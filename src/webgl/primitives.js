@@ -130,11 +130,13 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     depth = height;
   }
 
+  var perPixelLighting =
+    this._renderer.attributes && this._renderer.attributes.perPixelLighting;
   if (typeof detailX === 'undefined') {
-    detailX = 4;
+    detailX = perPixelLighting ? 1 : 4;
   }
   if (typeof detailY === 'undefined') {
-    detailY = 4;
+    detailY = perPixelLighting ? 1 : 4;
   }
 
   var gId = 'box|' + detailX + '|' + detailY;
@@ -777,12 +779,13 @@ p5.RendererGL.prototype.ellipse = function(args) {
 };
 
 p5.RendererGL.prototype.rect = function(args) {
+  var perPixelLighting = this.attributes.perPixelLighting;
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
-  var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
+  var detailX = args[4] || (perPixelLighting ? 1 : 24);
+  var detailY = args[5] || (perPixelLighting ? 1 : 16);
   var gId = 'rect|' + detailX + '|' + detailY;
   if (!this.geometryInHash(gId)) {
     var _rect = function() {
