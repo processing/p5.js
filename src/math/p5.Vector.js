@@ -7,7 +7,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var polarGeometry = require('./polargeometry');
 var constants = require('../core/constants');
 
 /**
