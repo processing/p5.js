@@ -22,6 +22,24 @@
   font-size: inherit;
 }
 
+#reference .params table tr:nth-child(even) {
+  background-color: rgba(69,142,209,.08);
+}
+
+#reference .params table td {
+  padding: 0.4em;
+}
+
+#reference .params table :not(pre)>code[class*=language-] {
+  padding: 0 .3em .05em .3em;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
+#reference .params .param-type {
+
+}
+
 #reference .param-optional {
   color: #AFAFAF;
 }
