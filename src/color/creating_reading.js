@@ -292,7 +292,6 @@ p5.prototype.brightness = function(c) {
 /**
  * @method color
  * @param  {String}        value   a color string
- * @param  {Number}        [alpha]
  * @return {p5.Color}
  */
 /**
