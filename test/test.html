@@ -38,6 +38,10 @@
       window.addEventListener('load', function() {
         var runner = mocha.run();
 
+        runner.on('test', function (test) {
+          p5._throwValidationErrors = true;
+        });
+
         // This exposes our test results to Sauce Labs. For more
         // details, see: https://github.com/axemclion/grunt-saucelabs.
 

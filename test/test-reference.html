@@ -155,6 +155,8 @@
             myp5Div = document.createElement('div');
             document.body.appendChild(myp5Div);
 
+            p5._throwValidationErrors = true;
+
             myp5 = new p5(createExampleSketch(exampleCode, function(p) {
               var drawCalled = false;
               var oldSetup = p.setup || function() {};
