@@ -824,7 +824,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *
  * @method fromAngle
  * @static
- * @param {Number}     angle the desired angle
+ * @param {Number}     angle the desired angle, in radians
  * @param {Number}     [length] the length of the new vector (defaults to 1)
  * @return {p5.Vector}       the new p5.Vector object
  * @example
@@ -865,19 +865,10 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  * </div>
  */
 p5.Vector.fromAngle = function fromAngle(angle, length) {
-  if (this.p5) angle = this.p5._toRadians(angle);
   if (typeof length === 'undefined') {
     length = 1;
   }
-  if (this.p5) {
-    return new p5.Vector(this.p5, [
-      length * Math.cos(angle),
-      length * Math.sin(angle),
-      0
-    ]);
-  } else {
-    return new p5.Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
-  }
+  return new p5.Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
 };
 
 /**
@@ -885,10 +876,11 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  *
  * @method fromAngles
  * @static
- * @param {Number}     theta the polar angle (zero is up)
- * @param {Number}     phi the azimuthal angle (zero is out of the screen)
+ * @param {Number}     theta    the polar angle, in radians (zero is up)
+ * @param {Number}     phi      the azimuthal angle, in radians
+ *                               (zero is out of the screen)
  * @param {Number}     [length] the length of the new vector (defaults to 1)
- * @return {p5.Vector}       the new p5.Vector object
+ * @return {p5.Vector}          the new p5.Vector object
  * @example
  * <div modernizr='webgl'>
  * <code>
@@ -913,12 +905,6 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  * </div>
  */
 p5.Vector.fromAngles = function(theta, phi, length) {
-  if (this.p5) {
-    if (this.p5._angleMode === constants.DEGREES) {
-      theta = polarGeometry.degreesToRadians(theta);
-      phi = polarGeometry.degreesToRadians(phi);
-    }
-  }
   if (typeof length === 'undefined') {
     length = 1;
   }
@@ -927,20 +913,11 @@ p5.Vector.fromAngles = function(theta, phi, length) {
   var cosTheta = Math.cos(theta);
   var sinTheta = Math.sin(theta);
 
-  if (this.p5) {
-    return new new p5.Vector(
-      this.p5,
-      length * sinTheta * sinPhi,
-      -length * cosTheta,
-      length * sinTheta * cosPhi
-    )();
-  } else {
-    return new p5.Vector(
-      length * sinTheta * sinPhi,
-      -length * cosTheta,
-      length * sinTheta * cosPhi
-    );
-  }
+  return new p5.Vector(
+    length * sinTheta * sinPhi,
+    -length * cosTheta,
+    length * sinTheta * cosPhi
+  );
 };
 
 /**
@@ -962,15 +939,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  * </div>
  */
 p5.Vector.random2D = function random2D() {
-  var angle;
-  // A lot of nonsense to determine if we know about a
-  // p5 sketch and whether we should make a random angle in degrees or radians
-  if (this.p5 && this.p5._angleMode === constants.DEGREES) {
-    angle = this.p5.random(360);
-  } else {
-    angle = Math.random() * constants.TWO_PI;
-  }
-  return this.fromAngle(angle);
+  return this.fromAngle(Math.random() * constants.TWO_PI);
 };
 
 /**
@@ -992,21 +961,11 @@ p5.Vector.random2D = function random2D() {
  * </div>
  */
 p5.Vector.random3D = function random3D() {
-  var angle, vz;
-  // If we know about p5
-  if (this.p5) {
-    angle = this.p5.random(0, constants.TWO_PI);
-    vz = this.p5.random(-1, 1);
-  } else {
-    angle = Math.random() * constants.TWO_PI;
-    vz = Math.random() * 2 - 1;
-  }
+  var angle = Math.random() * constants.TWO_PI;
+  var vz = Math.random() * 2 - 1;
   var vzBase = Math.sqrt(1 - vz * vz);
   var vx = vzBase * Math.cos(angle);
   var vy = vzBase * Math.sin(angle);
-  if (this.p5) {
-    return new p5.Vector(this.p5, [vx, vy, vz]);
-  }
   return new p5.Vector(vx, vy, vz);
 };
 

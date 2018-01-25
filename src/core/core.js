@@ -180,9 +180,7 @@ var p5 = function(sketch, node, sync) {
   this._preloadCount = 0;
   this._isGlobal = false;
   this._loop = true;
-  this._bezierDetail = 20;
-  this._curveDetail = 20;
-  this._styles = [];
+  this._initializeInstanceVariables();
   this._defaultCanvasSize = {
     width: 100,
     height: 100
@@ -556,6 +554,20 @@ var p5 = function(sketch, node, sync) {
       window.addEventListener('load', this._start.bind(this), false);
     }
   }
+};
+
+p5.prototype._initializeInstanceVariables = function() {
+  this._styles = [];
+
+  this._bezierDetail = 20;
+  this._curveDetail = 20;
+
+  this._colorMode = constants.RGB;
+  this._colorMaxes = {
+    rgb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
+    hsl: [360, 100, 100, 1]
+  };
 };
 
 // This is a pointer to our global mode p5 instance, if we're in

@@ -116,6 +116,19 @@ p5.prototype.loop = function() {
   this._draw();
 };
 
+function assign(dest, varArgs) {
+  for (var index = 1; index < arguments.length; index++) {
+    var src = arguments[index];
+    if (src != null) {
+      for (var key in src) {
+        if (src.hasOwnProperty(key)) {
+          dest[key] = src[key];
+        }
+      }
+    }
+  }
+}
+
 /**
  * The push() function saves the current drawing style settings and
  * transformations, while pop() restores these settings. Note that these
@@ -175,19 +188,23 @@ p5.prototype.loop = function() {
 p5.prototype.push = function() {
   this._renderer.push();
   this._styles.push({
-    _doStroke: this._renderer._doStroke,
-    _strokeSet: this._renderer._strokeSet,
-    _doFill: this._renderer._doFill,
-    _fillSet: this._renderer._fillSet,
-    _tint: this._renderer._tint,
-    _imageMode: this._renderer._imageMode,
-    _rectMode: this._renderer._rectMode,
-    _ellipseMode: this._renderer._ellipseMode,
-    _colorMode: this._renderer._colorMode,
-    _textFont: this._renderer._textFont,
-    _textLeading: this._renderer._textLeading,
-    _textSize: this._renderer._textSize,
-    _textStyle: this._renderer._textStyle
+    props: {
+      _colorMode: this._colorMode
+    },
+    renderer: {
+      _doStroke: this._renderer._doStroke,
+      _strokeSet: this._renderer._strokeSet,
+      _doFill: this._renderer._doFill,
+      _fillSet: this._renderer._fillSet,
+      _tint: this._renderer._tint,
+      _imageMode: this._renderer._imageMode,
+      _rectMode: this._renderer._rectMode,
+      _ellipseMode: this._renderer._ellipseMode,
+      _textFont: this._renderer._textFont,
+      _textLeading: this._renderer._textLeading,
+      _textSize: this._renderer._textSize,
+      _textStyle: this._renderer._textStyle
+    }
   });
 };
 
@@ -250,9 +267,8 @@ p5.prototype.push = function() {
 p5.prototype.pop = function() {
   this._renderer.pop();
   var lastS = this._styles.pop();
-  for (var prop in lastS) {
-    this._renderer[prop] = lastS[prop];
-  }
+  assign(this._renderer, lastS.renderer);
+  assign(this, lastS.props);
 };
 
 p5.prototype.pushStyle = function() {

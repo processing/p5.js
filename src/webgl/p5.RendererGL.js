@@ -604,10 +604,6 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
  * Any pixel manipulation must be done directly to the pixels[] array.
  *
  * @method loadPixels
- * @param {Number} [x] starting pixel x position, defaults to 0
- * @param {Number} [y] starting pixel y position, defaults to 0
- * @param {Number} [w] width of pixels to load, defaults to sketch width
- * @param {Number} [h] height of pixels to load, defaults to sketch height
  *
  */
 
@@ -620,17 +616,29 @@ p5.RendererGL.prototype.loadPixels = function() {
     return;
   }
   var pd = this._pInst._pixelDensity;
-  var x = arguments[0] || 0;
-  var y = arguments[1] || 0;
-  var w = arguments[2] || this.width;
-  var h = arguments[3] || this.height;
+  var x = 0;
+  var y = 0;
+  var w = this.width;
+  var h = this.height;
   w *= pd;
   h *= pd;
-  var pixels = new Uint8Array(
-    this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
+  //if there isn't a renderer-level temporary pixels buffer
+  //make a new one
+  if (typeof this.pixels === 'undefined') {
+    this.pixels = new Uint8Array(
+      this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
+    );
+  }
+  this.GL.readPixels(
+    x,
+    y,
+    w,
+    h,
+    this.GL.RGBA,
+    this.GL.UNSIGNED_BYTE,
+    this.pixels
   );
-  this.GL.readPixels(x, y, w, h, this.GL.RGBA, this.GL.UNSIGNED_BYTE, pixels);
-  this._pInst._setProperty('pixels', pixels);
+  this._pInst._setProperty('pixels', this.pixels);
 };
 
 //////////////////////////////////////////////
@@ -662,6 +670,12 @@ p5.RendererGL.prototype.resize = function(w, h) {
     // camera defaults are dependent on the width & height of the screen,
     // so we'll want to update them if the size of the screen changes.
     this._setDefaultCamera();
+  }
+  //resize pixels buffer
+  if (typeof this.pixels !== 'undefined') {
+    this.pixels = new Uint8Array(
+      this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
+    );
   }
 };
 

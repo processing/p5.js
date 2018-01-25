@@ -30,9 +30,9 @@ var color_conversion = require('./color_conversion');
  * @class p5.Color
  * @constructor
  */
-p5.Color = function(renderer, vals) {
+p5.Color = function(pInst, vals) {
   // Record color mode and maxes at time of construction.
-  this._storeModeAndMaxes(renderer._colorMode, renderer._colorMaxes);
+  this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
 
   // Calculate normalized RGBA values.
   if (
@@ -52,8 +52,16 @@ p5.Color = function(renderer, vals) {
 };
 
 /**
+ * This function returns the color formatted as a string. This can be useful
+ * for debugging, or for using p5.js with other libraries.
  * @method toString
- * @return {String}
+ * @param {String} [format] How the color string will be formatted.
+ * Leaving this empty formats the string as rgba(r, g, b, a).
+ * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
+ * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
+ * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
+ * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
+ * @return {String} the formatted string
  * @example
  * <div>
  * <code>
@@ -67,6 +75,8 @@ p5.Color = function(renderer, vals) {
  *
  * function draw() {
  *   text(myColor.toString(), 10, 10);
+ *   text(myColor.toString('#rrggbb'), 10, 95);
+ *   text(myColor.toString('rgba%'), 10, 180);
  * }
  * </code>
  * </div>
@@ -74,10 +84,166 @@ p5.Color = function(renderer, vals) {
  * @alt
  * canvas with text representation of color
  */
-p5.Color.prototype.toString = function() {
+p5.Color.prototype.toString = function(format) {
+  if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+  if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+
   var a = this.levels;
-  var alpha = this._array[3]; // String representation uses normalized alpha.
-  return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
+  var f = this._array;
+  var alpha = f[3]; // String representation uses normalized alpha
+
+  switch (format) {
+    case '#rrggbb':
+      return '#'.concat(
+        a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+        a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+        a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
+      );
+
+    case '#rrggbbaa':
+      return '#'.concat(
+        a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+        a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+        a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
+        a[3] < 16 ? '0'.concat(a[2].toString(16)) : a[3].toString(16)
+      );
+
+    case '#rgb':
+      return '#'.concat(
+        Math.round(f[0] * 15).toString(16),
+        Math.round(f[1] * 15).toString(16),
+        Math.round(f[2] * 15).toString(16)
+      );
+
+    case '#rgba':
+      return '#'.concat(
+        Math.round(f[0] * 15).toString(16),
+        Math.round(f[1] * 15).toString(16),
+        Math.round(f[2] * 15).toString(16),
+        Math.round(f[3] * 15).toString(16)
+      );
+
+    case 'rgb':
+      return 'rgb('.concat(a[0], ', ', a[1], ', ', a[2], ')');
+
+    case 'rgb%':
+      return 'rgb('.concat(
+        (100 * f[0]).toPrecision(3),
+        '%, ',
+        (100 * f[1]).toPrecision(3),
+        '%, ',
+        (100 * f[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'rgba%':
+      return 'rgba('.concat(
+        (100 * f[0]).toPrecision(3),
+        '%, ',
+        (100 * f[1]).toPrecision(3),
+        '%, ',
+        (100 * f[2]).toPrecision(3),
+        '%, ',
+        (100 * f[3]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsb':
+    case 'hsv':
+      return 'hsb('.concat(
+        this.hsba[0] * this.maxes[constants.HSB][0],
+        ', ',
+        this.hsba[1] * this.maxes[constants.HSB][1],
+        ', ',
+        this.hsba[2] * this.maxes[constants.HSB][2],
+        ')'
+      );
+
+    case 'hsb%':
+    case 'hsv%':
+      return 'hsb('.concat(
+        (100 * this.hsba[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsba':
+    case 'hsva':
+      return 'hsba('.concat(
+        this.hsba[0] * this.maxes[constants.HSB][0],
+        ', ',
+        this.hsba[1] * this.maxes[constants.HSB][1],
+        ', ',
+        this.hsba[2] * this.maxes[constants.HSB][2],
+        ', ',
+        alpha,
+        ')'
+      );
+
+    case 'hsba%':
+    case 'hsva%':
+      return 'hsba('.concat(
+        (100 * this.hsba[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[2]).toPrecision(3),
+        '%, ',
+        (100 * alpha).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsl':
+      return 'hsl('.concat(
+        this.hsla[0] * this.maxes[constants.HSL][0],
+        ', ',
+        this.hsla[1] * this.maxes[constants.HSL][1],
+        ', ',
+        this.hsla[2] * this.maxes[constants.HSL][2],
+        ')'
+      );
+
+    case 'hsl%':
+      return 'hsl('.concat(
+        (100 * this.hsla[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsla':
+      return 'hsla('.concat(
+        this.hsla[0] * this.maxes[constants.HSL][0],
+        ', ',
+        this.hsla[1] * this.maxes[constants.HSL][1],
+        ', ',
+        this.hsla[2] * this.maxes[constants.HSL][2],
+        ', ',
+        alpha,
+        ')'
+      );
+
+    case 'hsla%':
+      return 'hsl('.concat(
+        (100 * this.hsla[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[2]).toPrecision(3),
+        '%, ',
+        (100 * alpha).toPrecision(3),
+        '%)'
+      );
+
+    case 'rgba':
+    default:
+      return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
+  }
 };
 
 /**
@@ -659,7 +825,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
 
     // Return if string is a named colour.
     if (namedColors[str]) {
-      return p5.Color._parseInputs.apply(this, [namedColors[str]]);
+      return p5.Color._parseInputs.call(this, namedColors[str]);
     }
 
     // Try RGBA pattern matching.
