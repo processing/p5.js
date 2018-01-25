@@ -240,9 +240,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
             return { name: type, builtin: lowerType };
           }
 
-          // p5 class type
+          // find type's prototype
           var t = window;
-          type.split('.').forEach(function(p) {
+          var typeParts = type.split('.');
+
+          // special-case 'p5' since it may be non-global
+          if (typeParts[0] === 'p5') {
+            t = p5;
+            typeParts.shift();
+          }
+
+          typeParts.forEach(function(p) {
             t = t && t[p];
           });
           if (t) {
