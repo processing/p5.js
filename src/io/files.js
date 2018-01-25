@@ -1076,7 +1076,7 @@ p5.prototype._pWriters = [];
  *       writer.print(i * i);
  *     }
  *     writer.close();
- *     writer.flush();
+ *     writer.clear();
  *   });
  * </code>
  * </div>
@@ -1195,20 +1195,20 @@ p5.PrintWriter = function(filename, extension) {
   };
   /**
    * Clears the data already written to the PrintWriter object
-   * @method flush
+   * @method clear
    * @example
    * <div class ="norender"><code>
    * // create writer object
    * var writer = createWriter('newFile.txt');
-   * writer.write(['Flush me']);
-   * // flush writer object here
-   * writer.flush();
+   * writer.write(['clear me']);
+   * // clear writer object here
+   * writer.clear();
    * // close writer
    * writer.close();
    * </code></div>
    *
    */
-  this.flush = function() {
+  this.clear = function() {
     this.content = '';
   };
   /**
@@ -1246,7 +1246,7 @@ p5.PrintWriter = function(filename, extension) {
         p5.prototype._pWriters.splice(i, 1);
       }
     }
-    self.flush();
+    self.clear();
     self = {};
   };
 };
@@ -1484,7 +1484,7 @@ p5.prototype.saveStrings = function(list, filename, extension) {
     }
   }
   pWriter.close();
-  pWriter.flush();
+  pWriter.clear();
 };
 
 // =======
@@ -1620,9 +1620,9 @@ p5.prototype.saveTable = function(table, filename, options) {
     pWriter.print('</body>');
     pWriter.print('</html>');
   }
-  // close and flush the pWriter
+  // close and clear the pWriter
   pWriter.close();
-  pWriter.flush();
+  pWriter.clear();
 }; // end saveTable()
 
 /**
