@@ -287,7 +287,6 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._drawElements(gl.TRIANGLES, gId);
     this.curFillShader.unbindShader();
   }
-  return this;
 };
 
 /**
@@ -322,7 +321,6 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
-  return this;
 };
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {

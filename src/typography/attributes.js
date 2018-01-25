@@ -52,9 +52,7 @@ var p5 = require('../core/core');
  * @method textAlign
  * @return {Object}
  */
-p5.prototype.textAlign = function(horizAlign, vertAlign) {
-  return this._renderer.textAlign.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Sets/gets the spacing, in pixels, between lines of text. This
@@ -89,9 +87,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @method textLeading
  * @return {Number}
  */
-p5.prototype.textLeading = function(theLeading) {
-  return this._renderer.textLeading.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Sets/gets the current font size. This size will be used in all subsequent
@@ -120,9 +116,7 @@ p5.prototype.textLeading = function(theLeading) {
  * @method textSize
  * @return {Number}
  */
-p5.prototype.textSize = function(theSize) {
-  return this._renderer.textSize.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, or BOLD.
@@ -154,9 +148,7 @@ p5.prototype.textSize = function(theSize) {
  * @method textStyle
  * @return {String}
  */
-p5.prototype.textStyle = function(theStyle) {
-  return this._renderer.textStyle.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Calculates and returns the width of any character or text string.
@@ -185,12 +177,7 @@ p5.prototype.textStyle = function(theStyle) {
  *Letter P and p5.js are displayed with vertical lines at end. P is wide
  *
  */
-p5.prototype.textWidth = function(theText) {
-  if (theText.length === 0) {
-    return 0;
-  }
-  return this._renderer.textWidth.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Returns the ascent of the current font at its current size. The ascent
@@ -216,9 +203,7 @@ p5.prototype.textWidth = function(theText) {
  * </code>
  * </div>
  */
-p5.prototype.textAscent = function() {
-  return this._renderer.textAscent();
-};
+// see thunkRendererMethods
 
 /**
  * Returns the descent of the current font at its current size. The descent
@@ -244,9 +229,7 @@ p5.prototype.textAscent = function() {
  * </code>
  * </div>
  */
-p5.prototype.textDescent = function() {
-  return this._renderer.textDescent();
-};
+// see thunkRendererMethods
 
 /**
  * Helper function to measure ascent and descent.

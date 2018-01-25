@@ -115,8 +115,8 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.createShader = function(vertSrc, fragSrc) {
-  return new p5.Shader(this._renderer, vertSrc, fragSrc);
+p5.RendererGL.prototype.createShader = function(vertSrc, fragSrc) {
+  return new p5.Shader(this, vertSrc, fragSrc);
 };
 
 /**
@@ -130,16 +130,16 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
  * shapes.
  */
-p5.prototype.shader = function(s) {
-  if (s._renderer === undefined) {
-    s._renderer = this._renderer;
+p5.RendererGL.prototype.shader = function(s) {
+  if (!s._renderer) {
+    s._renderer = this;
   }
+
   if (s.isStrokeShader()) {
-    this._renderer.setStrokeShader(s);
+    this.setStrokeShader(s);
   } else {
-    this._renderer.setFillShader(s);
+    this.setFillShader(s);
   }
-  return this;
 };
 
 /**
@@ -167,12 +167,11 @@ p5.prototype.shader = function(s) {
  * Red, green and blue gradient.
  *
  */
-p5.prototype.normalMaterial = function() {
-  this._renderer.drawMode = constants.FILL;
-  this._renderer.setFillShader(this._renderer._getNormalShader());
-  this._renderer.curFillColor = [1, 1, 1, 1];
-  this.noStroke();
-  return this;
+p5.RendererGL.prototype.normalMaterial = function() {
+  this.drawMode = constants.FILL;
+  this.setFillShader(this._getNormalShader());
+  this.curFillColor = [1, 1, 1, 1];
+  this._pInst.noStroke();
 };
 
 /**
@@ -253,21 +252,17 @@ p5.prototype.normalMaterial = function() {
  * black canvas
  *
  */
-p5.prototype.texture = function(tex) {
-  this._renderer.GL.depthMask(true);
-  this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(
-    this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA
-  );
+p5.RendererGL.prototype.texture = function(tex) {
+  this.GL.depthMask(true);
+  this.GL.enable(this.GL.BLEND);
+  this.GL.blendFunc(this.GL.SRC_ALPHA, this.GL.ONE_MINUS_SRC_ALPHA);
 
-  this._renderer.drawMode = constants.TEXTURE;
-  var shader = this._renderer._useLightShader();
+  this.drawMode = constants.TEXTURE;
+  var shader = this._useLightShader();
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
-  this.noStroke();
-  return this;
+  this._pInst.noStroke();
 };
 
 /**
@@ -306,15 +301,14 @@ p5.prototype.texture = function(tex) {
  * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
-p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
+p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this.curFillColor = color._array;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  var shader = this._useLightShader();
+  shader.setUniform('uMaterialColor', this.curFillColor);
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
-  return this;
 };
 
 /**
@@ -353,15 +347,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
+p5.RendererGL.prototype.specularMaterial = function(v1, v2, v3, a) {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this.curFillColor = color._array;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  var shader = this._useLightShader();
+  shader.setUniform('uMaterialColor', this.curFillColor);
   shader.setUniform('uSpecular', true);
   shader.setUniform('isTexture', false);
-  return this;
 };
 
 /**

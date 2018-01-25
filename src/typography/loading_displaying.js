@@ -190,11 +190,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * The quick brown fox jumped over the lazy dog.
  *
  */
-p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  return !(this._renderer._doFill || this._renderer._doStroke)
-    ? this
-    : this._renderer.text.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Sets the current font that will be drawn with the text() function.

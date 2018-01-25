@@ -9,6 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var canvas = require('../core/canvas');
 require('./p5.Geometry');
 
 /**
@@ -45,7 +46,11 @@ require('./p5.Geometry');
  * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
-p5.prototype.plane = function(width, height, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.plane = function(width, height, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -62,7 +67,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
 
   var gId = 'plane|' + detailX + '|' + detailY;
 
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var _plane = function() {
       var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
@@ -79,17 +84,17 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     planeGeom.computeFaces().computeNormals();
     if (detailX <= 1 && detailY <= 1) {
       planeGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(planeGeom);
+      this._edgesToVertices(planeGeom);
     } else {
       console.log(
         'Cannot draw stroke on plane objects with more' +
           ' than 1 detailX or 1 detailY'
       );
     }
-    this._renderer.createBuffers(gId, planeGeom);
+    this.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, width, height, 0);
+  this.drawBuffersScaled(gId, width, height, 0);
 };
 
 /**
@@ -120,7 +125,11 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.box = function(width, height, depth, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.box = function(width, height, depth, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -141,7 +150,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
   }
 
   var gId = 'box|' + detailX + '|' + detailY;
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var _box = function() {
       var cubeIndices = [
         [0, 4, 2, 6], // -1, 0, 0],// -x
@@ -191,7 +200,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     boxGeom.computeNormals();
     if (detailX <= 4 && detailY <= 4) {
       boxGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(boxGeom);
+      this._edgesToVertices(boxGeom);
     } else {
       console.log(
         'Cannot draw stroke on box objects with more' +
@@ -201,11 +210,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
-    this._renderer.createBuffers(gId, boxGeom);
+    this.createBuffers(gId, boxGeom);
   }
-  this._renderer.drawBuffersScaled(gId, width, height, depth);
-
-  return this;
+  this.drawBuffersScaled(gId, width, height, depth);
 };
 
 /**
@@ -234,7 +241,11 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.sphere = function(radius, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.sphere = function(radius, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -246,8 +257,6 @@ p5.prototype.sphere = function(radius, detailX, detailY) {
   }
 
   this.ellipsoid(radius, radius, radius, detailX, detailY);
-
-  return this;
 };
 
 /**
@@ -365,7 +374,11 @@ var _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function(radius, height, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.cylinder = function(radius, height, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -380,25 +393,23 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
   }
 
   var gId = 'cylinder|' + detailX + '|' + detailY;
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(cylinderGeom);
+      this._edgesToVertices(cylinderGeom);
     } else {
       console.log(
         'Cannot draw stroke on cylinder objects with more' +
           ' than 24 detailX or 16 detailY'
       );
     }
-    this._renderer.createBuffers(gId, cylinderGeom);
+    this.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, radius, height, radius);
-
-  return this;
+  this.drawBuffersScaled(gId, radius, height, radius);
 };
 
 /**
@@ -430,7 +441,11 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.cone = function(radius, height, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.cone = function(radius, height, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -445,7 +460,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
   }
 
   var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
       coneGeom,
@@ -461,19 +476,17 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
     coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(coneGeom);
+      this._edgesToVertices(coneGeom);
     } else {
       console.log(
         'Cannot draw stroke on cone objects with more' +
           ' than 24 detailX or 16 detailY'
       );
     }
-    this._renderer.createBuffers(gId, coneGeom);
+    this.createBuffers(gId, coneGeom);
   }
 
-  this._renderer.drawBuffers(gId);
-
-  return this;
+  this.drawBuffers(gId);
 };
 
 /**
@@ -506,7 +519,17 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.ellipsoid = function(
+  radiusX,
+  radiusY,
+  radiusZ,
+  detailX,
+  detailY
+) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof radiusX === 'undefined') {
     radiusX = 50;
   }
@@ -526,7 +549,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 
   var gId = 'ellipsoid|' + detailX + '|' + detailY;
 
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var _ellipsoid = function() {
       for (var i = 0; i <= this.detailY; i++) {
         var v = i / this.detailY;
@@ -550,19 +573,17 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     ellipsoidGeom.computeFaces();
     if (detailX <= 24 && detailY <= 24) {
       ellipsoidGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(ellipsoidGeom);
+      this._edgesToVertices(ellipsoidGeom);
     } else {
       console.log(
         'Cannot draw stroke on ellipsoids with more' +
           ' than 24 detailX or 24 detailY'
       );
     }
-    this._renderer.createBuffers(gId, ellipsoidGeom);
+    this.createBuffers(gId, ellipsoidGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
-
-  return this;
+  this.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
 };
 
 /**
@@ -594,7 +615,11 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+// see thunkRendererMethods
+p5.RendererGL.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   if (typeof radius === 'undefined') {
     radius = 50;
   } else if (!radius) {
@@ -617,7 +642,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
   var tubeRatio = (tubeRadius / radius).toPrecision(4);
   var gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
 
-  if (!this._renderer.geometryInHash(gId)) {
+  if (!this.geometryInHash(gId)) {
     var _torus = function() {
       for (var i = 0; i <= this.detailY; i++) {
         var v = i / this.detailY;
@@ -646,38 +671,26 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     torusGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(torusGeom);
+      this._edgesToVertices(torusGeom);
     } else {
       console.log(
         'Cannot draw strokes on torus object with more' +
           ' than 24 detailX or 16 detailY'
       );
     }
-    this._renderer.createBuffers(gId, torusGeom);
+    this.createBuffers(gId, torusGeom);
   }
-  this._renderer.drawBuffersScaled(gId, radius, radius, radius);
-
-  return this;
+  this.drawBuffersScaled(gId, radius, radius, radius);
 };
 
 ///////////////////////
 /// 2D primitives
 /////////////////////////
 
-//@TODO
-p5.RendererGL.prototype.point = function(x, y, z) {
-  console.log('point not yet implemented in webgl');
-  return this;
-};
-
-p5.RendererGL.prototype.triangle = function(args) {
-  var x1 = args[0],
-    y1 = args[1];
-  var x2 = args[2],
-    y2 = args[3];
-  var x3 = args[4],
-    y3 = args[5];
-
+p5.RendererGL.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   var gId = 'tri';
   if (!this.geometryInHash(gId)) {
     var _triangle = function() {
@@ -719,8 +732,6 @@ p5.RendererGL.prototype.triangle = function(args) {
   } finally {
     this.uMVMatrix = uMVMatrix;
   }
-
-  return this;
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
@@ -779,14 +790,19 @@ p5.RendererGL.prototype.ellipse = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.rect = function(args) {
+p5.RendererGL.prototype.rect = function(x, y, w, h, detailX, detailY) {
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
+  var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
+  x = vals.x;
+  y = vals.y;
+  w = vals.w;
+  h = vals.h;
+
   var perPixelLighting = this.attributes.perPixelLighting;
-  var x = args[0];
-  var y = args[1];
-  var width = args[2];
-  var height = args[3];
-  var detailX = args[4] || (perPixelLighting ? 1 : 24);
-  var detailY = args[5] || (perPixelLighting ? 1 : 16);
+  detailX = detailX || (perPixelLighting ? 1 : 24);
+  detailY = detailY || (perPixelLighting ? 1 : 16);
   var gId = 'rect|' + detailX + '|' + detailY;
   if (!this.geometryInHash(gId)) {
     var _rect = function() {
@@ -816,7 +832,7 @@ p5.RendererGL.prototype.rect = function(args) {
   var uMVMatrix = this.uMVMatrix.copy();
   try {
     this.uMVMatrix.translate([x, y, 0]);
-    this.uMVMatrix.scale(width, height, 1);
+    this.uMVMatrix.scale(w, h, 1);
 
     this.drawBuffers(gId);
   } finally {
@@ -826,23 +842,17 @@ p5.RendererGL.prototype.rect = function(args) {
 };
 
 p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var gId =
-    'quad|' +
-    x1 +
-    '|' +
-    y1 +
-    '|' +
-    x2 +
-    '|' +
-    y2 +
-    '|' +
-    x3 +
-    '|' +
-    y3 +
-    '|' +
-    x4 +
-    '|' +
-    y4;
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
+  /* eslint-disable */
+  var gId = 'quad|' +
+    x1 + '|' + y1 + '|' +
+    x2 + '|' + y2 + '|' +
+    x3 + '|' + y3 + '|' +
+    x4 + '|' + y4;
+  /* eslint-enable */
+
   if (!this.geometryInHash(gId)) {
     var _quad = function() {
       this.vertices.push(new p5.Vector(x1, y1, 0));
@@ -859,26 +869,21 @@ p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
-  return this;
 };
 
 //this implementation of bezier curve
 //is based on Bernstein polynomial
-// pretier-ignore
+/* eslint-disable */
 p5.RendererGL.prototype.bezier = function(
-  x1,
-  y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
-  z3,
-  x4,
-  y4,
-  z4
+  x1, y1, z1,
+  x2, y2, z2,
+  x3, y3, z3,
+  x4, y4, z4
 ) {
+  /* eslint-enable */
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (var i = 0; i <= bezierDetail; i++) {
@@ -893,24 +898,19 @@ p5.RendererGL.prototype.bezier = function(
     );
   }
   this.endShape();
-  return this;
 };
 
-// pretier-ignore
+/* eslint-disable */
 p5.RendererGL.prototype.curve = function(
-  x1,
-  y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
-  z3,
-  x4,
-  y4,
-  z4
+  x1, y1, z1,
+  x2, y2, z2,
+  x3, y3, z3,
+  x4, y4, z4
 ) {
+  /* eslint-enable */
+  if (!this._doStroke && !this._doFill) {
+    return;
+  }
   var curveDetail = this._pInst._curveDetail;
   this.beginShape();
   for (var i = 0; i <= curveDetail; i++) {
@@ -936,7 +936,6 @@ p5.RendererGL.prototype.curve = function(
     this.vertex(vx, vy, vz);
   }
   this.endShape();
-  return this;
 };
 
 /**
@@ -968,7 +967,11 @@ p5.RendererGL.prototype.curve = function(
  * </code>
  * </div>
  */
+// see thunkRendererMethods
 p5.RendererGL.prototype.line = function() {
+  if (!this._doStroke) {
+    return;
+  }
   if (arguments.length === 6) {
     this.beginShape();
     this.vertex(arguments[0], arguments[1], arguments[2]);
@@ -980,7 +983,6 @@ p5.RendererGL.prototype.line = function() {
     this.vertex(arguments[2], arguments[3], 0);
     this.endShape();
   }
-  return this;
 };
 
 module.exports = p5;

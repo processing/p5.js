@@ -313,9 +313,7 @@ p5.prototype.degrees = function(angle) {
  * </code>
  * </div>
  */
-p5.prototype.radians = function(angle) {
-  return polarGeometry.degreesToRadians(angle);
-};
+p5.prototype.radians = polarGeometry.degreesToRadians;
 
 /**
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
