@@ -26,22 +26,14 @@ suite('Error Helpers', function() {
       );
     });
     test('arc(): missing param #4, #5', function() {
-      assert.doesNotThrow(
-        function() {
-          p5._validateParameters('arc', [1, 1, 10.5, 10]);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        p5._validateParameters('arc', [1, 1, 10.5, 10]);
+      });
     });
     test('arc(): wrong param type at #0', function() {
-      assert.doesNotThrow(
-        function() {
-          p5._validateParameters('arc', ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        p5._validateParameters('arc', ['a', 1, 10.5, 10, 0, Math.PI, 'pie']);
+      });
     });
   });
 
@@ -56,22 +48,14 @@ suite('Error Helpers', function() {
       );
     });
     test('rect(): missing param #3', function() {
-      assert.doesNotThrow(
-        function() {
-          p5._validateParameters('rect', [1, 1, 10.5]);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        p5._validateParameters('rect', [1, 1, 10.5]);
+      });
     });
     test('rect(): wrong param type at #0', function() {
-      assert.doesNotThrow(
-        function() {
-          p5._validateParameters('rect', ['1', 1, 10.5, 10, 0, Math.PI]);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        p5._validateParameters('rect', ['a', 1, 10.5, 10, 0, Math.PI]);
+      });
     });
   });
 
