@@ -314,7 +314,7 @@ p5.prototype.image = function(
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
+ * @param  {Number}         alpha value
  *
  * @example
  * <div>
@@ -365,22 +365,16 @@ p5.prototype.image = function(
  * 2 side by side images of umbrella and ceiling, one image translucent
  *
  */
-
 /**
  * @method tint
- * @param  {String}        value   a color string
+ * @param  {Number}        gray    number specifying value between white
+ *                                 and black.
  * @param  {Number}        [alpha]
  */
-
 /**
  * @method tint
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- */
-
-/**
- * @method tint
- * @param  {p5.Color}      color   the tint color
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  */
 p5.prototype.tint = function() {
   p5._validateParameters('tint', arguments);
