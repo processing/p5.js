@@ -10,6 +10,7 @@
 
 var p5 = require('../core/core');
 require('./p5.Geometry');
+
 /**
  * Draw a plane with given a width and height
  * @method plane
@@ -70,7 +71,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
           u = j / this.detailX;
           p = new p5.Vector(u - 0.5, v - 0.5, 0);
           this.vertices.push(p);
-          this.uvs.push([u, v]);
+          this.uvs.push(u, v);
         }
       }
     };
@@ -180,7 +181,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
             ((d & 4) / 2 - 1) / 2
           );
           this.vertices.push(octant);
-          this.uvs.push([j & 1, (j & 2) / 2]);
+          this.uvs.push(j & 1, (j & 2) / 2);
         }
         this.faces.push([v, v + 1, v + 2]);
         this.faces.push([v + 2, v + 1, v + 3]);
@@ -316,7 +317,7 @@ var _truncatedCone = function(
         )
       );
       //UVs
-      this.uvs.push([ii / detailX, v]);
+      this.uvs.push(ii / detailX, v);
     }
   }
   for (yy = 0; yy < detailY + extra; ++yy) {
@@ -541,7 +542,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
           var p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
           this.vertices.push(p);
           this.vertexNormals.push(p);
-          this.uvs.push([u, v]);
+          this.uvs.push(u, v);
         }
       }
     };
@@ -637,7 +638,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 
           this.vertices.push(p);
           this.vertexNormals.push(n);
-          this.uvs.push([u, v]);
+          this.uvs.push(u, v);
         }
       }
     };
@@ -687,7 +688,7 @@ p5.RendererGL.prototype.triangle = function(args) {
       this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
       this.faces = [[0, 1, 2]];
-      this.uvs = [[0, 0], [0, 1], [1, 1]];
+      this.uvs = [0, 0, 0, 1, 1, 1];
     };
     var triGeom = new p5.Geometry(1, 1, _triangle);
     triGeom._makeTriangleEdges();
@@ -744,7 +745,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
         var _y = 0.5 + Math.sin(theta) / 2;
 
         this.vertices.push(new p5.Vector(_x, _y, 0));
-        this.uvs.push([_x, _y]);
+        this.uvs.push(_x, _y);
 
         this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
       }
@@ -795,7 +796,7 @@ p5.RendererGL.prototype.rect = function(args) {
           var u = j / this.detailX;
           var p = new p5.Vector(u, v, 0);
           this.vertices.push(p);
-          this.uvs.push([u, v]);
+          this.uvs.push(u, v);
         }
       }
     };
@@ -848,7 +849,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       this.vertices.push(new p5.Vector(x2, y2, 0));
       this.vertices.push(new p5.Vector(x3, y3, 0));
       this.vertices.push(new p5.Vector(x4, y4, 0));
-      this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
+      this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
     var quadGeom = new p5.Geometry(2, 2, _quad);
