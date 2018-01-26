@@ -22,6 +22,7 @@ var constants = require('../core/constants');
  * performance will likely drop as a result of too many calls to
  * beginShape() / endShape().  As a high performance alternative,
  * please use p5.js geometry primitives.
+ * @private
  * @method beginShape
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
@@ -60,6 +61,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
 };
 /**
  * adds a vertex to be drawn in a custom Shape.
+ * @private
  * @method vertex
  * @param  {Number} x x-coordinate of vertex
  * @param  {Number} y y-coordinate of vertex

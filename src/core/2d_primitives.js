@@ -82,10 +82,9 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._angleMode === constants.DEGREES) {
-    start = this.radians(start);
-    stop = this.radians(stop);
-  }
+
+  start = this._toRadians(start);
+  stop = this._toRadians(stop);
 
   // Make all angles positive...
   while (start < 0) {
@@ -162,10 +161,9 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} detailX number of segments in the x-direction
- * @param  {Integer} [detailY] number of segments in the y-direction
+ * @param  {Integer} detail number of radial sectors to draw
  */
-p5.prototype.ellipse = function(x, y, w, h, detailX, detailY) {
+p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
 
   // p5 supports negative width and heights for rects
@@ -182,7 +180,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX, detailY) {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX, detailY]);
+    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
   }
 
   return this;

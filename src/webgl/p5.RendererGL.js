@@ -39,6 +39,7 @@ var defaultShaders = {
 
 /**
  * 3D graphics class
+ * @private
  * @class p5.RendererGL
  * @constructor
  * @extends p5.Renderer
@@ -95,7 +96,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.cameraZ = this.defaultCameraZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix(pInst);
+  this.cameraMatrix = new p5.Matrix();
   this.camera(); // set default camera matrices
 
   //Geometry & Material hashes
@@ -585,7 +586,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  * as grabbing the data directly from pixels[]. The equivalent statement to
  * get(x, y) is using pixels[] with pixel density d
  *
- *
+ * @private
  * @method get
  * @param  {Number}               [x] x-coordinate of the pixel
  * @param  {Number}               [y] y-coordinate of the pixel
@@ -603,6 +604,7 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
  * Note that updatePixels() and set() do not work.
  * Any pixel manipulation must be done directly to the pixels[] array.
  *
+ * @private
  * @method loadPixels
  *
  */

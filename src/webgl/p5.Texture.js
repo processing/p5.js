@@ -12,6 +12,7 @@ var p5 = require('../core/core');
 
 /**
  * Texture class for WEBGL Mode
+ * @private
  * @class p5.Texture
  * @constructor
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
