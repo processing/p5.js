@@ -30,6 +30,46 @@ suite('Error Helpers', function() {
         p5._validateParameters('arc', [1, 1, 10.5, 10]);
       });
     });
+    test('arc(): missing param #0', function() {
+      assert.validationError(function() {
+        p5._validateParameters('arc', [
+          undefined,
+          1,
+          10.5,
+          10,
+          0,
+          Math.PI,
+          'pie'
+        ]);
+      });
+    });
+    test('arc(): missing param #4', function() {
+      assert.validationError(function() {
+        p5._validateParameters('arc', [
+          1,
+          1,
+          10.5,
+          10,
+          undefined,
+          Math.PI,
+          'pie'
+        ]);
+      });
+    });
+    test('arc(): missing param #5', function() {
+      assert.validationError(function() {
+        p5._validateParameters('arc', [1, 1, 10.5, 10, 0, undefined, 'pie']);
+      });
+    });
+    test('arc(): missing param #6, no friendly-err-msg', function() {
+      assert.doesNotThrow(
+        function() {
+          p5._validateParameters('arc', [1, 1, 10.5, 10, 0, Math.PI]);
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
     test('arc(): wrong param type at #0', function() {
       assert.validationError(function() {
         p5._validateParameters('arc', ['a', 1, 10.5, 10, 0, Math.PI, 'pie']);
