@@ -13,6 +13,10 @@ var p5 = require('../core/core');
 var polarGeometry = require('./polargeometry');
 var constants = require('../core/constants');
 
+/*
+ * all DEGREES/RADIANS conversion should be done in the p5 instance
+ * if possible, using the p5._toRadians(), p5._fromRadians() methods.
+ */
 p5.prototype._angleMode = constants.RADIANS;
 
 /**
@@ -46,11 +50,7 @@ p5.prototype._angleMode = constants.RADIANS;
  * </div>
  */
 p5.prototype.acos = function(ratio) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.acos(ratio);
-  } else {
-    return polarGeometry.radiansToDegrees(Math.acos(ratio));
-  }
+  return this._fromRadians(Math.acos(ratio));
 };
 
 /**
@@ -85,11 +85,7 @@ p5.prototype.acos = function(ratio) {
  *
  */
 p5.prototype.asin = function(ratio) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.asin(ratio);
-  } else {
-    return polarGeometry.radiansToDegrees(Math.asin(ratio));
-  }
+  return this._fromRadians(Math.asin(ratio));
 };
 
 /**
@@ -124,11 +120,7 @@ p5.prototype.asin = function(ratio) {
  *
  */
 p5.prototype.atan = function(ratio) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.atan(ratio);
-  } else {
-    return polarGeometry.radiansToDegrees(Math.atan(ratio));
-  }
+  return this._fromRadians(Math.atan(ratio));
 };
 
 /**
@@ -164,11 +156,7 @@ p5.prototype.atan = function(ratio) {
  *
  */
 p5.prototype.atan2 = function(y, x) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.atan2(y, x);
-  } else {
-    return polarGeometry.radiansToDegrees(Math.atan2(y, x));
-  }
+  return this._fromRadians(Math.atan2(y, x));
 };
 
 /**
@@ -196,11 +184,7 @@ p5.prototype.atan2 = function(y, x) {
  *
  */
 p5.prototype.cos = function(angle) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.cos(angle);
-  } else {
-    return Math.cos(this.radians(angle));
-  }
+  return Math.cos(this._toRadians(angle));
 };
 
 /**
@@ -228,11 +212,7 @@ p5.prototype.cos = function(angle) {
  *
  */
 p5.prototype.sin = function(angle) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.sin(angle);
-  } else {
-    return Math.sin(this.radians(angle));
-  }
+  return Math.sin(this._toRadians(angle));
 };
 
 /**
@@ -260,11 +240,7 @@ p5.prototype.sin = function(angle) {
  *
  */
 p5.prototype.tan = function(angle) {
-  if (this._angleMode === constants.RADIANS) {
-    return Math.tan(angle);
-  } else {
-    return Math.tan(this.radians(angle));
-  }
+  return Math.tan(this._toRadians(angle));
 };
 
 /**
@@ -351,6 +327,51 @@ p5.prototype.angleMode = function(mode) {
   if (mode === constants.DEGREES || mode === constants.RADIANS) {
     this._angleMode = mode;
   }
+};
+
+/**
+ * converts angles from the current angleMode to RADIANS
+ *
+ * @method _toRadians
+ * @private
+ * @param {Number} angle
+ * @returns {Number}
+ */
+p5.prototype._toRadians = function(angle) {
+  if (this._angleMode === constants.DEGREES) {
+    return angle * constants.DEG_TO_RAD;
+  }
+  return angle;
+};
+
+/**
+ * converts angles from the current angleMode to DEGREES
+ *
+ * @method _toDegrees
+ * @private
+ * @param {Number} angle
+ * @returns {Number}
+ */
+p5.prototype._toDegrees = function(angle) {
+  if (this._angleMode === constants.RADIANS) {
+    return angle * constants.RAD_TO_DEG;
+  }
+  return angle;
+};
+
+/**
+ * converts angles from RADIANS into the current angleMode
+ *
+ * @method _fromRadians
+ * @private
+ * @param {Number} angle
+ * @returns {Number}
+ */
+p5.prototype._fromRadians = function(angle) {
+  if (this._angleMode === constants.DEGREES) {
+    return angle * constants.RAD_TO_DEG;
+  }
+  return angle;
 };
 
 module.exports = p5;

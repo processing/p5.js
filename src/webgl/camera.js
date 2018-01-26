@@ -163,7 +163,7 @@ p5.RendererGL.prototype.camera = function(
  * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
  * @param  {Number} [fovy]   camera frustum vertical field of view,
- *                           from bottom to top of view, in degrees
+ *                           from bottom to top of view, in angleMode units
  * @param  {Number} [aspect] camera frustum aspect ratio
  * @param  {Number} [near]   frustum near plane length
  * @param  {Number} [far]    frustum far plane length
@@ -217,12 +217,12 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
     far = this.defaultCameraFar;
   }
 
-  this.cameraFOV = fovy;
+  this.cameraFOV = this._pInst._toRadians(fovy);
   this.cameraAspect = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
 
-  this.uPMatrix = p5.Matrix.identity(this.pInst);
+  this.uPMatrix = p5.Matrix.identity();
 
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
@@ -287,8 +287,6 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (top === undefined) top = +this.height / 2;
   if (near === undefined) near = 0;
   if (far === undefined) far = Math.max(this.width, this.height);
-  this.uPMatrix = p5.Matrix.identity(this._pInst);
-  //this.uPMatrix.ortho(left,right,bottom,top,near,far);
 
   var w = right - left;
   var h = top - bottom;
