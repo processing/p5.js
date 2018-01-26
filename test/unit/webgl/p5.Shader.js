@@ -241,5 +241,13 @@ suite('p5.Shader', function() {
           'after call to specularMaterial()'
       );
     });
+
+    test('Able to setUniform empty arrays', function() {
+      myp5.shader(myp5._renderer._getLightShader());
+      var s = myp5._renderer.curFillShader;
+
+      s.setUniform('uMaterialColor', []);
+      s.setUniform('uLightingDirection', []);
+    });
   });
 });
