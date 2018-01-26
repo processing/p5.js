@@ -79,6 +79,10 @@ p5.Renderer.prototype.push = function() {
   };
 };
 
+// this is implementation of Object.assign()
+// The assign() method is used to copy the values of all enumerable
+// own properties from one or more source objects to a target object.
+// It will return the target object.
 function assign(to, firstSource) {
   for (var i = 1; i < arguments.length; i++) {
     var nextSource = arguments[i];
@@ -96,6 +100,7 @@ function assign(to, firstSource) {
 
 p5.Renderer.prototype.pop = function(style) {
   if (style.properties) {
+    // copy the style properties back into the renderer
     assign(this, style.properties);
   }
 };
