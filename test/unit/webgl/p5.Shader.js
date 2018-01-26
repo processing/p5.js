@@ -128,12 +128,11 @@ suite('p5.Shader', function() {
       );
     });
     test('Color Shader definition', function() {
-      var expectedAttributes = ['aPosition', 'aNormal', 'aTexCoord'];
+      var expectedAttributes = ['aPosition'];
 
       var expectedUniforms = [
         'uModelViewMatrix',
         'uProjectionMatrix',
-        'uNormalMatrix',
         'uMaterialColor'
       ];
 
@@ -162,7 +161,7 @@ suite('p5.Shader', function() {
       );
     });
     test('Normal Shader definition', function() {
-      var expectedAttributes = ['aPosition', 'aNormal', 'aTexCoord'];
+      var expectedAttributes = ['aPosition', 'aNormal'];
 
       var expectedUniforms = [
         'uModelViewMatrix',
