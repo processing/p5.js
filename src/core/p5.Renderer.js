@@ -60,6 +60,8 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
+// the renderer should return a 'style' object that it wishes to
+// store on the push stack.
 p5.Renderer.prototype.push = function() {
   return {
     properties: {
@@ -98,6 +100,9 @@ function assign(to, firstSource) {
   return to;
 }
 
+// a pop() operation is in progress
+// the renderer is passed the 'style' object that it returned
+// from its push() method.
 p5.Renderer.prototype.pop = function(style) {
   if (style.properties) {
     // copy the style properties back into the renderer
