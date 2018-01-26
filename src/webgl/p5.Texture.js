@@ -31,8 +31,8 @@ p5.Texture = function(renderer, obj) {
   this.mipmaps = false;
   this.glMinFilter = gl.LINEAR;
   this.glMagFilter = gl.LINEAR;
-  this.glWrapS = gl.CLAMP_TO_EDGE;
-  this.glWrapT = gl.CLAMP_TO_EDGE;
+  this.glWrapS = gl.REPEAT;
+  this.glWrapT = gl.REPEAT;
 
   // used to determine if this texture might need constant updating
   // because it is a video or gif.
