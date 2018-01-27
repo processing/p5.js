@@ -338,15 +338,17 @@ var _truncatedCone = function(
 
 /**
  * Draw a cylinder with given radius and height
- * @method  cylinder
- * @param  {Number} [radius]   radius of the surface
- * @param  {Number} [height]   height of the cylinder
- * @param  {Integer} [detailX] number of segments,
- *                             the more segments the smoother geometry
- *                             default is 24
- * @param {Integer} [detailY]  number of segments in y-dimension,
- *                             the more segments the smoother geometry
- *                             default is 16
+ * @method cylinder
+ * @param  {Number}  [radius]    radius of the surface
+ * @param  {Number}  [height]    height of the cylinder
+ * @param  {Integer} [detailX]   number of segments,
+ *                               the more segments the smoother geometry
+ *                               default is 24
+ * @param  {Integer} [detailY]   number of segments in y-dimension,
+ *                               the more segments the smoother geometry
+ *                               default is 16
+ * @param  {Boolean} [topCap]    whether to draw the top of the cylinder
+ * @param  {Boolean} [bottomCap] whether to draw the top bottom of the cylinder
  * @chainable
  * @example
  * <div>
@@ -365,7 +367,7 @@ var _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function(radius, height, detailX, detailY) {
+p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, bottomCap) {
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -378,11 +380,17 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
   if (typeof detailY === 'undefined') {
     detailY = 16;
   }
+  if (typeof topCap === 'undefined') {
+    topCap = true;
+  }
+  if (typeof bottomCap === 'undefined') {
+    bottomCap = true;
+  }
 
   var gId = 'cylinder|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
+    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, topCap, bottomCap);
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
@@ -412,6 +420,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
  * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
+ * @param  {Boolean} [cap]            whether to draw the base of the cone
  * @chainable
  * @example
  * <div>
@@ -430,7 +439,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
  * </code>
  * </div>
  */
-p5.prototype.cone = function(radius, height, detailX, detailY) {
+p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -443,20 +452,14 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
   if (typeof detailY === 'undefined') {
     detailY = 16;
   }
+  if (typeof cap === 'undefined') {
+    cap = true;
+  }
 
   var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(
-      coneGeom,
-      radius,
-      0, //top radius 0
-      height,
-      detailX,
-      detailY,
-      true,
-      true
-    );
+    _truncatedCone.call(coneGeom, radius, 0, height, detailX, detailY, cap, false);
     //for cones we need to average Normals
     coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
