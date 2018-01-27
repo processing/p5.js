@@ -346,7 +346,7 @@ var _truncatedCone = function(
  *                               default is 24
  * @param  {Integer} [detailY]   number of segments in y-dimension,
  *                               the more segments the smoother geometry
- *                               default is 16
+ *                               default is 1
  * @param  {Boolean} [topCap]    whether to draw the top of the cylinder
  * @param  {Boolean} [bottomCap] whether to draw the top bottom of the cylinder
  * @chainable
@@ -378,7 +378,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, botto
     detailX = 24;
   }
   if (typeof detailY === 'undefined') {
-    detailY = 16;
+    detailY = 1;
   }
   if (typeof topCap === 'undefined') {
     topCap = true;
@@ -419,7 +419,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, botto
  *                                    default is 24
  * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 16
+ *                                    default is 1
  * @param  {Boolean} [cap]            whether to draw the base of the cone
  * @chainable
  * @example
@@ -450,7 +450,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     detailX = 24;
   }
   if (typeof detailY === 'undefined') {
-    detailY = 16;
+    detailY = 1;
   }
   if (typeof cap === 'undefined') {
     cap = true;
