@@ -353,7 +353,7 @@ var _truncatedCone = function(
  * @example
  * <div>
  * <code>
- * //draw a spinning cylinder with radius 200 and height 200
+ * //draw a spinning cylinder with radius 20 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -425,7 +425,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, botto
  * @example
  * <div>
  * <code>
- * //draw a spinning cone with radius 200 and height 200
+ * //draw a spinning cone with radius 40 and height 70
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
