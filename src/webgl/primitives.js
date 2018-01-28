@@ -273,8 +273,8 @@ var _truncatedCone = function(
   detailY = detailY < 1 ? 1 : detailY;
   bottomCap = bottomCap === undefined ? true : bottomCap;
   topCap = topCap === undefined ? topRadius !== 0 : topCap;
-  var start = bottomCap ? -1 : 0;
-  var end = detailY + (topCap ? 1 : 0);
+  var start = bottomCap ? -2 : 0;
+  var end = detailY + (topCap ? 2 : 0);
   var vertsOnLayer = {};
   //ensure constant slant for interior vertex normals
   var slant = Math.atan2(bottomRadius - topRadius, height);
@@ -284,18 +284,22 @@ var _truncatedCone = function(
     var y = height * v;
     var ringRadius;
     if (yy < 0) {
-      //for the bottomCap
+      //for the bottomCap edge
       y = 0;
-      v = 1;
-      ringRadius = 0;
+      v = 0;
+      ringRadius = bottomRadius;
     } else if (yy > detailY) {
-      //for the topCap
+      //for the topCap edge
       y = height;
       v = 1;
-      ringRadius = 0;
+      ringRadius = topRadius;
     } else {
       //for the middle
       ringRadius = bottomRadius + (topRadius - bottomRadius) * v;
+    }
+    if (yy === -2 || yy === detailY + 2) {
+      //center of bottom or top caps
+      ringRadius = 0;
     }
 
     y -= height / 2; //shift coordiate origin to the center of object
@@ -328,20 +332,21 @@ var _truncatedCone = function(
   }
 
   var startIndex = 0;
-  for (yy = start; yy < end; ++yy) {
+  if (bottomCap) {
+    for (jj = 0; jj < vertsOnLayer[-1]; ++jj) {
+      nextjj = (jj + 1) % vertsOnLayer[-1];
+      this.faces.push([
+        startIndex,
+        startIndex + 1 + nextjj,
+        startIndex + 1 + jj
+      ]);
+    }
+    startIndex += vertsOnLayer[-2] + vertsOnLayer[-1];
+  }
+  for (yy = 0; yy < detailY; ++yy) {
     for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
-      if (vertsOnLayer[yy] === 1) {
-        //bottom faces
-        for (jj = 0; jj < vertsOnLayer[yy + 1]; ++jj) {
-          nextjj = (jj + 1) % vertsOnLayer[yy + 1];
-          this.faces.push([
-            startIndex + ii,
-            startIndex + vertsOnLayer[yy] + ii + nextjj,
-            startIndex + vertsOnLayer[yy] + ii + jj
-          ]);
-        }
-      } else if (vertsOnLayer[yy + 1] === 1) {
-        //top faces
+      if (vertsOnLayer[yy + 1] === 1) {
+        //top layer
         nextii = (ii + 1) % vertsOnLayer[yy];
         this.faces.push([
           startIndex + ii,
@@ -349,7 +354,7 @@ var _truncatedCone = function(
           startIndex + vertsOnLayer[yy]
         ]);
       } else {
-        //other faces
+        //other side faces
         //should have vertsOnLayer[yy] === vertsOnLayer[yy + 1]
         nextii = (ii + 1) % vertsOnLayer[yy];
         this.faces.push([
@@ -365,6 +370,17 @@ var _truncatedCone = function(
       }
     }
     startIndex += vertsOnLayer[yy];
+  }
+  if (topCap) {
+    startIndex += vertsOnLayer[detailY];
+    for (ii = 0; ii < vertsOnLayer[detailY + 1]; ++ii) {
+      nextii = (ii + 1) % vertsOnLayer[detailY + 1];
+      this.faces.push([
+        startIndex + ii,
+        startIndex + nextii,
+        startIndex + vertsOnLayer[detailY + 1]
+      ]);
+    }
   }
 };
 
