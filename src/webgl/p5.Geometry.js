@@ -83,7 +83,9 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
   var ln = p5.Vector.mag(n);
   var sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
   if (sinAlpha === 0 || isNaN(sinAlpha)) {
-    return new p5.Vector(0, 0, 0);
+    throw new Error(
+      'Degenerate geometry: This face either has a colinear sides or a repeated vertex.'
+    );
   }
   return n.mult(Math.asin(sinAlpha) / ln);
 };
