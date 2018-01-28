@@ -252,7 +252,10 @@ p5.prototype.sphere = function(radius, detailX, detailY) {
 
 /**
  * @private
- * helper function for creating both cones and cyllinders
+ * Helper function for creating both cones and cyllinders
+ * Will only generate well-defined geometry when bottomRadius, height > 0
+ * and topRadius >= 0
+ * If topRadius == 0, topCap should be false
  */
 var _truncatedCone = function(
   bottomRadius,
@@ -260,48 +263,51 @@ var _truncatedCone = function(
   height,
   detailX,
   detailY,
-  topCap,
-  bottomCap
+  bottomCap,
+  topCap
 ) {
+  bottomRadius = bottomRadius <= 0 ? 1 : bottomRadius;
+  topRadius = topRadius < 0 ? 0 : topRadius;
+  height = height <= 0 ? bottomRadius : height;
   detailX = detailX < 3 ? 3 : detailX;
   detailY = detailY < 1 ? 1 : detailY;
-  topCap = topCap === undefined ? true : topCap;
   bottomCap = bottomCap === undefined ? true : bottomCap;
-  var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-  var vertsAroundEdge = detailX + 1;
-
-  // ensure constant slant
+  topCap = topCap === undefined ? topRadius !== 0 : topCap;
+  var start = bottomCap ? -1 : 0;
+  var end = detailY + (topCap ? 1 : 0);
+  var vertsOnLayer = {};
+  //ensure constant slant for interior vertex normals
   var slant = Math.atan2(bottomRadius - topRadius, height);
-  var start = topCap ? -2 : 0;
-  var end = detailY + (bottomCap ? 2 : 0);
-  var yy, ii;
+  var yy, ii, jj, nextii, nextjj;
   for (yy = start; yy <= end; ++yy) {
     var v = yy / detailY;
     var y = height * v;
     var ringRadius;
     if (yy < 0) {
+      //for the bottomCap
       y = 0;
       v = 1;
-      ringRadius = bottomRadius;
+      ringRadius = 0;
     } else if (yy > detailY) {
+      //for the topCap
       y = height;
       v = 1;
-      ringRadius = topRadius;
-    } else {
-      ringRadius = bottomRadius + (topRadius - bottomRadius) * (yy / detailY);
-    }
-    if (yy === -2 || yy === detailY + 2) {
       ringRadius = 0;
-      v = 0;
+    } else {
+      //for the middle
+      ringRadius = bottomRadius + (topRadius - bottomRadius) * v;
     }
-    y -= height / 2;
-    for (ii = 0; ii < vertsAroundEdge; ++ii) {
+
+    y -= height / 2; //shift coordiate origin to the center of object
+    vertsOnLayer[yy] = ringRadius === 0 ? 1 : detailX;
+    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
+      var u = ii / detailX;
       //VERTICES
       this.vertices.push(
         new p5.Vector(
-          Math.sin(ii * Math.PI * 2 / detailX) * ringRadius,
+          Math.sin(u * 2 * Math.PI) * ringRadius,
           y,
-          Math.cos(ii * Math.PI * 2 / detailX) * ringRadius
+          Math.cos(u * 2 * Math.PI) * ringRadius
         )
       );
       //VERTEX NORMALS
@@ -309,30 +315,56 @@ var _truncatedCone = function(
         new p5.Vector(
           yy < 0 || yy > detailY
             ? 0
-            : Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant),
+            : Math.sin(u * 2 * Math.PI) * Math.cos(slant),
           yy < 0 ? -1 : yy > detailY ? 1 : Math.sin(slant),
           yy < 0 || yy > detailY
             ? 0
-            : Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)
+            : Math.cos(u * 2 * Math.PI) * Math.cos(slant)
         )
       );
       //UVs
-      this.uvs.push(ii / detailX, v);
+      this.uvs.push(u, v);
     }
   }
-  for (yy = 0; yy < detailY + extra; ++yy) {
-    for (ii = 0; ii < detailX; ++ii) {
-      this.faces.push([
-        vertsAroundEdge * (yy + 0) + 0 + ii,
-        vertsAroundEdge * (yy + 0) + 1 + ii,
-        vertsAroundEdge * (yy + 1) + 1 + ii
-      ]);
-      this.faces.push([
-        vertsAroundEdge * (yy + 0) + 0 + ii,
-        vertsAroundEdge * (yy + 1) + 1 + ii,
-        vertsAroundEdge * (yy + 1) + 0 + ii
-      ]);
+
+  var startIndex = 0;
+  for (yy = start; yy < end; ++yy) {
+    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
+      if (vertsOnLayer[yy] === 1) {
+        //bottom faces
+        for (jj = 0; jj < vertsOnLayer[yy + 1]; ++jj) {
+          nextjj = (jj + 1) % vertsOnLayer[yy + 1];
+          this.faces.push([
+            startIndex + ii,
+            startIndex + vertsOnLayer[yy] + ii + nextjj,
+            startIndex + vertsOnLayer[yy] + ii + jj
+          ]);
+        }
+      } else if (vertsOnLayer[yy + 1] === 1) {
+        //top faces
+        nextii = (ii + 1) % vertsOnLayer[yy];
+        this.faces.push([
+          startIndex + ii,
+          startIndex + nextii,
+          startIndex + vertsOnLayer[yy]
+        ]);
+      } else {
+        //other faces
+        //should have vertsOnLayer[yy] === vertsOnLayer[yy + 1]
+        nextii = (ii + 1) % vertsOnLayer[yy];
+        this.faces.push([
+          startIndex + ii,
+          startIndex + nextii,
+          startIndex + vertsOnLayer[yy] + nextii
+        ]);
+        this.faces.push([
+          startIndex + ii,
+          startIndex + vertsOnLayer[yy] + nextii,
+          startIndex + vertsOnLayer[yy] + ii
+        ]);
+      }
     }
+    startIndex += vertsOnLayer[yy];
   }
 };
 
@@ -347,8 +379,8 @@ var _truncatedCone = function(
  * @param  {Integer} [detailY]   number of segments in y-dimension,
  *                               the more segments the smoother geometry
  *                               default is 1
+ * @param  {Boolean} [bottomCap] whether to draw the bottom of the cylinder
  * @param  {Boolean} [topCap]    whether to draw the top of the cylinder
- * @param  {Boolean} [bottomCap] whether to draw the top bottom of the cylinder
  * @chainable
  * @example
  * <div>
@@ -367,7 +399,14 @@ var _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, bottomCap) {
+p5.prototype.cylinder = function(
+  radius,
+  height,
+  detailX,
+  detailY,
+  bottomCap,
+  topCap
+) {
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -390,7 +429,16 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, botto
   var gId = 'cylinder|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, topCap, bottomCap);
+    _truncatedCone.call(
+      cylinderGeom,
+      1,
+      1,
+      1,
+      detailX,
+      detailY,
+      bottomCap,
+      topCap
+    );
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
@@ -412,15 +460,15 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY, topCap, botto
 /**
  * Draw a cone with given radius and height
  * @method cone
- * @param  {Number} [radius]          radius of the bottom surface
- * @param  {Number} [height]          height of the cone
- * @param  {Integer} [detailX]        number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 24
- * @param  {Integer} [detailY]        number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 1
- * @param  {Boolean} [cap]            whether to draw the base of the cone
+ * @param  {Number}  [radius]  radius of the bottom surface
+ * @param  {Number}  [height]  height of the cone
+ * @param  {Integer} [detailX] number of segments,
+ *                             the more segments the smoother geometry
+ *                             default is 24
+ * @param  {Integer} [detailY] number of segments,
+ *                             the more segments the smoother geometry
+ *                             default is 1
+ * @param  {Boolean} [cap]     whether to draw the base of the cone
  * @chainable
  * @example
  * <div>
@@ -459,7 +507,16 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(coneGeom, radius, 0, height, detailX, detailY, cap, false);
+    _truncatedCone.call(
+      coneGeom,
+      radius,
+      0,
+      height,
+      detailX,
+      detailY,
+      cap,
+      false
+    );
     //for cones we need to average Normals
     coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
