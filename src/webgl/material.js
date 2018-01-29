@@ -254,13 +254,6 @@ p5.prototype.normalMaterial = function() {
  *
  */
 p5.prototype.texture = function(tex) {
-  this._renderer.GL.depthMask(true);
-  this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(
-    this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA
-  );
-
   this._renderer.drawMode = constants.TEXTURE;
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
@@ -373,8 +366,10 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  */
 p5.RendererGL.prototype._applyColorBlend = function(colors) {
   var gl = this.GL;
-  if (colors[colors.length - 1] < 1.0) {
-    gl.depthMask(false);
+
+  var isTexture = this.drawMode === constants.TEXTURE;
+  if (isTexture || colors[colors.length - 1] < 1.0) {
+    gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
     gl.blendEquation(gl.FUNC_ADD);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
