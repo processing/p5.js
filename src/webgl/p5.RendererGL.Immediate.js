@@ -75,7 +75,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   var push = Array.prototype.push;
   im.vertices.push(new p5.Vector(x, y, z));
   push.apply(im.vertexColors, this._diffuseColor);
-  push.apply(im.vertexNormals, this._normal);
+  im.vertexNormals.push(this._normal);
   push.apply(im.vertexAmbients, this._ambientColor);
   push.apply(im.vertexSpeculars, this._specularColor);
   push.apply(im.vertexEmissives, this._emissiveColor);
@@ -113,7 +113,7 @@ p5.RendererGL.prototype.normal = function(x, y, z) {
     x = z[0] || 0; // must be last
   }
   var len = Math.sqrt(x * x + y * y + z * z);
-  this._normal = [x / len, y / len, z / len];
+  this._normal = new p5.Vector(x / len, y / len, z / len);
 };
 
 /**

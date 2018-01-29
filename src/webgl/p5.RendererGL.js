@@ -1,7 +1,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
 require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
@@ -136,7 +135,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._specularColor = [0.5, 0.5, 0.5];
   this._specularPower = 1;
   this._emissiveColor = [0, 0, 0];
-  this._normal = [0, 0, 1];
+  this._normal = new p5.Vector(0, 0, 1);
 
   this._enableNormal = false;
   this._enableLighting = false;
