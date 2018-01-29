@@ -48,7 +48,7 @@ suite('stroke WebGL', function() {
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        myp5._renderer._doFill,
+        !myp5._renderer._doFill,
         'fill shader still active after noFill()'
       );
       done();

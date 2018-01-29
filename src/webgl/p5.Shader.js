@@ -308,14 +308,14 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       break;
     case gl.INT:
       if (uniform.size > 1) {
-        gl.uniform1iv(location, data);
+        data.length && gl.uniform1iv(location, data);
       } else {
         gl.uniform1i(location, data);
       }
       break;
     case gl.FLOAT:
       if (uniform.size > 1) {
-        gl.uniform1fv(location, data);
+        data.length && gl.uniform1fv(location, data);
       } else {
         gl.uniform1f(location, data);
       }
@@ -328,21 +328,21 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       break;
     case gl.FLOAT_VEC2:
       if (uniform.size > 1) {
-        gl.uniform2fv(location, data);
+        data.length && gl.uniform2fv(location, data);
       } else {
         gl.uniform2f(location, data[0], data[1]);
       }
       break;
     case gl.FLOAT_VEC3:
       if (uniform.size > 1) {
-        gl.uniform3fv(location, data);
+        data.length && gl.uniform3fv(location, data);
       } else {
         gl.uniform3f(location, data[0], data[1], data[2]);
       }
       break;
     case gl.FLOAT_VEC4:
       if (uniform.size > 1) {
-        gl.uniform4fv(location, data);
+        data.length && gl.uniform4fv(location, data);
       } else {
         gl.uniform4f(location, data[0], data[1], data[2], data[3]);
       }
