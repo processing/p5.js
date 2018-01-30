@@ -559,13 +559,12 @@ function makeObject(row, headers) {
   return ret;
 }
 
-/*global parseXML */
-p5.prototype.parseXML = function(two) {
+p5.prototype.parseXML = function (two) {
   var one = new p5.XML();
   var i;
   if (two.children.length) {
-    for (i = 0; i < two.children.length; i++) {
-      var node = parseXML(two.children[i]);
+    for ( i = 0; i < two.children.length; i++ ) {
+      var node = this.parseXML(two.children[i]);
       one.addChild(node);
     }
     one.setName(two.nodeName);
@@ -1018,7 +1017,8 @@ p5.prototype.httpDo = function() {
           throw err;
         }
       });
-  } else {
+  }else{
+    var self = this;
     fetch(request)
       .then(function(res) {
         if (res.ok) {
@@ -1035,7 +1035,7 @@ p5.prototype.httpDo = function() {
         if (type === 'xml') {
           var parser = new DOMParser();
           resp = parser.parseFromString(resp, 'text/xml');
-          resp = parseXML(resp.documentElement);
+          resp = self.parseXML(resp.documentElement);
         }
         callback(resp);
       })
