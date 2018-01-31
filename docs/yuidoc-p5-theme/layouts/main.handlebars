@@ -45,7 +45,7 @@
           <img src="https://p5js.org/assets/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
           <div id="p5_logo"></div>
         </a>
-        <p class='tagline' style='display:block !important'>Processing Intuition times JavaScript power</p>
+        <p class='tagline' style='display:block !important'><span id="reference-tagline">Processing Intuition times JavaScript power</span></p>
       </header>
 
       <!-- site navigation -->
@@ -131,10 +131,11 @@
       if (translations) {
         // reference title
         $('h1').html(translations['h1']);
+        // reference tagline
+        $('reference-tagline').html(translations['reference-tagline']);
         // reference menu
         $('#reference-menu-home').html(translations['reference-menu-home']);
         $('#reference-menu-download').html(translations['reference-menu-download']);
-
         $('#reference-menu-get-started').html(translations['reference-menu-get-started']);
         $('#reference-menu-reference').html(translations['reference-menu-reference']);
         $('#reference-menu-libraries').html(translations['reference-menu-libraries']);
