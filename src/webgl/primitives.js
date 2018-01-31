@@ -525,16 +525,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY + '|' + cap;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(
-      coneGeom,
-      radius,
-      0,
-      height,
-      detailX,
-      detailY,
-      cap,
-      false
-    );
+    _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
     //for cones we need to average Normals
     coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
@@ -549,7 +540,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     this._renderer.createBuffers(gId, coneGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radius, height, radius);
 
   return this;
 };
