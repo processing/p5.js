@@ -52,16 +52,16 @@
       <div class="column-span">
         <nav role="navigation">
           <ul id="menu">
-            <li><a href="{{p5SiteRoot}}/">Home</a></li>
-            <li><a href="{{p5SiteRoot}}/download/">Download</a></li>
-            <li><a href="{{p5SiteRoot}}/get-started/">Start</a></li>
-            <li><a href="{{p5SiteRoot}}/reference/">Reference</a></li>
-            <li><a href="{{p5SiteRoot}}/libraries/">Libraries</a></li>
-            <li><a href="{{p5SiteRoot}}/learn/">Learn</a></li>
-            <li><a href="{{p5SiteRoot}}/examples/">Examples</a></li>
-            <li><a href="{{p5SiteRoot}}/books/">Books</a></li>
-            <li><a href="{{p5SiteRoot}}/community/">Community</a></li>
-            <li><a href="http://forum.processing.org/two/" target=_blank class="other-link">Forum</a></li>
+            <li><a href="{{p5SiteRoot}}/"><span id="reference-menu-home">Home</span></a></li>
+            <li><a href="{{p5SiteRoot}}/download/"><span id="reference-menu-download">Download</span></a></li>
+            <li><a href="{{p5SiteRoot}}/get-started/"><span id="reference-menu-get-started">Start</span></a></li>
+            <li><a href="{{p5SiteRoot}}/reference/"><span id="reference-menu-reference">Reference</span></a></li>
+            <li><a href="{{p5SiteRoot}}/libraries/"><span id="reference-menu-libraries">Libraries</span></a></li>
+            <li><a href="{{p5SiteRoot}}/learn/"><span id="reference-menu-lean">Learn</span></a></li>
+            <li><a href="{{p5SiteRoot}}/examples/"><span id="reference-menu-examples">Examples</span></a></li>
+            <li><a href="{{p5SiteRoot}}/books/"><span id="reference-menu-books">Books</span></a></li>
+            <li><a href="{{p5SiteRoot}}/community/"><span id="reference-menu-community">Community</span></a></li>
+            <li><a href="http://forum.processing.org/two/" target=_blank class="other-link"><span id="reference-menu-forum">Forum</span></a></li>
             <li><a href="http://github.com/processing/p5.js" target=_blank class="other-link">GitHub</a></li>
             <li><a href="http://twitter.com/p5xjs" target=_blank class="other-link">Twitter</a></li>
           </ul>
@@ -131,6 +131,18 @@
       if (translations) {
         // reference title
         $('h1').html(translations['h1']);
+        // reference menu
+        $('#reference-menu-home').html(translations['reference-menu-home']);
+        $('#reference-menu-download').html(translations['reference-menu-download']);
+
+        $('#reference-menu-get-started').html(translations['reference-menu-get-started']);
+        $('#reference-menu-reference').html(translations['reference-menu-reference']);
+        $('#reference-menu-libraries').html(translations['reference-menu-libraries']);
+        $('#reference-menu-learn').html(translations['reference-menu-learn']);
+        $('#reference-menu-examples').html(translations['reference-menu-examples']);
+        $('#reference-menu-books').html(translations['reference-menu-books']);
+        $('#reference-menu-community').html(translations['reference-menu-community']);
+        $('#reference-menu-forum').html(translations['reference-menu-forum']);
         // reference footer
         $('#footer1').html(translations['footer1']);
         $('#footer2').html(translations['footer2']);
