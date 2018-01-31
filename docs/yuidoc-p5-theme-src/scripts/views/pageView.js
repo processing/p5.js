@@ -47,7 +47,7 @@ define([
         App.contentViews.push(App.listView);
       }
 
-      // Libary view
+      // Library view
       if (!App.libraryView) {
         App.libraryView = new libraryView();
         App.libraryView.init().render();
