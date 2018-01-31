@@ -45,23 +45,23 @@
           <img src="https://p5js.org/assets/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
           <div id="p5_logo"></div>
         </a>
-        <p class='tagline' style='display:block !important'>Processing Intuition times JavaScript power</p>
+        <p class='tagline' style='display:block !important'><span id="reference-tagline">Processing Intuition times JavaScript power</span></p>
       </header>
 
       <!-- site navigation -->
       <div class="column-span">
         <nav role="navigation">
           <ul id="menu">
-            <li><a href="{{p5SiteRoot}}/">Home</a></li>
-            <li><a href="{{p5SiteRoot}}/download/">Download</a></li>
-            <li><a href="{{p5SiteRoot}}/get-started/">Start</a></li>
-            <li><a href="{{p5SiteRoot}}/reference/">Reference</a></li>
-            <li><a href="{{p5SiteRoot}}/libraries/">Libraries</a></li>
-            <li><a href="{{p5SiteRoot}}/learn/">Learn</a></li>
-            <li><a href="{{p5SiteRoot}}/examples/">Examples</a></li>
-            <li><a href="{{p5SiteRoot}}/books/">Books</a></li>
-            <li><a href="{{p5SiteRoot}}/community/">Community</a></li>
-            <li><a href="http://forum.processing.org/two/" target=_blank class="other-link">Forum</a></li>
+            <li><a href="{{p5SiteRoot}}/"><span id="reference-menu-home">Home</span></a></li>
+            <li><a href="{{p5SiteRoot}}/download/"><span id="reference-menu-download">Download</span></a></li>
+            <li><a href="{{p5SiteRoot}}/get-started/"><span id="reference-menu-get-started">Start</span></a></li>
+            <li><a href="{{p5SiteRoot}}/reference/"><span id="reference-menu-reference">Reference</span></a></li>
+            <li><a href="{{p5SiteRoot}}/libraries/"><span id="reference-menu-libraries">Libraries</span></a></li>
+            <li><a href="{{p5SiteRoot}}/learn/"><span id="reference-menu-lean">Learn</span></a></li>
+            <li><a href="{{p5SiteRoot}}/examples/"><span id="reference-menu-examples">Examples</span></a></li>
+            <li><a href="{{p5SiteRoot}}/books/"><span id="reference-menu-books">Books</span></a></li>
+            <li><a href="{{p5SiteRoot}}/community/"><span id="reference-menu-community">Community</span></a></li>
+            <li><a href="http://forum.processing.org/two/" target=_blank class="other-link"><span id="reference-menu-forum">Forum</span></a></li>
             <li><a href="http://github.com/processing/p5.js" target=_blank class="other-link">GitHub</a></li>
             <li><a href="http://twitter.com/p5xjs" target=_blank class="other-link">Twitter</a></li>
           </ul>
@@ -86,9 +86,8 @@
 
 
         <footer>
-          <p>p5.js was created by <a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a> and is developed by a community of collaborators,
-          with support from the <a href="https://processing.org/foundation/" target="_blank">Processing Foundation</a>
-          and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. Identity and graphic design by <a href="http://jereljohnson.com/" target="_blank">Jerel Johnson</a>.
+          <p><span id="footer1">p5.js was created by </span><a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a><span id="footer2"> and is developed by a community of collaborators, with support from the </span><a href="https://processing.org/foundation/" target="_blank">Processing Foundation</a><span id="footer3">
+          and </span><a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. <span id="footer4">Identity and graphic design by </span><a href="http://jereljohnson.com/" target="_blank">Jerel Johnson</a>.
           <a href="https://p5js.org/copyright.html">&copy; Info.</a></p>
         </footer>
       </div><!-- end column-span -->
@@ -130,7 +129,31 @@
 
     function updateLanguage() {
       if (translations) {
+        // reference title
         $('h1').html(translations['h1']);
+        // reference tagline
+        $('#reference-tagline').html(translations['reference-tagline']);
+        // reference menu
+        $('#reference-menu-home').html(translations['reference-menu-home']);
+        $('#reference-menu-download').html(translations['reference-menu-download']);
+        $('#reference-menu-get-started').html(translations['reference-menu-get-started']);
+        $('#reference-menu-reference').html(translations['reference-menu-reference']);
+        $('#reference-menu-libraries').html(translations['reference-menu-libraries']);
+        $('#reference-menu-learn').html(translations['reference-menu-learn']);
+        $('#reference-menu-examples').html(translations['reference-menu-examples']);
+        $('#reference-menu-books').html(translations['reference-menu-books']);
+        $('#reference-menu-community').html(translations['reference-menu-community']);
+        $('#reference-menu-forum').html(translations['reference-menu-forum']);
+        // reference description
+        $('#reference-description1').html(translations['reference-description1']);
+        $('#reference-description2').html(translations['reference-description2']);
+        $('#reference-description3').html(translations['reference-description3']);
+        $('#reference-description4').html(translations['reference-description4']);
+        // reference footer
+        $('#footer1').html(translations['footer1']);
+        $('#footer2').html(translations['footer2']);
+        $('#footer3').html(translations['footer3']);
+        $('#footer4').html(translations['footer4']);
         $('.group-name, .subgroup-name').each(function() {
           $(this).text(translations[$(this).text()]);
         });
