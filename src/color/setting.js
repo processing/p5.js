@@ -21,7 +21,7 @@ require('./p5.Color');
  * <br><br>
  * The color is either specified in terms of the RGB, HSB, or HSL color
  * depending on the current colorMode. (The default color space is RGB, with
- * each value in the range from 0 to 255).
+ * each value in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
@@ -33,8 +33,6 @@ require('./p5.Color');
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
- * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-100)
  * @chainable
  *
  * @example
@@ -135,7 +133,8 @@ require('./p5.Color');
  * @param {String} colorstring color string, possible formats include: integer
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
- * @param {Number} [a]
+ * @param {Number} [a]         opacity of the background relative to current
+ *                             color range (default is 0-255)
  * @chainable
  */
 
@@ -160,12 +159,20 @@ require('./p5.Color');
 
 /**
  * @method background
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method background
  * @param {p5.Image} image     image created with loadImage() or createImage(),
  *                             to set as background
  *                             (must be same size as the sketch window)
  * @param  {Number}  [a]
  * @chainable
  */
+
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
     this.image(arguments[0], 0, 0, this.width, this.height);
@@ -237,8 +244,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(RGB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -250,8 +257,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(HSB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 100);
  *     point(i, j);
  *   }
@@ -277,7 +284,7 @@ p5.prototype.clear = function() {
  * background(255);
  *
  * strokeWeight(4);
- * stroke(255, 0 , 10, 0.3);
+ * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
  * </code>
@@ -302,30 +309,32 @@ p5.prototype.clear = function() {
  * @param {Number} [maxA]   range for the alpha
  * @chainable
  */
-p5.prototype.colorMode = function() {
-  if (arguments[0] === constants.RGB ||
-      arguments[0] === constants.HSB ||
-      arguments[0] === constants.HSL) {
-
+p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
+  p5._validateParameters('colorMode', arguments);
+  if (
+    mode === constants.RGB ||
+    mode === constants.HSB ||
+    mode === constants.HSL
+  ) {
     // Set color mode.
-    this._renderer._colorMode = arguments[0];
+    this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
+    var maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[1];  // Green
-      maxes[2] = arguments[1];  // Blue
-      maxes[3] = arguments[1];  // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max1; // Green
+      maxes[2] = max1; // Blue
+      maxes[3] = max1; // Alpha
     } else if (arguments.length === 4) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[2];  // Green
-      maxes[2] = arguments[3];  // Blue
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
     } else if (arguments.length === 5) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[2];  // Green
-      maxes[2] = arguments[3];  // Blue
-      maxes[3] = arguments[4];  // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
+      maxes[3] = maxA; // Alpha
     }
   }
 
@@ -337,7 +346,7 @@ p5.prototype.colorMode = function() {
  * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current colorMode(). (The default color space is RGB, with each value
- * in the range from 0 to 255).
+ * in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
@@ -474,7 +483,6 @@ p5.prototype.colorMode = function() {
 /**
  * @method fill
  * @param  {p5.Color}      color   the fill color
- * @param  {Number}        [alpha]
  * @chainable
  */
 p5.prototype.fill = function() {
@@ -498,13 +506,29 @@ p5.prototype.fill = function() {
  * rect(20, 20, 60, 60);
  * </code>
  * </div>
+ *
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   noFill();
+ *   stroke(100, 100, 240);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(45, 45, 45);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * white rect top middle and noFill rect center. Both 60x60 with black outlines.
+ * black canvas with purple cube wireframe spinning
  */
 p5.prototype.noFill = function() {
-  if(this._renderer.isP3D) {
-    this._renderer.noFill();
-  }
   this._renderer._setProperty('_doFill', false);
   return this;
 };
@@ -523,16 +547,28 @@ p5.prototype.noFill = function() {
  * </code>
  * </div>
  *
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   fill(240, 150, 150);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(45, 45, 45);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
- *60x60 white rect at center. no outline.
- *
+ * 60x60 white rect at center. no outline.
+ * black canvas with pink cube spinning
  */
-
 p5.prototype.noStroke = function() {
-  if(this._renderer.isP3D) {
-    this._renderer.noStroke();
-  }
   this._renderer._setProperty('_doStroke', false);
   return this;
 };
@@ -541,7 +577,7 @@ p5.prototype.noStroke = function() {
  * Sets the color used to draw lines and borders around shapes. This color
  * is either specified in terms of the RGB or HSB color depending on the
  * current colorMode() (the default color space is RGB, with each value in
- * the range from 0 to 255).
+ * the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
  * strings and all named color strings are supported. In this case, an alpha
@@ -693,7 +729,6 @@ p5.prototype.noStroke = function() {
 /**
  * @method stroke
  * @param  {p5.Color}      color   the stroke color
- * @param  {Number}        [alpha]
  * @chainable
  */
 

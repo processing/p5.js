@@ -6,11 +6,9 @@
  * @requires constants
  */
 
-
 'use strict';
 
 var p5 = require('./core');
-var constants = require('./constants');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -78,7 +76,7 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
+ *   var step = frameCount % 20;
  *   var angle = map(step, 0, 20, 0, TWO_PI);
  *   var cos_a = cos(angle);
  *   var sin_a = sin(angle);
@@ -98,12 +96,12 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
- *   var angle = map(step, 0, 20, -PI/4, PI/4);
+ *   var step = frameCount % 20;
+ *   var angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
  *   translate(50, 50);
  *   // equivalent to shearX(angle);
- *   var shear_factor = 1 / tan(PI/2 - angle);
+ *   var shear_factor = 1 / tan(PI / 2 - angle);
  *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
  *   rect(0, 0, 50, 50);
  * }
@@ -179,13 +177,13 @@ p5.prototype.resetMatrix = function() {
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
- * @param  {p5.Vector|Array} [axis] (in 3d) the axis to rotate around
+ * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
  * @chainable
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
+ * translate(width / 2, height / 2);
+ * rotate(PI / 3.0);
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
@@ -195,35 +193,38 @@ p5.prototype.resetMatrix = function() {
  *
  */
 p5.prototype.rotate = function(angle, axis) {
-  var args = new Array(arguments.length);
-  var r;
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if (this._angleMode === constants.DEGREES) {
-    r = this.radians(args[0]);
-  } else if (this._angleMode === constants.RADIANS){
-    r = args[0];
-  }
-  //in webgl mode
-  if(args.length > 1){
-    this._renderer.rotate(r, args[1]);
-  }
-  else {
-    this._renderer.rotate(r);
-  }
+  p5._validateParameters('rotate', arguments);
+  this._renderer.rotate(this._toRadians(angle), axis);
   return this;
 };
 
 /**
  * Rotates around X axis.
  * @method  rotateX
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateX(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the x axis.
  */
-p5.prototype.rotateX = function(rad) {
+p5.prototype.rotateX = function(angle) {
+  p5._validateParameters('rotateX', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.rotateX(rad);
+    this._renderer.rotateX(this._toRadians(angle));
   } else {
     throw 'not supported in p2d. Please use webgl mode';
   }
@@ -233,12 +234,30 @@ p5.prototype.rotateX = function(rad) {
 /**
  * Rotates around Y axis.
  * @method rotateY
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateY(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the y axis.
  */
-p5.prototype.rotateY = function(rad) {
+p5.prototype.rotateY = function(angle) {
+  p5._validateParameters('rotateY', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.rotateY(rad);
+    this._renderer.rotateY(this._toRadians(angle));
   } else {
     throw 'not supported in p2d. Please use webgl mode';
   }
@@ -248,12 +267,30 @@ p5.prototype.rotateY = function(rad) {
 /**
  * Rotates around Z axis. Webgl mode only.
  * @method rotateZ
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the z axis.
  */
-p5.prototype.rotateZ = function(rad) {
+p5.prototype.rotateZ = function(angle) {
+  p5._validateParameters('rotateZ', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.rotateZ(rad);
+    this._renderer.rotateZ(this._toRadians(angle));
   } else {
     throw 'not supported in p2d. Please use webgl mode';
   }
@@ -276,15 +313,18 @@ p5.prototype.rotateZ = function(rad) {
  * This function can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number} x   percent to scale the object in the x-axis
- * @param  {Number} y   percent to scale the object in the y-axis
+ * @param  {Number|p5.Vector|Number[]} s
+ *                      percent to scale the object, or percentage to
+ *                      scale the object in the x-axis if multiple arguments
+ *                      are given
+ * @param  {Number} [y] percent to scale the object in the y-axis
  * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @chainable
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
+ * translate(width / 2, height / 2);
+ * rotate(PI / 3.0);
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
@@ -304,43 +344,31 @@ p5.prototype.rotateZ = function(rad) {
  */
 /**
  * @method scale
- * @param  {p5.Vector|Array} scales per-axis percents to scale the object
+ * @param  {p5.Vector|Number[]} scales per-axis percents to scale the object
  * @chainable
  */
-p5.prototype.scale = function() {
-  var x,y,z;
-  var args = new Array(arguments.length);
-  for(var i = 0; i < args.length; i++) {
-    args[i] = arguments[i];
-  }
+p5.prototype.scale = function(x, y, z) {
+  p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
-  if (typeof p5.Vector !== 'undefined' && args[0] instanceof p5.Vector) {
-    x = args[0].x;
-    y = args[0].y;
-    z = args[0].z;
+  if (x instanceof p5.Vector) {
+    var v = x;
+    x = v.x;
+    y = v.y;
+    z = v.z;
+  } else if (x instanceof Array) {
+    var rg = x;
+    x = rg[0];
+    y = rg[1];
+    z = rg[2] || 1;
   }
-  else if(args[0] instanceof Array){
-    x = args[0][0];
-    y = args[0][1];
-    z = args[0][2] || 1;
-  }
-  else {
-    if(args.length === 1){
-      x = y = z = args[0];
-    }
-    else {
-      x = args[0];
-      y = args[1];
-      z = args[2] || 1;
-    }
+  if (isNaN(y)) {
+    y = z = x;
+  } else if (isNaN(z)) {
+    z = 1;
   }
 
-  if(this._renderer.isP3D){
-    this._renderer.scale.call(this._renderer, x,y,z);
-  }
-  else {
-    this._renderer.scale.call(this._renderer, x,y);
-  }
+  this._renderer.scale.call(this._renderer, x, y, z);
+
   return this;
 };
 
@@ -367,21 +395,19 @@ p5.prototype.scale = function() {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearX(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearX(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
  *
  * @alt
-  * white irregular quadrilateral with black outline at top middle.
+ * white irregular quadrilateral with black outline at top middle.
  *
  */
 p5.prototype.shearX = function(angle) {
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearX(angle);
+  p5._validateParameters('shearX', arguments);
+  this._renderer.shearX(this._toRadians(angle));
   return this;
 };
 
@@ -408,8 +434,8 @@ p5.prototype.shearX = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearY(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearY(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
@@ -419,10 +445,8 @@ p5.prototype.shearX = function(angle) {
  *
  */
 p5.prototype.shearY = function(angle) {
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearY(angle);
+  p5._validateParameters('shearY', arguments);
+  this._renderer.shearY(this._toRadians(angle));
   return this;
 };
 
@@ -453,11 +477,11 @@ p5.prototype.shearY = function(angle) {
  *
  * <div>
  * <code>
- * rect(0, 0, 55, 55);  // Draw rect at original 0,0
+ * rect(0, 0, 55, 55); // Draw rect at original 0,0
  * translate(30, 20);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
  * translate(14, 14);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
  * </code>
  * </div>
  *
@@ -467,6 +491,7 @@ p5.prototype.shearY = function(angle) {
  *
  */
 p5.prototype.translate = function(x, y, z) {
+  p5._validateParameters('translate', arguments);
   if (this._renderer.isP3D) {
     this._renderer.translate(x, y, z);
   } else {

@@ -19,6 +19,10 @@
  *                     start the connect server and leave it running; the tests
  *                     can then be opened at localhost:9001/test/test.html
  *
+ *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
+ *                     each time a change to the source is detected. You can preview
+ *                     the reference at localhost:9001/test/test.html
+ *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
  *  a lot of time when authoring test specs without making any build changes.
@@ -82,9 +86,9 @@ function getYuidocOptions() {
 }
 
 module.exports = function(grunt) {
-
   // Specify what reporter we'd like to use for Mocha
-  var reporter = (process.env.TRAVIS || grunt.option('quiet')) ? 'spec' : 'Nyan';
+  var quietReport = process.env.TRAVIS || grunt.option('quiet');
+  var reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
   var karmaTasks = require('./grunt-karma.js');
@@ -96,30 +100,57 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
-  grunt.initConfig({
-
+  let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
-        configFile: '.eslintrc',
+        format: 'unix',
+        configFile: '.eslintrc'
       },
       build: {
         src: [
           'Gruntfile.js',
+          'grunt-karma.js',
+          'docs/preprocessor.js',
+          'utils/**/*.js',
           'tasks/**/*.js'
         ]
       },
+      fix: {
+        // src: is calculated below...
+        options: {
+          fix: true
+        }
+      },
       source: {
-        src: [
-          'src/**/*.js',
-          '!src/external/**/*.js'
-        ]
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
-        src: ['test/unit/**/*.js']
+        src: [
+          'bench/**/*.js',
+          'test/test-docs-preprocessor/**/*.js',
+          'test/node/**/*.js',
+          'test/reporter/**/*.js',
+          'test/unit/**/*.js'
+        ]
+      }
+    },
+
+    'eslint-samples': {
+      options: {
+        configFile: '.eslintrc',
+        format: 'unix'
+      },
+      source: {
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+      },
+      fix: {
+        options: {
+          fix: true
+        }
       }
     },
 
@@ -129,7 +160,7 @@ module.exports = function(grunt) {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js','src/**/*.frag','src/**/*.vert'],
+        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
         tasks: ['browserify'],
         options: {
           livereload: true
@@ -138,7 +169,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:eslint:source','test'],
+        tasks: ['newer:eslint:source', 'test'],
         options: {
           livereload: true
         }
@@ -158,9 +189,18 @@ module.exports = function(grunt) {
         tasks: ['requirejs:yuidoc_theme']
       },
       // Watch the codebase for doc updates
-      yui:{
-        files:['src/**/*.js', 'lib/addons/*.js'],
-        task:['yuidoc']
+      // launch with 'grunt requirejs connect watch:yui'
+      yui: {
+        files: [
+          'src/**/*.js',
+          'lib/addons/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert'
+        ],
+        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        options: {
+          livereload: true
+        }
       }
     },
 
@@ -178,9 +218,7 @@ module.exports = function(grunt) {
     mocha: {
       yui: {
         options: {
-          urls: [
-            'http://localhost:9001/test/test-reference.html'
-          ],
+          urls: ['http://localhost:9001/test/test-reference.html'],
           reporter: reporter,
           run: false,
           log: true,
@@ -197,7 +235,8 @@ module.exports = function(grunt) {
           run: true,
           log: true,
           logErrors: true,
-          timeout: 100000
+          timeout: 100000,
+          growlOnSuccess: false
         }
       }
     },
@@ -206,7 +245,6 @@ module.exports = function(grunt) {
     // file to match the values in package.json. It is (likely) used as part
     // of the manual release strategy.
     update_json: {
-
       // set some task-level options
       options: {
         src: 'package.json',
@@ -236,7 +274,7 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           wrap: true,
           paths: {
-            'jquery': 'empty:'
+            jquery: 'empty:'
           }
         }
       }
@@ -248,14 +286,15 @@ module.exports = function(grunt) {
       options: {
         compress: {
           global_defs: {
-            'IS_MINIFIED': true
+            IS_MINIFIED: true
           }
         },
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
+        banner:
+          '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.js',
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
           'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
         }
       }
@@ -280,8 +319,8 @@ module.exports = function(grunt) {
           middleware: function(connect, options, middlewares) {
             middlewares.unshift(
               require('connect-modrewrite')([
-                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
-                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]',
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -294,6 +333,11 @@ module.exports = function(grunt) {
         }
       }
     },
+    open: {
+      yui: {
+        path: 'http://0.0.0.0:9001/docs/reference/'
+      }
+    },
     'saucelabs-mocha': {
       all: {
         options: {
@@ -302,9 +346,9 @@ module.exports = function(grunt) {
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,
           browsers: [
-            {browserName: 'chrome'},
-            {browserName: 'firefox', platform: 'Linux', version: '42.0'},
-            {browserName: 'safari'},
+            { browserName: 'chrome' },
+            { browserName: 'firefox', platform: 'Linux', version: '42.0' },
+            { browserName: 'safari' }
           ],
           testname: 'p5.js mocha tests',
           tags: ['master']
@@ -318,7 +362,24 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  };
+
+  // eslint fixes everything it checks:
+  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
+    .map(s => gruntConfig.eslint[s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+
+  /* not yet
+  gruntConfig['eslint-samples'].fix.src = Object.keys(
+    gruntConfig['eslint-samples']
+  )
+    .map(s => gruntConfig['eslint-samples'][s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+  */
+
+  grunt.initConfig(gruntConfig);
 
   // Load build tasks.
   // This contains the complete build task ("browserify")
@@ -332,9 +393,15 @@ module.exports = function(grunt) {
   // Load release task
   grunt.loadTasks('tasks/release');
 
+  // Load typescript task
+  grunt.registerTask('typescript', function() {
+    require('./tasks/typescript/task.js')(grunt);
+  });
+
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -352,11 +419,39 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['eslint', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'requirejs'
+  ]);
+  grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
+    'eslint:build',
+    'eslint:source',
+    'eslint:test',
+    'eslint-samples:source'
+  ]);
+  grunt.registerTask('lint-fix', ['eslint:fix']);
+  grunt.registerTask('test', [
+    'lint-no-fix',
+    //'yuidoc:prod', // already done by lint-no-fix
+    'build',
+    'connect',
+    'mocha',
+    'mochaTest'
+  ]);
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
-  grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
+  grunt.registerTask('yui', ['yuidoc:prod', 'minjson', 'typescript']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
+  grunt.registerTask('yui:dev', [
+    'yui:prod',
+    'build',
+    'connect',
+    'open:yui',
+    'watch:yui'
+  ]);
+  grunt.registerTask('yui:build', ['requirejs:yuidoc_theme', 'yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };

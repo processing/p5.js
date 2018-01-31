@@ -1,11 +1,13 @@
 // Sound samples from Damscray - "Dancing Tiger",
 // Creative Commons BY-NC-SA
 
+function preload() {
+  soundFile = loadSound('../_files/Damscray_01', soundReady);
+}
 
 function setup() {
   createCanvas(400,200);
   soundFormats('ogg', 'mp3');
-  soundFile = loadSound('../_files/Damscray_-_Dancing_Tiger_01', soundReady);
 }
 
 function soundReady(){

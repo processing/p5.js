@@ -1263,6 +1263,30 @@
       "contributions": [
         "blog"
       ]
+    },
+    {
+      "login": "hackertron",
+      "name": "Jay Gupta",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/7667514?s=460&v=4",
+      "profile": "https://github.com/hackertron",
+      "contributions": []
+    },
+    {
+      "login": "bansalnitish",
+      "name": "Nitish Bansal",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/22434689?v=4",
+      "profile": "https://github.com/bansalnitish",
+      "contributions": []
+    },
+    {
+      "login": "carolinehermans",
+      "name": "Caroline Hermans",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/8083973?s=460&v=4",
+      "profile": "https://caro.io/",
+      "contributions": [
+        "example", 
+        "doc"
+      ]
     }
   ]
 }

@@ -27,7 +27,7 @@ var modulator; // this oscillator will modulate the amplitude of the carrier
 var fft; // we'll visualize the waveform 
 
 function preload() {
-  carrier = loadSound('../_files/Damscray_-_Dancing_Tiger_01.mp3'); // connects to master output by default
+  carrier = loadSound('../_files/Damscray_01.mp3'); // connects to master output by default
 }
 
 function setup() {

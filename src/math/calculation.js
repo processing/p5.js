@@ -40,7 +40,7 @@ p5.prototype.abs = Math.abs;
  *
  * @method ceil
  * @param  {Number} n number to round up
- * @return {Number}   rounded up number
+ * @return {Integer}   rounded up number
  * @example
  * <div><code>
  * function draw() {
@@ -50,7 +50,7 @@ p5.prototype.abs = Math.abs;
  *   var ay = 66;
  *
  *   //Get the ceiling of the mapped number.
- *   var bx = ceil(map(mouseX, 0, 100, 0,5));
+ *   var bx = ceil(map(mouseX, 0, 100, 0, 5));
  *   var by = 33;
  *
  *   // Multiply the mapped numbers by 20 to more easily
@@ -62,11 +62,11 @@ p5.prototype.abs = Math.abs;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
-  *
+ *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  *
@@ -103,9 +103,9 @@ p5.prototype.ceil = Math.ceil;
  *   // Draw xm and xc as circles.
  *   noStroke();
  *   fill(150);
- *   ellipse(xm, 33, 9,9); // Not Constrained
+ *   ellipse(xm, 33, 9, 9); // Not Constrained
  *   fill(0);
- *   ellipse(xc, 66, 9,9); // Constrained
+ *   ellipse(xc, 66, 9, 9); // Constrained
  * }
  * </code></div>
  *
@@ -114,6 +114,7 @@ p5.prototype.ceil = Math.ceil;
  *
  */
 p5.prototype.constrain = function(n, low, high) {
+  p5._validateParameters('constrain', arguments);
   return Math.max(Math.min(n, high), low);
 };
 
@@ -150,9 +151,9 @@ p5.prototype.constrain = function(n, low, high) {
  *
  *   // Let's write d along the line we are drawing!
  *   push();
- *   translate( (x1+x2)/2, (y1+y2)/2 );
- *   rotate( atan2(y2-y1,x2-x1) );
- *   text(nfc(d,1,1), 0, -5);
+ *   translate((x1 + x2) / 2, (y1 + y2) / 2);
+ *   rotate(atan2(y2 - y1, x2 - x1));
+ *   text(nfc(d, 1), 0, -5);
  *   pop();
  *   // Fancy!
  * }
@@ -172,13 +173,17 @@ p5.prototype.constrain = function(n, low, high) {
  * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function() {
-  if (arguments.length === 4) { //2D
-    return hypot(arguments[2]-arguments[0], arguments[3]-arguments[1]);
-  } else if (arguments.length === 6) { //3D
+  p5._validateParameters('dist', arguments);
+  if (arguments.length === 4) {
+    //2D
+    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
+  } else if (arguments.length === 6) {
+    //3D
     return hypot(
-      arguments[3]-arguments[0],
-      arguments[4]-arguments[1],
-      arguments[5]-arguments[2]);
+      arguments[3] - arguments[0],
+      arguments[4] - arguments[1],
+      arguments[5] - arguments[2]
+    );
   }
 };
 
@@ -200,13 +205,13 @@ p5.prototype.dist = function() {
  *
  *   var y = map(yValue, 0, 8, height, 0);
  *
- *   var legend = "exp (" + nfc(xValue, 3) +")\n= " + nf(yValue, 1, 4);
+ *   var legend = 'exp (' + nfc(xValue, 3) + ')\n= ' + nf(yValue, 1, 4);
  *   stroke(150);
  *   line(mouseX, y, mouseX, height);
  *   fill(0);
  *   text(legend, 5, 15);
  *   noStroke();
- *   ellipse (mouseX,y, 7, 7);
+ *   ellipse(mouseX, y, 7, 7);
  *
  *   // Draw the exp(x) curve,
  *   // over the domain of x from 0 to 2
@@ -222,7 +227,7 @@ p5.prototype.dist = function() {
  *
  *   endShape();
  *   line(0, 0, 0, height);
- *   line(0, height-1, width, height-1);
+ *   line(0, height - 1, width, height - 1);
  * }
  * </code></div>
  *
@@ -238,7 +243,7 @@ p5.prototype.exp = Math.exp;
  *
  * @method floor
  * @param  {Number} n number to round down
- * @return {Number}   rounded down number
+ * @return {Integer}  rounded down number
  * @example
  * <div><code>
  * function draw() {
@@ -248,7 +253,7 @@ p5.prototype.exp = Math.exp;
  *   var ay = 66;
  *
  *   //Get the floor of the mapped number.
- *   var bx = floor(map(mouseX, 0, 100, 0,5));
+ *   var bx = floor(map(mouseX, 0, 100, 0, 5));
  *   var by = 33;
  *
  *   // Multiply the mapped numbers by 20 to more easily
@@ -260,8 +265,8 @@ p5.prototype.exp = Math.exp;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
@@ -289,11 +294,11 @@ p5.prototype.floor = Math.floor;
  *   background(200);
  *   var a = 20;
  *   var b = 80;
- *   var c = lerp(a,b, .2);
- *   var d = lerp(a,b, .5);
- *   var e = lerp(a,b, .8);
+ *   var c = lerp(a, b, 0.2);
+ *   var d = lerp(a, b, 0.5);
+ *   var e = lerp(a, b, 0.8);
  *
- *   var y = 50
+ *   var y = 50;
  *
  *   strokeWeight(5);
  *   stroke(0); // Draw the original points in black
@@ -312,7 +317,8 @@ p5.prototype.floor = Math.floor;
  *
  */
 p5.prototype.lerp = function(start, stop, amt) {
-  return amt*(stop-start)+start;
+  p5._validateParameters('lerp', arguments);
+  return amt * (stop - start) + start;
 };
 
 /**
@@ -332,18 +338,19 @@ p5.prototype.lerp = function(start, stop, amt) {
  *
  *   // Compute the natural log of a value between 0 and maxX
  *   var xValue = map(mouseX, 0, width, 0, maxX);
- *   if (xValue > 0) { // Cannot take the log of a negative number.
+ *   if (xValue > 0) {
+    // Cannot take the log of a negative number.
  *     var yValue = log(xValue);
  *     var y = map(yValue, -maxY, maxY, height, 0);
  *
  *     // Display the calculation occurring.
- *     var legend = "log(" + nf(xValue, 1, 2) + ")\n= " + nf(yValue, 1, 3);
+ *     var legend = 'log(' + nf(xValue, 1, 2) + ')\n= ' + nf(yValue, 1, 3);
  *     stroke(150);
  *     line(mouseX, y, mouseX, height);
  *     fill(0);
- *     text (legend, 5, 15);
+ *     text(legend, 5, 15);
  *     noStroke();
- *     ellipse (mouseX, y, 7, 7);
+ *     ellipse(mouseX, y, 7, 7);
  *   }
  *
  *   // Draw the log(x) curve,
@@ -351,15 +358,15 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   noFill();
  *   stroke(0);
  *   beginShape();
- *   for(var x=0; x < width; x++) {
+ *   for (var x = 0; x < width; x++) {
  *     xValue = map(x, 0, width, 0, maxX);
  *     yValue = log(xValue);
  *     y = map(yValue, -maxY, maxY, height, 0);
  *     vertex(x, y);
  *   }
  *   endShape();
- *   line(0,0,0,height);
- *   line(0,height/2,width, height/2);
+ *   line(0, 0, 0, height);
+ *   line(0, height / 2, width, height / 2);
  * }
  * </code></div>
  *
@@ -389,13 +396,13 @@ p5.prototype.log = Math.log;
  *   var y2 = 70;
  *
  *   line(0, 0, x1, y1);
- *   print(mag(x1, y1));  // Prints "36.05551275463989"
+ *   print(mag(x1, y1)); // Prints "36.05551275463989"
  *   line(0, 0, x2, y1);
- *   print(mag(x2, y1));  // Prints "85.44003745317531"
+ *   print(mag(x2, y1)); // Prints "85.44003745317531"
  *   line(0, 0, x1, y2);
- *   print(mag(x1, y2));  // Prints "72.80109889280519"
+ *   print(mag(x1, y2)); // Prints "72.80109889280519"
  *   line(0, 0, x2, y2);
- *   print(mag(x2, y2));  // Prints "106.3014581273465"
+ *   print(mag(x2, y2)); // Prints "106.3014581273465"
  * }
  * </code></div>
  *
@@ -404,6 +411,7 @@ p5.prototype.log = Math.log;
  *
  */
 p5.prototype.mag = function(x, y) {
+  p5._validateParameters('mag', arguments);
   return hypot(x, y);
 };
 
@@ -424,34 +432,35 @@ p5.prototype.mag = function(x, y) {
  * @return {Number}        remapped number
  * @example
  *   <div><code>
- *     var value = 25;
- *     var m = map(value, 0, 100, 0, width);
- *     ellipse(m, 50, 10, 10);
- *   </code></div>
+ * var value = 25;
+ * var m = map(value, 0, 100, 0, width);
+ * ellipse(m, 50, 10, 10);
+</code></div>
  *
  *   <div><code>
- *     function setup() {
- *       noStroke();
- *     }
+ * function setup() {
+ *   noStroke();
+ * }
  *
- *     function draw() {
- *       background(204);
- *       var x1 = map(mouseX, 0, width, 25, 75);
- *       ellipse(x1, 25, 25, 25);
- *       //This ellipse is constrained to the 0-100 range
- *       //after setting withinBounds to true
- *       var x2 = map(mouseX, 0, width, 0, 100, true);
- *       ellipse(x2, 75, 25, 25);
- *     }
- *   </code></div>
+ * function draw() {
+ *   background(204);
+ *   var x1 = map(mouseX, 0, width, 25, 75);
+ *   ellipse(x1, 25, 25, 25);
+ *   //This ellipse is constrained to the 0-100 range
+ *   //after setting withinBounds to true
+ *   var x2 = map(mouseX, 0, width, 0, 100, true);
+ *   ellipse(x2, 75, 25, 25);
+ * }
+</code></div>
  *
  * @alt
  * 10 by 10 white ellipse with in mid left canvas
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  *
  */
-p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
-  var newval = ((n - start1)/(stop1 - start1)) * (stop2 - start2) + start2;
+p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
+  p5._validateParameters('map', arguments);
+  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -468,25 +477,26 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  * of any length.
  *
  * @method max
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          maximum Number
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
+ * @return {Number}             maximum Number
  * @example
  * <div><code>
  * function setup() {
  *   // Change the elements in the array and run the sketch
  *   // to show how max() works!
- *   numArray = new Array(2,1,5,4,8,9);
+ *   var numArray = [2, 1, 5, 4, 8, 9];
  *   fill(0);
  *   noStroke();
- *   text("Array Elements", 0, 10);
+ *   text('Array Elements', 0, 10);
  *   // Draw all numbers in the array
  *   var spacing = 15;
  *   var elemsY = 25;
- *   for(var i = 0; i < numArray.length; i++) {
+ *   for (var i = 0; i < numArray.length; i++) {
  *     text(numArray[i], i * spacing, elemsY);
  *   }
- *   maxX = 33;
- *   maxY = 80;
+ *   var maxX = 33;
+ *   var maxY = 80;
  *   // Draw the Maximum value in the array.
  *   textSize(32);
  *   text(max(numArray), maxX, maxY);
@@ -497,11 +507,17 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
  *
  */
+/**
+ * @method max
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
+ */
 p5.prototype.max = function() {
+  p5._validateParameters('max', arguments);
   if (arguments[0] instanceof Array) {
-    return Math.max.apply(null,arguments[0]);
+    return Math.max.apply(null, arguments[0]);
   } else {
-    return Math.max.apply(null,arguments);
+    return Math.max.apply(null, arguments);
   }
 };
 
@@ -511,25 +527,26 @@ p5.prototype.max = function() {
  * of any length.
  *
  * @method min
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          minimum Number
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
+ * @return {Number}             minimum Number
  * @example
  * <div><code>
  * function setup() {
  *   // Change the elements in the array and run the sketch
  *   // to show how min() works!
- *   numArray = new Array(2,1,5,4,8,9);
+ *   var numArray = [2, 1, 5, 4, 8, 9];
  *   fill(0);
  *   noStroke();
- *   text("Array Elements", 0, 10);
+ *   text('Array Elements', 0, 10);
  *   // Draw all numbers in the array
  *   var spacing = 15;
  *   var elemsY = 25;
- *   for(var i = 0; i < numArray.length; i++) {
+ *   for (var i = 0; i < numArray.length; i++) {
  *     text(numArray[i], i * spacing, elemsY);
  *   }
- *   maxX = 33;
- *   maxY = 80;
+ *   var maxX = 33;
+ *   var maxY = 80;
  *   // Draw the Minimum value in the array.
  *   textSize(32);
  *   text(min(numArray), maxX, maxY);
@@ -540,11 +557,17 @@ p5.prototype.max = function() {
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
  *
  */
+/**
+ * @method min
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
+ */
 p5.prototype.min = function() {
+  p5._validateParameters('min', arguments);
   if (arguments[0] instanceof Array) {
-    return Math.min.apply(null,arguments[0]);
+    return Math.min.apply(null, arguments[0]);
   } else {
-    return Math.min.apply(null,arguments);
+    return Math.min.apply(null, arguments);
   }
 };
 
@@ -564,30 +587,30 @@ p5.prototype.min = function() {
  * <div><code>
  * function draw() {
  *   background(200);
- *   currentNum = mouseX;
- *   lowerBound = 0;
- *   upperBound = width; //100;
- *   normalized = norm(currentNum, lowerBound, upperBound);
- *   lineY = 70
+ *   var currentNum = mouseX;
+ *   var lowerBound = 0;
+ *   var upperBound = width; //100;
+ *   var normalized = norm(currentNum, lowerBound, upperBound);
+ *   var lineY = 70;
  *   line(0, lineY, width, lineY);
  *   //Draw an ellipse mapped to the non-normalized value.
  *   noStroke();
- *   fill(50)
+ *   fill(50);
  *   var s = 7; // ellipse size
  *   ellipse(currentNum, lineY, s, s);
  *
  *   // Draw the guide
- *   guideY = lineY + 15;
- *   text("0", 0, guideY);
+ *   var guideY = lineY + 15;
+ *   text('0', 0, guideY);
  *   textAlign(RIGHT);
- *   text("100", width, guideY);
+ *   text('100', width, guideY);
  *
  *   // Draw the normalized value
  *   textAlign(LEFT);
  *   fill(0);
  *   textSize(32);
- *   normalY = 40;
- *   normalX = 20;
+ *   var normalY = 40;
+ *   var normalX = 20;
  *   text(normalized, normalX, normalY);
  * }
  * </code></div>
@@ -597,6 +620,7 @@ p5.prototype.min = function() {
  *
  */
 p5.prototype.norm = function(n, start, stop) {
+  p5._validateParameters('norm', arguments);
   return this.map(n, start, stop, 0, 1);
 };
 
@@ -615,16 +639,16 @@ p5.prototype.norm = function(n, start, stop) {
  * <div><code>
  * function setup() {
  *   //Exponentially increase the size of an ellipse.
- *   eSize = 3; // Original Size
- *   eLoc = 10; // Original Location
+ *   var eSize = 3; // Original Size
+ *   var eLoc = 10; // Original Location
  *
  *   ellipse(eLoc, eLoc, eSize, eSize);
  *
- *   ellipse(eLoc*2, eLoc*2, pow(eSize, 2), pow(eSize, 2));
+ *   ellipse(eLoc * 2, eLoc * 2, pow(eSize, 2), pow(eSize, 2));
  *
- *   ellipse(eLoc*4, eLoc*4, pow(eSize, 3), pow(eSize, 3));
+ *   ellipse(eLoc * 4, eLoc * 4, pow(eSize, 3), pow(eSize, 3));
  *
- *   ellipse(eLoc*8, eLoc*8, pow(eSize, 4), pow(eSize, 4));
+ *   ellipse(eLoc * 8, eLoc * 8, pow(eSize, 4), pow(eSize, 4));
  * }
  * </code></div>
  *
@@ -640,7 +664,7 @@ p5.prototype.pow = Math.pow;
  *
  * @method round
  * @param  {Number} n number to round
- * @return {Number}   rounded number
+ * @return {Integer}  rounded number
  * @example
  * <div><code>
  * function draw() {
@@ -650,7 +674,7 @@ p5.prototype.pow = Math.pow;
  *   var ay = 66;
  *
  *   // Round the mapped number.
- *   var bx = round(map(mouseX, 0, 100, 0,5));
+ *   var bx = round(map(mouseX, 0, 100, 0, 5));
  *   var by = 33;
  *
  *   // Multiply the mapped numbers by 20 to more easily
@@ -662,8 +686,8 @@ p5.prototype.pow = Math.pow;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
@@ -685,11 +709,11 @@ p5.prototype.round = Math.round;
  * <div><code>
  * function draw() {
  *   background(200);
- *   eSize = 7;
- *   x1 = map(mouseX, 0, width, 0, 10);
- *   y1 = 80;
- *   x2 = sq(x1);
- *   y2 = 20;
+ *   var eSize = 7;
+ *   var x1 = map(mouseX, 0, width, 0, 10);
+ *   var y1 = 80;
+ *   var x2 = sq(x1);
+ *   var y2 = 20;
  *
  *   // Draw the non-squared.
  *   line(0, y1, width, y1);
@@ -700,15 +724,15 @@ p5.prototype.round = Math.round;
  *   ellipse(x2, y2, eSize, eSize);
  *
  *   // Draw dividing line.
- *   stroke(100)
- *   line(0, height/2, width, height/2);
+ *   stroke(100);
+ *   line(0, height / 2, width, height / 2);
  *
  *   // Draw text.
  *   var spacing = 15;
  *   noStroke();
  *   fill(0);
- *   text("x = " + x1, 0, y1 + spacing);
- *   text("sq(x) = " + x2, 0, y2 + spacing);
+ *   text('x = ' + x1, 0, y1 + spacing);
+ *   text('sq(x) = ' + x2, 0, y2 + spacing);
  * }
  * </code></div>
  *
@@ -716,7 +740,9 @@ p5.prototype.round = Math.round;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.sq = function(n) { return n*n; };
+p5.prototype.sq = function(n) {
+  return n * n;
+};
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -731,11 +757,11 @@ p5.prototype.sq = function(n) { return n*n; };
  * <div><code>
  * function draw() {
  *   background(200);
- *   eSize = 7;
- *   x1 = mouseX;
- *   y1 = 80;
- *   x2 = sqrt(x1);
- *   y2 = 20;
+ *   var eSize = 7;
+ *   var x1 = mouseX;
+ *   var y1 = 80;
+ *   var x2 = sqrt(x1);
+ *   var y2 = 20;
  *
  *   // Draw the non-squared.
  *   line(0, y1, width, y1);
@@ -746,15 +772,15 @@ p5.prototype.sq = function(n) { return n*n; };
  *   ellipse(x2, y2, eSize, eSize);
  *
  *   // Draw dividing line.
- *   stroke(100)
- *   line(0, height/2, width, height/2);
+ *   stroke(100);
+ *   line(0, height / 2, width, height / 2);
  *
  *   // Draw text.
  *   noStroke();
  *   fill(0);
  *   var spacing = 15;
- *   text("x = " + x1, 0, y1 + spacing);
- *   text("sqrt(x) = " + x2, 0, y2 + spacing);
+ *   text('x = ' + x1, 0, y1 + spacing);
+ *   text('sqrt(x) = ' + x2, 0, y2 + spacing);
  * }
  * </code></div>
  *
@@ -800,7 +826,7 @@ function hypot(x, y, z) {
     var m = args[j] / max;
     var summand = m * m - compensation;
     var preliminary = sum + summand;
-    compensation = (preliminary - sum) - summand;
+    compensation = preliminary - sum - summand;
     sum = preliminary;
   }
   return Math.sqrt(sum) * max;

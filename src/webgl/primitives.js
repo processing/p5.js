@@ -10,25 +10,26 @@
 
 var p5 = require('../core/core');
 require('./p5.Geometry');
+
 /**
  * Draw a plane with given a width and height
  * @method plane
- * @param  {Number} width      width of the plane
- * @param  {Number} height     height of the plane
- * @param  {Number} [detailX]  Optional number of triangle
+ * @param  {Number} [width]    width of the plane
+ * @param  {Number} [height]   height of the plane
+ * @param  {Integer} [detailX]  Optional number of triangle
  *                             subdivisions in x-dimension
- * @param {Number} [detailY]   Optional number of triangle
+ * @param {Integer} [detailY]   Optional number of triangle
  *                             subdivisions in y-dimension
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
- * //draw a plane with width 200 and height 200
- * function setup(){
+ * //draw a plane with width 50 and height 50
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   plane(50, 50);
  * }
@@ -44,108 +45,127 @@ require('./p5.Geometry');
  * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
-p5.prototype.plane = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.plane = function(width, height, detailX, detailY) {
+  if (typeof width === 'undefined') {
+    width = 50;
   }
-  var width = args[0] || 50;
-  var height = args[1] || width;
-  var detailX = typeof args[2] === 'number' ? args[2] : 1;
-  var detailY = typeof args[3] === 'number' ? args[3] : 1;
+  if (typeof height === 'undefined') {
+    height = width;
+  }
 
-  var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
+  if (typeof detailX === 'undefined') {
+    detailX = 1;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 1;
+  }
 
-  if(!this._renderer.geometryInHash(gId)){
-    var _plane = function(){
-      var u,v,p;
-      for (var i = 0; i <= this.detailY; i++){
+  var gId = 'plane|' + detailX + '|' + detailY;
+
+  if (!this._renderer.geometryInHash(gId)) {
+    var _plane = function() {
+      var u, v, p;
+      for (var i = 0; i <= this.detailY; i++) {
         v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
+        for (var j = 0; j <= this.detailX; j++) {
           u = j / this.detailX;
-          p = new p5.Vector(
-            width * u - width/2,
-            height * v - height/2,
-            0);
+          p = new p5.Vector(u - 0.5, v - 0.5, 0);
           this.vertices.push(p);
-          this.uvs.push([u,v]);
+          this.uvs.push(u, v);
         }
       }
     };
-    var planeGeom =
-    new p5.Geometry(detailX, detailY, _plane);
-    planeGeom
-       .computeFaces()
-       .computeNormals();
-    if(detailX <= 1 && detailY <= 1) {
+    var planeGeom = new p5.Geometry(detailX, detailY, _plane);
+    planeGeom.computeFaces().computeNormals();
+    if (detailX <= 1 && detailY <= 1) {
       planeGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(planeGeom);
     } else {
-      console.log('Cannot draw stroke on plane objects with more'+
-        ' than 1 detailX or 1 detailY');
+      console.log(
+        'Cannot draw stroke on plane objects with more' +
+          ' than 1 detailX or 1 detailY'
+      );
     }
     this._renderer.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffers(gId);
-
+  this._renderer.drawBuffersScaled(gId, width, height, 0);
 };
 
 /**
  * Draw a box with given width, height and depth
  * @method  box
- * @param  {Number} width     width of the box
+ * @param  {Number} [width]     width of the box
  * @param  {Number} [Height]    height of the box
  * @param  {Number} [depth]     depth of the box
- * @param {Number} [detailX]  Optional number of triangle
+ * @param {Integer} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
- * @param {Number} [detailY]  Optional number of triangle
+ * @param {Integer} [detailY]  Optional number of triangle
  *                            subdivisions in y-dimension
  * @chainable
  * @example
  * <div>
  * <code>
  * //draw a spinning box with width, height and depth 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   box(200, 200, 200);
+ *   box(50);
  * }
  * </code>
  * </div>
  */
-p5.prototype.box = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.box = function(width, height, depth, detailX, detailY) {
+  if (typeof width === 'undefined') {
+    width = 50;
   }
-  var width = args[0] || 50;
-  var height = args[1] || width;
-  var depth = args[2] || width;
+  if (typeof height === 'undefined') {
+    height = width;
+  }
+  if (typeof depth === 'undefined') {
+    depth = height;
+  }
 
-  var detailX = typeof args[3] === 'number' ? args[3] : 4;
-  var detailY = typeof args[4] === 'number' ? args[4] : 4;
-  var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
-    var _box = function(){
+  var perPixelLighting =
+    this._renderer.attributes && this._renderer.attributes.perPixelLighting;
+  if (typeof detailX === 'undefined') {
+    detailX = perPixelLighting ? 1 : 4;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = perPixelLighting ? 1 : 4;
+  }
+
+  var gId = 'box|' + detailX + '|' + detailY;
+  if (!this._renderer.geometryInHash(gId)) {
+    var _box = function() {
       var cubeIndices = [
-        [0, 4, 2, 6],// -1, 0, 0],// -x
-        [1, 3, 5, 7],// +1, 0, 0],// +x
-        [0, 1, 4, 5],// 0, -1, 0],// -y
-        [2, 6, 3, 7],// 0, +1, 0],// +y
-        [0, 2, 1, 3],// 0, 0, -1],// -z
-        [4, 5, 6, 7]// 0, 0, +1] // +z
+        [0, 4, 2, 6], // -1, 0, 0],// -x
+        [1, 3, 5, 7], // +1, 0, 0],// +x
+        [0, 1, 4, 5], // 0, -1, 0],// -y
+        [2, 6, 3, 7], // 0, +1, 0],// +y
+        [0, 2, 1, 3], // 0, 0, -1],// -z
+        [4, 5, 6, 7] // 0, 0, +1] // +z
       ];
       //using strokeIndices instead of faces for strokes
       //to avoid diagonal stroke lines across face of box
       this.strokeIndices = [
-        [0,1],[1,3],[3,2],[6,7],[8,9],[9,11],[14,15],
-        [16,17],[17,19],[18,19],[20,21],[22,23]
+        [0, 1],
+        [1, 3],
+        [3, 2],
+        [6, 7],
+        [8, 9],
+        [9, 11],
+        [14, 15],
+        [16, 17],
+        [17, 19],
+        [18, 19],
+        [20, 21],
+        [22, 23]
       ];
       for (var i = 0; i < cubeIndices.length; i++) {
         var cubeIndex = cubeIndices[i];
@@ -156,44 +176,46 @@ p5.prototype.box = function(){
           //https://github.com/evanw/lightgl.js
           //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
           var octant = new p5.Vector(
-            ((d & 1) * 2 - 1)*width/2,
-            ((d & 2) - 1) *height/2,
-            ((d & 4) / 2 - 1) * depth/2);
-          this.vertices.push( octant );
-          this.uvs.push([j & 1, (j & 2) / 2]);
+            ((d & 1) * 2 - 1) / 2,
+            ((d & 2) - 1) / 2,
+            ((d & 4) / 2 - 1) / 2
+          );
+          this.vertices.push(octant);
+          this.uvs.push(j & 1, (j & 2) / 2);
         }
         this.faces.push([v, v + 1, v + 2]);
         this.faces.push([v + 2, v + 1, v + 3]);
       }
     };
-    var boxGeom = new p5.Geometry(detailX,detailY, _box);
+    var boxGeom = new p5.Geometry(detailX, detailY, _box);
     boxGeom.computeNormals();
-    if(detailX <= 4 && detailY <= 4) {
+    if (detailX <= 4 && detailY <= 4) {
       boxGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(boxGeom);
     } else {
-      console.log('Cannot draw stroke on box objects with more'+
-      ' than 4 detailX or 4 detailY');
+      console.log(
+        'Cannot draw stroke on box objects with more' +
+          ' than 4 detailX or 4 detailY'
+      );
     }
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
   }
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, width, height, depth);
 
   return this;
-
 };
 
 /**
  * Draw a sphere with given radius
  * @method sphere
- * @param  {Number} radius            radius of circle
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Number} [radius]          radius of circle
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -201,71 +223,37 @@ p5.prototype.box = function(){
  * <div>
  * <code>
  * // draw a sphere with radius 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
  */
-p5.prototype.sphere = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.sphere = function(radius, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var radius = args[0] || 50;
-  var detailX = typeof args[1] === 'number' ? args[1] : 24;
-  var detailY = typeof args[2] === 'number' ? args[2] : 16;
-
-  var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
-    var _sphere = function(){
-      var u,v,p;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(
-            radius * Math.cos(phi) * Math.sin(theta),
-            radius * Math.sin(phi),
-            radius * Math.cos(phi) * Math.cos(theta));
-          this.vertices.push(p);
-          this.uvs.push([u,v]);
-        }
-      }
-    };
-    var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
-    sphereGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals()
-      .averagePoleNormals();
-    if(detailX <= 24 && detailY <= 16) {
-      sphereGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(sphereGeom);
-    } else {
-      console.log('Cannot draw stroke on sphere objects with more'+
-        ' than 24 detailX or 16 detailY');
-    }
-
-    this._renderer.createBuffers(gId, sphereGeom);
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
   }
-  this._renderer.drawBuffers(gId);
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
+
+  this.ellipsoid(radius, radius, radius, detailX, detailY);
 
   return this;
 };
 
-
 /**
-* @private
-* helper function for creating both cones and cyllinders
-*/
+ * @private
+ * helper function for creating both cones and cyllinders
+ */
 var _truncatedCone = function(
   bottomRadius,
   topRadius,
@@ -273,11 +261,12 @@ var _truncatedCone = function(
   detailX,
   detailY,
   topCap,
-  bottomCap) {
-  detailX = (detailX < 3) ? 3 : detailX;
-  detailY = (detailY < 1) ? 1 : detailY;
-  topCap = (topCap === undefined) ? true : topCap;
-  bottomCap = (bottomCap === undefined) ? true : bottomCap;
+  bottomCap
+) {
+  detailX = detailX < 3 ? 3 : detailX;
+  detailY = detailY < 1 ? 1 : detailY;
+  topCap = topCap === undefined ? true : topCap;
+  bottomCap = bottomCap === undefined ? true : bottomCap;
   var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
   var vertsAroundEdge = detailX + 1;
 
@@ -299,8 +288,7 @@ var _truncatedCone = function(
       v = 1;
       ringRadius = topRadius;
     } else {
-      ringRadius = bottomRadius +
-        (topRadius - bottomRadius) * (yy / detailY);
+      ringRadius = bottomRadius + (topRadius - bottomRadius) * (yy / detailY);
     }
     if (yy === -2 || yy === detailY + 2) {
       ringRadius = 0;
@@ -311,19 +299,25 @@ var _truncatedCone = function(
       //VERTICES
       this.vertices.push(
         new p5.Vector(
-          Math.sin(ii*Math.PI * 2 /detailX) * ringRadius,
+          Math.sin(ii * Math.PI * 2 / detailX) * ringRadius,
           y,
-          Math.cos(ii*Math.PI * 2 /detailX) * ringRadius)
+          Math.cos(ii * Math.PI * 2 / detailX) * ringRadius
+        )
       );
       //VERTEX NORMALS
       this.vertexNormals.push(
         new p5.Vector(
-          (yy < 0 || yy > detailY) ? 0 : (Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant)),
-          (yy < 0) ? -1 : (yy > detailY ? 1 : Math.sin(slant)),
-          (yy < 0 || yy > detailY) ? 0 : (Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)))
+          yy < 0 || yy > detailY
+            ? 0
+            : Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant),
+          yy < 0 ? -1 : yy > detailY ? 1 : Math.sin(slant),
+          yy < 0 || yy > detailY
+            ? 0
+            : Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)
+        )
       );
       //UVs
-      this.uvs.push([(ii / detailX), v]);
+      this.uvs.push(ii / detailX, v);
     }
   }
   for (yy = 0; yy < detailY + extra; ++yy) {
@@ -345,12 +339,12 @@ var _truncatedCone = function(
 /**
  * Draw a cylinder with given radius and height
  * @method  cylinder
- * @param  {Number} radius     radius of the surface
- * @param  {Number} height     height of the cylinder
- * @param  {Number} [detailX]  number of segments,
+ * @param  {Number} [radius]   radius of the surface
+ * @param  {Number} [height]   height of the cylinder
+ * @param  {Integer} [detailX] number of segments,
  *                             the more segments the smoother geometry
  *                             default is 24
- * @param {Number} [detailY]   number of segments in y-dimension,
+ * @param {Integer} [detailY]  number of segments in y-dimension,
  *                             the more segments the smoother geometry
  *                             default is 16
  * @chainable
@@ -358,65 +352,64 @@ var _truncatedCone = function(
  * <div>
  * <code>
  * //draw a spinning cylinder with radius 200 and height 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
- *   cylinder(200, 200);
+ *   cylinder(20, 50);
  * }
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.cylinder = function(radius, height, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var radius = args[0] || 50;
-  var height = args[1] || radius;
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
-  var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
+  if (typeof height === 'undefined') {
+    height = radius;
+  }
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
+
+  var gId = 'cylinder|' + detailX + '|' + detailY;
+  if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(
-      cylinderGeom,
-      radius,
-      radius,
-      height,
-      detailX,
-      detailY,
-      true,true);
+    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
     cylinderGeom.computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(cylinderGeom);
     } else {
-      console.log('Cannot draw stroke on cylinder objects with more'+
-      ' than 24 detailX or 16 detailY');
+      console.log(
+        'Cannot draw stroke on cylinder objects with more' +
+          ' than 24 detailX or 16 detailY'
+      );
     }
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radius, height, radius);
 
   return this;
 };
 
-
 /**
  * Draw a cone with given radius and height
  * @method cone
- * @param  {Number} radius            radius of the bottom surface
- * @param  {Number} height            height of the cone
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Number} [radius]          radius of the bottom surface
+ * @param  {Number} [height]          height of the cone
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -424,48 +417,56 @@ p5.prototype.cylinder = function(){
  * <div>
  * <code>
  * //draw a spinning cone with radius 200 and height 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
- *   cone(200, 200);
+ *   cone(40, 70);
  * }
  * </code>
  * </div>
  */
-p5.prototype.cone = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.cone = function(radius, height, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var baseRadius = args[0] || 50;
-  var height = args[1] || baseRadius;
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
-  var gId = 'cone|'+baseRadius+'|'+height+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
+  if (typeof height === 'undefined') {
+    height = radius;
+  }
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
+
+  var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
+  if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
       coneGeom,
-      baseRadius,
-      0,//top radius 0
+      radius,
+      0, //top radius 0
       height,
       detailX,
       detailY,
       true,
-      true);
+      true
+    );
     //for cones we need to average Normals
     coneGeom.computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(coneGeom);
     } else {
-      console.log('Cannot draw stroke on cone objects with more'+
-      ' than 24 detailX or 16 detailY');
+      console.log(
+        'Cannot draw stroke on cone objects with more' +
+          ' than 24 detailX or 16 detailY'
+      );
     }
     this._renderer.createBuffers(gId, coneGeom);
   }
@@ -478,14 +479,14 @@ p5.prototype.cone = function(){
 /**
  * Draw an ellipsoid with given radius
  * @method ellipsoid
- * @param  {Number} radiusx           xradius of circle
- * @param  {Number} radiusy           yradius of circle
- * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Number} [radiusx]         xradius of circle
+ * @param  {Number} [radiusy]         yradius of circle
+ * @param  {Number} [radiusz]         zradius of circle
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
  *                                    150, it may crash the browser.
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16. Avoid detail number above
  *                                    150, it may crash the browser.
@@ -494,65 +495,72 @@ p5.prototype.cone = function(){
  * <div>
  * <code>
  * // draw an ellipsoid with radius 20, 30 and 40.
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   ellipsoid(20, 30, 40);
  * }
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+  if (typeof radiusX === 'undefined') {
+    radiusX = 50;
   }
-  var detailX = typeof args[3] === 'number' ? args[3] : 24;
-  var detailY = typeof args[4] === 'number' ? args[4] : 24;
-  var radiusX = args[0] || 50;
-  var radiusY = args[1] || radiusX;
-  var radiusZ = args[2] || radiusX;
+  if (typeof radiusY === 'undefined') {
+    radiusY = radiusX;
+  }
+  if (typeof radiusZ === 'undefined') {
+    radiusZ = radiusX;
+  }
 
-  var gId = 'ellipsoid|'+radiusX+'|'+radiusY+
-  '|'+radiusZ+'|'+detailX+'|'+detailY;
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
 
+  var gId = 'ellipsoid|' + detailX + '|' + detailY;
 
-  if(!this._renderer.geometryInHash(gId)){
-    var _ellipsoid = function(){
-      var u,v,p;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
+  if (!this._renderer.geometryInHash(gId)) {
+    var _ellipsoid = function() {
+      for (var i = 0; i <= this.detailY; i++) {
+        var v = i / this.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+
+        for (var j = 0; j <= this.detailX; j++) {
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(
-            radiusX * Math.cos(phi) * Math.sin(theta),
-            radiusY * Math.sin(phi),
-            radiusZ * Math.cos(phi) * Math.cos(theta));
+          var cosTheta = Math.cos(theta);
+          var sinTheta = Math.sin(theta);
+          var p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
           this.vertices.push(p);
-          this.uvs.push([u,v]);
+          this.vertexNormals.push(p);
+          this.uvs.push(u, v);
         }
       }
     };
-    var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
-    ellipsoidGeom
-      .computeFaces()
-      .computeNormals();
-    if(detailX <= 24 && detailY <= 24) {
+    var ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
+    ellipsoidGeom.computeFaces();
+    if (detailX <= 24 && detailY <= 24) {
       ellipsoidGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(ellipsoidGeom);
     } else {
-      console.log('Cannot draw stroke on ellipsoids with more'+
-      ' than 24 detailX or 24 detailY');
+      console.log(
+        'Cannot draw stroke on ellipsoids with more' +
+          ' than 24 detailX or 24 detailY'
+      );
     }
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
 
   return this;
 };
@@ -560,12 +568,12 @@ p5.prototype.ellipsoid = function(){
 /**
  * Draw a torus with given radius and tube radius
  * @method torus
- * @param  {Number} radius        radius of the whole ring
- * @param  {Number} tubeRadius    radius of the tube
- * @param  {Number} [detailX]     number of segments in x-dimension,
+ * @param  {Number} [radius]      radius of the whole ring
+ * @param  {Number} [tubeRadius]  radius of the tube
+ * @param  {Integer} [detailX]    number of segments in x-dimension,
  *                                the more segments the smoother geometry
  *                                default is 24
- * @param  {Number} [detailY]     number of segments in y-dimension,
+ * @param  {Integer} [detailY]    number of segments in y-dimension,
  *                                the more segments the smoother geometry
  *                                default is 16
  * @chainable
@@ -573,65 +581,81 @@ p5.prototype.ellipsoid = function(){
  * <div>
  * <code>
  * //draw a spinning torus with radius 200 and tube radius 60
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   torus(200, 60);
+ *   torus(50, 15);
  * }
  * </code>
  * </div>
  */
-p5.prototype.torus = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
+  } else if (!radius) {
+    return; // nothing to draw
   }
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
 
-  var radius = args[0] || 50;
-  var tubeRadius = args[1] || 10;
+  if (typeof tubeRadius === 'undefined') {
+    tubeRadius = 10;
+  } else if (!tubeRadius) {
+    return; // nothing to draw
+  }
 
-  var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
 
-  if(!this._renderer.geometryInHash(gId)){
-    var _torus = function(){
-      var u,v,p;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
+  var tubeRatio = (tubeRadius / radius).toPrecision(4);
+  var gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
+
+  if (!this._renderer.geometryInHash(gId)) {
+    var _torus = function() {
+      for (var i = 0; i <= this.detailY; i++) {
+        var v = i / this.detailY;
+        var phi = 2 * Math.PI * v;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+        var r = 1 + tubeRatio * cosPhi;
+
+        for (var j = 0; j <= this.detailX; j++) {
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = 2 * Math.PI * v;
-          p = new p5.Vector(
-            (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta),
-            (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta),
-            tubeRadius * Math.sin(phi));
+          var cosTheta = Math.cos(theta);
+          var sinTheta = Math.sin(theta);
+
+          var p = new p5.Vector(r * cosTheta, r * sinTheta, tubeRatio * sinPhi);
+
+          var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+
           this.vertices.push(p);
-          this.uvs.push([u,v]);
+          this.vertexNormals.push(n);
+          this.uvs.push(u, v);
         }
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
-    torusGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    torusGeom.computeFaces();
+    if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(torusGeom);
     } else {
-      console.log('Cannot draw strokes on torus object with more'+
-      ' than 24 detailX or 16 detailY');
+      console.log(
+        'Cannot draw strokes on torus object with more' +
+          ' than 24 detailX or 16 detailY'
+      );
     }
     this._renderer.createBuffers(gId, torusGeom);
   }
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radius, radius, radius);
 
   return this;
 };
@@ -641,41 +665,65 @@ p5.prototype.torus = function(){
 /////////////////////////
 
 //@TODO
-p5.RendererGL.prototype.point = function(x, y, z){
+p5.RendererGL.prototype.point = function(x, y, z) {
   console.log('point not yet implemented in webgl');
   return this;
 };
 
-p5.RendererGL.prototype.triangle = function(args){
-  var x1=args[0], y1=args[1];
-  var x2=args[2], y2=args[3];
-  var x3=args[4], y3=args[5];
-  var gId = 'tri|'+x1+'|'+y1+'|'+
-  x2+'|'+y2+'|'+
-  x3+'|'+y3;
-  if(!this.geometryInHash(gId)){
-    var _triangle = function(){
+p5.RendererGL.prototype.triangle = function(args) {
+  var x1 = args[0],
+    y1 = args[1];
+  var x2 = args[2],
+    y2 = args[3];
+  var x3 = args[4],
+    y3 = args[5];
+
+  var gId = 'tri';
+  if (!this.geometryInHash(gId)) {
+    var _triangle = function() {
       var vertices = [];
-      vertices.push(new p5.Vector(x1,y1,0));
-      vertices.push(new p5.Vector(x2,y2,0));
-      vertices.push(new p5.Vector(x3,y3,0));
-      this.strokeIndices = [[0,1], [1,2], [2,0]];
+      vertices.push(new p5.Vector(0, 0, 0));
+      vertices.push(new p5.Vector(0, 1, 0));
+      vertices.push(new p5.Vector(1, 0, 0));
+      this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
-      this.faces = [[0,1,2]];
-      this.uvs = [[0,0],[0,1],[1,1]];
+      this.faces = [[0, 1, 2]];
+      this.uvs = [0, 0, 0, 1, 1, 1];
     };
-    var triGeom = new p5.Geometry(1,1,_triangle);
+    var triGeom = new p5.Geometry(1, 1, _triangle);
     triGeom._makeTriangleEdges();
     this._edgesToVertices(triGeom);
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
 
-  this.drawBuffers(gId);
+  // only one triangle is cached, one point is at the origin, and the
+  // two adjacent sides are tne unit vectors along the X & Y axes.
+  //
+  // this matrix multiplication transforms those two unit vectors
+  // onto the required vector prior to rendering, and moves the
+  // origin appropriately.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    // prettier-ignore
+    var mult = new p5.Matrix([
+      x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
+      x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
+      0, 0, 1, 0,             // the resulting unit Z-axis (unchanged)
+      x1, y1, 0, 1            // the resulting origin
+    ]).mult(this.uMVMatrix);
+
+    this.uMVMatrix = mult;
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
+
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function(args){
+p5.RendererGL.prototype.ellipse = function(args) {
   var x = args[0];
   var y = args[1];
   var width = args[2];
@@ -683,79 +731,76 @@ p5.RendererGL.prototype.ellipse = function(args){
   //detailX and Y are optional 6th & 7th
   //arguments
   var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3];
-  if(!this.geometryInHash(gId)){
-    var _ellipse = function(){
-      var u,v,p;
-      var centerX = x+width*0.5;
-      var centerY = y+height*0.5;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          if(v === 0){
-            p = new p5.Vector(centerX, centerY, 0);
-          }
-          else{
-            var _x = centerX + width*0.5 * Math.cos(theta);
-            var _y = centerY + height*0.5 * Math.sin(theta);
-            p = new p5.Vector(_x, _y, 0);
-          }
-          this.vertices.push(p);
-          this.uvs.push([u,v]);
-        }
+  var gId = 'ellipse|' + detailX;
+  if (!this.geometryInHash(gId)) {
+    var _ellipse = function() {
+      this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+      this.uvs.push([0.5, 0.5]);
+
+      for (var i = 0; i <= this.detailX; i++) {
+        var u = i / this.detailX;
+        var theta = 2 * Math.PI * u;
+
+        var _x = 0.5 + Math.cos(theta) / 2;
+        var _y = 0.5 + Math.sin(theta) / 2;
+
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push(_x, _y);
+
+        this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
       }
     };
-    var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
-    ellipseGeom
-      .computeFaces()
-      .computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
+    ellipseGeom.computeNormals();
+    if (detailX <= 50) {
       ellipseGeom._makeTriangleEdges();
       this._edgesToVertices(ellipseGeom);
     } else {
-      console.log('Cannot stroke ellipse with more'+
-        ' than 24 detailX or 16 detailY');
+      console.log('Cannot stroke ellipse with more than 50 detailX');
     }
 
     this.createBuffers(gId, ellipseGeom);
   }
-  this.drawBuffers(gId);
+
+  // only a single ellipse (of a given detail) is cached: a circle of
+  // _diameter_ 1 (radius 0.5).
+  //
+  // before rendering, this circle is squished (technical term ;)
+  // appropriately and moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.translate([x, y, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3];
+  var perPixelLighting = this.attributes.perPixelLighting;
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
-  var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  if(!this.geometryInHash(gId)){
-    var _rect = function(){
-      var u,v,p;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
-          // var _x = x-width/2;
-          // var _y = y-height/2;
-          p = new p5.Vector(
-            x + (width*u),
-            y + (height*v),
-            0
-          );
+  var detailX = args[4] || (perPixelLighting ? 1 : 24);
+  var detailY = args[5] || (perPixelLighting ? 1 : 16);
+  var gId = 'rect|' + detailX + '|' + detailY;
+  if (!this.geometryInHash(gId)) {
+    var _rect = function() {
+      for (var i = 0; i <= this.detailY; i++) {
+        var v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++) {
+          var u = j / this.detailX;
+          var p = new p5.Vector(u, v, 0);
           this.vertices.push(p);
-          this.uvs.push([u,v]);
+          this.uvs.push(u, v);
         }
       }
     };
-    var rectGeom = new p5.Geometry(detailX,detailY,_rect);
+    var rectGeom = new p5.Geometry(detailX, detailY, _rect);
     rectGeom
       .computeFaces()
       .computeNormals()
@@ -763,42 +808,54 @@ p5.RendererGL.prototype.rect = function(args) {
     this._edgesToVertices(rectGeom);
     this.createBuffers(gId, rectGeom);
   }
-  this.drawBuffers(gId);
+
+  // only a single rectangle (of a given detail) is cached: a square with
+  // opposite corners at (0,0) & (1,1).
+  //
+  // before rendering, this square is scaled & moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.translate([x, y, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
-p5.RendererGL.prototype.quad = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  var x1 = args[0],
-    y1 = args[1],
-    x2 = args[2],
-    y2 = args[3],
-    x3 = args[4],
-    y3 = args[5],
-    x4 = args[6],
-    y4 = args[7];
-  var gId = 'quad|'+x1+'|'+y1+'|'+
-  x2+'|'+y2+'|'+
-  x3+'|'+y3+'|'+
-  x4+'|'+y4;
-  if(!this.geometryInHash(gId)){
-    var _quad = function(){
-      this.vertices.push(new p5.Vector(x1,y1,0));
-      this.vertices.push(new p5.Vector(x2,y2,0));
-      this.vertices.push(new p5.Vector(x3,y3,0));
-      this.vertices.push(new p5.Vector(x4,y4,0));
-      this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
-      this.strokeIndices = [[0,1], [1,2], [2,3], [3,0]];
+p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+  var gId =
+    'quad|' +
+    x1 +
+    '|' +
+    y1 +
+    '|' +
+    x2 +
+    '|' +
+    y2 +
+    '|' +
+    x3 +
+    '|' +
+    y3 +
+    '|' +
+    x4 +
+    '|' +
+    y4;
+  if (!this.geometryInHash(gId)) {
+    var _quad = function() {
+      this.vertices.push(new p5.Vector(x1, y1, 0));
+      this.vertices.push(new p5.Vector(x2, y2, 0));
+      this.vertices.push(new p5.Vector(x3, y3, 0));
+      this.vertices.push(new p5.Vector(x4, y4, 0));
+      this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
+      this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
-    var quadGeom = new p5.Geometry(2,2,_quad);
-    quadGeom
-      .computeNormals()
-      ._makeTriangleEdges();
+    var quadGeom = new p5.Geometry(2, 2, _quad);
+    quadGeom.computeNormals()._makeTriangleEdges();
     this._edgesToVertices(quadGeom);
-    quadGeom.faces = [[0,1,2],[2,3,0]];
+    quadGeom.faces = [[0, 1, 2], [2, 3, 0]];
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
@@ -807,51 +864,76 @@ p5.RendererGL.prototype.quad = function(){
 
 //this implementation of bezier curve
 //is based on Bernstein polynomial
-p5.RendererGL.prototype.bezier = function(args){
-  var bezierDetail=args[12] || 20;//value of Bezier detail
+// pretier-ignore
+p5.RendererGL.prototype.bezier = function(
+  x1,
+  y1,
+  z1,
+  x2,
+  y2,
+  z2,
+  x3,
+  y3,
+  z3,
+  x4,
+  y4,
+  z4
+) {
+  var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
-  var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
-  var vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
-  for(var i=0; i<=bezierDetail; i++){
-    coeff[0]=Math.pow(1-(i/bezierDetail),3);
-    coeff[1]=(3*(i/bezierDetail)) * (Math.pow(1-(i/bezierDetail),2));
-    coeff[2]=(3*Math.pow(i/bezierDetail,2)) * (1-(i/bezierDetail));
-    coeff[3]=Math.pow(i/bezierDetail,3);
-    vertex[0]=args[0]*coeff[0] + args[3]*coeff[1] +
-              args[6]*coeff[2] + args[9]*coeff[3];
-    vertex[1]=args[1]*coeff[0] + args[4]*coeff[1] +
-              args[7]*coeff[2] + args[10]*coeff[3];
-    vertex[2]=args[2]*coeff[0] + args[5]*coeff[1] +
-              args[8]*coeff[2] + args[11]*coeff[3];
-    this.vertex(vertex[0],vertex[1],vertex[2]);
+  for (var i = 0; i <= bezierDetail; i++) {
+    var c1 = Math.pow(1 - i / bezierDetail, 3);
+    var c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
+    var c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
+    var c4 = Math.pow(i / bezierDetail, 3);
+    this.vertex(
+      x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
+      y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
+      z1 * c1 + z2 * c2 + z3 * c3 + z4 * c4
+    );
   }
   this.endShape();
   return this;
 };
 
-p5.RendererGL.prototype.curve=function(args){
-  var curveDetail=args[12];
+// pretier-ignore
+p5.RendererGL.prototype.curve = function(
+  x1,
+  y1,
+  z1,
+  x2,
+  y2,
+  z2,
+  x3,
+  y3,
+  z3,
+  x4,
+  y4,
+  z4
+) {
+  var curveDetail = this._pInst._curveDetail;
   this.beginShape();
-  var coeff=[0,0,0,0];//coeffecients of the equation
-  var vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
-  for(var i=0; i<=curveDetail; i++){
-    coeff[0]=Math.pow((i/curveDetail),3) * 0.5;
-    coeff[1]=Math.pow((i/curveDetail),2) * 0.5;
-    coeff[2]=(i/curveDetail) * 0.5;
-    coeff[3]=0.5;
-    vertex[0]=coeff[0]*(-args[0] + (3*args[3]) - (3*args[6]) +args[9]) +
-              coeff[1]*((2*args[0]) - (5*args[3]) + (4*args[6]) - args[9]) +
-              coeff[2]*(-args[0] + args[6]) +
-              coeff[3]*(2*args[3]);
-    vertex[1]=coeff[0]*(-args[1] + (3*args[4]) - (3*args[7]) +args[10]) +
-              coeff[1]*((2*args[1]) - (5*args[4]) + (4*args[7]) - args[10]) +
-              coeff[2]*(-args[1] + args[7]) +
-              coeff[3]*(2*args[4]);
-    vertex[2]=coeff[0]*(-args[2] + (3*args[5]) - (3*args[8]) +args[11]) +
-              coeff[1]*((2*args[2]) - (5*args[5]) + (4*args[8]) - args[11]) +
-              coeff[2]*(-args[2] + args[8]) +
-              coeff[3]*(2*args[5]);
-    this.vertex(vertex[0],vertex[1],vertex[2]);
+  for (var i = 0; i <= curveDetail; i++) {
+    var c1 = Math.pow(i / curveDetail, 3) * 0.5;
+    var c2 = Math.pow(i / curveDetail, 2) * 0.5;
+    var c3 = i / curveDetail * 0.5;
+    var c4 = 0.5;
+    var vx =
+      c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
+      c2 * (2 * x1 - 5 * x2 + 4 * x3 - x4) +
+      c3 * (-x1 + x3) +
+      c4 * (2 * x2);
+    var vy =
+      c1 * (-y1 + 3 * y2 - 3 * y3 + y4) +
+      c2 * (2 * y1 - 5 * y2 + 4 * y3 - y4) +
+      c3 * (-y1 + y3) +
+      c4 * (2 * y2);
+    var vz =
+      c1 * (-z1 + 3 * z2 - 3 * z3 + z4) +
+      c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
+      c3 * (-z1 + z3) +
+      c4 * (2 * z2);
+    this.vertex(vx, vy, vz);
   }
   this.endShape();
   return this;
@@ -871,11 +953,11 @@ p5.RendererGL.prototype.curve=function(args){
  * <div>
  * <code>
  * //draw a line
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
@@ -887,12 +969,12 @@ p5.RendererGL.prototype.curve=function(args){
  * </div>
  */
 p5.RendererGL.prototype.line = function() {
-  if(arguments.length === 6) {
+  if (arguments.length === 6) {
     this.beginShape();
     this.vertex(arguments[0], arguments[1], arguments[2]);
     this.vertex(arguments[3], arguments[4], arguments[5]);
     this.endShape();
-  } else if(arguments.length === 4) {
+  } else if (arguments.length === 4) {
     this.beginShape();
     this.vertex(arguments[0], arguments[1], 0);
     this.vertex(arguments[2], arguments[3], 0);

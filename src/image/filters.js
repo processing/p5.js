@@ -19,11 +19,9 @@
 
 var Filters = {};
 
-
 /*
  * Helper functions
  */
-
 
 /**
  * Returns the pixel buffer for a canvas
@@ -35,16 +33,13 @@ var Filters = {};
  *                                   the data in thc RGBA order, with integer
  *                                   values between 0 and 255
  */
-Filters._toPixels = function (canvas) {
+Filters._toPixels = function(canvas) {
   if (canvas instanceof ImageData) {
     return canvas.data;
   } else {
-    return canvas.getContext('2d').getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    ).data;
+    return canvas
+      .getContext('2d')
+      .getImageData(0, 0, canvas.width, canvas.height).data;
   }
 };
 
@@ -59,12 +54,14 @@ Filters._toPixels = function (canvas) {
  * @return {Integer}                32 bit integer value representing
  *                                  ARGB value.
  */
-Filters._getARGB = function (data, i) {
+Filters._getARGB = function(data, i) {
   var offset = i * 4;
-  return (data[offset+3] << 24) & 0xff000000 |
-    (data[offset] << 16) & 0x00ff0000 |
-    (data[offset+1] << 8) & 0x0000ff00 |
-    data[offset+2] & 0x000000ff;
+  return (
+    ((data[offset + 3] << 24) & 0xff000000) |
+    ((data[offset] << 16) & 0x00ff0000) |
+    ((data[offset + 1] << 8) & 0x0000ff00) |
+    (data[offset + 2] & 0x000000ff)
+  );
 };
 
 /**
@@ -76,14 +73,14 @@ Filters._getARGB = function (data, i) {
  * @param {Int32Array}        data   source 1D array where each value
  *                                   represents ARGB values
  */
-Filters._setPixels = function (pixels, data) {
+Filters._setPixels = function(pixels, data) {
   var offset = 0;
-  for( var i = 0, al = pixels.length; i < al; i++) {
-    offset = i*4;
-    pixels[offset + 0] = (data[i] & 0x00ff0000)>>>16;
-    pixels[offset + 1] = (data[i] & 0x0000ff00)>>>8;
-    pixels[offset + 2] = (data[i] & 0x000000ff);
-    pixels[offset + 3] = (data[i] & 0xff000000)>>>24;
+  for (var i = 0, al = pixels.length; i < al; i++) {
+    offset = i * 4;
+    pixels[offset + 0] = (data[i] & 0x00ff0000) >>> 16;
+    pixels[offset + 1] = (data[i] & 0x0000ff00) >>> 8;
+    pixels[offset + 2] = data[i] & 0x000000ff;
+    pixels[offset + 3] = (data[i] & 0xff000000) >>> 24;
   }
 };
 
@@ -97,16 +94,13 @@ Filters._setPixels = function (pixels, data) {
  * @return {ImageData}               Holder of pixel data (and width and
  *                                   height) for a canvas
  */
-Filters._toImageData = function (canvas) {
+Filters._toImageData = function(canvas) {
   if (canvas instanceof ImageData) {
     return canvas;
   } else {
-    return canvas.getContext('2d').getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    return canvas
+      .getContext('2d')
+      .getImageData(0, 0, canvas.width, canvas.height);
   }
 };
 
@@ -119,12 +113,11 @@ Filters._toImageData = function (canvas) {
  * @param  {Integer} height
  * @return {ImageData}
  */
-Filters._createImageData = function (width, height) {
+Filters._createImageData = function(width, height) {
   Filters._tmpCanvas = document.createElement('canvas');
   Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
   return this._tmpCtx.createImageData(width, height);
 };
-
 
 /**
  * Applys a filter function to a canvas.
@@ -145,7 +138,7 @@ Filters._createImageData = function (width, height) {
  * @param  {function(ImageData,Object)} func   [description]
  * @param  {Object} filterParam  [description]
  */
-Filters.apply = function (canvas, func, filterParam) {
+Filters.apply = function(canvas, func, filterParam) {
   var ctx = canvas.getContext('2d');
   var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -159,11 +152,9 @@ Filters.apply = function (canvas, func, filterParam) {
   }
 };
 
-
 /*
  * Filters
  */
-
 
 /**
  * Converts the image to black and white pixels depending if they are above or
@@ -176,7 +167,7 @@ Filters.apply = function (canvas, func, filterParam) {
  * @param  {Canvas} canvas
  * @param  {Float} level
  */
-Filters.threshold = function (canvas, level) {
+Filters.threshold = function(canvas, level) {
   var pixels = Filters._toPixels(canvas);
 
   if (level === undefined) {
@@ -188,7 +179,7 @@ Filters.threshold = function (canvas, level) {
     var r = pixels[i];
     var g = pixels[i + 1];
     var b = pixels[i + 2];
-    var gray = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+    var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     var val;
     if (gray >= thresh) {
       val = 255;
@@ -197,9 +188,7 @@ Filters.threshold = function (canvas, level) {
     }
     pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
   }
-
 };
-
 
 /**
  * Converts any colors in the image to grayscale equivalents.
@@ -210,7 +199,7 @@ Filters.threshold = function (canvas, level) {
  * @private
  * @param {Canvas} canvas
  */
-Filters.gray = function (canvas) {
+Filters.gray = function(canvas) {
   var pixels = Filters._toPixels(canvas);
 
   for (var i = 0; i < pixels.length; i += 4) {
@@ -219,7 +208,7 @@ Filters.gray = function (canvas) {
     var b = pixels[i + 2];
 
     // CIE luminance for RGB
-    var gray = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+    var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
   }
 };
@@ -230,7 +219,7 @@ Filters.gray = function (canvas) {
  * @private
  * @param {Canvas} canvas
  */
-Filters.opaque = function (canvas) {
+Filters.opaque = function(canvas) {
   var pixels = Filters._toPixels(canvas);
 
   for (var i = 0; i < pixels.length; i += 4) {
@@ -245,7 +234,7 @@ Filters.opaque = function (canvas) {
  * @private
  * @param  {Canvas} canvas
  */
-Filters.invert = function (canvas) {
+Filters.invert = function(canvas) {
   var pixels = Filters._toPixels(canvas);
 
   for (var i = 0; i < pixels.length; i += 4) {
@@ -253,9 +242,7 @@ Filters.invert = function (canvas) {
     pixels[i + 1] = 255 - pixels[i + 1];
     pixels[i + 2] = 255 - pixels[i + 2];
   }
-
 };
-
 
 /**
  * Limits each channel of the image to the number of colors specified as
@@ -268,24 +255,24 @@ Filters.invert = function (canvas) {
  * @param  {Canvas} canvas
  * @param  {Integer} level
  */
-Filters.posterize = function (canvas, level) {
+Filters.posterize = function(canvas, level) {
   var pixels = Filters._toPixels(canvas);
 
-  if ((level < 2) || (level > 255)) {
+  if (level < 2 || level > 255) {
     throw new Error(
       'Level must be greater than 2 and less than 255 for posterize'
     );
   }
 
   var levels1 = level - 1;
-  for (var i = 0; i < pixels.length; i+=4) {
+  for (var i = 0; i < pixels.length; i += 4) {
     var rlevel = pixels[i];
     var glevel = pixels[i + 1];
     var blevel = pixels[i + 2];
 
-    pixels[i] = (((rlevel * level) >> 8) * 255) / levels1;
-    pixels[i + 1] = (((glevel * level) >> 8) * 255) / levels1;
-    pixels[i + 2] = (((blevel * level) >> 8) * 255) / levels1;
+    pixels[i] = ((rlevel * level) >> 8) * 255 / levels1;
+    pixels[i + 1] = ((glevel * level) >> 8) * 255 / levels1;
+    pixels[i + 2] = ((blevel * level) >> 8) * 255 / levels1;
   }
 };
 
@@ -295,10 +282,10 @@ Filters.posterize = function (canvas, level) {
  * @param  {Canvas} canvas
  *
  */
-Filters.dilate = function (canvas) {
+Filters.dilate = function(canvas) {
   var pixels = Filters._toPixels(canvas);
   var currIdx = 0;
-  var maxIdx = pixels.length ? pixels.length/4 : 0;
+  var maxIdx = pixels.length ? pixels.length / 4 : 0;
   var out = new Int32Array(maxIdx);
   var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
 
@@ -306,89 +293,7 @@ Filters.dilate = function (canvas) {
   var colRight, colLeft, colUp, colDown;
   var lumRight, lumLeft, lumUp, lumDown;
 
-  while(currIdx < maxIdx) {
-    currRowIdx = currIdx;
-    maxRowIdx = currIdx + canvas.width;
-    while (currIdx < maxRowIdx) {
-      colOrig = colOut = Filters._getARGB(pixels, currIdx);
-      idxLeft = currIdx - 1;
-      idxRight = currIdx + 1;
-      idxUp = currIdx - canvas.width;
-      idxDown = currIdx + canvas.width;
-
-      if (idxLeft < currRowIdx) {
-        idxLeft = currIdx;
-      }
-      if (idxRight >= maxRowIdx) {
-        idxRight = currIdx;
-      }
-      if (idxUp < 0){
-        idxUp = 0;
-      }
-      if (idxDown >= maxIdx) {
-        idxDown = currIdx;
-      }
-      colUp = Filters._getARGB(pixels, idxUp);
-      colLeft = Filters._getARGB(pixels, idxLeft);
-      colDown = Filters._getARGB(pixels, idxDown);
-      colRight = Filters._getARGB(pixels, idxRight);
-
-      //compute luminance
-      currLum = 77*(colOrig>>16&0xff) +
-        151*(colOrig>>8&0xff) +
-        28*(colOrig&0xff);
-      lumLeft = 77*(colLeft>>16&0xff) +
-        151*(colLeft>>8&0xff) +
-        28*(colLeft&0xff);
-      lumRight = 77*(colRight>>16&0xff) +
-        151*(colRight>>8&0xff) +
-        28*(colRight&0xff);
-      lumUp = 77*(colUp>>16&0xff) +
-        151*(colUp>>8&0xff) +
-        28*(colUp&0xff);
-      lumDown = 77*(colDown>>16&0xff) +
-        151*(colDown>>8&0xff) +
-        28*(colDown&0xff);
-
-      if (lumLeft > currLum) {
-        colOut = colLeft;
-        currLum = lumLeft;
-      }
-      if (lumRight > currLum) {
-        colOut = colRight;
-        currLum = lumRight;
-      }
-      if (lumUp > currLum) {
-        colOut = colUp;
-        currLum = lumUp;
-      }
-      if (lumDown > currLum) {
-        colOut = colDown;
-        currLum = lumDown;
-      }
-      out[currIdx++]=colOut;
-    }
-  }
-  Filters._setPixels(pixels, out);
-};
-
-/**
- * increases the bright areas in an image
- * @private
- * @param  {Canvas} canvas
- *
- */
-Filters.erode = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
-  var currIdx = 0;
-  var maxIdx = pixels.length ? pixels.length/4 : 0;
-  var out = new Int32Array(maxIdx);
-  var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-  var idxRight, idxLeft, idxUp, idxDown;
-  var colRight, colLeft, colUp, colDown;
-  var lumRight, lumLeft, lumUp, lumDown;
-
-  while(currIdx < maxIdx) {
+  while (currIdx < maxIdx) {
     currRowIdx = currIdx;
     maxRowIdx = currIdx + canvas.width;
     while (currIdx < maxRowIdx) {
@@ -416,21 +321,113 @@ Filters.erode = function(canvas) {
       colRight = Filters._getARGB(pixels, idxRight);
 
       //compute luminance
-      currLum = 77*(colOrig>>16&0xff) +
-        151*(colOrig>>8&0xff) +
-        28*(colOrig&0xff);
-      lumLeft = 77*(colLeft>>16&0xff) +
-        151*(colLeft>>8&0xff) +
-        28*(colLeft&0xff);
-      lumRight = 77*(colRight>>16&0xff) +
-        151*(colRight>>8&0xff) +
-        28*(colRight&0xff);
-      lumUp = 77*(colUp>>16&0xff) +
-        151*(colUp>>8&0xff) +
-        28*(colUp&0xff);
-      lumDown = 77*(colDown>>16&0xff) +
-        151*(colDown>>8&0xff) +
-        28*(colDown&0xff);
+      currLum =
+        77 * ((colOrig >> 16) & 0xff) +
+        151 * ((colOrig >> 8) & 0xff) +
+        28 * (colOrig & 0xff);
+      lumLeft =
+        77 * ((colLeft >> 16) & 0xff) +
+        151 * ((colLeft >> 8) & 0xff) +
+        28 * (colLeft & 0xff);
+      lumRight =
+        77 * ((colRight >> 16) & 0xff) +
+        151 * ((colRight >> 8) & 0xff) +
+        28 * (colRight & 0xff);
+      lumUp =
+        77 * ((colUp >> 16) & 0xff) +
+        151 * ((colUp >> 8) & 0xff) +
+        28 * (colUp & 0xff);
+      lumDown =
+        77 * ((colDown >> 16) & 0xff) +
+        151 * ((colDown >> 8) & 0xff) +
+        28 * (colDown & 0xff);
+
+      if (lumLeft > currLum) {
+        colOut = colLeft;
+        currLum = lumLeft;
+      }
+      if (lumRight > currLum) {
+        colOut = colRight;
+        currLum = lumRight;
+      }
+      if (lumUp > currLum) {
+        colOut = colUp;
+        currLum = lumUp;
+      }
+      if (lumDown > currLum) {
+        colOut = colDown;
+        currLum = lumDown;
+      }
+      out[currIdx++] = colOut;
+    }
+  }
+  Filters._setPixels(pixels, out);
+};
+
+/**
+ * increases the bright areas in an image
+ * @private
+ * @param  {Canvas} canvas
+ *
+ */
+Filters.erode = function(canvas) {
+  var pixels = Filters._toPixels(canvas);
+  var currIdx = 0;
+  var maxIdx = pixels.length ? pixels.length / 4 : 0;
+  var out = new Int32Array(maxIdx);
+  var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+  var idxRight, idxLeft, idxUp, idxDown;
+  var colRight, colLeft, colUp, colDown;
+  var lumRight, lumLeft, lumUp, lumDown;
+
+  while (currIdx < maxIdx) {
+    currRowIdx = currIdx;
+    maxRowIdx = currIdx + canvas.width;
+    while (currIdx < maxRowIdx) {
+      colOrig = colOut = Filters._getARGB(pixels, currIdx);
+      idxLeft = currIdx - 1;
+      idxRight = currIdx + 1;
+      idxUp = currIdx - canvas.width;
+      idxDown = currIdx + canvas.width;
+
+      if (idxLeft < currRowIdx) {
+        idxLeft = currIdx;
+      }
+      if (idxRight >= maxRowIdx) {
+        idxRight = currIdx;
+      }
+      if (idxUp < 0) {
+        idxUp = 0;
+      }
+      if (idxDown >= maxIdx) {
+        idxDown = currIdx;
+      }
+      colUp = Filters._getARGB(pixels, idxUp);
+      colLeft = Filters._getARGB(pixels, idxLeft);
+      colDown = Filters._getARGB(pixels, idxDown);
+      colRight = Filters._getARGB(pixels, idxRight);
+
+      //compute luminance
+      currLum =
+        77 * ((colOrig >> 16) & 0xff) +
+        151 * ((colOrig >> 8) & 0xff) +
+        28 * (colOrig & 0xff);
+      lumLeft =
+        77 * ((colLeft >> 16) & 0xff) +
+        151 * ((colLeft >> 8) & 0xff) +
+        28 * (colLeft & 0xff);
+      lumRight =
+        77 * ((colRight >> 16) & 0xff) +
+        151 * ((colRight >> 8) & 0xff) +
+        28 * (colRight & 0xff);
+      lumUp =
+        77 * ((colUp >> 16) & 0xff) +
+        151 * ((colUp >> 8) & 0xff) +
+        28 * (colUp & 0xff);
+      lumDown =
+        77 * ((colDown >> 16) & 0xff) +
+        151 * ((colDown >> 8) & 0xff) +
+        28 * (colDown & 0xff);
 
       if (lumLeft < currLum) {
         colOut = colLeft;
@@ -449,7 +446,7 @@ Filters.erode = function(canvas) {
         currLum = lumDown;
       }
 
-      out[currIdx++]=colOut;
+      out[currIdx++] = colOut;
     }
   }
   Filters._setPixels(pixels, out);
@@ -474,37 +471,36 @@ var blurMult;
  * [toxi 050728]
  */
 function buildBlurKernel(r) {
-  var radius = (r * 3.5)|0;
-  radius = (radius < 1) ? 1 : ((radius < 248) ? radius : 248);
+  var radius = (r * 3.5) | 0;
+  radius = radius < 1 ? 1 : radius < 248 ? radius : 248;
 
   if (blurRadius !== radius) {
     blurRadius = radius;
-    blurKernelSize = 1 + blurRadius<<1;
+    blurKernelSize = (1 + blurRadius) << 1;
     blurKernel = new Int32Array(blurKernelSize);
     blurMult = new Array(blurKernelSize);
-    for(var l = 0; l < blurKernelSize; l++){
+    for (var l = 0; l < blurKernelSize; l++) {
       blurMult[l] = new Int32Array(256);
     }
 
-    var bk,bki;
-    var bm,bmi;
+    var bk, bki;
+    var bm, bmi;
 
     for (var i = 1, radiusi = radius - 1; i < radius; i++) {
-      blurKernel[radius+i] = blurKernel[radiusi] = bki = radiusi * radiusi;
-      bm = blurMult[radius+i];
+      blurKernel[radius + i] = blurKernel[radiusi] = bki = radiusi * radiusi;
+      bm = blurMult[radius + i];
       bmi = blurMult[radiusi--];
-      for (var j = 0; j < 256; j++){
+      for (var j = 0; j < 256; j++) {
         bm[j] = bmi[j] = bki * j;
       }
     }
     bk = blurKernel[radius] = radius * radius;
     bm = blurMult[radius];
 
-    for (var k = 0; k < 256; k++){
+    for (var k = 0; k < 256; k++) {
       bm[k] = bk * k;
     }
   }
-
 }
 
 // Port of https://github.com/processing/processing/blob/
@@ -592,7 +588,11 @@ function blurARGB(canvas, radius) {
         ri++;
         read += width;
       }
-      argb[x + yi] = (ca/sum)<<24 | (cr/sum)<<16 | (cg/sum)<<8 | (cb/sum);
+      argb[x + yi] =
+        ((ca / sum) << 24) |
+        ((cr / sum) << 16) |
+        ((cg / sum) << 8) |
+        (cb / sum);
     }
     yi += width;
     ymi += width;
@@ -601,9 +601,8 @@ function blurARGB(canvas, radius) {
   Filters._setPixels(pixels, argb);
 }
 
-Filters.blur = function(canvas, radius){
+Filters.blur = function(canvas, radius) {
   blurARGB(canvas, radius);
 };
-
 
 module.exports = Filters;

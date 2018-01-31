@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var p5 = require('./core');
 var constants = require('./constants');
 
@@ -23,29 +25,13 @@ var constants = require('./constants');
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-
   var r = renderer || constants.P2D;
 
   this.canvas = document.createElement('canvas');
-  var node = this._userNode || document.body;
+  var node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
   p5.Element.call(this, this.canvas, pInst, false);
-  this._styles = [];
-  this.width = w;
-  this.height = h;
-  this._pixelDensity = pInst._pixelDensity;
-
-  if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(this.canvas, this, false);
-  } else {
-    this._renderer = new p5.Renderer2D(this.canvas, this, false);
-  }
-
-  this._renderer.resize(w, h);
-  this._renderer._applyDefaults();
-
-  pInst._elements.push(this);
 
   // bind methods and props of p5 to the new object
   for (var p in p5.prototype) {
@@ -57,7 +43,23 @@ p5.Graphics = function(w, h, renderer, pInst) {
       }
     }
   }
-  this.name = 'p5.Graphics';   // for friendly debugger system
+
+  p5.prototype._initializeInstanceVariables.apply(this);
+  this.width = w;
+  this.height = h;
+  this._pixelDensity = pInst._pixelDensity;
+
+  if (r === constants.WEBGL) {
+    this._renderer = new p5.RendererGL(this.canvas, this, false);
+  } else {
+    this._renderer = new p5.Renderer2D(this.canvas, this, false);
+  }
+  pInst._elements.push(this);
+
+  this._renderer.resize(w, h);
+  this._renderer._applyDefaults();
+
+  this.name = 'p5.Graphics'; // for friendly debugger system
   return this;
 };
 

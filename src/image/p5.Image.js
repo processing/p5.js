@@ -37,7 +37,6 @@ var Filters = require('./filters');
  * the image to make sure that the pixel data is properly loaded.
  * @example
  * <div><code>
- *
  * function setup() {
  *   var img = createImage(100, 100); // same as new p5.Image(100, 100);
  *   img.loadPixels();
@@ -46,16 +45,17 @@ var Filters = require('./filters');
  *
  *   // helper for writing color to array
  *   function writeColor(image, x, y, red, green, blue, alpha) {
- *     var index = (x + (y * width)) * 4;
- *     image.pixels[index]   = red;
- *     image.pixels[index+1] = green;
- *     image.pixels[index+2] = blue;
- *     image.pixels[index+3] = alpha;
+ *     var index = (x + y * width) * 4;
+ *     image.pixels[index] = red;
+ *     image.pixels[index + 1] = green;
+ *     image.pixels[index + 2] = blue;
+ *     image.pixels[index + 3] = alpha;
  *   }
  *
+ *   var x, y;
  *   // fill with random colors
- *   for (var y = 0; y < img.height; y++) {
- *     for (var x = 0; x < img.width; x++) {
+ *   for (y = 0; y < img.height; y++) {
+ *     for (x = 0; x < img.width; x++) {
  *       var red = random(255);
  *       var green = random(255);
  *       var blue = random(255);
@@ -65,14 +65,14 @@ var Filters = require('./filters');
  *   }
  *
  *   // draw a red line
- *   for (var x = 0; x < img.width; x++) {
- *     var y = 0;
+ *   y = 0;
+ *   for (x = 0; x < img.width; x++) {
  *     writeColor(img, x, y, 255, 0, 0, 255);
  *   }
  *
  *   // draw a green line
- *   for (var x = 0; x < img.width; x++) {
- *     var y = img.height - 1;
+ *   y = img.height - 1;
+ *   for (x = 0; x < img.width; x++) {
  *     writeColor(img, x, y, 0, 255, 0, 255);
  *   }
  *
@@ -87,7 +87,7 @@ var Filters = require('./filters');
  * @param {Number} width
  * @param {Number} height
  */
-p5.Image = function(width, height){
+p5.Image = function(width, height) {
   /**
    * Image width.
    * @property {Number} width
@@ -96,16 +96,16 @@ p5.Image = function(width, height){
    * <div><code>
    * var img;
    * function preload() {
-   *   img = loadImage("assets/rockies.jpg");
+   *   img = loadImage('assets/rockies.jpg');
    * }
    *
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
-   *   for (var i=0; i < img.width; i++) {
-   *     var c = img.get(i, img.height/2);
+   *   for (var i = 0; i < img.width; i++) {
+   *     var c = img.get(i, img.height / 2);
    *     stroke(c);
-   *     line(i, height/2, i, height);
+   *     line(i, height / 2, i, height);
    *   }
    * }
    * </code></div>
@@ -123,16 +123,16 @@ p5.Image = function(width, height){
    * <div><code>
    * var img;
    * function preload() {
-   *   img = loadImage("assets/rockies.jpg");
+   *   img = loadImage('assets/rockies.jpg');
    * }
    *
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
-   *   for (var i=0; i < img.height; i++) {
-   *     var c = img.get(img.width/2, i);
+   *   for (var i = 0; i < img.height; i++) {
+   *     var c = img.get(img.width / 2, i);
    *     stroke(c);
-   *     line(0, i, width/2, i);
+   *     line(0, i, width / 2, i);
    *   }
    * }
    * </code></div>
@@ -184,10 +184,10 @@ p5.Image = function(width, height){
    * @example
    * <div>
    * <code>
-   * img = createImage(66, 66);
+   * var img = createImage(66, 66);
    * img.loadPixels();
-   * for (i = 0; i < img.width; i++) {
-   *   for (j = 0; j < img.height; j++) {
+   * for (var i = 0; i < img.width; i++) {
+   *   for (var j = 0; j < img.height; j++) {
    *     img.set(i, j, color(0, 90, 102));
    *   }
    * }
@@ -198,13 +198,13 @@ p5.Image = function(width, height){
    * <div>
    * <code>
    * var pink = color(255, 102, 204);
-   * img = createImage(66, 66);
+   * var img = createImage(66, 66);
    * img.loadPixels();
-   * for (var i = 0; i < 4*(width*height/2); i+=4) {
+   * for (var i = 0; i < 4 * (width * height / 2); i += 4) {
    *   img.pixels[i] = red(pink);
-   *   img.pixels[i+1] = green(pink);
-   *   img.pixels[i+2] = blue(pink);
-   *   img.pixels[i+3] = alpha(pink);
+   *   img.pixels[i + 1] = green(pink);
+   *   img.pixels[i + 2] = blue(pink);
+   *   img.pixels[i + 3] = alpha(pink);
    * }
    * img.updatePixels();
    * image(img, 17, 17);
@@ -217,14 +217,14 @@ p5.Image = function(width, height){
    *
    */
   this.pixels = [];
-  this.name = 'p5.Image';   // for friendly debugger system
+  this.name = 'p5.Image'; // for friendly debugger system
 };
 
 /**
  * Helper fxn for sharing pixel methods
  *
  */
-p5.Image.prototype._setProperty = function (prop, value) {
+p5.Image.prototype._setProperty = function(prop, value) {
   this[prop] = value;
   this.setModified(true);
 };
@@ -239,14 +239,14 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * var halfImage;
  *
  * function preload() {
- *   myImage = loadImage("assets/rockies.jpg");
+ *   myImage = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   myImage.loadPixels();
- *   halfImage = 4 * width * height/2;
- *   for(var i = 0; i < halfImage; i++){
- *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   halfImage = 4 * width * height / 2;
+ *   for (var i = 0; i < halfImage; i++) {
+ *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
  *   myImage.updatePixels();
  * }
@@ -256,11 +256,11 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * }
  * </code></div>
  *
-   * @alt
-   * 2 images of rocky mountains vertically stacked
-   *
+ * @alt
+ * 2 images of rocky mountains vertically stacked
+ *
  */
-p5.Image.prototype.loadPixels = function(){
+p5.Image.prototype.loadPixels = function() {
   p5.Renderer2D.prototype.loadPixels.call(this);
   this.setModified(true);
 };
@@ -284,14 +284,14 @@ p5.Image.prototype.loadPixels = function(){
  * var halfImage;
  *
  * function preload() {
- *   myImage = loadImage("assets/rockies.jpg");
+ *   myImage = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   myImage.loadPixels();
- *   halfImage = 4 * width * height/2;
- *   for(var i = 0; i < halfImage; i++){
- *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   halfImage = 4 * width * height / 2;
+ *   for (var i = 0; i < halfImage; i++) {
+ *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
  *   myImage.updatePixels();
  * }
@@ -308,7 +308,7 @@ p5.Image.prototype.loadPixels = function(){
 /**
  * @method updatePixels
  */
-p5.Image.prototype.updatePixels = function(x, y, w, h){
+p5.Image.prototype.updatePixels = function(x, y, w, h) {
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
   this.setModified(true);
 };
@@ -336,7 +336,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * var c;
  *
  * function preload() {
- *   myImage = loadImage("assets/rockies.jpg");
+ *   myImage = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
@@ -354,7 +354,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * image of rocky mountains with 50x50 green rect in front
  *
  */
-p5.Image.prototype.get = function(x, y, w, h){
+p5.Image.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
 };
 
@@ -369,16 +369,16 @@ p5.Image.prototype.get = function(x, y, w, h){
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Array|Object}   a grayscale value | pixel array |
+ * @param {Number|Number[]|Object}   a grayscale value | pixel array |
  *                                a p5.Color | image to copy
  * @example
  * <div>
  * <code>
- * img = createImage(66, 66);
+ * var img = createImage(66, 66);
  * img.loadPixels();
- * for (i = 0; i < img.width; i++) {
- *   for (j = 0; j < img.height; j++) {
- *     img.set(i, j, color(0, 90, 102, i % img.width * 2));
+ * for (var i = 0; i < img.width; i++) {
+ *   for (var j = 0; j < img.height; j++) {
+ *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
  *   }
  * }
  * img.updatePixels();
@@ -391,7 +391,7 @@ p5.Image.prototype.get = function(x, y, w, h){
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
  *
  */
-p5.Image.prototype.set = function(x, y, imgOrCol){
+p5.Image.prototype.set = function(x, y, imgOrCol) {
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
   this.setModified(true);
 };
@@ -409,8 +409,8 @@ p5.Image.prototype.set = function(x, y, imgOrCol){
  * <div><code>
  * var img;
  *
- * function setup() {
- *   img = loadImage("assets/rockies.jpg");
+ * function preload() {
+ *   img = loadImage('assets/rockies.jpg');
  * }
 
  * function draw() {
@@ -426,8 +426,7 @@ p5.Image.prototype.set = function(x, y, imgOrCol){
  * image of rocky mountains. zoomed in
  *
  */
-p5.Image.prototype.resize = function(width, height){
-
+p5.Image.prototype.resize = function(width, height) {
   // Copy contents to a temporary canvas, resize the original
   // and then copy back.
   //
@@ -454,12 +453,12 @@ p5.Image.prototype.resize = function(width, height){
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
+  // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
     0, 0, this.canvas.width, this.canvas.height,
     0, 0, tempCanvas.width, tempCanvas.height
   );
-
 
   // Resize the original canvas, which will clear its contents
   this.canvas.width = this.width = width;
@@ -467,13 +466,14 @@ p5.Image.prototype.resize = function(width, height){
 
   //Copy the image back
 
+  // prettier-ignore
   this.drawingContext.drawImage(
     tempCanvas,
     0, 0, width, height,
     0, 0, width, height
   );
 
-  if(this.pixels.length > 0){
+  if (this.pixels.length > 0) {
     this.loadPixels();
   }
 
@@ -488,7 +488,7 @@ p5.Image.prototype.resize = function(width, height){
  * target region.
  *
  * @method copy
- * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
+ * @param  {p5.Image|p5.Element} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -505,13 +505,13 @@ p5.Image.prototype.resize = function(width, height){
  * var y;
  *
  * function preload() {
- *   photo = loadImage("assets/rockies.jpg");
- *   bricks = loadImage("assets/bricks.jpg");
+ *   photo = loadImage('assets/rockies.jpg');
+ *   bricks = loadImage('assets/bricks.jpg');
  * }
  *
  * function setup() {
- *   x = bricks.width/2;
- *   y = bricks.height/2;
+ *   x = bricks.width / 2;
+ *   y = bricks.height / 2;
  *   photo.copy(bricks, 0, 0, x, y, 0, 0, x, y);
  *   image(photo, 0, 0);
  * }
@@ -521,8 +521,43 @@ p5.Image.prototype.resize = function(width, height){
  * image of rocky mountains and smaller image on top of bricks at top left
  *
  */
-p5.Image.prototype.copy = function () {
-  p5.prototype.copy.apply(this, arguments);
+/**
+ * @method copy
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ */
+p5.Image.prototype.copy = function() {
+  var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  if (arguments.length === 9) {
+    srcImage = arguments[0];
+    sx = arguments[1];
+    sy = arguments[2];
+    sw = arguments[3];
+    sh = arguments[4];
+    dx = arguments[5];
+    dy = arguments[6];
+    dw = arguments[7];
+    dh = arguments[8];
+  } else if (arguments.length === 8) {
+    srcImage = this;
+    sx = arguments[0];
+    sy = arguments[1];
+    sw = arguments[2];
+    sh = arguments[3];
+    dx = arguments[4];
+    dy = arguments[5];
+    dw = arguments[6];
+    dh = arguments[7];
+  } else {
+    throw new Error('Signature not supported');
+  }
+  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 };
 
 /**
@@ -536,8 +571,8 @@ p5.Image.prototype.copy = function () {
  * <div><code>
  * var photo, maskImage;
  * function preload() {
- *   photo = loadImage("assets/rockies.jpg");
- *   maskImage = loadImage("assets/mask2.png");
+ *   photo = loadImage('assets/rockies.jpg');
+ *   maskImage = loadImage('assets/mask2.png');
  * }
  *
  * function setup() {
@@ -560,7 +595,7 @@ p5.Image.prototype.copy = function () {
 //       moment this method does not match native processings original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
-  if(p5Image === undefined){
+  if (p5Image === undefined) {
     p5Image = this;
   }
   var currBlend = this.drawingContext.globalCompositeOperation;
@@ -574,8 +609,8 @@ p5.Image.prototype.mask = function(p5Image) {
     p5Image,
     0,
     0,
-    scaleFactor*p5Image.width,
-    scaleFactor*p5Image.height,
+    scaleFactor * p5Image.width,
+    scaleFactor * p5Image.height,
     0,
     0,
     this.width,
@@ -592,24 +627,26 @@ p5.Image.prototype.mask = function(p5Image) {
  * Applies an image filter to a p5.Image
  *
  * @method filter
- * @param {String} operation one of threshold, gray, invert, posterize, opaque
- *                           erode, dilate and blur. See Filters.js for docs on
- *                           each available filter
- * @param {Number|undefined} value
+ * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                See Filters.js for docs on
+ *                                each available filter
+ * @param  {Number} [filterParam] an optional parameter unique
+ *                                to each filter, see above
  * @example
  * <div><code>
  * var photo1;
  * var photo2;
  *
  * function preload() {
- *   photo1 = loadImage("assets/rockies.jpg");
- *   photo2 = loadImage("assets/rockies.jpg");
+ *   photo1 = loadImage('assets/rockies.jpg');
+ *   photo2 = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
- *   photo2.filter("gray");
+ *   photo2.filter('gray');
  *   image(photo1, 0, 0);
- *   image(photo2, width/2, 0);
+ *   image(photo2, width / 2, 0);
  * }
  * </code></div>
  *
@@ -627,7 +664,7 @@ p5.Image.prototype.filter = function(operation, value) {
  * blend mode to do the operation.
  *
  * @method blend
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -636,7 +673,10 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
- * @param  {Integer} blendMode the blend mode
+ * @param  {Constant} blendMode the blend mode. either
+ *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+ *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+ *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
  *
  * Available blend modes are: normal | multiply | screen | overlay |
  *            darken | lighten | color-dodge | color-burn | hard-light |
@@ -651,8 +691,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * var bricks;
  *
  * function preload() {
- *   mountains = loadImage("assets/rockies.jpg");
- *   bricks = loadImage("assets/bricks_third.jpg");
+ *   mountains = loadImage('assets/rockies.jpg');
+ *   bricks = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -666,8 +706,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * var bricks;
  *
  * function preload() {
- *   mountains = loadImage("assets/rockies.jpg");
- *   bricks = loadImage("assets/bricks_third.jpg");
+ *   mountains = loadImage('assets/rockies.jpg');
+ *   bricks = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -681,8 +721,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * var bricks;
  *
  * function preload() {
- *   mountains = loadImage("assets/rockies.jpg");
- *   bricks = loadImage("assets/bricks_third.jpg");
+ *   mountains = loadImage('assets/rockies.jpg');
+ *   bricks = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -698,6 +738,18 @@ p5.Image.prototype.filter = function(operation, value) {
  * image of rockies. Brickwall images on left and right. Right translucent
  *
  */
+/**
+ * @method blend
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ * @param  {Constant} blendMode
+ */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);
   this.setModified(true);
@@ -712,7 +764,7 @@ p5.Image.prototype.blend = function() {
  * modified.
  * @private
  */
-p5.Image.prototype.setModified = function (val) {
+p5.Image.prototype.setModified = function(val) {
   this._modified = val; //enforce boolean?
 };
 
@@ -725,7 +777,7 @@ p5.Image.prototype.setModified = function (val) {
  * @return {boolean} a boolean indicating whether or not the
  * image has been updated or modified since last texture upload.
  */
-p5.Image.prototype.isModified = function () {
+p5.Image.prototype.isModified = function() {
   return this._modified;
 };
 
@@ -742,7 +794,7 @@ p5.Image.prototype.isModified = function () {
  * var photo;
  *
  * function preload() {
- *   photo = loadImage("assets/rockies.jpg");
+ *   photo = loadImage('assets/rockies.jpg');
  * }
  *
  * function draw() {
@@ -750,8 +802,8 @@ p5.Image.prototype.isModified = function () {
  * }
  *
  * function keyTyped() {
- *   if (key == 's') {
- *     photo.save("photo", "png");
+ *   if (key === 's') {
+ *     photo.save('photo', 'png');
  *   }
  * }
  * </code></div>
@@ -761,34 +813,7 @@ p5.Image.prototype.isModified = function () {
  *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  var mimeType;
-  if (!extension) {
-    extension = 'png';
-    mimeType = 'image/png';
-  }
-  else {
-    // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-    switch(extension.toLowerCase()){
-      case 'png':
-        mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;
-      default:
-        mimeType = 'image/png';
-        break;
-    }
-  }
-  var downloadMime = 'image/octet-stream';
-  var imageData = this.canvas.toDataURL(mimeType);
-  imageData = imageData.replace(mimeType, downloadMime);
-
-  //Make the browser download the file
-  p5.prototype.downloadFile(imageData, filename, extension);
+  p5.prototype.saveCanvas(this.canvas, filename, extension);
 };
 
 module.exports = p5.Image;

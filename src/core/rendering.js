@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var p5 = require('./core');
 var constants = require('./constants');
 require('./p5.Graphics');
@@ -15,7 +17,7 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
  * Calling createCanvas more than once in a sketch will result in very
- * unpredicable behavior. If you want more than one drawing canvas
+ * unpredictable behavior. If you want more than one drawing canvas
  * you could use createGraphics (hidden by default but it can be shown).
  * <br><br>
  * The system variables width and height are set by the parameters passed
@@ -48,31 +50,34 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  */
 
 p5.prototype.createCanvas = function(w, h, renderer) {
+  p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
   var r = renderer || constants.P2D;
   var c;
 
-  if(r === constants.WEBGL){
+  if (r === constants.WEBGL) {
     c = document.getElementById(defaultId);
-    if(c) { //if defaultCanvas already exists
+    if (c) {
+      //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      var thisRenderer = this._renderer;
       this._elements = this._elements.filter(function(e) {
-        return e !== this._renderer;
+        return e !== thisRenderer;
       });
     }
     c = document.createElement('canvas');
     c.id = defaultId;
-  }
-  else {
+  } else {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
       var i = 0;
-      while (document.getElementById('defaultCanvas'+i)) {
+      while (document.getElementById('defaultCanvas' + i)) {
         i++;
       }
-      defaultId = 'defaultCanvas'+i;
+      defaultId = 'defaultCanvas' + i;
       c.id = defaultId;
-    } else { // resize the default canvas if new one is created
+    } else {
+      // resize the default canvas if new one is created
       c = this.canvas;
     }
   }
@@ -80,24 +85,23 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // set to invisible if still in setup (to prevent flashing with manipulate)
   if (!this._setupDone) {
     c.dataset.hidden = true; // tag to show later
-    c.style.visibility='hidden';
+    c.style.visibility = 'hidden';
   }
 
-  if (this._userNode) { // user input node case
+  if (this._userNode) {
+    // user input node case
     this._userNode.appendChild(c);
   } else {
     document.body.appendChild(c);
   }
-
 
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
     this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._elements.push(this._renderer);
-  }
-  //P2D mode
-  else {
+  } else {
+    //P2D mode
     if (!this._defaultGraphicsCreated) {
       this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
       this._defaultGraphicsCreated = true;
@@ -124,7 +128,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * }
  *
  * function draw() {
- *  background(0, 100, 200);
+ *   background(0, 100, 200);
  * }
  *
  * function windowResized() {
@@ -136,9 +140,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * No image displayed.
  *
  */
-p5.prototype.resizeCanvas = function (w, h, noRedraw) {
+p5.prototype.resizeCanvas = function(w, h, noRedraw) {
+  p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
-
     // save canvas properties
     var props = {};
     for (var key in this.drawingContext) {
@@ -150,14 +154,17 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     this._renderer.resize(w, h);
     // reset canvas properties
     for (var savedKey in props) {
-      this.drawingContext[savedKey] = props[savedKey];
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
     }
     if (!noRedraw) {
       this.redraw();
     }
   }
 };
-
 
 /**
  * Removes the default canvas for a p5 sketch that doesn't
@@ -205,7 +212,7 @@ p5.prototype.noCanvas = function() {
  *   background(200);
  *   pg.background(100);
  *   pg.noStroke();
- *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
+ *   pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
  *   image(pg, 50, 50);
  *   image(pg, 0, 0, 50, 50);
  * }
@@ -216,7 +223,8 @@ p5.prototype.noCanvas = function() {
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
  *
  */
-p5.prototype.createGraphics = function(w, h, renderer){
+p5.prototype.createGraphics = function(w, h, renderer) {
+  p5._validateParameters('createGraphics', arguments);
   return new p5.Graphics(w, h, renderer, this);
 };
 
@@ -286,17 +294,27 @@ p5.prototype.createGraphics = function(w, h, renderer){
  *
  */
 p5.prototype.blendMode = function(mode) {
-  if (mode === constants.BLEND || mode === constants.DARKEST ||
-    mode === constants.LIGHTEST || mode === constants.DIFFERENCE ||
-    mode === constants.MULTIPLY || mode === constants.EXCLUSION ||
-    mode === constants.SCREEN || mode === constants.REPLACE ||
-    mode === constants.OVERLAY || mode === constants.HARD_LIGHT ||
-    mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
-    mode === constants.BURN || mode === constants.ADD ||
-    mode === constants.NORMAL) {
+  p5._validateParameters('blendMode', arguments);
+  if (
+    mode === constants.BLEND ||
+    mode === constants.DARKEST ||
+    mode === constants.LIGHTEST ||
+    mode === constants.DIFFERENCE ||
+    mode === constants.MULTIPLY ||
+    mode === constants.EXCLUSION ||
+    mode === constants.SCREEN ||
+    mode === constants.REPLACE ||
+    mode === constants.OVERLAY ||
+    mode === constants.HARD_LIGHT ||
+    mode === constants.SOFT_LIGHT ||
+    mode === constants.DODGE ||
+    mode === constants.BURN ||
+    mode === constants.ADD ||
+    mode === constants.NORMAL
+  ) {
     this._renderer.blendMode(mode);
   } else {
-    throw new Error('Mode '+mode+' not recognized.');
+    throw new Error('Mode ' + mode + ' not recognized.');
   }
 };
 

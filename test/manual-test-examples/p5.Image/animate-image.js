@@ -1,19 +1,21 @@
 var runningCat;
 var savanna;
 
+function preload() {
+  savanna = loadImage('african-savanna.png');
+  runningCat = loadImage('running-cat.png');
+}
+
 function setup() {
   frameRate(15);
   createCanvas(800, 800);
-
-  savanna = loadImage('african-savanna.png');
-  runningCat = loadImage('running-cat.png');
 }
 
 var sX = 0, sY = 0;
 
 function draw() {
   clear();
-  image(savanna);
+  image(savanna, 0, 0);
 
   // Animate running cat
   //image(source,canvasX,canvasY,canvasWidth,canvasHeight,sourceX,sourceY,sourceWidth,sourceHeight);

@@ -31,6 +31,30 @@
       <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.sound.js"&gt;&lt;/script&gt;</code></pre>
     </p>
   <% } %>
+
+  <% if (item.constRefs) { %>
+    <p>Used by:
+  <%
+      var refs = item.constRefs;
+      for (var i = 0; i < refs.length; i ++) {
+        var ref = refs[i];
+        var name = ref;
+        if (name.substr(0, 3) === 'p5.') {
+          name = name.substr(3);
+        }
+	if (i !== 0) {
+          if (i == refs.length - 1) {
+            %> and <%
+          } else {
+            %>, <%
+          }
+        }
+        %><a href="./#/<%= ref.replace('.', '/') %>"><%= name %>()</a><%
+      }
+  %>
+    </p>
+  <% } %>
+  
 </div>
 
 <div>
@@ -58,11 +82,7 @@
 <% } %>
 
 <% if (item.final) { %>
-<span class="flag final">final</span>
-<% } %>
-
-<% if (item.static) { %>
-<span class="flag static">static</span>
+<span class="flag final">constant</span>
 <% } %>
 
 <% if (item.chainable) { %>
