@@ -78,8 +78,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     var planeGeom = new p5.Geometry(detailX, detailY, _plane);
     planeGeom.computeFaces().computeNormals();
     if (detailX <= 1 && detailY <= 1) {
-      planeGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(planeGeom);
+      planeGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw stroke on plane objects with more' +
@@ -190,8 +189,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     var boxGeom = new p5.Geometry(detailX, detailY, _box);
     boxGeom.computeNormals();
     if (detailX <= 4 && detailY <= 4) {
-      boxGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(boxGeom);
+      boxGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw stroke on box objects with more' +
@@ -385,8 +383,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
-      cylinderGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(cylinderGeom);
+      cylinderGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw stroke on cylinder objects with more' +
@@ -460,8 +457,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
     //for cones we need to average Normals
     coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
-      coneGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(coneGeom);
+      coneGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw stroke on cone objects with more' +
@@ -549,8 +545,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     var ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
     ellipsoidGeom.computeFaces();
     if (detailX <= 24 && detailY <= 24) {
-      ellipsoidGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(ellipsoidGeom);
+      ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw stroke on ellipsoids with more' +
@@ -645,8 +640,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
-      torusGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(torusGeom);
+      torusGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log(
         'Cannot draw strokes on torus object with more' +
@@ -691,8 +685,7 @@ p5.RendererGL.prototype.triangle = function(args) {
       this.uvs = [0, 0, 0, 1, 1, 1];
     };
     var triGeom = new p5.Geometry(1, 1, _triangle);
-    triGeom._makeTriangleEdges();
-    this._edgesToVertices(triGeom);
+    triGeom._makeTriangleEdges()._edgesToVertices();
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
@@ -753,8 +746,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
     var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
     ellipseGeom.computeNormals();
     if (detailX <= 50) {
-      ellipseGeom._makeTriangleEdges();
-      this._edgesToVertices(ellipseGeom);
+      ellipseGeom._makeTriangleEdges()._edgesToVertices();
     } else {
       console.log('Cannot stroke ellipse with more than 50 detailX');
     }
@@ -804,8 +796,8 @@ p5.RendererGL.prototype.rect = function(args) {
     rectGeom
       .computeFaces()
       .computeNormals()
-      ._makeTriangleEdges();
-    this._edgesToVertices(rectGeom);
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this.createBuffers(gId, rectGeom);
   }
 
@@ -853,8 +845,10 @@ p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
     var quadGeom = new p5.Geometry(2, 2, _quad);
-    quadGeom.computeNormals()._makeTriangleEdges();
-    this._edgesToVertices(quadGeom);
+    quadGeom
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     quadGeom.faces = [[0, 1, 2], [2, 3, 0]];
     this.createBuffers(gId, quadGeom);
   }

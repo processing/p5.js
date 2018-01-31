@@ -128,7 +128,7 @@ p5.RendererGL.prototype.endShape = function(
       ]);
     }
 
-    this._edgesToVertices(this.immediateMode);
+    p5.Geometry.prototype._edgesToVertices.call(this.immediateMode);
     this._drawStrokeImmediateMode();
   }
   if (this._doFill) {
