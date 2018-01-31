@@ -442,7 +442,8 @@ p5.prototype.cylinder = function(
     bottomCap = true;
   }
 
-  var gId = 'cylinder|' + detailX + '|' + detailY;
+  var gId =
+    'cylinder|' + detailX + '|' + detailY + '|' + bottomCap + '|' + topCap;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
@@ -520,7 +521,8 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     cap = true;
   }
 
-  var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
+  var gId =
+    'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY + '|' + cap;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
