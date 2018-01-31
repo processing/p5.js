@@ -86,9 +86,8 @@
 
 
         <footer>
-          <p>p5.js was created by <a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a> and is developed by a community of collaborators,
-          with support from the <a href="https://processing.org/foundation/" target="_blank">Processing Foundation</a>
-          and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. Identity and graphic design by <a href="http://jereljohnson.com/" target="_blank">Jerel Johnson</a>.
+          <p><span id="footer1">p5.js was created by </span><a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a><span id="footer2"> and is developed by a community of collaborators, with support from the </span><a href="https://processing.org/foundation/" target="_blank">Processing Foundation</a><span id="footer3">
+          and </span><a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. <span id="footer4">Identity and graphic design by </span><a href="http://jereljohnson.com/" target="_blank">Jerel Johnson</a>.
           <a href="https://p5js.org/copyright.html">&copy; Info.</a></p>
         </footer>
       </div><!-- end column-span -->
@@ -130,7 +129,13 @@
 
     function updateLanguage() {
       if (translations) {
+        // reference title
         $('h1').html(translations['h1']);
+        // reference footer
+        $('#footer1').html(translations['footer1']);
+        $('#footer2').html(translations['footer2']);
+        $('#footer3').html(translations['footer3']);
+        $('#footer4').html(translations['footer4']);
         $('.group-name, .subgroup-name').each(function() {
           $(this).text(translations[$(this).text()]);
         });
