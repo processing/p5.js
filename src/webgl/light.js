@@ -231,7 +231,12 @@ p5.RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
  */
 p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   //@TODO: check parameters number
-  var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
+  var color;
+  if (v1 instanceof p5.Color) {
+    color = v1;
+  } else {
+    color = this._pInst.color(v1, v2, v3);
+  }
 
   var _x, _y, _z;
   var v = arguments[arguments.length - 1];
@@ -326,7 +331,12 @@ p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  */
 p5.RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   //@TODO: check parameters number
-  var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
+  var color;
+  if (v1 instanceof p5.Color) {
+    color = v1;
+  } else {
+    color = this._pInst.color(v1, v2, v3);
+  }
 
   var _x, _y, _z;
   var v = arguments[arguments.length - 1];
