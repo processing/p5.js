@@ -10,23 +10,21 @@
 var ball1;
 var ball2;
 
-function setup(){
-  createCanvas(400,400);
+function setup() {
+  createCanvas(400, 400);
   smooth();
-  
+
   // Initialize balls
   ball1 = new Ball(64);
   ball2 = new Ball(32);
-};
+}
 
-function draw(){
+function draw() {
   background(255);
-  
+
   // Move and display balls
   ball1.move();
   ball2.move();
   ball1.display();
   ball2.display();
-};
-
-
+}

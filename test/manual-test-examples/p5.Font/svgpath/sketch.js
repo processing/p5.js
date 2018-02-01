@@ -1,9 +1,7 @@
 function setup() {
-
   var canvas = createCanvas(200, 150).canvas;
 
   loadFont('../SourceSansPro-Regular.otf', function(font) {
-
     // render text with opentype font
     textAlign(RIGHT);
     textFont(font, 32);
@@ -25,7 +23,6 @@ function setup() {
 
     // hit detection for canvas Path2D (cursor changes)
     canvas.onmousemove = function(e) {
-
       var context = e.target.getContext('2d');
       var coordX = e.offsetX;
       var coordY = e.offsetY;
@@ -38,6 +35,6 @@ function setup() {
 
       // Reset the pointer to the default
       e.target.style.cursor = 'default';
-    }
+    };
   });
 }

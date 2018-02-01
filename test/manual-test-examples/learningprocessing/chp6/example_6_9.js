@@ -6,11 +6,11 @@
 
 // Example 6-9: Simple while loop with interactivity
 
-function setup(){
-  createCanvas(255,255);
-};
+function setup() {
+  createCanvas(255, 255);
+}
 
-function draw(){
+function draw() {
   background(0);
 
   // Start with i as 0
@@ -20,11 +20,11 @@ function draw(){
   while (i < width) {
     noStroke();
     // The distance between the current rectangle and the mouse is equal to the absolute value of the difference between i and mouseX.
-    var distance = abs(mouseX - i); 
+    var distance = abs(mouseX - i);
     // That distance is used to fill the color of a rectangle at horizontal location i.
     fill(distance);
-    rect(i,0,10,height);
+    rect(i, 0, 10, height);
     // Increase i by 10
     i += 10;
   }
-};
+}

@@ -122,6 +122,10 @@ module.exports = function(grunt) {
       fix: {
         // src: is calculated below...
         options: {
+          rules: {
+            'no-undef': 0,
+            'no-unused-vars': 0
+          },
           fix: true
         }
       },
@@ -136,6 +140,15 @@ module.exports = function(grunt) {
           'test/reporter/**/*.js',
           'test/unit/**/*.js'
         ]
+      },
+      examples: {
+        options: {
+          rules: {
+            'no-undef': 0,
+            'no-unused-vars': 0
+          }
+        },
+        src: ['test/manual-test-examples/**/*.js']
       }
     },
 
@@ -430,6 +443,7 @@ module.exports = function(grunt) {
     'eslint:build',
     'eslint:source',
     'eslint:test',
+    'eslint:examples',
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);

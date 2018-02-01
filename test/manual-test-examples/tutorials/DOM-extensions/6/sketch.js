@@ -4,13 +4,11 @@
 // creating separate functions outside of draw that we call from inside draw.
 // This helps to keep code organized.
 
-
 // We define the canvas variables outside of setup so we can access them from anywhere in the sketch.
 var canvas0;
 var canvas1;
 
 function setup() {
-
   // We are still calling createCanvas like before, but now we are storing a pointer to each one.
   canvas0 = createCanvas(200, 200);
   canvas1 = createCanvas(600, 400);
@@ -21,9 +19,7 @@ function setup() {
   canvas1.position(300, 50);
 }
 
-
 function draw() {
-
   // Tell the program to draw into canvas0.
   context(canvas0);
   // Call the method to draw the contents of the canvas.
@@ -31,23 +27,21 @@ function draw() {
   // Try switching in a different function.
   //drawRectCanvas();
 
-
   // Tell the program to draw into canvas1.
   context(canvas1);
   // Call the method to draw the contents of the canvas.
   drawRectCanvas();
   // Try switching in a different function.
   //drawEllipseCanvas();
-  
 }
 
 // Addtional drawing functions.
 function drawEllipseCanvas() {
   background(120, 180, 200);
-  ellipse(width/2, height/2, 100, 100);
+  ellipse(width / 2, height / 2, 100, 100);
 }
 
 function drawRectCanvas() {
   background(50, 120, 80);
-  rect(width/4, height/4, width/2, height/2);
+  rect(width / 4, height / 4, width / 2, height / 2);
 }

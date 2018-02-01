@@ -6,7 +6,6 @@ var carrierFreq;
 // modulator frequency signal, a p5.Signal
 var modFreq;
 
-
 // output envelope
 var env;
 

@@ -8,15 +8,14 @@
 
 var catcher;
 
-function setup(){
-  createCanvas(400,400);
+function setup() {
+  createCanvas(400, 400);
   catcher = new Catcher(32);
   smooth();
-};
+}
 
-function draw(){
+function draw() {
   background(255);
-  catcher.setLocation(mouseX,mouseY);
+  catcher.setLocation(mouseX, mouseY);
   catcher.display();
-};
-
+}

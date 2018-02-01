@@ -2,7 +2,7 @@
  *  Example: Convolution Reverb
  *
  *  The p5.Convolver can recreate the sound of actual spaces using convolution.
- *  
+ *
  *  Toggle between five different buffer sources
  *
  *  Convolution samples Creative Commons BY recordinghopkins, via freesound.org
@@ -40,7 +40,6 @@ function setup() {
 }
 
 function mousePressed() {
-
   // cycle through the array of cVerb.impulses
   currentIR++;
   if (currentIR >= cVerb.impulses.length) {

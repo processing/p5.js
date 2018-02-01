@@ -6,7 +6,6 @@ var canvas1;
 var canvas2;
 
 function setup() {
-
   // We are still calling createCanvas like before, but now we are storing a pointer to each one.
   canvas0 = createCanvas(200, 200);
   canvas1 = createCanvas(200, 200);
@@ -21,49 +20,40 @@ function setup() {
   canvas1.class('donkey');
   canvas2.position(550, 50);
   canvas2.class('yogurt');
-};
-
+}
 
 function draw() {
-
   // Tell the program to draw into canvas0.
   context(canvas0);
   // Call the method to draw the contents of the canvas.
   drawEllipseCanvas();
-
 
   // Tell the program to draw into canvas1.
   context(canvas1);
   // Call the method to draw the contents of the canvas.
   drawRectCanvas();
 
-
   // Tell the program to draw into canvas2.
   context(canvas2);
   // Call the method to draw the contents of the canvas.
   drawRectCanvas();
-  
 }
 
 // Addtional drawing functions.
 function drawEllipseCanvas() {
   background(120, 180, 200);
-  ellipse(width/2, height/2, 100, 100);
+  ellipse(width / 2, height / 2, 100, 100);
 }
 
 function drawRectCanvas() {
   background(50, 120, 80);
-  rect(width/4, height/4, width/2, height/2);
+  rect(width / 4, height / 4, width / 2, height / 2);
 }
-
 
 // On key press, hide all elements with class donkey.
 function keyPressed() {
   var donkeys = find('donkey');
-  for (var i=0; i<donkeys.length; i++) {
+  for (var i = 0; i < donkeys.length; i++) {
     donkeys[i].hide();
   }
 }
-
-
-
