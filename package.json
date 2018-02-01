@@ -98,8 +98,7 @@
     "word-wrap": "^1.2.3"
   },
   "license": "LGPL-2.1",
-  "dependencies": {
-  },
+  "dependencies": {},
   "main": "./lib/p5.js",
   "types": "./lib/p5.d.ts",
   "files": [
