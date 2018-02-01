@@ -7,7 +7,7 @@ var soundFile;
 
 function preload() {
   // create a SoundFile
-  soundFile = loadSound( ['../_files/beatbox.ogg', '../_files/beatbox.mp3'] );
+  soundFile = loadSound(['../_files/beatbox.ogg', '../_files/beatbox.mp3']);
 }
 
 function setup() {
@@ -19,7 +19,6 @@ function setup() {
 
 // when a key is pressed...
 function keyPressed() {
-
   // play the sound file
   soundFile.play();
 

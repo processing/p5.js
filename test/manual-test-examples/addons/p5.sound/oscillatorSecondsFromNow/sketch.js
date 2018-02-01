@@ -6,10 +6,12 @@ function setup() {
   osc = new p5.TriOsc();
   osc.freq(260);
   createP('mousePressed: set amplitude to .7 over the course of .2 seconds');
-  createP('mouseReleased: 1 second fade to 0. Start the fade 0.5 seconds from now');
+  createP(
+    'mouseReleased: 1 second fade to 0. Start the fade 0.5 seconds from now'
+  );
 }
 
-function mousePressed () {
+function mousePressed() {
   osc.start();
   // fade amplitude to .7 over the course of .2 seconds
   osc.amp(0.7, 0.002);

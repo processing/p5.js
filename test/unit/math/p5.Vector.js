@@ -155,7 +155,7 @@ suite('p5.Vector', function() {
     });
 
     suite('with Array', function() {
-      test('[2,4] should set x == 2, y == 4, z == 0', function() {
+      test('[2,4] should set x === 2, y === 4, z === 0', function() {
         v.set([2, 4]);
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(4);

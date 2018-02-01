@@ -10,6 +10,6 @@ var values = [];
 
 var n = 0;
 while (n < 1000) {
-  values[n] = random(0,10);
+  values[n] = random(0, 10);
   n = n + 1;
 }

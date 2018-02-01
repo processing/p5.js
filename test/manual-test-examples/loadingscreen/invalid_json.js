@@ -4,7 +4,7 @@ function preload() {
   myJson = loadJSON('invalid.json');
 }
 
-function setup(){
+function setup() {
   createCanvas(300, 300);
 }
 

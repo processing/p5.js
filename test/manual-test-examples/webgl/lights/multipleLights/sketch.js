@@ -1,8 +1,8 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(0);
 
   var locY = mouseY - height / 2;

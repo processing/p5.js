@@ -8,20 +8,17 @@
 
 var x = 0;
 
-function setup(){
+function setup() {
+  while (x < 10) {
+    print(x);
+    // Decrementing x results in an infinite loop here because the value of x will never be 10 or greater.
+    // Be careful!
+    x = x - 1;
 
-	while (x < 10) {
-	  print(x);
-	  // Decrementing x results in an infinite loop here because the value of x will never be 10 or greater. 
-	  // Be careful!
-	  x = x - 1; 
-	  
-	  // This line quits the loop so that this sketch does not crash
-	  // Comment it out to see Processing crash! (save everything else first!)
-	  break;  
-	}
-};
+    // This line quits the loop so that this sketch does not crash
+    // Comment it out to see Processing crash! (save everything else first!)
+    break;
+  }
+}
 
-function draw(){
-
-};
+function draw() {}

@@ -1,7 +1,6 @@
 var table;
 
 function setup() {
-
   table = new p5.Table();
 
   table.addColumn('name');
@@ -24,7 +23,7 @@ function setup() {
   newRow.setString('type', 'Reptile');
 
   var rows = table.findRows('Reptile', 'type');
-  for (var i = 0; i < rows.length; i++){
+  for (var i = 0; i < rows.length; i++) {
     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
   }
 }

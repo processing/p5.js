@@ -6,8 +6,8 @@ function setup() {
   //radio = createSelect(); // for comparison
 
   // just mucking around
-  radio.option('apple','1');
-  radio.option('orange','2');
+  radio.option('apple', '1');
+  radio.option('orange', '2');
   radio.option('pear');
 
   // Set what it starts as
@@ -30,4 +30,3 @@ function mySelectEvent() {
     console.log("it's a pear!");
   }
 }
-
