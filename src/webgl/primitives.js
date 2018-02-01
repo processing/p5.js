@@ -521,8 +521,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     cap = true;
   }
 
-  var gId =
-    'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY + '|' + cap;
+  var gId = 'cone|' + detailX + '|' + detailY + '|' + cap;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
