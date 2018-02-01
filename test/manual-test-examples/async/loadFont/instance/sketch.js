@@ -13,24 +13,21 @@ var sketch = function(p) {
   var font1, font2;
 
   p.preload = function() {
-
     font1 = p.loadFont('SourceSansPro-Regular.otf');
     font2 = p.loadFont('acmesa.ttf');
   };
 
   p.setup = function() {
-
     p.createCanvas(600, 200);
     p.fill(20);
 
     p.textSize(64);
     p.textFont('times');
-    p.text("Lexical Projection...", 30, 50);
+    p.text('Lexical Projection...', 30, 50);
 
     p.textFont(font2, 48);
-    p.text("Indexical Rejection", 30, 100);
+    p.text('Indexical Rejection', 30, 100);
   };
-
-}
+};
 
 var myp5 = new p5(sketch);

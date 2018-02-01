@@ -1,8 +1,8 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(255);
 
   var locY = mouseY - height / 2;
@@ -28,6 +28,4 @@ function draw(){
   rotateY(frameCount * 0.02);
   torus(81, 20, 64, 64);
   pop();
-
-
 }

@@ -15,13 +15,13 @@ var diam;
 var x;
 var y;
 
-function setup(){
-  createCanvas(200,200);
+function setup() {
+  createCanvas(200, 200);
   background(255);
-  smooth();    
-};
+  smooth();
+}
 
-function draw(){
+function draw() {
   // Each time through draw(), new random numbers are picked for a new ellipse.
   r = random(255);
   g = random(255);
@@ -30,11 +30,9 @@ function draw(){
   diam = random(20);
   x = random(width);
   y = random(height);
-  
+
   // Use values to draw an ellipse
   noStroke();
-  fill(r,g,b,a);
-  ellipse(x,y,diam,diam);
-};
-
-
+  fill(r, g, b, a);
+  ellipse(x, y, diam, diam);
+}

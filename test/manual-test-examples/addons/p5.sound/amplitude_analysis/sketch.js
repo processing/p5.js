@@ -11,7 +11,7 @@ var amplitude;
 var description;
 var p1;
 
-var smoothing = .01;
+var smoothing = 0.01;
 var smoothSlider, smoothLabel;
 
 function preload() {
@@ -19,7 +19,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400); 
+  createCanvas(400, 400);
   background(0);
   noStroke();
   fill(255);
@@ -30,10 +30,11 @@ function setup() {
   amplitude = new p5.Amplitude(smoothing);
 
   // instruction text
-  description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize';
+  description =
+    'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize';
   p1 = createP(description);
 
-  smoothSlider = createSlider(0.0, 99.9, smoothing*100);
+  smoothSlider = createSlider(0.0, 99.9, smoothing * 100);
   smoothLabel = createP('Smoothing: ' + smoothing);
 }
 
@@ -48,23 +49,24 @@ function draw() {
 
   // Change size based on volume. First, map to useful values.
   size = map(volume, 0, 1.0, 25, 400);
-  ellipse(width/2, height/2, size, size);
+  ellipse(width / 2, height / 2, size, size);
 
   // instruction text
-  description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize. Normalized is '+amplitude.normalize;
+  description =
+    'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize. Normalized is ' +
+    amplitude.normalize;
   p1.html(description);
 
   // change smoothing
-  smoothing = smoothSlider.value()/100;
+  smoothing = smoothSlider.value() / 100;
   smoothLabel.html('Smoothing: ' + smoothing);
   amplitude.smooth(smoothing);
 }
 
 // on key pressed...
 function keyPressed(e) {
-
   // spacebar pauses
-  if (e.keyCode == 32) {
+  if (e.keyCode === 32) {
     if (soundFile.isPlaying()) {
       soundFile.pause();
     } else {
@@ -73,20 +75,17 @@ function keyPressed(e) {
   }
 
   // 'n' keypress toggles normalize on/off
-  if (e.keyCode == 78) {
+  if (e.keyCode === 78) {
     amplitude.toggleNormalize();
   }
-
 }
 
 function mouseClicked() {
-if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-if ( getMasterVolume() == 0) {
-setMasterVolume(0, 1);
-} else {
-setMasterVolume(0.1),1;
+  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+    if (getMasterVolume() === 0) {
+      setMasterVolume(0, 1);
+    } else {
+      setMasterVolume(0.1), 1;
+    }
+  }
 }
-}
-}
-
-

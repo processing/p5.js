@@ -1,7 +1,6 @@
 var canvas, rSlider, gSlider, bSlider, button;
 
 function setup() {
-
   // create canvas
   canvas = createCanvas(200, 200);
   canvas.position(0, 0);
@@ -19,14 +18,14 @@ function setup() {
   button.position(10, 100);
   button.mousePressed(resetSliders);
 }
- 
+
 function draw() {
   var r = rSlider.value();
   console.log(r);
   var g = gSlider.value();
   var b = bSlider.value();
   background(r, g, b);
-};
+}
 
 function resetSliders() {
   rSlider.value(0);

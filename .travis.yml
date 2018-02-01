@@ -1,6 +1,27 @@
 language: node_js
 node_js:
-  - "8.9"
-install: npm install
-script: npm run grunt
+- '8'
+install: yarn
+script: yarn grunt
 sudo: false
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: vQsN3nwHWuz5iAtFCNKhhktDtZqtfJnGoYHgLta7JAu+zgOEkzTjss21xqfFKo/hxwhNrZBjWxSD1o4CfxfhAzXs1D2D2TY1tTtDypjPlbZhCR8MzInvXkecpXkNcbf8uNAHwqxfg0icqtB+pNDg9MWQLcRa3Su6hZUALza4e8NdgbSSgLZLQdidVSQhx5F4aE8gFa4lY19x/en1rKcp2PqeXeGGvIfKbI8kFW/0/xoxCzOW/KrNO7+b1T5vSzixQWWd8rKLLhn6jkE+fQKpw1Mtp5zcBUky+jDG9EjYE8n5D0z4U2d8qoYrPb9BjD80K6sJ3HtgaKsMjSNOL120L0Tju2LoPhIQnuDFKwBVOg2XpsynrGZz/vk6GxDBfqpxcalP/mbGo/LDVltThGPxKkV9O/CmMIMDquL5MHTrUkVcwvzibPwiSDCFTiEwd28AXd+26gliCeDe+kI4x+A9uk7FHmOsZtUNtX4rpwg2dET+yco8q+pmWr/5UQEV8Dvaw7lPAWpbmCLbbz/Lq4QELUxGy+Zy3xQhGjr2fRDDdo6geWb3BGp57qbwHvnJ9/wmnpiqgWXEsqQJzjRJXR9AbDXXFGmNWC4SI9tQbfP3VPEGXHWJPXf5ydkVBu4D1bthKfc+EOB2astTJpg/90oBp2pmN2QvcsePdHexlrGj/vM=
+  file:
+    - "lib/p5.js"
+    - "lib/p5.min.js"
+    - "lib/addons/p5.dom.js"
+    - "lib/addons/p5.dom.min.js"
+    - "lib/addons/p5.sound.js"
+    - "lib/addons/p5.sound.min.js"
+    - "lib/p5.d.ts"
+    - "lib/p5.global-mode.d.ts"
+  on:
+    branch: master
+    repo: Spongman/p5.js
+cache:
+  yarn: true
+  directories:
+    - node_modules

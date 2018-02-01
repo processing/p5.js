@@ -2,21 +2,31 @@ var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(18);
-    p.text("Default Text", 10, 30);
+    p.text('Default Text', 10, 30);
     p.noStroke();
     p.fill(0, 102, 153);
-    p.text("Blue No Stroke Text", 10, 60);
+    p.text('Blue No Stroke Text', 10, 60);
     p.textStyle(p.ITALIC);
-    p.text("Blue No Stroke Text Italic", 10, 80);
+    p.text('Blue No Stroke Text Italic', 10, 80);
     p.textStyle(p.BOLD);
-    p.text("Blue No Stroke Text Bold", 10, 100);
-    p.fill(120).textStyle(p.NORMAL).textSize(12).text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 110, 220, 60);
+    p.text('Blue No Stroke Text Bold', 10, 100);
+    p
+      .fill(120)
+      .textStyle(p.NORMAL)
+      .textSize(12)
+      .text(
+        'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
+        10,
+        110,
+        220,
+        60
+      );
   };
 };
 
 var textLineSketch = function(p) {
   p.setup = function() {
-    p.createCanvas(240*4, 160);
+    p.createCanvas(240 * 4, 160);
     p.textSize(10);
     p.stroke(0);
     //1
@@ -26,7 +36,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.TOP);
-    p.text("LEFT TOP is simply dummy text.", 10, 10);
+    p.text('LEFT TOP is simply dummy text.', 10, 10);
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -34,7 +44,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.TOP);
-    p.text("CENTER TOP is simply dummy text.", 10, 60);
+    p.text('CENTER TOP is simply dummy text.', 10, 60);
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -42,7 +52,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.TOP);
-    p.text("RIGHT TOP is simply dummy text.", 10, 110);
+    p.text('RIGHT TOP is simply dummy text.', 10, 110);
 
     //1
     p.fill(255);
@@ -51,7 +61,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.CENTER);
-    p.text("LEFT CENTER is simply dummy text.", 250, 10);
+    p.text('LEFT CENTER is simply dummy text.', 250, 10);
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -59,7 +69,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("CENTER CENTER is simply dummy text.", 250, 60);
+    p.text('CENTER CENTER is simply dummy text.', 250, 60);
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -67,7 +77,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.CENTER);
-    p.text("RIGHT CENTER is simply dummy text.", 250, 110);
+    p.text('RIGHT CENTER is simply dummy text.', 250, 110);
 
     //1
     p.fill(255);
@@ -76,7 +86,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.BOTTOM);
-    p.text("LEFT BOTTOM is simply dummy text.", 490, 10);
+    p.text('LEFT BOTTOM is simply dummy text.', 490, 10);
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -84,7 +94,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.BOTTOM);
-    p.text("CENTER BOTTOM is simply dummy text.", 490, 60);
+    p.text('CENTER BOTTOM is simply dummy text.', 490, 60);
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -92,7 +102,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.BOTTOM);
-    p.text("RIGHT BOTTOM is simply dummy text.", 490, 110);
+    p.text('RIGHT BOTTOM is simply dummy text.', 490, 110);
 
     //1
     p.fill(255);
@@ -101,7 +111,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.BASELINE);
-    p.text("LEFT BASELINE is simply dummy text.", 730, 10);
+    p.text('LEFT BASELINE is simply dummy text.', 730, 10);
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -109,7 +119,7 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.BASELINE);
-    p.text("CENTER BASELINE is simply dummy text.", 730, 60);
+    p.text('CENTER BASELINE is simply dummy text.', 730, 60);
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -117,13 +127,13 @@ var textLineSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.BASELINE);
-    p.text("RIGHT BASELINE is simply dummy text.", 730, 110);
+    p.text('RIGHT BASELINE is simply dummy text.', 730, 110);
   };
 };
 
 var textWrapSketch = function(p) {
   p.setup = function() {
-    p.createCanvas(240*4, 160);
+    p.createCanvas(240 * 4, 160);
     p.textSize(10);
     p.stroke(0);
     //1
@@ -133,7 +143,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.TOP);
-    p.text("LEFT TOP is simply dummy text of the printing and typesetting industry. ", 10, 10, 220, 40);
+    p.text(
+      'LEFT TOP is simply dummy text of the printing and typesetting industry. ',
+      10,
+      10,
+      220,
+      40
+    );
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -141,7 +157,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.TOP);
-    p.text("CENTER TOP is simply dummy text of the printing and typesetting industry. ", 10, 60, 220, 40);
+    p.text(
+      'CENTER TOP is simply dummy text of the printing and typesetting industry. ',
+      10,
+      60,
+      220,
+      40
+    );
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -149,7 +171,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.TOP);
-    p.text("RIGHT TOP is simply dummy text of the printing and typesetting industry. ", 10, 110, 220, 40);
+    p.text(
+      'RIGHT TOP is simply dummy text of the printing and typesetting industry. ',
+      10,
+      110,
+      220,
+      40
+    );
 
     //1
     p.fill(255);
@@ -158,7 +186,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.CENTER);
-    p.text("LEFT CENTER is simply dummy text of the printing and typesetting industry. ", 250, 10, 220, 40);
+    p.text(
+      'LEFT CENTER is simply dummy text of the printing and typesetting industry. ',
+      250,
+      10,
+      220,
+      40
+    );
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -166,7 +200,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("CENTER CENTER is simply dummy text of the printing and typesetting industry. ", 250, 60, 220, 40);
+    p.text(
+      'CENTER CENTER is simply dummy text of the printing and typesetting industry. ',
+      250,
+      60,
+      220,
+      40
+    );
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -174,7 +214,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.CENTER);
-    p.text("RIGHT CENTER is simply dummy text of the printing and typesetting industry. ", 250, 110, 220, 40);
+    p.text(
+      'RIGHT CENTER is simply dummy text of the printing and typesetting industry. ',
+      250,
+      110,
+      220,
+      40
+    );
 
     //1
     p.fill(255);
@@ -183,7 +229,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.BOTTOM);
-    p.text("LEFT BOTTOM is simply dummy text of the printing and typesetting industry. ", 490, 10, 220, 40);
+    p.text(
+      'LEFT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+      490,
+      10,
+      220,
+      40
+    );
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -191,7 +243,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.BOTTOM);
-    p.text("CENTER BOTTOM is simply dummy text of the printing and typesetting industry. ", 490, 60, 220, 40);
+    p.text(
+      'CENTER BOTTOM is simply dummy text of the printing and typesetting industry. ',
+      490,
+      60,
+      220,
+      40
+    );
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -199,7 +257,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.BOTTOM);
-    p.text("RIGHT BOTTOM is simply dummy text of the printing and typesetting industry. ", 490, 110, 220, 40);
+    p.text(
+      'RIGHT BOTTOM is simply dummy text of the printing and typesetting industry. ',
+      490,
+      110,
+      220,
+      40
+    );
 
     //1
     p.fill(255);
@@ -208,7 +272,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.LEFT, p.BASELINE);
-    p.text("LEFT BASELINE is simply dummy text of the printing and typesetting industry. ", 730, 10, 220, 40);
+    p.text(
+      'LEFT BASELINE is simply dummy text of the printing and typesetting industry. ',
+      730,
+      10,
+      220,
+      40
+    );
     //2
     p.fill(255);
     p.strokeWeight(1);
@@ -216,7 +286,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.CENTER, p.BASELINE);
-    p.text("CENTER BASELINE is simply dummy text of the printing and typesetting industry. ", 730, 60, 220, 40);
+    p.text(
+      'CENTER BASELINE is simply dummy text of the printing and typesetting industry. ',
+      730,
+      60,
+      220,
+      40
+    );
     //3
     p.fill(255);
     p.strokeWeight(1);
@@ -224,7 +300,13 @@ var textWrapSketch = function(p) {
     p.strokeWeight(0);
     p.fill(0);
     p.textAlign(p.RIGHT, p.BASELINE);
-    p.text("RIGHT BASELINE is simply dummy text of the printing and typesetting industry. ", 730, 110, 220, 40);
+    p.text(
+      'RIGHT BASELINE is simply dummy text of the printing and typesetting industry. ',
+      730,
+      110,
+      220,
+      40
+    );
   };
 };
 
@@ -235,11 +317,11 @@ var textFontSketch = function(p) {
     p.fill(0);
     p.strokeWeight(0);
     p.textFont('times');
-    p.text("Times Font", 10, 30);
+    p.text('Times Font', 10, 30);
     p.textFont('arial');
-    p.text("Arial Font", 10, 60);
+    p.text('Arial Font', 10, 60);
     p.textFont('Courier');
-    p.text("Courier Font", 10, 90);
+    p.text('Courier Font', 10, 90);
   };
 };
 
@@ -250,60 +332,60 @@ var textAlignSketch = function(p) {
     p.strokeWeight(0);
     p.textSize(12);
     p.textAlign(p.RIGHT, p.TOP);
-    p.text("Top Right", 120, 30);
+    p.text('Top Right', 120, 30);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("Center Center", 120, 60);
+    p.text('Center Center', 120, 60);
     p.textAlign(p.LEFT, p.BOTTOM);
-    p.text("Left Bottom", 120, 90);
+    p.text('Left Bottom', 120, 90);
     p.textAlign(p.RIGHT, p.BASELINE);
-    p.text("Right Baseline", 120, 90);
+    p.text('Right Baseline', 120, 90);
     p.strokeWeight(1);
     p.line(120, 0, 120, 160);
   };
 };
 
 var textAllAlignmentsSketch = function(p) {
-  var systemFonts = ["Arial", "Times New Roman", "Consolas"];
+  var systemFonts = ['Arial', 'Times New Roman', 'Consolas'];
   var font1, font2, font3;
-  var hAligns = [ p.LEFT, p.CENTER, p.RIGHT ];
-  var vAligns = [ p.TOP, p.CENTER, p.BASELINE, p.BOTTOM ];
+  var hAligns = [p.LEFT, p.CENTER, p.RIGHT];
+  var vAligns = [p.TOP, p.CENTER, p.BASELINE, p.BOTTOM];
   var padding = 10;
   var drawFontAlignments = function(font, textString, xOff, yOff) {
     p.textFont(font);
     p.textSize(20);
     for (var h = 0; h < hAligns.length; h += 1) {
-     for (var v = 0; v < vAligns.length; v += 1) {
-       // Distribute words across the screen
-       var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
-       var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
-        
-       p.stroke(200);
-       p.line(0, y, p.width, y);
-       p.line(x, 0, x, p.height);
-       
-       // Align the text & calculate the bounds
-       p.textAlign(hAligns[h], vAligns[v]);
-      
-       // Draw the text
-       p.fill(255, 0, 0);
-       p.noStroke();
-       p.text(textString, x, y);
+      for (var v = 0; v < vAligns.length; v += 1) {
+        // Distribute words across the screen
+        var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+        var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
 
-       // Draw the (x, y) coordinates
-       p.stroke(0);
-       p.fill("#FF8132");
-       p.ellipse(x, y, 3, 3);
-     }
-   }
+        p.stroke(200);
+        p.line(0, y, p.width, y);
+        p.line(x, 0, x, p.height);
+
+        // Align the text & calculate the bounds
+        p.textAlign(hAligns[h], vAligns[v]);
+
+        // Draw the text
+        p.fill(255, 0, 0);
+        p.noStroke();
+        p.text(textString, x, y);
+
+        // Draw the (x, y) coordinates
+        p.stroke(0);
+        p.fill('#FF8132');
+        p.ellipse(x, y, 3, 3);
+      }
+    }
   };
   p.setup = function() {
     var renderer = p.createCanvas(400, 600);
-    renderer.elt.style.position = "absolute";
-    renderer.elt.style.top = "0";
-    renderer.elt.style.left = "0";
-    drawFontAlignments(systemFonts[0], "Arial", 0, 0);
-    drawFontAlignments(systemFonts[1], "Times", 0, 200);
-    drawFontAlignments(systemFonts[2], "Consolas", 0, 400); 
+    renderer.elt.style.position = 'absolute';
+    renderer.elt.style.top = '0';
+    renderer.elt.style.left = '0';
+    drawFontAlignments(systemFonts[0], 'Arial', 0, 0);
+    drawFontAlignments(systemFonts[1], 'Times', 0, 200);
+    drawFontAlignments(systemFonts[2], 'Consolas', 0, 400);
     // These proprietary fonts aren't included in the repo!
     // p.loadFont("../arial.ttf", function(font) {drawFontAlignments(font, "Arial", 0, 0)});
     // p.loadFont("../times.ttf", function(font) {drawFontAlignments(font, "Times", 0, 200)});
@@ -314,96 +396,96 @@ var textAllAlignmentsSketch = function(p) {
 var textLeadingSketch = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
-    p.textFont("Arial");
+    p.textFont('Arial');
     p.fill(0);
     p.textSize(12);
 
-    p.line(0,100,p.width,100);
+    p.line(0, 100, p.width, 100);
     p.textAlign(p.LEFT, p.TOP);
     p.strokeWeight(0);
 
     var s10 = 'LEFT/TOP@10px',
-      s20 = s10.replace('1','2'),
-      s30 = s10.replace('1','3');
+      s20 = s10.replace('1', '2'),
+      s30 = s10.replace('1', '3');
 
-    p.textLeading(10);  // Set leading to 10
-    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
-    p.textLeading(20);  // Set leading to 20
-    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
-    p.textLeading(30);  // Set leading to 30
-    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+    p.textLeading(10); // Set leading to 10
+    p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+    p.textLeading(20); // Set leading to 20
+    p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+    p.textLeading(30); // Set leading to 30
+    p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
   };
 };
 
 var textLeadingSketch2 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
-    p.textFont("Arial");
+    p.textFont('Arial');
     p.fill(0);
     p.textSize(12);
 
-    p.line(0,100,p.width,100);
+    p.line(0, 100, p.width, 100);
     p.textAlign(p.LEFT, p.CENTER);
     p.strokeWeight(0);
 
     var s10 = 'LEFT/CENTER@10px',
-      s20 = s10.replace('1','2'),
-      s30 = s10.replace('1','3');
+      s20 = s10.replace('1', '2'),
+      s30 = s10.replace('1', '3');
 
-    p.textLeading(10);  // Set leading to 10
-    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
-    p.textLeading(20);  // Set leading to 20
-    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
-    p.textLeading(30);  // Set leading to 30
-    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+    p.textLeading(10); // Set leading to 10
+    p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+    p.textLeading(20); // Set leading to 20
+    p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+    p.textLeading(30); // Set leading to 30
+    p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
   };
 };
 
 var textLeadingSketch3 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
-    p.textFont("Arial");
+    p.textFont('Arial');
     p.fill(0);
     p.textSize(12);
 
-    p.line(0,100,p.width,100);
+    p.line(0, 100, p.width, 100);
     p.textAlign(p.LEFT, p.BASELINE);
     p.strokeWeight(0);
 
     var s10 = 'LEFT/BASELINE@10px',
-      s20 = s10.replace('1','2'),
-      s30 = s10.replace('1','3');
+      s20 = s10.replace('1', '2'),
+      s30 = s10.replace('1', '3');
 
-    p.textLeading(10);  // Set leading to 10
-    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
-    p.textLeading(20);  // Set leading to 20
-    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
-    p.textLeading(30);  // Set leading to 30
-    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+    p.textLeading(10); // Set leading to 10
+    p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+    p.textLeading(20); // Set leading to 20
+    p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+    p.textLeading(30); // Set leading to 30
+    p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
   };
 };
 
 var textLeadingSketch4 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
-    p.textFont("Arial");
+    p.textFont('Arial');
     p.fill(0);
     p.textSize(12);
 
-    p.line(0,100,p.width,100);
+    p.line(0, 100, p.width, 100);
     p.textAlign(p.LEFT, p.BOTTOM);
     p.strokeWeight(0);
 
     var s10 = 'LEFT/BOTTOM@10px',
-      s20 = s10.replace('1','2'),
-      s30 = s10.replace('1','3');
+      s20 = s10.replace('1', '2'),
+      s30 = s10.replace('1', '3');
 
-    p.textLeading(10);  // Set leading to 10
-    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
-    p.textLeading(20);  // Set leading to 20
-    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
-    p.textLeading(30);  // Set leading to 30
-    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+    p.textLeading(10); // Set leading to 10
+    p.text(s10 + '\n' + s10 + '\n' + s10, 10, 100);
+    p.textLeading(20); // Set leading to 20
+    p.text(s20 + '\n' + s20 + '\n' + s20, 140, 100);
+    p.textLeading(30); // Set leading to 30
+    p.text(s30 + '\n' + s30 + '\n' + s30, 270, 100);
   };
 };
 
@@ -413,11 +495,11 @@ var textSizeSketch = function(p) {
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
-    p.text("Font Size 12", 10, 30);
+    p.text('Font Size 12', 10, 30);
     p.textSize(14);
-    p.text("Font Size 14", 10, 60);
+    p.text('Font Size 14', 10, 60);
     p.textSize(16);
-    p.text("Font Size 16", 10, 90);
+    p.text('Font Size 16', 10, 90);
   };
 };
 
@@ -428,11 +510,11 @@ var textStyleSketch = function(p) {
     p.strokeWeight(0);
     p.textSize(12);
     p.textStyle(p.NORMAL);
-    p.text("Font Style Normal", 10, 30);
+    p.text('Font Style Normal', 10, 30);
     p.textStyle(p.ITALIC);
-    p.text("Font Style Italic", 10, 60);
+    p.text('Font Style Italic', 10, 60);
     p.textStyle(p.BOLD);
-    p.text("Font Style Bold", 10, 90);
+    p.text('Font Style Bold', 10, 90);
   };
 };
 
@@ -446,7 +528,7 @@ var textWidthSketch = function(p) {
     var textWidth = p.textWidth(s);
     p.text(s, 10, 30);
     p.rect(10, 30, textWidth, 2);
-    p.text("width: " + textWidth, 10, 60);
+    p.text('width: ' + textWidth, 10, 60);
   };
 };
 
@@ -457,28 +539,28 @@ var textOverlapSketch = function(p) {
     p.strokeWeight(0);
     p.textSize(72);
     p.fill(0, 160); // Black with low opacity
-    p.text("O", 0, 100);
-    p.text("V", 30, 100);
-    p.text("E", 60, 100);
-    p.text("R", 90, 100);
-    p.text("L", 120, 100);
-    p.text("A", 150, 100);
-    p.text("P", 180, 100);
+    p.text('O', 0, 100);
+    p.text('V', 30, 100);
+    p.text('E', 60, 100);
+    p.text('R', 90, 100);
+    p.text('L', 120, 100);
+    p.text('A', 150, 100);
+    p.text('P', 180, 100);
   };
 };
 
 var textFlySketch = function(p) {
   var x1 = 100;
   var x2 = 0;
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
     p.textSize(48);
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
-    p.text("Left", x1, 50);
-    p.text("Right", x2, 150);
+    p.text('Left', x1, 50);
+    p.text('Right', x2, 150);
     x2 += 2.0;
     if (x2 > 240) {
       x2 = -100;
@@ -491,101 +573,101 @@ var textFlySketch = function(p) {
 };
 
 var textFlickerSketch = function(p) {
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(48);
     p.noStroke();
   };
-  p.draw = function(){
+  p.draw = function() {
     p.fill(204, 24);
     p.rect(0, 0, p.width, p.height);
     p.fill(0);
-    p.text("flicker Text", p.random(-100, 240), p.random(-20, 160));
+    p.text('flicker Text', p.random(-100, 240), p.random(-20, 160));
   };
 };
 
 var textFadeSketch = function(p) {
   var opacity = 0;
   var direction = 1;
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(72);
     p.noStroke();
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
     opacity += 4 * direction;
-    if ((opacity < 0) || (opacity > 255)) {
+    if (opacity < 0 || opacity > 255) {
       direction = -direction;
     }
     p.fill(0, opacity);
-    p.text("fade", 50, 100);
+    p.text('fade', 50, 100);
   };
 };
 
 var textRotateSketch = function(p) {
   var angle = 0.0;
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
     angle += 0.05;
     p.push();
     p.translate(120, 80);
     p.scale((p.cos(angle / 4.0) + 1.2) * 2.0);
     p.rotate(angle);
-    p.text("Rotating", 0, 0);
+    p.text('Rotating', 0, 0);
     p.pop();
   };
 };
 
 var textGrowSketch = function(p) {
   var angle = 0.0;
-  var str = "GROW";
-  p.setup = function(){
+  var str = 'GROW';
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
     p.noStroke();
     p.fill(0, 0, 0, 120);
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
     angle += 0.1;
     for (var i = 0; i < str.length; i++) {
       var c = p.sin(angle + i / p.PI);
       p.textSize((c + 1.0) * 40 + 10);
-      p.text(str.charAt(i), i*40 + 20, 100);
+      p.text(str.charAt(i), i * 40 + 20, 100);
     }
   };
 };
 
 var textAvoidSketch = function(p) {
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
     p.textAlign(p.CENTER);
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
-    p.text("AVOID", p.width - p.mouseX, p.height - p.mouseY);
+    p.text('AVOID', p.width - p.mouseX, p.height - p.mouseY);
   };
 };
 
 var textBendSketch = function(p) {
-  var str = "Flexibility";
-  p.setup = function(){
+  var str = 'Flexibility';
+  p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(30);
     p.noStroke();
     p.fill(0);
   };
-  p.draw = function(){
+  p.draw = function() {
     p.background(204);
     p.push();
     p.translate(0, 33);
@@ -593,7 +675,7 @@ var textBendSketch = function(p) {
       var angle = p.map(p.mouseX, 0, p.width, 0, p.PI / 8);
       p.rotate(angle);
       p.text(str[i], 20, 0);
-      p.translate(p.textWidth(str[i])*1.5, 0);
+      p.translate(p.textWidth(str[i]) * 1.5, 0);
     }
     p.pop();
   };
@@ -603,24 +685,22 @@ var typographyLetterSketch = function(p) {
   var margin = 10;
   var gap = 46;
   var counter = 35;
-  p.setup = function(){
+  p.setup = function() {
     p.createCanvas(720, 320);
     p.background(0);
-    p.textFont("Georgia");
+    p.textFont('Georgia');
     p.textSize(24);
     p.textStyle(p.BOLD);
     p.textAlign(p.CENTER, p.CENTER);
-    p.translate(margin*4, margin*4);
-    for (var y = 0; y < p.height-gap; y += gap) {
-      for (var x = 0; x < p.width-gap; x += gap) {
+    p.translate(margin * 4, margin * 4);
+    for (var y = 0; y < p.height - gap; y += gap) {
+      for (var x = 0; x < p.width - gap; x += gap) {
         var letter = p.char(counter);
-        if (letter == 'P' || letter == '5') {
+        if (letter === 'P' || letter === '5') {
           p.fill(255, 204, 0);
-        }
-        else if (letter == 'J' || letter == 'S') {
+        } else if (letter === 'J' || letter === 'S') {
           p.fill(204, 0, 255);
-        }
-        else {
+        } else {
           p.fill(255);
         }
         p.text(letter, x, y);

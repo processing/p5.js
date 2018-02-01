@@ -1,5 +1,4 @@
-var sketch0 = function( p ) {
-
+var sketch0 = function(p) {
   var v;
   var h1;
 
@@ -28,17 +27,12 @@ var sketch0 = function( p ) {
   };
 
   p.mousePressed = function() {
-    console.log('press')
-  }
+    console.log('press');
+  };
 
   p.mouseReleased = function() {
-    console.log('released')
-  }
-
+    console.log('released');
+  };
 };
 
 var myp5_0 = new p5(sketch0, 'div0');
-
-
-
-

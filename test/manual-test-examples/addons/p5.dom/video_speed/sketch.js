@@ -1,7 +1,6 @@
 var playing = false;
 var fingers, playbutton, slowButton, normalButton, fastButton;
 
-
 function setup() {
   fingers = createVideo('../fingers.mov');
 

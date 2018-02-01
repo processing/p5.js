@@ -44,7 +44,6 @@ function draw() {
   model(teapot);
 
   pop();
-
 }
 
 function mousePressed() {

@@ -1,4 +1,10 @@
-var myJson, banana, strings, xml, myTable, myFont, successCount = 0;
+var myJson,
+  banana,
+  strings,
+  xml,
+  myTable,
+  myFont,
+  successCount = 0;
 var myJson2, banana2, strings2, xml2, myTable2, myFont2;
 
 function successJSON() {
@@ -49,7 +55,7 @@ function preload() {
   myFont2 = loadFont('AvenirNextLTPro-Demi.otf');
 }
 
-function setup(){
+function setup() {
   createCanvas(400, 900);
 }
 
@@ -60,27 +66,27 @@ function draw() {
   // If preload finished successfully all of these should be drawn
 
   image(banana, 0, y);
-  image(banana2, 0, y += 50);
+  image(banana2, 0, (y += 50));
 
-  text(myJson.a, 0, y += 50);
-  text(myJson2.a, 0, y += 50);
+  text(myJson.a, 0, (y += 50));
+  text(myJson2.a, 0, (y += 50));
 
-  text(strings.length, 0, y += 50);
-  text(strings2.length, 0, y += 50);
+  text(strings.length, 0, (y += 50));
+  text(strings2.length, 0, (y += 50));
 
-  text(xml.toString(), 0, y += 50);
-  text(xml2.toString(), 0, y += 50);
+  text(xml.toString(), 0, (y += 50));
+  text(xml2.toString(), 0, (y += 50));
 
-  text(myTable.rows.length, 0, y += 50);
-  text(myTable2.rows.length, 0, y += 50);
+  text(myTable.rows.length, 0, (y += 50));
+  text(myTable2.rows.length, 0, (y += 50));
 
   textFont(myFont);
   textSize(16);
-  text('myFont', 0, y += 50);
+  text('myFont', 0, (y += 50));
 
   textFont(myFont2);
   textSize(16);
-  text('myFont2', 0, y += 50);
+  text('myFont2', 0, (y += 50));
 
   text('Success count should be 6: ' + successCount, 0, y + 50);
 }
