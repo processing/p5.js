@@ -559,12 +559,12 @@ function makeObject(row, headers) {
   return ret;
 }
 
-p5.prototype.parseXML = function(two) {
+function parseXML(two) {
   var one = new p5.XML();
   var i;
   if (two.children.length) {
     for (i = 0; i < two.children.length; i++) {
-      var node = this.parseXML(two.children[i]);
+      var node = parseXML(two.children[i]);
       one.addChild(node);
     }
     one.setName(two.nodeName);
@@ -580,7 +580,7 @@ p5.prototype.parseXML = function(two) {
     one._setAttributes(two);
     return one;
   }
-};
+}
 
 /**
  * Reads the contents of a file and creates an XML object with its values.
@@ -1018,7 +1018,6 @@ p5.prototype.httpDo = function() {
         }
       });
   } else {
-    var self = this;
     fetch(request)
       .then(function(res) {
         if (res.ok) {
@@ -1035,7 +1034,7 @@ p5.prototype.httpDo = function() {
         if (type === 'xml') {
           var parser = new DOMParser();
           resp = parser.parseFromString(resp, 'text/xml');
-          resp = self.parseXML(resp.documentElement);
+          resp = parseXML(resp.documentElement);
         }
         callback(resp);
       })
