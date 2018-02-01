@@ -182,7 +182,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 /**
  * Create a 2D array for establishing stroke connections
  * @private
- * @return {p5.Geometry}
+ * @chainable
  */
 p5.Geometry.prototype._makeTriangleEdges = function() {
   if (Array.isArray(this.strokeIndices)) {
@@ -204,13 +204,13 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * and two at the end position. These vertices are displaced relative to
  * that line's normal on the GPU
  * @private
- * @return {p5.Geometry}
+ * @chainable
  */
-p5.RendererGL.prototype._edgesToVertices = function(geom) {
-  geom.lineVertices = [];
-  for (var i = 0; i < geom.edges.length; i++) {
-    var begin = geom.vertices[geom.edges[i][0]];
-    var end = geom.vertices[geom.edges[i][1]];
+p5.Geometry.prototype._edgesToVertices = function() {
+  this.lineVertices = [];
+  for (var i = 0; i < this.edges.length; i++) {
+    var begin = this.vertices[this.edges[i][0]];
+    var end = this.vertices[this.edges[i][1]];
     var dir = end
       .copy()
       .sub(begin)
@@ -225,9 +225,10 @@ p5.RendererGL.prototype._edgesToVertices = function(geom) {
     // in opposite directions
     dirAdd.push(1);
     dirSub.push(-1);
-    geom.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
-    geom.lineVertices.push(a, b, c, c, b, d);
+    this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
+    this.lineVertices.push(a, b, c, c, b, d);
   }
+  return this;
 };
 
 /**
