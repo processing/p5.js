@@ -58,5 +58,10 @@ suite('DOM', function() {
     test('should return null when elements by tag name are not found', function() {
       assert.isNull(myp5.select('aside'));
     });
+
+    test('should create an empty node when no html is provided', function() {
+      const elem = myp5.createDiv();
+      assert.strictEqual(elem.elt.innerHTML, '');
+    });
   });
 });
