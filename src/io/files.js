@@ -559,8 +559,7 @@ function makeObject(row, headers) {
   return ret;
 }
 
-/*global parseXML */
-p5.prototype.parseXML = function(two) {
+function parseXML(two) {
   var one = new p5.XML();
   var i;
   if (two.children.length) {
@@ -581,7 +580,7 @@ p5.prototype.parseXML = function(two) {
     one._setAttributes(two);
     return one;
   }
-};
+}
 
 /**
  * Reads the contents of a file and creates an XML object with its values.
