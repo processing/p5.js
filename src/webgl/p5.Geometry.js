@@ -90,6 +90,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
     );
     return n;
   }
+  if (sinAlpha > 1) sinAlpha = 1; // handle float rounding error
   return n.mult(Math.asin(sinAlpha) / ln);
 };
 /**
