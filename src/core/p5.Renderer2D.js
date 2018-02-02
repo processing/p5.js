@@ -1138,6 +1138,11 @@ p5.Renderer2D.prototype.shearY = function(rad) {
 };
 
 p5.Renderer2D.prototype.translate = function(x, y) {
+  // support passing a vector as the 1st parameter
+  if (x instanceof p5.Vector) {
+    y = x.y;
+    x = x.x;
+  }
   this.drawingContext.translate(x, y);
   return this;
 };
