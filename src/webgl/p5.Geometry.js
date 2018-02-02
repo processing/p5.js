@@ -99,26 +99,35 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function() {
-  this.vertexNormals.length = 0;
-  var normals = [];
-  for (var v = 0; v < this.vertices.length; v++) {
-    var normal = new p5.Vector();
-    for (var i = 0; i < this.faces.length; i++) {
-      //if our face contains a given vertex
-      //calculate an average of the normals
-      //of the triangles adjacent to that vertex
-      if (
-        this.faces[i][0] === v ||
-        this.faces[i][1] === v ||
-        this.faces[i][2] === v
-      ) {
-        var faceNormal = normals[i] || (normals[i] = this._getFaceNormal(i));
-        normal = normal.add(faceNormal);
-      }
-    }
-    normal = normal.normalize();
-    this.vertexNormals.push(normal);
+  var vertexNormals = this.vertexNormals;
+  var vertices = this.vertices;
+  var faces = this.faces;
+  var iv;
+
+  // initialize the vertexNormals array with empty vectors
+  vertexNormals.length = 0;
+  for (iv = 0; iv < vertices.length; ++iv) {
+    vertexNormals.push(new p5.Vector());
   }
+
+  // loop through all the faces adding its normal to the normal
+  // of each of its vertices
+  for (var f = 0; f < faces.length; ++f) {
+    var face = faces[f];
+    var faceNormal = this._getFaceNormal(f);
+
+    // all three vertices get the normal added
+    for (var fv = 0; fv < 3; ++fv) {
+      var vertexIndex = face[fv];
+      vertexNormals[vertexIndex].add(faceNormal);
+    }
+  }
+
+  // normalize the normals
+  for (iv = 0; iv < vertices.length; ++iv) {
+    vertexNormals[iv].normalize();
+  }
+
   return this;
 };
 
