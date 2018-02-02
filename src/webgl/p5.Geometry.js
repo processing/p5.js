@@ -56,6 +56,7 @@ p5.Geometry = function(detailX, detailY, callback) {
  * @chainable
  */
 p5.Geometry.prototype.computeFaces = function() {
+  this.faces.length = 0;
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
   for (var i = 0; i < this.detailY; i++) {
@@ -98,6 +99,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function() {
+  this.vertexNormals.length = 0;
   var normals = [];
   for (var v = 0; v < this.vertices.length; v++) {
     var normal = new p5.Vector();
@@ -185,6 +187,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
  * @chainable
  */
 p5.Geometry.prototype._makeTriangleEdges = function() {
+  this.edges.length = 0;
   if (Array.isArray(this.strokeIndices)) {
     for (var i = 0, max = this.strokeIndices.length; i < max; i++) {
       this.edges.push(this.strokeIndices[i]);
@@ -207,7 +210,9 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * @chainable
  */
 p5.Geometry.prototype._edgesToVertices = function() {
-  this.lineVertices = [];
+  this.lineVertices.length = 0;
+  this.lineNormals.length = 0;
+
   for (var i = 0; i < this.edges.length; i++) {
     var begin = this.vertices[this.edges[i][0]];
     var end = this.vertices[this.edges[i][1]];
