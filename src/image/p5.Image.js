@@ -83,7 +83,7 @@ var Filters = require('./filters');
  *
  *
  * @class p5.Image
- * @constructor
+ * @ constructor
  * @param {Number} width
  * @param {Number} height
  */

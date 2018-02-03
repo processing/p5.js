@@ -104,7 +104,7 @@ define([
               'itemtype': item.itemtype,
               'name': item.name,
               'className': item.class,
-              'is_constructor': item.is_constructor,
+              'is_constructor': !!item.is_constructor,
               'final': item.final,
               'idx': i
             });

@@ -1100,7 +1100,7 @@ p5.prototype.createWriter = function(name, extension) {
 
 /**
  *  @class p5.PrintWriter
- *  @constructor
+ *  @ constructor
  *  @param  {String}     filename
  *  @param  {String}     [extension]
  */

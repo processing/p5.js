@@ -13,7 +13,7 @@ var p5 = require('../core/core');
 /**
  * Shader class for WEBGL Mode
  * @class p5.Shader
- * @constructor
+ * @ constructor
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Shader
  * @param {String} vertSrc source code for the vertex shader (as a string)
