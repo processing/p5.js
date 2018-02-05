@@ -13,7 +13,7 @@
     in <strong><%=className%></strong>
     <% } %>
 
-    <% if (is_constructor) { %>
+    <% if (typeof is_constructor !== 'undefined' && is_constructor) { %>
     <strong><span class="glyphicon glyphicon-star"></span> constructor</strong>
     <% } %>
   </span>
