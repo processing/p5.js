@@ -69,7 +69,6 @@ p5.prototype.createNumberDict = function(key, value) {
  * typed Dictionary objects inherit from this
  *
  * @class p5.TypedDict
- * @ constructor
  *
  */
 
@@ -379,7 +378,6 @@ p5.TypedDict.prototype._validate = function(value) {
  *
  *
  * @class p5.StringDict
- * @ constructor
  * @extends p5.TypedDict
  *
  */
@@ -400,7 +398,6 @@ p5.StringDict.prototype._validate = function(value) {
  *
  *
  * @class p5.NumberDict
- * @ constructor
  * @extends p5.TypedDict
  *
  */

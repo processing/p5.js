@@ -19,7 +19,6 @@ var p5 = require('./core');
  * or in the p5.dom library, createDiv, createImg, createInput, etc.
  *
  * @class p5.Element
- * @ constructor
  * @param {String} elt DOM node that is wrapped
  * @param {p5} [pInst] pointer to p5 instance
  */
