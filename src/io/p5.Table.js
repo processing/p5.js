@@ -639,6 +639,35 @@ p5.Table.prototype.addColumn = function(title) {
  *
  *  @method  getColumnCount
  *  @return {Integer} Number of columns in this table
+ * @example
+ * <div>
+ * <code>
+ * // given the cvs file "blobs.csv" in /assets directory
+ * // ID, Name, Flavor, Shape, Color
+ * // Blob1, Blobby, Sweet, Blob, Pink
+ * // Blob2, Saddy, Savory, Blob, Blue
+ *
+ * var table;
+ *
+ * function preload() {
+ *   table = loadTable('assets/blobs.csv');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 100);
+ *   textAlign(CENTER);
+ *   background(255);
+ * }
+ *
+ * function draw() {
+ *   text(
+    'There are ' + table.getColumnCount() + ' columns in the table.',
+    100,
+    50
+  );
+ * }
+ * </code>
+ * </div>
  */
 p5.Table.prototype.getColumnCount = function() {
   return this.columns.length;
@@ -649,6 +678,32 @@ p5.Table.prototype.getColumnCount = function() {
  *
  *  @method  getRowCount
  *  @return {Integer} Number of rows in this table
+ * @example
+ * <div>
+ * <code>
+ * // given the cvs file "blobs.csv" in /assets directory
+ * //
+ * // ID, Name, Flavor, Shape, Color
+ * // Blob1, Blobby, Sweet, Blob, Pink
+ * // Blob2, Saddy, Savory, Blob, Blue
+ *
+ * var table;
+ *
+ * function preload() {
+ *   table = loadTable('assets/blobs.csv');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 100);
+ *   textAlign(CENTER);
+ *   background(255);
+ * }
+ *
+ * function draw() {
+ *   text('There are ' + table.getRowCount() + ' rows in the table.', 100, 50);
+ * }
+ * </code>
+ * </div>
  */
 p5.Table.prototype.getRowCount = function() {
   return this.rows.length;
