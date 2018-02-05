@@ -51,7 +51,7 @@ require([
 
     // Get classes
     _.each(classes, function(c, idx, array) {
-      if (c.is_constructor) {
+      if (!c.private) {
         App.classes.push(c);
       }
     });

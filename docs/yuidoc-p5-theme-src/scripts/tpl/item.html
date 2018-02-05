@@ -57,6 +57,8 @@
 
 </div>
 
+<% if (isConstructor || !isClass) { %>
+
 <div>
   <h4><span id="reference-syntax">Syntax</span></h4>
   <p>
@@ -166,4 +168,6 @@
       <p class='returns'><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
 </div>
+<% } %>
+
 <% } %>

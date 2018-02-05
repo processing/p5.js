@@ -74,13 +74,13 @@ define([
 
         // Set item contents
         if (isClass) {
-          if (isConstructor) {
-            var constructor = this.tpl({
-              item: cleanItem,
-              syntaxes: syntaxes
-            });
-            cleanItem.constructor = constructor;
-          }
+          var constructor = this.tpl({
+            item: cleanItem,
+            isClass: true,
+            isConstructor: isConstructor,
+            syntaxes: syntaxes
+          });
+          cleanItem.constructor = constructor;
 
           var contents = _.find(App.classes, function(c){ return c.name === cleanItem.name; });
           cleanItem.things = contents.items;
@@ -93,6 +93,8 @@ define([
 
           itemHtml = this.tpl({
             item: cleanItem,
+            isClass: false,
+            isConstructor: false,
             syntaxes: syntaxes
           });
         }
