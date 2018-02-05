@@ -660,11 +660,8 @@ p5.Table.prototype.addColumn = function(title) {
  * }
  *
  * function draw() {
- *   text(
-    'There are ' + table.getColumnCount() + ' columns in the table.',
-    100,
-    50
-  );
+ *   var numOfColumn = table.getColumnCount();
+ *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
  * }
  * </code>
  * </div>
