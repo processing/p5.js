@@ -55,6 +55,8 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   var r = renderer || constants.P2D;
   var c;
 
+  var fillsWindow = w >= this.windowWidth && h >= this.windowHeight;
+
   if (r === constants.WEBGL) {
     c = document.getElementById(defaultId);
     if (c) {
@@ -87,6 +89,16 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     c.dataset.hidden = true; // tag to show later
     c.style.visibility = 'hidden';
   }
+
+  // if the canvas fills the window, set display to block so scrollbars
+  // don't show.
+  if (fillsWindow) {
+    c.style.display = 'block';
+  }
+
+  // add css class names so user can style if desired.
+  c.className =
+    (c.className ? c.className + ' ' : '') + 'p5jscanvas p5jscanvas-' + r;
 
   if (this._userNode) {
     // user input node case
