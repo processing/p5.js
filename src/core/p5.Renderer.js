@@ -60,6 +60,56 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
+// the renderer should return a 'style' object that it wishes to
+// store on the push stack.
+p5.Renderer.prototype.push = function() {
+  return {
+    properties: {
+      _doStroke: this._doStroke,
+      _strokeSet: this._strokeSet,
+      _doFill: this._doFill,
+      _fillSet: this._fillSet,
+      _tint: this._tint,
+      _imageMode: this._imageMode,
+      _rectMode: this._rectMode,
+      _ellipseMode: this._ellipseMode,
+      _textFont: this._textFont,
+      _textLeading: this._textLeading,
+      _textSize: this._textSize,
+      _textStyle: this._textStyle
+    }
+  };
+};
+
+// this is implementation of Object.assign()
+// The assign() method is used to copy the values of all enumerable
+// own properties from one or more source objects to a target object.
+// It will return the target object.
+function assign(to, firstSource) {
+  for (var i = 1; i < arguments.length; i++) {
+    var nextSource = arguments[i];
+    if (nextSource === undefined || nextSource === null) {
+      continue;
+    }
+
+    for (var nextKey in nextSource)
+      if (nextSource.hasOwnProperty(nextKey)) {
+        to[nextKey] = nextSource[nextKey];
+      }
+  }
+  return to;
+}
+
+// a pop() operation is in progress
+// the renderer is passed the 'style' object that it returned
+// from its push() method.
+p5.Renderer.prototype.pop = function(style) {
+  if (style.properties) {
+    // copy the style properties back into the renderer
+    assign(this, style.properties);
+  }
+};
+
 /**
  * Resize our canvas element.
  */

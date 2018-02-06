@@ -1,5 +1,7 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+  shininess(50);
+  lightSpecular(255);
 }
 
 function draw(){
@@ -8,6 +10,7 @@ function draw(){
   var locY = mouseY - height / 2;
   var locX = mouseX - width / 2;
 
+  lightSpecular(255);
   ambientLight(100, 80, 80);
   pointLight(200, 200, 200, locX, locY, 0);
 

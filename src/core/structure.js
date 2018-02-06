@@ -186,25 +186,11 @@ function assign(dest, varArgs) {
  *
  */
 p5.prototype.push = function() {
-  this._renderer.push();
   this._styles.push({
     props: {
       _colorMode: this._colorMode
     },
-    renderer: {
-      _doStroke: this._renderer._doStroke,
-      _strokeSet: this._renderer._strokeSet,
-      _doFill: this._renderer._doFill,
-      _fillSet: this._renderer._fillSet,
-      _tint: this._renderer._tint,
-      _imageMode: this._renderer._imageMode,
-      _rectMode: this._renderer._rectMode,
-      _ellipseMode: this._renderer._ellipseMode,
-      _textFont: this._renderer._textFont,
-      _textLeading: this._renderer._textLeading,
-      _textSize: this._renderer._textSize,
-      _textStyle: this._renderer._textStyle
-    }
+    renderer: this._renderer.push()
   });
 };
 
@@ -265,10 +251,13 @@ p5.prototype.push = function() {
  *
  */
 p5.prototype.pop = function() {
-  this._renderer.pop();
-  var lastS = this._styles.pop();
-  assign(this._renderer, lastS.renderer);
-  assign(this, lastS.props);
+  var style = this._styles.pop();
+  if (style) {
+    this._renderer.pop(style.renderer);
+    assign(this, style.props);
+  } else {
+    console.warn('pop() was called without matching push()');
+  }
 };
 
 p5.prototype.pushStyle = function() {

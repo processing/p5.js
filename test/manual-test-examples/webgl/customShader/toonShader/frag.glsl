@@ -3,27 +3,28 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform float fraction;
+float fraction = 1.0;
 
 varying vec4 vertColor;
 varying vec3 vertNormal;
 varying vec3 vertLightDir;
-varying highp vec2 vertTexCoord;
+//varying highp vec2 vertTexCoord;
 
 void main() {
-  float intensity;
-  vec4 color;
-  intensity = max(0.0, dot(vertLightDir, vertNormal));
-
+  float intensity = dot(vertLightDir, vertNormal);
+  float shade;
   if (intensity > pow(0.95, fraction)) {
-    color = vec4(vec3(1.0), 1.0);
+    shade = 1.0;
   } else if (intensity > pow(0.5, fraction)) {
-    color = vec4(vec3(0.6), 1.0);
+    shade = 0.6;
   } else if (intensity > pow(0.25, fraction)) {
-    color = vec4(vec3(0.4), 1.0);
+    shade = 0.4;
   } else {
-    color = vec4(vec3(0.2), 1.0);
+    shade = 0.2;
   }
 
-  gl_FragColor = color * vertColor;
+  gl_FragColor = vertColor;
+  gl_FragColor.rgb *= shade;
+
+  gl_FragColor.a = 1.0;
 }

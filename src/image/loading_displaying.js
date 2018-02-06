@@ -384,7 +384,7 @@ p5.prototype.image = function(
  */
 p5.prototype.tint = function() {
   p5._validateParameters('tint', arguments);
-  var c = this.color.apply(this, arguments);
+  var c = p5.prototype.color.apply(this, arguments);
   this._renderer._tint = c.levels;
 };
 

@@ -1,5 +1,7 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+  lightSpecular(255);
+  shininess(10);
 }
 
 function draw(){

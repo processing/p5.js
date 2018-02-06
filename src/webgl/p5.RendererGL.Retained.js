@@ -3,6 +3,35 @@
 'use strict';
 
 var p5 = require('../core/core');
+require('./p5.RendererGL');
+
+// a render buffer definition
+function BufferDef(size, src, dst, attr, map) {
+  this.size = size; // the number of FLOATs in each vertex
+  this.src = src; // the name of the model's source array
+  this.dst = dst; // the name of the geometry's buffer
+  this.attr = attr; // the name of the vertex attribute
+  this.map = map; // optional, a transformation function to apply to src
+}
+
+var _flatten = p5.RendererGL._flatten;
+var _vToNArray = p5.RendererGL._vToNArray;
+
+var strokeBuffers = [
+  new BufferDef(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', _flatten),
+  new BufferDef(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', _flatten)
+];
+
+var fillBuffers = [
+  new BufferDef(3, 'vertices', 'vertexBuffer', 'aPosition', _vToNArray),
+  new BufferDef(3, 'vertexNormals', 'normalBuffer', 'aNormal', _vToNArray),
+  new BufferDef(4, 'vertexColors', 'colorBuffer', 'aMaterialColor'),
+  new BufferDef(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor'),
+  new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+  new BufferDef(3, 'vertexEmissives', 'emissiveBuffer', 'aEmissiveColor'),
+  new BufferDef(1, 'vertexShininesses', 'shininessBuffer', 'aSpecularPower'),
+  new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
+];
 
 var hashCount = 0;
 /**
@@ -13,6 +42,8 @@ var hashCount = 0;
  * @param  {String} gId  key of the geometry object
  */
 p5.RendererGL.prototype._initBufferDefaults = function(gId) {
+  if (this.gHash.hasOwnProperty(gId)) return;
+
   this._freeBuffers(gId);
 
   //@TODO remove this limit on hashes in gHash
@@ -37,155 +68,60 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   hashCount--;
 
   var gl = this.GL;
-  geometry.vertexBuffer && gl.deleteBuffer(geometry.vertexBuffer);
-  geometry.normalBuffer && gl.deleteBuffer(geometry.normalBuffer);
-  geometry.lineNormalBuffer && gl.deleteBuffer(geometry.lineNormalBuffer);
-  geometry.uvBuffer && gl.deleteBuffer(geometry.uvBuffer);
   geometry.indexBuffer && gl.deleteBuffer(geometry.indexBuffer);
-  geometry.lineVertexBuffer && gl.deleteBuffer(geometry.lineVertexBuffer);
+
+  function freeBuffers(bds) {
+    for (var i = 0; i < bds.length; i++) {
+      var bd = bds[i];
+      if (geometry[bd.dst]) {
+        gl.deleteBuffer(geometry[bd.dst]);
+        geometry[bd.dst] = null;
+      }
+    }
+  }
+
+  // free all the buffers
+  freeBuffers(strokeBuffers);
+  freeBuffers(fillBuffers);
 };
+
 /**
  * createBuffers description
  * @private
  * @param  {String} gId    key of the geometry object
- * @param  {p5.Geometry}  obj contains geometry data
+ * @param  {p5.Geometry}  model contains geometry data
  */
-p5.RendererGL.prototype.createBuffers = function(gId, obj) {
+p5.RendererGL.prototype.createBuffers = function(gId, model) {
   var gl = this.GL;
   this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
 
   var geometry = this.gHash[gId];
+  geometry.model = model;
 
-  geometry.numberOfItems = obj.faces.length * 3;
-  geometry.lineVertexCount = obj.lineVertices.length;
-
-  this._useColorShader();
-
-  // initialize the stroke shader's 'aPosition' buffer, if used
-  if (this.curStrokeShader.attributes.aPosition) {
-    geometry.lineVertexBuffer = gl.createBuffer();
-
-    this._bindBuffer(
-      geometry.lineVertexBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.lineVertices),
-      Float32Array,
-      gl.STATIC_DRAW
+  if (model.faces.length) {
+    // allocate space for faces
+    geometry.indexBuffer = this._createBuffer(
+      geometry.indexBuffer,
+      p5.RendererGL._flatten(model.faces),
+      gl.ELEMENT_ARRAY_BUFFER,
+      Uint16Array
     );
 
-    this.curStrokeShader.enableAttrib(
-      this.curStrokeShader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    // the vertex count is based on the number of faces
+    geometry.vertexCount = model.faces.length * 3;
+  } else {
+    // the index buffer is unused, remove it
+    if (geometry.indexBuffer) {
+      gl.deleteBuffer(geometry.indexBuffer);
+      geometry.indexBuffer = null;
+    }
+    // the vertex count comes directly from the model
+    geometry.vertexCount = model.vertices && model.vertices.length;
   }
 
-  // initialize the stroke shader's 'aDirection' buffer, if used
-  if (this.curStrokeShader.attributes.aDirection) {
-    geometry.lineNormalBuffer = gl.createBuffer();
-
-    this._bindBuffer(
-      geometry.lineNormalBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.lineNormals),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    this.curStrokeShader.enableAttrib(
-      this.curStrokeShader.attributes.aDirection.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-
-  // initialize the fill shader's 'aPosition' buffer, if used
-  if (this.curFillShader.attributes.aPosition) {
-    geometry.vertexBuffer = gl.createBuffer();
-
-    // allocate space for vertex positions
-    this._bindBuffer(
-      geometry.vertexBuffer,
-      gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertices),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    this.curFillShader.enableAttrib(
-      this.curFillShader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-
-  // allocate space for faces
-  geometry.indexBuffer = gl.createBuffer();
-  this._bindBuffer(
-    geometry.indexBuffer,
-    gl.ELEMENT_ARRAY_BUFFER,
-    this._flatten(obj.faces),
-    Uint16Array,
-    gl.STATIC_DRAW
-  );
-
-  // initialize the fill shader's 'aNormal' buffer, if used
-  if (this.curFillShader.attributes.aNormal) {
-    geometry.normalBuffer = gl.createBuffer();
-
-    // allocate space for normals
-    this._bindBuffer(
-      geometry.normalBuffer,
-      gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertexNormals),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    this.curFillShader.enableAttrib(
-      this.curFillShader.attributes.aNormal.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-
-  // initialize the fill shader's 'aTexCoord' buffer, if used
-  if (this.curFillShader.attributes.aTexCoord) {
-    geometry.uvBuffer = gl.createBuffer();
-
-    // tex coords
-    this._bindBuffer(
-      geometry.uvBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.uvs),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    this.curFillShader.enableAttrib(
-      this.curFillShader.attributes.aTexCoord.location,
-      2,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-  //}
+  geometry.lineVertexCount = model.lineVertices && model.lineVertices.length;
 };
 
 /**
@@ -194,100 +130,39 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
  * @param  {String} gId     ID in our geom hash
  * @chainable
  */
-p5.RendererGL.prototype.drawBuffers = function(gId) {
+p5.RendererGL.prototype.drawBuffers = function(gId, drawMode) {
   this._setDefaultCamera();
-  var gl = this.GL;
-  this._useColorShader();
+
   var geometry = this.gHash[gId];
 
-  if (this._doStroke && geometry.lineVertexCount > 0) {
-    this.curStrokeShader.bindShader();
+  // select the stroke shader to use
+  var stroke = this.curStrokeShader;
+  if (!stroke || !stroke.isStrokeShader()) {
+    stroke = this._getLineShader();
+  }
+  // render the stroke
+  this._renderStroke(geometry, stroke);
 
-    // bind the stroke shader's 'aPosition' buffer
-    if (geometry.lineVertexBuffer) {
-      this._bindBuffer(geometry.lineVertexBuffer, gl.ARRAY_BUFFER);
-      this.curStrokeShader.enableAttrib(
-        this.curStrokeShader.attributes.aPosition.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
+  // select the fill shader to use
+  var fill = this.curFillShader;
+  if (this._enableNormal) {
+    fill = this._getNormalShader();
+  } else if (this._enableLighting) {
+    if (!fill || !fill.isLightShader()) {
+      fill = this._getLightShader();
     }
-
-    // bind the stroke shader's 'aDirection' buffer
-    if (geometry.lineNormalBuffer) {
-      this._bindBuffer(geometry.lineNormalBuffer, gl.ARRAY_BUFFER);
-      this.curStrokeShader.enableAttrib(
-        this.curStrokeShader.attributes.aDirection.location,
-        4,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
+  } else if (this._tex) {
+    if (!fill || !fill.isTextureShader()) {
+      fill = this._getTextureShader();
     }
-
-    this._applyColorBlend(this.curStrokeColor);
-    this._drawArrays(gl.TRIANGLES, gId);
-    this.curStrokeShader.unbindShader();
+  } else {
+    if (!fill /* || !fill.isColorShader()*/) {
+      fill = this._getColorShader();
+    }
   }
 
-  if (this._doFill !== false) {
-    this.curFillShader.bindShader();
-
-    // bind the fill shader's 'aPosition' buffer
-    if (geometry.vertexBuffer) {
-      //vertex position buffer
-      this._bindBuffer(geometry.vertexBuffer, gl.ARRAY_BUFFER);
-      this.curFillShader.enableAttrib(
-        this.curFillShader.attributes.aPosition.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
-    if (geometry.indexBuffer) {
-      //vertex index buffer
-      this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
-    }
-
-    // bind the fill shader's 'aNormal' buffer
-    if (geometry.normalBuffer) {
-      this._bindBuffer(geometry.normalBuffer, gl.ARRAY_BUFFER);
-      this.curFillShader.enableAttrib(
-        this.curFillShader.attributes.aNormal.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
-    // bind the fill shader's 'aTexCoord' buffer
-    if (geometry.uvBuffer) {
-      // uv buffer
-      this._bindBuffer(geometry.uvBuffer, gl.ARRAY_BUFFER);
-      this.curFillShader.enableAttrib(
-        this.curFillShader.attributes.aTexCoord.location,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
-    this._applyColorBlend(this.curFillColor);
-    this._drawElements(gl.TRIANGLES, gId);
-    this.curFillShader.unbindShader();
-  }
-  return this;
+  // render the fill
+  this._renderFill(geometry, fill, drawMode);
 };
 
 /**
@@ -320,18 +195,154 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   }
 };
 
-p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
-  this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
-  return this;
+p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, bds) {
+  var model = geometry.model;
+  var attributes = shader.attributes;
+  var gl = this.GL;
+
+  // loop through each of the buffer definitions
+  for (var i = 0; i < bds.length; i++) {
+    var bd = bds[i];
+
+    var attr = attributes[bd.attr];
+    if (!attr) continue;
+
+    var buffer = geometry[bd.dst];
+
+    // check if the model has the appropriate source array
+    var src = model[bd.src];
+    if (src) {
+      // check if we need to create the GL buffer
+      var createBuffer = !buffer;
+      if (createBuffer) {
+        // create and remember the buffer
+        geometry[bd.dst] = buffer = gl.createBuffer();
+      }
+      // bind the buffer
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+      // check if we need to fill the buffer with data
+      if (createBuffer || model.dirtyFlags[bd.src] !== false) {
+        var map = bd.map;
+        // get the values from the model, possibly transformed
+        var values = map ? map(src) : src;
+
+        // fill the buffer with the values
+        this._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
+
+        // mark the model's source array as clean
+        model.dirtyFlags[bd.src] = false;
+      }
+      // enable the attribute
+      shader.enableAttrib(attr, bd.size);
+    } else {
+      if (buffer) {
+        // remove the unused buffer
+        gl.deleteBuffer(buffer);
+        geometry[bd.dst] = null;
+      }
+      // disable the vertex
+      gl.disableVertexAttribArray(attr.index);
+    }
+  }
 };
 
-p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  this.GL.drawElements(
-    drawMode,
-    this.gHash[gId].numberOfItems,
-    this.GL.UNSIGNED_SHORT,
-    0
+p5.RendererGL.prototype._renderStroke = function(geometry, stroke) {
+  // check if the stroke is enabled
+  if (!this._doStroke || geometry.lineVertexCount < 2 || this._enableNormal) {
+    return;
+  }
+
+  var gl = this.GL;
+
+  stroke.bindShader();
+
+  // set the uniform values
+  stroke.setUniform('uStrokeColor', this._strokeColor);
+  stroke.setUniform('uStrokeWeight', this._strokeWeight);
+
+  // prepare the render buffers
+  this._prepareBuffers(geometry, stroke, strokeBuffers);
+
+  // render the stroke
+  this._applyColorBlend(this._strokeColor);
+  gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertexCount);
+
+  stroke.unbindShader();
+};
+
+p5.RendererGL.prototype._renderFill = function(geometry, fill, drawMode) {
+  // check if the fill is enabled
+  if (!this._doFill || geometry.vertexCount < 3) {
+    return;
+  }
+
+  var gl = this.GL;
+
+  fill.bindShader();
+
+  // TODO: optimize
+  fill.setUniform('uAmbientColor', this._ambientColor);
+  fill.setUniform('uMaterialColor', this._diffuseColor);
+  fill.setUniform('uSpecularColor', this._specularColor);
+  fill.setUniform('uSpecularPower', this._specularPower);
+  fill.setUniform('isTexture', !!this._tex);
+  if (this._tex) {
+    fill.setUniform('uSampler', this._tex);
+  }
+
+  var pointLightCount = this.pointLightColors.length / 3;
+  fill.setUniform('uPointLightCount', pointLightCount);
+  fill.setUniform('uPointLightLocation', this.pointLightPositions);
+  fill.setUniform('uPointLightColor', this.pointLightColors);
+  fill.setUniform('uPointLightSpecularColor', this.pointLightSpecularColors);
+
+  var directionalLightCount = this.directionalLightColors.length / 3;
+  fill.setUniform('uDirectionalLightCount', directionalLightCount);
+  fill.setUniform(
+    'uDirectionalLightDirection',
+    this.directionalLightDirections
   );
+  fill.setUniform('uDirectionalLightColor', this.directionalLightColors);
+  fill.setUniform(
+    'uDirectionalLightSpecularColor',
+    this.directionalLightSpecularColors
+  );
+
+  // TODO: sum these here...
+  var ambientLightCount = this.ambientLightColors.length / 3;
+  fill.setUniform('uAmbientLightCount', ambientLightCount);
+  fill.setUniform('uAmbientLightColor', this.ambientLightColors);
+
+  fill.setUniform('uConstantFalloff', this._constantFalloff);
+  fill.setUniform('uLinearFalloff', this._linearFalloff);
+  fill.setUniform('uQuadraticFalloff', this._quadraticFalloff);
+
+  // bind the index buffer, if we have one
+  if (geometry.indexBuffer) {
+    this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+  }
+
+  // prepare the other render buffers
+  this._prepareBuffers(geometry, fill, fillBuffers);
+
+  this._applyColorBlend(this._diffuseColor);
+
+  // render the fill
+  if (geometry.indexBuffer) {
+    // we're drawing faces
+    gl.drawElements(
+      gl.TRIANGLES,
+      geometry.vertexCount,
+      this.GL.UNSIGNED_SHORT,
+      0
+    );
+  } else {
+    // drawing vertices
+    gl.drawArrays(drawMode || gl.TRIANGLES, 0, geometry.vertexCount);
+  }
+
+  fill.unbindShader();
 };
 
 module.exports = p5.RendererGL;

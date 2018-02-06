@@ -7,9 +7,11 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
+  lightSpecular(255);
+  lightFalloff(1, 0.001, 0);
 }
 
-var lights = [
+var pointLights = [
   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
@@ -24,11 +26,13 @@ function draw() {
 
   directionalLight(color('#111'), 1, 1, 1);
 
-  for (var i = 0; i < lights.length; i++) {
-    var light = lights[i];
+  for (var i = 0; i < pointLights.length; i++) {
+    var light = pointLights[i];
+    var lightColor = color(light.c);
+    lightSpecular(lightColor);
     pointLight(
-      color(light.c),
-      p5.Vector.fromAngles(t * light.t, t * light.p, width * 2)
+      lightColor,
+      p5.Vector.fromAngles(t * light.t, t * light.p, width * 5)
     );
   }
 
@@ -49,12 +53,8 @@ function draw() {
 
 function mousePressed() {
   setAttributes('perPixelLighting', true);
-  noStroke();
-  specularMaterial(250);
 }
 
 function mouseReleased() {
   setAttributes('perPixelLighting', false);
-  noStroke();
-  specularMaterial(250);
 }
