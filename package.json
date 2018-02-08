@@ -69,8 +69,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-karma": "^2.0.0",
     "grunt-minjson": "^0.4.0",
-    "grunt-mocha": "^1.0.4",
-    "grunt-mocha-test": "^0.12.7",
+    "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
     "grunt-open": "^0.2.3",
     "grunt-release-it": "^1.0.1",
@@ -90,7 +89,6 @@
     "karma-safari-launcher": "^1.0.0",
     "lint-staged": "^4.3.0",
     "marked": "^0.3.9",
-    "mocha": "^4.1.0",
     "opentype.js": "^0.7.3",
     "prettier": "^1.7.4",
     "request": "^2.81.0",
@@ -98,7 +96,9 @@
     "word-wrap": "^1.2.3"
   },
   "license": "LGPL-2.1",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-mocha": "^1.0.4"
+  },
   "main": "./lib/p5.js",
   "types": "./lib/p5.d.ts",
   "files": [

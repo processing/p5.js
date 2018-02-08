@@ -55,6 +55,11 @@
  *                      specific benchmark you can by specifying the target e.g.
  *                      "grunt karma:random-dev". The available targets are
  *                      defined in grunt-karma.js.
+ *
+ *  Contributors list can be updated using all-contributors-cli:
+ *  https://www.npmjs.com/package/all-contributors-cli
+ *
+ *  all-contributors generate - Generates new contributors list for README
  */
 
 function getYuidocOptions() {
@@ -222,7 +227,8 @@ module.exports = function(grunt) {
           reporter: reporter,
           run: false,
           log: true,
-          logErrors: true
+          logErrors: true,
+          growlOnSuccess: false
         }
       },
       test: {
