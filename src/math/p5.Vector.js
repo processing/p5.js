@@ -29,7 +29,6 @@ var constants = require('../core/constants');
  * "vector" math, which is made easy by the methods inside the p5.Vector class.
  *
  * @class p5.Vector
- * @constructor
  * @param {Number} [x] x component of the vector
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector

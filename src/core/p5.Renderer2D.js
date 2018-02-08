@@ -286,38 +286,30 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 };
 
 p5.Renderer2D.prototype.loadPixels = function() {
-  var pd = this._pixelDensity || this._pInst._pixelDensity;
+  var ctx = this._pInst || this; // if called by p5.Image
+  var pd = ctx._pixelDensity;
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
   // @todo this should actually set pixels per object, so diff buffers can
   // have diff pixel arrays.
-  if (this._pInst) {
-    this._pInst._setProperty('imageData', imageData);
-    this._pInst._setProperty('pixels', imageData.data);
-  } else {
-    // if called by p5.Image
-    this._setProperty('imageData', imageData);
-    this._setProperty('pixels', imageData.data);
-  }
+  ctx._setProperty('imageData', imageData);
+  ctx._setProperty('pixels', imageData.data);
 };
 
 p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
+  var ctx = this._pInst || this;
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(
-      this._pInst._pixelDensity,
-      this._pInst._pixelDensity
-    );
+    this.drawingContext.scale(ctx._pixelDensity, ctx._pixelDensity);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
-    this.loadPixels.call(this._pInst);
+    this.loadPixels.call(ctx);
     this.drawingContext.restore();
   } else {
-    var ctx = this._pInst || this;
     var r = 0,
       g = 0,
       b = 0,
@@ -375,7 +367,8 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
 };
 
 p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
-  var pd = this._pixelDensity || this._pInst._pixelDensity;
+  var ctx = this._pInst || this;
+  var pd = ctx._pixelDensity;
   if (
     x === undefined &&
     y === undefined &&
@@ -390,11 +383,7 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   w *= pd;
   h *= pd;
 
-  if (this._pInst) {
-    this.drawingContext.putImageData(this._pInst.imageData, x, y, 0, 0, w, h);
-  } else {
-    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
-  }
+  this.drawingContext.putImageData(ctx.imageData, x, y, 0, 0, w, h);
 };
 
 //////////////////////////////////////////////
