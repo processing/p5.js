@@ -148,8 +148,8 @@ p5.prototype.saveCanvas = function(cnv, filename, extension) {
   if (cnv instanceof p5.Element) {
     cnv = cnv.elt;
   } else if (!(cnv instanceof HTMLCanvasElement)) {
-    filename = cnv;
     extension = filename;
+    filename = cnv;
     cnv = this._curElement && this._curElement.elt;
   }
 
