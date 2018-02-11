@@ -480,6 +480,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       return;
     }
     _validationInitialized = true;
+    var nestedValidation = false;
     var classitems = arrDoc.classitems;
     var typeMap = {};
     for (var i = 0; i < classitems.length; i++) {
@@ -520,8 +521,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
       if (typeof fn === 'function') {
         var proxy = (function(fn, vp, classitem) {
           return function validatingProxy() {
-            vp(classitem, arguments);
-            return fn.apply(this, arguments);
+            if (nestedValidation) {
+              return fn.apply(this, arguments);
+            }
+
+            nestedValidation = true;
+            try {
+              vp(classitem, arguments);
+              return fn.apply(this, arguments);
+            } finally {
+              nestedValidation = false;
+            }
           };
         })(fn, validateParameters, classitem);
         if (window[classitem.name] === pr[classitem.name]) {
