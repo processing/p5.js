@@ -396,6 +396,8 @@ p5.prototype.rect = function(x, y, w, h) {
   if (this._renderer._doStroke || this._renderer._doFill) {
     var vals = canvas.modeAdjust(x, y, w, h, this._renderer._rectMode);
     var args = [vals.x, vals.y, vals.w, vals.h];
+    // append the additional arguments (either cornder radii, or
+    // segment details) to the argument list
     for (var i = 4; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
