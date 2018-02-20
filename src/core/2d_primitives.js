@@ -390,12 +390,18 @@ p5.prototype.quad = function() {
  * @param  {Integer} [detailY] number of segments in the y-direction
  * @chainable
  */
-p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
+p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    var vals = canvas.modeAdjust(x, y, w, h, this._renderer._rectMode);
-    this._renderer.rect([vals.x, vals.y, vals.w, vals.h, detailX, detailY]);
+    var vals = canvas.modeAdjust(arguments[0], arguments[1], arguments[2], arguments[3], this._renderer._rectMode);
+    var args = [vals.x, vals.y, vals.w, vals.h];
+    // append the additional arguments (either cornder radii, or
+    // segment details) to the argument list
+    for (var i = 4; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    this._renderer.rect(args);
   }
 
   return this;
