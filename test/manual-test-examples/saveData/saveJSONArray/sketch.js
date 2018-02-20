@@ -1,14 +1,12 @@
-var species = [ "Capra hircus", "Panthera pardus", "Equus zebra" ];
-var names = [ "Goat", "Leopard", "Zebra" ];
+var species = ['Capra hircus', 'Panthera pardus', 'Equus zebra'];
+var names = ['Goat', 'Leopard', 'Zebra'];
 
 var values; // Array that contains JSON objects
 
 function setup() {
-
   values = [];
 
   for (var i = 0; i < species.length; i++) {
-
     var animal = {};
 
     animal.id = i;

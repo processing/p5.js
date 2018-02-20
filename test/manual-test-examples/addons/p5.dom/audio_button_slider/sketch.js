@@ -2,9 +2,8 @@ var playing = false;
 var beat, pVol, pTime, button, volumeSlider;
 var amp;
 
-
 function setup() {
-  createCanvas(100,100);
+  createCanvas(100, 100);
   beat = createAudio(['../lucky_dragons.ogg', '../lucky_dragons.mp3']);
 
   button = createButton('play');
@@ -22,7 +21,7 @@ function setup() {
 function draw() {
   background(200);
 
-  var volume = volumeSlider.value()/100;
+  var volume = volumeSlider.value() / 100;
   beat.volume(volume);
 
   pVol.html('Volume: ' + volume);
@@ -30,7 +29,7 @@ function draw() {
 
   var level = amp.getLevel();
   var siz = map(level, 0, 0.5, 10, 50);
-  ellipse(width/2, height/2, siz, siz);
+  ellipse(width / 2, height / 2, siz, siz);
 }
 
 function toggleAudio() {

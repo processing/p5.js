@@ -2,15 +2,15 @@ var img;
 var sz = 100;
 
 function preload() {
-  img = loadImage("assets/UV_Grid_Sm.jpg");
+  img = loadImage('assets/UV_Grid_Sm.jpg');
 }
 
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  sz = .25 * min(width, height);
+  sz = 0.25 * min(width, height);
 }
 
-function draw(){
+function draw() {
   background(255);
 
   randomSeed(1);
@@ -19,10 +19,10 @@ function draw(){
   rotateZ(random(0, 2 * PI) + frameCount * 0.01);
   beginShape(TRIANGLES);
   vertex(-sz, -sz, 0, 0, 0);
-  vertex( sz, -sz, 0, 1, 0);
-  vertex( sz,  sz, 0, 1, 1);
-  vertex( sz,  sz, 0, 1, 1);
-  vertex(-sz,  sz, 0, 0, 1);
+  vertex(sz, -sz, 0, 1, 0);
+  vertex(sz, sz, 0, 1, 1);
+  vertex(sz, sz, 0, 1, 1);
+  vertex(-sz, sz, 0, 0, 1);
   vertex(-sz, -sz, 0, 0, 0);
   endShape();
 }

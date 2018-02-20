@@ -5,5 +5,5 @@ function setup() {
 }
 
 function sayDone(elt) {
-  alert('done playing ' + elt.src );
+  alert('done playing ' + elt.src);
 }

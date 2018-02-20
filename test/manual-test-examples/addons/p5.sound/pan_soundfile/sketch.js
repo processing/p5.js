@@ -3,8 +3,6 @@
 // Pan the sound file left when ball hits left edge and vice versa.
 // ====================
 
-
-
 var ball;
 var soundFile;
 
@@ -14,16 +12,16 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400); 
+  createCanvas(400, 400);
 
-  soundFile.volume = .6;
+  soundFile.volume = 0.6;
 
   // create the ball
   ball = {
-    x: width/2,
-    y: height/2,
+    x: width / 2,
+    y: height / 2,
     speed: 7
-  }
+  };
 }
 
 function draw() {
@@ -31,10 +29,8 @@ function draw() {
 
   ball.x += ball.speed;
 
-
   // when the ball hits the wall...
   if (ball.x > width || ball.x < 0) {
-
     // map the ball's x location to a panning degree (float between -1.0 and 1.0)
     var panning = map(ball.x, 0, width, -1, 1);
     soundFile.pan(panning);

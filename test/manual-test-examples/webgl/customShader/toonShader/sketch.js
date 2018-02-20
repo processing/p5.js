@@ -1,19 +1,17 @@
-
 var toonShader;
-
 
 function preload() {
   toonShader = loadShader('vert.glsl', 'frag.glsl');
 }
 
-function setup () {
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
   shader(toonShader);
   toonShader.setUniform('fraction', 1.0);
 }
 
-function draw () {
+function draw() {
   background(0);
   var dirY = (mouseY / height - 0.5) * 2;
   var dirX = (mouseX / width - 0.5) * 2;

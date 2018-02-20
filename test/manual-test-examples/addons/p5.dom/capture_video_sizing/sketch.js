@@ -12,7 +12,7 @@ function draw() {
   image(capture, 0, 0);
 
   capture.loadPixels();
-  console.log(capture.pixels.length === 320*240*4);
+  console.log(capture.pixels.length === 320 * 240 * 4);
 }
 
 function mousePressed() {

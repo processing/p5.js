@@ -15,4 +15,3 @@ function videoReady() {
 function scrub() {
   fingers.time(slider.value());
 }
-

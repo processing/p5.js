@@ -15,15 +15,15 @@ function setup() {
   background(0, 255, 0);
 
   soundFile.loop();
-  createP('Press any key to pause. Resume when the key is released')
+  createP('Press any key to pause. Resume when the key is released');
 }
 
 function keyTyped() {
-    soundFile.pause();
-    background(255, 0, 0);
+  soundFile.pause();
+  background(255, 0, 0);
 }
 
 function keyReleased() {
-    soundFile.play();
-    background(0, 255, 0);
+  soundFile.play();
+  background(0, 255, 0);
 }

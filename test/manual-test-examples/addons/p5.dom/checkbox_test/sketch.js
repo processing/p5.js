@@ -3,7 +3,7 @@ var testcheck;
 
 function setup() {
   checkbox = createCheckbox('the label');
-  checkbox.value('some value')
+  checkbox.value('some value');
 
   // What should this be called??
   // it's wrapping 'onchange'
@@ -22,15 +22,12 @@ function draw() {
   if (testcheck.checked()) {
     background(255, 0, 255);
   }
-
 }
-
 
 function myCheckedEvent() {
   if (this.checked()) {
-    console.log(this.value() + " is checked!");
+    console.log(this.value() + ' is checked!');
   } else {
-    console.log(this.value() + " is not checked!");
+    console.log(this.value() + ' is not checked!');
   }
 }
-

@@ -9,7 +9,7 @@ var micToggle;
 var h;
 
 function setup() {
-  createCanvas(400,400);
+  createCanvas(400, 400);
   noStroke();
   fill(255);
 
@@ -18,7 +18,7 @@ function setup() {
 
   // create controls
   levelLabel = createP('Master Volume: ');
-  masterLevel = createSlider(0,100,50);
+  masterLevel = createSlider(0, 100, 50);
 
   soundToggle = createButton('Sound ON');
   soundToggle.mousePressed(toggleSound);
@@ -27,7 +27,9 @@ function setup() {
   micToggle.mousePressed(toggleMic);
 
   h = createP('enable the mic...');
-  createP('NOTE: Mic is disconnected from master output (speakers) by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
+  createP(
+    'NOTE: Mic is disconnected from master output (speakers) by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.'
+  );
 }
 
 function draw() {
@@ -44,17 +46,16 @@ function draw() {
     h.html('Make some noise!');
   }
 
-  ellipse(width/2,height/2, 400*micLevel + 10, 400*micLevel + 10);
+  ellipse(width / 2, height / 2, 400 * micLevel + 10, 400 * micLevel + 10);
 
   // set master output
-  levelLabel.html('Master Volume: ' + masterLevel.value()/100);
-  masterVolume(masterLevel.value()/100);
+  levelLabel.html('Master Volume: ' + masterLevel.value() / 100);
+  masterVolume(masterLevel.value() / 100);
 }
-
 
 // Toggle whether mic is connected to master output
 function toggleSound() {
-  if (soundOn == false) {
+  if (soundOn === false) {
     mic.connect();
     soundOn = true;
     soundToggle.html('Sound OFF');
@@ -67,7 +68,7 @@ function toggleSound() {
 
 // Toggle whether the mic is on (getting input) or off
 function toggleMic() {
-  if (micOn == true) {
+  if (micOn === true) {
     mic.stop();
     micOn = false;
     micToggle.html('Start Mic');
