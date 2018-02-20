@@ -123,7 +123,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.fill(255, 255, 255, 255);
   //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0; //default point size
-  this.strokeWeight(2);
+  this.strokeWeight(1);
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
