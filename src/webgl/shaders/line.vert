@@ -23,7 +23,7 @@ uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform vec4 uViewport;
-vec3 scale = vec3(1.0);
+vec3 scale = vec3(0.9995);
 
 attribute vec4 aPosition;
 attribute vec4 aDirection;
