@@ -443,7 +443,7 @@ module.exports = function(grunt) {
     'eslint:build',
     'eslint:source',
     'eslint:test',
-    'eslint:examples',
+    //'eslint:examples',
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
