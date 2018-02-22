@@ -12,7 +12,16 @@ function setup() {
 }
 
 function gotFile(file) {
-  var fileDiv = createDiv(file.name + ' ' + file.type + ' ' + file.subtype + ' ' + file.size + ' bytes');
+  var fileDiv = createDiv(
+    file.name +
+      ' ' +
+      file.type +
+      ' ' +
+      file.subtype +
+      ' ' +
+      file.size +
+      ' bytes'
+  );
   if (file.type === 'image') {
     var img = createImg(file.data);
     img.class('thumb');

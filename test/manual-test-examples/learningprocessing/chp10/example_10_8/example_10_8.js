@@ -6,15 +6,15 @@
 
 // Example 10-8: Fancier looking raindrop
 
-function setup(){
+function setup() {
   background(255);
   smooth();
-};
+}
 
-function draw(){
-  for (var i = 2; i < 8; i++ ) {
+function draw() {
+  for (var i = 2; i < 8; i++) {
     noStroke();
     fill(0);
-    ellipse(width/2, height/2 + i*4, i*2, i*2);
+    ellipse(width / 2, height / 2 + i * 4, i * 2, i * 2);
   }
-};
+}

@@ -1,7 +1,6 @@
 var json;
 
 function setup() {
-
   json = {}; // new JSON Object
 
   json.id = 0;

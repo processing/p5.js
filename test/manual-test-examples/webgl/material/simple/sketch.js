@@ -1,11 +1,11 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(255);
 
-  translate(-width/4, 0, 0);
+  translate(-width / 4, 0, 0);
 
   ambientLight(50);
   pointLight(250, 250, 250, -70, 70, 0);

@@ -4,8 +4,8 @@ function setup() {
   dropdown = createSelect(); // or create dropdown?
 
   // just mucking around
-  dropdown.option('apple','1');
-  dropdown.option('orange','2');
+  dropdown.option('apple', '1');
+  dropdown.option('orange', '2');
   dropdown.option('pear');
 
   // Set what it starts as
@@ -27,4 +27,3 @@ function mySelectEvent() {
     console.log("it's a pear!");
   }
 }
-

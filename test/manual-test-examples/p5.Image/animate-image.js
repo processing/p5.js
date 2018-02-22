@@ -11,7 +11,8 @@ function setup() {
   createCanvas(800, 800);
 }
 
-var sX = 0, sY = 0;
+var sX = 0,
+  sY = 0;
 
 function draw() {
   clear();
@@ -19,7 +20,7 @@ function draw() {
 
   // Animate running cat
   //image(source,canvasX,canvasY,canvasWidth,canvasHeight,sourceX,sourceY,sourceWidth,sourceHeight);
-  image(runningCat, 0,0, 300, 150, sX, sY, 300, 150);
+  image(runningCat, 0, 0, 300, 150, sX, sY, 300, 150);
   sX += 300;
   if (sX > 300) {
     sX = 0;
