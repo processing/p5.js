@@ -2,10 +2,10 @@
  *  Frequency Modulation involves two oscillators, referred
  *  to as the carrier and the modulator, where the modulator controls
  *  the carrier's frequency.
- * 
+ *
  *  The carrier oscillates at an audible frequency (i.e. 440 Hz)
  *  and connected to master output by default.
- * 
+ *
  *  The modulator is typically set to a frequency that is lower
  *  than humans can hear (i.e. 1 Hz, or one cycle every second).
  *  The modulator is disconnected from master output, and is connected
@@ -14,7 +14,7 @@
  *  In this example...
  *  - MouseX controls the amplitude of the modulator from 0 to 1. When the
  *  modulator's amplitude is set to 0, the amplitude modulation has no effect.
- * 
+ *
  *  - MouseY controls the frequency of the modulator from 0 to 20hz.
  *  Both impact our perception of the Carrier frequency. A subtle amount
  *  of Amplitude Modulation can simulate effects such as Tremolo.
@@ -27,10 +27,10 @@
 
 var carrier; // this is the oscillator we will hear
 var modulator; // this oscillator will modulate the amplitude of the carrier
-var fft; // we'll visualize the waveform 
+var fft; // we'll visualize the waveform
 
 function setup() {
-  createCanvas(800,400);
+  createCanvas(800, 400);
   noFill();
 
   carrier = new p5.Oscillator('sine');
@@ -70,11 +70,10 @@ function draw() {
   stroke(255);
   strokeWeight(10);
   beginShape();
-  for (var i = 0; i<waveform.length; i++){
+  for (var i = 0; i < waveform.length; i++) {
     var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, -height/2, height/2);
-    vertex(x, y + height/2);
+    var y = map(waveform[i], -1, 1, -height / 2, height / 2);
+    vertex(x, y + height / 2);
   }
   endShape();
-
 }

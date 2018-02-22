@@ -11,13 +11,13 @@ var myImage;
 
 function setup() {
   createCanvas(300, 300);
-  myImage =  loadImage('red.jpg');
-};
+  myImage = loadImage('red.jpg');
+}
 
 function draw() {
   background(255, 200, 200);
   image(myImage, 20, 20, 150, 150);
-};
+}
 
 function mousePressed() {
   if (mouseX > 20 && mouseX < 170 && mouseY > 20 && mouseY < 170) {

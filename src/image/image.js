@@ -125,6 +125,7 @@ p5.prototype.createImage = function(width, height) {
  *
  *   // all of the following are valid
  *   saveCanvas(c, 'myCanvas', 'jpg');
+ *   saveCanvas(c, 'myCanvas.jpg');
  *   saveCanvas(c, 'myCanvas');
  *   saveCanvas(c);
  *   saveCanvas('myCanvas', 'png');
@@ -143,14 +144,28 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.saveCanvas = function(cnv, filename, extension) {
+p5.prototype.saveCanvas = function() {
   p5._validateParameters('saveCanvas', arguments);
-  if (cnv instanceof p5.Element) {
-    cnv = cnv.elt;
-  } else if (!(cnv instanceof HTMLCanvasElement)) {
-    filename = cnv;
-    extension = filename;
-    cnv = this._curElement && this._curElement.elt;
+
+  // copy arguments to array
+  var args = [].slice.call(arguments);
+  var htmlCanvas, filename, extension;
+
+  if (arguments[0] instanceof HTMLCanvasElement) {
+    htmlCanvas = arguments[0];
+    args.shift();
+  } else if (arguments[0] instanceof p5.Element) {
+    htmlCanvas = arguments[0].elt;
+    args.shift();
+  } else {
+    htmlCanvas = this._curElement && this._curElement.elt;
+  }
+
+  if (args.length >= 1) {
+    filename = args[0];
+  }
+  if (args.length >= 2) {
+    extension = args[1];
   }
 
   extension =
@@ -170,7 +185,7 @@ p5.prototype.saveCanvas = function(cnv, filename, extension) {
       break;
   }
 
-  cnv.toBlob(function(blob) {
+  htmlCanvas.toBlob(function(blob) {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
 };

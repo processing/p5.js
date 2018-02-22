@@ -1,10 +1,8 @@
-
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-
 }
 
-function draw(){
+function draw() {
   background(220);
   // triangle with immediate mode
   fill(255);
@@ -16,7 +14,7 @@ function draw(){
 
   // box with retain mode
   push();
-  translate(-width/3, 0);
+  translate(-width / 3, 0);
   box(70);
   pop();
 

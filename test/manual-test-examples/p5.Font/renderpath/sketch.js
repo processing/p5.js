@@ -1,17 +1,16 @@
-function setup(){
-
-  var txt = "Default Text", x = 190;
+function setup() {
+  var txt = 'Default Text',
+    x = 190;
 
   createCanvas(200, 150);
 
-  line(190,0,190,height);
+  line(190, 0, 190, height);
 
   textAlign(RIGHT);
   textSize(32);
   text(txt, x, 30);
 
-  loadFont("../SourceSansPro-Regular.otf", function(font){
-
+  loadFont('../SourceSansPro-Regular.otf', function(font) {
     text(txt, x, 60);
 
     textSize(35); // not aligning correctly (ignore alignment or fix)
@@ -25,12 +24,12 @@ function setup(){
     textSize(20);
     textAlign(LEFT);
 
-    var td = x+font._textWidth('space');
+    var td = x + font._textWidth('space');
     var tw = font._textWidth(' ');
 
-    text('space width: '+tw.toFixed(2)+'px', x, 140);
+    text('space width: ' + tw.toFixed(2) + 'px', x, 140);
 
-    line(td,145,td,145-22);
-    line(td+tw,145,td+tw,145-22);
+    line(td, 145, td, 145 - 22);
+    line(td + tw, 145, td + tw, 145 - 22);
   });
 }

@@ -23,10 +23,10 @@ function setup() {
   /**
    *  Create an FFT object.
    *  Accepts optional parameters for
-   *    - Smoothing 
+   *    - Smoothing
    *    - Length of the FFT's analyze/waveform array. Must be a power of two between 16 and 1024 (default).
    */
-  fft = new p5.FFT(.99, fftBands);
+  fft = new p5.FFT(0.99, fftBands);
 
   p = createP('press any key to pause / play');
 }
@@ -34,23 +34,23 @@ function setup() {
 function draw() {
   background(250);
 
-  /** 
+  /**
    * Analyze the sound as a waveform (amplitude over time)
    */
   waveform = fft.waveform();
 
   // Draw snapshot of the waveform
   beginShape();
-  for (var i = 0; i< waveform.length; i++){
+  for (var i = 0; i < waveform.length; i++) {
     stroke(5);
     strokeWeight(5);
-    vertex(i*2, waveform[i]);
+    vertex(i * 2, waveform[i]);
   }
   endShape();
 }
 
 function keyPressed() {
-  if (soundFile.isPlaying() ) {
+  if (soundFile.isPlaying()) {
     soundFile.pause();
   } else {
     soundFile.play();

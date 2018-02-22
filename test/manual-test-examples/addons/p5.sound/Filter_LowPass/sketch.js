@@ -36,14 +36,16 @@ function setup() {
 
   // update description text
   p = createP(description);
-  var p2 = createP('Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.');
+  var p2 = createP(
+    'Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.'
+  );
 }
 
 function draw() {
   background(30);
 
   // Map mouseX to a the cutoff frequency for our lowpass filter
-  filterFreq = map (mouseX, 0, width, 10, 22050);
+  filterFreq = map(mouseX, 0, width, 10, 22050);
   // Map mouseY to resonance/width
   filterRes = map(mouseY, 0, height, 15, 5);
   // set filter parameters
@@ -54,18 +56,18 @@ function draw() {
   // h = energy / amplitude at that frequency
   var spectrum = fft.analyze();
   noStroke();
-  for (var i = 0; i< spectrum.length; i++){
+  for (var i = 0; i < spectrum.length; i++) {
     var x = map(i, 0, spectrum.length, 0, width);
     var h = -height + map(spectrum[i], 0, 255, height, 0);
-    rect(x, height, width/spectrum.length, h) ;
+    rect(x, height, width / spectrum.length, h);
   }
 
   updateDescription();
 }
 
-
 // Change description text if the song is loading, playing or paused
 function updateDescription() {
-    description = 'Filter Frequency = ' + filterFreq + ' Filter Res = ' + filterRes;
-    p.html(description);
+  description =
+    'Filter Frequency = ' + filterFreq + ' Filter Res = ' + filterRes;
+  p.html(description);
 }

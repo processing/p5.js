@@ -27,14 +27,16 @@ function setup() {
 
   // update description text
   p = createP(description);
-  var p2 = createP('Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.');
+  var p2 = createP(
+    'Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.'
+  );
 }
 
 function draw() {
   background(30);
 
   // Map mouseX to a bandpass freq from the FFT spectrum range: 10Hz - 22050Hz
-  filterFreq = map (mouseX, 0, width, 10, 22050);
+  filterFreq = map(mouseX, 0, width, 10, 22050);
   // Map mouseY to resonance/width
   filterWidth = map(mouseY, 0, height, 0, 90);
   // set filter parameters
@@ -45,10 +47,10 @@ function draw() {
   // h = energy / amplitude at that frequency
   var spectrum = fft.analyze();
   noStroke();
-  for (var i = 0; i< spectrum.length; i++){
+  for (var i = 0; i < spectrum.length; i++) {
     var x = map(i, 0, spectrum.length, 0, width);
     var h = -height + map(spectrum[i], 0, 255, height, 0);
-    rect(x, height, width/spectrum.length, h) ;
+    rect(x, height, width / spectrum.length, h);
   }
 
   updateDescription();
@@ -56,6 +58,10 @@ function draw() {
 
 // display current Filter params
 function updateDescription() {
-    description = 'Playing! Press any key to pause. Filter Frequency = ' + filterFreq + ' Filter Width = ' + filterWidth;
-    p.html(description);
+  description =
+    'Playing! Press any key to pause. Filter Frequency = ' +
+    filterFreq +
+    ' Filter Width = ' +
+    filterWidth;
+  p.html(description);
 }

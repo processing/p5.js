@@ -1,17 +1,15 @@
 var theta = 0;
 
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
-
+function draw() {
   background(255);
 
-
-  translate(-width/2, -height/2, 0);
-  fill(0,0,0);
-  line(0,0,0,width,height,0);
+  translate(-width / 2, -height / 2, 0);
+  fill(0, 0, 0);
+  line(0, 0, 0, width, height, 0);
 }
 
 // function draw(){
@@ -34,8 +32,8 @@ function draw(){
 //   //triangles
 //   translate(0, 100, 0);
 //   triangle(
-//     0, sin( i + frameCount * 0.1) * 10, i, 
-//     60, 60, i, 
+//     0, sin( i + frameCount * 0.1) * 10, i,
+//     60, 60, i,
 //     -60, 60, i);
 
 //   //quad
