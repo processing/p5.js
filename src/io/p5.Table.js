@@ -395,17 +395,46 @@ p5.Table.prototype.findRows = function(value, column) {
 };
 
 /**
- *  Finds the first row in the Table that matches the regular
- *  expression provided, and returns a reference to that row.
- *  Even if multiple rows are possible matches, only the first
- *  matching row is returned. The column to search may be
- *  specified by either its ID or title.
+ * Finds the first row in the Table that matches the regular
+ * expression provided, and returns a reference to that row.
+ * Even if multiple rows are possible matches, only the first
+ * matching row is returned. The column to search may be
+ * specified by either its ID or title.
  *
- *  @method  matchRow
- *  @param  {String} regexp The regular expression to match
- *  @param  {String|Integer} column The column ID (number) or
- *                                   title (string)
- *  @return {p5.TableRow}        TableRow object
+ * @method  matchRow
+ * @param  {String} regexp The regular expression to match
+ * @param  {String|Integer} column The column ID (number) or
+ *                                  title (string)
+ * @return {p5.TableRow}        TableRow object
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //Search using specified regex on a given column, return TableRow object
+ *   const mammal = table.matchRow(new RegExp('ant'), 1);
+ *   print(mammal.getString(1));
+ *   //Output "Panthera pardus"
+ * }
+ * </code>
+ * </div>
+ *
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
   if (typeof column === 'number') {
