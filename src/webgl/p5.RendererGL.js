@@ -568,6 +568,12 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
     this.curStrokeShader.setUniform('uStrokeWeight', w);
+    this.curStrokeShader.setUniform('uPointSize', w);
+    // TODO: Implement lineWidth as a vertex shader.
+    // As gl.lineWidth has a implementation defined minimum and maximum.
+    // and generally produces poor visual results.
+    // This is unlikely to change.
+    // this.drawingContext.lineWidth(w);
   }
 };
 

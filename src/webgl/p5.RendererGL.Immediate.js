@@ -316,7 +316,11 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   }
 
   this._applyColorBlend(this.curStrokeColor);
-  gl.drawArrays(gl.TRIANGLES, 0, this.immediateMode.lineVertices.length);
+  gl.drawArrays(
+    this.immediateMode.shapeMode,
+    0,
+    this.immediateMode.lineVertices.length
+  );
 
   // todo / optimizations? leave bound until another shader is set?
   this.curStrokeShader.unbindShader();

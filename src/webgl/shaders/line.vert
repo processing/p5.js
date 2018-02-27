@@ -21,6 +21,7 @@
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
+uniform float uPointSize;
 
 uniform vec4 uViewport;
 vec3 scale = vec3(1.0);
@@ -84,6 +85,8 @@ void main() {
   vec2 noPerspScale = p.w / (0.5 * uViewport.zw);
 
   //gl_Position.xy = p.xy + offset.xy * mix(noPerspScale, perspScale, float(perspective > 0));
-  gl_Position.xy = p.xy + offset.xy * perspScale;
+  gl_Position.xy = p.xy + perspScale.xy;
   gl_Position.zw = p.zw;
+
+  gl_PointSize = uPointSize;
 }
