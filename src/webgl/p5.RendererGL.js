@@ -177,14 +177,11 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   }
   this._pInst.canvas = c;
 
-  this._pInst.push();
   var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
   this._pInst._elements.push(renderer);
-
-  this._pInst.pop();
 
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -347,7 +344,9 @@ p5.prototype.setAttributes = function(key, value) {
   } else if (key instanceof Object) {
     attr = key;
   }
+  this.push();
   this._renderer._resetContext(attr);
+  this.pop();
 };
 
 /**
