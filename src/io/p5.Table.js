@@ -454,50 +454,53 @@ p5.Table.prototype.matchRow = function(regexp, column) {
 };
 
 /**
- *  Finds the rows in the Table that match the regular expression provided,
- *  and returns references to those rows. Returns an array, so for must be
- *  used to iterate through all the rows, as shown in the example. The
- *  column to search may be specified by either its ID or title.
+ * Finds the rows in the Table that match the regular expression provided,
+ * and returns references to those rows. Returns an array, so for must be
+ * used to iterate through all the rows, as shown in the example. The
+ * column to search may be specified by either its ID or title.
  *
- *  @method  matchRows
- *  @param  {String} regexp The regular expression to match
- *  @param  {String|Integer} [column] The column ID (number) or
- *                                   title (string)
- *  @return {p5.TableRow[]}          An Array of TableRow objects
- *  @example
- *  var table;
+ * @method  matchRows
+ * @param  {String} regexp The regular expression to match
+ * @param  {String|Integer} [column] The column ID (number) or
+ *                                  title (string)
+ * @return {p5.TableRow[]}          An Array of TableRow objects
+ * @example
+ * <div class="norender">
+ * <code>
+ * var table;
  *
- *  function setup() {
+ * function setup() {
+ *   table = new p5.Table();
  *
- *    table = new p5.Table();
+ *   table.addColumn('name');
+ *   table.addColumn('type');
  *
- *    table.addColumn('name');
- *    table.addColumn('type');
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', 'Lion');
+ *   newRow.setString('type', 'Mammal');
  *
- *    var newRow = table.addRow();
- *    newRow.setString('name', 'Lion');
- *    newRow.setString('type', 'Mammal');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Snake');
+ *   newRow.setString('type', 'Reptile');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Snake');
- *    newRow.setString('type', 'Reptile');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Mosquito');
+ *   newRow.setString('type', 'Insect');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Mosquito');
- *    newRow.setString('type', 'Insect');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Lizard');
+ *   newRow.setString('type', 'Reptile');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Lizard');
- *    newRow.setString('type', 'Reptile');
- *
- *    var rows = table.matchRows('R.*', 'type');
- *    for (var i = 0; i < rows.length; i++) {
- *      print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
- *    }
- *  }
- *  // Sketch prints:
- *  // Snake: Reptile
- *  // Lizard: Reptile
+ *   var rows = table.matchRows('R.*', 'type');
+ *   for (var i = 0; i < rows.length; i++) {
+ *     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
+ *   }
+ * }
+ * // Sketch prints:
+ * // Snake: Reptile
+ * // Lizard: Reptile
+ * </code>
+ * </div>
  */
 p5.Table.prototype.matchRows = function(regexp, column) {
   var ret = [];
