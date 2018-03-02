@@ -137,7 +137,7 @@ var p5 = function(sketch, node, sync) {
    * <br><br>
    * It is important to note that the drawing coordinate system will be reset
    * at the beginning of each draw() call. If any transformations are performed
-   * within draw() (ex: scale, rotate, translate, their effects will be
+   * within draw() (ex: scale, rotate, translate), their effects will be
    * undone at the beginning of draw(), so transformations will not accumulate
    * over time. On the other hand, styling applied (ex: fill, stroke, etc) will
    * remain in effect.
