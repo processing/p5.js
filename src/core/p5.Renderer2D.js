@@ -69,7 +69,10 @@ p5.Renderer2D.prototype.background = function() {
 };
 
 p5.Renderer2D.prototype.clear = function() {
+  this.drawingContext.save();
+  this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
   this.drawingContext.clearRect(0, 0, this.width, this.height);
+  this.drawingContext.restore();
 };
 
 p5.Renderer2D.prototype.fill = function() {
