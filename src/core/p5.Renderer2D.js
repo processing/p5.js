@@ -1364,15 +1364,30 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
 // STRUCTURE
 //////////////////////////////////////////////
 
+// a push() operation is in progress.
+// the renderer should return a 'style' object that it wishes to
+// store on the push stack.
+// derived renderers should call the base class' push() method
+// to fetch the base style object.
 p5.Renderer2D.prototype.push = function() {
   this.drawingContext.save();
+
+  // get the base renderer style
+  return p5.Renderer.prototype.push.apply(this);
 };
 
-p5.Renderer2D.prototype.pop = function() {
+// a pop() operation is in progress
+// the renderer is passed the 'style' object that it returned
+// from its push() method.
+// derived renderers should pass this object to their base
+// class' pop method
+p5.Renderer2D.prototype.pop = function(style) {
   this.drawingContext.restore();
   // Re-cache the fill / stroke state
   this._cachedFillStyle = this.drawingContext.fillStyle;
   this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+
+  p5.Renderer.prototype.pop.call(this, style);
 };
 
 module.exports = p5.Renderer2D;
