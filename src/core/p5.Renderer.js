@@ -82,7 +82,7 @@ p5.Renderer.prototype.push = function() {
 };
 
 // this is implementation of Object.assign() which is unavailable in
-// IE11 and android browsers.
+// IE11 and (non-Chrome) Android browsers.
 // The assign() method is used to copy the values of all enumerable
 // own properties from one or more source objects to a target object.
 // It will return the target object.
