@@ -26,17 +26,16 @@ function setup() {
   noiseEnv = new p5.Env(0.01, 0.5, 0.1, 0);
   noiseEnv.setInput(noise);
   // create a part with 8 spaces, where each space represents 1/16th note (default)
-  part = new p5.Part(8, 1/16);
+  part = new p5.Part(8, 1 / 16);
 
   // add phrases, with a name, a callback, and
   // an array of values that will be passed to the callback if > 0
   part.addPhrase('snare', playSnare, [0, 0, 1, 0]);
-  part.addPhrase('bass', playBass, [47, 42, 45, 47, 45,42, 40, 42]);
+  part.addPhrase('bass', playBass, [47, 42, 45, 47, 45, 42, 40, 42]);
 
   // // set tempo (Beats Per Minute) of the part and tell it to loop
   part.setBPM(80);
   part.loop();
-
 }
 
 function playBass(time, params) {
@@ -54,5 +53,5 @@ function draw() {
   background(255);
   fill(255, 0, 0);
   var noteHeight = map(currentBassNote, 40, 50, height, 0);
-  ellipse(width/2, noteHeight, 30, 30);
+  ellipse(width / 2, noteHeight, 30, 30);
 }

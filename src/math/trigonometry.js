@@ -3,14 +3,12 @@
  * @submodule Trigonometry
  * @for p5
  * @requires core
- * @requires polargeometry
  * @requires constants
  */
 
 'use strict';
 
 var p5 = require('../core/core');
-var polarGeometry = require('./polargeometry');
 var constants = require('../core/constants');
 
 /*
@@ -247,7 +245,8 @@ p5.prototype.tan = function(angle) {
  * Converts a radian measurement to its corresponding value in degrees.
  * Radians and degrees are two ways of measuring the same thing. There are
  * 360 degrees in a circle and 2*PI radians in a circle. For example,
- * 90° = PI/2 = 1.5707964.
+ * 90° = PI/2 = 1.5707964. This function does not take into account the
+ * current angleMode.
  *
  * @method degrees
  * @param  {Number} radians the radians value to convert to degrees
@@ -266,14 +265,15 @@ p5.prototype.tan = function(angle) {
  *
  */
 p5.prototype.degrees = function(angle) {
-  return polarGeometry.radiansToDegrees(angle);
+  return angle * constants.RAD_TO_DEG;
 };
 
 /**
  * Converts a degree measurement to its corresponding value in radians.
  * Radians and degrees are two ways of measuring the same thing. There are
  * 360 degrees in a circle and 2*PI radians in a circle. For example,
- * 90° = PI/2 = 1.5707964.
+ * 90° = PI/2 = 1.5707964. This function does not take into account the
+ * current angleMode.
  *
  * @method radians
  * @param  {Number} degrees the degree value to convert to radians
@@ -290,7 +290,7 @@ p5.prototype.degrees = function(angle) {
  * </div>
  */
 p5.prototype.radians = function(angle) {
-  return polarGeometry.degreesToRadians(angle);
+  return angle * constants.DEG_TO_RAD;
 };
 
 /**

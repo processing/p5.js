@@ -6,6 +6,25 @@ var p5 = require('../core/core');
  * @method orbitControl
  * @for p5
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *   // Orbit control allows the camera to orbit around a target.
+ *   orbitControl();
+ *   box(30, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Camera orbits around box when mouse is hold-clicked & then moved.
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.

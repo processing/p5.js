@@ -3,10 +3,10 @@
  *  of the other samples. This emphasizes the fundamental
  *  frequency. Auto Correlation is useful for pitch detection,
  *  as well as for visualization
- *  
+ *
  *  This example is a Correlogram which is a plot
  *  of the autocorrelations.
- *  
+ *
  *  Example by Jason Sigal and Golan Levin.
  */
 
@@ -41,12 +41,12 @@ function draw() {
   endShape();
 }
 
-
 function autoCorrelate(buffer) {
   var newBuffer = [];
   var nSamples = buffer.length;
 
   var autocorrelation = [];
+  var index;
 
   // center clip removes any samples under 0.1
   if (centerClip) {
@@ -57,11 +57,11 @@ function autoCorrelate(buffer) {
     }
   }
 
-  for (var lag = 0; lag < nSamples; lag++){
-    var sum = 0; 
-    for (var index = 0; index < nSamples; index++){
-      var indexLagged = index+lag;
-      if (indexLagged < nSamples){
+  for (var lag = 0; lag < nSamples; lag++) {
+    var sum = 0;
+    for (index = 0; index < nSamples; index++) {
+      var indexLagged = index + lag;
+      if (indexLagged < nSamples) {
         var sound1 = buffer[index];
         var sound2 = buffer[indexLagged];
         var product = sound1 * sound2;
@@ -70,17 +70,17 @@ function autoCorrelate(buffer) {
     }
 
     // average to a value between -1 and 1
-    newBuffer[lag] = sum/nSamples;
+    newBuffer[lag] = sum / nSamples;
   }
 
-  if (bNormalize){
+  if (bNormalize) {
     var biggestVal = 0;
-    for (var index = 0; index < nSamples; index++){
-      if (abs(newBuffer[index]) > biggestVal){
+    for (index = 0; index < nSamples; index++) {
+      if (abs(newBuffer[index]) > biggestVal) {
         biggestVal = abs(newBuffer[index]);
       }
     }
-    for (var index = 0; index < nSamples; index++){
+    for (index = 0; index < nSamples; index++) {
       newBuffer[index] /= biggestVal;
     }
   }

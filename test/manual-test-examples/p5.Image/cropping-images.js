@@ -4,7 +4,7 @@ function setup() {
   createCanvas(600, 600);
   background(200);
 
-  spriteSheet = loadImage('sprite_sheet.jpg', function () {
+  spriteSheet = loadImage('sprite_sheet.jpg', function() {
     // Full sprite sheet
     image(spriteSheet, 0, 0);
 
@@ -26,8 +26,17 @@ function setup() {
     // Three coins in a row
     var x = 70;
     for (var i = 0; i < 3; i++) {
-      image(spriteSheet,
-        67, 202, 30, 30, x += 75, spriteSheet.height + 10, 75, 75);
+      image(
+        spriteSheet,
+        67,
+        202,
+        30,
+        30,
+        (x += 75),
+        spriteSheet.height + 10,
+        75,
+        75
+      );
     }
   });
 }

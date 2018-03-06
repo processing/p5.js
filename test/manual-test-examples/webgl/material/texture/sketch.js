@@ -7,13 +7,12 @@ var vid;
 var theta = 0;
 
 function preload() {
-  img = loadImage("assets/UV_Grid_Sm.jpg");
-
+  img = loadImage('assets/UV_Grid_Sm.jpg');
 }
 
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  
+
   //2D renderer
   // createCanvas(windowWidth, windowHeight);
 
@@ -23,47 +22,47 @@ function setup(){
   //vid.hide();
 }
 
-function draw(){
+function draw() {
   background(255, 255, 255, 255);
-  translate(0,0,400);
+  translate(0, 0, 400);
   translate(-200, 0, 0);
   push();
-    rotate(theta * mouseX * 0.001, [1,1,1]);
-    
-    //pass image as texture
-    // texture(vid);
-    texture(img);
-    // normalMaterial();
-    sphere(80);
+  rotate(theta * mouseX * 0.001, [1, 1, 1]);
+
+  //pass image as texture
+  // texture(vid);
+  texture(img);
+  // normalMaterial();
+  sphere(80);
   pop();
-    translate(150,0,0);
+  translate(150, 0, 0);
   push();
 
-    rotateZ(theta * mouseX * 0.001);
-    rotateX(theta * mouseX * 0.001);
-    rotateY(theta * mouseX * 0.001);
-    texture(img);
-    //box(45);
-    torus();
+  rotateZ(theta * mouseX * 0.001);
+  rotateX(theta * mouseX * 0.001);
+  rotateY(theta * mouseX * 0.001);
+  texture(img);
+  //box(45);
+  torus();
   pop();
-     translate(150,0,0);
-    push();
- 
-    rotateZ(theta * mouseX * 0.001);
-    rotateX(theta * mouseX * 0.001);
-    rotateY(theta * mouseX * 0.001);
-    texture(img);
-    //box(45);
-    cone();
+  translate(150, 0, 0);
+  push();
+
+  rotateZ(theta * mouseX * 0.001);
+  rotateX(theta * mouseX * 0.001);
+  rotateY(theta * mouseX * 0.001);
+  texture(img);
+  //box(45);
+  cone();
   pop();
-    translate(150,0,0);
-    push(); 
-    rotateZ(theta * mouseX * 0.001);
-    rotateX(theta * mouseX * 0.001);
-    rotateY(theta * mouseX * 0.001);
-    texture(img);
-    //box(45);
-    box();
+  translate(150, 0, 0);
+  push();
+  rotateZ(theta * mouseX * 0.001);
+  rotateX(theta * mouseX * 0.001);
+  rotateY(theta * mouseX * 0.001);
+  texture(img);
+  //box(45);
+  box();
   pop();
   theta += 0.05;
 }

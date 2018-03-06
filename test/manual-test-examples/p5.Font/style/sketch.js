@@ -1,7 +1,7 @@
 var font;
 
 function preload() {
-  font = loadFont("../acmesa.ttf");
+  font = loadFont('../acmesa.ttf');
 }
 
 function setup() {

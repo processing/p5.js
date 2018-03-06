@@ -5,6 +5,8 @@ function setup() {
 
 function draw() {
   background(125);
-  console.log('mx:'+mouseX+' my:'+mouseY+' wmx:'+winMouseX+' wmy:'+winMouseY);
+  console.log(
+    'mx:' + mouseX + ' my:' + mouseY + ' wmx:' + winMouseX + ' wmy:' + winMouseY
+  );
   ellipse(mouseX, mouseY, 20, 20);
 }

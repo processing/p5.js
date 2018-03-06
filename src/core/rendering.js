@@ -234,12 +234,12 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * with the ones of pixels already in the display window (B):
  * <ul>
  * <li><code>BLEND</code> - linear interpolation of colours: C =
- * A*factor + B. This is the default blending mode.</li>
+ * A\*factor + B. This is the default blending mode.</li>
  * <li><code>ADD</code> - sum of A and B</li>
  * <li><code>DARKEST</code> - only the darkest colour succeeds: C =
- * min(A*factor, B).</li>
+ * min(A\*factor, B).</li>
  * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C =
- * max(A*factor, B).</li>
+ * max(A\*factor, B).</li>
  * <li><code>DIFFERENCE</code> - subtract colors from underlying image.</li>
  * <li><code>EXCLUSION</code> - similar to <code>DIFFERENCE</code>, but less
  * extreme.</li>

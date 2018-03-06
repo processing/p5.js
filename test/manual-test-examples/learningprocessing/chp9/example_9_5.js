@@ -8,6 +8,6 @@
 
 var values = [];
 
-for (var n = 0; n < 1000; n ++ ) {
-  values[n] = random(0,10);
+for (var n = 0; n < 1000; n++) {
+  values[n] = random(0, 10);
 }

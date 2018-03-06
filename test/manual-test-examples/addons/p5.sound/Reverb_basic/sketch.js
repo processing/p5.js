@@ -14,7 +14,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(720,100);
+  createCanvas(720, 100);
   background(0);
 
   reverb = new p5.Reverb();
