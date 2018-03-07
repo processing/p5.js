@@ -550,6 +550,8 @@ p5.Vector.prototype.dist = function dist(v) {
  */
 p5.Vector.prototype.normalize = function normalize() {
   var len = this.mag();
+  // here we multiply by the reciprocal instead of calling 'div()'
+  // since div duplicates this zero check.
   if (len !== 0) this.mult(1 / len);
   return this;
 };
