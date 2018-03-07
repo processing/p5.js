@@ -993,12 +993,12 @@ p5.RendererGL.prototype._bindBuffer = function(
 // @TODO:
 p5.RendererGL.prototype.smooth = function() {
   //@TODO finish implementation
-  console.error('smoothing not yet implemented in webgl');
+  console.log('smoothing not yet implemented in webgl');
 };
 
 p5.RendererGL.prototype.noSmooth = function() {
   //@TODO finish implementation
-  console.error('smoothing not yet implemented in webgl');
+  console.log('smoothing not yet implemented in webgl');
 };
 
 ///////////////////////////////
