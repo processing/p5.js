@@ -65,6 +65,7 @@ function draw() {
   pointLight(255, 250, 136, sunPos);
   pointLight(150, 150, 150, moonPos);
 
+  geometry.dirtyFlags.vertices = true;
   geometry.computeFaces().computeNormals();
   renderer.createBuffers('!', geometry);
   renderer.drawBuffersScaled('!', 1000, 1000, 1);

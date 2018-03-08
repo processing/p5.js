@@ -1,8 +1,7 @@
 precision mediump float;
-precision mediump int;
 
-uniform vec4 uMaterialColor;
+uniform vec4 uStrokeColor;
 
 void main() {
-  gl_FragColor = uMaterialColor;
+  gl_FragColor = uStrokeColor;
 }
