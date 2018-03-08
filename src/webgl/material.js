@@ -179,7 +179,7 @@ p5.RendererGL.prototype.shader = function(s) {
  */
 p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
-  this._renderer.normalMaterial.apply(this._renderer, arguments);
+  p5.RendererGL.prototype.normalMaterial.apply(this._renderer, arguments);
   return this;
 };
 
@@ -268,7 +268,7 @@ p5.RendererGL.prototype.normalMaterial = function() {
  */
 p5.prototype.texture = function() {
   this._assert3d('texture');
-  this._renderer.texture.apply(this._renderer, arguments);
+  p5.RendererGL.prototype.texture.apply(this._renderer, arguments);
   return this;
 };
 
@@ -316,7 +316,7 @@ p5.RendererGL.prototype.texture = function(tex) {
  */
 p5.prototype.ambientMaterial = function() {
   this._assert3d('ambientMaterial');
-  this._renderer.ambientMaterial.apply(this._renderer, arguments);
+  p5.RendererGL.prototype.ambientMaterial.apply(this._renderer, arguments);
   return this;
 };
 
@@ -365,7 +365,7 @@ p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
  */
 p5.prototype.specularMaterial = function() {
   this._assert3d('specularMaterial');
-  this._renderer.specularMaterial.apply(this._renderer, arguments);
+  p5.RendererGL.prototype.specularMaterial.apply(this._renderer, arguments);
   return this;
 };
 
