@@ -336,6 +336,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  this._assert3d();
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {
@@ -1046,6 +1047,14 @@ p5.RendererGL.prototype._vToNArray = function(arr) {
       return [item.x, item.y, item.z];
     })
   );
+};
+
+/**
+ * ensures that p5 is using a 3d renderer. throws an error if not.
+ */
+p5.prototype._assert3d = function() {
+  if (!this._renderer.isP3D)
+    throw 'Not supported in P2D mode. Please use webgl mode';
 };
 
 module.exports = p5.RendererGL;

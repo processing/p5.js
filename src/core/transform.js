@@ -223,11 +223,8 @@ p5.prototype.rotate = function(angle, axis) {
  */
 p5.prototype.rotateX = function(angle) {
   p5._validateParameters('rotateX', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateX(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._assert3d();
+  this._renderer.rotateX(this._toRadians(angle));
   return this;
 };
 
@@ -256,11 +253,8 @@ p5.prototype.rotateX = function(angle) {
  */
 p5.prototype.rotateY = function(angle) {
   p5._validateParameters('rotateY', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateY(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._assert3d();
+  this._renderer.rotateY(this._toRadians(angle));
   return this;
 };
 
@@ -289,11 +283,8 @@ p5.prototype.rotateY = function(angle) {
  */
 p5.prototype.rotateZ = function(angle) {
   p5._validateParameters('rotateZ', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateZ(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._assert3d();
+  this._renderer.rotateZ(this._toRadians(angle));
   return this;
 };
 

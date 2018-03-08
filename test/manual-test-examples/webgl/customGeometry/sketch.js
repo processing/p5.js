@@ -24,7 +24,6 @@ function setup() {
 }
 
 function draw() {
-
   var tt = millis();
 
   background(0);
@@ -48,7 +47,11 @@ function draw() {
 
   for (var y = 0; y <= geometry.detailY; y++) {
     for (var x = 0; x <= geometry.detailX; x++) {
-      var v = noise(3 * x / geometry.detailX, 3 * y / geometry.detailY, tt / 10000);
+      var v = noise(
+        3 * x / geometry.detailX,
+        3 * y / geometry.detailY,
+        tt / 10000
+      );
       v = map(v, 0, 1, -0.5, 1);
       if (v < 0) v = 0;
       v = v * v * v;
@@ -63,6 +66,6 @@ function draw() {
   pointLight(150, 150, 150, moonPos);
 
   geometry.computeFaces().computeNormals();
-  renderer.createBuffers("!", geometry);
-  renderer.drawBuffersScaled("!", 1000, 1000, 1);
+  renderer.createBuffers('!', geometry);
+  renderer.drawBuffersScaled('!', 1000, 1000, 1);
 }
