@@ -485,10 +485,29 @@ p5.prototype.shearY = function(angle) {
  * </code>
  * </div>
  *
+
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   rectMode(CENTER);
+ *   translate(width / 2, height / 2);
+ *   translate(p5.Vector.fromAngle(millis() / 1000, 40));
+ *   rect(0, 0, 20, 20);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * white 55x55 rect with black outline at center right.
  * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+ * a 20x20 white rect moving in a circle around the canvas
  *
+ */
+/**
+ * @method translate
+ * @param  {p5.Vector} vector the vector to translate by
+ * @chainable
  */
 p5.prototype.translate = function(x, y, z) {
   p5._validateParameters('translate', arguments);
