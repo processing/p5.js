@@ -1107,7 +1107,7 @@ p5.Table.prototype.getNum = function(row, column) {
  * @return {String}
  *
  * @example
- * <div>
+ * <div class="norender">
  * <code>
  * // Given the CSV file "mammals.csv"
  * // in the project's "assets" folder:
@@ -1219,7 +1219,7 @@ p5.Table.prototype.getObject = function(headerColumn) {
  * @return {Array}
  *
  * @example
- * <div class="no render">
+ * <div class="norender">
  * <code>
  * // Given the CSV file "mammals.csv"
  * // in the project's "assets" folder
