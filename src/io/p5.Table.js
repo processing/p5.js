@@ -1213,6 +1213,32 @@ p5.Table.prototype.getObject = function(headerColumn) {
  *
  * @method  getArray
  * @return {Array}
+ * @example
+ * <div class="no render">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leoperd
+ * // 2,Equus zebra,Zebra
+ * var table;
+ * function preload() {
+ *   // table is comma separated value "CSV"
+ *   // and has specifiying header for column labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ * function setup() {
+ *   var tableArray = table.getArray();
+ *   for (var i = 0; i < tableArray.length; i++) {
+ *     print(tableArray[i]);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *@alt
+ * no image displayed
  */
 p5.Table.prototype.getArray = function() {
   var tableArray = [];
