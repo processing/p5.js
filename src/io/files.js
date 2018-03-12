@@ -684,6 +684,68 @@ p5.prototype.loadXML = function() {
 };
 
 /**
+ * Loads a binary file from a file or a URL, and returns an Object
+ * with a bytes property containing a Uint8Array.
+ *
+ * This method is asynchronous, meaning it may not finish before the next
+ * line in your sketch is executed.
+ *
+ * @method loadBytes
+ * @param  {String}        path       name of the file or url to load
+ * @param  {function}      [callback] function to be executed after
+ *                                    loadBytes() completes, data is passed
+ *                                    in as first argument
+ * @param  {function}      [errorCallback] function to be executed if
+ *                                    there is an error, response is passed
+ *                                    in as first argument
+ * @return {Object}             contains a Uint8Array bytes property
+ * @example
+ *
+ * <p>Calling loadBytes() inside preload() guarantees to complete the
+ * operation before setup() and draw() are called.</p>
+ *
+ * <div><code>
+ * // TODO: Add Example with preload
+ * </code></div>
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * data:</p>
+ * <div><code>
+ * // TODO: Add Example with callback
+ * </code></div>
+ *
+ * @alt
+ * 50x50 ellipse that changes from black to white depending on the current humidity
+ * 50x50 ellipse that changes from black to white depending on the current humidity
+ *
+ */
+p5.prototype.loadBytes = function(path, callback, errorCallback) {
+  var self = this;
+  var ret = {};
+  var oReq = new XMLHttpRequest();
+  oReq.open('GET', path, true);
+  oReq.responseType = 'arraybuffer';
+  oReq.onload = function(oEvent) {
+    if (oReq.status >= 400) {
+      return;
+    }
+    var arrayBuffer = oReq.response;
+    if (arrayBuffer) {
+      ret.bytes = new Uint8Array(arrayBuffer);
+      if (callback) {
+        callback(ret);
+      }
+      self._decrementPreload();
+    }
+  };
+  if (errorCallback) {
+    oReq.onerror = errorCallback;
+  }
+  oReq.send(null);
+  return ret;
+};
+
+/**
  * Method for executing an HTTP GET request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
  * calling <code>httpDo(path, 'GET')</code>.
