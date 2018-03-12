@@ -1107,7 +1107,7 @@ p5.Table.prototype.getNum = function(row, column) {
  * @return {String}
  *
  * @example
- * <div class="norender">
+ * <div>
  * <code>
  * // Given the CSV file "mammals.csv"
  * // in the project's "assets" folder:
@@ -1120,18 +1120,21 @@ p5.Table.prototype.getNum = function(row, column) {
  * var table;
  *
  * function preload() {
- *   //my table is comma separated value "csv"
- *   //and has a header specifying the columns labels
+ *   // table is comma separated value "CSV"
+ *   // and has specifiying header for column labels
  *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
- *   var tableArray = table.getArray();
- *
- *   //output each row as array
- *   for (var i = 0; i < tableArray.length; i++) {
- *     print(tableArray[i]);
- *   }
+ *   print(table.getString(0, 0)); // 0
+ *   print(table.getString(0, 1)); // Capra hircus
+ *   print(table.getString(0, 2)); // Goat
+ *   print(table.getString(1, 0)); // 1
+ *   print(table.getString(1, 1)); // Panthera pardus
+ *   print(table.getString(1, 2)); // Leopard
+ *   print(table.getString(2, 0)); // 2
+ *   print(table.getString(2, 1)); // Equus zebra
+ *   print(table.getString(2, 2)); // Zebra
  * }
  * </code>
  * </div>
@@ -1140,6 +1143,7 @@ p5.Table.prototype.getNum = function(row, column) {
  * no image displayed
  *
  */
+
 p5.Table.prototype.getString = function(row, column) {
   return this.rows[row].getString(column);
 };
