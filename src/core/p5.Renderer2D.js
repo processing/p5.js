@@ -1163,7 +1163,9 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     return;
   }
 
-  if (typeof str !== 'string') {
+  if (typeof str === 'undefined') {
+    return;
+  } else if (typeof str !== 'string') {
     str = str.toString();
   }
 

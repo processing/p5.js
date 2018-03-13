@@ -350,9 +350,10 @@ p5.XML.prototype.getChildren = function(param) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    return this.children.find(function(c) {
-      return c.name === param;
-    });
+    for (var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+      if (child.name === param) return child;
+    }
   } else {
     return this.children[param];
   }
@@ -788,10 +789,13 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var i,
-    att = {};
-  for (i = 0; i < node.attributes.length; i++) {
-    att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
+  var att = {};
+  var attributes = node.attributes;
+  if (attributes) {
+    for (var i = 0; i < attributes.length; i++) {
+      var attribute = attributes[i];
+      att[attribute.nodeName] = attribute.nodeValue;
+    }
   }
   this.attributes = att;
 };
