@@ -588,4 +588,40 @@ p5.prototype.saturation = function(c) {
   return this.color(c)._getSaturation();
 };
 
+/**
+ * Gives the hex string value of a given color.
+ *
+ * @method hexstring
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
+ * @return {String} the corresponding hex string
+ * @example
+ * <div>
+ * <code>
+ * noStroke();
+ * var c = color(0, 0, 255);
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * var hexColor = hexstring(c);
+ * var myColor = '#1234' + hexColor.substr(5, 6);
+ * fill(myColor);
+ * rect(50, 20, 35, 60);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * blue rect on left and yellow rect on left, both 35x60.
+ *
+ */
+p5.prototype.hexstring = function(c) {
+  p5._validateParameters('hexstring', arguments);
+  var r = this.color(c)._getRed();
+  var g = this.color(c)._getGreen();
+  var b = this.color(c)._getBlue();
+  r = r.toString(16);
+  g = g.toString(16);
+  b = b.toString(16);
+  return '#' + r + g + b;
+};
+
 module.exports = p5;

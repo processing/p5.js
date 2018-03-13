@@ -222,4 +222,14 @@ suite('color/CreatingReading', function() {
       assert.deepEqual(interB.levels, [72, 61, 139, 200]);
     });
   });
+  suite('p5.prototype.hexstring', function() {
+    setup(function() {
+      myp5.colorMode(myp5.RGB);
+      c = myp5.color(25, 25, 25);
+    });
+    test('should correctly get hex value of color', function() {
+      var hexColor = myp5.hexstring(c);
+      assert.deepEqual(hexColor, '#191919');
+    });
+  });
 });
