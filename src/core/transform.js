@@ -223,7 +223,7 @@ p5.prototype.rotate = function(angle, axis) {
  */
 p5.prototype.rotateX = function(angle) {
   p5._validateParameters('rotateX', arguments);
-  this._assert3d();
+  this._assert3d('rotateX');
   this._renderer.rotateX(this._toRadians(angle));
   return this;
 };
@@ -253,7 +253,7 @@ p5.prototype.rotateX = function(angle) {
  */
 p5.prototype.rotateY = function(angle) {
   p5._validateParameters('rotateY', arguments);
-  this._assert3d();
+  this._assert3d('rotateY');
   this._renderer.rotateY(this._toRadians(angle));
   return this;
 };
@@ -283,7 +283,7 @@ p5.prototype.rotateY = function(angle) {
  */
 p5.prototype.rotateZ = function(angle) {
   p5._validateParameters('rotateZ', arguments);
-  this._assert3d();
+  this._assert3d('rotateZ');
   this._renderer.rotateZ(this._toRadians(angle));
   return this;
 };
