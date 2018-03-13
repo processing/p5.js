@@ -212,6 +212,14 @@ p5.prototype.loadJSON = function() {
  *
  */
 p5.prototype.loadStrings = function() {
+  return p5.prototype._loadStrings.apply(this, arguments);
+};
+
+// this private version of loadStrings exists because
+// the one above can be wrapped by _wrapPreload in order to handle
+// preload completion. this version is intended to be used by other
+// framework methods that themselves can be wrapped by _wrapPreload.
+p5.prototype._loadStrings = function() {
   var ret = [];
   var callback, errorCallback;
 
