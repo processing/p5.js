@@ -29,7 +29,7 @@ var p5 = require('../core/core');
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
 p5.prototype.orbitControl = function() {
-  this._assert3d();
+  this._assert3d('orbitControl');
   if (this.mouseIsPressed) {
     this.rotateY((this.mouseX - this.width / 2) / (this.width / 2));
     this.rotateX((this.mouseY - this.height / 2) / (this.width / 2));
