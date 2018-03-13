@@ -39,7 +39,7 @@ require('./p5.Geometry');
  * var teapot;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   teapot = loadModel('assets/teapot.obj', true);
  * }
  *
  * function setup() {
@@ -50,6 +50,7 @@ require('./p5.Geometry');
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
+ *   scale(0.5);
  *   model(teapot);
  * }
  * </code>
