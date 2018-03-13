@@ -35,14 +35,14 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
   var loadedFrag = false;
   var loadedVert = false;
 
-  this.loadStrings(fragFilename, function(result) {
+  this._loadStrings(fragFilename, function(result) {
     loadedShader._fragSrc = result.join('\n');
     loadedFrag = true;
     if (!loadedVert) {
       self._incrementPreload();
     }
   });
-  this.loadStrings(vertFilename, function(result) {
+  this._loadStrings(vertFilename, function(result) {
     loadedShader._vertSrc = result.join('\n');
     loadedVert = true;
     if (!loadedFrag) {

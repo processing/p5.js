@@ -81,7 +81,7 @@ p5.prototype.loadModel = function(path) {
 
   var model = new p5.Geometry();
   model.gid = path + '|' + normalize;
-  this.loadStrings(
+  this._loadStrings(
     path,
     function(strings) {
       parseObj(model, strings);
