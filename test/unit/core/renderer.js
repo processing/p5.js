@@ -89,4 +89,27 @@ suite('Renderer', function() {
       drawX();
     });
   });
+
+  suite('webgl assertions', function() {
+    test('box() should throw an Error', function() {
+      expect(function() {
+        myp5.box(100);
+      }).to.throw(Error);
+    });
+    test('sphere() should throw an Error', function() {
+      expect(function() {
+        myp5.sphere(100);
+      }).to.throw(Error);
+    });
+    test('rotateX() should throw an Error', function() {
+      expect(function() {
+        myp5.rotateX(100);
+      }).to.throw(Error);
+    });
+    test('normalMaterial() should throw an Error', function() {
+      expect(function() {
+        myp5.normalMaterial(100);
+      }).to.throw(Error);
+    });
+  });
 });
