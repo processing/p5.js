@@ -64,7 +64,7 @@ p5.Element = function(elt, pInst) {
  * @chainable
  *
  * @example
- * <div class="norender"><code>
+ * <div class="norender notest"><code>
  * // in the html file:
  * // &lt;div id="myContainer">&lt;/div>
  *
@@ -83,7 +83,7 @@ p5.Element = function(elt, pInst) {
  * var div1 = createDiv('this is the child');
  * div1.parent('apples'); // use id
  * </code></div>
- * <div class='norender'><code>
+ * <div class='norender notest'><code>
  * var elt = document.getElementById('myParentDiv');
  * var div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
