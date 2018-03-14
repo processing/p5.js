@@ -76,28 +76,23 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * function setup() {
  *   createCanvas(100, 100);
  *   stroke(255);
- *   colorMode(HSB);
+ *   fill(0);
  *
  *   // create and draw the background image
  *   bg = createGraphics(100, 100);
- *   bg.background(100);
- *   bg.colorMode(HSB);
- *   bg.strokeWeight(3);
- *   for (var i = 0; i < 100; i++) {
- *     bg.stroke(random(0, 255), 255, 255);
- *     bg.line(random(0, 100), random(0, 100), random(0, 100), random(0, 100));
- *   }
+ *   bg.ellipse(50, 50, 80, 80);
  * }
  * function draw() {
  *   var t = millis() / 1000;
  *   // draw the background
+ *   background(200);
  *   if (bg) {
  *     image(bg, frameCount % 100, 0);
  *     image(bg, frameCount % 100 - 100, 0);
  *   }
  *   // draw the foreground
- *   fill((t * 10) % 255, 255, 255);
- *   ellipse(50 + 50 * sin(t * 1.1713), 50 + 50 * cos(t * 1.5415), 30, 30);
+ *   var p = p5.Vector.fromAngle(t, 35).add(50, 50);
+ *   ellipse(p.x, p.y, 30);
  * }
  * function mouseClicked() {
  *   // remove the background

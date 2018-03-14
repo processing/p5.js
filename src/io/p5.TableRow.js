@@ -274,8 +274,7 @@ p5.TableRow.prototype.get = function(column) {
  *     minId = min(minId, id);
  *     maxId = min(maxId, id);
  *   }
- *
- *   print([minId, maxId]);
+ *   print('minimum id = ' + minId + ', maximum id = ' + maxId);
  * }
  * </code></div>
  *

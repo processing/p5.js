@@ -392,9 +392,7 @@ p5.XML.prototype.getChild = function(param) {
  *   xml.addChild(child);
  *
  *   var animals = xml.getChildren('animal');
- *   for (var i = 0; i < animals.length; i++) {
- *     print(animals[i].getContent());
- *   }
+ *   print(animals[animals.length - 1].getContent());
  * }
  *
  * // Sketch prints:
