@@ -65,7 +65,53 @@ p5.Graphics = function(w, h, renderer, pInst) {
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
 /**
+ * Removes a Graphics object from the page and frees any resources
+ * associated with it.
+ *
  * @method remove
+ *
+ * @example
+ * <div><code>
+ * var bg;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   stroke(255);
+ *   colorMode(HSB);
+ *
+ *   // create and draw the background image
+ *   bg = createGraphics(100, 100);
+ *   bg.background(100);
+ *   bg.colorMode(HSB);
+ *   bg.strokeWeight(3);
+ *   for (var i = 0; i < 100; i++) {
+ *     bg.stroke(random(0, 255), 255, 255);
+ *     bg.line(random(0, 100), random(0, 100), random(0, 100), random(0, 100));
+ *   }
+ * }
+ * function draw() {
+ *   var t = millis() / 1000;
+ *   // draw the background
+ *   if (bg) {
+ *     image(bg, frameCount % 100, 0);
+ *     image(bg, frameCount % 100 - 100, 0);
+ *   }
+ *   // draw the foreground
+ *   fill((t * 10) % 255, 255, 255);
+ *   ellipse(50 + 50 * sin(t * 1.1713), 50 + 50 * cos(t * 1.5415), 30, 30);
+ * }
+ * function mouseClicked() {
+ *   // remove the background
+ *   if (bg) {
+ *     bg.remove();
+ *     bg = null;
+ *   }
+ * }
+ * </code></div>
+ *
+ * @alt
+ * a multi-colored circle moving back and forth over a scrolling background
+ * of colored lines.
+ *
  */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {

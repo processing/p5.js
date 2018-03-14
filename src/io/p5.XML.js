@@ -365,7 +365,43 @@ p5.XML.prototype.getChild = function(param) {
  * A reference to the newly created child is returned as an p5.XML object.
  *
  * @method addChild
- * @param {p5.XML} a p5.XML Object which will be the child to be added
+ * @param {p5.XML} node a p5.XML Object which will be the child to be added
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   var child = new p5.XML();
+ *   child.setAttribute('id', '3');
+ *   child.setAttribute('species', 'Ornithorhynchus anatinus');
+ *   child.setContent('Platypus');
+ *   xml.addChild(child);
+ *
+ *   var animals = xml.getChildren('animal');
+ *   for (var i = 0; i < animals.length; i++) {
+ *     print(animals[i].getContent());
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Leopard"
+ * // "Zebra"
+ * </code></div>
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {
