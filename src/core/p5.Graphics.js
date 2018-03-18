@@ -71,7 +71,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * @method remove
  *
  * @example
- * <div class='norender'd><code>
+ * <div class='norender'><code>
  * var bg;
  * function setup() {
  *   bg = createCanvas(100, 100);
