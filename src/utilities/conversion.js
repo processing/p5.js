@@ -46,6 +46,7 @@ p5.prototype.float = function(str) {
  *
  * @method int
  * @param {String|Boolean|Number}       n value to parse
+ * @param {Integer}       [radix] the radix to convert to (default: 10)
  * @return {Number}                     integer representation of value
  *
  * @example
