@@ -57,7 +57,7 @@ function splitLines(text) {
   return lines;
 }
 
-var EOL = require('os').EOL;
+var EOL = '\n';
 
 var userFunctions = [
   'draw',
@@ -94,12 +94,15 @@ module.exports = {
     '.js': {
       supportsAutofix: true,
       preprocess: function(text) {
+        // Normalize line endings
+        text = text.replace(/(\r|\n)+/, EOL);
+
         this.lines = splitLines(text);
 
         var m;
         var comments = [];
 
-        var reComment = /\/\*\*(?:.|\r|\n)*?\*\//g;
+        var reComment = /\/\*\*(?:.|\n)*?\*\//g;
         while ((m = reComment.exec(text)) != null) {
           var value = m[0];
           comments.push({
@@ -114,7 +117,7 @@ module.exports = {
           var comment = comments[i];
           var commentText = comment.value;
 
-          var re = /(<code[^>]*>\s*(?:\r\n|\r|\n))((?:.|\r|\n)*?)<\/code>/gm;
+          var re = /(<code[^>]*>\s*(?:\n))((?:.|\n)*?)<\/code>/gm;
           while ((m = re.exec(commentText)) != null) {
             var code = m[2];
             if (!code) continue;
