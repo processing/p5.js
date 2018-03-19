@@ -749,6 +749,31 @@ p5.Table.prototype.getRowCount = function() {
  *  @param  {String} chars  String listing characters to be removed
  *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
+ *
+ * @example
+ * <div class="norender"><code>
+ * function setup() {
+ *   var table = new p5.Table();
+ *
+ *   table.addColumn('name');
+ *   table.addColumn('type');
+ *
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', '   $Lion  ,');
+ *   newRow.setString('type', ',,,Mammal');
+ *
+ *   newRow = table.addRow();
+ *   newRow.setString('name', '$Snake  ');
+ *   newRow.setString('type', ',,,Reptile');
+ *
+ *   table.removeTokens(',$ ');
+ *   print(table.getArray());
+ * }
+ *
+ * // prints:
+ * //  0  "Lion"   "Mamal"
+ * //  1  "Snake"  "Reptile"
+ * </code></div>
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
   var escape = function(s) {
@@ -796,6 +821,30 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  *  @method  trim
  *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
+ * @example
+ * <div class="norender"><code>
+ * function setup() {
+ *   var table = new p5.Table();
+ *
+ *   table.addColumn('name');
+ *   table.addColumn('type');
+ *
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', '   Lion  ,');
+ *   newRow.setString('type', ' Mammal  ');
+ *
+ *   newRow = table.addRow();
+ *   newRow.setString('name', '  Snake  ');
+ *   newRow.setString('type', '  Reptile  ');
+ *
+ *   table.trim();
+ *   print(table.getArray());
+ * }
+ *
+ * // prints:
+ * //  0  "Lion"   "Mamal"
+ * //  1  "Snake"  "Reptile"
+ * </code></div>
  */
 p5.Table.prototype.trim = function(column) {
   var regex = new RegExp(' ', 'g');
@@ -998,6 +1047,36 @@ p5.Table.prototype.setNum = function(row, column, value) {
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String} value  value to assign
+ * @example
+ * <div class="norender"><code>
+ * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //add a row
+ *   var newRow = table.addRow();
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Canis Lupus');
+ *   newRow.setString('name', 'Wolf');
+ *
+ *   print(table.getArray());
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
  */
 p5.Table.prototype.setString = function(row, column, value) {
   this.rows[row].setString(column, value);
