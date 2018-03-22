@@ -143,7 +143,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId, drawMode) {
 
   // select the fill shader to use
   var fill = this.curFillShader;
-  if (this._enableNormal) {
+  if (this._useNormalMaterial) {
     fill = this._getNormalShader();
   } else if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
@@ -247,7 +247,11 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, bds) {
 
 p5.RendererGL.prototype._renderStroke = function(geometry, stroke) {
   // check if the stroke is enabled
-  if (!this._doStroke || geometry.lineVertexCount < 2 || this._enableNormal) {
+  if (
+    !this._doStroke ||
+    geometry.lineVertexCount < 2 ||
+    this._useNormalMaterial
+  ) {
     return;
   }
 

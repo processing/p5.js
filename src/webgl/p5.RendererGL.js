@@ -128,7 +128,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._diffuseColor = [1, 1, 1, 1];
   this._specularColor = [0, 0, 0];
 
-  this._enableNormal = false;
+  this._useNormalMaterial = false;
   this._enableLighting = false;
 
   // array of textures created in this gl context via this.getTexture(src)
@@ -484,7 +484,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this._diffuseColor = this._ambientColor = color._array;
-  this._enableNormal = false;
+  this._useNormalMaterial = false;
   this._tex = null;
 };
 
