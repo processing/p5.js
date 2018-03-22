@@ -279,6 +279,36 @@ p5.Shader.prototype.useProgram = function() {
  * @param {Object|Number|Boolean|Number[]} data the data to be associated
  * with that uniform; type varies (could be a single numerical value, array,
  * matrix, or texture / sampler reference)
+ *
+ * @example
+ * <div modernizr='webgl'><code>
+ * var twist;
+ * var ps = [];
+ *
+ * function preload() {
+ *   twist = loadShader('assets/twist.vert', 'assets/twist.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   shader(twist);
+ *   for (var i = 0; i < 8; i++) {
+ *     ps.push({ x: 1 + random(), y: 1 + random() });
+ *   }
+ * }
+ * function draw() {
+ *   var time = millis() / 5000 + 1000;
+ *   for (var i = 0; i < 8; i++) {
+ *     twist.setUniform('v' + i, [sin(time / ps[i].x), cos(time / ps[i].y)]);
+ *   }
+ *
+ *   background(100);
+ *   scale(width / 2, height / 2);
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * colorful moving lines
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
