@@ -29,7 +29,6 @@ require('./p5.Texture');
  * vertex and fragment shader files.
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
-  this._assert3d('loadShader');
   var loadedShader = new p5.Shader();
 
   var self = this;
