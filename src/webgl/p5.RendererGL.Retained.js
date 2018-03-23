@@ -133,34 +133,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId, drawMode) {
 
   var geometry = this.gHash[gId];
 
-  // select the stroke shader to use
-  var stroke = this.curStrokeShader;
-  if (!stroke || !stroke.isStrokeShader()) {
-    stroke = this._getLineShader();
-  }
   // render the stroke
-  this._renderStroke(geometry, stroke);
-
-  // select the fill shader to use
-  var fill = this.curFillShader;
-  if (this._useNormalMaterial) {
-    fill = this._getNormalShader();
-  } else if (this._enableLighting) {
-    if (!fill || !fill.isLightShader()) {
-      fill = this._getLightShader();
-    }
-  } else if (this._tex) {
-    if (!fill || !fill.isTextureShader()) {
-      fill = this._getTextureShader();
-    }
-  } else {
-    if (!fill /* || !fill.isColorShader()*/) {
-      fill = this._getColorShader();
-    }
-  }
+  this._renderStroke(geometry, this._getRetainedStrokeShader());
 
   // render the fill
-  this._renderFill(geometry, fill, drawMode);
+  this._renderFill(geometry, this._getRetainedFillShader(), drawMode);
 };
 
 /**

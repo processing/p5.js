@@ -812,6 +812,56 @@ function include(shader, prefix) {
   return shader.replace('void main', prefix + 'void main');
 }
 
+p5.RendererGL.prototype._getImmediateStrokeShader = function() {
+  // select the stroke shader to use
+  var stroke = this.curStrokeShader;
+  if (!stroke || !stroke.isStrokeShader()) {
+    return this._getLineShader();
+  }
+  return stroke;
+};
+
+p5.RendererGL.prototype._getImmediateFillShader = function() {
+  //select the fill shader
+  if (this._useNormalMaterial) {
+    return this._getNormalShader();
+  }
+
+  var fill = this.curFillShader;
+  if (this._enableLighting) {
+    if (!fill || !fill.isLightShader()) {
+      return this._getImmediateLightShader();
+    }
+  } else if (!fill /*|| !fill.isColorShader()*/) {
+    return this._getImmediateFlatShader();
+  }
+  return fill;
+};
+
+p5.RendererGL.prototype._getRetainedStrokeShader =
+  p5.RendererGL.prototype._getImmediateStrokeShader;
+
+p5.RendererGL.prototype._getRetainedFillShader = function() {
+  // select the fill shader to use
+  if (this._useNormalMaterial) {
+    return this._getNormalShader();
+  }
+
+  var fill = this.curFillShader;
+  if (this._enableLighting) {
+    if (!fill || !fill.isLightShader()) {
+      return this._getLightShader();
+    }
+  } else if (this._tex) {
+    if (!fill || !fill.isTextureShader()) {
+      return this._getTextureShader();
+    }
+  } else if (!fill /* || !fill.isColorShader()*/) {
+    return this._getColorShader();
+  }
+  return fill;
+};
+
 p5.RendererGL.prototype._getLightShader = function() {
   if (!this._defaultLightShader) {
     if (this.attributes.perPixelLighting) {
