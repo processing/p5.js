@@ -9,6 +9,8 @@ module.exports = function(grunt) {
   ) {
     // Async Task
     var done = this.async();
+    // Keep the release-party ready
+    var releaseParty = grunt.config.get('githubReleaser');
 
     // Prepare the data
     var data = {
@@ -27,10 +29,12 @@ module.exports = function(grunt) {
     // Set up vars for requests
     var accessTokenParam = '?access_token=' + process.env.GITHUB_TOKEN;
     var createURL =
-      'https://api.github.com/repos/processing/p5.js/releases' +
+      'https://api.github.com/repos/' +
+      releaseParty +
+      '/p5.js/releases' +
       accessTokenParam;
     var uploadURL =
-      'https://uploads.github.com/repos/processing/p5.js/releases/';
+      'https://uploads.github.com/repos/' + releaseParty + '/p5.js/releases/';
     var ID = '';
     var count = 0;
 
@@ -93,6 +97,7 @@ module.exports = function(grunt) {
             count++;
             if (count === 7) {
               done();
+              console.log('Released on GitHub!\n All done!');
             }
           }
         )
