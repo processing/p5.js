@@ -290,10 +290,10 @@ p5.prototype.beginShape = function(kind) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(30,20);
- * point(80,20);
- * point(80,75);
- * point(30,75);
+ * point(30, 20);
+ * point(80, 20);
+ * point(80, 75);
+ * point(30, 75);
  *
  * strokeWeight(1);
  * noFill();
@@ -307,15 +307,15 @@ p5.prototype.beginShape = function(kind) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(30,20);
- * point(80,20);
- * point(80,75);
- * point(30,75);
+ * point(30, 20);
+ * point(80, 20);
+ * point(80, 75);
+ * point(30, 75);
  *
- * stroke(244,122,158);
- * point(50,80);
- * point(60,25);
- * point(30,20);
+ * stroke(244, 122, 158);
+ * point(50, 80);
+ * point(60, 25);
+ * point(30, 20);
  *
  * stroke(0);
  * strokeWeight(1);
@@ -372,11 +372,11 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * @example
  * <div>
  * <code>
- * strokeWeight(5)
- * point(84,91);
- * point(68,19);
- * point(21,17);
- * point(32,91);
+ * strokeWeight(5);
+ * point(84, 91);
+ * point(68, 19);
+ * point(21, 17);
+ * point(32, 91);
  * strokeWeight(1);
  *
  * noFill();
@@ -567,9 +567,9 @@ p5.prototype.endShape = function(mode) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(20,20);
- * point(80,20);
- * point(50,50);
+ * point(20, 20);
+ * point(80, 20);
+ * point(50, 50);
  *
  * noFill();
  * strokeWeight(1);
@@ -583,13 +583,13 @@ p5.prototype.endShape = function(mode) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(20,20);
- * point(80,20);
- * point(50,50);
+ * point(20, 20);
+ * point(80, 20);
+ * point(50, 50);
  *
- * point(20,80);
- * point(80,80);
- * point(80,60);
+ * point(20, 80);
+ * point(80, 80);
+ * point(80, 60);
  *
  * noFill();
  * strokeWeight(1);
