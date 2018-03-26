@@ -290,11 +290,11 @@ p5.prototype.beginShape = function(kind) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(30,20);    // displaying anchor point
- * point(80,20);    // displaying control point
- * point(80,75);    // displaying control point
- * point(30,75);    // displaying anchor point
-
+ * point(30,20);
+ * point(80,20);
+ * point(80,75);
+ * point(30,75);
+ *
  * strokeWeight(1);
  * noFill();
  * beginShape();
@@ -306,23 +306,23 @@ p5.prototype.beginShape = function(kind) {
  *
  * <div>
  * <code>
- *  strokeWeight(5);
- * point(30,20);  // displaying anchor point curve 1
- * point(80,20);  // displaying control point curve 1
- * point(80,75);  // displaying control point curve 1
- * point(30,75);  // displaying anchor point curve 1
-
+ * strokeWeight(5);
+ * point(30,20);
+ * point(80,20);
+ * point(80,75);
+ * point(30,75);
+ *
  * stroke(244,122,158);
- * point(50,80);      // displaying control point curve 2
- * point(60,25);      // displaying control point curve 2
- * point(30,20);      // displaying anchor point curve 2
-
+ * point(50,80);
+ * point(60,25);
+ * point(30,20);
+ *
  * stroke(0);
  * strokeWeight(1);
  * beginShape();
  * vertex(30, 20);
- * bezierVertex(80, 20, 80, 75, 30, 75);    // curve 1
- * bezierVertex(50, 80, 60, 25, 30, 20);    // curve 2
+ * bezierVertex(80, 20, 80, 75, 30, 75);
+ * bezierVertex(50, 80, 60, 25, 30, 20);
  * endShape();
  * </code>
  * </div>
@@ -373,12 +373,12 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * <div>
  * <code>
  * strokeWeight(5)
- * point(84,91);      // displaying beginning point 
- * point(68,19);      // displaying middle point
- * point(21,17);      // displaying middle point
- * point(32,91);      // displaying ending point
+ * point(84,91);
+ * point(68,19);
+ * point(21,17);
+ * point(32,91);
  * strokeWeight(1);
-
+ *
  * noFill();
  * beginShape();
  * curveVertex(84, 91);
@@ -390,7 +390,7 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * endShape();
  * </code>
  * </div>
- 
+ *
  *
  * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
@@ -567,10 +567,10 @@ p5.prototype.endShape = function(mode) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(20,20);        // displaying anchor point
- * point(80,20);        // displaying control point
- * point(50,50);        // displaying anchor point
-
+ * point(20,20);
+ * point(80,20);
+ * point(50,50);
+ *
  * noFill();
  * strokeWeight(1);
  * beginShape();
@@ -583,14 +583,14 @@ p5.prototype.endShape = function(mode) {
  * <div>
  * <code>
  * strokeWeight(5);
- * point(20,20);  // displaying anchor point
- * point(80,20);  // displaying control point
- * point(50,50);  // displaying anchor point
-
- * point(20,80);  // displaying control point
- * point(80,80);  // displaying anchor point
+ * point(20,20);
+ * point(80,20);
+ * point(50,50);
+ *
+ * point(20,80);
+ * point(80,80);
  * point(80,60);
-
+ *
  * noFill();
  * strokeWeight(1);
  * beginShape();
