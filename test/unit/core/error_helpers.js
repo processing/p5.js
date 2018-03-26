@@ -143,6 +143,26 @@ suite('Error Helpers', function() {
         'got unwanted exception'
       );
     });
+    test('color(): optional parameter, incorrect type', function() {
+      assert.validationError(function() {
+        p5._validateParameters('color', [0, 0, 0, 'A']);
+      });
+    });
+    test('color(): extra parameter', function() {
+      assert.validationError(function() {
+        p5._validateParameters('color', [[0, 0, 0], 0]);
+      });
+    });
+    test('color(): incorrect element type', function() {
+      assert.validationError(function() {
+        p5._validateParameters('color', [['A', 'B', 'C']]);
+      });
+    });
+    test('color(): incorrect parameter count', function() {
+      assert.validationError(function() {
+        p5._validateParameters('color', ['A', 'A', 0, 0, 0, 0, 0, 0]);
+      });
+    });
   });
 
   suite('helpForMisusedAtTopLevelCode', function() {
