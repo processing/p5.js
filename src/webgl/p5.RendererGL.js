@@ -336,6 +336,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  this._assert3d('setAttributes');
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {
@@ -1046,6 +1047,19 @@ p5.RendererGL.prototype._vToNArray = function(arr) {
       return [item.x, item.y, item.z];
     })
   );
+};
+
+/**
+ * ensures that p5 is using a 3d renderer. throws an error if not.
+ */
+p5.prototype._assert3d = function(name) {
+  if (!this._renderer.isP3D)
+    throw new Error(
+      name +
+        "() is only supported in WEBGL mode. If you'd like to use 3D graphics" +
+        ' and WebGL, see  https://p5js.org/examples/form-3d-primitives.html' +
+        ' for more information.'
+    );
 };
 
 module.exports = p5.RendererGL;
