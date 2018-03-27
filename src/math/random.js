@@ -163,8 +163,8 @@ p5.prototype.random = function(min, max) {
 
   if (typeof min === 'undefined') {
     return rand;
-  } else if (min instanceof Array) {
-    if (max instanceof Array) {
+  } else if (Array.isArray(min)) {
+    if (Array.isArray(max)) {
       var total = 0;
       for (var i = 0; i < max.length; i++) {
         total += max[i];
