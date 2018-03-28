@@ -32,15 +32,13 @@
 
   <!-- run mocha -->
   <script type="text/javascript" >
+    p5._throwValidationErrors = true;
+  
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
       window.addEventListener('load', function() {
         var runner = mocha.run();
-
-        runner.on('test', function (test) {
-          p5._throwValidationErrors = true;
-        });
 
         // This exposes our test results to Sauce Labs. For more
         // details, see: https://github.com/axemclion/grunt-saucelabs.
