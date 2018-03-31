@@ -120,7 +120,6 @@ suite('Graphics', function() {
       var graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       graph.resizeCanvas(19, 16);
-      // this fails:
       assertValidGraphSizes(graph, 19, 16, 1);
     });
 
@@ -142,7 +141,6 @@ suite('Graphics', function() {
       var graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(2);
       graph.resizeCanvas(19, 16);
-      // this fails:
       assertValidGraphSizes(graph, 19, 16, 2);
     });
 
