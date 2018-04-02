@@ -14,6 +14,7 @@ var p5 = require('../core/core');
  * the array by one. Maps to Array.push().
  *
  * @method append
+ * @deprecated Use <code class='language-javascript'>array.push(value)</code> instead.
  * @param {Array} array Array to append
  * @param {any} value to be added to the Array
  * @example
