@@ -101,7 +101,23 @@ require('../core/error_helpers');
  * 50x50 ellipse that changes from black to white depending on the current humidity
  *
  */
+/**
+ * @method loadJSON
+ * @param  {String}        path
+ * @param  {String}        datatype
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ * @return {Object|Array}
+ */
+/**
+ * @method loadJSON
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ * @return {Object|Array}
+ */
 p5.prototype.loadJSON = function() {
+  p5._validateParameters('loadJSON', arguments);
   var path = arguments[0];
   var callback;
   var errorCallback;
@@ -212,6 +228,8 @@ p5.prototype.loadJSON = function() {
  *
  */
 p5.prototype.loadStrings = function() {
+  p5._validateParameters('loadStrings', arguments);
+
   var ret = [];
   var callback, errorCallback;
 
@@ -691,7 +709,7 @@ p5.prototype.loadXML = function() {
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
- * @param  {Object}        [data]     param data passed sent with request
+ * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -731,7 +749,22 @@ p5.prototype.loadXML = function() {
  * }
  * </code></div>
  */
+/**
+ * @method httpGet
+ * @param  {String}        path
+ * @param  {Object|Boolean} data
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ */
+/**
+ * @method httpGet
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ */
 p5.prototype.httpGet = function() {
+  p5._validateParameters('httpGet', arguments);
+
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
@@ -746,7 +779,7 @@ p5.prototype.httpGet = function() {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
  *                                    If omitted, httpPost() will guess.
- * @param  {Object}        [data]     param data passed sent with request
+ * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpPost() completes, data is passed in
  *                                    as first argument
@@ -816,7 +849,22 @@ p5.prototype.httpGet = function() {
  * </code></div>
  *
  */
+/**
+ * @method httpPost
+ * @param  {String}        path
+ * @param  {Object|Boolean} data
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ */
+/**
+ * @method httpPost
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ */
 p5.prototype.httpPost = function() {
+  p5._validateParameters('httpPost', arguments);
+
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
@@ -890,7 +938,6 @@ p5.prototype.httpPost = function() {
  * </code>
  * </div>
  */
-
 /**
  * @method httpDo
  * @param  {String}        path
