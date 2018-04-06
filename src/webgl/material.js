@@ -276,6 +276,7 @@ p5.RendererGL.prototype.texture = function(tex) {
   this.drawMode = constants.TEXTURE;
   this._useNormalMaterial = false;
   this._tex = tex;
+  this._setProperty('_doFill', true);
 };
 
 /**
