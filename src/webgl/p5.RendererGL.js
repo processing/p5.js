@@ -780,6 +780,9 @@ p5.RendererGL.prototype.push = function() {
   properties._specularColor = this._specularColor;
 
   properties._enableLighting = this._enableLighting;
+  properties._useNormalMaterial = this._useNormalMaterial;
+  properties._tex = this._tex;
+  properties.drawMode = this.drawMode;
 
   return style;
 };
