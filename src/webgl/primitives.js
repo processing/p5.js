@@ -805,7 +805,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
       this.vertices.push(new p5.Vector(0.5, 0.5, 0));
       this.uvs.push([0.5, 0.5]);
 
-      for (var i = 0; i <= this.detailX; i++) {
+      for (var i = 0; i < this.detailX; i++) {
         var u = i / this.detailX;
         var theta = 2 * Math.PI * u;
 
