@@ -647,7 +647,7 @@ p5.prototype.getURLPath = function() {
  * @method getURLParams
  * @return {Object} URL params
  * @example
- * <div class='norender'>
+ * <div class='norender notest'>
  * <code>
  * // Example: http://p5js.org?year=2014&month=May&day=15
  *
