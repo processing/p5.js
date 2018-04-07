@@ -38,8 +38,8 @@ var _windowPrint = window.print;
  * @alt
  * default grey canvas
  */
-p5.prototype.print = function(args) {
-  if (typeof args === 'undefined') {
+p5.prototype.print = function() {
+  if (!arguments.length) {
     _windowPrint();
   } else {
     console.log.apply(console, arguments);
