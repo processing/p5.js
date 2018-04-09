@@ -1065,13 +1065,13 @@ p5.prototype.httpDo = function() {
           return res.text();
       }
     })
-    .then(callback)
-    .catch(
-      errorCallback ||
-        function(err, msg) {
-          throw err;
-        }
-    );
+    .then(callback || defaultCallback)
+    .catch(errorCallback || defaultErrorCallback);
+
+  function defaultCallback() {}
+  function defaultErrorCallback(err) {
+    throw err;
+  }
 };
 
 /**
