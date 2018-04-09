@@ -48,10 +48,10 @@ var p5 = function(sketch, node, sync) {
 
   /**
    * Called directly before setup(), the preload() function is used to handle
-   * asynchronous loading of external files. If a preload function is
-   * defined, setup() will wait until any load calls within have finished.
-   * Nothing besides load calls should be inside preload (loadImage,
-   * loadJSON, loadFont, loadStrings, etc).<br><br>
+   * asynchronous loading of external files in a blocking way. If a preload 
+   * function is defined, setup() will wait until any load calls within have
+   * finished. Nothing besides load calls (loadImage, loadJSON, loadFont,
+   * loadStrings, etc.) should be inside preload function.<br><br>
    * By default the text "loading..." will be displayed. To make your own
    * loading page, include an HTML element with id "p5_loading" in your
    * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
