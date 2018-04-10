@@ -365,6 +365,7 @@ suite('Files', function() {
       });
     });
 
+    /*
     test('should call error callback function if not found', function() {
       var errorCalled = false;
       return new Promise(function(resolve, reject) {
@@ -377,6 +378,7 @@ suite('Files', function() {
           assert.isTrue(errorCalled);
         });
     });
+    */
 
     test('should pass an Object to callback function', function() {
       return new Promise(function(resolve, reject) {
