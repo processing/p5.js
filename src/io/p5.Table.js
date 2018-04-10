@@ -402,7 +402,7 @@ p5.Table.prototype.findRows = function(value, column) {
  * specified by either its ID or title.
  *
  * @method  matchRow
- * @param  {String} regexp The regular expression to match
+ * @param  {String|RegExp} regexp The regular expression to match
  * @param  {String|Integer} column The column ID (number) or
  *                                  title (string)
  * @return {p5.TableRow}        TableRow object
@@ -948,6 +948,7 @@ p5.Table.prototype.removeColumn = function(c) {
  * by either its ID or title.
  *
  * @method  set
+ * @param {Integer} row row ID
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String|Number} value  value to assign

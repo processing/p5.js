@@ -46,6 +46,7 @@ require('./p5.Geometry');
  * rotating view of a multi-colored cylinder with concave sides.
  */
 p5.prototype.plane = function(width, height, detailX, detailY) {
+  this._assert3d('plane');
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -120,6 +121,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * </div>
  */
 p5.prototype.box = function(width, height, depth, detailX, detailY) {
+  this._assert3d('box');
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -233,6 +235,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * </div>
  */
 p5.prototype.sphere = function(radius, detailX, detailY) {
+  this._assert3d('sphere');
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -421,6 +424,7 @@ p5.prototype.cylinder = function(
   bottomCap,
   topCap
 ) {
+  this._assert3d('cylinder');
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -502,6 +506,7 @@ p5.prototype.cylinder = function(
  * </div>
  */
 p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
+  this._assert3d('cone');
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -571,6 +576,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * </div>
  */
 p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+  this._assert3d('ellipsoid');
   if (typeof radiusX === 'undefined') {
     radiusX = 50;
   }
@@ -658,6 +664,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * </div>
  */
 p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+  this._assert3d('torus');
   if (typeof radius === 'undefined') {
     radius = 50;
   } else if (!radius) {
@@ -798,7 +805,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
       this.vertices.push(new p5.Vector(0.5, 0.5, 0));
       this.uvs.push([0.5, 0.5]);
 
-      for (var i = 0; i <= this.detailX; i++) {
+      for (var i = 0; i < this.detailX; i++) {
         var u = i / this.detailX;
         var theta = 2 * Math.PI * u;
 

@@ -20,7 +20,7 @@ var p5 = require('../core/core');
  *
  * @method createStringDict
  * @for p5
- * @param {String|Object} key or object
+ * @param {String} key
  * @param {String} value
  * @return {p5.StringDict}
  *
@@ -32,6 +32,11 @@ var p5 = require('../core/core');
  *   print(myDictionary.hasKey('p5')); // logs true to console
  * }
  * </code></div>
+ */
+/**
+ * @method createStringDict
+ * @param {Object} object object
+ * @return {p5.StringDict}
  */
 
 p5.prototype.createStringDict = function(key, value) {
@@ -45,7 +50,7 @@ p5.prototype.createStringDict = function(key, value) {
  *
  * @method createNumberDict
  * @for p5
- * @param {Number|Object} key or object
+ * @param {Number} key
  * @param {Number} value
  * @return {p5.NumberDict}
  *
@@ -53,10 +58,15 @@ p5.prototype.createStringDict = function(key, value) {
  * <div class="norender">
  * <code>
  * function setup() {
- *   var myDictionary = createNumberDict('p5', 42);
- *   print(myDictionary.hasKey('p5')); // logs true to console
+ *   var myDictionary = createNumberDict(100, 42);
+ *   print(myDictionary.hasKey(100)); // logs true to console
  * }
  * </code></div>
+ */
+/**
+ * @method createNumberDict
+ * @param {Object} object object
+ * @return {p5.NumberDict}
  */
 
 p5.prototype.createNumberDict = function(key, value) {
@@ -315,7 +325,7 @@ p5.TypedDict.prototype.print = function() {
  * createButton('save')
  *   .position(10, 10)
  *   .mousePressed(function() {
- *     createNumberDict({
+ *     createStringDict({
  *       john: 1940,
       paul: 1942,
       george: 1943,
@@ -348,7 +358,7 @@ p5.TypedDict.prototype.saveTable = function(filename) {
  * createButton('save')
  *   .position(10, 10)
  *   .mousePressed(function() {
- *     createNumberDict({
+ *     createStringDict({
  *       john: 1940,
       paul: 1942,
       george: 1943,

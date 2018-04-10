@@ -29,7 +29,7 @@ require('./p5.Color');
  * <br><br>
  * A p5.Color object can also be provided to set the background color.
  * <br><br>
- * A p5.Image can also be provided to set the background iamge.
+ * A p5.Image can also be provided to set the background image.
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function

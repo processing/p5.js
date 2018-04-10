@@ -244,6 +244,7 @@ function parseObj(model, lines) {
  *
  */
 p5.prototype.model = function(model) {
+  this._assert3d('model');
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
       model._makeTriangleEdges()._edgesToVertices();
