@@ -52,7 +52,7 @@ var p5 = function(sketch, node, sync) {
    * function is defined, setup() will wait until any load calls within have
    * finished. Nothing besides load calls (loadImage, loadJSON, loadFont,
    * loadStrings, etc.) should be inside preload function. If asynchronous
-   * loading is prederred, the load methods can instead be called in setup()
+   * loading is preferred, the load methods can instead be called in setup()
    * or anywhere else with the use of a callback parameter.
    * <br><br>
    * By default the text "loading..." will be displayed. To make your own
