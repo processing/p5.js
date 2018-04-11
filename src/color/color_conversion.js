@@ -8,7 +8,7 @@
 'use strict';
 
 /**
- * Conversions adapted from <http://www.easyrgb.com/math.html>.
+ * Conversions adapted from <http://www.easyrgb.com/en/math.php>.
  *
  * In these functions, hue is always in the range [0,1); all other components
  * are in the range [0,1]. 'Brightness' and 'value' are used interchangeably.
