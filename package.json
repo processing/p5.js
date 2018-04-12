@@ -90,6 +90,8 @@
     "lint-staged": "^4.3.0",
     "marked": "^0.3.9",
     "opentype.js": "^0.7.3",
+    "patch-package": "^5.1.1",
+    "postinstall-prepare": "^1.0.1",
     "prettier": "^1.7.4",
     "request": "^2.81.0",
     "whatwg-fetch": "^2.0.3",
