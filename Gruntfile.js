@@ -251,7 +251,7 @@ module.exports = function(grunt) {
             'http://localhost:9001/test/test-minified.html'
           ],
           reporter: reporter,
-          run: true,
+          run: false,
           log: true,
           logErrors: true,
           timeout: 100000,

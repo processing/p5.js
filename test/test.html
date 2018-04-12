@@ -23,19 +23,30 @@
   <script src="js/modernizr.js" type="text/javascript" ></script>
   <script src="js/chai_helpers.js" type="text/javascript" ></script>
 
+  <script>
+    // Because we load tests asynchronously, we need to manually load
+    // grunt-mocha's bridge.js here.
+    //
+    // For more information, see:
+    // https://github.com/kmiyashiro/grunt-mocha#option-2
+    if (window.PHANTOMJS)
+      document.write(
+        '<script src="../node_modules/grunt-mocha/phantomjs/bridge.js"><\/script>'
+      );
+  </script>
+
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
   <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
 
-  <!-- Spec files (Now centralised in unit/spec.js) -->
-  <script src="unit/spec.js" type="text/javascript" ></script>
-
   <!-- run mocha -->
   <script type="text/javascript" >
-    // If tests run in a real browser
-    // Can alternatively do a check on window.PHANTOMJS
-    if (navigator.userAgent.indexOf('PhantomJS') < 0) {
-      window.addEventListener('load', function() {
+    if (window.PHANTOMJS) {
+      window.allScriptsLoaded = function() {
+          mocha.run();
+        }
+    } else { // If tests run in a real browser
+      window.allScriptsLoaded = function() {
         var runner = mocha.run();
 
         // This exposes our test results to Sauce Labs. For more
@@ -67,8 +78,11 @@
             titles: flattenTitles(test)
           });
         }
-      }, false);
+      }
     }
   </script>
+
+  <!-- Spec files (Now centralised in unit/spec.js) -->
+  <script src="unit/spec.js" type="text/javascript" ></script>
 </body>
 </html>

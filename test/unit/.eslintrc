@@ -1,0 +1,7 @@
+{
+    "env": {
+      "es6": false
+    },
+    "extends": ["../../.eslintrc"]
+  }
+  

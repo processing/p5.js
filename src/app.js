@@ -31,6 +31,7 @@ require('./utilities/time_date');
 require('./events/touch');
 require('./math/math');
 require('./math/calculation');
+require('./math/lcg');
 require('./math/random');
 require('./math/noise');
 require('./math/trigonometry');
