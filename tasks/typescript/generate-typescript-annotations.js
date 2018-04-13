@@ -55,7 +55,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     String: 'string',
     Constant: 'any',
     undefined: 'undefined',
-    Null: 'null',
+    null: 'null',
     Array: 'any[]',
     Boolean: 'boolean',
     '*': 'any',

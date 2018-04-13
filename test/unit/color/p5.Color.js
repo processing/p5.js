@@ -78,6 +78,14 @@ suite('p5.Color', function() {
       c = myp5.color('#cat');
       assert.deepEqual(c.levels, [255, 255, 255, 255]);
     });
+
+    test('should not be able to pass css & alpha', function() {
+      // TODO: change this to expect p5.ValidationError when
+      // color() docs are fixed.
+      assert.throws(function() {
+        c = myp5.color('#fff', 100);
+      }, Error);
+    });
   });
 
   suite('p5.prototype.color("#rgba")', function() {

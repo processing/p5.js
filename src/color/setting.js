@@ -469,6 +469,12 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 /**
  * @method fill
  * @param  {String}        value   a color string
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {Number}        gray   a gray value
  * @param  {Number}        [alpha]
  * @chainable
  */
@@ -715,6 +721,12 @@ p5.prototype.noStroke = function() {
 /**
  * @method stroke
  * @param  {String}        value   a color string
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {Number}        gray   a gray value
  * @param  {Number}        [alpha]
  * @chainable
  */
