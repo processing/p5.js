@@ -805,7 +805,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
       this.vertices.push(new p5.Vector(0.5, 0.5, 0));
       this.uvs.push([0.5, 0.5]);
 
-      for (var i = 0; i <= this.detailX; i++) {
+      for (var i = 0; i < this.detailX; i++) {
         var u = i / this.detailX;
         var theta = 2 * Math.PI * u;
 
@@ -937,17 +937,27 @@ p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 p5.RendererGL.prototype.bezier = function(
   x1,
   y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
+  z1, // x2
+  x2, // y2
+  y2, // x3
+  z2, // y3
+  x3, // x4
+  y3, // y4
   z3,
   x4,
   y4,
   z4
 ) {
+  if (arguments.length === 8) {
+    x4 = x3;
+    y4 = y3;
+    x3 = y2;
+    y3 = x2;
+    x2 = z1;
+    y2 = x2;
+    z1 = z2 = z3 = z4 = 0;
+  }
+
   var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (var i = 0; i <= bezierDetail; i++) {
@@ -969,17 +979,26 @@ p5.RendererGL.prototype.bezier = function(
 p5.RendererGL.prototype.curve = function(
   x1,
   y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
+  z1, // x2
+  x2, // y2
+  y2, // x3
+  z2, // y3
+  x3, // x4
+  y3, // y4
   z3,
   x4,
   y4,
   z4
 ) {
+  if (arguments.length === 8) {
+    x4 = x3;
+    y4 = y3;
+    x3 = y2;
+    y3 = x2;
+    x2 = z1;
+    y2 = x2;
+    z1 = z2 = z3 = z4 = 0;
+  }
   var curveDetail = this._pInst._curveDetail;
   this.beginShape();
   for (var i = 0; i <= curveDetail; i++) {

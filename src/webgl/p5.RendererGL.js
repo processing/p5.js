@@ -693,7 +693,11 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  this.GL.clearColor(arguments[0], arguments[1], arguments[2], arguments[3]);
+  var _r = arguments[0] || 0;
+  var _g = arguments[1] || 0;
+  var _b = arguments[2] || 0;
+  var _a = arguments[3] || 0;
+  this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
