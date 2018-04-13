@@ -103,13 +103,12 @@ p5.prototype.bezier = function() {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noFill();
+ *
+ *   bezierDetail(5);
  * }
  *
  * function draw() {
  *   background(200);
- *
- *   // a triangle-wave function
- *   bezierDetail(2 + abs(15 - floor(millis() / 150) % 30));
  *
  *   // prettier-ignore
  *   bezier(-40, -40, 0,
@@ -121,7 +120,7 @@ p5.prototype.bezier = function() {
  * </div>
  *
  * @alt
- * stretched black s-shape with varying bezier detail
+ * stretched black s-shape with a low level of bezier detail
  *
  */
 p5.prototype.bezierDetail = function(d) {
@@ -368,12 +367,11 @@ p5.prototype.curve = function() {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *
+ *   curveDetail(5);
  * }
  * function draw() {
  *   background(200);
- *
- *   // a triangle-wave function
- *   curveDetail(2 + abs(15 - floor(millis() / 150) % 30));
  *
  *   // prettier-ignore
  *   curve( 250, 600, 0,
@@ -385,7 +383,7 @@ p5.prototype.curve = function() {
  * </div>
  *
  * @alt
- * white arch shape with varying levels of curve detail.
+ * white arch shape with a low level of curve detail.
  *
  */
 p5.prototype.curveDetail = function(d) {
