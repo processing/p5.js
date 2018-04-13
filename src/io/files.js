@@ -684,13 +684,66 @@ p5.prototype.loadXML = function() {
 };
 
 /**
+ * @method loadBytes
+ * @param {string}   file            name of the file or URL to load
+ * @param {function} [callback]      function to be executed after loadBytes()
+ *                                    completes
+ * @param {function} [errorCallback] function to be executed if there
+ *                                    is an error
+ * @returns {Object} an object whose 'bytes' property will be the loaded buffer
+ *
+ * @example
+ * <div class='norender'><code>
+ * var data;
+ *
+ * function preload() {
+ *   data = loadBytes('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   for (var i = 0; i < 5; i++) {
+ *     console.log(data.bytes[i].toString(16));
+ *   }
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
+ *
+ */
+p5.prototype.loadBytes = function(file, callback, errorCallback) {
+  var ret = {};
+
+  var self = this;
+  this.httpDo(
+    file,
+    'GET',
+    'arrayBuffer',
+    function(arrayBuffer) {
+      ret.bytes = new Uint8Array(arrayBuffer);
+
+      if (typeof callback === 'function') {
+        callback(ret);
+      }
+
+      self._decrementPreload();
+    },
+    errorCallback
+  );
+  return ret;
+};
+
+/**
  * Method for executing an HTTP GET request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
- * calling <code>httpDo(path, 'GET')</code>.
+ * calling <code>httpDo(path, 'GET')</code>. The 'binary' datatype will return
+ * a Blob object, and the 'arrayBuffer' datatype will return an ArrayBuffer
+ * which can be used to initialize typed arrays (such as Uint8Array).
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
+ *                                    "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -901,7 +954,7 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  */
 p5.prototype.httpDo = function() {
-  var type = '';
+  var type;
   var callback;
   var errorCallback;
   var request;
@@ -918,29 +971,18 @@ p5.prototype.httpDo = function() {
   }
   // The number of arguments minus callbacks
   var argsCount = arguments.length - cbCount;
+  var path = arguments[0];
   if (
     argsCount === 2 &&
-    typeof arguments[0] === 'string' &&
+    typeof path === 'string' &&
     typeof arguments[1] === 'object'
   ) {
     // Intended for more advanced use, pass in Request parameters directly
-    request = new Request(arguments[0], arguments[1]);
+    request = new Request(path, arguments[1]);
     callback = arguments[2];
     errorCallback = arguments[3];
-
-    // do some sort of smart type checking
-    if (type === '') {
-      if (request.url.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (request.url.indexOf('xml') !== -1) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
   } else {
     // Provided with arguments
-    var path = arguments[0];
     var method = 'GET';
     var data;
 
@@ -952,6 +994,8 @@ p5.prototype.httpDo = function() {
         } else if (
           a === 'json' ||
           a === 'jsonp' ||
+          a === 'binary' ||
+          a === 'arrayBuffer' ||
           a === 'xml' ||
           a === 'text'
         ) {
@@ -978,16 +1022,6 @@ p5.prototype.httpDo = function() {
         }
       }
     }
-    // do some sort of smart type checking
-    if (type === '') {
-      if (path.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (path.indexOf('xml') !== -1) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
 
     request = new Request(path, {
       method: method,
@@ -999,53 +1033,40 @@ p5.prototype.httpDo = function() {
     });
   }
 
-  if (type === 'jsonp') {
-    fetchJsonp(arguments[0], jsonpOptions)
-      .then(function(res) {
-        if (res.ok) {
-          return res.json();
-        }
-        throw res;
-      })
-      .then(function(resp) {
-        callback(resp);
-      })
-      .catch(function(err) {
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      });
-  } else {
-    fetch(request)
-      .then(function(res) {
-        if (res.ok) {
-          if (type === 'json') {
-            return res.json();
-          } else {
-            return res.text();
-          }
-        }
-
-        throw res;
-      })
-      .then(function(resp) {
-        if (type === 'xml') {
-          var parser = new DOMParser();
-          resp = parser.parseFromString(resp, 'text/xml');
-          resp = parseXML(resp.documentElement);
-        }
-        callback(resp);
-      })
-      .catch(function(err, msg) {
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      });
+  // do some sort of smart type checking
+  if (!type) {
+    if (path.indexOf('json') !== -1) {
+      type = 'json';
+    } else if (path.indexOf('xml') !== -1) {
+      type = 'xml';
+    } else {
+      type = 'text';
+    }
   }
+
+  (type === 'jsonp' ? fetchJsonp(path, jsonpOptions) : fetch(request))
+    .then(function(res) {
+      if (!res.ok) throw res;
+
+      switch (type) {
+        case 'json':
+          return res.json();
+        case 'binary':
+          return res.blob();
+        case 'arrayBuffer':
+          return res.arrayBuffer();
+        case 'xml':
+          return res.text().then(function(text) {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            return parseXML(xml.documentElement);
+          });
+        default:
+          return res.text();
+      }
+    })
+    .then(callback || function() {})
+    .catch(errorCallback || console.error);
 };
 
 /**
