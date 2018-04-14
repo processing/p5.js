@@ -87,11 +87,17 @@ p5.prototype.randomSeed = function(seed) {
  * If one argument is given and it is a number, returns a random number from 0
  * up to (but not including) the number.
  *
+ * If two number arguments are given, returns a random number from the
+ * first argument up to (but not including) the second argument.
+ *
  * If one argument is given and it is an array, returns a random element from
  * that array.
  *
- * If two arguments are given, returns a random number from the
- * first argument up to (but not including) the second argument.
+ * If two array arguments are given, returns a random element from
+ * the first array using the second array as weights. The second array argument
+ * should contain positive numbers and have the same length as the first array.
+ * A higher weight means that the corresponding element from the first array is
+ * more likely to be picked.
  *
  * @method random
  * @param  {Number} [min]   the lower bound (inclusive)
@@ -123,16 +129,26 @@ p5.prototype.randomSeed = function(seed) {
  * text(word, 10, 50); // draw the word
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * // Get a weighted random element from an array using the random(Array, Array) syntax
+ * var animals = ['cat', 'dog', 'platypus'];
+ * var weights = [3, 1, 0.1]; // 'dog' is ten times more likely than 'platypus'
+ * var word = random(animals, weights); // select random word from the array
+ * text(word, 10, 50); // draw the word
+ * </code>
+ * </div>
  *
  * @alt
  * 100 horizontal lines from center canvas to right. size+fill change each time
  * 100 horizontal lines from center of canvas. height & side change each render
  * word displayed at random. Either apple, bear, cat, or dog
- *
+ * word displayed at random. Eigher cat, dog or platypus (less likely)
  */
 /**
  * @method random
- * @param  {Array} choices   the array to choose from
+ * @param  {Array} choices  the array to choose from
+ * @param  {Array} [weights]  weights to use wen picking elements (higher = more likely)
  * @return {*} the random element from the array
  * @example
  */
@@ -144,22 +160,37 @@ p5.prototype.random = function(min, max) {
   } else {
     rand = Math.random();
   }
+
   if (typeof min === 'undefined') {
     return rand;
-  } else if (typeof max === 'undefined') {
-    if (min instanceof Array) {
-      return min[Math.floor(rand * min.length)];
+  } else if (Array.isArray(min)) {
+    if (Array.isArray(max)) {
+      var total = 0;
+      for (var i = 0; i < max.length; i++) {
+        total += max[i];
+      }
+      var threshold = rand * total;
+      var cumulaliveSum = 0;
+      for (var j = 0; j < max.length; j++) {
+        cumulaliveSum += max[j];
+        if (cumulaliveSum >= threshold) {
+          return min[j];
+        }
+      }
     } else {
-      return rand * min;
+      return min[Math.floor(rand * min.length)];
     }
   } else {
-    if (min > max) {
-      var tmp = min;
-      min = max;
-      max = tmp;
+    if (typeof max === 'undefined') {
+      return rand * min;
+    } else {
+      if (min > max) {
+        var tmp = min;
+        min = max;
+        max = tmp;
+      }
+      return rand * (max - min) + min;
     }
-
-    return rand * (max - min) + min;
   }
 };
 

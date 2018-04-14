@@ -71,5 +71,23 @@ suite('Random', function() {
         assert.include(fruits, result);
       });
     });
+
+    suite('random(["apple"], [3.1])', function() {
+      test('should return a fruit even if single element', function() {
+        var fruits = ['apple'];
+        var weights = [3.1];
+        result = myp5.random(fruits, weights);
+        assert.equal(result, 'apple');
+      });
+    });
+
+    suite('random(["apple", "pear", "orange"], [0, 1, 2.0])', function() {
+      test('should return a fruit when using weights', function() {
+        var fruits = ['apple', 'pear', 'orange'];
+        var weights = [0, 1, 2.0];
+        result = myp5.random(fruits, weights);
+        assert.include(fruits, result);
+      });
+    });
   });
 });
