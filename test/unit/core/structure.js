@@ -181,51 +181,51 @@ suite('Structure', function() {
     });
 
     test('leak no state after strokeCap()', function() {
-      myp5.strokeCap(p5.ROUND);
+      myp5.strokeCap(myp5.ROUND);
       assertCanPreserveRenderState(function() {
-        myp5.strokeCap(p5.SQUARE);
+        myp5.strokeCap(myp5.SQUARE);
       });
     });
 
     test('leak no state after strokeJoin()', function() {
-      myp5.strokeJoin(p5.BEVEL);
+      myp5.strokeJoin(myp5.BEVEL);
       assertCanPreserveRenderState(function() {
-        myp5.strokeJoin(p5.MITER);
+        myp5.strokeJoin(myp5.MITER);
       });
     });
 
     test('leak no state after imageMode()', function() {
-      myp5.imageMode(p5.CORNER);
+      myp5.imageMode(myp5.CORNER);
       assertCanPreserveRenderState(function() {
-        myp5.imageMode(p5.CENTER);
+        myp5.imageMode(myp5.CENTER);
       });
     });
 
     test('leak no state after rectMode()', function() {
-      myp5.rectMode(p5.CORNER);
+      myp5.rectMode(myp5.CORNER);
       assertCanPreserveRenderState(function() {
-        myp5.rectMode(p5.CENTER);
+        myp5.rectMode(myp5.CENTER);
       });
     });
 
     test('leak no state after ellipseMode()', function() {
-      myp5.ellipseMode(p5.CORNER);
+      myp5.ellipseMode(myp5.CORNER);
       assertCanPreserveRenderState(function() {
-        myp5.ellipseMode(p5.CENTER);
+        myp5.ellipseMode(myp5.CENTER);
       });
     });
 
     test('leak no state after colorMode()', function() {
-      myp5.colorMode(p5.HSB);
+      myp5.colorMode(myp5.HSB);
       assertCanPreserveRenderState(function() {
-        myp5.colorMode(p5.RGB);
+        myp5.colorMode(myp5.RGB);
       });
     });
 
     test('leak no state after textAlign()', function() {
-      myp5.textAlign(p5.RIGHT, p5.BOTTOM);
+      myp5.textAlign(myp5.RIGHT, myp5.BOTTOM);
       assertCanPreserveRenderState(function() {
-        myp5.textAlign(p5.CENTER, p5.CENTER);
+        myp5.textAlign(myp5.CENTER, myp5.CENTER);
       });
     });
 
@@ -237,9 +237,9 @@ suite('Structure', function() {
     });
 
     test('leak no state after textStyle()', function() {
-      myp5.textStyle(p5.ITALIC);
+      myp5.textStyle(myp5.ITALIC);
       assertCanPreserveRenderState(function() {
-        myp5.textStyle(p5.BOLD);
+        myp5.textStyle(myp5.BOLD);
       });
     });
 
