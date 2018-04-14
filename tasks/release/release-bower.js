@@ -12,13 +12,17 @@ module.exports = function(grunt) {
       var done = this.async();
       // Keep the version handy
       var version = require('../../package.json').version;
+      // Keep the release-party ready
+      var releaseParty = grunt.config.get('bowerReleaser');
       // Avoiding Callback Hell and using Promises
       new Promise(function(resolve, reject) {
         // Clone the repo. NEEDS TO BE QUIET. Took 3 hours to realise this.
         // Otherwise the stdout screws up
         console.log('Cloning the Release repo ...');
         exec(
-          'rm -rf bower-repo/ && git clone -q https://github.com/lmccart/p5.js-release.git bower-repo',
+          'rm -rf bower-repo/ && git clone -q https://github.com/' +
+            releaseParty +
+            '/p5.js-release.git bower-repo',
           function(err, stdout, stderr) {
             if (err) {
               reject(err);
@@ -67,6 +71,7 @@ module.exports = function(grunt) {
                 if (stderr) {
                   reject(stderr);
                 }
+                console.log('Released on Bower!');
                 resolve();
                 done();
               }
@@ -74,6 +79,7 @@ module.exports = function(grunt) {
           });
         })
         .catch(function(err) {
+          console.log('Failed to Release on Bower!');
           throw new Error(err);
         });
     }

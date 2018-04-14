@@ -48,10 +48,18 @@ module.exports = function(grunt) {
     'Drafts and Publishes a fresh release of p5.js',
     function(args) {
       // 0. Setup Config
+
       // Default increment is patch (x.y.z+1)
       opts.releaseIt.options.increment = args;
+      // Uncomment to set dry run as true for testing
+      // opts.releaseIt.options['dry-run'] = true;
       grunt.config.set('release-it', opts.releaseIt);
       grunt.config.set('compress', opts.compress);
+      // Keeping URLs as config vars, so that anyone can change
+      // them to add their own, to test if release works or not.
+      grunt.config.set('bowerReleaser', 'lmccart');
+      grunt.config.set('docsReleaser', 'processing');
+      grunt.config.set('githubReleaser', 'processing');
 
       // 1. Test Suite
       grunt.task.run('test');
