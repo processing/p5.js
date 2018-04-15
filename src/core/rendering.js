@@ -44,14 +44,38 @@ var defaultClass = 'p5Canvas';
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas();
+ * }
+ * function draw() {
+ *   ellipse(width / 2, height / 2, width, height);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
  * Black line extending from top-left of canvas to bottom right.
- *
+ * An ellipse filling the canvas.
  */
-
+/**
+ * @method createCanvas
+ * @param  {Constant} [renderer]
+ * @return {HTMLCanvasElement} canvas generated
+ */
 p5.prototype.createCanvas = function(w, h, renderer) {
   p5._validateParameters('createCanvas', arguments);
+
+  var container = this._userNode || document.body;
+
+  this._autoSize = arguments.length === 0 || arguments.length === 1;
+  if (this._autoSize) {
+    w = container.clientWidth;
+    h = container.clientHeight;
+    renderer = arguments[0];
+  }
+
   //optional: renderer, otherwise defaults to p2d
   var r = renderer || constants.P2D;
   var c;
@@ -69,7 +93,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     c = document.createElement('canvas');
     c.id = defaultId;
     c.classList.add(defaultClass);
-  } else {
+  } else if (r === constants.P2D) {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
       var i = 0;
@@ -83,6 +107,8 @@ p5.prototype.createCanvas = function(w, h, renderer) {
       // resize the default canvas if new one is created
       c = this.canvas;
     }
+  } else {
+    console.log('invalid renderer type: ' + renderer);
   }
 
   // set to invisible if still in setup (to prevent flashing with manipulate)
@@ -91,12 +117,11 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     c.style.visibility = 'hidden';
   }
 
-  if (this._userNode) {
-    // user input node case
-    this._userNode.appendChild(c);
-  } else {
-    document.body.appendChild(c);
+  if (this._autoSize) {
+    c.style.display = 'block';
   }
+
+  container.appendChild(c);
 
   // Init our graphics renderer
   //webgl mode

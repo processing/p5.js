@@ -389,6 +389,11 @@ p5.prototype._onresize = function(e) {
     if (executeDefault !== undefined && !executeDefault) {
       e.preventDefault();
     }
+  } else if (this._autoSize) {
+    var container = this._renderer.canvas.parentNode;
+    if (container) {
+      this.resizeCanvas(container.clientWidth, container.clientHeight);
+    }
   }
 };
 
