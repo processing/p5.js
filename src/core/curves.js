@@ -94,6 +94,9 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * This function is only useful when using the WEBGL renderer
+ * as the default canvas renderer does not use this information.
+ *
  * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
@@ -358,6 +361,10 @@ p5.prototype.curve = function() {
  * Sets the resolution at which curves display.
  *
  * The default value is 20.
+ *
+ * This function is only useful when using the WEBGL renderer
+ * as the default canvas renderer does not use this
+ * information.
  *
  * @method curveDetail
  * @param {Number} resolution of the curves
