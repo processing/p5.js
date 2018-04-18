@@ -496,6 +496,26 @@ p5.prototype.get = function(x, y, w, h) {
  * @example
  * <div>
  * <code>
+ * function setup() {
+ *   pixelDensity(1);
+ *   background(244, 122, 158);
+ *   loadPixels();
+ *   for (var y = 0; y < height; y = y + 5) {
+ *     for (var x = 0; x < width; x = x + 5) {
+ *       var index = (x + y * width) * 4;
+ *       pixels[index] = 255;
+ *       pixels[index + 1] = 255;
+ *       pixels[index + 2] = 255;
+ *       pixels[index + 3] = 255;
+ *     }
+ *   }
+ *   updatePixels();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
  * var img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
@@ -516,6 +536,30 @@ p5.prototype.get = function(x, y, w, h) {
  *
  * @alt
  * two images of the rocky mountains. one on top, one on bottom of canvas.
+ *
+ *
+ * <div>
+ * <code>
+ * var img;
+ * function preload() {
+ *   img = loadImage('assets/rockies.jpg');
+ * }
+ * function setup() {
+ *   image(img, 0, 0);
+ *   loadPixels();
+ *   for (var y = 0; y < height; y++) {
+ *     for (var x = 0; x < width; x++) {
+ *       var index = (x + y * width) * 4;
+ *       var sum_of_pixels = pixels[index] + pixels[index + 1] + pixels[index + 2];
+ *       pixels[index] = sum_of_pixels / 3;
+ *       pixels[index + 1] = sum_of_pixels / 3;
+ *       pixels[index + 2] = sum_of_pixels / 3;
+ *     }
+ *   }
+ *   updatePixels();
+ * }
+ * </code>
+ * </div>
  *
  */
 p5.prototype.loadPixels = function() {
