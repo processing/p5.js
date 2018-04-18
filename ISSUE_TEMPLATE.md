@@ -15,7 +15,7 @@ Feel free to remove any portion of the template that is not relevant for your is
 #### Most appropriate sub-area of p5.js?
 
 - [ ] Color
-- [ ] Core
+- [ ] Core/Environment/Rendering
 - [ ] Data
 - [ ] Events
 - [ ] Image
