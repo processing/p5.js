@@ -550,12 +550,10 @@ p5.prototype.get = function(x, y, w, h) {
  *   for (var y = 0; y < height; y++) {
  *     for (var x = 0; x < width; x++) {
  *       var index = (x + y * width) * 4;
- *
- *       pixels[index] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
- *
- *       pixels[index + 1] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
- *
- *       pixels[index + 2] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
+ *       var sum_of_pixels = pixels[index] + pixels[index + 1] + pixels[index + 2];
+ *       pixels[index] = sum_of_pixels / 3;
+ *       pixels[index + 1] = sum_of_pixels / 3;
+ *       pixels[index + 2] = sum_of_pixels / 3;
  *     }
  *   }
  *   updatePixels();
