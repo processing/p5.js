@@ -359,6 +359,9 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * This function is only useful when using the WEBGL renderer 
+ * as the default canvas renderer does not use this information.
+ *
  * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
