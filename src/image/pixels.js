@@ -500,8 +500,8 @@ p5.prototype.get = function(x, y, w, h) {
  *   pixelDensity(1);
  *   background(244, 122, 158);
  *   loadPixels();
- *    for (var y = 0; y < height; y = y + 5) {
- *      for (var x = 0; x < width; x = x + 5) {
+ *   for (var y = 0; y < height; y = y + 5) {
+ *     for (var x = 0; x < width; x = x + 5) {
  *       var index = (x + y * width) * 4;
  *       pixels[index] = 255;
  *       pixels[index + 1] = 255;
@@ -547,11 +547,14 @@ p5.prototype.get = function(x, y, w, h) {
  * function setup() {
  *   image(img, 0, 0);
  *   loadPixels();
- *    for (var y = 0; y < height; y++) {
- *      for (var x = 0; x < width; x++) {
+ *   for (var y = 0; y < height; y++) {
+ *     for (var x = 0; x < width; x++) {
  *       var index = (x + y * width) * 4;
+ *
  *       pixels[index] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
+ *
  *       pixels[index + 1] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
+ *
  *       pixels[index + 2] = (pixels[index] + pixels[index + 1] + pixels[index + 2]) / 3;
  *     }
  *   }
