@@ -8,7 +8,7 @@ Using the original metaphor of a software sketchbook, p5.js has a full set of dr
 
 p5.js is a new interpretation, not an emulation or port, and it is in active development. An official editing environment is coming soon, as well as many more features!
 
-If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start. The [frequently asked questions](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions) might also be helpful.
+If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start.
 
 If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). An indicative template for reporting an issue is provided to assist you (and us!) better.
 
@@ -38,7 +38,6 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 * [Learn](//p5js.org/learn) — Tutorials and short, prototypical examples exploring the basics of p5.js.
 * [Forum](http://forum.processing.org/two/categories/p5-js) — Ask and answers questions about how to make things with p5.js here.
 * [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [FAQ](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions)
 
 ## Get Involved
 

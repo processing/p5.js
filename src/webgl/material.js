@@ -116,6 +116,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.createShader = function(vertSrc, fragSrc) {
+  this._assert3d('createShader');
   return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
 
@@ -131,6 +132,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * shapes.
  */
 p5.prototype.shader = function(s) {
+  this._assert3d('shader');
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
@@ -168,6 +170,7 @@ p5.prototype.shader = function(s) {
  *
  */
 p5.prototype.normalMaterial = function() {
+  this._assert3d('normalMaterial');
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
   this._renderer.curFillColor = [1, 1, 1, 1];
@@ -254,6 +257,7 @@ p5.prototype.normalMaterial = function() {
  *
  */
 p5.prototype.texture = function(tex) {
+  this._assert3d('texture');
   this._renderer.drawMode = constants.TEXTURE;
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
@@ -300,6 +304,7 @@ p5.prototype.texture = function(tex) {
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
+  this._assert3d('ambientMaterial');
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 
@@ -347,6 +352,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
+  this._assert3d('specularMaterial');
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 

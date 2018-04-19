@@ -94,20 +94,36 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * This function is only useful when using the WEBGL renderer
+ * as the default canvas renderer does not use this information.
+ *
  * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
- * background(204);
- * bezierDetail(50);
- * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noFill();
+ *
+ *   bezierDetail(5);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // prettier-ignore
+ *   bezier(-40, -40, 0,
+ *           90, -40, 0,
+ *          -90,  40, 0,
+ *           40,  40, 0);
+ * }
  * </code>
  * </div>
  *
  * @alt
- * stretched black s-shape with 7 5x5 ellipses and orange lines along the shape.
+ * stretched black s-shape with a low level of bezier detail
  *
  */
 p5.prototype.bezierDetail = function(d) {
@@ -346,20 +362,35 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * This function is only useful when using the WEBGL renderer
+ * as the default canvas renderer does not use this
+ * information.
+ *
  * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
- * background(204);
- * curveDetail(20);
- * curve(5, 26, 5, 26, 73, 24, 73, 61);
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   curveDetail(5);
+ * }
+ * function draw() {
+ *   background(200);
+ *
+ *   // prettier-ignore
+ *   curve( 250, 600, 0,
+ *          -30,  40, 0,
+ *           30,  30, 0,
+ *         -250, 600, 0);
+ * }
  * </code>
  * </div>
  *
  * @alt
- * white arch shape in top-mid canvas.
+ * white arch shape with a low level of curve detail.
  *
  */
 p5.prototype.curveDetail = function(d) {

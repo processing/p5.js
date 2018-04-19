@@ -108,14 +108,14 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [extension]      'jpg' or 'png'
  *
  *  @example
- * <div class='norender'><code>
+ * <div class='norender notest'><code>
  * function setup() {
  *   var c = createCanvas(100, 100);
  *   background(255, 0, 0);
  *   saveCanvas(c, 'myCanvas', 'jpg');
  * }
  * </code></div>
- * <div class='norender'><code>
+ * <div class='norender notest'><code>
  * // note that this example has the same result as above
  * // if no canvas is specified, defaults to main canvas
  * function setup() {

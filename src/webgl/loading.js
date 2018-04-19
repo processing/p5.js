@@ -81,6 +81,7 @@ p5.prototype.loadModel = function(path) {
 
   var model = new p5.Geometry();
   model.gid = path + '|' + normalize;
+  var self = this;
   this.loadStrings(
     path,
     function(strings) {
@@ -90,6 +91,7 @@ p5.prototype.loadModel = function(path) {
         model.normalize();
       }
 
+      self._decrementPreload();
       if (typeof successCallback === 'function') {
         successCallback(model);
       }
@@ -242,6 +244,7 @@ function parseObj(model, lines) {
  *
  */
 p5.prototype.model = function(model) {
+  this._assert3d('model');
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
       model._makeTriangleEdges()._edgesToVertices();

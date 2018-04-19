@@ -48,10 +48,13 @@ var p5 = function(sketch, node, sync) {
 
   /**
    * Called directly before setup(), the preload() function is used to handle
-   * asynchronous loading of external files. If a preload function is
-   * defined, setup() will wait until any load calls within have finished.
-   * Nothing besides load calls should be inside preload (loadImage,
-   * loadJSON, loadFont, loadStrings, etc).<br><br>
+   * asynchronous loading of external files in a blocking way. If a preload 
+   * function is defined, setup() will wait until any load calls within have
+   * finished. Nothing besides load calls (loadImage, loadJSON, loadFont,
+   * loadStrings, etc.) should be inside preload function. If asynchronous
+   * loading is preferred, the load methods can instead be called in setup()
+   * or anywhere else with the use of a callback parameter.
+   * <br><br>
    * By default the text "loading..." will be displayed. To make your own
    * loading page, include an HTML element with id "p5_loading" in your
    * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
@@ -238,7 +241,7 @@ var p5 = function(sketch, node, sync) {
     var userPreload = this.preload || window.preload; // look for "preload"
     if (userPreload) {
       // Setup loading screen
-      // Set loading scfeen into dom if not present
+      // Set loading screen into dom if not present
       // Otherwise displays and removes user provided loading screen
       var loadingScreen = document.getElementById(this._loadingScreenId);
       if (!loadingScreen) {
@@ -256,7 +259,10 @@ var p5 = function(sketch, node, sync) {
         var obj = this._preloadMethods[method];
         //it's p5, check if it's global or instance
         if (obj === p5.prototype || obj === p5) {
-          obj = this._isGlobal ? window : this;
+          if (this._isGlobal) {
+            window[method] = this._wrapPreload(this, method);
+          }
+          obj = this;
         }
         this._registeredPreloadMethods[method] = obj[method];
         obj[method] = this._wrapPreload(obj, method);
@@ -590,6 +596,7 @@ p5.prototype._preloadMethods = {
   loadImage: p5.prototype,
   loadStrings: p5.prototype,
   loadXML: p5.prototype,
+  loadBytes: p5.prototype,
   loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,

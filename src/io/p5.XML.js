@@ -350,9 +350,10 @@ p5.XML.prototype.getChildren = function(param) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    return this.children.find(function(c) {
-      return c.name === param;
-    });
+    for (var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+      if (child.name === param) return child;
+    }
   } else {
     return this.children[param];
   }
@@ -365,7 +366,41 @@ p5.XML.prototype.getChild = function(param) {
  * A reference to the newly created child is returned as an p5.XML object.
  *
  * @method addChild
- * @param {p5.XML} a p5.XML Object which will be the child to be added
+ * @param {p5.XML} node a p5.XML Object which will be the child to be added
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   var child = new p5.XML();
+ *   child.setAttribute('id', '3');
+ *   child.setAttribute('species', 'Ornithorhynchus anatinus');
+ *   child.setContent('Platypus');
+ *   xml.addChild(child);
+ *
+ *   var animals = xml.getChildren('animal');
+ *   print(animals[animals.length - 1].getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Leopard"
+ * // "Zebra"
+ * </code></div>
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {
@@ -609,7 +644,7 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * @method getString
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
- * @return {Number}
+ * @return {String}
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -647,7 +682,7 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  *
  * @method setAttribute
  * @param {String} name            the full name of the attribute
- * @param {Number} value           the value of the attribute
+ * @param {Number|String|Boolean} value  the value of the attribute
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -788,10 +823,13 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var i,
-    att = {};
-  for (i = 0; i < node.attributes.length; i++) {
-    att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
+  var att = {};
+  var attributes = node.attributes;
+  if (attributes) {
+    for (var i = 0; i < attributes.length; i++) {
+      var attribute = attributes[i];
+      att[attribute.nodeName] = attribute.nodeValue;
+    }
   }
   this.attributes = att;
 };

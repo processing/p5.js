@@ -47,6 +47,7 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.camera = function() {
+  this._assert3d('camera');
   this._renderer.camera.apply(this._renderer, arguments);
   return this;
 };
@@ -199,6 +200,7 @@ p5.RendererGL.prototype.camera = function(
  *
  */
 p5.prototype.perspective = function() {
+  this._assert3d('perspective');
   this._renderer.perspective.apply(this._renderer, arguments);
   return this;
 };
@@ -276,6 +278,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  *
  */
 p5.prototype.ortho = function() {
+  this._assert3d('ortho');
   this._renderer.ortho.apply(this._renderer, arguments);
   return this;
 };

@@ -101,7 +101,23 @@ require('../core/error_helpers');
  * 50x50 ellipse that changes from black to white depending on the current humidity
  *
  */
+/**
+ * @method loadJSON
+ * @param  {String}        path
+ * @param  {String}        datatype
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ * @return {Object|Array}
+ */
+/**
+ * @method loadJSON
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ * @return {Object|Array}
+ */
 p5.prototype.loadJSON = function() {
+  p5._validateParameters('loadJSON', arguments);
   var path = arguments[0];
   var callback;
   var errorCallback;
@@ -212,6 +228,8 @@ p5.prototype.loadJSON = function() {
  *
  */
 p5.prototype.loadStrings = function() {
+  p5._validateParameters('loadStrings', arguments);
+
   var ret = [];
   var callback, errorCallback;
 
@@ -561,10 +579,10 @@ function makeObject(row, headers) {
 
 function parseXML(two) {
   var one = new p5.XML();
-  var i;
-  if (two.children.length) {
-    for (i = 0; i < two.children.length; i++) {
-      var node = parseXML(two.children[i]);
+  var children = two.childNodes;
+  if (children && children.length) {
+    for (var i = 0; i < children.length; i++) {
+      var node = parseXML(children[i]);
       one.addChild(node);
     }
     one.setName(two.nodeName);
@@ -684,14 +702,67 @@ p5.prototype.loadXML = function() {
 };
 
 /**
+ * @method loadBytes
+ * @param {string}   file            name of the file or URL to load
+ * @param {function} [callback]      function to be executed after loadBytes()
+ *                                    completes
+ * @param {function} [errorCallback] function to be executed if there
+ *                                    is an error
+ * @returns {Object} an object whose 'bytes' property will be the loaded buffer
+ *
+ * @example
+ * <div class='norender'><code>
+ * var data;
+ *
+ * function preload() {
+ *   data = loadBytes('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   for (var i = 0; i < 5; i++) {
+ *     console.log(data.bytes[i].toString(16));
+ *   }
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
+ *
+ */
+p5.prototype.loadBytes = function(file, callback, errorCallback) {
+  var ret = {};
+
+  var self = this;
+  this.httpDo(
+    file,
+    'GET',
+    'arrayBuffer',
+    function(arrayBuffer) {
+      ret.bytes = new Uint8Array(arrayBuffer);
+
+      if (typeof callback === 'function') {
+        callback(ret);
+      }
+
+      self._decrementPreload();
+    },
+    errorCallback
+  );
+  return ret;
+};
+
+/**
  * Method for executing an HTTP GET request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
- * calling <code>httpDo(path, 'GET')</code>.
+ * calling <code>httpDo(path, 'GET')</code>. The 'binary' datatype will return
+ * a Blob object, and the 'arrayBuffer' datatype will return an ArrayBuffer
+ * which can be used to initialize typed arrays (such as Uint8Array).
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
- * @param  {Object}        [data]     param data passed sent with request
+ * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
+ *                                    "xml", or "text"
+ * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -731,7 +802,22 @@ p5.prototype.loadXML = function() {
  * }
  * </code></div>
  */
+/**
+ * @method httpGet
+ * @param  {String}        path
+ * @param  {Object|Boolean} data
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ */
+/**
+ * @method httpGet
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ */
 p5.prototype.httpGet = function() {
+  p5._validateParameters('httpGet', arguments);
+
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
@@ -746,7 +832,7 @@ p5.prototype.httpGet = function() {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
  *                                    If omitted, httpPost() will guess.
- * @param  {Object}        [data]     param data passed sent with request
+ * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpPost() completes, data is passed in
  *                                    as first argument
@@ -816,7 +902,22 @@ p5.prototype.httpGet = function() {
  * </code></div>
  *
  */
+/**
+ * @method httpPost
+ * @param  {String}        path
+ * @param  {Object|Boolean} data
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
+ */
+/**
+ * @method httpPost
+ * @param  {String}        path
+ * @param  {function}      callback
+ * @param  {function}      [errorCallback]
+ */
 p5.prototype.httpPost = function() {
+  p5._validateParameters('httpPost', arguments);
+
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
@@ -890,7 +991,6 @@ p5.prototype.httpPost = function() {
  * </code>
  * </div>
  */
-
 /**
  * @method httpDo
  * @param  {String}        path
@@ -901,7 +1001,7 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  */
 p5.prototype.httpDo = function() {
-  var type = '';
+  var type;
   var callback;
   var errorCallback;
   var request;
@@ -918,29 +1018,18 @@ p5.prototype.httpDo = function() {
   }
   // The number of arguments minus callbacks
   var argsCount = arguments.length - cbCount;
+  var path = arguments[0];
   if (
     argsCount === 2 &&
-    typeof arguments[0] === 'string' &&
+    typeof path === 'string' &&
     typeof arguments[1] === 'object'
   ) {
     // Intended for more advanced use, pass in Request parameters directly
-    request = new Request(arguments[0], arguments[1]);
+    request = new Request(path, arguments[1]);
     callback = arguments[2];
     errorCallback = arguments[3];
-
-    // do some sort of smart type checking
-    if (type === '') {
-      if (request.url.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (request.url.indexOf('xml') !== -1) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
   } else {
     // Provided with arguments
-    var path = arguments[0];
     var method = 'GET';
     var data;
 
@@ -952,6 +1041,8 @@ p5.prototype.httpDo = function() {
         } else if (
           a === 'json' ||
           a === 'jsonp' ||
+          a === 'binary' ||
+          a === 'arrayBuffer' ||
           a === 'xml' ||
           a === 'text'
         ) {
@@ -978,16 +1069,6 @@ p5.prototype.httpDo = function() {
         }
       }
     }
-    // do some sort of smart type checking
-    if (type === '') {
-      if (path.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (path.indexOf('xml') !== -1) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
 
     request = new Request(path, {
       method: method,
@@ -999,53 +1080,40 @@ p5.prototype.httpDo = function() {
     });
   }
 
-  if (type === 'jsonp') {
-    fetchJsonp(arguments[0], jsonpOptions)
-      .then(function(res) {
-        if (res.ok) {
-          return res.json();
-        }
-        throw res;
-      })
-      .then(function(resp) {
-        callback(resp);
-      })
-      .catch(function(err) {
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      });
-  } else {
-    fetch(request)
-      .then(function(res) {
-        if (res.ok) {
-          if (type === 'json') {
-            return res.json();
-          } else {
-            return res.text();
-          }
-        }
-
-        throw res;
-      })
-      .then(function(resp) {
-        if (type === 'xml') {
-          var parser = new DOMParser();
-          resp = parser.parseFromString(resp, 'text/xml');
-          resp = parseXML(resp.documentElement);
-        }
-        callback(resp);
-      })
-      .catch(function(err, msg) {
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
-      });
+  // do some sort of smart type checking
+  if (!type) {
+    if (path.indexOf('json') !== -1) {
+      type = 'json';
+    } else if (path.indexOf('xml') !== -1) {
+      type = 'xml';
+    } else {
+      type = 'text';
+    }
   }
+
+  (type === 'jsonp' ? fetchJsonp(path, jsonpOptions) : fetch(request))
+    .then(function(res) {
+      if (!res.ok) throw res;
+
+      switch (type) {
+        case 'json':
+          return res.json();
+        case 'binary':
+          return res.blob();
+        case 'arrayBuffer':
+          return res.arrayBuffer();
+        case 'xml':
+          return res.text().then(function(text) {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            return parseXML(xml.documentElement);
+          });
+        default:
+          return res.text();
+      }
+    })
+    .then(callback || function() {})
+    .catch(errorCallback || console.error);
 };
 
 /**
@@ -1088,7 +1156,7 @@ p5.prototype.createWriter = function(name, extension) {
       // if a p5.PrintWriter w/ this name already exists...
       // return p5.prototype._pWriters[i]; // return it w/ contents intact.
       // or, could return a new, empty one with a unique name:
-      newPW = new p5.PrintWriter(name + window.millis(), extension);
+      newPW = new p5.PrintWriter(name + this.millis(), extension);
       p5.prototype._pWriters.push(newPW);
       return newPW;
     }
@@ -1113,7 +1181,7 @@ p5.PrintWriter = function(filename, extension) {
    * @method write
    * @param {Array} data all data to be written by the PrintWriter
    * @example
-   * <div class="norender">
+   * <div class="norender notest">
    * <code>
    * // creates a file called 'newFile.txt'
    * var writer = createWriter('newFile.txt');
@@ -1123,7 +1191,7 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
-   * <div class='norender'>
+   * <div class='norender notest'>
    * <code>
    * // creates a file called 'newFile2.txt'
    * var writer = createWriter('newFile2.txt');
@@ -1133,7 +1201,7 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
-   * <div class='norender'>
+   * <div class='norender notest'>
    * <code>
    * // creates a file called 'newFile3.txt'
    * var writer = createWriter('newFile3.txt');
@@ -1153,7 +1221,7 @@ p5.PrintWriter = function(filename, extension) {
    * @method print
    * @param {Array} data all data to be printed by the PrintWriter
    * @example
-   * <div class='norender'>
+   * <div class='norender notest'>
    * <code>
    * // creates a file called 'newFile.txt'
    * var writer = createWriter('newFile.txt');
@@ -1166,7 +1234,7 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
-   * <div class='norender'>
+   * <div class='norender notest'>
    * <code>
    * var writer;
    *
@@ -1195,7 +1263,7 @@ p5.PrintWriter = function(filename, extension) {
    * Clears the data already written to the PrintWriter object
    * @method clear
    * @example
-   * <div class ="norender"><code>
+   * <div class ="norender notest"><code>
    * // create writer object
    * var writer = createWriter('newFile.txt');
    * writer.write(['clear me']);
@@ -1213,7 +1281,7 @@ p5.PrintWriter = function(filename, extension) {
    * Closes the PrintWriter
    * @method close
    * @example
-   * <div class="norender">
+   * <div class="norender notest">
    * <code>
    * // create a file called 'newFile.txt'
    * var writer = createWriter('newFile.txt');
@@ -1221,7 +1289,7 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
-   * <div class='norender'>
+   * <div class='norender notest'>
    * <code>
    * // create a file called 'newFile2.txt'
    * var writer = createWriter('newFile2.txt');
@@ -1652,6 +1720,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  but it is used by saveStrings, saveJSON, saveTable etc.
  *
  *  @method downloadFile
+ *  @private
  *  @param  {String|Blob} data    either an href generated by createObjectURL,
  *                                or a Blob object containing the data
  *  @param  {String} [filename]

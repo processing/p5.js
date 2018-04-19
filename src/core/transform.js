@@ -222,12 +222,9 @@ p5.prototype.rotate = function(angle, axis) {
  * 3d box rotating around the x axis.
  */
 p5.prototype.rotateX = function(angle) {
+  this._assert3d('rotateX');
   p5._validateParameters('rotateX', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateX(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._renderer.rotateX(this._toRadians(angle));
   return this;
 };
 
@@ -255,12 +252,9 @@ p5.prototype.rotateX = function(angle) {
  * 3d box rotating around the y axis.
  */
 p5.prototype.rotateY = function(angle) {
+  this._assert3d('rotateY');
   p5._validateParameters('rotateY', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateY(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._renderer.rotateY(this._toRadians(angle));
   return this;
 };
 
@@ -288,12 +282,9 @@ p5.prototype.rotateY = function(angle) {
  * 3d box rotating around the z axis.
  */
 p5.prototype.rotateZ = function(angle) {
+  this._assert3d('rotateZ');
   p5._validateParameters('rotateZ', arguments);
-  if (this._renderer.isP3D) {
-    this._renderer.rotateZ(this._toRadians(angle));
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+  this._renderer.rotateZ(this._toRadians(angle));
   return this;
 };
 
@@ -485,10 +476,29 @@ p5.prototype.shearY = function(angle) {
  * </code>
  * </div>
  *
+
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   rectMode(CENTER);
+ *   translate(width / 2, height / 2);
+ *   translate(p5.Vector.fromAngle(millis() / 1000, 40));
+ *   rect(0, 0, 20, 20);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * white 55x55 rect with black outline at center right.
  * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+ * a 20x20 white rect moving in a circle around the canvas
  *
+ */
+/**
+ * @method translate
+ * @param  {p5.Vector} vector the vector to translate by
+ * @chainable
  */
 p5.prototype.translate = function(x, y, z) {
   p5._validateParameters('translate', arguments);

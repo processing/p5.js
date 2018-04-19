@@ -47,14 +47,10 @@ suite('color/CreatingReading', function() {
       );
     });
     test('wrong param type at #0', function() {
-      assert.doesNotThrow(
-        function() {
-          c = 20;
-          val = myp5.alpha(c);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        c = 20;
+        val = myp5.alpha(c);
+      });
     });
   });
 
@@ -180,13 +176,9 @@ suite('color/CreatingReading', function() {
       assert.deepEqual(interB.levels, [72, 61, 139, 255]);
     });
     test('missing param #2', function() {
-      assert.doesNotThrow(
-        function() {
-          myp5.lerpColor(fromColor, toColor);
-        },
-        Error,
-        'got unwanted exception'
-      );
+      assert.validationError(function() {
+        myp5.lerpColor(fromColor, toColor);
+      });
     });
   });
   suite('p5.prototype.lerpColor with alpha', function() {

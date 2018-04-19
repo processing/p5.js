@@ -336,6 +336,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  this._assert3d('setAttributes');
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {
@@ -692,7 +693,11 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  this.GL.clearColor(arguments[0], arguments[1], arguments[2], arguments[3]);
+  var _r = arguments[0] || 0;
+  var _g = arguments[1] || 0;
+  var _b = arguments[2] || 0;
+  var _a = arguments[3] || 0;
+  this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
@@ -978,6 +983,20 @@ p5.RendererGL.prototype._bindBuffer = function(
   }
 };
 
+//////////////////////////
+//// SMOOTHING
+/////////////////////////
+// @TODO:
+p5.RendererGL.prototype.smooth = function() {
+  //@TODO finish implementation
+  console.log('smoothing not yet implemented in webgl');
+};
+
+p5.RendererGL.prototype.noSmooth = function() {
+  //@TODO finish implementation
+  console.log('smoothing not yet implemented in webgl');
+};
+
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
@@ -1032,6 +1051,19 @@ p5.RendererGL.prototype._vToNArray = function(arr) {
       return [item.x, item.y, item.z];
     })
   );
+};
+
+/**
+ * ensures that p5 is using a 3d renderer. throws an error if not.
+ */
+p5.prototype._assert3d = function(name) {
+  if (!this._renderer.isP3D)
+    throw new Error(
+      name +
+        "() is only supported in WEBGL mode. If you'd like to use 3D graphics" +
+        ' and WebGL, see  https://p5js.org/examples/form-3d-primitives.html' +
+        ' for more information.'
+    );
 };
 
 module.exports = p5.RendererGL;

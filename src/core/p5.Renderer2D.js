@@ -69,7 +69,10 @@ p5.Renderer2D.prototype.background = function() {
 };
 
 p5.Renderer2D.prototype.clear = function() {
+  this.drawingContext.save();
+  this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
   this.drawingContext.clearRect(0, 0, this.width, this.height);
+  this.drawingContext.restore();
 };
 
 p5.Renderer2D.prototype.fill = function() {
@@ -1127,6 +1130,11 @@ p5.Renderer2D.prototype.shearY = function(rad) {
 };
 
 p5.Renderer2D.prototype.translate = function(x, y) {
+  // support passing a vector as the 1st parameter
+  if (x instanceof p5.Vector) {
+    y = x.y;
+    x = x.x;
+  }
   this.drawingContext.translate(x, y);
   return this;
 };
@@ -1158,7 +1166,9 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     return;
   }
 
-  if (typeof str !== 'string') {
+  if (typeof str === 'undefined') {
+    return;
+  } else if (typeof str !== 'string') {
     str = str.toString();
   }
 

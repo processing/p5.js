@@ -158,7 +158,8 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * to the screen.
  *
  * @method text
- * @param {String|Object|Array} str the alphanumeric symbols to be displayed
+ * @param {String|Object|Array|Number|Boolean} str the alphanumeric
+ *                                             symbols to be displayed
  * @param {Number} x   x-coordinate of text
  * @param {Number} y   y-coordinate of text
  * @param {Number} [x2]  by default, the width of the text box,
@@ -191,6 +192,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+  p5._validateParameters('text', arguments);
   return !(this._renderer._doFill || this._renderer._doStroke)
     ? this
     : this._renderer.text.apply(this._renderer, arguments);
