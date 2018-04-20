@@ -726,9 +726,6 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @alt
  * 8 points making 4 lines
  *
- * @alt
- * 4 black points in a square shape in middle-right of canvas.
- *
  */
 /**
  * @method vertex
