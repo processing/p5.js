@@ -653,6 +653,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @example
  * <div>
  * <code>
+ * strokeWeight(3);
  * beginShape(POINTS);
  * vertex(30, 20);
  * vertex(85, 20);
@@ -664,6 +665,66 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  *
  * @alt
  * 4 black points in a square shape in middle-right of canvas.
+ *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * background(240, 240, 240);
+ * fill(237, 34, 93);
+ * noStroke();
+ * beginShape();
+ * vertex(0, 35);
+ * vertex(35, 0);
+ * vertex(0, -35);
+ * vertex(-35, 0);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 4 points making a diamond shape
+ *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * background(240, 240, 240);
+ * fill(237, 34, 93);
+ * noStroke();
+ * beginShape();
+ * vertex(-10, 10);
+ * vertex(0, 35);
+ * vertex(10, 10);
+ * vertex(35, 0);
+ * vertex(10, -8);
+ * vertex(0, -35);
+ * vertex(-10, -8);
+ * vertex(-35, 0);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 8 points making a star
+ *
+ * <div>
+ * <code>
+ * strokeWeight(3);
+ * stroke(237, 34, 93);
+ * beginShape(LINES);
+ * vertex(10, 35);
+ * vertex(90, 35);
+ * vertex(10, 65);
+ * vertex(90, 65);
+ * vertex(35, 10);
+ * vertex(35, 90);
+ * vertex(65, 10);
+ * vertex(65, 90);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 8 points making 4 lines
  *
  */
 /**
