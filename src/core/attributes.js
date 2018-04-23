@@ -104,6 +104,7 @@ p5.prototype.ellipseMode = function(m) {
  *
  */
 p5.prototype.noSmooth = function() {
+  p5._validateParameters('noSmooth', arguments);
   this._renderer.noSmooth();
   return this;
 };
@@ -202,6 +203,7 @@ p5.prototype.rectMode = function(m) {
  *
  */
 p5.prototype.smooth = function() {
+  p5._validateParameters('smooth', arguments);
   this._renderer.smooth();
   return this;
 };

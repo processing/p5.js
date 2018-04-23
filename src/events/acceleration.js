@@ -355,6 +355,7 @@ var shake_threshold = 30;
  * @param {number} value The threshold value
  */
 p5.prototype.setMoveThreshold = function(val) {
+  p5._validateParameters('setMoveThreshold', arguments);
   if (typeof val === 'number') {
     move_threshold = val;
   }
@@ -368,6 +369,7 @@ p5.prototype.setMoveThreshold = function(val) {
  * @param {number} value The threshold value
  */
 p5.prototype.setShakeThreshold = function(val) {
+  p5._validateParameters('setShakeThreshold', arguments);
   if (typeof val === 'number') {
     shake_threshold = val;
   }
