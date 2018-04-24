@@ -1,3 +1,9 @@
+/**
+ * @module Lights, Camera
+ * @submodule Camera
+ * @for p5
+ * @requires core
+ */
 'use strict';
 
 var p5 = require('../core/core');
