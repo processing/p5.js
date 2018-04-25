@@ -493,9 +493,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         var argType =
           arg instanceof Array
             ? 'array'
-            : arg === null
-              ? 'null'
-              : arg.name || typeof arg;
+            : arg === null ? 'null' : arg.name || typeof arg;
         message =
           func +
           '() was expecting ' +
