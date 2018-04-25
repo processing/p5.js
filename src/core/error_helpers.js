@@ -175,8 +175,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
         break;
       }
     }
-    // bail if we couldn't find it (should never happen)
-    if (!queryResult) throw new Error('missing docs for method ' + func);
 
     // different JSON structure for funct with multi-format
     var overloads = [];
@@ -301,12 +299,18 @@ if (typeof IS_MINIFIED !== 'undefined') {
     };
   };
 
-  var testParamType = function(param, type) {
-    function isNumber() {
-      if (typeof param === 'number') return true;
-      if (typeof param === 'string') return !isNaN(param);
-      return false;
+  var isNumber = function(param) {
+    switch (typeof param) {
+      case 'number':
+        return true;
+      case 'string':
+        return !isNaN(param);
+      default:
+        return false;
     }
+  };
+
+  var testParamType = function(param, type) {
     var isArray = param instanceof Array;
     var matches = true;
     if (type.array && isArray) {
@@ -319,10 +323,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
     } else if (type.builtin) {
       switch (type.builtin) {
         case 'number':
-          matches = isNumber();
+          matches = isNumber(param);
           break;
         case 'integer':
-          matches = isNumber() && Number(param) === Math.floor(param);
+          matches = isNumber(param) && Number(param) === Math.floor(param);
           break;
         case 'boolean':
         case 'any':
@@ -365,11 +369,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
   var scoreOverload = function(args, argCount, overload, minScore) {
     var score = 0;
     var formats = overload.formats;
+    var minParams = overload.minParams;
 
     // check for too few/many args
     // the score is double number of extra/missing args
-    if (argCount < overload.minParams) {
-      score = (overload.minParams - argCount) * 2;
+    if (argCount < minParams) {
+      score = (minParams - argCount) * 2;
     } else if (argCount > formats.length) {
       score = (argCount - formats.length) * 2;
     }
@@ -379,12 +384,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
     for (var p = 0; score <= minScore && p < formats.length; p++) {
       var arg = args[p];
       var format = formats[p];
+      // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
         // handle non-optional and non-trailing undefined args
-        if (
-          !format.optional ||
-          (p < overload.minParams ? true : p < argCount)
-        ) {
+        if (!format.optional || p < minParams || p < argCount) {
           score += 1;
         }
       } else {
@@ -397,14 +400,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // gets a list of errors for this overload
   var getOverloadErrors = function(args, argCount, overload) {
     var formats = overload.formats;
+    var minParams = overload.minParams;
 
     // check for too few/many args
-    if (argCount < overload.minParams) {
+    if (argCount < minParams) {
       return [
         {
           type: 'TOO_FEW_ARGUMENTS',
           argCount: argCount,
-          minParams: overload.minParams
+          minParams: minParams
         }
       ];
     } else if (argCount > formats.length) {
@@ -421,12 +425,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
     for (var p = 0; p < formats.length; p++) {
       var arg = args[p];
       var format = formats[p];
+      // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
         // handle non-optional and non-trailing undefined args
-        if (
-          !format.optional ||
-          (p < overload.minParams ? true : p < argCount)
-        ) {
+        if (!format.optional || p < minParams || p < argCount) {
           errorArray.push({
             type: 'EMPTY_VAR',
             position: p,
@@ -567,6 +569,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     // ignore any trailing `undefined` arguments
     var argCount = args.length;
+    // '== null' checks for 'null' and typeof 'undefined'
     while (argCount > 0 && args[argCount - 1] == null) argCount--;
 
     // find the overload with the best score
