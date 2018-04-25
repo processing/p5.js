@@ -215,7 +215,13 @@ module.exports = function(grunt) {
           'src/**/*.frag',
           'src/**/*.vert'
         ],
-        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        tasks: [
+          'browserify',
+          'browserify:min',
+          'yuidoc:prod',
+          'minjson',
+          'uglify'
+        ],
         options: {
           livereload: true
         }
