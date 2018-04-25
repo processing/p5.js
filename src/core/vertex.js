@@ -62,7 +62,6 @@ var isFirstContour = true;
  *
  */
 p5.prototype.beginContour = function() {
-  p5._validateParameters('beginContour', arguments);
   contourVertices = [];
   isContour = true;
   return this;
@@ -448,7 +447,6 @@ p5.prototype.curveVertex = function(x, y) {
  *
  */
 p5.prototype.endContour = function() {
-  p5._validateParameters('endContour', arguments);
   var vert = contourVertices[0].slice(); // copy all data
   vert.isVert = contourVertices[0].isVert;
   vert.moveTo = false;
