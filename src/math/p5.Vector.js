@@ -103,8 +103,8 @@ p5.Vector = function Vector() {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'black');
  *
  *   noStroke();
@@ -120,7 +120,7 @@ p5.Vector = function Vector() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -156,7 +156,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  *
  * <div>
  * <code>
- * let v0, v1;
+ * var v0, v1;
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -183,7 +183,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -276,14 +276,14 @@ p5.Vector.prototype.copy = function copy() {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'red');
  *
- *   let v2 = createVector(-30, 20);
+ *   var v2 = createVector(-30, 20);
  *   drawArrow(v1, v2, 'blue');
  *
- *   let v3 = p5.Vector.add(v1, v2);
+ *   var v3 = p5.Vector.add(v1, v2);
  *   drawArrow(v0, v3, 'purple');
  * }
  *
@@ -296,7 +296,7 @@ p5.Vector.prototype.copy = function copy() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -366,14 +366,14 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(70, 50);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(70, 50);
  *   drawArrow(v0, v1, 'red');
  *
- *   let v2 = createVector(mouseX, mouseY);
+ *   var v2 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v2, 'blue');
  *
- *   let v3 = p5.Vector.sub(v1, v2);
+ *   var v3 = p5.Vector.sub(v1, v2);
  *   drawArrow(v2, v3, 'purple');
  * }
  *
@@ -386,7 +386,7 @@ p5.Vector.prototype.add = function add(x, y, z) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -450,12 +450,12 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(25, -25);
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(25, -25);
  *   drawArrow(v0, v1, 'red');
  *
- *   let num = map(mouseX, 0, width, -2, 2, true);
- *   let v2 = p5.Vector.mult(v1, num);
+ *   var num = map(mouseX, 0, width, -2, 2, true);
+ *   var v2 = p5.Vector.mult(v1, num);
  *   drawArrow(v0, v2, 'blue');
  *
  *   noStroke();
@@ -471,7 +471,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -524,12 +524,12 @@ p5.Vector.prototype.mult = function mult(n) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 100);
- *   let v1 = createVector(50, -50);
+ *   var v0 = createVector(0, 100);
+ *   var v1 = createVector(50, -50);
  *   drawArrow(v0, v1, 'red');
  *
- *   let num = map(mouseX, 0, width, 10, 0.5, true);
- *   let v2 = p5.Vector.div(v1, num);
+ *   var num = map(mouseX, 0, width, 10, 0.5, true);
+ *   var v2 = p5.Vector.div(v1, num);
  *   drawArrow(v0, v2, 'blue');
  *
  *   noStroke();
@@ -545,7 +545,7 @@ p5.Vector.prototype.mult = function mult(n) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -583,8 +583,8 @@ p5.Vector.prototype.div = function div(n) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'black');
  *
  *   noStroke();
@@ -600,7 +600,7 @@ p5.Vector.prototype.div = function div(n) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -641,8 +641,8 @@ p5.Vector.prototype.mag = function mag() {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(mouseX, mouseY);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'black');
  *
  *   noStroke();
@@ -658,7 +658,7 @@ p5.Vector.prototype.mag = function mag() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -792,12 +792,12 @@ p5.Vector.prototype.cross = function cross(v) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
+ *   var v0 = createVector(0, 0);
  *
- *   let v1 = createVector(70, 50);
+ *   var v1 = createVector(70, 50);
  *   drawArrow(v0, v1, 'red');
  *
- *   let v2 = createVector(mouseX, mouseY);
+ *   var v2 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v2, 'blue');
  *
  *   noStroke();
@@ -813,7 +813,7 @@ p5.Vector.prototype.cross = function cross(v) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -848,8 +848,8 @@ p5.Vector.prototype.dist = function dist(v) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(mouseX - 50, mouseY - 50);
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
  *
  *   drawArrow(v0, v1, 'red');
  *   v1.normalize();
@@ -868,7 +868,7 @@ p5.Vector.prototype.dist = function dist(v) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -906,8 +906,8 @@ p5.Vector.prototype.normalize = function normalize() {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(mouseX - 50, mouseY - 50);
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
  *
  *   drawArrow(v0, v1, 'red');
  *   drawArrow(v0, v1.limit(35), 'blue');
@@ -925,7 +925,7 @@ p5.Vector.prototype.normalize = function normalize() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -964,12 +964,12 @@ p5.Vector.prototype.limit = function limit(max) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 0);
- *   let v1 = createVector(50, 50);
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(50, 50);
  *
  *   drawArrow(v0, v1, 'red');
  *
- *   let length = map(mouseX, 0, width, 0, 141, true);
+ *   var length = map(mouseX, 0, width, 0, 141, true);
  *   v1.setMag(length);
  *   drawArrow(v0, v1, 'blue');
  *
@@ -986,7 +986,7 @@ p5.Vector.prototype.limit = function limit(max) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -1024,12 +1024,12 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(mouseX - 50, mouseY - 50);
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
  *
  *   drawArrow(v0, v1, 'black');
  *
- *   let myHeading = v1.heading();
+ *   var myHeading = v1.heading();
  *   noStroke();
  *   text(
  *     'vector heading: ' +
@@ -1053,7 +1053,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -1086,12 +1086,12 @@ p5.Vector.prototype.heading = function heading() {
  *
  * <div>
  * <code>
- * let angle = 0;
+ * var angle = 0;
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = createVector(50, 0);
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(50, 0);
  *
  *   drawArrow(v0, v1.rotate(angle), 'black');
  *   angle += 0.01;
@@ -1106,7 +1106,7 @@ p5.Vector.prototype.heading = function heading() {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -1144,15 +1144,15 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * <code>
  * function draw() {
  *   background(240);
- *   let v0 = createVector(50, 50);
+ *   var v0 = createVector(50, 50);
  *
- *   let v1 = createVector(50, 0);
+ *   var v1 = createVector(50, 0);
  *   drawArrow(v0, v1, 'red');
  *
- *   let v2 = createVector(mouseX - 50, mouseY - 50);
+ *   var v2 = createVector(mouseX - 50, mouseY - 50);
  *   drawArrow(v0, v2, 'blue');
  *
- *   let angleBetween = v1.angleBetween(v2);
+ *   var angleBetween = v1.angleBetween(v2);
  *   noStroke();
  *   text(
  *     'angle between: ' +
@@ -1176,7 +1176,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -1230,24 +1230,24 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  *
  * <div>
  * <code>
- * let step = 0.01;
- * let amount = 0;
+ * var step = 0.01;
+ * var amount = 0;
  *
  * function draw() {
  *   background(240);
- *   let v0 = createVector(0, 0);
+ *   var v0 = createVector(0, 0);
  *
- *   let v1 = createVector(mouseX, mouseY);
+ *   var v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'red');
  *
- *   let v2 = createVector(90, 90);
+ *   var v2 = createVector(90, 90);
  *   drawArrow(v0, v2, 'blue');
  *
  *   if (amount > 1 || amount < 0) {
  *     step *= -1;
  *   }
  *   amount += step;
- *   let v3 = p5.Vector.lerp(v1, v2, amount);
+ *   var v3 = p5.Vector.lerp(v1, v2, amount);
  *
  *   drawArrow(v0, v3, 'purple');
  * }
@@ -1261,7 +1261,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
@@ -1500,8 +1500,8 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(50, 50);
- *   let v1 = p5.Vector.random2D();
+ *   var v0 = createVector(50, 50);
+ *   var v1 = p5.Vector.random2D();
  *   drawArrow(v0, v1.mult(50), 'black');
  * }
  *
@@ -1514,7 +1514,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
- *   let arrowSize = 7;
+ *   var arrowSize = 7;
  *   translate(vec.mag() - arrowSize, 0);
  *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
  *   pop();
