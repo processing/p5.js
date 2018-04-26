@@ -428,7 +428,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *
  * function setup() {
  *   //Search using specified regex on a given column, return TableRow object
- *   const mammal = table.matchRow(new RegExp('ant'), 1);
+ *   var mammal = table.matchRow(new RegExp('ant'), 1);
  *   print(mammal.getString(1));
  *   //Output "Panthera pardus"
  * }
