@@ -113,10 +113,10 @@ p5.Vector = function Vector() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -176,10 +176,10 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -289,10 +289,10 @@ p5.Vector.prototype.copy = function copy() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -379,10 +379,10 @@ p5.Vector.prototype.add = function add(x, y, z) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -464,10 +464,10 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -538,10 +538,10 @@ p5.Vector.prototype.mult = function mult(n) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -593,10 +593,10 @@ p5.Vector.prototype.div = function div(n) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -651,10 +651,10 @@ p5.Vector.prototype.mag = function mag() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -703,70 +703,6 @@ p5.Vector.prototype.magSq = function magSq() {
  * print(p5.Vector.dot(v1, v2)); // Prints "10"
  * </code>
  * </div>
- *
- * <div>
- * <code>
- * // in this example the dot product is used to measure
- * // how much 'light' passes through a tilted window
- * function draw() {
- *   background(30);
- *
- *   strokeWeight(10);
- *   let v0 = createVector(0, 50);
- *   let v1 = createVector(25, 0);
- *   drawArrow(v0, v1, 'yellow');
- *
- *   strokeWeight(3);
- *   let v2 = createVector(50, 50);
- *   let v3 = createVector(mouseX - v2.x, mouseY - v2.y);
- *   let angle = v3.heading();
- *   let length = v3.mag();
- *
- *   noStroke();
- *   fill('lightyellow');
- *   beginShape();
- *   vertex(
- *     v2.x + length / 2 * cos(PI / 2 + angle),
- *     v2.y + length / 2 * sin(PI / 2 + angle)
- *   );
- *   vertex(100, v2.y + length / 2 * sin(PI / 2 + angle));
- *   vertex(100, v2.y - length / 2 * sin(PI / 2 + angle));
- *   vertex(
- *     v2.x - length / 2 * cos(PI / 2 + angle),
- *     v2.y - length / 2 * sin(PI / 2 + angle)
- *   );
- *   endShape();
- *
- *   drawArrow(v2, v3, 'dodgerblue');
- *
- *   line(
- *     v2.x + length / 2 * cos(PI / 2 + angle),
- *     v2.y + length / 2 * sin(PI / 2 + angle),
- *     v2.x - length / 2 * cos(PI / 2 + angle),
- *     v2.y - length / 2 * sin(PI / 2 + angle)
- *   );
- *
- *   fill('white');
- *   noStroke();
- *   let dotProd = v3.dot(v1);
- *   text('dot product: ' + dotProd.toFixed(2), 5, 70, 95, 50);
- * }
- *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   stroke(myColor);
- *   fill(myColor);
- *   push();
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
- * </code>
- * </div>
  */
 /**
  * @method dot
@@ -807,51 +743,6 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  * var crossProduct = p5.Vector.cross(v1, v2);
  * // crossProduct has components [0, 0, 1]
  * print(crossProduct);
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // the length of the cross product of two vectors can be
- * // visualized as the area of the parallelogram between them
- * function draw() {
- *   background(240);
- *
- *   let v0 = createVector(10, 10, 0);
- *   let v1 = createVector(50, 0, 0);
- *   let v2 = createVector(mouseX - v0.x, mouseY - v0.y, 0);
- *
- *   noStroke();
- *   fill('thistle');
- *   beginShape();
- *   vertex(v0.x, v0.y);
- *   vertex(v1.x + v0.x, v1.y + v0.y);
- *   vertex(mouseX + v1.x, mouseY + v1.y);
- *   vertex(mouseX, mouseY);
- *   endShape();
- *
- *   drawArrow(v0, v1, 'red');
- *   drawArrow(v0, v2, 'blue');
- *
- *   v2.cross(v1);
- *   noStroke();
- *   text('length of cross product: ' + v2.mag().toFixed(2), 5, 70, 95, 50);
- * }
- *
- * // draw an arrow for a vector at a given base position
- * function drawArrow(base, vec, myColor) {
- *   stroke(myColor);
- *   strokeWeight(3);
- *   fill(myColor);
- *   push();
- *   translate(base.x, base.y);
- *   line(0, 0, vec.x, vec.y);
- *   rotate(vec.heading());
- *   let arrowSize = 7;
- *   translate(vec.mag() - arrowSize, 0);
- *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
- *   pop();
- * }
  * </code>
  * </div>
  */
@@ -915,10 +806,10 @@ p5.Vector.prototype.cross = function cross(v) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -970,10 +861,10 @@ p5.Vector.prototype.dist = function dist(v) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1027,10 +918,10 @@ p5.Vector.prototype.normalize = function normalize() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1088,10 +979,10 @@ p5.Vector.prototype.limit = function limit(max) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1155,10 +1046,10 @@ p5.Vector.prototype.setMag = function setMag(n) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1208,10 +1099,10 @@ p5.Vector.prototype.heading = function heading() {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1278,10 +1169,10 @@ p5.Vector.prototype.rotate = function rotate(a) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1363,10 +1254,10 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
@@ -1616,10 +1507,10 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  *
  * // draw an arrow for a vector at a given base position
  * function drawArrow(base, vec, myColor) {
+ *   push();
  *   stroke(myColor);
  *   strokeWeight(3);
  *   fill(myColor);
- *   push();
  *   translate(base.x, base.y);
  *   line(0, 0, vec.x, vec.y);
  *   rotate(vec.heading());
