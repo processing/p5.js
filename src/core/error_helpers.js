@@ -169,7 +169,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         overloads.push(queryResult[0].overloads[i].params);
       }
     } else {
-      overloads.push(queryResult[0].params);
+      overloads.push(queryResult[0].params || []);
     }
 
     var mapConstants = {};

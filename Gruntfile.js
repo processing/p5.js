@@ -215,7 +215,13 @@ module.exports = function(grunt) {
           'src/**/*.frag',
           'src/**/*.vert'
         ],
-        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        tasks: [
+          'browserify',
+          'browserify:min',
+          'yuidoc:prod',
+          'minjson',
+          'uglify'
+        ],
         options: {
           livereload: true
         }
@@ -354,7 +360,7 @@ module.exports = function(grunt) {
     },
     open: {
       yui: {
-        path: 'http://0.0.0.0:9001/docs/reference/'
+        path: 'http://127.0.0.1:9001/docs/reference/'
       }
     },
     'saucelabs-mocha': {
