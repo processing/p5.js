@@ -21,7 +21,7 @@
  *
  *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
  *                     each time a change to the source is detected. You can preview
- *                     the reference at localhost:9001/test/test.html
+ *                     the reference at localhost:9001/docs/reference/
  *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
