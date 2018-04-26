@@ -33,7 +33,7 @@ var defaultClass = 'p5Canvas';
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
- * @return {p5.Renderer} object 
+ * @return {p5.Renderer}
  * @example
  * <div>
  * <code>
