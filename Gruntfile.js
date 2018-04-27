@@ -135,6 +135,11 @@ module.exports = function(grunt) {
         }
       },
       source: {
+        options: {
+          parserOptions: {
+            ecmaVersion: 5
+          }
+        },
         src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
@@ -159,6 +164,9 @@ module.exports = function(grunt) {
 
     'eslint-samples': {
       options: {
+        parserOptions: {
+          ecmaVersion: 5
+        },
         configFile: '.eslintrc',
         format: 'unix'
       },
