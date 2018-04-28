@@ -13,19 +13,15 @@
 
 
 <div class="description">
+    
+  <h4><span id="reference-description">Description</span></h4>
 
   <% if (item.deprecated) { %>
     <p>
-      <span style="color: #ED225D;">Deprecated:</span>
-      <code class="language-javascript"><%=item.name%><% if (item.isMethod) { %>()<% } %></code>
-      is deprecated and will be removed in a future version of p5.
-
-      <% if (item.deprecationMessage) { %><%=item.deprecationMessage%><% } %>
+      Deprecated: <%=item.name%><% if (item.isMethod) { %>()<% } %> is deprecated and will be removed in a future version of p5. <% if (item.deprecationMessage) { %><%=item.deprecationMessage%><% } %>
     </p>
   <% } %>
       
-    
-  <h4><span id="reference-description">Description</span></h4>
 
   <span class='description-text'><%= item.description %></span>
 
