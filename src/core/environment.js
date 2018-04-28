@@ -527,6 +527,7 @@ p5.prototype.pixelDensity = function(val) {
   var returnValue;
   if (typeof val === 'number') {
     this._pixelDensity = val;
+    this._pixelsDirty = false;
     returnValue = this;
   } else {
     returnValue = this._pixelDensity;
