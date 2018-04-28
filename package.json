@@ -37,7 +37,7 @@
       "node ./utils/sample-linter.js"
     ]
   },
-  "version": "0.6.0",
+  "version": "0.6.1",
   "devDependencies": {
     "all-contributors-cli": "^4.5.0",
     "amdclean": "~0.3.3",
