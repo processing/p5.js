@@ -430,6 +430,12 @@ var p5 = function(sketch, node, sync) {
    *
    */
   this.remove = function() {
+    var loadingScreen = document.getElementById(this._loadingScreenId);
+    if (loadingScreen) {
+      loadingScreen.parentNode.removeChild(loadingScreen);
+      // Add 1 to preload counter to prevent the sketch ever executing setup()
+      this._incrementPreload();
+    }
     if (this._curElement) {
       // stop draw
       this._loop = false;
@@ -460,28 +466,27 @@ var p5 = function(sketch, node, sync) {
           f.call(self);
         }
       });
-
-      // remove window bound properties and methods
-      if (this._isGlobal) {
-        for (var p in p5.prototype) {
-          try {
-            delete window[p];
-          } catch (x) {
-            window[p] = undefined;
-          }
+    }
+    // remove window bound properties and methods
+    if (this._isGlobal) {
+      for (var p in p5.prototype) {
+        try {
+          delete window[p];
+        } catch (x) {
+          window[p] = undefined;
         }
-        for (var p2 in this) {
-          if (this.hasOwnProperty(p2)) {
-            try {
-              delete window[p2];
-            } catch (x) {
-              window[p2] = undefined;
-            }
+      }
+      for (var p2 in this) {
+        if (this.hasOwnProperty(p2)) {
+          try {
+            delete window[p2];
+          } catch (x) {
+            window[p2] = undefined;
           }
         }
       }
+      p5.instance = null;
     }
-    // window.p5 = undefined;
   }.bind(this);
 
   // call any registered init functions
