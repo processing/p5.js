@@ -57,9 +57,6 @@ p5.Graphics = function(w, h, renderer, pInst) {
 
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
-
-  this.name = 'p5.Graphics'; // for friendly debugger system
-  //this._pInst = pInst;
   return this;
 };
 

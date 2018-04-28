@@ -37,7 +37,6 @@ p5.TableRow = function(str, separator) {
   this.arr = arr;
   this.obj = obj;
   this.table = null;
-  this.name = 'p5.TableRow'; // for friendly debugger system
 };
 
 /**

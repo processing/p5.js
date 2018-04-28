@@ -46,7 +46,6 @@ p5.Color = function(pInst, vals) {
 
   // Expose closest screen color.
   this._calculateLevels();
-  this.name = 'p5.Color'; // for friendly debugger system
   return this;
 };
 

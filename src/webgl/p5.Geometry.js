@@ -46,8 +46,6 @@ p5.Geometry = function(detailX, detailY, callback) {
   if (callback instanceof Function) {
     callback.call(this);
   }
-  this.name = 'p5.Geometry'; // for friendly debugger system
-
   return this; // TODO: is this a constructor?
 };
 
