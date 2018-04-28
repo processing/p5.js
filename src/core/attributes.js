@@ -202,6 +202,7 @@ p5.prototype.rectMode = function(m) {
  *
  */
 p5.prototype.smooth = function() {
+  p5._validateParameters('smooth', arguments);
   this._renderer.smooth();
   return this;
 };

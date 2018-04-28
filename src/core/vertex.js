@@ -243,6 +243,7 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
+  p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.beginShape.apply(this._renderer, arguments);
   } else {
@@ -497,6 +498,7 @@ p5.prototype.endContour = function() {
  *
  */
 p5.prototype.endShape = function(mode) {
+  p5._validateParameters('endShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
