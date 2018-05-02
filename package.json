@@ -71,6 +71,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-karma": "^2.0.0",
     "grunt-minjson": "^0.4.0",
+    "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
     "grunt-open": "^0.2.3",
@@ -101,9 +102,6 @@
     "word-wrap": "^1.2.3"
   },
   "license": "LGPL-2.1",
-  "dependencies": {
-    "grunt-mocha": "^1.0.4"
-  },
   "main": "./lib/p5.js",
   "types": "./lib/p5.d.ts",
   "files": [
