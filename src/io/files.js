@@ -1097,6 +1097,7 @@ p5.prototype.httpDo = function() {
 
       switch (type) {
         case 'json':
+        case 'jsonp':
           return res.json();
         case 'binary':
           return res.blob();
