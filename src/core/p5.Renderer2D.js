@@ -46,11 +46,7 @@ p5.Renderer2D.prototype.resize = function(w, h) {
 
 p5.Renderer2D.prototype.background = function() {
   this.drawingContext.save();
-  this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-  this.drawingContext.scale(
-    this._pInst._pixelDensity,
-    this._pInst._pixelDensity
-  );
+  this.resetMatrix();
 
   if (arguments[0] instanceof p5.Image) {
     this._pInst.image(arguments[0], 0, 0, this.width, this.height);
@@ -69,7 +65,7 @@ p5.Renderer2D.prototype.background = function() {
 
 p5.Renderer2D.prototype.clear = function() {
   this.drawingContext.save();
-  this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+  this.resetMatrix();
   this.drawingContext.clearRect(0, 0, this.width, this.height);
   this.drawingContext.restore();
 };
