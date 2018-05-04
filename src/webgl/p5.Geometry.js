@@ -52,6 +52,7 @@ p5.Geometry = function(detailX, detailY, callback) {
  * @chainable
  */
 p5.Geometry.prototype.computeFaces = function() {
+  p5._validateParameters('p5.Geometry.computeFaces', arguments);
   this.faces.length = 0;
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
@@ -96,6 +97,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function() {
+  p5._validateParameters('p5.Geometry.computeNormals', arguments);
   var vertexNormals = this.vertexNormals;
   var vertices = this.vertices;
   var faces = this.faces;
@@ -135,6 +137,7 @@ p5.Geometry.prototype.computeNormals = function() {
  * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
+  p5._validateParameters('p5.Geometry.averageNormals', arguments);
   for (var i = 0; i <= this.detailY; i++) {
     var offset = this.detailX + 1;
     var temp = p5.Vector.add(
@@ -155,6 +158,7 @@ p5.Geometry.prototype.averageNormals = function() {
  * @chainable
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
+  p5._validateParameters('p5.Geometry.averagePoleNormals', arguments);
   //average the north pole
   var sum = new p5.Vector(0, 0, 0);
   for (var i = 0; i < this.detailX; i++) {
@@ -248,6 +252,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
  * @chainable
  */
 p5.Geometry.prototype.normalize = function() {
+  p5._validateParameters('p5.Geometry.normalize', arguments);
   if (this.vertices.length > 0) {
     // Find the corners of our bounding box
     var maxPosition = this.vertices[0].copy();

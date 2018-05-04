@@ -83,6 +83,7 @@ p5.Font.prototype.list = function() {
  *
  */
 p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
+  p5._validateParameters('p5.Font.textBounds', arguments);
   x = x !== undefined ? x : 0;
   y = y !== undefined ? y : 0;
   fontSize = fontSize || this.parent._renderer._textSize;
@@ -215,6 +216,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
+  p5._validateParameters('p5.Font.textToPoints', arguments);
   var xoff = 0,
     result = [],
     glyphs = this._getGlyphs(txt);

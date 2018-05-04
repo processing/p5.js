@@ -105,6 +105,7 @@ p5.Table = function(rows) {
  *
  */
 p5.Table.prototype.addRow = function(row) {
+  p5._validateParameters('p5.Table.addRow', arguments);
   // make sure it is a valid TableRow
   var r = row || new p5.TableRow();
 
@@ -159,6 +160,7 @@ p5.Table.prototype.addRow = function(row) {
  *
  */
 p5.Table.prototype.removeRow = function(id) {
+  p5._validateParameters('p5.Table.removeRow', arguments);
   this.rows[id].table = null; // remove reference to table
   var chunk = this.rows.splice(id + 1, this.rows.length);
   this.rows.pop();
@@ -208,6 +210,7 @@ p5.Table.prototype.removeRow = function(id) {
  *
  */
 p5.Table.prototype.getRow = function(r) {
+  p5._validateParameters('p5.Table.getRow', arguments);
   return this.rows[r];
 };
 
@@ -257,6 +260,7 @@ p5.Table.prototype.getRow = function(r) {
  *
  */
 p5.Table.prototype.getRows = function() {
+  p5._validateParameters('p5.Table.getRows', arguments);
   return this.rows;
 };
 
@@ -306,6 +310,7 @@ p5.Table.prototype.getRows = function() {
  *
  */
 p5.Table.prototype.findRow = function(value, column) {
+  p5._validateParameters('p5.Table.findRow', arguments);
   // try the Object
   if (typeof column === 'string') {
     for (var i = 0; i < this.rows.length; i++) {
@@ -376,6 +381,7 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  */
 p5.Table.prototype.findRows = function(value, column) {
+  p5._validateParameters('p5.Table.findRows', arguments);
   var ret = [];
   if (typeof column === 'string') {
     for (var i = 0; i < this.rows.length; i++) {
@@ -437,6 +443,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
+  p5._validateParameters('p5.Table.matchRow', arguments);
   if (typeof column === 'number') {
     for (var j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column].match(regexp)) {
@@ -503,6 +510,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  * </div>
  */
 p5.Table.prototype.matchRows = function(regexp, column) {
+  p5._validateParameters('p5.Table.matchRows', arguments);
   var ret = [];
   if (typeof column === 'number') {
     for (var j = 0; j < this.rows.length; j++) {
@@ -560,6 +568,7 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  *
  */
 p5.Table.prototype.getColumn = function(value) {
+  p5._validateParameters('p5.Table.getColumn', arguments);
   var ret = [];
   if (typeof value === 'string') {
     for (var i = 0; i < this.rows.length; i++) {
@@ -611,6 +620,7 @@ p5.Table.prototype.getColumn = function(value) {
  *
  */
 p5.Table.prototype.clearRows = function() {
+  p5._validateParameters('p5.Table.clearRows', arguments);
   delete this.rows;
   this.rows = [];
 };
@@ -662,6 +672,7 @@ p5.Table.prototype.clearRows = function() {
  *
  */
 p5.Table.prototype.addColumn = function(title) {
+  p5._validateParameters('p5.Table.addColumn', arguments);
   var t = title || null;
   this.columns.push(t);
 };
@@ -699,6 +710,7 @@ p5.Table.prototype.addColumn = function(title) {
  * </div>
  */
 p5.Table.prototype.getColumnCount = function() {
+  p5._validateParameters('p5.Table.getColumnCount', arguments);
   return this.columns.length;
 };
 
@@ -735,6 +747,7 @@ p5.Table.prototype.getColumnCount = function() {
  * </div>
  */
 p5.Table.prototype.getRowCount = function() {
+  p5._validateParameters('p5.Table.getRowCount', arguments);
   return this.rows.length;
 };
 
@@ -776,6 +789,7 @@ p5.Table.prototype.getRowCount = function() {
  * </code></div>
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
+  p5._validateParameters('p5.Table.removeTokens', arguments);
   var escape = function(s) {
     return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
@@ -847,6 +861,7 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  * </code></div>
  */
 p5.Table.prototype.trim = function(column) {
+  p5._validateParameters('p5.Table.trim', arguments);
   var regex = new RegExp(' ', 'g');
 
   if (typeof column === 'undefined') {
@@ -917,6 +932,7 @@ p5.Table.prototype.trim = function(column) {
  *
  */
 p5.Table.prototype.removeColumn = function(c) {
+  p5._validateParameters('p5.Table.removeColumn', arguments);
   var cString;
   var cNumber;
   if (typeof c === 'string') {
@@ -989,6 +1005,7 @@ p5.Table.prototype.removeColumn = function(c) {
  *
  */
 p5.Table.prototype.set = function(row, column, value) {
+  p5._validateParameters('p5.Table.set', arguments);
   this.rows[row].set(column, value);
 };
 
@@ -1035,6 +1052,7 @@ p5.Table.prototype.set = function(row, column, value) {
  * no image displayed
  */
 p5.Table.prototype.setNum = function(row, column, value) {
+  p5._validateParameters('p5.Table.setNum', arguments);
   this.rows[row].setNum(column, value);
 };
 
@@ -1080,6 +1098,7 @@ p5.Table.prototype.setNum = function(row, column, value) {
  * no image displayed
  */
 p5.Table.prototype.setString = function(row, column, value) {
+  p5._validateParameters('p5.Table.setString', arguments);
   this.rows[row].setString(column, value);
 };
 
@@ -1127,6 +1146,7 @@ p5.Table.prototype.setString = function(row, column, value) {
  *
  */
 p5.Table.prototype.get = function(row, column) {
+  p5._validateParameters('p5.Table.get', arguments);
   return this.rows[row].get(column);
 };
 
@@ -1172,6 +1192,7 @@ p5.Table.prototype.get = function(row, column) {
  *
  */
 p5.Table.prototype.getNum = function(row, column) {
+  p5._validateParameters('p5.Table.getNum', arguments);
   return this.rows[row].getNum(column);
 };
 
@@ -1225,6 +1246,7 @@ p5.Table.prototype.getNum = function(row, column) {
  */
 
 p5.Table.prototype.getString = function(row, column) {
+  p5._validateParameters('p5.Table.getString', arguments);
   return this.rows[row].getString(column);
 };
 
@@ -1271,6 +1293,7 @@ p5.Table.prototype.getString = function(row, column) {
  *
  */
 p5.Table.prototype.getObject = function(headerColumn) {
+  p5._validateParameters('p5.Table.getObject', arguments);
   var tableObject = {};
   var obj, cPos, index;
 
@@ -1333,6 +1356,7 @@ p5.Table.prototype.getObject = function(headerColumn) {
  *
  */
 p5.Table.prototype.getArray = function() {
+  p5._validateParameters('p5.Table.getArray', arguments);
   var tableArray = [];
   for (var i = 0; i < this.rows.length; i++) {
     tableArray.push(this.rows[i].arr);

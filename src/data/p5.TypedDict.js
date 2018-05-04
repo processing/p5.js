@@ -119,6 +119,7 @@ p5.TypedDict = function(key, value) {
  *
  */
 p5.TypedDict.prototype.size = function() {
+  p5._validateParameters('p5.TypedDict.size', arguments);
   return Object.keys(this.data).length;
 };
 
@@ -142,6 +143,7 @@ p5.TypedDict.prototype.size = function() {
  */
 
 p5.TypedDict.prototype.hasKey = function(key) {
+  p5._validateParameters('p5.TypedDict.hasKey', arguments);
   return this.data.hasOwnProperty(key);
 };
 
@@ -165,6 +167,7 @@ p5.TypedDict.prototype.hasKey = function(key) {
  */
 
 p5.TypedDict.prototype.get = function(key) {
+  p5._validateParameters('p5.TypedDict.get', arguments);
   if (this.data.hasOwnProperty(key)) {
     return this.data[key];
   } else {
@@ -193,6 +196,7 @@ p5.TypedDict.prototype.get = function(key) {
  */
 
 p5.TypedDict.prototype.set = function(key, value) {
+  p5._validateParameters('p5.TypedDict.set', arguments);
   if (this._validate(value)) {
     this.data[key] = value;
   } else {
@@ -235,6 +239,7 @@ p5.TypedDict.prototype._addObj = function(obj) {
  */
 
 p5.TypedDict.prototype.create = function(key, value) {
+  p5._validateParameters('p5.TypedDict.create', arguments);
   if (key instanceof Object && typeof value === 'undefined') {
     this._addObj(key);
   } else if (typeof key !== 'undefined') {
@@ -265,6 +270,7 @@ p5.TypedDict.prototype.create = function(key, value) {
  */
 
 p5.TypedDict.prototype.clear = function() {
+  p5._validateParameters('p5.TypedDict.clear', arguments);
   this.data = {};
 };
 
@@ -291,6 +297,7 @@ p5.TypedDict.prototype.clear = function() {
  */
 
 p5.TypedDict.prototype.remove = function(key) {
+  p5._validateParameters('p5.TypedDict.remove', arguments);
   if (this.data.hasOwnProperty(key)) {
     delete this.data[key];
   } else {
@@ -317,6 +324,7 @@ p5.TypedDict.prototype.remove = function(key) {
  */
 
 p5.TypedDict.prototype.print = function() {
+  p5._validateParameters('p5.TypedDict.print', arguments);
   for (var item in this.data) {
     console.log('key:' + item + ' value:' + this.data[item]);
   }
@@ -344,6 +352,7 @@ p5.TypedDict.prototype.print = function() {
  */
 
 p5.TypedDict.prototype.saveTable = function(filename) {
+  p5._validateParameters('p5.TypedDict.saveTable', arguments);
   var output = '';
 
   for (var key in this.data) {
@@ -452,6 +461,7 @@ p5.NumberDict.prototype._validate = function(value) {
  */
 
 p5.NumberDict.prototype.add = function(key, amount) {
+  p5._validateParameters('p5.NumberDict.add', arguments);
   if (this.data.hasOwnProperty(key)) {
     this.data[key] += amount;
   } else {
@@ -504,6 +514,7 @@ p5.NumberDict.prototype.sub = function(key, amount) {
  */
 
 p5.NumberDict.prototype.mult = function(key, amount) {
+  p5._validateParameters('p5.NumberDict.mult', arguments);
   if (this.data.hasOwnProperty(key)) {
     this.data[key] *= amount;
   } else {
@@ -532,6 +543,7 @@ p5.NumberDict.prototype.mult = function(key, amount) {
  */
 
 p5.NumberDict.prototype.div = function(key, amount) {
+  p5._validateParameters('p5.NumberDict.div', arguments);
   if (this.data.hasOwnProperty(key)) {
     this.data[key] /= amount;
   } else {
@@ -582,6 +594,7 @@ p5.NumberDict.prototype._valueTest = function(flip) {
  */
 
 p5.NumberDict.prototype.minValue = function() {
+  p5._validateParameters('p5.NumberDict.minValue', arguments);
   return this._valueTest(1);
 };
 
@@ -603,6 +616,7 @@ p5.NumberDict.prototype.minValue = function() {
  */
 
 p5.NumberDict.prototype.maxValue = function() {
+  p5._validateParameters('p5.NumberDict.maxValue', arguments);
   return this._valueTest(-1);
 };
 
@@ -647,6 +661,7 @@ p5.NumberDict.prototype._keyTest = function(flip) {
  */
 
 p5.NumberDict.prototype.minKey = function() {
+  p5._validateParameters('p5.NumberDict.minKey', arguments);
   return this._keyTest(1);
 };
 
@@ -668,6 +683,7 @@ p5.NumberDict.prototype.minKey = function() {
  */
 
 p5.NumberDict.prototype.maxKey = function() {
+  p5._validateParameters('p5.NumberDict.maxKey', arguments);
   return this._keyTest(-1);
 };
 

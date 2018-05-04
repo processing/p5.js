@@ -97,6 +97,7 @@ p5.Element = function(elt, pInst) {
  *
  */
 p5.Element.prototype.parent = function(p) {
+  p5._validateParameters('p5.Element.parent', arguments);
   if (typeof p === 'undefined') {
     return this.elt.parentNode;
   }
@@ -140,6 +141,7 @@ p5.Element.prototype.parent = function(p) {
  * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
+  p5._validateParameters('p5.Element.id', arguments);
   if (typeof id === 'undefined') {
     return this.elt.id;
   }
@@ -177,6 +179,7 @@ p5.Element.prototype.id = function(id) {
  * @return {String} the class of the element
  */
 p5.Element.prototype.class = function(c) {
+  p5._validateParameters('p5.Element.class', arguments);
   if (typeof c === 'undefined') {
     return this.elt.className;
   }
@@ -230,6 +233,7 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
+  p5._validateParameters('p5.Element.mousePressed', arguments);
   adjustListener('mousedown', fxn, this);
   adjustListener('touchstart', fxn, this);
   return this;
@@ -280,6 +284,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function(fxn) {
+  p5._validateParameters('p5.Element.doubleClicked', arguments);
   adjustListener('dblclick', fxn, this);
   return this;
 };
@@ -346,6 +351,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  *
  */
 p5.Element.prototype.mouseWheel = function(fxn) {
+  p5._validateParameters('p5.Element.mouseWheel', arguments);
   adjustListener('wheel', fxn, this);
   return this;
 };
@@ -398,6 +404,7 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  *
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
+  p5._validateParameters('p5.Element.mouseReleased', arguments);
   adjustListener('mouseup', fxn, this);
   adjustListener('touchend', fxn, this);
   return this;
@@ -453,6 +460,7 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function(fxn) {
+  p5._validateParameters('p5.Element.mouseClicked', arguments);
   adjustListener('click', fxn, this);
   return this;
 };
@@ -511,6 +519,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  *
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
+  p5._validateParameters('p5.Element.mouseMoved', arguments);
   adjustListener('mousemove', fxn, this);
   adjustListener('touchmove', fxn, this);
   return this;
@@ -555,6 +564,7 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  *
  */
 p5.Element.prototype.mouseOver = function(fxn) {
+  p5._validateParameters('p5.Element.mouseOver', arguments);
   adjustListener('mouseover', fxn, this);
   return this;
 };
@@ -622,6 +632,7 @@ p5.Element.prototype.mouseOver = function(fxn) {
  *
  */
 p5.Element.prototype.changed = function(fxn) {
+  p5._validateParameters('p5.Element.changed', arguments);
   adjustListener('change', fxn, this);
   return this;
 };
@@ -657,6 +668,7 @@ p5.Element.prototype.changed = function(fxn) {
  *
  */
 p5.Element.prototype.input = function(fxn) {
+  p5._validateParameters('p5.Element.input', arguments);
   adjustListener('input', fxn, this);
   return this;
 };
@@ -699,6 +711,7 @@ p5.Element.prototype.input = function(fxn) {
  *
  */
 p5.Element.prototype.mouseOut = function(fxn) {
+  p5._validateParameters('p5.Element.mouseOut', arguments);
   adjustListener('mouseout', fxn, this);
   return this;
 };
@@ -747,6 +760,7 @@ p5.Element.prototype.mouseOut = function(fxn) {
  *
  */
 p5.Element.prototype.touchStarted = function(fxn) {
+  p5._validateParameters('p5.Element.touchStarted', arguments);
   adjustListener('touchstart', fxn, this);
   adjustListener('mousedown', fxn, this);
   return this;
@@ -788,6 +802,7 @@ p5.Element.prototype.touchStarted = function(fxn) {
  *
  */
 p5.Element.prototype.touchMoved = function(fxn) {
+  p5._validateParameters('p5.Element.touchMoved', arguments);
   adjustListener('touchmove', fxn, this);
   adjustListener('mousemove', fxn, this);
   return this;
@@ -838,6 +853,7 @@ p5.Element.prototype.touchMoved = function(fxn) {
  *
  */
 p5.Element.prototype.touchEnded = function(fxn) {
+  p5._validateParameters('p5.Element.touchEnded', arguments);
   adjustListener('touchend', fxn, this);
   adjustListener('mouseup', fxn, this);
   return this;
@@ -877,6 +893,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragOver = function(fxn) {
+  p5._validateParameters('p5.Element.dragOver', arguments);
   adjustListener('dragover', fxn, this);
   return this;
 };
@@ -915,6 +932,7 @@ p5.Element.prototype.dragOver = function(fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragLeave = function(fxn) {
+  p5._validateParameters('p5.Element.dragLeave', arguments);
   adjustListener('dragleave', fxn, this);
   return this;
 };
@@ -952,6 +970,7 @@ p5.Element.prototype.dragLeave = function(fxn) {
  *
  */
 p5.Element.prototype.drop = function(callback, fxn) {
+  p5._validateParameters('p5.Element.drop', arguments);
   // Make a file loader callback and trigger user's callback
   function makeLoader(theFile) {
     // Making a p5.File object

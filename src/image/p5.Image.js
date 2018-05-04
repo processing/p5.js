@@ -259,6 +259,7 @@ p5.Image.prototype._setProperty = function(prop, value) {
  *
  */
 p5.Image.prototype.loadPixels = function() {
+  p5._validateParameters('p5.Image.loadPixels', arguments);
   p5.Renderer2D.prototype.loadPixels.call(this);
   this.setModified(true);
 };
@@ -307,6 +308,7 @@ p5.Image.prototype.loadPixels = function() {
  * @method updatePixels
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h) {
+  p5._validateParameters('p5.Image.updatePixels', arguments);
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
   this.setModified(true);
 };
@@ -425,6 +427,7 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
  *
  */
 p5.Image.prototype.resize = function(width, height) {
+  p5._validateParameters('p5.Image.resize', arguments);
   // Copy contents to a temporary canvas, resize the original
   // and then copy back.
   //
@@ -531,6 +534,7 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dh
  */
 p5.Image.prototype.copy = function() {
+  p5._validateParameters('p5.Image.copy', arguments);
   var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
   if (arguments.length === 9) {
     srcImage = arguments[0];
@@ -593,6 +597,7 @@ p5.Image.prototype.copy = function() {
 //       moment this method does not match native processings original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
+  p5._validateParameters('p5.Image.mask', arguments);
   if (p5Image === undefined) {
     p5Image = this;
   }
@@ -653,6 +658,7 @@ p5.Image.prototype.mask = function(p5Image) {
  *
  */
 p5.Image.prototype.filter = function(operation, value) {
+  p5._validateParameters('p5.Image.filter', arguments);
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   this.setModified(true);
 };
