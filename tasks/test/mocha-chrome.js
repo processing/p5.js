@@ -12,7 +12,7 @@ module.exports = function(grunt) {
           var my_opts = Object.assign({}, options);
           my_opts.urls = undefined;
           my_opts.url = testURL;
-          my_opts.chromeFlags = [];
+          my_opts.chromeFlags = ['--no-sandbox'];
           my_opts.logLevel = 'trace';
           var runner = new MochaCrome(my_opts);
           runner.on('ended', function(stats) {
