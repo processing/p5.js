@@ -42,7 +42,7 @@
   <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
   <script>
     // These tests fail. TODO: Work out why.
-    if (false && Modernizr.webaudio)
+    if (Modernizr.webaudio)
       document.write(
         '<script src="../lib/addons/p5.sound.js"><\/script>'
       );
@@ -54,7 +54,7 @@
   var TEST_FILENAME_FILTERS = [
     {regex: /webgl/, condition: Modernizr.webgl},
     {regex: /acceleration/, condition: Modernizr.webgl},
-    {regex: /sound/, condition: false && Modernizr.webaudio}
+    {regex: /sound/, condition: Modernizr.webaudio}
   ];
   var MS_TIMEOUT = 4000;
   var fxns = [
