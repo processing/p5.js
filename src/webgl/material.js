@@ -29,6 +29,7 @@ require('./p5.Texture');
  * vertex and fragment shader files.
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
+  p5._validateParameters('loadShader', arguments);
   var loadedShader = new p5.Shader();
 
   var self = this;
@@ -38,15 +39,15 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
   this.loadStrings(fragFilename, function(result) {
     loadedShader._fragSrc = result.join('\n');
     loadedFrag = true;
-    if (!loadedVert) {
-      self._incrementPreload();
+    if (loadedVert) {
+      self._decrementPreload();
     }
   });
   this.loadStrings(vertFilename, function(result) {
     loadedShader._vertSrc = result.join('\n');
     loadedVert = true;
-    if (!loadedFrag) {
-      self._incrementPreload();
+    if (loadedFrag) {
+      self._decrementPreload();
     }
   });
 
@@ -117,6 +118,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  */
 p5.prototype.createShader = function(vertSrc, fragSrc) {
   this._assert3d('createShader');
+  p5._validateParameters('createShader', arguments);
   return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
 
@@ -133,6 +135,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  */
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
+  p5._validateParameters('shader', arguments);
   this._renderer.shader.apply(this._renderer, arguments);
   return this;
 };
@@ -179,6 +182,7 @@ p5.RendererGL.prototype.shader = function(s) {
  */
 p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
+  p5._validateParameters('normalMaterial', arguments);
   p5.RendererGL.prototype.normalMaterial.apply(this._renderer, arguments);
   return this;
 };
@@ -268,6 +272,7 @@ p5.RendererGL.prototype.normalMaterial = function() {
  */
 p5.prototype.texture = function() {
   this._assert3d('texture');
+  p5._validateParameters('texture', arguments);
   p5.RendererGL.prototype.texture.apply(this._renderer, arguments);
   return this;
 };
@@ -317,6 +322,7 @@ p5.RendererGL.prototype.texture = function(tex) {
  */
 p5.prototype.ambientMaterial = function() {
   this._assert3d('ambientMaterial');
+  p5._validateParameters('ambientMaterial', arguments);
   p5.RendererGL.prototype.ambientMaterial.apply(this._renderer, arguments);
   return this;
 };
@@ -366,6 +372,7 @@ p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
  */
 p5.prototype.specularMaterial = function() {
   this._assert3d('specularMaterial');
+  p5._validateParameters('specularMaterial', arguments);
   p5.RendererGL.prototype.specularMaterial.apply(this._renderer, arguments);
   return this;
 };

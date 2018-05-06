@@ -37,7 +37,6 @@ p5.TableRow = function(str, separator) {
   this.arr = arr;
   this.obj = obj;
   this.table = null;
-  this.name = 'p5.TableRow'; // for friendly debugger system
 };
 
 /**
@@ -109,7 +108,7 @@ p5.TableRow.prototype.set = function(column, value) {
  *  @method  setNum
  *  @param {String|Integer} column Column ID (Number)
  *                                or Title (String)
- *  @param {Number} value  The value to be stored
+ *  @param {Number|String} value  The value to be stored
  *                                as a Float
  * @example
  * <div class="norender"><code>
@@ -153,7 +152,7 @@ p5.TableRow.prototype.setNum = function(column, value) {
  *  @method  setString
  *  @param {String|Integer} column Column ID (Number)
  *                                or Title (String)
- *  @param {String} value  The value to be stored
+ *  @param {String|Number|Boolean|Object} value  The value to be stored
  *                                as a String
  * @example
  * <div class="norender"><code>

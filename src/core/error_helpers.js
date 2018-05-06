@@ -169,7 +169,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         overloads.push(queryResult[0].overloads[i].params);
       }
     } else {
-      overloads.push(queryResult[0].params);
+      overloads.push(queryResult[0].params || []);
     }
 
     var mapConstants = {};
@@ -489,8 +489,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 // For more details, see https://github.com/processing/p5.js/issues/1121.
 var misusedAtTopLevelCode = null;
 var FAQ_URL =
-  'https://github.com/processing/p5.js/wiki/' +
-  'Frequently-Asked-Questions' +
+  'https://github.com/processing/p5.js/wiki/p5.js-overview' +
   '#why-cant-i-assign-variables-using-p5-functions-and-' +
   'variables-before-setup';
 

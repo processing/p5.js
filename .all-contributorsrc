@@ -1294,6 +1294,20 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/19146133?s=460&v=4",
       "profile": "https://github.com/faithwyu",
       "contributions": []
+    },
+    {
+      "login": "aatishb",
+      "name": "Aatish Bhatia",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1878638?s=400&v=4",
+      "profile": "https://aatishb.com",
+      "contributions": ["doc","bug"]
+    },
+    {
+      "login": "dekmm",
+      "name": "Mislav Milicevic",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/7628664?v=4",
+      "profile": "https://github.com/dekmm",
+      "contributions": ["code","bug"]
     }
   ]
 }

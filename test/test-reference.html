@@ -48,6 +48,8 @@
   </script>
 
   <script>
+  p5._throwValidationErrors = true;
+
   var TEST_FILENAME_FILTERS = [
     {regex: /webgl/, condition: Modernizr.webgl},
     {regex: /acceleration/, condition: Modernizr.webgl},

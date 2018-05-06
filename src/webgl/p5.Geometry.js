@@ -49,7 +49,6 @@ p5.Geometry = function(detailX, detailY, callback) {
   if (callback instanceof Function) {
     callback.call(this);
   }
-  this.name = 'p5.Geometry'; // for friendly debugger system
 };
 
 p5.Geometry.prototype.reset = function() {

@@ -33,7 +33,6 @@ p5.Font = function(p) {
    * @property font
    */
   this.font = undefined;
-  this.name = 'p5.Font'; // for friendly debugger system
 };
 
 p5.Font.prototype.list = function() {

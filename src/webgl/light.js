@@ -46,6 +46,12 @@ var p5 = require('../core/core');
 /**
  * @method ambientLight
  * @param  {String}        value   a color string
+ * @chainable
+ */
+
+/**
+ * @method ambientLight
+ * @param  {Number}        gray   a gray value
  * @param  {Number}        [alpha]
  * @chainable
  */
@@ -64,6 +70,7 @@ var p5 = require('../core/core');
  */
 p5.prototype.ambientLight = function() {
   this._assert3d('ambientLight');
+  p5._validateParameters('ambientLight', arguments);
   p5.RendererGL.prototype.ambientLight.apply(this._renderer, arguments);
   return this;
 };
@@ -140,6 +147,7 @@ p5.RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
  */
 p5.prototype.directionalLight = function() {
   this._assert3d('directionalLight');
+  p5._validateParameters('directionalLight', arguments);
   p5.RendererGL.prototype.directionalLight.apply(this._renderer, arguments);
   return this;
 };
@@ -245,6 +253,7 @@ p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  */
 p5.prototype.pointLight = function() {
   this._assert3d('pointLight');
+  p5._validateParameters('pointLight', arguments);
   p5.RendererGL.prototype.pointLight.apply(this._renderer, arguments);
   return this;
 };

@@ -46,7 +46,6 @@ p5.Element = function(elt, pInst) {
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;
-  this.name = 'p5.Element'; // for friendly debugger system
 };
 
 /**

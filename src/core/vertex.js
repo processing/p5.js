@@ -243,6 +243,7 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
+  p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.beginShape.apply(this._renderer, arguments);
   } else {
@@ -289,19 +290,39 @@ p5.prototype.beginShape = function(kind) {
  * @example
  * <div>
  * <code>
+ * strokeWeight(5);
+ * point(30, 20);
+ * point(80, 20);
+ * point(80, 75);
+ * point(30, 75);
+ *
+ * strokeWeight(1);
  * noFill();
  * beginShape();
  * vertex(30, 20);
- * bezierVertex(80, 0, 80, 75, 30, 75);
+ * bezierVertex(80, 20, 80, 75, 30, 75);
  * endShape();
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * strokeWeight(5);
+ * point(30, 20);
+ * point(80, 20);
+ * point(80, 75);
+ * point(30, 75);
+ *
+ * stroke(244, 122, 158);
+ * point(50, 80);
+ * point(60, 25);
+ * point(30, 20);
+ *
+ * stroke(0);
+ * strokeWeight(1);
  * beginShape();
  * vertex(30, 20);
- * bezierVertex(80, 0, 80, 75, 30, 75);
+ * bezierVertex(80, 20, 80, 75, 30, 75);
  * bezierVertex(50, 80, 60, 25, 30, 20);
  * endShape();
  * </code>
@@ -352,17 +373,25 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * @example
  * <div>
  * <code>
+ * strokeWeight(5);
+ * point(84, 91);
+ * point(68, 19);
+ * point(21, 17);
+ * point(32, 91);
+ * strokeWeight(1);
+ *
  * noFill();
  * beginShape();
  * curveVertex(84, 91);
  * curveVertex(84, 91);
  * curveVertex(68, 19);
  * curveVertex(21, 17);
- * curveVertex(32, 100);
- * curveVertex(32, 100);
+ * curveVertex(32, 91);
+ * curveVertex(32, 91);
  * endShape();
  * </code>
  * </div>
+ *
  *
  * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
@@ -469,6 +498,7 @@ p5.prototype.endContour = function() {
  *
  */
 p5.prototype.endShape = function(mode) {
+  p5._validateParameters('endShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
@@ -538,8 +568,13 @@ p5.prototype.endShape = function(mode) {
  * @example
  * <div>
  * <code>
+ * strokeWeight(5);
+ * point(20, 20);
+ * point(80, 20);
+ * point(50, 50);
+ *
  * noFill();
- * strokeWeight(4);
+ * strokeWeight(1);
  * beginShape();
  * vertex(20, 20);
  * quadraticVertex(80, 20, 50, 50);
@@ -549,8 +584,17 @@ p5.prototype.endShape = function(mode) {
  *
  * <div>
  * <code>
+ * strokeWeight(5);
+ * point(20, 20);
+ * point(80, 20);
+ * point(50, 50);
+ *
+ * point(20, 80);
+ * point(80, 80);
+ * point(80, 60);
+ *
  * noFill();
- * strokeWeight(4);
+ * strokeWeight(1);
  * beginShape();
  * vertex(20, 20);
  * quadraticVertex(80, 20, 50, 50);
@@ -611,6 +655,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @example
  * <div>
  * <code>
+ * strokeWeight(3);
  * beginShape(POINTS);
  * vertex(30, 20);
  * vertex(85, 20);
@@ -622,6 +667,66 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  *
  * @alt
  * 4 black points in a square shape in middle-right of canvas.
+ *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * background(240, 240, 240);
+ * fill(237, 34, 93);
+ * noStroke();
+ * beginShape();
+ * vertex(0, 35);
+ * vertex(35, 0);
+ * vertex(0, -35);
+ * vertex(-35, 0);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 4 points making a diamond shape
+ *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * background(240, 240, 240);
+ * fill(237, 34, 93);
+ * noStroke();
+ * beginShape();
+ * vertex(-10, 10);
+ * vertex(0, 35);
+ * vertex(10, 10);
+ * vertex(35, 0);
+ * vertex(10, -8);
+ * vertex(0, -35);
+ * vertex(-10, -8);
+ * vertex(-35, 0);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 8 points making a star
+ *
+ * <div>
+ * <code>
+ * strokeWeight(3);
+ * stroke(237, 34, 93);
+ * beginShape(LINES);
+ * vertex(10, 35);
+ * vertex(90, 35);
+ * vertex(10, 65);
+ * vertex(90, 65);
+ * vertex(35, 10);
+ * vertex(35, 90);
+ * vertex(65, 10);
+ * vertex(65, 90);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 8 points making 4 lines
  *
  */
 /**

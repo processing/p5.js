@@ -13,7 +13,15 @@
 
 
 <div class="description">
+    
   <h4><span id="reference-description">Description</span></h4>
+
+  <% if (item.deprecated) { %>
+    <p>
+      Deprecated: <%=item.name%><% if (item.isMethod) { %>()<% } %> is deprecated and will be removed in a future version of p5. <% if (item.deprecationMessage) { %><%=item.deprecationMessage%><% } %>
+    </p>
+  <% } %>
+      
 
   <span class='description-text'><%= item.description %></span>
 
@@ -73,10 +81,6 @@
 <span class="returns-inline">
   <span class="type"></span>
 </span>
-<% } %>
-
-<% if (item.deprecated) { %>
-<span class="flag deprecated"<% if (item.deprecationMessage) { %> title="<%=item.deprecationMessage%>"<% } %>>deprecated</span>
 <% } %>
 
 <% if (item.access) { %>

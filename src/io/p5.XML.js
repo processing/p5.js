@@ -59,7 +59,6 @@ p5.XML = function() {
   this.children = [];
   this.parent = null;
   this.content = null; //done
-  this.name = 'p5.XML'; // for friendly debugger system
 };
 
 /**
@@ -644,7 +643,7 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * @method getString
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
- * @return {Number}
+ * @return {String}
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -682,7 +681,7 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  *
  * @method setAttribute
  * @param {String} name            the full name of the attribute
- * @param {Number} value           the value of the attribute
+ * @param {Number|String|Boolean} value  the value of the attribute
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed

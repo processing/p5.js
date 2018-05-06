@@ -48,10 +48,13 @@ var p5 = function(sketch, node, sync) {
 
   /**
    * Called directly before setup(), the preload() function is used to handle
-   * asynchronous loading of external files. If a preload function is
-   * defined, setup() will wait until any load calls within have finished.
-   * Nothing besides load calls should be inside preload (loadImage,
-   * loadJSON, loadFont, loadStrings, etc).<br><br>
+   * asynchronous loading of external files in a blocking way. If a preload 
+   * function is defined, setup() will wait until any load calls within have
+   * finished. Nothing besides load calls (loadImage, loadJSON, loadFont,
+   * loadStrings, etc.) should be inside preload function. If asynchronous
+   * loading is preferred, the load methods can instead be called in setup()
+   * or anywhere else with the use of a callback parameter.
+   * <br><br>
    * By default the text "loading..." will be displayed. To make your own
    * loading page, include an HTML element with id "p5_loading" in your
    * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
@@ -427,6 +430,12 @@ var p5 = function(sketch, node, sync) {
    *
    */
   this.remove = function() {
+    var loadingScreen = document.getElementById(this._loadingScreenId);
+    if (loadingScreen) {
+      loadingScreen.parentNode.removeChild(loadingScreen);
+      // Add 1 to preload counter to prevent the sketch ever executing setup()
+      this._incrementPreload();
+    }
     if (this._curElement) {
       // stop draw
       this._loop = false;
@@ -457,28 +466,27 @@ var p5 = function(sketch, node, sync) {
           f.call(self);
         }
       });
-
-      // remove window bound properties and methods
-      if (this._isGlobal) {
-        for (var p in p5.prototype) {
-          try {
-            delete window[p];
-          } catch (x) {
-            window[p] = undefined;
-          }
+    }
+    // remove window bound properties and methods
+    if (this._isGlobal) {
+      for (var p in p5.prototype) {
+        try {
+          delete window[p];
+        } catch (x) {
+          window[p] = undefined;
         }
-        for (var p2 in this) {
-          if (this.hasOwnProperty(p2)) {
-            try {
-              delete window[p2];
-            } catch (x) {
-              window[p2] = undefined;
-            }
+      }
+      for (var p2 in this) {
+        if (this.hasOwnProperty(p2)) {
+          try {
+            delete window[p2];
+          } catch (x) {
+            window[p2] = undefined;
           }
         }
       }
+      p5.instance = null;
     }
-    // window.p5 = undefined;
   }.bind(this);
 
   // call any registered init functions
@@ -593,6 +601,7 @@ p5.prototype._preloadMethods = {
   loadImage: p5.prototype,
   loadStrings: p5.prototype,
   loadXML: p5.prototype,
+  loadBytes: p5.prototype,
   loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,

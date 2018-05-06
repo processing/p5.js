@@ -47,6 +47,7 @@ require('./p5.Geometry');
  */
 p5.prototype.plane = function(width, height, detailX, detailY) {
   this._assert3d('plane');
+  p5._validateParameters('plane', arguments);
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -122,6 +123,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  */
 p5.prototype.box = function(width, height, depth, detailX, detailY) {
   this._assert3d('box');
+  p5._validateParameters('box', arguments);
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -236,6 +238,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  */
 p5.prototype.sphere = function(radius, detailX, detailY) {
   this._assert3d('sphere');
+  p5._validateParameters('sphere', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -425,6 +428,7 @@ p5.prototype.cylinder = function(
   topCap
 ) {
   this._assert3d('cylinder');
+  p5._validateParameters('cylinder', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -507,6 +511,7 @@ p5.prototype.cylinder = function(
  */
 p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   this._assert3d('cone');
+  p5._validateParameters('cone', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -577,6 +582,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  */
 p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
   this._assert3d('ellipsoid');
+  p5._validateParameters('ellipsoid', arguments);
   if (typeof radiusX === 'undefined') {
     radiusX = 50;
   }
@@ -665,6 +671,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  */
 p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
   this._assert3d('torus');
+  p5._validateParameters('torus', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   } else if (!radius) {
@@ -805,7 +812,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
       this.vertices.push(new p5.Vector(0.5, 0.5, 0));
       this.uvs.push([0.5, 0.5]);
 
-      for (var i = 0; i <= this.detailX; i++) {
+      for (var i = 0; i < this.detailX; i++) {
         var u = i / this.detailX;
         var theta = 2 * Math.PI * u;
 
@@ -937,17 +944,27 @@ p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 p5.RendererGL.prototype.bezier = function(
   x1,
   y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
+  z1, // x2
+  x2, // y2
+  y2, // x3
+  z2, // y3
+  x3, // x4
+  y3, // y4
   z3,
   x4,
   y4,
   z4
 ) {
+  if (arguments.length === 8) {
+    x4 = x3;
+    y4 = y3;
+    x3 = y2;
+    y3 = x2;
+    x2 = z1;
+    y2 = x2;
+    z1 = z2 = z3 = z4 = 0;
+  }
+
   var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (var i = 0; i <= bezierDetail; i++) {
@@ -969,17 +986,26 @@ p5.RendererGL.prototype.bezier = function(
 p5.RendererGL.prototype.curve = function(
   x1,
   y1,
-  z1,
-  x2,
-  y2,
-  z2,
-  x3,
-  y3,
+  z1, // x2
+  x2, // y2
+  y2, // x3
+  z2, // y3
+  x3, // x4
+  y3, // y4
   z3,
   x4,
   y4,
   z4
 ) {
+  if (arguments.length === 8) {
+    x4 = x3;
+    y4 = y3;
+    x3 = y2;
+    y3 = x2;
+    x2 = z1;
+    y2 = x2;
+    z1 = z2 = z3 = z4 = 0;
+  }
   var curveDetail = this._pInst._curveDetail;
   this.beginShape();
   for (var i = 0; i <= curveDetail; i++) {

@@ -52,8 +52,6 @@ p5.Matrix = function() {
       ? args[0]
       : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
-
-  this.name = 'p5.Matrix'; // for friendly debugger system
   return this;
 };
 

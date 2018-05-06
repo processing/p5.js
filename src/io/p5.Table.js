@@ -51,7 +51,6 @@ p5.Table = function(rows) {
    *  @property rows {p5.TableRow[]}
    */
   this.rows = [];
-  this.name = 'p5.Table'; // for friendly debugger system
 };
 
 /**
@@ -402,7 +401,7 @@ p5.Table.prototype.findRows = function(value, column) {
  * specified by either its ID or title.
  *
  * @method  matchRow
- * @param  {String} regexp The regular expression to match
+ * @param  {String|RegExp} regexp The regular expression to match
  * @param  {String|Integer} column The column ID (number) or
  *                                  title (string)
  * @return {p5.TableRow}        TableRow object
@@ -428,7 +427,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *
  * function setup() {
  *   //Search using specified regex on a given column, return TableRow object
- *   const mammal = table.matchRow(new RegExp('ant'), 1);
+ *   var mammal = table.matchRow(new RegExp('ant'), 1);
  *   print(mammal.getString(1));
  *   //Output "Panthera pardus"
  * }
@@ -948,6 +947,7 @@ p5.Table.prototype.removeColumn = function(c) {
  * by either its ID or title.
  *
  * @method  set
+ * @param {Integer} row row ID
  * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String|Number} value  value to assign
