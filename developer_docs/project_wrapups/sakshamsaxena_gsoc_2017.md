@@ -15,7 +15,7 @@ Preview of the complete template :
 
 Some helpful comments are added alongside to make the experience of reporting an issue significantly lucid to a complete beginner. You can see the same when you [open a new issue](https://github.com/processing/p5.js/issues/new).
 
-### 2. [Generating a custom (modular) build of p5.js](https://github.com/processing/p5.js/wiki/How-to-build-a-combination-of-select-modules-of-p5)
+### 2. [Generating a custom (modular) build of p5.js](https://github.com/processing/p5.js/blob/master/developer_docs/custom_p5_build.md)
 
 This task was inspired by [Issue #94](https://github.com/processing/p5.js/issues/94). The goal was to implement such a functionality which enables users to select the desired components/modules which they want to use, and only those components would be bundled then itself to generate a custom build of p5.js.
 
