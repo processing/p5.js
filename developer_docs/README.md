@@ -1,3 +1,5 @@
+This folder contains various documents for developers of p5.js. This document contains the overview of how to contribute, build the library, test the code, and update the documentation.
+
 # Getting started
 
 Interested in contributing? Awesome! First, figure out what you'd like to do (a good place to start is the [issues list](https://github.com/processing/p5.js/issues)).
