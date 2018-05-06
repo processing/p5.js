@@ -6,7 +6,7 @@ Interested in contributing? Awesome! First, figure out what you'd like to do (a 
 
 * **Fix a bug** :
 
-    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#master-branch-development) 
+    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development) 
 Need help finding an issue to fix? Check out this [list of bite size issues](https://github.com/processing/p5.js/labels/level%3Abeginner) suitable for new contributors (or peruse other [issue labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) for topics that catch your interest).
 * **Implement a new feature** : 
 
@@ -14,7 +14,7 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
     - Inline documentation:
         - [Style guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference.
     - Unit tests:
-        - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#testing) for how to do this.
+        - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to do this.
         - This helps ensure that the code you write keeps working far into the future when further updates and changes are made.
     - Benchmarks
         - See [Benchmarking section](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md)
@@ -22,9 +22,9 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
 
 * **Add unit tests or documentation for existing code** : 
 
-    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#master-branch-development)
+    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development)
     - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
-    - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#testing) for how to add unit tests.
+    - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to add unit tests.
 
 * **Add examples to the examples page** : 
 
