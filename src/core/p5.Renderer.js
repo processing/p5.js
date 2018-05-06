@@ -23,7 +23,6 @@ var constants = require('../core/constants');
  */
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
-  this.name = 'p5.Renderer'; // for friendly debugger system
   this.canvas = elt;
   this._pInst = pInst;
   if (isMainCanvas) {

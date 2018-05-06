@@ -21,7 +21,7 @@
  *
  *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
  *                     each time a change to the source is detected. You can preview
- *                     the reference at localhost:9001/test/test.html
+ *                     the reference at localhost:9001/docs/reference/
  *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
@@ -135,6 +135,11 @@ module.exports = function(grunt) {
         }
       },
       source: {
+        options: {
+          parserOptions: {
+            ecmaVersion: 5
+          }
+        },
         src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
@@ -159,6 +164,9 @@ module.exports = function(grunt) {
 
     'eslint-samples': {
       options: {
+        parserOptions: {
+          ecmaVersion: 5
+        },
         configFile: '.eslintrc',
         format: 'unix'
       },
@@ -215,7 +223,13 @@ module.exports = function(grunt) {
           'src/**/*.frag',
           'src/**/*.vert'
         ],
-        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        tasks: [
+          'browserify',
+          'browserify:min',
+          'yuidoc:prod',
+          'minjson',
+          'uglify'
+        ],
         options: {
           livereload: true
         }
@@ -354,7 +368,7 @@ module.exports = function(grunt) {
     },
     open: {
       yui: {
-        path: 'http://0.0.0.0:9001/docs/reference/'
+        path: 'http://127.0.0.1:9001/docs/reference/'
       }
     },
     'saucelabs-mocha': {

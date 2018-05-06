@@ -216,7 +216,6 @@ p5.Image = function(width, height) {
    *
    */
   this.pixels = [];
-  this.name = 'p5.Image'; // for friendly debugger system
 };
 
 /**

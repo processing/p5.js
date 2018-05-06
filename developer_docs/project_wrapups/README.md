@@ -1,0 +1,1 @@
+This folder contains wrapup reports for projects from Google Summer of Code, Processing Fellowships, and others.

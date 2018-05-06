@@ -2,7 +2,7 @@
 
 # [p5.js](http://p5js.org)
 
-[Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
+Hello! p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 
 Using the original metaphor of a software sketchbook, p5.js has a full set of drawing functionality. However, you're not limited to your drawing canvas, you can think of your whole browser page as your sketch! For this, p5.js has addon libraries that make it easy to interact with other HTML5 objects, including text, input, video, webcam, and sound.
 
@@ -14,13 +14,13 @@ If you have found a bug in the p5.js library, you can file it here under the [�
 
 ## p5.js library
 
-To use the complete p5.js library, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development#Setup) wiki for more information about our build process to generate the complete as well as selective library.	
+To use the complete p5.js library, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/) for more information about our build process to generate the complete as well as selective library.	
 
 You can also start with the [codepen template](https://codepen.io/p5js/pen/wreBKy). You may need to update the version of the p5.js library that is linked into the html section.
 
 ## Issues
 
-Please post bugs in the proper repository:
+Please post bugs in the correct repository:
 
 * p5.js general and p5.dom: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
 * p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
@@ -32,24 +32,20 @@ Please post bugs in the proper repository:
 
 Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 
-* [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
+* [Get Started](http://p5js.org/get-started): Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
-* [Reference](http://p5js.org/reference) — The functionality supported by p5.js.
-* [Learn](//p5js.org/learn) — Tutorials and short, prototypical examples exploring the basics of p5.js.
-* [Forum](http://forum.processing.org/two/categories/p5-js) — Ask and answers questions about how to make things with p5.js here.
-* [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
+* [Reference](http://p5js.org/reference): The functionality supported by p5.js.
+* [Learn](//p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js.
+* [Forum](http://forum.processing.org/two/categories/p5-js): Ask and answers questions about how to make things with p5.js here.
+* [Libraries](http://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 
 ## Get Involved
 
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
-Developers, check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
+Developers, check out the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/) for more in-depth details about contributing code, bug fixes, and documentation.
 
 ## Contributors
-
-Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
-
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 | [<img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;"/><br /><sub>Lauren McCarthy</sub>](http://lauren-mccarthy.com)<br /> | [<img src="https://avatars2.githubusercontent.com/u/504124?v=4" width="100px;"/><br /><sub>Jason Sigal</sub>](http://jasonsigal.cc)<br /> | [<img src="https://avatars3.githubusercontent.com/u/1695075?v=4" width="100px;"/><br /><sub>Karen</sub>](https://twitter.com/KarenPunkPunk)<br /> | [<img src="https://avatars1.githubusercontent.com/u/699840?v=4" width="100px;"/><br /><sub>Evelyn Eastmond</sub>](http://www.evelyneastmond.com)<br /> | [<img src="https://avatars0.githubusercontent.com/u/191758?v=4" width="100px;"/><br /><sub>Daniel Shiffman</sub>](http://www.shiffman.net)<br /> | [<img src="https://avatars2.githubusercontent.com/u/677774?v=4" width="100px;"/><br /><sub>Casey Reas</sub>](http://reas.com)<br /> | [<img src="https://avatars1.githubusercontent.com/u/1623101?v=4" width="100px;"/><br /><sub>Ben Fry</sub>](http://fathom.info)<br /> |
@@ -78,6 +74,8 @@ We recognize all types of contributions. This project follows the [all-contribut
 | [<img src="https://avatars1.githubusercontent.com/u/1482377?v=4" width="100px;"/><br /><sub>Nick Yahnke</sub>](https://github.com/nthitz)<br /> | [<img src="https://avatars3.githubusercontent.com/u/1859451?v=4" width="100px;"/><br /><sub>Anthony Su</sub>](http://www.radialglo.com)<br /> | [<img src="https://avatars3.githubusercontent.com/u/720976?v=4" width="100px;"/><br /><sub>kroko / Reinis Adovičs</sub>](http://www.kroko.me/)<br /> | [<img src="https://avatars2.githubusercontent.com/u/5854770?v=4" width="100px;"/><br /><sub>Robyn Overstreet</sub>](https://github.com/robynitp)<br /> | [<img src="https://avatars1.githubusercontent.com/u/7188324?v=4" width="100px;"/><br /><sub>Ben Hinchley</sub>](https://github.com/benhinchley)<br /> | [<img src="https://avatars1.githubusercontent.com/u/3266989?v=4" width="100px;"/><br /><sub>Max Kolyanov</sub>](http://ello.co/maxkolyanov)<br /> | [<img src="https://avatars3.githubusercontent.com/u/2544489?v=4" width="100px;"/><br /><sub>Zeno Zeng</sub>](http://zenozeng.com)<br /> |
 | [<img src="https://avatars0.githubusercontent.com/u/8644048?v=4" width="100px;"/><br /><sub>Seth</sub>](http://www.sethkranzler.com)<br /> | [<img src="https://avatars2.githubusercontent.com/u/396562?v=4" width="100px;"/><br /><sub>plural</sub>](https://github.com/plural)<br /> | [<img src="https://avatars3.githubusercontent.com/u/1795860?v=4" width="100px;"/><br /><sub>Lionel Ringenbach</sub>](http://ucodia.space)<br /> | [<img src="https://avatars3.githubusercontent.com/u/9111606?v=4" width="100px;"/><br /><sub>Harshil Goel</sub>](https://github.com/darkcoderrises)<br /> | [<img src="https://avatars0.githubusercontent.com/u/12414183?v=4" width="100px;"/><br /><sub>Joshua Storm Becker</sub>](http://becker.codes)<br /> | [<img src="https://avatars2.githubusercontent.com/u/22229196?v=4" width="100px;"/><br /><sub>max_devjs</sub>](http://twitter.com/max_devjs)<br /> | [<img src="https://avatars2.githubusercontent.com/u/9803905?v=4" width="100px;"/><br /><sub>trych</sub>](http://timorychert.de/)<br /> |
 | [<img src="https://avatars1.githubusercontent.com/u/15284993?v=4" width="100px;"/><br /><sub>Alejandra Trejo</sub>](https://www.alejandratrejo.com/)<br /> | [<img src="https://avatars0.githubusercontent.com/u/9909241?v=4" width="100px;"/><br /><sub>Prashant Gupta</sub>](http://www.pgupta.com)<br /> | [<img src="https://avatars2.githubusercontent.com/u/5270022?v=4" width="100px;"/><br /><sub>Kai-han Chang</sub>](https://github.com/rasca0027)<br /> | [<img src="https://avatars0.githubusercontent.com/u/9029686?v=4" width="100px;"/><br /><sub>kjav</sub>](https://github.com/kjav)<br /> | [<img src="https://avatars0.githubusercontent.com/u/1965049?v=4" width="100px;"/><br /><sub>maddy</sub>](http://maddy.zone)<br /> | [<img src="https://avatars3.githubusercontent.com/u/2354476?v=4" width="100px;"/><br /><sub>Christopher Coleman</sub>](http://digitalcoleman.com)<br /> | [<img src="https://avatars3.githubusercontent.com/u/122117?v=4" width="100px;"/><br /><sub>Boaz</sub>](http://boazsender.com)<br /> |
-| [<img src="https://avatars1.githubusercontent.com/u/13515645?v=4" width="100px;"/><br /><sub>Yasai</sub>](https://github.com/wangyasai)<br />[📝](#blog-wangyasai "Blogposts") | [<img src="https://avatars3.githubusercontent.com/u/7667514?s=460&v=4" width="100px;"/><br /><sub>Jay Gupta</sub>](https://github.com/hackertron)<br /> | [<img src="https://avatars1.githubusercontent.com/u/22434689?v=4" width="100px;"/><br /><sub>Nitish Bansal</sub>](https://github.com/bansalnitish)<br /> | [<img src="https://avatars0.githubusercontent.com/u/8083973?s=460&v=4" width="100px;"/><br /><sub>Caroline Hermans</sub>](https://caro.io/)<br />[💡](#example-carolinehermans "Examples") [📖](https://github.com/processing/p5.js/commits?author=carolinehermans "Documentation") |
+| [<img src="https://avatars1.githubusercontent.com/u/13515645?v=4" width="100px;"/><br /><sub>Yasai</sub>](https://github.com/wangyasai)<br />[📝](#blog-wangyasai "Blogposts") | [<img src="https://avatars3.githubusercontent.com/u/7667514?s=460&v=4" width="100px;"/><br /><sub>Jay Gupta</sub>](https://github.com/hackertron)<br /> | [<img src="https://avatars1.githubusercontent.com/u/22434689?v=4" width="100px;"/><br /><sub>Nitish Bansal</sub>](https://github.com/bansalnitish)<br /> | [<img src="https://avatars0.githubusercontent.com/u/8083973?s=460&v=4" width="100px;"/><br /><sub>Caroline Hermans</sub>](https://caro.io/)<br />[💡](#example-carolinehermans "Examples") [📖](https://github.com/processing/p5.js/commits?author=carolinehermans "Documentation") | [<img src="https://avatars3.githubusercontent.com/u/19146133?s=460&v=4" width="100px;"/><br /><sub>Faith Wuyue Yu</sub>](https://github.com/faithwyu)<br /> | [<img src="https://avatars2.githubusercontent.com/u/1878638?s=400&v=4" width="100px;"/><br /><sub>Aatish Bhatia</sub>](https://aatishb.com)<br />[📖](https://github.com/processing/p5.js/commits?author=aatishb "Documentation") [🐛](https://github.com/processing/p5.js/issues?q=author%3Aaatishb "Bug reports") | [<img src="https://avatars3.githubusercontent.com/u/7628664?v=4" width="100px;"/><br /><sub>Mislav Milicevic</sub>](https://github.com/dekmm)<br />[💻](https://github.com/processing/p5.js/commits?author=dekmm "Code") [🐛](https://github.com/processing/p5.js/issues?q=author%3Adekmm "Bug reports") |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
 
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).

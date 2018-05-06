@@ -106,6 +106,15 @@ define([
 
         renderCode();
 
+        // Set the document title based on the item name.
+        // If it is a method, add parentheses to the name
+        if (item.itemtype === "method"){
+            App.pageView.appendToDocumentTitle(item.name + "()");
+        }
+        else {
+            App.pageView.appendToDocumentTitle(item.name);
+        }
+
         // Hook up alt-text for examples
         setTimeout(function() {
           var alts = $('.example-content')[0];

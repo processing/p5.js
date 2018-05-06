@@ -79,7 +79,6 @@ p5.Vector = function Vector() {
    * @property z {Number}
    */
   this.z = z;
-  this.name = 'p5.Vector'; // for friendly debugger system
 };
 
 /**
@@ -94,6 +93,36 @@ p5.Vector = function Vector() {
  * function setup() {
  *   var v = createVector(20, 30);
  *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   noStroke();
+ *   text(v1.toString(), 10, 25, 90, 75);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -120,6 +149,43 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  *   var v1 = createVector(0, 0, 0);
  *   var arr = [1, 2, 3];
  *   v1.set(arr); // Sets vector to [1, 2, 3]
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var v0, v1;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   v0 = createVector(0, 0);
+ *   v1 = createVector(50, 50);
+ * }
+ *
+ * function draw() {
+ *   background(240);
+ *
+ *   drawArrow(v0, v1, 'black');
+ *   v1.set(v1.x + random(-1, 1), v1.y + random(-1, 1));
+ *
+ *   noStroke();
+ *   text('x: ' + round(v1.x) + ' y: ' + round(v1.y), 20, 90);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -202,6 +268,40 @@ p5.Vector.prototype.copy = function copy() {
  * print(v3);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * // red vector + blue vector = purple vector
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(-30, 20);
+ *   drawArrow(v1, v2, 'blue');
+ *
+ *   var v3 = p5.Vector.add(v1, v2);
+ *   drawArrow(v0, v3, 'purple');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method add
@@ -258,6 +358,40 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * print(v3);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * // red vector - blue vector = purple vector
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(70, 50);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   var v3 = p5.Vector.sub(v1, v2);
+ *   drawArrow(v2, v3, 'purple');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 /**
  * @method sub
@@ -309,6 +443,40 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * print(v2);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(25, -25);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var num = map(mouseX, 0, width, -2, 2, true);
+ *   var v2 = p5.Vector.mult(v1, num);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   noStroke();
+ *   text('multiplied by ' + num.toFixed(2), 5, 90);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.mult = function mult(n) {
   if (!(typeof n === 'number' && isFinite(n))) {
@@ -349,6 +517,40 @@ p5.Vector.prototype.mult = function mult(n) {
  * print(v2);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 100);
+ *   var v1 = createVector(50, -50);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var num = map(mouseX, 0, width, 10, 0.5, true);
+ *   var v2 = p5.Vector.div(v1, num);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   noStroke();
+ *   text('divided by ' + num.toFixed(2), 10, 90);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.div = function div(n) {
   if (!(typeof n === 'number' && isFinite(n))) {
@@ -375,6 +577,35 @@ p5.Vector.prototype.div = function div(n) {
  * @method mag
  * @return {Number} magnitude of the vector
  * @example
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   noStroke();
+ *   text('vector length: ' + v1.mag().toFixed(2), 10, 70, 90, 30);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  * <div class="norender">
  * <code>
  * var v = createVector(20.0, 30.0, 40.0);
@@ -401,6 +632,36 @@ p5.Vector.prototype.mag = function mag() {
  * // Static method
  * var v1 = createVector(6, 4, 2);
  * print(v1.magSq()); // Prints "56"
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   noStroke();
+ *   text('vector length squared: ' + v1.magSq().toFixed(2), 10, 45, 90, 55);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -524,6 +785,40 @@ p5.Vector.prototype.cross = function cross(v) {
  * print(distance);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *
+ *   var v1 = createVector(70, 50);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   noStroke();
+ *   text('distance between vectors: ' + v2.dist(v1).toFixed(2), 5, 50, 95, 50);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.dist = function dist(v) {
   return v
@@ -545,6 +840,38 @@ p5.Vector.prototype.dist = function dist(v) {
  * v.normalize();
  * // v's components are set to
  * // [0.4454354, 0.8908708, 0.089087084]
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
+ *
+ *   drawArrow(v0, v1, 'red');
+ *   v1.normalize();
+ *   drawArrow(v0, v1.mult(35), 'blue');
+ *
+ *   noFill();
+ *   ellipse(50, 50, 35 * 2);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -573,6 +900,37 @@ p5.Vector.prototype.normalize = function normalize() {
  * // [2.2271771, 4.4543543, 0.4454354]
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
+ *
+ *   drawArrow(v0, v1, 'red');
+ *   drawArrow(v0, v1.limit(35), 'blue');
+ *
+ *   noFill();
+ *   ellipse(50, 50, 35 * 2);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.limit = function limit(max) {
   var mSq = this.magSq();
@@ -597,6 +955,41 @@ p5.Vector.prototype.limit = function limit(max) {
  * // v has components [10.0, 20.0, 2.0]
  * v.setMag(10);
  * // v's components are set to [6.0, 8.0, 0.0]
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(0, 0);
+ *   var v1 = createVector(50, 50);
+ *
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var length = map(mouseX, 0, width, 0, 141, true);
+ *   v1.setMag(length);
+ *   drawArrow(v0, v1, 'blue');
+ *
+ *   noStroke();
+ *   text('magnitude set to: ' + length.toFixed(2), 10, 70, 90, 30);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -624,6 +1017,48 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * }
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
+ *
+ *   drawArrow(v0, v1, 'black');
+ *
+ *   var myHeading = v1.heading();
+ *   noStroke();
+ *   text(
+ *     'vector heading: ' +
+ *       myHeading.toFixed(2) +
+ *       ' radians or ' +
+ *       degrees(myHeading).toFixed(2) +
+ *       ' degrees',
+ *     10,
+ *     50,
+ *     90,
+ *     50
+ *   );
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.heading = function heading() {
   var h = Math.atan2(this.y, this.x);
@@ -645,6 +1080,36 @@ p5.Vector.prototype.heading = function heading() {
  * // v has components [10.0, 20.0, 0.0]
  * v.rotate(HALF_PI);
  * // v's components are set to [-20.0, 9.999999, 0.0]
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var angle = 0;
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = createVector(50, 0);
+ *
+ *   drawArrow(v0, v1.rotate(angle), 'black');
+ *   angle += 0.01;
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -671,6 +1136,50 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * var angle = v1.angleBetween(v2);
  * // angle is PI/2
  * print(angle);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *   var v0 = createVector(50, 50);
+ *
+ *   var v1 = createVector(50, 0);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(mouseX - 50, mouseY - 50);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   var angleBetween = v1.angleBetween(v2);
+ *   noStroke();
+ *   text(
+ *     'angle between: ' +
+ *       angleBetween.toFixed(2) +
+ *       ' radians or ' +
+ *       degrees(angleBetween).toFixed(2) +
+ *       ' degrees',
+ *     10,
+ *     50,
+ *     90,
+ *     50
+ *   );
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -715,6 +1224,47 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  * var v3 = p5.Vector.lerp(v1, v2, 0.5);
  * // v3 has components [50,50,0]
  * print(v3);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var step = 0.01;
+ * var amount = 0;
+ *
+ * function draw() {
+ *   background(240);
+ *   var v0 = createVector(0, 0);
+ *
+ *   var v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(90, 90);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   if (amount > 1 || amount < 0) {
+ *     step *= -1;
+ *   }
+ *   amount += step;
+ *   var v3 = p5.Vector.lerp(v1, v2, amount);
+ *
+ *   drawArrow(v0, v3, 'purple');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */
@@ -937,6 +1487,37 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  * // [-0.4695841, -0.14366731, 0.0] or
  * // [0.6091097, -0.22805278, 0.0]
  * print(v);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   frameRate(1);
+ * }
+ *
+ * function draw() {
+ *   background(240);
+ *
+ *   var v0 = createVector(50, 50);
+ *   var v1 = p5.Vector.random2D();
+ *   drawArrow(v0, v1.mult(50), 'black');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
  * </code>
  * </div>
  */

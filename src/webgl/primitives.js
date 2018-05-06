@@ -47,6 +47,7 @@ require('./p5.Geometry');
  */
 p5.prototype.plane = function(width, height, detailX, detailY) {
   this._assert3d('plane');
+  p5._validateParameters('plane', arguments);
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -122,6 +123,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  */
 p5.prototype.box = function(width, height, depth, detailX, detailY) {
   this._assert3d('box');
+  p5._validateParameters('box', arguments);
   if (typeof width === 'undefined') {
     width = 50;
   }
@@ -236,6 +238,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  */
 p5.prototype.sphere = function(radius, detailX, detailY) {
   this._assert3d('sphere');
+  p5._validateParameters('sphere', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -425,6 +428,7 @@ p5.prototype.cylinder = function(
   topCap
 ) {
   this._assert3d('cylinder');
+  p5._validateParameters('cylinder', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -507,6 +511,7 @@ p5.prototype.cylinder = function(
  */
 p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   this._assert3d('cone');
+  p5._validateParameters('cone', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   }
@@ -577,6 +582,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  */
 p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
   this._assert3d('ellipsoid');
+  p5._validateParameters('ellipsoid', arguments);
   if (typeof radiusX === 'undefined') {
     radiusX = 50;
   }
@@ -665,6 +671,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  */
 p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
   this._assert3d('torus');
+  p5._validateParameters('torus', arguments);
   if (typeof radius === 'undefined') {
     radius = 50;
   } else if (!radius) {

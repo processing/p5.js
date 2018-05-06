@@ -1493,6 +1493,7 @@ p5.prototype.save = function(object, _filename, _options) {
  *
  */
 p5.prototype.saveJSON = function(json, filename, opt) {
+  p5._validateParameters('saveJSON', arguments);
   var stringify;
   if (opt) {
     stringify = JSON.stringify(json);
@@ -1540,6 +1541,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *
  */
 p5.prototype.saveStrings = function(list, filename, extension) {
+  p5._validateParameters('saveStrings', arguments);
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
   for (var i = 0; i < list.length; i++) {
@@ -1607,6 +1609,7 @@ function escapeHelper(content) {
  *
  */
 p5.prototype.saveTable = function(table, filename, options) {
+  p5._validateParameters('saveTable', arguments);
   var ext;
   if (options === undefined) {
     ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
