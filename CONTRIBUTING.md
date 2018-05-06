@@ -25,4 +25,4 @@ Participants asked to stop any harassing behavior are expected to comply immedia
 
 ## Also
 * You can read our [community statement](http://p5js.org/community/) on our website.
-* Check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
+* Check out the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/README.md) for more in-depth details about contributing code, bug fixes, and documentation.
