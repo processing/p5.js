@@ -6,8 +6,8 @@ Interested in contributing? Awesome! First, figure out what you'd like to do (a 
 
 * **Fix a bug** :
 
-    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/wiki/Development#master-branch-development) 
-Need help finding an issue to fix? Check out this [list of bite size issues](https://github.com/processing/p5.js/labels/level%3Abeginner) suitable for new contributors (or peruse other [issue labels](https://github.com/processing/p5.js/wiki/Issue-Labels) for topics that catch your interest).
+    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#master-branch-development) 
+Need help finding an issue to fix? Check out this [list of bite size issues](https://github.com/processing/p5.js/labels/level%3Abeginner) suitable for new contributors (or peruse other [issue labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) for topics that catch your interest).
 * **Implement a new feature** : 
 
     If you have an original idea about a feature, open an issue describing your idea preferably in the format provided there, and let us know you're interested! Initiate a discussion, wait for the green signal, and then assign it to yourself! _Note: new features will require tests and inline documentation._
@@ -22,7 +22,7 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
 
 * **Add unit tests or documentation for existing code** : 
 
-    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/wiki/Development#master-branch-development)
+    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#master-branch-development)
     - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
     - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#testing) for how to add unit tests.
 
@@ -75,8 +75,6 @@ This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-i
 `src/` Contains all the source code for the library. The code is broken up into folders and files corresponding with the [Processing reference page](http://processing.org/reference/). Additionally, there is a core folder that holds constants, and internal helper functions and variables.
 
 `tests/` Contains unit testing files.
-
-`examples/` Contains code examples including a port of all of Dan Shiffman's [Learning Processing](learningprocessing.com), as well as an empty-empty example that demonstrates setting up a sketch, and examples related to specific [tutorials](https://github.com/processing/p5.js/wiki/Tutorials).
 
 # Code Style
 
