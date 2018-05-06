@@ -1,4 +1,4 @@
-#### This page is out of date. Help us update it! (See the stated goal below.)
+#### This page is out of date. Help us update it! See our stated goal below.
 
 # Supported browsers
 
