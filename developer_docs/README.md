@@ -12,19 +12,19 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
 
     If you have an original idea about a feature, open an issue describing your idea preferably in the format provided there, and let us know you're interested! Initiate a discussion, wait for the green signal, and then assign it to yourself! _Note: new features will require tests and inline documentation._
     - Inline documentation:
-        - [Style guide for p5.js inline docs](https://github.com/processing/p5.js/wiki/Inline-documentation) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference.
+        - [Style guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference.
     - Unit tests:
-        - See the [testing section](https://github.com/processing/p5.js/wiki/Development#wiki-testing) for how to do this.
+        - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#testing) for how to do this.
         - This helps ensure that the code you write keeps working far into the future when further updates and changes are made.
     - Benchmarks
-        - See [Benchmarking section](https://github.com/processing/p5.js/wiki/Benchmarking-p5.js)
+        - See [Benchmarking section](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md)
         - Helpful for finding and implementing performance optimizations
 
 * **Add unit tests or documentation for existing code** : 
 
     Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/wiki/Development#master-branch-development)
-    - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/wiki/Inline-documentation) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
-    - See the [testing section](https://github.com/processing/p5.js/wiki/Development#wiki-testing) for how to add unit tests.
+    - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
+    - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/README.md#testing) for how to add unit tests.
 
 * **Add examples to the examples page** : 
 
@@ -33,7 +33,7 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
 * **Add inline examples to the ref** :
 
   * [List of examples needed](https://github.com/processing/p5.js/issues/1954)
-  * [Guide for p5.js inline docs](https://github.com/processing/p5.js/wiki/Inline-documentation) 
+  * [Guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) 
 
 * **Contribute in some other way** :
 
@@ -60,7 +60,7 @@ Need help finding an issue to fix? Check out this [list of bite size issues](htt
    ```
    npm run grunt
    ```
-   **NEW** : To create the library with only certain components, use Grunt [as it is explained here.](https://github.com/processing/p5.js/wiki/How-to-build-a-combination-of-select-modules-of-p5)
+   **NEW** : To create the library with only certain components, use Grunt [as it is explained here.](https://github.com/processing/p5.js/blob/master/developer_docs/custom_p5_build.md)
 
    If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change.
 

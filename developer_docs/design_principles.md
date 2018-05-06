@@ -1,4 +1,4 @@
-# Design Principles for p5.js
+# Design principles for p5.js
 
 - **Beginner Friendly** The p5.js API aims to be friendly to beginner coders, offering a low barrier to creating interactive and visual web content with cutting-edge HTML5/canvas/DOM APIs.
 
