@@ -14,7 +14,6 @@
     "lint:fix": "grunt lint-fix",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "generate": "all-contributors generate",
     "prepare": "patch-package",
     "precommit": "lint-staged"
   },
