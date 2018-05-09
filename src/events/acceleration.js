@@ -353,7 +353,38 @@ var shake_threshold = 30;
  *
  * @method setMoveThreshold
  * @param {number} value The threshold value
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Run this example on a mobile device
+ * // You will need to move the device incrementally further
+ * // the closer the square's color gets to white in order to change the value.
+ *
+ * var value = 0;
+ * var threshold = 0.5;
+ * function setup() {
+ *   setMoveThreshold(threshold);
+ * }
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceMoved() {
+ *   value = value + 5;
+ *   threshold = threshold + 0.1;
+ *   if (value > 255) {
+ *     value = 0;
+ *     threshold = 30;
+ *   }
+ *   setMoveThreshold(threshold);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device moves
  */
+
 p5.prototype.setMoveThreshold = function(val) {
   p5._validateParameters('setMoveThreshold', arguments);
   move_threshold = val;
@@ -365,7 +396,39 @@ p5.prototype.setMoveThreshold = function(val) {
  *
  * @method setShakeThreshold
  * @param {number} value The threshold value
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Run this example on a mobile device
+ * // You will need to shake the device more firmly
+ * // the closer the box's fill gets to white in order to change the value.
+ *
+ * var value = 0;
+ * var threshold = 30;
+ * function setup() {
+ *   setShakeThreshold(threshold);
+ * }
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceMoved() {
+ *   value = value + 5;
+ *   threshold = threshold + 5;
+ *   if (value > 255) {
+ *     value = 0;
+ *     threshold = 30;
+ *   }
+ *   setShakeThreshold(threshold);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device
+ * is being shaked
  */
+
 p5.prototype.setShakeThreshold = function(val) {
   p5._validateParameters('setShakeThreshold', arguments);
   shake_threshold = val;
