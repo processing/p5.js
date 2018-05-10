@@ -72,9 +72,10 @@ p5.Color = function(pInst, vals) {
  * }
  *
  * function draw() {
- *   text(myColor.toString(), 10, 10);
- *   text(myColor.toString('#rrggbb'), 10, 95);
- *   text(myColor.toString('rgba%'), 10, 180);
+ *   rotate(HALF_PI);
+ *   text(myColor.toString(), 0, -5);
+ *   text(myColor.toString('#rrggbb'), 0, -30);
+ *   text(myColor.toString('rgba%'), 0, -55);
  * }
  * </code>
  * </div>
