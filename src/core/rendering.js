@@ -17,9 +17,9 @@ var defaultClass = 'p5Canvas';
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
- * Calling createCanvas more than once in a sketch will result in very
+ * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a sketch will result in very
  * unpredictable behavior. If you want more than one drawing canvas
- * you could use createGraphics (hidden by default but it can be shown).
+ * you could use <a href="#/p5/createGraphics">createGraphics</a> (hidden by default but it can be shown).
  * <br><br>
  * The system variables width and height are set by the parameters passed
  * to this function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the window will be

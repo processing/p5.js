@@ -191,8 +191,8 @@ p5.prototype.loadJSON = function() {
  * @return {String[]}            Array of Strings
  * @example
  *
- * <p>Calling loadStrings() inside preload() guarantees to complete the
- * operation before setup() and draw() are called.</p>
+ * <p>Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
  * var result;
@@ -1342,7 +1342,7 @@ p5.PrintWriter = function(filename, extension) {
  *
  *  <p>Alternately, the first parameter can be a pointer to a canvas
  *  <a href="#/p5.Element">p5.Element</a>, an Array of Strings,
- *  an Array of JSON, a JSON object, a p5.Table, a <a href="#/p5.Image">p5.Image</a>, or a
+ *  an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table</a>, a <a href="#/p5.Image">p5.Image</a>, or a
  *  p5.SoundFile (requires p5.sound). The second parameter is a filename
  *  (including extension). The third parameter is for options specific
  *  to this type of object. This method will save a file that fits the
@@ -1699,7 +1699,7 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  Generate a blob of file data as a url to prepare for download.
  *  Accepts an array of data, a filename, and an extension (optional).
  *  This is a private function because it does not do any formatting,
- *  but it is used by saveStrings, saveJSON, saveTable etc.
+ *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a> etc.
  *
  *  @param  {Array} dataToDownload
  *  @param  {String} filename
@@ -1721,7 +1721,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  Forces download. Accepts a url to filedata/blob, a filename,
  *  and an extension (optional).
  *  This is a private function because it does not do any formatting,
- *  but it is used by saveStrings, saveJSON, saveTable etc.
+ *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a> etc.
  *
  *  @method downloadFile
  *  @private

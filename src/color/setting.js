@@ -20,7 +20,7 @@ require('./p5.Color');
  * the first frame of animation or if the background need only be set once.
  * <br><br>
  * The color is either specified in terms of the RGB, HSB, or HSL color
- * depending on the current colorMode. (The default color space is RGB, with
+ * depending on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space is RGB, with
  * each value in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings

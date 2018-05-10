@@ -16,7 +16,7 @@ var p5 = require('./core');
  * library</a>.
  * It is not called directly, but <a href="#/p5.Element">p5.Element</a>
  * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
- * or in the p5.dom library, createDiv, createImg, createInput, etc.
+ * or in the p5.dom library, <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
  *
  * @class p5.Element
  * @param {String} elt DOM node that is wrapped

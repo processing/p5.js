@@ -165,7 +165,7 @@ p5.RendererGL.prototype.camera = function(
  * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
  * @param  {Number} [fovy]   camera frustum vertical field of view,
- *                           from bottom to top of view, in angleMode units
+ *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
  * @param  {Number} [aspect] camera frustum aspect ratio
  * @param  {Number} [near]   frustum near plane length
  * @param  {Number} [far]    frustum far plane length

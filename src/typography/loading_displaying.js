@@ -33,8 +33,8 @@ require('../core/error_helpers');
  * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
  * @example
  *
- * <p>Calling loadFont() inside preload() guarantees that the load
- * operation will have completed before setup() and draw() are called.</p>
+ * <p>Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees that the load
+ * operation will have completed before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
  * var myFont;
@@ -50,7 +50,7 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * Outside of preload(), you may supply a callback function to handle the
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object:
  *
  * <div><code>
@@ -164,7 +164,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * @param {Number} x   x-coordinate of text
  * @param {Number} y   y-coordinate of text
  * @param {Number} [x2]  by default, the width of the text box,
- *                     see rectMode() for more info
+ *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
  * @param {Number} [y2]  by default, the height of the text box,
  *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
  * @chainable

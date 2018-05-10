@@ -31,10 +31,10 @@ require('../core/error_helpers');
  * @param  {String} path Path of the image to be loaded
  * @param  {function(p5.Image)} [successCallback] Function to be called once
  *                                the image is loaded. Will be passed the
- *                                p5.Image.
+ *                                <a href="#/p5.Image">p5.Image</a>.
  * @param  {function(Event)}    [failureCallback] called with event error if
  *                                the image fails to load.
- * @return {p5.Image}             the p5.Image object
+ * @return {p5.Image}             the <a href="#/p5.Image">p5.Image</a> object
  * @example
  * <div>
  * <code>

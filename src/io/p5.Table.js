@@ -20,9 +20,9 @@ var p5 = require('../core/core');
  *  <p>File names should end with .csv if they're comma separated.</p>
  *  <p>A rough "spec" for CSV can be found
  *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
- *  <p>To load files, use the loadTable method.</p>
- *  <p>To save tables to your computer, use the save method
- *   or the saveTable method.</p>
+ *  <p>To load files, use the <a href="#/p5/loadTable">loadTable</a> method.</p>
+ *  <p>To save tables to your computer, use the <a href="#/p5/save">save</a> method
+ *   or the <a href="#/p5/saveTable">saveTable</a> method.</p>
  *
  *  Possible options include:
  *  <ul>

@@ -159,7 +159,7 @@ p5.prototype.atan2 = function(y, x) {
 
 /**
  * Calculates the cosine of an angle. This function takes into account the
- * current angleMode. Values are returned in the range -1 to 1.
+ * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
  *
  * @method cos
  * @param  {Number} angle the angle
@@ -187,7 +187,7 @@ p5.prototype.cos = function(angle) {
 
 /**
  * Calculates the sine of an angle. This function takes into account the
- * current angleMode. Values are returned in the range -1 to 1.
+ * current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
  *
  * @method sin
  * @param  {Number} angle the angle
@@ -215,7 +215,7 @@ p5.prototype.sin = function(angle) {
 
 /**
  * Calculates the tangent of an angle. This function takes into account
- * the current angleMode. Values are returned in the range -1 to 1.
+ * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
  *
  * @method tan
  * @param  {Number} angle the angle
@@ -246,7 +246,7 @@ p5.prototype.tan = function(angle) {
  * Radians and degrees are two ways of measuring the same thing. There are
  * 360 degrees in a circle and 2*PI radians in a circle. For example,
  * 90° = PI/2 = 1.5707964. This function does not take into account the
- * current angleMode.
+ * current <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method degrees
  * @param  {Number} radians the radians value to convert to degrees
@@ -273,7 +273,7 @@ p5.prototype.degrees = function(angle) {
  * Radians and degrees are two ways of measuring the same thing. There are
  * 360 degrees in a circle and 2*PI radians in a circle. For example,
  * 90° = PI/2 = 1.5707964. This function does not take into account the
- * current angleMode.
+ * current <a href="#/p5/angleMode">angleMode</a>.
  *
  * @method radians
  * @param  {Number} degrees the degree value to convert to radians

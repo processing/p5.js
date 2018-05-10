@@ -47,7 +47,7 @@ p5.prototype.print = function() {
 };
 
 /**
- * The system variable frameCount contains the number of frames that have
+ * The system variable <a href="#/p5/frameCount">frameCount</a> contains the number of frames that have
  * been displayed since the program started. Inside <a href="#/p5/setup">setup()</a> the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
@@ -424,7 +424,7 @@ p5.prototype.width = 0;
 
 /**
  * System variable that stores the height of the drawing canvas. This value
- * is set by the second parameter of the createCanvas() function. For
+ * is set by the second parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function. For
  * example, the function call createCanvas(320, 240) sets the height
  * variable to the value 240. The value of height defaults to 100 if
  * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.

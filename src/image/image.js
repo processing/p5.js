@@ -23,7 +23,7 @@ var p5 = require('../core/core'); // This is not global, but JSHint is not aware
  * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
- * factor for the pixelDensity) of the display window x4,
+ * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
  * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.

@@ -16,7 +16,7 @@ var p5 = require('../core/core');
 var downKeys = {};
 
 /**
- * The boolean system variable keyIsPressed is true if any key is pressed
+ * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
  * and false if no keys are pressed.
  *
  * @property {Boolean} keyIsPressed
@@ -45,7 +45,7 @@ p5.prototype.keyIsPressed = false; // khan
 /**
  * The system variable key always contains the value of the most recent
  * key on the keyboard that was typed. To get the proper capitalization, it
- * is best to use it within <a href="#/p5/keyTyped">keyTyped()</a>. For non-ASCII keys, use the keyCode
+ * is best to use it within <a href="#/p5/keyTyped">keyTyped()</a>. For non-ASCII keys, use the <a href="#/p5/keyCode">keyCode</a>
  * variable.
  *
  * @property {String} key
@@ -106,7 +106,7 @@ p5.prototype.keyCode = 0;
 
 /**
  * The <a href="#/p5/keyPressed">keyPressed()</a> function is called once every time a key is pressed. The
- * keyCode for the key that was pressed is stored in the keyCode variable.
+ * keyCode for the key that was pressed is stored in the <a href="#/p5/keyCode">keyCode</a> variable.
  * <br><br>
  * For non-ASCII keys, use the keyCode variable. You can check if the keyCode
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
@@ -197,7 +197,7 @@ p5.prototype._onkeydown = function(e) {
 };
 /**
  * The <a href="#/p5/keyReleased">keyReleased()</a> function is called once every time a key is released.
- * See key and keyCode for more information.<br><br>
+ * See <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a> for more information.<br><br>
  * Browsers may have different default
  * behaviors attached to various key events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -320,7 +320,7 @@ p5.prototype._onblur = function(e) {
  * It can be used if you have an object that moves, and you want several keys
  * to be able to affect its behaviour simultaneously, such as moving a
  * sprite diagonally. You can put in any number representing the keyCode of
- * the key, or use any of the variable keyCode names listed
+ * the key, or use any of the variable <a href="#/p5/keyCode">keyCode</a> names listed
  * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
  *
  * @method keyIsDown

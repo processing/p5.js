@@ -50,8 +50,8 @@ var p5 = function(sketch, node, sync) {
    * Called directly before <a href="#/p5/setup">setup()</a>, the <a href="#/p5/preload">preload()</a> function is used to handle
    * asynchronous loading of external files in a blocking way. If a preload 
    * function is defined, <a href="#/p5/setup">setup()</a> will wait until any load calls within have
-   * finished. Nothing besides load calls (loadImage, loadJSON, loadFont,
-   * loadStrings, etc.) should be inside preload function. If asynchronous
+   * finished. Nothing besides load calls (<a href="#/p5/loadImage">loadImage</a>, <a href="#/p5/loadJSON">loadJSON</a>, <a href="#/p5/loadFont">loadFont</a>,
+   * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
    * loading is preferred, the load methods can instead be called in <a href="#/p5/setup">setup()</a>
    * or anywhere else with the use of a callback parameter.
    * <br><br>

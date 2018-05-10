@@ -160,7 +160,7 @@ p5.prototype.resetMatrix = function() {
 
 /**
  * Rotates a shape the amount specified by the angle parameter. This
- * function accounts for angleMode, so angles can be entered in either
+ * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles can be entered in either
  * RADIANS or DEGREES.
  * <br><br>
  * Objects are always rotated around their relative position to the
