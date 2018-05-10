@@ -120,6 +120,8 @@ module.exports = function(grunt) {
           'Gruntfile.js',
           'grunt-karma.js',
           'docs/preprocessor.js',
+          'docs/yuidoc-p5-theme-src/scripts/*.js',
+          'docs/yuidoc-p5-theme-src/scripts/view/*.js',
           'utils/**/*.js',
           'tasks/**/*.js'
         ]
