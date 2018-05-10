@@ -207,6 +207,21 @@
           timeout = setTimeout(updateLanguage, 500);
         });
       }
+
+      var pathFragments = window.location.pathname.split('/').filter(function(v) { return v });
+      var currentLangPrefix = pathFragments.shift();
+      $('[data-lang]')
+        .on('click', function() {
+          var location = window.location.pathname;
+          var newPrefix = $(this).data('lang');
+          if (newPrefix === 'en') {
+            newPrefix = 'docs'; // english is using `/docs/:parameters`
+          }
+          window.location = '/' +
+            [newPrefix].concat(pathFragments).join('/') +
+            '/' +
+            (window.location.hash || '');
+        });
     });
 
     $(window).bind('hashchange', function() {
