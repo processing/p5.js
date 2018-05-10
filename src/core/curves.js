@@ -443,6 +443,7 @@ p5.prototype.curveDetail = function(d) {
 p5.prototype.curveTightness = function(t) {
   p5._validateParameters('curveTightness', arguments);
   this._renderer._curveTightness = t;
+  return this;
 };
 
 /**
