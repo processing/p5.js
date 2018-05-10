@@ -56,7 +56,7 @@ function getTouchInfo(canvas, w, h, e, i) {
 
 /**
  * The touchStarted() function is called once after every time a touch is
- * registered. If no touchStarted() function is defined, the mousePressed()
+ * registered. If no <a href="#/p5/touchStarted">touchStarted()</a> function is defined, the <a href="#/p5/mousePressed">mousePressed()</a>
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
@@ -118,8 +118,8 @@ p5.prototype._ontouchstart = function(e) {
 };
 
 /**
- * The touchMoved() function is called every time a touch move is registered.
- * If no touchMoved() function is defined, the mouseDragged() function will
+ * The <a href="#/p5/touchMoved">touchMoved()</a> function is called every time a touch move is registered.
+ * If no <a href="#/p5/touchMoved">touchMoved()</a> function is defined, the <a href="#/p5/mouseDragged">mouseDragged()</a> function will
  * be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
@@ -180,8 +180,8 @@ p5.prototype._ontouchmove = function(e) {
 };
 
 /**
- * The touchEnded() function is called every time a touch ends. If no
- * touchEnded() function is defined, the mouseReleased() function will be
+ * The <a href="#/p5/touchEnded">touchEnded()</a> function is called every time a touch ends. If no
+ * <a href="#/p5/touchEnded">touchEnded()</a> function is defined, the <a href="#/p5/mouseReleased">mouseReleased()</a> function will be
  * called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"

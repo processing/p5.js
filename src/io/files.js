@@ -32,7 +32,7 @@ require('../core/error_helpers');
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
  * @param  {String}        [datatype] "json" or "jsonp"
  * @param  {function}      [callback] function to be executed after
- *                                    loadJSON() completes, data is passed
+ *                                    <a href="#/p5/loadJSON">loadJSON()</a> completes, data is passed
  *                                    in as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
@@ -40,8 +40,8 @@ require('../core/error_helpers');
  * @return {Object|Array}             JSON data
  * @example
  *
- * <p>Calling loadJSON() inside preload() guarantees to complete the
- * operation before setup() and draw() are called.</p>
+ * <p>Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
  * // Examples use USGS Earthquake API:
@@ -182,7 +182,7 @@ p5.prototype.loadJSON = function() {
  *
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
- * @param  {function} [callback] function to be executed after loadStrings()
+ * @param  {function} [callback] function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>
  *                               completes, Array is passed in as first
  *                               argument
  * @param  {function} [errorCallback] function to be executed if
@@ -269,7 +269,7 @@ p5.prototype.loadStrings = function() {
 };
 
 /**
- * <p>Reads the contents of a file or URL and creates a p5.Table object with
+ * <p>Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
  * its values. If a file is specified, it must be located in the sketch's
  * "data" folder. The filename parameter can also be a URL to a file found
  * online. By default, the file is assumed to be comma-separated (in CSV
@@ -295,9 +295,9 @@ p5.prototype.loadStrings = function() {
  * <p> All files loaded and saved use UTF-8 encoding.</p>
  *
  * <p>This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed. Calling loadTable() inside preload()
- * guarantees to complete the operation before setup() and draw() are called.
- * <p>Outside of preload(), you may supply a callback function to handle the
+ * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
+ * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
+ * <p>Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object:</p>
  * </p>
  *
@@ -305,13 +305,13 @@ p5.prototype.loadStrings = function() {
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String}         options  "header" "csv" "tsv"
  * @param  {function}       [callback] function to be executed after
- *                                     loadTable() completes. On success, the
- *                                     Table object is passed in as the
+ *                                     <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
+ *                                     <a href="#/p5.Table">Table</a> object is passed in as the
  *                                     first argument.
  * @param  {function}  [errorCallback] function to be executed if
  *                                     there is an error, response is passed
  *                                     in as first argument
- * @return {Object}                    Table object containing data
+ * @return {Object}                    <a href="#/p5.Table">Table</a> object containing data
  *
  * @example
  * <div class="norender">
@@ -611,15 +611,15 @@ function parseXML(two) {
  * URL for a file found on a network.
  *
  * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed. Calling loadXML() inside preload()
- * guarantees to complete the operation before setup() and draw() are called.
+ * line in your sketch is executed. Calling <a href="#/p5/loadXML">loadXML()</a> inside <a href="#/p5/preload">preload()</a>
+ * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
- * Outside of preload(), you may supply a callback function to handle the
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object.
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
- * @param  {function} [callback] function to be executed after loadXML()
+ * @param  {function} [callback] function to be executed after <a href="#/p5/loadXML">loadXML()</a>
  *                               completes, XML object is passed in as
  *                               first argument
  * @param  {function} [errorCallback] function to be executed if
@@ -704,7 +704,7 @@ p5.prototype.loadXML = function() {
 /**
  * @method loadBytes
  * @param {string}   file            name of the file or URL to load
- * @param {function} [callback]      function to be executed after loadBytes()
+ * @param {function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
  *                                    completes
  * @param {function} [errorCallback] function to be executed if there
  *                                    is an error
@@ -764,7 +764,7 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  *                                    "xml", or "text"
  * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
- *                                    httpGet() completes, data is passed in
+ *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
  *                                    as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
@@ -831,10 +831,10 @@ p5.prototype.httpGet = function() {
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
- *                                    If omitted, httpPost() will guess.
+ *                                    If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.
  * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
- *                                    httpPost() completes, data is passed in
+ *                                    <a href="#/p5/httpPost">httpPost()</a> completes, data is passed in
  *                                    as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
@@ -937,7 +937,7 @@ p5.prototype.httpPost = function() {
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {function}      [callback] function to be executed after
- *                                    httpGet() completes, data is passed in
+ *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
  *                                    as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
@@ -1329,8 +1329,8 @@ p5.PrintWriter = function(filename, extension) {
 
 /**
  *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
- *  the client's computer. <b>Note that it is not recommended to call save()
- *  within draw if it's looping, as the save() function will open a new save
+ *  the client's computer. <b>Note that it is not recommended to call <a href="#/p5/save">save()</a>
+ *  within draw if it's looping, as the <a href="#/p5/save">save()</a> function will open a new save
  *  dialog every frame.</b></p>
  *  <p>The default behavior is to save the canvas as an image. You can
  *  optionally specify a filename.
@@ -1341,8 +1341,8 @@ p5.PrintWriter = function(filename, extension) {
  * </code></pre>
  *
  *  <p>Alternately, the first parameter can be a pointer to a canvas
- *  p5.Element, an Array of Strings,
- *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
+ *  <a href="#/p5.Element">p5.Element</a>, an Array of Strings,
+ *  an Array of JSON, a JSON object, a p5.Table, a <a href="#/p5.Image">p5.Image</a>, or a
  *  p5.SoundFile (requires p5.sound). The second parameter is a filename
  *  (including extension). The third parameter is for options specific
  *  to this type of object. This method will save a file that fits the
@@ -1570,14 +1570,14 @@ function escapeHelper(content) {
 }
 
 /**
- *  Writes the contents of a Table object to a file. Defaults to a
+ *  Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
  *  text file with comma-separated-values ('csv') but can also
  *  use tab separation ('tsv'), or generate an HTML table ('html').
  *  The file saving process and location of the saved file will
  *  vary between web browsers.
  *
  *  @method saveTable
- *  @param  {p5.Table} Table  the Table object to save to a file
+ *  @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
  *  @param  {String} filename the filename to which the Table should be saved
  *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
  *  @example

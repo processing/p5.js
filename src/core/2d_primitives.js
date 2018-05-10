@@ -17,11 +17,11 @@ require('./error_helpers');
  * Draw an arc to the screen. If called with only x, y, w, h, start, and
  * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
  * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
- * origin may be changed with the ellipseMode() function.<br><br>
+ * origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.<br><br>
  * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
  * because 0 and TWO_PI are the same position on the unit circle. The
- * best way to handle this is by using the ellipse() function instead
- * to create a closed ellipse, and to use the arc() function
+ * best way to handle this is by using the <a href="#/p5/ellipse">ellipse()</a> function instead
+ * to create a closed ellipse, and to use the <a href="#/p5/arc">arc()</a> function
  * only to draw parts of an ellipse.
  *
  * @method arc
@@ -136,7 +136,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * and the third and fourth parameters set the shape's width and height. If
  * no height is specified, the value of width is used for both the width and
  * height. If a negative height or width is specified, the absolute value is taken.
- * The origin may be changed with the ellipseMode() function.
+ * The origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
  * @param  {Number} x x-coordinate of the ellipse.
@@ -187,11 +187,11 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 };
 /**
  * Draws a line (a direct path between two points) to the screen. The version
- * of line() with four parameters draws the line in 2D. To color a line, use
- * the stroke() function. A line cannot be filled, therefore the fill()
+ * of <a href="#/p5/line">line()</a> with four parameters draws the line in 2D. To color a line, use
+ * the <a href="#/p5/stroke">stroke()</a> function. A line cannot be filled, therefore the <a href="#/p5/fill">fill()</a>
  * function will not affect the color of a line. 2D lines are drawn with a
  * width of one pixel by default, but this can be changed with the
- * strokeWeight() function.
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> function.
  *
  * @method line
  * @param  {Number} x1 the x-coordinate of the first point
@@ -335,7 +335,7 @@ p5.prototype.quad = function() {
  * every angle at ninety degrees. By default, the first two parameters set
  * the location of the upper-left corner, the third sets the width, and the
  * fourth sets the height. The way these parameters are interpreted, however,
- * may be changed with the rectMode() function.
+ * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
  * <br><br>
  * The fifth, sixth, seventh and eighth parameters, if specified,
  * determine corner radius for the top-right, top-left, lower-right and

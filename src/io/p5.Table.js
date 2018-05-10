@@ -33,7 +33,7 @@ var p5 = require('../core/core');
  */
 
 /**
- *  Table objects store data with multiple rows and columns, much
+ *  <a href="#/p5.Table">Table</a> objects store data with multiple rows and columns, much
  *  like in a traditional spreadsheet. Tables can be generated from
  *  scratch, dynamically, or using data from an existing file.
  *
@@ -54,12 +54,12 @@ p5.Table = function(rows) {
 };
 
 /**
- *  Use addRow() to add a new row of data to a p5.Table object. By default,
+ *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
  *  an empty row is created. Typically, you would store a reference to
  *  the new row in a TableRow object (see newRow in the example above),
- *  and then set individual values using set().
+ *  and then set individual values using <a href="#/p5/set">set()</a>.
  *
- *  If a p5.TableRow object is included as a parameter, then that row is
+ *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
  *  duplicated and added to the table.
  *
  *  @method  addRow
@@ -165,12 +165,12 @@ p5.Table.prototype.removeRow = function(id) {
 };
 
 /**
- * Returns a reference to the specified p5.TableRow. The reference
+ * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
  * can then be used to get and set values of the selected row.
  *
  * @method  getRow
  * @param  {Integer}   rowID ID number of the row to get
- * @return {p5.TableRow} p5.TableRow object
+ * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
  *
  * @example
  * <div class="norender">
@@ -211,10 +211,10 @@ p5.Table.prototype.getRow = function(r) {
 };
 
 /**
- *  Gets all rows from the table. Returns an array of p5.TableRows.
+ *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
  *
  *  @method  getRows
- *  @return {p5.TableRow[]}   Array of p5.TableRows
+ *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
  *
  * @example
  * <div class="norender">
@@ -615,7 +615,7 @@ p5.Table.prototype.clearRows = function() {
 };
 
 /**
- *  Use addColumn() to add a new column to a Table object.
+ *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
  *  Typically, you will want to specify a title, so the column
  *  may be easily referenced later by name. (If no title is
  *  specified, the new column's title will be null.)
@@ -876,7 +876,7 @@ p5.Table.prototype.trim = function(column) {
 };
 
 /**
- *  Use removeColumn() to remove an existing column from a Table
+ *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
  *  object. The column to be removed may be identified by either
  *  its title (a String) or its index value (an int).
  *  removeColumn(0) would remove the first column, removeColumn(1)

@@ -17,7 +17,7 @@ var color_conversion = require('./color_conversion');
  * Each color stores the color mode and level maxes that applied at the
  * time of its construction. These are used to interpret the input arguments
  * (at construction and later for that instance of color) and to format the
- * output e.g. when saturation() is requested.
+ * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
  *
  * Internally we store an array representing the ideal RGBA values in floating
  * point form, normalized from 0 to 1. From this we calculate the closest

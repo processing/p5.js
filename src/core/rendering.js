@@ -22,7 +22,7 @@ var defaultClass = 'p5Canvas';
  * you could use createGraphics (hidden by default but it can be shown).
  * <br><br>
  * The system variables width and height are set by the parameters passed
- * to this function. If createCanvas() is not used, the window will be
+ * to this function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the window will be
  * given a default size of 100x100 pixels.
  * <br><br>
  * For more ways to position the canvas, see the

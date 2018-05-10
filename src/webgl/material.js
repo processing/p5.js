@@ -14,7 +14,7 @@ require('./p5.Texture');
 /**
  * Loads a custom shader from the provided vertex and fragment
  * shader paths. The shader files are loaded asynchronously in the
- * background, so this method should be used in preload().
+ * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
  * For now, there are three main types of shaders. p5 will automatically
  * supply appropriate vertices, normals, colors, and lighting attributes
@@ -123,14 +123,14 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * The shader() function lets the user provide a custom shader
+ * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
  * own shaders by loading vertex and fragment shaders with
- * loadShader().
+ * <a href="#/p5/loadShader">loadShader()</a>.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
+ * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
  */
 p5.prototype.shader = function(s) {

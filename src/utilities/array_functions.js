@@ -39,7 +39,7 @@ p5.prototype.append = function(array, value) {
  * srcPosition and into the position specified by dstPosition. The number of
  * elements to copy is determined by length. Note that copying values
  * overwrites existing values in the destination array. To append values
- * instead of overwriting them, use concat().
+ * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
  * <br><br>
  * The simplified version with only two arguments, arrayCopy(src, dst),
  * copies an entire array to another of the same size. It is equivalent to

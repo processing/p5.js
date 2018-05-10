@@ -40,7 +40,7 @@ define([
             if (p.optdefault) syntax += '='+p.optdefault;
             if (p.optional) syntax += ']';
             if (i !== cleanItem.params.length-1) {
-              syntax += ',';
+              syntax += ', ';
             }
           }
         }

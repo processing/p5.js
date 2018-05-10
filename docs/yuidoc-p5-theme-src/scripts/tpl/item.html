@@ -152,8 +152,10 @@
     <%if (p.optdefault) { %>=<%=p.optdefault%><% } %>
     </td>
     <td>
-    <% if (p.type) { %>
-      <span class="param-type label label-info"><%=p.type%></span>: <%=p.description%></span>
+    <% if (p.type) {
+      var type = p.type.replace(/(p5\.[A-Z][A-Za-z]*)/, '<a href="#/$1">$1</a>');
+    %>
+      <span class="param-type label label-info"><%=type%></span>: <%=p.description%></span>
     <% } %>
     <% if (p.multiple) {%>
       <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
