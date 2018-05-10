@@ -15,24 +15,28 @@ module.exports = function(grunt) {
         my_opts.url = testURL;
         my_opts.chromeFlags = ['--no-sandbox', '--mute-audio'];
         my_opts.logLevel = 'trace';
+        var success, failure;
         var runner = new MochaCrome(my_opts);
-        var result = new Promise((resolve, reject) => {
-          runner.on('ended', function(stats) {
-            if (stats.failures) {
-              reject(stats);
-            } else {
-              resolve(stats);
-            }
-          });
-          runner.on('failure', reject);
+        runner.on('ended', stats => {
+          if (stats.failures) {
+            failure = stats;
+          } else {
+            success = stats;
+          }
         });
+        runner.on('failure', e => (failure = e));
 
         (async function() {
           await runner.connect();
           await runner.run();
         })();
 
-        await result;
+        await new Promise((resolve, reject) => {
+          runner.on('exit', function() {
+            if (success) resolve(success);
+            else reject(failure);
+          });
+        });
       }
 
       done();
