@@ -366,6 +366,7 @@ p5.Color.prototype.setAlpha = function(new_alpha) {
 // calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
   var array = this._array;
+  // (loop backwards for performance)
   var levels = (this.levels = new Array(array.length));
   for (var i = array.length - 1; i >= 0; --i) {
     levels[i] = Math.round(array[i] * 255);
@@ -810,6 +811,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     }
 
     // Constrain components to the range [0,1].
+    // (loop backwards for performance)
     for (i = results.length - 1; i >= 0; --i) {
       var result = results[i];
       if (result < 0) {
@@ -971,6 +973,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     }
 
     if (results.length) {
+      // (loop backwards for performance)
       for (i = results.length - 1; i >= 0; --i) {
         results[i] = Math.max(Math.min(results[i], 1), 0);
       }
