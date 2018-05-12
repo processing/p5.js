@@ -64,6 +64,7 @@ p5.Table = function(rows) {
  *
  *  @method  addRow
  *  @param   {p5.TableRow} [row] row to be added to the table
+ *  @return  {p5.TableRow} the row that was added
  *
  * @example
  * <div class="norender">
