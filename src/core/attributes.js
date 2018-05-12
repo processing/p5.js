@@ -68,7 +68,6 @@ var constants = require('./constants');
  *
  */
 p5.prototype.ellipseMode = function(m) {
-  p5._validateParameters('ellipseMode', arguments);
   if (
     m === constants.CORNER ||
     m === constants.CORNERS ||
@@ -165,7 +164,6 @@ p5.prototype.noSmooth = function() {
  *
  */
 p5.prototype.rectMode = function(m) {
-  p5._validateParameters('rectMode', arguments);
   if (
     m === constants.CORNER ||
     m === constants.CORNERS ||
@@ -232,7 +230,6 @@ p5.prototype.smooth = function() {
  *
  */
 p5.prototype.strokeCap = function(cap) {
-  p5._validateParameters('strokeCap', arguments);
   if (
     cap === constants.ROUND ||
     cap === constants.SQUARE ||
@@ -299,7 +296,6 @@ p5.prototype.strokeCap = function(cap) {
  *
  */
 p5.prototype.strokeJoin = function(join) {
-  p5._validateParameters('strokeJoin', arguments);
   if (
     join === constants.ROUND ||
     join === constants.BEVEL ||
@@ -334,7 +330,6 @@ p5.prototype.strokeJoin = function(join) {
  *
  */
 p5.prototype.strokeWeight = function(w) {
-  p5._validateParameters('strokeWeight', arguments);
   this._renderer.strokeWeight(w);
   return this;
 };

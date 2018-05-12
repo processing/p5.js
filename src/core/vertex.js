@@ -243,7 +243,6 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
-  p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.beginShape.apply(this._renderer, arguments);
   } else {
@@ -334,7 +333,6 @@ p5.prototype.beginShape = function(kind) {
  *
  */
 p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
-  p5._validateParameters('bezierVertex', arguments);
   if (vertices.length === 0) {
     throw 'vertex() must be used once before calling bezierVertex()';
   } else {
@@ -398,7 +396,6 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  *
  */
 p5.prototype.curveVertex = function(x, y) {
-  p5._validateParameters('curveVertex', arguments);
   isCurve = true;
   this.vertex(x, y);
   return this;
@@ -498,7 +495,6 @@ p5.prototype.endContour = function() {
  *
  */
 p5.prototype.endShape = function(mode) {
-  p5._validateParameters('endShape', arguments);
   if (this._renderer.isP3D) {
     this._renderer.endShape(
       mode,
@@ -610,7 +606,6 @@ p5.prototype.endShape = function(mode) {
  *
  */
 p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
-  p5._validateParameters('quadraticVertex', arguments);
   //if we're drawing a contour, put the points into an
   // array for inside drawing
   if (this._contourInited) {

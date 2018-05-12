@@ -70,7 +70,6 @@ var p5 = require('../core/core');
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a) {
   this._assert3d('ambientLight');
-  p5._validateParameters('ambientLight', arguments);
   var color = this.color.apply(this, arguments);
 
   var shader = this._renderer._useLightShader();
@@ -160,7 +159,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  */
 p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
-  p5._validateParameters('directionalLight', arguments);
   var shader = this._renderer._useLightShader();
 
   //@TODO: check parameters number
@@ -273,7 +271,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  */
 p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
-  p5._validateParameters('pointLight', arguments);
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(this, [v1, v2, v3]);
 

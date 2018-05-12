@@ -51,7 +51,6 @@ var defaultClass = 'p5Canvas';
  */
 
 p5.prototype.createCanvas = function(w, h, renderer) {
-  p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
   var r = renderer || constants.P2D;
   var c;
@@ -144,7 +143,6 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  *
  */
 p5.prototype.resizeCanvas = function(w, h, noRedraw) {
-  p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save canvas properties
     var props = {};
@@ -227,7 +225,6 @@ p5.prototype.noCanvas = function() {
  *
  */
 p5.prototype.createGraphics = function(w, h, renderer) {
-  p5._validateParameters('createGraphics', arguments);
   return new p5.Graphics(w, h, renderer, this);
 };
 
@@ -297,7 +294,6 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  *
  */
 p5.prototype.blendMode = function(mode) {
-  p5._validateParameters('blendMode', arguments);
   if (
     mode === constants.BLEND ||
     mode === constants.DARKEST ||

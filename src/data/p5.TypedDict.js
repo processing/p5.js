@@ -43,7 +43,6 @@ var p5 = require('../core/core');
  */
 
 p5.prototype.createStringDict = function(key, value) {
-  p5._validateParameters('createStringDict', arguments);
   return new p5.StringDict(key, value);
 };
 
@@ -77,7 +76,6 @@ p5.prototype.createStringDict = function(key, value) {
  */
 
 p5.prototype.createNumberDict = function(key, value) {
-  p5._validateParameters('createNumberDict', arguments);
   return new p5.NumberDict(key, value);
 };
 

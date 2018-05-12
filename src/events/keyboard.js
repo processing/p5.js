@@ -363,7 +363,6 @@ p5.prototype._onblur = function(e) {
  *
  */
 p5.prototype.keyIsDown = function(code) {
-  p5._validateParameters('keyIsDown', arguments);
   return downKeys[code];
 };
 

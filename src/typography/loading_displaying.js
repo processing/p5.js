@@ -85,7 +85,6 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
-  p5._validateParameters('loadFont', arguments);
   var p5Font = new p5.Font(this);
 
   var self = this;
@@ -193,7 +192,6 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  p5._validateParameters('text', arguments);
   return !(this._renderer._doFill || this._renderer._doStroke)
     ? this
     : this._renderer.text.apply(this._renderer, arguments);
@@ -251,7 +249,6 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * @chainable
  */
 p5.prototype.textFont = function(theFont, theSize) {
-  p5._validateParameters('textFont', arguments);
   if (arguments.length) {
     if (!theFont) {
       throw Error('null font passed to textFont');

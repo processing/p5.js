@@ -496,6 +496,10 @@ var p5 = function(sketch, node, sync) {
     }
   }, this);
 
+  if (typeof IS_MINIFIED === 'undefined') {
+    p5._initializeParameterValidation();
+  }
+
   var friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
   // If the user has created a global setup or draw function,

@@ -57,7 +57,9 @@ suite('Trigonometry', function() {
     });
 
     test('should always be RADIANS or DEGREES', function() {
+      p5._throwValidationErrors = false;
       myp5.angleMode('wtflolzkk');
+      p5._throwValidationErrors = true;
       assert.equal(myp5._angleMode, 'radians');
     });
   });

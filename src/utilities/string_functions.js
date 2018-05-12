@@ -37,7 +37,6 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.join = function(list, separator) {
-  p5._validateParameters('join', arguments);
   return list.join(separator);
 };
 
@@ -78,7 +77,6 @@ p5.prototype.join = function(list, separator) {
  *
  */
 p5.prototype.match = function(str, reg) {
-  p5._validateParameters('match', arguments);
   return str.match(reg);
 };
 
@@ -115,7 +113,6 @@ p5.prototype.match = function(str, reg) {
  * </div>
  */
 p5.prototype.matchAll = function(str, reg) {
-  p5._validateParameters('matchAll', arguments);
   var re = new RegExp(reg, 'g');
   var match = re.exec(str);
   var matches = [];
@@ -179,7 +176,6 @@ p5.prototype.matchAll = function(str, reg) {
  * @return {String[]}                formatted Strings
  */
 p5.prototype.nf = function(nums, left, right) {
-  p5._validateParameters('nf', arguments);
   if (nums instanceof Array) {
     return nums.map(function(x) {
       return doNf(x, left, right);
@@ -279,7 +275,6 @@ function doNf(num, left, right) {
  * @return {String[]}           formatted Strings
  */
 p5.prototype.nfc = function(num, right) {
-  p5._validateParameters('nfc', arguments);
   if (num instanceof Array) {
     return num.map(function(x) {
       return doNfc(x, right);
@@ -359,7 +354,6 @@ function doNfc(num, right) {
  * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
-  p5._validateParameters('nfp', arguments);
   var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
@@ -421,7 +415,6 @@ function addNfp(num) {
  * @return {String[]}         formatted Strings
  */
 p5.prototype.nfs = function() {
-  p5._validateParameters('nfs', arguments);
   var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
@@ -464,7 +457,6 @@ function addNfs(num) {
  *
  */
 p5.prototype.split = function(str, delim) {
-  p5._validateParameters('split', arguments);
   return str.split(delim);
 };
 
@@ -495,7 +487,6 @@ p5.prototype.split = function(str, delim) {
  * </div>
  */
 p5.prototype.splitTokens = function(value, delims) {
-  p5._validateParameters('splitTokens', arguments);
   var d;
   if (typeof delims !== 'undefined') {
     var str = delims;
@@ -549,7 +540,6 @@ p5.prototype.splitTokens = function(value, delims) {
  * @return {String[]}   an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
-  p5._validateParameters('trim', arguments);
   if (str instanceof Array) {
     return str.map(this.trim);
   } else {
