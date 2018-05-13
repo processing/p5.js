@@ -10,7 +10,7 @@
 var p5 = require('./core');
 
 p5.prototype.exit = function() {
-  throw 'exit() not implemented, see remove()';
+  throw new Error('exit() not implemented, see remove()');
 };
 /**
  * Stops p5.js from continuously executing the code within draw().
@@ -364,7 +364,7 @@ p5.prototype.redraw = function(n) {
 p5.prototype.size = function() {
   var s = 'size() is not a valid p5 function, to set the size of the ';
   s += 'drawing canvas, please use createCanvas() instead';
-  throw s;
+  throw new Error(s);
 };
 
 module.exports = p5;

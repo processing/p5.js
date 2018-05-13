@@ -336,7 +336,7 @@ p5.prototype.beginShape = function(kind) {
 p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
   p5._validateParameters('bezierVertex', arguments);
   if (vertices.length === 0) {
-    throw 'vertex() must be used once before calling bezierVertex()';
+    throw new Error('vertex() must be used once before calling bezierVertex()');
   } else {
     isBezier = true;
     var vert = [];
@@ -637,7 +637,9 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
       vertices.push(vert);
     }
   } else {
-    throw 'vertex() must be used once before calling quadraticVertex()';
+    throw new Error(
+      'vertex() must be used once before calling quadraticVertex()'
+    );
   }
   return this;
 };

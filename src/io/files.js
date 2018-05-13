@@ -1093,7 +1093,12 @@ p5.prototype.httpDo = function() {
 
   (type === 'jsonp' ? fetchJsonp(path, jsonpOptions) : fetch(request))
     .then(function(res) {
-      if (!res.ok) throw res;
+      if (!res.ok) {
+        var err = new Error(res.body);
+        err.status = res.status;
+        err.ok = false;
+        throw err;
+      }
 
       switch (type) {
         case 'json':
