@@ -27,6 +27,32 @@ require('./p5.Texture');
  * source code
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * var mandel;
+ * function preload() {
+ *   // load the shader definitions from files
+ *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // use the shader
+ *   shader(mandel);
+ *   noStroke();
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
   p5._validateParameters('loadShader', arguments);

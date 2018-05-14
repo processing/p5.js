@@ -294,7 +294,7 @@ p5.TypedDict.prototype.remove = function(key) {
   if (this.data.hasOwnProperty(key)) {
     delete this.data[key];
   } else {
-    throw key + ' does not exist in this Dictionary';
+    throw new Error(key + ' does not exist in this Dictionary');
   }
 };
 
@@ -548,7 +548,9 @@ p5.NumberDict.prototype.div = function(key, amount) {
 
 p5.NumberDict.prototype._valueTest = function(flip) {
   if (Object.keys(this.data).length === 0) {
-    throw 'Unable to search for a minimum or maximum value on an empty NumberDict';
+    throw new Error(
+      'Unable to search for a minimum or maximum value on an empty NumberDict'
+    );
   } else if (Object.keys(this.data).length === 1) {
     return this.data[Object.keys(this.data)[0]];
   } else {
@@ -613,7 +615,7 @@ p5.NumberDict.prototype.maxValue = function() {
 
 p5.NumberDict.prototype._keyTest = function(flip) {
   if (Object.keys(this.data).length === 0) {
-    throw 'Unable to use minValue on an empty NumberDict';
+    throw new Error('Unable to use minValue on an empty NumberDict');
   } else if (Object.keys(this.data).length === 1) {
     return Object.keys(this.data)[0];
   } else {

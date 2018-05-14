@@ -151,7 +151,7 @@ p5.RendererGL.prototype._initContext = function() {
       );
     }
   } catch (er) {
-    throw new Error(er);
+    throw er;
   }
 };
 

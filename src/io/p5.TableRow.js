@@ -87,7 +87,7 @@ p5.TableRow.prototype.set = function(column, value) {
       this.obj[column] = value;
       this.arr[cPos] = value;
     } else {
-      throw 'This table has no column named "' + column + '"';
+      throw new Error('This table has no column named "' + column + '"');
     }
   } else {
     // if typeof column is number, use .arr
@@ -96,7 +96,9 @@ p5.TableRow.prototype.set = function(column, value) {
       var cTitle = this.table.columns[column];
       this.obj[cTitle] = value;
     } else {
-      throw 'Column #' + column + ' is out of the range of this table';
+      throw new Error(
+        'Column #' + column + ' is out of the range of this table'
+      );
     }
   }
 };

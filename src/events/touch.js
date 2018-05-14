@@ -20,6 +20,23 @@ var p5 = require('../core/core');
  *
  * @property {Object[]} touches
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // On a touchscreen device, touch
+ * // the canvas using one or more fingers
+ * // at the same time
+ * function draw() {
+ *   clear();
+ *   var display = touches.length + ' touches';
+ *   text(display, 5, 10);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Number of touches currently registered are displayed on the canvas
  */
 p5.prototype.touches = [];
 
