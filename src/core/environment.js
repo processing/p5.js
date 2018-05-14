@@ -491,10 +491,9 @@ p5.prototype.fullscreen = function(val) {
  * to turn this off. Calling pixelDensity() with no arguments returns
  * the current pixel density of the sketch.
  *
- *
  * @method pixelDensity
- * @param  {Number} [val] whether or how much the sketch should scale
- * @returns {Number} current pixel density of the sketch
+ * @param  {Number} val whether or how much the sketch should scale
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -521,14 +520,21 @@ p5.prototype.fullscreen = function(val) {
  * fuzzy 50x50 white ellipse with black outline in center of canvas.
  * sharp 50x50 white ellipse with black outline in center of canvas.
  */
+/**
+ * @method pixelDensity
+ * @returns {Number} current pixel density of the sketch
+ */
 p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
+  var returnValue;
   if (typeof val === 'number') {
     this._pixelDensity = val;
+    returnValue = this;
   } else {
-    return this._pixelDensity;
+    returnValue = this._pixelDensity;
   }
   this.resizeCanvas(this.width, this.height, true);
+  return returnValue;
 };
 
 /**
