@@ -91,6 +91,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
   }
 
   this._renderer.drawBuffersScaled(gId, width, height, 0);
+  return this;
 };
 
 /**

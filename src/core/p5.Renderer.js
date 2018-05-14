@@ -129,7 +129,7 @@ p5.Renderer.prototype.resize = function(w, h) {
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
     this._setProperty('_textLeading', l);
-    return this;
+    return this._pInst;
   }
 
   return this._textLeading;
