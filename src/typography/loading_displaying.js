@@ -254,7 +254,7 @@ p5.prototype.textFont = function(theFont, theSize) {
   p5._validateParameters('textFont', arguments);
   if (arguments.length) {
     if (!theFont) {
-      throw Error('null font passed to textFont');
+      throw new Error('null font passed to textFont');
     }
 
     this._renderer._setProperty('_textFont', theFont);

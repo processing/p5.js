@@ -37,7 +37,7 @@ p5.Font = function(p) {
 
 p5.Font.prototype.list = function() {
   // TODO
-  throw 'not yet implemented';
+  throw new Error('not yet implemented');
 };
 
 /**

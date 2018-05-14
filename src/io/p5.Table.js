@@ -109,7 +109,7 @@ p5.Table.prototype.addRow = function(row) {
 
   if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
     //r = new p5.prototype.TableRow(r);
-    throw 'invalid TableRow: ' + r;
+    throw new Error('invalid TableRow: ' + r);
   }
   r.table = this;
   this.rows.push(r);
@@ -1282,7 +1282,9 @@ p5.Table.prototype.getObject = function(headerColumn) {
         index = obj[headerColumn];
         tableObject[index] = obj;
       } else {
-        throw 'This table has no column named "' + headerColumn + '"';
+        throw new Error(
+          'This table has no column named "' + headerColumn + '"'
+        );
       }
     } else {
       tableObject[i] = this.rows[i].obj;

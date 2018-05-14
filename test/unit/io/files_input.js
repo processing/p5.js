@@ -71,7 +71,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
@@ -175,7 +174,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response.');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
@@ -240,7 +238,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is an object');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
