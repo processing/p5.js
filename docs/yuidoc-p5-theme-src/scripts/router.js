@@ -84,6 +84,7 @@ define([
           self.list();
         }
 
+        styleCodeLinks();
       });
     },
     /**
@@ -154,6 +155,7 @@ define([
         App.menuView.show(collection);
         App.menuView.update(collection);
         App.listView.show(collection);
+        styleCodeLinks();
       });
     },
     /**
@@ -164,6 +166,7 @@ define([
       this.init(function() {
         App.menuView.hide();
         App.libraryView.show(collection.substring(3)); //remove p5.
+        styleCodeLinks();
       });
     },
     /**
@@ -197,8 +200,19 @@ define([
        }
 
        return item.hash;
-     }
-   });
+    }
+  });
+
+  
+  function styleCodeLinks() {
+    var links = document.getElementsByTagName("a");
+    for (var iLink = 0; iLink < links.length; iLink++) {
+      var link = links[iLink];
+      if (link.hash.startsWith('#/p5')) {
+        link.classList.add('code');
+      }
+    }
+  }
 
 
   // Get the router

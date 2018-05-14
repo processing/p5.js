@@ -20,7 +20,7 @@ p5.prototype._targetFrameRate = 60;
 var _windowPrint = window.print;
 
 /**
- * The print() function writes to the console area of your browser.
+ * The <a href="#/p5/print">print()</a> function writes to the console area of your browser.
  * This function is often helpful for looking at the data a program is
  * producing. This function creates a new line of text for each call to
  * the function. Individual elements can be
@@ -47,8 +47,8 @@ p5.prototype.print = function() {
 };
 
 /**
- * The system variable frameCount contains the number of frames that have
- * been displayed since the program started. Inside setup() the value is 0,
+ * The system variable <a href="#/p5/frameCount">frameCount</a> contains the number of frames that have
+ * been displayed since the program started. Inside <a href="#/p5/setup">setup()</a> the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
  * @property {Integer} frameCount
@@ -171,15 +171,15 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within setup() is
+ * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
  * recommended. The default rate is 60 frames per second. This is the same as
  * setFrameRate(val).
  * <br><br>
- * Calling frameRate() with no arguments returns the current framerate. The
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate. The
  * draw function must run at least once before it will return a value. This
- * is the same as getFrameRate().
+ * is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
  * <br><br>
- * Calling frameRate() with arguments that are not of the type numbers
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not of the type numbers
  * or are non positive also returns current framerate.
  *
  * @method frameRate
@@ -253,10 +253,10 @@ p5.prototype.getFrameRate = function() {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within setup() is
+ * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
  * recommended. The default rate is 60 frames per second.
  *
- * Calling frameRate() with no arguments returns the current framerate.
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate.
  *
  * @private
  * @param {Number} [fps] number of frames to be displayed every second
@@ -357,7 +357,7 @@ p5.prototype.windowWidth = getWindowWidth();
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
- * The windowResized() function is called once every time the browser window
+ * The <a href="#/p5/windowResized">windowResized()</a> function is called once every time the browser window
  * is resized. This is a good place to resize the canvas or do any other
  * adjustments to accommodate the new window size.
  *
@@ -412,10 +412,10 @@ function getWindowHeight() {
 
 /**
  * System variable that stores the width of the drawing canvas. This value
- * is set by the first parameter of the createCanvas() function.
+ * is set by the first parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function.
  * For example, the function call createCanvas(320, 240) sets the width
  * variable to the value 320. The value of width defaults to 100 if
- * createCanvas() is not used in a program.
+ * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
  *
  * @property {Number} width
  * @readOnly
@@ -424,10 +424,10 @@ p5.prototype.width = 0;
 
 /**
  * System variable that stores the height of the drawing canvas. This value
- * is set by the second parameter of the createCanvas() function. For
+ * is set by the second parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function. For
  * example, the function call createCanvas(320, 240) sets the height
  * variable to the value 240. The value of height defaults to 100 if
- * createCanvas() is not used in a program.
+ * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
  *
  * @property {Number} height
  * @readOnly
@@ -488,7 +488,7 @@ p5.prototype.fullscreen = function(val) {
 /**
  * Sets the pixel scaling for high pixel density displays. By default
  * pixel density is set to match display density, call pixelDensity(1)
- * to turn this off. Calling pixelDensity() with no arguments returns
+ * to turn this off. Calling <a href="#/p5/pixelDensity">pixelDensity()</a> with no arguments returns
  * the current pixel density of the sketch.
  *
  * @method pixelDensity

@@ -1,5 +1,5 @@
 /**
- * This module defines the p5.Font class and functions for
+ * This module defines the <a href="#/p5.Font">p5.Font</a> class and functions for
  * drawing text to the display canvas.
  * @module Typography
  * @submodule Font

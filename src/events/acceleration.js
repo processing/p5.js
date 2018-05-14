@@ -348,8 +348,8 @@ var move_threshold = 0.5;
 var shake_threshold = 30;
 
 /**
- * The setMoveThreshold() function is used to set the movement threshold for
- * the deviceMoved() function. The default threshold is set to 0.5.
+ * The <a href="#/p5/setMoveThreshold">setMoveThreshold()</a> function is used to set the movement threshold for
+ * the <a href="#/p5/deviceMoved">deviceMoved()</a> function. The default threshold is set to 0.5.
  *
  * @method setMoveThreshold
  * @param {number} value The threshold value
@@ -391,8 +391,8 @@ p5.prototype.setMoveThreshold = function(val) {
 };
 
 /**
- * The setShakeThreshold() function is used to set the movement threshold for
- * the deviceShaken() function. The default threshold is set to 30.
+ * The <a href="#/p5/setShakeThreshold">setShakeThreshold()</a> function is used to set the movement threshold for
+ * the <a href="#/p5/deviceShaken">deviceShaken()</a> function. The default threshold is set to 30.
  *
  * @method setShakeThreshold
  * @param {number} value The threshold value
@@ -435,7 +435,7 @@ p5.prototype.setShakeThreshold = function(val) {
 };
 
 /**
- * The deviceMoved() function is called when the device is moved by more than
+ * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
  * the threshold value along X, Y or Z axis. The default threshold is set to
  * 0.5.
  * @method deviceMoved
@@ -466,11 +466,11 @@ p5.prototype.setShakeThreshold = function(val) {
  */
 
 /**
- * The deviceTurned() function is called when the device rotates by
+ * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
  * more than 90 degrees continuously.
  * <br><br>
- * The axis that triggers the deviceTurned() method is stored in the turnAxis
- * variable. The deviceTurned() method can be locked to trigger on any axis:
+ * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the turnAxis
+ * variable. The <a href="#/p5/deviceTurned">deviceTurned()</a> method can be locked to trigger on any axis:
  * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
  *
  * @method deviceTurned
@@ -525,7 +525,7 @@ p5.prototype.setShakeThreshold = function(val) {
  */
 
 /**
- * The deviceShaken() function is called when the device total acceleration
+ * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
  * changes of accelerationX and accelerationY values is more than
  * the threshold value. The default threshold is set to 30.
  * @method deviceShaken

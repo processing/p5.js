@@ -6,7 +6,7 @@
  */
 
 /**
- * This module defines the p5 methods for the p5.Image class
+ * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
  * for drawing images to the main display canvas.
  */
 'use strict';
@@ -16,26 +16,26 @@ var p5 = require('../core/core'); // This is not global, but JSHint is not aware
 /* global frames:true */ var frames = [];
 
 /**
- * Creates a new p5.Image (the datatype for storing images). This provides a
+ * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
  * width and height parameters.
  * <br><br>
- * .pixels gives access to an array containing the values for all the pixels
+ * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
- * factor for the pixelDensity) of the display window x4,
+ * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
- * left to right across each row, then down each column. See .pixels for
- * more info. It may also be simpler to use set() or get().
+ * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
+ * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
  * <br><br>
  * Before accessing the pixels of an image, the data must loaded with the
- * loadPixels() function. After the array data has been modified, the
- * updatePixels() function must be run to update the changes.
+ * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
+ * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
  *
  * @method createImage
  * @param  {Integer} width  width in pixels
  * @param  {Integer} height height in pixels
- * @return {p5.Image}       the p5.Image object
+ * @return {p5.Image}       the <a href="#/p5.Image">p5.Image</a> object
  * @example
  * <div>
  * <code>
@@ -200,7 +200,7 @@ p5.prototype.saveCanvas = function() {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
- *  Note that saveFrames() will only save the first 15 frames of an animation.
+ *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 frames of an animation.
  *  To export longer animations, you might look into a library like
  *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
  *

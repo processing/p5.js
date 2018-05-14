@@ -49,7 +49,7 @@ p5.prototype.createStringDict = function(key, value) {
 
 /**
  *
- * Creates a new instance of p5.NumberDict using the key-value pair
+ * Creates a new instance of <a href="#/p5.NumberDict">p5.NumberDict</a> using the key-value pair
  * or object you provide.
  *
  * @method createNumberDict

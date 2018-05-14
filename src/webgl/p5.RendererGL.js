@@ -593,7 +593,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
  * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or p5.Image
+ *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
