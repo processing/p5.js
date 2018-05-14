@@ -338,7 +338,7 @@ p5.prototype.quad = function() {
  * may be changed with the rectMode() function.
  * <br><br>
  * The fifth, sixth, seventh and eighth parameters, if specified,
- * determine corner radius for the top-right, top-left, lower-right and
+ * determine corner radius for the top-left, top-right, lower-right and
  * lower-left corners, respectively. An omitted corner radius parameter is set
  * to the value of the previously specified radius value in the parameter list.
  *
