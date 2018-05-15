@@ -12,7 +12,7 @@ The `app.js` file is simply an index of all the other modules which exports the 
 
 p5.js seeks to create a toolkit for working with the web technologies that are most valuable for building art projects. For both expressive and pedagogical reasons, p5.js values (but does not necessarily always achieve lol!) clarity in its APIs.
 
-Public APIs which are exposed to users of the p5.js should use short, clear, declarative function names. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured.
+Public APIs which are exposed to users of the p5.js library during the course of working on sketches and projects should use short, clear, declarative function names. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured into something more creative, expressive, or intuitive.
 
 Internal APIs which are not exposed to the user but are used for coordination within the library should generally as constructor functions which can be exported across module boundaries. Those constructors are often attached to the `p5` constructor as a form of namespacing, but otherwise do not meaningfully act as methods that reference the host object. In cases where a `p5` object is needed inside a constructor, an instance will be explicitly passed as an input argument.
 
