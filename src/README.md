@@ -4,6 +4,8 @@ The p5.js source code is organized into subdirectories which are roughly concept
 
 The `src/core` directory is the primary exception to this. It contains most of the internal logic of p5.js — the code which orchestrates everything else. It is possible to create optimized minimalist [custom builds](/developer_docs/custom_p5_build.md) of the p5.js library which only include specific desired modules. In such a custom build, the contents of the core directory would be the only hard requirement, and everything else would be optional.
 
+[JSDoc](http://usejsdoc.org/) [module](http://usejsdoc.org/tags-module.html) annotations are used throughout the codebase, but they primarily organize the public-facing [p5 reference manual](https://p5js.org/reference/), which is built automatically from the source code. These annotations structure the *expressive and creative API* of p5, and consequently they might not always align exactly with the *source code structure*.
+
 The `app.js` file is simply an index of all the other modules which exports the p5 constructor function.
 
 # APIs
@@ -12,6 +14,6 @@ p5.js seeks to create a toolkit for working with the web technologies that are m
 
 Public APIs which are exposed to users of the p5.js should use short, clear, declarative function names. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured.
 
-Internal APIs which are not exposed to the user but are used for coordination within the library should generally as constructor functions which can be exported across module boundaries. Those constructors are often attached to the `p5` constructor as a form of namespacing, but otherwise do not meaningfully act as methods that reference the host object. In cases where a `p5` object is needed inside a constructor, an instance will be passed as a creation argument.
+Internal APIs which are not exposed to the user but are used for coordination within the library should generally as constructor functions which can be exported across module boundaries. Those constructors are often attached to the `p5` constructor as a form of namespacing, but otherwise do not meaningfully act as methods that reference the host object. In cases where a `p5` object is needed inside a constructor, an instance will be explicitly passed as an input argument.
 
 The above are guidelines, and in practice there may be occasional exceptions.
