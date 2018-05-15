@@ -19,7 +19,7 @@ var p5 = require('../core/core');
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] the alpha value
  * @chainable
  *
  * @example
