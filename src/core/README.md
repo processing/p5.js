@@ -66,7 +66,7 @@ Attributes are an important part of the general API for the web, but the `attrib
 
 # [2d_primitives.js](./2d_primitives.js)
 
-The `2d_primitives.js` module provides helper functions for drawing common shapes. The resulting drawing commands are sent to the currently active [renderer](./renderer.js).
+The `2d_primitives.js` module provides helper functions for drawing common shapes. The resulting drawing commands are sent to the currently active [renderer](./rendering.js).
 
 # [transform.js](./transform.js)
 
