@@ -1,6 +1,6 @@
 # Application
 
-internal structure and logic
+*internal structure and logic*
 
 ## [init.js](./init.js)
 
@@ -22,7 +22,7 @@ The `constants.js` module provides various default values mostly related to math
 
 # Browser
 
-utilizing and abstracting web technologies
+*utilizing and abstracting web technologies*
 
 ## [environment.js](./environment.js)
 
@@ -38,7 +38,7 @@ Although p5.js is a general toolkit for all sorts of interactive art projects, i
 
 # Rendering
 
-project output options
+*project output options*
 
 ## [rendering.js](./rendering.js)
 
@@ -58,7 +58,7 @@ The `p5.Graphics` module is a lightweight wrapper around renderers which is used
 
 # Drawing
 
-lines, shapes, and visual styles
+*lines, shapes, and visual styles*
 
 # [attributes.js](./attributes.js)
 
