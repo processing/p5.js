@@ -125,12 +125,13 @@ p5.Shader.prototype._loadAttributes = function() {
     var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
     var name = attributeInfo.name;
     var location = gl.getAttribLocation(this._glProgram, name);
-    var attribute = {};
-    attribute.name = name;
-    attribute.location = location;
-    attribute.type = attributeInfo.type;
-    attribute.size = attributeInfo.size;
-    this.attributes[name] = attribute;
+    this.attributes[name] = {
+      index: i,
+      name: name,
+      location: location,
+      type: attributeInfo.type,
+      size: attributeInfo.size
+    };
   }
 
   this._loadedAttributes = true;
@@ -199,10 +200,9 @@ p5.Shader.prototype.bindShader = function() {
 
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
-    if (this === this._renderer.curStrokeShader) {
-      this._setViewportUniform();
-    }
   }
+
+  this.setUniform('uViewport', this._renderer._viewport);
 };
 
 /**
@@ -246,14 +246,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
-  if (this === this._renderer.curFillShader) {
+  if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
   }
-};
-
-p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('uViewport', this._renderer._viewport);
 };
 
 /**
@@ -368,16 +364,15 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
 
 p5.Shader.prototype.isLightShader = function() {
   return (
-    this.uniforms.uUseLighting !== undefined ||
+    this.attributes.aNormal !== undefined ||
     this.uniforms.uAmbientLightCount !== undefined ||
     this.uniforms.uDirectionalLightCount !== undefined ||
     this.uniforms.uPointLightCount !== undefined ||
     this.uniforms.uAmbientColor !== undefined ||
-    this.uniforms.uDirectionalColor !== undefined ||
+    this.uniforms.uDirectionalLightColor !== undefined ||
     this.uniforms.uPointLightLocation !== undefined ||
     this.uniforms.uPointLightColor !== undefined ||
-    this.uniforms.uLightingDirection !== undefined ||
-    this.uniforms.uSpecular !== undefined
+    this.uniforms.uDirectionalLightDirection !== undefined
   );
 };
 
@@ -387,8 +382,9 @@ p5.Shader.prototype.isTextureShader = function() {
 
 p5.Shader.prototype.isColorShader = function() {
   return (
-    this.attributes.aVertexColor !== undefined ||
-    this.uniforms.uMaterialColor !== undefined
+    this.attributes.aMaterialColor !== undefined ||
+    this.uniforms.uMaterialColor !== undefined ||
+    this.uniforms.uSampler
   );
 };
 
@@ -406,7 +402,7 @@ p5.Shader.prototype.isStrokeShader = function() {
  * @private
  */
 p5.Shader.prototype.enableAttrib = function(
-  loc,
+  attrib,
   size,
   type,
   normalized,
@@ -414,9 +410,16 @@ p5.Shader.prototype.enableAttrib = function(
   offset
 ) {
   var gl = this._renderer.GL;
-  if (loc !== -1) {
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
+  if (attrib && attrib.loc !== -1) {
+    gl.vertexAttribPointer(
+      attrib.index,
+      size,
+      type || gl.FLOAT,
+      normalized || false,
+      stride || 0,
+      offset || 0
+    );
+    gl.enableVertexAttribArray(attrib.index);
   }
   return this;
 };

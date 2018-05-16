@@ -162,15 +162,23 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
-  if (s._renderer === undefined) {
-    s._renderer = this._renderer;
-  }
-  if (s.isStrokeShader()) {
-    this._renderer.setStrokeShader(s);
-  } else {
-    this._renderer.setFillShader(s);
-  }
+  this._renderer.shader.apply(this._renderer, arguments);
   return this;
+};
+
+p5.RendererGL.prototype.shader = function(s) {
+  if (s._renderer === undefined) {
+    s._renderer = this;
+  }
+
+  s.init();
+
+  if (s.isStrokeShader()) {
+    this.curStrokeShader = s;
+  } else {
+    this.curFillShader = s;
+    this._useNormalMaterial = false;
+  }
 };
 
 /**
@@ -201,11 +209,13 @@ p5.prototype.shader = function(s) {
 p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', arguments);
-  this._renderer.drawMode = constants.FILL;
-  this._renderer.setFillShader(this._renderer._getNormalShader());
-  this._renderer.curFillColor = [1, 1, 1, 1];
-  this.noStroke();
+  p5.RendererGL.prototype.normalMaterial.apply(this._renderer, arguments);
   return this;
+};
+
+p5.RendererGL.prototype.normalMaterial = function() {
+  this.drawMode = constants.FILL;
+  this._useNormalMaterial = true;
 };
 
 /**
@@ -286,16 +296,18 @@ p5.prototype.normalMaterial = function() {
  * black canvas
  *
  */
-p5.prototype.texture = function(tex) {
+p5.prototype.texture = function() {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
-  this._renderer.drawMode = constants.TEXTURE;
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', tex);
-  this.noStroke();
+  p5.RendererGL.prototype.texture.apply(this._renderer, arguments);
   return this;
+};
+
+p5.RendererGL.prototype.texture = function(tex) {
+  this.drawMode = constants.TEXTURE;
+  this._useNormalMaterial = false;
+  this._tex = tex;
+  this._setProperty('_doFill', true);
 };
 
 /**
@@ -334,17 +346,18 @@ p5.prototype.texture = function(tex) {
  * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
-p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
+p5.prototype.ambientMaterial = function() {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
-  var color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
-
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
+  p5.RendererGL.prototype.ambientMaterial.apply(this._renderer, arguments);
   return this;
+};
+
+p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this._ambientColor = color._array;
+  this._useNormalMaterial = false;
+  this._tex = null;
 };
 
 /**
@@ -383,17 +396,18 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3, a) {
+p5.prototype.specularMaterial = function() {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
-  var color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
-
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
+  p5.RendererGL.prototype.specularMaterial.apply(this._renderer, arguments);
   return this;
+};
+
+p5.RendererGL.prototype.specularMaterial = function(v1, v2, v3, a) {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this._specularColor = color._array;
+  this._useNormalMaterial = false;
+  this._tex = null;
 };
 
 /**

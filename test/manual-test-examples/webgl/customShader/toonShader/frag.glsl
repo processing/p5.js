@@ -3,12 +3,12 @@ precision mediump float;
 precision mediump int;
 #endif
 
-uniform float fraction;
+float fraction = 1.0;
 
 varying vec4 vertColor;
 varying vec3 vertNormal;
 varying vec3 vertLightDir;
-varying highp vec2 vertTexCoord;
+//varying highp vec2 vertTexCoord;
 
 void main() {
   float intensity;

@@ -41,10 +41,25 @@ p5.Geometry = function(detailX, detailY, callback) {
   this.edges = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
+
+  this.dirtyFlags = {};
+
   if (callback instanceof Function) {
     callback.call(this);
   }
-  return this; // TODO: is this a constructor?
+};
+
+p5.Geometry.prototype.reset = function() {
+  this.lineVertices.length = 0;
+  this.lineNormals.length = 0;
+
+  this.vertices.length = 0;
+  this.edges.length = 0;
+  this.vertexColors.length = 0;
+  this.vertexNormals.length = 0;
+  this.uvs.length = 0;
+
+  this.dirtyFlags = {};
 };
 
 /**
@@ -68,20 +83,19 @@ p5.Geometry.prototype.computeFaces = function() {
   return this;
 };
 
-p5.Geometry.prototype._getFaceNormal = function(faceId) {
-  //This assumes that vA->vB->vC is a counter-clockwise ordering
-  var face = this.faces[faceId];
-  var vA = this.vertices[face[0]];
-  var vB = this.vertices[face[1]];
-  var vC = this.vertices[face[2]];
+p5.Geometry.prototype._computeNormal = function(iA, iB, iC) {
+  var vA = this.vertices[iA];
+  var vB = this.vertices[iB];
+  var vC = this.vertices[iC];
   var ab = p5.Vector.sub(vB, vA);
   var ac = p5.Vector.sub(vC, vA);
   var n = p5.Vector.cross(ab, ac);
+  // return n.normalize(); why not just this?
   var ln = p5.Vector.mag(n);
   var sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
   if (sinAlpha === 0 || isNaN(sinAlpha)) {
     console.warn(
-      'p5.Geometry.prototype._getFaceNormal:',
+      'p5.Geometry.prototype._computeNormal:',
       'face has colinear sides or a repeated vertex'
     );
     return n;
@@ -111,7 +125,7 @@ p5.Geometry.prototype.computeNormals = function() {
   // of each of its vertices
   for (var f = 0; f < faces.length; ++f) {
     var face = faces[f];
-    var faceNormal = this._getFaceNormal(f);
+    var faceNormal = this._computeNormal(face[0], face[1], face[2]);
 
     // all three vertices get the normal added
     for (var fv = 0; fv < 3; ++fv) {
@@ -125,6 +139,7 @@ p5.Geometry.prototype.computeNormals = function() {
     vertexNormals[iv].normalize();
   }
 
+  this.dirtyFlags.vertexNormals = true;
   return this;
 };
 
@@ -146,6 +161,7 @@ p5.Geometry.prototype.averageNormals = function() {
     this.vertexNormals[i * offset] = temp;
     this.vertexNormals[i * offset + this.detailX] = temp;
   }
+  this.dirtyFlags.vertexNormals = true;
   return this;
 };
 
@@ -184,6 +200,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   ) {
     this.vertexNormals[i] = sum;
   }
+  this.dirtyFlags.vertexNormals = true;
   return this;
 };
 
@@ -239,6 +256,8 @@ p5.Geometry.prototype._edgesToVertices = function() {
     this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
     this.lineVertices.push(a, b, c, c, b, d);
   }
+  this.dirtyFlags.lineVertices = true;
+  this.dirtyFlags.lineNormals = true;
   return this;
 };
 
@@ -253,7 +272,7 @@ p5.Geometry.prototype.normalize = function() {
     var maxPosition = this.vertices[0].copy();
     var minPosition = this.vertices[0].copy();
 
-    for (var i = 0; i < this.vertices.length; i++) {
+    for (var i = 1; i < this.vertices.length; i++) {
       maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
       minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
       maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
@@ -272,7 +291,24 @@ p5.Geometry.prototype.normalize = function() {
       this.vertices[i].mult(scale);
     }
   }
+  this.dirtyFlags.vertices = true;
   return this;
 };
 
+p5.Geometry.prototype._duplicateVertex = function(i) {
+  this.vertices.push(this.vertices[i]);
+  this.vertexColors.push(
+    this.vertexColors[i * 4],
+    this.vertexColors[i * 4 + 1],
+    this.vertexColors[i * 4 + 2],
+    this.vertexColors[i * 4 + 3]
+  );
+  this.vertexAmbients.push(
+    this.vertexAmbients[i * 4],
+    this.vertexAmbients[i * 4 + 1],
+    this.vertexAmbients[i * 3 + 2],
+    this.vertexAmbients[i * 3 + 3]
+  );
+  this.uvs.push(this.uvs[i * 2], this.uvs[i * 2 + 1]);
+};
 module.exports = p5.Geometry;

@@ -1,15 +1,121 @@
-var theta = 0;
-
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
 function draw() {
-  background(255);
+  background(150);
 
-  translate(-width / 2, -height / 2, 0);
-  fill(0, 0, 0);
-  line(0, 0, 0, width, height, 0);
+  var t = millis() / 1000;
+
+  fill(255, 200, 100);
+
+  push();
+  translate(-width / 3, -height / 3);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape();
+  vertex(30, 20);
+  vertex(85, 20);
+  vertex(85, 75);
+  vertex(30, 75);
+  endShape(CLOSE);
+
+  pop();
+
+  push();
+  translate(0, -height / 3);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape(LINES);
+  vertex(30, 20);
+  vertex(85, 20);
+  vertex(85, 75);
+  vertex(30, 75);
+  endShape();
+  pop();
+
+  push();
+  translate(width / 3, -height / 3);
+  noFill();
+  rotateX(t);
+  translate(-50, -50);
+  beginShape();
+  vertex(30, 20);
+  vertex(85, 20);
+  vertex(85, 75);
+  vertex(30, 75);
+  endShape();
+  pop();
+
+  push();
+  translate(-width / 3, 0);
+  noFill();
+  rotateX(t);
+  translate(-50, -50);
+  beginShape();
+  vertex(30, 20);
+  vertex(85, 20);
+  vertex(85, 75);
+  vertex(30, 75);
+  endShape(CLOSE);
+  pop();
+
+  push();
+  translate(0, 0);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape(TRIANGLES);
+  vertex(30, 75);
+  vertex(40, 20);
+  vertex(50, 75);
+  vertex(60, 20);
+  vertex(70, 75);
+  vertex(80, 20);
+  endShape();
+  pop();
+
+  push();
+  translate(width / 3, 0);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape(TRIANGLE_STRIP);
+  vertex(30, 75);
+  vertex(40, 20);
+  vertex(50, 75);
+  vertex(60, 20);
+  vertex(70, 75);
+  vertex(80, 20);
+  vertex(90, 75);
+  endShape();
+  pop();
+
+  push();
+  translate(-width / 3, height / 3);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape(TRIANGLE_FAN);
+  vertex(57.5, 50);
+  vertex(57.5, 15);
+  vertex(92, 50);
+  vertex(57.5, 85);
+  vertex(22, 50);
+  vertex(57.5, 15);
+  endShape();
+  pop();
+
+  push();
+  translate(0, height / 3);
+  rotateX(t);
+  translate(-50, -50);
+  beginShape();
+  vertex(20, 20);
+  vertex(40, 20);
+  vertex(40, 40);
+  vertex(60, 40);
+  vertex(60, 60);
+  vertex(20, 60);
+  endShape(CLOSE);
+  pop();
 }
 
 // function draw(){

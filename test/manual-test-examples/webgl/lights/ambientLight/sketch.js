@@ -7,6 +7,18 @@ function draw() {
 
   ambientLight(150);
 
-  ambientMaterial(250);
+  push();
+  translate(-width / 3, 0, 0);
+  ambientMaterial(250, 0, 0);
   sphere(50, 64);
+  pop();
+
+  ambientMaterial(0, 250, 0);
+  sphere(50, 64);
+
+  push();
+  translate(width / 3, 0, 0);
+  ambientMaterial(0, 0, 250);
+  sphere(50, 64);
+  pop();
 }
