@@ -800,59 +800,110 @@ p5.RendererGL.prototype.triangle = function(args) {
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
-  var x = args[0];
-  var y = args[1];
-  var width = args[2];
-  var height = args[3];
-  //detailX and Y are optional 6th & 7th
-  //arguments
-  var detailX = args[4] || 24;
-  var gId = 'ellipse|' + detailX;
-  if (!this.geometryInHash(gId)) {
-    var _ellipse = function() {
-      this.vertices.push(new p5.Vector(0.5, 0.5, 0));
-      this.uvs.push([0.5, 0.5]);
+  this.arc(args[0], args[1], args[2], args[3], 0 , PI * 2, 'ellipse' , args[4]);
+};
 
-      for (var i = 0; i < this.detailX; i++) {
-        var u = i / this.detailX;
-        var theta = 2 * Math.PI * u;
+p5.RendererGL.prototype.arc = function(args){
 
-        var _x = 0.5 + Math.cos(theta) / 2;
-        var _y = 0.5 + Math.sin(theta) / 2;
+   var x       = arguments[0];
+   var y       = arguments[1];
+   var width   = arguments[2];
+   var height  = arguments[3];
+   var start   = arguments[4];
+   var stop    = arguments[5];
+   var mode    = arguments[6];
+   var detailX = arguments[7] || 25;
+   var detailY = 1;
 
-        this.vertices.push(new p5.Vector(_x, _y, 0));
-        this.uvs.push(_x, _y);
+   var gId = 'arc|' + x + "|" + y + "|" + width + "|" + 
+   height + "|" + start + "|" + stop + "|" + mode + "|" + detailX + "|";
 
-        this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
-      }
+   if (!this.geometryInHash(gId))
+   {
+
+    var _arc = function()
+    {
+        this.strokeIndices = [];
+
+        for (var i = 0; i <= this.detailX; i++)
+        {
+            var u = i / this.detailX;
+            var theta = (stop - start) * u + start;
+
+            var _x = 0.5 + Math.cos(theta)/2;
+            var _y = 0.5 + Math.sin(theta)/2;
+
+            this.vertices.push(new p5.Vector(_x, _y, 0));
+            this.uvs.push([_x, _y]);
+
+           if (i < this.detailX && mode == PIE)
+           {                                               
+                this.faces.push([0, i + 1, i + 2]);
+                this.strokeIndices.push([i + 1, i + 2]);
+           }
+
+           if (i < this.detailX - 1 && (mode == CHORD || mode == OPEN || mode == 'ellipse'))
+           {
+                this.faces.push([0, i + 1, i + 2]);
+                this.strokeIndices.push([i + 1, i + 2]);
+           }
+
+        }
+
+        if (mode == PIE || mode == null){
+            this.vertices.unshift(new p5.Vector(0.5,0.5,0));
+            this.uvs.unshift([0.5,0.5,0]);
+            this.faces.push([0, this.vertices.length - 2, this.vertices.length - 1]);
+            this.strokeIndices.push([0 , 1]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+        }
+
+        else if (mode == CHORD){
+            this.strokeIndices.push([0 , 1]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+        }
+
+        else if (mode == OPEN || mode == 'ellipse') {
+            this.strokeIndices.push([0 , 1]);
+        }
+
     };
-    var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
-    ellipseGeom.computeNormals();
+
+    var arcGeom = new p5.Geometry(detailX, 1, _arc);
+    arcGeom.computeNormals();
+
     if (detailX <= 50) {
-      ellipseGeom._makeTriangleEdges()._edgesToVertices();
-    } else {
-      console.log('Cannot stroke ellipse with more than 50 detailX');
+      arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
+    } 
+    else {
+      console.log('Cannot stroke arc with more than 50 detailX');
     }
 
-    this.createBuffers(gId, ellipseGeom);
-  }
+    this.createBuffers(gId, arcGeom);
 
-  // only a single ellipse (of a given detail) is cached: a circle of
-  // _diameter_ 1 (radius 0.5).
-  //
-  // before rendering, this circle is squished (technical term ;)
-  // appropriately and moved to the required location.
+   }
+
   var uMVMatrix = this.uMVMatrix.copy();
+  
   try {
-    this.uMVMatrix.translate([x, y, 0]);
+    if (mode == 'ellipse'){
+        this.uMVMatrix.translate([x, y, 0]);
+    }
+    else {
+        this.uMVMatrix.translate([x - 15, y - 15, 0]);
+    }
     this.uMVMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
-  } finally {
+  } 
+
+  finally {
     this.uMVMatrix = uMVMatrix;
   }
+
   return this;
-};
+
+}
 
 p5.RendererGL.prototype.rect = function(args) {
   var perPixelLighting = this.attributes.perPixelLighting;
