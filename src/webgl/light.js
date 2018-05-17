@@ -52,7 +52,7 @@ var p5 = require('../core/core');
 /**
  * @method ambientLight
  * @param  {Number}        gray   a gray value
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] the alpha value
  * @chainable
  */
 
