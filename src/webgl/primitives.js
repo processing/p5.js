@@ -827,7 +827,6 @@ p5.RendererGL.prototype.arc = function(args) {
   if (!this.geometryInHash(gId)) {
     var _arc = function() {
       this.strokeIndices = [];
-      this.strokeIndices.push([0, 1]);
 
       for (var i = 0; i <= this.detailX; i++) {
         var u = i / this.detailX;
@@ -853,13 +852,29 @@ p5.RendererGL.prototype.arc = function(args) {
           this.vertices.length - 2,
           this.vertices.length - 1
         ]);
+        this.strokeIndices.push([0, 1]);
         this.strokeIndices.push([
           this.vertices.length - 2,
           this.vertices.length - 1
         ]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
       } else if (mode === CHORD) {
+        this.strokeIndices.push([0, 1]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
+      } else if (mode === OPEN) {
+        this.strokeIndices.push([0, 1]);
+      } else {
+        this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));
+        this.uvs.unshift([0.5, 0.5]);
+        this.faces.push([
+          0,
+          this.vertices.length - 2,
+          this.vertices.length - 1
+        ]);
+        this.strokeIndices.push([
+          this.vertices.length - 2,
+          this.vertices.length - 1
+        ]);
       }
     };
 
