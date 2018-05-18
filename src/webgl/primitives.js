@@ -800,73 +800,67 @@ p5.RendererGL.prototype.triangle = function(args) {
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
-  this.arc(args[0], args[1], args[2], args[3], 0 , PI * 2, 'ellipse' , args[4]);
+  this.arc(args[0], args[1], args[2], args[3], 0, PI * 2, OPEN, args[4]);
 };
 
-p5.RendererGL.prototype.arc = function(args){
+p5.RendererGL.prototype.arc = function(args) {
+  var x = arguments[0];
+  var y = arguments[1];
+  var width = arguments[2];
+  var height = arguments[3];
+  var start = arguments[4];
+  var stop = arguments[5];
+  var mode = arguments[6];
+  var detailX = arguments[7] || 25;
+  var detailY = 1;
 
-   var x       = arguments[0];
-   var y       = arguments[1];
-   var width   = arguments[2];
-   var height  = arguments[3];
-   var start   = arguments[4];
-   var stop    = arguments[5];
-   var mode    = arguments[6];
-   var detailX = arguments[7] || 25;
-   var detailY = 1;
+  var shape;
 
-   var gId = 'arc|' + x + "|" + y + "|" + width + "|" + 
-   height + "|" + start + "|" + stop + "|" + mode + "|" + detailX + "|";
+  if (Math.abs(stop - start) === PI * 2) {
+    shape = 'ellipse';
+  } else {
+    shape = 'arc';
+  }
 
-   if (!this.geometryInHash(gId))
-   {
+  var gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detailX + '|';
 
-    var _arc = function()
-    {
-        this.strokeIndices = [];
+  if (!this.geometryInHash(gId)) {
+    var _arc = function() {
+      this.strokeIndices = [];
+      this.strokeIndices.push([0, 1]);
 
-        for (var i = 0; i <= this.detailX; i++)
-        {
-            var u = i / this.detailX;
-            var theta = (stop - start) * u + start;
+      for (var i = 0; i <= this.detailX; i++) {
+        var u = i / this.detailX;
+        var theta = (stop - start) * u + start;
 
-            var _x = 0.5 + Math.cos(theta)/2;
-            var _y = 0.5 + Math.sin(theta)/2;
+        var _x = 0.5 + Math.cos(theta) / 2;
+        var _y = 0.5 + Math.sin(theta) / 2;
 
-            this.vertices.push(new p5.Vector(_x, _y, 0));
-            this.uvs.push([_x, _y]);
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push([_x, _y]);
 
-           if (i < this.detailX && mode == PIE)
-           {                                               
-                this.faces.push([0, i + 1, i + 2]);
-                this.strokeIndices.push([i + 1, i + 2]);
-           }
-
-           if (i < this.detailX - 1 && (mode == CHORD || mode == OPEN || mode == 'ellipse'))
-           {
-                this.faces.push([0, i + 1, i + 2]);
-                this.strokeIndices.push([i + 1, i + 2]);
-           }
-
+        if (i < this.detailX - 1) {
+          this.faces.push([0, i + 1, i + 2]);
+          this.strokeIndices.push([i + 1, i + 2]);
         }
+      }
 
-        if (mode == PIE || mode == null){
-            this.vertices.unshift(new p5.Vector(0.5,0.5,0));
-            this.uvs.unshift([0.5,0.5,0]);
-            this.faces.push([0, this.vertices.length - 2, this.vertices.length - 1]);
-            this.strokeIndices.push([0 , 1]);
-            this.strokeIndices.push([0, this.vertices.length - 1]);
-        }
-
-        else if (mode == CHORD){
-            this.strokeIndices.push([0 , 1]);
-            this.strokeIndices.push([0, this.vertices.length - 1]);
-        }
-
-        else if (mode == OPEN || mode == 'ellipse') {
-            this.strokeIndices.push([0 , 1]);
-        }
-
+      if (mode === PIE) {
+        this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));
+        this.uvs.unshift([0.5, 0.5]);
+        this.faces.push([
+          0,
+          this.vertices.length - 2,
+          this.vertices.length - 1
+        ]);
+        this.strokeIndices.push([
+          this.vertices.length - 2,
+          this.vertices.length - 1
+        ]);
+        this.strokeIndices.push([0, this.vertices.length - 1]);
+      } else if (mode === CHORD) {
+        this.strokeIndices.push([0, this.vertices.length - 1]);
+      }
     };
 
     var arcGeom = new p5.Geometry(detailX, 1, _arc);
@@ -874,36 +868,26 @@ p5.RendererGL.prototype.arc = function(args){
 
     if (detailX <= 50) {
       arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
-    } 
-    else {
-      console.log('Cannot stroke arc with more than 50 detailX');
+    } else {
+      console.log('Cannot stroke ' + shape + ' with more than 50 detailX');
     }
 
     this.createBuffers(gId, arcGeom);
-
-   }
+  }
 
   var uMVMatrix = this.uMVMatrix.copy();
-  
+
   try {
-    if (mode == 'ellipse'){
-        this.uMVMatrix.translate([x, y, 0]);
-    }
-    else {
-        this.uMVMatrix.translate([x - 15, y - 15, 0]);
-    }
+    this.uMVMatrix.translate([x, y, 0]);
     this.uMVMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
-  } 
-
-  finally {
+  } finally {
     this.uMVMatrix = uMVMatrix;
   }
 
   return this;
-
-}
+};
 
 p5.RendererGL.prototype.rect = function(args) {
   var perPixelLighting = this.attributes.perPixelLighting;

@@ -77,7 +77,7 @@ require('./error_helpers');
  *white ellipse with top right quarter missing with black outline around the shape.
  *
  */
-p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
+p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
   p5._validateParameters('arc', arguments);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
@@ -126,7 +126,19 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  this._renderer.arc(x, y, w, h, start, stop, mode);
+
+  var vals = canvas.arcModeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  this._renderer.arc(
+    vals.x,
+    vals.y,
+    vals.w,
+    vals.h,
+    start,
+    stop,
+    mode,
+    xDetail
+  );
+
   return this;
 };
 
