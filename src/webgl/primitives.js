@@ -800,7 +800,7 @@ p5.RendererGL.prototype.triangle = function(args) {
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
-  this.arc(args[0], args[1], args[2], args[3], 0, PI * 2, OPEN, args[4]);
+  this.arc(args[0], args[1], args[2], args[3], 0, Math.PI * 2, 'open', args[4]);
 };
 
 p5.RendererGL.prototype.arc = function(args) {
@@ -815,7 +815,7 @@ p5.RendererGL.prototype.arc = function(args) {
 
   var shape;
 
-  if (Math.abs(stop - start) === PI * 2) {
+  if (Math.abs(stop - start) === Math.PI * 2) {
     shape = 'ellipse';
   } else {
     shape = 'arc';
