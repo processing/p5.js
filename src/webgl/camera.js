@@ -35,15 +35,16 @@ var p5 = require('../core/core');
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
+ *   background(204);
  *   //move the camera away from the plane by a sin wave
- *   camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
- *   plane(120, 120);
+ *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+ *   plane(10, 10);
  * }
  * </code>
  * </div>
  *
  * @alt
- * blue square shrinks in size grows to fill canvas. disappears then loops.
+ * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
 p5.prototype.camera = function() {
