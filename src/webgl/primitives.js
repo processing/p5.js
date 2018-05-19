@@ -812,7 +812,6 @@ p5.RendererGL.prototype.arc = function(args) {
   var stop = arguments[5];
   var mode = arguments[6];
   var detailX = arguments[7] || 25;
-  var detailY = 1;
 
   var shape;
 
@@ -844,7 +843,7 @@ p5.RendererGL.prototype.arc = function(args) {
         }
       }
 
-      if (mode === PIE) {
+      if (mode === 'pie') {
         this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));
         this.uvs.unshift([0.5, 0.5]);
         this.faces.push([
@@ -858,10 +857,10 @@ p5.RendererGL.prototype.arc = function(args) {
           this.vertices.length - 1
         ]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === CHORD) {
+      } else if (mode === 'chord') {
         this.strokeIndices.push([0, 1]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === OPEN) {
+      } else if (mode === 'open') {
         this.strokeIndices.push([0, 1]);
       } else {
         this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));

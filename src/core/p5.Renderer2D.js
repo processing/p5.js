@@ -431,6 +431,9 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var arcToDraw = 0;
   var curves = [];
 
+  x += rx;
+  y += ry;
+
   // Create curves
   while (stop - start > epsilon) {
     arcToDraw = Math.min(stop - start, constants.HALF_PI);
