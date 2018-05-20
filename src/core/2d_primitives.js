@@ -292,6 +292,10 @@ p5.prototype.point = function() {
  * @param {Number} y3 the y-coordinate of the third point
  * @param {Number} x4 the x-coordinate of the fourth point
  * @param {Number} y4 the y-coordinate of the fourth point
+ * @param {Number} z1 the z-coordinate of the first point
+ * @param {Number} z2 the z-coordinate of the second point
+ * @param {Number} z3 the z-coordinate of the third point
+ * @param {Number} z4 the z-coordinate of the fourth point
  * @chainable
  * @example
  * <div>
