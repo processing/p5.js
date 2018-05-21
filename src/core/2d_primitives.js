@@ -83,6 +83,9 @@ require('./error_helpers');
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
+
+  // if the current stroke and fill settings wouldn't result in something
+  // visible, exit immediately
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
