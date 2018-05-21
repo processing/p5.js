@@ -19,7 +19,7 @@ require('./error_helpers');
  * of the curve. Approximately speaking, control points "pull" the curve
  * towards them.<br /><br />Bezier curves were developed by French
  * automotive engineer Pierre Bezier, and are commonly used in computer
- * graphics to define gently sloping curves. See also curve().
+ * graphics to define gently sloping curves. See also <a href="#/p5/curve">curve()</a>.
  *
  * @method bezier
  * @param  {Number} x1 x-coordinate for the first anchor point
@@ -271,10 +271,10 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * middle four parameters. The first two parameters are a control point, as
  * if the curve came from this point even though it's not drawn. The last
  * two parameters similarly describe the other control point. <br /><br />
- * Longer curves can be created by putting a series of curve() functions
- * together or using curveVertex(). An additional function called
- * curveTightness() provides control for the visual quality of the curve.
- * The curve() function is an implementation of Catmull-Rom splines.
+ * Longer curves can be created by putting a series of <a href="#/p5/curve">curve()</a> functions
+ * together or using <a href="#/p5/curveVertex">curveVertex()</a>. An additional function called
+ * <a href="#/p5/curveTightness">curveTightness()</a> provides control for the visual quality of the curve.
+ * The <a href="#/p5/curve">curve()</a> function is an implementation of Catmull-Rom splines.
  *
  * @method curve
  * @param  {Number} x1 x-coordinate for the beginning control point
@@ -400,7 +400,7 @@ p5.prototype.curveDetail = function(d) {
 };
 
 /**
- * Modifies the quality of forms created with curve() and curveVertex().
+ * Modifies the quality of forms created with <a href="#/p5/curve">curve()</a> and <a href="#/p5/curveVertex">curveVertex()</a>.
  * The parameter tightness determines how the curve fits to the vertex
  * points. The value 0.0 is the default value for tightness (this value
  * defines the curves to be Catmull-Rom splines) and the value 1.0 connects
@@ -443,6 +443,7 @@ p5.prototype.curveDetail = function(d) {
 p5.prototype.curveTightness = function(t) {
   p5._validateParameters('curveTightness', arguments);
   this._renderer._curveTightness = t;
+  return this;
 };
 
 /**

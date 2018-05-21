@@ -13,21 +13,21 @@ var constants = require('./constants');
 
 /**
  * Modifies the location from which ellipses are drawn by changing the way
- * in which parameters given to ellipse() are interpreted.
+ * in which parameters given to <a href="#/p5/ellipse">ellipse()</a> are interpreted.
  * <br><br>
  * The default mode is ellipseMode(CENTER), which interprets the first two
- * parameters of ellipse() as the shape's center point, while the third and
+ * parameters of <a href="#/p5/ellipse">ellipse()</a> as the shape's center point, while the third and
  * fourth parameters are its width and height.
  * <br><br>
- * ellipseMode(RADIUS) also uses the first two parameters of ellipse() as
+ * ellipseMode(RADIUS) also uses the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
  * the shape's center point, but uses the third and fourth parameters to
  * specify half of the shapes's width and height.
  * <br><br>
- * ellipseMode(CORNER) interprets the first two parameters of ellipse() as
+ * ellipseMode(CORNER) interprets the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
  * the upper-left corner of the shape, while the third and fourth parameters
  * are its width and height.
  * <br><br>
- * ellipseMode(CORNERS) interprets the first two parameters of ellipse() as
+ * ellipseMode(CORNERS) interprets the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
  * the location of one corner of the ellipse's bounding box, and the third
  * and fourth parameters as the location of the opposite corner.
  * <br><br>
@@ -81,8 +81,8 @@ p5.prototype.ellipseMode = function(m) {
 };
 
 /**
- * Draws all geometry with jagged (aliased) edges. Note that smooth() is
- * active by default, so it is necessary to call noSmooth() to disable
+ * Draws all geometry with jagged (aliased) edges. Note that <a href="#/p5/smooth">smooth()</a> is
+ * active by default, so it is necessary to call <a href="#/p5/noSmooth">noSmooth()</a> to disable
  * smoothing of geometry, images, and fonts.
  *
  * @method noSmooth
@@ -110,21 +110,21 @@ p5.prototype.noSmooth = function() {
 
 /**
  * Modifies the location from which rectangles are drawn by changing the way
- * in which parameters given to rect() are interpreted.
+ * in which parameters given to <a href="#/p5/rect">rect()</a> are interpreted.
  * <br><br>
  * The default mode is rectMode(CORNER), which interprets the first two
- * parameters of rect() as the upper-left corner of the shape, while the
+ * parameters of <a href="#/p5/rect">rect()</a> as the upper-left corner of the shape, while the
  * third and fourth parameters are its width and height.
  * <br><br>
- * rectMode(CORNERS) interprets the first two parameters of rect() as the
+ * rectMode(CORNERS) interprets the first two parameters of <a href="#/p5/rect">rect()</a> as the
  * location of one corner, and the third and fourth parameters as the
  * location of the opposite corner.
  * <br><br>
- * rectMode(CENTER) interprets the first two parameters of rect() as the
+ * rectMode(CENTER) interprets the first two parameters of <a href="#/p5/rect">rect()</a> as the
  * shape's center point, while the third and fourth parameters are its
  * width and height.
  * <br><br>
- * rectMode(RADIUS) also uses the first two parameters of rect() as the
+ * rectMode(RADIUS) also uses the first two parameters of <a href="#/p5/rect">rect()</a> as the
  * shape's center point, but uses the third and fourth parameters to specify
  * half of the shapes's width and height.
  * <br><br>
@@ -178,9 +178,9 @@ p5.prototype.rectMode = function(m) {
 };
 
 /**
- * Draws all geometry with smooth (anti-aliased) edges. smooth() will also
- * improve image quality of resized images. Note that smooth() is active by
- * default; noSmooth() can be used to disable smoothing of geometry,
+ * Draws all geometry with smooth (anti-aliased) edges. <a href="#/p5/smooth">smooth()</a> will also
+ * improve image quality of resized images. Note that <a href="#/p5/smooth">smooth()</a> is active by
+ * default; <a href="#/p5/noSmooth">noSmooth()</a> can be used to disable smoothing of geometry,
  * images, and fonts.
  *
  * @method smooth

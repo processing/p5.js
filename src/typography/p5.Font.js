@@ -1,5 +1,5 @@
 /**
- * This module defines the p5.Font class and functions for
+ * This module defines the <a href="#/p5.Font">p5.Font</a> class and functions for
  * drawing text to the display canvas.
  * @module Typography
  * @submodule Font
@@ -37,7 +37,7 @@ p5.Font = function(p) {
 
 p5.Font.prototype.list = function() {
   // TODO
-  throw 'not yet implemented';
+  throw new Error('not yet implemented');
 };
 
 /**

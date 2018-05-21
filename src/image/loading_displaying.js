@@ -15,11 +15,11 @@ var constants = require('../core/constants');
 require('../core/error_helpers');
 
 /**
- * Loads an image from a path and creates a p5.Image from it.
+ * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
  * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
- * anything with it, place the loadImage() call in preload().
+ * anything with it, place the <a href="#/p5/loadImage">loadImage()</a> call in <a href="#/p5/preload">preload()</a>.
  * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
@@ -31,10 +31,10 @@ require('../core/error_helpers');
  * @param  {String} path Path of the image to be loaded
  * @param  {function(p5.Image)} [successCallback] Function to be called once
  *                                the image is loaded. Will be passed the
- *                                p5.Image.
+ *                                <a href="#/p5.Image">p5.Image</a>.
  * @param  {function(Event)}    [failureCallback] called with event error if
  *                                the image fails to load.
- * @return {p5.Image}             the p5.Image object
+ * @return {p5.Image}             the <a href="#/p5.Image">p5.Image</a> object
  * @example
  * <div>
  * <code>
@@ -300,10 +300,10 @@ p5.prototype.image = function(
  * To apply transparency to an image without affecting its color, use
  * white as the tint color and specify an alpha value. For instance,
  * tint(255, 128) will make an image 50% transparent (assuming the default
- * alpha range of 0-255, which can be changed with colorMode()).
+ * alpha range of 0-255, which can be changed with <a href="#/p5/colorMode">colorMode()</a>).
  * <br><br>
  * The value for the gray parameter must be less than or equal to the current
- * maximum value as specified by colorMode(). The default maximum value is
+ * maximum value as specified by <a href="#/p5/colorMode">colorMode()</a>. The default maximum value is
  * 255.
  *
  *
@@ -461,17 +461,17 @@ p5.prototype._getTintedImageCanvas = function(img) {
 
 /**
  * Set image mode. Modifies the location from which images are drawn by
- * changing the way in which parameters given to image() are interpreted.
+ * changing the way in which parameters given to <a href="#/p5/image">image()</a> are interpreted.
  * The default mode is imageMode(CORNER), which interprets the second and
- * third parameters of image() as the upper-left corner of the image. If
+ * third parameters of <a href="#/p5/image">image()</a> as the upper-left corner of the image. If
  * two additional parameters are specified, they are used to set the image's
  * width and height.
  * <br><br>
- * imageMode(CORNERS) interprets the second and third parameters of image()
+ * imageMode(CORNERS) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the location of one corner, and the fourth and fifth parameters as the
  * opposite corner.
  * <br><br>
- * imageMode(CENTER) interprets the second and third parameters of image()
+ * imageMode(CENTER) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the image's center point. If two additional parameters are specified,
  * they are used to set the image's width and height.
  *

@@ -197,9 +197,10 @@
 
 
     $(document).ready(function() {
+      var langs = ['es', 'zh-Hans'];
       var routes = window.location.pathname.split('/');
       var lang = routes[1];
-      if (lang.length === 2) {
+      if (langs.indexOf(lang) != -1) {
         $.getJSON('/assets/reference/'+lang+'.json', function(data) {
           translations = data;
           if (timeout) clearTimeout(timeout);

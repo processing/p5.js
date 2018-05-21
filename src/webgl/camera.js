@@ -35,15 +35,16 @@ var p5 = require('../core/core');
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
+ *   background(204);
  *   //move the camera away from the plane by a sin wave
- *   camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
- *   plane(120, 120);
+ *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+ *   plane(10, 10);
  * }
  * </code>
  * </div>
  *
  * @alt
- * blue square shrinks in size grows to fill canvas. disappears then loops.
+ * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
 p5.prototype.camera = function() {
@@ -165,7 +166,7 @@ p5.RendererGL.prototype.camera = function(
  * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
  * @param  {Number} [fovy]   camera frustum vertical field of view,
- *                           from bottom to top of view, in angleMode units
+ *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
  * @param  {Number} [aspect] camera frustum aspect ratio
  * @param  {Number} [near]   frustum near plane length
  * @param  {Number} [far]    frustum far plane length

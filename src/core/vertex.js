@@ -20,18 +20,18 @@ var isContour = false;
 var isFirstContour = true;
 
 /**
- * Use the beginContour() and endContour() functions to create negative
- * shapes within shapes such as the center of the letter 'O'. beginContour()
- * begins recording vertices for the shape and endContour() stops recording.
+ * Use the <a href="#/p5/beginContour">beginContour()</a> and <a href="#/p5/endContour">endContour()</a> functions to create negative
+ * shapes within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
+ * begins recording vertices for the shape and <a href="#/p5/endContour">endContour()</a> stops recording.
  * The vertices that define a negative shape must "wind" in the opposite
  * direction from the exterior shape. First draw vertices for the exterior
  * clockwise order, then for internal shapes, draw vertices
  * shape in counter-clockwise.
  * <br><br>
- * These functions can only be used within a beginShape()/endShape() pair and
- * transformations such as translate(), rotate(), and scale() do not work
- * within a beginContour()/endContour() pair. It is also not possible to use
- * other shapes, such as ellipse() or rect() within.
+ * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
+ * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+ * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
+ * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within.
  *
  * @method beginContour
  * @chainable
@@ -68,21 +68,21 @@ p5.prototype.beginContour = function() {
 };
 
 /**
- * Using the beginShape() and endShape() functions allow creating more
- * complex forms. beginShape() begins recording vertices for a shape and
- * endShape() stops recording. The value of the kind parameter tells it which
+ * Using the <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> functions allow creating more
+ * complex forms. <a href="#/p5/beginShape">beginShape()</a> begins recording vertices for a shape and
+ * <a href="#/p5/endShape">endShape()</a> stops recording. The value of the kind parameter tells it which
  * types of shapes to create from the provided vertices. With no mode
  * specified, the shape can be any irregular polygon.
  * <br><br>
- * The parameters available for beginShape() are POINTS, LINES, TRIANGLES,
+ * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
  * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the
- * beginShape() function, a series of vertex() commands must follow. To stop
- * drawing the shape, call endShape(). Each shape will be outlined with the
+ * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
+ * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
  * current stroke color and filled with the fill color.
  * <br><br>
- * Transformations such as translate(), rotate(), and scale() do not work
- * within beginShape(). It is also not possible to use other shapes, such as
- * ellipse() or rect() within beginShape().
+ * Transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+ * within <a href="#/p5/beginShape">beginShape()</a>. It is also not possible to use other shapes, such as
+ * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method beginShape
  * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
@@ -269,15 +269,15 @@ p5.prototype.beginShape = function(kind) {
 
 /**
  * Specifies vertex coordinates for Bezier curves. Each call to
- * bezierVertex() defines the position of two control points and
+ * <a href="#/p5/bezierVertex">bezierVertex()</a> defines the position of two control points and
  * one anchor point of a Bezier curve, adding a new segment to a
  * line or shape.
  * <br><br>
- * The first time bezierVertex() is used within a
- * beginShape() call, it must be prefaced with a call to vertex()
+ * The first time <a href="#/p5/bezierVertex">bezierVertex()</a> is used within a
+ * <a href="#/p5/beginShape">beginShape()</a> call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a>
  * to set the first anchor point. This function must be used between
- * beginShape() and endShape() and only when there is no MODE
- * parameter specified to beginShape().
+ * <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there is no MODE
+ * parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method bezierVertex
  * @param  {Number} x2 x-coordinate for the first control point
@@ -336,7 +336,7 @@ p5.prototype.beginShape = function(kind) {
 p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
   p5._validateParameters('bezierVertex', arguments);
   if (vertices.length === 0) {
-    throw 'vertex() must be used once before calling bezierVertex()';
+    throw new Error('vertex() must be used once before calling bezierVertex()');
   } else {
     isBezier = true;
     var vert = [];
@@ -355,15 +355,15 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
 
 /**
  * Specifies vertex coordinates for curves. This function may only
- * be used between beginShape() and endShape() and only when there
- * is no MODE parameter specified to beginShape().
+ * be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there
+ * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
  * <br><br>
- * The first and last points in a series of curveVertex() lines will be used to
+ * The first and last points in a series of <a href="#/p5/curveVertex">curveVertex()</a> lines will be used to
  * guide the beginning and end of a the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
- * third points. Adding a fifth point with curveVertex() will draw
+ * third points. Adding a fifth point with <a href="#/p5/curveVertex">curveVertex()</a> will draw
  * the curve between the second, third, and fourth points. The
- * curveVertex() function is an implementation of Catmull-Rom
+ * <a href="#/p5/curveVertex">curveVertex()</a> function is an implementation of Catmull-Rom
  * splines.
  *
  * @method curveVertex
@@ -405,18 +405,18 @@ p5.prototype.curveVertex = function(x, y) {
 };
 
 /**
- * Use the beginContour() and endContour() functions to create negative
- * shapes within shapes such as the center of the letter 'O'. beginContour()
- * begins recording vertices for the shape and endContour() stops recording.
+ * Use the <a href="#/p5/beginContour">beginContour()</a> and <a href="#/p5/endContour">endContour()</a> functions to create negative
+ * shapes within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
+ * begins recording vertices for the shape and <a href="#/p5/endContour">endContour()</a> stops recording.
  * The vertices that define a negative shape must "wind" in the opposite
  * direction from the exterior shape. First draw vertices for the exterior
  * clockwise order, then for internal shapes, draw vertices
  * shape in counter-clockwise.
  * <br><br>
- * These functions can only be used within a beginShape()/endShape() pair and
- * transformations such as translate(), rotate(), and scale() do not work
- * within a beginContour()/endContour() pair. It is also not possible to use
- * other shapes, such as ellipse() or rect() within.
+ * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
+ * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
+ * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
+ * other shapes, such as <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within.
  *
  * @method endContour
  * @chainable
@@ -465,9 +465,9 @@ p5.prototype.endContour = function() {
 };
 
 /**
- * The endShape() function is the companion to beginShape() and may only be
- * called after beginShape(). When endshape() is called, all of image data
- * defined since the previous call to beginShape() is written into the image
+ * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endshape()</a> is called, all of image data
+ * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
  * buffer. The constant CLOSE as the value for the MODE parameter to close
  * the shape (to connect the beginning and the end).
  *
@@ -552,12 +552,12 @@ p5.prototype.endShape = function(mode) {
 
 /**
  * Specifies vertex coordinates for quadratic Bezier curves. Each call to
- * quadraticVertex() defines the position of one control points and one
+ * <a href="#/p5/quadraticVertex">quadraticVertex()</a> defines the position of one control points and one
  * anchor point of a Bezier curve, adding a new segment to a line or shape.
- * The first time quadraticVertex() is used within a beginShape() call, it
- * must be prefaced with a call to vertex() to set the first anchor point.
- * This function must be used between beginShape() and endShape() and only
- * when there is no MODE parameter specified to beginShape().
+ * The first time <a href="#/p5/quadraticVertex">quadraticVertex()</a> is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
+ * must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor point.
+ * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only
+ * when there is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method quadraticVertex
  * @param  {Number} cx x-coordinate for the control point
@@ -637,16 +637,18 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
       vertices.push(vert);
     }
   } else {
-    throw 'vertex() must be used once before calling quadraticVertex()';
+    throw new Error(
+      'vertex() must be used once before calling quadraticVertex()'
+    );
   }
   return this;
 };
 
 /**
- * All shapes are constructed by connecting a series of vertices. vertex()
+ * All shapes are constructed by connecting a series of vertices. <a href="#/p5/vertex">vertex()</a>
  * is used to specify the vertex coordinates for points, lines, triangles,
- * quads, and polygons. It is used exclusively within the beginShape() and
- * endShape() functions.
+ * quads, and polygons. It is used exclusively within the <a href="#/p5/beginShape">beginShape()</a> and
+ * <a href="#/p5/endShape">endShape()</a> functions.
  *
  * @method vertex
  * @param  {Number} x x-coordinate of the vertex
@@ -733,9 +735,10 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} [z] z-coordinate of the vertex
+ * @param  {Number} z   z-coordinate of the vertex
  * @param  {Number} [u] the vertex's texture u-coordinate
  * @param  {Number} [v] the vertex's texture v-coordinate
+ * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
