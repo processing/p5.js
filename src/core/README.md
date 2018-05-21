@@ -1,4 +1,4 @@
-# Application
+# Skeleton
 
 *internal structure and logic*
 
