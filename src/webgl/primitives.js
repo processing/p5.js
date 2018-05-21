@@ -10,6 +10,7 @@
 
 var p5 = require('../core/core');
 require('./p5.Geometry');
+var constants = require('../core/constants');
 
 /**
  * Draw a plane with given a width and height
@@ -800,7 +801,16 @@ p5.RendererGL.prototype.triangle = function(args) {
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
-  this.arc(args[0], args[1], args[2], args[3], 0, Math.PI * 2, 'open', args[4]);
+  this.arc(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    0,
+    constants.PI * 2,
+    constants.OPEN,
+    args[4]
+  );
 };
 
 p5.RendererGL.prototype.arc = function(args) {
@@ -811,24 +821,30 @@ p5.RendererGL.prototype.arc = function(args) {
   var start = arguments[4];
   var stop = arguments[5];
   var mode = arguments[6];
-  var detailX = arguments[7] || 25;
+  var detail = arguments[7] || 25;
 
   var shape;
+  var gId;
 
-  if (Math.abs(stop - start) === Math.PI * 2) {
+  if (Math.abs(stop - start) >= constants.PI * 2) {
     shape = 'ellipse';
+    gId = shape + '|' + x + '|' + y + '|' + width + '|' + height + '|';
   } else {
     shape = 'arc';
+    gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detail + '|';
   }
-
-  var gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detailX + '|';
 
   if (!this.geometryInHash(gId)) {
     var _arc = function() {
       this.strokeIndices = [];
 
-      for (var i = 0; i <= this.detailX; i++) {
-        var u = i / this.detailX;
+      if (mode === constants.PIE || mode === null) {
+        this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+        this.uvs.push([0.5, 0.5]);
+      }
+
+      for (var i = 0; i <= detail; i++) {
+        var u = i / detail;
         var theta = (stop - start) * u + start;
 
         var _x = 0.5 + Math.cos(theta) / 2;
@@ -837,15 +853,13 @@ p5.RendererGL.prototype.arc = function(args) {
         this.vertices.push(new p5.Vector(_x, _y, 0));
         this.uvs.push([_x, _y]);
 
-        if (i < this.detailX - 1) {
+        if (i < detail - 1) {
           this.faces.push([0, i + 1, i + 2]);
           this.strokeIndices.push([i + 1, i + 2]);
         }
       }
 
-      if (mode === 'pie') {
-        this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));
-        this.uvs.unshift([0.5, 0.5]);
+      if (mode === constants.PIE) {
         this.faces.push([
           0,
           this.vertices.length - 2,
@@ -857,14 +871,12 @@ p5.RendererGL.prototype.arc = function(args) {
           this.vertices.length - 1
         ]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === 'chord') {
+      } else if (mode === constants.CHORD) {
         this.strokeIndices.push([0, 1]);
         this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === 'open') {
+      } else if (mode === constants.OPEN) {
         this.strokeIndices.push([0, 1]);
       } else {
-        this.vertices.unshift(new p5.Vector(0.5, 0.5, 0));
-        this.uvs.unshift([0.5, 0.5]);
         this.faces.push([
           0,
           this.vertices.length - 2,
@@ -877,13 +889,13 @@ p5.RendererGL.prototype.arc = function(args) {
       }
     };
 
-    var arcGeom = new p5.Geometry(detailX, 1, _arc);
+    var arcGeom = new p5.Geometry(detail, 1, _arc);
     arcGeom.computeNormals();
 
-    if (detailX <= 50) {
+    if (detail <= 50) {
       arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
     } else {
-      console.log('Cannot stroke ' + shape + ' with more than 50 detailX');
+      console.log('Cannot stroke ' + shape + ' with more than 50 detail');
     }
 
     this.createBuffers(gId, arcGeom);
