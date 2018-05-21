@@ -838,7 +838,7 @@ p5.RendererGL.prototype.arc = function(args) {
     var _arc = function() {
       this.strokeIndices = [];
 
-      if (mode === constants.PIE || mode === null) {
+      if (mode === constants.PIE || mode === undefined) {
         this.vertices.push(new p5.Vector(0.5, 0.5, 0));
         this.uvs.push([0.5, 0.5]);
       }
