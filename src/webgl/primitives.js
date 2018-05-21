@@ -838,7 +838,7 @@ p5.RendererGL.prototype.arc = function(args) {
     var _arc = function() {
       this.strokeIndices = [];
 
-      if (mode === constants.PIE || mode === undefined) {
+      if (mode === constants.PIE || typeof mode === 'undefined') {
         this.vertices.push(new p5.Vector(0.5, 0.5, 0));
         this.uvs.push([0.5, 0.5]);
       }
@@ -859,33 +859,40 @@ p5.RendererGL.prototype.arc = function(args) {
         }
       }
 
-      if (mode === constants.PIE) {
-        this.faces.push([
-          0,
-          this.vertices.length - 2,
-          this.vertices.length - 1
-        ]);
-        this.strokeIndices.push([0, 1]);
-        this.strokeIndices.push([
-          this.vertices.length - 2,
-          this.vertices.length - 1
-        ]);
-        this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === constants.CHORD) {
-        this.strokeIndices.push([0, 1]);
-        this.strokeIndices.push([0, this.vertices.length - 1]);
-      } else if (mode === constants.OPEN) {
-        this.strokeIndices.push([0, 1]);
-      } else {
-        this.faces.push([
-          0,
-          this.vertices.length - 2,
-          this.vertices.length - 1
-        ]);
-        this.strokeIndices.push([
-          this.vertices.length - 2,
-          this.vertices.length - 1
-        ]);
+      switch (mode) {
+        case constants.PIE:
+          this.faces.push([
+            0,
+            this.vertices.length - 2,
+            this.vertices.length - 1
+          ]);
+          this.strokeIndices.push([0, 1]);
+          this.strokeIndices.push([
+            this.vertices.length - 2,
+            this.vertices.length - 1
+          ]);
+          this.strokeIndices.push([0, this.vertices.length - 1]);
+          break;
+
+        case constants.CHORD:
+          this.strokeIndices.push([0, 1]);
+          this.strokeIndices.push([0, this.vertices.length - 1]);
+          break;
+
+        case constants.OPEN:
+          this.strokeIndices.push([0, 1]);
+          break;
+
+        default:
+          this.faces.push([
+            0,
+            this.vertices.length - 2,
+            this.vertices.length - 1
+          ]);
+          this.strokeIndices.push([
+            this.vertices.length - 2,
+            this.vertices.length - 1
+          ]);
       }
     };
 
