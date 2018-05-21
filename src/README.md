@@ -12,7 +12,9 @@ The `app.js` file is simply an index of all the other modules which exports the 
 
 p5.js seeks to create a toolkit for working with the web technologies that are most valuable for building art projects. For both expressive and pedagogical reasons, p5.js values (but does not necessarily always achieve lol!) clarity in its APIs.
 
-Public APIs which are exposed to users of the p5.js library during the course of working on sketches and projects should use short, clear, declarative function names. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured into something more creative, expressive, or intuitive.
+Public APIs which are exposed to users of the p5.js library during the course of working on sketches and projects should use short, clear, declarative function names. `circle()` is preferable to `new Circle()`. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured into something more creative, expressive, or intuitive.
+
+Native APIs provided by the browser can sometimes be aliased in the style of public APIs to provide a more creative, expressive, or intuitive interface than the native implementation. For example, `print()` is easier to explain than `console.log()`. Be careful when considering whether to alias native browser functionality in this manner using the public API, because teaching a non-standard implementation also has a steep educational cost. 
 
 Internal APIs which are not exposed to the user but are used for coordination within the library should generally take the form of constructor functions which can be exported across module boundaries. Those constructors are often attached to the `p5` constructor as a form of namespacing, but otherwise do not meaningfully act as methods that reference the host object. In cases where a `p5` object is needed inside a constructor, an instance will be explicitly passed as an input argument.
 
