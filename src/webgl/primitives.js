@@ -90,7 +90,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     this._renderer.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, width, height, 0);
+  this._renderer.drawBuffersScaled(gId, width, height, 1);
   return this;
 };
 
