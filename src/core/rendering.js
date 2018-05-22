@@ -155,6 +155,8 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
       }
     }
     this._renderer.resize(w, h);
+    this.width = w;
+    this.height = h;
     // reset canvas properties
     for (var savedKey in props) {
       try {
