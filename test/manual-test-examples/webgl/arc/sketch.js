@@ -1,5 +1,5 @@
-let angle = 4.2;
-let angle_2 = 0.2;
+var angle_1 = 0;
+var angle_2 = 30;
 
 function setup() {
   createCanvas(800, 600, WEBGL);
@@ -11,21 +11,22 @@ function draw() {
   strokeWeight(3);
   stroke(237, 34, 93);
   fill(255);
-  arc(-300, -150, 100, 100, angle_2, angle, OPEN);
-  arc(-100, -150, 100, 100, angle_2, angle, CHORD);
-  arc(100, -150, 100, 100, angle_2, angle, PIE);
-  arc(300, -150, 100, 100, angle_2, angle);
+  arc(-300, -150, 150, 150, radians(angle_1), radians(angle_2), OPEN);
+  arc(-100, -150, 150, 150, radians(angle_1), radians(angle_2), CHORD);
+  arc(100, -150, 150, 150, radians(angle_1), radians(angle_2), PIE);
+  arc(300, -150, 150, 150, radians(angle_1), radians(angle_2));
   noFill();
-  arc(-300, 150, 100, 100, angle_2, angle, OPEN);
-  arc(-100, 150, 100, 100, angle_2, angle, CHORD);
-  arc(100, 150, 100, 100, angle_2, angle, PIE);
-  arc(300, 150, 100, 100, angle_2, angle);
+  arc(-300, 150, 150, 150, radians(angle_1), radians(angle_2), OPEN);
+  arc(-100, 150, 150, 150, radians(angle_1), radians(angle_2), CHORD);
+  arc(100, 150, 150, 150, radians(angle_1), radians(angle_2), PIE);
+  arc(300, 150, 150, 150, radians(angle_1), radians(angle_2));
 
-  if (angle === angle_2) {
-    angle = 0;
+  angle_1 = angle_1 + 1;
+  angle_2 = angle_2 + 2;
+
+  if (angle_2 >= 360) {
     angle_2 = 0;
-  } else {
-    angle += 0.03;
-    angle_2 += 0.01;
+  } else if (angle_1 >= 360) {
+    angle_1 = 0;
   }
 }

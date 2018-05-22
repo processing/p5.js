@@ -807,7 +807,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
     args[2],
     args[3],
     0,
-    constants.PI * 2,
+    constants.TWO_PI,
     constants.OPEN,
     args[4]
   );
@@ -826,9 +826,9 @@ p5.RendererGL.prototype.arc = function(args) {
   var shape;
   var gId;
 
-  if (Math.abs(stop - start) >= constants.PI * 2) {
+  if (Math.abs(stop - start) >= constants.TWO_PI) {
     shape = 'ellipse';
-    gId = shape + '|' + x + '|' + y + '|' + width + '|' + height + '|';
+    gId = shape + '|' + detail + '|';
   } else {
     shape = 'arc';
     gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detail + '|';
@@ -838,61 +838,63 @@ p5.RendererGL.prototype.arc = function(args) {
     var _arc = function() {
       this.strokeIndices = [];
 
-      if (mode === constants.PIE || typeof mode === 'undefined') {
-        this.vertices.push(new p5.Vector(0.5, 0.5, 0));
-        this.uvs.push([0.5, 0.5]);
-      }
-
-      for (var i = 0; i <= detail; i++) {
-        var u = i / detail;
-        var theta = (stop - start) * u + start;
-
-        var _x = 0.5 + Math.cos(theta) / 2;
-        var _y = 0.5 + Math.sin(theta) / 2;
-
-        this.vertices.push(new p5.Vector(_x, _y, 0));
-        this.uvs.push([_x, _y]);
-
-        if (i < detail - 1) {
-          this.faces.push([0, i + 1, i + 2]);
-          this.strokeIndices.push([i + 1, i + 2]);
+      if (start.toFixed(10) !== stop.toFixed(10)) {
+        if (mode === constants.PIE || typeof mode === 'undefined') {
+          this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+          this.uvs.push([0.5, 0.5]);
         }
-      }
 
-      switch (mode) {
-        case constants.PIE:
-          this.faces.push([
-            0,
-            this.vertices.length - 2,
-            this.vertices.length - 1
-          ]);
-          this.strokeIndices.push([0, 1]);
-          this.strokeIndices.push([
-            this.vertices.length - 2,
-            this.vertices.length - 1
-          ]);
-          this.strokeIndices.push([0, this.vertices.length - 1]);
-          break;
+        for (var i = 0; i <= detail; i++) {
+          var u = i / detail;
+          var theta = (stop - start) * u + start;
 
-        case constants.CHORD:
-          this.strokeIndices.push([0, 1]);
-          this.strokeIndices.push([0, this.vertices.length - 1]);
-          break;
+          var _x = 0.5 + Math.cos(theta) / 2;
+          var _y = 0.5 + Math.sin(theta) / 2;
 
-        case constants.OPEN:
-          this.strokeIndices.push([0, 1]);
-          break;
+          this.vertices.push(new p5.Vector(_x, _y, 0));
+          this.uvs.push([_x, _y]);
 
-        default:
-          this.faces.push([
-            0,
-            this.vertices.length - 2,
-            this.vertices.length - 1
-          ]);
-          this.strokeIndices.push([
-            this.vertices.length - 2,
-            this.vertices.length - 1
-          ]);
+          if (i < detail - 1) {
+            this.faces.push([0, i + 1, i + 2]);
+            this.strokeIndices.push([i + 1, i + 2]);
+          }
+        }
+
+        switch (mode) {
+          case constants.PIE:
+            this.faces.push([
+              0,
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([0, 1]);
+            this.strokeIndices.push([
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+            break;
+
+          case constants.CHORD:
+            this.strokeIndices.push([0, 1]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+            break;
+
+          case constants.OPEN:
+            this.strokeIndices.push([0, 1]);
+            break;
+
+          default:
+            this.faces.push([
+              0,
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+        }
       }
     };
 

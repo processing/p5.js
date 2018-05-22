@@ -97,13 +97,20 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   while (stop < 0) {
     stop += constants.TWO_PI;
   }
-  // ...and confine them to the interval [0,TWO_PI).
-  start %= constants.TWO_PI;
-  stop %= constants.TWO_PI;
 
-  // account for full circle, don't display anything
-  if (stop.toFixed(10) === start.toFixed(10)) {
+  // don't display anything if the angles are same or they have a difference of 0 - TWO_PI
+  if (
+    stop.toFixed(10) === start.toFixed(10) ||
+    Math.abs(stop - start) === constants.TWO_PI
+  ) {
+    start %= constants.TWO_PI;
+    stop %= constants.TWO_PI;
     start += constants.TWO_PI;
+  } else if (Math.abs(stop - start) > constants.TWO_PI) {
+    // display a full circle if the difference between them is greater than 0 - TWO_PI
+    start %= constants.TWO_PI;
+    stop %= constants.TWO_PI;
+    stop += constants.TWO_PI;
   }
 
   //Adjust angles to counter linear scaling.
@@ -127,6 +134,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
+
+  //console.log(start + " , " + stop);
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, detail);
