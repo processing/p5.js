@@ -826,6 +826,7 @@ p5.RendererGL.prototype.arc = function(args) {
   var shape;
   var gId;
 
+  // check if it is an ellipse or an arc
   if (Math.abs(stop - start) >= constants.TWO_PI) {
     shape = 'ellipse';
     gId = shape + '|' + detail + '|';
@@ -838,12 +839,15 @@ p5.RendererGL.prototype.arc = function(args) {
     var _arc = function() {
       this.strokeIndices = [];
 
+      // if the start and stop angles are not the same, push vertices to the array
       if (start.toFixed(10) !== stop.toFixed(10)) {
+        // if the mode specified is PIE or null, push the mid point of the arc in vertices
         if (mode === constants.PIE || typeof mode === 'undefined') {
           this.vertices.push(new p5.Vector(0.5, 0.5, 0));
           this.uvs.push([0.5, 0.5]);
         }
 
+        // vertices for the perimeter of the circle
         for (var i = 0; i <= detail; i++) {
           var u = i / detail;
           var theta = (stop - start) * u + start;
@@ -860,6 +864,7 @@ p5.RendererGL.prototype.arc = function(args) {
           }
         }
 
+        // check the mode specified in order to push vertices and faces, different for each mode
         switch (mode) {
           case constants.PIE:
             this.faces.push([
