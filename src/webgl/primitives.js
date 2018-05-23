@@ -10,6 +10,7 @@
 
 var p5 = require('../core/core');
 require('./p5.Geometry');
+var constants = require('../core/constants');
 
 /**
  * Draw a plane with given a width and height
@@ -800,49 +801,122 @@ p5.RendererGL.prototype.triangle = function(args) {
 };
 
 p5.RendererGL.prototype.ellipse = function(args) {
-  var x = args[0];
-  var y = args[1];
-  var width = args[2];
-  var height = args[3];
-  //detailX and Y are optional 6th & 7th
-  //arguments
-  var detailX = args[4] || 24;
-  var gId = 'ellipse|' + detailX;
-  if (!this.geometryInHash(gId)) {
-    var _ellipse = function() {
-      this.vertices.push(new p5.Vector(0.5, 0.5, 0));
-      this.uvs.push([0.5, 0.5]);
+  this.arc(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    0,
+    constants.TWO_PI,
+    constants.OPEN,
+    args[4]
+  );
+};
 
-      for (var i = 0; i < this.detailX; i++) {
-        var u = i / this.detailX;
-        var theta = 2 * Math.PI * u;
+p5.RendererGL.prototype.arc = function(args) {
+  var x = arguments[0];
+  var y = arguments[1];
+  var width = arguments[2];
+  var height = arguments[3];
+  var start = arguments[4];
+  var stop = arguments[5];
+  var mode = arguments[6];
+  var detail = arguments[7] || 25;
 
-        var _x = 0.5 + Math.cos(theta) / 2;
-        var _y = 0.5 + Math.sin(theta) / 2;
+  var shape;
+  var gId;
 
-        this.vertices.push(new p5.Vector(_x, _y, 0));
-        this.uvs.push(_x, _y);
-
-        this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
-      }
-    };
-    var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
-    ellipseGeom.computeNormals();
-    if (detailX <= 50) {
-      ellipseGeom._makeTriangleEdges()._edgesToVertices();
-    } else {
-      console.log('Cannot stroke ellipse with more than 50 detailX');
-    }
-
-    this.createBuffers(gId, ellipseGeom);
+  // check if it is an ellipse or an arc
+  if (Math.abs(stop - start) >= constants.TWO_PI) {
+    shape = 'ellipse';
+    gId = shape + '|' + detail + '|';
+  } else {
+    shape = 'arc';
+    gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detail + '|';
   }
 
-  // only a single ellipse (of a given detail) is cached: a circle of
-  // _diameter_ 1 (radius 0.5).
-  //
-  // before rendering, this circle is squished (technical term ;)
-  // appropriately and moved to the required location.
+  if (!this.geometryInHash(gId)) {
+    var _arc = function() {
+      this.strokeIndices = [];
+
+      // if the start and stop angles are not the same, push vertices to the array
+      if (start.toFixed(10) !== stop.toFixed(10)) {
+        // if the mode specified is PIE or null, push the mid point of the arc in vertices
+        if (mode === constants.PIE || typeof mode === 'undefined') {
+          this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+          this.uvs.push([0.5, 0.5]);
+        }
+
+        // vertices for the perimeter of the circle
+        for (var i = 0; i <= detail; i++) {
+          var u = i / detail;
+          var theta = (stop - start) * u + start;
+
+          var _x = 0.5 + Math.cos(theta) / 2;
+          var _y = 0.5 + Math.sin(theta) / 2;
+
+          this.vertices.push(new p5.Vector(_x, _y, 0));
+          this.uvs.push([_x, _y]);
+
+          if (i < detail - 1) {
+            this.faces.push([0, i + 1, i + 2]);
+            this.strokeIndices.push([i + 1, i + 2]);
+          }
+        }
+
+        // check the mode specified in order to push vertices and faces, different for each mode
+        switch (mode) {
+          case constants.PIE:
+            this.faces.push([
+              0,
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([0, 1]);
+            this.strokeIndices.push([
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+            break;
+
+          case constants.CHORD:
+            this.strokeIndices.push([0, 1]);
+            this.strokeIndices.push([0, this.vertices.length - 1]);
+            break;
+
+          case constants.OPEN:
+            this.strokeIndices.push([0, 1]);
+            break;
+
+          default:
+            this.faces.push([
+              0,
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+            this.strokeIndices.push([
+              this.vertices.length - 2,
+              this.vertices.length - 1
+            ]);
+        }
+      }
+    };
+
+    var arcGeom = new p5.Geometry(detail, 1, _arc);
+    arcGeom.computeNormals();
+
+    if (detail <= 50) {
+      arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
+    } else {
+      console.log('Cannot stroke ' + shape + ' with more than 50 detail');
+    }
+
+    this.createBuffers(gId, arcGeom);
+  }
+
   var uMVMatrix = this.uMVMatrix.copy();
+
   try {
     this.uMVMatrix.translate([x, y, 0]);
     this.uMVMatrix.scale(width, height, 1);
@@ -851,6 +925,7 @@ p5.RendererGL.prototype.ellipse = function(args) {
   } finally {
     this.uMVMatrix = uMVMatrix;
   }
+
   return this;
 };
 
