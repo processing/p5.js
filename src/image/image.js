@@ -96,9 +96,7 @@ p5.prototype.createImage = function(width, height) {
 };
 
 /**
- *  Save the current canvas as an image. In Safari, this will open the
- *  image in the window and the user must provide their own
- *  filename on save-as. Other browsers will either save the
+ *  Save the current canvas as an image. The browser will either save the
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
