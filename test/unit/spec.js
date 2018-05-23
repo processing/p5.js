@@ -7,6 +7,7 @@ var spec = {
     'curves',
     'element',
     'error_helpers',
+    'graphics',
     'renderer',
     'structure'
   ],

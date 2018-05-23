@@ -1308,6 +1308,13 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/7628664?v=4",
       "profile": "https://github.com/dekmm",
       "contributions": ["code","bug"]
+    },
+    {
+      "login": "yutinglu413",
+      "name": "Yuting Lu",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/25344311?v=4",
+      "profile": "https://github.com/yutinglu413",
+      "contributions": ["doc"]
     }
   ]
 }

@@ -80,33 +80,13 @@ p5.Renderer.prototype.push = function() {
   };
 };
 
-// this is implementation of Object.assign() which is unavailable in
-// IE11 and (non-Chrome) Android browsers.
-// The assign() method is used to copy the values of all enumerable
-// own properties from one or more source objects to a target object.
-// It will return the target object.
-function assign(to, firstSource) {
-  for (var i = 1; i < arguments.length; i++) {
-    var nextSource = arguments[i];
-    if (nextSource === undefined || nextSource === null) {
-      continue;
-    }
-
-    for (var nextKey in nextSource)
-      if (nextSource.hasOwnProperty(nextKey)) {
-        to[nextKey] = nextSource[nextKey];
-      }
-  }
-  return to;
-}
-
 // a pop() operation is in progress
 // the renderer is passed the 'style' object that it returned
 // from its push() method.
 p5.Renderer.prototype.pop = function(style) {
   if (style.properties) {
     // copy the style properties back into the renderer
-    assign(this, style.properties);
+    Object.assign(this, style.properties);
   }
 };
 

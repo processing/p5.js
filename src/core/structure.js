@@ -116,19 +116,6 @@ p5.prototype.loop = function() {
   this._draw();
 };
 
-function assign(dest, varArgs) {
-  for (var index = 1; index < arguments.length; index++) {
-    var src = arguments[index];
-    if (src != null) {
-      for (var key in src) {
-        if (src.hasOwnProperty(key)) {
-          dest[key] = src[key];
-        }
-      }
-    }
-  }
-}
-
 /**
  * The <a href="#/p5/push">push()</a> function saves the current drawing style settings and
  * transformations, while <a href="#/p5/pop">pop()</a> restores these settings. Note that these
@@ -254,7 +241,7 @@ p5.prototype.pop = function() {
   var style = this._styles.pop();
   if (style) {
     this._renderer.pop(style.renderer);
-    assign(this, style.props);
+    Object.assign(this, style.props);
   } else {
     console.warn('pop() was called without matching push()');
   }

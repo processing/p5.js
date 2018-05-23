@@ -365,9 +365,12 @@ p5.Color.prototype.setAlpha = function(new_alpha) {
 
 // calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
-  this.levels = this._array.map(function(level) {
-    return Math.round(level * 255);
-  });
+  var array = this._array;
+  // (loop backwards for performance)
+  var levels = (this.levels = new Array(array.length));
+  for (var i = array.length - 1; i >= 0; --i) {
+    levels[i] = Math.round(array[i] * 255);
+  }
 };
 
 p5.Color.prototype._getAlpha = function() {
@@ -789,27 +792,34 @@ var colorPatterns = {
 p5.Color._parseInputs = function(r, g, b, a) {
   var numArgs = arguments.length;
   var mode = this.mode;
-  var maxes = this.maxes;
+  var maxes = this.maxes[mode];
   var results = [];
+  var i;
 
   if (numArgs >= 3) {
     // Argument is a list of component values.
 
-    results[0] = r / maxes[mode][0];
-    results[1] = g / maxes[mode][1];
-    results[2] = b / maxes[mode][2];
+    results[0] = r / maxes[0];
+    results[1] = g / maxes[1];
+    results[2] = b / maxes[2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof a === 'number') {
-      results[3] = a / maxes[mode][3];
+      results[3] = a / maxes[3];
     } else {
       results[3] = 1;
     }
 
     // Constrain components to the range [0,1].
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    // (loop backwards for performance)
+    for (i = results.length - 1; i >= 0; --i) {
+      var result = results[i];
+      if (result < 0) {
+        results[i] = 0;
+      } else if (result > 1) {
+        results[i] = 1;
+      }
+    }
 
     // Convert to RGBA and return.
     if (mode === constants.HSL) {
@@ -961,11 +971,13 @@ p5.Color._parseInputs = function(r, g, b, a) {
           return parseInt(color, 10) / 100;
         });
     }
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
 
     if (results.length) {
+      // (loop backwards for performance)
+      for (i = results.length - 1; i >= 0; --i) {
+        results[i] = Math.max(Math.min(results[i], 1), 0);
+      }
+
       return color_conversion._hsbaToRGBA(results);
     }
 
@@ -979,13 +991,13 @@ p5.Color._parseInputs = function(r, g, b, a) {
      * value (they are equivalent when chroma is zero). For RGB, normalize the
      * gray level according to the blue maximum.
      */
-    results[0] = r / maxes[mode][2];
-    results[1] = r / maxes[mode][2];
-    results[2] = r / maxes[mode][2];
+    results[0] = r / maxes[2];
+    results[1] = r / maxes[2];
+    results[2] = r / maxes[2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof g === 'number') {
-      results[3] = g / maxes[mode][3];
+      results[3] = g / maxes[3];
     } else {
       results[3] = 1;
     }

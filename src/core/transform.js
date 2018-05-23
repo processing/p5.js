@@ -314,9 +314,9 @@ p5.prototype.rotateZ = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(width / 2, height / 2);
- * rotate(PI / 3.0);
- * rect(-26, -26, 52, 52);
+ * rect(30, 20, 50, 50);
+ * scale(0.5);
+ * rect(30, 20, 50, 50);
  * </code>
  * </div>
  *

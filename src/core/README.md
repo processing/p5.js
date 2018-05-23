@@ -14,7 +14,7 @@ Aside from the exported constructor function, the most important thing in this m
 
 ## [structure.js](./structure.js)
 
-The `structure.js` module is best thought of as a collection of ways to make *modifications* to the typical *loop structure* of p5's `draw()` function. The functions in this module allow you to add and extract individual renders from the loop, draw the loop one frame at a time, pause and resume the loop, and so on.
+The `structure.js` module is best thought of as a collection of ways to make *modifications* to the typical *loop structure* exposed by the `draw()` function. The functions in this module allow you to add and extract individual renders from the loop, draw the loop one frame at a time, pause and resume the loop, and so on.
 
 ## [constants.js](./constants.js)
 
