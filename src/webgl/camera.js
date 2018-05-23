@@ -10,12 +10,12 @@
 var p5 = require('../core/core');
 
 /**
- * Sets camera position for a 3D sketch. The function behaves similarly
- * gluLookAt, except that it replaces the existing modelview matrix instead
- * of applying any transformations calculated here on top of the existing
- * model view.
- * When called with no arguments, this function
- * sets a default camera equivalent to calling
+ * Sets the camera position for a 3D sketch. Parameters for this function define
+ * the position for the camera, the center of the sketch (where the camera is
+ * pointing), and an up direction (the orientation of the camera).
+ *
+ * When called with no arguments, this function creates a default camera
+ * equivalent to
  * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
  * @method camera
  * @param  {Number} [x]        camera position value on x axis
@@ -160,10 +160,18 @@ p5.RendererGL.prototype.camera = function(
 };
 
 /**
- * Sets perspective camera. When called with no arguments, the defaults
+ * Sets a perspective projection for the camera in a 3D sketch. This projection
+ * represents depth through foreshortening: objects that are close to the camera
+ * appear their actual size while those that are further away from the camera
+ * appear smaller. The parameters to this function define the viewing frustum
+ * (the truncated pyramid within which objects are seen by the camera) through
+ * vertical field of view, aspect ratio (usually width/height), and near and far
+ * clipping planes.
+ *
+ * When called with no arguments, the defaults
  * provided are equivalent to
- * perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0)
- * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+ * perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0), where cameraZ
+ * is equal to ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
  * @param  {Number} [fovy]   camera frustum vertical field of view,
  *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
@@ -174,31 +182,36 @@ p5.RendererGL.prototype.camera = function(
  * @example
  * <div>
  * <code>
- * //drag mouse to toggle the world!
- * //you will see there's a vanish point
+ * //drag the mouse to look around!
+ * //you will see there's a vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   var fov = 60 / 180 * PI;
- *   var cameraZ = height / 2.0 / tan(fov / 2.0);
- *   perspective(60 / 180 * PI, width / height, cameraZ * 0.1, cameraZ * 10);
+ *   perspective(fov, width / height, 0.1, 500);
  * }
  * function draw() {
  *   background(200);
  *   orbitControl();
- *   for (var i = -1; i < 2; i++) {
- *     for (var j = -2; j < 3; j++) {
- *       push();
- *       translate(i * 160, 0, j * 160);
- *       box(40, 40, 40);
- *       pop();
- *     }
- *   }
+ *   normalMaterial();
+ *
+ *   rotateX(-0.3);
+ *   rotateY(-0.2);
+ *   translate(0, 0, -50);
+ *
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 95);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 95);
+ *   box(30);
+ *   pop();
  * }
  * </code>
  * </div>
  *
  * @alt
- * colored 3d boxes toggleable with mouse position
+ * colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
 p5.prototype.perspective = function() {
@@ -242,7 +255,14 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
 };
 
 /**
- * Setup ortho camera
+ * Sets an orthographic projection for the camera in a 3D sketch and defines a
+ * box-shaped viewing frustum within which objects are seen. In this projection,
+ * all objects with the same dimension appear the same size, regardless of
+ * whether they are near or far from the camera. The parameters to this
+ * function specify the viewing frustum where left and right are the minimum and
+ * maximum x values, top and bottom are the minimum and maximum y values, and near
+ * and far are the minimum and maximum z values. If no parameters are given, the
+ * default is used: ortho(-width/2, width/2, -height/2, height/2).
  * @method  ortho
  * @param  {Number} [left]   camera frustum left plane
  * @param  {Number} [right]  camera frustum right plane
@@ -254,8 +274,8 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * @example
  * <div>
  * <code>
- * //drag mouse to toggle the world!
- * //there's no vanish point
+ * //drag the mouse to look around!
+ * //there's no vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
@@ -263,21 +283,24 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * function draw() {
  *   background(200);
  *   orbitControl();
- *   strokeWeight(0.1);
- *   for (var i = -1; i < 2; i++) {
- *     for (var j = -2; j < 3; j++) {
- *       push();
- *       translate(i * 160, 0, j * 160);
- *       box(40, 40, 40);
- *       pop();
- *     }
- *   }
+ *   normalMaterial();
+ *
+ *   rotateX(0.2);
+ *   rotateY(-0.2);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 65);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
+ *   box(30);
+ *   pop();
  * }
  * </code>
  * </div>
  *
  * @alt
- * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
+ * 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  *
  */
 p5.prototype.ortho = function() {
@@ -310,9 +333,9 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   this.uPMatrix = p5.Matrix.identity();
 
   // prettier-ignore
-  this.uPMatrix.set(  x,  0,  0,  0, 
-                      0, -y,  0,  0, 
-                      0,  0,  z,  0, 
+  this.uPMatrix.set(  x,  0,  0,  0,
+                      0, -y,  0,  0,
+                      0,  0,  z,  0,
                      tx, ty, tz,  1);
 
   this._curCamera = 'custom';
