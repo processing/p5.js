@@ -108,12 +108,16 @@ p5.Renderer2D.prototype.image = function(
     if (!cnv) {
       cnv = img.canvas || img.elt;
     }
+    var s = 1;
+    if (img.width && img.width > 0) {
+      s = cnv.width / img.width;
+    }
     this.drawingContext.drawImage(
       cnv,
-      sx,
-      sy,
-      sWidth,
-      sHeight,
+      s * sx,
+      s * sy,
+      s * sWidth,
+      s * sHeight,
       dx,
       dy,
       dWidth,
