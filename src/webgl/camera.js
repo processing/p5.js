@@ -185,8 +185,7 @@ p5.RendererGL.prototype.camera = function(
  * //you will see there's a vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   var fov = 60 / 180 * PI;
- *   perspective(fov, width / height, 0.1, 500);
+ *   perspective(PI / 3.0, width / height, 0.1, 500);
  * }
  * function draw() {
  *   background(200);
@@ -210,7 +209,7 @@ p5.RendererGL.prototype.camera = function(
  * </div>
  *
  * @alt
- * colored 3D boxes move back and forth, rotating as mouse is dragged.
+ * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
 p5.prototype.perspective = function() {
@@ -299,7 +298,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * </div>
  *
  * @alt
- * 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  *
  */
 p5.prototype.ortho = function() {
