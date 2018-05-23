@@ -221,6 +221,21 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
     far = this.defaultCameraFar;
   }
 
+  if (near <= 0.0001) {
+    near = 0.01;
+    console.log(
+      'Avoid perspective near plane values close to or below 0. ' +
+        'Setting value to 0.01.'
+    );
+  }
+
+  if (far < near) {
+    console.log(
+      'Perspective far plane value is less than near plane value. ' +
+        'Nothing will be shown.'
+    );
+  }
+
   this.cameraFOV = this._pInst._toRadians(fovy);
   this.cameraAspect = aspect;
   this.cameraNear = near;
@@ -309,9 +324,9 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   this.uPMatrix = p5.Matrix.identity();
 
   // prettier-ignore
-  this.uPMatrix.set(  x,  0,  0,  0, 
-                      0, -y,  0,  0, 
-                      0,  0,  z,  0, 
+  this.uPMatrix.set(  x,  0,  0,  0,
+                      0, -y,  0,  0,
+                      0,  0,  z,  0,
                      tx, ty, tz,  1);
 
   this._curCamera = 'custom';
