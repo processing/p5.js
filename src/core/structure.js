@@ -9,9 +9,6 @@
 
 var p5 = require('./core');
 
-p5.prototype.exit = function() {
-  throw new Error('exit() not implemented, see remove()');
-};
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
  * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a> begins to run continuously again.
@@ -247,14 +244,6 @@ p5.prototype.pop = function() {
   }
 };
 
-p5.prototype.pushStyle = function() {
-  throw new Error('pushStyle() not used, see push()');
-};
-
-p5.prototype.popStyle = function() {
-  throw new Error('popStyle() not used, see pop()');
-};
-
 /**
  *
  * Executes the code within <a href="#/p5/draw">draw()</a> one time. This functions allows the
@@ -346,12 +335,6 @@ p5.prototype.redraw = function(n) {
       this._registeredMethods.post.forEach(callMethod);
     }
   }
-};
-
-p5.prototype.size = function() {
-  var s = 'size() is not a valid p5 function, to set the size of the ';
-  s += 'drawing canvas, please use createCanvas() instead';
-  throw new Error(s);
 };
 
 module.exports = p5;

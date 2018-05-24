@@ -20,6 +20,9 @@ The `structure.js` module is best thought of as a collection of ways to make *mo
 
 The `constants.js` module provides various default values mostly related to math and web standards using clear semantic names to increase syntax clarity when they are used in other algorithms. These values are attached to the `p5` object prototype as properties by the constructor function so they can be more easily accessed by other parts of the p5.js library or by user code.
 
+## [api_notifications.js](./api_notifications.js)
+TODO
+
 # Browser
 
 *utilizing and abstracting web technologies*

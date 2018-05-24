@@ -42,6 +42,7 @@ require('./core/curves');
 require('./core/vertex');
 require('./core/structure');
 require('./core/transform');
+require('./core/api_notifications');
 require('./typography/attributes');
 require('./typography/loading_displaying');
 
