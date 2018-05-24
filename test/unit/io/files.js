@@ -109,20 +109,6 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  // loadJSON()
-  suite('loadJSON() in Preload', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadJSON);
-      assert.typeOf(myp5.loadJSON, 'function');
-    });
-
-    test('should return an Object', function() {
-      result = myp5.loadJSON('unit/assets/array.json');
-      assert.ok(result);
-      assert.isObject(result, 'result is an object');
-    });
-  });
-
   // loadStrings()
   suite('loadStrings() in Preload', function() {
     test('should be a function', function() {
@@ -153,70 +139,6 @@ suite('Files', function() {
 
   //tests while preload is false with callbacks
   preload = false;
-
-  // myp5.loadJSON()
-  suite('p5.prototype.myp5.loadJSON', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadJSON);
-      assert.typeOf(myp5.loadJSON, 'function');
-    });
-
-    test('should call callback function if provided', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.loadJSON('unit/assets/array.json', resolve, reject);
-      });
-    });
-
-    test('should pass an Array to callback function', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.loadJSON('unit/assets/array.json', resolve, reject);
-      }).then(function(data) {
-        assert.isArray(data, 'Array passed to callback function');
-        assert.lengthOf(data, 3, 'length of data is 3');
-      });
-    });
-
-    test('should call error callback function if provided', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.loadJSON(
-          'unit/assets/arr.json',
-          function(data) {
-            reject('Success callback executed');
-          },
-          resolve
-        );
-      });
-    });
-
-    test('should pass error object to error callback function', function() {
-      return new Promise(function(resolve, reject) {
-        myp5.loadJSON(
-          'unit/assets/arr.json',
-          function(data) {
-            reject('Success callback executed');
-          },
-          resolve
-        );
-      }).then(function(err) {
-        assert.isFalse(err.ok, 'err.ok is false');
-        assert.equal(err.status, 404, 'Error status is 404');
-      });
-    });
-
-    // @TODO Need to check this does what it should
-    test('should allow json to override jsonp', function() {
-      return new Promise(function(resolve, reject) {
-        result = myp5.loadJSON(
-          'unit/assets/array.json',
-          'json',
-          resolve,
-          reject
-        );
-      }).then(function(resp) {
-        assert.ok(resp);
-      });
-    });
-  });
 
   // loadStrings()
   suite('p5.prototype.loadStrings', function() {
