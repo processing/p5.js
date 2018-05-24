@@ -775,15 +775,13 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </div>
  */
 p5.RendererGL.prototype.point = function(x, y, z) {
-  this._usePointShader();
-  this.curPointShader.bindShader();
   if (typeof z === 'undefined') {
     z = 0;
   }
+
   var _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
   this._drawPoints(_vertex, this._pointVertexBuffer);
-  this.curPointShader.unbindShader();
 
   return this;
 };
