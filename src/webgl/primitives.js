@@ -949,6 +949,15 @@ p5.RendererGL.prototype.rect = function(args) {
           this.uvs.push(u, v);
         }
       }
+      // using stroke indices to avoid stroke over face(s) of rectangle
+      if (detailX > 0 && detailY > 0) {
+        this.strokeIndices = [
+          [0, detailX],
+          [detailX, (detailX + 1) * (detailY + 1) - 1],
+          [(detailX + 1) * (detailY + 1) - 1, (detailX + 1) * detailY],
+          [(detailX + 1) * detailY, 0]
+        ];
+      }
     };
     var rectGeom = new p5.Geometry(detailX, detailY, _rect);
     rectGeom
