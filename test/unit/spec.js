@@ -19,6 +19,7 @@ var spec = {
     'loadImage',
     'loadJSON',
     'loadModel',
+    'loadShader',
     'loadStrings',
     'loadTable',
     'loadXML'
