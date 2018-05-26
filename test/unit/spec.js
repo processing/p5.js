@@ -18,6 +18,7 @@ var spec = {
     'loadBytes',
     'loadImage',
     'loadJSON',
+    'loadModel',
     'loadStrings',
     'loadTable',
     'loadXML'
