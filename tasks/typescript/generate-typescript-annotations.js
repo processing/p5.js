@@ -48,7 +48,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     'null',
     'Node',
     'RegExp',
-    'Promise',
+    'Promise'
   ]);
 
   var YUIDOC_TO_TYPESCRIPT_PARAM_MAP = {
