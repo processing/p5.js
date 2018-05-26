@@ -602,7 +602,6 @@ p5.prototype._preloadMethods = {
   loadStrings: p5.prototype,
   loadXML: p5.prototype,
   loadBytes: p5.prototype,
-  loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,
   loadModel: p5.prototype,
