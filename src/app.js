@@ -25,7 +25,7 @@ require('./image/loading_displaying');
 require('./image/pixels');
 require('./io/files');
 require('./events/keyboard');
-require('./events/acceleration'); //john
+require('./events/acceleration');
 require('./events/mouse');
 require('./utilities/time_date');
 require('./events/touch');
@@ -42,7 +42,7 @@ require('./core/curves');
 require('./core/vertex');
 require('./core/structure');
 require('./core/transform');
-require('./core/api_notifications');
+require('./core/legacy');
 require('./typography/attributes');
 require('./typography/loading_displaying');
 
