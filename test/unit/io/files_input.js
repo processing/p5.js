@@ -16,7 +16,6 @@ suite('Files', function() {
 
   //variable for preload
   var preload = p5.prototype.preload;
-  var result;
 
   // httpDo
   suite('httpDo()', function() {
@@ -85,45 +84,8 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  // loadXML()
-  suite('loadXML() in Preload', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadXML);
-      assert.typeOf(myp5.loadXML, 'function');
-    });
-
-    test('should return an Object', function() {
-      result = myp5.loadXML('unit/assets/books.xml');
-      assert.ok(result);
-      assert.isObject(result, 'result is an object');
-    });
-  });
-
   //tests while preload is false with callbacks
   preload = false;
-
-  // loadXML()
-  suite('p5.prototype.loadXML', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadXML);
-      assert.typeOf(myp5.loadXML, 'function');
-    });
-
-    //Missing reference to parseXML, might need some test suite rethink
-    // test('should call callback function if provided', function() {
-    //   return new Promise(function(resolve, reject) {
-    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
-    //   });
-    // });
-    //
-    // test('should pass an Object to callback function', function(){
-    //   return new Promise(function(resolve, reject) {
-    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
-    //   }).then(function(data) {
-    //     assert.isObject(data);
-    //   });
-    // });
-  });
 
   suite('p5.prototype.loadTable', function() {
     var url = 'unit/assets/csv.csv';
