@@ -16,6 +16,7 @@ var spec = {
   io: [
     'files_input',
     'loadBytes',
+    'loadImage',
     'loadJSON',
     'loadStrings',
     'loadTable',
