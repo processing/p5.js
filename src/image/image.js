@@ -72,7 +72,7 @@ var p5 = require('../core/core'); // This is not global, but JSHint is not aware
  * var img = createImage(66, 66);
  * img.loadPixels();
  * var d = pixelDensity();
- * var halfImage = 4 * (width * d) * (height / 2 * d);
+ * var halfImage = 4 * (img.width * d) * (img.height / 2 * d);
  * for (var i = 0; i < halfImage; i += 4) {
  *   img.pixels[i] = red(pink);
  *   img.pixels[i + 1] = green(pink);
