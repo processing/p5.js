@@ -109,10 +109,8 @@ p5.prototype.focused = document.hasFocus();
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
  * if already hidden. If you are trying to set an image as the cursor, the
- * recommended size is 16x16 or 32x32 pixels. It is not possible to load an
- * image as the cursor if you are exporting your program for the Web, and not
- * all MODES work with all browsers. The values for parameters x and y must
- * be less than the dimensions of the image.
+ * recommended size is 16x16 or 32x32 pixels. The values for parameters x and y
+ * must be less than the dimensions of the image.
  *
  * @method cursor
  * @param {String|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
