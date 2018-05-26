@@ -13,7 +13,14 @@ var spec = {
   ],
   data: ['dictionary'],
   image: ['loading', 'pixels'],
-  io: ['files_input', 'loadJSON', 'loadStrings', 'loadTable', 'loadXML'],
+  io: [
+    'files_input',
+    'loadBytes',
+    'loadJSON',
+    'loadStrings',
+    'loadTable',
+    'loadXML'
+  ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
