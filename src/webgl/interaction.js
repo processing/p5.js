@@ -33,7 +33,7 @@ p5.prototype.orbitControl = function() {
   p5._validateParameters('orbitControl', arguments);
   if (this.mouseIsPressed) {
     this.rotateY((this.mouseX - this.width / 2) / (this.width / 2));
-    this.rotateX((this.mouseY - this.height / 2) / (this.width / 2));
+    this.rotateX((this.height / 2 - this.mouseY) / (this.height / 2));
   }
   return this;
 };
