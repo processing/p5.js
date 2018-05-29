@@ -191,7 +191,7 @@ p5.Shader.prototype.bindShader = function() {
     this.useProgram();
     this._bound = true;
     this.bindTextures();
-    
+
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
     if (this === this._renderer.curStrokeShader) {
