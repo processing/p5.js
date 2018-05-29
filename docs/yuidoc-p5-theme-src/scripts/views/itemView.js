@@ -138,6 +138,9 @@ define([
         Prism.highlightAll();
       }
 
+      var renderEvent = new Event('reference-rendered');
+      window.dispatchEvent(renderEvent);
+
       return this;
     },
     /**
