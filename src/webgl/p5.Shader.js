@@ -34,8 +34,6 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
   this.uniforms = {};
   this._bound = false;
   this.samplers = [];
-
-  return this;
 };
 
 /**
@@ -193,9 +191,6 @@ p5.Shader.prototype.bindShader = function() {
     this.useProgram();
     this._bound = true;
     this.bindTextures();
-
-    this._loadAttributes();
-    this._loadUniforms();
 
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
