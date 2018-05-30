@@ -9,6 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('./constants');
 
 /**
  * Texture class for WEBGL Mode
@@ -250,6 +251,74 @@ p5.Texture.prototype.unbindTexture = function() {
   // unbind per above, disable texturing on glTarget
   var gl = this._renderer.GL;
   gl.bindTexture(this.glTarget, null);
+};
+
+/**
+ * Sets texture min / mag filters
+ * @method setTextureFilters
+ */
+p5.Texture.prototype.setTextureFilters = function(minFilter, magFilter) {
+  var gl = this._renderer.GL;
+
+  if (minFilter === constants.NEAREST) {
+    this.glMinFilter = gl.NEAREST;
+  } else if (minFilter === constants.LINEAR) {
+    this.glMinFilter = gl.LINEAR;
+  } else {
+    // falling back to default
+    this.glMinFilter = gl.LINEAR;
+  }
+
+  if (magFilter === constants.NEAREST) {
+    this.glMagFilter = gl.NEAREST;
+  } else if (magFilter === constants.LINEAR) {
+    this.glMagFilter = gl.LINEAR;
+  } else {
+    // falling back to default
+    this.glMagFilter = gl.LINEAR;
+  }
+
+  this.bindTexture();
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
+
+  this.unbindTexture();
+};
+
+/**
+ * Sets texture wrap
+ * @method setTextureWrap
+ */
+p5.Texture.prototype.setTextureWrap = function(wrapS, wrapT) {
+  var gl = this._renderer.GL;
+
+  if (wrapS === constants.CLAMP) {
+    this.glWrapS = gl.CLAMP_TO_EDGE;
+  } else if (wrapS === constants.REPEAT) {
+    this.glWrapS = gl.REPEAT;
+  } else if (wrapS === constants.MIRROR) {
+    this.glWrapS = gl.MIRRORED_REPEAT;
+  } else {
+    // falling back to default
+    this.glWrapS = gl.CLAMP_TO_EDGE;
+  }
+
+  if (wrapT === constants.CLAMP) {
+    this.glWrapT = gl.CLAMP_TO_EDGE;
+  } else if (wrapT === constants.REPEAT) {
+    this.glWrapT = gl.REPEAT;
+  } else if (wrapT === constants.MIRROR) {
+    this.glWrapT = gl.MIRRORED_REPEAT;
+  } else {
+    // falling back to default
+    this.glWrapT = gl.CLAMP_TO_EDGE;
+  }
+
+  this.bindTexture();
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
+  this.unbindTexture();
 };
 
 module.exports = p5.Texture;
