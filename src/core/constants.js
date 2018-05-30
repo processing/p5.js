@@ -20,6 +20,11 @@ module.exports = {
    * @final
    */
   WEBGL: 'webgl',
+  NEAREST: 'nearest',
+  LINEAR: 'linear',
+  REPEAT: 'repeat',
+  CLAMP: 'clamp',
+  MIRROR: 'mirror',
 
   // ENVIRONMENT
   ARROW: 'default',
