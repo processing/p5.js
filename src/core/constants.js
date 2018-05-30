@@ -21,7 +21,6 @@ module.exports = {
    */
   WEBGL: 'webgl',
 
-
   // ENVIRONMENT
   ARROW: 'default',
   CROSS: 'crosshair',
@@ -499,7 +498,7 @@ module.exports = {
   IMMEDIATE: 'immediate',
 
   //WEBGL TEXTURE WRAP AND FILTERING
-  // LINEAR already exists above 
+  // LINEAR already exists above
   NEAREST: 'nearest',
   REPEAT: 'repeat',
   CLAMP: 'clamp',
