@@ -15,7 +15,7 @@ function draw() {
   cone(90);
   pop();
 
-  fill(255);
+  fill(0, 0, 255);
   rect(0, 0, width / 4, height / 4);
   fill(0, 255, 0);
   ellipse(width / 4, height / 4, width / 4, height / 4);
@@ -23,7 +23,7 @@ function draw() {
   push();
   translate(width / 4, height / 4);
   fill(0, 0, 255);
-  ellipse(0, 0, width / 4, height / 4);
+  ellipse(0, 0, width / 8, height / 8);
   pop();
 
   fill(255, 0, 0);

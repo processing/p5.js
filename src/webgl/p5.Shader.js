@@ -194,9 +194,8 @@ p5.Shader.prototype.bindShader = function() {
 
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
-    if (this === this._renderer.curStrokeShader) {
-      this._setViewportUniform();
-    }
+
+    this.setUniform('uViewport', this._renderer._viewport);
   }
 };
 
@@ -241,14 +240,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
-  if (this === this._renderer.curFillShader) {
+  if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
   }
-};
-
-p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('uViewport', this._renderer._viewport);
 };
 
 /**
@@ -277,12 +272,11 @@ p5.Shader.prototype.useProgram = function() {
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
-
-  var uniform = this.uniforms[uniformName];
-  if (!uniform) {
-    //@todo warning?
+  if (!(uniformName in this.uniforms)) {
     return;
   }
+
+  var uniform = this.uniforms[uniformName];
   var location = uniform.location;
 
   var gl = this._renderer.GL;
@@ -363,6 +357,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
 
 p5.Shader.prototype.isLightShader = function() {
   return (
+    this.attributes.aNormal !== undefined ||
     this.uniforms.uUseLighting !== undefined ||
     this.uniforms.uAmbientLightCount !== undefined ||
     this.uniforms.uDirectionalLightCount !== undefined ||
