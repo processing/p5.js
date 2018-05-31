@@ -473,6 +473,8 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
     emit = createEmitter(localFileame);
 
+    emit('export = p5;');
+
     emit('declare class p5 {');
     emit.indent();
 
