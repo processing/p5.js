@@ -9,7 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('./constants');
+var constants = require('../core/constants');
 
 /**
  * Texture class for WEBGL Mode
@@ -254,24 +254,31 @@ p5.Texture.prototype.unbindTexture = function() {
 };
 
 /**
- * Sets texture min / mag filters
- * @method setTextureFilters
+ * Sets how a texture is be interpolated when upscaled or downscaled.
+ * Nearest filtering uses nearest neighbor scaling when interpolating
+ * Linear filtering uses WebGL's linear scaling when interpolating
+ * @method setInterpolation
+ * @param {String} downScale Specifies the texture filtering when
+ *                           textures are shrunk. Options are LINEAR or NEAREST
+ * @param {String} upScale Specifies the texture filtering when
+ *                         textures are magnified. Options are LINEAR or NEAREST
+ * @todo implement mipmapping filters
  */
-p5.Texture.prototype.setTextureFilters = function(minFilter, magFilter) {
+p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
   var gl = this._renderer.GL;
 
-  if (minFilter === constants.NEAREST) {
+  if (downScale === constants.NEAREST) {
     this.glMinFilter = gl.NEAREST;
-  } else if (minFilter === constants.LINEAR) {
+  } else if (downScale === constants.LINEAR) {
     this.glMinFilter = gl.LINEAR;
   } else {
     // falling back to default
     this.glMinFilter = gl.LINEAR;
   }
 
-  if (magFilter === constants.NEAREST) {
+  if (upScale === constants.NEAREST) {
     this.glMagFilter = gl.NEAREST;
-  } else if (magFilter === constants.LINEAR) {
+  } else if (upScale === constants.LINEAR) {
     this.glMagFilter = gl.LINEAR;
   } else {
     // falling back to default
@@ -279,39 +286,72 @@ p5.Texture.prototype.setTextureFilters = function(minFilter, magFilter) {
   }
 
   this.bindTexture();
-
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
   this.unbindTexture();
 };
 
 /**
- * Sets texture wrap
- * @method setTextureWrap
+ * Sets the texture wrapping mode. This controls how textures behave
+ * when their uv's go outside of the 0 - 1 range. There are three options:
+ * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
+ * is a power of two size (128, 256, 512, 1024, etc.).
+ * @method setWrapMode
+ * @param {String} wrapX Controls the horizontal texture wrapping behavior
+ * @param {String} wrapY Controls the vertical texture wrapping behavior
  */
-p5.Texture.prototype.setTextureWrap = function(wrapS, wrapT) {
+p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   var gl = this._renderer.GL;
 
-  if (wrapS === constants.CLAMP) {
+  // for webgl 1 we need to check if the texture is power of two
+  // if it isn't we will set the wrap mode to CLAMP
+  // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
+  var isPowerOfTwo = function(x) {
+    return (x & (x - 1)) === 0;
+  };
+
+  var widthPowerOfTwo = isPowerOfTwo(this.width);
+  var heightPowerOfTwo = isPowerOfTwo(this.width);
+
+  if (wrapX === constants.CLAMP) {
     this.glWrapS = gl.CLAMP_TO_EDGE;
-  } else if (wrapS === constants.REPEAT) {
-    this.glWrapS = gl.REPEAT;
-  } else if (wrapS === constants.MIRROR) {
-    this.glWrapS = gl.MIRRORED_REPEAT;
+  } else if (wrapX === constants.REPEAT) {
+    if (widthPowerOfTwo && heightPowerOfTwo) {
+      this.glWrapS = gl.REPEAT;
+    } else {
+      console.warn('Texture not Power of Two. Setting to CLAMP instead');
+      this.glWrapS = gl.CLAMP_TO_EDGE;
+    }
+  } else if (wrapX === constants.MIRROR) {
+    if (widthPowerOfTwo && heightPowerOfTwo) {
+      this.glWrapS = gl.MIRRORED_REPEAT;
+    } else {
+      console.warn('Texture not Power of Two. Setting to CLAMP instead');
+      this.glWrapS = gl.CLAMP_TO_EDGE;
+    }
   } else {
-    // falling back to default
+    // falling back to default if didn't get a proper mode
     this.glWrapS = gl.CLAMP_TO_EDGE;
   }
 
-  if (wrapT === constants.CLAMP) {
+  if (wrapY === constants.CLAMP) {
     this.glWrapT = gl.CLAMP_TO_EDGE;
-  } else if (wrapT === constants.REPEAT) {
-    this.glWrapT = gl.REPEAT;
-  } else if (wrapT === constants.MIRROR) {
-    this.glWrapT = gl.MIRRORED_REPEAT;
+  } else if (wrapY === constants.REPEAT) {
+    if (widthPowerOfTwo && heightPowerOfTwo) {
+      this.glWrapT = gl.REPEAT;
+    } else {
+      console.warn('Texture not Power of Two. Setting to CLAMP instead');
+      this.glWrapT = gl.CLAMP_TO_EDGE;
+    }
+  } else if (wrapY === constants.MIRROR) {
+    if (widthPowerOfTwo && heightPowerOfTwo) {
+      this.glWrapT = gl.MIRRORED_REPEAT;
+    } else {
+      console.warn('Texture not Power of Two. Setting to CLAMP instead');
+      this.glWrapT = gl.CLAMP_TO_EDGE;
+    }
   } else {
-    // falling back to default
+    // falling back to default if didn't get a proper mode
     this.glWrapT = gl.CLAMP_TO_EDGE;
   }
 
