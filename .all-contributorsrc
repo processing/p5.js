@@ -1315,6 +1315,13 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/25344311?v=4",
       "profile": "https://github.com/yutinglu413",
       "contributions": ["doc"]
+    },
+    {
+      "login": "adilrabbani",
+      "name": "Adil Rabbani",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/15272015?s=400&u=577bd9ace068da2f36968cc1aee8002e2da5cae0&v=4",
+      "profile": "https://github.com/AdilRabbani",
+      "contributions": ["code","bug","example"]
     }
   ]
 }
