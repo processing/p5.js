@@ -7,8 +7,12 @@ var p5 = require('../core/core');
  * away from the center of the canvas in the X or Y direction, the sketch is
  * rotated about the Y or X axis respectively. Note that this rotation only
  * affects objects drawn after orbitControl() has been called in the draw() loop.
+ * To reverse movement in either axis, enter a negative number for sensitivity.
+ * Calling this function without arguments is equivalent to calling orbitControl(1,1).
  * @method orbitControl
  * @for p5
+ * @param  {Number} [sensitivityX]        sensitivity to mouse movement along X axis
+ * @param  {Number} [sensitivityY]        sensitivity to mouse movement along Y axis
  * @chainable
  *
  * @example
@@ -32,12 +36,24 @@ var p5 = require('../core/core');
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
-p5.prototype.orbitControl = function() {
+p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
+
+  if (typeof sensitivityX === 'undefined') {
+    sensitivityX = 1;
+  }
+  if (typeof sensitivityY === 'undefined') {
+    sensitivityY = sensitivityX;
+  }
+
   if (this.mouseIsPressed) {
-    this.rotateY((this.mouseX - this.width / 2) / (this.width / 2));
-    this.rotateX((this.mouseY - this.height / 2) / (this.width / 2));
+    this.rotateY(
+      sensitivityX * (this.mouseX - this.width / 2) / (this.width / 2)
+    );
+    this.rotateX(
+      -sensitivityY * (this.mouseY - this.height / 2) / (this.width / 2)
+    );
   }
   return this;
 };
