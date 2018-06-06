@@ -234,6 +234,21 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
     far = this.defaultCameraFar;
   }
 
+  if (near <= 0.0001) {
+    near = 0.01;
+    console.log(
+      'Avoid perspective near plane values close to or below 0. ' +
+        'Setting value to 0.01.'
+    );
+  }
+
+  if (far < near) {
+    console.log(
+      'Perspective far plane value is less than near plane value. ' +
+        'Nothing will be shown.'
+    );
+  }
+
   this.cameraFOV = this._pInst._toRadians(fovy);
   this.cameraAspect = aspect;
   this.cameraNear = near;
