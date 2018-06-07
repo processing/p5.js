@@ -579,6 +579,8 @@ p5.prototype._initializeInstanceVariables = function() {
     hsb: [360, 100, 100, 1],
     hsl: [360, 100, 100, 1]
   };
+
+  this._pixelsDirty = true;
 };
 
 // This is a pointer to our global mode p5 instance, if we're in

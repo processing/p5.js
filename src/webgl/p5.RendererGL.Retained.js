@@ -322,6 +322,7 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
+  this._pInst._pixelsDirty = true;
   return this;
 };
 
@@ -332,6 +333,7 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
     this.GL.UNSIGNED_SHORT,
     0
   );
+  this._pInst._pixelsDirty = true;
 };
 
 module.exports = p5.RendererGL;
