@@ -14,7 +14,6 @@ var p5 = require('../core/core');
  * @param  {Number} [sensitivityX]        sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY]        sensitivity to mouse movement along Y axis
  * @chainable
- *
  * @example
  * <div>
  * <code>
