@@ -13,9 +13,19 @@ var spec = {
   ],
   data: ['dictionary'],
   image: ['loading', 'pixels'],
-  io: ['files_input'],
+  io: [
+    'files_input',
+    'loadBytes',
+    'loadImage',
+    'loadJSON',
+    'loadModel',
+    'loadShader',
+    'loadStrings',
+    'loadTable',
+    'loadXML'
+  ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
-  typography: ['font_loading'],
+  typography: ['loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
   webgl: [
     'matrix',

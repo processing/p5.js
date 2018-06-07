@@ -552,7 +552,7 @@ p5.prototype.loadTable = function(path) {
       if (errorCallback) {
         errorCallback(err);
       } else {
-        throw err;
+        console.error(err);
       }
     }
   );
