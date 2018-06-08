@@ -263,6 +263,7 @@ p5.prototype.pop = function() {
  *
  * @method redraw
  * @param  {Integer} [n] Redraw for n-times. The default value is 1.
+ * @return {Promise} A promise that resolves once all redraws are finished.
  * @example
  * <div><code>
  * var x = 0;
@@ -308,6 +309,7 @@ p5.prototype.pop = function() {
  *
  */
 p5.prototype.redraw = function(n) {
+  var promise = Promise.resolve();
   var numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
@@ -324,16 +326,22 @@ p5.prototype.redraw = function(n) {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
-      this.resetMatrix();
-      if (this._renderer.isP3D) {
-        this._renderer._update();
-      }
-      this._setProperty('frameCount', this.frameCount + 1);
-      this._registeredMethods.pre.forEach(callMethod);
-      userDraw();
-      this._registeredMethods.post.forEach(callMethod);
+      promise = promise
+        .then(function() {
+          self.resetMatrix();
+          if (self._renderer.isP3D) {
+            self._renderer._update();
+          }
+          self._setProperty('frameCount', self.frameCount + 1);
+          self._registeredMethods.pre.forEach(callMethod);
+        })
+        .then(userDraw)
+        .then(function() {
+          self._registeredMethods.post.forEach(callMethod);
+        });
     }
   }
+  return promise;
 };
 
 module.exports = p5;

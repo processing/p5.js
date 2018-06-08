@@ -270,8 +270,7 @@ suite('Structure', function() {
           }
           myp5.rotate(10);
         };
-        myp5.redraw(10);
-        resolve();
+        myp5.redraw(10).then(resolve);
       });
     });
   });

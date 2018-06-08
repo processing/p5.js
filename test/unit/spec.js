@@ -8,6 +8,7 @@ var spec = {
     'element',
     'error_helpers',
     'graphics',
+    'promises',
     'renderer',
     'structure'
   ],

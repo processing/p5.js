@@ -18,59 +18,119 @@ suite('Core', function() {
     // readyState is "loading" and we can verify that the code is doing the
     // right thing during page load.
 
-    var myp5 = new p5(function() {}, null, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(
+      function(s) {
+        s.preload = function() {
+          isPreloadCalled = true;
+        };
+      },
+      null,
+      true
+    );
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext synchronously', function() {
-      assert.ok(isDrawingContextDefined);
+    test('should start preload immediately', function() {
+      assert.ok(preloadedHere);
     });
   });
 
   suite('new p5(sketch, null, false)', function() {
-    var myp5 = new p5(function() {}, null, false);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(
+      function(s) {
+        s.preload = function() {
+          isPreloadCalled = true;
+        };
+      },
+      null,
+      false
+    );
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext asynchronously', function() {
-      assert.equal(isDrawingContextDefined, false);
-      assert.isDefined(myp5.drawingContext);
+    test('should start preload asynchronously', function() {
+      assert.isFalse(preloadedHere);
+      assert.isTrue(isPreloadCalled);
     });
   });
 
   suite('new p5(sketch, node, true)', function() {
-    var myp5 = new p5(function() {}, node, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(
+      function(s) {
+        s.preload = function() {
+          isPreloadCalled = true;
+        };
+      },
+      node,
+      true
+    );
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext synchronously', function() {
-      assert.ok(isDrawingContextDefined);
+    test('should start preload synchronously', function() {
+      assert.isTrue(preloadedHere);
     });
   });
 
   suite('new p5(sketch, node)', function() {
-    var myp5 = new p5(function() {}, node);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(function(s) {
+      s.preload = function() {
+        isPreloadCalled = true;
+      };
+    }, node);
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext asynchronously', function() {
-      assert.equal(isDrawingContextDefined, false);
-      assert.isDefined(myp5.drawingContext);
+    test('should start preload asynchronously', function() {
+      assert.isFalse(preloadedHere);
+      assert.isTrue(isPreloadCalled);
     });
   });
 
   suite('new p5(sketch, true)', function() {
-    var myp5 = new p5(function() {}, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(function(s) {
+      s.preload = function() {
+        isPreloadCalled = true;
+      };
+    }, true);
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext synchronously', function() {
-      assert.ok(isDrawingContextDefined);
+    test('should start preload synchronously', function() {
+      assert.isTrue(preloadedHere);
     });
   });
 
   suite('new p5(sketch)', function() {
-    var myp5 = new p5(function() {});
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    var isPreloadCalled = false;
+    var myp5 = new p5(function(s) {
+      s.preload = function() {
+        isPreloadCalled = true;
+      };
+    });
+    var preloadedHere = isPreloadCalled;
+    teardown(function() {
+      myp5.remove();
+    });
 
-    test('should define drawContext asynchronously', function() {
-      assert.equal(isDrawingContextDefined, false);
-      assert.isDefined(myp5.drawingContext);
+    test('should start preload asynchronously', function() {
+      assert.isFalse(preloadedHere);
+      assert.isTrue(isPreloadCalled);
     });
   });
 
