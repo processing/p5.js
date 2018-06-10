@@ -308,11 +308,6 @@ p5.prototype.pop = function() {
  *
  */
 p5.prototype.redraw = function(n) {
-  this.resetMatrix();
-  if (this._renderer.isP3D) {
-    this._renderer._update();
-  }
-
   var numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
@@ -329,6 +324,10 @@ p5.prototype.redraw = function(n) {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this.resetMatrix();
+      if (this._renderer.isP3D) {
+        this._renderer._update();
+      }
       this._setProperty('frameCount', this.frameCount + 1);
       this._registeredMethods.pre.forEach(callMethod);
       userDraw();

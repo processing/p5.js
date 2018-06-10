@@ -104,7 +104,7 @@
     },
     {
       "login": "dhowe",
-      "name": "dhowe",
+      "name": "Daniel Howe",
       "avatar_url": "https://avatars3.githubusercontent.com/u/737638?v=4",
       "profile": "https://github.com/dhowe",
       "contributions": []
@@ -1315,6 +1315,13 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/25344311?v=4",
       "profile": "https://github.com/yutinglu413",
       "contributions": ["doc"]
+    },
+    {
+      "login": "adilrabbani",
+      "name": "Adil Rabbani",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/15272015?v=4",
+      "profile": "https://github.com/adilrabbani",
+      "contributions": ["code","bug","example"]
     }
   ]
 }

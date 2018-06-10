@@ -182,11 +182,7 @@ p5.prototype._onkeydown = function(e) {
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
   downKeys[e.which] = true;
-  var key = String.fromCharCode(e.which);
-  if (!key) {
-    key = e.which;
-  }
-  this._setProperty('key', key);
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
@@ -237,11 +233,7 @@ p5.prototype._onkeyup = function(e) {
 
   this._setProperty('_lastKeyCodeTyped', null);
 
-  var key = String.fromCharCode(e.which);
-  if (!key) {
-    key = e.which;
-  }
-  this._setProperty('key', key);
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
     var executeDefault = keyReleased(e);

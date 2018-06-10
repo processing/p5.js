@@ -44,7 +44,11 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     'DelayNode',
     'ConvolverNode',
     'Event',
-    'Blob'
+    'Blob',
+    'null',
+    'Node',
+    'RegExp',
+    'Promise'
   ]);
 
   var YUIDOC_TO_TYPESCRIPT_PARAM_MAP = {
@@ -468,6 +472,8 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     });
 
     emit = createEmitter(localFileame);
+
+    emit('export = p5;');
 
     emit('declare class p5 {');
     emit.indent();
