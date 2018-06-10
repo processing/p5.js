@@ -47,11 +47,28 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    this.rotateY(
-      sensitivityX * (this.mouseX - this.width / 2) / (this.width / 2)
-    );
-    this.rotateX(
-      -sensitivityY * (this.mouseY - this.height / 2) / (this.width / 2)
+    var yAxisRotation = sensitivityX * (this.mouseX - this.pmouseX);
+    var xAxisRotation = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+
+    var camMatrix = p5.Matrix.identity();
+
+    p5.Matrix.prototype.rotate.apply(camMatrix, [xAxisRotation, 1, 0, 0]);
+    p5.Matrix.prototype.rotate.apply(camMatrix, [yAxisRotation, 0, 1, 0]);
+
+    p5.Matrix.prototype.translate.apply(camMatrix, [
+      [this._renderer.cameraX, this._renderer.cameraY, this._renderer.cameraZ]
+    ]);
+
+    this.camera(
+      camMatrix.mat4[12],
+      camMatrix.mat4[13],
+      camMatrix.mat4[14],
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
     );
   }
   return this;
