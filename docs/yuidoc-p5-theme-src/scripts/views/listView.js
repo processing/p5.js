@@ -57,7 +57,7 @@ define([
               };
             }
 
-            // hide the un-interesting constants  
+            // hide the un-interesting constants
             if (group === 'Constants' && !item.example)
               return;
 
@@ -96,6 +96,9 @@ define([
         // Render the view
         this.$el.html(listHtml);
       }
+
+      var renderEvent = new Event('reference-rendered');
+      window.dispatchEvent(renderEvent);
 
       return this;
     },
