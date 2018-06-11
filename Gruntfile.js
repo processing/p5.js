@@ -426,11 +426,6 @@ module.exports = function(grunt) {
   // Load release task
   grunt.loadTasks('tasks/release');
 
-  // Load typescript task
-  grunt.registerTask('typescript', function() {
-    require('./tasks/typescript/task.js')(grunt);
-  });
-
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -476,7 +471,7 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
-  grunt.registerTask('yui', ['yuidoc:prod', 'minjson', 'typescript']);
+  grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('yui:dev', [
     'yui:prod',
