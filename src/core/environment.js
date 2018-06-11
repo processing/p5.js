@@ -57,7 +57,6 @@ p5.prototype.print = function() {
  *   <div><code>
  * function setup() {
  *   frameRate(30);
- *   textSize(20);
  *   textSize(30);
  *   textAlign(CENTER);
  * }
