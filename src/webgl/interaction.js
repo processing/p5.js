@@ -35,6 +35,7 @@ var p5 = require('../core/core');
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
+// implementation based on three.js 'orbitControls'
 p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
@@ -47,94 +48,38 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    var deltaPhi = sensitivityX * (this.mouseX - this.pmouseX);
-    var deltaTheta = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+    var deltaTheta = 0.1 * sensitivityX * (this.mouseX - this.pmouseX);
+    var deltaPhi = -0.1 * sensitivityY * (this.mouseY - this.pmouseY);
 
-    var cartesianToSpherical = function(x, y, z) {
-      var _x = x;
-      var _y = z;
-      var _z = y;
+    // camera position
+    var camX = this._renderer.cameraX;
+    var camY = this._renderer.cameraY;
+    var camZ = this._renderer.cameraZ;
 
-      var rad = Math.sqrt(_x * _x + _y * _y + _z * _z);
-      return {
-        radius: rad,
-        theta: Math.acos(_z / rad),
-        phi: Math.atan(_y / _x)
-      };
-    };
+    // get spherical coorinates for current camera position about origin
+    var camRadius = Math.sqrt(camX * camX + camY * camY + camZ * camZ);
+    var camTheta = Math.atan2(camX, camZ); // equator angle around y-up axis
+    var camPhi = Math.acos(Math.max(-1, Math.min(1, camY / camRadius))); // polar angle
 
-    var sphericalToCartesian = function(rad, theta, phi) {
-      var _x = rad * Math.sin(theta) * Math.cos(phi);
-      var _y = rad * Math.sin(theta) * Math.sin(phi);
-      var _z = rad * Math.cos(theta);
+    // add mouse movements
+    camTheta += deltaTheta;
+    camPhi += deltaPhi;
 
-      return {
-        x: _x,
-        y: _z,
-        z: _y
-      };
-    };
-
-    var sphericalCoordinates = cartesianToSpherical(
-      this._renderer.cameraX,
-      this._renderer.cameraY,
-      this._renderer.cameraZ
-    );
-
-    console.log(
-      'spherical coordinates: ' +
-        sphericalCoordinates.radius +
-        ', ' +
-        sphericalCoordinates.theta +
-        ', ' +
-        sphericalCoordinates.phi
-    );
-
-    var newTheta = sphericalCoordinates.theta + deltaTheta;
-    var newPhi = sphericalCoordinates.phi + deltaPhi;
-
-    if (newTheta > Math.PI) {
-      newTheta = Math.PI;
-    }
-    if (newTheta <= 0) {
-      newTheta = 0.01;
+    // prevent move over the apex
+    if (camPhi > Math.PI) {
+      camPhi = Math.PI;
+    } else if (camPhi <= 0) {
+      camPhi = 0.001;
     }
 
-    var newCartesianCoordinates = sphericalToCartesian(
-      sphericalCoordinates.radius,
-      newTheta,
-      newPhi
-    );
+    // turn back into Cartesian coordinates
+    var sinPhiRadius = Math.sin(camPhi) * camRadius;
 
-    console.log('new theta: ' + newTheta);
-    console.log('new phi: ' + newPhi);
+    var _x = sinPhiRadius * Math.sin(camTheta);
+    var _y = Math.cos(camPhi) * camRadius;
+    var _z = sinPhiRadius * Math.cos(camTheta);
 
-    // var camMatrix = p5.Matrix.identity();
-
-    // p5.Matrix.prototype.rotate.apply(camMatrix, [newTheta, 1, 0, 0]);
-    // p5.Matrix.prototype.rotate.apply(camMatrix, [newPhi, 0, 1, 0]);
-    // p5.Matrix.prototype.translate.apply(camMatrix, [
-    //   [0, 0, sphericalCoordinates.radius]
-    // ]);
-
-    // p5.Matrix.prototype.rotate.apply(camMatrix, [xAxisRotation, 1, 0, 0]);
-    // p5.Matrix.prototype.rotate.apply(camMatrix, [yAxisRotation, 0, 1, 0]);
-    //
-    // p5.Matrix.prototype.translate.apply(camMatrix, [
-    //   [this._renderer.cameraX, this._renderer.cameraY, this._renderer.cameraZ]
-    // ]);
-
-    this.camera(
-      newCartesianCoordinates.x,
-      newCartesianCoordinates.y,
-      newCartesianCoordinates.z,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0
-    );
+    this.camera(_x, _y, _z, 0, 0, 0, 0, 1, 0);
   }
   return this;
 };
