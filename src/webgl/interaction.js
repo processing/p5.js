@@ -48,6 +48,14 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
+    // avoid 'jumping' between mousedrag events
+    var distSq =
+      Math.pow(this.pmouseX - this.mouseX, 2) +
+      Math.pow(this.pmouseY - this.mouseY, 2);
+    if (distSq >= 200) {
+      return;
+    }
+
     var deltaTheta = 0.1 * sensitivityX * (this.mouseX - this.pmouseX);
     var deltaPhi = 0.1 * sensitivityY * (this.mouseY - this.pmouseY);
 
@@ -58,14 +66,15 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 
     // get spherical coorinates for current camera position about origin
     var camRadius = Math.sqrt(camX * camX + camY * camY + camZ * camZ);
-    var camTheta = Math.atan2(camX, camZ); // equator angle around y-up axis
+    // from three.js...
+    var camTheta = Math.atan2(camX, camZ); // equatorial angle
     var camPhi = Math.acos(Math.max(-1, Math.min(1, camY / camRadius))); // polar angle
 
     // add mouse movements
     camTheta += deltaTheta;
     camPhi += deltaPhi;
 
-    // prevent move over the apex
+    // prevent rotation over the zenith / under bottom
     if (camPhi > Math.PI) {
       camPhi = Math.PI;
     } else if (camPhi <= 0) {
