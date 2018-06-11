@@ -91,6 +91,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.cameraX = this.defaultCameraX;
   this.cameraY = this.defaultCameraY;
   this.cameraZ = this.defaultCameraZ;
+  this.cameraCenterX = this.defaultCameraCenterX;
+  this.cameraCenterY = this.defaultCameraCenterY;
+  this.cameraCenterZ = this.defaultCameraCenterZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
   this.cameraMatrix = new p5.Matrix();
@@ -359,6 +362,9 @@ p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraY = 0;
   this.defaultCameraZ =
     this.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+  this.defaultCameraCenterX = 0;
+  this.defaultCameraCenterY = 0;
+  this.defaultCameraCenterZ = 0;
   this.defaultCameraNear = this.defaultCameraZ * 0.1;
   this.defaultCameraFar = this.defaultCameraZ * 10;
 };
@@ -373,6 +379,9 @@ p5.RendererGL.prototype._setDefaultCamera = function() {
     this.cameraX = this.defaultCameraX;
     this.cameraY = this.defaultCameraY;
     this.cameraZ = this.defaultCameraZ;
+    this.cameraCenterX = this.defaultCameraCenterX;
+    this.cameraCenterY = this.defaultCameraCenterY;
+    this.cameraCenterZ = this.defaultCameraCenterZ;
     this.cameraNear = this.defaultCameraNear;
     this.cameraFar = this.defaultCameraFar;
 

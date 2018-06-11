@@ -56,11 +56,20 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
     var camY = this._renderer.cameraY;
     var camZ = this._renderer.cameraZ;
 
+    // center coordinates
+    var centerX = this._renderer.cameraCenterX;
+    var centerY = this._renderer.cameraCenterY;
+    var centerZ = this._renderer.cameraCenterZ;
+
+    var diffX = camX - centerX;
+    var diffY = camY - centerY;
+    var diffZ = camZ - centerZ;
+
     // get spherical coorinates for current camera position about origin
-    var camRadius = Math.sqrt(camX * camX + camY * camY + camZ * camZ);
+    var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
     // from three.js...
-    var camTheta = Math.atan2(camX, camZ); // equatorial angle
-    var camPhi = Math.acos(Math.max(-1, Math.min(1, camY / camRadius))); // polar angle
+    var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+    var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
     // add mouse movements
     camTheta += deltaTheta;
@@ -80,7 +89,17 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
     var _y = Math.cos(camPhi) * camRadius;
     var _z = sinPhiRadius * Math.cos(camTheta);
 
-    this.camera(_x, _y, _z, 0, 0, 0, 0, 1, 0);
+    this.camera(
+      _x + centerX,
+      _y + centerY,
+      _z + centerZ,
+      centerX,
+      centerY,
+      centerZ,
+      0,
+      1,
+      0
+    );
   }
   return this;
 };
