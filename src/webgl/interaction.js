@@ -47,22 +47,87 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    var yAxisRotation = sensitivityX * (this.mouseX - this.pmouseX);
-    var xAxisRotation = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+    var deltaPhi = sensitivityX * (this.mouseX - this.pmouseX);
+    var deltaTheta = -1 * sensitivityY * (this.mouseY - this.pmouseY);
 
-    var camMatrix = p5.Matrix.identity();
+    var cartesianToSpherical = function(x, y, z) {
+      var _x = x;
+      var _y = z;
+      var _z = y;
 
-    p5.Matrix.prototype.rotate.apply(camMatrix, [xAxisRotation, 1, 0, 0]);
-    p5.Matrix.prototype.rotate.apply(camMatrix, [yAxisRotation, 0, 1, 0]);
+      var rad = Math.sqrt(_x * _x + _y * _y + _z * _z);
+      return {
+        radius: rad,
+        theta: Math.acos(_z / rad),
+        phi: Math.atan(_y / _x)
+      };
+    };
 
-    p5.Matrix.prototype.translate.apply(camMatrix, [
-      [this._renderer.cameraX, this._renderer.cameraY, this._renderer.cameraZ]
-    ]);
+    var sphericalToCartesian = function(rad, theta, phi) {
+      var _x = rad * Math.sin(theta) * Math.cos(phi);
+      var _y = rad * Math.sin(theta) * Math.sin(phi);
+      var _z = rad * Math.cos(theta);
+
+      return {
+        x: _x,
+        y: _z,
+        z: _y
+      };
+    };
+
+    var sphericalCoordinates = cartesianToSpherical(
+      this._renderer.cameraX,
+      this._renderer.cameraY,
+      this._renderer.cameraZ
+    );
+
+    console.log(
+      'spherical coordinates: ' +
+        sphericalCoordinates.radius +
+        ', ' +
+        sphericalCoordinates.theta +
+        ', ' +
+        sphericalCoordinates.phi
+    );
+
+    var newTheta = sphericalCoordinates.theta + deltaTheta;
+    var newPhi = sphericalCoordinates.phi + deltaPhi;
+
+    if (newTheta > Math.PI) {
+      newTheta = Math.PI;
+    }
+    if (newTheta <= 0) {
+      newTheta = 0.01;
+    }
+
+    var newCartesianCoordinates = sphericalToCartesian(
+      sphericalCoordinates.radius,
+      newTheta,
+      newPhi
+    );
+
+    console.log('new theta: ' + newTheta);
+    console.log('new phi: ' + newPhi);
+
+    // var camMatrix = p5.Matrix.identity();
+
+    // p5.Matrix.prototype.rotate.apply(camMatrix, [newTheta, 1, 0, 0]);
+    // p5.Matrix.prototype.rotate.apply(camMatrix, [newPhi, 0, 1, 0]);
+    // p5.Matrix.prototype.translate.apply(camMatrix, [
+    //   [0, 0, sphericalCoordinates.radius]
+    // ]);
+
+    // p5.Matrix.prototype.rotate.apply(camMatrix, [xAxisRotation, 1, 0, 0]);
+    // p5.Matrix.prototype.rotate.apply(camMatrix, [yAxisRotation, 0, 1, 0]);
+    //
+    // p5.Matrix.prototype.translate.apply(camMatrix, [
+    //   [this._renderer.cameraX, this._renderer.cameraY, this._renderer.cameraZ]
+    // ]);
 
     this.camera(
-      camMatrix.mat4[12],
-      camMatrix.mat4[13],
-      camMatrix.mat4[14],
+      newCartesianCoordinates.x,
+      newCartesianCoordinates.y,
+      newCartesianCoordinates.z,
       0,
       0,
       0,
