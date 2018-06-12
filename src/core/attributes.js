@@ -311,6 +311,70 @@ p5.prototype.strokeJoin = function(join) {
 };
 
 /**
+ * Sets the line dash pattern used when drawing lines,
+ * using an array of values which specify alternating lengths of lines and gaps
+ * which describe the pattern.
+ * If the argument is omitted, the function just returns the current line dash setting.
+ *
+ * @method lineDash
+ * @param  {Number[]} [segments] An array of numbers which specify distances to alternately draw a line and a gap.
+ * If the number of elements in the array is odd, the elements of the array get copied and concatenated.
+ * For example, (5, 15, 25) will become (5, 15, 25, 5, 15, 25).
+ * If the array is empty, the line dash list is cleared and line strokes return to being solid.
+ * @return {Number[]} The current line dash setting.
+ * @example
+ * <div>
+ * <code>
+ * strokeWeight(2);
+ *
+ * // A simple pattern:
+ * // Stroke 5 pixels and leave 5 pixels of spacing
+ * lineDash([5]);
+ *
+ * line(10, 10, 10, 90);
+ *
+ * fill(255, 0, 0);
+ * rect(30, 20, 60, 60);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * strokeWeight(2);
+ * stroke(255, 0, 0);
+ *
+ * // A more complex pattern:
+ * // Stroke 10 pixels, leave 5 pixels of spacing, stroke 2 pixels, leave 5 pixels of spacing and repeat
+ * lineDash([10, 5, 2, 5]);
+ *
+ * ellipse(width / 2, height / 2, 80);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * stroke(255, 255, 0);
+ *
+ * lineDash([10]);
+ * line(10, height / 3, 90, height / 3);
+ *
+ * // Go back to solid lines
+ * lineDash([]);
+ * line(10, 2 / 3 * height, 90, 2 / 3 * height);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A dashed vertical line and a square with a dashed perimeter.
+ * A circle with a red, dashed outline.
+ * A dashed line on the top, a normal line on the bottom.
+ */
+p5.prototype.lineDash = function(segments) {
+  p5._validateParameters('lineDash', arguments);
+  return this._renderer.lineDash(segments);
+};
+
+/**
  * Sets the width of the stroke used for lines, points, and the border
  * around shapes. All widths are set in units of pixels.
  *
