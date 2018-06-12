@@ -48,14 +48,6 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    // avoid 'jumping' between mousedrag events
-    var distSq =
-      Math.pow(this.pmouseX - this.mouseX, 2) +
-      Math.pow(this.pmouseY - this.mouseY, 2);
-    if (distSq >= 200) {
-      return;
-    }
-
     var deltaTheta = 0.1 * sensitivityX * (this.mouseX - this.pmouseX);
     var deltaPhi = 0.1 * sensitivityY * (this.mouseY - this.pmouseY);
 
