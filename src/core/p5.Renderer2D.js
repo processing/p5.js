@@ -1042,6 +1042,15 @@ p5.Renderer2D.prototype.strokeJoin = function(join) {
   return this;
 };
 
+p5.Renderer2D.prototype.lineDash = function(segments) {
+  if (typeof segments === 'undefined') {
+    return this.drawingContext.getLineDash();
+  }
+
+  this.drawingContext.setLineDash(segments);
+  return segments;
+};
+
 p5.Renderer2D.prototype.strokeWeight = function(w) {
   if (typeof w === 'undefined' || w === 0) {
     // hack because lineWidth 0 doesn't work
