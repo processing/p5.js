@@ -1284,7 +1284,7 @@
       "avatar_url": "https://avatars0.githubusercontent.com/u/8083973?s=460&v=4",
       "profile": "https://caro.io/",
       "contributions": [
-        "example", 
+        "example",
         "doc"
       ]
     },
@@ -1300,28 +1300,55 @@
       "name": "Aatish Bhatia",
       "avatar_url": "https://avatars2.githubusercontent.com/u/1878638?s=400&v=4",
       "profile": "https://aatishb.com",
-      "contributions": ["doc","bug"]
+      "contributions": [
+        "doc",
+        "bug"
+      ]
     },
     {
       "login": "dekmm",
       "name": "Mislav Milicevic",
       "avatar_url": "https://avatars3.githubusercontent.com/u/7628664?v=4",
       "profile": "https://github.com/dekmm",
-      "contributions": ["code","bug"]
+      "contributions": [
+        "code",
+        "bug"
+      ]
     },
     {
       "login": "yutinglu413",
       "name": "Yuting Lu",
       "avatar_url": "https://avatars1.githubusercontent.com/u/25344311?v=4",
       "profile": "https://github.com/yutinglu413",
-      "contributions": ["doc"]
+      "contributions": [
+        "doc"
+      ]
     },
     {
       "login": "adilrabbani",
       "name": "Adil Rabbani",
       "avatar_url": "https://avatars2.githubusercontent.com/u/15272015?v=4",
       "profile": "https://github.com/adilrabbani",
-      "contributions": ["code","bug","example"]
+      "contributions": [
+        "code",
+        "bug",
+        "example"
+      ]
+    },
+    {
+      "login": "Zalastax",
+      "name": "Pierre Krafft",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/908496?v=4",
+      "profile": "http://zalastax.github.io/",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "example",
+        "review",
+        "test",
+        "tool"
+      ]
     }
   ]
 }
