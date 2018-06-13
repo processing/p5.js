@@ -83,18 +83,21 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uNMatrix = new p5.Matrix('mat3');
 
   // Camera
-  this._curCamera = null;
-  // default camera settings, then use those to populate camera fields.
-  this._computeCameraDefaultSettings();
-  this.cameraFOV = this.defaultCameraFOV;
-  this.cameraAspect = this.defaultAspect;
-  this.cameraX = this.defaultCameraX;
-  this.cameraY = this.defaultCameraY;
-  this.cameraZ = this.defaultCameraZ;
-  this.cameraNear = this.defaultCameraNear;
-  this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix();
-  this.camera(); // set default camera matrices
+  // this._curCamera = null;
+  this._curCamera = new p5.Camera(this);
+  this._curCamera.camera();
+
+  // // default camera settings, then use those to populate camera fields.
+  // this._computeCameraDefaultSettings();
+  // this.cameraFOV = this.defaultCameraFOV;
+  // this.cameraAspect = this.defaultAspect;
+  // this.cameraX = this.defaultCameraX;
+  // this.cameraY = this.defaultCameraY;
+  // this.cameraZ = this.defaultCameraZ;
+  // this.cameraNear = this.defaultCameraNear;
+  // this.cameraFar = this.defaultCameraFar;
+  // this.cameraMatrix = new p5.Matrix();
+  // this.camera(); // set default camera matrices
 
   //Geometry & Material hashes
   this.gHash = {};
@@ -352,56 +355,56 @@ p5.prototype.setAttributes = function(key, value) {
  * @class p5.RendererGL
  */
 
-p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
-  this.defaultCameraFOV = 60 / 180 * Math.PI;
-  this.defaultCameraAspect = this.width / this.height;
-  this.defaultCameraX = 0;
-  this.defaultCameraY = 0;
-  this.defaultCameraZ =
-    this.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-  this.defaultCameraNear = this.defaultCameraZ * 0.1;
-  this.defaultCameraFar = this.defaultCameraZ * 10;
-};
-
-//detect if user didn't set the camera
-//then call this function below
-p5.RendererGL.prototype._setDefaultCamera = function() {
-  if (this._curCamera === null) {
-    this._computeCameraDefaultSettings();
-    this.cameraFOV = this.defaultCameraFOV;
-    this.cameraAspect = this.defaultAspect;
-    this.cameraX = this.defaultCameraX;
-    this.cameraY = this.defaultCameraY;
-    this.cameraZ = this.defaultCameraZ;
-    this.cameraNear = this.defaultCameraNear;
-    this.cameraFar = this.defaultCameraFar;
-
-    this.perspective();
-    this.camera();
-    this._curCamera = 'default';
-  }
-};
+// p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
+//   this.defaultCameraFOV = 60 / 180 * Math.PI;
+//   this.defaultCameraAspect = this.width / this.height;
+//   this.defaultCameraX = 0;
+//   this.defaultCameraY = 0;
+//   this.defaultCameraZ =
+//     this.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+//   this.defaultCameraNear = this.defaultCameraZ * 0.1;
+//   this.defaultCameraFar = this.defaultCameraZ * 10;
+// };
+//
+// //detect if user didn't set the camera
+// //then call this function below
+// p5.RendererGL.prototype._setDefaultCamera = function() {
+//   if (this._curCamera === null) {
+//     this._computeCameraDefaultSettings();
+//     this.cameraFOV = this.defaultCameraFOV;
+//     this.cameraAspect = this.defaultAspect;
+//     this.cameraX = this.defaultCameraX;
+//     this.cameraY = this.defaultCameraY;
+//     this.cameraZ = this.defaultCameraZ;
+//     this.cameraNear = this.defaultCameraNear;
+//     this.cameraFar = this.defaultCameraFar;
+//
+//     this.perspective();
+//     this.camera();
+//     this._curCamera = 'default';
+//   }
+// };
 
 p5.RendererGL.prototype._update = function() {
   // reset model view and apply initial camera transform
   // (containing only look at info; no projection).
   this.uMVMatrix.set(
-    this.cameraMatrix.mat4[0],
-    this.cameraMatrix.mat4[1],
-    this.cameraMatrix.mat4[2],
-    this.cameraMatrix.mat4[3],
-    this.cameraMatrix.mat4[4],
-    this.cameraMatrix.mat4[5],
-    this.cameraMatrix.mat4[6],
-    this.cameraMatrix.mat4[7],
-    this.cameraMatrix.mat4[8],
-    this.cameraMatrix.mat4[9],
-    this.cameraMatrix.mat4[10],
-    this.cameraMatrix.mat4[11],
-    this.cameraMatrix.mat4[12],
-    this.cameraMatrix.mat4[13],
-    this.cameraMatrix.mat4[14],
-    this.cameraMatrix.mat4[15]
+    this._curCamera.cameraMatrix.mat4[0],
+    this._curCamera.cameraMatrix.mat4[1],
+    this._curCamera.cameraMatrix.mat4[2],
+    this._curCamera.cameraMatrix.mat4[3],
+    this._curCamera.cameraMatrix.mat4[4],
+    this._curCamera.cameraMatrix.mat4[5],
+    this._curCamera.cameraMatrix.mat4[6],
+    this._curCamera.cameraMatrix.mat4[7],
+    this._curCamera.cameraMatrix.mat4[8],
+    this._curCamera.cameraMatrix.mat4[9],
+    this._curCamera.cameraMatrix.mat4[10],
+    this._curCamera.cameraMatrix.mat4[11],
+    this._curCamera.cameraMatrix.mat4[12],
+    this._curCamera.cameraMatrix.mat4[13],
+    this._curCamera.cameraMatrix.mat4[14],
+    this._curCamera.cameraMatrix.mat4[15]
   );
 
   // reset light data for new frame.
@@ -666,13 +669,15 @@ p5.RendererGL.prototype.resize = function(w, h) {
     this.GL.drawingBufferHeight
   );
   this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
+
   // If we're using the default camera, update the aspect ratio
-  if (this._curCamera === null || this._curCamera === 'default') {
-    this._curCamera = null;
-    // camera defaults are dependent on the width & height of the screen,
-    // so we'll want to update them if the size of the screen changes.
-    this._setDefaultCamera();
-  }
+  // if (this._curCamera === null || this._curCamera === 'default') {
+  //   this._curCamera = null;
+  //   // camera defaults are dependent on the width & height of the screen,
+  //   // so we'll want to update them if the size of the screen changes.
+  //   this._setDefaultCamera();
+  // }
+
   //resize pixels buffer
   if (typeof this.pixels !== 'undefined') {
     this.pixels = new Uint8Array(
@@ -763,7 +768,7 @@ p5.RendererGL.prototype.push = function() {
   var properties = style.properties;
 
   properties.uMVMatrix = this.uMVMatrix.copy();
-  properties.cameraMatrix = this.cameraMatrix.copy();
+  properties.cameraMatrix = this._curCamera.cameraMatrix.copy();
 
   return style;
 };
