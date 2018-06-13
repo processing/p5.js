@@ -83,21 +83,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uNMatrix = new p5.Matrix('mat3');
 
   // Camera
-  // this._curCamera = null;
   this._curCamera = new p5.Camera(this);
-  this._curCamera.camera();
-
-  // // default camera settings, then use those to populate camera fields.
-  // this._computeCameraDefaultSettings();
-  // this.cameraFOV = this.defaultCameraFOV;
-  // this.cameraAspect = this.defaultAspect;
-  // this.cameraX = this.defaultCameraX;
-  // this.cameraY = this.defaultCameraY;
-  // this.cameraZ = this.defaultCameraZ;
-  // this.cameraNear = this.defaultCameraNear;
-  // this.cameraFar = this.defaultCameraFar;
-  // this.cameraMatrix = new p5.Matrix();
-  // this.camera(); // set default camera matrices
 
   //Geometry & Material hashes
   this.gHash = {};
@@ -670,6 +656,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
   );
   this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
 
+  this._curCamera.resize();
   // If we're using the default camera, update the aspect ratio
   // if (this._curCamera === null || this._curCamera === 'default') {
   //   this._curCamera = null;

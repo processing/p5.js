@@ -12,21 +12,13 @@ var p5 = require('../core/core');
 p5.Camera = function(rGL) {
   this._renderer = rGL;
 
+  this.cameraType = 'default';
+
   this.cameraMatrix = new p5.Matrix();
   this.projMatrix = new p5.Matrix();
 
-  // compute default camera settings, then use those to populate camera fields.
+  // compute default camera settings, then set a default camera
   this._computeCameraDefaultSettings();
-
-  this.cameraFOV = this.defaultCameraFOV;
-  this.cameraAspect = this.defaultCameraAspect;
-  this.cameraX = this.defaultCameraX;
-  this.cameraY = this.defaultCameraY;
-  this.cameraZ = this.defaultCameraZ;
-  this.cameraNear = this.defaultCameraNear;
-  this.cameraFar = this.defaultCameraFar;
-
-  // this.camera(); // set default camera matrices
   this._setDefaultCamera();
 
   return this;
@@ -46,8 +38,6 @@ p5.Camera.prototype._computeCameraDefaultSettings = function() {
 //detect if user didn't set the camera
 //then call this function below
 p5.Camera.prototype._setDefaultCamera = function() {
-  // if (this._renderer._curCamera === null) {
-  this._computeCameraDefaultSettings();
   this.cameraFOV = this.defaultCameraFOV;
   this.cameraAspect = this.defaultCameraAspect;
   this.cameraX = this.defaultCameraX;
@@ -56,11 +46,18 @@ p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
 
-  this.perspective();
   this.camera();
-  // this._curCamera = 'default';
-  // }
+  this.perspective();
 };
+
+p5.Camera.prototype.resize = function() {
+  // If we're using the default camera, update the aspect ratio
+  if (this.cameraType === 'default') {
+    this._computeCameraDefaultSettings();
+    this._setDefaultCamera();
+  }
+};
+
 /**
  * Sets the camera position for a 3D sketch. Parameters for this function define
  * the position for the camera, the center of the sketch (where the camera is
@@ -99,10 +96,11 @@ p5.Camera.prototype._setDefaultCamera = function() {
  * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
+
 p5.prototype.camera = function() {
   this._assert3d('camera');
   p5._validateParameters('camera', arguments);
-  this.camera.apply(this, arguments);
+  p5.Camera.camera.apply(this._renderer._curCamera, arguments);
   return this;
 };
 
@@ -307,21 +305,20 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   this.cameraNear = near;
   this.cameraFar = far;
 
-  this.uPMatrix = p5.Matrix.identity();
+  this.projMatrix = p5.Matrix.identity();
 
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
 
   // prettier-ignore
-  this.uPMatrix.set(f / aspect,  0,                     0,  0,
+  this.projMatrix.set(f / aspect,  0,                     0,  0,
                     0,          -f,                     0,  0,
                     0,           0,     (far + near) * nf, -1,
                     0,           0, (2 * far * near) * nf,  0);
 
-  console.log('setting renderer proj matrix');
-  this._renderer.uPMatrix = this.uPMatrix.copy();
+  this._renderer.uPMatrix = this.projMatrix.copy();
 
-  // this._renderer._curCamera = 'custom';
+  this.cameraType = 'custom';
 };
 
 /**
@@ -381,12 +378,13 @@ p5.prototype.ortho = function() {
 };
 
 p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
-  if (left === undefined) left = -this.width / 2;
-  if (right === undefined) right = +this.width / 2;
-  if (bottom === undefined) bottom = -this.height / 2;
-  if (top === undefined) top = +this.height / 2;
+  if (left === undefined) left = -this._renderer.width / 2;
+  if (right === undefined) right = +this._renderer.width / 2;
+  if (bottom === undefined) bottom = -this._renderer.height / 2;
+  if (top === undefined) top = +this._renderer.height / 2;
   if (near === undefined) near = 0;
-  if (far === undefined) far = Math.max(this.width, this.height);
+  if (far === undefined)
+    far = Math.max(this._renderer.width, this._renderer.height);
 
   var w = right - left;
   var h = top - bottom;
@@ -400,17 +398,17 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   var ty = -(top + bottom) / h;
   var tz = -(far + near) / d;
 
-  this.uPMatrix = p5.Matrix.identity();
+  this.projMatrix = p5.Matrix.identity();
 
   // prettier-ignore
-  this.uPMatrix.set(  x,  0,  0,  0,
+  this.projMatrix.set(  x,  0,  0,  0,
                       0, -y,  0,  0,
                       0,  0,  z,  0,
                      tx, ty, tz,  1);
 
-  this._renderer.uPMatrix = this.uPMatrix.get();
+  this._renderer.uPMatrix = this.projMatrix.get();
 
-  // this._curCamera = 'custom';
+  this.cameraType = 'custom';
 };
 
 module.exports = p5;
