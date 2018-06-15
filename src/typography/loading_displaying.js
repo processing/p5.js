@@ -156,7 +156,9 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * may only be used with string data. When these parameters are specified,
  * they are interpreted based on the current rectMode() setting. Text that
  * does not fit completely within the rectangle specified will not be drawn
- * to the screen.
+ * to the screen. If x2 and y2 are not specified, the baseline alignment is
+ * the default, which means that the text will be drawn upwards from x and y.
+ * <br><br>
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
