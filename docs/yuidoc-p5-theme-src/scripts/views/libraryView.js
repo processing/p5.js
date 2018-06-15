@@ -28,20 +28,40 @@ define(
           this.groups = {};
           _.each(m.items, function(item, i) {
             var module = item.module || '_';
-            var group = item.class || '_';
-            var hash = App.router.getHash(item);
+            var group;
+            // Override default group with a selected category
+            // TODO: Overwriting with the first category might not be the best choice
+            // We might also want to have links for categories
+            if (item.category && item.category[0]) {
+              group = item.category[0];
+              // Populate item.hash
+              App.router.getHash(item);
 
-            var ind = hash.lastIndexOf('/');
-            hash = hash.substring(0, ind);
+              // Create a group list without link hash
+              if (!self.groups[group]) {
+                self.groups[group] = {
+                  name: group.replace('_', '&nbsp;'),
+                  module: module,
+                  hash: undefined,
+                  items: []
+                };
+              }
+            } else {
+              group = item.class || '_';
+              var hash = App.router.getHash(item);
 
-            // Create a group list
-            if (!self.groups[group]) {
-              self.groups[group] = {
-                name: group.replace('_', '&nbsp;'),
-                module: module,
-                hash: hash,
-                items: []
-              };
+              var ind = hash.lastIndexOf('/');
+              hash = hash.substring(0, ind);
+
+              // Create a group list
+              if (!self.groups[group]) {
+                self.groups[group] = {
+                  name: group.replace('_', '&nbsp;'),
+                  module: module,
+                  hash: hash,
+                  items: []
+                };
+              }
             }
 
             self.groups[group].items.push(item);
