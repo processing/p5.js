@@ -1349,6 +1349,15 @@
         "test",
         "tool"
       ]
+    },
+    {
+      "login": "zoeingram",
+      "name": "Zoë Ingram",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/12074409?v=4",
+      "profile": "https://github.com/zoeingram",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }
