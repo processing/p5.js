@@ -23,6 +23,9 @@ The `constants.js` module provides various default values mostly related to math
 ## [error_helpers.js](./error_helpers.js)
 TODO
 
+## [legacy.js](./legacy.js)
+These are functions that are part of the Processing API but are not part of the p5.js API. In some cases they have a new name, in others, they are removed completely. Not all unsupported Processing functions are listed here but we try to include ones that a user coming from Processing might likely call.
+
 # Browser
 
 *utilizing and abstracting web technologies*
