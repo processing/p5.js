@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var C = require('./constants');
 
 var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];

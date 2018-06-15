@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use

@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('./core');
-var constants = require('./constants');
+var p5 = require('../main');
+var constants = require('../constants');
 var shapeKind = null;
 var vertices = [];
 var contourVertices = [];

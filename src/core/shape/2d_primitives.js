@@ -8,10 +8,10 @@
 
 'use strict';
 
-var p5 = require('./core');
-var constants = require('./constants');
-var canvas = require('./canvas');
-require('./error_helpers');
+var p5 = require('../main');
+var constants = require('../constants');
+var canvas = require('../helpers');
+require('../error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only x, y, w, h, start, and

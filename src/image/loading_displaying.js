@@ -7,9 +7,9 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
-var canvas = require('../core/canvas');
+var canvas = require('../core/helpers');
 var constants = require('../core/constants');
 
 require('../core/error_helpers');

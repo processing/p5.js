@@ -20,7 +20,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 var PERLIN_YWRAPB = 4;
 var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
