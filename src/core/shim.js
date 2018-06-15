@@ -15,22 +15,6 @@ window.requestAnimationFrame = (function() {
   );
 })();
 
-// use window.performance() to get max fast and accurate time in milliseconds
-window.performance = window.performance || {};
-window.performance.now = (function() {
-  var load_date = Date.now();
-  return (
-    window.performance.now ||
-    window.performance.mozNow ||
-    window.performance.msNow ||
-    window.performance.oNow ||
-    window.performance.webkitNow ||
-    function() {
-      return Date.now() - load_date;
-    }
-  );
-})();
-
 /**
  * shim for Uint8ClampedArray.slice
  * (allows arrayCopy to work with pixels[])
