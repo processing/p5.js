@@ -48,6 +48,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode.uvBuffer = this.GL.createBuffer();
     this.immediateMode.lineVertexBuffer = this.GL.createBuffer();
     this.immediateMode.lineNormalBuffer = this.GL.createBuffer();
+    this.immediateMode.pointVertexBuffer = this.GL.createBuffer();
   } else {
     this.immediateMode.vertices.length = 0;
     this.immediateMode.edges.length = 0;
@@ -115,22 +116,30 @@ p5.RendererGL.prototype.endShape = function(
   isContour,
   shapeKind
 ) {
-  this._useImmediateModeShader();
+  if (this.immediateMode.shapeMode === constants.POINTS) {
+    this._usePointShader();
+    this.curPointShader.bindShader();
+    this.initPointVertexBufferImmediate();
+    this.curPointShader.unbindShader();
+  } else {
+    this._useImmediateModeShader();
 
-  if (this._doStroke && this.drawMode !== constants.TEXTURE) {
-    for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
-      this.immediateMode.edges.push([i, i + 1]);
-    }
-    if (mode === constants.CLOSE) {
-      this.immediateMode.edges.push([
-        this.immediateMode.vertices.length - 1,
-        0
-      ]);
-    }
+    if (this._doStroke && this.drawMode !== constants.TEXTURE) {
+      for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+        this.immediateMode.edges.push([i, i + 1]);
+      }
+      if (mode === constants.CLOSE) {
+        this.immediateMode.edges.push([
+          this.immediateMode.vertices.length - 1,
+          0
+        ]);
+      }
 
-    p5.Geometry.prototype._edgesToVertices.call(this.immediateMode);
-    this._drawStrokeImmediateMode();
+      p5.Geometry.prototype._edgesToVertices.call(this.immediateMode);
+      this._drawStrokeImmediateMode();
+    }
   }
+
   if (this._doFill) {
     this._drawFillImmediateMode(
       mode,
@@ -324,6 +333,31 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   this.curStrokeShader.unbindShader();
 
   this._pInst._pixelsDirty = true;
+};
+
+p5.RendererGL.prototype.initPointVertexBufferImmediate = function() {
+  var gl = this.GL;
+
+  this._bindBuffer(
+    this.immediateMode.pointVertexBuffer,
+    gl.ARRAY_BUFFER,
+    this._vToNArray(this.immediateMode.vertices),
+    Float32Array,
+    gl.STATIC_DRAW
+  );
+
+  this.curPointShader.enableAttrib(
+    this.curPointShader.attributes.vPosition.location,
+    3,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.BLEND);
+  gl.drawArrays(gl.Points, 0, this.immediateMode.vertices.length);
 };
 
 module.exports = p5.RendererGL;
