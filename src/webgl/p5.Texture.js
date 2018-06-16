@@ -271,8 +271,8 @@ p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
     this.glMinFilter = gl.NEAREST;
   } else {
     this.glMinFilter = gl.LINEAR;
-  } 
-  
+  }
+
   if (upScale === constants.NEAREST) {
     this.glMagFilter = gl.NEAREST;
   } else {
