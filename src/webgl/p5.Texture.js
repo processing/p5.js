@@ -269,19 +269,13 @@ p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
 
   if (downScale === constants.NEAREST) {
     this.glMinFilter = gl.NEAREST;
-  } else if (downScale === constants.LINEAR) {
-    this.glMinFilter = gl.LINEAR;
   } else {
-    // falling back to default
     this.glMinFilter = gl.LINEAR;
-  }
-
+  } 
+  
   if (upScale === constants.NEAREST) {
     this.glMagFilter = gl.NEAREST;
-  } else if (upScale === constants.LINEAR) {
-    this.glMagFilter = gl.LINEAR;
   } else {
-    // falling back to default
     this.glMagFilter = gl.LINEAR;
   }
 
@@ -313,9 +307,7 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   var widthPowerOfTwo = isPowerOfTwo(this.width);
   var heightPowerOfTwo = isPowerOfTwo(this.width);
 
-  if (wrapX === constants.CLAMP) {
-    this.glWrapS = gl.CLAMP_TO_EDGE;
-  } else if (wrapX === constants.REPEAT) {
+  if (wrapX === constants.REPEAT) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapS = gl.REPEAT;
     } else {
@@ -334,9 +326,7 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
     this.glWrapS = gl.CLAMP_TO_EDGE;
   }
 
-  if (wrapY === constants.CLAMP) {
-    this.glWrapT = gl.CLAMP_TO_EDGE;
-  } else if (wrapY === constants.REPEAT) {
+  if (wrapY === constants.REPEAT) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapT = gl.REPEAT;
     } else {
