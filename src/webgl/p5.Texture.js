@@ -311,14 +311,18 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapS = gl.REPEAT;
     } else {
-      console.warn('You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead');
+      console.warn(
+        'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+      );
       this.glWrapS = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapX === constants.MIRROR) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapS = gl.MIRRORED_REPEAT;
     } else {
-      console.warn('You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead');
+      console.warn(
+        'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+      );
       this.glWrapS = gl.CLAMP_TO_EDGE;
     }
   } else {
@@ -330,14 +334,18 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapT = gl.REPEAT;
     } else {
-      console.warn('You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead');
+      console.warn(
+        'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
+      );
       this.glWrapT = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapY === constants.MIRROR) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
       this.glWrapT = gl.MIRRORED_REPEAT;
     } else {
-      console.warn('You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead');
+      console.warn(
+        'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
+      );
       this.glWrapT = gl.CLAMP_TO_EDGE;
     }
   } else {
