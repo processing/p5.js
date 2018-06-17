@@ -148,6 +148,7 @@ p5.Image = function(width, height) {
   this._pixelDensity = 1;
   //used for webgl texturing only
   this._modified = false;
+  this._pixelsDirty = true;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -476,6 +477,7 @@ p5.Image.prototype.resize = function(width, height) {
   }
 
   this.setModified(true);
+  this._pixelsDirty = true;
 };
 
 /**
@@ -556,6 +558,7 @@ p5.Image.prototype.copy = function() {
     throw new Error('Signature not supported');
   }
   p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  this._pixelsDirty = true;
 };
 
 /**

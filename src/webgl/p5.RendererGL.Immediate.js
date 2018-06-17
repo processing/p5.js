@@ -267,6 +267,8 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       0,
       this.immediateMode.vertices.length
     );
+
+    this._pInst._pixelsDirty = true;
   }
   // todo / optimizations? leave bound until another shader is set?
   this.curFillShader.unbindShader();
@@ -320,6 +322,8 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
 
   // todo / optimizations? leave bound until another shader is set?
   this.curStrokeShader.unbindShader();
+
+  this._pInst._pixelsDirty = true;
 };
 
 module.exports = p5.RendererGL;
