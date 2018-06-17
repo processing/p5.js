@@ -336,4 +336,31 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   this._pInst._pixelsDirty = true;
 };
 
+p5.RendererGL.prototype.initPointVertexBuffer = function(x, y, z) {
+  var gl = this.GL;
+
+  var pointVertexBuffer = gl.createBuffer();
+
+  this._bindBuffer(
+    pointVertexBuffer,
+    gl.ARRAY_BUFFER,
+    [x, y, z],
+    Float32Array,
+    gl.STATIC_DRAW
+  );
+
+  this.curPointShader.enableAttrib(
+    this.curPointShader.attributes.vPosition.location,
+    3,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.BLEND);
+  gl.drawArrays(gl.Points, 0, 1);
+};
+
 module.exports = p5.RendererGL;

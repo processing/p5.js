@@ -744,7 +744,14 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 
 //@TODO
 p5.RendererGL.prototype.point = function(x, y, z) {
-  console.log('point not yet implemented in webgl');
+  this._usePointShader();
+  this.curPointShader.bindShader();
+  if (typeof z === 'undefined') {
+    z = 0;
+  }
+  this.initPointVertexBuffer(x, y, z);
+  this.curPointShader.unbindShader();
+
   return this;
 };
 
