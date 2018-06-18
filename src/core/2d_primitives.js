@@ -199,7 +199,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
   } else if (h < 0) {
     h = Math.abs(h);
   }
-  
+
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
