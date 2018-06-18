@@ -1,5 +1,8 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
+
+  // controls should work whether or not camera center is set to (0,0,0)
+  // camera(0, 0, 500, 300, 0, 0, 0, 1, 0);
 }
 
 function draw() {

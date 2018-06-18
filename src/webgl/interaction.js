@@ -35,7 +35,8 @@ var p5 = require('../core/core');
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
-// implementation based on three.js 'orbitControls'
+// implementation based on three.js 'orbitControls':
+// https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
 p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
@@ -67,7 +68,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 
     // get spherical coorinates for current camera position about origin
     var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-    // from three.js...
+    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
     var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
     var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
@@ -82,12 +83,12 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
       camPhi = 0.001;
     }
 
-    // turn back into Cartesian coordinates
-    var sinPhiRadius = Math.sin(camPhi) * camRadius;
+    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
+    // var sinPhiRadius = Math.sin(camPhi) * camRadius;
 
-    var _x = sinPhiRadius * Math.sin(camTheta);
+    var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
     var _y = Math.cos(camPhi) * camRadius;
-    var _z = sinPhiRadius * Math.cos(camTheta);
+    var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
 
     this.camera(
       _x + centerX,
