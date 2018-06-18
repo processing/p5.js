@@ -630,6 +630,11 @@ p5.prototype.registerMethod = function(name, m) {
   target._registeredMethods[name].push(m);
 };
 
+// create a function which provides a standardized process for binding
+// globals; this is implemented as a factory primarily so that there's a
+// way to redefine what "global" means for the binding function so it
+// can be used in scenarios like unit testing where the window object
+// might not exist
 p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   options = options || {};
 
