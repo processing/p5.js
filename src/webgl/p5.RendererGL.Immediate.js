@@ -119,7 +119,10 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._usePointShader();
     this.curPointShader.bindShader();
-    this.initPointVertexBufferImmediate();
+    this._drawPoints(
+      this.immediateMode.vertices,
+      this.immediateMode.pointVertexBuffer
+    );
     this.curPointShader.unbindShader();
   } else {
     this._useImmediateModeShader();
@@ -333,31 +336,6 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   this.curStrokeShader.unbindShader();
 
   this._pInst._pixelsDirty = true;
-};
-
-p5.RendererGL.prototype.initPointVertexBufferImmediate = function() {
-  var gl = this.GL;
-
-  this._bindBuffer(
-    this.immediateMode.pointVertexBuffer,
-    gl.ARRAY_BUFFER,
-    this._vToNArray(this.immediateMode.vertices),
-    Float32Array,
-    gl.STATIC_DRAW
-  );
-
-  this.curPointShader.enableAttrib(
-    this.curPointShader.attributes.vPosition.location,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
-
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.enable(gl.BLEND);
-  gl.drawArrays(gl.Points, 0, this.immediateMode.vertices.length);
 };
 
 module.exports = p5.RendererGL;

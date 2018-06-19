@@ -1,7 +1,7 @@
 precision mediump float;
 precision mediump int;
-uniform vec4 color;
-varying float v_strokeWeight;
+uniform vec4 uColor;
+varying float vStrokeWeight;
 
 void main(){
 	float mask = 0.0;
@@ -15,12 +15,12 @@ void main(){
 	// this prevents weird artifacting from carving circles when our points are really small
 	// if strokeWeight is larger than 1, we just use it as is
 
-	mask = mix(0.0, mask, clamp(floor(v_strokeWeight - 0.5),0.0,1.0));
+	mask = mix(0.0, mask, clamp(floor(vStrokeWeight - 0.5),0.0,1.0));
 
 	// throw away the borders of the mask
     // otherwise we get weird alpha blending issues
 
 	float alpha = float((mask < 0.98));
 
-	gl_FragColor = vec4(color.rgb,alpha);
+	gl_FragColor = vec4(uColor.rgb,alpha);
 }

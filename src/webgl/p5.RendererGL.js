@@ -115,6 +115,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.setStrokeShader(this._getLineShader());
   this._usePointShader();
 
+  this._pointVertexBuffer = this.GL.createBuffer();
+
   //Imediate Mode
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
@@ -526,7 +528,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-  this.curPointShader.setUniform('color', color._array);
+  this.curPointShader.setUniform('uColor', color._array);
 };
 
 /**
@@ -574,7 +576,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
     this.curStrokeShader.setUniform('uStrokeWeight', w);
-    this.curPointShader.setUniform('vPointSize', w);
+    this.curPointShader.setUniform('uPointSize', w);
   }
 };
 

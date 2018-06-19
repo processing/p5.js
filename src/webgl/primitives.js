@@ -742,14 +742,47 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 /// 2D primitives
 /////////////////////////
 
-//@TODO
+/**
+ * Draws a point, a coordinate in space at the dimension of one pixel,
+ * given x, y and z coordinates. The color of the point is determined
+ * by the current stroke, while the point size is determined by current
+ * stroke weight.
+ * @private
+ * @param {Number} x x-coordinate of point
+ * @param {Number} y y-coordinate of point
+ * @param {Number} z z-coordinate of point
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(50);
+ *   stroke(255);
+ *   strokeWeight(4);
+ *   point(25, 0);
+ *   strokeWeight(3);
+ *   point(-25, 0);
+ *   strokeWeight(2);
+ *   point(0, 25);
+ *   strokeWeight(1);
+ *   point(0, -25);
+ * }
+ * </code>
+ * </div>
+ */
 p5.RendererGL.prototype.point = function(x, y, z) {
   this._usePointShader();
   this.curPointShader.bindShader();
   if (typeof z === 'undefined') {
     z = 0;
   }
-  this.initPointVertexBuffer(x, y, z);
+  var _vertex = [];
+  _vertex.push(new p5.Vector(x, y, z));
+  this._drawPoints(_vertex, this._pointVertexBuffer);
   this.curPointShader.unbindShader();
 
   return this;

@@ -1,11 +1,11 @@
-attribute vec3 vPosition;
-uniform float vPointSize;
-varying float v_strokeWeight;
+attribute vec3 aPosition;
+uniform float uPointSize;
+varying float vStrokeWeight;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 void main() {
-	vec4 positionVec4 =  vec4(vPosition, 1.0);
+	vec4 positionVec4 =  vec4(aPosition, 1.0);
 	gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
-	gl_PointSize = vPointSize;
-	v_strokeWeight = vPointSize;
+	gl_PointSize = uPointSize;
+	vStrokeWeight = uPointSize;
 }

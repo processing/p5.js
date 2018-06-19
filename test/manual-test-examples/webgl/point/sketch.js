@@ -13,15 +13,17 @@ function setup() {
 }
 
 function draw() {
-  for (var i = 0; i < 10; i++) {
-    randStroke_r = Math.floor(Math.random() * 255 + 1);
-    randStroke_g = Math.floor(Math.random() * 255 + 1);
-    randStroke_b = Math.floor(Math.random() * 255 + 1);
-    randStrokeWeight = Math.floor(Math.random() * 10 + 1);
-    stroke(randStroke_r, randStroke_g, randStroke_b);
-    strokeWeight(randStrokeWeight);
-    randX = Math.floor(Math.random() * (-800 - 800 + 1)) + 800;
-    randY = Math.floor(Math.random() * (-600 - 600 + 1)) + 600;
-    point(randX, randY);
-  }
+  randStroke_r = Math.floor(Math.random() * 255 + 1);
+  randStroke_g = Math.floor(Math.random() * 255 + 1);
+  randStroke_b = Math.floor(Math.random() * 255 + 1);
+  randStrokeWeight = Math.floor(Math.random() * 10 + 5);
+  stroke(randStroke_r, randStroke_g, randStroke_b);
+  strokeWeight(8);
+  randX = Math.floor(Math.random() * (-800 - 800 + 1)) + 800;
+  randY = Math.floor(Math.random() * (-600 - 600 + 1)) + 600;
+  point(mouseX - 400, mouseY - 300);
+}
+
+function mousePressed() {
+  background(50);
 }
