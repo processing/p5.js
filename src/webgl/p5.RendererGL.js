@@ -528,7 +528,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-  this.curPointShader.setUniform('uColor', color._array);
+  this.curPointShader.setUniform('uMaterialColor', color._array);
 };
 
 /**
