@@ -318,7 +318,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 
   this._renderer.uPMatrix = this.projMatrix.copy();
 
-  this.cameraType = 'custom';
+  // this.cameraType = 'custom';
 };
 
 /**

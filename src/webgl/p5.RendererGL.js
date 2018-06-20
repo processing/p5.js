@@ -657,13 +657,6 @@ p5.RendererGL.prototype.resize = function(w, h) {
   this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
 
   this._curCamera.resize();
-  // If we're using the default camera, update the aspect ratio
-  // if (this._curCamera === null || this._curCamera === 'default') {
-  //   this._curCamera = null;
-  //   // camera defaults are dependent on the width & height of the screen,
-  //   // so we'll want to update them if the size of the screen changes.
-  //   this._setDefaultCamera();
-  // }
 
   //resize pixels buffer
   if (typeof this.pixels !== 'undefined') {
