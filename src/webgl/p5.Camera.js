@@ -31,6 +31,9 @@ p5.Camera.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraY = 0;
   this.defaultCameraZ =
     this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+  this.defaultCenterX = 0;
+  this.defaultCenterY = 0;
+  this.defaultCenterZ = 0;
   this.defaultCameraNear = this.defaultCameraZ * 0.1;
   this.defaultCameraFar = this.defaultCameraZ * 10;
 };
@@ -43,6 +46,9 @@ p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraX = this.defaultCameraX;
   this.cameraY = this.defaultCameraY;
   this.cameraZ = this.defaultCameraZ;
+  this.centerX = this.defaultCenterX;
+  this.centerY = this.defaultCenterY;
+  this.centerZ = this.defaultCenterZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
 
