@@ -984,72 +984,13 @@ p5.RendererGL.prototype._bindBuffer = function(
 //////////////////////////
 //// SMOOTHING
 /////////////////////////
-/**
- * Sets antialiasing to true if it is not already.
- * This is similar to using setAttributes('antialias', true);
- * @method smooth
- * @for p5
- * @class p5.RendererGL
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   smooth();
- * }
- *
- * function draw() {
- *   background(255);
- *   push();
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   fill(50);
- *   box(50);
- *   pop();
- * }
- * </code>
- * </div>
- *
- *
- * @alt a rotating cube with smoother edges
- */
+
 p5.RendererGL.prototype.smooth = function() {
   if (this.attributes.antialias === false) {
     this._pInst.setAttributes('antialias', true);
   }
 };
 
-/**
- * Sets antialiasing to false if it is not already.
- * This is similar to using setAttributes('antialias', false);
- * @method noSmooth
- * @class p5.RendererGL
- * @for p5
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   noSmooth();
- * }
- *
- * function draw() {
- *   background(255);
- *   push();
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   fill(50);
- *   box(50);
- *   pop();
- * }
- * </code>
- * </div>
- *
- *
- * @alt a rotating cube with jagged edges
- */
 p5.RendererGL.prototype.noSmooth = function() {
   if (this.attributes.antialias === true) {
     this._pInst.setAttributes('antialias', false);
