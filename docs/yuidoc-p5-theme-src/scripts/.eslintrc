@@ -1,0 +1,50 @@
+{
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "window": true,
+    "$": true,
+    "jQuery": true,
+    "console": true,
+    "module": true,
+    "define": false,
+    "require": false,
+    "Backbone": true,
+    "_": true
+  },
+  "rules": {
+    "no-cond-assign": [
+      2,
+      "except-parens"
+    ],
+    "eqeqeq": 2,
+    "no-eq-null": 2,
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "no-use-before-define": [
+      2,
+      {
+        "functions": false
+      }
+    ],
+    "new-cap": 0,
+    "no-caller": 2,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "no-undef": 2,
+    "no-unused-vars": 2,
+    "curly": 2,
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ]
+  }
+}
