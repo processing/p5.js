@@ -1,4 +1,4 @@
-# Application
+# Skeleton
 
 *internal structure and logic*
 
@@ -10,7 +10,7 @@ The `init.js` module initializes a new `p5` object in either global mode, instan
 
 The sole job of the `core.js` module is to create and then export the constructor function for creating a new `p5` object. This constructor function is also called `p5`, and doesn't use the typical JavaScript convention of capitalizing constructor functions. The constructor handles a number of mechanical startup concerns, including assigning functions and properties from elsewhere in the source code to the newly created `p5` object as either public or private methods and properties.
 
-Aside from the exported constructor function, the most important thing in this module is the set of functions that define the loop used by nearly every p5.js project: `preload()`, `setup()`, `draw()`, `remove()`, and so on. These functions are both available on the `p5` object as methods, and also assigned to variables in the global space for syntactic simplicity, because calling a function named `draw()` is more creatively expressive than namespacing the same functionality with an object as with `mySketch.draw()` or similar. The `friendlyBindGlobal` function standardizes the process by which the necessary global variables can be created, notably including logging [friendly error messages](https://github.com/processing/p5.js/wiki/Friendly-Error-System) when conflicts are detected, but it is not exported from the module's internal scope.
+Aside from the exported constructor function, the most important thing in this module is the set of functions that define the loop used by nearly every p5.js project: `preload()`, `setup()`, `draw()`, `remove()`, and so on. These functions are both available on the `p5` object as methods, and also assigned to variables in the global space for syntactic simplicity, because calling a function named `draw()` is more creatively expressive than namespacing the same functionality with an object as with `mySketch.draw()` or similar. The `friendlyBindGlobal()` function standardizes the process by which the necessary global variables can be created, notably including logging [friendly error messages](https://github.com/processing/p5.js/wiki/Friendly-Error-System) when conflicts are detected, but it is not exported from the module's internal scope.
 
 ## [structure.js](./structure.js)
 
