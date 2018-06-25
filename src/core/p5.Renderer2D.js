@@ -448,8 +448,8 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
 
 p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
-  var rx = w / 2.0;
-  var ry = h / 2.0;
+  var rx = w / 2.00000001;
+  var ry = h / 2.00000001;
   var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
   var arcToDraw = 0;
   var curves = [];
