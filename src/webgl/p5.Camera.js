@@ -9,8 +9,17 @@
 
 var p5 = require('../core/core');
 
-p5.Camera = function(rGL) {
-  this._renderer = rGL;
+/**
+ * P5.Camera class for WebGL Mode.
+ * This class stores camera and projection matrices for rendererGL and allows
+ * manipulation of camera within public API.
+ * @class p5.Camera
+ * @private
+ * @constructor
+ * @param {p5.RendererGL} renderer an instance of p5.RendererGL
+ */
+p5.Camera = function(renderer) {
+  this._renderer = renderer;
 
   this.cameraType = 'default';
 
@@ -22,6 +31,18 @@ p5.Camera = function(rGL) {
   this._setDefaultCamera();
 
   return this;
+};
+
+/**
+ * Creates a new p5.Camera object and sets that as the WebGL renderer's current
+ * camera. Returns this camera object.
+ * @method createCamera
+ */
+p5.prototype.createCamera = function() {
+  this._assert3d('createCamera');
+  var _cam = new p5.Camera(this._renderer);
+  this._renderer._curCamera = _cam;
+  return _cam;
 };
 
 p5.Camera.prototype._computeCameraDefaultSettings = function() {
@@ -52,8 +73,10 @@ p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
 
-  this.camera();
   this.perspective();
+  this.camera();
+
+  this.cameraType = 'default';
 };
 
 p5.Camera.prototype.resize = function() {
@@ -106,7 +129,7 @@ p5.Camera.prototype.resize = function() {
 p5.prototype.camera = function() {
   this._assert3d('camera');
   p5._validateParameters('camera', arguments);
-  p5.Camera.camera.apply(this._renderer._curCamera, arguments);
+  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
   return this;
 };
 
@@ -194,7 +217,6 @@ p5.Camera.prototype.camera = function(
   var tz = -eyeZ;
 
   this.cameraMatrix.translate([tx, ty, tz]);
-
   this._renderer.uMVMatrix.set(
     this.cameraMatrix.mat4[0],
     this.cameraMatrix.mat4[1],
@@ -270,10 +292,14 @@ p5.Camera.prototype.camera = function(
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
+
 p5.prototype.perspective = function() {
   this._assert3d('perspective');
   p5._validateParameters('perspective', arguments);
-  p5.Camera.perspective.apply(this._renderer._curCamera, arguments);
+  this._renderer._curCamera.perspective.apply(
+    this._renderer._curCamera,
+    arguments
+  );
   return this;
 };
 
@@ -318,13 +344,13 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 
   // prettier-ignore
   this.projMatrix.set(f / aspect,  0,                     0,  0,
-                    0,          -f,                     0,  0,
-                    0,           0,     (far + near) * nf, -1,
-                    0,           0, (2 * far * near) * nf,  0);
+                      0,          -f,                     0,  0,
+                      0,           0,     (far + near) * nf, -1,
+                      0,           0, (2 * far * near) * nf,  0);
 
   this._renderer.uPMatrix = this.projMatrix.copy();
 
-  // this.cameraType = 'custom';
+  this.cameraType = 'custom';
 };
 
 /**
@@ -379,7 +405,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 p5.prototype.ortho = function() {
   this._assert3d('ortho');
   p5._validateParameters('ortho', arguments);
-  p5.Camera.ortho.apply(this._renderer._curCamera, arguments);
+  this._renderer._curCamera.ortho.apply(this._renderer._curCamera, arguments);
   return this;
 };
 
@@ -408,13 +434,38 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 
   // prettier-ignore
   this.projMatrix.set(  x,  0,  0,  0,
-                      0, -y,  0,  0,
-                      0,  0,  z,  0,
-                     tx, ty, tz,  1);
+                        0, -y,  0,  0,
+                        0,  0,  z,  0,
+                        tx, ty, tz,  1);
 
-  this._renderer.uPMatrix = this.projMatrix.get();
+  this._renderer.uPMatrix = this.projMatrix.copy();
 
   this.cameraType = 'custom';
 };
+
+// copy (for use with push/pop):
+p5.Camera.prototype.copy = function(cam) {
+  var _cam = new p5.Camera(cam._renderer);
+  _cam.cameraFOV = cam.cameraFOV;
+  _cam.cameraAspect = cam.cameraAspect;
+  _cam.cameraX = cam.cameraX;
+  _cam.cameraY = cam.cameraY;
+  _cam.cameraZ = cam.cameraZ;
+  _cam.centerX = cam.centerX;
+  _cam.centerY = cam.centerY;
+  _cam.centerZ = cam.centerZ;
+  _cam.cameraNear = cam.cameraNear;
+  _cam.cameraFar = cam.cameraFar;
+
+  _cam.cameraMatrix = cam.cameraMatrix.copy();
+  _cam.projMatrix = cam.projMatrix.copy();
+};
+// Public API Methods
+
+// Rotate
+
+// Pan
+
+// Controls
 
 module.exports = p5;

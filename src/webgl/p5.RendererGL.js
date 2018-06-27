@@ -748,7 +748,7 @@ p5.RendererGL.prototype.push = function() {
   var properties = style.properties;
 
   properties.uMVMatrix = this.uMVMatrix.copy();
-  properties.cameraMatrix = this._curCamera.cameraMatrix.copy();
+  // properties._curCamera = this._curCamera.copy();
 
   return style;
 };
