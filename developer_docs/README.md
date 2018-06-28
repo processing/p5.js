@@ -47,9 +47,11 @@ If you'd like to contribute in other ways which are not covered here, feel free 
    
    If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
 
-6. After you've made some changes to the codebase, run `npm run grunt` one last time to make sure all the [unit tests](ttps://github.com/processing/p5.js/blob/master/developer_docs/#testing) pass.
+6. Make some changes to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
 
-7. Once everything looks good, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
+7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
+
+8. Once everything looks good, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
 # Overview
 
