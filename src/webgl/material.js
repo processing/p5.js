@@ -330,11 +330,11 @@ p5.prototype.texture = function(tex) {
  * function draw() {
  *   background(0);
  *
- *   const dX = mouseX / width;
- *   const dY = mouseY / height;
+ *   var dX = mouseX / width;
+ *   var dY = mouseY / height;
  *
- *   let u = lerp(1.0, 8.0, dX);
- *   let v = lerp(1.0, 8.0, dY);
+ *   var u = lerp(1.0, 8.0, dX);
+ *   var v = lerp(1.0, 8.0, dY);
  *
  *   scale(width / 2);
  *
