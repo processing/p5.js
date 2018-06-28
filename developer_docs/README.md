@@ -20,32 +20,34 @@ The p5.js reference manual includes [integrated examples](http://p5js.org/exampl
 
 If you'd like to contribute in other ways which are not covered here, feel free to write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! Aside from working on this codebase, we can always use help with things like documentation, tutorials, workshops, educational materials, branding, and design. Get in touch and we can talk about ways you might participate.
 
-# Setup
+# Development Process
 
-1. Download and install [npm](https://npmjs.org/). The easiest way to do this is to just install [node](http://nodejs.org/).
-2. [Fork and clone](https://help.github.com/articles/fork-a-repo) this library ([p5.js](https://github.com/processing/p5.js)). 
+1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
+2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
+3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer. 
 
    ```
    git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
-3. Navigate into the project folder and install dependencies via npm.
+4. Navigate into the project folder and install all its necessary dependencies with npm.
    
    ```
    cd p5.js
    npm install
    ```
 
-4. To create the complete library from source, run Grunt. 
+5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code. 
 
    ```
    npm run grunt
    ```
-   **NEW** : To create the library with only certain components, use Grunt [as it is explained here.](https://github.com/processing/p5.js/blob/master/developer_docs/custom_p5_build.md)
+   
+   If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
 
-   If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change.
+6. After you've made some changes to the codebase, run `npm run grunt` one last time to make sure all the [unit tests](ttps://github.com/processing/p5.js/blob/master/developer_docs/#testing) pass.
 
-5. Run `npm run grunt` one last time to make sure all the tests pass, and [submit a pull request](https://help.github.com/articles/creating-a-pull-request).
+7. Once everything looks good, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
 # Overview
 
