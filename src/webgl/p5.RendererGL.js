@@ -124,6 +124,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
+
+  // default wrap settings
+  this.textureWrapX = constants.CLAMP;
+  this.textureWrapY = constants.CLAMP;
+
   return this;
 };
 
