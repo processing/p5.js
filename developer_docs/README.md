@@ -1,14 +1,10 @@
 This folder contains various documents indended for developers of p5.js.
 
-# Getting started
+## Issues
 
-Interested in contributing? Awesome! First, figure out what you'd like to do (a good place to start is the [issues list](https://github.com/processing/p5.js/issues)).
+Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). If you'd like to contribute code but need suggestions about what to work on, start by looking at the existing issues. Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you start working on an existing issue, make sure to "assign" it to yourself so other contributors know it's being handled and can offer help. If you have discovered a bug or thought of a new feature but don't have code for it yet, you should consider submitting an issue.
 
-* **Fix a bug** :
-
-    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development) 
-Need help finding an issue to fix? Check out this [list of bite size issues](https://github.com/processing/p5.js/labels/level%3Abeginner) suitable for new contributors (or peruse other [issue labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) for topics that catch your interest).
-* **Implement a new feature** : 
+## TK
 
     If you have an original idea about a feature, open an issue describing your idea preferably in the format provided there, and let us know you're interested! Initiate a discussion, wait for the green signal, and then assign it to yourself! _Note: new features will require tests and inline documentation._
     - Inline documentation:
