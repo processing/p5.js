@@ -45,5 +45,35 @@ suite('p5.Texture', function() {
       // other image was made into a texture in setup, should still be there!
       //testTextureSet(texImg1);
     });
+    test('Set filter mode to linear', function() {
+      var tex = myp5._renderer.getTexture(texImg2);
+      tex.setInterpolation(myp5.LINEAR, myp5.LINEAR);
+      assert.deepEqual(tex.glMinFilter, myp5._renderer.GL.LINEAR);
+      assert.deepEqual(tex.glMagFilter, myp5._renderer.GL.LINEAR);
+    });
+    test('Set filter mode to nearest', function() {
+      var tex = myp5._renderer.getTexture(texImg2);
+      tex.setInterpolation(myp5.NEAREST, myp5.NEAREST);
+      assert.deepEqual(tex.glMinFilter, myp5._renderer.GL.NEAREST);
+      assert.deepEqual(tex.glMagFilter, myp5._renderer.GL.NEAREST);
+    });
+    test('Set wrap mode to clamp', function() {
+      var tex = myp5._renderer.getTexture(texImg2);
+      tex.setWrapMode(myp5.CLAMP, myp5.CLAMP);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+    });
+    test('Set wrap mode to repeat', function() {
+      var tex = myp5._renderer.getTexture(texImg2);
+      tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
+    });
+    test('Set wrap mode to mirror', function() {
+      var tex = myp5._renderer.getTexture(texImg2);
+      tex.setWrapMode(myp5.MIRROR, myp5.MIRROR);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+    });
   });
 });
