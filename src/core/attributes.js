@@ -82,10 +82,10 @@ p5.prototype.ellipseMode = function(m) {
 
 /**
  * Draws all geometry with jagged (aliased) edges. Note that <a href="#/p5/smooth">smooth()</a> is
- * active by default in 2D rendering, so it is necessary to call <a href="#/p5/noSmooth">noSmooth()</a> to disable
- * smoothing of geometry, images, and fonts. In 3D Rendering, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
+ * active by default in 2D mode, so it is necessary to call <a href="#/p5/noSmooth">noSmooth()</a> to disable
+ * smoothing of geometry, images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
  * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
- * smooth (antialiased) edge on your geometry.
+ * smooth (antialiased) edges on your geometry.
  *
  * @method noSmooth
  * @chainable
@@ -182,10 +182,10 @@ p5.prototype.rectMode = function(m) {
 /**
  * Draws all geometry with smooth (anti-aliased) edges. <a href="#/p5/smooth">smooth()</a> will also
  * improve image quality of resized images. Note that <a href="#/p5/smooth">smooth()</a> is active by
- * default in 2D rendering; <a href="#/p5/noSmooth">noSmooth()</a> can be used to disable smoothing of geometry,
- * images, and fonts. In 3D Rendering, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
+ * default in 2D mode; <a href="#/p5/noSmooth">noSmooth()</a> can be used to disable smoothing of geometry,
+ * images, and fonts. In 3D mode, <a href="#/p5/noSmooth">noSmooth()</a> is enabled
  * by default, so it is necessary to call <a href="#/p5/smooth">smooth()</a> if you would like
- * smooth (antialiased) edge on your geometry.
+ * smooth (antialiased) edges on your geometry.
  *
  * @method smooth
  * @chainable
