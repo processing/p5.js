@@ -330,7 +330,6 @@ p5.prototype.texture = function(tex) {
 };
 
 /**
-<<<<<<< HEAD
  * Sets the coordinate space for texture mapping. The default mode is IMAGE
  * which refers to the actual coordinates of the image.
  * NORMAL refers to a normalized space of values ranging from 0 to 1.
@@ -348,34 +347,10 @@ p5.prototype.texture = function(tex) {
  *
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
-=======
- * Sets the global texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 - 1 range. There are three options:
- * CLAMP, REPEAT, and MIRROR.
- *
- * REPEAT & MIRROR are only available if the texture
- * is a power of two size (128, 256, 512, 1024, etc.).
- *
- * This method will affect all textures in your sketch until a subsequent
- * textureWrap call is made.
- *
- * If only one argument is provided, it will be applied to both the
- * horizontal and vertical axes.
- * @method textureWrap
- * @param {Constant} wrapX Required, either CLAMP, REPEAT, or MIRROR
- * @param {Constant} wrapY Optional, either CLAMP, REPEAT, or MIRROR
- * @example
- * <div>
- * <code>
- * var img;
- * function preload() {
- *   img = loadImage('assets/rockies128.jpg');
->>>>>>> add global texturewrap function
  * }
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
-<<<<<<< HEAD
  * }
  *
  * function draw() {
@@ -414,15 +389,59 @@ p5.prototype.texture = function(tex) {
  *   vertex(50, -50, img.width, 0);
  *   vertex(50, 50, img.width, img.height);
  *   vertex(-50, 50, 0, img.height);
-=======
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ */
+p5.prototype.textureMode = function(mode) {
+  if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
+    console.warn(
+      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
+    );
+  } else {
+    this._renderer.textureMode = mode;
+  }
+};
+
+/**
+ * Sets the global texture wrapping mode. This controls how textures behave
+ * when their uv's go outside of the 0 - 1 range. There are three options:
+ * CLAMP, REPEAT, and MIRROR.
+ *
+ * REPEAT & MIRROR are only available if the texture
+ * is a power of two size (128, 256, 512, 1024, etc.).
+ *
+ * This method will affect all textures in your sketch until a subsequent
+ * textureWrap call is made.
+ *
+ * If only one argument is provided, it will be applied to both the
+ * horizontal and vertical axes.
+ * @method textureWrap
+ * @param {Constant} wrapX Either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} [wrapY] Either CLAMP, REPEAT, or MIRROR
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
  *   textureWrap(MIRROR);
  * }
  *
  * function draw() {
  *   background(0);
  *
- *   const dX = mouseX / width;
- *   const dY = mouseY / height;
+ *   let dX = mouseX / width;
+ *   let dY = mouseY / height;
  *
  *   let u = lerp(1.0, 8.0, dX);
  *   let v = lerp(1.0, 8.0, dY);
@@ -439,25 +458,14 @@ p5.prototype.texture = function(tex) {
  *   vertex(1, 1, 0, u, v);
  *   vertex(-1, 1, 0, 0, v);
  *   vertex(-1, -1, 0, 0, 0);
->>>>>>> add global texturewrap function
  *   endShape();
  * }
  * </code>
  * </div>
-<<<<<<< HEAD
  *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * an image of the rocky mountains repeated in mirrored tiles
  *
- */
-p5.prototype.textureMode = function(mode) {
-  if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
-    console.warn(
-      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
-    );
-  } else {
-    this._renderer.textureMode = mode;
-=======
  */
 p5.prototype.textureWrap = function(wrapX, wrapY) {
   wrapY = wrapY || wrapX;
@@ -468,7 +476,6 @@ p5.prototype.textureWrap = function(wrapX, wrapY) {
   var textures = this._renderer.textures;
   for (var i = 0; i < textures.length; i++) {
     textures[i].setWrapMode(wrapX, wrapY);
->>>>>>> add global texturewrap function
   }
 };
 
