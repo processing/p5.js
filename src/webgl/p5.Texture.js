@@ -81,13 +81,16 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
 p5.Texture.prototype.init = function(data) {
   var gl = this._renderer.GL;
   this.glTex = gl.createTexture();
+
+  this.glWrapS = this._renderer.textureWrapX;
+  this.glWrapT = this._renderer.textureWrapY;
+
+  this.setWrapMode(this.glWrapS, this.glWrapT);
   this.bindTexture();
 
   //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
 
   if (
     this.width === 0 ||
