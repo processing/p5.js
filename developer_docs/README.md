@@ -137,23 +137,6 @@ Sometimes it is useful to run tests in browser especially when trying to debug t
 1. Run the connect server. ```npm run grunt connect -keepalive```
 2. Open test/test.html in your favourite web browser.
 
-# Master branch development
-
-1. Fork p5.js
-2. Create a feature branch: `git checkout -b my_branch`
-3. Make local changes
-4. Commit and push changes. When you first attempt to push your feature branch, `git` will give you instructions on how to have your local branch track a similarly-named one on Github.
-5. Submit a PR against the `p5.js/master` branch
-6. checkout the master branch: `git checkout master`
-
-## Bringing your master branch up-to-date
-
-1. Make sure you have no uncommitted changes, or any additional commits in your master branch. The following commands will discard any changes you have made.
-2. `git checkout master`
-3. `git fetch`
-4. `git reset --hard upstream/master`
-5. `git push -f`
-
 # Repositories
 
 * https://github.com/processing/p5.js - this repo contains the source code for the p5.js library, and the p5.dom.js addon library. The reference is also generated from this code, as the documentation and examples are located in the source code itself, maintained by Lauren McCarthy.
@@ -170,3 +153,4 @@ An alternative to setting up node, grunt, php, apache, and the p5.js & p5.js-web
 # p5.js API JSON file
 
 [This file](https://p5js.org/reference/data.json) can be used for auto-complete. This [gist](https://gist.github.com/jonohayon/b059a029755f84f42b29f005323ec165) explains how to parse the file. Note that the data.json file is generated when the `npm run grunt` command is run, it is found on the p5js.org website but is not included in the repo.
+
