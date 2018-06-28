@@ -24,25 +24,27 @@ If you'd like to contribute in other ways which are not covered here, feel free 
 
 # Development Process
 
+Shell commands should be typed into your terminal, without including the `$` prompt.
+
 1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
 2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
 3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer. 
 
    ```
-   git clone https://github.com/YOUR_USERNAME/p5.js.git
+   $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
 4. Navigate into the project folder and install all its necessary dependencies with npm.
    
    ```
-   cd p5.js
-   npm install
+   $ cd p5.js
+   $ npm install
    ```
 
 5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code. 
 
    ```
-   npm run grunt
+   $ npm run grunt
    ```
    
    If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
@@ -51,7 +53,13 @@ If you'd like to contribute in other ways which are not covered here, feel free 
 
 7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
 
-8. Once everything looks good, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
+8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
+
+   ```
+   $ git push
+   ```
+
+9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
 # Overview
 
