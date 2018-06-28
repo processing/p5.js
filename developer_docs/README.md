@@ -1,4 +1,4 @@
-This folder contains various documents indended for developers of p5.js.
+This folder contains various documents intended for developers of p5.js.
 
 # Ways To Contribute
 
