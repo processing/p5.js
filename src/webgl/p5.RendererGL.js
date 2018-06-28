@@ -128,6 +128,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.textures = [];
   this.textureImage = undefined;
   this.textureMode = constants.IMAGE;
+  // default wrap settings
+  this.textureWrapX = constants.CLAMP;
+  this.textureWrapY = constants.CLAMP;
   this._curveTightness = 6;
 
   // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -143,6 +146,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._tessy = this._initTessy();
 
   this.fontInfos = {};
+
   return this;
 };
 
