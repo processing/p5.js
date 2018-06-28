@@ -4,23 +4,13 @@ This folder contains various documents indended for developers of p5.js.
 
 Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). If you'd like to contribute code but need suggestions about what to work on, start by looking at the existing issues. Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you start working on an existing issue, make sure to "assign" it to yourself so other contributors know it's being handled and can offer help. If you have discovered a bug or thought of a new feature but don't have code for it yet, you should consider submitting an issue.
 
-## TK
+## Accompaniments
 
-    If you have an original idea about a feature, open an issue describing your idea preferably in the format provided there, and let us know you're interested! Initiate a discussion, wait for the green signal, and then assign it to yourself! _Note: new features will require tests and inline documentation._
-    - Inline documentation:
-        - [Style guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference.
-    - Unit tests:
-        - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to do this.
-        - This helps ensure that the code you write keeps working far into the future when further updates and changes are made.
-    - Benchmarks
-        - See [Benchmarking section](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md)
-        - Helpful for finding and implementing performance optimizations
+Aside from the code itself, you may also need to supply some combination of the following.
 
-* **Add unit tests or documentation for existing code** : 
-
-    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development)
-    - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
-    - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to add unit tests.
+- [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/) 
+- [unit tests](https://github.com/processing/p5.js/blob/master/developer_docs/#testing), small pieces of code which are separate from the library and are used to verify its behavior
+- [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
 
 * **Add examples to the examples page** : 
 
