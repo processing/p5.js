@@ -1,4 +1,4 @@
-This folder contains various documents for developers of p5.js. This document contains the overview of how to contribute, build the library, test the code, and update the documentation.
+This folder contains various documents indended for developers of p5.js.
 
 # Getting started
 
