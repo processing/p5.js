@@ -22,6 +22,36 @@ The p5.js reference manual includes [integrated examples](http://p5js.org/exampl
 
 If you'd like to contribute in other ways which are not covered here, feel free to write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! Aside from working on this codebase, we can always use help with things like documentation, tutorials, workshops, educational materials, branding, and design. Get in touch and we can talk about ways you might participate.
 
+# Gotchas
+
+The developer tooling included with the p5.js codebase is intentionally very strict about some things. This is a good thing! It makes everything consistent, and it will encourage you to be disciplined. This means you may try to change something only to have your commit rejected by the project, but don't get discouraged; even seasoned p5.js developers get caught by this stuff all the time. Typically the problem will be in one of two areas.
+
+## Code Syntax
+
+p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as they appear. which will highlight problems immediately as you write your code.
+
+To detect errors:
+
+```
+$ npm run lint
+```
+
+Some syntax errors can be automatically fixed:
+
+```
+$ npm run lint:fix
+```
+
+## Unit Tests
+
+Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
+
+To run the unit tests, use Grunt.
+
+```
+$ grunt
+```
+
 # Development Process
 
 Shell commands should be typed into your terminal, without including the `$` prompt.
@@ -71,30 +101,8 @@ This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-i
 
 `tests/` Contains unit testing files.
 
-# Code Style
-
-p5.js uses [Prettier](https://prettier.io/) to automatically enforce a consistent code style and [Eslint](https://eslint.org/) to find other problematic code patterns. The rules are checked both when tests are run and before you make a commit.
-
-## Editor integration
-
-It's a good idea to add an [Eslint plugin to your editor](https://eslint.org/docs/user-guide/integrations#editors) which will show problems as you write your code. Many of the Eslint plugins can also fix style problems while you edit your code. You can also use an integration for [Prettier](https://prettier.io/), but the Eslint plugins provide most of the same features and more.
-
-## Automatic style fixing
-
-`npm run lint:fix` will format your code so that it follows the code style rules. You can check for style errors / code problems without fixing them by running `npm run lint`.
-
-## My commit got rejected ?! 
-Whenever you make a commit, Eslint and Prettier will check that your code follows the style rules and reject commits that break the rules. The error often looks like this:
-```
-eslint found some errors. Please fix them and try committing again.
-
-✖ 3 problem (2 error, 1 warnings)
-  1 error, 1 warnings potentially fixable with the `--fix` option.
-```
-
-Errors or warnings that are ``fixable with the `--fix` option`` are fixed by running `npm run lint:fix`. 
-
 ## My code needs a special format!
+
 In [some special cases](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) your code needs special formatting to look more clear. Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html) to ignore a block of code from being formatted, via the `// prettier-ignore` comment. Use with caution!
 
 # Testing
@@ -106,10 +114,10 @@ To get started:
 
 1. Install dependencies.
 
-   ```
+   ````
    cd p5.js/
    npm install
-   ```
+   ````
 
 2. Add test files corresponding to files in `src` (more info about Chai assert style TDD phrasing [here](http://chaijs.com/api/assert/)). 
 3. Link to the src and test files in `test.html`. 
@@ -119,9 +127,9 @@ To get started:
 
 This will build the p5.js library, generate the documentation files, run a web server, and open a browser to the main documentation page.
 
-    ````
+    ```
     npm run docs:dev
-    ````
+    ```
 
 ## Running tests in the browser
 Sometimes it is useful to run tests in browser especially when trying to debug test failures.  To run the tests in the browser:
