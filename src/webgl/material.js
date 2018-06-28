@@ -440,11 +440,16 @@ p5.prototype.textureMode = function(mode) {
  * function draw() {
  *   background(0);
  *
+<<<<<<< HEAD
  *   let dX = mouseX / width;
  *   let dY = mouseY / height;
+=======
+ *   var dX = mouseX / width;
+ *   var dY = mouseY / height;
+>>>>>>> prettier formatting
  *
- *   let u = lerp(1.0, 8.0, dX);
- *   let v = lerp(1.0, 8.0, dY);
+ *   var u = lerp(1.0, 8.0, dX);
+ *   var v = lerp(1.0, 8.0, dY);
  *
  *   scale(width / 2);
  *
