@@ -12,14 +12,11 @@ Aside from the code itself, you may also need to supply some combination of the 
 - [unit tests](https://github.com/processing/p5.js/blob/master/developer_docs/#testing), small pieces of code which are separate from the library and are used to verify its behavior
 - [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
 
-* **Add examples to the examples page** : 
+## Examples
 
-    Add to the examples on the [p5js.org examples page](http://p5js.org/examples/). See this [guide](https://github.com/processing/p5.js-website/wiki/Adding-examples) for details.
+The p5.js reference manual includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
-* **Add inline examples to the ref** :
-
-  * [List of examples needed](https://github.com/processing/p5.js/issues/1954)
-  * [Guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) 
+## TK
 
 * **Contribute in some other way** :
 
