@@ -114,10 +114,10 @@ To get started:
 
 1. Install dependencies.
 
-   ````
+   ```
    cd p5.js/
    npm install
-   ````
+   ```
 
 2. Add test files corresponding to files in `src` (more info about Chai assert style TDD phrasing [here](http://chaijs.com/api/assert/)). 
 3. Link to the src and test files in `test.html`. 
