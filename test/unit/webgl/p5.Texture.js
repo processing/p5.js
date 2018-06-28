@@ -75,5 +75,32 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
     });
+    test('Set global wrap mode to clamp', function() {
+      myp5.textureWrap(myp5.CLAMP);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+    });
+    test('Set global wrap mode to repeat', function() {
+      myp5.textureWrap(myp5.REPEAT);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.REPEAT);
+    });
+    test('Set global wrap mode to mirror', function() {
+      myp5.textureWrap(myp5.MIRROR);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+    });
   });
 });
