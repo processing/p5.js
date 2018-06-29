@@ -376,6 +376,46 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 // Camera Orientation Methods
 ////////////////////////////////////////////////////////////////////////////////
 
+// Rotate camera view about arbitrary axis defined by x,y,z
+// based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
+
+p5.Camera.prototype._rotateView = function(a, x, y, z) {
+  var centerX = this.centerX;
+  var centerY = this.centerY;
+  var centerZ = this.centerZ;
+
+  // move center by eye position such that rotation happens around eye position
+  centerX -= this.cameraX;
+  centerY -= this.cameraY;
+  centerZ -= this.cameraZ;
+
+  var rotation = p5.Matrix.identity();
+  rotation.rotate(a, x, y, z);
+
+  // prettier-ignore
+  var rotatedCenter = [
+    centerX * rotation.mat4[0]+ centerY * rotation.mat4[4]+ centerZ * rotation.mat4[8],
+    centerX * rotation.mat4[1]+ centerY * rotation.mat4[5]+ centerZ * rotation.mat4[9],
+    centerX * rotation.mat4[2]+ centerY * rotation.mat4[6]+ centerZ * rotation.mat4[10]
+  ]
+
+  // add eye position back into center
+  rotatedCenter[0] += this.cameraX;
+  rotatedCenter[1] += this.cameraY;
+  rotatedCenter[2] += this.cameraZ;
+
+  this.camera(
+    this.cameraX,
+    this.cameraY,
+    this.cameraZ,
+    rotatedCenter[0],
+    rotatedCenter[1],
+    rotatedCenter[2],
+    this.upX,
+    this.upY,
+    this.upZ
+  );
+};
 /**
  * Panning moves the camera view to the left and right.  This method rotates a
  * p5.Camera object about the Y axis.
@@ -383,7 +423,10 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * @param {Number} amount to rotate camera in either radians or degrees
  * depending on current pInstance's 'degreeMode' (>0 values rotate counterclockwise)
  */
-p5.Camera.prototype.pan = function(amount) {};
+p5.Camera.prototype.pan = function(amount) {
+  var local = this._getLocalAxes();
+  this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
+};
 
 /**
  * Tilting moves the camera view up and down.  This method rotates a p5.Camera
@@ -393,7 +436,10 @@ p5.Camera.prototype.pan = function(amount) {};
  * @param {Number} amount to rotate camera in either radians or degrees
  * depending on current pInstance's 'degreeMode' (>0 values tilt up)
  */
-p5.Camera.prototype.tilt;
+p5.Camera.prototype.tilt = function(amount) {
+  var local = this._getLocalAxes();
+  this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
+};
 
 /**
  * Reorients the camera to look at a position in 3D space.  This method is
@@ -402,7 +448,19 @@ p5.Camera.prototype.tilt;
  * @method lookAt
  * @param point (vector or x,y,z values)
  */
-p5.Camera.prototype.lookAt;
+p5.Camera.prototype.lookAt = function(x, y, z) {
+  this.camera(
+    this.cameraX,
+    this.cameraY,
+    this.cameraZ,
+    x,
+    y,
+    z,
+    this.upX,
+    this.upY,
+    this.upZ
+  );
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Camera Position Methods
