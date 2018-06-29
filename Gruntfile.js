@@ -209,11 +209,6 @@ module.exports = function(grunt) {
           interrupt: true
         }
       },
-      // watch the yuidoc/reference theme scripts for changes
-      yuidoc_theme_build: {
-        files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
-        tasks: ['requirejs:yuidoc_theme']
-      },
       // Watch the codebase for doc updates
       // launch with 'grunt requirejs connect watch:yui'
       yui: {
@@ -291,26 +286,6 @@ module.exports = function(grunt) {
         dest: 'bower.json', // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
-      }
-    },
-
-    // This generates the theme for the documentation from the theme source
-    // files.
-    requirejs: {
-      yuidoc_theme: {
-        options: {
-          baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
-          mainConfigFile: './docs/yuidoc-p5-theme-src/scripts/config.js',
-          name: 'main',
-          out: './docs/yuidoc-p5-theme/assets/js/reference.js',
-          optimize: 'none',
-          generateSourceMaps: true,
-          findNestedDependencies: true,
-          wrap: true,
-          paths: {
-            jquery: 'empty:'
-          }
-        }
       }
     },
 
@@ -447,7 +422,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-http');
@@ -462,12 +436,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Create the multitasks.
-  grunt.registerTask('build', [
-    'browserify',
-    'browserify:min',
-    'uglify',
-    'requirejs'
-  ]);
+  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
@@ -501,7 +470,7 @@ module.exports = function(grunt) {
     'open:yui',
     'watch:yui'
   ]);
-  grunt.registerTask('yui:build', ['requirejs:yuidoc_theme', 'yui']);
+  grunt.registerTask('yui:build', ['yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };
