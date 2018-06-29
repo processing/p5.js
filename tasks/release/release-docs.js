@@ -37,19 +37,18 @@ module.exports = function(grunt) {
           // Copy the new docs over
           console.log('Copying new docs ...');
           return new Promise(function(resolve, reject) {
-            exec('cp -r docs/reference p5-website/dist/', function(
-              err,
-              stdout,
-              stderr
-            ) {
-              if (err) {
-                reject(err);
+            exec(
+              'cp -r docs/reference/**/* p5-website/src/templates/pages/reference/',
+              function(err, stdout, stderr) {
+                if (err) {
+                  reject(err);
+                }
+                if (stderr) {
+                  reject(stderr);
+                }
+                resolve();
               }
-              if (stderr) {
-                reject(stderr);
-              }
-              resolve();
-            });
+            );
           });
         })
         .then(function() {
