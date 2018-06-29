@@ -1050,4 +1050,14 @@ p5.prototype._assert3d = function(name) {
     );
 };
 
+/**
+ * Sets rendererGL's current camera to a p5.Camera object.  Allows switching
+ * between multiple cameras.
+ * @param  {p5.Camera} cam  p5.Camera object
+ */
+p5.RendererGL.prototype.setCamera = function(cam) {
+  this._curCamera = cam;
+  this.uPMatrix = cam.projMatrix.copy();
+};
+
 module.exports = p5.RendererGL;
