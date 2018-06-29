@@ -50,7 +50,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 
   if (this.mouseIsPressed) {
     var scaleFactor = this.height < this.width ? this.height : this.width;
-    var deltaTheta = sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
+    var deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
     var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
 
     // camera position
