@@ -383,9 +383,7 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * @param {Number} amount to rotate camera in either radians or degrees
  * depending on current pInstance's 'degreeMode' (>0 values rotate counterclockwise)
  */
-p5.Camera.prototype.pan = function(amount) {
-  this.cameraMatrix.rotateY(amount);
-};
+p5.Camera.prototype.pan = function(amount) {};
 
 /**
  * Tilting moves the camera view up and down.  This method rotates a p5.Camera
@@ -411,20 +409,28 @@ p5.Camera.prototype.lookAt;
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Move camera position by a vector while maintaining current camera orientation.
+ * Move camera position along its local XYZ axes while maintaining current camera orientation.
  * This is equivalent to calling camera() with position and center values adjusted
  * by arguments.
  * @method move
  * @param {Number} amount (p5.Vector or x,y,z values)
  */
 p5.Camera.prototype.move = function(x, y, z) {
+  var local = this._getLocalAxes();
+
+  // scale local axes by movement amounts
+  // based on http://learnwebgl.brown37.net/07_cameras/camera_linear_motion.html
+  var dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
+  var dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
+  var dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
+
   this.camera(
-    this.cameraX + x,
-    this.cameraY + y,
-    this.cameraZ + z,
-    this.centerX + x,
-    this.centerY + y,
-    this.centerZ + z,
+    this.cameraX + dx[0] + dy[0] + dz[0],
+    this.cameraY + dx[1] + dy[1] + dz[1],
+    this.cameraZ + dx[2] + dy[2] + dz[2],
+    this.centerX + dx[0] + dy[0] + dz[0],
+    this.centerY + dx[1] + dy[1] + dz[1],
+    this.centerZ + dx[2] + dy[2] + dz[2],
     0,
     1,
     0
