@@ -45,48 +45,6 @@ p5.prototype.createCamera = function() {
   return _cam;
 };
 
-p5.Camera.prototype._computeCameraDefaultSettings = function() {
-  this.defaultCameraFOV = 60 / 180 * Math.PI;
-  this.defaultCameraAspect = this._renderer.width / this._renderer.height;
-  this.defaultCameraX = 0;
-  this.defaultCameraY = 0;
-  this.defaultCameraZ =
-    this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-  this.defaultCenterX = 0;
-  this.defaultCenterY = 0;
-  this.defaultCenterZ = 0;
-  this.defaultCameraNear = this.defaultCameraZ * 0.1;
-  this.defaultCameraFar = this.defaultCameraZ * 10;
-};
-
-//detect if user didn't set the camera
-//then call this function below
-p5.Camera.prototype._setDefaultCamera = function() {
-  this.cameraFOV = this.defaultCameraFOV;
-  this.cameraAspect = this.defaultCameraAspect;
-  this.cameraX = this.defaultCameraX;
-  this.cameraY = this.defaultCameraY;
-  this.cameraZ = this.defaultCameraZ;
-  this.centerX = this.defaultCenterX;
-  this.centerY = this.defaultCenterY;
-  this.centerZ = this.defaultCenterZ;
-  this.cameraNear = this.defaultCameraNear;
-  this.cameraFar = this.defaultCameraFar;
-
-  this.perspective();
-  this.camera();
-
-  this.cameraType = 'default';
-};
-
-p5.Camera.prototype.resize = function() {
-  // If we're using the default camera, update the aspect ratio
-  if (this.cameraType === 'default') {
-    this._computeCameraDefaultSettings();
-    this._setDefaultCamera();
-  }
-};
-
 /**
  * Sets the camera position for a 3D sketch. Parameters for this function define
  * the position for the camera, the center of the sketch (where the camera is
@@ -160,57 +118,24 @@ p5.Camera.prototype.camera = function(
   this.cameraY = eyeY;
   this.cameraZ = eyeZ;
 
-  // calculate camera Z vector
-  var z0 = eyeX - centerX;
-  var z1 = eyeY - centerY;
-  var z2 = eyeZ - centerZ;
+  this.centerX = centerX;
+  this.centerY = centerY;
+  this.centerZ = centerZ;
 
-  this.eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-  if (this.eyeDist !== 0) {
-    z0 /= this.eyeDist;
-    z1 /= this.eyeDist;
-    z2 /= this.eyeDist;
-  }
+  this.upX = upX;
+  this.upY = upY;
+  this.upZ = upZ;
 
-  // calculate camera Y vector
-  var y0 = upX;
-  var y1 = upY;
-  var y2 = upZ;
-
-  // computer x vector as y cross z
-  var x0 = y1 * z2 - y2 * z1;
-  var x1 = -y0 * z2 + y2 * z0;
-  var x2 = y0 * z1 - y1 * z0;
-
-  // recomputer y = z cross x
-  y0 = z1 * x2 - z2 * x1;
-  y1 = -z0 * x2 + z2 * x0;
-  y2 = z0 * x1 - z1 * x0;
-
-  // cross product gives area of parallelogram, which is < 1.0 for
-  // non-perpendicular unit-length vectors; so normalize x, y here:
-  var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-  if (xmag !== 0) {
-    x0 /= xmag;
-    x1 /= xmag;
-    x2 /= xmag;
-  }
-
-  var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-  if (ymag !== 0) {
-    y0 /= ymag;
-    y1 /= ymag;
-    y2 /= ymag;
-  }
+  var local = this._getLocalAxes();
 
   // the camera affects the model view matrix, insofar as it
   // inverse translates the world to the eye position of the camera
   // and rotates it.
   // prettier-ignore
-  this.cameraMatrix.set(x0, y0, z0, 0,
-                        x1, y1, z1, 0,
-                        x2, y2, z2, 0,
-                        0,   0,  0, 1);
+  this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
+                        local.x[1], local.y[1], local.z[1], 0,
+                        local.x[2], local.y[2], local.z[2], 0,
+                                 0,          0,          0, 1);
 
   var tx = -eyeX;
   var ty = -eyeY;
@@ -237,6 +162,10 @@ p5.Camera.prototype.camera = function(
   );
   return this;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Projection Methods
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Sets a perspective projection for the camera in a 3D sketch. This projection
@@ -443,6 +372,141 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   this.cameraType = 'custom';
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// Camera Orientation Methods
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Panning moves the camera view to the left and right.  This method rotates a
+ * p5.Camera object about the Y axis.
+ * @method pan
+ * @param {Number} amount to rotate camera in either radians or degrees
+ * depending on current pInstance's 'degreeMode' (>0 values rotate counterclockwise)
+ */
+p5.Camera.prototype.pan = function(amount) {
+  this.cameraMatrix.rotateY(amount);
+};
+
+/**
+ * Tilting moves the camera view up and down.  This method rotates a p5.Camera
+ * object about an axis perpendicular to the Y axis and camera's local -Z axis
+ * (where the camera is looking) to maintain current up-vector.
+ * @method tilt
+ * @param {Number} amount to rotate camera in either radians or degrees
+ * depending on current pInstance's 'degreeMode' (>0 values tilt up)
+ */
+p5.Camera.prototype.tilt;
+
+/**
+ * Reorients the camera to look at a position in 3D space.  This method is
+ * equivalent to calling camera() and passing in the current position and
+ * up-vector along with the new centerXYZ.
+ * @method lookAt
+ * @param point (vector or x,y,z values)
+ */
+p5.Camera.prototype.lookAt;
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Position Methods
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Move camera position by a vector while maintaining current camera orientation.
+ * This is equivalent to calling camera() with position and center values adjusted
+ * by arguments.
+ * @method move
+ * @param {Number} amount (p5.Vector or x,y,z values)
+ */
+p5.Camera.prototype.move = function(x, y, z) {
+  this.camera(
+    this.cameraX + x,
+    this.cameraY + y,
+    this.cameraZ + z,
+    this.centerX + x,
+    this.centerY + y,
+    this.centerZ + z,
+    0,
+    1,
+    0
+  );
+};
+
+/**
+ * Set camera position while maintaining current camera orientation.
+ * This is equivalent to calling camera() with position and center values adjusted
+ * by arguments.
+ * @method setPosition
+ * @param {Number} position (p5.Vector or x,y,z values)
+ */
+
+p5.Camera.prototype.setPosition = function(x, y, z) {
+  let diffX = x - this.cameraX;
+  let diffY = y - this.cameraY;
+  let diffZ = z - this.cameraZ;
+
+  this.camera(
+    x,
+    y,
+    z,
+    this.centerX + diffX,
+    this.centerY + diffY,
+    this.centerZ + diffZ,
+    0,
+    1,
+    0
+  );
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Helper Methods
+////////////////////////////////////////////////////////////////////////////////
+
+p5.Camera.prototype._computeCameraDefaultSettings = function() {
+  this.defaultCameraFOV = 60 / 180 * Math.PI;
+  this.defaultCameraAspect = this._renderer.width / this._renderer.height;
+  this.defaultCameraX = 0;
+  this.defaultCameraY = 0;
+  this.defaultCameraZ =
+    this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+  this.defaultCenterX = 0;
+  this.defaultCenterY = 0;
+  this.defaultCenterZ = 0;
+  this.defaultCameraNear = this.defaultCameraZ * 0.1;
+  this.defaultCameraFar = this.defaultCameraZ * 10;
+};
+
+//detect if user didn't set the camera
+//then call this function below
+p5.Camera.prototype._setDefaultCamera = function() {
+  this.cameraFOV = this.defaultCameraFOV;
+  this.cameraAspect = this.defaultCameraAspect;
+  this.cameraX = this.defaultCameraX;
+  this.cameraY = this.defaultCameraY;
+  this.cameraZ = this.defaultCameraZ;
+  this.centerX = this.defaultCenterX;
+  this.centerY = this.defaultCenterY;
+  this.centerZ = this.defaultCenterZ;
+  this.upX = 0;
+  this.upY = 1;
+  this.upZ = 0;
+  this.cameraNear = this.defaultCameraNear;
+  this.cameraFar = this.defaultCameraFar;
+
+  this.perspective();
+  this.camera();
+
+  this.cameraType = 'default';
+};
+
+p5.Camera.prototype.resize = function() {
+  // If we're using the default camera, update the aspect ratio
+  if (this.cameraType === 'default') {
+    this._computeCameraDefaultSettings();
+    this._setDefaultCamera();
+  }
+};
+
+// for use with rendererGL push/pop methods
 // copy (for use with push/pop):
 p5.Camera.prototype.copy = function(cam) {
   var _cam = new p5.Camera(cam._renderer);
@@ -460,12 +524,64 @@ p5.Camera.prototype.copy = function(cam) {
   _cam.cameraMatrix = cam.cameraMatrix.copy();
   _cam.projMatrix = cam.projMatrix.copy();
 };
-// Public API Methods
 
-// Rotate
+/**
+ * Returns camera local axes defined as follows:
+ * local Z axis is from camera position to center position
+ * local X axis is perpendicular to Z axis and camera up vector
+ * local Y axis is perpendicular to both Z and X axes
+ * @method _getLocalAxes
+ */
+p5.Camera.prototype._getLocalAxes = function() {
+  // calculate camera local Z vector
+  var z0 = this.cameraX - this.centerX;
+  var z1 = this.cameraY - this.centerY;
+  var z2 = this.cameraZ - this.centerZ;
 
-// Pan
+  // normalize camera local Z vector
+  var eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+  if (eyeDist !== 0) {
+    z0 /= eyeDist;
+    z1 /= eyeDist;
+    z2 /= eyeDist;
+  }
 
-// Controls
+  // calculate camera Y vector
+  var y0 = this.upX;
+  var y1 = this.upY;
+  var y2 = this.upZ;
+
+  // compute camera local X vector as up vector (local Y) cross local Z
+  var x0 = y1 * z2 - y2 * z1;
+  var x1 = -y0 * z2 + y2 * z0;
+  var x2 = y0 * z1 - y1 * z0;
+
+  // recompute y = z cross x
+  y0 = z1 * x2 - z2 * x1;
+  y1 = -z0 * x2 + z2 * x0;
+  y2 = z0 * x1 - z1 * x0;
+
+  // cross product gives area of parallelogram, which is < 1.0 for
+  // non-perpendicular unit-length vectors; so normalize x, y here:
+  var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+  if (xmag !== 0) {
+    x0 /= xmag;
+    x1 /= xmag;
+    x2 /= xmag;
+  }
+
+  var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+  if (ymag !== 0) {
+    y0 /= ymag;
+    y1 /= ymag;
+    y2 /= ymag;
+  }
+
+  return {
+    x: [x0, x1, x2],
+    y: [y0, y1, y2],
+    z: [z0, z1, z2]
+  };
+};
 
 module.exports = p5;
