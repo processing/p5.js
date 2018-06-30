@@ -54,6 +54,14 @@ To run the unit tests, use Grunt.
 $ grunt
 ```
 
+Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
+
+```
+$ npm run grunt connect -keepalive
+```
+
+With the server running, you should be able to open test/test.html in your favorite web browser.
+
 # Development Process
 
 1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
@@ -126,12 +134,6 @@ This will build the p5.js library, generate the documentation files, run a web s
     ```
     npm run docs:dev
     ```
-
-## Running tests in the browser
-Sometimes it is useful to run tests in browser especially when trying to debug test failures.  To run the tests in the browser:
-
-1. Run the connect server. ```npm run grunt connect -keepalive```
-2. Open test/test.html in your favourite web browser.
 
 # Repositories
 
