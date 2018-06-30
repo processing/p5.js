@@ -99,6 +99,14 @@ With the server running, you should be able to open test/test.html in your favor
 
 9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
+# Building Documentation
+
+Inline comments in p5.js are built into the public-facing [reference manual](https://p5js.org/reference/). You can also view this locally:
+
+```
+$ npm run docs:dev
+```
+
 # Overview
 
 This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-inside-p5/) describes the tools and files used in p5.js workflow.
@@ -127,13 +135,6 @@ To get started:
 3. Link to the src and test files in `test.html`. 
 4. Run the tests with `npm run grunt`.
 
-## Building and testing the Reference Docs & Examples
-
-This will build the p5.js library, generate the documentation files, run a web server, and open a browser to the main documentation page.
-
-    ```
-    npm run docs:dev
-    ```
 
 # Repositories
 
