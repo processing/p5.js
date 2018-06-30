@@ -30,7 +30,7 @@ The developer tooling included with the p5.js codebase is intentionally very str
 
 p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as they appear. which will highlight problems immediately as you write your code.
 
-To detect errors:
+To detect errors, run the following command in your terminal (do not type the `$` prompt):
 
 ```
 $ npm run lint
@@ -53,8 +53,6 @@ $ grunt
 ```
 
 # Development Process
-
-Shell commands should be typed into your terminal, without including the `$` prompt.
 
 1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
 2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
@@ -100,10 +98,6 @@ This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-i
 `src/` Contains all the source code for the library. The code is broken up into folders and files corresponding with the [Processing reference page](http://processing.org/reference/). Additionally, there is a core folder that holds constants, and internal helper functions and variables.
 
 `tests/` Contains unit testing files.
-
-## My code needs a special format!
-
-In [some special cases](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) your code needs special formatting to look more clear. Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html) to ignore a block of code from being formatted, via the `// prettier-ignore` comment. Use with caution!
 
 # Testing
 
