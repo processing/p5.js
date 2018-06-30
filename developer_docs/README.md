@@ -60,7 +60,7 @@ Sometimes it is useful to run the tests in the browser instead of on the command
 $ npm run grunt connect -keepalive
 ```
 
-With the server running, you should be able to open test/test.html in your favorite web browser.
+With the server running, you should be able to open `test/test.html` in a browser.
 
 # Development Process
 
