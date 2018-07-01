@@ -322,6 +322,7 @@ p5.prototype._onblur = function(e) {
  * <div><code>
  * var x = 100;
  * var y = 100;
+ * var widthAndHeight = 50;
  *
  * function setup() {
  *   createCanvas(512, 512);
@@ -344,9 +345,19 @@ p5.prototype._onblur = function(e) {
  *     y += 5;
  *   }
  *
+ *   // 107 and 187 are keyCodes for "+"
+ *   if (keyIsDown(107) || keyIsDown(187)) {
+ *     widthAndHeight += 1;
+ *   }
+ *
+ *   // 109 and 189 are keyCodes for "-"
+ *   if (keyIsDown(109) || keyIsDown(189)) {
+ *     widthAndHeight -= 1;
+ *   }
+ *
  *   clear();
  *   fill(255, 0, 0);
- *   ellipse(x, y, 50, 50);
+ *   ellipse(x, y, widthAndHeight, widthAndHeight);
  * }
  * </code></div>
  *
