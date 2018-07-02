@@ -103,9 +103,9 @@ p5.Camera.prototype.camera = function(
   upZ
 ) {
   if (typeof eyeX === 'undefined') {
-    eyeX = this.defaultCameraX;
-    eyeY = this.defaultCameraY;
-    eyeZ = this.defaultCameraZ;
+    eyeX = this.defaultEyeX;
+    eyeY = this.defaultEyeY;
+    eyeZ = this.defaultEyeZ;
     centerX = eyeX;
     centerY = eyeY;
     centerZ = 0;
@@ -114,9 +114,9 @@ p5.Camera.prototype.camera = function(
     upZ = 0;
   }
 
-  this.cameraX = eyeX;
-  this.cameraY = eyeY;
-  this.cameraZ = eyeZ;
+  this.eyeX = eyeX;
+  this.eyeY = eyeY;
+  this.eyeZ = eyeZ;
 
   this.centerX = centerX;
   this.centerY = centerY;
@@ -178,7 +178,7 @@ p5.Camera.prototype.camera = function(
  *
  * When called with no arguments, the defaults
  * provided are equivalent to
- * perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0), where cameraZ
+ * perspective(PI/3.0, width/height, eyeZ/10.0, eyeZ*10.0), where eyeZ
  * is equal to ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
  * @param  {Number} [fovy]   camera frustum vertical field of view,
@@ -385,9 +385,9 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
   var centerZ = this.centerZ;
 
   // move center by eye position such that rotation happens around eye position
-  centerX -= this.cameraX;
-  centerY -= this.cameraY;
-  centerZ -= this.cameraZ;
+  centerX -= this.eyeX;
+  centerY -= this.eyeY;
+  centerZ -= this.eyeZ;
 
   var rotation = p5.Matrix.identity();
   rotation.rotate(a, x, y, z);
@@ -400,14 +400,14 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
   ]
 
   // add eye position back into center
-  rotatedCenter[0] += this.cameraX;
-  rotatedCenter[1] += this.cameraY;
-  rotatedCenter[2] += this.cameraZ;
+  rotatedCenter[0] += this.eyeX;
+  rotatedCenter[1] += this.eyeY;
+  rotatedCenter[2] += this.eyeZ;
 
   this.camera(
-    this.cameraX,
-    this.cameraY,
-    this.cameraZ,
+    this.eyeX,
+    this.eyeY,
+    this.eyeZ,
     rotatedCenter[0],
     rotatedCenter[1],
     rotatedCenter[2],
@@ -450,9 +450,9 @@ p5.Camera.prototype.tilt = function(amount) {
  */
 p5.Camera.prototype.lookAt = function(x, y, z) {
   this.camera(
-    this.cameraX,
-    this.cameraY,
-    this.cameraZ,
+    this.eyeX,
+    this.eyeY,
+    this.eyeZ,
     x,
     y,
     z,
@@ -483,9 +483,9 @@ p5.Camera.prototype.move = function(x, y, z) {
   var dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
 
   this.camera(
-    this.cameraX + dx[0] + dy[0] + dz[0],
-    this.cameraY + dx[1] + dy[1] + dz[1],
-    this.cameraZ + dx[2] + dy[2] + dz[2],
+    this.eyeX + dx[0] + dy[0] + dz[0],
+    this.eyeY + dx[1] + dy[1] + dz[1],
+    this.eyeZ + dx[2] + dy[2] + dz[2],
     this.centerX + dx[0] + dy[0] + dz[0],
     this.centerY + dx[1] + dy[1] + dz[1],
     this.centerZ + dx[2] + dy[2] + dz[2],
@@ -504,9 +504,9 @@ p5.Camera.prototype.move = function(x, y, z) {
  */
 
 p5.Camera.prototype.setPosition = function(x, y, z) {
-  let diffX = x - this.cameraX;
-  let diffY = y - this.cameraY;
-  let diffZ = z - this.cameraZ;
+  let diffX = x - this.eyeX;
+  let diffY = y - this.eyeY;
+  let diffZ = z - this.eyeZ;
 
   this.camera(
     x,
@@ -528,15 +528,15 @@ p5.Camera.prototype.setPosition = function(x, y, z) {
 p5.Camera.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraFOV = 60 / 180 * Math.PI;
   this.defaultCameraAspect = this._renderer.width / this._renderer.height;
-  this.defaultCameraX = 0;
-  this.defaultCameraY = 0;
-  this.defaultCameraZ =
+  this.defaultEyeX = 0;
+  this.defaultEyeY = 0;
+  this.defaultEyeZ =
     this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
   this.defaultCenterX = 0;
   this.defaultCenterY = 0;
   this.defaultCenterZ = 0;
-  this.defaultCameraNear = this.defaultCameraZ * 0.1;
-  this.defaultCameraFar = this.defaultCameraZ * 10;
+  this.defaultCameraNear = this.defaultEyeZ * 0.1;
+  this.defaultCameraFar = this.defaultEyeZ * 10;
 };
 
 //detect if user didn't set the camera
@@ -544,9 +544,9 @@ p5.Camera.prototype._computeCameraDefaultSettings = function() {
 p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraFOV = this.defaultCameraFOV;
   this.cameraAspect = this.defaultCameraAspect;
-  this.cameraX = this.defaultCameraX;
-  this.cameraY = this.defaultCameraY;
-  this.cameraZ = this.defaultCameraZ;
+  this.eyeX = this.defaultEyeX;
+  this.eyeY = this.defaultEyeY;
+  this.eyeZ = this.defaultEyeZ;
   this.centerX = this.defaultCenterX;
   this.centerY = this.defaultCenterY;
   this.centerZ = this.defaultCenterZ;
@@ -576,9 +576,9 @@ p5.Camera.prototype.copy = function(cam) {
   var _cam = new p5.Camera(cam._renderer);
   _cam.cameraFOV = cam.cameraFOV;
   _cam.cameraAspect = cam.cameraAspect;
-  _cam.cameraX = cam.cameraX;
-  _cam.cameraY = cam.cameraY;
-  _cam.cameraZ = cam.cameraZ;
+  _cam.eyeX = cam.eyeX;
+  _cam.eyeY = cam.eyeY;
+  _cam.eyeZ = cam.eyeZ;
   _cam.centerX = cam.centerX;
   _cam.centerY = cam.centerY;
   _cam.centerZ = cam.centerZ;
@@ -598,9 +598,9 @@ p5.Camera.prototype.copy = function(cam) {
  */
 p5.Camera.prototype._getLocalAxes = function() {
   // calculate camera local Z vector
-  var z0 = this.cameraX - this.centerX;
-  var z1 = this.cameraY - this.centerY;
-  var z2 = this.cameraZ - this.centerZ;
+  var z0 = this.eyeX - this.centerX;
+  var z1 = this.eyeY - this.centerY;
+  var z2 = this.eyeZ - this.centerZ;
 
   // normalize camera local Z vector
   var eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
