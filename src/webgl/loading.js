@@ -35,11 +35,11 @@ require('./p5.Geometry');
  * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * var teapot;
+ * //draw a spinning octahedron
+ * var octahedron;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   octahedron = loadModel('assets/octahedron.obj');
  * }
  *
  * function setup() {
@@ -50,13 +50,13 @@ require('./p5.Geometry');
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   model(teapot);
+ *   model(octahedron);
  * }
  * </code>
  * </div>
  *
  * @alt
- * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * Vertically rotating 3-d teapot octahedron.
  */
 /**
  * @method loadModel
