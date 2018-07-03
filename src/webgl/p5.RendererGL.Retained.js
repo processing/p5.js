@@ -52,7 +52,6 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
  */
 p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   var gl = this.GL;
-  // this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
 
@@ -195,7 +194,6 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
  * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
-  // this._setDefaultCamera();
   var gl = this.GL;
   this._useColorShader();
   var geometry = this.gHash[gId];
