@@ -124,6 +124,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
+  this.textureImage = undefined;
+  this.textureMode = constants.IMAGE;
   return this;
 };
 
