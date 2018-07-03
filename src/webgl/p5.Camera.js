@@ -26,10 +26,6 @@ p5.Camera = function(renderer) {
   this.cameraMatrix = new p5.Matrix();
   this.projMatrix = new p5.Matrix();
 
-  // compute default camera settings, then set a default camera
-  this._computeCameraDefaultSettings();
-  this._setDefaultCamera();
-
   return this;
 };
 
@@ -41,6 +37,12 @@ p5.Camera = function(renderer) {
 p5.prototype.createCamera = function() {
   this._assert3d('createCamera');
   var _cam = new p5.Camera(this._renderer);
+
+  // compute default camera settings, then set a default camera
+  _cam._computeCameraDefaultSettings();
+  _cam._setDefaultCamera();
+
+  // set renderer current camera to the new camera
   this._renderer._curCamera = _cam;
   return _cam;
 };
