@@ -628,7 +628,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
   );
   this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
 
-  this._curCamera.resize();
+  this._curCamera._resize();
 
   //resize pixels buffer
   if (typeof this.pixels !== 'undefined') {

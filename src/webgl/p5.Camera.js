@@ -598,7 +598,7 @@ p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraType = 'default';
 };
 
-p5.Camera.prototype.resize = function() {
+p5.Camera.prototype._resize = function() {
   // If we're using the default camera, update the aspect ratio
   if (this.cameraType === 'default') {
     this._computeCameraDefaultSettings();
