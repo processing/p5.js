@@ -751,7 +751,11 @@ p5.RendererGL.prototype.push = function() {
 
   properties.uMVMatrix = this.uMVMatrix.copy();
   properties.uPMatrix = this.uPMatrix.copy();
-  properties._curCamera = this._curCamera.copy();
+  properties._curCamera = this._curCamera;
+
+  // make a copy of the current camera for the push state
+  // this preserves any references stored using 'createCamera'
+  this._curCamera = this._curCamera.copy();
 
   return style;
 };
