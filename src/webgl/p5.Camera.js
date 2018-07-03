@@ -619,6 +619,8 @@ p5.Camera.prototype.copy = function() {
   _cam.cameraNear = this.cameraNear;
   _cam.cameraFar = this.cameraFar;
 
+  _cam.cameraType = this.cameraType;
+
   _cam.cameraMatrix = this.cameraMatrix.copy();
   _cam.projMatrix = this.projMatrix.copy();
 
