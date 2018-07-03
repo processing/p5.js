@@ -572,21 +572,23 @@ p5.Camera.prototype.resize = function() {
 
 // for use with rendererGL push/pop methods
 // copy (for use with push/pop):
-p5.Camera.prototype.copy = function(cam) {
-  var _cam = new p5.Camera(cam._renderer);
-  _cam.cameraFOV = cam.cameraFOV;
-  _cam.cameraAspect = cam.cameraAspect;
-  _cam.eyeX = cam.eyeX;
-  _cam.eyeY = cam.eyeY;
-  _cam.eyeZ = cam.eyeZ;
-  _cam.centerX = cam.centerX;
-  _cam.centerY = cam.centerY;
-  _cam.centerZ = cam.centerZ;
-  _cam.cameraNear = cam.cameraNear;
-  _cam.cameraFar = cam.cameraFar;
+p5.Camera.prototype.copy = function() {
+  var _cam = new p5.Camera(this._renderer);
+  _cam.cameraFOV = this.cameraFOV;
+  _cam.cameraAspect = this.cameraAspect;
+  _cam.eyeX = this.eyeX;
+  _cam.eyeY = this.eyeY;
+  _cam.eyeZ = this.eyeZ;
+  _cam.centerX = this.centerX;
+  _cam.centerY = this.centerY;
+  _cam.centerZ = this.centerZ;
+  _cam.cameraNear = this.cameraNear;
+  _cam.cameraFar = this.cameraFar;
 
-  _cam.cameraMatrix = cam.cameraMatrix.copy();
-  _cam.projMatrix = cam.projMatrix.copy();
+  _cam.cameraMatrix = this.cameraMatrix.copy();
+  _cam.projMatrix = this.projMatrix.copy();
+
+  return _cam;
 };
 
 /**
