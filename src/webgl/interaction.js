@@ -35,6 +35,8 @@ var p5 = require('../core/core');
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
+// implementation based on three.js 'orbitControls':
+// https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
 p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
@@ -47,11 +49,58 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    this.rotateY(
-      sensitivityX * (this.mouseX - this.width / 2) / (this.width / 2)
-    );
-    this.rotateX(
-      -sensitivityY * (this.mouseY - this.height / 2) / (this.width / 2)
+    var scaleFactor = this.height < this.width ? this.height : this.width;
+    var deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
+    var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+
+    // camera position
+    var camX = this._renderer.cameraX;
+    var camY = this._renderer.cameraY;
+    var camZ = this._renderer.cameraZ;
+
+    // center coordinates
+    var centerX = this._renderer.cameraCenterX;
+    var centerY = this._renderer.cameraCenterY;
+    var centerZ = this._renderer.cameraCenterZ;
+
+    var diffX = camX - centerX;
+    var diffY = camY - centerY;
+    var diffZ = camZ - centerZ;
+
+    // get spherical coorinates for current camera position about origin
+    var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
+    var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+    var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
+
+    // add mouse movements
+    camTheta += deltaTheta;
+    camPhi += deltaPhi;
+
+    // prevent rotation over the zenith / under bottom
+    if (camPhi > Math.PI) {
+      camPhi = Math.PI;
+    } else if (camPhi <= 0) {
+      camPhi = 0.001;
+    }
+
+    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
+    // var sinPhiRadius = Math.sin(camPhi) * camRadius;
+
+    var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
+    var _y = Math.cos(camPhi) * camRadius;
+    var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+
+    this.camera(
+      _x + centerX,
+      _y + centerY,
+      _z + centerZ,
+      centerX,
+      centerY,
+      centerZ,
+      0,
+      1,
+      0
     );
   }
   return this;

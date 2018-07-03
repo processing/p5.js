@@ -1,5 +1,8 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
+
+  // controls should work whether or not camera center is set to (0,0,0)
+  // camera(0, 0, 500, 300, 0, 0, 0, 1, 0);
 }
 
 function draw() {
@@ -9,18 +12,21 @@ function draw() {
   orbitControl();
 
   normalMaterial();
-  translate(0, 0, -1000);
-  for (var i = 0; i <= 20; i++) {
-    for (var j = 0; j <= 20; j++) {
+
+  let scale = 200;
+  for (let px = -5; px < 5; px++) {
+    for (let pz = -5; pz < 5; pz++) {
       push();
-      var a = j / 20 * PI;
-      var b = i / 20 * PI;
-      translate(
-        sin(2 * a) * radius * sin(b),
-        cos(b) * radius / 2,
-        cos(2 * a) * radius * sin(b)
-      );
-      cone();
+      rotateX(PI);
+      translate(px * scale, 0, pz * scale);
+      if (px > 0) {
+        fill(255, 0, 0);
+      }
+      if (px == 0 && pz == 0) {
+        cone(50, 100);
+      } else {
+        cone(20, 50);
+      }
       pop();
     }
   }

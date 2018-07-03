@@ -81,6 +81,10 @@ p5.RendererGL.prototype.camera = function(
   this.cameraY = eyeY;
   this.cameraZ = eyeZ;
 
+  this.cameraCenterX = centerX;
+  this.cameraCenterY = centerY;
+  this.cameraCenterZ = centerZ;
+
   // calculate camera Z vector
   var z0 = eyeX - centerX;
   var z1 = eyeY - centerY;
