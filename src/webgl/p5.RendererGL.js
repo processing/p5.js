@@ -343,36 +343,6 @@ p5.prototype.setAttributes = function(key, value) {
  * @class p5.RendererGL
  */
 
-// p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
-//   this.defaultCameraFOV = 60 / 180 * Math.PI;
-//   this.defaultCameraAspect = this.width / this.height;
-//   this.defaultCameraX = 0;
-//   this.defaultCameraY = 0;
-//   this.defaultCameraZ =
-//     this.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-//   this.defaultCameraNear = this.defaultCameraZ * 0.1;
-//   this.defaultCameraFar = this.defaultCameraZ * 10;
-// };
-//
-// //detect if user didn't set the camera
-// //then call this function below
-// p5.RendererGL.prototype._setDefaultCamera = function() {
-//   if (this._curCamera === null) {
-//     this._computeCameraDefaultSettings();
-//     this.cameraFOV = this.defaultCameraFOV;
-//     this.cameraAspect = this.defaultAspect;
-//     this.cameraX = this.defaultCameraX;
-//     this.cameraY = this.defaultCameraY;
-//     this.cameraZ = this.defaultCameraZ;
-//     this.cameraNear = this.defaultCameraNear;
-//     this.cameraFar = this.defaultCameraFar;
-//
-//     this.perspective();
-//     this.camera();
-//     this._curCamera = 'default';
-//   }
-// };
-
 p5.RendererGL.prototype._update = function() {
   // reset model view and apply initial camera transform
   // (containing only look at info; no projection).
