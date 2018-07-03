@@ -277,7 +277,24 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
                       0,           0,     (far + near) * nf, -1,
                       0,           0, (2 * far * near) * nf,  0);
 
-  this._renderer.uPMatrix = this.projMatrix.copy();
+  this._renderer.uPMatrix.set(
+    this.projMatrix.mat4[0],
+    this.projMatrix.mat4[1],
+    this.projMatrix.mat4[2],
+    this.projMatrix.mat4[3],
+    this.projMatrix.mat4[4],
+    this.projMatrix.mat4[5],
+    this.projMatrix.mat4[6],
+    this.projMatrix.mat4[7],
+    this.projMatrix.mat4[8],
+    this.projMatrix.mat4[9],
+    this.projMatrix.mat4[10],
+    this.projMatrix.mat4[11],
+    this.projMatrix.mat4[12],
+    this.projMatrix.mat4[13],
+    this.projMatrix.mat4[14],
+    this.projMatrix.mat4[15]
+  );
 
   this.cameraType = 'custom';
 };
@@ -367,7 +384,24 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
 
-  this._renderer.uPMatrix = this.projMatrix.copy();
+  this._renderer.uPMatrix.set(
+    this.projMatrix.mat4[0],
+    this.projMatrix.mat4[1],
+    this.projMatrix.mat4[2],
+    this.projMatrix.mat4[3],
+    this.projMatrix.mat4[4],
+    this.projMatrix.mat4[5],
+    this.projMatrix.mat4[6],
+    this.projMatrix.mat4[7],
+    this.projMatrix.mat4[8],
+    this.projMatrix.mat4[9],
+    this.projMatrix.mat4[10],
+    this.projMatrix.mat4[11],
+    this.projMatrix.mat4[12],
+    this.projMatrix.mat4[13],
+    this.projMatrix.mat4[14],
+    this.projMatrix.mat4[15]
+  );
 
   this.cameraType = 'custom';
 };
