@@ -322,7 +322,6 @@ p5.prototype._onblur = function(e) {
  * <div><code>
  * var x = 100;
  * var y = 100;
- * var widthAndHeight = 50;
  *
  * function setup() {
  *   createCanvas(512, 512);
@@ -345,24 +344,39 @@ p5.prototype._onblur = function(e) {
  *     y += 5;
  *   }
  *
+ *   clear();
+ *   fill(255, 0, 0);
+ *   ellipse(x, y, 50, 50);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var diameter = 50;
+ *
+ * function setup() {
+ *   createCanvas(512, 512);
+ * }
+ *
+ * function draw() {
  *   // 107 and 187 are keyCodes for "+"
  *   if (keyIsDown(107) || keyIsDown(187)) {
- *     widthAndHeight += 1;
+ *     diameter += 1;
  *   }
  *
  *   // 109 and 189 are keyCodes for "-"
  *   if (keyIsDown(109) || keyIsDown(189)) {
- *     widthAndHeight -= 1;
+ *     diameter -= 1;
  *   }
  *
  *   clear();
  *   fill(255, 0, 0);
- *   ellipse(x, y, widthAndHeight, widthAndHeight);
+ *   ellipse(50, 50, diameter, diameter);
  * }
  * </code></div>
  *
  * @alt
  * 50x50 red ellipse moves left, right, up and down with arrow presses.
+ * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
  *
  */
 p5.prototype.keyIsDown = function(code) {
