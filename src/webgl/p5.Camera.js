@@ -239,7 +239,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
     fovy = this.defaultCameraFOV;
   }
   if (typeof aspect === 'undefined') {
-    aspect = this.defaultCameraAspect;
+    aspect = this.defaultAspectRatio;
   }
   if (typeof near === 'undefined') {
     near = this.defaultCameraNear;
@@ -264,7 +264,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   }
 
   this.cameraFOV = this._renderer._pInst._toRadians(fovy);
-  this.cameraAspect = aspect;
+  this.aspectRatio = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
 
@@ -563,7 +563,7 @@ p5.Camera.prototype.setPosition = function(x, y, z) {
 
 p5.Camera.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraFOV = 60 / 180 * Math.PI;
-  this.defaultCameraAspect = this._renderer.width / this._renderer.height;
+  this.defaultAspectRatio = this._renderer.width / this._renderer.height;
   this.defaultEyeX = 0;
   this.defaultEyeY = 0;
   this.defaultEyeZ =
@@ -579,7 +579,7 @@ p5.Camera.prototype._computeCameraDefaultSettings = function() {
 //then call this function below
 p5.Camera.prototype._setDefaultCamera = function() {
   this.cameraFOV = this.defaultCameraFOV;
-  this.cameraAspect = this.defaultCameraAspect;
+  this.aspectRatio = this.defaultAspectRatio;
   this.eyeX = this.defaultEyeX;
   this.eyeY = this.defaultEyeY;
   this.eyeZ = this.defaultEyeZ;
@@ -604,7 +604,7 @@ p5.Camera.prototype._resize = function() {
     this._computeCameraDefaultSettings();
     this._setDefaultCamera();
   } else {
-    this.defaultCameraAspect = this._renderer.width / this._renderer.height;
+    this.defaultAspectRatio = this._renderer.width / this._renderer.height;
     this.perspective();
     this.camera();
   }
@@ -615,7 +615,7 @@ p5.Camera.prototype._resize = function() {
 p5.Camera.prototype.copy = function() {
   var _cam = new p5.Camera(this._renderer);
   _cam.cameraFOV = this.cameraFOV;
-  _cam.cameraAspect = this.cameraAspect;
+  _cam.aspectRatio = this.aspect;
   _cam.eyeX = this.eyeX;
   _cam.eyeY = this.eyeY;
   _cam.eyeZ = this.eyeZ;
