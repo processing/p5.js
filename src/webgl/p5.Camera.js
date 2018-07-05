@@ -603,6 +603,10 @@ p5.Camera.prototype._resize = function() {
   if (this.cameraType === 'default') {
     this._computeCameraDefaultSettings();
     this._setDefaultCamera();
+  } else {
+    this.defaultCameraAspect = this._renderer.width / this._renderer.height;
+    this.perspective();
+    this.camera();
   }
 };
 
