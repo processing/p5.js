@@ -456,7 +456,7 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  * Panning moves the camera view to the left and right.  This method rotates a
  * p5.Camera object about the Y axis.
  * @method pan
- * @param {Number} amount to rotate camera in either radians or degrees
+ * @param {Number} angle to rotate camera in either radians or degrees
  * depending on current pInstance's 'degreeMode' (>0 values rotate counterclockwise)
  */
 p5.Camera.prototype.pan = function(amount) {
@@ -469,7 +469,7 @@ p5.Camera.prototype.pan = function(amount) {
  * object about an axis perpendicular to the Y axis and camera's local -Z axis
  * (where the camera is looking) to maintain current up-vector.
  * @method tilt
- * @param {Number} amount to rotate camera in either radians or degrees
+ * @param {Number} angle to rotate camera in either radians or degrees
  * depending on current pInstance's 'degreeMode' (>0 values tilt up)
  */
 p5.Camera.prototype.tilt = function(amount) {
