@@ -312,8 +312,8 @@ p5.prototype.texture = function(tex) {
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
  * @method textureWrap
- * @param {Constant} wrapX Required, either CLAMP, REPEAT, or MIRROR
- * @param {Constant} wrapY Optional, either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} wrapX Either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} [wrapY] Either CLAMP, REPEAT, or MIRROR
  * @example
  * <div>
  * <code>
@@ -352,6 +352,10 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * an image of the rocky mountains repeated in mirrored tiles
+ *
  */
 p5.prototype.textureWrap = function(wrapX, wrapY) {
   wrapY = wrapY || wrapX;
