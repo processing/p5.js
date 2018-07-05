@@ -1,7 +1,6 @@
 /**
  * @module Lights, Camera
  * @submodule Camera
- * @for p5
  * @requires core
  */
 
@@ -33,6 +32,7 @@ p5.Camera = function(renderer) {
  * Creates a new p5.Camera object and sets that as the WebGL renderer's current
  * camera. Returns this camera object.
  * @method createCamera
+ * @for p5
  */
 p5.prototype.createCamera = function() {
   this._assert3d('createCamera');
@@ -85,7 +85,6 @@ p5.prototype.createCamera = function() {
  * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
-
 p5.prototype.camera = function() {
   this._assert3d('camera');
   p5._validateParameters('camera', arguments);
@@ -93,6 +92,10 @@ p5.prototype.camera = function() {
   return this;
 };
 
+/**
+ * @method camera
+ * @class p5.Camera
+ */
 p5.Camera.prototype.camera = function(
   eyeX,
   eyeY,
@@ -183,6 +186,7 @@ p5.Camera.prototype.camera = function(
  * perspective(PI/3.0, width/height, eyeZ/10.0, eyeZ*10.0), where eyeZ
  * is equal to ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
+ * @for p5
  * @param  {Number} [fovy]   camera frustum vertical field of view,
  *                           from bottom to top of view, in <a href="#/p5/angleMode">angleMode</a> units
  * @param  {Number} [aspect] camera frustum aspect ratio
@@ -223,7 +227,6 @@ p5.Camera.prototype.camera = function(
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
-
 p5.prototype.perspective = function() {
   this._assert3d('perspective');
   p5._validateParameters('perspective', arguments);
@@ -234,6 +237,10 @@ p5.prototype.perspective = function() {
   return this;
 };
 
+/**
+ * @method perspective
+ * @class p5.Camera
+ */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
@@ -317,6 +324,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
  * and far are the minimum and maximum z values. If no parameters are given, the
  * default is used: ortho(-width/2, width/2, -height/2, height/2).
  * @method  ortho
+ * @for p5
  * @param  {Number} [left]   camera frustum left plane
  * @param  {Number} [right]  camera frustum right plane
  * @param  {Number} [bottom] camera frustum bottom plane
@@ -363,6 +371,10 @@ p5.prototype.ortho = function() {
   return this;
 };
 
+/**
+ * @method ortho
+ * @class p5.Camera
+ */
 p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (left === undefined) left = -this._renderer.width / 2;
   if (right === undefined) right = +this._renderer.width / 2;
@@ -488,7 +500,6 @@ p5.Camera.prototype.tilt = function(amount) {
  * equivalent to calling camera() and passing in the current position and
  * up-vector along with the new centerXYZ.
  * @method lookAt
- * @param point (vector or x,y,z values)
  */
 p5.Camera.prototype.lookAt = function(x, y, z) {
   this.camera(
