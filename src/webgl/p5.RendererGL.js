@@ -1034,7 +1034,26 @@ p5.prototype._assert3d = function(name) {
  */
 p5.RendererGL.prototype.setCamera = function(cam) {
   this._curCamera = cam;
-  this.uPMatrix = cam.projMatrix.copy();
+
+  // set the projection matrix (which is not normally updated each frame)
+  this.uPMatrix.set(
+    cam.projMatrix.mat4[0],
+    cam.projMatrix.mat4[1],
+    cam.projMatrix.mat4[2],
+    cam.projMatrix.mat4[3],
+    cam.projMatrix.mat4[4],
+    cam.projMatrix.mat4[5],
+    cam.projMatrix.mat4[6],
+    cam.projMatrix.mat4[7],
+    cam.projMatrix.mat4[8],
+    cam.projMatrix.mat4[9],
+    cam.projMatrix.mat4[10],
+    cam.projMatrix.mat4[11],
+    cam.projMatrix.mat4[12],
+    cam.projMatrix.mat4[13],
+    cam.projMatrix.mat4[14],
+    cam.projMatrix.mat4[15]
+  );
 };
 
 module.exports = p5.RendererGL;
