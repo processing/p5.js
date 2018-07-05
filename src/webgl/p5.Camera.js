@@ -237,6 +237,12 @@ p5.prototype.perspective = function() {
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
+    // this avoids issue where setting angleMode(DEGREES) before calling
+    // perspective leads to a smaller than expected FOV (because
+    // _computeCameraDefaultSettings computes in radians)
+    this.cameraFOV = fovy;
+  } else {
+    this.cameraFOV = this._renderer._pInst._toRadians(fovy);
   }
   if (typeof aspect === 'undefined') {
     aspect = this.defaultAspectRatio;
