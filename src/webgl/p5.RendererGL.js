@@ -3,6 +3,7 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Shader');
+require('./p5.Camera');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
