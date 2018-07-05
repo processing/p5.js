@@ -546,9 +546,9 @@ p5.Camera.prototype.move = function(x, y, z) {
  */
 
 p5.Camera.prototype.setPosition = function(x, y, z) {
-  let diffX = x - this.eyeX;
-  let diffY = y - this.eyeY;
-  let diffZ = z - this.eyeZ;
+  var diffX = x - this.eyeX;
+  var diffY = y - this.eyeY;
+  var diffZ = z - this.eyeZ;
 
   this.camera(
     x,
