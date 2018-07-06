@@ -56,7 +56,7 @@ require('./p5.Geometry');
  * </div>
  *
  * @alt
- * Vertically rotating 3-d teapot octahedron.
+ * Vertically rotating 3-d octahedron.
  *
  * @example
  * <div>
