@@ -9,8 +9,9 @@
 var p5 = require('../core/core');
 
 /**
- * Creates a new p5.Camera object and sets that p5.Camera as the WebGL
- * renderer's current camera. Returns this camera object.
+ * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and tells the
+ * renderer to use that camera.
+ * Returns the p5.Camera object.
  * @method createCamera
  * @return {p5.Camera} The newly created camera object.
  * @for p5
@@ -128,7 +129,8 @@ p5.prototype.perspective = function() {
 };
 
 /**
- * Perspective Documentation for p5.Camera
+ * Sets perspective projection.  Equivalent to calling
+ * <a href="#/p5/perspective">perspective()</a> on a p5.Camera object.
  * @method perspective
  * @for p5.Camera
  */
@@ -263,7 +265,8 @@ p5.prototype.ortho = function() {
 };
 
 /**
- * Sets an orthographic projection matrix.
+ * Sets an orthographic projection.  This is
+ * equivalent to calling <a href="#/p5/ortho">ortho()</a> on a p5.Camera object.
  * @method ortho
  * @for p5.Camera
  */
@@ -484,9 +487,7 @@ p5.Camera.prototype.tilt = function(amount) {
 };
 
 /**
- * Reorients the camera to look at a position in world space.  This method is
- * equivalent to calling <a href="#/p5.Camera/camera">camera()</a>
- * and passing in the current position and up-vector along with the new centerXYZ.
+ * Reorients the camera to look at a position in world space.
  * @method lookAt
  * @for p5.Camera
  * @param {Number} x x position of a point in world space
@@ -599,6 +600,8 @@ p5.prototype.camera = function() {
 };
 
 /**
+ * Sets a camera's position and orientation.  This is equivalent to calling
+ * <a href="#/p5/camera">camera()</a> on a p5.Camera object.
  * @method camera
  * @for p5.Camera
  */
