@@ -268,12 +268,10 @@ var p5 = function(sketch, node, sync) {
         obj[method] = this._wrapPreload(obj, method);
       }
 
-      userPreload();
-      this._runIfPreloadsAreDone();
+      this._incrementPreload();
+      Promise.resolve(userPreload()).then(this._decrementPreload.bind(this));
     } else {
-      this._setup();
-      this._runFrames();
-      this._draw();
+      this._runIfPreloadsAreDone();
     }
   }.bind(this);
 
@@ -284,9 +282,10 @@ var p5 = function(sketch, node, sync) {
       if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);
       }
-      context._setup();
-      context._runFrames();
-      context._draw();
+      return Promise.resolve()
+        .then(context._setup.bind(context))
+        .then(context._runFrames.bind(context))
+        .then(context._draw.bind(context));
     }
   };
 
@@ -333,22 +332,28 @@ var p5 = function(sketch, node, sync) {
       }
     }
 
-    // Short-circuit on this, in case someone used the library in "global"
-    // mode earlier
-    if (typeof context.setup === 'function') {
-      context.setup();
-    }
+    var self = this;
 
-    // unhide any hidden canvases that were created
-    var canvases = document.getElementsByTagName('canvas');
-    for (var i = 0; i < canvases.length; i++) {
-      var k = canvases[i];
-      if (k.dataset.hidden === 'true') {
-        k.style.visibility = '';
-        delete k.dataset.hidden;
-      }
-    }
-    this._setupDone = true;
+    return Promise.resolve()
+      .then(function() {
+        // Short-circuit on this, in case someone used the library in "global"
+        // mode earlier
+        if (typeof context.setup === 'function') {
+          return context.setup();
+        }
+      })
+      .then(function() {
+        // unhide any hidden canvases that were created
+        var canvases = document.getElementsByTagName('canvas');
+        for (var i = 0; i < canvases.length; i++) {
+          var k = canvases[i];
+          if (k.dataset.hidden === 'true') {
+            k.style.visibility = '';
+            delete k.dataset.hidden;
+          }
+        }
+        self._setupDone = true;
+      });
   }.bind(this);
 
   this._draw = function() {
@@ -364,6 +369,8 @@ var p5 = function(sketch, node, sync) {
     // in sync with the browser. note that we have to draw once even
     // if looping is off, so we bypass the time delay if that
     // is the case.
+    var self = this;
+    var promise = Promise.resolve();
     var epsilon = 5;
     if (
       !this._loop ||
@@ -371,24 +378,30 @@ var p5 = function(sketch, node, sync) {
     ) {
       //mandatory update values(matrixs and stack)
 
-      this.redraw();
-      this._frameRate = 1000.0 / (now - this._lastFrameTime);
-      this._lastFrameTime = now;
+      promise = promise.then(function() {
+        return self.redraw();
+      });
+      promise = promise.then(function() {
+        self._frameRate = 1000.0 / (now - self._lastFrameTime);
+        self._lastFrameTime = now;
 
-      // If the user is actually using mouse module, then update
-      // coordinates, otherwise skip. We can test this by simply
-      // checking if any of the mouse functions are available or not.
-      // NOTE : This reflects only in complete build or modular build.
-      if (typeof this._updateMouseCoords !== 'undefined') {
-        this._updateMouseCoords();
-      }
+        // If the user is actually using mouse module, then update
+        // coordinates, otherwise skip. We can test this by simply
+        // checking if any of the mouse functions are available or not.
+        // NOTE : This reflects only in complete build or modular build.
+        if (typeof self._updateMouseCoords !== 'undefined') {
+          self._updateMouseCoords();
+        }
+      });
     }
 
     // get notified the next time the browser gives us
     // an opportunity to draw.
-    if (this._loop) {
-      this._requestAnimId = window.requestAnimationFrame(this._draw);
-    }
+    promise.then(function() {
+      if (self._loop) {
+        self._requestAnimId = window.requestAnimationFrame(self._draw);
+      }
+    });
   }.bind(this);
 
   this._runFrames = function() {
