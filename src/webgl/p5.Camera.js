@@ -9,29 +9,10 @@
 var p5 = require('../core/core');
 
 /**
- * P5.Camera class for WebGL Mode.
- * This class stores camera and projection matrices for rendererGL and allows
- * manipulation of camera within public API.
- * @class p5.Camera
- * @private
- * @constructor
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL
- */
-p5.Camera = function(renderer) {
-  this._renderer = renderer;
-
-  this.cameraType = 'default';
-
-  this.cameraMatrix = new p5.Matrix();
-  this.projMatrix = new p5.Matrix();
-
-  return this;
-};
-
-/**
- * Creates a new p5.Camera object and sets that as the WebGL renderer's current
- * camera. Returns this camera object.
+ * Creates a new p5.Camera object and sets that p5.Camera as the WebGL
+ * renderer's current camera. Returns this camera object.
  * @method createCamera
+ * @return {p5.Camera} The newly created camera object.
  * @for p5
  */
 p5.prototype.createCamera = function() {
@@ -44,127 +25,36 @@ p5.prototype.createCamera = function() {
 
   // set renderer current camera to the new camera
   this._renderer._curCamera = _cam;
+
   return _cam;
 };
 
 /**
- * Sets the camera position for a 3D sketch. Parameters for this function define
- * the position for the camera, the center of the sketch (where the camera is
- * pointing), and an up direction (the orientation of the camera).
+ * This P5.Camera class describes a 3D camera for use with the WebGL Renderer.
  *
- * When called with no arguments, this function creates a default camera
- * equivalent to
- * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
- * @method camera
- * @param  {Number} [x]        camera position value on x axis
- * @param  {Number} [y]        camera position value on y axis
- * @param  {Number} [z]        camera position value on z axis
- * @param  {Number} [centerX]  x coordinate representing center of the sketch
- * @param  {Number} [centerY]  y coordinate representing center of the sketch
- * @param  {Number} [centerZ]  z coordinate representing center of the sketch
- * @param  {Number} [upX]      x component of direction 'up' from camera
- * @param  {Number} [upY]      y component of direction 'up' from camera
- * @param  {Number} [upZ]      z component of direction 'up' from camera
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(204);
- *   //move the camera away from the plane by a sin wave
- *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
- *   plane(10, 10);
- * }
- * </code>
- * </div>
+ * Note:
+ * The methods below operate in two coordinate systems: the 'world' coordinate
+ * system describe positions in terms of their relationship to the origin along
+ * the X, Y and Z axes whereas the camera's 'local' coordinate system
+ * describes positions from the camera's point of view: left-right, up-down,
+ * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
+ * for instance, moves the camera along its own axes, whereas the
+ * <a href="#/p5.Camera/setPosition">setPosition()</a>
+ * method sets the camera's position in world-space.
  *
- * @alt
- * White square repeatedly grows to fill canvas and then shrinks.
  *
- */
-p5.prototype.camera = function() {
-  this._assert3d('camera');
-  p5._validateParameters('camera', arguments);
-  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
-  return this;
-};
-
-/**
- * @method camera
  * @class p5.Camera
+ * @constructor
+ * @param {p5.RendererGL} renderer an instance of p5.RendererGL
  */
-p5.Camera.prototype.camera = function(
-  eyeX,
-  eyeY,
-  eyeZ,
-  centerX,
-  centerY,
-  centerZ,
-  upX,
-  upY,
-  upZ
-) {
-  if (typeof eyeX === 'undefined') {
-    eyeX = this.defaultEyeX;
-    eyeY = this.defaultEyeY;
-    eyeZ = this.defaultEyeZ;
-    centerX = eyeX;
-    centerY = eyeY;
-    centerZ = 0;
-    upX = 0;
-    upY = 1;
-    upZ = 0;
-  }
+p5.Camera = function(renderer) {
+  this._renderer = renderer;
 
-  this.eyeX = eyeX;
-  this.eyeY = eyeY;
-  this.eyeZ = eyeZ;
+  this.cameraType = 'default';
 
-  this.centerX = centerX;
-  this.centerY = centerY;
-  this.centerZ = centerZ;
+  this.cameraMatrix = new p5.Matrix();
+  this.projMatrix = new p5.Matrix();
 
-  this.upX = upX;
-  this.upY = upY;
-  this.upZ = upZ;
-
-  var local = this._getLocalAxes();
-
-  // the camera affects the model view matrix, insofar as it
-  // inverse translates the world to the eye position of the camera
-  // and rotates it.
-  // prettier-ignore
-  this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
-                        local.x[1], local.y[1], local.z[1], 0,
-                        local.x[2], local.y[2], local.z[2], 0,
-                                 0,          0,          0, 1);
-
-  var tx = -eyeX;
-  var ty = -eyeY;
-  var tz = -eyeZ;
-
-  this.cameraMatrix.translate([tx, ty, tz]);
-  this._renderer.uMVMatrix.set(
-    this.cameraMatrix.mat4[0],
-    this.cameraMatrix.mat4[1],
-    this.cameraMatrix.mat4[2],
-    this.cameraMatrix.mat4[3],
-    this.cameraMatrix.mat4[4],
-    this.cameraMatrix.mat4[5],
-    this.cameraMatrix.mat4[6],
-    this.cameraMatrix.mat4[7],
-    this.cameraMatrix.mat4[8],
-    this.cameraMatrix.mat4[9],
-    this.cameraMatrix.mat4[10],
-    this.cameraMatrix.mat4[11],
-    this.cameraMatrix.mat4[12],
-    this.cameraMatrix.mat4[13],
-    this.cameraMatrix.mat4[14],
-    this.cameraMatrix.mat4[15]
-  );
   return this;
 };
 
@@ -238,8 +128,9 @@ p5.prototype.perspective = function() {
 };
 
 /**
+ * Perspective Documentation for p5.Camera
  * @method perspective
- * @class p5.Camera
+ * @for p5.Camera
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   if (typeof fovy === 'undefined') {
@@ -372,8 +263,9 @@ p5.prototype.ortho = function() {
 };
 
 /**
+ * Sets an orthographic projection matrix.
  * @method ortho
- * @class p5.Camera
+ * @for p5.Camera
  */
 p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (left === undefined) left = -this._renderer.width / 2;
@@ -430,9 +322,12 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 // Camera Orientation Methods
 ////////////////////////////////////////////////////////////////////////////////
 
-// Rotate camera view about arbitrary axis defined by x,y,z
-// based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
-
+/**
+ * Rotate camera view about arbitrary axis defined by x,y,z
+ * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
+ * @method _rotateView
+ * @private
+ */
 p5.Camera.prototype._rotateView = function(a, x, y, z) {
   var centerX = this.centerX;
   var centerY = this.centerY;
@@ -470,12 +365,60 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
     this.upZ
   );
 };
+
 /**
- * Panning moves the camera view to the left and right.  This method rotates a
- * p5.Camera object about the Y axis.
+ * Panning rotates the camera view to the left and right.
  * @method pan
- * @param {Number} angle to rotate camera in either radians or degrees
- * depending on current pInstance's 'degreeMode' (>0 values rotate counterclockwise)
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * Greater than 0 values rotate counterclockwise (to the left).
+ * @example
+ * <div>
+ * <code>
+ * var cam;
+ * var delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ *   // set initial pan angle
+ *   cam.pan(-0.5);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // pan camera according to angle 'delta'
+ *   cam.pan(delta);
+ *
+ *   // every 100 frames, switch direction
+ *   if (frameCount % 100 === 0) {
+ *     delta *= -1;
+ *   }
+ *
+ *   rotateX(frameCount * 0.01);
+ *   translate(-100, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view pans left and right across a series of rotating 3D boxes.
+ *
  */
 p5.Camera.prototype.pan = function(amount) {
   var local = this._getLocalAxes();
@@ -483,12 +426,57 @@ p5.Camera.prototype.pan = function(amount) {
 };
 
 /**
- * Tilting moves the camera view up and down.  This method rotates a p5.Camera
- * object about an axis perpendicular to the Y axis and camera's local -Z axis
- * (where the camera is looking) to maintain current up-vector.
+ * Tilting rotates the camera view up and down.
  * @method tilt
- * @param {Number} angle to rotate camera in either radians or degrees
- * depending on current pInstance's 'degreeMode' (>0 values tilt up)
+ * @param {Number} angle amount to rotate camera in current
+ * <a href="#/p5/angleMode">angleMode</a> units.
+ * Greater than 0 values rotate counterclockwise (to the left).
+ * @example
+ * <div>
+ * <code>
+ * var cam;
+ * var delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ *   // set initial tilt
+ *   cam.tilt(-0.5);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // pan camera according to angle 'delta'
+ *   cam.tilt(delta);
+ *
+ *   // every 100 frames, switch direction
+ *   if (frameCount % 100 === 0) {
+ *     delta *= -1;
+ *   }
+ *
+ *   rotateY(frameCount * 0.01);
+ *   translate(0, -100, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ *   translate(0, 35, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view tilts up and down across a series of rotating 3D boxes.
  */
 p5.Camera.prototype.tilt = function(amount) {
   var local = this._getLocalAxes();
@@ -496,10 +484,55 @@ p5.Camera.prototype.tilt = function(amount) {
 };
 
 /**
- * Reorients the camera to look at a position in 3D space.  This method is
- * equivalent to calling camera() and passing in the current position and
- * up-vector along with the new centerXYZ.
+ * Reorients the camera to look at a position in world space.  This method is
+ * equivalent to calling <a href="#/p5.Camera/camera">camera()</a>
+ * and passing in the current position and up-vector along with the new centerXYZ.
  * @method lookAt
+ * @for p5.Camera
+ * @param {Number} x x position of a point in world space
+ * @param {Number} y y position of a point in world space
+ * @param {Number} z z position of a point in world space
+ * @example
+ * <div>
+ * <code>
+ * var cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // look at a new random point every 60 frames
+ *   if (frameCount % 60 === 0) {
+ *     cam.lookAt(random(-100, 100), random(-50, 50), 0);
+ *   }
+ *
+ *   rotateX(frameCount * 0.01);
+ *   translate(-100, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view of rotating 3D cubes changes to look at a new random
+ * point every second .
  */
 p5.Camera.prototype.lookAt = function(x, y, z) {
   this.camera(
@@ -520,11 +553,176 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Move camera position along its local XYZ axes while maintaining current camera orientation.
- * This is equivalent to calling camera() with position and center values adjusted
- * by arguments.
+ * Sets the camera position for a 3D sketch. Parameters for this function define
+ * the position for the camera, the center of the sketch (where the camera is
+ * pointing), and an up direction (the orientation of the camera).
+ *
+ * When called with no arguments, this function creates a default camera
+ * equivalent to
+ * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
+ * @method camera
+ * @for p5
+ * @param  {Number} [x]        camera position value on x axis
+ * @param  {Number} [y]        camera position value on y axis
+ * @param  {Number} [z]        camera position value on z axis
+ * @param  {Number} [centerX]  x coordinate representing center of the sketch
+ * @param  {Number} [centerY]  y coordinate representing center of the sketch
+ * @param  {Number} [centerZ]  z coordinate representing center of the sketch
+ * @param  {Number} [upX]      x component of direction 'up' from camera
+ * @param  {Number} [upY]      y component of direction 'up' from camera
+ * @param  {Number} [upZ]      z component of direction 'up' from camera
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(204);
+ *   //move the camera away from the plane by a sin wave
+ *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+ *   plane(10, 10);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * White square repeatedly grows to fill canvas and then shrinks.
+ *
+ */
+p5.prototype.camera = function() {
+  this._assert3d('camera');
+  p5._validateParameters('camera', arguments);
+  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
+  return this;
+};
+
+/**
+ * @method camera
+ * @for p5.Camera
+ */
+p5.Camera.prototype.camera = function(
+  eyeX,
+  eyeY,
+  eyeZ,
+  centerX,
+  centerY,
+  centerZ,
+  upX,
+  upY,
+  upZ
+) {
+  if (typeof eyeX === 'undefined') {
+    eyeX = this.defaultEyeX;
+    eyeY = this.defaultEyeY;
+    eyeZ = this.defaultEyeZ;
+    centerX = eyeX;
+    centerY = eyeY;
+    centerZ = 0;
+    upX = 0;
+    upY = 1;
+    upZ = 0;
+  }
+
+  this.eyeX = eyeX;
+  this.eyeY = eyeY;
+  this.eyeZ = eyeZ;
+
+  this.centerX = centerX;
+  this.centerY = centerY;
+  this.centerZ = centerZ;
+
+  this.upX = upX;
+  this.upY = upY;
+  this.upZ = upZ;
+
+  var local = this._getLocalAxes();
+
+  // the camera affects the model view matrix, insofar as it
+  // inverse translates the world to the eye position of the camera
+  // and rotates it.
+  // prettier-ignore
+  this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
+                        local.x[1], local.y[1], local.z[1], 0,
+                        local.x[2], local.y[2], local.z[2], 0,
+                                 0,          0,          0, 1);
+
+  var tx = -eyeX;
+  var ty = -eyeY;
+  var tz = -eyeZ;
+
+  this.cameraMatrix.translate([tx, ty, tz]);
+  this._renderer.uMVMatrix.set(
+    this.cameraMatrix.mat4[0],
+    this.cameraMatrix.mat4[1],
+    this.cameraMatrix.mat4[2],
+    this.cameraMatrix.mat4[3],
+    this.cameraMatrix.mat4[4],
+    this.cameraMatrix.mat4[5],
+    this.cameraMatrix.mat4[6],
+    this.cameraMatrix.mat4[7],
+    this.cameraMatrix.mat4[8],
+    this.cameraMatrix.mat4[9],
+    this.cameraMatrix.mat4[10],
+    this.cameraMatrix.mat4[11],
+    this.cameraMatrix.mat4[12],
+    this.cameraMatrix.mat4[13],
+    this.cameraMatrix.mat4[14],
+    this.cameraMatrix.mat4[15]
+  );
+  return this;
+};
+
+/**
+ * Move camera along its local axes while maintaining current camera orientation.
  * @method move
- * @param {Number} amount (p5.Vector or x,y,z values)
+ * @param {Number} x amount to move along camera's left-right axis
+ * @param {Number} y amount to move along camera's up-down axis
+ * @param {Number} z amount to move along camera's forward-backward axis
+ * @example
+ * <div>
+ * <code>
+ * // see the camera move along its own axes while maintaining its orientation
+ * var cam;
+ * var delta = 0.5;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // move the camera along its local axes
+ *   cam.move(delta, delta, 0);
+ *
+ *   // every 100 frames, switch direction
+ *   if (frameCount % 100 === 0) {
+ *     delta *= -1;
+ *   }
+ *
+ *   translate(-10, -10, 0);
+ *   box(50, 8, 50);
+ *   translate(15, 15, 0);
+ *   box(50, 8, 50);
+ *   translate(15, 15, 0);
+ *   box(50, 8, 50);
+ *   translate(15, 15, 0);
+ *   box(50, 8, 50);
+ *   translate(15, 15, 0);
+ *   box(50, 8, 50);
+ *   translate(15, 15, 0);
+ *   box(50, 8, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view moves along a series of 3D boxes, maintaining the same
+ * orientation throughout the move
  */
 p5.Camera.prototype.move = function(x, y, z) {
   var local = this._getLocalAxes();
@@ -549,13 +747,49 @@ p5.Camera.prototype.move = function(x, y, z) {
 };
 
 /**
- * Set camera position while maintaining current camera orientation.
- * This is equivalent to calling camera() with position and center values adjusted
- * by arguments.
+ * Set camera position in world-space while maintaining current camera
+ * orientation.
  * @method setPosition
- * @param {Number} position (p5.Vector or x,y,z values)
+ * @param {Number} x x position of a point in world space
+ * @param {Number} y y position of a point in world space
+ * @param {Number} z z position of a point in world space
+ * @example
+ * <div>
+ * <code>
+ * // press '1' '2' or '3' keys to set camera position
+ *
+ * var cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // '1' key
+ *   if (keyIsDown(49)) {
+ *     cam.setPosition(30, 0, 80);
+ *   }
+ *   // '2' key
+ *   if (keyIsDown(50)) {
+ *     cam.setPosition(0, 0, 80);
+ *   }
+ *   // '3' key
+ *   if (keyIsDown(51)) {
+ *     cam.setPosition(-30, 0, 80);
+ *   }
+ *
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera position changes as the user presses keys, altering view of a 3D box
  */
-
 p5.Camera.prototype.setPosition = function(x, y, z) {
   var diffX = x - this.eyeX;
   var diffY = y - this.eyeY;
@@ -578,6 +812,8 @@ p5.Camera.prototype.setPosition = function(x, y, z) {
 // Camera Helper Methods
 ////////////////////////////////////////////////////////////////////////////////
 
+// @TODO: combine this function with _setDefaultCamera to compute these values
+// as-needed
 p5.Camera.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraFOV = 60 / 180 * Math.PI;
   this.defaultAspectRatio = this._renderer.width / this._renderer.height;
@@ -627,8 +863,11 @@ p5.Camera.prototype._resize = function() {
   }
 };
 
-// for use with rendererGL push/pop methods
-// copy (for use with push/pop):
+/**
+ * Returns a copy of a camera.
+ * @method copy
+ * @private
+ */
 p5.Camera.prototype.copy = function() {
   var _cam = new p5.Camera(this._renderer);
   _cam.cameraFOV = this.cameraFOV;
@@ -651,11 +890,10 @@ p5.Camera.prototype.copy = function() {
 };
 
 /**
- * Returns camera local axes defined as follows:
- * local Z axis is from camera position to center position
- * local X axis is perpendicular to Z axis and camera up vector
- * local Y axis is perpendicular to both Z and X axes
+ * Returns a camera's local axes: left-right, up-down, and forward-backward,
+ * as defined by vectors in world-space.
  * @method _getLocalAxes
+ * @private
  */
 p5.Camera.prototype._getLocalAxes = function() {
   // calculate camera local Z vector
@@ -709,4 +947,4 @@ p5.Camera.prototype._getLocalAxes = function() {
   };
 };
 
-module.exports = p5;
+module.exports = p5.Camera;
