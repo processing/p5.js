@@ -115,7 +115,6 @@ Inline comments in p5.js are built into the public-facing [reference manual](htt
 $ npm run docs:dev
 ```
 
-
 # Testing
 
 With all new functions implemented, please include unit tests and inline documentation. A good example for how to format and write inline documentation can be seen in [PImage](https://github.com/processing/p5.js/blob/master/src/image/image.js). Examples of unit tests can be found in the [test/unit](https://github.com/processing/p5.js/tree/master/test/unit) directory. Directions for adding your own tests and including them are below.
@@ -134,17 +133,17 @@ To get started:
 3. Link to the src and test files in `test.html`. 
 4. Run the tests with `npm run grunt`.
 
-
 # Repositories
 
-* https://github.com/processing/p5.js - this repo contains the source code for the p5.js library, and the p5.dom.js addon library. The reference is also generated from this code, as the documentation and examples are located in the source code itself, maintained by Lauren McCarthy.
-* https://github.com/processing/p5.js-website - contains the code for http://p5js.org website, maintained by Lauren McCarthy. 
-* https://github.com/processing/p5.js-sound - contains the source code for the p5.sound.js library, maintained by Jason Sigal.
-* https://github.com/processing/p5.js-web-editor - contains the source code for the p5 web editor, maintained by Cassie Tarakajian.
-* https://github.com/processing/p5.js-editor - contains the source code for the p5 editor, which is now depricated.
-* https://github.com/scottgarner/p5.js-video - contains the code for Hello p5.js!, maintained by Scott Garner.
+The overarching p5.js project includes repositories other than this one.
 
-# Alternative Setup - Docker
+- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library, as well as the p5.dom.js addon library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
+- [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart). 
+- [sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
+- [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
+- [p5.js-video](https://github.com/scottgarner/p5.js-video): Note that this is not a toolkit for working with video! Rather, this repository contains the code for the [Hello p5.js! introductory video](http://hello.p5js.org/). It is maintained by [Scott Garner](https://github.com/scottgarner).
+
+# Docker
 
 An alternative to setting up node, grunt, php, apache, and the p5.js & p5.js-website codebases is to use [toolness/p5.js-docker](https://github.com/toolness/p5.js-docker). While this does require the installation of a tool called Docker, it potentially makes viewing and editing the p5 website with the latest documentation and libraries a lot easier.
 
