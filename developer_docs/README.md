@@ -2,8 +2,6 @@ This folder contains various documents intended for developers of p5.js.
 
 # Project Directory Structure
 
-This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-inside-p5/) describes the tools and files used in p5.js workflow.
-
 - `src/` contains all the source code for the library, which is topically organized into separated modules. This is what you'll work on if you are changing the code.
 - `lib/` contains the final version of p5.js intended for users, in both minified and uncompressed forms. This is the output when the source code modules are compiled to a single file by [Grunt](https://gruntjs.com/).
 - `tests/` contains unit tests which ensure the library continues to function correctly as changes are made.
@@ -143,11 +141,8 @@ The overarching p5.js project includes repositories other than this one.
 - [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
 - [p5.js-video](https://github.com/scottgarner/p5.js-video): Note that this is not a toolkit for working with video! Rather, this repository contains the code for the [Hello p5.js! introductory video](http://hello.p5js.org/). It is maintained by [Scott Garner](https://github.com/scottgarner).
 
-# Docker
+# Miscellaneous
 
-An alternative to setting up node, grunt, php, apache, and the p5.js & p5.js-website codebases is to use [toolness/p5.js-docker](https://github.com/toolness/p5.js-docker). While this does require the installation of a tool called Docker, it potentially makes viewing and editing the p5 website with the latest documentation and libraries a lot easier.
-
-# p5.js API JSON file
-
-[This file](https://p5js.org/reference/data.json) can be used for auto-complete. This [gist](https://gist.github.com/jonohayon/b059a029755f84f42b29f005323ec165) explains how to parse the file. Note that the data.json file is generated when the `npm run grunt` command is run, it is found on the p5js.org website but is not included in the repo.
-
+- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
+- The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
+- The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.
