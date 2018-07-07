@@ -16,7 +16,7 @@ Aside from the code itself, you may also need to supply some combination of the 
 
 ## Examples
 
-The p5.js reference manual includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
+The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
 ## Other Ideas
 
