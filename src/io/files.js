@@ -252,7 +252,10 @@ p5.prototype.loadStrings = function() {
     'text',
     function(data) {
       // split lines handling mac/windows/linux endings
-      var lines = data.replace(/\r\n/g, '\r').replace(/\n/g, '\r').split(/\r/);
+      var lines = data
+        .replace(/\r\n/g, '\r')
+        .replace(/\n/g, '\r')
+        .split(/\r/);
       Array.prototype.push.apply(ret, lines);
 
       if (typeof callback !== 'undefined') {
