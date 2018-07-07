@@ -58,7 +58,19 @@ Sticking with the established project style is usually preferable, but [occasion
 
 Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
 
-To run the unit tests, use Grunt.
+In order to run unit tests, you'll need to have previously installed the project's dependencies.
+
+```
+$ npm install
+```
+
+This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
+
+- [Mocha](http://visionmedia.github.io/mocha/), a powerful testing framework that executes individual test files which are specific to p5.js 
+- [PhantomJS](http://phantomjs.org/download.html), a "headless browser" that allows tests to check browser-related functionality without actually opening up a browser window
+- [grunt-mocha](https://github.com/kmiyashiro/grunt-mocha), a plugin which integrates Mocha with the [Grunt](https://gruntjs.com/) task runner
+
+Once the dependencies are installed, use Grunt to run the unit tests.
 
 ```
 $ grunt
@@ -71,6 +83,8 @@ $ npm run grunt connect -keepalive
 ```
 
 With the server running, you should be able to open `test/test.html` in a browser.
+
+A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. 
 
 # Development Process
 
@@ -116,25 +130,6 @@ Inline comments in p5.js are built into the public-facing [reference manual](htt
 ```
 $ npm run docs:dev
 ```
-
-# Testing
-
-With all new functions implemented, please include unit tests and inline documentation. A good example for how to format and write inline documentation can be seen in [PImage](https://github.com/processing/p5.js/blob/master/src/image/image.js). Examples of unit tests can be found in the [test/unit](https://github.com/processing/p5.js/tree/master/test/unit) directory. Directions for adding your own tests and including them are below.
-
-The testing is done with [grunt-mocha](https://github.com/kmiyashiro/grunt-mocha) which uses [mocha](http://visionmedia.github.io/mocha/) test framework with [phantomjs](http://phantomjs.org/download.html). 
-To get started:
-
-1. Install dependencies.
-
-   ```
-   cd p5.js/
-   npm install
-   ```
-
-2. Add test files corresponding to files in `src` (more info about Chai assert style TDD phrasing [here](http://chaijs.com/api/assert/)). 
-3. Link to the src and test files in `test.html`. 
-4. Run the tests with `npm run grunt`.
-
 # Repositories
 
 The overarching p5.js project includes repositories other than this one.
