@@ -867,7 +867,7 @@ p5.Renderer2D.prototype.endShape = function(
         this.drawingContext.moveTo(v[0], v[1]);
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
         this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-        this.drawingContext.lineTo(v[0], v[1]);
+        this.drawingContext.closePath();
         if (this._doFill) {
           this._pInst.fill(vertices[i + 2][5]);
           this.drawingContext.fill();
@@ -876,7 +876,6 @@ p5.Renderer2D.prototype.endShape = function(
           this._pInst.stroke(vertices[i + 2][6]);
           this.drawingContext.stroke();
         }
-        this.drawingContext.closePath();
       }
     } else if (shapeKind === constants.TRIANGLE_STRIP) {
       for (i = 0; i + 1 < numVerts; i++) {
