@@ -92,9 +92,9 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   // alphabetic baseline.
   var p =
       (options && options.renderer && options.renderer._pInst) || this.parent,
-    ctx = p._renderer.drawingContext,
-    alignment = ctx.textAlign || constants.LEFT,
-    baseline = ctx.textBaseline || constants.BASELINE,
+    renderer = p._renderer,
+    alignment = renderer._textAlign || constants.LEFT,
+    baseline = renderer._textBaseline || constants.BASELINE,
     key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline),
     result = this.cache[key];
 
@@ -136,8 +136,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
     pos = this._handleAlignment(
-      p,
-      ctx,
+      renderer,
       str,
       result.x,
       result.y,
@@ -282,10 +281,10 @@ p5.Font.prototype._getGlyphs = function(str) {
 p5.Font.prototype._getPath = function(line, x, y, options) {
   var p =
       (options && options.renderer && options.renderer._pInst) || this.parent,
-    ctx = p._renderer.drawingContext,
-    pos = this._handleAlignment(p, ctx, line, x, y);
+    renderer = p._renderer,
+    pos = this._handleAlignment(renderer, line, x, y);
 
-  return this.font.getPath(line, pos.x, pos.y, p._renderer._textSize, options);
+  return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
 };
 
 /*
@@ -444,27 +443,33 @@ p5.Font.prototype._scale = function(fontSize) {
   );
 };
 
-p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
-  var fontSize = p._renderer._textSize,
-    textAscent = this._textAscent(fontSize),
-    textDescent = this._textDescent(fontSize);
+p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
+  var fontSize = renderer._textSize;
 
-  textWidth =
-    textWidth !== undefined ? textWidth : this._textWidth(line, fontSize);
-
-  if (ctx.textAlign === constants.CENTER) {
-    x -= textWidth / 2;
-  } else if (ctx.textAlign === constants.RIGHT) {
-    x -= textWidth;
+  if (typeof textWidth === 'undefined') {
+    textWidth = this._textWidth(line, fontSize);
   }
 
-  if (ctx.textBaseline === constants.TOP) {
-    y += textAscent;
-  } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
-    y += textAscent / 2;
-  } else if (ctx.textBaseline === constants.BOTTOM) {
-    y -= textDescent;
+  switch (renderer._textAlign) {
+    case constants.CENTER:
+      x -= textWidth / 2;
+      break;
+    case constants.RIGHT:
+      x -= textWidth;
+      break;
   }
+
+  switch (renderer._textBaseline) {
+    case constants.TOP:
+      y += this._textAscent(fontSize);
+      break;
+    case constants.CENTER:
+      y += this._textAscent(fontSize) / 2;
+      break;
+    case constants.BOTTOM:
+      y -= this._textDescent(fontSize);
+      break;
+  }  
 
   return { x: x, y: y };
 };
