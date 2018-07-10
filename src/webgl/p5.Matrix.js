@@ -511,7 +511,6 @@ p5.Matrix.prototype.scale = function(x, y, z) {
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, x, y, z) {
-
   if (x instanceof p5.Vector) {
     // x is a vector, extract the components from it.
     y = x.y;
