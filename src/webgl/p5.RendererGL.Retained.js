@@ -185,6 +185,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     );
   }
   //}
+  return geometry;
 };
 
 /**

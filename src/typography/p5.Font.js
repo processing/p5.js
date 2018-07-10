@@ -469,7 +469,7 @@ p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
     case constants.BOTTOM:
       y -= this._textDescent(fontSize);
       break;
-  }  
+  }
 
   return { x: x, y: y };
 };
