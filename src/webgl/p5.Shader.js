@@ -231,6 +231,16 @@ p5.Shader.prototype.bindTextures = function() {
   }
 };
 
+p5.Shader.prototype.updateTextures = function() {
+  for (var i = 0; i < this.samplers.length; i++) {
+    var uniform = this.samplers[i];
+    var tex = uniform.texture;
+    if (tex) {
+      tex.update();
+    }
+  }
+};
+
 p5.Shader.prototype.unbindTextures = function() {
   // TODO: migrate stuff from material.js here
   // - OR - have material.js define this function

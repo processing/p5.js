@@ -17,7 +17,7 @@ var constants = require('../core/constants');
  * @class p5.Texture
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Texture
- * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement} [obj] the
+ * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
  * object containing the image data to store in the texture.
  */
 p5.Texture = function(renderer, obj) {
@@ -46,6 +46,8 @@ p5.Texture = function(renderer, obj) {
     !(obj instanceof p5.Graphics);
   this.isSrcP5Image = obj instanceof p5.Image;
   this.isSrcP5Graphics = obj instanceof p5.Graphics;
+  this.isImageData =
+    typeof ImageData !== 'undefined' && obj instanceof ImageData;
 
   var textureData = this._getTextureDataFromSource();
   this.width = textureData.width;
@@ -67,6 +69,8 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
   ) {
     // if param is a video HTML element
     textureData = this.src.elt;
+  } else if (this.isImageData) {
+    textureData = this.src;
   }
   return textureData;
 };
@@ -131,28 +135,21 @@ p5.Texture.prototype.init = function(data) {
 p5.Texture.prototype.update = function() {
   var data = this.src;
   if (data.width === 0 || data.height === 0) {
-    return; // nothing to do!
+    return false; // nothing to do!
   }
 
   var textureData = this._getTextureDataFromSource();
+  var updated = false;
 
   var gl = this._renderer.GL;
   // pull texture from data, make sure width & height are appropriate
   if (textureData.width !== this.width || textureData.height !== this.height) {
+    updated = true;
+
     // make sure that if the width and height of this.src have changed
     // for some reason, we update our metadata and upload the texture again
     this.width = textureData.width;
     this.height = textureData.height;
-
-    this.bindTexture();
-    gl.texImage2D(
-      this.glTarget,
-      0,
-      this.glFormat,
-      this.glFormat,
-      gl.UNSIGNED_BYTE,
-      textureData
-    );
 
     if (this.isSrcP5Image) {
       data.setModified(false);
@@ -168,20 +165,10 @@ p5.Texture.prototype.update = function() {
     // for an image, we only update if the modified field has been set,
     // for example, by a call to p5.Image.set
     if (data.isModified()) {
-      this.bindTexture();
-      gl.texImage2D(
-        this.glTarget,
-        0,
-        this.glFormat,
-        this.glFormat,
-        gl.UNSIGNED_BYTE,
-        textureData
-      );
+      updated = true;
       data.setModified(false);
     }
   } else if (this.isSrcMediaElement) {
-    var shouldUpdate = false;
-
     // for a media element (video), we'll check if the current time in
     // the video frame matches the last time. if it doesn't match, the
     // video has advanced or otherwise been taken to a new frame,
@@ -190,7 +177,7 @@ p5.Texture.prototype.update = function() {
       // p5.MediaElement may have also had set/updatePixels, etc. called
       // on it and should be updated, or may have been set for the first
       // time!
-      shouldUpdate = true;
+      updated = true;
       data.setModified(false);
     } else if (data.loadedmetadata) {
       // if the meta data has been loaded, we can ask the video
@@ -201,24 +188,23 @@ p5.Texture.prototype.update = function() {
         // time we uploaded this texture (and update the time we
         // last uploaded, too)
         this._videoPrevUpdateTime = data.time();
-        shouldUpdate = true;
+        updated = true;
       }
     }
-
-    if (shouldUpdate) {
-      this.bindTexture();
-      gl.texImage2D(
-        this.glTarget,
-        0,
-        this.glFormat,
-        this.glFormat,
-        gl.UNSIGNED_BYTE,
-        textureData
-      );
+  } else if (this.isImageData) {
+    if (data._dirty) {
+      data._dirty = false;
+      updated = true;
     }
   } else {
-    /* data instanceof p5.Graphics, probably */ // there is not enough information to tell if the texture can be
+    /* data instanceof p5.Graphics, probably */
+    // there is not enough information to tell if the texture can be
     // conditionally updated; so to be safe, we just go ahead and upload it.
+    updated = true;
+  }
+
+  if (updated) {
+    this.bindTexture();
     gl.texImage2D(
       this.glTarget,
       0,
@@ -228,6 +214,8 @@ p5.Texture.prototype.update = function() {
       textureData
     );
   }
+
+  return updated;
 };
 
 /**
