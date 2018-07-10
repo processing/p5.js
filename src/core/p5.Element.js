@@ -231,7 +231,6 @@ p5.Element.prototype.class = function(c) {
  */
 p5.Element.prototype.mousePressed = function(fxn) {
   adjustListener('mousedown', fxn, this);
-  adjustListener('touchstart', fxn, this);
   return this;
 };
 
@@ -399,7 +398,6 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
-  adjustListener('touchend', fxn, this);
   return this;
 };
 
@@ -512,7 +510,6 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
-  adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -748,7 +745,6 @@ p5.Element.prototype.mouseOut = function(fxn) {
  */
 p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
-  adjustListener('mousedown', fxn, this);
   return this;
 };
 
@@ -789,7 +785,6 @@ p5.Element.prototype.touchStarted = function(fxn) {
  */
 p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
-  adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -839,7 +834,6 @@ p5.Element.prototype.touchMoved = function(fxn) {
  */
 p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
-  adjustListener('mouseup', fxn, this);
   return this;
 };
 
