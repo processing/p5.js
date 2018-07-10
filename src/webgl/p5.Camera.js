@@ -8,60 +8,55 @@
 
 var p5 = require('../core/core');
 
+////////////////////////////////////////////////////////////////////////////////
+// p5.Prototype Methods
+////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and tells the
- * renderer to use that camera.
- * Returns the p5.Camera object.
- * @method createCamera
- * @return {p5.Camera} The newly created camera object.
+ * Sets the camera position for a 3D sketch. Parameters for this function define
+ * the position for the camera, the center of the sketch (where the camera is
+ * pointing), and an up direction (the orientation of the camera).
+ *
+ * When called with no arguments, this function creates a default camera
+ * equivalent to
+ * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
+ * @method camera
  * @for p5
+ * @param  {Number} [x]        camera position value on x axis
+ * @param  {Number} [y]        camera position value on y axis
+ * @param  {Number} [z]        camera position value on z axis
+ * @param  {Number} [centerX]  x coordinate representing center of the sketch
+ * @param  {Number} [centerY]  y coordinate representing center of the sketch
+ * @param  {Number} [centerZ]  z coordinate representing center of the sketch
+ * @param  {Number} [upX]      x component of direction 'up' from camera
+ * @param  {Number} [upY]      y component of direction 'up' from camera
+ * @param  {Number} [upZ]      z component of direction 'up' from camera
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(204);
+ *   //move the camera away from the plane by a sin wave
+ *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+ *   plane(10, 10);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * White square repeatedly grows to fill canvas and then shrinks.
+ *
  */
-p5.prototype.createCamera = function() {
-  this._assert3d('createCamera');
-  var _cam = new p5.Camera(this._renderer);
-
-  // compute default camera settings, then set a default camera
-  _cam._computeCameraDefaultSettings();
-  _cam._setDefaultCamera();
-
-  // set renderer current camera to the new camera
-  this._renderer._curCamera = _cam;
-
-  return _cam;
-};
-
-/**
- * This P5.Camera class describes a 3D camera for use with the WebGL Renderer.
- *
- * Note:
- * The methods below operate in two coordinate systems: the 'world' coordinate
- * system describe positions in terms of their relationship to the origin along
- * the X, Y and Z axes whereas the camera's 'local' coordinate system
- * describes positions from the camera's point of view: left-right, up-down,
- * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
- * for instance, moves the camera along its own axes, whereas the
- * <a href="#/p5.Camera/setPosition">setPosition()</a>
- * method sets the camera's position in world-space.
- *
- *
- * @class p5.Camera
- * @constructor
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL
- */
-p5.Camera = function(renderer) {
-  this._renderer = renderer;
-
-  this.cameraType = 'default';
-
-  this.cameraMatrix = new p5.Matrix();
-  this.projMatrix = new p5.Matrix();
-
+p5.prototype.camera = function() {
+  this._assert3d('camera');
+  p5._validateParameters('camera', arguments);
+  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
   return this;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// Camera Projection Methods
-////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Sets a perspective projection for the camera in a 3D sketch. This projection
@@ -129,85 +124,6 @@ p5.prototype.perspective = function() {
 };
 
 /**
- * Sets perspective projection.  Equivalent to calling
- * <a href="#/p5/perspective">perspective()</a> on a p5.Camera object.
- * @method perspective
- * @for p5.Camera
- */
-p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
-  if (typeof fovy === 'undefined') {
-    fovy = this.defaultCameraFOV;
-    // this avoids issue where setting angleMode(DEGREES) before calling
-    // perspective leads to a smaller than expected FOV (because
-    // _computeCameraDefaultSettings computes in radians)
-    this.cameraFOV = fovy;
-  } else {
-    this.cameraFOV = this._renderer._pInst._toRadians(fovy);
-  }
-  if (typeof aspect === 'undefined') {
-    aspect = this.defaultAspectRatio;
-  }
-  if (typeof near === 'undefined') {
-    near = this.defaultCameraNear;
-  }
-  if (typeof far === 'undefined') {
-    far = this.defaultCameraFar;
-  }
-
-  if (near <= 0.0001) {
-    near = 0.01;
-    console.log(
-      'Avoid perspective near plane values close to or below 0. ' +
-        'Setting value to 0.01.'
-    );
-  }
-
-  if (far < near) {
-    console.log(
-      'Perspective far plane value is less than near plane value. ' +
-        'Nothing will be shown.'
-    );
-  }
-
-  this.cameraFOV = this._renderer._pInst._toRadians(fovy);
-  this.aspectRatio = aspect;
-  this.cameraNear = near;
-  this.cameraFar = far;
-
-  this.projMatrix = p5.Matrix.identity();
-
-  var f = 1.0 / Math.tan(this.cameraFOV / 2);
-  var nf = 1.0 / (this.cameraNear - this.cameraFar);
-
-  // prettier-ignore
-  this.projMatrix.set(f / aspect,  0,                     0,  0,
-                      0,          -f,                     0,  0,
-                      0,           0,     (far + near) * nf, -1,
-                      0,           0, (2 * far * near) * nf,  0);
-
-  this._renderer.uPMatrix.set(
-    this.projMatrix.mat4[0],
-    this.projMatrix.mat4[1],
-    this.projMatrix.mat4[2],
-    this.projMatrix.mat4[3],
-    this.projMatrix.mat4[4],
-    this.projMatrix.mat4[5],
-    this.projMatrix.mat4[6],
-    this.projMatrix.mat4[7],
-    this.projMatrix.mat4[8],
-    this.projMatrix.mat4[9],
-    this.projMatrix.mat4[10],
-    this.projMatrix.mat4[11],
-    this.projMatrix.mat4[12],
-    this.projMatrix.mat4[13],
-    this.projMatrix.mat4[14],
-    this.projMatrix.mat4[15]
-  );
-
-  this.cameraType = 'custom';
-};
-
-/**
  * Sets an orthographic projection for the camera in a 3D sketch and defines a
  * box-shaped viewing frustum within which objects are seen. In this projection,
  * all objects with the same dimension appear the same size, regardless of
@@ -264,9 +180,206 @@ p5.prototype.ortho = function() {
   return this;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+// p5.Camera
+////////////////////////////////////////////////////////////////////////////////
+
 /**
- * Sets an orthographic projection.  This is
- * equivalent to calling <a href="#/p5/ortho">ortho()</a> on a p5.Camera object.
+ * Creates a new <a href="#/p5.Camera">p5.Camera</a> object and tells the
+ * renderer to use that camera.
+ * Returns the p5.Camera object.
+ * @method createCamera
+ * @return {p5.Camera} The newly created camera object.
+ * @for p5
+ */
+p5.prototype.createCamera = function() {
+  this._assert3d('createCamera');
+  var _cam = new p5.Camera(this._renderer);
+
+  // compute default camera settings, then set a default camera
+  _cam._computeCameraDefaultSettings();
+  _cam._setDefaultCamera();
+
+  // set renderer current camera to the new camera
+  this._renderer._curCamera = _cam;
+
+  return _cam;
+};
+
+/**
+ * This class describes a camera for use in p5's
+ * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5">
+ * WebGL mode</a>. It contains camera position, orientation, and projection
+ * information necessary for rendering a 3D scene.
+ *
+ * New p5.Camera objects can be made through the
+ * <a href="#/p5/createCamera">createCamera()</a> function and controlled through
+ * the methods described below. A camera created in this way will use a default
+ * position in the scene and a default perspective projection until these
+ * properties are changed through the various methods available. It is possible
+ * to create multiple cameras, in which case the current camera
+ * can be set through the <a href="#/p5/setCamera">setCamera()</a> method.
+ *
+ *
+ * Note:
+ * The methods below operate in two coordinate systems: the 'world' coordinate
+ * system describe positions in terms of their relationship to the origin along
+ * the X, Y and Z axes whereas the camera's 'local' coordinate system
+ * describes positions from the camera's point of view: left-right, up-down,
+ * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
+ * for instance, moves the camera along its own axes, whereas the
+ * <a href="#/p5.Camera/setPosition">setPosition()</a>
+ * method sets the camera's position in world-space.
+ *
+ *
+ * @class p5.Camera
+ * @param {rendererGL} rendererGL instance of WebGL renderer
+ * @example
+ * <div>
+ * <code>
+ * var cam;
+ * var delta = 0.01;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *   cam = createCamera();
+ *   // set initial pan angle
+ *   cam.pan(-0.8);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // pan camera according to angle 'delta'
+ *   cam.pan(delta);
+ *
+ *   // every 160 frames, switch direction
+ *   if (frameCount % 160 === 0) {
+ *     delta *= -1;
+ *   }
+ *
+ *   rotateX(frameCount * 0.01);
+ *   translate(-100, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * camera view pans left and right across a series of rotating 3D boxes.
+ *
+ */
+p5.Camera = function(renderer) {
+  this._renderer = renderer;
+
+  this.cameraType = 'default';
+
+  this.cameraMatrix = new p5.Matrix();
+  this.projMatrix = new p5.Matrix();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Camera Projection Methods
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Sets a perspective projection for a p5.Camera object and sets parameters
+ * for that projection according to <a href="#/p5/perspective">perspective()</a>
+ * syntax.
+ * @method perspective
+ * @for p5.Camera
+ */
+p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+  if (typeof fovy === 'undefined') {
+    fovy = this.defaultCameraFOV;
+    // this avoids issue where setting angleMode(DEGREES) before calling
+    // perspective leads to a smaller than expected FOV (because
+    // _computeCameraDefaultSettings computes in radians)
+    this.cameraFOV = fovy;
+  } else {
+    this.cameraFOV = this._renderer._pInst._toRadians(fovy);
+  }
+  if (typeof aspect === 'undefined') {
+    aspect = this.defaultAspectRatio;
+  }
+  if (typeof near === 'undefined') {
+    near = this.defaultCameraNear;
+  }
+  if (typeof far === 'undefined') {
+    far = this.defaultCameraFar;
+  }
+
+  if (near <= 0.0001) {
+    near = 0.01;
+    console.log(
+      'Avoid perspective near plane values close to or below 0. ' +
+        'Setting value to 0.01.'
+    );
+  }
+
+  if (far < near) {
+    console.log(
+      'Perspective far plane value is less than near plane value. ' +
+        'Nothing will be shown.'
+    );
+  }
+
+  this.cameraFOV = this._renderer._pInst._toRadians(fovy);
+  this.aspectRatio = aspect;
+  this.cameraNear = near;
+  this.cameraFar = far;
+
+  this.projMatrix = p5.Matrix.identity();
+
+  var f = 1.0 / Math.tan(this.cameraFOV / 2);
+  var nf = 1.0 / (this.cameraNear - this.cameraFar);
+
+  // prettier-ignore
+  this.projMatrix.set(f / aspect,  0,                     0,  0,
+                      0,          -f,                     0,  0,
+                      0,           0,     (far + near) * nf, -1,
+                      0,           0, (2 * far * near) * nf,  0);
+
+  if (this._isActive()) {
+    this._renderer.uPMatrix.set(
+      this.projMatrix.mat4[0],
+      this.projMatrix.mat4[1],
+      this.projMatrix.mat4[2],
+      this.projMatrix.mat4[3],
+      this.projMatrix.mat4[4],
+      this.projMatrix.mat4[5],
+      this.projMatrix.mat4[6],
+      this.projMatrix.mat4[7],
+      this.projMatrix.mat4[8],
+      this.projMatrix.mat4[9],
+      this.projMatrix.mat4[10],
+      this.projMatrix.mat4[11],
+      this.projMatrix.mat4[12],
+      this.projMatrix.mat4[13],
+      this.projMatrix.mat4[14],
+      this.projMatrix.mat4[15]
+    );
+  }
+
+  this.cameraType = 'custom';
+};
+
+/**
+ * Sets an orthographic projection for a p5.Camera object and sets parameters
+ * for that projection according to <a href="#/p5/ortho">ortho()</a> syntax.
  * @method ortho
  * @for p5.Camera
  */
@@ -299,24 +412,26 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
 
-  this._renderer.uPMatrix.set(
-    this.projMatrix.mat4[0],
-    this.projMatrix.mat4[1],
-    this.projMatrix.mat4[2],
-    this.projMatrix.mat4[3],
-    this.projMatrix.mat4[4],
-    this.projMatrix.mat4[5],
-    this.projMatrix.mat4[6],
-    this.projMatrix.mat4[7],
-    this.projMatrix.mat4[8],
-    this.projMatrix.mat4[9],
-    this.projMatrix.mat4[10],
-    this.projMatrix.mat4[11],
-    this.projMatrix.mat4[12],
-    this.projMatrix.mat4[13],
-    this.projMatrix.mat4[14],
-    this.projMatrix.mat4[15]
-  );
+  if (this._isActive()) {
+    this._renderer.uPMatrix.set(
+      this.projMatrix.mat4[0],
+      this.projMatrix.mat4[1],
+      this.projMatrix.mat4[2],
+      this.projMatrix.mat4[3],
+      this.projMatrix.mat4[4],
+      this.projMatrix.mat4[5],
+      this.projMatrix.mat4[6],
+      this.projMatrix.mat4[7],
+      this.projMatrix.mat4[8],
+      this.projMatrix.mat4[9],
+      this.projMatrix.mat4[10],
+      this.projMatrix.mat4[11],
+      this.projMatrix.mat4[12],
+      this.projMatrix.mat4[13],
+      this.projMatrix.mat4[14],
+      this.projMatrix.mat4[15]
+    );
+  }
 
   this.cameraType = 'custom';
 };
@@ -386,7 +501,7 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  *   normalMaterial();
  *   cam = createCamera();
  *   // set initial pan angle
- *   cam.pan(-0.5);
+ *   cam.pan(-0.8);
  * }
  *
  * function draw() {
@@ -395,8 +510,8 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  *   // pan camera according to angle 'delta'
  *   cam.pan(delta);
  *
- *   // every 100 frames, switch direction
- *   if (frameCount % 100 === 0) {
+ *   // every 160 frames, switch direction
+ *   if (frameCount % 160 === 0) {
  *     delta *= -1;
  *   }
  *
@@ -445,7 +560,7 @@ p5.Camera.prototype.pan = function(amount) {
  *   normalMaterial();
  *   cam = createCamera();
  *   // set initial tilt
- *   cam.tilt(-0.5);
+ *   cam.tilt(-0.8);
  * }
  *
  * function draw() {
@@ -454,8 +569,8 @@ p5.Camera.prototype.pan = function(amount) {
  *   // pan camera according to angle 'delta'
  *   cam.tilt(delta);
  *
- *   // every 100 frames, switch direction
- *   if (frameCount % 100 === 0) {
+ *   // every 160 frames, switch direction
+ *   if (frameCount % 160 === 0) {
  *     delta *= -1;
  *   }
  *
@@ -554,52 +669,6 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets the camera position for a 3D sketch. Parameters for this function define
- * the position for the camera, the center of the sketch (where the camera is
- * pointing), and an up direction (the orientation of the camera).
- *
- * When called with no arguments, this function creates a default camera
- * equivalent to
- * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
- * @method camera
- * @for p5
- * @param  {Number} [x]        camera position value on x axis
- * @param  {Number} [y]        camera position value on y axis
- * @param  {Number} [z]        camera position value on z axis
- * @param  {Number} [centerX]  x coordinate representing center of the sketch
- * @param  {Number} [centerY]  y coordinate representing center of the sketch
- * @param  {Number} [centerZ]  z coordinate representing center of the sketch
- * @param  {Number} [upX]      x component of direction 'up' from camera
- * @param  {Number} [upY]      y component of direction 'up' from camera
- * @param  {Number} [upZ]      z component of direction 'up' from camera
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(204);
- *   //move the camera away from the plane by a sin wave
- *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
- *   plane(10, 10);
- * }
- * </code>
- * </div>
- *
- * @alt
- * White square repeatedly grows to fill canvas and then shrinks.
- *
- */
-p5.prototype.camera = function() {
-  this._assert3d('camera');
-  p5._validateParameters('camera', arguments);
-  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
-  return this;
-};
-
-/**
  * Sets a camera's position and orientation.  This is equivalent to calling
  * <a href="#/p5/camera">camera()</a> on a p5.Camera object.
  * @method camera
@@ -656,24 +725,27 @@ p5.Camera.prototype.camera = function(
   var tz = -eyeZ;
 
   this.cameraMatrix.translate([tx, ty, tz]);
-  this._renderer.uMVMatrix.set(
-    this.cameraMatrix.mat4[0],
-    this.cameraMatrix.mat4[1],
-    this.cameraMatrix.mat4[2],
-    this.cameraMatrix.mat4[3],
-    this.cameraMatrix.mat4[4],
-    this.cameraMatrix.mat4[5],
-    this.cameraMatrix.mat4[6],
-    this.cameraMatrix.mat4[7],
-    this.cameraMatrix.mat4[8],
-    this.cameraMatrix.mat4[9],
-    this.cameraMatrix.mat4[10],
-    this.cameraMatrix.mat4[11],
-    this.cameraMatrix.mat4[12],
-    this.cameraMatrix.mat4[13],
-    this.cameraMatrix.mat4[14],
-    this.cameraMatrix.mat4[15]
-  );
+
+  if (this._isActive()) {
+    this._renderer.uMVMatrix.set(
+      this.cameraMatrix.mat4[0],
+      this.cameraMatrix.mat4[1],
+      this.cameraMatrix.mat4[2],
+      this.cameraMatrix.mat4[3],
+      this.cameraMatrix.mat4[4],
+      this.cameraMatrix.mat4[5],
+      this.cameraMatrix.mat4[6],
+      this.cameraMatrix.mat4[7],
+      this.cameraMatrix.mat4[8],
+      this.cameraMatrix.mat4[9],
+      this.cameraMatrix.mat4[10],
+      this.cameraMatrix.mat4[11],
+      this.cameraMatrix.mat4[12],
+      this.cameraMatrix.mat4[13],
+      this.cameraMatrix.mat4[14],
+      this.cameraMatrix.mat4[15]
+    );
+  }
   return this;
 };
 
@@ -703,7 +775,7 @@ p5.Camera.prototype.camera = function(
  *   cam.move(delta, delta, 0);
  *
  *   // every 100 frames, switch direction
- *   if (frameCount % 100 === 0) {
+ *   if (frameCount % 150 === 0) {
  *     delta *= -1;
  *   }
  *
@@ -860,9 +932,10 @@ p5.Camera.prototype._resize = function() {
     this._computeCameraDefaultSettings();
     this._setDefaultCamera();
   } else {
-    this.defaultAspectRatio = this._renderer.width / this._renderer.height;
-    this.perspective();
-    this.camera();
+    this.perspective(
+      this.cameraFOV,
+      this._renderer.width / this._renderer.height
+    );
   }
 };
 
@@ -948,6 +1021,110 @@ p5.Camera.prototype._getLocalAxes = function() {
     y: [y0, y1, y2],
     z: [z0, z1, z2]
   };
+};
+
+/**
+ * Returns true if camera is currently attached to renderer.
+ * @method _isActive
+ * @private
+ */
+p5.Camera.prototype._isActive = function() {
+  return this === this._renderer._curCamera;
+};
+
+/**
+ * Sets rendererGL's current camera to a p5.Camera object.  Allows switching
+ * between multiple cameras.
+ * @method setCamera
+ * @param  {p5.Camera} cam  p5.Camera object
+ * @for p5
+ * @example
+ * <div>
+ * <code>
+ * var cam1, cam2;
+ * var currentCamera;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
+ *
+ *   cam1 = createCamera();
+ *   cam2 = createCamera();
+ *   cam2.setPosition(30, 0, 50);
+ *   cam2.lookAt(0, 0, 0);
+ *   cam2.ortho();
+ *
+ *   // set variable for previously active camera:
+ *   currentCamera = 1;
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // camera 1:
+ *   cam1.lookAt(0, 0, 0);
+ *   cam1.setPosition(sin(frameCount / 60) * 200, 0, 100);
+ *
+ *   // every 100 frames, switch between the two cameras
+ *   if (frameCount % 100 === 0) {
+ *     if (currentCamera === 1) {
+ *       setCamera(cam1);
+ *       currentCamera = 0;
+ *     } else {
+ *       setCamera(cam2);
+ *       currentCamera = 1;
+ *     }
+ *   }
+ *
+ *   drawBoxes();
+ * }
+ *
+ * function drawBoxes() {
+ *   rotateX(frameCount * 0.01);
+ *   translate(-100, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ *   translate(35, 0, 0);
+ *   box(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Canvas switches between two camera views, each showing a series of spinning
+ * 3D boxes.
+ */
+p5.prototype.setCamera = function(cam) {
+  this._renderer._curCamera = cam;
+
+  // set the projection matrix (which is not normally updated each frame)
+  this._renderer.uPMatrix.set(
+    cam.projMatrix.mat4[0],
+    cam.projMatrix.mat4[1],
+    cam.projMatrix.mat4[2],
+    cam.projMatrix.mat4[3],
+    cam.projMatrix.mat4[4],
+    cam.projMatrix.mat4[5],
+    cam.projMatrix.mat4[6],
+    cam.projMatrix.mat4[7],
+    cam.projMatrix.mat4[8],
+    cam.projMatrix.mat4[9],
+    cam.projMatrix.mat4[10],
+    cam.projMatrix.mat4[11],
+    cam.projMatrix.mat4[12],
+    cam.projMatrix.mat4[13],
+    cam.projMatrix.mat4[14],
+    cam.projMatrix.mat4[15]
+  );
 };
 
 module.exports = p5.Camera;
