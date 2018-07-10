@@ -337,7 +337,7 @@ p5.prototype.texture = function(tex) {
  * </div>
  *
  * @alt
- * image of the underside of a white umbrella and grided ceililng above
+ * the underside of a white umbrella and gridded ceiling above
  *
  * <div>
  * <code>
@@ -365,7 +365,7 @@ p5.prototype.texture = function(tex) {
  * </div>
  *
  * @alt
- * image of the underside of a white umbrella and grided ceililng above
+ * the underside of a white umbrella and gridded ceiling above
  *
  */
 p5.prototype.textureMode = function(mode) {
