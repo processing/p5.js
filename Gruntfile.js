@@ -457,16 +457,15 @@ module.exports = function(grunt) {
     'build',
     'connect',
     'mochaChrome',
-    //'mocha',
     'mochaTest'
   ]);
-  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mochaChrome']);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
     'yuidoc:prod',
     'clean:reference',
     'connect',
-    'mocha:yui'
+    'mochaChrome:yui'
   ]);
   grunt.registerTask('yui:dev', [
     'yui:prod',
