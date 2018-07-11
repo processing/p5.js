@@ -192,7 +192,6 @@ p5.Shader.prototype.bindShader = function() {
     this._bound = true;
     this.bindTextures();
 
-    this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
 
     this.setUniform('uViewport', this._renderer._viewport);
@@ -239,7 +238,7 @@ p5.Shader.prototype.unbindTextures = function() {
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
-  this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
+  this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
