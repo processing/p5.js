@@ -68,7 +68,7 @@ require('./utilities/string_functions');
 require('./utilities/time_date');
 
 // webgl
-require('./webgl/camera');
+require('./webgl/p5.Camera');
 require('./webgl/interaction');
 require('./webgl/light');
 require('./webgl/loading');
