@@ -74,7 +74,8 @@ p5.prototype.mouseY = 0;
 /**
  * The system variable pmouseX always contains the horizontal position of
  * the mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas.
+ * (0, 0) of the canvas. Note: pmouseX will be reset to the current mouseX
+ * value at the start of each touch event.
  *
  * @property {Number} pmouseX
  * @readOnly
@@ -105,7 +106,8 @@ p5.prototype.pmouseX = 0;
 /**
  * The system variable pmouseY always contains the vertical position of the
  * mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas.
+ * (0, 0) of the canvas. Note: pmouseY will be reset to the current mouseY
+ * value at the start of each touch event.
  *
  * @property {Number} pmouseY
  * @readOnly
@@ -209,7 +211,8 @@ p5.prototype.winMouseY = 0;
 /**
  * The system variable pwinMouseX always contains the horizontal position
  * of the mouse in the frame previous to the current frame, relative to
- * (0, 0) of the window.
+ * (0, 0) of the window. Note: pwinMouseX will be reset to the current winMouseX
+ * value at the start of each touch event.
  *
  * @property {Number} pwinMouseX
  * @readOnly
@@ -249,7 +252,8 @@ p5.prototype.pwinMouseX = 0;
 /**
  * The system variable pwinMouseY always contains the vertical position of
  * the mouse in the frame previous to the current frame, relative to (0, 0)
- * of the window.
+ * of the window. Note: pwinMouseY will be reset to the current winMouseY
+ * value at the start of each touch event.
  *
  * @property {Number} pwinMouseY
  * @readOnly

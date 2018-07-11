@@ -32,7 +32,9 @@ var defaultShaders = {
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
   phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
-  lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
+  lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8'),
+  pointVert: fs.readFileSync(__dirname + '/shaders/point.vert', 'utf-8'),
+  pointFrag: fs.readFileSync(__dirname + '/shaders/point.frag', 'utf-8')
 };
 
 /**
@@ -95,12 +97,17 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
+  this._defaultPointShader = undefined;
 
   this.curFillShader = undefined;
   this.curStrokeShader = undefined;
+  this.curPointShader = undefined;
 
   this._useColorShader();
   this.setStrokeShader(this._getLineShader());
+  this._usePointShader();
+
+  this._pointVertexBuffer = this.GL.createBuffer();
 
   //Imediate Mode
   //default drawing is done in Retained Mode
@@ -483,6 +490,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+  this.curPointShader.setUniform('uMaterialColor', color._array);
 };
 
 /**
@@ -530,6 +538,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
     this.curStrokeShader.setUniform('uStrokeWeight', w);
+    this.curPointShader.setUniform('uPointSize', w);
   }
 };
 
@@ -772,6 +781,18 @@ p5.RendererGL.prototype.setFillShader = function(s) {
   return this.curFillShader;
 };
 
+p5.RendererGL.prototype.setPointShader = function(s) {
+  if (this.curPointShader !== s) {
+    // only do setup etc. if shader is actually new.
+    this.curPointShader = s;
+
+    // safe to do this multiple times;
+    // init() will bail early if has already been run.
+    this.curPointShader.init();
+  }
+  return this.curPointShader;
+};
+
 /*
  * @method setStrokeShader
  * @param {p5.Shader} [s] a p5.Shader object
@@ -822,6 +843,13 @@ p5.RendererGL.prototype._useColorShader = function() {
     this.setFillShader(this._getColorShader());
   }
   return this.curFillShader;
+};
+
+p5.RendererGL.prototype._usePointShader = function() {
+  if (!this.curPointShader) {
+    this.setPointShader(this._getPointShader());
+  }
+  return this.curPointShader;
 };
 
 p5.RendererGL.prototype._useImmediateModeShader = function() {
@@ -890,6 +918,17 @@ p5.RendererGL.prototype._getColorShader = function() {
   }
   //this.drawMode = constants.FILL;
   return this._defaultColorShader;
+};
+
+p5.RendererGL.prototype._getPointShader = function() {
+  if (!this._defaultPointShader) {
+    this._defaultPointShader = new p5.Shader(
+      this,
+      defaultShaders.pointVert,
+      defaultShaders.pointFrag
+    );
+  }
+  return this._defaultPointShader;
 };
 
 p5.RendererGL.prototype._getLineShader = function() {
