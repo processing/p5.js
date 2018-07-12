@@ -6,70 +6,33 @@
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="p5.js a JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.">
     <title tabindex="1">p5.js | reference</title>
-    <link rel="stylesheet" href="https://p5js.org/assets/css/all.css">
-    <link rel="stylesheet" href="{{projectAssets}}/reference.css">
-    <script type="text/javascript" src="//fast.fonts.net/jsapi/5ace315e-3b19-4568-9e85-5bfcb29004c0.js"></script>
+    <link rel="stylesheet" href="{{projectAssets}}/all.css">
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="https://p5js.org/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <script src="{{projectAssets}}/js/vendor/jquery-1.12.4.min.js"></script>
     <script src='/assets/js/p5.min.js'></script>
     <script src='/assets/js/p5.dom.min.js'></script>
     <script src='/assets/js/p5.sound.min.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"></script>
+    <script src="{{projectAssets}}/js/vendor/underscore-min.js"></script>
+    <script src="{{projectAssets}}/js/vendor/backbone-min.js"></script>
+    <script type="text/javascript" src="{{projectAssets}}/js/vendor/ace-nc/ace.js"></script>
+    <script type="text/javascript" src="{{projectAssets}}/js/vendor/ace-nc/mode-javascript.js"></script>
+    <script type="text/javascript" src="{{projectAssets}}/js/vendor/prism.js"></script>
 
-    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/ace-nc/ace.js"></script>
-    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/ace-nc/mode-javascript.js"></script>
-    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/prism.js"></script>
-    <script type="text/javascript" src="https://p5js.org/assets/js/scroll.js"></script>
-    <script type="text/javascript" src="https://p5js.org/assets/js/init.js"></script>
     <link rel="shortcut icon" href="{{projectAssets}}/favicon.ico">
     <link rel="icon" href="{{projectAssets}}/favicon.ico">
-
   </head>
 
   <body id='reference'>
-    <a href="#content" class="skip">Skip to content</a>
-
-    <!-- p5*js language buttons -->
-    <div id="i18n-btn">
-      <h1 class='visuallyhidden'>Language Settings</h1>
-      <button data-lang="en">EN</button>
-      <button data-lang="es">ES</button>
-    </div>
-
-
     <div id="reference-page" class="container">
 
       <!-- logo -->
       <header id="lockup">
         <a href="{{p5SiteRoot}}/">
-          <img src="https://p5js.org/assets/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
+          <img src="{{projectAssets}}/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
           <div id="p5_logo"></div>
         </a>
         <p class='tagline' style='display:block !important'><span id="reference-tagline">Processing Intuition times JavaScript power</span></p>
       </header>
-
-      <!-- site navigation -->
-      <div class="column-span">
-        <nav role="navigation">
-          <ul id="menu">
-            <li><a href="{{p5SiteRoot}}/"><span id="reference-menu-home">Home</span></a></li>
-            <li><a href="{{p5SiteRoot}}/download/"><span id="reference-menu-download">Download</span></a></li>
-            <li><a href="{{p5SiteRoot}}/get-started/"><span id="reference-menu-get-started">Start</span></a></li>
-            <li><a href="{{p5SiteRoot}}/reference/"><span id="reference-menu-reference">Reference</span></a></li>
-            <li><a href="{{p5SiteRoot}}/libraries/"><span id="reference-menu-libraries">Libraries</span></a></li>
-            <li><a href="{{p5SiteRoot}}/learn/"><span id="reference-menu-learn">Learn</span></a></li>
-            <li><a href="{{p5SiteRoot}}/examples/"><span id="reference-menu-examples">Examples</span></a></li>
-            <li><a href="{{p5SiteRoot}}/books/"><span id="reference-menu-books">Books</span></a></li>
-            <li><a href="{{p5SiteRoot}}/community/"><span id="reference-menu-community">Community</span></a></li>
-            <li><a href="http://forum.processing.org/two/" target=_blank class="other-link"><span id="reference-menu-forum">Forum</span></a></li>
-            <li><a href="http://github.com/processing/p5.js" target=_blank class="other-link">GitHub</a></li>
-            <li><a href="http://twitter.com/p5xjs" target=_blank class="other-link">Twitter</a></li>
-          </ul>
-        </nav>
-      </div>
-
 
       <div class="column-span">
         <section id="content" role="region" label="main content">
@@ -86,7 +49,6 @@
 
         </section>
 
-
         <footer>
           <p><span id="footer1">p5.js was created by </span><a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a><span id="footer2"> and is developed by a community of collaborators, with support from the </span><a href="https://processing.org/foundation/" target="_blank">Processing Foundation</a><span id="footer3">
           and </span><a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. <span id="footer4">Identity and graphic design by </span><a href="http://jereljohnson.com/" target="_blank">Jerel Johnson</a>.
@@ -96,123 +58,11 @@
 
       <!-- outside of column for footer to go across both -->
       <p class="clearfix"> &nbsp; </p>
-
-      <object type="image/svg+xml" data="https://p5js.org/assets/img/thick-asterisk-alone.svg" id="asterisk-design-element">
-           *<!-- to do: add fallback image in CSS -->
-      </object>
-    </div>
-
-    <!-- header -->
-    <div id="family">
-      <p class="left"><a href="http://processing.org">Processing</a>
-        <a class="here" href="{{p5SiteRoot}}/">p5.js</a>
-        <a href="http://py.processing.org/">Processing.py</a>
-        <a href="http://android.processing.org/">Processing for Android</a>
-      </p>
-      <form id="search_form" style='pointer-events:all;' name="search" method="get" action="https://www.google.com/search">
-        <input type="hidden" name="as_sitesearch" value="p5js.org" />
-        <input type="text" name="fn" id="fn" size="20" />
-        <label for="fn"><input id="search_button" type="submit" value=" " name="Go" alt="submit search"/></label>
-      </form>
-
-      <p class="right">
-        <a href="https://processingfoundation.org/">Processing Foundation</a>
-      </p>
     </div>
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
-    <script src="https://p5js.org/assets/js/vendor/prism.js"></script>
-    <script src="https://p5js.org/assets/js/render.js"></script>
+    <script src="{{projectAssets}}/js/render.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
-    <script type='text/javascript'>
-
-    var translations;
-    var timeout;
-
-    function updateLanguage() {
-      if (translations) {
-        // reference title
-        $('h1').html(translations['h1']);
-        // reference tagline
-        $('#reference-tagline').html(translations['reference-tagline']);
-        // reference tagline
-        $('#search input').attr('placeholder', translations['reference-search']);
-        $('#search input').attr('title', translations['reference-search']);
-        // reference menu
-        $('#reference-menu-home').html(translations['reference-menu-home']);
-        $('#reference-menu-download').html(translations['reference-menu-download']);
-        $('#reference-menu-get-started').html(translations['reference-menu-get-started']);
-        $('#reference-menu-reference').html(translations['reference-menu-reference']);
-        $('#reference-menu-libraries').html(translations['reference-menu-libraries']);
-        $('#reference-menu-learn').html(translations['reference-menu-learn']);
-        $('#reference-menu-examples').html(translations['reference-menu-examples']);
-        $('#reference-menu-books').html(translations['reference-menu-books']);
-        $('#reference-menu-community').html(translations['reference-menu-community']);
-        $('#reference-menu-forum').html(translations['reference-menu-forum']);
-        // reference description
-        $('#reference-description1').html(translations['reference-description1']);
-        $('#reference-description2').html(translations['reference-description2']);
-        $('#reference-description3').html(translations['reference-description3']);
-        $('#reference-description4').html(translations['reference-description4']);
-        // reference contribute
-        $('#reference-contribute1').html(translations['reference-contribute1']);
-        $('#reference-contribute2').html(translations['reference-contribute2']);
-        // reference error
-        $('#reference-error1').html(translations['reference-error1']);
-        $('#reference-error2').html(translations['reference-error2']);
-        $('#reference-error3').html(translations['reference-error3']);
-        $('#reference-error4').html(translations['reference-error4']);
-        $('#reference-error5').html(translations['reference-error5']);
-        // reference texts
-        $('#reference-example').html(translations['reference-example']);
-        $('#reference-description').html(translations['reference-description'])
-        $('#reference-extends').html(translations['reference-extends']);
-        $('#reference-parameters').html(translations['reference-parameters']);
-        $('#reference-syntax').html(translations['reference-syntax']);
-        $('#reference-returns').html(translations['reference-returns']);
-        // reference footer
-        $('#footer1').html(translations['footer1']);
-        $('#footer2').html(translations['footer2']);
-        $('#footer3').html(translations['footer3']);
-        $('#footer4').html(translations['footer4']);
-        $('.group-name, .subgroup-name').each(function() {
-          $(this).text(translations[$(this).text()]);
-        });
-        var routes = window.location.hash.split('/');
-        var obj = routes[1];
-        var name = routes[2];
-        if (translations[obj] && translations[obj][name]) {
-          var entry = translations[obj][name];
-          $('.description-text').html('<p>'+entry.description+'</p>');
-          $('.returns').html(entry.returns);
-          $('.params').find('tr').each(function(i) {
-            if (i < entry.params.length) {
-              $(this).children('td').eq(1).html(entry.params[i])
-            }
-          });
-        }
-      }
-      clearTimeout(timeout);
-    }
-
-
-    $(document).ready(function() {
-      var routes = window.location.pathname.split('/');
-      var lang = routes[1];
-      if (lang.length === 2) {
-        $.getJSON('/assets/reference/'+lang+'.json', function(data) {
-          translations = data;
-          if (timeout) clearTimeout(timeout);
-          timeout = setTimeout(updateLanguage, 500);
-        });
-      }
-    });
-
-    $(window).bind('hashchange', function() {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(updateLanguage, 500);
-    });
-    </script>
 
   </body>
 </html>

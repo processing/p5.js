@@ -7,13 +7,13 @@
  */
 
 /**
- * This module defines the p5.Image class and P5 methods for
+ * This module defines the <a href="#/p5.Image">p5.Image</a> class and P5 methods for
  * drawing images to the main display canvas.
  */
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
 
 /*
@@ -21,19 +21,19 @@ var Filters = require('./filters');
  */
 
 /**
- * Creates a new p5.Image. A p5.Image is a canvas backed representation of an
+ * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
  * image.
  * <br><br>
  * p5 can display .gif, .jpg and .png images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
- * loadImage() function. The p5.Image class contains fields for the width and
- * height of the image, as well as an array called pixels[] that contains the
+ * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
+ * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
  * values for every pixel in the image.
  * <br><br>
  * The methods described below allow easy access to the image's pixels and
  * alpha channel and simplify the process of compositing.
  * <br><br>
- * Before using the pixels[] array, be sure to use the loadPixels() method on
+ * Before using the <a href="#/p5.Image/pixels">pixels[]</a> array, be sure to use the <a href="#/p5.Image/loadPixels">loadPixels()</a> method on
  * the image to make sure that the pixel data is properly loaded.
  * @example
  * <div><code>
@@ -148,13 +148,14 @@ p5.Image = function(width, height) {
   this._pixelDensity = 1;
   //used for webgl texturing only
   this._modified = false;
+  this._pixelsDirty = true;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
    * factor for pixelDensity) of the display window x4,
    * representing the R, G, B, A values in order for each pixel, moving from
    * left to right across each row, then down each column. Retina and other
-   * high denisty displays may have more pixels[] (by a factor of
+   * high denisty displays may have more pixels (by a factor of
    * pixelDensity^2).
    * For example, if the image is 100x100 pixels, there will be 40,000. With
    * pixelDensity = 2, there will be 160,000. The first four values
@@ -176,8 +177,8 @@ p5.Image = function(width, height) {
    * }
    * ```
    * <br><br>
-   * Before accessing this array, the data must loaded with the loadPixels()
-   * function. After the array data has been modified, the updatePixels()
+   * Before accessing this array, the data must loaded with the <a href="#/p5.Image/loadPixels">loadPixels()</a>
+   * function. After the array data has been modified, the <a href="#/p5.Image/updatePixels">updatePixels()</a>
    * function must be run to update the changes.
    * @property {Number[]} pixels
    * @example
@@ -316,7 +317,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  *
  * If no params are passed, those whole image is returned,
  * if x and y are the only params passed a single pixel is extracted
- * if all params are passed a rectangle region is extracted and a p5.Image
+ * if all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
  * is returned.
  *
  * Returns undefined if the region is outside the bounds of the image
@@ -327,7 +328,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
  * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or p5.Image
+ *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div><code>
  * var myImage;
@@ -358,17 +359,17 @@ p5.Image.prototype.get = function(x, y, w, h) {
 
 /**
  * Set the color of a single pixel or write an image into
- * this p5.Image.
+ * this <a href="#/p5.Image">p5.Image</a>.
  *
  * Note that for a large number of pixels this will
  * be slower than directly manipulating the pixels array
- * and then calling updatePixels().
+ * and then calling <a href="#/p5.Image/updatePixels">updatePixels()</a>.
  *
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
  * @param {Number|Number[]|Object}   a grayscale value | pixel array |
- *                                a p5.Color | image to copy
+ *                                a <a href="#/p5.Color">p5.Color</a> | image to copy
  * @example
  * <div>
  * <code>
@@ -476,6 +477,7 @@ p5.Image.prototype.resize = function(width, height) {
   }
 
   this.setModified(true);
+  this._pixelsDirty = true;
 };
 
 /**
@@ -556,6 +558,7 @@ p5.Image.prototype.copy = function() {
     throw new Error('Signature not supported');
   }
   p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  this._pixelsDirty = true;
 };
 
 /**
@@ -622,7 +625,7 @@ p5.Image.prototype.mask = function(p5Image) {
 };
 
 /**
- * Applies an image filter to a p5.Image
+ * Applies an image filter to a <a href="#/p5.Image">p5.Image</a>
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,

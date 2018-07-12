@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Holds the key codes of currently pressed keys.
@@ -16,7 +16,7 @@ var p5 = require('../core/core');
 var downKeys = {};
 
 /**
- * The boolean system variable keyIsPressed is true if any key is pressed
+ * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
  * and false if no keys are pressed.
  *
  * @property {Boolean} keyIsPressed
@@ -45,7 +45,7 @@ p5.prototype.keyIsPressed = false; // khan
 /**
  * The system variable key always contains the value of the most recent
  * key on the keyboard that was typed. To get the proper capitalization, it
- * is best to use it within keyTyped(). For non-ASCII keys, use the keyCode
+ * is best to use it within <a href="#/p5/keyTyped">keyTyped()</a>. For non-ASCII keys, use the <a href="#/p5/keyCode">keyCode</a>
  * variable.
  *
  * @property {String} key
@@ -105,8 +105,8 @@ p5.prototype.key = '';
 p5.prototype.keyCode = 0;
 
 /**
- * The keyPressed() function is called once every time a key is pressed. The
- * keyCode for the key that was pressed is stored in the keyCode variable.
+ * The <a href="#/p5/keyPressed">keyPressed()</a> function is called once every time a key is pressed. The
+ * keyCode for the key that was pressed is stored in the <a href="#/p5/keyCode">keyCode</a> variable.
  * <br><br>
  * For non-ASCII keys, use the keyCode variable. You can check if the keyCode
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
@@ -114,11 +114,11 @@ p5.prototype.keyCode = 0;
  * <br><br>
  * For ASCII keys that was pressed is stored in the key variable. However, it
  * does not distinguish between uppercase and lowercase. For this reason, it
- * is recommended to use keyTyped() to read the key variable, in which the
+ * is recommended to use <a href="#/p5/keyTyped">keyTyped()</a> to read the key variable, in which the
  * case of the variable will be distinguished.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
- * may cause multiple calls to keyTyped() (and keyReleased() as well). The
+ * may cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
  * configured.<br><br>
  * Browsers may have different default
@@ -182,11 +182,7 @@ p5.prototype._onkeydown = function(e) {
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
   downKeys[e.which] = true;
-  var key = String.fromCharCode(e.which);
-  if (!key) {
-    key = e.which;
-  }
-  this._setProperty('key', key);
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
@@ -196,8 +192,8 @@ p5.prototype._onkeydown = function(e) {
   }
 };
 /**
- * The keyReleased() function is called once every time a key is released.
- * See key and keyCode for more information.<br><br>
+ * The <a href="#/p5/keyReleased">keyReleased()</a> function is called once every time a key is released.
+ * See <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a> for more information.<br><br>
  * Browsers may have different default
  * behaviors attached to various key events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -237,11 +233,7 @@ p5.prototype._onkeyup = function(e) {
 
   this._setProperty('_lastKeyCodeTyped', null);
 
-  var key = String.fromCharCode(e.which);
-  if (!key) {
-    key = e.which;
-  }
-  this._setProperty('key', key);
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
     var executeDefault = keyReleased(e);
@@ -252,12 +244,12 @@ p5.prototype._onkeyup = function(e) {
 };
 
 /**
- * The keyTyped() function is called once every time a key is pressed, but
+ * The <a href="#/p5/keyTyped">keyTyped()</a> function is called once every time a key is pressed, but
  * action keys such as Ctrl, Shift, and Alt are ignored. The most recent
  * key pressed will be stored in the key variable.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
- * will cause multiple calls to keyTyped() (and keyReleased() as well). The
+ * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
  * configured.<br><br>
  * Browsers may have different default behaviors attached to various key
@@ -316,11 +308,11 @@ p5.prototype._onblur = function(e) {
 };
 
 /**
- * The keyIsDown() function checks if the key is currently down, i.e. pressed.
+ * The <a href="#/p5/keyIsDown">keyIsDown()</a> function checks if the key is currently down, i.e. pressed.
  * It can be used if you have an object that moves, and you want several keys
  * to be able to affect its behaviour simultaneously, such as moving a
  * sprite diagonally. You can put in any number representing the keyCode of
- * the key, or use any of the variable keyCode names listed
+ * the key, or use any of the variable <a href="#/p5/keyCode">keyCode</a> names listed
  * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
  *
  * @method keyIsDown
@@ -358,8 +350,33 @@ p5.prototype._onblur = function(e) {
  * }
  * </code></div>
  *
+ * <div><code>
+ * var diameter = 50;
+ *
+ * function setup() {
+ *   createCanvas(512, 512);
+ * }
+ *
+ * function draw() {
+ *   // 107 and 187 are keyCodes for "+"
+ *   if (keyIsDown(107) || keyIsDown(187)) {
+ *     diameter += 1;
+ *   }
+ *
+ *   // 109 and 189 are keyCodes for "-"
+ *   if (keyIsDown(109) || keyIsDown(189)) {
+ *     diameter -= 1;
+ *   }
+ *
+ *   clear();
+ *   fill(255, 0, 0);
+ *   ellipse(50, 50, diameter, diameter);
+ * }
+ * </code></div>
+ *
  * @alt
  * 50x50 red ellipse moves left, right, up and down with arrow presses.
+ * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
  *
  */
 p5.prototype.keyIsDown = function(code) {

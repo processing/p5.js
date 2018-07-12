@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 var opentype = require('opentype.js');
 
@@ -27,14 +27,14 @@ require('../core/error_helpers');
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
  * @param  {Function}      [callback] function to be executed after
- *                                    loadFont() completes
+ *                                    <a href="#/p5/loadFont">loadFont()</a> completes
  * @param  {Function}      [onError]  function to be executed if
  *                                    an error occurs
- * @return {p5.Font}                  p5.Font object
+ * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
  * @example
  *
- * <p>Calling loadFont() inside preload() guarantees that the load
- * operation will have completed before setup() and draw() are called.</p>
+ * <p>Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees that the load
+ * operation will have completed before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
  * var myFont;
@@ -50,7 +50,7 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * Outside of preload(), you may supply a callback function to handle the
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object:
  *
  * <div><code>
@@ -144,19 +144,20 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * Draws text to the screen. Displays the information specified in the first
  * parameter on the screen in the position specified by the additional
  * parameters. A default font will be used unless a font is set with the
- * textFont() function and a default size will be used unless a font is set
- * with textSize(). Change the color of the text with the fill() function.
- * Change the outline of the text with the stroke() and strokeWeight()
+ * <a href="#/p5/textFont">textFont()</a> function and a default size will be used unless a font is set
+ * with <a href="#/p5/textSize">textSize()</a>. Change the color of the text with the <a href="#/p5/fill">fill()</a> function.
+ * Change the outline of the text with the <a href="#/p5/stroke">stroke()</a> and <a href="#/p5/strokeWeight">strokeWeight()</a>
  * functions.
  * <br><br>
- * The text displays in relation to the textAlign() function, which gives the
+ * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a> function, which gives the
  * option to draw to the left, right, and center of the coordinates.
  * <br><br>
  * The x2 and y2 parameters define a rectangular area to display within and
  * may only be used with string data. When these parameters are specified,
- * they are interpreted based on the current rectMode() setting. Text that
+ * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a> setting. Text that
  * does not fit completely within the rectangle specified will not be drawn
- * to the screen.
+ * to the screen. If x2 and y2 are not specified, the baseline alignment is the
+ * default, which means that the text will be drawn upwards from x and y.
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
@@ -164,9 +165,9 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * @param {Number} x   x-coordinate of text
  * @param {Number} y   y-coordinate of text
  * @param {Number} [x2]  by default, the width of the text box,
- *                     see rectMode() for more info
+ *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
  * @param {Number} [y2]  by default, the height of the text box,
- *                     see rectMode() for more info
+ *                     see <a href="#/p5/rectMode">rectMode()</a> for more info
  * @chainable
  * @example
  * <div>
@@ -200,7 +201,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 };
 
 /**
- * Sets the current font that will be drawn with the text() function.
+ * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
  *
  * @method textFont
  * @return {Object} the current font
@@ -244,7 +245,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  */
 /**
  * @method textFont
- * @param {Object|String} font a font loaded via loadFont(), or a String
+ * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>, or a String
  * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
  * that is generally available across all systems)
  * @param {Number} [size] the font size to use
@@ -254,7 +255,7 @@ p5.prototype.textFont = function(theFont, theSize) {
   p5._validateParameters('textFont', arguments);
   if (arguments.length) {
     if (!theFont) {
-      throw Error('null font passed to textFont');
+      throw new Error('null font passed to textFont');
     }
 
     this._renderer._setProperty('_textFont', theFont);

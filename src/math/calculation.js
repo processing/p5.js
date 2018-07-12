@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
@@ -380,7 +380,7 @@ p5.prototype.log = Math.log;
  * Calculates the magnitude (or length) of a vector. A vector is a direction
  * in space commonly used in computer graphics and linear algebra. Because it
  * has no "start" position, the magnitude of a vector can be thought of as
- * the distance from the coordinate 0,0 to its x,y value. Therefore, mag() is
+ * the distance from the coordinate 0,0 to its x,y value. Therefore, <a href="#/p5/mag">mag()</a> is
  * a shortcut for writing dist(0, 0, x, y).
  *
  * @method mag
@@ -473,7 +473,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
 
 /**
  * Determines the largest value in a sequence of numbers, and then returns
- * that value. max() accepts any number of Number parameters, or an Array
+ * that value. <a href="#/p5/max">max()</a> accepts any number of Number parameters, or an Array
  * of any length.
  *
  * @method max
@@ -523,7 +523,7 @@ p5.prototype.max = function() {
 
 /**
  * Determines the smallest value in a sequence of numbers, and then returns
- * that value. min() accepts any number of Number parameters, or an Array
+ * that value. <a href="#/p5/min">min()</a> accepts any number of Number parameters, or an Array
  * of any length.
  *
  * @method min
@@ -625,7 +625,7 @@ p5.prototype.norm = function(n, start, stop) {
 };
 
 /**
- * Facilitates exponential expressions. The pow() function is an efficient
+ * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
  * way of multiplying numbers by themselves (or their reciprocals) in large
  * quantities. For example, pow(3, 5) is equivalent to the expression
  * 3*3*3*3*3 and pow(3, -5) is equivalent to 1 / 3*3*3*3*3. Maps to

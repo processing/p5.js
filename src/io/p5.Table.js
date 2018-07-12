@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  *  Table Options
@@ -20,9 +20,9 @@ var p5 = require('../core/core');
  *  <p>File names should end with .csv if they're comma separated.</p>
  *  <p>A rough "spec" for CSV can be found
  *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
- *  <p>To load files, use the loadTable method.</p>
- *  <p>To save tables to your computer, use the save method
- *   or the saveTable method.</p>
+ *  <p>To load files, use the <a href="#/p5/loadTable">loadTable</a> method.</p>
+ *  <p>To save tables to your computer, use the <a href="#/p5/save">save</a> method
+ *   or the <a href="#/p5/saveTable">saveTable</a> method.</p>
  *
  *  Possible options include:
  *  <ul>
@@ -33,7 +33,7 @@ var p5 = require('../core/core');
  */
 
 /**
- *  Table objects store data with multiple rows and columns, much
+ *  <a href="#/p5.Table">Table</a> objects store data with multiple rows and columns, much
  *  like in a traditional spreadsheet. Tables can be generated from
  *  scratch, dynamically, or using data from an existing file.
  *
@@ -54,16 +54,17 @@ p5.Table = function(rows) {
 };
 
 /**
- *  Use addRow() to add a new row of data to a p5.Table object. By default,
+ *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
  *  an empty row is created. Typically, you would store a reference to
  *  the new row in a TableRow object (see newRow in the example above),
- *  and then set individual values using set().
+ *  and then set individual values using <a href="#/p5/set">set()</a>.
  *
- *  If a p5.TableRow object is included as a parameter, then that row is
+ *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
  *  duplicated and added to the table.
  *
  *  @method  addRow
  *  @param   {p5.TableRow} [row] row to be added to the table
+ *  @return  {p5.TableRow} the row that was added
  *
  * @example
  * <div class="norender">
@@ -109,7 +110,7 @@ p5.Table.prototype.addRow = function(row) {
 
   if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
     //r = new p5.prototype.TableRow(r);
-    throw 'invalid TableRow: ' + r;
+    throw new Error('invalid TableRow: ' + r);
   }
   r.table = this;
   this.rows.push(r);
@@ -165,12 +166,12 @@ p5.Table.prototype.removeRow = function(id) {
 };
 
 /**
- * Returns a reference to the specified p5.TableRow. The reference
+ * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
  * can then be used to get and set values of the selected row.
  *
  * @method  getRow
  * @param  {Integer}   rowID ID number of the row to get
- * @return {p5.TableRow} p5.TableRow object
+ * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
  *
  * @example
  * <div class="norender">
@@ -211,10 +212,10 @@ p5.Table.prototype.getRow = function(r) {
 };
 
 /**
- *  Gets all rows from the table. Returns an array of p5.TableRows.
+ *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
  *
  *  @method  getRows
- *  @return {p5.TableRow[]}   Array of p5.TableRows
+ *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
  *
  * @example
  * <div class="norender">
@@ -615,7 +616,7 @@ p5.Table.prototype.clearRows = function() {
 };
 
 /**
- *  Use addColumn() to add a new column to a Table object.
+ *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
  *  Typically, you will want to specify a title, so the column
  *  may be easily referenced later by name. (If no title is
  *  specified, the new column's title will be null.)
@@ -876,7 +877,7 @@ p5.Table.prototype.trim = function(column) {
 };
 
 /**
- *  Use removeColumn() to remove an existing column from a Table
+ *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
  *  object. The column to be removed may be identified by either
  *  its title (a String) or its index value (an int).
  *  removeColumn(0) would remove the first column, removeColumn(1)
@@ -922,7 +923,6 @@ p5.Table.prototype.removeColumn = function(c) {
     // find the position of c in the columns
     cString = c;
     cNumber = this.columns.indexOf(c);
-    console.log('string');
   } else {
     cNumber = c;
     cString = this.columns[c];
@@ -1282,7 +1282,9 @@ p5.Table.prototype.getObject = function(headerColumn) {
         index = obj[headerColumn];
         tableObject[index] = obj;
       } else {
-        throw 'This table has no column named "' + headerColumn + '"';
+        throw new Error(
+          'This table has no column named "' + headerColumn + '"'
+        );
       }
     } else {
       tableObject[i] = this.rows[i].obj;

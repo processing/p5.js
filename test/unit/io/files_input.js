@@ -71,9 +71,32 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
+      });
+    });
+
+    test('should return a promise', function() {
+      var promise = myp5.httpDo('unit/assets/sentences.txt');
+      assert.instanceOf(promise, Promise);
+      return promise.then(function(data) {
+        assert.ok(data);
+        assert.isString(data);
+      });
+    });
+
+    test('should return a promise that rejects on error', function() {
+      return new Promise(function(resolve, reject) {
+        var promise = myp5.httpDo('404file');
+        assert.instanceOf(promise, Promise);
+        promise.then(function(data) {
+          reject(new Error('promise resolved.'));
+        });
+        resolve(
+          promise.catch(function(error) {
+            assert.instanceOf(error, Error);
+          })
+        );
       });
     });
   });
@@ -175,7 +198,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response.');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
@@ -240,7 +262,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is an object');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });

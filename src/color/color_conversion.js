@@ -1,5 +1,5 @@
 /**
- * @module Conversion
+ * @module Color
  * @submodule Color Conversion
  * @for p5
  * @requires core
@@ -10,11 +10,12 @@
 /**
  * Conversions adapted from <http://www.easyrgb.com/en/math.php>.
  *
- * In these functions, hue is always in the range [0,1); all other components
- * are in the range [0,1]. 'Brightness' and 'value' are used interchangeably.
+ * In these functions, hue is always in the range [0, 1], just like all other
+ * components are in the range [0, 1]. 'Brightness' and 'value' are used
+ * interchangeably.
  */
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 p5.ColorConversion = {};
 
 /**

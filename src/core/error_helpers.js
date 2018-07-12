@@ -5,7 +5,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var constants = require('./constants');
 
 if (typeof IS_MINIFIED !== 'undefined') {
@@ -159,8 +159,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // validateParameters() helper functions:
   // lookupParamDoc() for querying data.json
   var lookupParamDoc = function(func) {
+    var ichDot = func.lastIndexOf('.');
+    var funcName = func.substr(ichDot + 1);
+    var funcClass = func.substr(0, ichDot) || 'p5';
     var queryResult = arrDoc.classitems.filter(function(x) {
-      return x.name === func;
+      return x.name === funcName && x.class === funcClass;
     });
     // different JSON structure for funct with multi-format
     var overloads = [];

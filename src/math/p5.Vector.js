@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /**
@@ -14,9 +14,9 @@ var constants = require('../core/constants');
  * a Euclidean (also known as geometric) vector. A vector is an entity
  * that has both magnitude and direction. The datatype, however, stores
  * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
- * and direction can be accessed via the methods mag() and heading().
+ * and direction can be accessed via the methods <a href="#/p5/mag">mag()</a> and <a href="#/p5/heading">heading()</a>.
  * <br><br>
- * In many of the p5.js examples, you will see p5.Vector used to describe a
+ * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
  * position, velocity, or acceleration. For example, if you consider a rectangle
  * moving across the screen, at any given instant it has a position (a vector
  * that points from the origin to its location), a velocity (the rate at which
@@ -26,7 +26,7 @@ var constants = require('../core/constants');
  * <br><br>
  * Since vectors represent groupings of values, we cannot simply use
  * traditional addition/multiplication/etc. Instead, we'll need to do some
- * "vector" math, which is made easy by the methods inside the p5.Vector class.
+ * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
  *
  * @class p5.Vector
  * @param {Number} [x] x component of the vector
@@ -133,7 +133,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
 
 /**
  * Sets the x, y, and z component of the vector using two or three separate
- * variables, the data from a p5.Vector, or the values from a float array.
+ * variables, the data from a <a href="#/p5.Vector">p5.Vector</a>, or the values from a float array.
  * @method set
  * @param {Number} [x] the x component of the vector
  * @param {Number} [y] the y component of the vector
@@ -215,10 +215,10 @@ p5.Vector.prototype.set = function set(x, y, z) {
 };
 
 /**
- * Gets a copy of the vector, returns a p5.Vector object.
+ * Gets a copy of the vector, returns a <a href="#/p5.Vector">p5.Vector</a> object.
  *
  * @method copy
- * @return {p5.Vector} the copy of the p5.Vector object
+ * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -240,7 +240,7 @@ p5.Vector.prototype.copy = function copy() {
 /**
  * Adds x, y, and z components to a vector, adds one vector to another, or
  * adds two independent vectors together. The version of the method that adds
- * two vectors together is a static method and returns a p5.Vector, the others
+ * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
  * acts directly on the vector. See the examples for more context.
  *
  * @method add
@@ -330,7 +330,7 @@ p5.Vector.prototype.add = function add(x, y, z) {
 /**
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method
- * that subtracts two vectors is a static method and returns a p5.Vector, the
+ * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
  * other acts directly on the vector. See the examples for more context.
  *
  * @method sub
@@ -419,7 +419,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 
 /**
  * Multiply the vector by a scalar. The static version of this method
- * creates a new p5.Vector while the non static version acts on the vector
+ * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
  * directly. See the examples for more context.
  *
  * @method mult
@@ -494,7 +494,7 @@ p5.Vector.prototype.mult = function mult(n) {
 
 /**
  * Divide the vector by a scalar. The static version of this method creates a
- * new p5.Vector while the non static version acts on the vector directly.
+ * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
  * See the examples for more context.
  *
  * @method div
@@ -705,7 +705,7 @@ p5.Vector.prototype.magSq = function magSq() {
  */
 /**
  * @method dot
- * @param  {p5.Vector} value value component of the vector or a p5.Vector
+ * @param  {p5.Vector} value value component of the vector or a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}
  */
 p5.Vector.prototype.dot = function dot(x, y, z) {
@@ -717,12 +717,12 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
 
 /**
  * Calculates and returns a vector composed of the cross product between
- * two vectors. Both the static and non static methods return a new p5.Vector.
+ * two vectors. Both the static and non static methods return a new <a href="#/p5.Vector">p5.Vector</a>.
  * See the examples for more context.
  *
  * @method cross
- * @param  {p5.Vector} v p5.Vector to be crossed
- * @return {p5.Vector}   p5.Vector composed of cross product
+ * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be crossed
+ * @return {p5.Vector}   <a href="#/p5.Vector">p5.Vector</a> composed of cross product
  * @example
  * <div class="norender">
  * <code>
@@ -761,7 +761,7 @@ p5.Vector.prototype.cross = function cross(v) {
  * point as a vector object).
  *
  * @method dist
- * @param  {p5.Vector} v the x, y, and z coordinates of a p5.Vector
+ * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}      the distance
  * @example
  * <div class="norender">
@@ -831,7 +831,7 @@ p5.Vector.prototype.dist = function dist(v) {
  * Normalize the vector to length 1 (make it a unit vector).
  *
  * @method normalize
- * @return {p5.Vector} normalized p5.Vector
+ * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>
  * @example
  * <div class="norender">
  * <code>
@@ -1125,7 +1125,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
 /**
  * Calculates and returns the angle (in radians) between two vectors.
  * @method angleBetween
- * @param  {p5.Vector}    the x, y, and z components of a p5.Vector
+ * @param  {p5.Vector}    the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}       the angle between (in radians)
  * @example
  * <div class="norender">
@@ -1270,7 +1270,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  */
 /**
  * @method lerp
- * @param  {p5.Vector} v   the p5.Vector to lerp to
+ * @param  {p5.Vector} v   the <a href="#/p5.Vector">p5.Vector</a> to lerp to
  * @param  {Number}    amt
  * @chainable
  */
@@ -1287,7 +1287,7 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 /**
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
- * copied by using the <b>p5.Vector.copy()</b> method to copy into your own
+ * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
  * array.
  *
  * @method array
@@ -1317,7 +1317,7 @@ p5.Vector.prototype.array = function array() {
 };
 
 /**
- * Equality check against a p5.Vector
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
  *
  * @method equals
  * @param {Number} [x] the x component of the vector
@@ -1378,7 +1378,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  * @static
  * @param {Number}     angle the desired angle, in radians
  * @param {Number}     [length] the length of the new vector (defaults to 1)
- * @return {p5.Vector}       the new p5.Vector object
+ * @return {p5.Vector}       the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div>
  * <code>
@@ -1432,7 +1432,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  * @param {Number}     phi      the azimuthal angle, in radians
  *                               (zero is out of the screen)
  * @param {Number}     [length] the length of the new vector (defaults to 1)
- * @return {p5.Vector}          the new p5.Vector object
+ * @return {p5.Vector}          the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div modernizr='webgl'>
  * <code>
@@ -1477,7 +1477,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  *
  * @method random2D
  * @static
- * @return {p5.Vector} the new p5.Vector object
+ * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -1530,7 +1530,7 @@ p5.Vector.random2D = function random2D() {
  *
  * @method random3D
  * @static
- * @return {p5.Vector} the new p5.Vector object
+ * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -1556,8 +1556,8 @@ p5.Vector.random3D = function random3D() {
 /**
  * @method add
  * @static
- * @param  {p5.Vector} v1 a p5.Vector to add
- * @param  {p5.Vector} v2 a p5.Vector to add
+ * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
+ * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} target the vector to receive the result
  */
 /**
@@ -1565,7 +1565,7 @@ p5.Vector.random3D = function random3D() {
  * @static
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} v2
- * @return {p5.Vector} the resulting p5.Vector
+ * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  *
  */
 
@@ -1580,14 +1580,14 @@ p5.Vector.add = function add(v1, v2, target) {
 };
 
 /*
- * Subtracts one p5.Vector from another and returns a new one.  The second
+ * Subtracts one <a href="#/p5.Vector">p5.Vector</a> from another and returns a new one.  The second
  * vector (v2) is subtracted from the first (v1), resulting in v1-v2.
  */
 /**
  * @method sub
  * @static
- * @param  {p5.Vector} v1 a p5.Vector to subtract from
- * @param  {p5.Vector} v2 a p5.Vector to subtract
+ * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
+ * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
  * @param  {p5.Vector} target if undefined a new vector will be created
  */
 /**
@@ -1595,7 +1595,7 @@ p5.Vector.add = function add(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} v2
- * @return {p5.Vector} the resulting p5.Vector
+ * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
 p5.Vector.sub = function sub(v1, v2, target) {
@@ -1623,7 +1623,7 @@ p5.Vector.sub = function sub(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector}  the resulting new p5.Vector
+ * @return {p5.Vector}  the resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 p5.Vector.mult = function mult(v, n, target) {
   if (!target) {
@@ -1650,7 +1650,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector} the resulting new p5.Vector
+ * @return {p5.Vector} the resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 p5.Vector.div = function div(v, n, target) {
   if (!target) {
@@ -1668,8 +1668,8 @@ p5.Vector.div = function div(v, n, target) {
 /**
  * @method dot
  * @static
- * @param  {p5.Vector} v1 the first p5.Vector
- * @param  {p5.Vector} v2 the second p5.Vector
+ * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}     the dot product
  */
 p5.Vector.dot = function dot(v1, v2) {
@@ -1682,8 +1682,8 @@ p5.Vector.dot = function dot(v1, v2) {
 /**
  * @method cross
  * @static
- * @param  {p5.Vector} v1 the first p5.Vector
- * @param  {p5.Vector} v2 the second p5.Vector
+ * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}     the cross product
  */
 p5.Vector.cross = function cross(v1, v2) {
@@ -1697,8 +1697,8 @@ p5.Vector.cross = function cross(v1, v2) {
 /**
  * @method dist
  * @static
- * @param  {p5.Vector} v1 the first p5.Vector
- * @param  {p5.Vector} v2 the second p5.Vector
+ * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}     the distance
  */
 p5.Vector.dist = function dist(v1, v2) {

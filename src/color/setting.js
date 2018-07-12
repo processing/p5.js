@@ -8,31 +8,31 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Color');
 
 /**
- * The background() function sets the color used for the background of the
+ * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
  * p5.js canvas. The default background is light gray. This function is
- * typically used within draw() to clear the display window at the beginning
- * of each frame, but it can be used inside setup() to set the background on
+ * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
+ * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
  * the first frame of animation or if the background need only be set once.
  * <br><br>
  * The color is either specified in terms of the RGB, HSB, or HSL color
- * depending on the current colorMode. (The default color space is RGB, with
+ * depending on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space is RGB, with
  * each value in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  * <br><br>
- * A p5.Color object can also be provided to set the background color.
+ * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
  * <br><br>
- * A p5.Image can also be provided to set the background image.
+ * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the background image.
  *
  * @method background
- * @param {p5.Color} color     any value created by the color() function
+ * @param {p5.Color} color     any value created by the <a href="#/p5/color">color()</a> function
  * @chainable
  *
  * @example
@@ -166,7 +166,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param {p5.Image} image     image created with loadImage() or createImage(),
+ * @param {p5.Image} image     image created with <a href="#/p5/loadImage">loadImage()</a> or <a href="#/p5/createImage">createImage()</a>,
  *                             to set as background
  *                             (must be same size as the sketch window)
  * @param  {Number}  [a]
@@ -184,9 +184,9 @@ p5.prototype.background = function() {
 
 /**
  * Clears the pixels within a buffer. This function only works on p5.Canvas
- * objects created with the createCanvas() function; it won't work with the
+ * objects created with the <a href="#/p5/createCanvas">createCanvas()</a> function; it won't work with the
  * main display window. Unlike the main graphics context, pixels in
- * additional graphics areas created with createGraphics() can be entirely
+ * additional graphics areas created with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
@@ -221,8 +221,8 @@ p5.prototype.clear = function() {
 };
 
 /**
- * colorMode() changes the way p5.js interprets color data. By default, the
- * parameters for fill(), stroke(), background(), and color() are defined by
+ * <a href="#/p5/colorMode">colorMode()</a> changes the way p5.js interprets color data. By default, the
+ * parameters for <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>, and <a href="#/p5/color">color()</a> are defined by
  * values between 0 and 255 using the RGB color model. This is equivalent to
  * setting colorMode(RGB, 255). Setting colorMode(HSB) lets you use the HSB
  * system instead. By default, this is colorMode(HSB, 360, 100, 100, 1). You
@@ -345,14 +345,14 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * Sets the color used to fill shapes. For example, if you run
  * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
  * color is either specified in terms of the RGB or HSB color depending on
- * the current colorMode(). (The default color space is RGB, with each value
+ * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space is RGB, with each value
  * in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  * <br><br>
- * A p5 Color object can also be provided to set the fill color.
+ * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the fill color.
  *
  * @method fill
  * @param  {Number}        v1      red or hue value relative to
@@ -499,7 +499,7 @@ p5.prototype.fill = function() {
 };
 
 /**
- * Disables filling geometry. If both noStroke() and noFill() are called,
+ * Disables filling geometry. If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a> are called,
  * nothing will be drawn to the screen.
  *
  * @method noFill
@@ -540,7 +540,7 @@ p5.prototype.noFill = function() {
 };
 
 /**
- * Disables drawing the stroke (outline). If both noStroke() and noFill()
+ * Disables drawing the stroke (outline). If both <a href="#/p5/noStroke">noStroke()</a> and <a href="#/p5/noFill">noFill()</a>
  * are called, nothing will be drawn to the screen.
  *
  * @method noStroke
@@ -582,7 +582,7 @@ p5.prototype.noStroke = function() {
 /**
  * Sets the color used to draw lines and borders around shapes. This color
  * is either specified in terms of the RGB or HSB color depending on the
- * current colorMode() (the default color space is RGB, with each value in
+ * current <a href="#/p5/colorMode">colorMode()</a> (the default color space is RGB, with each value in
  * the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
@@ -590,7 +590,7 @@ p5.prototype.noStroke = function() {
  * number value as a second argument is not supported, the RGBA form should be
  * used.
  * <br><br>
- * A p5 Color object can also be provided to set the stroke color.
+ * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the stroke color.
  *
  *
  * @method stroke

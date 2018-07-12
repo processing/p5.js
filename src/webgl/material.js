@@ -7,14 +7,14 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Texture');
 
 /**
  * Loads a custom shader from the provided vertex and fragment
  * shader paths. The shader files are loaded asynchronously in the
- * background, so this method should be used in preload().
+ * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
  * For now, there are three main types of shaders. p5 will automatically
  * supply appropriate vertices, normals, colors, and lighting attributes
@@ -27,6 +27,32 @@ require('./p5.Texture');
  * source code
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * var mandel;
+ * function preload() {
+ *   // load the shader definitions from files
+ *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // use the shader
+ *   shader(mandel);
+ *   noStroke();
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
   p5._validateParameters('loadShader', arguments);
@@ -123,14 +149,14 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * The shader() function lets the user provide a custom shader
+ * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
  * own shaders by loading vertex and fragment shaders with
- * loadShader().
+ * <a href="#/p5/loadShader">loadShader()</a>.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
+ * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
  */
 p5.prototype.shader = function(s) {

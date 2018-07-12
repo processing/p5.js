@@ -22,11 +22,35 @@ module.exports = {
   WEBGL: 'webgl',
 
   // ENVIRONMENT
+  /**
+   * @property {String} ARROW
+   * @final
+   */
   ARROW: 'default',
+  /**
+   * @property {String} CROSS
+   * @final
+   */
   CROSS: 'crosshair',
+  /**
+   * @property {String} HAND
+   * @final
+   */
   HAND: 'pointer',
+  /**
+   * @property {String} MOVE
+   * @final
+   */
   MOVE: 'move',
+  /**
+   * @property {String} TEXT
+   * @final
+   */
   TEXT: 'text',
+  /**
+   * @property {String} WAIT
+   * @final
+   */
   WAIT: 'wait',
 
   // TRIGONOMETRY
@@ -35,7 +59,7 @@ module.exports = {
    * HALF_PI is a mathematical constant with the value
    * 1.57079632679489661923. It is half the ratio of the
    * circumference of a circle to its diameter. It is useful in
-   * combination with the trigonometric functions sin() and cos().
+   * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
    *
    * @property {Number} HALF_PI
    * @final
@@ -54,7 +78,7 @@ module.exports = {
    * PI is a mathematical constant with the value
    * 3.14159265358979323846. It is the ratio of the circumference
    * of a circle to its diameter. It is useful in combination with
-   * the trigonometric functions sin() and cos().
+   * the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
    *
    * @property {Number} PI
    * @final
@@ -73,7 +97,7 @@ module.exports = {
    * QUARTER_PI is a mathematical constant with the value 0.7853982.
    * It is one quarter the ratio of the circumference of a circle to
    * its diameter. It is useful in combination with the trigonometric
-   * functions sin() and cos().
+   * functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
    *
    * @property {Number} QUARTER_PI
    * @final
@@ -92,7 +116,7 @@ module.exports = {
    * TAU is an alias for TWO_PI, a mathematical constant with the
    * value 6.28318530717958647693. It is twice the ratio of the
    * circumference of a circle to its diameter. It is useful in
-   * combination with the trigonometric functions sin() and cos().
+   * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
    *
    * @property {Number} TAU
    * @final
@@ -111,7 +135,7 @@ module.exports = {
    * TWO_PI is a mathematical constant with the value
    * 6.28318530717958647693. It is twice the ratio of the
    * circumference of a circle to its diameter. It is useful in
-   * combination with the trigonometric functions sin() and cos().
+   * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
    *
    * @property {Number} TWO_PI
    * @final
@@ -127,7 +151,7 @@ module.exports = {
    */
   TWO_PI: PI * 2,
   /**
-   * Constant to be used with angleMode() function, to set the mode which
+   * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
    * p5.js interprates and calculates angles (either DEGREES or RADIANS).
    * @property {String} DEGREES
    * @final
@@ -141,7 +165,7 @@ module.exports = {
    */
   DEGREES: 'degrees',
   /**
-   * Constant to be used with angleMode() function, to set the mode which
+   * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
    * p5.js interprates and calculates angles (either RADIANS or DEGREES).
    * @property {String} RADIANS
    * @final
@@ -323,6 +347,10 @@ module.exports = {
   HSL: 'hsl',
 
   // DOM EXTENSION
+  /**
+   * @property {String} AUTO
+   * @final
+   */
   AUTO: 'auto',
 
   // INPUT
@@ -496,6 +524,13 @@ module.exports = {
   FILL: 'fill',
   TEXTURE: 'texture',
   IMMEDIATE: 'immediate',
+
+  //WEBGL TEXTURE WRAP AND FILTERING
+  // LINEAR already exists above
+  NEAREST: 'nearest',
+  REPEAT: 'repeat',
+  CLAMP: 'clamp',
+  MIRROR: 'mirror',
 
   // DEVICE-ORIENTATION
   /**

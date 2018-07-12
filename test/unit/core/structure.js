@@ -257,4 +257,22 @@ suite('Structure', function() {
       });
     });
   });
+
+  suite('p5.prototype.redraw', function() {
+    test('resets the rendering matrix between frames', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.draw = function() {
+          myp5.background(0);
+          myp5.stroke(255);
+          myp5.point(10, 10);
+          if (myp5.get(10, 10)[0] !== 255) {
+            reject(new Error("Drawing matrix doesn't appear to be reset"));
+          }
+          myp5.rotate(10);
+        };
+        myp5.redraw(10);
+        resolve();
+      });
+    });
+  });
 });

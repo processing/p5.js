@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Color');
 require('../core/error_helpers');
@@ -17,7 +17,7 @@ require('../core/error_helpers');
  * Extracts the alpha value from a color or pixel array.
  *
  * @method alpha
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the alpha value
  * @example
@@ -62,7 +62,7 @@ p5.prototype.alpha = function(c) {
  * Extracts the blue value from a color or pixel array.
  *
  * @method blue
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the blue value
  * @example
@@ -92,7 +92,7 @@ p5.prototype.blue = function(c) {
  * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the brightness value
  * @example
@@ -121,11 +121,11 @@ p5.prototype.brightness = function(c) {
 /**
  * Creates colors for storing in variables of the color datatype. The
  * parameters are interpreted as RGB or HSB values depending on the
- * current colorMode(). The default mode is RGB values from 0 to 255
+ * current <a href="#/p5/colorMode">colorMode()</a>. The default mode is RGB values from 0 to 255
  * and, therefore, the function call color(255, 204, 0) will return a
  * bright yellow color.
  * <br><br>
- * Note that if only one value is provided to color(), it will be interpreted
+ * Note that if only one value is provided to <a href="#/p5/color">color()</a>, it will be interpreted
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
  * either RGB or HSB values. Adding a fourth value applies alpha
@@ -320,7 +320,7 @@ p5.prototype.color = function() {
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the green value
  * @example
@@ -357,7 +357,7 @@ p5.prototype.green = function(c) {
  * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the hue
  * @example
@@ -389,7 +389,7 @@ p5.prototype.hue = function(c) {
  * parameter is the amount to interpolate between the two values where 0.0
  * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
  * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
- * above 1 will be capped at 1. This is different from the behavior of lerp(),
+ * above 1 will be capped at 1. This is different from the behavior of <a href="#/p5/lerp">lerp()</a>,
  * but necessary because otherwise numbers outside the range will produce
  * strange and unexpected colors.
  * <br><br>
@@ -485,7 +485,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the lightness
  * @example
@@ -515,7 +515,7 @@ p5.prototype.lightness = function(c) {
  * Extracts the red value from a color or pixel array.
  *
  * @method red
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the red value
  * @example
@@ -560,7 +560,7 @@ p5.prototype.red = function(c) {
  * HSL saturation otherwise.
  *
  * @method saturation
- * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
  *                                         or CSS color
  * @return {Number} the saturation value
  * @example

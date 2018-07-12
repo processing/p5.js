@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 var seeded = false;
 var previous = false;
@@ -46,9 +46,9 @@ var lcg = (function() {
 })();
 
 /**
- * Sets the seed value for random().
+ * Sets the seed value for <a href="#/p5/random">random()</a>.
  *
- * By default, random() produces different results each time the program
+ * By default, <a href="#/p5/random">random()</a> produces different results each time the program
  * is run. Set the seed parameter to a constant to return the same
  * pseudo-random numbers each time the software is run.
  *
@@ -167,7 +167,7 @@ p5.prototype.random = function(min, max) {
  *
  * Returns a random number fitting a Gaussian, or
  * normal, distribution. There is theoretically no minimum or maximum
- * value that randomGaussian() might return. Rather, there is
+ * value that <a href="#/p5/randomGaussian">randomGaussian()</a> might return. Rather, there is
  * just a very low probability that values far from the mean will be
  * returned; and a higher probability that numbers near the mean will
  * be returned.

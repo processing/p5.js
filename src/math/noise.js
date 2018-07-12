@@ -20,7 +20,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 var PERLIN_YWRAPB = 4;
 var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
@@ -47,7 +47,7 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  * <b>random()</b> function is that Perlin noise is defined in an infinite
  * n-dimensional space where each pair of coordinates corresponds to a
  * fixed semi-random value (fixed only for the lifespan of the program; see
- * the noiseSeed() function). p5.js can compute 1D, 2D and 3D noise,
+ * the <a href="#/p5/noiseSeed">noiseSeed()</a> function). p5.js can compute 1D, 2D and 3D noise,
  * depending on the number of coordinates given. The resulting value will
  * always be between 0.0 and 1.0. The noise value can be animated by moving
  * through the noise space as demonstrated in the example above. The 2nd

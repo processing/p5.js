@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Adds a value to the end of an array. Extends the length of
@@ -17,6 +17,7 @@ var p5 = require('../core/core');
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">array.push(value)</a> instead.
  * @param {Array} array Array to append
  * @param {any} value to be added to the Array
+ * @return {Array} the array that was appended to
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -39,7 +40,7 @@ p5.prototype.append = function(array, value) {
  * srcPosition and into the position specified by dstPosition. The number of
  * elements to copy is determined by length. Note that copying values
  * overwrites existing values in the destination array. To append values
- * instead of overwriting them, use concat().
+ * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
  * <br><br>
  * The simplified version with only two arguments, arrayCopy(src, dst),
  * copies an entire array to another of the same size. It is equivalent to
@@ -147,6 +148,7 @@ p5.prototype.concat = function(list0, list1) {
  * @method reverse
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">array.reverse()</a> instead.
  * @param {Array} list Array to reverse
+ * @return {Array} the reversed list
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -240,6 +242,7 @@ p5.prototype.shuffle = function(arr, bool) {
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">array.sort()</a> instead.
  * @param {Array} list Array to sort
  * @param {Integer} [count] number of elements to sort, starting from 0
+ * @return {Array} the sorted list
  *
  * @example
  * <div class = 'norender'><code>
@@ -289,6 +292,7 @@ p5.prototype.sort = function(list, count) {
  * @param {Array}  list Array to splice into
  * @param {any}    value value to be spliced in
  * @param {Integer} position in the array from which to insert data
+ * @return {Array} the list
  *
  * @example
  * <div class = 'norender'><code>

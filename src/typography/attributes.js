@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Sets the current alignment for drawing text. Accepts two
@@ -16,11 +16,11 @@ var p5 = require('../core/core');
  * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
  *
  * The horizAlign parameter is in reference to the x value
- * of the text() function, while the vertAlign parameter is
+ * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter is
  * in reference to the y value.
  *
  * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in text(). If you
+ * edge of your text to the x value you give in <a href="#/p5/text">text()</a>. If you
  * write textAlign(RIGHT, TOP), you are aligning the right edge
  * of your text to the x value and the top of edge of the text
  * to the y value.
@@ -59,7 +59,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
 
 /**
  * Sets/gets the spacing, in pixels, between lines of text. This
- * setting will be used in all subsequent calls to the text() function.
+ * setting will be used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
@@ -97,7 +97,7 @@ p5.prototype.textLeading = function(theLeading) {
 
 /**
  * Sets/gets the current font size. This size will be used in all subsequent
- * calls to the text() function. Font size is measured in pixels.
+ * calls to the <a href="#/p5/text">text()</a> function. Font size is measured in pixels.
  *
  * @method textSize
  * @param {Number} theSize the size of the letters in units of pixels

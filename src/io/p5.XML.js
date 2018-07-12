@@ -6,11 +6,11 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use
- * loadXML() to load external XML files and create XML objects.
+ * <a href="#/p5/loadXML">loadXML()</a> to load external XML files and create XML objects.
  *
  * @class p5.XML
  * @constructor
@@ -63,7 +63,7 @@ p5.XML = function() {
 
 /**
  * Gets a copy of the element's parent. Returns the parent as another
- * p5.XML object.
+ * <a href="#/p5.XML">p5.XML</a> object.
  *
  * @method getParent
  * @return {p5.XML}   element parent
@@ -210,7 +210,7 @@ p5.XML.prototype.hasChildren = function() {
 
 /**
  * Get the names of all of the element's children, and returns the names as an
- * array of Strings. This is the same as looping through and calling getName()
+ * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
  * on each child element individually.
  *
  * @method listChildren
@@ -248,7 +248,7 @@ p5.XML.prototype.listChildren = function() {
 };
 
 /**
- * Returns all of the element's children as an array of p5.XML objects. When
+ * Returns all of the element's children as an array of <a href="#/p5.XML">p5.XML</a> objects. When
  * the name parameter is specified, then it will return all children that match
  * that name.
  *
@@ -361,11 +361,11 @@ p5.XML.prototype.getChild = function(param) {
 /**
  * Appends a new child to the element. The child can be specified with
  * either a String, which will be used as the new tag's name, or as a
- * reference to an existing p5.XML object.
- * A reference to the newly created child is returned as an p5.XML object.
+ * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
+ * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
  *
  * @method addChild
- * @param {p5.XML} node a p5.XML Object which will be the child to be added
+ * @param {p5.XML} node a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -818,7 +818,7 @@ p5.XML.prototype._setCont = function(content) {
 /**
  * This method is called while the parsing of XML (when loadXML() is
  * called). The XML node is passed and its attributes are stored in the
- * p5.XML's attribute Object.
+ * <a href="#/p5.XML">p5.XML</a>'s attribute Object.
  *
  */
 p5.XML.prototype._setAttributes = function(node) {

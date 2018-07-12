@@ -4,19 +4,19 @@
  * @for p5.TypedDict
  * @requires core
  *
- * This module defines the p5 methods for the p5 Dictionary classes
- * these classes StringDict and NumberDict are for storing and working
- * with key, value pairs
+ * This module defines the p5 methods for the p5 Dictionary classes.
+ * The classes StringDict and NumberDict are for storing and working
+ * with key-value pairs.
  */
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  *
- * Creates a new instance of p5.StringDict using the key, value pair
- * or object you provide.
+ * Creates a new instance of p5.StringDict using the key-value pair
+ * or the object you provide.
  *
  * @method createStringDict
  * @for p5
@@ -30,6 +30,9 @@ var p5 = require('../core/core');
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   print(myDictionary.hasKey('p5')); // logs true to console
+ *
+ *   var anotherDictionary = createStringDict({ happy: 'coding' });
+ *   print(anotherDictionary.hasKey('happy')); // logs true to console
  * }
  * </code></div>
  */
@@ -46,7 +49,7 @@ p5.prototype.createStringDict = function(key, value) {
 
 /**
  *
- * Creates a new instance of p5.NumberDict using the key, value pair
+ * Creates a new instance of <a href="#/p5.NumberDict">p5.NumberDict</a> using the key-value pair
  * or object you provide.
  *
  * @method createNumberDict
@@ -61,6 +64,9 @@ p5.prototype.createStringDict = function(key, value) {
  * function setup() {
  *   var myDictionary = createNumberDict(100, 42);
  *   print(myDictionary.hasKey(100)); // logs true to console
+ *
+ *   var anotherDictionary = createNumberDict({ 200: 84 });
+ *   print(anotherDictionary.hasKey(200)); // logs true to console
  * }
  * </code></div>
  */
@@ -77,8 +83,8 @@ p5.prototype.createNumberDict = function(key, value) {
 
 /**
  *
- * Base class for all p5.Dictionary types. More specifically
- * typed Dictionary objects inherit from this
+ * Base class for all p5.Dictionary types. Specifically
+ * typed Dictionary classes inherit from this class.
  *
  * @class p5.TypedDict
  *
@@ -95,10 +101,10 @@ p5.TypedDict = function(key, value) {
 };
 
 /**
- * Returns the number of key-value pairs currently in Dictionary object
+ * Returns the number of key-value pairs currently stored in the Dictionary.
  *
  * @method size
- * @return {Integer} the number of key-value pairs in Dictionary object
+ * @return {Integer} the number of key-value pairs in the Dictionary
  *
  * @example
  * <div class="norender">
@@ -107,7 +113,7 @@ p5.TypedDict = function(key, value) {
  *   var myDictionary = createNumberDict(1, 10);
  *   myDictionary.create(2, 20);
  *   myDictionary.create(3, 30);
- *   print(myDictionary.size()); // value of amt is 3
+ *   print(myDictionary.size()); // logs 3 to the console
  * }
  * </code></div>
  *
@@ -117,11 +123,11 @@ p5.TypedDict.prototype.size = function() {
 };
 
 /**
- * Returns true if key exists in Dictionary
- * otherwise returns false
+ * Returns true if the given key exists in the Dictionary,
+ * otherwise returns false.
  *
  * @method hasKey
- * @param {Number|String} key that you want to access
+ * @param {Number|String} key that you want to look up
  * @return {Boolean} whether that key exists in Dictionary
  *
  * @example
@@ -140,10 +146,10 @@ p5.TypedDict.prototype.hasKey = function(key) {
 };
 
 /**
- * Returns value stored at supplied key.
+ * Returns the value stored at the given key.
  *
  * @method get
- * @param {Number|String} key that you want to access
+ * @param {Number|String} the key you want to access
  * @return {Number|String} the value stored at that key
  *
  * @example
@@ -167,8 +173,8 @@ p5.TypedDict.prototype.get = function(key) {
 };
 
 /**
- * Changes the value of key if in it already exists in
- * in the Dictionary otherwise makes a new key-value pair
+ * Updates the value associated with the given key in case it already exists
+ * in the Dictionary. Otherwise a new key-value pair is added.
  *
  * @method set
  * @param {Number|String} key
@@ -180,8 +186,7 @@ p5.TypedDict.prototype.get = function(key) {
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   myDictionary.set('p5', 'JS');
- *   myDictionary.print();
- *   // above logs "key: p5 - value: JS" to console
+ *   myDictionary.print(); // logs "key: p5 - value: JS" to console
  * }
  * </code></div>
  *
@@ -196,7 +201,7 @@ p5.TypedDict.prototype.set = function(key, value) {
 };
 
 /**
- * private helper function to handle the user passing objects in
+ * private helper function to handle the user passing in objects
  * during construction or calls to create()
  */
 
@@ -207,7 +212,7 @@ p5.TypedDict.prototype._addObj = function(obj) {
 };
 
 /**
- * Creates a key-value pair in the Dictionary
+ * Creates a new key-value pair in the Dictionary.
  *
  * @method create
  * @param {Number|String} key
@@ -243,7 +248,8 @@ p5.TypedDict.prototype.create = function(key, value) {
 };
 
 /**
- * Empties Dictionary of all key-value pairs
+ * Removes all previously stored key-value pairs from the Dictionary.
+ *
  * @method clear
  * @example
  * <div class="norender">
@@ -263,7 +269,7 @@ p5.TypedDict.prototype.clear = function() {
 };
 
 /**
- * Removes a key-value pair in the Dictionary
+ * Removes the key-value pair stored at the given key from the Dictionary.
  *
  * @method remove
  * @param {Number|String} key for the pair to remove
@@ -288,12 +294,12 @@ p5.TypedDict.prototype.remove = function(key) {
   if (this.data.hasOwnProperty(key)) {
     delete this.data[key];
   } else {
-    throw key + ' does not exist in this Dictionary';
+    throw new Error(key + ' does not exist in this Dictionary');
   }
 };
 
 /**
- * Logs the list of items currently in the Dictionary to the console
+ * Logs the set of items currently stored in the Dictionary to the console.
  *
  * @method print
  *
@@ -317,8 +323,7 @@ p5.TypedDict.prototype.print = function() {
 };
 
 /**
- * Converts the Dictionary into a CSV file for local
- * storage.
+ * Converts the Dictionary into a CSV file for local download.
  *
  * @method saveTable
  * @example
@@ -329,9 +334,9 @@ p5.TypedDict.prototype.print = function() {
  *   .mousePressed(function() {
  *     createStringDict({
  *       john: 1940,
-      paul: 1942,
-      george: 1943,
-      ringo: 1940
+ *       paul: 1942,
+ *       george: 1943,
+ *       ringo: 1940
  *     }).saveTable('beatles');
  *   });
  * </code>
@@ -350,8 +355,7 @@ p5.TypedDict.prototype.saveTable = function(filename) {
 };
 
 /**
- * Converts the Dictionary into a JSON file for local
- * storage.
+ * Converts the Dictionary into a JSON file for local download.
  *
  * @method saveJSON
  * @example
@@ -362,9 +366,9 @@ p5.TypedDict.prototype.saveTable = function(filename) {
  *   .mousePressed(function() {
  *     createStringDict({
  *       john: 1940,
-      paul: 1942,
-      george: 1943,
-      ringo: 1940
+ *       paul: 1942,
+ *       george: 1943,
+ *       ringo: 1940
  *     }).saveJSON('beatles');
  *   });
  * </code>
@@ -386,8 +390,7 @@ p5.TypedDict.prototype._validate = function(value) {
 
 /**
  *
- * A  Dictionary class for Strings.
- *
+ * A simple Dictionary class for Strings.
  *
  * @class p5.StringDict
  * @extends p5.TypedDict
@@ -407,7 +410,6 @@ p5.StringDict.prototype._validate = function(value) {
 /**
  *
  * A simple Dictionary class for Numbers.
- *
  *
  * @class p5.NumberDict
  * @extends p5.TypedDict
@@ -430,19 +432,19 @@ p5.NumberDict.prototype._validate = function(value) {
 };
 
 /**
- * Add to a value stored at a certain key
- * The sum is stored in that location in the Dictionary.
+ * Add the given number to the value currently stored at the given key.
+ * The sum then replaces the value previously stored in the Dictionary.
  *
  * @method add
- * @param {Number} Key for value you wish to add to
- * @param {Number} Amount to add to the value
+ * @param {Number} Key for the value you wish to add to
+ * @param {Number} Number to add to the value
  * @example
  * <div class='norender'>
  * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 5);
  *   myDictionary.add(2, 2);
- *   console.log(myDictionary.get(2)); // logs 7 to console.
+ *   print(myDictionary.get(2)); // logs 7 to console.
  * }
  * </code></div>
  *
@@ -458,19 +460,19 @@ p5.NumberDict.prototype.add = function(key, amount) {
 };
 
 /**
- * Subtract from a value stored at a certain key
- * The difference is stored in that location in the Dictionary.
+ * Subtract the given number from the value currently stored at the given key.
+ * The difference then replaces the value previously stored in the Dictionary.
  *
  * @method sub
- * @param {Number} Key for value you wish to subtract from
- * @param {Number} Amount to subtract from the value
+ * @param {Number} Key for the value you wish to subtract from
+ * @param {Number} Number to subtract from the value
  * @example
  * <div class='norender'>
  * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 5);
  *   myDictionary.sub(2, 2);
- *   console.log(myDictionary.get(2)); // logs 3 to console.
+ *   print(myDictionary.get(2)); // logs 3 to console.
  * }
  * </code></div>
  *
@@ -482,8 +484,8 @@ p5.NumberDict.prototype.sub = function(key, amount) {
 };
 
 /**
- * Multiply a value stored at a certain key
- * The product is stored in that location in the Dictionary.
+ * Multiply the given number with the value currently stored at the given key.
+ * The product then replaces the value previously stored in the Dictionary.
  *
  * @method mult
  * @param {Number} Key for value you wish to multiply
@@ -494,7 +496,7 @@ p5.NumberDict.prototype.sub = function(key, amount) {
  * function setup() {
  *   var myDictionary = createNumberDict(2, 4);
  *   myDictionary.mult(2, 2);
- *   console.log(myDictionary.get(2)); // logs 8 to console.
+ *   print(myDictionary.get(2)); // logs 8 to console.
  * }
  * </code></div>
  *
@@ -510,8 +512,8 @@ p5.NumberDict.prototype.mult = function(key, amount) {
 };
 
 /**
- * Divide a value stored at a certain key
- * The quotient is stored in that location in the Dictionary.
+ * Divide the given number with the value currently stored at the given key.
+ * The quotient then replaces the value previously stored in the Dictionary.
  *
  * @method div
  * @param {Number} Key for value you wish to divide
@@ -522,7 +524,7 @@ p5.NumberDict.prototype.mult = function(key, amount) {
  * function setup() {
  *   var myDictionary = createNumberDict(2, 8);
  *   myDictionary.div(2, 2);
- *   console.log(myDictionary.get(2)); // logs 4 to console.
+ *   print(myDictionary.get(2)); // logs 4 to console.
  * }
  * </code></div>
  *
@@ -546,7 +548,9 @@ p5.NumberDict.prototype.div = function(key, amount) {
 
 p5.NumberDict.prototype._valueTest = function(flip) {
   if (Object.keys(this.data).length === 0) {
-    throw 'Unable to search for a minimum or maximum value on an empty NumberDict';
+    throw new Error(
+      'Unable to search for a minimum or maximum value on an empty NumberDict'
+    );
   } else if (Object.keys(this.data).length === 1) {
     return this.data[Object.keys(this.data)[0]];
   } else {
@@ -561,7 +565,7 @@ p5.NumberDict.prototype._valueTest = function(flip) {
 };
 
 /**
- * Return the lowest value.
+ * Return the lowest number currently stored in the Dictionary.
  *
  * @method minValue
  * @return {Number}
@@ -582,7 +586,7 @@ p5.NumberDict.prototype.minValue = function() {
 };
 
 /**
- * Return the highest value.
+ * Return the highest number currently stored in the Dictionary.
  *
  * @method maxValue
  * @return {Number}
@@ -611,7 +615,7 @@ p5.NumberDict.prototype.maxValue = function() {
 
 p5.NumberDict.prototype._keyTest = function(flip) {
   if (Object.keys(this.data).length === 0) {
-    throw 'Unable to use minValue on an empty NumberDict';
+    throw new Error('Unable to use minValue on an empty NumberDict');
   } else if (Object.keys(this.data).length === 1) {
     return Object.keys(this.data)[0];
   } else {
@@ -626,7 +630,7 @@ p5.NumberDict.prototype._keyTest = function(flip) {
 };
 
 /**
- * Return the lowest key.
+ * Return the lowest key currently used in the Dictionary.
  *
  * @method minKey
  * @return {Number}
@@ -647,7 +651,7 @@ p5.NumberDict.prototype.minKey = function() {
 };
 
 /**
- * Return the highest key.
+ * Return the highest key currently used in the Dictionary.
  *
  * @method maxKey
  * @return {Number}

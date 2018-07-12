@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -160,7 +160,7 @@ p5.prototype.resetMatrix = function() {
 
 /**
  * Rotates a shape the amount specified by the angle parameter. This
- * function accounts for angleMode, so angles can be entered in either
+ * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles can be entered in either
  * RADIANS or DEGREES.
  * <br><br>
  * Objects are always rotated around their relative position to the
@@ -168,11 +168,11 @@ p5.prototype.resetMatrix = function() {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when draw() begins again.
+ * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  * <br><br>
- * Technically, rotate() multiplies the current transformation matrix
+ * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
- * the push() and pop().
+ * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -297,11 +297,11 @@ p5.prototype.rotateZ = function(angle) {
  * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function multiply the effect. For example, calling scale(2.0)
- * and then scale(1.5) is the same as scale(3.0). If scale() is called
- * within draw(), the transformation is reset when the loop begins again.
+ * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
+ * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
  * <br><br>
  * Using this function with the z parameter is only available in WEBGL mode.
- * This function can be further controlled with push() and pop().
+ * This function can be further controlled with <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method scale
  * @param  {Number|p5.Vector|Number[]} s
@@ -314,9 +314,9 @@ p5.prototype.rotateZ = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(width / 2, height / 2);
- * rotate(PI / 3.0);
- * rect(-26, -26, 52, 52);
+ * rect(30, 20, 50, 50);
+ * scale(0.5);
+ * rect(30, 20, 50, 50);
  * </code>
  * </div>
  *
@@ -372,12 +372,12 @@ p5.prototype.scale = function(x, y, z) {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
- * If shearX() is called within the draw(), the transformation is reset when
+ * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
  * <br><br>
- * Technically, shearX() multiplies the current transformation matrix by a
+ * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
- * push() and pop() functions.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
  *
  * @method shearX
  * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -411,12 +411,12 @@ p5.prototype.shearX = function(angle) {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
- * shearY() is called within the draw(), the transformation is reset when
+ * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
  * <br><br>
- * Technically, shearY() multiplies the current transformation matrix by a
+ * Technically, <a href="#/p5/shearY">shearY()</a> multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
- * push() and pop() functions.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
  *
  * @method shearY
  * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -449,9 +449,9 @@ p5.prototype.shearY = function(angle) {
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
  * calling translate(50, 0) and then translate(20, 0) is the same as
- * translate(70, 0). If translate() is called within draw(), the
+ * translate(70, 0). If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
  * transformation is reset when the loop begins again. This function can be
- * further controlled by using push() and pop().
+ * further controlled by using <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method translate
  * @param  {Number} x left/right translation
