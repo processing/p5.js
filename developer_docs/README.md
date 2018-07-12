@@ -66,7 +66,7 @@ $ npm install
 
 This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
 
-- [Mocha](http://visionmedia.github.io/mocha/), a powerful testing framework that executes individual test files which are specific to p5.js 
+- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js 
 - [PhantomJS](http://phantomjs.org/download.html), a "headless browser" that allows tests to check browser-related functionality without actually opening up a browser window
 - [grunt-mocha](https://github.com/kmiyashiro/grunt-mocha), a plugin which integrates Mocha with the [Grunt](https://gruntjs.com/) task runner
 
