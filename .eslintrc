@@ -37,6 +37,7 @@
     "no-undef": 2,
     "no-unused-vars": ["error", { "args": "none" }],
     "no-empty": ["error", { "allowEmptyCatch": true }],
-    "no-console": "off"
+    "no-console": "off",
+    "no-restricted-globals": ["error", "event"]
   }
 }
