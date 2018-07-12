@@ -1,6 +1,6 @@
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Allows rotation of a 3D sketch by dragging the mouse. As the mouse is dragged

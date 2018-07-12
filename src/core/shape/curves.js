@@ -7,8 +7,8 @@
 
 'use strict';
 
-var p5 = require('./core');
-require('./error_helpers');
+var p5 = require('../main');
+require('../error_helpers');
 
 /**
  * Draws a cubic Bezier curve on the screen. These curves are defined by a
