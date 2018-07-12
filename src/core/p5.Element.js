@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,

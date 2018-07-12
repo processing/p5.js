@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('../core/error_helpers');
 
 //return p5; //LM is this a mistake?

@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/day">day()</a> function
