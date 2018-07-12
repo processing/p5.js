@@ -138,7 +138,6 @@ The overarching p5.js project includes repositories other than this one.
 - [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart). 
 - [sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
 - [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
-- [p5.js-video](https://github.com/scottgarner/p5.js-video): Note that this is not a toolkit for working with video! Rather, this repository contains the code for the [Hello p5.js! introductory video](http://hello.p5js.org/). It is maintained by [Scott Garner](https://github.com/scottgarner).
 
 # Miscellaneous
 
