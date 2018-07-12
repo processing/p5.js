@@ -22,11 +22,35 @@ module.exports = {
   WEBGL: 'webgl',
 
   // ENVIRONMENT
+  /**
+   * @property {String} ARROW
+   * @final
+   */
   ARROW: 'default',
+  /**
+   * @property {String} CROSS
+   * @final
+   */
   CROSS: 'crosshair',
+  /**
+   * @property {String} HAND
+   * @final
+   */
   HAND: 'pointer',
+  /**
+   * @property {String} MOVE
+   * @final
+   */
   MOVE: 'move',
+  /**
+   * @property {String} TEXT
+   * @final
+   */
   TEXT: 'text',
+  /**
+   * @property {String} WAIT
+   * @final
+   */
   WAIT: 'wait',
 
   // TRIGONOMETRY
@@ -323,6 +347,10 @@ module.exports = {
   HSL: 'hsl',
 
   // DOM EXTENSION
+  /**
+   * @property {String} AUTO
+   * @final
+   */
   AUTO: 'auto',
 
   // INPUT
@@ -496,6 +524,13 @@ module.exports = {
   FILL: 'fill',
   TEXTURE: 'texture',
   IMMEDIATE: 'immediate',
+
+  //WEBGL TEXTURE WRAP AND FILTERING
+  // LINEAR already exists above
+  NEAREST: 'nearest',
+  REPEAT: 'repeat',
+  CLAMP: 'clamp',
+  MIRROR: 'mirror',
 
   // DEVICE-ORIENTATION
   /**

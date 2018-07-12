@@ -923,7 +923,6 @@ p5.Table.prototype.removeColumn = function(c) {
     // find the position of c in the columns
     cString = c;
     cNumber = this.columns.indexOf(c);
-    console.log('string');
   } else {
     cNumber = c;
     cString = this.columns[c];

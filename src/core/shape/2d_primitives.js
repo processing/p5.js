@@ -83,6 +83,9 @@ require('../error_helpers');
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
+
+  // if the current stroke and fill settings wouldn't result in something
+  // visible, exit immediately
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -179,6 +182,12 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
 
+  // if the current stroke and fill settings wouldn't result in something
+  // visible, exit immediately
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
+    return this;
+  }
+
   // p5 supports negative width and heights for rects
   if (w < 0) {
     w = Math.abs(w);
@@ -191,10 +200,8 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
     h = Math.abs(h);
   }
 
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
-  }
+  var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
   return this;
 };
