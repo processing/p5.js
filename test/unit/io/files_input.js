@@ -240,6 +240,15 @@ suite('Files', function() {
       });
     });
 
+    test('should include empty strings', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/empty_lines.txt', resolve, reject);
+      }).then(function(data) {
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 6, 'length of data is 6');
+      });
+    });
+
     test('should call error callback function if provided', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadStrings(
