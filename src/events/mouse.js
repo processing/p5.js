@@ -288,7 +288,7 @@ p5.prototype.pwinMouseX = 0;
 p5.prototype.pwinMouseY = 0;
 
 /**
- * Processing automatically tracks if the mouse button is pressed and which
+ * p5 automatically tracks if the mouse button is pressed and which
  * button is pressed. The value of the system variable mouseButton is either
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
@@ -328,7 +328,8 @@ p5.prototype.mouseButton = 0;
 
 /**
  * The boolean system variable mouseIsPressed is true if the mouse is pressed
- * and false if not.
+ * and false if not. On mobile or tablet devices with touch-screens,
+ * mouseIsPressed will also be true if the user is touching the screen.
  *
  * @property {Boolean} mouseIsPressed
  * @readOnly
@@ -461,8 +462,8 @@ p5.prototype._setMouseButton = function(e) {
 
 /**
  * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
- * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
- * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
+ * a mouse button is pressed. On touch screen devices, <a href="#/p5/mouseDragged">mouseDragged()</a> is
+ * only called if no <a href="#/p5/touchMoved">touchMoved()</a> function is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -520,11 +521,6 @@ p5.prototype._onmousemove = function(e) {
       if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchMoved === 'function') {
-      executeDefault = context.touchMoved(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
     }
   }
 };
@@ -532,9 +528,9 @@ p5.prototype._onmousemove = function(e) {
 /**
  * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
  * is pressed. The mouseButton variable (see the related reference entry)
- * can be used to determine which button has been pressed. If no
- * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
- * called instead if it is defined.<br><br>
+ * can be used to determine which button has been pressed.
+ * On touch screen devices, <a href="#/p5/mousePressed">mousePressed()</a> is
+ * only called if no <a href="#/p5/touchStarted">touchStarted()</a> function is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -587,18 +583,13 @@ p5.prototype._onmousedown = function(e) {
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.touchStarted === 'function') {
-    executeDefault = context.touchStarted(e);
-    if (executeDefault === false) {
-      e.preventDefault();
-    }
   }
 };
 
 /**
  * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
- * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
- * function will be called instead if it is defined.<br><br>
+ * released. On touch screen devices, <a href="#/p5/mouseReleased">mouseReleased()</a> is
+ * only called if no <a href="#/p5/touchEnded">touchEnded()</a> function is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -651,11 +642,6 @@ p5.prototype._onmouseup = function(e) {
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.touchEnded === 'function') {
-    executeDefault = context.touchEnded(e);
-    if (executeDefault === false) {
-      e.preventDefault();
-    }
   }
 };
 
@@ -667,7 +653,9 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * pressed and then released.<br><br>
  * Browsers handle clicks differently, so this function is only guaranteed to be
  * run when the left mouse button is clicked. To handle other mouse buttons
- * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
+ * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.
+ * On touch screen devices, <a href="#/p5/mouseClicked">mouseClicked()</a> may not be called
+ * at all.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
