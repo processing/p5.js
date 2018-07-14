@@ -313,8 +313,7 @@ p5.prototype.beginShape = function(kind) {
  * @alt
  * crescent-shaped line in middle of canvas. Points facing left.
  * white crescent shape in middle of canvas. Points facing left.
-/**
-
+ */
 /**
  * @method bezierVertex
  * @param  {Number} x2
@@ -487,13 +486,13 @@ p5.prototype.bezierVertex = function() {
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
  *
  */
-p5.prototype.curveVertex = function(x, y) {
+p5.prototype.curveVertex = function() {
   p5._validateParameters('curveVertex', arguments);
   if (this._renderer.isP3D) {
     this._renderer.curveVertex.apply(this._renderer, arguments);
   } else {
     isCurve = true;
-    this.vertex(x, y);
+    this.vertex(arguments[0], arguments[1]);
   }
   return this;
 };
@@ -759,7 +758,7 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * backwards s-shaped black line with the same s-shaped line in postive z-axis.
  */
-p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
+p5.prototype.quadraticVertex = function() {
   p5._validateParameters('quadraticVertex', arguments);
   if (this._renderer.isP3D) {
     this._renderer.quadraticVertex.apply(this._renderer, arguments);
@@ -768,10 +767,10 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
     // array for inside drawing
     if (this._contourInited) {
       var pt = {};
-      pt.x = cx;
-      pt.y = cy;
-      pt.x3 = x3;
-      pt.y3 = y3;
+      pt.x = arguments[0];
+      pt.y = arguments[1];
+      pt.x3 = arguments[2];
+      pt.y3 = arguments[3];
       pt.type = constants.QUADRATIC;
       this._contourVertices.push(pt);
 
