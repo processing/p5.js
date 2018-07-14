@@ -284,8 +284,8 @@ p5.prototype.beginShape = function(kind) {
  * @method bezierVertex
  * @param  {Number} x2 x-coordinate for the first control point
  * @param  {Number} y2 y-coordinate for the first control point
- * @param  {Number} x3 x-coordinate for the first control point
- * @param  {Number} y3 y-coordinate for the first control point
+ * @param  {Number} x3 x-coordinate for the second control point
+ * @param  {Number} y3 y-coordinate for the second control point
  * @param  {Number} x4 x-coordinate for the anchor point
  * @param  {Number} y4 y-coordinate for the anchor point
  * @chainable
@@ -327,6 +327,41 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} y4
  * @param  {Number} [z4] z-coordinate for the anchor point (for WebGL mode)
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ * function draw() {
+ *   orbitControl();
+ *   background(50);
+ *   strokeWeight(4);
+ *   stroke(255);
+ *   point(-25, 30);
+ *   point(25, 30);
+ *   point(25, -30);
+ *   point(-25, -30);
+ *
+ *   strokeWeight(1);
+ *   noFill();
+ *
+ *   beginShape();
+ *   vertex(-25, 30);
+ *   bezierVertex(25, 30, 25, -30, -25, -30);
+ *   endShape();
+ *
+ *   beginShape();
+ *   vertex(-25, 30, 20);
+ *   bezierVertex(25, 30, 20, 25, -30, 20, -25, -30, 20);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * crescent shape in middle of canvas with another crescent shape on positive z-axis.
  */
 
 p5.prototype.bezierVertex = function() {

@@ -190,7 +190,6 @@ p5.RendererGL.prototype.endShape = function(
   this.immediateMode.vertexColors.length = 0;
   this.immediateMode.uvCoords.length = 0;
   this.isImmediateDrawing = false;
-  this.isImmediateDrawing = false;
   this.isBezier = false;
   this.isQuadratic = false;
   this.isCurve = false;
