@@ -1203,4 +1203,323 @@ p5.RendererGL.prototype.line = function() {
   return this;
 };
 
+p5.RendererGL.prototype.bezierVertex = function() {
+  if (this.immediateMode._bezierVertex.length === 0) {
+    throw 'vertex() must be used once before calling bezierVertex()';
+  } else {
+    var w_x = [];
+    var w_y = [];
+    var w_z = [];
+    var t, _x, _y, _z, i;
+
+    t = parseFloat(0.0);
+
+    if (
+      this._lookUpTableBezier.length === 0 ||
+      this._lookUpTableBezier[this._lookUpTableBezier.length - 1] !==
+        this._pInst._curveDetail
+    ) {
+      this._lookUpTableBezier = [];
+      var step = 1 / this._pInst._curveDetail;
+      var start = 0;
+      var end = 1;
+      var j = 0;
+      while (start < 1) {
+        t = parseFloat(start.toFixed(6));
+        this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+        if (end.toFixed(6) === step.toFixed(6)) {
+          t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
+          ++j;
+          this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+          break;
+        }
+        start += step;
+        end -= step;
+        ++j;
+      }
+
+      this._lookUpTableBezier.push(this._pInst._curveDetail);
+    }
+
+    var LUTLength = this._lookUpTableBezier.length;
+
+    if (arguments.length === 6) {
+      this.isBezier = true;
+
+      w_x = [
+        this.immediateMode._bezierVertex[0],
+        arguments[0],
+        arguments[2],
+        arguments[4]
+      ];
+      w_y = [
+        this.immediateMode._bezierVertex[1],
+        arguments[1],
+        arguments[3],
+        arguments[5]
+      ];
+
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableBezier[i][0] +
+          w_x[1] * this._lookUpTableBezier[i][1] +
+          w_x[2] * this._lookUpTableBezier[i][2] +
+          w_x[3] * this._lookUpTableBezier[i][3];
+        _y =
+          w_y[0] * this._lookUpTableBezier[i][0] +
+          w_y[1] * this._lookUpTableBezier[i][1] +
+          w_y[2] * this._lookUpTableBezier[i][2] +
+          w_y[3] * this._lookUpTableBezier[i][3];
+        this.vertex(_x, _y);
+      }
+      this.immediateMode._bezierVertex[0] = arguments[4];
+      this.immediateMode._bezierVertex[1] = arguments[5];
+    } else if (arguments.length === 9) {
+      this.isBezier = true;
+
+      w_x = [
+        this.immediateMode._bezierVertex[0],
+        arguments[0],
+        arguments[3],
+        arguments[6]
+      ];
+      w_y = [
+        this.immediateMode._bezierVertex[1],
+        arguments[1],
+        arguments[4],
+        arguments[7]
+      ];
+      w_z = [
+        this.immediateMode._bezierVertex[2],
+        arguments[2],
+        arguments[5],
+        arguments[8]
+      ];
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableBezier[i][0] +
+          w_x[1] * this._lookUpTableBezier[i][1] +
+          w_x[2] * this._lookUpTableBezier[i][2] +
+          w_x[3] * this._lookUpTableBezier[i][3];
+        _y =
+          w_y[0] * this._lookUpTableBezier[i][0] +
+          w_y[1] * this._lookUpTableBezier[i][1] +
+          w_y[2] * this._lookUpTableBezier[i][2] +
+          w_y[3] * this._lookUpTableBezier[i][3];
+        _z =
+          w_z[0] * this._lookUpTableBezier[i][0] +
+          w_z[1] * this._lookUpTableBezier[i][1] +
+          w_z[2] * this._lookUpTableBezier[i][2] +
+          w_z[3] * this._lookUpTableBezier[i][3];
+        this.vertex(_x, _y, _z);
+      }
+      this.immediateMode._bezierVertex[0] = arguments[6];
+      this.immediateMode._bezierVertex[1] = arguments[7];
+      this.immediateMode._bezierVertex[2] = arguments[8];
+    }
+  }
+};
+
+p5.RendererGL.prototype.quadraticVertex = function() {
+  if (this.immediateMode._quadraticVertex.length === 0) {
+    throw 'vertex() must be used once before calling quadraticVertex()';
+  } else {
+    var w_x = [];
+    var w_y = [];
+    var w_z = [];
+    var t, _x, _y, _z, i;
+
+    t = parseFloat(0.0);
+
+    if (
+      this._lookUpTableQuadratic.length === 0 ||
+      this._lookUpTableQuadratic[this._lookUpTableQuadratic.length - 1] !==
+        this._pInst._curveDetail
+    ) {
+      this._lookUpTableQuadratic = [];
+      var step = 1 / this._pInst._curveDetail;
+      var start = 0;
+      var end = 1;
+      var j = 0;
+      while (start < 1) {
+        t = parseFloat(start.toFixed(6));
+        this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
+        if (end.toFixed(6) === step.toFixed(6)) {
+          t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
+          ++j;
+          this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
+          break;
+        }
+        start += step;
+        end -= step;
+        ++j;
+      }
+
+      this._lookUpTableQuadratic.push(this._pInst._curveDetail);
+    }
+
+    var LUTLength = this._lookUpTableQuadratic.length;
+
+    if (arguments.length === 4) {
+      this.isQuadratic = true;
+
+      w_x = [
+        this.immediateMode._quadraticVertex[0],
+        arguments[0],
+        arguments[2]
+      ];
+      w_y = [
+        this.immediateMode._quadraticVertex[1],
+        arguments[1],
+        arguments[3]
+      ];
+
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableQuadratic[i][0] +
+          w_x[1] * this._lookUpTableQuadratic[i][1] +
+          w_x[2] * this._lookUpTableQuadratic[i][2];
+        _y =
+          w_y[0] * this._lookUpTableQuadratic[i][0] +
+          w_y[1] * this._lookUpTableQuadratic[i][1] +
+          w_y[2] * this._lookUpTableQuadratic[i][2];
+        this.vertex(_x, _y);
+      }
+
+      this.immediateMode._quadraticVertex[0] = arguments[2];
+      this.immediateMode._quadraticVertex[1] = arguments[3];
+    } else if (arguments.length === 6) {
+      this.isQuadratic = true;
+
+      w_x = [
+        this.immediateMode._quadraticVertex[0],
+        arguments[0],
+        arguments[3]
+      ];
+      w_y = [
+        this.immediateMode._quadraticVertex[1],
+        arguments[1],
+        arguments[4]
+      ];
+      w_z = [
+        this.immediateMode._quadraticVertex[2],
+        arguments[2],
+        arguments[5]
+      ];
+
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableQuadratic[i][0] +
+          w_x[1] * this._lookUpTableQuadratic[i][1] +
+          w_x[2] * this._lookUpTableQuadratic[i][2];
+        _y =
+          w_y[0] * this._lookUpTableQuadratic[i][0] +
+          w_y[1] * this._lookUpTableQuadratic[i][1] +
+          w_y[2] * this._lookUpTableQuadratic[i][2];
+        _z =
+          w_z[0] * this._lookUpTableQuadratic[i][0] +
+          w_z[1] * this._lookUpTableQuadratic[i][1] +
+          w_z[2] * this._lookUpTableQuadratic[i][2];
+        this.vertex(_x, _y, _z);
+      }
+
+      this.immediateMode._quadraticVertex[0] = arguments[3];
+      this.immediateMode._quadraticVertex[1] = arguments[4];
+      this.immediateMode._quadraticVertex[2] = arguments[5];
+    }
+  }
+};
+
+p5.RendererGL.prototype.curveVertex = function() {
+  var w_x = [];
+  var w_y = [];
+  var w_z = [];
+  var t, _x, _y, _z, i;
+  t = parseFloat(0.0);
+
+  if (
+    this._lookUpTableBezier.length === 0 ||
+    this._lookUpTableBezier[this._lookUpTableBezier.length - 1] !==
+      this._pInst._curveDetail
+  ) {
+    this._lookUpTableBezier = [];
+    var step = 1 / this._pInst._curveDetail;
+    var start = 0;
+    var end = 1;
+    var j = 0;
+    while (start < 1) {
+      t = parseFloat(start.toFixed(6));
+      this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+      if (end.toFixed(6) === step.toFixed(6)) {
+        t = parseFloat(end.toFixed(6)) + parseFloat(start.toFixed(6));
+        ++j;
+        this._lookUpTableBezier[j] = this._bezierCoefficients(t);
+        break;
+      }
+      start += step;
+      end -= step;
+      ++j;
+    }
+    this._lookUpTableBezier.push(this._pInst._curveDetail);
+  }
+
+  var LUTLength = this._lookUpTableBezier.length;
+
+  if (arguments.length === 2) {
+    this.immediateMode._curveVertex_x.push(arguments[0]);
+    this.immediateMode._curveVertex_y.push(arguments[1]);
+    if (this.immediateMode._curveVertex_x.length === 4) {
+      this.isCurve = true;
+      w_x = this.Bezier2Catmull(this.immediateMode._curveVertex_x);
+      w_y = this.Bezier2Catmull(this.immediateMode._curveVertex_y);
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableBezier[i][0] +
+          w_x[1] * this._lookUpTableBezier[i][1] +
+          w_x[2] * this._lookUpTableBezier[i][2] +
+          w_x[3] * this._lookUpTableBezier[i][3];
+        _y =
+          w_y[0] * this._lookUpTableBezier[i][0] +
+          w_y[1] * this._lookUpTableBezier[i][1] +
+          w_y[2] * this._lookUpTableBezier[i][2] +
+          w_y[3] * this._lookUpTableBezier[i][3];
+        this.vertex(_x, _y);
+      }
+      this.immediateMode._curveVertex_x.shift(1);
+      this.immediateMode._curveVertex_y.shift(1);
+    }
+  } else if (arguments.length === 3) {
+    this.immediateMode._curveVertex_x.push(arguments[0]);
+    this.immediateMode._curveVertex_y.push(arguments[1]);
+    this.immediateMode._curveVertex_z.push(arguments[2]);
+    if (this.immediateMode._curveVertex_x.length === 4) {
+      this.isCurve = true;
+      w_x = this.Bezier2Catmull(this.immediateMode._curveVertex_x);
+      w_y = this.Bezier2Catmull(this.immediateMode._curveVertex_y);
+      w_z = this.Bezier2Catmull(this.immediateMode._curveVertex_z);
+      for (i = 0; i < LUTLength - 1; i++) {
+        _x =
+          w_x[0] * this._lookUpTableBezier[i][0] +
+          w_x[1] * this._lookUpTableBezier[i][1] +
+          w_x[2] * this._lookUpTableBezier[i][2] +
+          w_x[3] * this._lookUpTableBezier[i][3];
+        _y =
+          w_y[0] * this._lookUpTableBezier[i][0] +
+          w_y[1] * this._lookUpTableBezier[i][1] +
+          w_y[2] * this._lookUpTableBezier[i][2] +
+          w_y[3] * this._lookUpTableBezier[i][3];
+        _z =
+          w_z[0] * this._lookUpTableBezier[i][0] +
+          w_z[1] * this._lookUpTableBezier[i][1] +
+          w_z[2] * this._lookUpTableBezier[i][2] +
+          w_z[3] * this._lookUpTableBezier[i][3];
+        this.vertex(_x, _y, _z);
+      }
+      this.immediateMode._curveVertex_x.shift(1);
+      this.immediateMode._curveVertex_y.shift(1);
+      this.immediateMode._curveVertex_z.shift(1);
+    }
+  }
+};
+
 module.exports = p5;
