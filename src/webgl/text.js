@@ -73,6 +73,8 @@ function ImageInfos(width, height) {
   };
 }
 
+var SQRT3 = Math.sqrt(3);
+
 var FontInfo = function(font) {
   this.font = font;
   this.strokeImageInfos = new ImageInfos(strokeImageWidth, strokeImageHeight);
@@ -135,33 +137,179 @@ var FontInfo = function(font) {
       return clamp(255 * v, 0, 255);
     }
 
-    var x0, y0, cx, cy;
+    function Cubic(p0, c0, c1, p1) {
+      this.p0 = p0;
+      this.c0 = c0;
+      this.c1 = c1;
+      this.p1 = p1;
+
+      this.toQuadratic = function() {
+        return {
+          x: this.p0.x,
+          y: this.p0.y,
+          x1: this.p1.x,
+          y1: this.p1.y,
+          cx: ((this.c0.x + this.c1.x) * 3 - (this.p0.x + this.p1.x)) / 4,
+          cy: ((this.c0.y + this.c1.y) * 3 - (this.p0.y + this.p1.y)) / 4
+        };
+      };
+
+      this.quadError = function() {
+        return (
+          this.p1
+            .minus(this.p0)
+            .minus(this.c1.minus(this.c0).times(3))
+            .mag() / 2
+        );
+      };
+
+      this.split = function(t) {
+        var m1 = p5.Vector.lerp(this.p0, this.c0, t);
+        var m2 = p5.Vector.lerp(this.c0, this.c1, t);
+        var mm1 = p5.Vector.lerp(m1, m2, t);
+
+        this.c1 = p5.Vector.lerp(this.c1, this.p1, t);
+        this.c0 = p5.Vector.lerp(m2, this.c1, t);
+        var pt = p5.Vector.lerp(mm1, this.c0, t);
+        var part1 = new Cubic(this.p0, m1, mm1, pt);
+        this.p0 = pt;
+        return part1;
+      };
+
+      this.splitInflections = function() {
+        var a = this.c0.minus(this.p0);
+        var b = this.c1.minus(this.c0).minus(a);
+        var c = this.p1
+          .minus(this.c1)
+          .minus(a)
+          .minus(b.times(2));
+
+        var cubics = [];
+
+        var A = b.x * c.y - b.y * c.x;
+        if (A !== 0) {
+          var B = a.x * c.y - a.y * c.x;
+          var C = a.x * b.y - a.y * b.x;
+          var disc = B * B - 4 * A * C;
+          if (disc >= 0) {
+            if (A < 0) {
+              A = -A;
+              B = -B;
+              C = -C;
+            }
+
+            var Q = Math.sqrt(disc);
+            var t0 = (-B - Q) / (2 * A);
+            var t1 = (-B + Q) / (2 * A);
+
+            if (t0 > 0 && t0 < 1) {
+              cubics.push(this.split(t0));
+              t1 = 1 - (1 - t1) / (1 - t0);
+            }
+
+            if (t1 > 0 && t1 < 1) {
+              cubics.push(this.split(t1));
+            }
+          }
+        }
+
+        cubics.push(this);
+        return cubics;
+      };
+    }
+
+    function cubicToQuadratics(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
+      var cubics = new Cubic(
+        new p5.Vector(x0, y0),
+        new p5.Vector(cx0, cy0),
+        new p5.Vector(cx1, cy1),
+        new p5.Vector(x1, y1)
+      ).splitInflections();
+
+      var qs = [];
+      var precision = 30 / SQRT3;
+
+      for (var i = 0; i < cubics.length; i++) {
+        var cubic = cubics[i];
+        var tail = [];
+
+        for (;;) {
+          var t3 = precision / cubic.quadError();
+          if (t3 >= 0.5 * 0.5 * 0.5) {
+            break;
+          }
+
+          var t = Math.pow(t3, 1.0 / 3.0);
+          var start = cubic.split(t);
+          var middle = cubic.split(1 - t / (1 - t));
+
+          qs.push(start);
+          tail.push(cubic);
+          cubic = middle;
+        }
+
+        if (t3 < 1) {
+          qs.push(cubic.split(0.5));
+        }
+        qs.push(cubic);
+
+        Array.prototype.push.apply(qs, tail.reverse());
+      }
+
+      return qs;
+    }
+
+    function pushLine(x0, y0, x1, y1) {
+      var mx = (x0 + x1) / 2;
+      var my = (y0 + y1) / 2;
+      push([x0, x1], [y0, y1], { x: x0, y: y0, cx: mx, cy: my });
+    }
+
+    function samePoint(x0, y0, x1, y1) {
+      return Math.abs(x1 - x0) < 0.00001 && Math.abs(y1 - y0) < 0.00001;
+    }
+
+    var x0, y0, xs, ys;
     var cmds = glyph.path.commands;
     for (var iCmd = 0; iCmd < cmds.length; ++iCmd) {
       var cmd = cmds[iCmd];
       var x1 = (cmd.x - xMin) / gWidth;
       var y1 = (cmd.y - yMin) / gHeight;
 
-      if (Math.abs(x1 - x0) < 0.00001 && Math.abs(y1 - y0) < 0.00001) continue;
+      if (samePoint(x0, y0, x1, y1)) continue;
 
       switch (cmd.type) {
         case 'M':
+          xs = x1;
+          ys = y1;
           break;
         case 'L':
-          cx = (x0 + x1) / 2;
-          cy = (y0 + y1) / 2;
-          push([x0, x1], [y0, y1], { x: x0, y: y0, cx: cx, cy: cy });
+          pushLine(x0, y0, x1, y1);
           break;
         case 'Q':
-          cx = (cmd.x1 - xMin) / gWidth;
-          cy = (cmd.y1 - yMin) / gHeight;
+          var cx = (cmd.x1 - xMin) / gWidth;
+          var cy = (cmd.y1 - yMin) / gHeight;
           push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx: cx, cy: cy });
           break;
         case 'Z':
-          strokes.push({ x: x0, y: y0 });
+          if (!samePoint(x0, y0, xs, ys)) {
+            pushLine(x0, y0, xs, ys);
+            strokes.push({ x: xs, y: ys });
+          } else {
+            strokes.push({ x: x0, y: y0 });
+          }
           break;
         case 'C':
-          throw new Error('cubics are not yet supported');
+          var cx1 = (cmd.x1 - xMin) / gWidth;
+          var cy1 = (cmd.y1 - yMin) / gHeight;
+          var cx2 = (cmd.x2 - xMin) / gWidth;
+          var cy2 = (cmd.y2 - yMin) / gHeight;
+          var qs = cubicToQuadratics(x0, y0, cx1, cy1, cx2, cy2, x1, y1);
+          for (var iq = 0; iq < qs.length; iq++) {
+            var q = qs[iq].toQuadratic();
+            push([q.x, q.x1, q.cx], [q.y, q.y1, q.cy], q);
+          }
+          break;
         default:
           throw new Error('unknown command type: ' + cmd.type);
       }
@@ -217,7 +365,7 @@ var FontInfo = function(font) {
 
     gi = this.glyphInfos[glyph.index] = {
       glyph: glyph,
-      uGlyphRect: [glyph.xMin, -glyph.yMin, glyph.xMax, -glyph.yMax],
+      uGlyphRect: [bb.x1, -bb.y1, bb.x2, -bb.y2],
       strokeImageInfo: strokeImageInfo,
       strokes: strokes,
       colInfo: layout(cols, this.colDimImageInfos, this.colCellImageInfos),
