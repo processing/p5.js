@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Holds the key codes of currently pressed keys.
@@ -350,8 +350,33 @@ p5.prototype._onblur = function(e) {
  * }
  * </code></div>
  *
+ * <div><code>
+ * var diameter = 50;
+ *
+ * function setup() {
+ *   createCanvas(512, 512);
+ * }
+ *
+ * function draw() {
+ *   // 107 and 187 are keyCodes for "+"
+ *   if (keyIsDown(107) || keyIsDown(187)) {
+ *     diameter += 1;
+ *   }
+ *
+ *   // 109 and 189 are keyCodes for "-"
+ *   if (keyIsDown(109) || keyIsDown(189)) {
+ *     diameter -= 1;
+ *   }
+ *
+ *   clear();
+ *   fill(255, 0, 0);
+ *   ellipse(50, 50, diameter, diameter);
+ * }
+ * </code></div>
+ *
  * @alt
  * 50x50 red ellipse moves left, right, up and down with arrow presses.
+ * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
  *
  */
 p5.prototype.keyIsDown = function(code) {

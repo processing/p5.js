@@ -1,6 +1,11 @@
 'use strict';
 
 // requestAnim shim layer by Paul Irish
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/
+// requestanimationframe-for-smart-er-animating
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
 window.requestAnimationFrame = (function() {
   return (
     window.requestAnimationFrame ||
@@ -11,22 +16,6 @@ window.requestAnimationFrame = (function() {
     function(callback, element) {
       // should '60' here be framerate?
       window.setTimeout(callback, 1000 / 60);
-    }
-  );
-})();
-
-// use window.performance() to get max fast and accurate time in milliseconds
-window.performance = window.performance || {};
-window.performance.now = (function() {
-  var load_date = Date.now();
-  return (
-    window.performance.now ||
-    window.performance.mozNow ||
-    window.performance.msNow ||
-    window.performance.oNow ||
-    window.performance.webkitNow ||
-    function() {
-      return Date.now() - load_date;
     }
   );
 })();

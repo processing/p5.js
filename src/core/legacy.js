@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 p5.prototype.exit = function() {
   throw new Error('exit() not implemented, see remove()');

@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.

@@ -201,7 +201,7 @@ If you do not want the example to render with canvas (ie you just want the code 
 ```
 
 
-If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the PhantomJS test framework), include the class "notest" in the div:
+If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the headless-Chrome test framework), include the class "notest" in the div:
 ```
 @example
 <div class='norender notest'><code>

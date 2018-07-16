@@ -1,6 +1,6 @@
 var marked = require('marked');
 
-var DocumentedMethod = require('./yuidoc-p5-theme-src/scripts/documented-method');
+var DocumentedMethod = require('./documented-method');
 
 function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {

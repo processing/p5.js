@@ -1,4 +1,4 @@
-# Application
+# Skeleton
 
 *internal structure and logic*
 
@@ -6,11 +6,11 @@
 
 The `init.js` module initializes a new `p5` object in either global mode, instance mode, or unit testing mode. Broadly speaking, this module should only contain logic that needs to execute *before startup*, such as testing the environment in which the code is running in order to make decisions about how it should load.
 
-## [core.js](./core.js)
+## [main.js](./main.js)
 
-The sole job of the `core.js` module is to create and then export the constructor function for creating a new `p5` object. This constructor function is also called `p5`, and doesn't use the typical JavaScript convention of capitalizing constructor functions. The constructor handles a number of mechanical startup concerns, including assigning functions and properties from elsewhere in the source code to the newly created `p5` object as either public or private methods and properties.
+The sole job of the `main.js` module is to create and then export the constructor function for creating a new `p5` object. This constructor function is also called `p5`, and doesn't use the typical JavaScript convention of capitalizing constructor functions. The constructor handles a number of mechanical startup concerns, including assigning functions and properties from elsewhere in the source code to the newly created `p5` object as either public or private methods and properties.
 
-Aside from the exported constructor function, the most important thing in this module is the set of functions that define the loop used by nearly every p5.js project: `preload()`, `setup()`, `draw()`, `remove()`, and so on. These functions are both available on the `p5` object as methods, and also assigned to variables in the global space for syntactic simplicity, because calling a function named `draw()` is more creatively expressive than namespacing the same functionality with an object as with `mySketch.draw()` or similar. The `friendlyBindGlobal` function standardizes the process by which the necessary global variables can be created, notably including logging [friendly error messages](https://github.com/processing/p5.js/wiki/Friendly-Error-System) when conflicts are detected, but it is not exported from the module's internal scope.
+Aside from the exported constructor function, the most important thing in this module is the set of functions that define the loop used by nearly every p5.js project: `preload()`, `setup()`, `draw()`, `remove()`, and so on. These functions are both available on the `p5` object as methods, and also assigned to variables in the global space for syntactic simplicity, because calling a function named `draw()` is more creatively expressive than namespacing the same functionality with an object as with `mySketch.draw()` or similar. The `friendlyBindGlobal()` function standardizes the process by which the necessary global variables can be created, notably including logging [friendly error messages](https://github.com/processing/p5.js/wiki/Friendly-Error-System) when conflicts are detected, but it is not exported from the module's internal scope.
 
 ## [structure.js](./structure.js)
 
@@ -20,8 +20,11 @@ The `structure.js` module is best thought of as a collection of ways to make *mo
 
 The `constants.js` module provides various default values mostly related to math and web standards using clear semantic names to increase syntax clarity when they are used in other algorithms. These values are attached to the `p5` object prototype as properties by the constructor function so they can be more easily accessed by other parts of the p5.js library or by user code.
 
-## [api_notifications.js](./api_notifications.js)
+## [error_helpers.js](./error_helpers.js)
 TODO
+
+## [legacy.js](./legacy.js)
+These are functions that are part of the Processing API but are not part of the p5.js API. In some cases they have a new name, in others, they are removed completely. Not all unsupported Processing functions are listed here but we try to include ones that a user coming from Processing might likely call.
 
 # Browser
 
@@ -63,22 +66,23 @@ The `p5.Graphics` module is a lightweight wrapper around renderers which is used
 
 *lines, shapes, and visual styles*
 
-## [attributes.js](./attributes.js)
-
-Attributes are an important part of the general API for the web, but the `attributes.js` module defines and handles miscellaneous *graphical* attributes that can be consider a set of active parameters for the current drawing style. Think of this as a grab bag of all the remaining drawing parameters that were not moved out into separate dedicated modules as with [color](../color/) and [typography](../typography/).
-
-## [2d_primitives.js](./2d_primitives.js)
-
-The `2d_primitives.js` module provides helper functions for drawing common shapes. The resulting drawing commands are sent to the currently active [renderer](./rendering.js).
-
 ## [transform.js](./transform.js)
 
 The `transform.js` module implements logic for scaling, rotation, and matrix transformations.
 
-## [vertex.js](./vertex.js)
+
+## [shape/attributes.js](./shape/attributes.js)
+
+Attributes are an important part of the general API for the web, but the `attributes.js` module defines and handles miscellaneous *graphical* attributes that can be consider a set of active parameters for the current drawing style. Think of this as a grab bag of all the remaining drawing parameters that were not moved out into separate dedicated modules as with [color](../color/) and [typography](../typography/).
+
+## [shape/2d_primitives.js](./shape/2d_primitives.js)
+
+The `2d_primitives.js` module provides helper functions for drawing common shapes. The resulting drawing commands are sent to the currently active [renderer](./rendering.js).
+
+## [shape/vertex.js](./shape/vertex.js)
 
 The `vertex.js` module handles points and coordinates for drawing curves and shapes.
 
-## [curves.js](./curves.js)
+## [shape/curves.js](./shape/curves.js)
 
 The `curves.js` module draws curves based on a set of vertices.

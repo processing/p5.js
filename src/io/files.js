@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('whatwg-fetch');
 require('es6-promise').polyfill();
 var fetchJsonp = require('fetch-jsonp');
@@ -769,6 +769,9 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  * @example
  * <div class='norender'><code>
  * // Examples use USGS Earthquake API:
@@ -808,19 +811,21 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {Object|Boolean} data
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 /**
  * @method httpGet
  * @param  {String}        path
  * @param  {function}      callback
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpGet = function() {
   p5._validateParameters('httpGet', arguments);
 
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
-  p5.prototype.httpDo.apply(this, args);
+  return p5.prototype.httpDo.apply(this, args);
 };
 
 /**
@@ -839,6 +844,9 @@ p5.prototype.httpGet = function() {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  *
  * @example
  * <div>
@@ -908,19 +916,21 @@ p5.prototype.httpGet = function() {
  * @param  {Object|Boolean} data
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 /**
  * @method httpPost
  * @param  {String}        path
  * @param  {function}      callback
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpPost = function() {
   p5._validateParameters('httpPost', arguments);
 
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
-  p5.prototype.httpDo.apply(this, args);
+  return p5.prototype.httpDo.apply(this, args);
 };
 
 /**
@@ -942,7 +952,9 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
- *
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  *
  * @example
  * <div>
@@ -999,6 +1011,7 @@ p5.prototype.httpPost = function() {
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpDo = function() {
   var type;
@@ -1091,35 +1104,41 @@ p5.prototype.httpDo = function() {
     }
   }
 
-  (type === 'jsonp' ? fetchJsonp(path, jsonpOptions) : fetch(request))
-    .then(function(res) {
-      if (!res.ok) {
-        var err = new Error(res.body);
-        err.status = res.status;
-        err.ok = false;
-        throw err;
-      }
+  var promise;
+  if (type === 'jsonp') {
+    promise = fetchJsonp(path, jsonpOptions);
+  } else {
+    promise = fetch(request);
+  }
+  promise = promise.then(function(res) {
+    if (!res.ok) {
+      var err = new Error(res.body);
+      err.status = res.status;
+      err.ok = false;
+      throw err;
+    }
 
-      switch (type) {
-        case 'json':
-        case 'jsonp':
-          return res.json();
-        case 'binary':
-          return res.blob();
-        case 'arrayBuffer':
-          return res.arrayBuffer();
-        case 'xml':
-          return res.text().then(function(text) {
-            var parser = new DOMParser();
-            var xml = parser.parseFromString(text, 'text/xml');
-            return parseXML(xml.documentElement);
-          });
-        default:
-          return res.text();
-      }
-    })
-    .then(callback || function() {})
-    .catch(errorCallback || console.error);
+    switch (type) {
+      case 'json':
+      case 'jsonp':
+        return res.json();
+      case 'binary':
+        return res.blob();
+      case 'arrayBuffer':
+        return res.arrayBuffer();
+      case 'xml':
+        return res.text().then(function(text) {
+          var parser = new DOMParser();
+          var xml = parser.parseFromString(text, 'text/xml');
+          return parseXML(xml.documentElement);
+        });
+      default:
+        return res.text();
+    }
+  });
+  promise.then(callback || function() {});
+  promise.catch(errorCallback || console.error);
+  return promise;
 };
 
 /**

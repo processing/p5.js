@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  *  A TableRow object represents a single row of data values,

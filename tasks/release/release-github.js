@@ -67,12 +67,6 @@ module.exports = function(grunt) {
         './lib/addons/p5.sound.min.js',
         'application/javascript'
       ],
-      p5ts: ['p5.d.ts', './lib/p5.d.ts', 'text/plain'],
-      p5globalts: [
-        'p5.global-mode.d.ts',
-        './lib/p5.global-mode.d.ts',
-        'text/plain'
-      ],
       p5zip: ['p5.zip', './p5.zip', 'application/zip']
     };
 

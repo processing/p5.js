@@ -20,27 +20,15 @@
 
   <!-- Include your assertion lib of choice -->
   <script src="../node_modules/chai/chai.js" type="text/javascript" ></script>
-  <script src="js/bind.js" type="text/javascript" ></script>
   <script src="js/sinon.js" type="text/javascript" ></script>
   <script src="js/modernizr.js"></script>
   <script src="js/chai_helpers.js" type="text/javascript" ></script>
-
-  <script>
-    // Because we load tests asynchronously, we need to manually load
-    // grunt-mocha's bridge.js here.
-    //
-    // For more information, see:
-    // https://github.com/kmiyashiro/grunt-mocha#option-2
-    if (window.PHANTOMJS)
-      document.write(
-        '<script src="../node_modules/grunt-mocha/phantomjs/bridge.js"><\/script>'
-      );
-  </script>
 
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
   <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
   <script>
+    // These tests fail. TODO: Work out why.
     if (Modernizr.webaudio)
       document.write(
         '<script src="../lib/addons/p5.sound.js"><\/script>'
@@ -56,6 +44,12 @@
     {regex: /sound/, condition: Modernizr.webaudio}
   ];
   var MS_TIMEOUT = 4000;
+  var fxns = [
+    'setup', 'draw', 'preload', 'mousePressed', 'mouseReleased',
+    'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel',
+    'touchStarted', 'touchMoved', 'touchEnded',
+    'keyPressed', 'keyReleased', 'keyTyped'
+  ];
 
   // TODO: This code has basically been harvested from
   // https://github.com/processing/p5.js-website/blob/master/js/render.js.
@@ -79,12 +73,6 @@
           eval(runnable);
         }
 
-        var fxns = [
-          'setup', 'draw', 'preload', 'mousePressed', 'mouseReleased',
-          'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel',
-          'touchStarted', 'touchMoved', 'touchEnded',
-          'keyPressed', 'keyReleased', 'keyTyped'
-        ];
         fxns.forEach(function(f) {
           var ind = runnable.indexOf(f+'(');
           // this is a gross hack within a hacky script that
@@ -125,9 +113,11 @@
       teardown(function() {
         if (myp5) {
           myp5.remove();
+          myp5 = null;
         }
         if (myp5Div && myp5Div.parentNode) {
           myp5Div.parentNode.removeChild(myp5Div);
+          myp5Div = null;
         }
       });
 
@@ -135,6 +125,7 @@
       div.innerHTML = info.example.join('');
       document.body.appendChild(div);
       examples = [].slice.call(div.querySelectorAll('div:not(.notest)'));
+      document.body.removeChild(div);
 
       examples.forEach(function(el, i) {
 
@@ -159,21 +150,24 @@
 
             myp5 = new p5(createExampleSketch(exampleCode, function(p) {
               var drawCalled = false;
-              var oldSetup = p.setup || function() {};
-              var oldDraw = p.draw || function() {};
-
-              p.setup = function() {
-                try {
-                  oldSetup();
-                } catch(err) {
-                  reject(err);
+              fxns.forEach(function(f) {
+                var old = p[f];
+                if(old) {
+                  p[f] = function() {
+                    try {
+                      old.apply(this, arguments);
+                    } catch(err) {
+                      reject(err);
+                    }
+                  }
                 }
-              }
+              });
+              var oldDraw = p.draw || function() {};
 
               p.draw = function() {
                 try {
-                  oldDraw.call(p);
                   if (drawCalled) return;
+                  oldDraw.call(p);
                   drawCalled = true;
 
                   if (Date.now() - startTime > MS_TIMEOUT) {
@@ -191,6 +185,7 @@
             }, myp5Div));
           });
         };
+
 
         testFunc.toString = function() {
           // When a user clicks on a specific test, mocha shows its
