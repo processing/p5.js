@@ -957,6 +957,7 @@ p5.RendererGL.prototype._getLineShader = function() {
 
 p5.RendererGL.prototype._getFontShader = function() {
   if (!this._defaultFontShader) {
+    this.GL.getExtension('OES_standard_derivatives');
     this._defaultFontShader = new p5.Shader(
       this,
       defaultShaders.fontVert,

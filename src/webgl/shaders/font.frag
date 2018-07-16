@@ -1,3 +1,4 @@
+#extension GL_OES_standard_derivatives : enable
 precision mediump float;
 
 #if 0
@@ -31,9 +32,6 @@ uniform ivec2 uGridImageSize;
 uniform ivec2 uGridOffset;
 uniform ivec2 uGridSize;
 uniform vec4 uMaterialColor;
-
-uniform vec4 uGlyphRect;
-uniform float uFontSize;
 
 uniform vec2 uPpmScale;
 
@@ -143,7 +141,7 @@ void coverageY(vec2 p0, vec2 p1, vec2 p2) {
 
 void main() {
 
-  ppm = 200.0 * uFontSize * uGlyphRect.zw / (w * w);
+  ppm = 1.0 / fwidth(vTexCoord);
 
   ivec2 gridCoord = ifloor(vTexCoord * vec2(uGridSize));
 
@@ -186,14 +184,6 @@ void main() {
   }
 
   float v = saturate(max(abs(cov.x * wgt.x + cov.y * wgt.y) / max(wgt.x + wgt.y, 0.0001220703125), min(abs(cov.x), abs(cov.y))));
-
-  //gl_FragColor.rg = (v * .8 + .2) * (vec2(gridCoord) * .8 + .2) / vec2(uGridSize);
   gl_FragColor = uMaterialColor;
   gl_FragColor.a *= v;
-
-  /*
-  gl_FragColor.a = 1.0;
-  gl_FragColor.b = fract(w/1000.0);
-  gl_FragColor.rgb = vec3(1.0);
-  */
 }

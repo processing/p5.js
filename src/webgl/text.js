@@ -442,7 +442,6 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   sh.enableAttrib(sh.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
 
   sh.setUniform('uMaterialColor', this.curFillColor);
-  sh.setUniform('uFontSize', fontSize);
 
   try {
     var dx = 0;
