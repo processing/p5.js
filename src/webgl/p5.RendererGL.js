@@ -143,6 +143,41 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // lookUpTable for coefficients needed to be calculated for quadraticVertex
   this._lookUpTableQuadratic = [];
 
+  // Initializing GLU Tesselator
+  this._tessy = (function initTesselator() {
+    // function called for each vertex of tesselator output
+    function vertexCallback(data, polyVertArray) {
+      polyVertArray[polyVertArray.length] = data[0];
+      polyVertArray[polyVertArray.length] = data[1];
+      polyVertArray[polyVertArray.length] = data[2];
+    }
+    function begincallback(type) {
+      if (type !== libtess.primitiveType.GL_TRIANGLES) {
+        console.log('expected TRIANGLES but got type: ' + type);
+      }
+    }
+    function errorcallback(errno) {
+      console.log('error callback');
+      console.log('error number: ' + errno);
+    }
+    // callback for when segments intersect and must be split
+    function combinecallback(coords, data, weight) {
+      return [coords[0], coords[1], coords[2]];
+    }
+    function edgeCallback(flag) {
+      // don't really care about the flag, but need no-strip/no-fan behavior
+    }
+
+    var tessy = new libtess.GluTesselator();
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
+
+    return tessy;
+  })();
+
   return this;
 };
 
@@ -1122,63 +1157,28 @@ p5.prototype._assert3d = function(name) {
     );
 };
 
-// Initializing GLU Tesselator
-var tessy = (function initTesselator() {
-  // function called for each vertex of tesselator output
-  function vertexCallback(data, polyVertArray) {
-    polyVertArray[polyVertArray.length] = data[0];
-    polyVertArray[polyVertArray.length] = data[1];
-    polyVertArray[polyVertArray.length] = data[2];
-  }
-  function begincallback(type) {
-    if (type !== libtess.primitiveType.GL_TRIANGLES) {
-      console.log('expected TRIANGLES but got type: ' + type);
-    }
-  }
-  function errorcallback(errno) {
-    console.log('error callback');
-    console.log('error number: ' + errno);
-  }
-  // callback for when segments intersect and must be split
-  function combinecallback(coords, data, weight) {
-    return [coords[0], coords[1], coords[2]];
-  }
-  function edgeCallback(flag) {
-    // don't really care about the flag, but need no-strip/no-fan behavior
-  }
-
-  var tessy = new libtess.GluTesselator();
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
-
-  return tessy;
-})();
-
 p5.RendererGL.prototype._triangulate = function(contours) {
   // libtess will take 3d verts and flatten to a plane for tesselation
   // since only doing 2d tesselation here, provide z=1 normal to skip
   // iterating over verts only to get the same answer.
   // comment out to test normal-generation code
-  tessy.gluTessNormal(0, 0, 1);
+  this._tessy.gluTessNormal(0, 0, 1);
 
   var triangleVerts = [];
-  tessy.gluTessBeginPolygon(triangleVerts);
+  this._tessy.gluTessBeginPolygon(triangleVerts);
 
   for (var i = 0; i < contours.length; i++) {
-    tessy.gluTessBeginContour();
+    this._tessy.gluTessBeginContour();
     var contour = contours[i];
     for (var j = 0; j < contour.length; j += 3) {
       var coords = [contour[j], contour[j + 1], contour[j + 2]];
-      tessy.gluTessVertex(coords, coords);
+      this._tessy.gluTessVertex(coords, coords);
     }
-    tessy.gluTessEndContour();
+    this._tessy.gluTessEndContour();
   }
 
   // finish polygon
-  tessy.gluTessEndPolygon();
+  this._tessy.gluTessEndPolygon();
 
   return triangleVerts;
 };
@@ -1202,7 +1202,7 @@ p5.RendererGL.prototype._quadraticCoefficients = function(t) {
 };
 
 // function to convert Bezier coordinates to Catmull Rom Splines
-p5.RendererGL.prototype.Bezier2Catmull = function(w) {
+p5.RendererGL.prototype._bezierToCatmull = function(w) {
   var p1 = w[1];
   var p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
   var p3 = w[2] - (w[3] - w[1]) / this._curveTightness;

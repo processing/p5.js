@@ -1219,6 +1219,9 @@ p5.RendererGL.prototype.bezierVertex = function() {
       this._lookUpTableBezier[0] !== this._pInst._curveDetail
     ) {
       this._lookUpTableBezier = [];
+      if (this._pInst._curveDetail < 3) {
+        this._pInst._curveDetail = 3;
+      }
       this._lookUpTableBezier.push(this._pInst._curveDetail);
       var step = 1 / this._pInst._curveDetail;
       var start = 0;
@@ -1334,6 +1337,9 @@ p5.RendererGL.prototype.quadraticVertex = function() {
       this._lookUpTableQuadratic[0] !== this._pInst._curveDetail
     ) {
       this._lookUpTableQuadratic = [];
+      if (this._pInst._curveDetail < 3) {
+        this._pInst._curveDetail = 3;
+      }
       this._lookUpTableQuadratic.push(this._pInst._curveDetail);
       var step = 1 / this._pInst._curveDetail;
       var start = 0;
@@ -1438,6 +1444,9 @@ p5.RendererGL.prototype.curveVertex = function() {
     this._lookUpTableBezier[0] !== this._pInst._curveDetail
   ) {
     this._lookUpTableBezier = [];
+    if (this._pInst._curveDetail < 3) {
+      this._pInst._curveDetail = 3;
+    }
     this._lookUpTableBezier.push(this._pInst._curveDetail);
     var step = 1 / this._pInst._curveDetail;
     var start = 0;
@@ -1461,12 +1470,22 @@ p5.RendererGL.prototype.curveVertex = function() {
   var LUTLength = this._lookUpTableBezier.length;
 
   if (arguments.length === 2) {
-    this.immediateMode._curveVertex_x.push(arguments[0]);
-    this.immediateMode._curveVertex_y.push(arguments[1]);
-    if (this.immediateMode._curveVertex_x.length === 4) {
+    this.immediateMode._curveVertex.push(arguments[0]);
+    this.immediateMode._curveVertex.push(arguments[1]);
+    if (this.immediateMode._curveVertex.length === 8) {
       this.isCurve = true;
-      w_x = this.Bezier2Catmull(this.immediateMode._curveVertex_x);
-      w_y = this.Bezier2Catmull(this.immediateMode._curveVertex_y);
+      w_x = this._bezierToCatmull([
+        this.immediateMode._curveVertex[0],
+        this.immediateMode._curveVertex[2],
+        this.immediateMode._curveVertex[4],
+        this.immediateMode._curveVertex[6]
+      ]);
+      w_y = this._bezierToCatmull([
+        this.immediateMode._curveVertex[1],
+        this.immediateMode._curveVertex[3],
+        this.immediateMode._curveVertex[5],
+        this.immediateMode._curveVertex[7]
+      ]);
       for (i = 1; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
@@ -1480,18 +1499,33 @@ p5.RendererGL.prototype.curveVertex = function() {
           w_y[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y);
       }
-      this.immediateMode._curveVertex_x.shift(1);
-      this.immediateMode._curveVertex_y.shift(1);
+      this.immediateMode._curveVertex.shift();
+      this.immediateMode._curveVertex.shift();
     }
   } else if (arguments.length === 3) {
-    this.immediateMode._curveVertex_x.push(arguments[0]);
-    this.immediateMode._curveVertex_y.push(arguments[1]);
-    this.immediateMode._curveVertex_z.push(arguments[2]);
-    if (this.immediateMode._curveVertex_x.length === 4) {
+    this.immediateMode._curveVertex.push(arguments[0]);
+    this.immediateMode._curveVertex.push(arguments[1]);
+    this.immediateMode._curveVertex.push(arguments[2]);
+    if (this.immediateMode._curveVertex.length === 12) {
       this.isCurve = true;
-      w_x = this.Bezier2Catmull(this.immediateMode._curveVertex_x);
-      w_y = this.Bezier2Catmull(this.immediateMode._curveVertex_y);
-      w_z = this.Bezier2Catmull(this.immediateMode._curveVertex_z);
+      w_x = this._bezierToCatmull([
+        this.immediateMode._curveVertex[0],
+        this.immediateMode._curveVertex[3],
+        this.immediateMode._curveVertex[6],
+        this.immediateMode._curveVertex[9]
+      ]);
+      w_y = this._bezierToCatmull([
+        this.immediateMode._curveVertex[1],
+        this.immediateMode._curveVertex[4],
+        this.immediateMode._curveVertex[7],
+        this.immediateMode._curveVertex[10]
+      ]);
+      w_z = this._bezierToCatmull([
+        this.immediateMode._curveVertex[2],
+        this.immediateMode._curveVertex[5],
+        this.immediateMode._curveVertex[8],
+        this.immediateMode._curveVertex[11]
+      ]);
       for (i = 1; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
@@ -1510,9 +1544,9 @@ p5.RendererGL.prototype.curveVertex = function() {
           w_z[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y, _z);
       }
-      this.immediateMode._curveVertex_x.shift(1);
-      this.immediateMode._curveVertex_y.shift(1);
-      this.immediateMode._curveVertex_z.shift(1);
+      this.immediateMode._curveVertex.shift();
+      this.immediateMode._curveVertex.shift();
+      this.immediateMode._curveVertex.shift();
     }
   }
 };

@@ -275,11 +275,11 @@ p5.prototype.beginShape = function(kind) {
  * as well as 3D mode. 2D mode expects 6 parameters, while 3D mode
  * expects 9 parameters (including z coordinates).
  * <br><br>
- * The first time bezierVertex() is used within a beginShape() call,
- * it must be prefaced with a call to vertex() to set the first anchor
- * point. This function must be used between beginShape() and endShape()
+ * The first time bezierVertex() is used within a <a href="#/p5/beginShape">beginShape()</a>
+ * call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor
+ * point. This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
  * and only when there is no MODE or POINTS parameter specified to
- * beginShape().
+ * <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method bezierVertex
  * @param  {Number} x2 x-coordinate for the first control point
@@ -389,8 +389,8 @@ p5.prototype.bezierVertex = function() {
 
 /**
  * Specifies vertex coordinates for curves. This function may only
- * be used between beginShape() and endShape() and only when there
- * is no MODE parameter specified to beginShape().
+ * be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there
+ * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
  * For WebGL mode curveVertex() can be used in 2D as well as 3D mode.
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  * <br><br>
@@ -647,15 +647,15 @@ p5.prototype.endShape = function(mode) {
  * Specifies vertex coordinates for quadratic Bezier curves. Each call to
  * quadraticVertex() defines the position of one control points and one
  * anchor point of a Bezier curve, adding a new segment to a line or shape.
- * The first time quadraticVertex() is used within a beginShape() call, it
- * must be prefaced with a call to vertex() to set the first anchor point.
+ * The first time quadraticVertex() is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
+ * must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor point.
  * For WebGL mode quadraticVertex() can be used in 2D as well as 3D mode.
  * 2D mode expects 4 parameters, while 3D mode expects 6 parameters
  * (including z coordinates).
  * <br><br>
- * This function must be used between beginShape() and endShape()
+ * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
  * and only when there is no MODE or POINTS parameter specified to
- * beginShape().
+ * <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method quadraticVertex
  * @param  {Number} cx x-coordinate for the control point
