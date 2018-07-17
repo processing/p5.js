@@ -140,17 +140,43 @@ suite('p5.Camera', function() {
         );
       }
     });
+
+    test('perspective() sets projection matrix correctly', function() {
+      //prettier-ignore
+      var control = [1.8304877281188965, 0, 0, 0,
+                      0, -1.8304877281188965, 0, 0,
+                      0, 0, -1.0020020008087158, -1,
+                      0, 0, -2.002002000808716, 0];
+
+      myCam.perspective(1, 1, 1, 1000);
+
+      for (let i in myCam.projMatrix.mat4) {
+        assert.closeTo(myCam.projMatrix.mat4[i], control[i], delta);
+      }
+    });
+
+    test('ortho() sets projection matrix correctly', function() {
+      //prettier-ignore
+      var control = [0.009999999776482582, 0, 0, 0,
+                     0, -0.009999999776482582, 0, 0,
+                     0, 0, -0.0020020019728690386, 0,
+                    -0, -0, -1.0020020008087158, 1];
+
+      myCam.ortho(-100, 100, -100, 100, 1, 1000);
+
+      for (let i in myCam.projMatrix.mat4) {
+        assert.closeTo(myCam.projMatrix.mat4[i], control[i], delta);
+      }
+    });
   });
 
   suite('Helper Functions', function() {
-    // copy
     test('copy() returns a new p5.Camera object', function() {
       var newCam = myCam.copy();
       assert.instanceOf(newCam, p5.Camera);
       assert.notDeepEqual(newCam, myCam);
     });
 
-    // _getLocalAxes
     test('_getLocalAxes() returns three vectors', function() {
       var local = myCam._getLocalAxes();
       for (let j = 0; j < 3; j++) {
