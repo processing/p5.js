@@ -143,29 +143,29 @@ suite('p5.Camera', function() {
 
     test('perspective() sets projection matrix correctly', function() {
       //prettier-ignore
-      var control = [1.8304877281188965, 0, 0, 0,
-                      0, -1.8304877281188965, 0, 0,
-                      0, 0, -1.0020020008087158, -1,
-                      0, 0, -2.002002000808716, 0];
+      var control = [1,  0,   0,  0,
+                     0, -1,   0,  0,
+                     0,  0,  -3, -1,
+                     0,  0, -40,  0];
 
-      myCam.perspective(1, 1, 1, 1000);
+      myCam.perspective(Math.PI / 2, 1, 10, 20);
 
       for (let i in myCam.projMatrix.mat4) {
-        assert.closeTo(myCam.projMatrix.mat4[i], control[i], delta);
+        assert.strictEqual(myCam.projMatrix.mat4[i], control[i]);
       }
     });
 
     test('ortho() sets projection matrix correctly', function() {
       //prettier-ignore
-      var control = [0.009999999776482582, 0, 0, 0,
-                     0, -0.009999999776482582, 0, 0,
-                     0, 0, -0.0020020019728690386, 0,
-                    -0, -0, -1.0020020008087158, 1];
+      var control = [1,  0,  0, 0,
+                     0, -1,  0, 0,
+                     0,  0, -1, 0,
+                    -0, -0, -1, 1];
 
-      myCam.ortho(-100, 100, -100, 100, 1, 1000);
+      myCam.ortho(-1, 1, -1, 1, 0, 2);
 
       for (let i in myCam.projMatrix.mat4) {
-        assert.closeTo(myCam.projMatrix.mat4[i], control[i], delta);
+        assert.strictEqual(myCam.projMatrix.mat4[i], control[i]);
       }
     });
   });
