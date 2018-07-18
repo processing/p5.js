@@ -19,19 +19,30 @@ var p5 = require('../core/core');
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   normalMaterial();
  * }
- *
  * function draw() {
  *   background(200);
- *   // Orbit control allows the camera to orbit around a target.
  *   orbitControl();
- *   box(30, 50);
+ *   translate(-20, 15, -20);
+ *   torus(20, 5);
+ *   translate(15, 0, 15);
+ *   torus(20, 5);
+ *   translate(15, 0, 15);
+ *   torus(20, 5);
+ *   translate(15, 0, 15);
+ *   torus(20, 5);
+ *   translate(15, 0, 15);
+ *   torus(20, 5);
+ *   translate(15, 0, 15);
+ *   torus(20, 5);
  * }
  * </code>
  * </div>
  *
  * @alt
- * Camera orbits around box when mouse is hold-clicked & then moved.
+ * Camera orbits around a series of floating shapes when mouse is
+ * hold-clicked & then moved.
  */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
@@ -41,6 +52,17 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
+  var cam = this._renderer._curCamera;
+
+  // disable context menu for canvas element and add 'contextMenuDisabled'
+  // flag to p5 instance
+  if (this.contextMenuDisabled !== true) {
+    this.canvas.oncontextmenu = function() {
+      return false;
+    };
+    this._setProperty('contextMenuDisabled', true);
+  }
+
   if (typeof sensitivityX === 'undefined') {
     sensitivityX = 1;
   }
@@ -49,59 +71,81 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
 
   if (this.mouseIsPressed) {
-    var scaleFactor = this.height < this.width ? this.height : this.width;
-    var deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
-    var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+    if (this.mouseButton === this.LEFT) {
+      var scaleFactor = this.height < this.width ? this.height : this.width;
+      var deltaTheta =
+        -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
+      var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
 
-    // camera position
-    var camX = this._renderer.cameraX;
-    var camY = this._renderer.cameraY;
-    var camZ = this._renderer.cameraZ;
+      var diffX = cam.eyeX - cam.centerX;
+      var diffY = cam.eyeY - cam.centerY;
+      var diffZ = cam.eyeZ - cam.centerZ;
 
-    // center coordinates
-    var centerX = this._renderer.cameraCenterX;
-    var centerY = this._renderer.cameraCenterY;
-    var centerZ = this._renderer.cameraCenterZ;
+      // get spherical coorinates for current camera position about origin
+      var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+      // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
+      var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+      var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
-    var diffX = camX - centerX;
-    var diffY = camY - centerY;
-    var diffZ = camZ - centerZ;
+      // add mouse movements
+      camTheta += deltaTheta;
+      camPhi += deltaPhi;
 
-    // get spherical coorinates for current camera position about origin
-    var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
-    var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
-    var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
+      // prevent rotation over the zenith / under bottom
+      if (camPhi > Math.PI) {
+        camPhi = Math.PI;
+      } else if (camPhi <= 0) {
+        camPhi = 0.001;
+      }
 
-    // add mouse movements
-    camTheta += deltaTheta;
-    camPhi += deltaPhi;
+      // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
+      // var sinPhiRadius = Math.sin(camPhi) * camRadius;
+      var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
+      var _y = Math.cos(camPhi) * camRadius;
+      var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
 
-    // prevent rotation over the zenith / under bottom
-    if (camPhi > Math.PI) {
-      camPhi = Math.PI;
-    } else if (camPhi <= 0) {
-      camPhi = 0.001;
+      this.camera(
+        _x + cam.centerX,
+        _y + cam.centerY,
+        _z + cam.centerZ,
+        cam.centerX,
+        cam.centerY,
+        cam.centerZ,
+        0,
+        1,
+        0
+      );
     }
+    if (this.mouseButton === this.RIGHT) {
+      // panning behavior along X/Z camera axes and restricted to X/Z plane
+      // in world space
+      var local = cam._getLocalAxes();
 
-    // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
-    // var sinPhiRadius = Math.sin(camPhi) * camRadius;
+      // normalize portions along X/Z axes
+      var xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
+      if (xmag !== 0) {
+        local.x[0] /= xmag;
+        local.x[2] /= xmag;
+      }
 
-    var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
-    var _y = Math.cos(camPhi) * camRadius;
-    var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+      // normalize portions along X/Z axes
+      var ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
+      if (ymag !== 0) {
+        local.y[0] /= ymag;
+        local.y[2] /= ymag;
+      }
 
-    this.camera(
-      _x + centerX,
-      _y + centerY,
-      _z + centerZ,
-      centerX,
-      centerY,
-      centerZ,
-      0,
-      1,
-      0
-    );
+      // move along those vectors by amount controlled by mouseX, pmouseY
+      var dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
+      var dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+
+      // restrict movement to XZ plane in world space
+      cam.setPosition(
+        cam.eyeX + dx * local.x[0] + dz * local.z[0],
+        cam.eyeY,
+        cam.eyeZ + dx * local.x[2] + dz * local.z[2]
+      );
+    }
   }
   return this;
 };
