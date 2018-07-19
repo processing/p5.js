@@ -1203,54 +1203,103 @@ p5.RendererGL.prototype.line = function() {
   return this;
 };
 
-p5.RendererGL.prototype._grid = function(width, depth, detailX, detailZ) {
-  if (typeof width === 'undefined') {
-    width = this.width / 2;
+/**
+ * For use with debugMode
+ * @private
+ * @param {Number} sizeX size of grid along x-axis
+ * @param {Number} sizeZ size of grid along z-axis
+ * @param {Number} divX number of grid divisions along x-axis
+ * @param {Number} divZ number of grid divisions along z-axis
+ */
+p5.RendererGL.prototype._grid = function(sizeX, sizeZ, divX, divZ) {
+  if (typeof sizeX === 'undefined') {
+    sizeX = this.width / 2;
   }
-  if (typeof depth === 'undefined') {
-    depth = width;
+  if (typeof sizeZ === 'undefined') {
+    sizeZ = sizeX;
   }
-  if (typeof detailX === 'undefined') {
-    detailX = 10;
+  if (typeof divX === 'undefined') {
+    divX = 10;
   }
-  if (typeof detailZ === 'undefined') {
-    detailZ = 10;
+  if (typeof divZ === 'undefined') {
+    divZ = 10;
   }
 
-  var spacingX = width / detailX;
-  var spacingZ = depth / detailZ;
+  var spacingX = sizeX / divX;
+  var spacingZ = sizeZ / divZ;
 
-  var halfX = width / 2;
-  var halfZ = depth / 2;
+  var halfX = sizeX / 2;
+  var halfZ = sizeZ / 2;
+
+  this.push();
 
   // Lines along X axis
-  for (var q = 0; q <= detailZ; q++) {
+  for (var q = 0; q <= divZ; q++) {
     this.strokeWeight(1);
     this.stroke(0, 0, 0);
     // if there is a line running through the origin, color it differently
-    if (detailZ / q === 2) {
+    if (divZ / q === 2) {
       this.stroke(255, 255, 255);
     }
-    this.beginShape();
+    this.beginShape(this.LINES);
     this.vertex(-halfX, 0, q * spacingZ - halfZ);
     this.vertex(+halfX, 0, q * spacingZ - halfZ);
     this.endShape();
   }
 
   // Lines along Z axis
-  for (var i = 0; i <= detailX; i++) {
+  for (var i = 0; i <= divX; i++) {
     this.strokeWeight(1);
     this.stroke(0, 0, 0);
     // if there is a line running through the origin, color it differently
-    if (detailX / i === 2) {
+    if (divX / i === 2) {
       this.stroke(255, 255, 255);
     }
-    this.beginShape();
+    this.beginShape(this.LINES);
     this.vertex(i * spacingX - halfX, 0, -halfZ);
     this.vertex(i * spacingX - halfX, 0, +halfZ);
     this.endShape();
   }
-  return this;
+
+  this.pop();
+  return this; //@TODO is this necessary?
+};
+
+p5.RendererGL.prototype._axesIcon = function(xOff, yOff, zOff, size) {
+  if (typeof xOff === 'undefined') {
+    xOff = this.width / 10;
+  }
+  if (typeof yOff === 'undefined') {
+    yOff = -xOff;
+  }
+  if (typeof zOff === 'undefined') {
+    zOff = xOff;
+  }
+  if (typeof size === 'undefined') {
+    size = this.width / 10;
+  }
+
+  this.push();
+  // X axis
+  this.strokeWeight(3);
+  this.stroke(255, 0, 0);
+  this.beginShape(this.LINES);
+  this.vertex(xOff, yOff, zOff);
+  this.vertex(xOff + size, yOff, zOff);
+  this.endShape();
+  // Y axis
+  this.stroke(0, 255, 0);
+  this.beginShape(this.LINES);
+  this.vertex(xOff, yOff, zOff);
+  this.vertex(xOff, yOff + size, zOff);
+  this.endShape();
+  // Z axis
+  this.stroke(0, 0, 255);
+  this.beginShape(this.LINES);
+  this.vertex(xOff, yOff, zOff);
+  this.vertex(xOff, yOff, zOff + size);
+  this.endShape();
+  this.pop();
 };
 
 module.exports = p5;

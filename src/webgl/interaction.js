@@ -106,4 +106,34 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   return this;
 };
 
+/**
+ * This function helps visualize 3D space with the addition of a 'ground grid'
+ * running through the origin (0,0,0) and a set of axes markers which indicate
+ * which way is +X, +Y and +Z. Calling this function without parameters will
+ * toggle it ON or OFF depending on its current state.  To explicitely turn
+ * debugMode ON or OFF, simply add 0 (for OFF) or 1 (for ON) as a parameter.
+ * @method debugMode
+ * @param {Number} [state] 0 or 1 to explicitely call the function on or off
+ * @example @TODO
+ */
+p5.prototype.debugMode = function(state) {
+  this._assert3d('debugMode');
+  // p5._validateParameters('debugMode', arguments);
+
+  // shut off debugMode by removing registered 'post' methods
+  if (state === 0) {
+    for (var i = this._registeredMethods.post.length; i >= 0; i--) {
+      if (
+        this._registeredMethods.post[i] === this._renderer._grid ||
+        this._registeredMethods.post[i] === this._renderer._axesIcon
+      ) {
+        this._registeredMethods.post.splice(i, 1);
+      }
+    }
+  } else if (state === 1) {
+    this.registerMethod('post', this._renderer._grid);
+    this.registerMethod('post', this._renderer._axesIcon);
+  }
+};
+
 module.exports = p5;
