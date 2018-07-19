@@ -1203,4 +1203,54 @@ p5.RendererGL.prototype.line = function() {
   return this;
 };
 
+p5.RendererGL.prototype._grid = function(width, depth, detailX, detailZ) {
+  if (typeof width === 'undefined') {
+    width = this.width / 2;
+  }
+  if (typeof depth === 'undefined') {
+    depth = width;
+  }
+  if (typeof detailX === 'undefined') {
+    detailX = 10;
+  }
+  if (typeof detailZ === 'undefined') {
+    detailZ = 10;
+  }
+
+  var spacingX = width / detailX;
+  var spacingZ = depth / detailZ;
+
+  var halfX = width / 2;
+  var halfZ = depth / 2;
+
+  // Lines along X axis
+  for (var q = 0; q <= detailZ; q++) {
+    this.strokeWeight(1);
+    this.stroke(0, 0, 0);
+    // if there is a line running through the origin, color it differently
+    if (detailZ / q === 2) {
+      this.stroke(255, 255, 255);
+    }
+    this.beginShape();
+    this.vertex(-halfX, 0, q * spacingZ - halfZ);
+    this.vertex(+halfX, 0, q * spacingZ - halfZ);
+    this.endShape();
+  }
+
+  // Lines along Z axis
+  for (var i = 0; i <= detailX; i++) {
+    this.strokeWeight(1);
+    this.stroke(0, 0, 0);
+    // if there is a line running through the origin, color it differently
+    if (detailX / i === 2) {
+      this.stroke(255, 255, 255);
+    }
+    this.beginShape();
+    this.vertex(i * spacingX - halfX, 0, -halfZ);
+    this.vertex(i * spacingX - halfX, 0, +halfZ);
+    this.endShape();
+  }
+  return this;
+};
+
 module.exports = p5;
