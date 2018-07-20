@@ -204,13 +204,13 @@ suite('Files', function() {
     });
 
     // @TODO Need to check this does what it should
-    test('should allow json to override jsonp in 3rd param', function() {
+    test('should allow json to override jsonp', function() {
       return new Promise(function(resolve, reject) {
         result = myp5.loadJSON(
           'unit/assets/array.json',
+          'json',
           resolve,
-          reject,
-          'json'
+          reject
         );
       }).then(function(resp) {
         assert.ok(resp);
