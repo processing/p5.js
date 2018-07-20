@@ -96,6 +96,7 @@ p5.XML = function() {
  * </code></div>
  */
 p5.XML.prototype.getParent = function() {
+  p5._validateParameters('p5.XML.getParent', arguments);
   return this.parent;
 };
 
@@ -131,6 +132,7 @@ p5.XML.prototype.getParent = function() {
  * </code></div>
  */
 p5.XML.prototype.getName = function() {
+  p5._validateParameters('p5.XML.getName', arguments);
   return this.name;
 };
 
@@ -169,6 +171,7 @@ p5.XML.prototype.getName = function() {
  * </code></div>
  */
 p5.XML.prototype.setName = function(name) {
+  p5._validateParameters('p5.XML.setName', arguments);
   this.name = name;
 };
 
@@ -205,6 +208,7 @@ p5.XML.prototype.setName = function(name) {
  * </code></div>
  */
 p5.XML.prototype.hasChildren = function() {
+  p5._validateParameters('p5.XML.hasChildren', arguments);
   return this.children.length > 0;
 };
 
@@ -242,6 +246,7 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
+  p5._validateParameters('p5.XML.listChildren', arguments);
   return this.children.map(function(c) {
     return c.name;
   });
@@ -288,6 +293,7 @@ p5.XML.prototype.listChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.getChildren = function(param) {
+  p5._validateParameters('p5.XML.getChildren', arguments);
   if (param) {
     return this.children.filter(function(c) {
       return c.name === param;
@@ -348,6 +354,7 @@ p5.XML.prototype.getChildren = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getChild = function(param) {
+  p5._validateParameters('p5.XML.getChild', arguments);
   if (typeof param === 'string') {
     for (var i = 0; i < this.children.length; i++) {
       var child = this.children[i];
@@ -402,6 +409,7 @@ p5.XML.prototype.getChild = function(param) {
  * </code></div>
  */
 p5.XML.prototype.addChild = function(node) {
+  p5._validateParameters('p5.XML.addChild', arguments);
   if (node instanceof p5.XML) {
     this.children.push(node);
   } else {
@@ -465,6 +473,7 @@ p5.XML.prototype.addChild = function(node) {
  * </code></div>
  */
 p5.XML.prototype.removeChild = function(param) {
+  p5._validateParameters('p5.XML.removeChild', arguments);
   var ind = -1;
   if (typeof param === 'string') {
     for (var i = 0; i < this.children.length; i++) {
@@ -514,6 +523,7 @@ p5.XML.prototype.removeChild = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getAttributeCount = function() {
+  p5._validateParameters('p5.XML.getAttributeCount', arguments);
   return Object.keys(this.attributes).length;
 };
 
@@ -551,6 +561,7 @@ p5.XML.prototype.getAttributeCount = function() {
  * </code></div>
  */
 p5.XML.prototype.listAttributes = function() {
+  p5._validateParameters('p5.XML.listAttributes', arguments);
   return Object.keys(this.attributes);
 };
 
@@ -590,6 +601,7 @@ p5.XML.prototype.listAttributes = function() {
  * </code></div>
  */
 p5.XML.prototype.hasAttribute = function(name) {
+  p5._validateParameters('p5.XML.hasAttribute', arguments);
   return this.attributes[name] ? true : false;
 };
 
@@ -631,6 +643,7 @@ p5.XML.prototype.hasAttribute = function(name) {
  * </code></div>
  */
 p5.XML.prototype.getNum = function(name, defaultValue) {
+  p5._validateParameters('p5.XML.getNum', arguments);
   return Number(this.attributes[name]) || defaultValue || 0;
 };
 
@@ -672,6 +685,7 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.getString = function(name, defaultValue) {
+  p5._validateParameters('p5.XML.getString', arguments);
   return String(this.attributes[name]) || defaultValue || null;
 };
 
@@ -713,6 +727,7 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.setAttribute = function(name, value) {
+  p5._validateParameters('p5.XML.setAttribute', arguments);
   if (this.attributes[name]) {
     this.attributes[name] = value;
   }
@@ -753,6 +768,7 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * </code></div>
  */
 p5.XML.prototype.getContent = function(defaultValue) {
+  p5._validateParameters('p5.XML.getContent', arguments);
   return this.content || defaultValue || null;
 };
 
@@ -792,6 +808,7 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.setContent = function(content) {
+  p5._validateParameters('p5.XML.setContent', arguments);
   if (!this.children.length) {
     this.content = content;
   }

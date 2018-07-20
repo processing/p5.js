@@ -80,6 +80,7 @@ p5.TableRow = function(str, separator) {
  * no image displayed
  */
 p5.TableRow.prototype.set = function(column, value) {
+  p5._validateParameters('p5.TableRow.set', arguments);
   // if typeof column is string, use .obj
   if (typeof column === 'string') {
     var cPos = this.table.columns.indexOf(column); // index of columnID
@@ -143,6 +144,7 @@ p5.TableRow.prototype.set = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setNum = function(column, value) {
+  p5._validateParameters('p5.TableRow.setNum', arguments);
   var floatVal = parseFloat(value);
   this.set(column, floatVal);
 };
@@ -188,6 +190,7 @@ p5.TableRow.prototype.setNum = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setString = function(column, value) {
+  p5._validateParameters('p5.TableRow.setString', arguments);
   var stringVal = value.toString();
   this.set(column, stringVal);
 };
@@ -233,6 +236,7 @@ p5.TableRow.prototype.setString = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.get = function(column) {
+  p5._validateParameters('p5.TableRow.get', arguments);
   if (typeof column === 'string') {
     return this.obj[column];
   } else {
@@ -283,6 +287,7 @@ p5.TableRow.prototype.get = function(column) {
  * no image displayed
  */
 p5.TableRow.prototype.getNum = function(column) {
+  p5._validateParameters('p5.TableRow.getNum', arguments);
   var ret;
   if (typeof column === 'string') {
     ret = parseFloat(this.obj[column]);
@@ -340,6 +345,7 @@ p5.TableRow.prototype.getNum = function(column) {
  * no image displayed
  */
 p5.TableRow.prototype.getString = function(column) {
+  p5._validateParameters('p5.TableRow.getString', arguments);
   if (typeof column === 'string') {
     return this.obj[column].toString();
   } else {

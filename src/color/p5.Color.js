@@ -84,6 +84,8 @@ p5.Color = function(pInst, vals) {
  * canvas with text representation of color
  */
 p5.Color.prototype.toString = function(format) {
+  p5._validateParameters('p5.Color.toString', arguments);
+
   if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
   if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
 
@@ -268,6 +270,7 @@ p5.Color.prototype.toString = function(format) {
  * canvas with gradually changing background color
  */
 p5.Color.prototype.setRed = function(new_red) {
+  p5._validateParameters('p5.Color.setRed', arguments);
   this._array[0] = new_red / this.maxes[constants.RGB][0];
   this._calculateLevels();
 };
@@ -295,6 +298,7 @@ p5.Color.prototype.setRed = function(new_red) {
  * canvas with gradually changing background color
  **/
 p5.Color.prototype.setGreen = function(new_green) {
+  p5._validateParameters('p5.Color.setGreen', arguments);
   this._array[1] = new_green / this.maxes[constants.RGB][1];
   this._calculateLevels();
 };
@@ -322,6 +326,7 @@ p5.Color.prototype.setGreen = function(new_green) {
  * canvas with gradually changing background color
  **/
 p5.Color.prototype.setBlue = function(new_blue) {
+  p5._validateParameters('p5.Color.setBlue', arguments);
   this._array[2] = new_blue / this.maxes[constants.RGB][2];
   this._calculateLevels();
 };
@@ -359,6 +364,7 @@ p5.Color.prototype.setBlue = function(new_blue) {
  * circle behind a square with gradually changing opacity
  **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
+  p5._validateParameters('p5.Color.setAlpha', arguments);
   this._array[3] = new_alpha / this.maxes[this.mode][3];
   this._calculateLevels();
 };

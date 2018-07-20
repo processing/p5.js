@@ -118,6 +118,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *
  */
 p5.Graphics.prototype.remove = function() {
+  p5._validateParameters('p5.Graphics.remove', arguments);
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
   }

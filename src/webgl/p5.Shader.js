@@ -276,6 +276,7 @@ p5.Shader.prototype.useProgram = function() {
  * matrix, or texture / sampler reference)
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
+  p5._validateParameters('p5.Shader.setUniform', arguments);
   //@todo update all current gl.uniformXX calls
 
   var uniform = this.uniforms[uniformName];
