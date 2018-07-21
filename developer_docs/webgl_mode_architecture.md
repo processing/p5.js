@@ -52,15 +52,15 @@ Retained geometry is used for 3D primitives, while immediate mode is used for sh
 |Functions with retained geometry| Functions with immediate mode geometry | 2D functions not yet implemented|
 |--------------------------------|----------------------------------------|---------------------------------|
 |plane()                         | bezier()                               | text()                          |
-|box()                           | curve()                                | curveVertex()                   |
-|sphere()                        | line()                                 | bezierVertex()                  |
-|cylinder()                      | beginShape()                           | quadraticVertex()               |
+|box()                           | curve()                                |                                 |
+|sphere()                        | line()                                 |                                 |
+|cylinder()                      | beginShape()                           |                                 |
 |cone()                          | vertex()                               |                                 |
 |ellipsoid()                     | endShape()                             |                                 |
 |torus()                         | point()                                |                                 |
-|triangle()                      |
-|arc()                           |
-|point()                         |
+|triangle()                      | curveVertex()                          |                                 |
+|arc()                           | bezierVertex()                         |                                 |
+|point()                         | quadraticVertex()                      |                                 |
 |ellipse()                       |
 |rect()                          |
 |quad()                          |

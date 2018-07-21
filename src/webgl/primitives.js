@@ -1205,28 +1205,26 @@ p5.RendererGL.prototype.line = function() {
 
 p5.RendererGL.prototype.bezierVertex = function() {
   if (this.immediateMode._bezierVertex.length === 0) {
-    throw 'vertex() must be used once before calling bezierVertex()';
+    throw Error('vertex() must be used once before calling bezierVertex()');
   } else {
     var w_x = [];
     var w_y = [];
     var w_z = [];
     var t, _x, _y, _z, i;
+    var argLength = arguments.length;
 
-    t = parseFloat(0.0);
+    t = 0;
 
     if (
       this._lookUpTableBezier.length === 0 ||
-      this._lookUpTableBezier[0] !== this._pInst._curveDetail
+      this._lutBezierDetail !== this._pInst._curveDetail
     ) {
       this._lookUpTableBezier = [];
-      if (this._pInst._curveDetail < 3) {
-        this._pInst._curveDetail = 3;
-      }
-      this._lookUpTableBezier.push(this._pInst._curveDetail);
-      var step = 1 / this._pInst._curveDetail;
+      this._lutBezierDetail = this._pInst._curveDetail;
+      var step = 1 / this._lutBezierDetail;
       var start = 0;
       var end = 1;
-      var j = 1;
+      var j = 0;
       while (start < 1) {
         t = parseFloat(start.toFixed(6));
         this._lookUpTableBezier[j] = this._bezierCoefficients(t);
@@ -1244,7 +1242,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
 
     var LUTLength = this._lookUpTableBezier.length;
 
-    if (arguments.length === 6) {
+    if (argLength === 6) {
       this.isBezier = true;
 
       w_x = [
@@ -1260,7 +1258,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
         arguments[5]
       ];
 
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
           w_x[1] * this._lookUpTableBezier[i][1] +
@@ -1275,7 +1273,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
       }
       this.immediateMode._bezierVertex[0] = arguments[4];
       this.immediateMode._bezierVertex[1] = arguments[5];
-    } else if (arguments.length === 9) {
+    } else if (argLength === 9) {
       this.isBezier = true;
 
       w_x = [
@@ -1296,7 +1294,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
         arguments[5],
         arguments[8]
       ];
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
           w_x[1] * this._lookUpTableBezier[i][1] +
@@ -1323,28 +1321,26 @@ p5.RendererGL.prototype.bezierVertex = function() {
 
 p5.RendererGL.prototype.quadraticVertex = function() {
   if (this.immediateMode._quadraticVertex.length === 0) {
-    throw 'vertex() must be used once before calling quadraticVertex()';
+    throw Error('vertex() must be used once before calling quadraticVertex()');
   } else {
     var w_x = [];
     var w_y = [];
     var w_z = [];
     var t, _x, _y, _z, i;
+    var argLength = arguments.length;
 
-    t = parseFloat(0.0);
+    t = 0;
 
     if (
       this._lookUpTableQuadratic.length === 0 ||
-      this._lookUpTableQuadratic[0] !== this._pInst._curveDetail
+      this._lutQuadraticDetail !== this._pInst._curveDetail
     ) {
       this._lookUpTableQuadratic = [];
-      if (this._pInst._curveDetail < 3) {
-        this._pInst._curveDetail = 3;
-      }
-      this._lookUpTableQuadratic.push(this._pInst._curveDetail);
-      var step = 1 / this._pInst._curveDetail;
+      this._lutQuadraticDetail = this._pInst._curveDetail;
+      var step = 1 / this._lutQuadraticDetail;
       var start = 0;
       var end = 1;
-      var j = 1;
+      var j = 0;
       while (start < 1) {
         t = parseFloat(start.toFixed(6));
         this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
@@ -1362,7 +1358,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
 
     var LUTLength = this._lookUpTableQuadratic.length;
 
-    if (arguments.length === 4) {
+    if (argLength === 4) {
       this.isQuadratic = true;
 
       w_x = [
@@ -1376,7 +1372,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
         arguments[3]
       ];
 
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableQuadratic[i][0] +
           w_x[1] * this._lookUpTableQuadratic[i][1] +
@@ -1390,7 +1386,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
 
       this.immediateMode._quadraticVertex[0] = arguments[2];
       this.immediateMode._quadraticVertex[1] = arguments[3];
-    } else if (arguments.length === 6) {
+    } else if (argLength === 6) {
       this.isQuadratic = true;
 
       w_x = [
@@ -1409,7 +1405,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
         arguments[5]
       ];
 
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableQuadratic[i][0] +
           w_x[1] * this._lookUpTableQuadratic[i][1] +
@@ -1437,21 +1433,19 @@ p5.RendererGL.prototype.curveVertex = function() {
   var w_y = [];
   var w_z = [];
   var t, _x, _y, _z, i;
-  t = parseFloat(0.0);
+  t = 0;
+  var argLength = arguments.length;
 
   if (
     this._lookUpTableBezier.length === 0 ||
-    this._lookUpTableBezier[0] !== this._pInst._curveDetail
+    this._lutBezierDetail !== this._pInst._curveDetail
   ) {
     this._lookUpTableBezier = [];
-    if (this._pInst._curveDetail < 3) {
-      this._pInst._curveDetail = 3;
-    }
-    this._lookUpTableBezier.push(this._pInst._curveDetail);
-    var step = 1 / this._pInst._curveDetail;
+    this._lutBezierDetail = this._pInst._curveDetail;
+    var step = 1 / this._lutBezierDetail;
     var start = 0;
     var end = 1;
-    var j = 1;
+    var j = 0;
     while (start < 1) {
       t = parseFloat(start.toFixed(6));
       this._lookUpTableBezier[j] = this._bezierCoefficients(t);
@@ -1469,7 +1463,7 @@ p5.RendererGL.prototype.curveVertex = function() {
 
   var LUTLength = this._lookUpTableBezier.length;
 
-  if (arguments.length === 2) {
+  if (argLength === 2) {
     this.immediateMode._curveVertex.push(arguments[0]);
     this.immediateMode._curveVertex.push(arguments[1]);
     if (this.immediateMode._curveVertex.length === 8) {
@@ -1486,7 +1480,7 @@ p5.RendererGL.prototype.curveVertex = function() {
         this.immediateMode._curveVertex[5],
         this.immediateMode._curveVertex[7]
       ]);
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
           w_x[1] * this._lookUpTableBezier[i][1] +
@@ -1499,10 +1493,11 @@ p5.RendererGL.prototype.curveVertex = function() {
           w_y[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y);
       }
-      this.immediateMode._curveVertex.shift();
-      this.immediateMode._curveVertex.shift();
+      for (i = 0; i < argLength; i++) {
+        this.immediateMode._curveVertex.shift();
+      }
     }
-  } else if (arguments.length === 3) {
+  } else if (argLength === 3) {
     this.immediateMode._curveVertex.push(arguments[0]);
     this.immediateMode._curveVertex.push(arguments[1]);
     this.immediateMode._curveVertex.push(arguments[2]);
@@ -1526,7 +1521,7 @@ p5.RendererGL.prototype.curveVertex = function() {
         this.immediateMode._curveVertex[8],
         this.immediateMode._curveVertex[11]
       ]);
-      for (i = 1; i < LUTLength; i++) {
+      for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
           w_x[1] * this._lookUpTableBezier[i][1] +
@@ -1544,9 +1539,9 @@ p5.RendererGL.prototype.curveVertex = function() {
           w_z[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y, _z);
       }
-      this.immediateMode._curveVertex.shift();
-      this.immediateMode._curveVertex.shift();
-      this.immediateMode._curveVertex.shift();
+      for (i = 0; i < argLength; i++) {
+        this.immediateMode._curveVertex.shift();
+      }
     }
   }
 };
