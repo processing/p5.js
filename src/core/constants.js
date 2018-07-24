@@ -539,5 +539,23 @@ module.exports = {
 
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
-  _DEFAULT_FILL: '#FFFFFF'
+  _DEFAULT_FILL: '#FFFFFF',
+
+  /**
+   * @property {String} GRID
+   * @final
+   */
+  GRID: 'grid',
+
+  /**
+   * @property {String} AXES
+   * @final
+   */
+  AXES: 'axes',
+
+  /**
+   * @property {String} OFF
+   * @final
+   */
+  OFF: 'off'
 };

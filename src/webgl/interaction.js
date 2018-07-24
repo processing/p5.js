@@ -1,6 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 
 /**
  * Allows rotation of a 3D sketch by dragging the mouse. As the mouse is dragged
@@ -113,27 +114,243 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * toggle it ON or OFF depending on its current state.  To explicitely turn
  * debugMode ON or OFF, simply add 0 (for OFF) or 1 (for ON) as a parameter.
  * @method debugMode
- * @param {Number} [state] 0 or 1 to explicitely call the function on or off
+ * @param {Constant} [mode]
+ * @param {Number} [size] size of grid sides
+ * @param {Number} [div] number of grid divisions
+ * @param {Number} [xOff] offset of grid center from origin in X axis
+ * @param {Number} [yOff] offset of grid center from origin in Y axis
+ * @param {Number} [zOff] offset of grid center from origin in Z axis
+ * @param {Number} [sizeA] size of grid sides
+ * @param {Number} [xOffA] offset of grid center from origin in X axis
+ * @param {Number} [yOffA] offset of grid center from origin in Y axis
+ * @param {Number} [zOffA] offset of grid center from origin in Z axis
  * @example @TODO
  */
-p5.prototype.debugMode = function(state) {
+p5.prototype.debugMode = function() {
   this._assert3d('debugMode');
   // p5._validateParameters('debugMode', arguments);
 
-  // shut off debugMode by removing registered 'post' methods
-  if (state === 0) {
-    for (var i = this._registeredMethods.post.length; i >= 0; i--) {
-      if (
-        this._registeredMethods.post[i] === this._renderer._grid ||
-        this._registeredMethods.post[i] === this._renderer._axesIcon
-      ) {
-        this._registeredMethods.post.splice(i, 1);
+  // start by removing existing 'post' registered debug methods
+  for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+    // test for equality...
+    if (
+      this._registeredMethods.post[i].toString() === this._grid().toString() ||
+      this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+    ) {
+      this._registeredMethods.post.splice(i, 1);
+    }
+  }
+
+  // reinstate functions with new parameters
+  // for (let i = 0; i < debugFuncs.length; i++) {
+  //   this.registerMethod('post', debugFuncs[i]);
+  // }
+
+  if (arguments.length > 0) {
+    if (arguments.length === 9) {
+      this.registerMethod(
+        'post',
+        this._grid.call(
+          this,
+          arguments[0],
+          arguments[1],
+          arguments[2],
+          arguments[3],
+          arguments[4]
+        )
+      );
+      this.registerMethod(
+        'post',
+        this._axesIcon.call(
+          this,
+          arguments[5],
+          arguments[6],
+          arguments[7],
+          arguments[8]
+        )
+      );
+    } else if (arguments.length > 1) {
+      if (arguments[0] === constants.GRID) {
+        this.registerMethod(
+          'post',
+          this._grid.call(
+            this,
+            arguments[1],
+            arguments[2],
+            arguments[3],
+            arguments[4],
+            arguments[5]
+          )
+        );
+      } else if (arguments[0] === constants.AXES) {
+        this.registerMethod(
+          'post',
+          this._axesIcon.call(
+            this,
+            arguments[1],
+            arguments[2],
+            arguments[3],
+            arguments[4]
+          )
+        );
+      }
+    } else {
+      if (arguments[0] === constants.GRID) {
+        this.registerMethod('post', this._grid.call(this));
+      } else if (arguments[0] === constants.AXES) {
+        this.registerMethod('post', this._axesIcon.call(this));
+      } else if (arguments[0] === constants.OFF) {
+        return;
       }
     }
-  } else if (state === 1) {
-    this.registerMethod('post', this._renderer._grid);
-    this.registerMethod('post', this._renderer._axesIcon);
+  } else {
+    this.registerMethod('post', this._grid.call(this));
+    this.registerMethod('post', this._axesIcon.call(this));
   }
+};
+
+/**
+ * For use with debugMode
+ * @private
+ * @method _grid
+ * @param {Number} [size] size of grid sides
+ * @param {Number} [div] number of grid divisions
+ * @param {Number} [xOff] offset of grid center from origin in X axis
+ * @param {Number} [yOff] offset of grid center from origin in Y axis
+ * @param {Number} [zOff] offset of grid center from origin in Z axis
+ */
+p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
+  if (typeof size === 'undefined') {
+    size = this.width / 2;
+  }
+  if (typeof numDivs === 'undefined') {
+    // ensure even number of divisions to allow highlighted centerlines
+    var divs = Math.round(size / 20);
+    numDivs = divs % 2 === 0 ? divs : divs - 1;
+  }
+  if (typeof xOff === 'undefined') {
+    xOff = 0;
+  }
+  if (typeof yOff === 'undefined') {
+    yOff = 0;
+  }
+  if (typeof zOff === 'undefined') {
+    zOff = 0;
+  }
+
+  var spacing = size / numDivs;
+  var halfSize = size / 2;
+
+  return function() {
+    this.push();
+
+    this._renderer.uMVMatrix.set(
+      this._renderer._curCamera.cameraMatrix.mat4[0],
+      this._renderer._curCamera.cameraMatrix.mat4[1],
+      this._renderer._curCamera.cameraMatrix.mat4[2],
+      this._renderer._curCamera.cameraMatrix.mat4[3],
+      this._renderer._curCamera.cameraMatrix.mat4[4],
+      this._renderer._curCamera.cameraMatrix.mat4[5],
+      this._renderer._curCamera.cameraMatrix.mat4[6],
+      this._renderer._curCamera.cameraMatrix.mat4[7],
+      this._renderer._curCamera.cameraMatrix.mat4[8],
+      this._renderer._curCamera.cameraMatrix.mat4[9],
+      this._renderer._curCamera.cameraMatrix.mat4[10],
+      this._renderer._curCamera.cameraMatrix.mat4[11],
+      this._renderer._curCamera.cameraMatrix.mat4[12],
+      this._renderer._curCamera.cameraMatrix.mat4[13],
+      this._renderer._curCamera.cameraMatrix.mat4[14],
+      this._renderer._curCamera.cameraMatrix.mat4[15]
+    );
+
+    // Lines along X axis
+    for (var q = 0; q <= numDivs; q++) {
+      this.strokeWeight(1);
+      this.stroke(0, 0, 0);
+      // if there is a line running through the origin, color it differently
+      if (numDivs / q === 2) {
+        this.stroke(255, 255, 255);
+      }
+      this.beginShape(this.LINES);
+      this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
+      this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
+      this.endShape();
+    }
+
+    // Lines along Z axis
+    for (var i = 0; i <= numDivs; i++) {
+      this.strokeWeight(1);
+      this.stroke(0, 0, 0);
+      // if there is a line running through the origin, color it differently
+      if (numDivs / i === 2) {
+        this.stroke(255, 255, 255);
+      }
+
+      this.beginShape(this.LINES);
+      this.vertex(i * spacing - halfSize + xOff, yOff, -halfSize + zOff);
+      this.vertex(i * spacing - halfSize + xOff, yOff, +halfSize + zOff);
+      this.endShape();
+    }
+    this.pop();
+  };
+};
+
+p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
+  if (typeof size === 'undefined') {
+    size = this.width / 20;
+  }
+  if (typeof xOff === 'undefined') {
+    xOff = -this.width / 10;
+  }
+  if (typeof yOff === 'undefined') {
+    yOff = xOff;
+  }
+  if (typeof zOff === 'undefined') {
+    zOff = xOff;
+  }
+
+  return function() {
+    this.push();
+    this._renderer.uMVMatrix.set(
+      this._renderer._curCamera.cameraMatrix.mat4[0],
+      this._renderer._curCamera.cameraMatrix.mat4[1],
+      this._renderer._curCamera.cameraMatrix.mat4[2],
+      this._renderer._curCamera.cameraMatrix.mat4[3],
+      this._renderer._curCamera.cameraMatrix.mat4[4],
+      this._renderer._curCamera.cameraMatrix.mat4[5],
+      this._renderer._curCamera.cameraMatrix.mat4[6],
+      this._renderer._curCamera.cameraMatrix.mat4[7],
+      this._renderer._curCamera.cameraMatrix.mat4[8],
+      this._renderer._curCamera.cameraMatrix.mat4[9],
+      this._renderer._curCamera.cameraMatrix.mat4[10],
+      this._renderer._curCamera.cameraMatrix.mat4[11],
+      this._renderer._curCamera.cameraMatrix.mat4[12],
+      this._renderer._curCamera.cameraMatrix.mat4[13],
+      this._renderer._curCamera.cameraMatrix.mat4[14],
+      this._renderer._curCamera.cameraMatrix.mat4[15]
+    );
+
+    // X axis
+    this.strokeWeight(3);
+    this.stroke(255, 0, 0);
+    this.beginShape(this.LINES);
+    this.vertex(xOff, yOff, zOff);
+    this.vertex(xOff + size, yOff, zOff);
+    this.endShape();
+    // Y axis
+    this.stroke(0, 255, 0);
+    this.beginShape(this.LINES);
+    this.vertex(xOff, yOff, zOff);
+    this.vertex(xOff, yOff + size, zOff);
+    this.endShape();
+    // Z axis
+    this.stroke(0, 0, 255);
+    this.beginShape(this.LINES);
+    this.vertex(xOff, yOff, zOff);
+    this.vertex(xOff, yOff, zOff + size);
+    this.endShape();
+    this.pop();
+  };
 };
 
 module.exports = p5;
