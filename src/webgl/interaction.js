@@ -141,11 +141,7 @@ p5.prototype.debugMode = function() {
     }
   }
 
-  // reinstate functions with new parameters
-  // for (let i = 0; i < debugFuncs.length; i++) {
-  //   this.registerMethod('post', debugFuncs[i]);
-  // }
-
+  // then add new debugMode functions according to the argument list
   if (arguments.length > 0) {
     if (arguments.length === 9) {
       this.registerMethod(
