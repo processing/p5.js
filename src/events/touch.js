@@ -76,8 +76,9 @@ function getTouchInfo(canvas, w, h, e, i) {
  * registered. If no <a href="#/p5/touchStarted">touchStarted()</a> function is defined, the <a href="#/p5/mousePressed">mousePressed()</a>
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
- * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * events. To disable any default behavior for this event, add "return false"
+ * to the end of the method. Otherwise add "return true" if you wish for default
+ * touch behavior to be recognized by browser.
  *
  * @method touchStarted
  * @example
@@ -140,7 +141,8 @@ p5.prototype._ontouchstart = function(e) {
  * be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * to the end of the method. Otherwise add "return true" if you wish for default
+ * touch behavior to be recognized by browser.
  *
  * @method touchMoved
  * @example
