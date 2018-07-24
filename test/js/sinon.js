@@ -1295,7 +1295,7 @@ var sinon = (function () {
                         delete object[property];
                     } catch (e) {}
                     // For native code functions `delete` fails without throwing an error
-                    // on Chrome < 43, PhantomJS, etc.
+                    // on Chrome < 43, etc.
                 } else if (hasES5Support) {
                     Object.defineProperty(object, property, wrappedMethodDesc);
                 }
