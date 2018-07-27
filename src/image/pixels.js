@@ -441,6 +441,9 @@ p5.prototype.filter = function(operation, value) {
  * <br><br>
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
+ * If you want to extract an array of colors or a subimage from an p5.Image object,
+ * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
+ *
  * @method get
  * @param  {Number}         [x] x-coordinate of the pixel
  * @param  {Number}         [y] y-coordinate of the pixel
