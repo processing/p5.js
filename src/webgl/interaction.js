@@ -1,3 +1,10 @@
+/**
+ * @module Lights, Camera
+ * @submodule Interaction
+ * @for p5
+ * @requires core
+ */
+
 'use strict';
 
 var p5 = require('../core/core');
@@ -108,27 +115,151 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 };
 
 /**
- * This function helps visualize 3D space with the addition of a 'ground grid'
- * running through the origin (0,0,0) and a set of axes markers which indicate
- * which way is +X, +Y and +Z. Calling this function without parameters will
- * toggle it ON or OFF depending on its current state.  To explicitely turn
- * debugMode ON or OFF, simply add 0 (for OFF) or 1 (for ON) as a parameter.
+ * DebugMode() helps visualize 3D space by adding a grid to indicate where the
+ * ‘ground’ is in a sketch and an axes icon which indicates the +X, +Y, and +Z
+ * directions. This function can be called without parameters to create a
+ * default grid and axes icon, or it can be called according to the examples
+ * above to customize the size and position of the grid and/or axes icon.
+ *
+ * By default, the grid will run through the origin (0,0,0) of the sketch
+ * along the XZ plane
+ * and the axes icon will be offset from the origin.  Both the grid and axes
+ * icon will be sized according to the current canvas size.  Note that because the
+ * grid runs parallel to the default camera view, it is often helpful to use
+ * debugMode along with orbitControl to allow full view of the grid.
  * @method debugMode
- * @param {Constant} [mode]
- * @param {Number} [size] size of grid sides
- * @param {Number} [div] number of grid divisions
- * @param {Number} [xOff] offset of grid center from origin in X axis
- * @param {Number} [yOff] offset of grid center from origin in Y axis
- * @param {Number} [zOff] offset of grid center from origin in Z axis
- * @param {Number} [sizeA] size of grid sides
- * @param {Number} [xOffA] offset of grid center from origin in X axis
- * @param {Number} [yOffA] offset of grid center from origin in Y axis
- * @param {Number} [zOffA] offset of grid center from origin in Z axis
- * @example @TODO
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ *   // Press the spacebar to turn debugMode off!
+ *   if (keyIsDown(32)) {
+ *     debugMode(OFF);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode(GRID);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode(AXES);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode(GRID, 100, 10, 0, 0, 0);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ * }
+ * </code>
+ * </div>
  */
+
+/**
+ * @method debugMode
+ * @param {Constant} mode GRID, AXES, or OFF
+ */
+
+/**
+ * @method debugMode
+ * @param {Constant} mode
+ * @param {Number} [gridSize] size of one side of the grid
+ * @param {Number} [gridDivisions] number of divisions in the grid
+ * @param {Number} [xOff] X axis offset from origin (0,0,0)
+ * @param {Number} [yOff] Y axis offset from origin (0,0,0)
+ * @param {Number} [zOff] Z axis offset from origin (0,0,0)
+ */
+
+/**
+ * @method debugMode
+ * @param {Constant} mode
+ * @param {Number} [axesSize] size of axes icon
+ * @param {Number} [xOff]
+ * @param {Number} [yOff]
+ * @param {Number} [zOff]
+ */
+
+/**
+ * @method debugMode
+ * @param {Number} [gridSize]
+ * @param {Number} [gridDivisions]
+ * @param {Number} [xOff]
+ * @param {Number} [yOff]
+ * @param {Number} [zOff]
+ * @param {Number} [axesSize]
+ * @param {Number} [xOff]
+ * @param {Number} [yOff]
+ * @param {Number} [zOff]
+ */
+
 p5.prototype.debugMode = function() {
   this._assert3d('debugMode');
-  // p5._validateParameters('debugMode', arguments);
+  p5._validateParameters('debugMode', arguments);
 
   // start by removing existing 'post' registered debug methods
   for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
@@ -220,9 +351,8 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     size = this.width / 2;
   }
   if (typeof numDivs === 'undefined') {
-    // ensure even number of divisions to allow highlighted centerlines
-    var divs = Math.round(size / 20);
-    numDivs = divs % 2 === 0 ? divs : divs - 1;
+    // ensure at least 2 divisions
+    numDivs = Math.round(size / 30) < 4 ? 4 : Math.round(size / 30);
   }
   if (typeof xOff === 'undefined') {
     xOff = 0;
@@ -263,10 +393,6 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     for (var q = 0; q <= numDivs; q++) {
       this.strokeWeight(1);
       this.stroke(0, 0, 0);
-      // if there is a line running through the origin, color it differently
-      if (numDivs / q === 2) {
-        this.stroke(255, 255, 255);
-      }
       this.beginShape(this.LINES);
       this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
       this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
@@ -277,11 +403,6 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     for (var i = 0; i <= numDivs; i++) {
       this.strokeWeight(1);
       this.stroke(0, 0, 0);
-      // if there is a line running through the origin, color it differently
-      if (numDivs / i === 2) {
-        this.stroke(255, 255, 255);
-      }
-
       this.beginShape(this.LINES);
       this.vertex(i * spacing - halfSize + xOff, yOff, -halfSize + zOff);
       this.vertex(i * spacing - halfSize + xOff, yOff, +halfSize + zOff);
@@ -291,12 +412,21 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
   };
 };
 
+/**
+ * For use with debugMode
+ * @private
+ * @method _axesIcon
+ * @param {Number} [size] size of axes icon lines
+ * @param {Number} [xOff] offset of icon from origin in X axis
+ * @param {Number} [yOff] offset of icon from origin in Y axis
+ * @param {Number} [zOff] offset of icon from origin in Z axis
+ */
 p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
   if (typeof size === 'undefined') {
-    size = this.width / 20;
+    size = this.width / 20 > 40 ? this.width / 20 : 40;
   }
   if (typeof xOff === 'undefined') {
-    xOff = -this.width / 10;
+    xOff = -this.width / 4;
   }
   if (typeof yOff === 'undefined') {
     yOff = xOff;
@@ -327,7 +457,7 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
     );
 
     // X axis
-    this.strokeWeight(3);
+    this.strokeWeight(2);
     this.stroke(255, 0, 0);
     this.beginShape(this.LINES);
     this.vertex(xOff, yOff, zOff);
