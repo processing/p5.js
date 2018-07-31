@@ -232,11 +232,16 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
+  // Prepend the mouse property setters to the event-listener.
+  // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+  // For details, see https://github.com/processing/p5.js/issues/3087.
   var eventPrependedFxn = function(event) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
+    // Pass along the return-value of the callback:
     return fxn();
   };
+  // Pass along the event-prepended form of the callback.
   adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
