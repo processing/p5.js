@@ -232,7 +232,12 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
-  adjustListener('mousedown', fxn, this);
+  var eventPrependedFxn = function(event) {
+    this._pInst._setProperty('mouseIsPressed', true);
+    this._pInst._setMouseButton(event);
+    return fxn();
+  };
+  adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
