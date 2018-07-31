@@ -18,6 +18,8 @@ To use the complete p5.js library, you can [download it here](http://p5js.org/do
 
 You can also start with the [codepen template](https://codepen.io/p5js/pen/wreBKy). You may need to update the version of the p5.js library that is linked into the html section.
 
+The typescript definitions are [here](https://github.com/p5-types/p5.ts).
+
 ## Issues
 
 Please post bugs in the correct repository:
