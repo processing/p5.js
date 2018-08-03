@@ -155,6 +155,28 @@ p5.RendererGL.prototype._initContext = function() {
   }
 };
 
+/**
+ * Sets the default ambient light, directional light, falloff, and
+ * specular values. The defaults are ambientLight(128, 128, 128) and
+ * directionalLight(128, 128, 128, 0, 0, -1), lightFalloff(1, 0, 0),
+ * and lightSpecular(0, 0, 0). Lights need to be included in the draw()
+ * to remain persistent in a looping program. Placing them in the setup()
+ * of a looping program will cause them to only have an effect the
+ * first time through the loop.
+ * @method lights
+ * @chainable
+ */
+p5.RendererGL.prototype.lights = function() {
+  this._enableLighting = true;
+  var grey = [0.5, 0.5, 0.5];
+  this._specularLight = [0, 0, 0];
+  this.ambientLightColors = grey;
+  this.directionalLightDirections = [0, 0, -1];
+  this.directionalLightColors = grey;
+  this.directionalLightSpecularColors = this._specularLight;
+  this.lightFalloff(1, 0, 0);
+};
+
 //This is helper function to reset the context anytime the attributes
 //are changed with setAttributes()
 
