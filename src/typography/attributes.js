@@ -44,8 +44,24 @@ var p5 = require('../core/main');
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * textSize(16);
+ * strokeWeight(0.25);
+ * var names = ['TOP', 'CENTER', 'BASELINE', 'BOTTOM'];
+ * var aligns = [TOP, CENTER, BASELINE, BOTTOM];
+ * for (var i = 0; i < 4; i++) {
+ *   var y = map(i + 0.5, 0, 4, 0, height);
+ *   line(0, y, width, y);
+ *   textAlign(CENTER, aligns[i]);
+ *   text(names[i], 0, y, width);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
+ * The names of the four vertical alignments rendered each showing that alignment's placement relative to a horizontal line.
  *
  */
 /**
