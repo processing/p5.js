@@ -45,7 +45,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textAscent = null;
   this._textDescent = null;
   this._textAlign = constants.LEFT;
-  this._textBaseline = constants.BOTTOM;
+  this._textBaseline = constants.BASELINE;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
