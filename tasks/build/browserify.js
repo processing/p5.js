@@ -32,10 +32,14 @@ module.exports = function(grunt) {
       });
 
       if (isMin) {
-        browseified = browseified.exclude('../../docs/reference/data.json');
+        browseified = browseified
+          .exclude('../../docs/reference/data.json')
+          .transform(require('../../utils/minglsl.js'));
+      } else {
+        browseified = browseified.transform('brfs');
       }
 
-      var bundle = browseified.transform('brfs').bundle();
+      var bundle = browseified.bundle();
 
       // Start the generated output with the banner comment,
       var code = banner + '\n';
