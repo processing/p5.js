@@ -239,7 +239,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 
 /**
  * @method debugMode
- * @param {Constant} mode GRID or AXES
+ * @param {Constant} mode either GRID or AXES
  */
 
 /**
