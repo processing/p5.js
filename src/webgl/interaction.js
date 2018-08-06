@@ -119,7 +119,10 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * ‘ground’ is in a sketch and an axes icon which indicates the +X, +Y, and +Z
  * directions. This function can be called without parameters to create a
  * default grid and axes icon, or it can be called according to the examples
- * above to customize the size and position of the grid and/or axes icon.
+ * above to customize the size and position of the grid and/or axes icon.  The
+ * grid is drawn using the most recently set stroke color and weight.  To
+ * specify these parameters, add a call to stroke() and strokeWeight()
+ * just before the end of the draw() loop.
  *
  * By default, the grid will run through the origin (0,0,0) of the sketch
  * along the XZ plane
@@ -226,9 +229,13 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  *
  * function draw() {
+ *   noStroke();
  *   background(200);
  *   orbitControl();
  *   box(15, 30);
+ *   // set the stroke color and weight for the grid!
+ *   stroke(255, 0, 150);
+ *   strokeWeight(0.8);
  * }
  * </code>
  * </div>
@@ -290,64 +297,51 @@ p5.prototype.debugMode = function() {
   }
 
   // then add new debugMode functions according to the argument list
-  if (arguments.length > 0) {
-    if (arguments.length === 9) {
-      this.registerMethod(
-        'post',
-        this._grid.call(
-          this,
-          arguments[0],
-          arguments[1],
-          arguments[2],
-          arguments[3],
-          arguments[4]
-        )
-      );
-      this.registerMethod(
-        'post',
-        this._axesIcon.call(
-          this,
-          arguments[5],
-          arguments[6],
-          arguments[7],
-          arguments[8]
-        )
-      );
-    } else if (arguments.length > 1) {
-      if (arguments[0] === constants.GRID) {
-        this.registerMethod(
-          'post',
-          this._grid.call(
-            this,
-            arguments[1],
-            arguments[2],
-            arguments[3],
-            arguments[4],
-            arguments[5]
-          )
-        );
-      } else if (arguments[0] === constants.AXES) {
-        this.registerMethod(
-          'post',
-          this._axesIcon.call(
-            this,
-            arguments[1],
-            arguments[2],
-            arguments[3],
-            arguments[4]
-          )
-        );
-      }
-    } else {
-      if (arguments[0] === constants.GRID) {
-        this.registerMethod('post', this._grid.call(this));
-      } else if (arguments[0] === constants.AXES) {
-        this.registerMethod('post', this._axesIcon.call(this));
-      }
-    }
+  if (arguments[0] === constants.GRID) {
+    this.registerMethod(
+      'post',
+      this._grid.call(
+        this,
+        arguments[1],
+        arguments[2],
+        arguments[3],
+        arguments[4],
+        arguments[5]
+      )
+    );
+  } else if (arguments[0] === constants.AXES) {
+    this.registerMethod(
+      'post',
+      this._axesIcon.call(
+        this,
+        arguments[1],
+        arguments[2],
+        arguments[3],
+        arguments[4]
+      )
+    );
   } else {
-    this.registerMethod('post', this._grid.call(this));
-    this.registerMethod('post', this._axesIcon.call(this));
+    this.registerMethod(
+      'post',
+      this._grid.call(
+        this,
+        arguments[0],
+        arguments[1],
+        arguments[2],
+        arguments[3],
+        arguments[4]
+      )
+    );
+    this.registerMethod(
+      'post',
+      this._axesIcon.call(
+        this,
+        arguments[5],
+        arguments[6],
+        arguments[7],
+        arguments[8]
+      )
+    );
   }
 };
 
