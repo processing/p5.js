@@ -144,7 +144,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  *   box(15, 30);
  *   // Press the spacebar to turn debugMode off!
  *   if (keyIsDown(32)) {
- *     debugMode(OFF);
+ *     noDebugMode();
  *   }
  * }
  * </code>
@@ -222,7 +222,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 
 /**
  * @method debugMode
- * @param {Constant} mode GRID, AXES, or OFF
+ * @param {Constant} mode GRID or AXES
  */
 
 /**
@@ -326,13 +326,54 @@ p5.prototype.debugMode = function() {
         this.registerMethod('post', this._grid.call(this));
       } else if (arguments[0] === constants.AXES) {
         this.registerMethod('post', this._axesIcon.call(this));
-      } else if (arguments[0] === constants.OFF) {
-        return;
       }
     }
   } else {
     this.registerMethod('post', this._grid.call(this));
     this.registerMethod('post', this._axesIcon.call(this));
+  }
+};
+
+/**
+ * Turns off debugMode() in a 3D sketch.
+ * @method noDebugMode
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
+ *   normalMaterial();
+ *   debugMode();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   box(15, 30);
+ *   // Press the spacebar to turn debugMode off!
+ *   if (keyIsDown(32)) {
+ *     noDebugMode();
+ *   }
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * a grid and icon indicating axes turns off when the spacebar is pressed in a
+ * 3D sketch.
+ */
+p5.prototype.noDebugMode = function() {
+  this._assert3d('noDebugMode');
+
+  // start by removing existing 'post' registered debug methods
+  for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+    // test for equality...
+    if (
+      this._registeredMethods.post[i].toString() === this._grid().toString() ||
+      this._registeredMethods.post[i].toString() === this._axesIcon().toString()
+    ) {
+      this._registeredMethods.post.splice(i, 1);
+    }
   }
 };
 
