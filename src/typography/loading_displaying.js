@@ -188,9 +188,32 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * </code>
  * </div>
  *
+ * <div modernizr='webgl'>
+ * <code>
+ * var avenir;
+ * function preload() {
+ *   avenir = loadFont('assets/Avenir.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   textFont(avenir);
+ *   textSize(width / 3);
+ *   textAlign(CENTER, CENTER);
+ * }
+ * function draw() {
+ *   background(0);
+ *   var time = millis();
+ *   rotateX(time / 1000);
+ *   rotateZ(time / 1234);
+ *   text('p5.js', 0, 0);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  *'word' displayed 3 times going from black, blue to translucent blue
  * The quick brown fox jumped over the lazy dog.
+ * the text 'p5.js' spinning in 3d
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
