@@ -428,7 +428,11 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
 
   return function() {
     this.push();
-
+    this.stroke(
+      this._renderer.curStrokeColor[0] * 255,
+      this._renderer.curStrokeColor[1] * 255,
+      this._renderer.curStrokeColor[2] * 255
+    );
     this._renderer.uMVMatrix.set(
       this._renderer._curCamera.cameraMatrix.mat4[0],
       this._renderer._curCamera.cameraMatrix.mat4[1],
@@ -450,8 +454,6 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
 
     // Lines along X axis
     for (var q = 0; q <= numDivs; q++) {
-      this.strokeWeight(1);
-      this.stroke(0, 0, 0);
       this.beginShape(this.LINES);
       this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
       this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
@@ -460,13 +462,12 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
 
     // Lines along Z axis
     for (var i = 0; i <= numDivs; i++) {
-      this.strokeWeight(1);
-      this.stroke(0, 0, 0);
       this.beginShape(this.LINES);
       this.vertex(i * spacing - halfSize + xOff, yOff, -halfSize + zOff);
       this.vertex(i * spacing - halfSize + xOff, yOff, +halfSize + zOff);
       this.endShape();
     }
+
     this.pop();
   };
 };
