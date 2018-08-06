@@ -551,11 +551,5 @@ module.exports = {
    * @property {String} AXES
    * @final
    */
-  AXES: 'axes',
-
-  /**
-   * @property {String} OFF
-   * @final
-   */
-  OFF: 'off'
+  AXES: 'axes'
 };
