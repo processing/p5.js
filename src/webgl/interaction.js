@@ -149,8 +149,12 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  * </code>
  * </div>
+ * @alt
+ * a 3D box is centered on a grid in a 3D sketch. there is also an icon
+ * indicating the direction of each axis. the grid and icon disappear when the
+ * spacebar is pressed.
  *
- *
+ * @example
  * <div>
  * <code>
  * function setup() {
@@ -167,7 +171,10 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  * </code>
  * </div>
+ * @alt
+ * a 3D box is centered on a grid in a 3D sketch.
  *
+ * @example
  * <div>
  * <code>
  * function setup() {
@@ -184,7 +191,11 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  * </code>
  * </div>
+ * @alt
+ * a 3D box is centered in a 3D sketch. there is also an icon
+ * indicating the direction of each axis.
  *
+ * @example
  * <div>
  * <code>
  * function setup() {
@@ -201,7 +212,10 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  * </code>
  * </div>
+ * @alt
+ * a 3D box is centered on a grid in a 3D sketch
  *
+ * @example
  * <div>
  * <code>
  * function setup() {
@@ -218,6 +232,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * }
  * </code>
  * </div>
+ * @alt
+ * a 3D box is centered on a grid in a 3D sketch. there is also an icon
+ * indicating the direction of each axis.
  */
 
 /**
@@ -359,8 +376,9 @@ p5.prototype.debugMode = function() {
  * </code>
  * </div>
  * @alt
- * a grid and icon indicating axes turns off when the spacebar is pressed in a
- * 3D sketch.
+ * a 3D box is centered on a grid in a 3D sketch. there is also an icon
+ * indicating the direction of each axis. the grid and icon disappear when the
+ * spacebar is pressed.
  */
 p5.prototype.noDebugMode = function() {
   this._assert3d('noDebugMode');
