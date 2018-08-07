@@ -339,7 +339,12 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          base: './',
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
