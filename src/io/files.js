@@ -251,10 +251,12 @@ p5.prototype.loadStrings = function() {
     'GET',
     'text',
     function(data) {
-      var arr = data.match(/[^\r\n]+/g);
-      for (var k in arr) {
-        ret[k] = arr[k];
-      }
+      // split lines handling mac/windows/linux endings
+      var lines = data
+        .replace(/\r\n/g, '\r')
+        .replace(/\n/g, '\r')
+        .split(/\r/);
+      Array.prototype.push.apply(ret, lines);
 
       if (typeof callback !== 'undefined') {
         callback(ret);

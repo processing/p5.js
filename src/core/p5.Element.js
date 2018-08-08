@@ -187,8 +187,10 @@ p5.Element.prototype.class = function(c) {
 
 /**
  * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called once after every time a
- * mouse button is pressed over the element. This can be used to
- * attach element specific event listeners.
+ * mouse button is pressed over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mousePressed
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -230,8 +232,17 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
-  adjustListener('mousedown', fxn, this);
-  adjustListener('touchstart', fxn, this);
+  // Prepend the mouse property setters to the event-listener.
+  // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+  // For details, see https://github.com/processing/p5.js/issues/3087.
+  var eventPrependedFxn = function(event) {
+    this._pInst._setProperty('mouseIsPressed', true);
+    this._pInst._setMouseButton(event);
+    // Pass along the return-value of the callback:
+    return fxn();
+  };
+  // Pass along the event-prepended form of the callback.
+  adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
@@ -352,8 +363,10 @@ p5.Element.prototype.mouseWheel = function(fxn) {
 
 /**
  * The .<a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is called once after every time a
- * mouse button is released over the element. This can be used to
- * attach element specific event listeners.
+ * mouse button is released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseReleased
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -399,14 +412,15 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
-  adjustListener('touchend', fxn, this);
   return this;
 };
 
 /**
  * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is called once after a mouse button is
- * pressed and released over the element. This can be used to
- * attach element specific event listeners.
+ * pressed and released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -512,7 +526,6 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
-  adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -748,7 +761,6 @@ p5.Element.prototype.mouseOut = function(fxn) {
  */
 p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
-  adjustListener('mousedown', fxn, this);
   return this;
 };
 
@@ -789,7 +801,6 @@ p5.Element.prototype.touchStarted = function(fxn) {
  */
 p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
-  adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -839,7 +850,6 @@ p5.Element.prototype.touchMoved = function(fxn) {
  */
 p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
-  adjustListener('mouseup', fxn, this);
   return this;
 };
 
