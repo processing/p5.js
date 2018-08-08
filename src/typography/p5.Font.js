@@ -466,7 +466,7 @@ p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
     case constants.CENTER:
       y += this._textAscent(fontSize) / 2;
       break;
-    case constants.BASELINE:
+    case constants.BOTTOM:
       y -= this._textDescent(fontSize);
       break;
   }

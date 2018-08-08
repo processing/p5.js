@@ -233,6 +233,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         break;
     }
 
+    var baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
       switch (this._textBaseline) {
         case constants.BOTTOM:
@@ -240,6 +241,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           break;
         case constants.CENTER:
           y += (maxHeight - totalHeight) / 2;
+          break;
+        case constants.BASELINE:
+          baselineHacked = true;
+          this._textBaseline = constants.TOP;
           break;
       }
 
@@ -264,6 +269,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
       this._renderText(p, line, x, y, finalMaxHeight);
       y += p.textLeading();
+
+      if (baselineHacked) {
+        this._textBaseline = constants.BASELINE;
+      }
     }
   } else {
     // Offset to account for vertically centering multiple lines of text - no
