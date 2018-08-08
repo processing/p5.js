@@ -941,6 +941,7 @@ p5.prototype.httpPost = function() {
  * For more advanced use, you may also pass in the path as the first argument
  * and a object as the second argument, the signature follows the one specified
  * in the Fetch API specification.
+ * This method will only fetch files upto size of 64MB when "GET" is used.
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
@@ -1023,6 +1024,7 @@ p5.prototype.httpDo = function() {
   var jsonpOptions = {};
   var cbCount = 0;
   var contentType = 'text/plain';
+  var promise;
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length - 1; i > 0; i--) {
     if (typeof arguments[i] === 'function') {
@@ -1085,61 +1087,138 @@ p5.prototype.httpDo = function() {
       }
     }
 
-    request = new Request(path, {
-      method: method,
-      mode: 'cors',
-      body: data,
-      headers: new Headers({
-        'Content-Type': contentType
+    if (method === 'GET') {
+      return new Promise(function(resolve, reject) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(e) {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              resolve(xhr.getResponseHeader('content-length'));
+            } else {
+              reject('Content length unavailable');
+            }
+          }
+        };
+        xhr.ontimeout = function() {
+          reject('timeout');
+        };
+        xhr.open('HEAD', path, true);
+        xhr.send();
       })
-    });
-  }
+        .then(function(value) {
+          var fileSize = value;
+          console.log(fileSize);
+          if (fileSize && fileSize > 64000000) {
+            p5._friendlyFileLoadError(5, path);
+          } else {
+            request = new Request(path, {
+              method: method,
+              mode: 'cors',
+              body: data,
+              headers: new Headers({
+                'Content-Type': contentType
+              })
+            });
+            // do some sort of smart type checking
+            if (!type) {
+              if (path.indexOf('json') !== -1) {
+                type = 'json';
+              } else if (path.indexOf('xml') !== -1) {
+                type = 'xml';
+              } else {
+                type = 'text';
+              }
+            }
 
-  // do some sort of smart type checking
-  if (!type) {
-    if (path.indexOf('json') !== -1) {
-      type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
-      type = 'xml';
-    } else {
-      type = 'text';
-    }
-  }
+            if (type === 'jsonp') {
+              promise = fetchJsonp(path, jsonpOptions);
+            } else {
+              promise = fetch(request);
+            }
+            promise = promise.then(function(res) {
+              if (!res.ok) {
+                var err = new Error(res.body);
+                err.status = res.status;
+                err.ok = false;
+                throw err;
+              }
 
-  var promise;
-  if (type === 'jsonp') {
-    promise = fetchJsonp(path, jsonpOptions);
-  } else {
-    promise = fetch(request);
-  }
-  promise = promise.then(function(res) {
-    if (!res.ok) {
-      var err = new Error(res.body);
-      err.status = res.status;
-      err.ok = false;
-      throw err;
-    }
-
-    switch (type) {
-      case 'json':
-      case 'jsonp':
-        return res.json();
-      case 'binary':
-        return res.blob();
-      case 'arrayBuffer':
-        return res.arrayBuffer();
-      case 'xml':
-        return res.text().then(function(text) {
-          var parser = new DOMParser();
-          var xml = parser.parseFromString(text, 'text/xml');
-          return parseXML(xml.documentElement);
+              switch (type) {
+                case 'json':
+                case 'jsonp':
+                  return res.json();
+                case 'binary':
+                  return res.blob();
+                case 'arrayBuffer':
+                  return res.arrayBuffer();
+                case 'xml':
+                  return res.text().then(function(text) {
+                    var parser = new DOMParser();
+                    var xml = parser.parseFromString(text, 'text/xml');
+                    return parseXML(xml.documentElement);
+                  });
+                default:
+                  return res.text();
+              }
+            });
+            promise.then(callback || function() {});
+            promise.catch(errorCallback || console.error);
+          }
+        })
+        .catch(function(e) {
+          promise.then(callback || function() {});
+          promise.catch(errorCallback || console.error);
+          console.log(e);
         });
-      default:
-        return res.text();
     }
-  });
-  promise.then(callback || function() {});
-  promise.catch(errorCallback || console.error);
+  }
+
+  if (method !== 'GET') {
+    // do some sort of smart type checking
+    if (!type) {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
+
+    if (type === 'jsonp') {
+      promise = fetchJsonp(path, jsonpOptions);
+    } else {
+      promise = fetch(request);
+    }
+    promise = promise.then(function(res) {
+      if (!res.ok) {
+        var err = new Error(res.body);
+        err.status = res.status;
+        err.ok = false;
+        throw err;
+      }
+
+      switch (type) {
+        case 'json':
+        case 'jsonp':
+          return res.json();
+        case 'binary':
+          return res.blob();
+        case 'arrayBuffer':
+          return res.arrayBuffer();
+        case 'xml':
+          return res.text().then(function(text) {
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, 'text/xml');
+            return parseXML(xml.documentElement);
+          });
+        default:
+          return res.text();
+      }
+    });
+    promise.then(callback || function() {});
+    promise.catch(errorCallback || console.error);
+  }
   return promise;
 };
 
