@@ -3,17 +3,6 @@ suite('p5.Camera', function() {
   var myCam;
   var delta = 0.001;
 
-  // copy of p5.Vector.prototype.angleBetween...
-  var angleBetween = function(a1, a2, a3, b1, b2, b3) {
-    var dotProd = a1 * b1 + a2 * b2 + a3 * b3;
-    var dotmagmag =
-      dotProd /
-      (Math.sqrt(a1 * a1 + a2 * a2 + a3 * a3) *
-        Math.sqrt(b1 * b1 + b2 * b2 + b3 * b3));
-    var angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-    return angle;
-  };
-
   // returns values to test which have changed
   var getVals = function(cam) {
     return {
@@ -436,82 +425,38 @@ suite('p5.Camera', function() {
     test('_getLocalAxes() returns three normalized, orthogonal vectors', function() {
       var local = myCam._getLocalAxes();
 
-      // assert that returned values are numbers
+      // assert that all returned values are numbers
       for (let j = 0; j < 3; j++) {
         assert.typeOf(local.x[j], 'number');
         assert.typeOf(local.y[j], 'number');
         assert.typeOf(local.z[j], 'number');
       }
 
-      // assert vectors are normalized
-      assert.equal(
-        Math.sqrt(
-          local.x[0] * local.x[0] +
-            local.x[1] * local.x[1] +
-            local.x[2] * local.x[2]
-        ),
-        1,
-        'local X vector is not unit vector'
-      );
-      assert.equal(
-        Math.sqrt(
-          local.y[0] * local.y[0] +
-            local.y[1] * local.y[1] +
-            local.y[2] * local.y[2]
-        ),
-        1,
-        'local Y vector is not unit vector'
-      );
-      assert.equal(
-        Math.sqrt(
-          local.z[0] * local.z[0] +
-            local.z[1] * local.z[1] +
-            local.z[2] * local.z[2]
-        ),
-        1,
-        'local Z vector is not unit vector'
-      );
+      // create p5.Vectors for further assertions
+      var vecX = myp5.createVector(local.x[0], local.x[1], local.x[2]);
+      var vecY = myp5.createVector(local.y[0], local.y[1], local.y[2]);
+      var vecZ = myp5.createVector(local.z[0], local.z[1], local.z[2]);
 
-      // assert vectors are orthogonal to one another using angleBetween
-      // function from p5.Vector:
-      var angleXY = angleBetween(
-        local.x[0],
-        local.x[1],
-        local.x[2],
-        local.y[0],
-        local.y[1],
-        local.y[2]
-      );
-      var angleYZ = angleBetween(
-        local.y[0],
-        local.y[1],
-        local.y[2],
-        local.z[0],
-        local.z[1],
-        local.z[2]
-      );
-      var angleXZ = angleBetween(
-        local.x[0],
-        local.x[1],
-        local.x[2],
-        local.z[0],
-        local.z[1],
-        local.z[2]
-      );
+      // assert vectors are normalized
+      assert.equal(vecX.mag(), 1, 'local X vector is not unit vector');
+      assert.equal(vecY.mag(), 1, 'local Y vector is not unit vector');
+      assert.equal(vecZ.mag(), 1, 'local Z vector is not unit vector');
+
+      // Assert vectors are orthogonal
       assert.closeTo(
-        angleXY,
+        vecX.angleBetween(vecY),
         Math.PI / 2,
         delta,
         'local X vector not orthogonal to local Y vector'
       );
       assert.closeTo(
-        angleYZ,
+        vecY.angleBetween(vecZ),
         Math.PI / 2,
         delta,
         'local Y vector not orthogonal to local Z vector'
       );
       assert.closeTo(
-        angleXZ,
+        vecX.angleBetween(vecZ),
         Math.PI / 2,
         delta,
         'local X vector not orthogonal to local Z vector'
