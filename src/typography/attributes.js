@@ -47,15 +47,23 @@ var p5 = require('../core/main');
  * <div>
  * <code>
  * textSize(16);
- * strokeWeight(0.25);
- * var names = ['TOP', 'CENTER', 'BASELINE', 'BOTTOM'];
- * var aligns = [TOP, CENTER, BASELINE, BOTTOM];
- * for (var i = 0; i < 4; i++) {
- *   var y = map(i + 0.5, 0, 4, 0, height);
- *   line(0, y, width, y);
- *   textAlign(CENTER, aligns[i]);
- *   text(names[i], 0, y, width);
- * }
+ * strokeWeight(0.5);
+ *
+ * line(0, 12, width, 12);
+ * textAlign(CENTER, TOP);
+ * text('TOP', 0, 12, width);
+ *
+ * line(0, 37, width, 37);
+ * textAlign(CENTER, CENTER);
+ * text('CENTER', 0, 37, width);
+ *
+ * line(0, 62, width, 62);
+ * textAlign(CENTER, BASELINE);
+ * text('BASELINE', 0, 62, width);
+ *
+ * line(0, 87, width, 87);
+ * textAlign(CENTER, BOTTOM);
+ * text('BOTTOM', 0, 87, width);
  * </code>
  * </div>
  *
