@@ -12,7 +12,7 @@
     "lint:fix": "grunt lint-fix",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "postinstall": "patch-package",
+    "prepare": "patch-package",
     "generate": "all-contributors generate",
     "precommit": "lint-staged"
   },
