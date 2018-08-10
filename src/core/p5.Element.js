@@ -946,20 +946,41 @@ p5.Element.prototype.dragLeave = function(fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('drop image', width / 2, height / 2);
+ *   text('drop file', width / 2, height / 2);
  *   c.drop(gotFile);
  * }
  *
  * function gotFile(file) {
- *   var img = createImg(file.data).hide();
- *   // Draw the image onto the canvas
- *   image(img, 0, 0, width, height);
+ *   background(200);
+ *   text('received file:', width / 2, height / 2);
+ *   text(file.name, width / 2, height / 2 + 50);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var img;
+ *
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop image', width / 2, height / 2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function draw() {
+ *   if (img) {
+ *     image(img, 0, 0, width, height);
+ *   }
+ * }
+ *
+ * function gotFile(file) {
+ *   img = createImg(file.data).hide();
  * }
  * </code></div>
  *
  * @alt
  * Canvas turns into whatever image is dragged/dropped onto it.
- *
  */
 p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback
