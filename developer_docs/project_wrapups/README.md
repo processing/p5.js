@@ -1,4 +1,4 @@
-This folder contains wrapup reports for projects from p5.js related Google Summer of Code projects, Processing Fellowships, and others.
+This folder contains wrapup reports for projects from p5.js related [Google Summer of Code](https://summerofcode.withgoogle.com/organizations/4915113891463168/) projects, [Processing Fellowships](https://processingfoundation.org/fellowships), and others.
 
 
 *Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
