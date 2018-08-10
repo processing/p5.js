@@ -36,7 +36,7 @@
       "node ./utils/sample-linter.js"
     ]
   },
-  "version": "0.7.0",
+  "version": "0.7.1",
   "devDependencies": {
     "all-contributors-cli": "^4.5.0",
     "brfs": "^1.4.3",
