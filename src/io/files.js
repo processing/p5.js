@@ -27,6 +27,7 @@ require('../core/error_helpers');
  * callback following the syntax specified <a href="https://github.com/camsong/
  * fetch-jsonp">here</a>.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadJSON
  * @param  {String}        path       name of the file or url to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
@@ -161,7 +162,16 @@ p5.prototype.loadJSON = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(5, path);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
@@ -180,6 +190,7 @@ p5.prototype.loadJSON = function() {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
  * @param  {function} [callback] function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>
@@ -264,7 +275,16 @@ p5.prototype.loadStrings = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(3, arguments[0]);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
@@ -303,6 +323,7 @@ p5.prototype.loadStrings = function() {
  * object:</p>
  * </p>
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String}         options  "header" "csv" "tsv"
@@ -316,7 +337,7 @@ p5.prototype.loadStrings = function() {
  * @return {Object}                    <a href="#/p5.Table">Table</a> object containing data
  *
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * // Given the following CSV file called "mammals.csv"
  * // located in the project's "assets" folder:
@@ -416,7 +437,7 @@ p5.prototype.loadTable = function(path) {
   this.httpDo(
     path,
     'GET',
-    'text',
+    'table',
     function(resp) {
       var state = {};
 
@@ -619,6 +640,7 @@ function parseXML(two) {
  * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
  * @param  {function} [callback] function to be executed after <a href="#/p5/loadXML">loadXML()</a>
@@ -697,13 +719,23 @@ p5.prototype.loadXML = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(1, arguments[0]);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
 };
 
 /**
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadBytes
  * @param {string}   file            name of the file or URL to load
  * @param {function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
@@ -748,7 +780,16 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(6, file);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
   return ret;
 };
@@ -941,7 +982,7 @@ p5.prototype.httpPost = function() {
  * For more advanced use, you may also pass in the path as the first argument
  * and a object as the second argument, the signature follows the one specified
  * in the Fetch API specification.
- * This method will only fetch files upto size of 64MB when "GET" is used.
+ * This method is suitable for fetching files up to size of 64MB when "GET" is used.
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
@@ -1021,10 +1062,10 @@ p5.prototype.httpDo = function() {
   var callback;
   var errorCallback;
   var request;
+  var promise;
   var jsonpOptions = {};
   var cbCount = 0;
   var contentType = 'text/plain';
-  var promise;
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length - 1; i > 0; i--) {
     if (typeof arguments[i] === 'function') {
@@ -1061,7 +1102,8 @@ p5.prototype.httpDo = function() {
           a === 'binary' ||
           a === 'arrayBuffer' ||
           a === 'xml' ||
-          a === 'text'
+          a === 'text' ||
+          a === 'table'
         ) {
           type = a;
         } else {
@@ -1087,117 +1129,42 @@ p5.prototype.httpDo = function() {
       }
     }
 
-    if (method === 'GET') {
-      return new Promise(function(resolve, reject) {
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              resolve(xhr.getResponseHeader('content-length'));
-            } else {
-              reject('Content length unavailable');
-            }
-          }
-        };
-        xhr.ontimeout = function() {
-          reject('timeout');
-        };
-        xhr.open('HEAD', path, true);
-        xhr.send();
+    request = new Request(path, {
+      method: method,
+      mode: 'cors',
+      body: data,
+      headers: new Headers({
+        'Content-Type': contentType
       })
-        .then(function(value) {
-          var fileSize = value;
-          console.log(fileSize);
-          if (fileSize && fileSize > 64000000) {
-            p5._friendlyFileLoadError(5, path);
-          } else {
-            request = new Request(path, {
-              method: method,
-              mode: 'cors',
-              body: data,
-              headers: new Headers({
-                'Content-Type': contentType
-              })
-            });
-            // do some sort of smart type checking
-            if (!type) {
-              if (path.indexOf('json') !== -1) {
-                type = 'json';
-              } else if (path.indexOf('xml') !== -1) {
-                type = 'xml';
-              } else {
-                type = 'text';
-              }
-            }
-
-            if (type === 'jsonp') {
-              promise = fetchJsonp(path, jsonpOptions);
-            } else {
-              promise = fetch(request);
-            }
-            promise = promise.then(function(res) {
-              if (!res.ok) {
-                var err = new Error(res.body);
-                err.status = res.status;
-                err.ok = false;
-                throw err;
-              }
-
-              switch (type) {
-                case 'json':
-                case 'jsonp':
-                  return res.json();
-                case 'binary':
-                  return res.blob();
-                case 'arrayBuffer':
-                  return res.arrayBuffer();
-                case 'xml':
-                  return res.text().then(function(text) {
-                    var parser = new DOMParser();
-                    var xml = parser.parseFromString(text, 'text/xml');
-                    return parseXML(xml.documentElement);
-                  });
-                default:
-                  return res.text();
-              }
-            });
-            promise.then(callback || function() {});
-            promise.catch(errorCallback || console.error);
-          }
-        })
-        .catch(function(e) {
-          promise.then(callback || function() {});
-          promise.catch(errorCallback || console.error);
-          console.log(e);
-        });
+    });
+  }
+  // do some sort of smart type checking
+  if (!type) {
+    if (path.indexOf('json') !== -1) {
+      type = 'json';
+    } else if (path.indexOf('xml') !== -1) {
+      type = 'xml';
+    } else {
+      type = 'text';
     }
   }
 
-  if (method !== 'GET') {
-    // do some sort of smart type checking
-    if (!type) {
-      if (path.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (path.indexOf('xml') !== -1) {
-        type = 'xml';
-      } else {
-        type = 'text';
-      }
-    }
-
-    if (type === 'jsonp') {
-      promise = fetchJsonp(path, jsonpOptions);
+  if (type === 'jsonp') {
+    promise = fetchJsonp(path, jsonpOptions);
+  } else {
+    promise = fetch(request);
+  }
+  promise = promise.then(function(res) {
+    if (!res.ok) {
+      var err = new Error(res.body);
+      err.status = res.status;
+      err.ok = false;
+      throw err;
     } else {
-      promise = fetch(request);
-    }
-    promise = promise.then(function(res) {
-      if (!res.ok) {
-        var err = new Error(res.body);
-        err.status = res.status;
-        err.ok = false;
-        throw err;
+      var fileSize = res.headers.get('content-length');
+      if (fileSize && fileSize > 64000000) {
+        p5._friendlyFileLoadError(7, path);
       }
-
       switch (type) {
         case 'json':
         case 'jsonp':
@@ -1215,10 +1182,10 @@ p5.prototype.httpDo = function() {
         default:
           return res.text();
       }
-    });
-    promise.then(callback || function() {});
-    promise.catch(errorCallback || console.error);
-  }
+    }
+  });
+  promise.then(callback || function() {});
+  promise.catch(errorCallback || console.error);
   return promise;
 };
 
