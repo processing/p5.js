@@ -1,8 +1,8 @@
 # Release process
 
 ## Approach
-* While we are below p5.js 1.0.0, we will follow this [versioning pattern](https://semver.org/): 0:MAJOR/MINOR:PATCH
-* Once we reach 1.0.0, we will follow this versioning pattern: MAJOR:MINOR:PATCH
+* While we are below p5.js 1.0.0, we will follow this [versioning pattern](https://semver.org/): `0:MAJOR/MINOR:PATCH`
+* Once we reach 1.0.0, we will follow this versioning pattern: `MAJOR:MINOR:PATCH`
 
 
 ## Requirements
