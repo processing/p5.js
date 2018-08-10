@@ -39,7 +39,7 @@ function preload() {
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  
+
   wrapShader = createShader(vertexShader, fragmentShader);
 
   tex = canvas.getTexture(img);
@@ -55,19 +55,16 @@ function draw() {
   wrapShader.setUniform('uWindowSize', [width, height]);
 
   rect(0, 0, width, height);
-  
 }
 
 function keyPressed() {
   wrapMode = (wrapMode + 1) % 3;
-  
-  if(wrapMode == 0){
+
+  if (wrapMode === 0) {
     tex.setWrapMode(CLAMP, CLAMP);
-  } else if( wrapMode == 1){
+  } else if (wrapMode === 1) {
     tex.setWrapMode(MIRROR, MIRROR);
   } else {
     tex.setWrapMode(REPEAT, REPEAT);
   }
-
-  
 }
