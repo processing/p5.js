@@ -1,4 +1,4 @@
-# P5.js WebGL Updates
+# p5.js WebGL Updates
 
 Over the course of this Google Summer of Code 2018 project for The Processing Foundation, I worked along with [Adil Rabbani](https://github.com/AdilRabbani) and our mentors [Kate Hollenbach](https://github.com/kjhollen) and [Stalgia Grigg](https://github.com/mlarghydracept) to further expand and improve p5.js' WebGL implementation. I focused specifically on helping beginner coders visualize and understand 3D space through an expanded orbitControl(), reorganization and expansion of the camera and a debugMode().
 
