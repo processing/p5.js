@@ -1,6 +1,10 @@
 This folder contains wrapup reports for projects from p5.js related Google Summer of Code projects, Processing Fellowships, and others.
 
 
+*Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
+
+
+
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018
 * [Chinese Translation for p5.js and preparing a future of more translations](https://medium.com/processing-foundation/chinese-translation-for-p5-js-and-preparing-a-future-of-more-translations-b56843ea096e), [p5.js 的中文翻译 — 为支持更多种语言翻译做准备](https://medium.com/processing-foundation/p5-js-%E7%9A%84%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91-%E4%B8%BA%E6%94%AF%E6%8C%81%E6%9B%B4%E5%A4%9A%E7%A7%8D%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91%E5%81%9A%E5%87%86%E5%A4%87-a0fa94da770f) by Kenneth Lim, 2018
@@ -32,5 +36,3 @@ This folder contains wrapup reports for projects from p5.js related Google Summe
 * [Friendly Error System for p5.js](https://medium.com/processing-foundation/2017-marks-the-processing-foundations-sixth-year-participating-in-google-summer-of-code-d365f62fc463) by A. Mira Chung, 2017
 * [Processing Foundation: Our Summer of Code Has Begun!](https://medium.com/processing-foundation/our-summer-of-code-has-begun-dffc1bbddb7c)
 
-
-Note: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.
