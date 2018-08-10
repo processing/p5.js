@@ -362,6 +362,9 @@ module.exports = function(grunt) {
     open: {
       yui: {
         path: 'http://127.0.0.1:9001/docs/reference/'
+      },
+      dev: {
+        path: 'http://127.0.0.1:9001/test/'
       }
     },
     'saucelabs-mocha': {
