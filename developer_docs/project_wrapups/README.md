@@ -5,3 +5,6 @@ This folder contains wrapup reports for projects from Google Summer of Code, Pro
 * [Updates to WebGL Mode](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/aidannelson_gsoc_2018.md) by Aidan Nelson, 2018
 * [Implementing missing primitives in p5.js WebGL mode](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/adilrabbani_gsoc_2018.md) by Adil Rabbani, 2018
 * [Improving Developer Operations](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/sakshamsaxena_gsoc_2017.md) by Saksham Saxena, 2017
+
+
+Note: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.
