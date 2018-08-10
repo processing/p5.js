@@ -28,7 +28,7 @@ This folder contains wrapup reports for projects from p5.js related Google Summe
 * [Creative Coding with p5.js for Prisons in Washington State](https://medium.com/processing-foundation/creative-coding-with-p5-js-for-prisons-in-washington-state-3bd1d342d769) by Susan Evans, 2017
 * [Announcing our 2017 Processing Foundation Fellows](https://medium.com/processing-foundation/announcing-our-2017-processing-foundation-fellows-8b9e7c8bd2f)
 
-### Google Summer of Code 2017 
+### Google Summer of Code 2017 ([archive](https://summerofcode.withgoogle.com/archive/2017/organizations/5256745899261952/))
 
 * [Processing Foundation: GSOC Grand Wrap-Up Post](https://medium.com/processing-foundation/2017-google-summer-of-code-grand-wrap-up-post-16680b1438db)
 * [Improving Developer Operations](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/sakshamsaxena_gsoc_2017.md) by Saksham Saxena, 2017
