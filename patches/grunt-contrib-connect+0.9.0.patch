@@ -1,0 +1,12 @@
+patch-package
+--- a/node_modules/grunt-contrib-connect/tasks/connect.js
++++ b/node_modules/grunt-contrib-connect/tasks/connect.js
+@@ -36,7 +36,7 @@ module.exports = function(grunt) {
+       middlewares.push(connect.static(path, staticOptions));
+     });
+     // Make directory browse-able.
+-    middlewares.push(connect.directory(directory.path || directory));
++    middlewares.push(connect.directory(directory.path || directory, directory.options));
+     return middlewares;
+   };
+ 
