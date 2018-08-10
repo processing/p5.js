@@ -452,16 +452,16 @@ p5.prototype.curveTightness = function(t) {
 
 /**
  * Evaluates the curve at position t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points
- * on the curve, and b and c are the control points.
+ * The parameter t varies between 0 and 1, a and d are control points
+ * of the curve, and b and c are the start and end points of the curve.
  * This can be done once with the x coordinates and a second time
  * with the y coordinates to get the location of a curve at t.
  *
  * @method curvePoint
- * @param {Number} a coordinate of first point on the curve
- * @param {Number} b coordinate of first control point
- * @param {Number} c coordinate of second control point
- * @param {Number} d coordinate of second point on the curve
+ * @param {Number} a coordinate of first control point of the curve
+ * @param {Number} b coordinate of first point
+ * @param {Number} c coordinate of second point
+ * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
  * @return {Number} bezier value at position t
  * @example
