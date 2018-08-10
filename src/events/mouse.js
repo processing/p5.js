@@ -386,6 +386,8 @@ p5.prototype._updateMouseCoords = function() {
   this._setProperty('pmouseY', this.mouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
   this._setProperty('pwinMouseY', this.winMouseY);
+
+  this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
 };
 
 function getMousePos(canvas, w, h, evt) {
@@ -784,6 +786,22 @@ p5.prototype._ondblclick = function(e) {
 };
 
 /**
+ * For use with WebGL orbitControl.
+ * @property {Number} _mouseWheelDeltaY
+ * @readOnly
+ * @private
+ */
+p5.prototype._mouseWheelDeltaY = 0;
+
+/**
+ * For use with WebGL orbitControl.
+ * @property {Number} _pmouseWheelDeltaY
+ * @readOnly
+ * @private
+ */
+p5.prototype._pmouseWheelDeltaY = 0;
+
+/**
  * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
  * touchpad.<br><br>
@@ -826,6 +844,7 @@ p5.prototype._ondblclick = function(e) {
  */
 p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
+  this._setProperty('_mouseWheelDeltaY', e.deltaY);
   if (typeof context.mouseWheel === 'function') {
     e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
