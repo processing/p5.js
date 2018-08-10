@@ -1,21 +1,21 @@
 # Implementing missing WebGL primitives
 #### by Adil Rabbani ([@adilrabbani](https://github.com/AdilRabbani))
 
-This summer I worked on improving p5.js WebGL mode, along side [Aidan Nelson](https://github.com/AidanNelson) with the help of our mentors [Kate Hollenbach](https://github.com/kjhollen)
-and [Stalgia Grigg](https://github.com/mlarghydracept). My tasks for the summer included implementing missing primitives in p5.js WebGL mode i.e arc, point, bezierVertex,
+This summer I worked on improving p5.js WebGL mode, along side [Aidan Nelson](https://github.com/AidanNelson) with the help of our mentors [Stalgia Grigg](https://github.com/mlarghydracept)
+and [Kate Hollenbach](https://github.com/kjhollen). My tasks for the summer included implementing missing primitives in p5.js WebGL mode i.e arc, point, bezierVertex,
 curveVertex, quadraticVertex and text.
 
 ## Contribution
 
 My first contribution to p5.js was when I was writing my GSOC proposal. This was just a minor change in [reference examples](https://github.com/processing/p5.js/pull/2737) for curves
 and some examples for [vertex()](https://github.com/processing/p5.js/pull/2798). These small changes helped me in understanding the use of grunt, lint, and other node modules being
-used in the build process. I was really happy (and surprised) when my proposal got accepted 😄. I was about to contribute to one of my favourite libraries. We had a shared branch on [git]
-(https://github.com/processing/p5.js/tree/webgl-gsoc-2018) where we would compare our pull requests to be merged.
+used in the build process. I was really happy (and surprised) when my proposal got accepted 😄. I was about to contribute to one of my favourite libraries. We had a shared branch on 
+[git](https://github.com/processing/p5.js/tree/webgl-gsoc-2018) where we would compare our pull requests to be merged.
 
 ### arc
 
 I started by going through [manual examples](https://github.com/processing/p5.js/tree/master/test/manual-test-examples/webgl), debugging them in browser and watching the code jump from 
-function to function. I have to admit though, It was a little daunting at first. My first task was to implement arc for WebGL mode and so I decided to go through already implemented ellipse 
+function to function. I have to admit though, it was a little daunting at first. My first task was to implement arc for WebGL mode and so I decided to go through already implemented ellipse 
 and debugging it in the chrome editor.
 
 The code started to make sense after a while and I started to make small changes so as to move forward in implementing arc. Before my first evaluation I was able to implement arc [#2942](https://github.com/processing/p5.js/pull/2942) with all three modes
@@ -46,7 +46,7 @@ After a quick discussion with Earcut's creator, it was decided that Earcut wasn'
 Tess2 wasn't really a good option either. It wasn't giving correct results and was too big in size. Libtess seemed to work really well and this was also because it was based on the same [GLU Tesselator implementation](https://github.com/processing/processing-android/tree/master/core/src/processing/opengl/tess) that was being used in Processing. The only problem with Libtess was that it was quite bigger than Earcut. We contacted [Lauren](https://github.com/lmccart) 
 if it was okay with integrating this library for the triangulation part. She encouraged us by saying that we can add the library as a node module just as opentype was being used for 2D text in p5.js. After integrating libtess, 
 I decided to improve the code further for some performance gains. I was able to implement a look up table with the help of which, we wouldn't need to compute coefficients after rendering curve, the first time. This was a huge performance boost from the 
-previous trivial implementation. All that was left was to submit a [pull request](https://github.com/processing/p5.js/pull/3085) with an [example](https://github.com/processing/p5.js/tree/webgl-gsoc-2018/test/manual-test-examples/webgl/curves) showcasing what you can do with WebGL curves in p5.js. This closed issue [#2185](https://github.com/processing/p5.js/issues/2185), [#2186](https://github.com/processing/p5.js/issues/2186) and [#2187](https://github.com/processing/p5.js/issues/2187).
+previous trivial implementation. All that was left was to submit a [pull request](https://github.com/processing/p5.js/pull/3085) with an [example](https://github.com/processing/p5.js/tree/webgl-gsoc-2018/test/manual-test-examples/webgl/curves) showcasing what you can do with WebGL curves in p5.js. This closed issues [#2185](https://github.com/processing/p5.js/issues/2185), [#2186](https://github.com/processing/p5.js/issues/2186) and [#2187](https://github.com/processing/p5.js/issues/2187).
 
 ### text
 
@@ -56,8 +56,8 @@ I went through different methods for rendering text in WebGL. At the end I was a
 
 ### Other minor contributions
 
-Fixed a minor issue with triangle stroke in 2D mode. [#3075](https://github.com/processing/p5.js/pull/3075) closing [#3065](https://github.com/processing/p5.js/issues/3065).
-Ported some examples from Processing to p5.js. [#242](https://github.com/processing/p5.js-website/pull/242)
+Fixed a minor issue with triangle stroke in 2D mode [#3075](https://github.com/processing/p5.js/pull/3075) closing [#3065](https://github.com/processing/p5.js/issues/3065).
+Ported some examples from Processing to p5.js [#242](https://github.com/processing/p5.js-website/pull/242).
 
 ## Support
 Any questions pertaining to this project may be addressed via Issues on the [p5.js repository](https://github.com/processing/p5.js). Simply create a new Issue and either assign or tag me in the conversation with @adilrabbani. For anything else, don't hesitate to get in touch at 14bscsarabbani@seecs.edu.pk!
