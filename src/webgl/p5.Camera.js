@@ -1024,6 +1024,60 @@ p5.Camera.prototype._getLocalAxes = function() {
 };
 
 /**
+ * Orbits the camera about center point. For use with orbitControl().
+ * @method _orbit
+ * @private
+ * @param {Number} dTheta change in spherical coordinate theta
+ * @param {Number} dPhi change in spherical coordinate phi
+ * @param {Number} dRadius change in radius
+ */
+p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
+  var diffX = this.eyeX - this.centerX;
+  var diffY = this.eyeY - this.centerY;
+  var diffZ = this.eyeZ - this.centerZ;
+
+  // get spherical coorinates for current camera position about origin
+  var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+  // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
+  var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+  var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
+
+  // add change
+  camTheta += dTheta;
+  camPhi += dPhi;
+  camRadius += dRadius;
+
+  // prevent zooming through the center:
+  if (camRadius < 0) {
+    camRadius = 0.1;
+  }
+
+  // prevent rotation over the zenith / under bottom
+  if (camPhi > Math.PI) {
+    camPhi = Math.PI;
+  } else if (camPhi <= 0) {
+    camPhi = 0.001;
+  }
+
+  // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
+  var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
+  var _y = Math.cos(camPhi) * camRadius;
+  var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+
+  this.camera(
+    _x + this.centerX,
+    _y + this.centerY,
+    _z + this.centerZ,
+    this.centerX,
+    this.centerY,
+    this.centerZ,
+    0,
+    1,
+    0
+  );
+};
+
+/**
  * Returns true if camera is currently attached to renderer.
  * @method _isActive
  * @private
