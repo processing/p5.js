@@ -49,6 +49,9 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode.lineVertexBuffer = this.GL.createBuffer();
     this.immediateMode.lineNormalBuffer = this.GL.createBuffer();
     this.immediateMode.pointVertexBuffer = this.GL.createBuffer();
+    this.immediateMode._bezierVertex = [];
+    this.immediateMode._quadraticVertex = [];
+    this.immediateMode._curveVertex = [];
   } else {
     this.immediateMode.vertices.length = 0;
     this.immediateMode.edges.length = 0;
@@ -101,6 +104,14 @@ p5.RendererGL.prototype.vertex = function(x, y) {
 
   this.immediateMode.uvCoords.push(u, v);
 
+  this.immediateMode._bezierVertex[0] = x;
+  this.immediateMode._bezierVertex[1] = y;
+  this.immediateMode._bezierVertex[2] = z;
+
+  this.immediateMode._quadraticVertex[0] = x;
+  this.immediateMode._quadraticVertex[1] = y;
+  this.immediateMode._quadraticVertex[2] = z;
+
   return this;
 };
 
@@ -124,7 +135,7 @@ p5.RendererGL.prototype.endShape = function(
       this.immediateMode.pointVertexBuffer
     );
     this.curPointShader.unbindShader();
-  } else {
+  } else if (this.immediateMode.vertices.length > 1) {
     this._useImmediateModeShader();
 
     if (this._doStroke && this.drawMode !== constants.TEXTURE) {
@@ -141,17 +152,35 @@ p5.RendererGL.prototype.endShape = function(
       p5.Geometry.prototype._edgesToVertices.call(this.immediateMode);
       this._drawStrokeImmediateMode();
     }
-  }
 
-  if (this._doFill) {
-    this._drawFillImmediateMode(
-      mode,
-      isCurve,
-      isBezier,
-      isQuadratic,
-      isContour,
-      shapeKind
-    );
+    if (this._doFill) {
+      if (this.isBezier || this.isQuadratic || this.isCurve) {
+        var contours = [
+          new Float32Array(this._vToNArray(this.immediateMode.vertices))
+        ];
+        var polyTriangles = this._triangulate(contours);
+        this.immediateMode.vertices = [];
+        for (
+          var j = 0, polyTriLength = polyTriangles.length;
+          j < polyTriLength;
+          j = j + 3
+        ) {
+          this.vertex(
+            polyTriangles[j],
+            polyTriangles[j + 1],
+            polyTriangles[j + 2]
+          );
+        }
+      }
+      this._drawFillImmediateMode(
+        mode,
+        isCurve,
+        isBezier,
+        isQuadratic,
+        isContour,
+        shapeKind
+      );
+    }
   }
   //clear out our vertexPositions & colors arrays
   //after rendering
@@ -159,6 +188,13 @@ p5.RendererGL.prototype.endShape = function(
   this.immediateMode.vertexColors.length = 0;
   this.immediateMode.uvCoords.length = 0;
   this.isImmediateDrawing = false;
+  this.isBezier = false;
+  this.isQuadratic = false;
+  this.isCurve = false;
+  this.immediateMode._bezierVertex.length = 0;
+  this.immediateMode._quadraticVertex.length = 0;
+
+  this.immediateMode._curveVertex.length = 0;
 
   return this;
 };
@@ -248,7 +284,10 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       case constants.LINE_STRIP:
       case constants.LINES:
       case constants.TRIANGLES:
-        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+        this.immediateMode.shapeMode =
+          this.isBezier || this.isQuadratic || this.isCurve
+            ? constants.TRIANGLES
+            : constants.TRIANGLE_FAN;
         break;
     }
   } else {
