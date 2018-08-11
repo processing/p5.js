@@ -328,6 +328,114 @@ suite('p5.Camera', function() {
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
+
+    test('_orbit(1,0,0) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+          0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
+          0, 1, 6.123234262925839e-17, 0,
+          -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+          8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+        ]);
+
+      myCam._orbit(1, 0, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit(0,1,0) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+          1, 0, 0, 0,
+          0, 0.5403022766113281, -0.8414709568023682, 0,
+          -0, 0.8414709568023682, 0.5403022766113281, 0,
+          0, -8.216248374992574e-7, -86.6025390625, 1
+        ]);
+
+      myCam._orbit(0, 1, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit(0,0,1) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+          1, 0, 0, 0,
+          0, 1, 6.123234262925839e-17, 0,
+          0, -6.123234262925839e-17, 1, 0,
+          0, 2.3406442117928995e-22, -87.6025390625, 1
+        ]);
+
+      myCam._orbit(0, 0, 1);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit(-1,0,0) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+          0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
+          -0, 1, 6.123234262925839e-17, 0,
+          0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+          -8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+        ]);
+
+      myCam._orbit(-1, 0, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit(0,-1,0) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 0.5403022766113281, 0.8414709568023682, 0,
+        0, -0.8414709568023682, 0.5403022766113281, 0,
+        0, 8.216248374992574e-7, -86.6025390625, 1
+      ]);
+
+      myCam._orbit(0, -1, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit(0,0,-1) sets correct matrix', function() {
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 6.123234262925839e-17, 0,
+        0, -6.123234262925839e-17, 1, 0,
+        0, 2.2872063954199937e-22, -85.6025390625, 1
+      ]);
+
+      myCam._orbit(0, 0, -1);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbit() ensures altitude phi <= PI', function() {
+      var myCamCopy = myCam.copy();
+
+      // the following should produce the same values because phi is capped at PI
+      myCamCopy._orbit(0, 10, 0);
+      myCam._orbit(0, 20, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+    });
+    test('_orbit() ensures altitude phi > 0', function() {
+      var myCamCopy = myCam.copy();
+
+      // the following should produce the same values because phi is restricted
+      // to > 0
+      myCamCopy._orbit(0, -10, 0);
+      myCam._orbit(0, -20, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+    });
+    test('_orbit() ensures radius > 0', function() {
+      var myCamCopy = myCam.copy();
+
+      // the following should produce the same values because radius is
+      // restricted to > 0
+      myCamCopy._orbit(0, 0, -200);
+      myCam._orbit(0, 0, -300);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+    });
   });
 
   suite('Projection', function() {
