@@ -144,7 +144,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
 };
 
 /**
- * DebugMode() helps visualize 3D space by adding a grid to indicate where the
+ * debugMode() helps visualize 3D space by adding a grid to indicate where the
  * ‘ground’ is in a sketch and an axes icon which indicates the +X, +Y, and +Z
  * directions. This function can be called without parameters to create a
  * default grid and axes icon, or it can be called according to the examples
@@ -182,8 +182,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * </code>
  * </div>
  * @alt
- * a 3D box is centered on a grid in a 3D sketch. there is also an icon
- * indicating the direction of each axis. the grid and icon disappear when the
+ * a 3D box is centered on a grid in a 3D sketch. an icon
+ * indicates the direction of each axis: a red line points +X,
+ * a green line +Y, and a blue line +Z. the grid and icon disappear when the
  * spacebar is pressed.
  *
  * @example
@@ -224,8 +225,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * </code>
  * </div>
  * @alt
- * a 3D box is centered in a 3D sketch. there is also an icon
- * indicating the direction of each axis.
+ * a 3D box is centered in a 3D sketch. an icon
+ * indicates the direction of each axis: a red line points +X,
+ * a green line +Y, and a blue line +Z.
  *
  * @example
  * <div>
@@ -269,8 +271,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * </code>
  * </div>
  * @alt
- * a 3D box is centered on a grid in a 3D sketch. there is also an icon
- * indicating the direction of each axis.
+ * a 3D box is centered on a grid in a 3D sketch. an icon
+ * indicates the direction of each axis: a red line points +X,
+ * a green line +Y, and a blue line +Z.
  */
 
 /**
@@ -399,8 +402,9 @@ p5.prototype.debugMode = function() {
  * </code>
  * </div>
  * @alt
- * a 3D box is centered on a grid in a 3D sketch. there is also an icon
- * indicating the direction of each axis. the grid and icon disappear when the
+ * a 3D box is centered on a grid in a 3D sketch. an icon
+ * indicates the direction of each axis: a red line points +X,
+ * a green line +Y, and a blue line +Z. the grid and icon disappear when the
  * spacebar is pressed.
  */
 p5.prototype.noDebugMode = function() {
