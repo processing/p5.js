@@ -1,7 +1,9 @@
 var font;
 
 function preload() {
-  font = loadFont('https://fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.otf');
+  font = loadFont(
+    'https://fonts.gstatic.com/ea/notosanstc/v1/NotoSansTC-Regular.otf'
+  );
 }
 
 var chars = [];
@@ -16,11 +18,12 @@ function setup() {
   textSize(100);
 
   var glyphs = font.font.glyphs.glyphs;
-  for (var pn of Object.getOwnPropertyNames(glyphs)) {
-    var glyph = glyphs[pn];
+  var glyphNames = Object.getOwnPropertyNames(glyphs);
+  for (var ipn = 0; ipn < glyphNames.length; ipn++) {
+    var glyph = glyphs[glyphNames[ipn]];
     var char = glyph.unicode;
     if (char) {
-      chars.push(String.fromCodePoint(char));
+      chars.push(String.fromCharCode(char));
     }
   }
 }
@@ -29,7 +32,7 @@ var ich = 0;
 var lines = [];
 
 function addLine() {
-  var line = "";
+  var line = '';
   while (textWidth(line + chars[ich]) < width) {
     line += chars[ich++];
     if (ich > chars.length) {
@@ -51,12 +54,12 @@ function draw() {
   yoff += timeNow - timeLast;
   timeLast = timeNow;
 
-  while(yoff > leading) {
+  while (yoff > leading) {
     yoff -= leading;
     lines.shift();
   }
 
-  while((lines.length - 1) * leading < height) {
+  while ((lines.length - 1) * leading < height) {
     addLine();
     txt = null;
   }

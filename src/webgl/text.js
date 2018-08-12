@@ -71,8 +71,29 @@ function ImageInfos(width, height) {
     }
 
     if (!imageInfo) {
-      // create a new image
-      imageData = new ImageData(this.width, this.height);
+      try {
+        // create a new image
+        imageData = new ImageData(this.width, this.height);
+      } catch (err) {
+        // for browsers that don't support ImageData constructors (ie IE11)
+        // create an ImageData using the old method
+        var canvas = document.getElementsByTagName('canvas')[0];
+        var created = !canvas;
+        if (!canvas) {
+          // create a temporary canvas
+          canvas = document.createElement('canvas');
+          canvas.style.display = 'none';
+          document.body.appendChild(canvas);
+        }
+        var ctx = canvas.getContext('2d');
+        if (ctx) {
+          imageData = ctx.createImageData(this.width, this.height);
+        }
+        if (created) {
+          // distroy the temporary canvas, if necessary
+          document.body.removeChild(canvas);
+        }
+      }
       imageInfo = { index: 0, imageData: imageData };
       this.infos.push(imageInfo);
     }
