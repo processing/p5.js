@@ -112,9 +112,9 @@ I've provided necessary documentations in the components' js files in all the ar
 
 7) Smoothening of the canvas strokes- At present, there are no smoothening algorithms for the strokes in the canvas due to which they appear to be a little jagged.
 
-For feature enhancements, bug reports and contributions
+8) Making the webapp responsive.
 
-You can email me to jithunni.ks@gmail.com
+For feature enhancements, bug reports and contributions, email me to jithunni.ks@gmail.com
 
 ## Acknowledgement
 
