@@ -19,6 +19,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 * [Implementing missing primitives in p5.js WebGL mode](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/adilrabbani_gsoc_2018.md) by Adil Rabbani, 2018
 * [Dynamic Learning, a collaborative platform for teachers and creative coders](
 https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/jithinks_gsoc_2018.md) by Jithin KS, 2018
+* [Improvements to existing I/O Methods of p5.js](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/tanvi_gsoc_2018.md) by Tanvi Kumar, 2018
 
 ### Processing Foundation Fellowships 2017
 * [p5 Accessibility](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8) by Claire Kearney-Volpe, 2017
