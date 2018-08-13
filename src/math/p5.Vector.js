@@ -1749,16 +1749,4 @@ p5.Vector.mag = function mag(vecT) {
   return Math.sqrt(magSq);
 };
 
-p5.Vector.prototype.plus = function(v) {
-  return p5.Vector.add(this, v);
-};
-
-p5.Vector.prototype.minus = function(v) {
-  return p5.Vector.sub(this, v);
-};
-
-p5.Vector.prototype.times = function(v) {
-  return p5.Vector.mult(this, v);
-};
-
 module.exports = p5.Vector;

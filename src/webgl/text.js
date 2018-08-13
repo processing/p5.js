@@ -282,10 +282,10 @@ var FontInfo = function(font) {
        */
       this.quadError = function() {
         return (
-          this.p1
-            .minus(this.p0)
-            .minus(this.c1.minus(this.c0).times(3))
-            .mag() / 2
+          p5.Vector.sub(
+            p5.Vector.sub(this.p1, this.p0),
+            p5.Vector.mult(p5.Vector.sub(this.c1, this.c0), 3)
+          ).mag() / 2
         );
       };
 
@@ -320,12 +320,12 @@ var FontInfo = function(font) {
        * this cubic is (potentially) altered and returned in the list.
        */
       this.splitInflections = function() {
-        var a = this.c0.minus(this.p0);
-        var b = this.c1.minus(this.c0).minus(a);
-        var c = this.p1
-          .minus(this.c1)
-          .minus(a)
-          .minus(b.times(2));
+        var a = p5.Vector.sub(this.c0, this.p0);
+        var b = p5.Vector.sub(p5.Vector.sub(this.c1, this.c0), a);
+        var c = p5.Vector.sub(
+          p5.Vector.sub(p5.Vector.sub(this.p1, this.c1), a),
+          p5.Vector.mult(b, 2)
+        );
 
         var cubics = [];
 
