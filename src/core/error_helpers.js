@@ -89,7 +89,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // Type to color
       color = typeColors[color];
     }
-    if (func.substring(0, 4) === 'load') {
+    if (func === 'loadX') {
+      console.log('> p5.js says: ' + message);
+    } else if (func.substring(0, 4) === 'load') {
       console.log(
         '> p5.js says: ' +
           message +
@@ -128,20 +130,39 @@ if (typeof IS_MINIFIED !== 'undefined') {
       fileType: 'font',
       method: 'loadFont',
       message: ' hosting the font online,'
+    },
+    '5': {
+      fileType: 'json',
+      method: 'loadJSON'
+    },
+    '6': {
+      fileType: 'file',
+      method: 'loadBytes'
+    },
+    '7': {
+      method: 'loadX',
+      message:
+        "In case your large file isn't fetched successfully," +
+        'we recommend splitting the file into smaller segments and fetching those.'
     }
   };
   p5._friendlyFileLoadError = function(errorType, filePath) {
     var errorInfo = errorCases[errorType];
-    var message =
-      'It looks like there was a problem' +
-      ' loading your ' +
-      errorInfo.fileType +
-      '.' +
-      ' Try checking if the file path [' +
-      filePath +
-      '] is correct,' +
-      (errorInfo.message || '') +
-      ' or running a local server.';
+    var message;
+    if (errorType === 7) {
+      message = errorInfo.message;
+    } else {
+      message =
+        'It looks like there was a problem' +
+        ' loading your ' +
+        errorInfo.fileType +
+        '.' +
+        ' Try checking if the file path [' +
+        filePath +
+        '] is correct,' +
+        (errorInfo.message || '') +
+        ' or running a local server.';
+    }
     report(message, errorInfo.method, FILE_LOAD);
   };
 
