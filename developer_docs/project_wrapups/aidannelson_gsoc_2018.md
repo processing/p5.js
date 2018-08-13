@@ -46,6 +46,8 @@ Because human depth perception is based in numerous visual and contextual clues 
 | :-------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: |
 |                                    Are we moving or is the box moving? Which way is up?                                     |                                   Easier to identify orientation and movement with debugMode()                                   |
 
-## Links
+## Summary
 
-A full list of my contributions to the WebGL branch can be found [here](https://github.com/processing/p5.js/commits/webgl-gsoc-2018?author=aidannelson) and work in progress pull requests can be found [here](https://github.com/processing/p5.js/pulls/AidanNelson).
+A full list of my contributions to the WebGL branch can be found [here](https://github.com/processing/p5.js/commits/webgl-gsoc-2018?author=aidannelson) and my merged pull requests can be found [here](https://github.com/processing/p5.js/pulls?q=is%3Apr+is%3Amerged+author%3AAidanNelson).
+
+Working on this project for p5.js has been an incredible learning experience and a joy.  I am extremely grateful to the Processing community and especially to my mentor, Kate Hollenbach, for a summer's worth of guidance, debugging, git tutorials, WebGL articles and support.  Thank you!
