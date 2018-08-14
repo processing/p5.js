@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var constants = require('../core/constants');
 
 /**
@@ -23,7 +23,6 @@ var constants = require('../core/constants');
  */
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
-  this.name = 'p5.Renderer'; // for friendly debugger system
   this.canvas = elt;
   this._pInst = pInst;
   if (isMainCanvas) {
@@ -60,6 +59,37 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
+// the renderer should return a 'style' object that it wishes to
+// store on the push stack.
+p5.Renderer.prototype.push = function() {
+  return {
+    properties: {
+      _doStroke: this._doStroke,
+      _strokeSet: this._strokeSet,
+      _doFill: this._doFill,
+      _fillSet: this._fillSet,
+      _tint: this._tint,
+      _imageMode: this._imageMode,
+      _rectMode: this._rectMode,
+      _ellipseMode: this._ellipseMode,
+      _textFont: this._textFont,
+      _textLeading: this._textLeading,
+      _textSize: this._textSize,
+      _textStyle: this._textStyle
+    }
+  };
+};
+
+// a pop() operation is in progress
+// the renderer is passed the 'style' object that it returned
+// from its push() method.
+p5.Renderer.prototype.pop = function(style) {
+  if (style.properties) {
+    // copy the style properties back into the renderer
+    Object.assign(this, style.properties);
+  }
+};
+
 /**
  * Resize our canvas element.
  */
@@ -79,7 +109,7 @@ p5.Renderer.prototype.resize = function(w, h) {
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
     this._setProperty('_textLeading', l);
-    return this;
+    return this._pInst;
   }
 
   return this._textLeading;

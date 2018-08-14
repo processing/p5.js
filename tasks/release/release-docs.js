@@ -12,12 +12,16 @@ module.exports = function(grunt) {
       var done = this.async();
       // Keep the version handy
       var version = require('../../package.json').version;
+      // Keep the release-party ready
+      var releaseParty = grunt.config.get('docsReleaser');
       // Avoiding Callback Hell and using Promises
       new Promise(function(resolve, reject) {
         // Clone the website locally
         console.log('Cloning the website ...');
         exec(
-          'rm -rf p5-website/ && git clone -q https://github.com/sakshamsaxena/p5.js-website.git p5-website',
+          'rm -rf p5-website/ && git clone -q https://github.com/' +
+            releaseParty +
+            '/p5.js-website.git p5-website',
           function(err, stdout, stderr) {
             if (err) {
               reject(err);
@@ -33,19 +37,18 @@ module.exports = function(grunt) {
           // Copy the new docs over
           console.log('Copying new docs ...');
           return new Promise(function(resolve, reject) {
-            exec('cp -r docs/reference p5-website/dist/', function(
-              err,
-              stdout,
-              stderr
-            ) {
-              if (err) {
-                reject(err);
+            exec(
+              'cp -r docs/reference/**/* p5-website/src/templates/pages/reference/',
+              function(err, stdout, stderr) {
+                if (err) {
+                  reject(err);
+                }
+                if (stderr) {
+                  reject(stderr);
+                }
+                resolve();
               }
-              if (stderr) {
-                reject(stderr);
-              }
-              resolve();
-            });
+            );
           });
         })
         .then(function() {
@@ -64,6 +67,7 @@ module.exports = function(grunt) {
                 if (stderr) {
                   reject(stderr);
                 }
+                console.log('Released Docs on Website!');
                 resolve();
                 done();
               }

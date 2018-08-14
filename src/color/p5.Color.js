@@ -9,7 +9,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 var color_conversion = require('./color_conversion');
 
@@ -17,7 +17,7 @@ var color_conversion = require('./color_conversion');
  * Each color stores the color mode and level maxes that applied at the
  * time of its construction. These are used to interpret the input arguments
  * (at construction and later for that instance of color) and to format the
- * output e.g. when saturation() is requested.
+ * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
  *
  * Internally we store an array representing the ideal RGBA values in floating
  * point form, normalized from 0 to 1. From this we calculate the closest
@@ -46,7 +46,6 @@ p5.Color = function(pInst, vals) {
 
   // Expose closest screen color.
   this._calculateLevels();
-  this.name = 'p5.Color'; // for friendly debugger system
   return this;
 };
 
@@ -73,9 +72,10 @@ p5.Color = function(pInst, vals) {
  * }
  *
  * function draw() {
- *   text(myColor.toString(), 10, 10);
- *   text(myColor.toString('#rrggbb'), 10, 95);
- *   text(myColor.toString('rgba%'), 10, 180);
+ *   rotate(HALF_PI);
+ *   text(myColor.toString(), 0, -5);
+ *   text(myColor.toString('#rrggbb'), 0, -30);
+ *   text(myColor.toString('rgba%'), 0, -55);
  * }
  * </code>
  * </div>
@@ -365,9 +365,12 @@ p5.Color.prototype.setAlpha = function(new_alpha) {
 
 // calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
-  this.levels = this._array.map(function(level) {
-    return Math.round(level * 255);
-  });
+  var array = this._array;
+  // (loop backwards for performance)
+  var levels = (this.levels = new Array(array.length));
+  for (var i = array.length - 1; i >= 0; --i) {
+    levels[i] = Math.round(array[i] * 255);
+  }
 };
 
 p5.Color.prototype._getAlpha = function() {
@@ -789,27 +792,34 @@ var colorPatterns = {
 p5.Color._parseInputs = function(r, g, b, a) {
   var numArgs = arguments.length;
   var mode = this.mode;
-  var maxes = this.maxes;
+  var maxes = this.maxes[mode];
   var results = [];
+  var i;
 
   if (numArgs >= 3) {
     // Argument is a list of component values.
 
-    results[0] = r / maxes[mode][0];
-    results[1] = g / maxes[mode][1];
-    results[2] = b / maxes[mode][2];
+    results[0] = r / maxes[0];
+    results[1] = g / maxes[1];
+    results[2] = b / maxes[2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof a === 'number') {
-      results[3] = a / maxes[mode][3];
+      results[3] = a / maxes[3];
     } else {
       results[3] = 1;
     }
 
     // Constrain components to the range [0,1].
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    // (loop backwards for performance)
+    for (i = results.length - 1; i >= 0; --i) {
+      var result = results[i];
+      if (result < 0) {
+        results[i] = 0;
+      } else if (result > 1) {
+        results[i] = 1;
+      }
+    }
 
     // Convert to RGBA and return.
     if (mode === constants.HSL) {
@@ -961,11 +971,13 @@ p5.Color._parseInputs = function(r, g, b, a) {
           return parseInt(color, 10) / 100;
         });
     }
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
 
     if (results.length) {
+      // (loop backwards for performance)
+      for (i = results.length - 1; i >= 0; --i) {
+        results[i] = Math.max(Math.min(results[i], 1), 0);
+      }
+
       return color_conversion._hsbaToRGBA(results);
     }
 
@@ -979,13 +991,13 @@ p5.Color._parseInputs = function(r, g, b, a) {
      * value (they are equivalent when chroma is zero). For RGB, normalize the
      * gray level according to the blue maximum.
      */
-    results[0] = r / maxes[mode][2];
-    results[1] = r / maxes[mode][2];
-    results[2] = r / maxes[mode][2];
+    results[0] = r / maxes[2];
+    results[1] = r / maxes[2];
+    results[2] = r / maxes[2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof g === 'number') {
-      results[3] = g / maxes[mode][3];
+      results[3] = g / maxes[3];
     } else {
       results[3] = 1;
     }

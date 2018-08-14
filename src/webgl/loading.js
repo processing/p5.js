@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('./p5.Geometry');
 
 /**
@@ -17,9 +17,9 @@ require('./p5.Geometry');
  * One of the limitations of the OBJ format is that it doesn't have a built-in
  * sense of scale. This means that models exported from different programs might
  * be very different sizes. If your model isn't displaying, try calling
- * loadModel() with the normalized parameter set to true. This will resize the
+ * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
  * model to a scale appropriate for p5. You can also make additional changes to
- * the final size of your model with the scale() function.
+ * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
  *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
@@ -30,16 +30,16 @@ require('./p5.Geometry');
  *                                     the 3D model object.
  * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the image fails to load.
- * @return {p5.Geometry} the p5.Geometry object
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  *
  * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * var teapot;
+ * //draw a spinning octahedron
+ * var octahedron;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   octahedron = loadModel('assets/octahedron.obj');
  * }
  *
  * function setup() {
@@ -50,6 +50,35 @@ require('./p5.Geometry');
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
+ *   model(octahedron);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Vertically rotating 3-d octahedron.
+ *
+ * @example
+ * <div>
+ * <code>
+ * //draw a spinning teapot
+ * var teapot;
+ *
+ * function preload() {
+ *   // Load model with normalise parameter set to true
+ *   teapot = loadModel('assets/teapot.obj', true);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   scale(0.4); // Scaled to make model fit into canvas
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   normalMaterial(); // For effect
  *   model(teapot);
  * }
  * </code>
@@ -63,9 +92,10 @@ require('./p5.Geometry');
  * @param  {String} path
  * @param  {function(p5.Geometry)} [successCallback]
  * @param  {function(Event)} [failureCallback]
- * @return {p5.Geometry} the p5.Geometry object
+ * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
 p5.prototype.loadModel = function(path) {
+  p5._validateParameters('loadModel', arguments);
   var normalize;
   var successCallback;
   var failureCallback;
@@ -81,6 +111,7 @@ p5.prototype.loadModel = function(path) {
 
   var model = new p5.Geometry();
   model.gid = path + '|' + normalize;
+  var self = this;
   this.loadStrings(
     path,
     function(strings) {
@@ -90,6 +121,7 @@ p5.prototype.loadModel = function(path) {
         model.normalize();
       }
 
+      self._decrementPreload();
       if (typeof successCallback === 'function') {
         successCallback(model);
       }
@@ -217,11 +249,11 @@ function parseObj(model, lines) {
  * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * var teapot;
+ * //draw a spinning octahedron
+ * var octahedron;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   octahedron = loadModel('assets/octahedron.obj');
  * }
  *
  * function setup() {
@@ -232,16 +264,18 @@ function parseObj(model, lines) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   model(teapot);
+ *   model(octahedron);
  * }
  * </code>
  * </div>
  *
  * @alt
- * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * Vertically rotating 3-d octahedron.
  *
  */
 p5.prototype.model = function(model) {
+  this._assert3d('model');
+  p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
       model._makeTriangleEdges()._edgesToVertices();

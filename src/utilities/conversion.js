@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Converts a string to its floating point representation. The contents of a
@@ -46,6 +46,7 @@ p5.prototype.float = function(str) {
  *
  * @method int
  * @param {String|Boolean|Number}       n value to parse
+ * @param {Integer}       [radix] the radix to convert to (default: 10)
  * @return {Number}                     integer representation of value
  *
  * @example

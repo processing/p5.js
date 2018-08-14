@@ -1,9 +1,9 @@
 <!--
-Hi there! If you are here to report a bug, or to discuss a feature (new or existing), you can use the below template to get started quickly. Fill out all those parts which you're comfortable with, and delete the remaining ones.
+Hi there! 
 
-To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it looks in the Preview tab!
+PLEASE NOTE: The github issues are for bugs and feature requests for the p5.js library itself. If you have a general question or bug programming with p5.js please post it in the p5.js forum: https://forum.processing.org/two/.
 
-Feel free to remove any portion of the template that is not relevant for your issue.
+To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it looks in the Preview tab! Feel free to remove any portion of the template that is not relevant for your issue.
 -->
 
 #### Nature of issue?
@@ -15,7 +15,7 @@ Feel free to remove any portion of the template that is not relevant for your is
 #### Most appropriate sub-area of p5.js?
 
 - [ ] Color
-- [ ] Core
+- [ ] Core/Environment/Rendering
 - [ ] Data
 - [ ] Events
 - [ ] Image
@@ -32,7 +32,6 @@ Feel free to remove any portion of the template that is not relevant for your is
 - [ ] Desktop/Laptop
 - [ ] Others (specify if possible)
 
-<!-- If you found a bug, the following information might prove to be helpful for us. Simply remove whatever you can't determine/don't know. -->
 #### Details about the bug: 
 
 - p5.js version: <!-- You can first this in the first line of the p5.js file -->

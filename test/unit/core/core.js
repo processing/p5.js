@@ -127,13 +127,12 @@ suite('Core', function() {
   });
 
   suite('new p5() / global mode', function() {
-    var BIND_TAG = '<script src="../js/bind.js"></script>';
     var P5_SCRIPT_URL = '../../lib/p5.js';
     var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
     var iframe;
 
     function createP5Iframe(html) {
-      html = html || BIND_TAG + P5_SCRIPT_TAG;
+      html = html || P5_SCRIPT_TAG;
 
       iframe = document.createElement('iframe');
 
@@ -172,7 +171,7 @@ suite('Core', function() {
 
     test('works when p5.js is loaded asynchronously', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe(BIND_TAG);
+        createP5Iframe();
 
         iframe.contentWindow.addEventListener(
           'load',
@@ -195,7 +194,6 @@ suite('Core', function() {
       return new Promise(function(resolve, reject) {
         createP5Iframe(
           [
-            BIND_TAG,
             P5_SCRIPT_TAG,
             '<script>',
             'new p5();',

@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('../core/error_helpers');
 
 //return p5; //LM is this a mistake?
@@ -15,7 +15,7 @@ require('../core/error_helpers');
 /**
  * Combines an array of Strings into one String, each separated by the
  * character(s) used for the separator parameter. To join arrays of ints or
- * floats, it's necessary to first convert them to Strings using nf() or
+ * floats, it's necessary to first convert them to Strings using <a href="#/p5/nf">nf()</a> or
  * nfs().
  *
  * @method join
@@ -311,7 +311,7 @@ function doNfc(num, right) {
 }
 
 /**
- * Utility function for formatting numbers into strings. Similar to nf() but
+ * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
  * puts a "+" in front of positive numbers and a "-" in front of negative
  * numbers. There are two versions: one for formatting floats, and one for
  * formatting ints. The values for left, and right parameters
@@ -373,7 +373,7 @@ function addNfp(num) {
 }
 
 /**
- * Utility function for formatting numbers into strings. Similar to nf() but
+ * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
  * puts a " " (space) in front of positive numbers and a "-" in front of
  * negative numbers. There are two versions: one for formatting floats, and
  * one for formatting ints. The values for the digits, left, and right
@@ -435,12 +435,12 @@ function addNfs(num) {
 }
 
 /**
- * The split() function maps to String.split(), it breaks a String into
+ * The <a href="#/p5/split">split()</a> function maps to String.split(), it breaks a String into
  * pieces using a character or string as the delimiter. The delim parameter
  * specifies the character or characters that mark the boundaries between
  * each piece. A String[] array is returned that contains each of the pieces.
  *
- * The splitTokens() function works in a similar fashion, except that it
+ * The <a href="#/p5/splitTokens">splitTokens()</a> function works in a similar fashion, except that it
  * splits using a range of characters instead of a specific character or
  * sequence.
  *
@@ -469,7 +469,7 @@ p5.prototype.split = function(str, delim) {
 };
 
 /**
- * The splitTokens() function splits a String at one or many character
+ * The <a href="#/p5/splitTokens">splitTokens()</a> function splits a String at one or many character
  * delimiters or "tokens." The delim parameter specifies the character or
  * characters to be used as a boundary.
  * <br><br>

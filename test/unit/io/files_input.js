@@ -71,9 +71,32 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
+      });
+    });
+
+    test('should return a promise', function() {
+      var promise = myp5.httpDo('unit/assets/sentences.txt');
+      assert.instanceOf(promise, Promise);
+      return promise.then(function(data) {
+        assert.ok(data);
+        assert.isString(data);
+      });
+    });
+
+    test('should return a promise that rejects on error', function() {
+      return new Promise(function(resolve, reject) {
+        var promise = myp5.httpDo('404file');
+        assert.instanceOf(promise, Promise);
+        promise.then(function(data) {
+          reject(new Error('promise resolved.'));
+        });
+        resolve(
+          promise.catch(function(error) {
+            assert.instanceOf(error, Error);
+          })
+        );
       });
     });
   });
@@ -175,20 +198,19 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is a Response.');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
     });
 
     // @TODO Need to check this does what it should
-    test('should allow json to override jsonp in 3rd param', function() {
+    test('should allow json to override jsonp', function() {
       return new Promise(function(resolve, reject) {
         result = myp5.loadJSON(
           'unit/assets/array.json',
+          'json',
           resolve,
-          reject,
-          'json'
+          reject
         );
       }).then(function(resp) {
         assert.ok(resp);
@@ -218,6 +240,15 @@ suite('Files', function() {
       });
     });
 
+    test('should include empty strings', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/empty_lines.txt', resolve, reject);
+      }).then(function(data) {
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 6, 'length of data is 6');
+      });
+    });
+
     test('should call error callback function if provided', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadStrings(
@@ -240,7 +271,6 @@ suite('Files', function() {
           resolve
         );
       }).then(function(err) {
-        assert.instanceOf(err, Response, 'err is an object');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
       });
@@ -348,6 +378,66 @@ suite('Files', function() {
       }).then(function(resp) {
         assert.equal(resp.getRowCount(), 4);
         assert.equal(resp.getRow(3).get(0), 'David,\nSr. "the boss"');
+      });
+    });
+  });
+
+  // loadBytes()
+  suite('p5.prototype.loadBytes', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadBytes);
+      assert.typeOf(myp5.loadBytes, 'function');
+    });
+
+    test('should call callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      });
+    });
+
+    test('should call error callback function if not found', function() {
+      var errorCalled = false;
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('notfound.jpg', resolve, reject);
+      })
+        .catch(function() {
+          errorCalled = true;
+        })
+        .then(function() {
+          assert.isTrue(errorCalled);
+        });
+    });
+
+    test('should pass an Object to callback function', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        assert.isObject(data);
+      });
+    });
+
+    test('data.bytes should be an Array/Uint8Array', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        expect(data.bytes).to.satisfy(function(v) {
+          return Array.isArray(v) || v instanceof Uint8Array;
+        });
+      });
+    });
+
+    test('should load correct data', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        var str = 'GIF89a';
+        // convert the string to a byte array
+        var rgb = str.split('').map(function(e) {
+          return e.charCodeAt(0);
+        });
+        // this will convert a Uint8Aray to [], if necessary:
+        var loaded = Array.prototype.slice.call(data.bytes, 0, str.length);
+        assert.deepEqual(loaded, rgb);
       });
     });
   });

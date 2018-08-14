@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /*
@@ -416,7 +416,7 @@ p5.prototype._setMouseButton = function(e) {
 };
 
 /**
- * The mouseMoved() function is called every time the mouse moves and a mouse
+ * The <a href="#/p5/mouseMoved">mouseMoved()</a> function is called every time the mouse moves and a mouse
  * button is not pressed.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
@@ -460,9 +460,9 @@ p5.prototype._setMouseButton = function(e) {
  */
 
 /**
- * The mouseDragged() function is called once every time the mouse moves and
- * a mouse button is pressed. If no mouseDragged() function is defined, the
- * touchMoved() function will be called instead if it is defined.<br><br>
+ * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
+ * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
+ * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -530,10 +530,10 @@ p5.prototype._onmousemove = function(e) {
 };
 
 /**
- * The mousePressed() function is called once after every time a mouse button
+ * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
  * is pressed. The mouseButton variable (see the related reference entry)
  * can be used to determine which button has been pressed. If no
- * mousePressed() function is defined, the touchStarted() function will be
+ * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
@@ -596,8 +596,8 @@ p5.prototype._onmousedown = function(e) {
 };
 
 /**
- * The mouseReleased() function is called every time a mouse button is
- * released. If no mouseReleased() function is defined, the touchEnded()
+ * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
+ * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
@@ -663,11 +663,11 @@ p5.prototype._ondragend = p5.prototype._onmouseup;
 p5.prototype._ondragover = p5.prototype._onmousemove;
 
 /**
- * The mouseClicked() function is called once after a mouse button has been
+ * The <a href="#/p5/mouseClicked">mouseClicked()</a> function is called once after a mouse button has been
  * pressed and then released.<br><br>
  * Browsers handle clicks differently, so this function is only guaranteed to be
  * run when the left mouse button is clicked. To handle other mouse buttons
- * being pressed or released, see mousePressed() or mouseReleased().<br><br>
+ * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -722,7 +722,7 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
- * The doubleClicked() function is executed every time a event
+ * The <a href="#/p5/doubleClicked">doubleClicked()</a> function is executed every time a event
  * listener has detected a dblclick event which is a part of the
  * DOM L3 specification. The doubleClicked event is fired when a
  * pointing device button (usually a mouse's primary button)
@@ -780,7 +780,7 @@ p5.prototype._ondblclick = function(e) {
 };
 
 /**
- * The function mouseWheel() is executed every time a vertical mouse wheel
+ * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel

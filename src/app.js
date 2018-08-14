@@ -1,65 +1,87 @@
 'use strict';
 
-var p5 = require('./core/core');
-require('./color/p5.Color');
-require('./core/p5.Element');
-require('./typography/p5.Font');
-require('./core/p5.Graphics');
-require('./core/p5.Renderer2D');
-
-require('./image/p5.Image');
-require('./math/p5.Vector');
-require('./io/p5.TableRow');
-require('./io/p5.Table');
-require('./io/p5.XML');
-
-require('./color/creating_reading');
-require('./color/setting');
+// core
+var p5 = require('./core/main');
 require('./core/constants');
-require('./utilities/conversion');
-require('./utilities/array_functions');
-require('./utilities/string_functions');
 require('./core/environment');
-require('./image/image');
-require('./image/loading_displaying');
-require('./image/pixels');
-require('./io/files');
-require('./events/keyboard');
-require('./events/acceleration'); //john
-require('./events/mouse');
-require('./utilities/time_date');
-require('./events/touch');
-require('./math/math');
-require('./math/calculation');
-require('./math/random');
-require('./math/noise');
-require('./math/trigonometry');
+require('./core/error_helpers');
+require('./core/helpers');
+require('./core/legacy');
+require('./core/p5.Element');
+require('./core/p5.Graphics');
+require('./core/p5.Renderer');
+require('./core/p5.Renderer2D');
 require('./core/rendering');
-require('./core/2d_primitives');
-
-require('./core/attributes');
-require('./core/curves');
-require('./core/vertex');
+require('./core/shim');
 require('./core/structure');
 require('./core/transform');
-require('./typography/attributes');
-require('./typography/loading_displaying');
+require('./core/shape/2d_primitives');
+require('./core/shape/attributes');
+require('./core/shape/curves');
+require('./core/shape/vertex');
 
+// color
+require('./color/color_conversion');
+require('./color/creating_reading');
+require('./color/p5.Color');
+require('./color/setting');
+
+// data
 require('./data/p5.TypedDict');
 
-require('./webgl/p5.RendererGL');
-require('./webgl/p5.Geometry');
-require('./webgl/p5.RendererGL.Retained');
-require('./webgl/p5.RendererGL.Immediate');
-require('./webgl/primitives');
-require('./webgl/loading');
-require('./webgl/p5.Matrix');
-require('./webgl/material');
-require('./webgl/light');
-require('./webgl/p5.Shader');
+// events
+require('./events/acceleration');
+require('./events/keyboard');
+require('./events/mouse');
+require('./events/touch');
+
+// image
+require('./image/filters');
+require('./image/image');
+require('./image/loading_displaying');
+require('./image/p5.Image');
+require('./image/pixels');
+
+// io
+require('./io/files');
+require('./io/p5.Table');
+require('./io/p5.TableRow');
+require('./io/p5.XML');
+
+// math
+require('./math/calculation');
+require('./math/math');
+require('./math/noise');
+require('./math/p5.Vector');
+require('./math/random');
+require('./math/trigonometry');
+
+// typography
+require('./typography/attributes');
+require('./typography/loading_displaying');
+require('./typography/p5.Font');
+
+// utilities
+require('./utilities/array_functions');
+require('./utilities/conversion');
+require('./utilities/string_functions');
+require('./utilities/time_date');
+
+// webgl
+require('./webgl/3d_primitives');
 require('./webgl/camera');
 require('./webgl/interaction');
+require('./webgl/light');
+require('./webgl/loading');
+require('./webgl/material');
+require('./webgl/p5.Geometry');
+require('./webgl/p5.Matrix');
+require('./webgl/p5.RendererGL.Immediate');
+require('./webgl/p5.RendererGL');
+require('./webgl/p5.RendererGL.Retained');
+require('./webgl/p5.Shader');
+require('./webgl/p5.Texture');
 
-require('./core/init.js');
+require('./core/init');
 
 module.exports = p5;

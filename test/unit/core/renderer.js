@@ -89,4 +89,38 @@ suite('Renderer', function() {
       drawX();
     });
   });
+
+  // prettier-ignore
+  var webglMethods = [
+    'rotateX', 'rotateY', 'rotateZ',
+    'camera', 'perspective', 'ortho', 'orbitControl',
+    'ambientLight', 'directionalLight', 'pointLight',
+    'model',
+    'createShader', 'shader',
+    'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial',
+    'setAttributes',
+    'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
+  ];
+
+  suite('webgl assertions', function() {
+    for (var i = 0; i < webglMethods.length; i++) {
+      var webglMethod = webglMethods[i];
+      test(
+        webglMethod + '() should throw a WEBGL assertion Error',
+        (function(webglMethod) {
+          return function() {
+            var validateParamters = myp5.validateParameters;
+            myp5.validateParameters = false;
+            try {
+              expect(function() {
+                myp5[webglMethod].call(myp5);
+              }).to.throw(Error, /is only supported in WEBGL mode/);
+            } finally {
+              myp5.validateParameters = validateParamters;
+            }
+          };
+        })(webglMethod)
+      );
+    }
+  });
 });

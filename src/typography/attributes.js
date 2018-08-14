@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Sets the current alignment for drawing text. Accepts two
@@ -16,11 +16,11 @@ var p5 = require('../core/core');
  * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
  *
  * The horizAlign parameter is in reference to the x value
- * of the text() function, while the vertAlign parameter is
+ * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter is
  * in reference to the y value.
  *
  * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in text(). If you
+ * edge of your text to the x value you give in <a href="#/p5/text">text()</a>. If you
  * write textAlign(RIGHT, TOP), you are aligning the right edge
  * of your text to the x value and the top of edge of the text
  * to the y value.
@@ -44,8 +44,32 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * textSize(16);
+ * strokeWeight(0.5);
+ *
+ * line(0, 12, width, 12);
+ * textAlign(CENTER, TOP);
+ * text('TOP', 0, 12, width);
+ *
+ * line(0, 37, width, 37);
+ * textAlign(CENTER, CENTER);
+ * text('CENTER', 0, 37, width);
+ *
+ * line(0, 62, width, 62);
+ * textAlign(CENTER, BASELINE);
+ * text('BASELINE', 0, 62, width);
+ *
+ * line(0, 87, width, 87);
+ * textAlign(CENTER, BOTTOM);
+ * text('BOTTOM', 0, 87, width);
+ * </code>
+ * </div>
+ *
  * @alt
  *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
+ * The names of the four vertical alignments rendered each showing that alignment's placement relative to a horizontal line.
  *
  */
 /**
@@ -53,12 +77,13 @@ var p5 = require('../core/core');
  * @return {Object}
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
+  p5._validateParameters('textAlign', arguments);
   return this._renderer.textAlign.apply(this._renderer, arguments);
 };
 
 /**
  * Sets/gets the spacing, in pixels, between lines of text. This
- * setting will be used in all subsequent calls to the text() function.
+ * setting will be used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
@@ -90,12 +115,13 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @return {Number}
  */
 p5.prototype.textLeading = function(theLeading) {
+  p5._validateParameters('textLeading', arguments);
   return this._renderer.textLeading.apply(this._renderer, arguments);
 };
 
 /**
  * Sets/gets the current font size. This size will be used in all subsequent
- * calls to the text() function. Font size is measured in pixels.
+ * calls to the <a href="#/p5/text">text()</a> function. Font size is measured in pixels.
  *
  * @method textSize
  * @param {Number} theSize the size of the letters in units of pixels
@@ -121,6 +147,7 @@ p5.prototype.textLeading = function(theLeading) {
  * @return {Number}
  */
 p5.prototype.textSize = function(theSize) {
+  p5._validateParameters('textSize', arguments);
   return this._renderer.textSize.apply(this._renderer, arguments);
 };
 
@@ -155,6 +182,7 @@ p5.prototype.textSize = function(theSize) {
  * @return {String}
  */
 p5.prototype.textStyle = function(theStyle) {
+  p5._validateParameters('textStyle', arguments);
   return this._renderer.textStyle.apply(this._renderer, arguments);
 };
 
@@ -186,6 +214,7 @@ p5.prototype.textStyle = function(theStyle) {
  *
  */
 p5.prototype.textWidth = function(theText) {
+  p5._validateParameters('textWidth', arguments);
   if (theText.length === 0) {
     return 0;
   }
@@ -217,6 +246,7 @@ p5.prototype.textWidth = function(theText) {
  * </div>
  */
 p5.prototype.textAscent = function() {
+  p5._validateParameters('textAscent', arguments);
   return this._renderer.textAscent();
 };
 
@@ -245,6 +275,7 @@ p5.prototype.textAscent = function() {
  * </div>
  */
 p5.prototype.textDescent = function() {
+  p5._validateParameters('textDescent', arguments);
   return this._renderer.textDescent();
 };
 

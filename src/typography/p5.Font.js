@@ -1,5 +1,5 @@
 /**
- * This module defines the p5.Font class and functions for
+ * This module defines the <a href="#/p5.Font">p5.Font</a> class and functions for
  * drawing text to the display canvas.
  * @module Typography
  * @submodule Font
@@ -9,7 +9,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /*
@@ -33,12 +33,11 @@ p5.Font = function(p) {
    * @property font
    */
   this.font = undefined;
-  this.name = 'p5.Font'; // for friendly debugger system
 };
 
 p5.Font.prototype.list = function() {
   // TODO
-  throw 'not yet implemented';
+  throw new Error('not yet implemented');
 };
 
 /**

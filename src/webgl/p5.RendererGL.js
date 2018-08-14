@@ -1,14 +1,11 @@
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
-
-var uMVMatrixStack = [];
-var cameraMatrixStack = [];
 
 var defaultShaders = {
   immediateVert: fs.readFileSync(
@@ -123,12 +120,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.fill(255, 255, 255, 255);
   //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0; //default point size
-  this.strokeWeight(2);
+  this.strokeWeight(1);
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
-  this.name = 'p5.RendererGL'; // for friendly debugger system
-
   return this;
 };
 
@@ -156,7 +151,7 @@ p5.RendererGL.prototype._initContext = function() {
       );
     }
   } catch (er) {
-    throw new Error(er);
+    throw er;
   }
 };
 
@@ -179,11 +174,13 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
+
   var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
   this._pInst._elements.push(renderer);
+
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
@@ -337,6 +334,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  this._assert3d('setAttributes');
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {
@@ -345,7 +343,9 @@ p5.prototype.setAttributes = function(key, value) {
   } else if (key instanceof Object) {
     attr = key;
   }
+  this.push();
   this._renderer._resetContext(attr);
+  this.pop();
 };
 
 /**
@@ -593,7 +593,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
  * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or p5.Image
+ *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
@@ -691,7 +691,11 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  this.GL.clearColor(arguments[0], arguments[1], arguments[2], arguments[3]);
+  var _r = arguments[0] || 0;
+  var _g = arguments[1] || 0;
+  var _b = arguments[2] || 0;
+  var _a = arguments[3] || 0;
+  this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
@@ -750,27 +754,17 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
   return this;
 };
 
-/**
- * pushes a copy of the model view matrix onto the
- * MV Matrix stack.
- */
 p5.RendererGL.prototype.push = function() {
-  uMVMatrixStack.push(this.uMVMatrix.copy());
-  cameraMatrixStack.push(this.cameraMatrix.copy());
-};
+  // get the base renderer style
+  var style = p5.Renderer.prototype.push.apply(this);
 
-/**
- * [pop description]
- */
-p5.RendererGL.prototype.pop = function() {
-  if (uMVMatrixStack.length === 0) {
-    throw new Error('Invalid popMatrix!');
-  }
-  this.uMVMatrix = uMVMatrixStack.pop();
-  if (cameraMatrixStack.length === 0) {
-    throw new Error('Invalid popMatrix!');
-  }
-  this.cameraMatrix = cameraMatrixStack.pop();
+  // add webgl-specific style properties
+  var properties = style.properties;
+
+  properties.uMVMatrix = this.uMVMatrix.copy();
+  properties.cameraMatrix = this.cameraMatrix.copy();
+
+  return style;
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
@@ -987,6 +981,22 @@ p5.RendererGL.prototype._bindBuffer = function(
   }
 };
 
+//////////////////////////
+//// SMOOTHING
+/////////////////////////
+
+p5.RendererGL.prototype.smooth = function() {
+  if (this.attributes.antialias === false) {
+    this._pInst.setAttributes('antialias', true);
+  }
+};
+
+p5.RendererGL.prototype.noSmooth = function() {
+  if (this.attributes.antialias === true) {
+    this._pInst.setAttributes('antialias', false);
+  }
+};
+
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
@@ -1041,6 +1051,19 @@ p5.RendererGL.prototype._vToNArray = function(arr) {
       return [item.x, item.y, item.z];
     })
   );
+};
+
+/**
+ * ensures that p5 is using a 3d renderer. throws an error if not.
+ */
+p5.prototype._assert3d = function(name) {
+  if (!this._renderer.isP3D)
+    throw new Error(
+      name +
+        "() is only supported in WEBGL mode. If you'd like to use 3D graphics" +
+        ' and WebGL, see  https://p5js.org/examples/form-3d-primitives.html' +
+        ' for more information.'
+    );
 };
 
 module.exports = p5.RendererGL;

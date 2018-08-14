@@ -6,11 +6,11 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use
- * loadXML() to load external XML files and create XML objects.
+ * <a href="#/p5/loadXML">loadXML()</a> to load external XML files and create XML objects.
  *
  * @class p5.XML
  * @constructor
@@ -59,12 +59,11 @@ p5.XML = function() {
   this.children = [];
   this.parent = null;
   this.content = null; //done
-  this.name = 'p5.XML'; // for friendly debugger system
 };
 
 /**
  * Gets a copy of the element's parent. Returns the parent as another
- * p5.XML object.
+ * <a href="#/p5.XML">p5.XML</a> object.
  *
  * @method getParent
  * @return {p5.XML}   element parent
@@ -211,7 +210,7 @@ p5.XML.prototype.hasChildren = function() {
 
 /**
  * Get the names of all of the element's children, and returns the names as an
- * array of Strings. This is the same as looping through and calling getName()
+ * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
  * on each child element individually.
  *
  * @method listChildren
@@ -249,7 +248,7 @@ p5.XML.prototype.listChildren = function() {
 };
 
 /**
- * Returns all of the element's children as an array of p5.XML objects. When
+ * Returns all of the element's children as an array of <a href="#/p5.XML">p5.XML</a> objects. When
  * the name parameter is specified, then it will return all children that match
  * that name.
  *
@@ -350,9 +349,10 @@ p5.XML.prototype.getChildren = function(param) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    return this.children.find(function(c) {
-      return c.name === param;
-    });
+    for (var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+      if (child.name === param) return child;
+    }
   } else {
     return this.children[param];
   }
@@ -361,11 +361,45 @@ p5.XML.prototype.getChild = function(param) {
 /**
  * Appends a new child to the element. The child can be specified with
  * either a String, which will be used as the new tag's name, or as a
- * reference to an existing p5.XML object.
- * A reference to the newly created child is returned as an p5.XML object.
+ * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
+ * A reference to the newly created child is returned as an <a href="#/p5.XML">p5.XML</a> object.
  *
  * @method addChild
- * @param {p5.XML} a p5.XML Object which will be the child to be added
+ * @param {p5.XML} node a <a href="#/p5.XML">p5.XML</a> Object which will be the child to be added
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   var child = new p5.XML();
+ *   child.setAttribute('id', '3');
+ *   child.setAttribute('species', 'Ornithorhynchus anatinus');
+ *   child.setContent('Platypus');
+ *   xml.addChild(child);
+ *
+ *   var animals = xml.getChildren('animal');
+ *   print(animals[animals.length - 1].getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Leopard"
+ * // "Zebra"
+ * </code></div>
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {
@@ -609,7 +643,7 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * @method getString
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
- * @return {Number}
+ * @return {String}
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -647,7 +681,7 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  *
  * @method setAttribute
  * @param {String} name            the full name of the attribute
- * @param {Number} value           the value of the attribute
+ * @param {Number|String|Boolean} value  the value of the attribute
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -784,14 +818,17 @@ p5.XML.prototype._setCont = function(content) {
 /**
  * This method is called while the parsing of XML (when loadXML() is
  * called). The XML node is passed and its attributes are stored in the
- * p5.XML's attribute Object.
+ * <a href="#/p5.XML">p5.XML</a>'s attribute Object.
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var i,
-    att = {};
-  for (i = 0; i < node.attributes.length; i++) {
-    att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
+  var att = {};
+  var attributes = node.attributes;
+  if (attributes) {
+    for (var i = 0; i < attributes.length; i++) {
+      var attribute = attributes[i];
+      att[attribute.nodeName] = attribute.nodeValue;
+    }
   }
   this.attributes = att;
 };

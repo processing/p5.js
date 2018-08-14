@@ -7,15 +7,17 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Adds a value to the end of an array. Extends the length of
  * the array by one. Maps to Array.push().
  *
  * @method append
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">array.push(value)</a> instead.
  * @param {Array} array Array to append
  * @param {any} value to be added to the Array
+ * @return {Array} the array that was appended to
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -38,7 +40,7 @@ p5.prototype.append = function(array, value) {
  * srcPosition and into the position specified by dstPosition. The number of
  * elements to copy is determined by length. Note that copying values
  * overwrites existing values in the destination array. To append values
- * instead of overwriting them, use concat().
+ * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
  * <br><br>
  * The simplified version with only two arguments, arrayCopy(src, dst),
  * copies an entire array to another of the same size. It is equivalent to
@@ -48,6 +50,7 @@ p5.prototype.append = function(array, value) {
  * iterating through a for() loop and copying each element individually.
  *
  * @method arrayCopy
+ * @deprecated
  * @param {Array}  src           the source Array
  * @param {Integer} srcPosition  starting position in the source Array
  * @param {Array}  dst           the destination Array
@@ -71,6 +74,7 @@ p5.prototype.append = function(array, value) {
  */
 /**
  * @method arrayCopy
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">arr1.copyWithin(arr2)</a> instead.
  * @param {Array}  src
  * @param {Array}  dst
  * @param {Integer} [length]
@@ -112,6 +116,7 @@ p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
  * input arrays.
  *
  * @method concat
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat">arr1.concat(arr2)</a> instead.
  * @param {Array} a first Array to concatenate
  * @param {Array} b second Array to concatenate
  * @return {Array} concatenated array
@@ -141,7 +146,9 @@ p5.prototype.concat = function(list0, list1) {
  * Reverses the order of an array, maps to Array.reverse()
  *
  * @method reverse
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">array.reverse()</a> instead.
  * @param {Array} list Array to reverse
+ * @return {Array} the reversed list
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -162,6 +169,7 @@ p5.prototype.reverse = function(list) {
  * maps to Array.pop().
  *
  * @method shorten
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">array.pop()</a> instead.
  * @param  {Array} list Array to shorten
  * @return {Array} shortened Array
  * @example
@@ -186,6 +194,7 @@ p5.prototype.shorten = function(list) {
  * Fisher-Yates Shuffle Algorithm</a>.
  *
  * @method shuffle
+ * @deprecated See <a href="https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">shuffling an array with JS</a> instead.
  * @param  {Array}   array  Array to shuffle
  * @param  {Boolean} [bool] modify passed array
  * @return {Array}   shuffled Array
@@ -230,8 +239,10 @@ p5.prototype.shuffle = function(arr, bool) {
  * count is set to 5, only the first 5 elements in the array will be sorted.
  *
  * @method sort
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">array.sort()</a> instead.
  * @param {Array} list Array to sort
  * @param {Integer} [count] number of elements to sort, starting from 0
+ * @return {Array} the sorted list
  *
  * @example
  * <div class = 'norender'><code>
@@ -277,9 +288,11 @@ p5.prototype.sort = function(list, count) {
  * is 0, the second position is 1, and so on.)
  *
  * @method splice
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">array.splice()</a> instead.
  * @param {Array}  list Array to splice into
  * @param {any}    value value to be spliced in
  * @param {Integer} position in the array from which to insert data
+ * @return {Array} the list
  *
  * @example
  * <div class = 'norender'><code>
@@ -310,6 +323,7 @@ p5.prototype.splice = function(list, value, index) {
  * This function does not change the source array.
  *
  * @method subset
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">array.slice()</a> instead.
  * @param  {Array}  list    Array to extract from
  * @param  {Integer} start   position to begin
  * @param  {Integer} [count] number of values to extract

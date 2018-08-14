@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -14,9 +14,9 @@ var p5 = require('./core');
  * included in the core functionality, methods in brown are added
  * with the <a href="http://p5js.org/reference/#/libraries/p5.dom">p5.dom
  * library</a>.
- * It is not called directly, but p5.Element
- * objects are created by calling createCanvas, createGraphics,
- * or in the p5.dom library, createDiv, createImg, createInput, etc.
+ * It is not called directly, but <a href="#/p5.Element">p5.Element</a>
+ * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
+ * or in the p5.dom library, <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
  *
  * @class p5.Element
  * @param {String} elt DOM node that is wrapped
@@ -46,25 +46,24 @@ p5.Element = function(elt, pInst) {
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;
-  this.name = 'p5.Element'; // for friendly debugger system
 };
 
 /**
  *
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
- * node, or p5.Element. If no arguments given, parent node is returned.
+ * node, or <a href="#/p5.Element">p5.Element</a>. If no arguments given, parent node is returned.
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
  *
  * @method parent
- * @param  {String|p5.Element|Object} parent the ID, DOM node, or p5.Element
+ * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
  *                         of desired parent element
  * @chainable
  *
  * @example
- * <div class="norender"><code>
+ * <div class="norender notest"><code>
  * // in the html file:
  * // &lt;div id="myContainer">&lt;/div>
  *
@@ -83,7 +82,7 @@ p5.Element = function(elt, pInst) {
  * var div1 = createDiv('this is the child');
  * div1.parent('apples'); // use id
  * </code></div>
- * <div class='norender'><code>
+ * <div class='norender notest'><code>
  * var elt = document.getElementById('myParentDiv');
  * var div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
@@ -187,9 +186,11 @@ p5.Element.prototype.class = function(c) {
 };
 
 /**
- * The .mousePressed() function is called once after every time a
- * mouse button is pressed over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called once after every time a
+ * mouse button is pressed over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mousePressed
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -231,13 +232,22 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
-  adjustListener('mousedown', fxn, this);
-  adjustListener('touchstart', fxn, this);
+  // Prepend the mouse property setters to the event-listener.
+  // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+  // For details, see https://github.com/processing/p5.js/issues/3087.
+  var eventPrependedFxn = function(event) {
+    this._pInst._setProperty('mouseIsPressed', true);
+    this._pInst._setMouseButton(event);
+    // Pass along the return-value of the callback:
+    return fxn();
+  };
+  // Pass along the event-prepended form of the callback.
+  adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
 /**
- * The .doubleClicked() function is called once after every time a
+ * The .<a href="#/p5.Element/doubleClicked">doubleClicked()</a> function is called once after every time a
  * mouse button is pressed twice over the element. This can be used to
  * attach element and action specific event listeners.
  *
@@ -286,7 +296,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
 };
 
 /**
- * The .mouseWheel() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseWheel">mouseWheel()</a> function is called once after every time a
  * mouse wheel is scrolled over the element. This can be used to
  * attach element specific event listeners.
  * <br><br>
@@ -352,9 +362,11 @@ p5.Element.prototype.mouseWheel = function(fxn) {
 };
 
 /**
- * The .mouseReleased() function is called once after every time a
- * mouse button is released over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is called once after every time a
+ * mouse button is released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseReleased
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -400,14 +412,15 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
-  adjustListener('touchend', fxn, this);
   return this;
 };
 
 /**
- * The .mouseClicked() function is called once after a mouse button is
- * pressed and released over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is called once after a mouse button is
+ * pressed and released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -459,7 +472,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
 };
 
 /**
- * The .mouseMoved() function is called once every time a
+ * The .<a href="#/p5.Element/mouseMoved">mouseMoved()</a> function is called once every time a
  * mouse moves over the element. This can be used to attach an
  * element specific event listener.
  *
@@ -513,12 +526,11 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
-  adjustListener('touchmove', fxn, this);
   return this;
 };
 
 /**
- * The .mouseOver() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseOver">mouseOver()</a> function is called once after every time a
  * mouse moves onto the element. This can be used to attach an
  * element specific event listener.
  *
@@ -561,7 +573,7 @@ p5.Element.prototype.mouseOver = function(fxn) {
 };
 
 /**
- * The .changed() function is called when the value of an
+ * The .<a href="#/p5.Element/changed">changed()</a> function is called when the value of an
  * element changes.
  * This can be used to attach an element specific event listener.
  *
@@ -628,7 +640,7 @@ p5.Element.prototype.changed = function(fxn) {
 };
 
 /**
- * The .input() function is called when any user input is
+ * The .<a href="#/p5.Element/input">input()</a> function is called when any user input is
  * detected with an element. The input event is often used
  * to detect keystrokes in a input element, or changes on a
  * slider element. This can be used to attach an element specific
@@ -663,7 +675,7 @@ p5.Element.prototype.input = function(fxn) {
 };
 
 /**
- * The .mouseOut() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseOut">mouseOut()</a> function is called once after every time a
  * mouse moves off the element. This can be used to attach an
  * element specific event listener.
  *
@@ -705,7 +717,7 @@ p5.Element.prototype.mouseOut = function(fxn) {
 };
 
 /**
- * The .touchStarted() function is called once after every time a touch is
+ * The .<a href="#/p5.Element/touchStarted">touchStarted()</a> function is called once after every time a touch is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchStarted
@@ -749,12 +761,11 @@ p5.Element.prototype.mouseOut = function(fxn) {
  */
 p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
-  adjustListener('mousedown', fxn, this);
   return this;
 };
 
 /**
- * The .touchMoved() function is called once after every time a touch move is
+ * The .<a href="#/p5.Element/touchMoved">touchMoved()</a> function is called once after every time a touch move is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchMoved
@@ -790,12 +801,11 @@ p5.Element.prototype.touchStarted = function(fxn) {
  */
 p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
-  adjustListener('mousemove', fxn, this);
   return this;
 };
 
 /**
- * The .touchEnded() function is called once after every time a touch is
+ * The .<a href="#/p5.Element/touchEnded">touchEnded()</a> function is called once after every time a touch is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchEnded
@@ -840,12 +850,11 @@ p5.Element.prototype.touchMoved = function(fxn) {
  */
 p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
-  adjustListener('mouseup', fxn, this);
   return this;
 };
 
 /**
- * The .dragOver() function is called once after every time a
+ * The .<a href="#/p5.Element/dragOver">dragOver()</a> function is called once after every time a
  * file is dragged over the element. This can be used to attach an
  * element specific event listener.
  *
@@ -921,7 +930,7 @@ p5.Element.prototype.dragLeave = function(fxn) {
 };
 
 /**
- * The .drop() function is called for each file dropped on the element.
+ * The .<a href="#/p5.Element/drop">drop()</a> function is called for each file dropped on the element.
  * It requires a callback that is passed a p5.File object.  You can
  * optionally pass two callbacks, the first one (required) is triggered
  * for each file dropped when the file is loaded.  The second (optional)
@@ -937,20 +946,41 @@ p5.Element.prototype.dragLeave = function(fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('drop image', width / 2, height / 2);
+ *   text('drop file', width / 2, height / 2);
  *   c.drop(gotFile);
  * }
  *
  * function gotFile(file) {
- *   var img = createImg(file.data).hide();
- *   // Draw the image onto the canvas
- *   image(img, 0, 0, width, height);
+ *   background(200);
+ *   text('received file:', width / 2, height / 2);
+ *   text(file.name, width / 2, height / 2 + 50);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var img;
+ *
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop image', width / 2, height / 2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function draw() {
+ *   if (img) {
+ *     image(img, 0, 0, width, height);
+ *   }
+ * }
+ *
+ * function gotFile(file) {
+ *   img = createImg(file.data).hide();
  * }
  * </code></div>
  *
  * @alt
  * Canvas turns into whatever image is dragged/dropped onto it.
- *
  */
 p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback

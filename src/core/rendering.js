@@ -6,22 +6,23 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var constants = require('./constants');
 require('./p5.Graphics');
 require('./p5.Renderer2D');
 require('../webgl/p5.RendererGL');
 var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
+var defaultClass = 'p5Canvas';
 
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
- * Calling createCanvas more than once in a sketch will result in very
+ * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a sketch will result in very
  * unpredictable behavior. If you want more than one drawing canvas
- * you could use createGraphics (hidden by default but it can be shown).
+ * you could use <a href="#/p5/createGraphics">createGraphics</a> (hidden by default but it can be shown).
  * <br><br>
  * The system variables width and height are set by the parameters passed
- * to this function. If createCanvas() is not used, the window will be
+ * to this function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the window will be
  * given a default size of 100x100 pixels.
  * <br><br>
  * For more ways to position the canvas, see the
@@ -32,7 +33,7 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
- * @return {HTMLCanvasElement} canvas generated
+ * @return {p5.Renderer}
  * @example
  * <div>
  * <code>
@@ -67,6 +68,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     }
     c = document.createElement('canvas');
     c.id = defaultId;
+    c.classList.add(defaultClass);
   } else {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
@@ -76,6 +78,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
       }
       defaultId = 'defaultCanvas' + i;
       c.id = defaultId;
+      c.classList.add(defaultClass);
     } else {
       // resize the default canvas if new one is created
       c = this.canvas;
@@ -152,6 +155,8 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
       }
     }
     this._renderer.resize(w, h);
+    this.width = w;
+    this.height = h;
     // reset canvas properties
     for (var savedKey in props) {
       try {

@@ -7,14 +7,14 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Texture');
 
 /**
  * Loads a custom shader from the provided vertex and fragment
  * shader paths. The shader files are loaded asynchronously in the
- * background, so this method should be used in preload().
+ * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
  * For now, there are three main types of shaders. p5 will automatically
  * supply appropriate vertices, normals, colors, and lighting attributes
@@ -27,8 +27,35 @@ require('./p5.Texture');
  * source code
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * var mandel;
+ * function preload() {
+ *   // load the shader definitions from files
+ *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // use the shader
+ *   shader(mandel);
+ *   noStroke();
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
+  p5._validateParameters('loadShader', arguments);
   var loadedShader = new p5.Shader();
 
   var self = this;
@@ -38,15 +65,15 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
   this.loadStrings(fragFilename, function(result) {
     loadedShader._fragSrc = result.join('\n');
     loadedFrag = true;
-    if (!loadedVert) {
-      self._incrementPreload();
+    if (loadedVert) {
+      self._decrementPreload();
     }
   });
   this.loadStrings(vertFilename, function(result) {
     loadedShader._vertSrc = result.join('\n');
     loadedVert = true;
-    if (!loadedFrag) {
-      self._incrementPreload();
+    if (loadedFrag) {
+      self._decrementPreload();
     }
   });
 
@@ -116,21 +143,25 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
 p5.prototype.createShader = function(vertSrc, fragSrc) {
+  this._assert3d('createShader');
+  p5._validateParameters('createShader', arguments);
   return new p5.Shader(this._renderer, vertSrc, fragSrc);
 };
 
 /**
- * The shader() function lets the user provide a custom shader
+ * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
  * own shaders by loading vertex and fragment shaders with
- * loadShader().
+ * <a href="#/p5/loadShader">loadShader()</a>.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
+ * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
  */
 p5.prototype.shader = function(s) {
+  this._assert3d('shader');
+  p5._validateParameters('shader', arguments);
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
@@ -168,6 +199,8 @@ p5.prototype.shader = function(s) {
  *
  */
 p5.prototype.normalMaterial = function() {
+  this._assert3d('normalMaterial');
+  p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
   this._renderer.curFillColor = [1, 1, 1, 1];
@@ -254,6 +287,8 @@ p5.prototype.normalMaterial = function() {
  *
  */
 p5.prototype.texture = function(tex) {
+  this._assert3d('texture');
+  p5._validateParameters('texture', arguments);
   this._renderer.drawMode = constants.TEXTURE;
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
@@ -300,6 +335,8 @@ p5.prototype.texture = function(tex) {
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
+  this._assert3d('ambientMaterial');
+  p5._validateParameters('ambientMaterial', arguments);
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 
@@ -347,6 +384,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
+  this._assert3d('specularMaterial');
+  p5._validateParameters('specularMaterial', arguments);
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 

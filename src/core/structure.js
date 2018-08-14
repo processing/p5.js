@@ -7,26 +7,23 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
-p5.prototype.exit = function() {
-  throw 'exit() not implemented, see remove()';
-};
 /**
- * Stops p5.js from continuously executing the code within draw().
- * If loop() is called, the code in draw() begins to run continuously again.
- * If using noLoop() in setup(), it should be the last line inside the block.
+ * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
+ * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a> begins to run continuously again.
+ * If using <a href="#/p5/noLoop">noLoop()</a> in <a href="#/p5/setup">setup()</a>, it should be the last line inside the block.
  * <br><br>
- * When noLoop() is used, it's not possible to manipulate or access the
- * screen inside event handling functions such as mousePressed() or
- * keyPressed(). Instead, use those functions to call redraw() or loop(),
- * which will run draw(), which can update the screen properly. This means
- * that when noLoop() has been called, no drawing can happen, and functions
- * like saveFrame() or loadPixels() may not be used.
+ * When <a href="#/p5/noLoop">noLoop()</a> is used, it's not possible to manipulate or access the
+ * screen inside event handling functions such as <a href="#/p5/mousePressed">mousePressed()</a> or
+ * <a href="#/p5/keyPressed">keyPressed()</a>. Instead, use those functions to call <a href="#/p5/redraw">redraw()</a> or <a href="#/p5/loop">loop()</a>,
+ * which will run <a href="#/p5/draw">draw()</a>, which can update the screen properly. This means
+ * that when <a href="#/p5/noLoop">noLoop()</a> has been called, no drawing can happen, and functions
+ * like <a href="#/p5/saveFrame">saveFrame()</a> or <a href="#/p5/loadPixels">loadPixels()</a> may not be used.
  * <br><br>
- * Note that if the sketch is resized, redraw() will be called to update
- * the sketch, even after noLoop() has been specified. Otherwise, the sketch
- * would enter an odd state until loop() was called.
+ * Note that if the sketch is resized, <a href="#/p5/redraw">redraw()</a> will be called to update
+ * the sketch, even after <a href="#/p5/noLoop">noLoop()</a> has been specified. Otherwise, the sketch
+ * would enter an odd state until <a href="#/p5/loop">loop()</a> was called.
  *
  * @method noLoop
  * @example
@@ -76,8 +73,8 @@ p5.prototype.noLoop = function() {
 };
 /**
  * By default, p5.js loops through draw() continuously, executing the code
- * within it. However, the draw() loop may be stopped by calling noLoop().
- * In that case, the draw() loop can be resumed with loop().
+ * within it. However, the <a href="#/p5/draw">draw()</a> loop may be stopped by calling <a href="#/p5/noLoop">noLoop()</a>.
+ * In that case, the <a href="#/p5/draw">draw()</a> loop can be resumed with loop().
  *
  * @method loop
  * @example
@@ -116,33 +113,20 @@ p5.prototype.loop = function() {
   this._draw();
 };
 
-function assign(dest, varArgs) {
-  for (var index = 1; index < arguments.length; index++) {
-    var src = arguments[index];
-    if (src != null) {
-      for (var key in src) {
-        if (src.hasOwnProperty(key)) {
-          dest[key] = src[key];
-        }
-      }
-    }
-  }
-}
-
 /**
- * The push() function saves the current drawing style settings and
- * transformations, while pop() restores these settings. Note that these
+ * The <a href="#/p5/push">push()</a> function saves the current drawing style settings and
+ * transformations, while <a href="#/p5/pop">pop()</a> restores these settings. Note that these
  * functions are always used together. They allow you to change the style
  * and transformation settings and later return to what you had. When a new
- * state is started with push(), it builds on the current style and transform
- * information. The push() and pop() functions can be embedded to provide
+ * state is started with <a href="#/p5/push">push()</a>, it builds on the current style and transform
+ * information. The <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions can be embedded to provide
  * more control. (See the second example for a demonstration.)
  * <br><br>
- * push() stores information related to the current transformation state
- * and style settings controlled by the following functions: fill(),
- * stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(),
- * imageMode(), rectMode(), ellipseMode(), colorMode(), textAlign(),
- * textFont(), textMode(), textSize(), textLeading().
+ * <a href="#/p5/push">push()</a> stores information related to the current transformation state
+ * and style settings controlled by the following functions: <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/tint">tint()</a>, <a href="#/p5/strokeWeight">strokeWeight()</a>, <a href="#/p5/strokeCap">strokeCap()</a>, <a href="#/p5/strokeJoin">strokeJoin()</a>,
+ * <a href="#/p5/imageMode">imageMode()</a>, <a href="#/p5/rectMode">rectMode()</a>, <a href="#/p5/ellipseMode">ellipseMode()</a>, <a href="#/p5/colorMode">colorMode()</a>, <a href="#/p5/textAlign">textAlign()</a>,
+ * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textMode">textMode()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
  *
  * @method push
  * @example
@@ -186,42 +170,28 @@ function assign(dest, varArgs) {
  *
  */
 p5.prototype.push = function() {
-  this._renderer.push();
   this._styles.push({
     props: {
       _colorMode: this._colorMode
     },
-    renderer: {
-      _doStroke: this._renderer._doStroke,
-      _strokeSet: this._renderer._strokeSet,
-      _doFill: this._renderer._doFill,
-      _fillSet: this._renderer._fillSet,
-      _tint: this._renderer._tint,
-      _imageMode: this._renderer._imageMode,
-      _rectMode: this._renderer._rectMode,
-      _ellipseMode: this._renderer._ellipseMode,
-      _textFont: this._renderer._textFont,
-      _textLeading: this._renderer._textLeading,
-      _textSize: this._renderer._textSize,
-      _textStyle: this._renderer._textStyle
-    }
+    renderer: this._renderer.push()
   });
 };
 
 /**
- * The push() function saves the current drawing style settings and
- * transformations, while pop() restores these settings. Note that these
+ * The <a href="#/p5/push">push()</a> function saves the current drawing style settings and
+ * transformations, while <a href="#/p5/pop">pop()</a> restores these settings. Note that these
  * functions are always used together. They allow you to change the style
  * and transformation settings and later return to what you had. When a new
- * state is started with push(), it builds on the current style and transform
- * information. The push() and pop() functions can be embedded to provide
+ * state is started with <a href="#/p5/push">push()</a>, it builds on the current style and transform
+ * information. The <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions can be embedded to provide
  * more control. (See the second example for a demonstration.)
  * <br><br>
- * push() stores information related to the current transformation state
- * and style settings controlled by the following functions: fill(),
- * stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(),
- * imageMode(), rectMode(), ellipseMode(), colorMode(), textAlign(),
- * textFont(), textMode(), textSize(), textLeading().
+ * <a href="#/p5/push">push()</a> stores information related to the current transformation state
+ * and style settings controlled by the following functions: <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/tint">tint()</a>, <a href="#/p5/strokeWeight">strokeWeight()</a>, <a href="#/p5/strokeCap">strokeCap()</a>, <a href="#/p5/strokeJoin">strokeJoin()</a>,
+ * <a href="#/p5/imageMode">imageMode()</a>, <a href="#/p5/rectMode">rectMode()</a>, <a href="#/p5/ellipseMode">ellipseMode()</a>, <a href="#/p5/colorMode">colorMode()</a>, <a href="#/p5/textAlign">textAlign()</a>,
+ * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textMode">textMode()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
  *
  * @method pop
  * @example
@@ -265,33 +235,28 @@ p5.prototype.push = function() {
  *
  */
 p5.prototype.pop = function() {
-  this._renderer.pop();
-  var lastS = this._styles.pop();
-  assign(this._renderer, lastS.renderer);
-  assign(this, lastS.props);
-};
-
-p5.prototype.pushStyle = function() {
-  throw new Error('pushStyle() not used, see push()');
-};
-
-p5.prototype.popStyle = function() {
-  throw new Error('popStyle() not used, see pop()');
+  var style = this._styles.pop();
+  if (style) {
+    this._renderer.pop(style.renderer);
+    Object.assign(this, style.props);
+  } else {
+    console.warn('pop() was called without matching push()');
+  }
 };
 
 /**
  *
- * Executes the code within draw() one time. This functions allows the
+ * Executes the code within <a href="#/p5/draw">draw()</a> one time. This functions allows the
  * program to update the display window only when necessary, for example
- * when an event registered by mousePressed() or keyPressed() occurs.
+ * when an event registered by <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/keyPressed">keyPressed()</a> occurs.
  * <br><br>
- * In structuring a program, it only makes sense to call redraw() within
- * events such as mousePressed(). This is because redraw() does not run
- * draw() immediately (it only sets a flag that indicates an update is
+ * In structuring a program, it only makes sense to call <a href="#/p5/redraw">redraw()</a> within
+ * events such as <a href="#/p5/mousePressed">mousePressed()</a>. This is because <a href="#/p5/redraw">redraw()</a> does not run
+ * <a href="#/p5/draw">draw()</a> immediately (it only sets a flag that indicates an update is
  * needed).
  * <br><br>
- * The redraw() function does not work properly when called inside draw().
- * To enable/disable animations, use loop() and noLoop().
+ * The <a href="#/p5/redraw">redraw()</a> function does not work properly when called inside <a href="#/p5/draw">draw()</a>.
+ * To enable/disable animations, use <a href="#/p5/loop">loop()</a> and <a href="#/p5/noLoop">noLoop()</a>.
  * <br><br>
  * In addition you can set the number of redraws per method call. Just
  * add an integer as single parameter for the number of redraws.
@@ -343,11 +308,6 @@ p5.prototype.popStyle = function() {
  *
  */
 p5.prototype.redraw = function(n) {
-  this.resetMatrix();
-  if (this._renderer.isP3D) {
-    this._renderer._update();
-  }
-
   var numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
@@ -364,18 +324,16 @@ p5.prototype.redraw = function(n) {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this.resetMatrix();
+      if (this._renderer.isP3D) {
+        this._renderer._update();
+      }
       this._setProperty('frameCount', this.frameCount + 1);
       this._registeredMethods.pre.forEach(callMethod);
       userDraw();
       this._registeredMethods.post.forEach(callMethod);
     }
   }
-};
-
-p5.prototype.size = function() {
-  var s = 'size() is not a valid p5 function, to set the size of the ';
-  s += 'drawing canvas, please use createCanvas() instead';
-  throw s;
 };
 
 module.exports = p5;
