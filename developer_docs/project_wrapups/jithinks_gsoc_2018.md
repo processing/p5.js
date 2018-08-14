@@ -5,7 +5,7 @@ For Google Summer of Code 2018, I worked on developing a webapp (Dynamic Learnin
 
 ## Overview of the app
 
-Dynamic Learning is meant to be an online platform where teachers and programmers collaborate to create and share STEM lessons which makes use of interactive visualisations created in p5.js. The main objective in GSoC 2018 was to lay down a basic structure of the app which will act as a foundation for future developments and will provide an idea about the app to the teacher community and future contributors.
+Dynamic Learning is meant to be an online platform where teachers and programmers collaborate to create and share STEM lessons which make use of interactive visualisations created in p5.js. The main objective in GSoC 2018 was to lay down a basic structure of the app which will act as a foundation for future developments and will provide an idea about the app to the teacher community and future contributors.
 
 The three core objectives of the web app are-
 
@@ -34,10 +34,9 @@ https://github.com/JithinKS97/dynamic-learning-app
 
 The webapp is build on top of full stack Javascript framework Meteor.js along with React.js. Meteor.js comes with inbuilt Mongo DB database which is used in the app. Semantic UI React is used for obtaining styled ui components used throughout for making the ui of the app.
 
-
 ## Main React components
 
-Below are the main React Components of the app and much of the work in GSoC 2018 was focused on the development of these React components. These main React page components can be found in 'client/ui/pages'.
+Below are the main React components of the app and much of the work in GSoC 2018 was focused on the development of these React components. These main React page components can be found in 'client/ui/pages'.
 
 The routes of each of the pages can be found in the 'clients/routes' directory. Detailed documentation for each of the components are provided in the components' js files.
 
@@ -89,10 +88,9 @@ Users who are not logged in visiting the app will be able to view all the lesson
 
 ##### Component - SimContainer
 
-Simulations are added to the app by making use of the iframe export feature of the online p5 text editor. One of the challenges that I faced 
-was the implementation of the communication between the webapp and the iframe. [Cassie Tarakajian](https://github.com/catarak) helped me with this. She suggested me to use MessageChannel API and it worked. Another functionality I wanted to add was the ability to save the state of the simulations. This can be achieved by alloting a Javascript object for each of the simulation in the database. The Javascript object can be saved and loaded using MessageChannel.
+Simulations are added to the app by making use of the iframe export feature of the online p5 text editor. One of the challenges that I faced was the implementation of the communication between the webapp and the iframe. [Cassie Tarakajian](https://github.com/catarak) helped me with this. She suggested me to use MessageChannel API and it worked. Another functionality I wanted to add was the ability to save the state of the simulations. This can be achieved by alloting a Javascript object for each of the simulation in the database. The Javascript object can be saved and loaded using MessageChannel.
 
-#### Above are the main React Components of the app and the you can find the other React Components in the'client/ui/components' folder.
+#### Above are the main React Components of the app and you can find the other React Components in the'client/ui/components' folder.
 
 I've provided necessary documentations in the components' js files in all the areas where I felt like clarifications are necessary.
 
