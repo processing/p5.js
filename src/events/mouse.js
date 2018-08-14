@@ -466,8 +466,6 @@ p5.prototype._setMouseButton = function(e) {
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
- * Otherwise add "return true" if you wish for default
- * mouse behavior to be recognized by browser.
  *
  * @method mouseDragged
  * @example
@@ -540,7 +538,6 @@ p5.prototype._onmousemove = function(e) {
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
- * Otherwise add "return true" if you wish for default mouse behavior to be recognized by browser.
  *
  * @method mousePressed
  * @example
