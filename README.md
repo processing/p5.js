@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
+[![Backers on Open Collective](https://opencollective.com/p5js/backers/badge.svg)](#backers) [![Sponsors on Open Collective](https://opencollective.com/p5js/sponsors/badge.svg)](#sponsors) [![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
 # [p5.js](http://p5js.org)
 
@@ -83,3 +83,33 @@ Developers, check out the [developer docs](https://github.com/processing/p5.js/b
 Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
 
 We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
+
+## Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/processing/p5.js/graphs/contributors"><img src="https://opencollective.com/p5js/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/p5js#backer)]
+
+<a href="https://opencollective.com/p5js#backers" target="_blank"><img src="https://opencollective.com/p5js/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/p5js#sponsor)]
+
+<a href="https://opencollective.com/p5js/sponsor/0/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/1/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/2/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/3/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/4/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/5/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/6/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/7/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/8/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/p5js/sponsor/9/website" target="_blank"><img src="https://opencollective.com/p5js/sponsor/9/avatar.svg"></a>
+
+
