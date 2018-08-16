@@ -343,4 +343,39 @@ p5.prototype.strokeWeight = function(w) {
   return this;
 };
 
+/**
+ * Sets the shadow properties of the canvas
+ *
+ * @method setShadow
+ * @param {String|p5.Color}  c          color of the shadow
+ * @param {Number}           blur       level of the blurring. This value doesn't correspond to a number of pixels. The default value is 0.
+ * @param {Number}           [offsetX]  the distance in pixels that the shadow will be offset in horizontal distance. The default value is 0.
+ * @param {Number}           [offsetY]  the distance in pixels that the shadow will be offset in vertical distance. The default value is 0.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * setShadow('blue', 10, 10, 10);
+ * fill('green');
+ * rect(20, 20, 50, 50);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * setShadow('blue', 10);
+ * fill('green');
+ * rect(20, 20, 50, 50);
+ * </code>
+ * </div>
+ *
+ */
+p5.prototype.setShadow = function() {
+  p5._validateParameters('setShadow', arguments);
+  if (arguments[0] instanceof p5.Color) {
+    arguments[0] = arguments[0].toString('#rrggbb');
+  }
+  this._renderer.setShadow(arguments);
+  return this;
+};
 module.exports = p5;
