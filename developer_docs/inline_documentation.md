@@ -68,6 +68,13 @@ If the parameter is optional, add square brackets around the name:
 @param {type} [name] Description here.
 ```
 
+If the parameter takes one or more values defined in `constants.js`,
+then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, eg:
+
+```
+@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
+```
+
 ## Specify return type
 
 The `@return` is identical to `@params`, but without the name. It should be the last element in `@method`. The JS types are: String, Number, Boolean, Object, Array, Null, and Undefined. If there is no return type, do not include `@return`. 
