@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * The system variable deviceOrientation always contains the orientation of

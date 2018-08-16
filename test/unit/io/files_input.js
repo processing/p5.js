@@ -75,6 +75,30 @@ suite('Files', function() {
         assert.equal(err.status, 404, 'Error status is 404');
       });
     });
+
+    test('should return a promise', function() {
+      var promise = myp5.httpDo('unit/assets/sentences.txt');
+      assert.instanceOf(promise, Promise);
+      return promise.then(function(data) {
+        assert.ok(data);
+        assert.isString(data);
+      });
+    });
+
+    test('should return a promise that rejects on error', function() {
+      return new Promise(function(resolve, reject) {
+        var promise = myp5.httpDo('404file');
+        assert.instanceOf(promise, Promise);
+        promise.then(function(data) {
+          reject(new Error('promise resolved.'));
+        });
+        resolve(
+          promise.catch(function(error) {
+            assert.instanceOf(error, Error);
+          })
+        );
+      });
+    });
   });
 
   // tests while preload is true without callbacks
@@ -180,13 +204,13 @@ suite('Files', function() {
     });
 
     // @TODO Need to check this does what it should
-    test('should allow json to override jsonp in 3rd param', function() {
+    test('should allow json to override jsonp', function() {
       return new Promise(function(resolve, reject) {
         result = myp5.loadJSON(
           'unit/assets/array.json',
+          'json',
           resolve,
-          reject,
-          'json'
+          reject
         );
       }).then(function(resp) {
         assert.ok(resp);
@@ -213,6 +237,15 @@ suite('Files', function() {
       }).then(function(data) {
         assert.isArray(data, 'Array passed to callback function');
         assert.lengthOf(data, 68, 'length of data is 68');
+      });
+    });
+
+    test('should include empty strings', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/empty_lines.txt', resolve, reject);
+      }).then(function(data) {
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 6, 'length of data is 6');
       });
     });
 

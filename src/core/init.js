@@ -1,6 +1,6 @@
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * _globalInit
@@ -15,7 +15,7 @@ var p5 = require('../core/core');
  * @return {Undefined}
  */
 var _globalInit = function() {
-  if (!window.PHANTOMJS && !window.mocha) {
+  if (!window.mocha) {
     // If there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
     if (
@@ -29,8 +29,12 @@ var _globalInit = function() {
 };
 
 // TODO: ???
+
+// if the page is ready, initialize p5 immediately
 if (document.readyState === 'complete') {
   _globalInit();
+  // if the page is still loading, add an event listener
+  // and initialize p5 as soon as it finishes loading
 } else {
   window.addEventListener('load', _globalInit, false);
 }

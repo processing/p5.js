@@ -18,10 +18,10 @@
 
   <!-- Include your assertion lib of choice -->
   <script src="../node_modules/chai/chai.js" type="text/javascript" ></script>
-  <script src="js/bind.js" type="text/javascript" ></script>
   <script src="js/sinon.js" type="text/javascript" ></script>
   <script src="js/modernizr.js" type="text/javascript" ></script>
   <script src="js/chai_helpers.js" type="text/javascript" ></script>
+  <script src="js/p5_helpers.js" type="text/javascript" ></script>
 
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
@@ -34,43 +34,39 @@
   <script type="text/javascript" >
     p5._throwValidationErrors = true;
   
-    // If tests run in a real browser
-    // Can alternatively do a check on window.PHANTOMJS
-    if (navigator.userAgent.indexOf('PhantomJS') < 0) {
-      window.addEventListener('load', function() {
-        var runner = mocha.run();
+    window.addEventListener('load', function() {
+      var runner = mocha.run();
 
-        // This exposes our test results to Sauce Labs. For more
-        // details, see: https://github.com/axemclion/grunt-saucelabs.
+      // This exposes our test results to Sauce Labs. For more
+      // details, see: https://github.com/axemclion/grunt-saucelabs.
 
-        var failedTests = [];
-        runner.on('end', function(){
-          window.mochaResults = runner.stats;
-          window.mochaResults.reports = failedTests;
+      var failedTests = [];
+      runner.on('end', function(){
+        window.mochaResults = runner.stats;
+        window.mochaResults.reports = failedTests;
+      });
+
+      runner.on('fail', logFailure);
+
+      function logFailure(test, err) {
+        var flattenTitles = function(test){
+          var titles = [];
+          while (test.parent.title){
+            titles.push(test.parent.title);
+            test = test.parent;
+          }
+          return titles.reverse();
+        };
+
+        failedTests.push({
+          name: test.title,
+          result: false,
+          message: err.message,
+          stack: err.stack,
+          titles: flattenTitles(test)
         });
-
-        runner.on('fail', logFailure);
-
-        function logFailure(test, err) {
-          var flattenTitles = function(test){
-            var titles = [];
-            while (test.parent.title){
-              titles.push(test.parent.title);
-              test = test.parent;
-            }
-            return titles.reverse();
-          };
-
-          failedTests.push({
-            name: test.title,
-            result: false,
-            message: err.message,
-            stack: err.stack,
-            titles: flattenTitles(test)
-          });
-        }
-      }, false);
-    }
+      }
+    }, false);
   </script>
 </body>
 </html>

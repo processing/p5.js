@@ -1,6 +1,6 @@
 var marked = require('marked');
 
-var DocumentedMethod = require('./yuidoc-p5-theme-src/scripts/documented-method');
+var DocumentedMethod = require('./documented-method');
 
 function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
@@ -70,27 +70,40 @@ function mergeOverloadedMethods(data) {
       }
     };
 
-    var extractConsts = function(params) {
-      params &&
-        params.forEach(function(param) {
-          if (param.type.split('|').indexOf('Constant') >= 0) {
-            var match;
-            if (classitem.name === 'endShape' && param.name === 'mode') {
-              match = 'CLOSE';
-            } else {
-              var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
-              var execResult = constantRe.exec(param.description);
-              match = execResult && execResult[0];
-            }
-            if (match) {
-              var reConst = /[A-Z0-9_]+/g;
-              var matchConst;
-              while ((matchConst = reConst.exec(match)) !== null) {
-                methodConsts[matchConst] = true;
-              }
-            }
+    var extractConsts = function(param) {
+      if (!param.type) {
+        console.log(param);
+      }
+      if (param.type.split('|').indexOf('Constant') >= 0) {
+        var match;
+        if (classitem.name === 'endShape' && param.name === 'mode') {
+          match = 'CLOSE';
+        } else {
+          var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+          var execResult = constantRe.exec(param.description);
+          match = execResult && execResult[0];
+          if (!match) {
+            throw new Error(
+              classitem.file +
+                ':' +
+                classitem.line +
+                ', Constant-typed parameter ' +
+                fullName +
+                '(...' +
+                param.name +
+                '...) is missing valid value enumeration. ' +
+                'See inline_documentation.md#specify-parameters.'
+            );
           }
-        });
+        }
+        if (match) {
+          var reConst = /[A-Z0-9_]+/g;
+          var matchConst;
+          while ((matchConst = reConst.exec(match)) !== null) {
+            methodConsts[matchConst] = true;
+          }
+        }
+      }
     };
 
     var processOverloadedParams = function(params) {
@@ -125,10 +138,10 @@ function mergeOverloadedMethods(data) {
           );
         } else {
           paramNames[param.name] = param;
+          extractConsts(param);
         }
       });
 
-      extractConsts(params);
       return params;
     };
 
@@ -182,7 +195,11 @@ function mergeOverloadedMethods(data) {
         method.overloads.push(makeOverload(classitem));
         return false;
       } else {
-        extractConsts(classitem.params);
+        if (classitem.params) {
+          classitem.params.forEach(function(param) {
+            extractConsts(param);
+          });
+        }
         methodsByFullName[fullName] = classitem;
       }
 

@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var C = require('./constants');
 
 var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
@@ -169,8 +169,11 @@ p5.prototype.cursor = function(type, x, y) {
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
  * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
- * recommended. The default rate is 60 frames per second. This is the same as
- * setFrameRate(val).
+ * recommended. The default frame rate is based on the frame rate of the display
+ * (here also called "refresh rate"), which is set to 60 frames per second on most
+ * computers. A frame rate of 24 frames per second (usual for movies) or above
+ * will be enough for smooth animations
+ * This is the same as setFrameRate(val).
  * <br><br>
  * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate. The
  * draw function must run at least once before it will return a value. This

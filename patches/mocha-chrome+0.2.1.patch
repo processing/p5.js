@@ -1,0 +1,11 @@
+patch-package
+--- a/node_modules/mocha-chrome/lib/instance.js
++++ b/node_modules/mocha-chrome/lib/instance.js
+@@ -9,7 +9,6 @@ module.exports = async function createInstance (log, options) {
+       '--disable-background-timer-throttling',
+       '--disable-default-apps',
+       '--disable-device-discovery-notifications',
+-      '--disable-gpu',
+       '--disable-popup-blocking',
+       '--disable-renderer-backgrounding',
+       '--disable-translate',

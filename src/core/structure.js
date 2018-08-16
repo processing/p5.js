@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.

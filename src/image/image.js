@@ -11,7 +11,7 @@
  */
 'use strict';
 
-var p5 = require('../core/core'); // This is not global, but JSHint is not aware that // this module is implicitly enclosed with Browserify: this overrides the // redefined-global error and permits using the name "frames" for the array // of saved animation frames.
+var p5 = require('../core/main'); // This is not global, but JSHint is not aware that // this module is implicitly enclosed with Browserify: this overrides the // redefined-global error and permits using the name "frames" for the array // of saved animation frames.
 
 /* global frames:true */ var frames = [];
 

@@ -9,7 +9,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 var GLMAT_ARRAY_TYPE = Array;
 var isMatrixArray = function(x) {

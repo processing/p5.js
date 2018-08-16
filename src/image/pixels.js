@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
 require('../color/p5.Color');
 
@@ -440,6 +440,9 @@ p5.prototype.filter = function(operation, value) {
  * </code>
  * <br><br>
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+ *
+ * If you want to extract an array of colors or a subimage from an p5.Image object,
+ * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
  *
  * @method get
  * @param  {Number}         [x] x-coordinate of the pixel

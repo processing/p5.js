@@ -1358,6 +1358,26 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "aidannelson",
+      "name": "Aidan Nelson",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6486359?s=460&v=4",
+      "profile": "https://github.com/AidanNelson",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "hydrosquall",
+      "name": "Cameron Yick",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9020979?s=460&v=4",
+      "profile": "https://github.com/hydrosquall",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }

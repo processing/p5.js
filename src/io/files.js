@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('whatwg-fetch');
 require('es6-promise').polyfill();
 var fetchJsonp = require('fetch-jsonp');
@@ -27,6 +27,7 @@ require('../core/error_helpers');
  * callback following the syntax specified <a href="https://github.com/camsong/
  * fetch-jsonp">here</a>.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadJSON
  * @param  {String}        path       name of the file or url to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
@@ -161,7 +162,16 @@ p5.prototype.loadJSON = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(5, path);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
@@ -180,6 +190,7 @@ p5.prototype.loadJSON = function() {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
  * @param  {function} [callback] function to be executed after <a href="#/p5/loadStrings">loadStrings()</a>
@@ -251,10 +262,12 @@ p5.prototype.loadStrings = function() {
     'GET',
     'text',
     function(data) {
-      var arr = data.match(/[^\r\n]+/g);
-      for (var k in arr) {
-        ret[k] = arr[k];
-      }
+      // split lines handling mac/windows/linux endings
+      var lines = data
+        .replace(/\r\n/g, '\r')
+        .replace(/\n/g, '\r')
+        .split(/\r/);
+      Array.prototype.push.apply(ret, lines);
 
       if (typeof callback !== 'undefined') {
         callback(ret);
@@ -262,7 +275,16 @@ p5.prototype.loadStrings = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(3, arguments[0]);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
@@ -301,6 +323,7 @@ p5.prototype.loadStrings = function() {
  * object:</p>
  * </p>
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String}         options  "header" "csv" "tsv"
@@ -314,7 +337,7 @@ p5.prototype.loadStrings = function() {
  * @return {Object}                    <a href="#/p5.Table">Table</a> object containing data
  *
  * @example
- * <div class="norender">
+ * <div class='norender'>
  * <code>
  * // Given the following CSV file called "mammals.csv"
  * // located in the project's "assets" folder:
@@ -414,7 +437,7 @@ p5.prototype.loadTable = function(path) {
   this.httpDo(
     path,
     'GET',
-    'text',
+    'table',
     function(resp) {
       var state = {};
 
@@ -617,6 +640,7 @@ function parseXML(two) {
  * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object.
  *
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
  * @param  {function} [callback] function to be executed after <a href="#/p5/loadXML">loadXML()</a>
@@ -695,13 +719,23 @@ p5.prototype.loadXML = function() {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(1, arguments[0]);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
 
   return ret;
 };
 
 /**
+ * This method is suitable for fetching files up to size of 64MB.
  * @method loadBytes
  * @param {string}   file            name of the file or URL to load
  * @param {function} [callback]      function to be executed after <a href="#/p5/loadBytes">loadBytes()</a>
@@ -746,7 +780,16 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
 
       self._decrementPreload();
     },
-    errorCallback
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(6, file);
+
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
+    }
   );
   return ret;
 };
@@ -769,6 +812,9 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  * @example
  * <div class='norender'><code>
  * // Examples use USGS Earthquake API:
@@ -808,19 +854,21 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
  * @param  {Object|Boolean} data
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 /**
  * @method httpGet
  * @param  {String}        path
  * @param  {function}      callback
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpGet = function() {
   p5._validateParameters('httpGet', arguments);
 
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
-  p5.prototype.httpDo.apply(this, args);
+  return p5.prototype.httpDo.apply(this, args);
 };
 
 /**
@@ -839,6 +887,9 @@ p5.prototype.httpGet = function() {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  *
  * @example
  * <div>
@@ -908,19 +959,21 @@ p5.prototype.httpGet = function() {
  * @param  {Object|Boolean} data
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 /**
  * @method httpPost
  * @param  {String}        path
  * @param  {function}      callback
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpPost = function() {
   p5._validateParameters('httpPost', arguments);
 
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
-  p5.prototype.httpDo.apply(this, args);
+  return p5.prototype.httpDo.apply(this, args);
 };
 
 /**
@@ -929,6 +982,7 @@ p5.prototype.httpPost = function() {
  * For more advanced use, you may also pass in the path as the first argument
  * and a object as the second argument, the signature follows the one specified
  * in the Fetch API specification.
+ * This method is suitable for fetching files up to size of 64MB when "GET" is used.
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
@@ -942,7 +996,9 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
- *
+ * @return {Promise} A promise that resolves with the data when the operation
+ *                   completes successfully or rejects with the error after
+ *                   one occurs.
  *
  * @example
  * <div>
@@ -999,12 +1055,14 @@ p5.prototype.httpPost = function() {
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
  * @param  {function}      [callback]
  * @param  {function}      [errorCallback]
+ * @return {Promise}
  */
 p5.prototype.httpDo = function() {
   var type;
   var callback;
   var errorCallback;
   var request;
+  var promise;
   var jsonpOptions = {};
   var cbCount = 0;
   var contentType = 'text/plain';
@@ -1044,7 +1102,8 @@ p5.prototype.httpDo = function() {
           a === 'binary' ||
           a === 'arrayBuffer' ||
           a === 'xml' ||
-          a === 'text'
+          a === 'text' ||
+          a === 'table'
         ) {
           type = a;
         } else {
@@ -1079,7 +1138,6 @@ p5.prototype.httpDo = function() {
       })
     });
   }
-
   // do some sort of smart type checking
   if (!type) {
     if (path.indexOf('json') !== -1) {
@@ -1091,15 +1149,22 @@ p5.prototype.httpDo = function() {
     }
   }
 
-  (type === 'jsonp' ? fetchJsonp(path, jsonpOptions) : fetch(request))
-    .then(function(res) {
-      if (!res.ok) {
-        var err = new Error(res.body);
-        err.status = res.status;
-        err.ok = false;
-        throw err;
+  if (type === 'jsonp') {
+    promise = fetchJsonp(path, jsonpOptions);
+  } else {
+    promise = fetch(request);
+  }
+  promise = promise.then(function(res) {
+    if (!res.ok) {
+      var err = new Error(res.body);
+      err.status = res.status;
+      err.ok = false;
+      throw err;
+    } else {
+      var fileSize = res.headers.get('content-length');
+      if (fileSize && fileSize > 64000000) {
+        p5._friendlyFileLoadError(7, path);
       }
-
       switch (type) {
         case 'json':
         case 'jsonp':
@@ -1117,9 +1182,11 @@ p5.prototype.httpDo = function() {
         default:
           return res.text();
       }
-    })
-    .then(callback || function() {})
-    .catch(errorCallback || console.error);
+    }
+  });
+  promise.then(callback || function() {});
+  promise.catch(errorCallback || console.error);
+  return promise;
 };
 
 /**

@@ -68,6 +68,13 @@ If the parameter is optional, add square brackets around the name:
 @param {type} [name] Description here.
 ```
 
+If the parameter takes one or more values defined in `constants.js`,
+then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, eg:
+
+```
+@param {Constant} horizAlign horizontal alignment, either LEFT, CENTER, or RIGHT
+```
+
 ## Specify return type
 
 The `@return` is identical to `@params`, but without the name. It should be the last element in `@method`. The JS types are: String, Number, Boolean, Object, Array, Null, and Undefined. If there is no return type, do not include `@return`. 
@@ -201,7 +208,7 @@ If you do not want the example to render with canvas (ie you just want the code 
 ```
 
 
-If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the PhantomJS test framework), include the class "notest" in the div:
+If you do not want the example to be run as part of the build tests (for example, if the example requires user interaction, or uses functionality not supported by the headless-Chrome test framework), include the class "notest" in the div:
 ```
 @example
 <div class='norender notest'><code>

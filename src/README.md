@@ -10,10 +10,18 @@ The `app.js` file is simply an index of all the other modules which exports the 
 
 # APIs
 
-p5.js seeks to create a toolkit for working with the web technologies that are most valuable for building art projects. For both expressive and pedagogical reasons, p5.js values (but does not necessarily always achieve lol!) clarity in its APIs.
+p5.js seeks to create a toolkit for working with the web technologies that are most valuable for building art projects. For both expressive and pedagogical reasons, p5.js values (but does not necessarily always achieve lol!) clarity in its APIs. These are guidelines, and in practice there may be occasional exceptions.
 
-Public APIs which are exposed to users of the p5.js library during the course of working on sketches and projects should use short, clear, declarative function names. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured into something more creative, expressive, or intuitive.
+## Public
+
+Public APIs which are exposed to users of the p5.js library during the course of working on sketches and projects should use short, clear, declarative function names. `circle()` is preferable to `new Circle()`. If the name of a public API function is longer than one or two words, it may be worth carefully considering whether the API should be restructured into something more creative, expressive, or intuitive.
+
+## Native
+
+Native APIs provided by the browser can sometimes be aliased in the style of public APIs to provide a more creative, expressive, or intuitive interface than the native implementation. For example, `print()` is easier to explain than `console.log()`. Idiomatic JavaScript is generally preferable, so aliasing in this manner needs to have tremendous creative or pedagogical benefits.
+
+Native browser functionality is also often aliased with properties on the `p5` object. This allows the library to consistently point toward the same reference, but in most cases this practice should not be considered part of the public API even though those properties are exposed to the user.
+
+## Internal
 
 Internal APIs which are not exposed to the user but are used for coordination within the library should generally take the form of constructor functions which can be exported across module boundaries. Those constructors are often attached to the `p5` constructor as a form of namespacing, but otherwise do not meaningfully act as methods that reference the host object. In cases where a `p5` object is needed inside a constructor, an instance will be explicitly passed as an input argument.
-
-The above are guidelines, and in practice there may be occasional exceptions.
