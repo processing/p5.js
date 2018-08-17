@@ -24,7 +24,6 @@ var constants = require('../core/constants');
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
   this.canvas = elt;
-  this._pInst = pInst;
   if (isMainCanvas) {
     this._isMainCanvas = true;
     // for pixel method sharing with pimage
