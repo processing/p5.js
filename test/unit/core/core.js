@@ -197,7 +197,14 @@ suite('Core', function() {
   suite('p5.prototype._createFriendlyGlobalFunctionBinder', function() {
     var noop = function() {};
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
-    var logMsg, globalObject, bind;
+    var logMsg, globalObject, bind, iframe;
+
+    teardown(function() {
+      if (iframe) {
+        iframe.teardown();
+        iframe = null;
+      }
+    });
 
     setup(function() {
       globalObject = {};
@@ -291,6 +298,34 @@ suite('Core', function() {
       globalObject.mouseX = 50;
       assert.equal(globalObject.mouseX, 50);
       assert.isUndefined(logMsg);
+    });
+
+    test('instance preload is independent of window', function() {
+      // callback for p5 instance mode.
+      // It does not define a preload.
+      // This tests that we don't call the global preload accidentally.
+      function cb(s) {
+        s.setup = function() {
+          window.afterSetup();
+        };
+      }
+      return new Promise(function(resolve) {
+        iframe = createP5Iframe(
+          [
+            P5_SCRIPT_TAG,
+            '<script>',
+            'globalPreloads = 0;',
+            'function setup() { }',
+            'function preload() { window.globalPreloads++; }',
+            'new p5(' + cb.toString() + ');',
+            '</script>'
+          ].join('\n')
+        );
+        iframe.elt.contentWindow.afterSetup = resolve;
+      }).then(function() {
+        var win = iframe.elt.contentWindow;
+        assert.strictEqual(win.globalPreloads, 1);
+      });
     });
   });
 });

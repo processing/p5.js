@@ -258,7 +258,16 @@ suite('Structure', function() {
     });
   });
 
-  suite('p5.prototype.redraw', function() {
+  suite.only('p5.prototype.redraw', function() {
+    var iframe;
+
+    teardown(function() {
+      if (iframe) {
+        iframe.teardown();
+        iframe = null;
+      }
+    });
+
     test('resets the rendering matrix between frames', function() {
       return new Promise(function(resolve, reject) {
         myp5.draw = function() {
@@ -272,6 +281,34 @@ suite('Structure', function() {
         };
         myp5.redraw(10);
         resolve();
+      });
+    });
+
+    test('instance redraw is independent of window', function() {
+      // callback for p5 instance mode.
+      // It does not call noLoop so redraw will be called many times.
+      // Redraw is not supposed to call window.draw even though no draw is defined in cb
+      function cb(s) {
+        s.setup = function() {
+          setTimeout(window.afterSetup, 1000);
+        };
+      }
+      return new Promise(function(resolve) {
+        iframe = createP5Iframe(
+          [
+            P5_SCRIPT_TAG,
+            '<script>',
+            'globalDraws = 0;',
+            'function setup() { noLoop(); }',
+            'function draw() { window.globalDraws++; }',
+            'new p5(' + cb.toString() + ');',
+            '</script>'
+          ].join('\n')
+        );
+        iframe.elt.contentWindow.afterSetup = resolve;
+      }).then(function() {
+        var win = iframe.elt.contentWindow;
+        assert.strictEqual(win.globalDraws, 1);
       });
     });
   });
