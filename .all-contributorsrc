@@ -1378,6 +1378,18 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "TanviKumar",
+      "name": "Tanvi Kumar",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18724229?v=4",
+      "profile": "https://github.com/TanviKumar",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "example"
+      ]
     }
   ]
 }
