@@ -354,8 +354,6 @@ p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
     0
   );
 
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.enable(gl.BLEND);
   gl.drawArrays(gl.Points, 0, vertices.length);
 };
 
