@@ -20,7 +20,9 @@ void main(){
 	// throw away the borders of the mask
     // otherwise we get weird alpha blending issues
 
-	float alpha = float((mask < 0.98));
+	if(mask > 0.98){
+      discard;
+  	}
 
-	gl_FragColor = vec4(uMaterialColor.rgb,alpha);
+  	gl_FragColor = vec4(uMaterialColor.rgb * (1.0 - mask), uMaterialColor.a) ;
 }
