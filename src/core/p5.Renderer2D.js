@@ -1051,6 +1051,20 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
   return this;
 };
 
+p5.Renderer2D.prototype.setShadow = function(args) {
+  var ctx = this.drawingContext;
+  console.log(args);
+  ctx.shadowColor = args[0];
+  ctx.shadowBlur = args[1];
+  if (typeof args[2] !== 'undefined') {
+    ctx.shadowOffsetX = args[2];
+  }
+  if (typeof args[3] !== 'undefined') {
+    ctx.shadowOffsetY = args[3];
+  }
+  return this;
+};
+
 p5.Renderer2D.prototype._getFill = function() {
   if (!this._cachedFillStyle) {
     this._cachedFillStyle = this.drawingContext.fillStyle;
