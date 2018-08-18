@@ -31,9 +31,9 @@ Note that most contributions for this project are on the [p5.js-sound repository
   - Instantaneous playback
   - Note-by-note visualization
   - Step sequencer example
-- Add example for algorithmic composition using Fractals [#309](https://github.com/processing/p5.js-sound/pull/309)
+- Add example for algorithmic composition using Fractals [#308](https://github.com/processing/p5.js-sound/pull/308)
 - Add example for algorithmic composition using Markov chains [#309](https://github.com/processing/p5.js-sound/pull/309)
-- Add example for algorithmic composition using Genetic algorithms [#309](https://github.com/processing/p5.js-sound/pull/309)
+- Add example for algorithmic composition using Genetic algorithms [#311](https://github.com/processing/p5.js-sound/pull/311)
 
 ### Tutorial
 - Create an online tutorial which encapsulates new examples and best practices developed for algorithmic composition on p5.js-sound: [tutorial repository](https://github.com/JunShern/explorable-algcomp)
