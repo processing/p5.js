@@ -158,6 +158,10 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * does not fit completely within the rectangle specified will not be drawn
  * to the screen. If x2 and y2 are not specified, the baseline alignment is the
  * default, which means that the text will be drawn upwards from x and y.
+ * <br><br>
+ * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font using the
+ * <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
+ * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
@@ -225,6 +229,8 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
 /**
  * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
+ * <br><br>
+ * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
  *
  * @method textFont
  * @return {Object} the current font
