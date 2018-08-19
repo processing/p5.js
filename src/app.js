@@ -69,11 +69,11 @@ require('./utilities/time_date');
 
 // webgl
 require('./webgl/3d_primitives');
-require('./webgl/camera');
 require('./webgl/interaction');
 require('./webgl/light');
 require('./webgl/loading');
 require('./webgl/material');
+require('./webgl/p5.Camera');
 require('./webgl/p5.Geometry');
 require('./webgl/p5.Matrix');
 require('./webgl/p5.RendererGL.Immediate');

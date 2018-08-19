@@ -19,6 +19,7 @@ var spec = {
   utilities: ['array_functions', 'string_functions', 'time_date'],
   webgl: [
     'matrix',
+    'p5.Camera',
     'p5.RendererGL',
     'p5.Shader',
     'p5.Texture',

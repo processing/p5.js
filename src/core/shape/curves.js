@@ -364,7 +364,7 @@ p5.prototype.curve = function() {
 /**
  * Sets the resolution at which curves display.
  *
- * The default value is 20.
+ * The default value is 20 while the minimum value is 3.
  *
  * This function is only useful when using the WEBGL renderer
  * as the default canvas renderer does not use this
@@ -384,11 +384,7 @@ p5.prototype.curve = function() {
  * function draw() {
  *   background(200);
  *
- *   // prettier-ignore
- *   curve( 250, 600, 0,
- *          -30,  40, 0,
- *           30,  30, 0,
- *         -250, 600, 0);
+ *   curve(250, 600, 0, -30, 40, 0, 30, 30, 0, -250, 600, 0);
  * }
  * </code>
  * </div>
@@ -399,7 +395,11 @@ p5.prototype.curve = function() {
  */
 p5.prototype.curveDetail = function(d) {
   p5._validateParameters('curveDetail', arguments);
-  this._curveDetail = d;
+  if (d < 3) {
+    this._curveDetail = 3;
+  } else {
+    this._curveDetail = d;
+  }
   return this;
 };
 

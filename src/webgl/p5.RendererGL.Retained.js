@@ -52,7 +52,6 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
  */
 p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   var gl = this.GL;
-  this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
 
@@ -195,7 +194,6 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
  * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
-  this._setDefaultCamera();
   var gl = this.GL;
   this._useColorShader();
   var geometry = this.gHash[gId];
@@ -334,6 +332,29 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
     0
   );
   this._pInst._pixelsDirty = true;
+};
+
+p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
+  var gl = this.GL;
+
+  this._bindBuffer(
+    vertexBuffer,
+    gl.ARRAY_BUFFER,
+    this._vToNArray(vertices),
+    Float32Array,
+    gl.STATIC_DRAW
+  );
+
+  this.curPointShader.enableAttrib(
+    this.curPointShader.attributes.aPosition.location,
+    3,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  gl.drawArrays(gl.Points, 0, vertices.length);
 };
 
 module.exports = p5.RendererGL;
