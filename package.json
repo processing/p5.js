@@ -14,7 +14,8 @@
     "contributors:generate": "all-contributors generate",
     "prepare": "patch-package",
     "generate": "all-contributors generate",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "postinstall": "opencollective-postinstall"
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
@@ -115,5 +116,12 @@
     "doc": "docs",
     "test": "test"
   },
-  "author": ""
+  "author": "",
+  "dependencies": {
+    "opencollective": "^1.0.3"
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/p5js"
+  }
 }
