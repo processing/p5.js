@@ -171,22 +171,17 @@ suite('Core', function() {
 
     test('works when p5.js is loaded asynchronously', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe();
+        createP5Iframe(`
+          <script>
+            window.onload = function() {
+              var script = document.createElement('script');
+              script.setAttribute('src', '${P5_SCRIPT_URL}');
 
-        iframe.contentWindow.addEventListener(
-          'load',
-          function() {
-            var win = iframe.contentWindow;
+              document.body.appendChild(script);
+            }
+          </script>`);
 
-            win.setup = resolve;
-
-            var script = win.document.createElement('script');
-            script.setAttribute('src', P5_SCRIPT_URL);
-
-            win.document.body.appendChild(script);
-          },
-          false
-        );
+        iframe.contentWindow.setup = resolve;
       });
     });
 
