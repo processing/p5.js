@@ -21,14 +21,22 @@ p5.RendererGL.prototype.textWidth = function(s) {
 };
 
 // rendering constants
+
+// the number of rows/columns dividing each glyph
 var charGridWidth = 9;
 var charGridHeight = charGridWidth;
+
+// size of the image holding the bezier stroke info
 var strokeImageWidth = 64;
 var strokeImageHeight = 64;
-var cellImageWidth = 64;
-var cellImageHeight = 64;
+
+// size of the image holding the stroke indices for each row/col
 var gridImageWidth = 64;
 var gridImageHeight = 64;
+
+// size of the image holding the offset/length of each row/col stripe
+var cellImageWidth = 64;
+var cellImageHeight = 64;
 
 /**
  * @private
@@ -94,12 +102,13 @@ function ImageInfos(width, height) {
           document.body.removeChild(canvas);
         }
       }
+      // construct & dd the new image info
       imageInfo = { index: 0, imageData: imageData };
       this.infos.push(imageInfo);
     }
 
     var index = imageInfo.index;
-    imageInfo.index += space;
+    imageInfo.index += space; // move to the start of the next image
     imageData._dirty = true;
     return { imageData: imageData, index: index };
   };
@@ -148,6 +157,15 @@ var FontInfo = function(font) {
   // the cached information for each glyph
   this.glyphInfos = {};
 
+  /**
+   * @method getGlyphInfo
+   * @param {Glyph} glyph the x positions of points in the curve
+   * @returns {Object} the glyphInfo for that glyph
+   *
+   * calculates rendering info for a glyph, including the curve information,
+   * row & column stripes compiled into textures.
+   */
+
   this.getGlyphInfo = function(glyph) {
     // check the cache
     var gi = this.glyphInfos[glyph.index];
@@ -166,9 +184,9 @@ var FontInfo = function(font) {
     }
 
     var i;
-    var strokes = [];
-    var rows = [];
-    var cols = [];
+    var strokes = []; // the strokes in this glyph
+    var rows = []; // the indices of strokes in each row
+    var cols = []; // the indices of strokes in each column
     for (i = charGridWidth - 1; i >= 0; --i) cols.push([]);
     for (i = charGridHeight - 1; i >= 0; --i) rows.push([]);
 
@@ -181,9 +199,8 @@ var FontInfo = function(font) {
      * adds a curve to the rows & columns that it intersects with
      */
     function push(xs, ys, v) {
-      var index = strokes.length;
-      strokes.push(v);
-      // find the minimum & maximum of a
+      var index = strokes.length; // the index of this stroke
+      strokes.push(v); // add this stroke to the list
 
       /**
        * @function minMax
@@ -377,6 +394,8 @@ var FontInfo = function(font) {
      * @param {Number} cy1
      * @param {Number} x1
      * @param {Number} y1
+     * @returns {Cubic[]} an array of cubics whose quadratic approximations
+     *                    closely match the civen cubic.
      *
      * converts a cubic curve to a list of quadratics.
      */
@@ -456,7 +475,7 @@ var FontInfo = function(font) {
      * @param {Number} y0
      * @param {Number} x1
      * @param {Number} y1
-     * @return {Boolean}
+     * @return {Boolean} true if the two points are sufficiently close
      *
      * tests if two points are close enough to be considered the same
      */
@@ -605,6 +624,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
 
   p.push(); // fix to #803
 
+  // remember this state, so it can be restored later
   var curFillShader = this.curFillShader;
   var doStroke = this._doStroke;
   var drawMode = this.drawMode;
@@ -613,20 +633,21 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   this._doStroke = false;
   this.drawMode = constants.TEXTURE;
 
+  // get the cached FontInfo object
   var font = this._textFont.font;
-  var glyphs = font.stringToGlyphs(line);
   var fontInfo = this._textFont._fontInfo;
   if (!fontInfo) {
     fontInfo = this._textFont._fontInfo = new FontInfo(font);
   }
 
+  // calculate the alignment and move/scale the view accordingly
   var pos = this._textFont._handleAlignment(this, line, x, y);
   var fontSize = this._textSize;
   var scale = fontSize / font.unitsPerEm;
-
   this.translate(pos.x, pos.y, 0);
   this.scale(scale, scale, 1);
 
+  // initialize the font shader
   var gl = this.GL;
   var initializeShader = !this._defaultFontShader;
   var sh = this.setFillShader(this._getFontShader());
@@ -654,6 +675,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     g = this.createBuffers('glyph', geom);
   }
 
+  // bind the shader buffers
   this._bindBuffer(g.vertexBuffer, gl.ARRAY_BUFFER);
   sh.enableAttrib(sh.attributes.aPosition.location, 3, gl.FLOAT, false, 0, 0);
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
@@ -664,9 +686,11 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   sh.setUniform('uMaterialColor', this.curFillColor);
 
   try {
-    var dx = 0;
-    var glyphPrev = null;
+    var dx = 0; // the x position in the line
+    var glyphPrev = null; // the previous glyph, used for kerning
     var shaderBound = false;
+    // fetch the glyphs in the line of text
+    var glyphs = font.stringToGlyphs(line);
     for (var ig = 0; ig < glyphs.length; ++ig) {
       var glyph = glyphs[ig];
       // kern
