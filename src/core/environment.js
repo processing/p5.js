@@ -537,10 +537,12 @@ p5.prototype.pixelDensity = function(val) {
       this._pixelsDirty = true;
     }
     returnValue = this;
+    this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
   } else {
     returnValue = this._pixelDensity;
   }
-  this.resizeCanvas(this.width, this.height, true);
+  // not resizing the canvas if we only read the pixelDensity
+  // -> fixes issue #3175
   return returnValue;
 };
 
