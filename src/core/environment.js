@@ -541,8 +541,6 @@ p5.prototype.pixelDensity = function(val) {
   } else {
     returnValue = this._pixelDensity;
   }
-  // not resizing the canvas if we only read the pixelDensity
-  // -> fixes issue #3175
   return returnValue;
 };
 
