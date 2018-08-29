@@ -81,6 +81,7 @@ require('./webgl/p5.RendererGL');
 require('./webgl/p5.RendererGL.Retained');
 require('./webgl/p5.Shader');
 require('./webgl/p5.Texture');
+require('./webgl/text');
 
 require('./core/init');
 

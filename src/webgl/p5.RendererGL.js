@@ -32,6 +32,8 @@ var defaultShaders = {
   ),
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
   phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
+  fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
   lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8'),
   pointVert: fs.readFileSync(__dirname + '/shaders/point.vert', 'utf-8'),
@@ -139,6 +141,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this._tessy = this._initTessy();
 
+  this.fontInfos = {};
   return this;
 };
 
@@ -761,13 +764,6 @@ p5.RendererGL.prototype.resetMatrix = function() {
   return this;
 };
 
-// Text/Typography
-// @TODO:
-p5.RendererGL.prototype._applyTextProperties = function() {
-  //@TODO finish implementation
-  console.error('text commands not yet implemented in webgl');
-};
-
 //////////////////////////////////////////////
 // SHADER
 //////////////////////////////////////////////
@@ -959,6 +955,18 @@ p5.RendererGL.prototype._getLineShader = function() {
   return this._defaultLineShader;
 };
 
+p5.RendererGL.prototype._getFontShader = function() {
+  if (!this._defaultFontShader) {
+    this.GL.getExtension('OES_standard_derivatives');
+    this._defaultFontShader = new p5.Shader(
+      this,
+      defaultShaders.fontVert,
+      defaultShaders.fontFrag
+    );
+  }
+  return this._defaultFontShader;
+};
+
 p5.RendererGL.prototype._getEmptyTexture = function() {
   if (!this._emptyTexture) {
     // a plain white texture RGBA, full alpha, single pixel.
@@ -970,16 +978,14 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
 };
 
 p5.RendererGL.prototype.getTexture = function(img) {
-  var checkSource = function(element) {
-    return element.src === img;
-  };
-  //this.drawMode = constants.TEXTURE;
-  var tex = this.textures.find(checkSource);
-  if (!tex) {
-    tex = new p5.Texture(this, img);
-    this.textures.push(tex);
+  var textures = this.textures;
+  for (var it = 0; it < textures.length; ++it) {
+    var texture = textures[it];
+    if (texture.src === img) return texture;
   }
 
+  var tex = new p5.Texture(this, img);
+  this.textures.push(tex);
   return tex;
 };
 

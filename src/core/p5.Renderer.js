@@ -43,6 +43,8 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textStyle = constants.NORMAL;
   this._textAscent = null;
   this._textDescent = null;
+  this._textAlign = constants.LEFT;
+  this._textBaseline = constants.BASELINE;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -74,6 +76,8 @@ p5.Renderer.prototype.push = function() {
       _textFont: this._textFont,
       _textLeading: this._textLeading,
       _textSize: this._textSize,
+      _textAlign: this._textAlign,
+      _textBaseline: this._textBaseline,
       _textStyle: this._textStyle
     }
   };
@@ -152,6 +156,141 @@ p5.Renderer.prototype.textDescent = function() {
     this._updateTextMetrics();
   }
   return this._textDescent;
+};
+
+p5.Renderer.prototype.textAlign = function(h, v) {
+  if (typeof h !== 'undefined') {
+    this._setProperty('_textAlign', h);
+
+    if (typeof v !== 'undefined') {
+      this._setProperty('_textBaseline', v);
+    }
+
+    return this._applyTextProperties();
+  } else {
+    return {
+      horizontal: this._textAlign,
+      vertical: this._textBaseline
+    };
+  }
+};
+
+p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+  var p = this._pInst,
+    cars,
+    n,
+    ii,
+    jj,
+    line,
+    testLine,
+    testWidth,
+    words,
+    totalHeight,
+    finalMaxHeight = Number.MAX_VALUE;
+
+  if (!(this._doFill || this._doStroke)) {
+    return;
+  }
+
+  if (typeof str === 'undefined') {
+    return;
+  } else if (typeof str !== 'string') {
+    str = str.toString();
+  }
+
+  str = str.replace(/(\t)/g, '  ');
+  cars = str.split('\n');
+
+  if (typeof maxWidth !== 'undefined') {
+    totalHeight = 0;
+    for (ii = 0; ii < cars.length; ii++) {
+      line = '';
+      words = cars[ii].split(' ');
+      for (n = 0; n < words.length; n++) {
+        testLine = line + words[n] + ' ';
+        testWidth = this.textWidth(testLine);
+        if (testWidth > maxWidth) {
+          line = words[n] + ' ';
+          totalHeight += p.textLeading();
+        } else {
+          line = testLine;
+        }
+      }
+    }
+
+    if (this._rectMode === constants.CENTER) {
+      x -= maxWidth / 2;
+      y -= maxHeight / 2;
+    }
+
+    switch (this._textAlign) {
+      case constants.CENTER:
+        x += maxWidth / 2;
+        break;
+      case constants.RIGHT:
+        x += maxWidth;
+        break;
+    }
+
+    var baselineHacked = false;
+    if (typeof maxHeight !== 'undefined') {
+      switch (this._textBaseline) {
+        case constants.BOTTOM:
+          y += maxHeight - totalHeight;
+          break;
+        case constants.CENTER:
+          y += (maxHeight - totalHeight) / 2;
+          break;
+        case constants.BASELINE:
+          baselineHacked = true;
+          this._textBaseline = constants.TOP;
+          break;
+      }
+
+      // remember the max-allowed y-position for any line (fix to #928)
+      finalMaxHeight = y + maxHeight - p.textAscent();
+    }
+
+    for (ii = 0; ii < cars.length; ii++) {
+      line = '';
+      words = cars[ii].split(' ');
+      for (n = 0; n < words.length; n++) {
+        testLine = line + words[n] + ' ';
+        testWidth = this.textWidth(testLine);
+        if (testWidth > maxWidth && line.length > 0) {
+          this._renderText(p, line, x, y, finalMaxHeight);
+          line = words[n] + ' ';
+          y += p.textLeading();
+        } else {
+          line = testLine;
+        }
+      }
+
+      this._renderText(p, line, x, y, finalMaxHeight);
+      y += p.textLeading();
+
+      if (baselineHacked) {
+        this._textBaseline = constants.BASELINE;
+      }
+    }
+  } else {
+    // Offset to account for vertically centering multiple lines of text - no
+    // need to adjust anything for vertical align top or baseline
+    var offset = 0,
+      vAlign = p.textAlign().vertical;
+    if (vAlign === constants.CENTER) {
+      offset = (cars.length - 1) * p.textLeading() / 2;
+    } else if (vAlign === constants.BOTTOM) {
+      offset = (cars.length - 1) * p.textLeading();
+    }
+
+    for (jj = 0; jj < cars.length; jj++) {
+      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+      y += p.textLeading();
+    }
+  }
+
+  return p;
 };
 
 p5.Renderer.prototype._applyDefaults = function() {

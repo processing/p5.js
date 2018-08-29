@@ -31,7 +31,7 @@ The p5.Shader class provides access to the uniforms and attributes of a GL progr
 There are four default shaders, as documented in the Shader section.
 
 ### p5.Texture
-The p5.Texture object manages GL state for a texture based on a `p5.Image`, `p5.MediaElement`, or `p5.Element`. In the future, this object could also be constructed for a piece of text to render in WEBGL mode.
+The p5.Texture object manages GL state for a texture based on a `p5.Image`, `p5.MediaElement`, `p5.Element`, or `ImageData`.
 
 * Internally handles processing image data based on type, so that the p5.Renderer implementation doesn’t have to make special exceptions in its own methods when handling textures
 * Updates conditionally every frame by making a best guess at whether or not image data has changed. Tries not to upload the texture if no change has been made, to help performance.
@@ -49,21 +49,22 @@ All attributes for drawing with Immediate Mode are stored in an object in the re
 ## Geometry: Retain and Immediate Mode
 Retained geometry is used for 3D primitives, while immediate mode is used for shapes created with begin/endShape.
 
-|Functions with retained geometry| Functions with immediate mode geometry | 2D functions not yet implemented|
-|--------------------------------|----------------------------------------|---------------------------------|
-|plane()                         | bezier()                               | text()                          |
-|box()                           | curve()                                |                                 |
-|sphere()                        | line()                                 |                                 |
-|cylinder()                      | beginShape()                           |                                 |
-|cone()                          | vertex()                               |                                 |
-|ellipsoid()                     | endShape()                             |                                 |
-|torus()                         | point()                                |                                 |
-|triangle()                      | curveVertex()                          |                                 |
-|arc()                           | bezierVertex()                         |                                 |
-|point()                         | quadraticVertex()                      |                                 |
+|Functions with retained geometry| Functions with immediate mode geometry |
+|--------------------------------|----------------------------------------|
+|plane()                         | bezier()                               |
+|box()                           | curve()                                |
+|sphere()                        | line()                                 |
+|cylinder()                      | beginShape()                           |
+|cone()                          | vertex()                               |
+|ellipsoid()                     | endShape()                             |
+|torus()                         | point()                                |
+|triangle()                      | curveVertex()                          |
+|arc()                           | bezierVertex()                         |
+|point()                         | quadraticVertex()                      |
 |ellipse()                       |
 |rect()                          |
 |quad()                          |
+|text()                          |
 
 
 
