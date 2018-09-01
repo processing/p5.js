@@ -258,7 +258,7 @@ suite('Structure', function() {
     });
   });
 
-  suite.only('p5.prototype.redraw', function() {
+  suite('p5.prototype.redraw', function() {
     var iframe;
 
     teardown(function() {
