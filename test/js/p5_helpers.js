@@ -10,7 +10,7 @@ function promisedSketch(sketch_fn) {
     myInstance.remove();
   });
   return promise;
-};
+}
 
 function testSketchWithPromise(name, sketch_fn) {
   var test_fn = function() {
@@ -20,4 +20,27 @@ function testSketchWithPromise(name, sketch_fn) {
     return sketch_fn.toString();
   };
   return test(name, test_fn);
-};
+}
+
+var P5_SCRIPT_URL = '../../lib/p5.js';
+var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
+
+function createP5Iframe(html) {
+  html = html || P5_SCRIPT_TAG;
+
+  var elt = document.createElement('iframe');
+
+  document.body.appendChild(elt);
+  elt.setAttribute('style', 'visibility: hidden');
+
+  elt.contentDocument.open();
+  elt.contentDocument.write(html);
+  elt.contentDocument.close();
+
+  return {
+    elt: elt,
+    teardown: function() {
+      elt.parentNode.removeChild(elt);
+    }
+  };
+}

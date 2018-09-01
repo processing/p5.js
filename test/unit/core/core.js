@@ -127,34 +127,19 @@ suite('Core', function() {
   });
 
   suite('new p5() / global mode', function() {
-    var P5_SCRIPT_URL = '../../lib/p5.js';
-    var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
     var iframe;
-
-    function createP5Iframe(html) {
-      html = html || P5_SCRIPT_TAG;
-
-      iframe = document.createElement('iframe');
-
-      document.body.appendChild(iframe);
-      iframe.setAttribute('style', 'visibility: hidden');
-
-      iframe.contentDocument.open();
-      iframe.contentDocument.write(html);
-      iframe.contentDocument.close();
-    }
 
     teardown(function() {
       if (iframe) {
-        iframe.parentNode.removeChild(iframe);
+        iframe.teardown();
         iframe = null;
       }
     });
 
     test('is triggered when "setup" is in window', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe();
-        iframe.contentWindow.setup = function() {
+        iframe = createP5Iframe();
+        iframe.elt.contentWindow.setup = function() {
           resolve();
         };
       });
@@ -162,8 +147,8 @@ suite('Core', function() {
 
     test('is triggered when "draw" is in window', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe();
-        iframe.contentWindow.draw = function() {
+        iframe = createP5Iframe();
+        iframe.elt.contentWindow.draw = function() {
           resolve();
         };
       });
@@ -171,7 +156,7 @@ suite('Core', function() {
 
     test('works when p5.js is loaded asynchronously', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe(`
+        iframe = createP5Iframe(`
           <script>
             window.onload = function() {
               var script = document.createElement('script');
@@ -181,13 +166,13 @@ suite('Core', function() {
             }
           </script>`);
 
-        iframe.contentWindow.setup = resolve;
+        iframe.elt.contentWindow.setup = resolve;
       });
     });
 
     test('works on-demand', function() {
       return new Promise(function(resolve, reject) {
-        createP5Iframe(
+        iframe = createP5Iframe(
           [
             P5_SCRIPT_TAG,
             '<script>',
@@ -199,9 +184,9 @@ suite('Core', function() {
             '</script>'
           ].join('\n')
         );
-        iframe.contentWindow.onDoneLoading = resolve;
+        iframe.elt.contentWindow.onDoneLoading = resolve;
       }).then(function() {
-        var win = iframe.contentWindow;
+        var win = iframe.elt.contentWindow;
         assert.equal(typeof win.myURL, 'string');
         assert.strictEqual(win.setupCalled, true);
         assert.strictEqual(win.originalP5Instance, win.p5.instance);
@@ -212,7 +197,14 @@ suite('Core', function() {
   suite('p5.prototype._createFriendlyGlobalFunctionBinder', function() {
     var noop = function() {};
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
-    var logMsg, globalObject, bind;
+    var logMsg, globalObject, bind, iframe;
+
+    teardown(function() {
+      if (iframe) {
+        iframe.teardown();
+        iframe = null;
+      }
+    });
 
     setup(function() {
       globalObject = {};
@@ -306,6 +298,34 @@ suite('Core', function() {
       globalObject.mouseX = 50;
       assert.equal(globalObject.mouseX, 50);
       assert.isUndefined(logMsg);
+    });
+
+    test('instance preload is independent of window', function() {
+      // callback for p5 instance mode.
+      // It does not define a preload.
+      // This tests that we don't call the global preload accidentally.
+      function cb(s) {
+        s.setup = function() {
+          window.afterSetup();
+        };
+      }
+      return new Promise(function(resolve) {
+        iframe = createP5Iframe(
+          [
+            P5_SCRIPT_TAG,
+            '<script>',
+            'globalPreloads = 0;',
+            'function setup() { }',
+            'function preload() { window.globalPreloads++; }',
+            'new p5(' + cb.toString() + ');',
+            '</script>'
+          ].join('\n')
+        );
+        iframe.elt.contentWindow.afterSetup = resolve;
+      }).then(function() {
+        var win = iframe.elt.contentWindow;
+        assert.strictEqual(win.globalPreloads, 1);
+      });
     });
   });
 });
