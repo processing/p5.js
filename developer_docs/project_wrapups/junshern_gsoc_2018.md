@@ -53,7 +53,7 @@ At the end of this project, we can now confidently recommend p5.js-sound as a ca
 
 ## Support
 
-Any questions pertaining to this project may be addressed via Issues on the [p5.js-sound repository](https://github.com/processing/p5.js-sound). Simply create a new Issue and either assign or tag me in the conversation with @junshern. For anything else, don't hesitate to get in touch at chanjunshern@gmail.com!
+Any questions pertaining to this project may be addressed via Issues on the [p5.js-sound repository](https://github.com/processing/p5.js-sound), or on the [tutorial repository](https://github.com/JunShern/explorable-algcomp) if directly related to tutorial content. Simply create a new Issue and either assign or tag me in the conversation with @junshern. For anything else, don't hesitate to get in touch at chanjunshern@gmail.com!
 
 ## Acknowledgements
 
