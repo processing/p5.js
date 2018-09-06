@@ -1,7 +1,7 @@
 # A Platform for Algorithmic Composition on p5.js-sound
 #### by Chan Jun Shern ([@junshern](https://github.com/JunShern))
 
-![tutorial-screenshot](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/home.png)
+![tutorial-homepage](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/home.png)
 
 ## Summary
 
@@ -9,7 +9,7 @@ My project this summer had the goal of making [p5.js-sound](https://github.com/p
 
 In line with this objective, work for the project involved building up features, fixing bugs, adding documentation and producing examples of p5.js sketches related to algorithmic composition.
 
-To encourage the use of these features and resources we've built for algorithmic composition, the project culminates in an online tutorial which walks through a number of examples and best practices for algorithmic composition on p5.js-sound.
+To encourage the use of these features and resources we've built for algorithmic composition, the project culminates in an [online tutorial](https://junshern.github.io/algorithmic-music-tutorial/) which walks through a number of examples and best practices for algorithmic composition on p5.js-sound.
 
 ## Contributions
 Note that most contributions for this project are on the [p5.js-sound repository](https://github.com/processing/p5.js-sound), unless otherwise stated. Links should link to the correct issues and pull requests in any case.
@@ -40,7 +40,9 @@ Note that most contributions for this project are on the [p5.js-sound repository
 ![genetic-music-example](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/sketch-fullscreen.PNG)
 
 ### Tutorial
-- Create an online tutorial which encapsulates new examples and best practices developed for algorithmic composition on p5.js-sound: [tutorial repository](https://github.com/JunShern/explorable-algcomp)
+- Create an online tutorial which encapsulates new examples and best practices developed for algorithmic composition on p5.js-sound. The tutorial consists of narrative + interactive examples embedded within the page which users can interact with directly.
+- [Tutorial repository](https://github.com/JunShern/explorable-algcomp)
+- [Tutorial website](https://junshern.github.io/algorithmic-music-tutorial/)
 
 ![tutorial-screenshot](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/sketch1.PNG)
 
