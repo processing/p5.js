@@ -142,6 +142,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, detail);
+  this._pixelsDirty = true;
 
   return this;
 };
@@ -202,6 +203,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
+  this._pixelsDirty = true;
 
   return this;
 };
@@ -287,6 +289,7 @@ p5.prototype.line = function() {
 
   if (this._renderer._doStroke) {
     this._renderer.line.apply(this._renderer, arguments);
+    this._pixelsDirty = true;
   }
 
   return this;
@@ -322,6 +325,7 @@ p5.prototype.point = function() {
 
   if (this._renderer._doStroke) {
     this._renderer.point.apply(this._renderer, arguments);
+    this._pixelsDirty = true;
   }
 
   return this;
@@ -376,6 +380,7 @@ p5.prototype.quad = function() {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.quad.apply(this._renderer, arguments);
+    this._pixelsDirty = true;
   }
 
   return this;
@@ -459,6 +464,7 @@ p5.prototype.rect = function() {
       args[i] = arguments[i];
     }
     this._renderer.rect(args);
+    this._pixelsDirty = true;
   }
 
   return this;
@@ -550,6 +556,7 @@ p5.prototype.triangle = function() {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.triangle(arguments);
+    this._pixelsDirty = true;
   }
 
   return this;

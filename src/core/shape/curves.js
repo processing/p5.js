@@ -89,6 +89,7 @@ p5.prototype.bezier = function() {
   }
 
   this._renderer.bezier.apply(this._renderer, arguments);
+  this._pixelsDirty = true;
 
   return this;
 };
@@ -356,6 +357,7 @@ p5.prototype.curve = function() {
 
   if (this._renderer._doStroke) {
     this._renderer.curve.apply(this._renderer, arguments);
+    this._pixelsDirty = true;
   }
 
   return this;

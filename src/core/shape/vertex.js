@@ -648,6 +648,7 @@ p5.prototype.endShape = function(mode) {
       vertices.pop();
     }
   }
+  this._pixelsDirty = true;
   return this;
 };
 

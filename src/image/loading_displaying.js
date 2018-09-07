@@ -293,6 +293,7 @@ p5.prototype.image = function(
 
   // tint the image if there is a tint
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+  this._pixelsDirty = true;
 };
 
 /**

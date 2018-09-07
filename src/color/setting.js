@@ -179,6 +179,7 @@ p5.prototype.background = function() {
   } else {
     this._renderer.background.apply(this._renderer, arguments);
   }
+  this._pixelsDirty = true;
   return this;
 };
 
@@ -217,6 +218,7 @@ p5.prototype.background = function() {
 
 p5.prototype.clear = function() {
   this._renderer.clear();
+  this._pixelsDirty = true;
   return this;
 };
 

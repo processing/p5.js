@@ -60,8 +60,6 @@ p5.Renderer2D.prototype.background = function() {
     this._setFill(curFill);
   }
   this.drawingContext.restore();
-
-  this._pInst._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.clear = function() {
@@ -69,8 +67,6 @@ p5.Renderer2D.prototype.clear = function() {
   this.resetMatrix();
   this.drawingContext.clearRect(0, 0, this.width, this.height);
   this.drawingContext.restore();
-
-  this._pInst._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.fill = function() {
@@ -131,8 +127,6 @@ p5.Renderer2D.prototype.image = function(
       throw e;
     }
   }
-
-  this._pInst._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
@@ -209,6 +203,7 @@ p5.Renderer2D.prototype.copy = function() {
   }
   p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 
+  // this is done here because this method is re-used by Image etc.
   this._pInst._pixelsDirty = true;
 };
 
@@ -976,7 +971,6 @@ p5.Renderer2D.prototype.endShape = function(
     vertices.pop();
   }
 
-  this._pInst._pixelsDirty = true;
   return this;
 };
 //////////////////////////////////////////////
@@ -1091,8 +1085,7 @@ p5.Renderer2D.prototype._doFillStrokeClose = function() {
   if (this._doStroke) {
     this.drawingContext.stroke();
   }
-
-  this._pInst._pixelsDirty = true;
+  this.drawingContext.closePath();
 };
 
 //////////////////////////////////////////////
@@ -1200,7 +1193,6 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
 
   p.pop();
 
-  this._pInst._pixelsDirty = true;
   return p;
 };
 
