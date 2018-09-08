@@ -930,15 +930,21 @@ p5.Element.prototype.dragLeave = function(fxn) {
 };
 
 /**
- * The .<a href="#/p5.Element/drop">drop()</a> function is called for each file dropped on the element.
- * It requires a callback that is passed a p5.File object.  You can
- * optionally pass two callbacks, the first one (required) is triggered
- * for each file dropped when the file is loaded.  The second (optional)
- * is triggered just once when a file (or files) are dropped.
+ * Registers a callback that gets called every time a file that is
+ * dropped on the element has been loaded.
+ * p5 will load every dropped file into memory and pass it as a p5.File object to the callback.
+ * Multiple files dropped at the same time will result in multiple calls to the callback.
+ *
+ * You can optionally pass a second callback which will be registered to the raw
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/Events/drop">drop</a> event.
+ * The callback will thus be provided the original
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/DragEvent">DragEvent</a>.
+ * Dropping multiple files at the same time will trigger the second callback once per drop,
+ * whereas the first callback will trigger for each loaded file.
  *
  * @method drop
- * @param  {Function} callback  callback triggered when files are dropped.
- * @param  {Function} [fxn]       callback to receive loaded file.
+ * @param  {Function} callback  callback to receive loaded file.
+ * @param  {Function} [fxn]     callback triggered when files are dropped.
  * @chainable
  * @example
  * <div><code>
@@ -1016,7 +1022,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
       this
     );
 
-    // If just one argument it's the callback for the files
+    // Attach the second argument as a callback that receives the raw drop event
     if (typeof fxn !== 'undefined') {
       attachListener('drop', fxn, this);
     }
