@@ -239,64 +239,8 @@ p5.Renderer2D._copyHelper = function(
   );
 };
 
-p5.Renderer2D.prototype.get = function(x, y, w, h) {
-  if (typeof w === 'undefined' && typeof h === 'undefined') {
-    if (typeof x === 'undefined' && typeof y === 'undefined') {
-      x = y = 0;
-      w = this.width;
-      h = this.height;
-    } else {
-      w = h = 1;
-    }
-  }
-
-  // if the section does not overlap the canvas
-  if (x + w < 0 || y + h < 0 || x >= this.width || y >= this.height) {
-    // TODO: is this valid for w,h > 1 ?
-    return [0, 0, 0, 255];
-  }
-
-  var ctx = this._pInst || this;
-  var pd = ctx._pixelDensity;
-
-  // round down to get integer numbers
-  x = Math.floor(x);
-  y = Math.floor(y);
-  w = Math.floor(w);
-  h = Math.floor(h);
-
-  var sx = x * pd;
-  var sy = y * pd;
-  if (w === 1 && h === 1 && !(this instanceof p5.RendererGL)) {
-    var imageData, index;
-    if (ctx._pixelsDirty) {
-      imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
-      index = 0;
-    } else {
-      imageData = ctx.pixels;
-      index = (sx + sy * this.width * pd) * 4;
-    }
-    return [
-      imageData[index + 0],
-      imageData[index + 1],
-      imageData[index + 2],
-      imageData[index + 3]
-    ];
-  } else {
-    //auto constrain the width and height to
-    //dimensions of the source image
-    var dw = Math.min(w, ctx.width);
-    var dh = Math.min(h, ctx.height);
-    var sw = dw * pd;
-    var sh = dh * pd;
-
-    var region = new p5.Image(dw, dh);
-    region.canvas
-      .getContext('2d')
-      .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
-
-    return region;
-  }
+p5.Renderer2D.prototype.readPixel = function(x, y) {
+  return this.drawingContext.getImageData(x, y, 1, 1).data;
 };
 
 p5.Renderer2D.prototype.loadPixels = function() {

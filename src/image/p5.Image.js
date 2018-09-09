@@ -15,6 +15,7 @@
 
 var p5 = require('../core/main');
 var Filters = require('./filters');
+require('../core/p5.Renderer');
 
 /*
  * Class methods
@@ -311,6 +312,8 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
   this.setModified(true);
 };
+
+p5.Image.prototype.readPixel = p5.Renderer2D.prototype.readPixel;
 
 /**
  * Get a region of pixels from an image.

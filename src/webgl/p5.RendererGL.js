@@ -561,32 +561,11 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
   }
 };
 
-/**
- * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
- * an image. If no parameters are specified, the entire image is returned.
- * Use the x and y parameters to get the value of one pixel. Get a section of
- * the display window by specifying additional w and h parameters. When
- * getting an image, the x and y parameters define the coordinates for the
- * upper-left corner of the image, regardless of the current imageMode().
- * <br><br>
- * If the pixel requested is outside of the image window, [0,0,0,255] is
- * returned.
- * <br><br>
- * Getting the color of a single pixel with get(x, y) is easy, but not as fast
- * as grabbing the data directly from pixels[]. The equivalent statement to
- * get(x, y) is using pixels[] with pixel density d
- *
- * @private
- * @method get
- * @param  {Number}               [x] x-coordinate of the pixel
- * @param  {Number}               [y] y-coordinate of the pixel
- * @param  {Number}               [w] width
- * @param  {Number}               [h] height
- * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
- */
-p5.RendererGL.prototype.get = function(x, y, w, h) {
-  return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
+p5.RendererGL.prototype.readPixel = function(x, y) {
+  var imageData = new Uint8Array(4);
+  var gl = this.GL;
+  gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+  return imageData;
 };
 
 /**

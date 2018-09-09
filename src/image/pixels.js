@@ -10,6 +10,7 @@
 var p5 = require('../core/main');
 var Filters = require('./filters');
 require('../color/p5.Color');
+require('../core/p5.Renderer');
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference

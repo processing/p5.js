@@ -109,6 +109,94 @@ p5.Renderer.prototype.resize = function(w, h) {
   }
 };
 
+/**
+ * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+ * an image. If no parameters are specified, the entire image is returned.
+ * Use the x and y parameters to get the value of one pixel. Get a section of
+ * the display window by specifying additional w and h parameters. When
+ * getting an image, the x and y parameters define the coordinates for the
+ * upper-left corner of the image, regardless of the current imageMode().
+ * <br><br>
+ * If the pixel requested is outside of the image window, [0,0,0,255] is
+ * returned.
+ * <br><br>
+ * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+ * as grabbing the data directly from pixels[]. The equivalent statement to
+ * get(x, y) is using pixels[] with pixel density d
+ *
+ * @private
+ * @method get
+ * @param  {Number}               [x] x-coordinate of the pixel
+ * @param  {Number}               [y] y-coordinate of the pixel
+ * @param  {Number}               [w] width
+ * @param  {Number}               [h] height
+ * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
+ *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
+ */
+p5.Renderer.prototype.get = function(x, y, w, h) {
+  if (typeof w === 'undefined' && typeof h === 'undefined') {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      x = y = 0;
+      w = this.width;
+      h = this.height;
+    } else {
+      w = h = 1;
+    }
+  }
+
+  // if the section does not overlap the canvas
+  if (x + w < 0 || y + h < 0 || x >= this.width || y >= this.height) {
+    // TODO: is this valid for w,h > 1 ?
+    return [0, 0, 0, 255];
+  }
+
+  var ctx = this._pInst || this;
+  var pd = ctx._pixelDensity;
+
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
+  w = Math.floor(w);
+  h = Math.floor(h);
+
+  var sx = x * pd;
+  var sy = y * pd;
+  if (w === 1 && h === 1) {
+    var imageData, index;
+    if (ctx._pixelsDirty) {
+      imageData = this.readPixel(sx, sy);
+      index = 0;
+    } else {
+      imageData = ctx.pixels;
+      index = (sx + sy * this.width * pd) * 4;
+    }
+    return [
+      imageData[index + 0],
+      imageData[index + 1],
+      imageData[index + 2],
+      imageData[index + 3]
+    ];
+  } else {
+    //auto constrain the width and height to
+    //dimensions of the source image
+    var dw = Math.min(w, ctx.width);
+    var dh = Math.min(h, ctx.height);
+    var sw = dw * pd;
+    var sh = dh * pd;
+
+    var region = new p5.Image(dw, dh);
+    region.canvas
+      .getContext('2d')
+      .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
+
+    return region;
+  }
+};
+
+p5.Renderer.prototype.readPixel = function(x, y) {
+  throw new Error('readPixel not implemented');
+};
+
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
     this._setProperty('_textLeading', l);

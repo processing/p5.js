@@ -14,6 +14,7 @@ suite('p5.RendererGL', function() {
 
   teardown(function() {
     myp5.remove();
+    myp5 = null;
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
@@ -74,22 +75,26 @@ suite('p5.RendererGL', function() {
   });
 
   suite('get()', function() {
-    myp5.createCanvas(100, 100, myp5.WEBGL);
     var img;
     test('get() size check', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
       img = myp5.get();
       assert.deepEqual(img.width, myp5.width);
       done();
     });
 
     test('get() can create p5.Image', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      img = myp5.get();
       assert.isTrue(img instanceof p5.Image);
       done();
     });
 
     test('get() singlePixel color and size', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(100, 115, 100);
       img = myp5.get(0, 0);
+      console.log(img[1]);
       assert.isTrue(img[1] === 115);
       assert.isTrue(img.length === 4);
       done();
