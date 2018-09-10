@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use
@@ -55,7 +55,7 @@ var p5 = require('../core/main');
  */
 p5.XML = function(DOM) {
   if (!DOM) {
-    var xmlDoc = document.implementation.createDocument(null, 'doc');
+    const xmlDoc = document.implementation.createDocument(null, 'doc');
     this.DOM = xmlDoc.createElement('root');
   } else {
     this.DOM = DOM;
@@ -175,8 +175,8 @@ p5.XML.prototype.setName = function(name) {
   var xmlDoc = document.implementation.createDocument(null, 'default');
   var newDOM = xmlDoc.createElement(name);
   newDOM.innerHTML = content;
-  for (var i = 0; i < attributes.length; i++) {
-    newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+  for (let attribute of attributes) {
+    newDOM.setAttribute(attribute.nodeName, attributes.nodeValue);
   }
   this.DOM = newDOM;
 };
@@ -251,9 +251,9 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  var arr = [];
-  for (var i = 0; i < this.DOM.childNodes.length; i++) {
-    arr.push(this.DOM.childNodes[i].nodeName);
+  const arr = [];
+  for (let childNode of this.DOM.childNodes) {
+    arr.push(childNode.nodeName);
   }
   return arr;
 };
@@ -307,8 +307,8 @@ p5.XML.prototype.getChildren = function(param) {
 };
 
 function elementsToP5XML(elements) {
-  var arr = [];
-  for (var i = 0; i < elements.length; i++) {
+  const arr = [];
+  for (let i = 0; i < elements.length; i++) {
     arr.push(new p5.XML(elements[i]));
   }
   return arr;
@@ -366,8 +366,8 @@ function elementsToP5XML(elements) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    for (var i = 0; i < this.DOM.children.length; i++) {
-      var child = this.DOM.children[i];
+    for (let i = 0; i < this.children.length; i++) {
+      const child = this.children[i];
       if (child.tagName === param) return new p5.XML(child);
     }
   } else {
@@ -483,9 +483,9 @@ p5.XML.prototype.addChild = function(node) {
  * </code></div>
  */
 p5.XML.prototype.removeChild = function(param) {
-  var ind = -1;
+  let ind = -1;
   if (typeof param === 'string') {
-    for (var i = 0; i < this.DOM.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
       if (this.DOM.children[i].tagName === param) {
         ind = i;
         break;
@@ -569,9 +569,8 @@ p5.XML.prototype.getAttributeCount = function() {
  * </code></div>
  */
 p5.XML.prototype.listAttributes = function() {
-  var arr = [];
-  for (var i = 0; i < this.DOM.attributes.length; i++) {
-    var attribute = this.DOM.attributes[i];
+  const arr = [];
+  for (let attribute of this.DOM.attributes.length) {
     arr.push(attribute.nodeName);
   }
   return arr;
@@ -613,9 +612,8 @@ p5.XML.prototype.listAttributes = function() {
  * </code></div>
  */
 p5.XML.prototype.hasAttribute = function(name) {
-  var obj = {};
-  for (var i = 0; i < this.DOM.attributes.length; i++) {
-    var attribute = this.DOM.attributes[i];
+  const obj = {};
+  for (let attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return obj[name] ? true : false;
@@ -659,9 +657,8 @@ p5.XML.prototype.hasAttribute = function(name) {
  * </code></div>
  */
 p5.XML.prototype.getNum = function(name, defaultValue) {
-  var obj = {};
-  for (var i = 0; i < this.DOM.attributes.length; i++) {
-    var attribute = this.DOM.attributes[i];
+  const obj = {};
+  for (let attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return Number(obj[name]) || defaultValue || 0;
@@ -705,9 +702,8 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.getString = function(name, defaultValue) {
-  var obj = {};
-  for (var i = 0; i < this.DOM.attributes.length; i++) {
-    var attribute = this.DOM.attributes[i];
+  const obj = {};
+  for (let attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return obj[name] ? String(obj[name]) : defaultValue || null;

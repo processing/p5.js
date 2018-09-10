@@ -10,7 +10,7 @@
 require('./shim');
 
 // Core needs the PVariables object
-var constants = require('./constants');
+const constants = require('./constants');
 
 /**
  * This is the p5 instance constructor.
@@ -36,7 +36,7 @@ var constants = require('./constants');
  * @param  {Boolean}     [sync] start synchronously (optional)
  * @return {p5}                 a p5 instance
  */
-var p5 = function(sketch, node, sync) {
+const p5 = function(sketch, node, sync) {
   if (typeof node === 'boolean' && typeof sync === 'undefined') {
     sync = node;
     node = undefined;
@@ -215,9 +215,9 @@ var p5 = function(sketch, node, sync) {
   // Allows methods to be registered on an instance that
   // are instance-specific.
   this._registeredMethods = {};
-  var methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
-  for (var i = 0; i < methods.length; i++) {
-    var prop = methods[i];
+  const methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
+  for (let i = 0; i < methods.length; i++) {
+    const prop = methods[i];
     this._registeredMethods[prop] = p5.prototype._registeredMethods[
       prop
     ].slice();
@@ -230,43 +230,55 @@ var p5 = function(sketch, node, sync) {
     this._events.devicemotion = null;
   }
 
-  this._start = function() {
-    // Find node if id given
+  const _incrementPreload = () => {
+    const context = this._isGlobal ? window : this;
+    context._setProperty('_preloadCount', context._preloadCount + 1);
+  };
+
+  const _wrapPreload = (obj, fnName) =>
+    function() {
+      //increment counter
+      _incrementPreload();
+      //call original function
+      return this._registeredPreloadMethods[fnName].apply(obj, arguments);
+    }.bind(this);
+
+  this._start = () => {
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
         this._userNode = document.getElementById(this._userNode);
       }
     }
 
-    var context = this._isGlobal ? window : this;
-    var userPreload = context.preload;
+    const context = this._isGlobal ? window : this;
+    const userPreload = context.preload;
     if (userPreload) {
       // Setup loading screen
       // Set loading screen into dom if not present
       // Otherwise displays and removes user provided loading screen
-      var loadingScreen = document.getElementById(this._loadingScreenId);
+      let loadingScreen = document.getElementById(this._loadingScreenId);
       if (!loadingScreen) {
         loadingScreen = document.createElement('div');
         loadingScreen.innerHTML = 'Loading...';
         loadingScreen.style.position = 'absolute';
         loadingScreen.id = this._loadingScreenId;
-        var node = this._userNode || document.body;
+        const node = this._userNode || document.body;
         node.appendChild(loadingScreen);
       }
-      var methods = this._preloadMethods;
-      for (var method in methods) {
+      const methods = this._preloadMethods;
+      for (let method in methods) {
         // default to p5 if no object defined
         methods[method] = methods[method] || p5;
-        var obj = methods[method];
+        let obj = methods[method];
         //it's p5, check if it's global or instance
         if (obj === p5.prototype || obj === p5) {
           if (this._isGlobal) {
-            window[method] = this._wrapPreload(this, method);
+            window[method] = _wrapPreload(this, method);
           }
           obj = this;
         }
         this._registeredPreloadMethods[method] = obj[method];
-        obj[method] = this._wrapPreload(obj, method);
+        obj[method] = _wrapPreload(obj, method);
       }
 
       userPreload();
@@ -275,12 +287,12 @@ var p5 = function(sketch, node, sync) {
       this._setup();
       this._draw();
     }
-  }.bind(this);
+  };
 
-  this._runIfPreloadsAreDone = function() {
-    var context = this._isGlobal ? window : this;
+  this._runIfPreloadsAreDone = () => {
+    const context = this._isGlobal ? window : this;
     if (context._preloadCount === 0) {
-      var loadingScreen = document.getElementById(context._loadingScreenId);
+      const loadingScreen = document.getElementById(context._loadingScreenId);
       if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);
       }
@@ -289,32 +301,15 @@ var p5 = function(sketch, node, sync) {
     }
   };
 
-  this._decrementPreload = function() {
-    var context = this._isGlobal ? window : this;
+  this._decrementPreload = () => {
+    const context = this._isGlobal ? window : this;
     if (typeof context.preload === 'function') {
       context._setProperty('_preloadCount', context._preloadCount - 1);
       context._runIfPreloadsAreDone();
     }
   };
 
-  this._wrapPreload = function(obj, fnName) {
-    return function() {
-      //increment counter
-      this._incrementPreload();
-      //call original function
-      return this._registeredPreloadMethods[fnName].apply(obj, arguments);
-    }.bind(this);
-  };
-
-  this._incrementPreload = function() {
-    var context = this._isGlobal ? window : this;
-    context._setProperty('_preloadCount', context._preloadCount + 1);
-  };
-
-  this._setup = function() {
-    // Always create a default canvas.
-    // Later on if the user calls createCanvas, this default one
-    // will be replaced
+  this._setup = () => {
     this.createCanvas(
       this._defaultCanvasSize.width,
       this._defaultCanvasSize.height,
@@ -322,9 +317,9 @@ var p5 = function(sketch, node, sync) {
     );
 
     // return preload functions to their normal vals if switched by preload
-    var context = this._isGlobal ? window : this;
+    const context = this._isGlobal ? window : this;
     if (typeof context.preload === 'function') {
-      for (var f in this._preloadMethods) {
+      for (let f in this._preloadMethods) {
         context[f] = this._preloadMethods[f][f];
         if (context[f] && this) {
           context[f] = context[f].bind(this);
@@ -339,21 +334,21 @@ var p5 = function(sketch, node, sync) {
     }
 
     // unhide any hidden canvases that were created
-    var canvases = document.getElementsByTagName('canvas');
-    for (var i = 0; i < canvases.length; i++) {
-      var k = canvases[i];
+    const canvases = document.getElementsByTagName('canvas');
+    for (let i = 0; i < canvases.length; i++) {
+      const k = canvases[i];
       if (k.dataset.hidden === 'true') {
         k.style.visibility = '';
         delete k.dataset.hidden;
       }
     }
     this._setupDone = true;
-  }.bind(this);
+  };
 
-  this._draw = function() {
-    var now = window.performance.now();
-    var time_since_last = now - this._lastFrameTime;
-    var target_time_between_frames = 1000 / this._targetFrameRate;
+  this._draw = () => {
+    const now = window.performance.now();
+    const time_since_last = now - this._lastFrameTime;
+    const target_time_between_frames = 1000 / this._targetFrameRate;
 
     // only draw if we really need to; don't overextend the browser.
     // draw if we're within 5ms of when our next frame should paint
@@ -363,7 +358,7 @@ var p5 = function(sketch, node, sync) {
     // in sync with the browser. note that we have to draw once even
     // if looping is off, so we bypass the time delay if that
     // is the case.
-    var epsilon = 5;
+    const epsilon = 5;
     if (
       !this._loop ||
       time_since_last >= target_time_between_frames - epsilon
@@ -388,14 +383,14 @@ var p5 = function(sketch, node, sync) {
     if (this._loop) {
       this._requestAnimId = window.requestAnimationFrame(this._draw);
     }
-  }.bind(this);
+  };
 
   this._setProperty = function(prop, value) {
     this[prop] = value;
     if (this._isGlobal) {
       window[prop] = value;
     }
-  }.bind(this);
+  };
 
   /**
    * Removes the entire p5 sketch. This will remove the canvas and any
@@ -422,12 +417,12 @@ var p5 = function(sketch, node, sync) {
    * nothing displayed
    *
    */
-  this.remove = function() {
-    var loadingScreen = document.getElementById(this._loadingScreenId);
+  this.remove = () => {
+    const loadingScreen = document.getElementById(this._loadingScreenId);
     if (loadingScreen) {
       loadingScreen.parentNode.removeChild(loadingScreen);
       // Add 1 to preload counter to prevent the sketch ever executing setup()
-      this._incrementPreload();
+      _incrementPreload();
     }
     if (this._curElement) {
       // stop draw
@@ -437,23 +432,23 @@ var p5 = function(sketch, node, sync) {
       }
 
       // unregister events sketch-wide
-      for (var ev in this._events) {
+      for (let ev in this._events) {
         window.removeEventListener(ev, this._events[ev]);
       }
 
       // remove DOM elements created by p5, and listeners
-      for (var i = 0; i < this._elements.length; i++) {
-        var e = this._elements[i];
+      for (let i = 0; i < this._elements.length; i++) {
+        const e = this._elements[i];
         if (e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
         }
-        for (var elt_ev in e._events) {
+        for (let elt_ev in e._events) {
           e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
         }
       }
 
       // call any registered remove functions
-      var self = this;
+      const self = this;
       this._registeredMethods.remove.forEach(function(f) {
         if (typeof f !== 'undefined') {
           f.call(self);
@@ -462,14 +457,14 @@ var p5 = function(sketch, node, sync) {
     }
     // remove window bound properties and methods
     if (this._isGlobal) {
-      for (var p in p5.prototype) {
+      for (let p in p5.prototype) {
         try {
           delete window[p];
         } catch (x) {
           window[p] = undefined;
         }
       }
-      for (var p2 in this) {
+      for (let p2 in this) {
         if (this.hasOwnProperty(p2)) {
           try {
             delete window[p2];
@@ -480,7 +475,7 @@ var p5 = function(sketch, node, sync) {
       }
       p5.instance = null;
     }
-  }.bind(this);
+  };
 
   // call any registered init functions
   this._registeredMethods.init.forEach(function(f) {
@@ -489,7 +484,7 @@ var p5 = function(sketch, node, sync) {
     }
   }, this);
 
-  var friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
+  const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
@@ -497,9 +492,9 @@ var p5 = function(sketch, node, sync) {
     this._isGlobal = true;
     p5.instance = this;
     // Loop through methods on the prototype and attach them to the window
-    for (var p in p5.prototype) {
+    for (let p in p5.prototype) {
       if (typeof p5.prototype[p] === 'function') {
-        var ev = p.substring(2);
+        const ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
           if (Math.hasOwnProperty(p) && Math[p] === p5.prototype[p]) {
             // Multiple p5 methods are just native Math functions. These can be
@@ -514,7 +509,7 @@ var p5 = function(sketch, node, sync) {
       }
     }
     // Attach its properties to the window
-    for (var p2 in this) {
+    for (let p2 in this) {
       if (this.hasOwnProperty(p2)) {
         friendlyBindGlobal(p2, this[p2]);
       }
@@ -527,36 +522,30 @@ var p5 = function(sketch, node, sync) {
 
   // Bind events to window (not using container div bc key events don't work)
 
-  for (var e in this._events) {
-    var f = this['_on' + e];
+  for (let e in this._events) {
+    const f = this['_on' + e];
     if (f) {
-      var m = f.bind(this);
-      window.addEventListener(e, m, { passive: false });
+      const m = f.bind(this);
+      window.addEventListener(e, m, {
+        passive: false
+      });
       this._events[e] = m;
     }
   }
 
-  var focusHandler = function() {
-    this._setProperty('focused', true);
-  }.bind(this);
-  var blurHandler = function() {
-    this._setProperty('focused', false);
-  }.bind(this);
+  const focusHandler = () => this._setProperty('focused', true);
+  const blurHandler = () => this._setProperty('focused', false);
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
-  this.registerMethod('remove', function() {
+  this.registerMethod('remove', () => {
     window.removeEventListener('focus', focusHandler);
     window.removeEventListener('blur', blurHandler);
   });
 
-  if (sync) {
+  if (sync || document.readyState === 'complete') {
     this._start();
   } else {
-    if (document.readyState === 'complete') {
-      this._start();
-    } else {
-      window.addEventListener('load', this._start.bind(this), false);
-    }
+    window.addEventListener('load', this._start, false);
   }
 };
 
@@ -585,7 +574,7 @@ p5.instance = null;
 p5.disableFriendlyErrors = false;
 
 // attach constants to p5 prototype
-for (var k in constants) {
+for (let k in constants) {
   p5.prototype[k] = constants[k];
 }
 
@@ -603,7 +592,12 @@ p5.prototype._preloadMethods = {
   loadShader: p5.prototype
 };
 
-p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
+p5.prototype._registeredMethods = {
+  init: [],
+  pre: [],
+  post: [],
+  remove: []
+};
 
 p5.prototype._registeredPreloadMethods = {};
 
@@ -615,7 +609,7 @@ p5.prototype.registerPreloadMethod = function(fnString, obj) {
 };
 
 p5.prototype.registerMethod = function(name, m) {
-  var target = this || p5.prototype;
+  const target = this || p5.prototype;
   if (!target._registeredMethods.hasOwnProperty(name)) {
     target._registeredMethods[name] = [];
   }
@@ -630,9 +624,9 @@ p5.prototype.registerMethod = function(name, m) {
 p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   options = options || {};
 
-  var globalObject = options.globalObject || window;
-  var log = options.log || console.log.bind(console);
-  var propsToForciblyOverwrite = {
+  const globalObject = options.globalObject || window;
+  const log = options.log || console.log.bind(console);
+  const propsToForciblyOverwrite = {
     // p5.print actually always overwrites an existing global function,
     // albeit one that is very unlikely to be used:
     //

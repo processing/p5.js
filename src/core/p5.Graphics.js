@@ -6,8 +6,8 @@
 
 'use strict';
 
-var p5 = require('./main');
-var constants = require('./constants');
+const p5 = require('./main');
+const constants = require('./constants');
 
 /**
  * Thin wrapper around a renderer, to be used for creating a
@@ -24,16 +24,16 @@ var constants = require('./constants');
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-  var r = renderer || constants.P2D;
+  const r = renderer || constants.P2D;
 
   this.canvas = document.createElement('canvas');
-  var node = pInst._userNode || document.body;
+  const node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
   p5.Element.call(this, this.canvas, pInst, false);
 
   // bind methods and props of p5 to the new object
-  for (var p in p5.prototype) {
+  for (let p in p5.prototype) {
     if (!this[p]) {
       if (typeof p5.prototype[p] === 'function') {
         this[p] = p5.prototype[p].bind(this);
@@ -121,11 +121,11 @@ p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
   }
-  var idx = this._pInst._elements.indexOf(this);
+  const idx = this._pInst._elements.indexOf(this);
   if (idx !== -1) {
     this._pInst._elements.splice(idx, 1);
   }
-  for (var elt_ev in this._events) {
+  for (let elt_ev in this._events) {
     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
   }
 };

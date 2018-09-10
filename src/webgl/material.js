@@ -7,8 +7,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 require('./p5.Texture');
 
 /**
@@ -56,11 +56,11 @@ require('./p5.Texture');
  */
 p5.prototype.loadShader = function(vertFilename, fragFilename) {
   p5._validateParameters('loadShader', arguments);
-  var loadedShader = new p5.Shader();
+  const loadedShader = new p5.Shader();
 
-  var self = this;
-  var loadedFrag = false;
-  var loadedVert = false;
+  const self = this;
+  let loadedFrag = false;
+  let loadedVert = false;
 
   this.loadStrings(fragFilename, function(result) {
     loadedShader._fragSrc = result.join('\n');
@@ -291,7 +291,7 @@ p5.prototype.texture = function(tex) {
   p5._validateParameters('texture', arguments);
   this._renderer.drawMode = constants.TEXTURE;
   this._renderer.textureImage = tex;
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
@@ -417,10 +417,10 @@ p5.prototype.textureMode = function(mode) {
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
-  var color = p5.prototype.color.apply(this, arguments);
+  const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
@@ -466,10 +466,10 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
-  var color = p5.prototype.color.apply(this, arguments);
+  const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
 
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', true);
   shader.setUniform('isTexture', false);
@@ -484,9 +484,9 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyColorBlend = function(colors) {
-  var gl = this.GL;
+  const gl = this.GL;
 
-  var isTexture = this.drawMode === constants.TEXTURE;
+  const isTexture = this.drawMode === constants.TEXTURE;
   if (isTexture || colors[colors.length - 1] < 1.0) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);

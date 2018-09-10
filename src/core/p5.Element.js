@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+const p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -235,7 +235,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
   // Prepend the mouse property setters to the event-listener.
   // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
   // For details, see https://github.com/processing/p5.js/issues/3087.
-  var eventPrependedFxn = function(event) {
+  const eventPrependedFxn = function(event) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
@@ -994,9 +994,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
     if (!this._dragDisabled) {
       this._dragDisabled = true;
 
-      var preventDefault = function(evt) {
-        evt.preventDefault();
-      };
+      const preventDefault = evt => evt.preventDefault();
 
       // If you want to be able to drop you've got to turn off
       // a lot of default behavior.
@@ -1019,11 +1017,10 @@ p5.Element.prototype.drop = function(callback, fxn) {
         evt.preventDefault();
 
         // A FileList
-        var files = evt.dataTransfer.files;
+        const files = evt.dataTransfer.files;
 
         // Load each one and trigger the callback
-        for (var i = 0; i < files.length; i++) {
-          var f = files[i];
+        for (let f of files) {
           p5.File._load(f, callback);
         }
       },
@@ -1055,13 +1052,13 @@ function attachListener(ev, fxn, ctx) {
   if (ctx._events[ev]) {
     detachListener(ev, ctx);
   }
-  var f = fxn.bind(ctx);
+  const f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
 }
 
 function detachListener(ev, ctx) {
-  var f = ctx._events[ev];
+  const f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;
 }

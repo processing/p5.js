@@ -1,15 +1,15 @@
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var libtess = require('libtess');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
+const libtess = require('libtess');
 require('./p5.Shader');
 require('./p5.Camera');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
-var fs = require('fs');
+const fs = require('fs');
 
-var defaultShaders = {
+const defaultShaders = {
   immediateVert: fs.readFileSync(
     __dirname + '/shaders/immediate.vert',
     'utf-8'
@@ -161,7 +161,7 @@ p5.RendererGL.prototype._initContext = function() {
       throw new Error('Error creating webgl context');
     } else {
       console.log('p5.RendererGL: enabled webgl context');
-      var gl = this.drawingContext;
+      const gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -178,10 +178,10 @@ p5.RendererGL.prototype._initContext = function() {
 //are changed with setAttributes()
 
 p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
-  var w = this.width;
-  var h = this.height;
-  var defaultId = this.canvas.id;
-  var c = this.canvas;
+  const w = this.width;
+  const h = this.height;
+  const defaultId = this.canvas.id;
+  let c = this.canvas;
   if (c) {
     c.parentNode.removeChild(c);
   }
@@ -194,7 +194,12 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   }
   this._pInst.canvas = c;
 
-  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
+  const renderer = new p5.RendererGL(
+    this._pInst.canvas,
+    this._pInst,
+    true,
+    attr
+  );
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
@@ -203,9 +208,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
-    setTimeout(function() {
-      callback.apply(window._renderer, options);
-    }, 0);
+    setTimeout(() => callback.apply(window._renderer, options), 0);
   }
 };
 /**
@@ -355,7 +358,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
 p5.prototype.setAttributes = function(key, value) {
   this._assert3d('setAttributes');
   //@todo_FES
-  var attr;
+  let attr;
   if (typeof value !== 'undefined') {
     attr = {};
     attr[key] = value;
@@ -407,11 +410,11 @@ p5.RendererGL.prototype._update = function() {
  * [background description]
  */
 p5.RendererGL.prototype.background = function() {
-  var _col = this._pInst.color.apply(this._pInst, arguments);
-  var _r = _col.levels[0] / 255;
-  var _g = _col.levels[1] / 255;
-  var _b = _col.levels[2] / 255;
-  var _a = _col.levels[3] / 255;
+  const _col = this._pInst.color.apply(this._pInst, arguments);
+  const _r = _col.levels[0] / 255;
+  const _g = _col.levels[1] / 255;
+  const _b = _col.levels[2] / 255;
+  const _a = _col.levels[3] / 255;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
@@ -460,7 +463,7 @@ p5.RendererGL.prototype.background = function() {
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
-  var color = p5.prototype.color.apply(this._pInst, arguments);
+  const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curFillColor = color._array;
 
   if (this.isImmediateDrawing) {
@@ -507,7 +510,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   //@todo allow transparency in stroking currently doesn't have
   //any impact and causes problems with specularMaterial
   arguments[3] = 255;
-  var color = p5.prototype.color.apply(this._pInst, arguments);
+  const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
   this.curPointShader.setUniform('uMaterialColor', color._array);
@@ -587,14 +590,14 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
-  var ctx = this._pInst || this;
-  var pd = ctx._pixelDensity;
+  const ctx = this._pInst || this;
+  const pd = ctx._pixelDensity;
 
-  var sx = x * pd;
-  var sy = y * pd;
+  const sx = x * pd;
+  const sy = y * pd;
 
   if (w === 1 && h === 1) {
-    var pixels = new Uint8Array(4);
+    const pixels = new Uint8Array(4);
     this.drawingContext.readPixels(
       sx,
       sy,
@@ -608,12 +611,12 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
   } else {
     //auto constrain the width and height to
     //dimensions of the source image
-    var dw = Math.min(w, ctx.width);
-    var dh = Math.min(h, ctx.height);
-    var sw = dw * pd;
-    var sh = dh * pd;
+    const dw = Math.min(w, ctx.width);
+    const dh = Math.min(h, ctx.height);
+    const sw = dw * pd;
+    const sh = dh * pd;
 
-    var region = new p5.Image(dw, dh);
+    const region = new p5.Image(dw, dh);
     region.canvas
       .getContext('2d') // not sure this is correct
       .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
@@ -639,13 +642,11 @@ p5.RendererGL.prototype.loadPixels = function() {
     );
     return;
   }
-  var pd = this._pInst._pixelDensity;
-  var x = 0;
-  var y = 0;
-  var w = this.width;
-  var h = this.height;
-  w *= pd;
-  h *= pd;
+  const pd = this._pInst._pixelDensity;
+  const x = 0;
+  const y = 0;
+  const w = this.width * pd;
+  const h = this.height * pd;
   //if there isn't a renderer-level temporary pixels buffer
   //make a new one
   if (typeof this.pixels === 'undefined') {
@@ -709,10 +710,10 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  var _r = arguments[0] || 0;
-  var _g = arguments[1] || 0;
-  var _b = arguments[2] || 0;
-  var _a = arguments[3] || 0;
+  const _r = arguments[0] || 0;
+  const _g = arguments[1] || 0;
+  const _b = arguments[2] || 0;
+  const _a = arguments[3] || 0;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
@@ -775,10 +776,10 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
 
 p5.RendererGL.prototype.push = function() {
   // get the base renderer style
-  var style = p5.Renderer.prototype.push.apply(this);
+  const style = p5.Renderer.prototype.push.apply(this);
 
   // add webgl-specific style properties
-  var properties = style.properties;
+  const properties = style.properties;
 
   properties.uMVMatrix = this.uMVMatrix.copy();
   properties.uPMatrix = this.uPMatrix.copy();
@@ -1002,7 +1003,7 @@ p5.RendererGL.prototype._getFontShader = function() {
 p5.RendererGL.prototype._getEmptyTexture = function() {
   if (!this._emptyTexture) {
     // a plain white texture RGBA, full alpha, single pixel.
-    var im = new p5.Image(1, 1);
+    const im = new p5.Image(1, 1);
     im.set(0, 0, 255);
     this._emptyTexture = new p5.Texture(this, im);
   }
@@ -1010,13 +1011,13 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
 };
 
 p5.RendererGL.prototype.getTexture = function(img) {
-  var textures = this.textures;
-  for (var it = 0; it < textures.length; ++it) {
-    var texture = textures[it];
+  const textures = this.textures;
+  for (let it = 0; it < textures.length; ++it) {
+    const texture = textures[it];
     if (texture.src === img) return texture;
   }
 
-  var tex = new p5.Texture(this, img);
+  const tex = new p5.Texture(this, img);
   this.textures.push(tex);
   return tex;
 };
@@ -1033,7 +1034,7 @@ p5.RendererGL.prototype._bindBuffer = function(
 ) {
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    var data = new type(values);
+    const data = new type(values);
     this.GL.bufferData(target, data, usage);
   }
 };
@@ -1072,11 +1073,11 @@ p5.RendererGL.prototype._flatten = function(arr) {
     //big models , load slower to avoid stack overflow
     //faster non-recursive flatten via axelduch
     //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
-    var toString = Object.prototype.toString;
-    var arrayTypeStr = '[object Array]';
-    var result = [];
-    var nodes = arr.slice();
-    var node;
+    const toString = Object.prototype.toString;
+    const arrayTypeStr = '[object Array]';
+    const result = [];
+    const nodes = arr.slice();
+    let node;
     node = nodes.pop();
     do {
       if (toString.call(node) === arrayTypeStr) {
@@ -1103,11 +1104,7 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._vToNArray = function(arr) {
-  return this._flatten(
-    arr.map(function(item) {
-      return [item.x, item.y, item.z];
-    })
-  );
+  return this._flatten(arr.map(item => [item.x, item.y, item.z]));
 };
 
 /**
@@ -1132,11 +1129,13 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
     polyVertArray[polyVertArray.length] = data[1];
     polyVertArray[polyVertArray.length] = data[2];
   }
+
   function begincallback(type) {
     if (type !== libtess.primitiveType.GL_TRIANGLES) {
       console.log('expected TRIANGLES but got type: ' + type);
     }
   }
+
   function errorcallback(errno) {
     console.log('error callback');
     console.log('error number: ' + errno);
@@ -1145,11 +1144,12 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   function combinecallback(coords, data, weight) {
     return [coords[0], coords[1], coords[2]];
   }
+
   function edgeCallback(flag) {
     // don't really care about the flag, but need no-strip/no-fan behavior
   }
 
-  var tessy = new libtess.GluTesselator();
+  const tessy = new libtess.GluTesselator();
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
@@ -1166,14 +1166,14 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   // comment out to test normal-generation code
   this._tessy.gluTessNormal(0, 0, 1);
 
-  var triangleVerts = [];
+  const triangleVerts = [];
   this._tessy.gluTessBeginPolygon(triangleVerts);
 
-  for (var i = 0; i < contours.length; i++) {
+  for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
-    var contour = contours[i];
-    for (var j = 0; j < contour.length; j += 3) {
-      var coords = [contour[j], contour[j + 1], contour[j + 2]];
+    const contour = contours[i];
+    for (let j = 0; j < contour.length; j += 3) {
+      const coords = [contour[j], contour[j + 1], contour[j + 2]];
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();
@@ -1187,29 +1187,29 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 
 // function to calculate BezierVertex Coefficients
 p5.RendererGL.prototype._bezierCoefficients = function(t) {
-  var t2 = t * t;
-  var t3 = t2 * t;
-  var mt = 1 - t;
-  var mt2 = mt * mt;
-  var mt3 = mt2 * mt;
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const mt = 1 - t;
+  const mt2 = mt * mt;
+  const mt3 = mt2 * mt;
   return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
 };
 
 // function to calculate QuadraticVertex Coefficients
 p5.RendererGL.prototype._quadraticCoefficients = function(t) {
-  var t2 = t * t;
-  var mt = 1 - t;
-  var mt2 = mt * mt;
+  const t2 = t * t;
+  const mt = 1 - t;
+  const mt2 = mt * mt;
   return [mt2, 2 * mt * t, t2];
 };
 
 // function to convert Bezier coordinates to Catmull Rom Splines
 p5.RendererGL.prototype._bezierToCatmull = function(w) {
-  var p1 = w[1];
-  var p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
-  var p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
-  var p4 = w[2];
-  var p = [p1, p2, p3, p4];
+  const p1 = w[1];
+  const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
+  const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
+  const p4 = w[2];
+  const p = [p1, p2, p3, p4];
   return p;
 };
 

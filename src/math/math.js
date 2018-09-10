@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> (the datatype for storing vectors). This provides a

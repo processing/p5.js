@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+const p5 = require('./main');
 
 p5.prototype.pushStyle = function() {
   throw new Error('pushStyle() not used, see push()');

@@ -7,13 +7,13 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Holds the key codes of currently pressed keys.
  * @private
  */
-var downKeys = {};
+let downKeys = {};
 
 /**
  * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
@@ -183,9 +183,9 @@ p5.prototype._onkeydown = function(e) {
   this._setProperty('keyCode', e.which);
   downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-  var keyPressed = this.keyPressed || window.keyPressed;
+  const keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
-    var executeDefault = keyPressed(e);
+    const executeDefault = keyPressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -223,7 +223,7 @@ p5.prototype._onkeydown = function(e) {
  *
  */
 p5.prototype._onkeyup = function(e) {
-  var keyReleased = this.keyReleased || window.keyReleased;
+  const keyReleased = this.keyReleased || window.keyReleased;
   downKeys[e.which] = false;
 
   if (!areDownKeys()) {
@@ -236,7 +236,7 @@ p5.prototype._onkeyup = function(e) {
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
-    var executeDefault = keyReleased(e);
+    const executeDefault = keyReleased(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -289,9 +289,9 @@ p5.prototype._onkeypress = function(e) {
   this._setProperty('keyCode', e.which);
   this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
   this._setProperty('key', String.fromCharCode(e.which));
-  var keyTyped = this.keyTyped || window.keyTyped;
+  const keyTyped = this.keyTyped || window.keyTyped;
   if (typeof keyTyped === 'function') {
-    var executeDefault = keyTyped(e);
+    const executeDefault = keyTyped(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -394,7 +394,7 @@ p5.prototype.keyIsDown = function(code) {
  * @private
 **/
 function areDownKeys() {
-  for (var key in downKeys) {
+  for (let key in downKeys) {
     if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
       return true;
     }

@@ -7,8 +7,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
+const p5 = require('../core/main');
+const Filters = require('./filters');
 require('../color/p5.Color');
 
 /**
@@ -30,8 +30,8 @@ require('../color/p5.Color');
  * set values for a pixel at (x, y):
  * ```javascript
  * var d = pixelDensity();
- * for (var i = 0; i < d; i++) {
- *   for (var j = 0; j < d; j++) {
+  for (var i = 0; i < d; i++) {
+    for (var j = 0; j < d; j++) {
  *     // loop over
  *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
  *     pixels[idx] = r;

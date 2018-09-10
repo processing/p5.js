@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Shader class for WEBGL Mode
@@ -47,7 +47,7 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
  */
 p5.Shader.prototype.init = function() {
   if (this._glProgram === 0 /* or context is stale? */) {
-    var gl = this._renderer.GL;
+    const gl = this._renderer.GL;
 
     // @todo: once custom shading is allowed,
     // friendly error messages should be used here to share
@@ -113,17 +113,17 @@ p5.Shader.prototype._loadAttributes = function() {
 
   this.attributes = {};
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
-  var numAttributes = gl.getProgramParameter(
+  const numAttributes = gl.getProgramParameter(
     this._glProgram,
     gl.ACTIVE_ATTRIBUTES
   );
-  for (var i = 0; i < numAttributes; ++i) {
-    var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
-    var name = attributeInfo.name;
-    var location = gl.getAttribLocation(this._glProgram, name);
-    var attribute = {};
+  for (let i = 0; i < numAttributes; ++i) {
+    const attributeInfo = gl.getActiveAttrib(this._glProgram, i);
+    const name = attributeInfo.name;
+    const location = gl.getAttribLocation(this._glProgram, name);
+    const attribute = {};
     attribute.name = name;
     attribute.location = location;
     attribute.type = attributeInfo.type;
@@ -145,18 +145,21 @@ p5.Shader.prototype._loadUniforms = function() {
     return;
   }
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
   // Inspect shader and cache uniform info
-  var numUniforms = gl.getProgramParameter(this._glProgram, gl.ACTIVE_UNIFORMS);
+  const numUniforms = gl.getProgramParameter(
+    this._glProgram,
+    gl.ACTIVE_UNIFORMS
+  );
 
-  var samplerIndex = 0;
-  for (var i = 0; i < numUniforms; ++i) {
-    var uniformInfo = gl.getActiveUniform(this._glProgram, i);
-    var uniform = {};
+  let samplerIndex = 0;
+  for (let i = 0; i < numUniforms; ++i) {
+    const uniformInfo = gl.getActiveUniform(this._glProgram, i);
+    const uniform = {};
     uniform.location = gl.getUniformLocation(this._glProgram, uniformInfo.name);
     uniform.size = uniformInfo.size;
-    var uniformName = uniformInfo.name;
+    let uniformName = uniformInfo.name;
     //uniforms thats are arrays have their name returned as
     //someUniform[0] which is a bit silly so we trim it
     //off here. The size property tells us that its an array
@@ -214,10 +217,10 @@ p5.Shader.prototype.unbindShader = function() {
 };
 
 p5.Shader.prototype.bindTextures = function() {
-  var gl = this._renderer.GL;
-  for (var i = 0; i < this.samplers.length; i++) {
-    var uniform = this.samplers[i];
-    var tex = uniform.texture;
+  const gl = this._renderer.GL;
+  for (let i = 0; i < this.samplers.length; i++) {
+    const uniform = this.samplers[i];
+    let tex = uniform.texture;
     if (tex === undefined) {
       // user hasn't yet supplied a texture for this slot.
       // (or there may not be one--maybe just lighting),
@@ -232,9 +235,9 @@ p5.Shader.prototype.bindTextures = function() {
 };
 
 p5.Shader.prototype.updateTextures = function() {
-  for (var i = 0; i < this.samplers.length; i++) {
-    var uniform = this.samplers[i];
-    var tex = uniform.texture;
+  for (let i = 0; i < this.samplers.length; i++) {
+    const uniform = this.samplers[i];
+    const tex = uniform.texture;
     if (tex) {
       tex.update();
     }
@@ -266,7 +269,7 @@ p5.Shader.prototype._setViewportUniform = function() {
  * @private
  */
 p5.Shader.prototype.useProgram = function() {
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   gl.useProgram(this._glProgram);
   return this;
 };
@@ -287,14 +290,14 @@ p5.Shader.prototype.useProgram = function() {
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
 
-  var uniform = this.uniforms[uniformName];
+  const uniform = this.uniforms[uniformName];
   if (!uniform) {
     //@todo warning?
     return;
   }
-  var location = uniform.location;
+  const location = uniform.location;
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   // todo: is this safe to do here?
   // todo: store the values another way?
   this.useProgram();
@@ -438,7 +441,7 @@ p5.Shader.prototype.enableAttrib = function(
   stride,
   offset
 ) {
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   if (loc !== -1) {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
