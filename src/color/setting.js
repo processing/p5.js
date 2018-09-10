@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 require('./p5.Color');
 
 /**
@@ -320,7 +320,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
     this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._colorMaxes[mode];
+    const maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
       maxes[0] = max1; // Red
       maxes[1] = max1; // Green

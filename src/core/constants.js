@@ -6,7 +6,7 @@
 
 'use strict';
 
-var PI = Math.PI;
+const PI = Math.PI;
 
 module.exports = {
   // GRAPHICS RENDERER

@@ -7,9 +7,9 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var opentype = require('opentype.js');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
+const opentype = require('opentype.js');
 
 require('../core/error_helpers');
 
@@ -86,9 +86,9 @@ require('../core/error_helpers');
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
-  var p5Font = new p5.Font(this);
+  const p5Font = new p5.Font(this);
 
-  var self = this;
+  const self = this;
   opentype.load(path, function(err, font) {
     if (err) {
       if (typeof onError !== 'undefined') {
@@ -108,16 +108,15 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
+    const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
       fileNoPath = path
         .split('\\')
         .pop()
         .split('/')
         .pop(),
       lastDotIdx = fileNoPath.lastIndexOf('.'),
-      fontFamily,
-      newStyle,
       fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    let fontFamily, newStyle;
 
     // if so, add it to the DOM (name-only) for use with p5.dom
     if (validFontTypes.indexOf(fileExt) > -1) {

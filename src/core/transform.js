@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+const p5 = require('./main');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -342,12 +342,12 @@ p5.prototype.scale = function(x, y, z) {
   p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
   if (x instanceof p5.Vector) {
-    var v = x;
+    const v = x;
     x = v.x;
     y = v.y;
     z = v.z;
   } else if (x instanceof Array) {
-    var rg = x;
+    const rg = x;
     x = rg[0];
     y = rg[1];
     z = rg[2] || 1;

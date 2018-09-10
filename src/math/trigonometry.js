@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 
 /*
  * all DEGREES/RADIANS conversion should be done in the p5 instance

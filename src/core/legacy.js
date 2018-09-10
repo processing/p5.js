@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+const p5 = require('./main');
 
 p5.prototype.exit = function() {
   throw new Error('exit() not implemented, see remove()');
@@ -25,8 +25,9 @@ p5.prototype.popStyle = function() {
 };
 
 p5.prototype.size = function() {
-  var s = 'size() is not a valid p5 function, to set the size of the ';
-  s += 'drawing canvas, please use createCanvas() instead';
+  const s =
+    'size() is not a valid p5 function, to set the size of the ' +
+    'drawing canvas, please use createCanvas() instead';
   throw new Error(s);
 };
 

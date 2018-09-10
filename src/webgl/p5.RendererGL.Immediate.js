@@ -13,8 +13,8 @@
  */
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 
 /**
  * Begin shape drawing.  This is a helpful way of generating
@@ -74,7 +74,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
  */
 p5.RendererGL.prototype.vertex = function(x, y) {
-  var z, u, v;
+  let z, u, v;
 
   // default to (x, y) mode: all other arugments assumed to be 0.
   z = u = v = 0;
@@ -92,9 +92,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     u = arguments[3];
     v = arguments[4];
   }
-  var vert = new p5.Vector(x, y, z);
+  const vert = new p5.Vector(x, y, z);
   this.immediateMode.vertices.push(vert);
-  var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
+  const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
@@ -139,7 +139,7 @@ p5.RendererGL.prototype.endShape = function(
     this._useImmediateModeShader();
 
     if (this._doStroke && this.drawMode !== constants.TEXTURE) {
-      for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+      for (let i = 0; i < this.immediateMode.vertices.length - 1; i++) {
         this.immediateMode.edges.push([i, i + 1]);
       }
       if (mode === constants.CLOSE) {
@@ -155,13 +155,13 @@ p5.RendererGL.prototype.endShape = function(
 
     if (this._doFill) {
       if (this.isBezier || this.isQuadratic || this.isCurve) {
-        var contours = [
+        const contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
         ];
-        var polyTriangles = this._triangulate(contours);
+        const polyTriangles = this._triangulate(contours);
         this.immediateMode.vertices = [];
         for (
-          var j = 0, polyTriLength = polyTriangles.length;
+          let j = 0, polyTriLength = polyTriangles.length;
           j < polyTriLength;
           j = j + 3
         ) {
@@ -207,7 +207,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
   isContour,
   shapeKind
 ) {
-  var gl = this.GL;
+  const gl = this.GL;
   this.curFillShader.bindShader();
 
   // initialize the fill shader's 'aPosition' buffer
@@ -326,7 +326,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
 };
 
 p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
-  var gl = this.GL;
+  const gl = this.GL;
   this.curStrokeShader.bindShader();
 
   // initialize the stroke shader's 'aPosition' buffer

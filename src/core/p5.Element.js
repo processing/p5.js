@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+const p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -235,7 +235,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
   // Prepend the mouse property setters to the event-listener.
   // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
   // For details, see https://github.com/processing/p5.js/issues/3087.
-  var eventPrependedFxn = function(event) {
+  const eventPrependedFxn = function(event) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
@@ -992,7 +992,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback
   function makeLoader(theFile) {
     // Making a p5.File object
-    var p5file = new p5.File(theFile);
+    const p5file = new p5.File(theFile);
     return function(e) {
       p5file.data = e.target.result;
       callback(p5file);
@@ -1035,12 +1035,12 @@ p5.Element.prototype.drop = function(callback, fxn) {
         evt.preventDefault();
 
         // A FileList
-        var files = evt.dataTransfer.files;
+        const files = evt.dataTransfer.files;
 
         // Load each one and trigger the callback
-        for (var i = 0; i < files.length; i++) {
-          var f = files[i];
-          var reader = new FileReader();
+        for (let i = 0; i < files.length; i++) {
+          const f = files[i];
+          const reader = new FileReader();
           reader.onload = makeLoader(f);
 
           // Text or data?
@@ -1080,13 +1080,13 @@ function attachListener(ev, fxn, ctx) {
   if (ctx._events[ev]) {
     detachListener(ev, ctx);
   }
-  var f = fxn.bind(ctx);
+  const f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
 }
 
 function detachListener(ev, ctx) {
-  var f = ctx._events[ev];
+  const f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;
 }

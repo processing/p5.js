@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use
@@ -242,9 +242,7 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  return this.children.map(function(c) {
-    return c.name;
-  });
+  return this.children.map(c => c.name);
 };
 
 /**
@@ -289,9 +287,7 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) {
-      return c.name === param;
-    });
+    return this.children.filter(c => c.name === param);
   } else {
     return this.children;
   }
@@ -349,8 +345,8 @@ p5.XML.prototype.getChildren = function(param) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    for (var i = 0; i < this.children.length; i++) {
-      var child = this.children[i];
+    for (let i = 0; i < this.children.length; i++) {
+      const child = this.children[i];
       if (child.name === param) return child;
     }
   } else {
@@ -465,9 +461,9 @@ p5.XML.prototype.addChild = function(node) {
  * </code></div>
  */
 p5.XML.prototype.removeChild = function(param) {
-  var ind = -1;
+  let ind = -1;
   if (typeof param === 'string') {
-    for (var i = 0; i < this.children.length; i++) {
+    for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].name === param) {
         ind = i;
         break;
@@ -808,7 +804,7 @@ p5.XML.prototype.setContent = function(content) {
  *
  */
 p5.XML.prototype._setCont = function(content) {
-  var str;
+  let str;
   str = content;
   str = str.replace(/\s\s+/g, ',');
   //str = str.split(',');
@@ -822,11 +818,11 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var att = {};
-  var attributes = node.attributes;
+  const att = {};
+  const attributes = node.attributes;
   if (attributes) {
-    for (var i = 0; i < attributes.length; i++) {
-      var attribute = attributes[i];
+    for (let i = 0; i < attributes.length; i++) {
+      const attribute = attributes[i];
       att[attribute.nodeName] = attribute.nodeValue;
     }
   }

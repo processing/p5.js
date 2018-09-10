@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Creates an ambient light with a color
@@ -71,9 +71,9 @@ var p5 = require('../core/main');
 p5.prototype.ambientLight = function(v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
-  var color = this.color.apply(this, arguments);
+  const color = this.color.apply(this, arguments);
 
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
 
   //@todo this is a bit icky. array uniforms have
   //to be multiples of the type 3(rgb) in this case.
@@ -161,18 +161,18 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
 
   //@TODO: check parameters number
-  var color;
+  let color;
   if (v1 instanceof p5.Color) {
     color = v1;
   } else {
     color = this.color(v1, v2, v3);
   }
 
-  var _x, _y, _z;
-  var v = arguments[arguments.length - 1];
+  let _x, _y, _z;
+  const v = arguments[arguments.length - 1];
   if (typeof v === 'number') {
     _x = arguments[arguments.length - 3];
     _y = arguments[arguments.length - 2];
@@ -187,7 +187,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);
 
   // normalize direction
-  var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+  const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
   this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
   shader.setUniform(
     'uLightingDirection',
@@ -280,15 +280,15 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
   //@TODO: check parameters number
-  var color;
+  let color;
   if (v1 instanceof p5.Color) {
     color = v1;
   } else {
     color = this.color(v1, v2, v3);
   }
 
-  var _x, _y, _z;
-  var v = arguments[arguments.length - 1];
+  let _x, _y, _z;
+  const v = arguments[arguments.length - 1];
   if (typeof v === 'number') {
     _x = arguments[arguments.length - 3];
     _y = arguments[arguments.length - 2];
@@ -299,7 +299,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     _z = v.z;
   }
 
-  var shader = this._renderer._useLightShader();
+  const shader = this._renderer._useLightShader();
   shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);

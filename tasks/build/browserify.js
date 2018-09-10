@@ -29,6 +29,8 @@ module.exports = function(grunt) {
       // Invoke Browserify programatically to bundle the code
       var browseified = browserify(srcFilePath, {
         standalone: 'p5'
+      }).transform('babelify', {
+        presets: ['@babel/preset-env']
       });
 
       if (isMin) {

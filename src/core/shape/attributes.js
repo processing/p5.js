@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../main');
-var constants = require('../constants');
+const p5 = require('../main');
+const constants = require('../constants');
 
 /**
  * Modifies the location from which ellipses are drawn by changing the way

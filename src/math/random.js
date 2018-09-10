@@ -7,25 +7,21 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
-var seeded = false;
-var previous = false;
-var y2 = 0;
+let seeded = false;
+let previous = false;
+let y2 = 0;
 
 // Linear Congruential Generator
 // Variant of a Lehman Generator
-var lcg = (function() {
-  // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
-  // m is basically chosen to be large (as it is the max period)
-  // and for its relationships to a and c
-  var m = 4294967296,
+const lcg = (() => {
+  const m = 4294967296,
     // a - 1 should be divisible by m's prime factors
     a = 1664525,
     // c and m should be co-prime
-    c = 1013904223,
-    seed,
-    z;
+    c = 1013904223;
+  let seed, z;
   return {
     setSeed: function(val) {
       // pick a random seed if val is undefined or null
@@ -137,7 +133,7 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  */
 p5.prototype.random = function(min, max) {
-  var rand;
+  let rand;
 
   if (seeded) {
     rand = lcg.rand();
@@ -154,7 +150,7 @@ p5.prototype.random = function(min, max) {
     }
   } else {
     if (min > max) {
-      var tmp = min;
+      const tmp = min;
       min = max;
       max = tmp;
     }
@@ -220,7 +216,7 @@ p5.prototype.random = function(min, max) {
  * black lines radiate from center of canvas. size determined each render
  */
 p5.prototype.randomGaussian = function(mean, sd) {
-  var y1, x1, x2, w;
+  let y1, x1, x2, w;
   if (previous) {
     y1 = y2;
     previous = false;
@@ -236,8 +232,8 @@ p5.prototype.randomGaussian = function(mean, sd) {
     previous = true;
   }
 
-  var m = mean || 0;
-  var s = sd || 1;
+  const m = mean || 0;
+  const s = sd || 1;
   return y1 * s + m;
 };
 

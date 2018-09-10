@@ -11,13 +11,14 @@
  */
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 // This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
 // redefined-global error and permits using the name "frames" for the array
 // of saved animation frames.
 
-/* global frames:true */ var frames = [];
+/* global frames:true */
+var frames = [];
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
@@ -150,8 +151,8 @@ p5.prototype.saveCanvas = function() {
   p5._validateParameters('saveCanvas', arguments);
 
   // copy arguments to array
-  var args = [].slice.call(arguments);
-  var htmlCanvas, filename, extension;
+  const args = [].slice.call(arguments);
+  let htmlCanvas, filename, extension;
 
   if (arguments[0] instanceof HTMLCanvasElement) {
     htmlCanvas = arguments[0];
@@ -175,7 +176,7 @@ p5.prototype.saveCanvas = function() {
     p5.prototype._checkFileExtension(filename, extension)[1] ||
     'png';
 
-  var mimeType;
+  let mimeType;
   switch (extension) {
     default:
       //case 'png':
@@ -187,9 +188,10 @@ p5.prototype.saveCanvas = function() {
       break;
   }
 
-  htmlCanvas.toBlob(function(blob) {
-    p5.prototype.downloadFile(blob, filename, extension);
-  }, mimeType);
+  htmlCanvas.toBlob(
+    blob => p5.prototype.downloadFile(blob, filename, extension),
+    mimeType
+  );
 };
 
 /**
@@ -237,42 +239,42 @@ p5.prototype.saveCanvas = function() {
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   p5._validateParameters('saveFrames', arguments);
-  var duration = _duration || 3;
+  let duration = _duration || 3;
   duration = p5.prototype.constrain(duration, 0, 15);
   duration = duration * 1000;
-  var fps = _fps || 15;
+  let fps = _fps || 15;
   fps = p5.prototype.constrain(fps, 0, 22);
-  var count = 0;
+  let count = 0;
 
-  var makeFrame = p5.prototype._makeFrame;
-  var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function() {
+  const makeFrame = p5.prototype._makeFrame;
+  const cnv = this._curElement.elt;
+  const frameFactory = setInterval(() => {
     makeFrame(fName + count, ext, cnv);
     count++;
   }, 1000 / fps);
 
-  setTimeout(function() {
+  setTimeout(() => {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
     } else {
-      for (var i = 0; i < frames.length; i++) {
-        var f = frames[i];
+      for (let i = 0; i < frames.length; i++) {
+        const f = frames[i];
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
       }
     }
-    frames = []; // clear frames
+    frames = [];
   }, duration + 0.01);
 };
 
 p5.prototype._makeFrame = function(filename, extension, _cnv) {
-  var cnv;
+  let cnv;
   if (this) {
     cnv = this._curElement.elt;
   } else {
     cnv = _cnv;
   }
-  var mimeType;
+  let mimeType;
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
@@ -292,11 +294,10 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
         break;
     }
   }
-  var downloadMime = 'image/octet-stream';
-  var imageData = cnv.toDataURL(mimeType);
-  imageData = imageData.replace(mimeType, downloadMime);
+  const downloadMime = 'image/octet-stream';
+  const imageData = cnv.toDataURL(mimeType).replace(mimeType, downloadMime);
 
-  var thisFrame = {};
+  const thisFrame = {};
   thisFrame.imageData = imageData;
   thisFrame.filename = filename;
   thisFrame.ext = extension;

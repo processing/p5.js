@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 require('./p5.Geometry');
 
 /**
@@ -96,9 +96,9 @@ require('./p5.Geometry');
  */
 p5.prototype.loadModel = function(path) {
   p5._validateParameters('loadModel', arguments);
-  var normalize;
-  var successCallback;
-  var failureCallback;
+  let normalize;
+  let successCallback;
+  let failureCallback;
   if (typeof arguments[1] === 'boolean') {
     normalize = arguments[1];
     successCallback = arguments[2];
@@ -109,9 +109,9 @@ p5.prototype.loadModel = function(path) {
     failureCallback = arguments[2];
   }
 
-  var model = new p5.Geometry();
+  const model = new p5.Geometry();
   model.gid = path + '|' + normalize;
-  var self = this;
+  const self = this;
   this.loadStrings(
     path,
     function(strings) {
@@ -153,24 +153,24 @@ function parseObj(model, lines) {
   // used to map a specific combination (keyed on, for example, the string
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
-  var loadedVerts = {
+  const loadedVerts = {
     v: [],
     vt: [],
     vn: []
   };
-  var indexedVerts = {};
+  const indexedVerts = {};
 
-  for (var line = 0; line < lines.length; ++line) {
+  for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
     // describes the type.
-    var tokens = lines[line].trim().split(/\b\s+/);
+    const tokens = lines[line].trim().split(/\b\s+/);
 
     if (tokens.length > 0) {
       if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
-        var vertex = new p5.Vector(
+        const vertex = new p5.Vector(
           parseFloat(tokens[1]),
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
@@ -179,20 +179,20 @@ function parseObj(model, lines) {
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
         // It will have two numeric parameters.
-        var texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
+        const texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
         loadedVerts[tokens[0]].push(texVertex);
       } else if (tokens[0] === 'f') {
         // Check if this line describes a face.
         // OBJ faces can have more than three points. Triangulate points.
-        for (var tri = 3; tri < tokens.length; ++tri) {
-          var face = [];
+        for (let tri = 3; tri < tokens.length; ++tri) {
+          const face = [];
 
-          var vertexTokens = [1, tri - 1, tri];
+          const vertexTokens = [1, tri - 1, tri];
 
-          for (var tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
+          for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
-            var vertString = tokens[vertexTokens[tokenInd]];
-            var vertIndex = 0;
+            const vertString = tokens[vertexTokens[tokenInd]];
+            let vertIndex = 0;
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
@@ -201,8 +201,8 @@ function parseObj(model, lines) {
             if (indexedVerts[vertString] !== undefined) {
               vertIndex = indexedVerts[vertString];
             } else {
-              var vertParts = vertString.split('/');
-              for (var i = 0; i < vertParts.length; i++) {
+              const vertParts = vertString.split('/');
+              for (let i = 0; i < vertParts.length; i++) {
                 vertParts[i] = parseInt(vertParts[i]) - 1;
               }
 
