@@ -1418,7 +1418,7 @@ p5.PrintWriter = function(filename, extension) {
  *  p5.SoundFile (requires p5.sound). The second parameter is a filename
  *  (including extension). The third parameter is for options specific
  *  to this type of object. This method will save a file that fits the
- *  given paramaters. For example:</p>
+ *  given parameters. For example:</p>
  *
  * <pre class='language-javascript'><code>
  * // Saves canvas as an image
