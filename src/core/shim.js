@@ -53,27 +53,27 @@ window.requestAnimationFrame = (function() {
 (function() {
   'use strict';
   if (!Object.assign) {
-    var keys = Object.keys;
-    var defineProperty = Object.defineProperty;
-    var canBeObject = function(obj) {
+    const keys = Object.keys;
+    const defineProperty = Object.defineProperty;
+    const canBeObject = function(obj) {
       return typeof obj !== 'undefined' && obj !== null;
     };
-    var hasSymbols =
+    const hasSymbols =
       typeof Symbol === 'function' && typeof Symbol() === 'symbol';
-    var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-    var isEnumerableOn = function(obj) {
+    const propIsEnumerable = Object.prototype.propertyIsEnumerable;
+    const isEnumerableOn = function(obj) {
       return function isEnumerable(prop) {
         return propIsEnumerable.call(obj, prop);
       };
     };
 
     // per ES6 spec, this function has to have a length of 2
-    var assignShim = function assign(target, source1) {
+    const assignShim = function assign(target, source1) {
       if (!canBeObject(target)) {
         throw new TypeError('target must be an object');
       }
-      var objTarget = Object(target);
-      var s, source, i, props;
+      const objTarget = Object(target);
+      let s, source, i, props;
       for (s = 1; s < arguments.length; ++s) {
         source = Object(arguments[s]);
         props = keys(source);

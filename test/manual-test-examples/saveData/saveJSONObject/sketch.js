@@ -1,4 +1,4 @@
-var json;
+let json;
 
 function setup() {
   json = {}; // new JSON Object

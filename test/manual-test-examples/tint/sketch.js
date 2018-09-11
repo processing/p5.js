@@ -1,4 +1,4 @@
-var img;
+let img;
 
 function preload() {
   img = loadImage('flowers.jpg');

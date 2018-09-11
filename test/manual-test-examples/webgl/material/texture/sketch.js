@@ -2,9 +2,9 @@
  * webgl texture example
  * video source: https://vimeo.com/90312869
  */
-var img;
-var vid;
-var theta = 0;
+let img;
+let vid;
+let theta = 0;
 
 function preload() {
   img = loadImage('assets/UV_Grid_Sm.jpg');

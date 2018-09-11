@@ -35,6 +35,8 @@
     "new-cap": 0,
     "no-caller": 2,
     "no-undef": 2,
+    "no-var": 2,
+    "prefer-const": 2,
     "no-unused-vars": ["error", { "args": "none" }],
     "no-empty": ["error", { "allowEmptyCatch": true }],
     "no-console": "off"

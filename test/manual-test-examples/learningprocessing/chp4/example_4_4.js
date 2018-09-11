@@ -7,14 +7,14 @@
 // Example 4-4: Many variables
 
 // We've got 8 variables now!
-var circleX = 0;
-var circleY = 0;
-var circleW = 50;
-var circleH = 100;
-var circleStroke = 255;
-var circleFill = 0;
-var backgroundColor = 255;
-var change = 0.5;
+let circleX = 0;
+let circleY = 0;
+let circleW = 50;
+let circleH = 100;
+let circleStroke = 255;
+let circleFill = 0;
+const backgroundColor = 255;
+const change = 0.5;
 
 // Your basic setup
 function setup() {

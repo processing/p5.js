@@ -2,9 +2,9 @@
 //in WEBGL.
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
-var hashCount = 0;
+let hashCount = 0;
 /**
  * _initBufferDefaults
  * @private
@@ -18,7 +18,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   //@TODO remove this limit on hashes in gHash
   hashCount++;
   if (hashCount > 1000) {
-    var key = Object.keys(this.gHash)[0];
+    const key = Object.keys(this.gHash)[0];
     delete this.gHash[key];
     hashCount--;
   }
@@ -28,7 +28,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-  var geometry = this.gHash[gId];
+  const geometry = this.gHash[gId];
   if (!geometry) {
     return;
   }
@@ -36,7 +36,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   delete this.gHash[gId];
   hashCount--;
 
-  var gl = this.GL;
+  const gl = this.GL;
   geometry.vertexBuffer && gl.deleteBuffer(geometry.vertexBuffer);
   geometry.normalBuffer && gl.deleteBuffer(geometry.normalBuffer);
   geometry.lineNormalBuffer && gl.deleteBuffer(geometry.lineNormalBuffer);
@@ -51,11 +51,11 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
  * @param  {p5.Geometry}  obj contains geometry data
  */
 p5.RendererGL.prototype.createBuffers = function(gId, obj) {
-  var gl = this.GL;
+  const gl = this.GL;
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
 
-  var geometry = this.gHash[gId];
+  const geometry = this.gHash[gId];
 
   geometry.numberOfItems = obj.faces.length * 3;
   geometry.lineVertexCount = obj.lineVertices.length;
@@ -195,9 +195,9 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
  * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
-  var gl = this.GL;
+  const gl = this.GL;
   this._useColorShader();
-  var geometry = this.gHash[gId];
+  const geometry = this.gHash[gId];
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
     this.curStrokeShader.bindShader();
@@ -310,7 +310,7 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleY,
   scaleZ
 ) {
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
   try {
     this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
     this.drawBuffers(gId);
@@ -336,7 +336,7 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
 };
 
 p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
-  var gl = this.GL;
+  const gl = this.GL;
 
   this._bindBuffer(
     vertexBuffer,

@@ -1,4 +1,4 @@
-var textSketch = function(p) {
+const textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(18);
@@ -24,7 +24,7 @@ var textSketch = function(p) {
   };
 };
 
-var textLineSketch = function(p) {
+const textLineSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240 * 4, 160);
     p.textSize(10);
@@ -131,7 +131,7 @@ var textLineSketch = function(p) {
   };
 };
 
-var textWrapSketch = function(p) {
+const textWrapSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240 * 4, 160);
     p.textSize(10);
@@ -310,7 +310,7 @@ var textWrapSketch = function(p) {
   };
 };
 
-var textFontSketch = function(p) {
+const textFontSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(20);
@@ -325,7 +325,7 @@ var textFontSketch = function(p) {
   };
 };
 
-var textAlignSketch = function(p) {
+const textAlignSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
@@ -344,20 +344,22 @@ var textAlignSketch = function(p) {
   };
 };
 
-var textAllAlignmentsSketch = function(p) {
-  var systemFonts = ['Arial', 'Times New Roman', 'Consolas'];
-  var font1, font2, font3;
-  var hAligns = [p.LEFT, p.CENTER, p.RIGHT];
-  var vAligns = [p.TOP, p.CENTER, p.BASELINE, p.BOTTOM];
-  var padding = 10;
-  var drawFontAlignments = function(font, textString, xOff, yOff) {
+const textAllAlignmentsSketch = function(p) {
+  const systemFonts = ['Arial', 'Times New Roman', 'Consolas'];
+  let font1, font2, font3;
+  const hAligns = [p.LEFT, p.CENTER, p.RIGHT];
+  const vAligns = [p.TOP, p.CENTER, p.BASELINE, p.BOTTOM];
+  const padding = 10;
+  const drawFontAlignments = function(font, textString, xOff, yOff) {
     p.textFont(font);
     p.textSize(20);
-    for (var h = 0; h < hAligns.length; h += 1) {
-      for (var v = 0; v < vAligns.length; v += 1) {
+    for (let h = 0; h < hAligns.length; h += 1) {
+      for (let v = 0; v < vAligns.length; v += 1) {
         // Distribute words across the screen
-        var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
-        var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
+        const x =
+          xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+        const y =
+          yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
 
         p.stroke(200);
         p.line(0, y, p.width, y);
@@ -379,7 +381,7 @@ var textAllAlignmentsSketch = function(p) {
     }
   };
   p.setup = function() {
-    var renderer = p.createCanvas(400, 600);
+    const renderer = p.createCanvas(400, 600);
     renderer.elt.style.position = 'absolute';
     renderer.elt.style.top = '0';
     renderer.elt.style.left = '0';
@@ -393,7 +395,7 @@ var textAllAlignmentsSketch = function(p) {
   };
 };
 
-var textLeadingSketch = function(p) {
+const textLeadingSketch = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
     p.textFont('Arial');
@@ -404,7 +406,7 @@ var textLeadingSketch = function(p) {
     p.textAlign(p.LEFT, p.TOP);
     p.strokeWeight(0);
 
-    var s10 = 'LEFT/TOP@10px',
+    const s10 = 'LEFT/TOP@10px',
       s20 = s10.replace('1', '2'),
       s30 = s10.replace('1', '3');
 
@@ -417,7 +419,7 @@ var textLeadingSketch = function(p) {
   };
 };
 
-var textLeadingSketch2 = function(p) {
+const textLeadingSketch2 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
     p.textFont('Arial');
@@ -428,7 +430,7 @@ var textLeadingSketch2 = function(p) {
     p.textAlign(p.LEFT, p.CENTER);
     p.strokeWeight(0);
 
-    var s10 = 'LEFT/CENTER@10px',
+    const s10 = 'LEFT/CENTER@10px',
       s20 = s10.replace('1', '2'),
       s30 = s10.replace('1', '3');
 
@@ -441,7 +443,7 @@ var textLeadingSketch2 = function(p) {
   };
 };
 
-var textLeadingSketch3 = function(p) {
+const textLeadingSketch3 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
     p.textFont('Arial');
@@ -452,7 +454,7 @@ var textLeadingSketch3 = function(p) {
     p.textAlign(p.LEFT, p.BASELINE);
     p.strokeWeight(0);
 
-    var s10 = 'LEFT/BASELINE@10px',
+    const s10 = 'LEFT/BASELINE@10px',
       s20 = s10.replace('1', '2'),
       s30 = s10.replace('1', '3');
 
@@ -465,7 +467,7 @@ var textLeadingSketch3 = function(p) {
   };
 };
 
-var textLeadingSketch4 = function(p) {
+const textLeadingSketch4 = function(p) {
   p.setup = function() {
     p.createCanvas(400, 200);
     p.textFont('Arial');
@@ -476,7 +478,7 @@ var textLeadingSketch4 = function(p) {
     p.textAlign(p.LEFT, p.BOTTOM);
     p.strokeWeight(0);
 
-    var s10 = 'LEFT/BOTTOM@10px',
+    const s10 = 'LEFT/BOTTOM@10px',
       s20 = s10.replace('1', '2'),
       s30 = s10.replace('1', '3');
 
@@ -489,7 +491,7 @@ var textLeadingSketch4 = function(p) {
   };
 };
 
-var textSizeSketch = function(p) {
+const textSizeSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
@@ -503,7 +505,7 @@ var textSizeSketch = function(p) {
   };
 };
 
-var textStyleSketch = function(p) {
+const textStyleSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
@@ -518,21 +520,21 @@ var textStyleSketch = function(p) {
   };
 };
 
-var textWidthSketch = function(p) {
+const textWidthSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
-    var s = "What's the width of this line?";
-    var textWidth = p.textWidth(s);
+    const s = "What's the width of this line?";
+    const textWidth = p.textWidth(s);
     p.text(s, 10, 30);
     p.rect(10, 30, textWidth, 2);
     p.text('width: ' + textWidth, 10, 60);
   };
 };
 
-var textOverlapSketch = function(p) {
+const textOverlapSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
@@ -549,9 +551,9 @@ var textOverlapSketch = function(p) {
   };
 };
 
-var textFlySketch = function(p) {
-  var x1 = 100;
-  var x2 = 0;
+const textFlySketch = function(p) {
+  let x1 = 100;
+  let x2 = 0;
   p.setup = function() {
     p.createCanvas(240, 160);
     p.fill(0);
@@ -572,7 +574,7 @@ var textFlySketch = function(p) {
   };
 };
 
-var textFlickerSketch = function(p) {
+const textFlickerSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(48);
@@ -586,9 +588,9 @@ var textFlickerSketch = function(p) {
   };
 };
 
-var textFadeSketch = function(p) {
-  var opacity = 0;
-  var direction = 1;
+const textFadeSketch = function(p) {
+  let opacity = 0;
+  let direction = 1;
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(72);
@@ -605,8 +607,8 @@ var textFadeSketch = function(p) {
   };
 };
 
-var textRotateSketch = function(p) {
-  var angle = 0.0;
+const textRotateSketch = function(p) {
+  let angle = 0.0;
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
@@ -625,9 +627,9 @@ var textRotateSketch = function(p) {
   };
 };
 
-var textGrowSketch = function(p) {
-  var angle = 0.0;
-  var str = 'GROW';
+const textGrowSketch = function(p) {
+  let angle = 0.0;
+  const str = 'GROW';
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
@@ -637,15 +639,15 @@ var textGrowSketch = function(p) {
   p.draw = function() {
     p.background(204);
     angle += 0.1;
-    for (var i = 0; i < str.length; i++) {
-      var c = p.sin(angle + i / p.PI);
+    for (let i = 0; i < str.length; i++) {
+      const c = p.sin(angle + i / p.PI);
       p.textSize((c + 1.0) * 40 + 10);
       p.text(str.charAt(i), i * 40 + 20, 100);
     }
   };
 };
 
-var textAvoidSketch = function(p) {
+const textAvoidSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(24);
@@ -659,8 +661,8 @@ var textAvoidSketch = function(p) {
   };
 };
 
-var textBendSketch = function(p) {
-  var str = 'Flexibility';
+const textBendSketch = function(p) {
+  const str = 'Flexibility';
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(30);
@@ -671,8 +673,8 @@ var textBendSketch = function(p) {
     p.background(204);
     p.push();
     p.translate(0, 33);
-    for (var i = 0; i < str.length; i++) {
-      var angle = p.map(p.mouseX, 0, p.width, 0, p.PI / 8);
+    for (let i = 0; i < str.length; i++) {
+      const angle = p.map(p.mouseX, 0, p.width, 0, p.PI / 8);
       p.rotate(angle);
       p.text(str[i], 20, 0);
       p.translate(p.textWidth(str[i]) * 1.5, 0);
@@ -681,10 +683,10 @@ var textBendSketch = function(p) {
   };
 };
 
-var typographyLetterSketch = function(p) {
-  var margin = 10;
-  var gap = 46;
-  var counter = 35;
+const typographyLetterSketch = function(p) {
+  const margin = 10;
+  const gap = 46;
+  let counter = 35;
   p.setup = function() {
     p.createCanvas(720, 320);
     p.background(0);
@@ -693,9 +695,9 @@ var typographyLetterSketch = function(p) {
     p.textStyle(p.BOLD);
     p.textAlign(p.CENTER, p.CENTER);
     p.translate(margin * 4, margin * 4);
-    for (var y = 0; y < p.height - gap; y += gap) {
-      for (var x = 0; x < p.width - gap; x += gap) {
-        var letter = p.char(counter);
+    for (let y = 0; y < p.height - gap; y += gap) {
+      for (let x = 0; x < p.width - gap; x += gap) {
+        const letter = p.char(counter);
         if (letter === 'P' || letter === '5') {
           p.fill(255, 204, 0);
         } else if (letter === 'J' || letter === 'S') {

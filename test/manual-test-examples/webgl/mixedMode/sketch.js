@@ -1,4 +1,4 @@
-var theta = 0;
+const theta = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -10,7 +10,7 @@ function draw() {
 
   orbitControl();
 
-  for (var i = 0; i < 500; i += 100) {
+  for (let i = 0; i < 500; i += 100) {
     push();
     translate(0, 0, i);
     normalMaterial(i * 0.1, 100, 100);

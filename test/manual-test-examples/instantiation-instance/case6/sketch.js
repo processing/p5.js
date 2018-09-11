@@ -1,9 +1,9 @@
-var sketch0 = function(p) {
-  var gray = 0;
-  var h = 10;
+const sketch0 = function(p) {
+  let gray = 0;
+  let h = 10;
 
   p.setup = function() {
-    var cnv = p.createCanvas(400, 400);
+    const cnv = p.createCanvas(400, 400);
     cnv.mousePressed(increaseH);
     p.rectMode(p.CENTER);
     p.print(
@@ -29,10 +29,10 @@ var sketch0 = function(p) {
   }
 };
 
-var myp5_0 = new p5(sketch0, 'div0');
+const myp5_0 = new p5(sketch0, 'div0');
 
-var sketch1 = function(p) {
-  var gray = 0;
+const sketch1 = function(p) {
+  let gray = 0;
 
   p.setup = function() {
     p.createCanvas(400, 400);
@@ -65,4 +65,4 @@ var sketch1 = function(p) {
   };
 };
 
-var myp5_1 = new p5(sketch1, 'div1');
+const myp5_1 = new p5(sketch1, 'div1');

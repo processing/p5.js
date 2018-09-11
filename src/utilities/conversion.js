@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Converts a string to its floating point representation. The contents of a
@@ -73,9 +73,7 @@ p5.prototype.int = function(n, radix) {
   } else if (typeof n === 'boolean') {
     return n ? 1 : 0;
   } else if (n instanceof Array) {
-    return n.map(function(n) {
-      return p5.prototype.int(n, radix);
-    });
+    return n.map(n => p5.prototype.int(n, radix));
   }
 };
 
@@ -165,7 +163,7 @@ p5.prototype.boolean = function(n) {
  * @return {Number[]}                  array of byte representation of values
  */
 p5.prototype.byte = function(n) {
-  var nn = p5.prototype.int(n, 10);
+  const nn = p5.prototype.int(n, 10);
   if (typeof nn === 'number') {
     return (nn + 128) % 256 - 128;
   } else if (nn instanceof Array) {
@@ -263,14 +261,12 @@ p5.prototype.unchar = function(n) {
 p5.prototype.hex = function(n, digits) {
   digits = digits === undefined || digits === null ? (digits = 8) : digits;
   if (n instanceof Array) {
-    return n.map(function(n) {
-      return p5.prototype.hex(n, digits);
-    });
+    return n.map(n => p5.prototype.hex(n, digits));
   } else if (typeof n === 'number') {
     if (n < 0) {
       n = 0xffffffff + n + 1;
     }
-    var hex = Number(n)
+    let hex = Number(n)
       .toString(16)
       .toUpperCase();
     while (hex.length < digits) {

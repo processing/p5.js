@@ -1,7 +1,7 @@
 'use strict';
 
 // core
-var p5 = require('./core/main');
+const p5 = require('./core/main');
 require('./core/constants');
 require('./core/environment');
 require('./core/error_helpers');

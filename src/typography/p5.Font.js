@@ -9,8 +9,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 
 /*
  * TODO:
@@ -90,23 +90,18 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
-  var p =
+  const p =
       (options && options.renderer && options.renderer._pInst) || this.parent,
     renderer = p._renderer,
     alignment = renderer._textAlign || constants.LEFT,
     baseline = renderer._textBaseline || constants.BASELINE,
-    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline),
-    result = this.cache[key];
+    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline);
+  let result = this.cache[key];
 
   if (!result) {
-    var minX,
-      minY,
-      maxX,
-      maxY,
-      pos,
-      xCoords = [],
-      yCoords = [],
-      scale = this._scale(fontSize);
+    const xCoords = [];
+    const yCoords = [];
+    const scale = this._scale(fontSize);
 
     this.font.forEachGlyph(str, x, y, fontSize, options, function(
       glyph,
@@ -114,17 +109,17 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
       gY,
       gFontSize
     ) {
-      var gm = glyph.getMetrics();
+      const gm = glyph.getMetrics();
       xCoords.push(gX + gm.xMin * scale);
       xCoords.push(gX + gm.xMax * scale);
       yCoords.push(gY + -gm.yMin * scale);
       yCoords.push(gY + -gm.yMax * scale);
     });
 
-    minX = Math.min.apply(null, xCoords);
-    minY = Math.min.apply(null, yCoords);
-    maxX = Math.max.apply(null, xCoords);
-    maxY = Math.max.apply(null, yCoords);
+    const minX = Math.min.apply(null, xCoords);
+    const minY = Math.min.apply(null, yCoords);
+    const maxX = Math.max.apply(null, xCoords);
+    const maxY = Math.max.apply(null, yCoords);
 
     result = {
       x: minX,
@@ -135,7 +130,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
-    pos = this._handleAlignment(
+    const pos = this._handleAlignment(
       renderer,
       str,
       result.x,
@@ -214,8 +209,8 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
-  var xoff = 0,
-    result = [],
+  let xoff = 0;
+  const result = [],
     glyphs = this._getGlyphs(txt);
 
   function isSpace(i) {
@@ -228,17 +223,17 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
 
   fontSize = fontSize || this.parent._renderer._textSize;
 
-  for (var i = 0; i < glyphs.length; i++) {
+  for (let i = 0; i < glyphs.length; i++) {
     if (!isSpace(i)) {
       // fix to #1817, #2069
 
-      var gpath = glyphs[i].getPath(x, y, fontSize),
+      const gpath = glyphs[i].getPath(x, y, fontSize),
         paths = splitPaths(gpath.commands);
 
-      for (var j = 0; j < paths.length; j++) {
-        var pts = pathToPoints(paths[j], options);
+      for (let j = 0; j < paths.length; j++) {
+        const pts = pathToPoints(paths[j], options);
 
-        for (var k = 0; k < pts.length; k++) {
+        for (let k = 0; k < pts.length; k++) {
           pts[k].x += xoff;
           result.push(pts[k]);
         }
@@ -279,7 +274,7 @@ p5.Font.prototype._getGlyphs = function(str) {
  * @return {Object}     the opentype path
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
-  var p =
+  const p =
       (options && options.renderer && options.renderer._pInst) || this.parent,
     renderer = p._renderer,
     pos = this._handleAlignment(renderer, line, x, y);
@@ -303,7 +298,7 @@ p5.Font.prototype._getPath = function(line, x, y, options) {
  * @return {Object}     this p5.Font object
  */
 p5.Font.prototype._getPathData = function(line, x, y, options) {
-  var decimals = 3;
+  let decimals = 3;
 
   // create path from string/position
   if (typeof line === 'string' && arguments.length > 2) {
@@ -339,7 +334,7 @@ p5.Font.prototype._getPathData = function(line, x, y, options) {
  * @return {Object}     this p5.Font object
  */
 p5.Font.prototype._getSVG = function(line, x, y, options) {
-  var decimals = 3;
+  let decimals = 3;
 
   // create path from string/position
   if (typeof line === 'string' && arguments.length > 2) {
@@ -382,8 +377,8 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  * @return {p5.Font}     this p5.Font object
  */
 p5.Font.prototype._renderPath = function(line, x, y, options) {
-  var pdata,
-    pg = (options && options.renderer) || this.parent._renderer,
+  let pdata;
+  const pg = (options && options.renderer) || this.parent._renderer,
     ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
@@ -394,8 +389,8 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   }
 
   ctx.beginPath();
-  for (var i = 0; i < pdata.length; i += 1) {
-    var cmd = pdata[i];
+  for (let i = 0; i < pdata.length; i += 1) {
+    const cmd = pdata[i];
     if (cmd.type === 'M') {
       ctx.moveTo(cmd.x, cmd.y);
     } else if (cmd.type === 'L') {
@@ -444,7 +439,7 @@ p5.Font.prototype._scale = function(fontSize) {
 };
 
 p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
-  var fontSize = renderer._textSize;
+  const fontSize = renderer._textSize;
 
   if (typeof textWidth === 'undefined') {
     textWidth = this._textWidth(line, fontSize);
@@ -477,16 +472,16 @@ p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
 // path-utils
 
 function pathToPoints(cmds, options) {
-  var opts = parseOpts(options, {
+  const opts = parseOpts(options, {
     sampleFactor: 0.1,
     simplifyThreshold: 0
   });
 
-  var len = pointAtLength(cmds, 0, 1), // total-length
+  const len = pointAtLength(cmds, 0, 1), // total-length
     t = len / (len * opts.sampleFactor),
     pts = [];
 
-  for (var i = 0; i < len; i += t) {
+  for (let i = 0; i < len; i += t) {
     pts.push(pointAtLength(cmds, i));
   }
 
@@ -501,8 +496,8 @@ function pathToPoints(cmds, options) {
 function simplify(pts, angle) {
   angle = typeof angle === 'undefined' ? 0 : angle;
 
-  var num = 0;
-  for (var i = pts.length - 1; pts.length > 3 && i >= 0; --i) {
+  let num = 0;
+  for (let i = pts.length - 1; pts.length > 3 && i >= 0; --i) {
     if (collinear(at(pts, i - 1), at(pts, i), at(pts, i + 1), angle)) {
       // Remove the middle point
       pts.splice(i % pts.length, 1);
@@ -513,9 +508,9 @@ function simplify(pts, angle) {
 }
 
 function splitPaths(cmds) {
-  var paths = [],
-    current;
-  for (var i = 0; i < cmds.length; i++) {
+  const paths = [];
+  let current;
+  for (let i = 0; i < cmds.length; i++) {
     if (cmds[i].type === 'M') {
       if (current) {
         paths.push(current);
@@ -530,7 +525,7 @@ function splitPaths(cmds) {
 }
 
 function cmdToArr(cmd) {
-  var arr = [cmd.type];
+  const arr = [cmd.type];
   if (cmd.type === 'M' || cmd.type === 'L') {
     // moveto or lineto
     arr.push(cmd.x, cmd.y);
@@ -547,7 +542,7 @@ function parseOpts(options, defaults) {
   if (typeof options !== 'object') {
     options = defaults;
   } else {
-    for (var key in defaults) {
+    for (const key in defaults) {
       if (typeof options[key] === 'undefined') {
         options[key] = defaults[key];
       }
@@ -559,7 +554,7 @@ function parseOpts(options, defaults) {
 //////////////////////// Helpers ////////////////////////////
 
 function at(v, i) {
-  var s = v.length;
+  const s = v.length;
   return v[i < 0 ? i % s + s : i % s];
 }
 
@@ -573,14 +568,14 @@ function collinear(a, b, c, thresholdAngle) {
     collinear.tmpPoint2 = [];
   }
 
-  var ab = collinear.tmpPoint1,
+  const ab = collinear.tmpPoint1,
     bc = collinear.tmpPoint2;
   ab.x = b.x - a.x;
   ab.y = b.y - a.y;
   bc.x = c.x - b.x;
   bc.y = c.y - b.y;
 
-  var dot = ab.x * bc.x + ab.y * bc.y,
+  const dot = ab.x * bc.x + ab.y * bc.y,
     magA = Math.sqrt(ab.x * ab.x + ab.y * ab.y),
     magB = Math.sqrt(bc.x * bc.x + bc.y * bc.y),
     angle = Math.acos(dot / (magA * magB));
@@ -595,7 +590,7 @@ function areaTriangle(a, b, c) {
 // Portions of below code copyright 2008 Dmitry Baranovskiy (via MIT license)
 
 function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
-  var t1 = 1 - t,
+  const t1 = 1 - t,
     t13 = Math.pow(t1, 3),
     t12 = Math.pow(t1, 2),
     t2 = t * t,
@@ -609,9 +604,9 @@ function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
     ax = t1 * p1x + t * c1x,
     ay = t1 * p1y + t * c1y,
     cx = t1 * c2x + t * p2x,
-    cy = t1 * c2y + t * p2y,
-    alpha = 90 - Math.atan2(mx - nx, my - ny) * 180 / Math.PI;
+    cy = t1 * c2y + t * p2y;
 
+  let alpha = 90 - Math.atan2(mx - nx, my - ny) * 180 / Math.PI;
   if (mx > nx || my < ny) {
     alpha += 180;
   }
@@ -655,15 +650,15 @@ function getPointAtSegmentLength(
 
 function pointAtLength(path, length, istotal) {
   path = path2curve(path);
-  var x,
+  let x,
     y,
     p,
     l,
     sp = '',
-    subpaths = {},
     point,
     len = 0;
-  for (var i = 0, ii = path.length; i < ii; i++) {
+  const subpaths = {};
+  for (let i = 0, ii = path.length; i < ii; i++) {
     p = path[i];
     if (p[0] === 'M') {
       x = +p[1];
@@ -706,8 +701,8 @@ function pointAtLength(path, length, istotal) {
 }
 
 function pathToAbsolute(pathArray) {
-  var res = [],
-    x = 0,
+  let res = [];
+  let x = 0,
     y = 0,
     mx = 0,
     my = 0,
@@ -725,14 +720,14 @@ function pathToAbsolute(pathArray) {
     res[0] = ['M', x, y];
   }
 
-  var dots,
-    crz =
-      pathArray.length === 3 &&
-      pathArray[0][0] === 'M' &&
-      pathArray[1][0].toUpperCase() === 'R' &&
-      pathArray[2][0].toUpperCase() === 'Z';
+  let dots;
+  const crz =
+    pathArray.length === 3 &&
+    pathArray[0][0] === 'M' &&
+    pathArray[1][0].toUpperCase() === 'R' &&
+    pathArray[2][0].toUpperCase() === 'Z';
 
-  for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
+  for (let r, pa, i = start, ii = pathArray.length; i < ii; i++) {
     res.push((r = []));
     pa = pathArray[i];
     if (pa[0] !== String.prototype.toUpperCase.call(pa[0])) {
@@ -755,7 +750,7 @@ function pathToAbsolute(pathArray) {
           break;
         case 'R':
           dots = [x, y].concat(pa.slice(1));
-          for (var j = 2, jj = dots.length; j < jj; j++) {
+          for (let j = 2, jj = dots.length; j < jj; j++) {
             dots[j] = +dots[j] + x;
             dots[++j] = +dots[j] + y;
           }
@@ -767,7 +762,7 @@ function pathToAbsolute(pathArray) {
           my = +pa[2] + y;
           break;
         default:
-          for (j = 1, jj = pa.length; j < jj; j++) {
+          for (let j = 1, jj = pa.length; j < jj; j++) {
             r[j] = +pa[j] + (j % 2 ? x : y);
           }
       }
@@ -777,7 +772,7 @@ function pathToAbsolute(pathArray) {
       res = res.concat(catmullRom2bezier(dots, crz));
       r = ['R'].concat(pa.slice(-2));
     } else {
-      for (var k = 0, kk = pa.length; k < kk; k++) {
+      for (let k = 0, kk = pa.length; k < kk; k++) {
         r[k] = pa[k];
       }
     }
@@ -805,18 +800,17 @@ function pathToAbsolute(pathArray) {
 }
 
 function path2curve(path, path2) {
-  var p = pathToAbsolute(path),
+  const p = pathToAbsolute(path),
     p2 = path2 && pathToAbsolute(path2);
-  var attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
-  var attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
-  var pcoms1 = []; // path commands of original path p
-  var pcoms2 = []; // path commands of original path p2
-  var ii;
+  const attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+  const attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+  const pcoms1 = []; // path commands of original path p
+  const pcoms2 = []; // path commands of original path p2
+  let ii;
 
-  var processPath = function(path, d, pcom) {
-      var nx,
-        ny,
-        tq = { T: 1, Q: 1 };
+  const processPath = function(path, d, pcom) {
+      let nx, ny;
+      const tq = { T: 1, Q: 1 };
       if (!path) {
         return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
       }
@@ -876,7 +870,7 @@ function path2curve(path, path2) {
     fixArc = function(pp, i) {
       if (pp[i].length > 7) {
         pp[i].shift();
-        var pi = pp[i];
+        const pi = pp[i];
         while (pi.length) {
           pcoms1[i] = 'A';
           if (p2) {
@@ -899,11 +893,11 @@ function path2curve(path, path2) {
       }
     };
 
-  var pfirst = ''; // temporary holder for original path command
-  var pcom = ''; // holder for previous path command of original path
+  let pfirst = ''; // temporary holder for original path command
+  let pcom = ''; // holder for previous path command of original path
 
   ii = Math.max(p.length, (p2 && p2.length) || 0);
-  for (var i = 0; i < ii; i++) {
+  for (let i = 0; i < ii; i++) {
     if (p[i]) {
       pfirst = p[i][0];
     } // save current path command
@@ -943,7 +937,7 @@ function path2curve(path, path2) {
     }
     fixM(p, p2, attrs, attrs2, i);
     fixM(p2, p, attrs2, attrs, i);
-    var seg = p[i],
+    const seg = p[i],
       seg2 = p2 && p2[i],
       seglen = seg.length,
       seg2len = p2 && seg2.length;
@@ -963,20 +957,21 @@ function path2curve(path, path2) {
 function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
   // for more information of where this Math came from visit:
   // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-  var PI = Math.PI,
+  const PI = Math.PI,
     _120 = PI * 120 / 180,
+    rad = PI / 180 * (+angle || 0),
+    rotate = function(x, y, rad) {
+      return {
+        x: x * Math.cos(rad) - y * Math.sin(rad),
+        y: x * Math.sin(rad) + y * Math.cos(rad)
+      };
+    };
+  let res = [],
     f1,
     f2,
     cx,
     cy,
-    rad = PI / 180 * (+angle || 0),
-    res = [],
-    xy,
-    rotate = function(x, y, rad) {
-      var X = x * Math.cos(rad) - y * Math.sin(rad),
-        Y = x * Math.sin(rad) + y * Math.cos(rad);
-      return { x: X, y: Y };
-    };
+    xy;
   if (!recursive) {
     xy = rotate(x1, y1, -rad);
     x1 = xy.x;
@@ -984,17 +979,17 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     xy = rotate(x2, y2, -rad);
     x2 = xy.x;
     y2 = xy.y;
-    var x = (x1 - x2) / 2,
-      y = (y1 - y2) / 2,
-      h = x * x / (rx * rx) + y * y / (ry * ry);
+    const x = (x1 - x2) / 2,
+      y = (y1 - y2) / 2;
+    let h = x * x / (rx * rx) + y * y / (ry * ry);
     if (h > 1) {
       h = Math.sqrt(h);
       rx = h * rx;
       ry = h * ry;
     }
-    var rx2 = rx * rx,
+    const rx2 = rx * rx,
       ry2 = ry * ry;
-    var k =
+    const k =
       (lac === sweep_flag ? -1 : 1) *
       Math.sqrt(
         Math.abs(
@@ -1029,9 +1024,9 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     cx = recursive[2];
     cy = recursive[3];
   }
-  var df = f2 - f1;
+  let df = f2 - f1;
   if (Math.abs(df) > _120) {
-    var f2old = f2,
+    const f2old = f2,
       x2old = x2,
       y2old = y2;
     f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
@@ -1045,7 +1040,7 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     ]);
   }
   df = f2 - f1;
-  var c1 = Math.cos(f1),
+  const c1 = Math.cos(f1),
     s1 = Math.sin(f1),
     c2 = Math.cos(f2),
     s2 = Math.sin(f2),
@@ -1065,8 +1060,8 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
       .concat(res)
       .join()
       .split(',');
-    var newres = [];
-    for (var i = 0, ii = res.length; i < ii; i++) {
+    const newres = [];
+    for (let i = 0, ii = res.length; i < ii; i++) {
       newres[i] =
         i % 2
           ? rotate(res[i - 1], res[i], rad).y
@@ -1078,9 +1073,9 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
 
 // http://schepers.cc/getting-to-the-point
 function catmullRom2bezier(crp, z) {
-  var d = [];
-  for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
-    var p = [
+  const d = [];
+  for (let i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
+    const p = [
       {
         x: +crp[i - 2],
         y: +crp[i - 1]
@@ -1148,7 +1143,7 @@ function l2c(x1, y1, x2, y2) {
 }
 
 function q2c(x1, y1, ax, ay, x2, y2) {
-  var _13 = 1 / 3,
+  const _13 = 1 / 3,
     _23 = 2 / 3;
   return [
     _13 * x1 + _23 * ax,
@@ -1165,9 +1160,9 @@ function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
     z = 1;
   }
   z = z > 1 ? 1 : z < 0 ? 0 : z;
-  var z2 = z / 2;
-  var n = 12;
-  var Tvalues = [
+  const z2 = z / 2;
+  const n = 12;
+  const Tvalues = [
     -0.1252,
     0.1252,
     -0.3678,
@@ -1182,8 +1177,8 @@ function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
     0.9816
   ];
 
-  var sum = 0;
-  var Cvalues = [
+  let sum = 0;
+  const Cvalues = [
     0.2491,
     0.2491,
     0.2335,
@@ -1198,8 +1193,8 @@ function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
     0.0472
   ];
 
-  for (var i = 0; i < n; i++) {
-    var ct = z2 * Tvalues[i] + z2,
+  for (let i = 0; i < n; i++) {
+    const ct = z2 * Tvalues[i] + z2,
       xbase = base3(ct, x1, x2, x3, x4),
       ybase = base3(ct, y1, y2, y3, y4),
       comb = xbase * xbase + ybase * ybase;
@@ -1212,12 +1207,11 @@ function getTatLen(x1, y1, x2, y2, x3, y3, x4, y4, ll) {
   if (ll < 0 || bezlen(x1, y1, x2, y2, x3, y3, x4, y4) < ll) {
     return;
   }
-  var t = 1,
-    step = t / 2,
-    t2 = t - step,
-    l,
+  const t = 1,
     e = 0.01;
-  l = bezlen(x1, y1, x2, y2, x3, y3, x4, y4, t2);
+  let step = t / 2,
+    t2 = t - step,
+    l = bezlen(x1, y1, x2, y2, x3, y3, x4, y4, t2);
   while (Math.abs(l - ll) > e) {
     step /= 2;
     t2 += (l < ll ? 1 : -1) * step;
@@ -1227,15 +1221,15 @@ function getTatLen(x1, y1, x2, y2, x3, y3, x4, y4, ll) {
 }
 
 function base3(t, p1, p2, p3, p4) {
-  var t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
+  const t1 = -3 * p1 + 9 * p2 - 9 * p3 + 3 * p4,
     t2 = t * t1 + 6 * p1 - 12 * p2 + 6 * p3;
   return t * t2 - 3 * p1 + 3 * p2;
 }
 
 function cacheKey() {
-  var hash = '';
-  for (var i = arguments.length - 1; i >= 0; --i) {
-    var v = arguments[i];
+  let hash = '';
+  for (let i = arguments.length - 1; i >= 0; --i) {
+    const v = arguments[i];
     hash += v === Object(v) ? JSON.stringify(v) : v;
   }
   return hash;

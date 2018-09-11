@@ -7,7 +7,7 @@
 // Example 6-8: Lines one at a time
 
 // No for loop here. Instead, a global variable.
-var y = 0;
+let y = 0;
 
 function setup() {
   createCanvas(200, 200);

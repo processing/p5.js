@@ -63,7 +63,7 @@
  */
 
 function getYuidocOptions() {
-  var BASE_YUIDOC_OPTIONS = {
+  const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
     description: '<%= pkg.description %>',
     version: '<%= pkg.version %>',
@@ -79,7 +79,7 @@ function getYuidocOptions() {
 
   // note dev is no longer used, prod is used to build both testing and production ready docs
 
-  var o = {
+  const o = {
     prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
     dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
   };
@@ -92,20 +92,20 @@ function getYuidocOptions() {
 
 module.exports = function(grunt) {
   // Specify what reporter we'd like to use for Mocha
-  var quietReport = process.env.TRAVIS || grunt.option('quiet');
-  var reporter = quietReport ? 'spec' : 'Nyan';
+  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
-  var karmaTasks = require('./grunt-karma.js');
+  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
-  var keepalive = false;
+  let keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
   }
 
-  var mochaConfig = {
+  const mochaConfig = {
     yui: {
       options: {
         urls: ['http://localhost:9001/test/test-reference.html'],
@@ -132,7 +132,7 @@ module.exports = function(grunt) {
     }
   };
 
-  let gruntConfig = {
+  const gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
       source: {
         options: {
           parserOptions: {
-            ecmaVersion: 5
+            ecmaVersion: 6
           }
         },
         src: ['src/**/*.js', 'lib/addons/p5.dom.js']
@@ -180,10 +180,7 @@ module.exports = function(grunt) {
       },
       examples: {
         options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
-          }
+          rules: {}
         },
         src: ['test/manual-test-examples/**/*.js']
       }
@@ -191,6 +188,9 @@ module.exports = function(grunt) {
 
     'eslint-samples': {
       options: {
+        rules: {
+          'no-var': 0
+        },
         parserOptions: {
           ecmaVersion: 5
         },
@@ -433,7 +433,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-uglify-es');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');

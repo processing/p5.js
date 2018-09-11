@@ -1,4 +1,4 @@
-var r, g, b, y;
+let r, g, b, y;
 
 function preload() {
   loadJSON('http://api.openweathermap.org/data/2.5/weather?q=London,uk', null);

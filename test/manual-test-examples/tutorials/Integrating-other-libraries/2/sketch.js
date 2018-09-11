@@ -6,8 +6,8 @@
 // http://buzz.jaysalvat.com/documentation/sound/
 
 // Initializing a variable using the third-party library buzz object
-var mySound = new buzz.sound('rhodes_loop.wav');
-var myImage;
+const mySound = new buzz.sound('rhodes_loop.wav');
+let myImage;
 
 function setup() {
   createCanvas(300, 300);

@@ -7,9 +7,9 @@
 // Example 5-1: Conditionals
 
 // Variables
-var r = 150;
-var g = 0;
-var b = 0;
+let r = 150;
+const g = 0;
+const b = 0;
 
 function setup() {
   createCanvas(200, 200);

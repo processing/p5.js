@@ -1,5 +1,5 @@
 suite('Structure', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -34,8 +34,8 @@ suite('Structure', function() {
     });
     test('matches draw calls', function() {
       return new Promise(function(resolve, reject) {
-        var frames = myp5.frameCount;
-        var start = myp5.frameCount;
+        let frames = myp5.frameCount;
+        const start = myp5.frameCount;
         myp5.draw = function() {
           try {
             frames += 1;
@@ -70,10 +70,10 @@ suite('Structure', function() {
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
       return new Promise(function(resolve, reject) {
-        var c0 = myp5.frameCount;
+        const c0 = myp5.frameCount;
         myp5.noLoop();
         myp5.draw = function() {
-          var c1 = myp5.frameCount;
+          const c1 = myp5.frameCount;
           // Allow one final draw to run
           if (c1 > c0 + 1) {
             reject('Entered draw');
@@ -85,10 +85,10 @@ suite('Structure', function() {
 
     test('loop should restart', function() {
       return new Promise(function(resolve, reject) {
-        var c0 = myp5.frameCount;
+        const c0 = myp5.frameCount;
         myp5.noLoop();
         myp5.draw = function() {
-          var c1 = myp5.frameCount;
+          const c1 = myp5.frameCount;
           // Allow one final draw to run
           if (c1 > c0 + 1) {
             reject('Entered draw');
@@ -109,9 +109,9 @@ suite('Structure', function() {
 
   suite('p5.prototype.push and p5.prototype.pop', function() {
     function getRenderState() {
-      var state = {};
-      for (var key in myp5._renderer) {
-        var value = myp5._renderer[key];
+      const state = {};
+      for (const key in myp5._renderer) {
+        const value = myp5._renderer[key];
         if (
           typeof value !== 'function' &&
           key !== '_cachedFillStyle' &&
@@ -124,7 +124,7 @@ suite('Structure', function() {
     }
 
     function assertCanPreserveRenderState(work) {
-      var originalState = getRenderState();
+      const originalState = getRenderState();
       myp5.push();
       work();
       myp5.pop();
@@ -259,7 +259,7 @@ suite('Structure', function() {
   });
 
   suite('p5.prototype.redraw', function() {
-    var iframe;
+    let iframe;
 
     teardown(function() {
       if (iframe) {
@@ -307,7 +307,7 @@ suite('Structure', function() {
         );
         iframe.elt.contentWindow.afterSetup = resolve;
       }).then(function() {
-        var win = iframe.elt.contentWindow;
+        const win = iframe.elt.contentWindow;
         assert.strictEqual(win.globalDraws, 1);
       });
     });

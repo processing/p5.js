@@ -6,10 +6,10 @@
  *  as well as time, which should be used to schedule playback with precision.
  */
 
-var osc, env; // used by playNote
-var noise, noiseEnv; // used by playSnare
-var part; // a part we will loop
-var currentBassNote = 47;
+let osc, env; // used by playNote
+let noise, noiseEnv; // used by playSnare
+let part; // a part we will loop
+let currentBassNote = 47;
 
 function setup() {
   // prepare the osc and env used by playNote()
@@ -52,6 +52,6 @@ function playSnare(time, params) {
 function draw() {
   background(255);
   fill(255, 0, 0);
-  var noteHeight = map(currentBassNote, 40, 50, height, 0);
+  const noteHeight = map(currentBassNote, 40, 50, height, 0);
   ellipse(width / 2, noteHeight, 30, 30);
 }

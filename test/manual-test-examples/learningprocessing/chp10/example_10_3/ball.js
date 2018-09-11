@@ -50,7 +50,7 @@ Ball.prototype.display = function() {
 // If distance is less than the sum of radii the circles touch
 Ball.prototype.intersect = function(b) {
   // Objects can be passed into functions as arguments too!
-  var distance = dist(this.x, this.y, b.x, b.y); // Calculate distance
+  const distance = dist(this.x, this.y, b.x, b.y); // Calculate distance
 
   // Compare distance to sum of radii
   if (distance < this.r + b.r) {

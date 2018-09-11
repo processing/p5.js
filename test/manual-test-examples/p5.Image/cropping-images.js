@@ -1,4 +1,4 @@
-var spriteSheet;
+let spriteSheet;
 
 function setup() {
   createCanvas(600, 600);
@@ -24,8 +24,8 @@ function setup() {
     image(spriteSheet, 0, 75, 53, 53, 0, spriteSheet.height + 10, 125, 125);
 
     // Three coins in a row
-    var x = 70;
-    for (var i = 0; i < 3; i++) {
+    let x = 70;
+    for (let i = 0; i < 3; i++) {
       image(
         spriteSheet,
         67,

@@ -4,7 +4,7 @@
  *  Display a random line every time the mouse is clicked.
  */
 
-var result;
+let result;
 
 function preload() {
   result = loadStrings('tenderbuttons_excerpt.txt');
@@ -21,8 +21,8 @@ function setup() {
 
 function pickLine() {
   background(255);
-  var randomLineNumber = floor(random(0, result.length - 1));
-  var randomLine = result[randomLineNumber];
+  const randomLineNumber = floor(random(0, result.length - 1));
+  const randomLine = result[randomLineNumber];
   text(randomLine, width / 2, height / 2);
 
   print(

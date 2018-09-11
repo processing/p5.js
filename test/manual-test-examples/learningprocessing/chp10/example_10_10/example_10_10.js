@@ -6,10 +6,10 @@
 
 // Example 10-10: The raindrop catching game
 
-var catcher; // One catcher object
-var timer; // One timer object
-var drops = []; // An array of drop objects
-var totalDrops = 0; // totalDrops
+let catcher; // One catcher object
+let timer; // One timer object
+const drops = []; // An array of drop objects
+let totalDrops = 0; // totalDrops
 
 function setup() {
   createCanvas(400, 400);
@@ -42,7 +42,7 @@ function draw() {
   }
 
   // Move and display all drops
-  for (var i = 0; i < totalDrops; i++) {
+  for (let i = 0; i < totalDrops; i++) {
     drops[i].move();
     drops[i].display();
     if (catcher.intersect(drops[i])) {

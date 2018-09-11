@@ -13,8 +13,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
+const p5 = require('../core/main');
+const Filters = require('./filters');
 
 /*
  * Class methods
@@ -165,8 +165,8 @@ p5.Image = function(width, height) {
    * at (x, y):
    * ```javascript
    * var d = pixelDensity();
-   * for (var i = 0; i < d; i++) {
-   *   for (var j = 0; j < d; j++) {
+   *   for (var i = 0; i < d; i++) {
+   *     for (var j = 0; j < d; j++) {
    *     // loop over
    *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
    *     pixels[idx] = r;
@@ -449,7 +449,7 @@ p5.Image.prototype.resize = function(width, height) {
   width = Math.floor(width);
   height = Math.floor(height);
 
-  var tempCanvas = document.createElement('canvas');
+  const tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
   // prettier-ignore
@@ -533,7 +533,7 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dh
  */
 p5.Image.prototype.copy = function() {
-  var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
   if (arguments.length === 9) {
     srcImage = arguments[0];
     sx = arguments[1];
@@ -599,14 +599,14 @@ p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
     p5Image = this;
   }
-  var currBlend = this.drawingContext.globalCompositeOperation;
+  const currBlend = this.drawingContext.globalCompositeOperation;
 
-  var scaleFactor = 1;
+  let scaleFactor = 1;
   if (p5Image instanceof p5.Renderer) {
     scaleFactor = p5Image._pInst._pixelDensity;
   }
 
-  var copyArgs = [
+  const copyArgs = [
     p5Image,
     0,
     0,

@@ -6,7 +6,7 @@
 
 // Example 6-4: Infinite loop. Don't do this!
 
-var x = 0;
+let x = 0;
 
 function setup() {
   while (x < 10) {

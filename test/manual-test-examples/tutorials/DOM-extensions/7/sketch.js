@@ -1,9 +1,9 @@
 // Using find.
 
 // We define the canvas variables outside of setup so we can access them from anywhere in the sketch.
-var canvas0;
-var canvas1;
-var canvas2;
+let canvas0;
+let canvas1;
+let canvas2;
 
 function setup() {
   // We are still calling createCanvas like before, but now we are storing a pointer to each one.
@@ -52,8 +52,8 @@ function drawRectCanvas() {
 
 // On key press, hide all elements with class donkey.
 function keyPressed() {
-  var donkeys = find('donkey');
-  for (var i = 0; i < donkeys.length; i++) {
+  const donkeys = find('donkey');
+  for (let i = 0; i < donkeys.length; i++) {
     donkeys[i].hide();
   }
 }

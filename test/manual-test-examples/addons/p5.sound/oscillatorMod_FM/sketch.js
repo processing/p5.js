@@ -25,9 +25,9 @@
  *  is scaled to a range between 100 and 300 using .mult and .add
  */
 
-var carrier; // this is the oscillator we will hear
-var modulator; // this oscillator will modulate the amplitude of the carrier
-var fft; // we'll visualize the waveform
+let carrier; // this is the oscillator we will hear
+let modulator; // this oscillator will modulate the amplitude of the carrier
+let fft; // we'll visualize the waveform
 
 function setup() {
   createCanvas(800, 400);
@@ -55,12 +55,12 @@ function draw() {
   background(30);
 
   // map mouseY to moodulator freq between 0 and 20hz
-  var modFreq = map(mouseY, 0, height, 20, 0);
+  const modFreq = map(mouseY, 0, height, 20, 0);
   modulator.freq(modFreq);
 
   // change the original amplitude of the sawOsc, before it's scaled.
   // negative amp reverses the waveform, and sounds percussive
-  var modAmp = map(mouseX, 0, width, -1, 1);
+  const modAmp = map(mouseX, 0, width, -1, 1);
   modulator.amp(modAmp);
 
   // analyze the waveform
@@ -70,9 +70,9 @@ function draw() {
   stroke(255);
   strokeWeight(10);
   beginShape();
-  for (var i = 0; i < waveform.length; i++) {
-    var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, -height / 2, height / 2);
+  for (let i = 0; i < waveform.length; i++) {
+    const x = map(i, 0, waveform.length, 0, width);
+    const y = map(waveform[i], -1, 1, -height / 2, height / 2);
     vertex(x, y + height / 2);
   }
   endShape();

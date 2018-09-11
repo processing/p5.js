@@ -1,4 +1,4 @@
-var canvas, img, slider, button, input, result, vid;
+let canvas, img, slider, button, input, result, vid;
 
 function setup() {
   canvas = createCanvas(200, 200);

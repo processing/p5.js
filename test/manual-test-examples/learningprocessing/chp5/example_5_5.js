@@ -5,12 +5,12 @@
 // Ported by Lauren McCarthy
 
 // Example 5-5: Button as switch
-var button = false;
+let button = false;
 
-var x = 50;
-var y = 50;
-var w = 100;
-var h = 75;
+const x = 50;
+const y = 50;
+const w = 100;
+const h = 75;
 
 function setup() {
   createCanvas(200, 200);

@@ -1,4 +1,4 @@
-var dropdown;
+let dropdown;
 
 function setup() {
   dropdown = createSelect(); // or create dropdown?
@@ -22,7 +22,7 @@ function draw() {
 }
 
 function mySelectEvent() {
-  var selected = this.selected();
+  const selected = this.selected();
   if (selected === 'pear') {
     console.log("it's a pear!");
   }

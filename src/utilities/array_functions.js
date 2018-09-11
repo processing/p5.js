@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Adds a value to the end of an array. Extends the length of
@@ -81,8 +81,8 @@ p5.prototype.append = function(array, value) {
  */
 p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
   // the index to begin splicing from dst array
-  var start;
-  var end;
+  let start;
+  let end;
 
   if (typeof length !== 'undefined') {
     end = Math.min(length, src.length);
@@ -214,10 +214,10 @@ p5.prototype.shorten = function(list) {
  * </code></div>
  */
 p5.prototype.shuffle = function(arr, bool) {
-  var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+  const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
   arr = bool || isView ? arr : arr.slice();
 
-  var rnd,
+  let rnd,
     tmp,
     idx = arr.length;
   while (idx > 1) {
@@ -267,14 +267,12 @@ p5.prototype.shuffle = function(arr, bool) {
  * </code></div>
  */
 p5.prototype.sort = function(list, count) {
-  var arr = count ? list.slice(0, Math.min(count, list.length)) : list;
-  var rest = count ? list.slice(Math.min(count, list.length)) : [];
+  let arr = count ? list.slice(0, Math.min(count, list.length)) : list;
+  const rest = count ? list.slice(Math.min(count, list.length)) : [];
   if (typeof arr[0] === 'string') {
     arr = arr.sort();
   } else {
-    arr = arr.sort(function(a, b) {
-      return a - b;
-    });
+    arr = arr.sort((a, b) => a - b);
   }
   return arr.concat(rest);
 };

@@ -1,4 +1,4 @@
-var im1;
+let im1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -7,20 +7,20 @@ function setup() {
   im1.background(0, 0, 0, 0);
   im1.strokeWeight(0.25);
   im1.colorMode(HSB);
-  for (var i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     drawLine(im1);
   }
 }
 
 function drawLine(im) {
   im.stroke((millis() / 40) % 255, 255, 255);
-  var w = im.width;
-  var h = im.height;
-  var x1 = random(0, w);
-  var y1 = random(0, h);
+  const w = im.width;
+  const h = im.height;
+  const x1 = random(0, w);
+  const y1 = random(0, h);
 
-  var x2 = random(-w / 2, w * 3 / 2);
-  var y2 = random(-h / 2, h * 3 / 2);
+  const x2 = random(-w / 2, w * 3 / 2);
+  const y2 = random(-h / 2, h * 3 / 2);
 
   im.line(x1, y1, x2, y2);
   if (x2 < 0) {

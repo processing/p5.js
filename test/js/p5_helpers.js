@@ -1,6 +1,6 @@
 function promisedSketch(sketch_fn) {
-  var myInstance;
-  var promise = new Promise(function(resolve, reject) {
+  let myInstance;
+  const promise = new Promise(function(resolve, reject) {
     myInstance = new p5(function(sketch) {
       return sketch_fn(sketch, resolve, reject);
     });
@@ -13,7 +13,7 @@ function promisedSketch(sketch_fn) {
 }
 
 function testSketchWithPromise(name, sketch_fn) {
-  var test_fn = function() {
+  const test_fn = function() {
     return promisedSketch(sketch_fn);
   };
   test_fn.toString = function() {
@@ -22,13 +22,13 @@ function testSketchWithPromise(name, sketch_fn) {
   return test(name, test_fn);
 }
 
-var P5_SCRIPT_URL = '../../lib/p5.js';
-var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
+const P5_SCRIPT_URL = '../../lib/p5.js';
+const P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
 
 function createP5Iframe(html) {
   html = html || P5_SCRIPT_TAG;
 
-  var elt = document.createElement('iframe');
+  const elt = document.createElement('iframe');
 
   document.body.appendChild(elt);
   elt.setAttribute('style', 'visibility: hidden');

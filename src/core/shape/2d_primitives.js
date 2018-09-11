@@ -8,9 +8,9 @@
 
 'use strict';
 
-var p5 = require('../main');
-var constants = require('../constants');
-var canvas = require('../helpers');
+const p5 = require('../main');
+const constants = require('../constants');
+const canvas = require('../helpers');
 require('../error_helpers');
 
 /**
@@ -140,7 +140,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   w = Math.abs(w);
   h = Math.abs(h);
 
-  var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, detail);
 
   return this;
@@ -200,7 +200,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
     h = Math.abs(h);
   }
 
-  var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
   return this;
@@ -414,17 +414,17 @@ p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    var vals = canvas.modeAdjust(
+    const vals = canvas.modeAdjust(
       arguments[0],
       arguments[1],
       arguments[2],
       arguments[3],
       this._renderer._rectMode
     );
-    var args = [vals.x, vals.y, vals.w, vals.h];
+    const args = [vals.x, vals.y, vals.w, vals.h];
     // append the additional arguments (either cornder radii, or
     // segment details) to the argument list
-    for (var i = 4; i < arguments.length; i++) {
+    for (let i = 4; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
     this._renderer.rect(args);

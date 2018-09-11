@@ -1,6 +1,6 @@
-var playing = false;
-var beat, pVol, pTime, button, volumeSlider;
-var amp;
+let playing = false;
+let beat, pVol, pTime, button, volumeSlider;
+let amp;
 
 function setup() {
   createCanvas(100, 100);
@@ -21,14 +21,14 @@ function setup() {
 function draw() {
   background(200);
 
-  var volume = volumeSlider.value() / 100;
+  const volume = volumeSlider.value() / 100;
   beat.volume(volume);
 
   pVol.html('Volume: ' + volume);
   pTime.html('Current Time: ' + beat.time());
 
-  var level = amp.getLevel();
-  var siz = map(level, 0, 0.5, 10, 50);
+  const level = amp.getLevel();
+  const siz = map(level, 0, 0.5, 10, 50);
   ellipse(width / 2, height / 2, siz, siz);
 }
 

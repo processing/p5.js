@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Sets the current alignment for drawing text. Accepts two

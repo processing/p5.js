@@ -1,5 +1,5 @@
-var image1;
-var image2;
+let image1;
+let image2;
 
 function setup() {
   frameRate(1);
@@ -9,7 +9,7 @@ function setup() {
   //Load an image and then clone it and
   //apply filters
   loadImage('cat.jpg', function(img) {
-    var clone;
+    let clone;
     //Original
     image(img, 10, 10, 100, 100);
 
@@ -45,11 +45,10 @@ function setup() {
   //Load an image with an alpha channel that
   //we will then make opaque
   loadImage('cat-with-alpha.png', function(img) {
-    var clone;
     //Original
     image(img, 10, 240, 100, 100);
 
-    clone = img.get();
+    const clone = img.get();
     clone.filter('opaque', 0.5);
     image(clone, 120, 240, 100, 100);
   });

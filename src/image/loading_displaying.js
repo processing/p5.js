@@ -7,10 +7,10 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
-var canvas = require('../core/helpers');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const Filters = require('./filters');
+const canvas = require('../core/helpers');
+const constants = require('../core/constants');
 
 require('../core/error_helpers');
 
@@ -65,10 +65,10 @@ require('../core/error_helpers');
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
-  var img = new Image();
-  var pImg = new p5.Image(1, 1, this);
+  const img = new Image();
+  const pImg = new p5.Image(1, 1, this);
 
-  var self = this;
+  const self = this;
   img.onload = function() {
     pImg.width = pImg.canvas.width = img.width;
     pImg.height = pImg.canvas.height = img.height;
@@ -244,8 +244,8 @@ p5.prototype.image = function(
 
   p5._validateParameters('image', arguments);
 
-  var defW = img.width;
-  var defH = img.height;
+  let defW = img.width;
+  let defH = img.height;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -253,14 +253,14 @@ p5.prototype.image = function(
     defH = img.elt.videoHeight;
   }
 
-  var _dx = dx;
-  var _dy = dy;
-  var _dw = dWidth || defW;
-  var _dh = dHeight || defH;
-  var _sx = sx || 0;
-  var _sy = sy || 0;
-  var _sw = sWidth || defW;
-  var _sh = sHeight || defH;
+  const _dx = dx;
+  const _dy = dy;
+  const _dw = dWidth || defW;
+  const _dh = dHeight || defH;
+  let _sx = sx || 0;
+  let _sy = sy || 0;
+  let _sw = sWidth || defW;
+  let _sh = sHeight || defH;
 
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
@@ -268,7 +268,7 @@ p5.prototype.image = function(
   // This part needs cleanup and unit tests
   // see issues https://github.com/processing/p5.js/issues/1741
   // and https://github.com/processing/p5.js/issues/1673
-  var pd = 1;
+  let pd = 1;
 
   if (img.elt && !img.canvas && img.elt.style.width) {
     //if img is video and img.elt.size() has been used and
@@ -287,7 +287,7 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
   // tint the image if there is a tint
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
@@ -389,7 +389,7 @@ p5.prototype.image = function(
  */
 p5.prototype.tint = function() {
   p5._validateParameters('tint', arguments);
-  var c = this.color.apply(this, arguments);
+  const c = this.color.apply(this, arguments);
   this._renderer._tint = c.levels;
 };
 
@@ -435,19 +435,19 @@ p5.prototype._getTintedImageCanvas = function(img) {
   if (!img.canvas) {
     return img;
   }
-  var pixels = Filters._toPixels(img.canvas);
-  var tmpCanvas = document.createElement('canvas');
+  const pixels = Filters._toPixels(img.canvas);
+  const tmpCanvas = document.createElement('canvas');
   tmpCanvas.width = img.canvas.width;
   tmpCanvas.height = img.canvas.height;
-  var tmpCtx = tmpCanvas.getContext('2d');
-  var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  var newPixels = id.data;
+  const tmpCtx = tmpCanvas.getContext('2d');
+  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+  const newPixels = id.data;
 
-  for (var i = 0; i < pixels.length; i += 4) {
-    var r = pixels[i];
-    var g = pixels[i + 1];
-    var b = pixels[i + 2];
-    var a = pixels[i + 3];
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    const a = pixels[i + 3];
 
     newPixels[i] = r * this._renderer._tint[0] / 255;
     newPixels[i + 1] = g * this._renderer._tint[1] / 255;

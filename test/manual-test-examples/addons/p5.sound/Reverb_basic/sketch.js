@@ -2,7 +2,7 @@
  *  Example: Reverb
  */
 
-var sound, reverb;
+let sound, reverb;
 
 function preload() {
   soundFormats('mp3', 'ogg');

@@ -1,6 +1,6 @@
-var marked = require('marked');
+const marked = require('marked');
 
-var DocumentedMethod = require('./documented-method');
+const DocumentedMethod = require('./documented-method');
 
 function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
@@ -31,26 +31,26 @@ function smokeTestMethods(data) {
 }
 
 function mergeOverloadedMethods(data) {
-  var methodsByFullName = {};
-  var paramsForOverloadedMethods = {};
+  const methodsByFullName = {};
+  const paramsForOverloadedMethods = {};
 
-  var consts = (data.consts = {});
+  const consts = (data.consts = {});
 
   data.classitems = data.classitems.filter(function(classitem) {
     if (classitem.access === 'private') {
       return false;
     }
 
-    var itemClass = data.classes[classitem.class];
+    const itemClass = data.classes[classitem.class];
     if (!itemClass || itemClass.private) {
       return false;
     }
 
-    var methodConsts = {};
+    const methodConsts = {};
 
-    var fullName, method;
+    let fullName, method;
 
-    var assertEqual = function(a, b, msg) {
+    const assertEqual = function(a, b, msg) {
       if (a !== b) {
         throw new Error(
           'for ' +
@@ -70,17 +70,17 @@ function mergeOverloadedMethods(data) {
       }
     };
 
-    var extractConsts = function(param) {
+    const extractConsts = function(param) {
       if (!param.type) {
         console.log(param);
       }
       if (param.type.split('|').indexOf('Constant') >= 0) {
-        var match;
+        let match;
         if (classitem.name === 'endShape' && param.name === 'mode') {
           match = 'CLOSE';
         } else {
-          var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
-          var execResult = constantRe.exec(param.description);
+          const constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+          const execResult = constantRe.exec(param.description);
           match = execResult && execResult[0];
           if (!match) {
             throw new Error(
@@ -97,8 +97,8 @@ function mergeOverloadedMethods(data) {
           }
         }
         if (match) {
-          var reConst = /[A-Z0-9_]+/g;
-          var matchConst;
+          const reConst = /[A-Z0-9_]+/g;
+          let matchConst;
           while ((matchConst = reConst.exec(match)) !== null) {
             methodConsts[matchConst] = true;
           }
@@ -106,17 +106,15 @@ function mergeOverloadedMethods(data) {
       }
     };
 
-    var processOverloadedParams = function(params) {
-      var paramNames;
-
+    const processOverloadedParams = function(params) {
       if (!(fullName in paramsForOverloadedMethods)) {
         paramsForOverloadedMethods[fullName] = {};
       }
 
-      paramNames = paramsForOverloadedMethods[fullName];
+      const paramNames = paramsForOverloadedMethods[fullName];
 
       params.forEach(function(param) {
-        var origParam = paramNames[param.name];
+        const origParam = paramNames[param.name];
 
         if (origParam) {
           assertEqual(
@@ -175,8 +173,8 @@ function mergeOverloadedMethods(data) {
           'additional overloads should have no description'
         );
 
-        var makeOverload = function(method) {
-          var overload = {
+        const makeOverload = function(method) {
+          const overload = {
             line: method.line,
             params: processOverloadedParams(method.params || [])
           };

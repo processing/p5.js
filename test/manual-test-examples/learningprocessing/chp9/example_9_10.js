@@ -7,13 +7,13 @@
 // Example 9-10: Interactive stripes
 
 // An array of stripes
-var stripes = [];
+const stripes = [];
 
 function setup() {
   createCanvas(200, 200);
 
   // Initialize all Stripe objects
-  for (var i = 0; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     stripes[i] = new Stripe();
   }
 }
@@ -21,7 +21,7 @@ function setup() {
 function draw() {
   background(100);
   // Move and display all Stripe objects
-  for (var i = 0; i < stripes.length; i++) {
+  for (let i = 0; i < stripes.length; i++) {
     // Check if mouse is over the Stripe
     stripes[i].rollover(mouseX, mouseY); // Passing the mouse coordinates into an object.
     stripes[i].move();

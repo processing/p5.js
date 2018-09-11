@@ -1,8 +1,8 @@
 // CASE 1: no node specified, createCanvas called
 // Canvas is generated and appended to body.
 
-var sketch = function(p) {
-  var gray = 0;
+const sketch = function(p) {
+  let gray = 0;
 
   p.setup = function() {
     p.createCanvas(400, 400);
@@ -18,4 +18,4 @@ var sketch = function(p) {
   };
 };
 
-var myp5 = new p5(sketch);
+const myp5 = new p5(sketch);

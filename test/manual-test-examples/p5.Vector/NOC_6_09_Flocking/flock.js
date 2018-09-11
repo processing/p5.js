@@ -11,7 +11,7 @@ function Flock() {
 }
 
 Flock.prototype.run = function() {
-  for (var i = 0; i < this.boids.length; i++) {
+  for (let i = 0; i < this.boids.length; i++) {
     this.boids[i].run(this.boids); // Passing the entire list of boids to each boid individually
   }
 };

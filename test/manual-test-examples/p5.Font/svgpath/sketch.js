@@ -1,5 +1,5 @@
 function setup() {
-  var canvas = createCanvas(200, 150).canvas;
+  const canvas = createCanvas(200, 150).canvas;
 
   loadFont('../SourceSansPro-Regular.otf', function(font) {
     // render text with opentype font
@@ -8,12 +8,12 @@ function setup() {
     text('Text Path', 190, 60);
 
     // converted path to canvas Path2D then render
-    var pathStr = font._getPathData('Path Data', 190, 90);
-    var cPath = new Path2D(pathStr);
+    const pathStr = font._getPathData('Path Data', 190, 90);
+    const cPath = new Path2D(pathStr);
     canvas.getContext('2d').fill(cPath);
 
     // not displayed, just print <path> tag in console
-    var pathTag = font._getSVG('SVG', 190, 120, {
+    const pathTag = font._getSVG('SVG', 190, 120, {
       decimals: 4,
       fill: 'red',
       strokeWidth: 2,
@@ -23,9 +23,9 @@ function setup() {
 
     // hit detection for canvas Path2D (cursor changes)
     canvas.onmousemove = function(e) {
-      var context = e.target.getContext('2d');
-      var coordX = e.offsetX;
-      var coordY = e.offsetY;
+      const context = e.target.getContext('2d');
+      const coordX = e.offsetX;
+      const coordY = e.offsetY;
 
       // Test the square for clicks
       if (context.isPointInPath(cPath, coordX, coordY)) {

@@ -1,5 +1,5 @@
 suite('Core', function() {
-  var node;
+  let node;
 
   setup(function() {
     node = document.createElement('div');
@@ -18,8 +18,8 @@ suite('Core', function() {
     // readyState is "loading" and we can verify that the code is doing the
     // right thing during page load.
 
-    var myp5 = new p5(function() {}, null, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {}, null, true);
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
@@ -27,8 +27,8 @@ suite('Core', function() {
   });
 
   suite('new p5(sketch, null, false)', function() {
-    var myp5 = new p5(function() {}, null, false);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {}, null, false);
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
@@ -37,8 +37,8 @@ suite('Core', function() {
   });
 
   suite('new p5(sketch, node, true)', function() {
-    var myp5 = new p5(function() {}, node, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {}, node, true);
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
@@ -46,8 +46,8 @@ suite('Core', function() {
   });
 
   suite('new p5(sketch, node)', function() {
-    var myp5 = new p5(function() {}, node);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {}, node);
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
@@ -56,8 +56,8 @@ suite('Core', function() {
   });
 
   suite('new p5(sketch, true)', function() {
-    var myp5 = new p5(function() {}, true);
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {}, true);
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
@@ -65,8 +65,8 @@ suite('Core', function() {
   });
 
   suite('new p5(sketch)', function() {
-    var myp5 = new p5(function() {});
-    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+    const myp5 = new p5(function() {});
+    const isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
@@ -96,8 +96,8 @@ suite('Core', function() {
 
   suite('p5.prototype.registerMethod', function() {
     test('should register and call "init" methods', function() {
-      var originalInit = p5.prototype._registeredMethods.init;
-      var myp5, myInitCalled;
+      const originalInit = p5.prototype._registeredMethods.init;
+      let myp5, myInitCalled;
 
       p5.prototype._registeredMethods.init = [];
 
@@ -127,7 +127,7 @@ suite('Core', function() {
   });
 
   suite('new p5() / global mode', function() {
-    var iframe;
+    let iframe;
 
     teardown(function() {
       if (iframe) {
@@ -186,7 +186,7 @@ suite('Core', function() {
         );
         iframe.elt.contentWindow.onDoneLoading = resolve;
       }).then(function() {
-        var win = iframe.elt.contentWindow;
+        const win = iframe.elt.contentWindow;
         assert.equal(typeof win.myURL, 'string');
         assert.strictEqual(win.setupCalled, true);
         assert.strictEqual(win.originalP5Instance, win.p5.instance);
@@ -195,9 +195,9 @@ suite('Core', function() {
   });
 
   suite('p5.prototype._createFriendlyGlobalFunctionBinder', function() {
-    var noop = function() {};
-    var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
-    var logMsg, globalObject, bind, iframe;
+    const noop = function() {};
+    const createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
+    let logMsg, globalObject, bind, iframe;
 
     teardown(function() {
       if (iframe) {
@@ -323,7 +323,7 @@ suite('Core', function() {
         );
         iframe.elt.contentWindow.afterSetup = resolve;
       }).then(function() {
-        var win = iframe.elt.contentWindow;
+        const win = iframe.elt.contentWindow;
         assert.strictEqual(win.globalPreloads, 1);
       });
     });

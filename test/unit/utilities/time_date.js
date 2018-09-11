@@ -1,5 +1,5 @@
 suite('time and date', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -14,7 +14,7 @@ suite('time and date', function() {
     myp5.remove();
   });
 
-  var result;
+  let result;
 
   suite('p5.prototype.year', function() {
     test('should be a function', function() {
@@ -24,7 +24,7 @@ suite('time and date', function() {
 
     test('should return this year', function() {
       result = myp5.year();
-      var jsYear = new Date().getFullYear();
+      const jsYear = new Date().getFullYear();
       assert.equal(result, jsYear);
     });
   });
@@ -36,7 +36,7 @@ suite('time and date', function() {
     });
 
     test('should return todays day', function() {
-      var jsDay = new Date().getDate();
+      const jsDay = new Date().getDate();
       result = myp5.day();
       assert.equal(result, jsDay);
     });
@@ -50,7 +50,7 @@ suite('time and date', function() {
 
     test("should return today's month", function() {
       result = myp5.month();
-      var jsMonth = new Date().getMonth() + 1;
+      const jsMonth = new Date().getMonth() + 1;
       assert.equal(result, jsMonth);
     });
   });
@@ -62,7 +62,7 @@ suite('time and date', function() {
     });
 
     test('should return this hour', function() {
-      var jsHour = new Date().getHours();
+      const jsHour = new Date().getHours();
       result = myp5.hour();
       assert.equal(result, jsHour);
     });
@@ -75,7 +75,7 @@ suite('time and date', function() {
     });
 
     test('should return this second', function() {
-      var jsSecond = new Date().getSeconds();
+      const jsSecond = new Date().getSeconds();
       result = myp5.second();
       assert.equal(result, jsSecond); //(Math.abs(jsSecond - result), '==', 0, 'everything is ok'); // in my testing, found this might be off by 1 second
     });
@@ -88,7 +88,7 @@ suite('time and date', function() {
     });
 
     test('should return a number that is this minute', function() {
-      var jsMinute = new Date().getMinutes();
+      const jsMinute = new Date().getMinutes();
       result = myp5.minute();
       assert.isNumber(result);
       assert.isNumber(jsMinute);
@@ -107,8 +107,8 @@ suite('time and date', function() {
     });
 
     test('result should be greater than running time', function() {
-      var runningTime = 50;
-      var init_date = Date.now();
+      const runningTime = 50;
+      const init_date = Date.now();
       // wait :\
       while (Date.now() - init_date < runningTime) {
         /* no-op */
@@ -117,14 +117,14 @@ suite('time and date', function() {
     });
 
     test('result should be > newResult', function() {
-      var runningTime = 50;
-      var init_date = Date.now();
-      var result = myp5.millis();
+      const runningTime = 50;
+      const init_date = Date.now();
+      const result = myp5.millis();
       // wait :\
       while (Date.now() - init_date < runningTime) {
         /* no-op */
       }
-      var newResult = myp5.millis();
+      const newResult = myp5.millis();
       assert.operator(newResult, '>', result, 'everything is ok');
     });
   });

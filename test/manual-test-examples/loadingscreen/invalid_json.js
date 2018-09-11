@@ -1,4 +1,4 @@
-var myJson;
+let myJson;
 
 function preload() {
   myJson = loadJSON('invalid.json');

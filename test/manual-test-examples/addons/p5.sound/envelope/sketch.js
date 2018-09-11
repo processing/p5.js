@@ -14,26 +14,26 @@ depending on pre defined time segments.
 
 */
 
-var triOsc;
-var env;
-var a;
+let triOsc;
+let env;
+let a;
 
 // Times and levels for the ASR envelope
-var attackTime = 0.01;
-var attackLevel = 0.7;
-var decayTime = 0.3;
-var decayLevel = 0.2;
-var sustainTime = 0.1;
-var sustainLevel = decayLevel;
-var releaseTime = 0.5;
+const attackTime = 0.01;
+const attackLevel = 0.7;
+const decayTime = 0.3;
+const decayLevel = 0.2;
+const sustainTime = 0.1;
+const sustainLevel = decayLevel;
+const releaseTime = 0.5;
 
-var midiSequence = [60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72];
-var duration = 1000;
+const midiSequence = [60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72];
+const duration = 1000;
 // Set the note trigger
-var trigger;
+let trigger;
 
 // An index to count up the notes
-var note = 0;
+let note = 0;
 
 function setup() {
   createCanvas(600, 600);
@@ -60,7 +60,7 @@ function setup() {
 }
 
 function draw() {
-  var size = 10;
+  const size = 10;
   background(255, 255, 255, 20);
   ellipse(
     map((trigger - millis()) % duration, 1000, 0, 0, width),

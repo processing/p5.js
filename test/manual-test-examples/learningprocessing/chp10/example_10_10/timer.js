@@ -21,7 +21,7 @@ Timer.prototype.start = function() {
 // The work of the timer is farmed out to this method.
 Timer.prototype.isFinished = function() {
   // Check how much time has passed
-  var passedTime = millis() - this.savedTime;
+  const passedTime = millis() - this.savedTime;
   if (passedTime > this.totalTime) {
     return true;
   } else {

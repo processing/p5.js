@@ -1,7 +1,7 @@
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+const p5 = require('../core/main');
+const constants = require('../core/constants');
 require('./p5.Shader');
 require('./p5.RendererGL');
 
@@ -23,20 +23,20 @@ p5.RendererGL.prototype.textWidth = function(s) {
 // rendering constants
 
 // the number of rows/columns dividing each glyph
-var charGridWidth = 9;
-var charGridHeight = charGridWidth;
+const charGridWidth = 9;
+const charGridHeight = charGridWidth;
 
 // size of the image holding the bezier stroke info
-var strokeImageWidth = 64;
-var strokeImageHeight = 64;
+const strokeImageWidth = 64;
+const strokeImageHeight = 64;
 
 // size of the image holding the stroke indices for each row/col
-var gridImageWidth = 64;
-var gridImageHeight = 64;
+const gridImageWidth = 64;
+const gridImageHeight = 64;
 
 // size of the image holding the offset/length of each row/col stripe
-var cellImageWidth = 64;
-var cellImageHeight = 64;
+const cellImageWidth = 64;
+const cellImageHeight = 64;
 
 /**
  * @private
@@ -61,15 +61,15 @@ function ImageInfos(width, height) {
    * finds free space of a given size in the ImageData list
    */
   this.findImage = function(space) {
-    var imageSize = this.width * this.height;
+    const imageSize = this.width * this.height;
     if (space > imageSize)
       throw new Error('font is too complex to render in 3D');
 
     // search through the list of images, looking for one with
     // anough unused space.
-    var imageInfo, imageData;
-    for (var ii = this.infos.length - 1; ii >= 0; --ii) {
-      var imageInfoTest = this.infos[ii];
+    let imageInfo, imageData;
+    for (let ii = this.infos.length - 1; ii >= 0; --ii) {
+      const imageInfoTest = this.infos[ii];
       if (imageInfoTest.index + space < imageSize) {
         // found one
         imageInfo = imageInfoTest;
@@ -85,15 +85,15 @@ function ImageInfos(width, height) {
       } catch (err) {
         // for browsers that don't support ImageData constructors (ie IE11)
         // create an ImageData using the old method
-        var canvas = document.getElementsByTagName('canvas')[0];
-        var created = !canvas;
+        let canvas = document.getElementsByTagName('canvas')[0];
+        const created = !canvas;
         if (!canvas) {
           // create a temporary canvas
           canvas = document.createElement('canvas');
           canvas.style.display = 'none';
           document.body.appendChild(canvas);
         }
-        var ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
         if (ctx) {
           imageData = ctx.createImageData(this.width, this.height);
         }
@@ -107,7 +107,7 @@ function ImageInfos(width, height) {
       this.infos.push(imageInfo);
     }
 
-    var index = imageInfo.index;
+    const index = imageInfo.index;
     imageInfo.index += space; // move to the start of the next image
     imageData._dirty = true;
     return { imageData: imageData, index: index };
@@ -125,16 +125,16 @@ function ImageInfos(width, height) {
  * writes the next pixel into an indexed ImageData
  */
 function setPixel(imageInfo, r, g, b, a) {
-  var imageData = imageInfo.imageData;
-  var pixels = imageData.data;
-  var index = imageInfo.index++ * 4;
+  const imageData = imageInfo.imageData;
+  const pixels = imageData.data;
+  let index = imageInfo.index++ * 4;
   pixels[index++] = r;
   pixels[index++] = g;
   pixels[index++] = b;
   pixels[index++] = a;
 }
 
-var SQRT3 = Math.sqrt(3);
+const SQRT3 = Math.sqrt(3);
 
 /**
  * @private
@@ -143,7 +143,7 @@ var SQRT3 = Math.sqrt(3);
  *
  * contains cached images and glyph information for an opentype font
  */
-var FontInfo = function(font) {
+const FontInfo = function(font) {
   this.font = font;
   // the bezier curve coordinates
   this.strokeImageInfos = new ImageInfos(strokeImageWidth, strokeImageHeight);
@@ -168,25 +168,25 @@ var FontInfo = function(font) {
 
   this.getGlyphInfo = function(glyph) {
     // check the cache
-    var gi = this.glyphInfos[glyph.index];
+    let gi = this.glyphInfos[glyph.index];
     if (gi) return gi;
 
     // get the bounding box of the glyph from opentype.js
-    var bb = glyph.getBoundingBox();
-    var xMin = bb.x1;
-    var yMin = bb.y1;
-    var gWidth = bb.x2 - xMin;
-    var gHeight = bb.y2 - yMin;
-    var cmds = glyph.path.commands;
+    const bb = glyph.getBoundingBox();
+    const xMin = bb.x1;
+    const yMin = bb.y1;
+    const gWidth = bb.x2 - xMin;
+    const gHeight = bb.y2 - yMin;
+    const cmds = glyph.path.commands;
     // don't bother rendering invisible glyphs
     if (gWidth === 0 || gHeight === 0 || !cmds.length) {
       return (this.glyphInfos[glyph.index] = {});
     }
 
-    var i;
-    var strokes = []; // the strokes in this glyph
-    var rows = []; // the indices of strokes in each row
-    var cols = []; // the indices of strokes in each column
+    let i;
+    const strokes = []; // the strokes in this glyph
+    const rows = []; // the indices of strokes in each row
+    const cols = []; // the indices of strokes in each column
     for (i = charGridWidth - 1; i >= 0; --i) cols.push([]);
     for (i = charGridHeight - 1; i >= 0; --i) rows.push([]);
 
@@ -199,7 +199,7 @@ var FontInfo = function(font) {
      * adds a curve to the rows & columns that it intersects with
      */
     function push(xs, ys, v) {
-      var index = strokes.length; // the index of this stroke
+      const index = strokes.length; // the index of this stroke
       strokes.push(v); // add this stroke to the list
 
       /**
@@ -211,8 +211,8 @@ var FontInfo = function(font) {
        * find the minimum & maximum value in a list of values
        */
       function minMax(rg, min, max) {
-        for (var i = rg.length; i-- > 0; ) {
-          var v = rg[i];
+        for (let i = rg.length; i-- > 0; ) {
+          const v = rg[i];
           if (min > v) min = v;
           if (max < v) max = v;
         }
@@ -221,15 +221,18 @@ var FontInfo = function(font) {
 
       // loop through the rows & columns that the curve intersects
       // adding the curve to those slices
-      var mmX = minMax(xs, 1, 0);
-      var ixMin = Math.max(Math.floor(mmX.min * charGridWidth), 0);
-      var ixMax = Math.min(Math.ceil(mmX.max * charGridWidth), charGridWidth);
-      for (var iCol = ixMin; iCol < ixMax; ++iCol) cols[iCol].push(index);
+      const mmX = minMax(xs, 1, 0);
+      const ixMin = Math.max(Math.floor(mmX.min * charGridWidth), 0);
+      const ixMax = Math.min(Math.ceil(mmX.max * charGridWidth), charGridWidth);
+      for (let iCol = ixMin; iCol < ixMax; ++iCol) cols[iCol].push(index);
 
-      var mmY = minMax(ys, 1, 0);
-      var iyMin = Math.max(Math.floor(mmY.min * charGridHeight), 0);
-      var iyMax = Math.min(Math.ceil(mmY.max * charGridHeight), charGridHeight);
-      for (var iRow = iyMin; iRow < iyMax; ++iRow) rows[iRow].push(index);
+      const mmY = minMax(ys, 1, 0);
+      const iyMin = Math.max(Math.floor(mmY.min * charGridHeight), 0);
+      const iyMax = Math.min(
+        Math.ceil(mmY.max * charGridHeight),
+        charGridHeight
+      );
+      for (let iRow = iyMin; iRow < iyMax; ++iRow) rows[iRow].push(index);
     }
 
     /**
@@ -316,14 +319,14 @@ var FontInfo = function(font) {
        * point at 't'. the 'end half is returned.
        */
       this.split = function(t) {
-        var m1 = p5.Vector.lerp(this.p0, this.c0, t);
-        var m2 = p5.Vector.lerp(this.c0, this.c1, t);
-        var mm1 = p5.Vector.lerp(m1, m2, t);
+        const m1 = p5.Vector.lerp(this.p0, this.c0, t);
+        const m2 = p5.Vector.lerp(this.c0, this.c1, t);
+        const mm1 = p5.Vector.lerp(m1, m2, t);
 
         this.c1 = p5.Vector.lerp(this.c1, this.p1, t);
         this.c0 = p5.Vector.lerp(m2, this.c1, t);
-        var pt = p5.Vector.lerp(mm1, this.c0, t);
-        var part1 = new Cubic(this.p0, m1, mm1, pt);
+        const pt = p5.Vector.lerp(mm1, this.c0, t);
+        const part1 = new Cubic(this.p0, m1, mm1, pt);
         this.p0 = pt;
         return part1;
       };
@@ -337,21 +340,21 @@ var FontInfo = function(font) {
        * this cubic is (potentially) altered and returned in the list.
        */
       this.splitInflections = function() {
-        var a = p5.Vector.sub(this.c0, this.p0);
-        var b = p5.Vector.sub(p5.Vector.sub(this.c1, this.c0), a);
-        var c = p5.Vector.sub(
+        const a = p5.Vector.sub(this.c0, this.p0);
+        const b = p5.Vector.sub(p5.Vector.sub(this.c1, this.c0), a);
+        const c = p5.Vector.sub(
           p5.Vector.sub(p5.Vector.sub(this.p1, this.c1), a),
           p5.Vector.mult(b, 2)
         );
 
-        var cubics = [];
+        const cubics = [];
 
         // find the derivative coefficients
-        var A = b.x * c.y - b.y * c.x;
+        let A = b.x * c.y - b.y * c.x;
         if (A !== 0) {
-          var B = a.x * c.y - a.y * c.x;
-          var C = a.x * b.y - a.y * b.x;
-          var disc = B * B - 4 * A * C;
+          let B = a.x * c.y - a.y * c.x;
+          let C = a.x * b.y - a.y * b.x;
+          const disc = B * B - 4 * A * C;
           if (disc >= 0) {
             if (A < 0) {
               A = -A;
@@ -359,9 +362,9 @@ var FontInfo = function(font) {
               C = -C;
             }
 
-            var Q = Math.sqrt(disc);
-            var t0 = (-B - Q) / (2 * A); // the first inflection point
-            var t1 = (-B + Q) / (2 * A); // the second inflection point
+            const Q = Math.sqrt(disc);
+            const t0 = (-B - Q) / (2 * A); // the first inflection point
+            let t1 = (-B + Q) / (2 * A); // the second inflection point
 
             // test if the first inflection point lies on the curve
             if (t0 > 0 && t0 < 1) {
@@ -401,27 +404,27 @@ var FontInfo = function(font) {
      */
     function cubicToQuadratics(x0, y0, cx0, cy0, cx1, cy1, x1, y1) {
       // create the Cubic object and split it at its inflections
-      var cubics = new Cubic(
+      const cubics = new Cubic(
         new p5.Vector(x0, y0),
         new p5.Vector(cx0, cy0),
         new p5.Vector(cx1, cy1),
         new p5.Vector(x1, y1)
       ).splitInflections();
 
-      var qs = []; // the final list of quadratics
-      var precision = 30 / SQRT3;
+      const qs = []; // the final list of quadratics
+      const precision = 30 / SQRT3;
 
       // for each of the non-inflected pieces of the original cubic
-      for (var i = 0; i < cubics.length; i++) {
-        var cubic = cubics[i];
+      for (let i = 0; i < cubics.length; i++) {
+        let cubic = cubics[i];
 
         // the cubic is iteratively split in 3 pieces:
         // the first piece is accumulated in 'qs', the result.
         // the last piece is accumulated in 'tail', temporarily.
         // the middle piece is repeatedly split again, while necessary.
-        var tail = [];
+        const tail = [];
 
-        var t3;
+        let t3;
         for (;;) {
           // calculate this cubic's precision
           t3 = precision / cubic.quadError();
@@ -430,10 +433,10 @@ var FontInfo = function(font) {
           }
 
           // find a split point based on the error
-          var t = Math.pow(t3, 1.0 / 3.0);
+          const t = Math.pow(t3, 1.0 / 3.0);
           // split the cubic in 3
-          var start = cubic.split(t);
-          var middle = cubic.split(1 - t / (1 - t));
+          const start = cubic.split(t);
+          const middle = cubic.split(1 - t / (1 - t));
 
           qs.push(start); // the first part
           tail.push(cubic); // the last part
@@ -464,8 +467,8 @@ var FontInfo = function(font) {
      * add a straight line to the row/col grid of a glyph
      */
     function pushLine(x0, y0, x1, y1) {
-      var mx = (x0 + x1) / 2;
-      var my = (y0 + y1) / 2;
+      const mx = (x0 + x1) / 2;
+      const my = (y0 + y1) / 2;
       push([x0, x1], [y0, y1], { x: x0, y: y0, cx: mx, cy: my });
     }
 
@@ -483,12 +486,12 @@ var FontInfo = function(font) {
       return Math.abs(x1 - x0) < 0.00001 && Math.abs(y1 - y0) < 0.00001;
     }
 
-    var x0, y0, xs, ys;
-    for (var iCmd = 0; iCmd < cmds.length; ++iCmd) {
-      var cmd = cmds[iCmd];
+    let x0, y0, xs, ys;
+    for (let iCmd = 0; iCmd < cmds.length; ++iCmd) {
+      const cmd = cmds[iCmd];
       // scale the coordinates to the range 0-1
-      var x1 = (cmd.x - xMin) / gWidth;
-      var y1 = (cmd.y - yMin) / gHeight;
+      const x1 = (cmd.x - xMin) / gWidth;
+      const y1 = (cmd.y - yMin) / gHeight;
 
       // don't bother if this point is the same as the last
       if (samePoint(x0, y0, x1, y1)) continue;
@@ -501,11 +504,13 @@ var FontInfo = function(font) {
         case 'L': // line
           pushLine(x0, y0, x1, y1);
           break;
-        case 'Q': // quadratic
-          var cx = (cmd.x1 - xMin) / gWidth;
-          var cy = (cmd.y1 - yMin) / gHeight;
+        case 'Q': {
+          // quadratic
+          const cx = (cmd.x1 - xMin) / gWidth;
+          const cy = (cmd.y1 - yMin) / gHeight;
           push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx: cx, cy: cy });
           break;
+        }
         case 'Z': // end
           if (!samePoint(x0, y0, xs, ys)) {
             // add an extra line closing the loop, if necessary
@@ -515,17 +520,19 @@ var FontInfo = function(font) {
             strokes.push({ x: x0, y: y0 });
           }
           break;
-        case 'C': // cubic
-          var cx1 = (cmd.x1 - xMin) / gWidth;
-          var cy1 = (cmd.y1 - yMin) / gHeight;
-          var cx2 = (cmd.x2 - xMin) / gWidth;
-          var cy2 = (cmd.y2 - yMin) / gHeight;
-          var qs = cubicToQuadratics(x0, y0, cx1, cy1, cx2, cy2, x1, y1);
-          for (var iq = 0; iq < qs.length; iq++) {
-            var q = qs[iq].toQuadratic();
+        case 'C': {
+          // cubic
+          const cx1 = (cmd.x1 - xMin) / gWidth;
+          const cy1 = (cmd.y1 - yMin) / gHeight;
+          const cx2 = (cmd.x2 - xMin) / gWidth;
+          const cy2 = (cmd.y2 - yMin) / gHeight;
+          const qs = cubicToQuadratics(x0, y0, cx1, cy1, cx2, cy2, x1, y1);
+          for (let iq = 0; iq < qs.length; iq++) {
+            const q = qs[iq].toQuadratic();
             push([q.x, q.x1, q.cx], [q.y, q.y1, q.cy], q);
           }
           break;
+        }
         default:
           throw new Error('unknown command type: ' + cmd.type);
       }
@@ -534,13 +541,13 @@ var FontInfo = function(font) {
     }
 
     // allocate space for the strokes
-    var strokeCount = strokes.length;
-    var strokeImageInfo = this.strokeImageInfos.findImage(strokeCount);
-    var strokeOffset = strokeImageInfo.index;
+    const strokeCount = strokes.length;
+    const strokeImageInfo = this.strokeImageInfos.findImage(strokeCount);
+    const strokeOffset = strokeImageInfo.index;
 
     // fill the stroke image
-    for (var il = 0; il < strokeCount; ++il) {
-      var s = strokes[il];
+    for (let il = 0; il < strokeCount; ++il) {
+      const s = strokes[il];
       setPixel(strokeImageInfo, byte(s.x), byte(s.y), byte(s.cx), byte(s.cy));
     }
 
@@ -556,23 +563,23 @@ var FontInfo = function(font) {
      * one containing the offset and length of those index spans.
      */
     function layout(dim, dimImageInfos, cellImageInfos) {
-      var dimLength = dim.length; // the number of slices in this dimension
-      var dimImageInfo = dimImageInfos.findImage(dimLength);
-      var dimOffset = dimImageInfo.index;
+      const dimLength = dim.length; // the number of slices in this dimension
+      const dimImageInfo = dimImageInfos.findImage(dimLength);
+      const dimOffset = dimImageInfo.index;
       // calculate the total number of stroke indices in this dimension
-      var totalStrokes = 0;
-      for (var id = 0; id < dimLength; ++id) {
+      let totalStrokes = 0;
+      for (let id = 0; id < dimLength; ++id) {
         totalStrokes += dim[id].length;
       }
 
       // allocate space for the stroke indices
-      var cellImageInfo = cellImageInfos.findImage(totalStrokes);
+      const cellImageInfo = cellImageInfos.findImage(totalStrokes);
 
       // for each slice in the glyph
-      for (var i = 0; i < dimLength; ++i) {
-        var strokeIndices = dim[i];
-        var strokeCount = strokeIndices.length;
-        var cellLineIndex = cellImageInfo.index;
+      for (let i = 0; i < dimLength; ++i) {
+        const strokeIndices = dim[i];
+        const strokeCount = strokeIndices.length;
+        const cellLineIndex = cellImageInfo.index;
 
         // write the offset and count into the glyph slice image
         setPixel(
@@ -584,9 +591,9 @@ var FontInfo = function(font) {
         );
 
         // for each stroke index in that slice
-        for (var iil = 0; iil < strokeCount; ++iil) {
+        for (let iil = 0; iil < strokeCount; ++iil) {
           // write the stroke index into the slice's image
-          var strokeIndex = strokeIndices[iil] + strokeOffset;
+          const strokeIndex = strokeIndices[iil] + strokeOffset;
           setPixel(cellImageInfo, strokeIndex >> 7, strokeIndex & 0x7f, 0, 0);
         }
       }
@@ -625,32 +632,32 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   p.push(); // fix to #803
 
   // remember this state, so it can be restored later
-  var curFillShader = this.curFillShader;
-  var doStroke = this._doStroke;
-  var drawMode = this.drawMode;
+  const curFillShader = this.curFillShader;
+  const doStroke = this._doStroke;
+  const drawMode = this.drawMode;
 
   this.curFillShader = null;
   this._doStroke = false;
   this.drawMode = constants.TEXTURE;
 
   // get the cached FontInfo object
-  var font = this._textFont.font;
-  var fontInfo = this._textFont._fontInfo;
+  const font = this._textFont.font;
+  let fontInfo = this._textFont._fontInfo;
   if (!fontInfo) {
     fontInfo = this._textFont._fontInfo = new FontInfo(font);
   }
 
   // calculate the alignment and move/scale the view accordingly
-  var pos = this._textFont._handleAlignment(this, line, x, y);
-  var fontSize = this._textSize;
-  var scale = fontSize / font.unitsPerEm;
+  const pos = this._textFont._handleAlignment(this, line, x, y);
+  const fontSize = this._textSize;
+  const scale = fontSize / font.unitsPerEm;
   this.translate(pos.x, pos.y, 0);
   this.scale(scale, scale, 1);
 
   // initialize the font shader
-  var gl = this.GL;
-  var initializeShader = !this._defaultFontShader;
-  var sh = this.setFillShader(this._getFontShader());
+  const gl = this.GL;
+  const initializeShader = !this._defaultFontShader;
+  const sh = this.setFillShader(this._getFontShader());
   if (initializeShader) {
     // these are constants, really. just initialize them one-time.
     sh.setUniform('uGridImageSize', [gridImageWidth, gridImageHeight]);
@@ -660,12 +667,12 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
   this._applyColorBlend(this.curFillColor);
 
-  var g = this.gHash['glyph'];
+  let g = this.gHash['glyph'];
   if (!g) {
     // create the geometry for rendering a quad
-    var geom = (this._textGeom = new p5.Geometry(1, 1, function() {
-      for (var i = 0; i <= 1; i++) {
-        for (var j = 0; j <= 1; j++) {
+    const geom = (this._textGeom = new p5.Geometry(1, 1, function() {
+      for (let i = 0; i <= 1; i++) {
+        for (let j = 0; j <= 1; j++) {
           this.vertices.push(new p5.Vector(j, i, 0));
           this.uvs.push(j, i);
         }
@@ -686,20 +693,20 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   sh.setUniform('uMaterialColor', this.curFillColor);
 
   try {
-    var dx = 0; // the x position in the line
-    var glyphPrev = null; // the previous glyph, used for kerning
-    var shaderBound = false;
+    let dx = 0; // the x position in the line
+    let glyphPrev = null; // the previous glyph, used for kerning
+    let shaderBound = false;
     // fetch the glyphs in the line of text
-    var glyphs = font.stringToGlyphs(line);
-    for (var ig = 0; ig < glyphs.length; ++ig) {
-      var glyph = glyphs[ig];
+    const glyphs = font.stringToGlyphs(line);
+    for (let ig = 0; ig < glyphs.length; ++ig) {
+      const glyph = glyphs[ig];
       // kern
       if (glyphPrev) dx += font.getKerningValue(glyphPrev, glyph);
 
-      var gi = fontInfo.getGlyphInfo(glyph);
+      const gi = fontInfo.getGlyphInfo(glyph);
       if (gi.uGlyphRect) {
-        var rowInfo = gi.rowInfo;
-        var colInfo = gi.colInfo;
+        const rowInfo = gi.rowInfo;
+        const colInfo = gi.colInfo;
         sh.setUniform('uSamplerStrokes', gi.strokeImageInfo.imageData);
         sh.setUniform('uSamplerRowStrokes', rowInfo.cellImageInfo.imageData);
         sh.setUniform('uSamplerRows', rowInfo.dimImageInfo.imageData);

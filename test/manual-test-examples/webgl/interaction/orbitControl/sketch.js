@@ -7,13 +7,13 @@ function setup() {
 
 function draw() {
   background(250);
-  var radius = width;
+  const radius = width;
 
   orbitControl();
 
   normalMaterial();
 
-  let scale = 200;
+  const scale = 200;
   for (let px = -5; px < 5; px++) {
     for (let pz = -5; pz < 5; pz++) {
       push();
@@ -22,7 +22,7 @@ function draw() {
       if (px > 0) {
         fill(255, 0, 0);
       }
-      if (px == 0 && pz == 0) {
+      if (px === 0 && pz === 0) {
         cone(50, 100);
       } else {
         cone(20, 50);

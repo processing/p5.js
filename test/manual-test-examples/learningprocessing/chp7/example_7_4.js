@@ -29,8 +29,8 @@ function draw() {
 }
 
 function distance(x1, y1, x2, y2) {
-  var dx = x1 - x2;
-  var dy = y1 - y2;
-  var d = sqrt(dx * dx + dy * dy);
+  const dx = x1 - x2;
+  const dy = y1 - y2;
+  const d = sqrt(dx * dx + dy * dy);
   return d;
 }

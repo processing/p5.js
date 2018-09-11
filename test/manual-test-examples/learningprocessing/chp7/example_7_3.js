@@ -7,8 +7,8 @@
 // Example 7-3: Bouncing ball with functions
 
 // Declare all global variables (stays the same)
-var x = 0;
-var speed = 1;
+let x = 0;
+let speed = 1;
 
 // Setup does not change
 function setup() {

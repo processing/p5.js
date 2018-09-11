@@ -1,4 +1,4 @@
-var table;
+let table;
 
 function setup() {
   table = new p5.Table();
@@ -6,7 +6,7 @@ function setup() {
   table.addColumn('name');
   table.addColumn('type');
 
-  var newRow = table.addRow();
+  let newRow = table.addRow();
   newRow.setString('name', 'Lion');
   newRow.setString('type', 'Mammal');
 
@@ -22,8 +22,8 @@ function setup() {
   newRow.setString('name', 'Lizard');
   newRow.setString('type', 'Reptile');
 
-  var rows = table.findRows('Reptile', 'type');
-  for (var i = 0; i < rows.length; i++) {
+  const rows = table.findRows('Reptile', 'type');
+  for (let i = 0; i < rows.length; i++) {
     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
   }
 }

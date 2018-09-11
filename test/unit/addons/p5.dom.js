@@ -1,7 +1,7 @@
 /* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
-    var myp5;
+    let myp5;
 
     setup(function(done) {
       new p5(function(p) {
@@ -16,7 +16,7 @@ suite('DOM', function() {
       myp5.remove();
     });
 
-    var elt;
+    let elt;
 
     teardown(function() {
       if (elt && elt.parentNode) {
@@ -73,7 +73,7 @@ suite('DOM', function() {
       reject
     ) {
       sketch.setup = function() {
-        var elem = sketch.createButton('test');
+        const elem = sketch.createButton('test');
         elem.mousePressed(resolve);
         elem.elt.dispatchEvent(new Event('mousedown'));
       };

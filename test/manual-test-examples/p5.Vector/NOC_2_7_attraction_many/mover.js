@@ -2,7 +2,7 @@
 // Daniel Shiffman
 // http://natureofcode.com
 
-var Mover = function(m, x, y) {
+const Mover = function(m, x, y) {
   this.position = createVector(x, y);
   this.velocity = p5.Vector.random2D();
   this.acceleration = createVector(0, 0);
@@ -10,7 +10,7 @@ var Mover = function(m, x, y) {
 };
 
 Mover.prototype.applyForce = function(force) {
-  var f = p5.Vector.div(force, this.mass);
+  const f = p5.Vector.div(force, this.mass);
   this.acceleration.add(f);
 };
 

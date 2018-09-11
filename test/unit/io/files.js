@@ -1,5 +1,5 @@
 suite('Files', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -15,8 +15,8 @@ suite('Files', function() {
   });
 
   //variable for preload
-  var preload = p5.prototype.preload;
-  var result;
+  let preload = p5.prototype.preload;
+  let result;
 
   // httpDo
   suite('httpDo()', function() {
@@ -77,7 +77,7 @@ suite('Files', function() {
     });
 
     test('should return a promise', function() {
-      var promise = myp5.httpDo('unit/assets/sentences.txt');
+      const promise = myp5.httpDo('unit/assets/sentences.txt');
       assert.instanceOf(promise, Promise);
       return promise.then(function(data) {
         assert.ok(data);
@@ -87,7 +87,7 @@ suite('Files', function() {
 
     test('should return a promise that rejects on error', function() {
       return new Promise(function(resolve, reject) {
-        var promise = myp5.httpDo('404file');
+        const promise = myp5.httpDo('404file');
         assert.instanceOf(promise, Promise);
         promise.then(function(data) {
           reject(new Error('promise resolved.'));
@@ -301,7 +301,7 @@ suite('Files', function() {
   });
 
   suite('p5.prototype.loadTable', function() {
-    var url = 'unit/assets/csv.csv';
+    const url = 'unit/assets/csv.csv';
 
     test('should be a function', function() {
       assert.isFunction(myp5.loadTable);
@@ -334,7 +334,7 @@ suite('Files', function() {
     });
 
     test('using the csv and tsv options fails', function() {
-      var fn = function() {
+      const fn = function() {
         myp5.loadTable(url, 'csv', 'tsv');
       };
       assert.throw(fn, 'Cannot set multiple separator types.');
@@ -396,7 +396,7 @@ suite('Files', function() {
     });
 
     test('should call error callback function if not found', function() {
-      var errorCalled = false;
+      let errorCalled = false;
       return new Promise(function(resolve, reject) {
         myp5.loadBytes('notfound.jpg', resolve, reject);
       })
@@ -430,13 +430,13 @@ suite('Files', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
       }).then(function(data) {
-        var str = 'GIF89a';
+        const str = 'GIF89a';
         // convert the string to a byte array
-        var rgb = str.split('').map(function(e) {
+        const rgb = str.split('').map(function(e) {
           return e.charCodeAt(0);
         });
         // this will convert a Uint8Aray to [], if necessary:
-        var loaded = Array.prototype.slice.call(data.bytes, 0, str.length);
+        const loaded = Array.prototype.slice.call(data.bytes, 0, str.length);
         assert.deepEqual(loaded, rgb);
       });
     });

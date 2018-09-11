@@ -3,7 +3,7 @@
 // ====================
 
 // create a variable for the sound file
-var soundFile;
+let soundFile;
 
 function preload() {
   // create a SoundFile

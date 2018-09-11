@@ -1,8 +1,8 @@
 // CASE 0: no node specified
 // Canvas is auto-generated and appended to body.
 
-var sketch = function(p) {
-  var gray = 0;
+const sketch = function(p) {
+  let gray = 0;
 
   p.draw = function() {
     p.background(gray);
@@ -14,4 +14,4 @@ var sketch = function(p) {
   };
 };
 
-var myp5 = new p5(sketch);
+const myp5 = new p5(sketch);

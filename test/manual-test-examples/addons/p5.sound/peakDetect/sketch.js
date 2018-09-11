@@ -1,23 +1,23 @@
 // first try at live beat detection from fft data
 // contains two classes : one for onset detection - OnsetDetect and one to detect when amplitude reaches a certain treshold - BeatDetect (probably ill named)
 
-var file = '../_files/Tripping.mp3';
+const file = '../_files/Tripping.mp3';
 
-var source_file; // sound file
-var src_length; // hold its duration
+let source_file; // sound file
+let src_length; // hold its duration
 
-var fft;
+let fft;
 
-var pg; // to draw waveform
+let pg; // to draw waveform
 
-var playing = false;
-var button;
+let playing = false;
+let button;
 
 // detectors listen for peaks
-var detectors = [];
+const detectors = [];
 
 // visual representation of detectors
-var beatBalls = [];
+const beatBalls = [];
 
 function preload() {
   source_file = loadSound(file); // preload the sound
@@ -32,15 +32,15 @@ function setup() {
   print('source duration: ' + src_length);
 
   // draw the waveform to an off-screen graphic
-  var peaks = source_file.getPeaks(); // get an array of peaks
+  const peaks = source_file.getPeaks(); // get an array of peaks
   pg = createGraphics(width, 150);
   pg.background(100);
   pg.translate(0, 75);
   pg.noFill();
   pg.stroke(0);
-  for (var i = 0; i < peaks.length; i++) {
-    var x = map(i, 0, peaks.length, 0, width);
-    var y = map(peaks[i], 0, 1, 0, 150);
+  for (let i = 0; i < peaks.length; i++) {
+    const x = map(i, 0, peaks.length, 0, width);
+    const y = map(peaks[i], 0, 1, 0, 150);
     pg.line(x, 0, x, y);
     pg.line(x, 0, x, -y);
   }
@@ -68,7 +68,7 @@ function setup() {
   beatBalls.push(new BeatBall(850, 50));
 
   // tell the detectors to call gotPeak function when they detect a peak
-  for (i = 0; i < detectors.length; i++) {
+  for (let i = 0; i < detectors.length; i++) {
     detectors[i].onPeak(gotPeak, i);
   }
 
@@ -104,7 +104,7 @@ function draw() {
   text('140Hz-400Hz', 750, 80);
   text('400Hz-2.6kHz', 850, 80);
 
-  for (var i = 0; i < detectors.length; i++) {
+  for (let i = 0; i < detectors.length; i++) {
     detectors[i].update(fft);
     beatBalls[i].update();
   }
@@ -116,7 +116,7 @@ function draw() {
 
 function mouseClicked() {
   if (mouseY > 100 && mouseY < 350) {
-    var playpos = constrain(
+    const playpos = constrain(
       map(mouseX, 0, windowWidth, 0, src_length),
       0,
       src_length

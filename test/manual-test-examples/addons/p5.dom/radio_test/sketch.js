@@ -1,4 +1,4 @@
-var radio;
+let radio;
 
 function setup() {
   radio = createRadio();
@@ -24,7 +24,7 @@ function draw() {
 }
 
 function mySelectEvent() {
-  var selected = this.selected();
+  const selected = this.selected();
   console.log(this.value());
   if (selected === 'pear') {
     console.log("it's a pear!");

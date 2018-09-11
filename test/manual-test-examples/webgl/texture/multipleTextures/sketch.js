@@ -1,4 +1,4 @@
-var im1, im2;
+let im1, im2;
 
 function preload() {
   im1 = loadImage('../../assets/UV_Grid_Sm.jpg');
@@ -12,12 +12,12 @@ function setup() {
 function draw() {
   background(255);
 
-  var halfw = im1.width / 2 * 0.5;
-  var halfh = im1.height / 2 * 0.5;
+  const halfw = im1.width / 2 * 0.5;
+  const halfh = im1.height / 2 * 0.5;
 
-  var i = 0;
-  for (var x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
-    for (var y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
+  let i = 0;
+  for (let x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
+    for (let y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
       push();
       if (i % 2 === 0) {
         texture(im1);

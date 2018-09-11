@@ -1,4 +1,4 @@
-var spec = {
+const spec = {
   addons: ['p5.dom'],
   color: ['color_conversion', 'creating_reading', 'p5.Color', 'setting'],
   core: [
@@ -21,7 +21,7 @@ var spec = {
 };
 Object.keys(spec).map(function(folder) {
   spec[folder].map(function(file) {
-    var string = [
+    const string = [
       '<script src="unit/',
       folder,
       '/',

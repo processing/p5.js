@@ -11,12 +11,12 @@
 
 // Declaring Variables.
 // zoogX and zoogY are for feature #1.  eyeR, eyeG, eyeB are for feature #2.
-var zoogX;
-var zoogY;
+let zoogX;
+let zoogY;
 
-var eyeR;
-var eyeG;
-var eyeB;
+let eyeR;
+let eyeG;
+let eyeB;
 
 function setup() {
   createCanvas(200, 200); // Set the size of the window

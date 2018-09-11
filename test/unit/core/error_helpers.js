@@ -1,5 +1,5 @@
 suite('Error Helpers', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -105,7 +105,7 @@ suite('Error Helpers', function() {
       test('ambientLight(): no friendly-err-msg', function() {
         assert.doesNotThrow(
           function() {
-            var c = myp5.color(255, 204, 0);
+            const c = myp5.color(255, 204, 0);
             p5._validateParameters('ambientLight', [c]);
           },
           Error,
@@ -166,9 +166,9 @@ suite('Error Helpers', function() {
   });
 
   suite('helpForMisusedAtTopLevelCode', function() {
-    var help = function(msg) {
-      var log = [];
-      var logger = function(msg) {
+    const help = function(msg) {
+      const log = [];
+      const logger = function(msg) {
         log.push(msg);
       };
 

@@ -9,9 +9,9 @@
  *  https://www.freesound.org/people/recordinghopkins/
  */
 
-var sound, cVerb;
-var currentIR = 0;
-var p;
+let sound, cVerb;
+let currentIR = 0;
+let p;
 
 function preload() {
   // we have included both MP3 and OGG versions of all the impulses/sounds

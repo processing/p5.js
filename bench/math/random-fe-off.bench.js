@@ -1,7 +1,7 @@
 /* global suite, benchmark */
 p5.disableFriendlyErrors = true;
 
-var p5Inst = new p5();
+const p5Inst = new p5();
 
 /**
  *  Instance random() vs Math.random()

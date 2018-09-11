@@ -1,8 +1,8 @@
 suite('Font Loading', function() {
   // @TODO: Need to rewrite these.
   // Test loading font in preload() with success callback
-  var mySketch = function(this_p5) {
-    var myFont;
+  let mySketch = function(this_p5) {
+    let myFont;
     this_p5.preload = function() {
       suite('Test in preload() with success callback', function() {
         test('Load asynchronously and use success callback', function(done) {
@@ -32,7 +32,7 @@ suite('Font Loading', function() {
 
   // Test loading font in preload() without success callback
   mySketch = function(this_p5) {
-    var myFont;
+    let myFont;
     this_p5.preload = function() {
       myFont = this_p5.loadFont('manual-test-examples/p5.Font/acmesa.ttf');
     };
@@ -51,9 +51,9 @@ suite('Font Loading', function() {
   new p5(mySketch, null, true);
 
   suite('Fonts outside preload()', function() {
-    var p5Inst = new p5(function() {}, true);
+    const p5Inst = new p5(function() {}, true);
 
-    var loadFont = p5.prototype.loadFont;
+    const loadFont = p5.prototype.loadFont;
 
     test('loadFont should be a function', function() {
       assert.ok(loadFont);

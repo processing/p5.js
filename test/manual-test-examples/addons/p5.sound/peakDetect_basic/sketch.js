@@ -1,5 +1,5 @@
-var cnv, soundFile, fft, peakDetect;
-var ellipseWidth = 10;
+let cnv, soundFile, fft, peakDetect;
+let ellipseWidth = 10;
 
 function preload() {
   soundFile = loadSound('../_files/beat.mp3');

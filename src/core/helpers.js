@@ -4,7 +4,7 @@
 
 'use strict';
 
-var constants = require('./constants');
+const constants = require('./constants');
 
 module.exports = {
   modeAdjust: function(a, b, c, d, mode) {

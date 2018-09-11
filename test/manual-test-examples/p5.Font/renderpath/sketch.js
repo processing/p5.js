@@ -1,6 +1,6 @@
 function setup() {
-  var txt = 'Default Text',
-    x = 190;
+  const txt = 'Default Text';
+  let x = 190;
 
   createCanvas(200, 150);
 
@@ -14,7 +14,7 @@ function setup() {
     text(txt, x, 60);
 
     textSize(35); // not aligning correctly (ignore alignment or fix)
-    var path = font._getPath(txt, x, 90);
+    const path = font._getPath(txt, x, 90);
     font._renderPath(path);
 
     textFont(font);
@@ -24,8 +24,8 @@ function setup() {
     textSize(20);
     textAlign(LEFT);
 
-    var td = x + font._textWidth('space');
-    var tw = font._textWidth(' ');
+    const td = x + font._textWidth('space');
+    const tw = font._textWidth(' ');
 
     text('space width: ' + tw.toFixed(2) + 'px', x, 140);
 

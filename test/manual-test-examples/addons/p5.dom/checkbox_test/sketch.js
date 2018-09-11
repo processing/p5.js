@@ -1,5 +1,5 @@
-var checkbox;
-var testcheck;
+let checkbox;
+let testcheck;
 
 function setup() {
   checkbox = createCheckbox('the label');
