@@ -1,4 +1,4 @@
-var table;
+let table;
 
 function setup() {
   loadTable('table.csv', 'tsv', logResults);
@@ -7,8 +7,8 @@ function setup() {
 function logResults(results) {
   table = results;
   console.log(table);
-  for (var i = 0; i < table.rows.length; i++) {
-    for (var j = 0; j < table.columns.length; j++) {
+  for (let i = 0; i < table.rows.length; i++) {
+    for (let j = 0; j < table.columns.length; j++) {
       console.log(table.columns[j] + ': ' + table.rows[i].getString(j));
     }
     console.log('---');

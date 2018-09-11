@@ -2,7 +2,7 @@
 // DEMO: pause sound when the user presses a key, resume on release
 // ====================
 
-var soundFile;
+let soundFile;
 
 function preload() {
   // create a SoundFile

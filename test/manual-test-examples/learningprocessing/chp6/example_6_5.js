@@ -6,11 +6,11 @@
 
 // Example 6-5: Another infinite loop. Don't do this!
 
-var y = 80; // Vertical location of each line
-var x = 0; // Horizontal location of first line
-var spacing = 10; // How far apart is each line
-var len = 20; // Length of each line
-var endLegs = 150; // Where should the lines stop?
+const y = 80; // Vertical location of each line
+let x = 0; // Horizontal location of first line
+const spacing = 10; // How far apart is each line
+const len = 20; // Length of each line
+const endLegs = 150; // Where should the lines stop?
 
 function setup() {
   createCanvas(200, 200);

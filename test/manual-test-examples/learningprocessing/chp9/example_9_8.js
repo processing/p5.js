@@ -7,15 +7,15 @@
 // Example 9-8: A snake following the mouse
 
 // Declare two arrays.
-var xpos = [];
-var ypos = [];
+const xpos = [];
+const ypos = [];
 
 function setup() {
   createCanvas(200, 200);
 
   smooth();
   // Initialize all elements of each array to zero.
-  for (var i = 0; i < 50; i++) {
+  for (let i = 0; i < 50; i++) {
     xpos[i] = 0;
     ypos[i] = 0;
   }
@@ -24,7 +24,7 @@ function setup() {
 function draw() {
   background(255);
 
-  var i;
+  let i;
   // Shift array values
   for (i = 0; i < xpos.length - 1; i++) {
     // Shift all elements down one spot.

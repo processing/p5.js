@@ -14,8 +14,8 @@
 //
 // loadJSON(url, callback)
 
-var result;
-var userInput;
+let result;
+let userInput;
 
 function setup() {
   createCanvas(600, 100);
@@ -34,8 +34,8 @@ function setup() {
 function getWeather() {
   background(255);
 
-  var cityName = userInput.value();
-  var URL =
+  const cityName = userInput.value();
+  const URL =
     'http://api.openweathermap.org/data/2.5/weather?q=' +
     cityName +
     '&units=metric';
@@ -46,8 +46,8 @@ function getWeather() {
 function displayWeather() {
   print(result); // result is ready!
 
-  var location = result.name;
-  var currentTemp = result.main.temp;
+  const location = result.name;
+  const currentTemp = result.main.temp;
   text(
     'Current temperature in ' + location + ' is ' + currentTemp + ' celsius',
     width / 2,

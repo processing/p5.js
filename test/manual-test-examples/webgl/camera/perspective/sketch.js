@@ -1,7 +1,7 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  var fov = PI / 3.0;
-  var cameraZ = height / 2.0 / tan(fov / 2.0);
+  const fov = PI / 3.0;
+  const cameraZ = height / 2.0 / tan(fov / 2.0);
   perspective(fov, width / height, cameraZ * 0.1, cameraZ * 10);
 }
 
@@ -11,8 +11,8 @@ function draw() {
   rotateY(map(mouseX, 0, width, 0, TWO_PI));
   normalMaterial();
 
-  for (var i = -5; i < 6; i++) {
-    for (var j = -5; j < 6; j++) {
+  for (let i = -5; i < 6; i++) {
+    for (let j = -5; j < 6; j++) {
       push();
       translate(i * 100, 0, j * 100);
       sphere(20);

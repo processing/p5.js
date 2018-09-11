@@ -9,8 +9,8 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var sketch = function(p) {
-  var font1, font2;
+const sketch = function(p) {
+  let font1, font2;
 
   p.preload = function() {
     font1 = p.loadFont('SourceSansPro-Regular.otf');
@@ -30,4 +30,4 @@ var sketch = function(p) {
   };
 };
 
-var myp5 = new p5(sketch);
+const myp5 = new p5(sketch);

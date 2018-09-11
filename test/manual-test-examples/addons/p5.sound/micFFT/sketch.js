@@ -2,7 +2,7 @@
  *  Visualize the frequency spectrum of live audio input
  */
 
-var mic, fft;
+let mic, fft;
 
 function setup() {
   createCanvas(512, 400);
@@ -17,7 +17,7 @@ function setup() {
 
 function draw() {
   background(200);
-  var spectrum = fft.analyze();
+  const spectrum = fft.analyze();
 
   beginShape();
   vertex(0, height);

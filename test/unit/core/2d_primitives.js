@@ -1,5 +1,5 @@
 suite('2D Primitives', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -61,7 +61,7 @@ suite('2D Primitives', function() {
     });
     test('missing param #2', function() {
       assert.validationError(function() {
-        var size;
+        let size;
         myp5.ellipse(0, 0, size);
       });
     });
@@ -103,7 +103,7 @@ suite('2D Primitives', function() {
     test('missing param #4 ', function() {
       // this err case escapes
       assert.validationError(function() {
-        var x3;
+        let x3;
         myp5.line(0, 0, 100, 100, x3, Math.PI);
       });
     });
@@ -215,7 +215,7 @@ suite('2D Primitives', function() {
     test('missing param #4', function() {
       // this err case escapes
       assert.validationError(function() {
-        var r1;
+        let r1;
         myp5.rect(0, 0, 100, 100, r1, Math.PI, 1, Math.PI);
       });
     });

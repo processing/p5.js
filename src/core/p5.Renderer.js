@@ -178,8 +178,7 @@ p5.Renderer.prototype.textAlign = function(h, v) {
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   const p = this._pInst;
-  let cars,
-    n,
+  let n,
     ii,
     jj,
     line,
@@ -200,7 +199,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   }
 
   str = str.replace(/(\t)/g, '  ');
-  cars = str.split('\n');
+  const cars = str.split('\n');
 
   if (typeof maxWidth !== 'undefined') {
     totalHeight = 0;

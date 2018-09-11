@@ -1,4 +1,4 @@
-var fingers;
+let fingers;
 
 function setup() {
   createCanvas(400, 400);

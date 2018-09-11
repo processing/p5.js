@@ -1,9 +1,9 @@
-var img;
-var tex;
-var wrapShader;
-var wrapMode = 0;
+let img;
+let tex;
+let wrapShader;
+let wrapMode = 0;
 
-var vertexShader = `
+const vertexShader = `
 attribute vec3 aPosition;
 
 
@@ -15,7 +15,7 @@ void main() {
   gl_Position = positionVec4;
 }`;
 
-var fragmentShader = `
+const fragmentShader = `
 precision mediump float;
 
 uniform sampler2D uTex0;
@@ -38,7 +38,7 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  const canvas = createCanvas(windowWidth, windowHeight, WEBGL);
 
   wrapShader = createShader(vertexShader, fragmentShader);
 

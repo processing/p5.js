@@ -1,8 +1,8 @@
 // CASE 3: alternate syntax
 // Canvas is auto-generated and appended to body.
 
-var myp5 = new p5(function(p) {
-  var gray = 0;
+const myp5 = new p5(function(p) {
+  let gray = 0;
 
   p.setup = function() {
     p.createCanvas(400, 400);

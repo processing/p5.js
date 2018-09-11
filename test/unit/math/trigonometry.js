@@ -1,11 +1,11 @@
 suite('Trigonometry', function() {
-  var theta = 90;
-  var x = 0;
-  var y = 1;
-  var ratio = 0.5;
-  var RADIANS = 'radians';
-  var DEGREES = 'degrees';
-  var myp5;
+  const theta = 90;
+  const x = 0;
+  const y = 1;
+  const ratio = 0.5;
+  const RADIANS = 'radians';
+  const DEGREES = 'degrees';
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -20,10 +20,10 @@ suite('Trigonometry', function() {
     myp5.remove();
   });
 
-  var handleDegreesAndRadians = function(func) {
+  const handleDegreesAndRadians = function(func) {
     test('should handle degrees', function() {
       myp5.angleMode(DEGREES);
-      var degToRad = myp5.radians(theta);
+      const degToRad = myp5.radians(theta);
       assert.equal(Math[func](degToRad), myp5[func](theta));
     });
 
@@ -33,7 +33,7 @@ suite('Trigonometry', function() {
     });
   };
 
-  var ahandleDegreesAndRadians = function(func) {
+  const ahandleDegreesAndRadians = function(func) {
     test('should handle degrees', function() {
       myp5.angleMode(DEGREES);
       assert.equal(myp5.degrees(Math[func](ratio)), myp5[func](ratio));
@@ -65,13 +65,13 @@ suite('Trigonometry', function() {
   suite('p5.prototype.degrees', function() {
     test('should return the angle in radians when angleMode is DEGREES', function() {
       myp5.angleMode(DEGREES);
-      var angleInRad = 360 * theta / (2 * Math.PI); // This is degToRad conversion
+      const angleInRad = 360 * theta / (2 * Math.PI); // This is degToRad conversion
       assert.equal(myp5.degrees(theta), angleInRad);
     });
 
     test('should return the angle in radians when angleMode is RADIANS', function() {
       myp5.angleMode(RADIANS);
-      var angleInRad = 360 * theta / (2 * Math.PI); // This is degToRad conversion
+      const angleInRad = 360 * theta / (2 * Math.PI); // This is degToRad conversion
       assert.equal(myp5.degrees(theta), angleInRad);
     });
   });
@@ -79,13 +79,13 @@ suite('Trigonometry', function() {
   suite('p5.prototype.radians', function() {
     test('should return the angle in degrees when angleMode is RADIANS', function() {
       myp5.angleMode(RADIANS);
-      var angleInDeg = 2 * Math.PI * theta / 360; // This is RadToDeg conversion
+      const angleInDeg = 2 * Math.PI * theta / 360; // This is RadToDeg conversion
       assert.equal(myp5.radians(theta), angleInDeg);
     });
 
     test('should return the angle in degrees when angleMode is DEGREES', function() {
       myp5.angleMode(DEGREES);
-      var angleInDeg = 2 * Math.PI * theta / 360; // This is RadToDeg conversion
+      const angleInDeg = 2 * Math.PI * theta / 360; // This is RadToDeg conversion
       assert.equal(myp5.radians(theta), angleInDeg);
     });
   });

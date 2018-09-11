@@ -7,8 +7,8 @@
 // Example 4-3: Varying variables
 
 // Declare and initialize two variables at the top of the code.
-var circleX = 0;
-var circleY = 100;
+let circleX = 0;
+const circleY = 100;
 
 function setup() {
   createCanvas(200, 200);

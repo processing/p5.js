@@ -7,8 +7,8 @@
 // Example 10-3: Bouncing ball with intersection
 
 // Two ball variables
-var ball1;
-var ball2;
+let ball1;
+let ball2;
 
 function setup() {
   createCanvas(400, 400);

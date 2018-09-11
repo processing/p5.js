@@ -1,7 +1,7 @@
 module.exports = function(runner) {
-  var failures = (runner.failures = []);
+  const failures = (runner.failures = []);
 
-  var stats = (runner.stats = {
+  const stats = (runner.stats = {
     suites: 0,
     tests: 0,
     passes: 0,

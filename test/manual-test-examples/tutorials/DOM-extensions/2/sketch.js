@@ -1,8 +1,8 @@
 // Creating HTML images
 
 // We define the variables outside of setup so we can access them from anywhere in the sketch.
-var img;
-var canvas;
+let img;
+let canvas;
 
 function setup() {
   // We are still calling createCanvas like before, but now we are storing a pointer to each one.
@@ -27,7 +27,7 @@ function draw() {
   fill(180, 200, 40);
   strokeWeight(6);
   stroke(180, 100, 240);
-  for (var i = 0; i < width; i += 15) {
+  for (let i = 0; i < width; i += 15) {
     line(i, 0, i, height);
   }
 }

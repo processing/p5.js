@@ -6,9 +6,9 @@
 
 // Example 9-7: An array operation using dot length
 
-var values = [];
+const values = [];
 values.length = 100;
 
-for (var i = 0; i < values.length; i++) {
+for (let i = 0; i < values.length; i++) {
   values[i] = 0;
 }

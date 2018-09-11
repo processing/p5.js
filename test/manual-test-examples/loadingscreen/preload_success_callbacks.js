@@ -1,11 +1,11 @@
-var myJson,
+let myJson,
   banana,
   strings,
   xml,
   myTable,
   myFont,
   successCount = 0;
-var myJson2, banana2, strings2, xml2, myTable2, myFont2;
+let myJson2, banana2, strings2, xml2, myTable2, myFont2;
 
 function successJSON() {
   successCount++;
@@ -61,7 +61,7 @@ function setup() {
 
 function draw() {
   clear();
-  var y = 0;
+  let y = 0;
 
   // If preload finished successfully all of these should be drawn
 

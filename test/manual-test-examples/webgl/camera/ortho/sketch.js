@@ -9,8 +9,8 @@ function draw() {
   rotateY(map(mouseX, 0, width, 0, TWO_PI));
   normalMaterial();
 
-  for (var i = -5; i < 6; i++) {
-    for (var j = -5; j < 6; j++) {
+  for (let i = -5; i < 6; i++) {
+    for (let j = -5; j < 6; j++) {
       push();
       translate(i * 100, 0, j * 100);
       box(20);

@@ -5,15 +5,15 @@
 // Ported by Lauren McCarthy
 
 // Example 5-10: Zoog and conditionals
-var x = 100;
-var y = 100;
-var w = 60;
-var h = 60;
-var eyeSize = 16;
+let x = 100;
+let y = 100;
+letw = 60;
+const h = 60;
+const eyeSize = 16;
 
 // Zoog has variables for speed in the horizontal and vertical direction.
-var xspeed = 3;
-var yspeed = 1;
+let xspeed = 3;
+let yspeed = 1;
 
 function setup() {
   createCanvas(200, 200);

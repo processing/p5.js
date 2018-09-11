@@ -10,7 +10,7 @@ const constants = require('./constants');
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
-var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
+const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = function() {};

@@ -1,4 +1,4 @@
-var sketch = function(p) {
+const sketch = function(p) {
   p.setup = function() {
     p.createCanvas(300, 300);
     p.background(200);
@@ -8,4 +8,4 @@ var sketch = function(p) {
   };
 };
 
-var myp5 = new p5(sketch, 'canvas1');
+const myp5 = new p5(sketch, 'canvas1');

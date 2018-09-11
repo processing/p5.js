@@ -102,14 +102,9 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   let result = this.cache[key];
 
   if (!result) {
-    let minX,
-      minY,
-      maxX,
-      maxY,
-      pos,
-      xCoords = [],
-      yCoords = [],
-      scale = this._scale(fontSize);
+    const xCoords = [];
+    const yCoords = [];
+    const scale = this._scale(fontSize);
 
     this.font.forEachGlyph(str, x, y, fontSize, options, function(
       glyph,
@@ -124,10 +119,10 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
       yCoords.push(gY + -gm.yMax * scale);
     });
 
-    minX = Math.min.apply(null, xCoords);
-    minY = Math.min.apply(null, yCoords);
-    maxX = Math.max.apply(null, xCoords);
-    maxY = Math.max.apply(null, yCoords);
+    const minX = Math.min.apply(null, xCoords);
+    const minY = Math.min.apply(null, yCoords);
+    const maxX = Math.max.apply(null, xCoords);
+    const maxY = Math.max.apply(null, yCoords);
 
     result = {
       x: minX,
@@ -138,7 +133,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
-    pos = this._handleAlignment(
+    const pos = this._handleAlignment(
       renderer,
       str,
       result.x,
@@ -217,8 +212,8 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
-  let xoff = 0,
-    result = [],
+  let xoff = 0;
+  const result = [],
     glyphs = this._getGlyphs(txt);
 
   function isSpace(i) {
@@ -385,8 +380,8 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  * @return {p5.Font}     this p5.Font object
  */
 p5.Font.prototype._renderPath = function(line, x, y, options) {
-  let pdata,
-    pg = (options && options.renderer) || this.parent._renderer,
+  let pdata;
+  const pg = (options && options.renderer) || this.parent._renderer,
     ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
@@ -550,7 +545,7 @@ function parseOpts(options, defaults) {
   if (typeof options !== 'object') {
     options = defaults;
   } else {
-    for (let key in defaults) {
+    for (const key in defaults) {
       if (typeof options[key] === 'undefined') {
         options[key] = defaults[key];
       }
@@ -663,9 +658,9 @@ function pointAtLength(path, length, istotal) {
     p,
     l,
     sp = '',
-    subpaths = {},
     point,
     len = 0;
+  const subpaths = {};
   for (let i = 0, ii = path.length; i < ii; i++) {
     p = path[i];
     if (p[0] === 'M') {
@@ -728,12 +723,12 @@ function pathToAbsolute(pathArray) {
     res[0] = ['M', x, y];
   }
 
-  let dots,
-    crz =
-      pathArray.length === 3 &&
-      pathArray[0][0] === 'M' &&
-      pathArray[1][0].toUpperCase() === 'R' &&
-      pathArray[2][0].toUpperCase() === 'Z';
+  let dots;
+  const crz =
+    pathArray.length === 3 &&
+    pathArray[0][0] === 'M' &&
+    pathArray[1][0].toUpperCase() === 'R' &&
+    pathArray[2][0].toUpperCase() === 'Z';
 
   for (let r, pa, i = start, ii = pathArray.length; i < ii; i++) {
     res.push((r = []));
@@ -817,9 +812,8 @@ function path2curve(path, path2) {
   let ii;
 
   const processPath = function(path, d, pcom) {
-      let nx,
-        ny,
-        tq = { T: 1, Q: 1 };
+      let nx, ny;
+      const tq = { T: 1, Q: 1 };
       if (!path) {
         return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
       }

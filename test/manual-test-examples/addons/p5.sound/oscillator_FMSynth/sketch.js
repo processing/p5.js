@@ -1,13 +1,13 @@
-var carrier, modulator;
+let carrier, modulator;
 
 // carrier frequency signal, a p5.Signal
-var carrierFreq;
+let carrierFreq;
 
 // modulator frequency signal, a p5.Signal
-var modFreq;
+let modFreq;
 
 // output envelope
-var env;
+let env;
 
 function setup() {
   carrier = new p5.Oscillator();
@@ -26,7 +26,7 @@ function setup() {
   modulator.freq(modFreq);
   modulator.start();
 
-  var m1 = new p5.SignalMult();
+  const m1 = new p5.SignalMult();
   m1.setInput(modulator);
   m1.setValue(100);
 }

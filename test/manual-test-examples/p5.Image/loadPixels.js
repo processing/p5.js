@@ -1,6 +1,6 @@
 p5.disableFriendlyErrors = true;
 
-var img;
+let img;
 function preload() {
   img = createVideo('../addons/p5.dom/fingers.mov');
   img.loop();
@@ -22,9 +22,9 @@ function draw() {
 
   img.loadPixels();
 
-  for (var i = 0; i < 3000; i++) {
-    var px = random(img.width);
-    var py = random(img.height);
+  for (let i = 0; i < 3000; i++) {
+    const px = random(img.width);
+    const py = random(img.height);
 
     fill(img.get(px, py));
     ellipse(px, py, 3, 3);

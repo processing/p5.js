@@ -5,8 +5,8 @@
 // This helps to keep code organized.
 
 // We define the canvas variables outside of setup so we can access them from anywhere in the sketch.
-var canvas0;
-var canvas1;
+let canvas0;
+let canvas1;
 
 function setup() {
   // We are still calling createCanvas like before, but now we are storing a pointer to each one.

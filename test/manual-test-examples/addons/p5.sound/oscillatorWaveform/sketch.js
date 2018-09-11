@@ -2,14 +2,14 @@
  * Example: change the frequency of an oscillator and visualize the waveform
  */
 
-var freqSlider, freqLabel, ampLabel, ampSlider, button;
+let freqSlider, freqLabel, ampLabel, ampSlider, button;
 
-var osc;
-var freq = 220; // current frequency (updated by slider)
-var amp = 0.5;
-var fft;
+let osc;
+let freq = 220; // current frequency (updated by slider)
+let amp = 0.5;
+let fft;
 
-var oscOn = false;
+let oscOn = false;
 
 function setup() {
   createCanvas(800, 400);
@@ -64,9 +64,9 @@ function draw() {
   stroke(255);
   strokeWeight(10);
   beginShape();
-  for (var i = 0; i < waveform.length; i++) {
-    var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, -height / 2, height / 2);
+  for (let i = 0; i < waveform.length; i++) {
+    const x = map(i, 0, waveform.length, 0, width);
+    const y = map(waveform[i], -1, 1, -height / 2, height / 2);
     vertex(x, y + height / 2);
   }
   endShape();

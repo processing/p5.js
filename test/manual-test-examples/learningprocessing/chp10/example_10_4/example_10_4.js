@@ -6,8 +6,8 @@
 
 // example 10-4: Implementing a timer
 
-var savedTime;
-var totalTime = 5000;
+let savedTime;
+const totalTime = 5000;
 
 function setup() {
   createCanvas(200, 200);
@@ -17,7 +17,7 @@ function setup() {
 
 function draw() {
   // Calculate how much time has passed
-  var passedTime = millis() - savedTime;
+  const passedTime = millis() - savedTime;
   // Has five seconds passed?
   if (passedTime > totalTime) {
     print(' 5 seconds have passed! ');

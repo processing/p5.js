@@ -14,15 +14,15 @@
  * 16 and 1024.
  */
 
-var soundFile;
-var fft;
-var fftBands = 512;
+let soundFile;
+let fft;
+const fftBands = 512;
 
-var description = 'loading';
-var p;
+let description = 'loading';
+let p;
 
 // This will be an array of amplitude values from lowest to highest frequencies
-var frequencySpectrum = [];
+let frequencySpectrum = [];
 
 function preload() {
   soundFormats('mp3', 'ogg');
@@ -40,7 +40,7 @@ function setup() {
 
   // update description text
   p = createP(description);
-  var p2 = createP(
+  const p2 = createP(
     'Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.'
   );
 
@@ -62,9 +62,9 @@ function draw() {
 
   // Draw every value in the frequencySpectrum array as a rectangle
   noStroke();
-  for (var i = 0; i < fftBands; i++) {
-    var x = map(i, 0, fftBands, 0, width);
-    var h = -height + map(frequencySpectrum[i], 0, 255, height, 0);
+  for (let i = 0; i < fftBands; i++) {
+    const x = map(i, 0, fftBands, 0, width);
+    const h = -height + map(frequencySpectrum[i], 0, 255, height, 0);
     rect(x, height, width / fftBands, h);
   }
 }
@@ -78,7 +78,7 @@ function updateDescription() {
     description = 'Playing! Press any key to pause';
     p.html(description);
   } else {
-    for (var i = 0; i < frameCount % 3; i++) {
+    for (let i = 0; i < frameCount % 3; i++) {
       // add periods to loading to create a fun loading bar effect
       if (frameCount % 4 === 0) {
         description += '.';

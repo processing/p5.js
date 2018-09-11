@@ -6,7 +6,7 @@
 
 // Example 8-1: A Car class and a Car object
 
-var myCar; // Declare car object as a globle variable.
+let myCar; // Declare car object as a globle variable.
 
 function setup() {
   createCanvas(200, 200);

@@ -1,4 +1,4 @@
-var table;
+let table;
 
 function setup() {
   table = new p5.Table();
@@ -6,7 +6,7 @@ function setup() {
   table.addColumn('name');
   table.addColumn('type');
 
-  var newRow = table.addRow();
+  let newRow = table.addRow();
   newRow.setString('name', 'Lion');
   newRow.setString('type', 'Mammal');
 
@@ -18,6 +18,6 @@ function setup() {
   newRow.setString('name', 'Mosquito');
   newRow.setString('type', 'Insect');
 
-  var result = table.matchRow('R.*', 'type');
+  const result = table.matchRow('R.*', 'type');
   print(result.getString('name')); // Prints "Snake"
 }

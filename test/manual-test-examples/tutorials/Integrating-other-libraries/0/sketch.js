@@ -21,7 +21,7 @@
 //        document.getElementById( "timer" ).innerHTML = timer;
 //     });
 
-var mySound = new buzz.sound('rhodes_loop.wav');
+const mySound = new buzz.sound('rhodes_loop.wav');
 
 function setup() {
   mySound.play();

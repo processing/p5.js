@@ -2,8 +2,8 @@
  * webgl loadPixels() and get() example
  */
 
-var c;
-var currentBackground = [255, 0, 100];
+let c;
+let currentBackground = [255, 0, 100];
 
 function setup() {
   createCanvas(500, 500, WEBGL);

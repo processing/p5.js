@@ -7,8 +7,8 @@
 // Example 10-2: Bouncing ball class
 
 // Two ball variables
-var ball1;
-var ball2;
+let ball1;
+let ball2;
 
 function setup() {
   createCanvas(400, 400);

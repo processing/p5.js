@@ -6,9 +6,9 @@
 
 // Example 6-11: Multiple Zoogs
 
-var w = 60;
-var h = 60;
-var eyeSize = 16;
+const w = 60;
+const h = 60;
+const eyeSize = 16;
 
 function setup() {
   createCanvas(400, 200);
@@ -21,11 +21,11 @@ function draw() {
   ellipseMode(CENTER);
   rectMode(CENTER);
 
-  var y = height / 2;
+  const y = height / 2;
 
   // Multiple versions of Zoog
   // The variable x is now included in a for loop, in order to iterate and display multiple Zoogs!
-  for (var x = 80; x < width; x += 80) {
+  for (let x = 80; x < width; x += 80) {
     // Draw Zoog's body
     stroke(0);
     fill(175);

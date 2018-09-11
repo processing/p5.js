@@ -1,5 +1,5 @@
 function setup() {
-  var c = createCanvas(200, 200);
+  const c = createCanvas(200, 200);
   c.position(100, 100);
 }
 

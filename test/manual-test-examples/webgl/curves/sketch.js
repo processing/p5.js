@@ -1,4 +1,4 @@
-var angle = 0;
+let angle = 0;
 
 function setup() {
   createCanvas(800, 600, WEBGL);
@@ -16,9 +16,9 @@ function draw() {
 
   push();
   translate(0, -120, 0);
-  for (var i = 0; i < 20; i++) {
-    var _x = 30 * Math.cos(radians(i));
-    var _y = 30 * Math.sin(radians(i));
+  for (let i = 0; i < 20; i++) {
+    const _x = 30 * Math.cos(radians(i));
+    const _y = 30 * Math.sin(radians(i));
     beginShape();
     vertex(_x, _y, 0);
     bezierVertex(-50, -250, -20, 120, -200, -10, _x, _y, 0);

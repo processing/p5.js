@@ -9,7 +9,7 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var largeImage;
+let largeImage;
 
 function preload() {
   largeImage = loadImage('test.gif'); // preloading the image guarantees it will be ready by setup()

@@ -206,7 +206,7 @@ p5.TypedDict.prototype.set = function(key, value) {
  */
 
 p5.TypedDict.prototype._addObj = function(obj) {
-  for (let key in obj) {
+  for (const key in obj) {
     this.set(key, obj[key]);
   }
 };
@@ -317,7 +317,7 @@ p5.TypedDict.prototype.remove = function(key) {
  */
 
 p5.TypedDict.prototype.print = function() {
-  for (let item in this.data) {
+  for (const item in this.data) {
     console.log('key:' + item + ' value:' + this.data[item]);
   }
 };
@@ -346,7 +346,7 @@ p5.TypedDict.prototype.print = function() {
 p5.TypedDict.prototype.saveTable = function(filename) {
   let output = '';
 
-  for (let key in this.data) {
+  for (const key in this.data) {
     output += key + ',' + this.data[key] + '\n';
   }
 
@@ -555,7 +555,7 @@ p5.NumberDict.prototype._valueTest = function(flip) {
     return this.data[Object.keys(this.data)[0]];
   } else {
     let result = this.data[Object.keys(this.data)[0]];
-    for (let key in this.data) {
+    for (const key in this.data) {
       if (this.data[key] * flip < result * flip) {
         result = this.data[key];
       }

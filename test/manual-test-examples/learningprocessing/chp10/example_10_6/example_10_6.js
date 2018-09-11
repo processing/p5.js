@@ -7,7 +7,7 @@
 // Example 10-6: Simple raindrop behavior
 
 // Variables for drop location
-var x, y;
+let x, y;
 
 function setup() {
   createCanvas(400, 400);

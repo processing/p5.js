@@ -1,5 +1,5 @@
-var img;
-var sz = 100;
+let img;
+let sz = 100;
 
 function preload() {
   img = loadImage('assets/UV_Grid_Sm.jpg');

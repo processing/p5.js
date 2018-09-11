@@ -1,8 +1,8 @@
 suite('p5.Vector', function() {
-  var RADIANS = 'radians';
-  var DEGREES = 'degrees';
+  const RADIANS = 'radians';
+  const DEGREES = 'degrees';
 
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -16,7 +16,7 @@ suite('p5.Vector', function() {
   teardown(function() {
     myp5.remove();
   });
-  var v;
+  let v;
 
   suite('p5.prototype.createVector()', function() {
     setup(function() {
@@ -118,26 +118,26 @@ suite('p5.Vector', function() {
     });
 
     test('should not trip on rounding issues in 2D space', function() {
-      var v1 = myp5.createVector(-11, -20);
-      var v2 = myp5.createVector(-5.5, -10);
+      const v1 = myp5.createVector(-11, -20);
+      const v2 = myp5.createVector(-5.5, -10);
       expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
 
-      var v3 = myp5.createVector(-11, -20);
-      var v4 = myp5.createVector(5.5, 10);
+      const v3 = myp5.createVector(-11, -20);
+      const v4 = myp5.createVector(5.5, 10);
       expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
     });
 
     test('should not trip on rounding issues in 3D space', function() {
-      var v1 = myp5.createVector(1, 1.1, 1.2);
-      var v2 = myp5.createVector(2, 2.2, 2.4);
+      const v1 = myp5.createVector(1, 1.1, 1.2);
+      const v2 = myp5.createVector(2, 2.2, 2.4);
 
-      var angle = v1.angleBetween(v2);
+      const angle = v1.angleBetween(v2);
       expect(angle).to.be.closeTo(0, 0.00001);
     });
 
     test('should return NaN for zero vector', function() {
-      var v1 = myp5.createVector(0, 0, 0);
-      var v2 = myp5.createVector(2, 3, 4);
+      const v1 = myp5.createVector(0, 0, 0);
+      const v2 = myp5.createVector(2, 3, 4);
 
       expect(v1.angleBetween(v2)).to.be.NaN; // jshint ignore:line
       expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
@@ -186,7 +186,7 @@ suite('p5.Vector', function() {
     });
 
     test('should not return the same instance', function() {
-      var newObject = v.copy();
+      const newObject = v.copy();
       expect(newObject).to.not.equal(v);
     });
 
@@ -194,7 +194,7 @@ suite('p5.Vector', function() {
       v.x = 2;
       v.y = 3;
       v.z = 4;
-      var newObject = v.copy();
+      const newObject = v.copy();
       expect(newObject.x).to.eql(2);
       expect(newObject.y).to.eql(3);
       expect(newObject.z).to.eql(4);
@@ -252,7 +252,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.add(v1, v2)', function() {
-      var v1, v2, res;
+      let v1, v2, res;
       setup(function() {
         v1 = new p5.Vector(2, 0, 3);
         v2 = new p5.Vector(0, 1, 3);
@@ -324,7 +324,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.sub(v1, v2)', function() {
-      var v1, v2, res;
+      let v1, v2, res;
       setup(function() {
         v1 = new p5.Vector(2, 0, 3);
         v2 = new p5.Vector(0, 1, 3);
@@ -377,7 +377,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.mult(v, n)', function() {
-      var v, res;
+      let v, res;
       setup(function() {
         v = new p5.Vector(1, 2, 3);
         res = p5.Vector.mult(v, 4);
@@ -435,7 +435,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.div(v, n)', function() {
-      var v, res;
+      let v, res;
       setup(function() {
         v = new p5.Vector(1, 1, 1);
         res = p5.Vector.div(v, 4);
@@ -485,7 +485,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.dot(v, n)', function() {
-      var v1, v2, res;
+      let v1, v2, res;
       setup(function() {
         v1 = new p5.Vector(1, 1, 1);
         v2 = new p5.Vector(2, 3, 4);
@@ -503,7 +503,7 @@ suite('p5.Vector', function() {
   });
 
   suite('cross', function() {
-    var res;
+    let res;
     setup(function() {
       v.x = 1;
       v.y = 1;
@@ -524,7 +524,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.cross(v1, v2)', function() {
-      var v1, v2, res;
+      let v1, v2, res;
       setup(function() {
         v1 = new p5.Vector(3, 6, 9);
         v2 = new p5.Vector(1, 1, 1);
@@ -549,7 +549,7 @@ suite('p5.Vector', function() {
   });
 
   suite('dist', function() {
-    var b, c;
+    let b, c;
     setup(function() {
       v.x = 0;
       v.y = 0;
@@ -576,7 +576,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.dist(v1, v2)', function() {
-    var v1, v2;
+    let v1, v2;
     setup(function() {
       v1 = new p5.Vector(0, 0, 0);
       v2 = new p5.Vector(0, 3, 4);
@@ -790,7 +790,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.lerp(v1, v2, amt)', function() {
-    var res, v1, v2;
+    let res, v1, v2;
     setup(function() {
       v1 = new p5.Vector(0, 0, 0);
       v2 = new p5.Vector(2, 2, 2);
@@ -818,7 +818,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.fromAngle(angle)', function() {
-    var res, angle;
+    let res, angle;
     setup(function() {
       angle = Math.PI / 2;
       res = p5.Vector.fromAngle(angle);
@@ -831,7 +831,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.random2D()', function() {
-    var res;
+    let res;
     setup(function() {
       res = p5.Vector.random2D();
     });
@@ -842,7 +842,7 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.random3D()', function() {
-    var res;
+    let res;
     setup(function() {
       res = p5.Vector.random3D();
     });
@@ -852,7 +852,7 @@ suite('p5.Vector', function() {
   });
 
   suite('v1.angleBetween(v2)', function() {
-    var res, v1, v2;
+    let res, v1, v2;
     setup(function() {
       v1 = new p5.Vector(1, 0, 0);
       v2 = new p5.Vector(2, 2, 0);

@@ -4,19 +4,19 @@ const MochaCrome = require('mocha-chrome');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
-    var done = this.async();
+    const done = this.async();
 
     try {
-      var options = this.data.options;
+      const options = this.data.options;
 
-      for (var testURL of options.urls) {
-        var my_opts = Object.assign({}, options);
+      for (const testURL of options.urls) {
+        const my_opts = Object.assign({}, options);
         my_opts.urls = undefined;
         my_opts.url = testURL;
         my_opts.chromeFlags = ['--no-sandbox', '--mute-audio'];
         my_opts.logLevel = 'trace';
-        var success, failure;
-        var runner = new MochaCrome(my_opts);
+        let success, failure;
+        const runner = new MochaCrome(my_opts);
         runner.on('ended', stats => {
           if (stats.failures) {
             failure = stats;

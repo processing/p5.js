@@ -1,11 +1,11 @@
-var randX;
-var randY;
+let randX;
+let randY;
 
-var randStroke_r;
-var randStroke_g;
-var randStroke_b;
+let randStroke_r;
+let randStroke_g;
+let randStroke_b;
 
-var randStrokeWeight;
+let randStrokeWeight;
 
 function setup() {
   createCanvas(800, 600, WEBGL);

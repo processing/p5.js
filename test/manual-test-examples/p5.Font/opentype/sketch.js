@@ -1,5 +1,5 @@
-var font;
-var snapDistance = 71;
+let font;
+let snapDistance = 71;
 
 function preload() {
   font = loadFont('AvenirNextLTPro-Demi.otf');
@@ -15,7 +15,7 @@ function setup() {
 function draw() {
   background(237, 34, 93);
 
-  var path = font._getPath('p5*js', 170, 275);
+  const path = font._getPath('p5*js', 170, 275);
   doSnap(path, snapDistance);
   font._renderPath(path);
 
@@ -25,11 +25,11 @@ function draw() {
 }
 
 function doSnap(path, dist) {
-  var i,
-    value = dist <= 0 ? 1 : dist;
+  let i;
+  const value = dist <= 0 ? 1 : dist;
 
   for (i = 0; i < path.commands.length; i++) {
-    var cmd = path.commands[i];
+    const cmd = path.commands[i];
     if (cmd.type !== 'Z') {
       cmd.x = snap(cmd.x, value);
       cmd.y = snap(cmd.y, value);

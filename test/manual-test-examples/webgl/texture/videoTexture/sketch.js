@@ -1,6 +1,6 @@
-var img;
-var playing = false;
-var fingers, button;
+let img;
+let playing = false;
+let fingers, button;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -11,11 +11,11 @@ function setup() {
 function draw() {
   background(255);
 
-  var halfw = fingers.width / 2 * 0.5;
-  var halfh = fingers.height / 2 * 0.5;
+  const halfw = fingers.width / 2 * 0.5;
+  const halfh = fingers.height / 2 * 0.5;
 
-  for (var x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
-    for (var y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
+  for (let x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
+    for (let y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
       texture(fingers);
       push();
       translate(x, y);

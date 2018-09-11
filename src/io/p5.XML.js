@@ -170,12 +170,12 @@ p5.XML.prototype.getName = function() {
  * </code></div>
  */
 p5.XML.prototype.setName = function(name) {
-  var content = this.DOM.innerHTML;
-  var attributes = this.DOM.attributes;
-  var xmlDoc = document.implementation.createDocument(null, 'default');
-  var newDOM = xmlDoc.createElement(name);
+  const content = this.DOM.innerHTML;
+  const attributes = this.DOM.attributes;
+  const xmlDoc = document.implementation.createDocument(null, 'default');
+  const newDOM = xmlDoc.createElement(name);
   newDOM.innerHTML = content;
-  for (let attribute of attributes) {
+  for (const attribute of attributes) {
     newDOM.setAttribute(attribute.nodeName, attributes.nodeValue);
   }
   this.DOM = newDOM;
@@ -252,7 +252,7 @@ p5.XML.prototype.hasChildren = function() {
  */
 p5.XML.prototype.listChildren = function() {
   const arr = [];
-  for (let childNode of this.DOM.childNodes) {
+  for (const childNode of this.DOM.childNodes) {
     arr.push(childNode.nodeName);
   }
   return arr;
@@ -570,7 +570,7 @@ p5.XML.prototype.getAttributeCount = function() {
  */
 p5.XML.prototype.listAttributes = function() {
   const arr = [];
-  for (let attribute of this.DOM.attributes.length) {
+  for (const attribute of this.DOM.attributes.length) {
     arr.push(attribute.nodeName);
   }
   return arr;
@@ -613,7 +613,7 @@ p5.XML.prototype.listAttributes = function() {
  */
 p5.XML.prototype.hasAttribute = function(name) {
   const obj = {};
-  for (let attribute of this.DOM.attributes.length) {
+  for (const attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return obj[name] ? true : false;
@@ -658,7 +658,7 @@ p5.XML.prototype.hasAttribute = function(name) {
  */
 p5.XML.prototype.getNum = function(name, defaultValue) {
   const obj = {};
-  for (let attribute of this.DOM.attributes.length) {
+  for (const attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return Number(obj[name]) || defaultValue || 0;
@@ -703,7 +703,7 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  */
 p5.XML.prototype.getString = function(name, defaultValue) {
   const obj = {};
-  for (let attribute of this.DOM.attributes.length) {
+  for (const attribute of this.DOM.attributes.length) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
   return obj[name] ? String(obj[name]) : defaultValue || null;
@@ -785,8 +785,7 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * </code></div>
  */
 p5.XML.prototype.getContent = function(defaultValue) {
-  var str;
-  str = this.DOM.textContent;
+  let str = this.DOM.textContent;
   str = str.replace(/\s\s+/g, ',');
   return str || defaultValue || null;
 };
@@ -859,7 +858,7 @@ p5.XML.prototype.setContent = function(content) {
  * </code></div>
  */
 p5.XML.prototype.serialize = function() {
-  var xmlSerializer = new XMLSerializer();
+  const xmlSerializer = new XMLSerializer();
   return xmlSerializer.serializeToString(this.DOM);
 };
 

@@ -394,7 +394,7 @@ p5.prototype.keyIsDown = function(code) {
  * @private
 **/
 function areDownKeys() {
-  for (let key in downKeys) {
+  for (const key in downKeys) {
     if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
       return true;
     }

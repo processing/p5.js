@@ -1,8 +1,8 @@
 // CASE 2: node specified, node is a DIV ELEMENT
 // A canvas with p5 attached will be inserted inside of it.
 
-var sketch = function(p) {
-  var gray = 0;
+const sketch = function(p) {
+  let gray = 0;
 
   p.setup = function() {
     p.createCanvas(400, 400);
@@ -19,6 +19,6 @@ var sketch = function(p) {
 };
 
 window.onload = function() {
-  var containerNode = document.getElementById('p5-container');
-  var myp5 = new p5(sketch, containerNode);
+  const containerNode = document.getElementById('p5-container');
+  const myp5 = new p5(sketch, containerNode);
 };

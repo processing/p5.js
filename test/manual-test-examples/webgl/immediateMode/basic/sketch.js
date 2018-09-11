@@ -1,4 +1,4 @@
-var theta = 0;
+const theta = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);

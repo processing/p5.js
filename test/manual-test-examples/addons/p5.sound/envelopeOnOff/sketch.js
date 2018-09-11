@@ -4,24 +4,24 @@
  *  Trigger the Release when the mouse is released.
  */
 
-var triOsc;
-var env;
-var a;
+let triOsc;
+let env;
+let a;
 
 // Times and levels for the ADSR envelope
-var attackTime = 0.001;
-var attackLevel = 0.9;
-var decayTime = 0.25;
-var decayLevel = 0.2;
-var sustainTime = 0.1;
-var sustainLevel = decayLevel;
-var releaseTime = 0.8;
-var duration = 1000;
+const attackTime = 0.001;
+const attackLevel = 0.9;
+const decayTime = 0.25;
+const decayLevel = 0.2;
+const sustainTime = 0.1;
+const sustainLevel = decayLevel;
+const releaseTime = 0.8;
+const duration = 1000;
 // Set the note trigger
-var trigger;
+let trigger;
 
 // An index to count up the notes
-var note = 0;
+const note = 0;
 
 function setup() {
   createCanvas(600, 600);
@@ -49,7 +49,7 @@ function setup() {
 }
 
 function draw() {
-  var size = 10;
+  const size = 10;
   background(255, 255, 255, 20);
   ellipse(
     map((trigger - millis()) % duration, 1000, 0, 0, width) % width,

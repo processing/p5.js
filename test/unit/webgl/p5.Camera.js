@@ -1,10 +1,10 @@
 suite('p5.Camera', function() {
-  var myp5;
-  var myCam;
-  var delta = 0.001;
+  let myp5;
+  let myCam;
+  const delta = 0.001;
 
   // returns values to test which have changed
-  var getVals = function(cam) {
+  const getVals = function(cam) {
     return {
       ex: cam.eyeX,
       ey: cam.eyeY,
@@ -56,12 +56,12 @@ suite('p5.Camera', function() {
 
   suite('createCamera()', function() {
     test('creates a p5.Camera object', function() {
-      var myCam2 = myp5.createCamera();
+      const myCam2 = myp5.createCamera();
       assert.instanceOf(myCam2, p5.Camera);
     });
 
     test('createCamera attaches p5.Camera to renderer', function() {
-      var myCam2 = myp5.createCamera();
+      const myCam2 = myp5.createCamera();
       assert.deepEqual(myCam2, myp5._renderer._curCamera);
     });
   });
@@ -69,10 +69,10 @@ suite('p5.Camera', function() {
   suite('Rotation', function() {
     test('Pan() with positive parameter sets correct matrix w/o changing\
      eyeXYZ or upXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         0.5403022766113281, -0, 0.8414710164070129, 0,
         0, 1, 0, 0,
         -0.8414710164070129, 0, 0.5403022766113281, 0,
@@ -94,10 +94,10 @@ suite('p5.Camera', function() {
 
     test('Pan() with negative parameter sets correct matrix w/o changing\
      eyeXYZ or upXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         0.5403022766113281, 0, -0.8414710164070129, 0,
          -0, 1, 0, 0,
          0.8414710164070129, 0, 0.5403022766113281, 0,
@@ -116,10 +116,10 @@ suite('p5.Camera', function() {
       assert.strictEqual(myCam.upZ, orig.uz, 'up Z pos changed');
     });
     test('Pan(0) sets correct matrix w/o changing eyeXYZ or upXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -140,10 +140,10 @@ suite('p5.Camera', function() {
 
     test('Tilt() with positive parameter sets correct Matrix w/o \
     changing eyeXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array(
+      const expectedMatrix = new Float32Array(
         [1, 0, 0, 0,
           0, 0.07073719799518585, -0.9974949955940247, 0,
           -0, 0.9974949955940247, 0.07073719799518585, 0,
@@ -160,10 +160,10 @@ suite('p5.Camera', function() {
 
     test('Tilt() with negative parameter sets correct matrix w/o \
     changing eyeXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
           1, 0, 0, 0,
           0, 0.07073719799518585, 0.9974949955940247, 0,
           0, -0.9974949955940247, 0.07073719799518585, 0,
@@ -178,10 +178,10 @@ suite('p5.Camera', function() {
       assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
     });
     test('Tilt(0) sets correct matrix w/o changing eyeXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -198,7 +198,7 @@ suite('p5.Camera', function() {
 
     test('LookAt() should set centerXYZ without changing eyeXYZ or \
     upXYZ', function() {
-      var orig = getVals(myCam);
+      const orig = getVals(myCam);
 
       myCam.lookAt(10, 20, 30);
 
@@ -254,7 +254,7 @@ suite('p5.Camera', function() {
 
     test('Move() with positive parameters sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
                         1, 0, 0, 0,
                         0, 1, 0, 0,
                         0, 0, 1, 0,
@@ -267,7 +267,7 @@ suite('p5.Camera', function() {
 
     test('Move() with negative parameters sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
                       1, 0, 0, 0,
                       0, 1, 0, 0,
                       0, 0, 1, 0,
@@ -280,7 +280,7 @@ suite('p5.Camera', function() {
 
     test('Move(0,0,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -292,7 +292,7 @@ suite('p5.Camera', function() {
 
     test('SetPosition() with positive parameters sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -305,7 +305,7 @@ suite('p5.Camera', function() {
     });
     test('SetPosition() with negative parameters sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -318,7 +318,7 @@ suite('p5.Camera', function() {
     });
     test('SetPosition(0,0,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -331,7 +331,7 @@ suite('p5.Camera', function() {
 
     test('_orbit(1,0,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
           0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
           0, 1, 6.123234262925839e-17, 0,
           -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
@@ -344,7 +344,7 @@ suite('p5.Camera', function() {
     });
     test('_orbit(0,1,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
           1, 0, 0, 0,
           0, 0.5403022766113281, -0.8414709568023682, 0,
           -0, 0.8414709568023682, 0.5403022766113281, 0,
@@ -357,7 +357,7 @@ suite('p5.Camera', function() {
     });
     test('_orbit(0,0,1) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
           1, 0, 0, 0,
           0, 1, 6.123234262925839e-17, 0,
           0, -6.123234262925839e-17, 1, 0,
@@ -370,7 +370,7 @@ suite('p5.Camera', function() {
     });
     test('_orbit(-1,0,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
           0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
           -0, 1, 6.123234262925839e-17, 0,
           0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
@@ -383,7 +383,7 @@ suite('p5.Camera', function() {
     });
     test('_orbit(0,-1,0) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 0.5403022766113281, 0.8414709568023682, 0,
         0, -0.8414709568023682, 0.5403022766113281, 0,
@@ -396,7 +396,7 @@ suite('p5.Camera', function() {
     });
     test('_orbit(0,0,-1) sets correct matrix', function() {
       //prettier-ignore
-      var expectedMatrix = new Float32Array([
+      const expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 6.123234262925839e-17, 0,
         0, -6.123234262925839e-17, 1, 0,
@@ -408,7 +408,7 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit() ensures altitude phi <= PI', function() {
-      var myCamCopy = myCam.copy();
+      const myCamCopy = myCam.copy();
 
       // the following should produce the same values because phi is capped at PI
       myCamCopy._orbit(0, 10, 0);
@@ -417,7 +417,7 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
     });
     test('_orbit() ensures altitude phi > 0', function() {
-      var myCamCopy = myCam.copy();
+      const myCamCopy = myCam.copy();
 
       // the following should produce the same values because phi is restricted
       // to > 0
@@ -427,7 +427,7 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
     });
     test('_orbit() ensures radius > 0', function() {
-      var myCamCopy = myCam.copy();
+      const myCamCopy = myCam.copy();
 
       // the following should produce the same values because radius is
       // restricted to > 0
@@ -450,7 +450,7 @@ suite('p5.Camera', function() {
         // expectedMatrix array needs to match Float32Array type of
         // p5.Camera projMatrix's mat4 array for deepEqual to work
         //prettier-ignore
-        var expectedMatrix = new Float32Array(
+        const expectedMatrix = new Float32Array(
                       [1,  0,  0, 0,
                        0, -1,  0, 0,
                        0,  0, -1, 0,
@@ -463,7 +463,7 @@ suite('p5.Camera', function() {
 
       test('ortho() with no parameters specified (sets default)', function() {
         //prettier-ignore
-        var expectedMatrix = new Float32Array([
+        const expectedMatrix = new Float32Array([
           0.019999999552965164, 0, 0, 0,
           0, -0.019999999552965164, 0,0,
           0,0,-0.019999999552965164,0,
@@ -481,7 +481,7 @@ suite('p5.Camera', function() {
       });
       test('perspective() sets projection matrix correctly', function() {
         //prettier-ignore
-        var expectedMatrix = new Float32Array(
+        const expectedMatrix = new Float32Array(
                       [1,  0,   0,  0,
                        0, -1,   0,  0,
                        0,  0,  -3, -1,
@@ -494,7 +494,7 @@ suite('p5.Camera', function() {
 
       test('perspective() with no parameters specified (sets default)', function() {
         // prettier-ignore
-        var expectedMatrix = new Float32Array([
+        const expectedMatrix = new Float32Array([
           1.7320507764816284,0,0,0,
           0,-1.7320507764816284,0,0,
           0,0,-1.0202020406723022,-1,
@@ -510,7 +510,7 @@ suite('p5.Camera', function() {
 
   suite('Helper Functions', function() {
     test('copy() returns a new p5.Camera object', function() {
-      var newCam = myCam.copy();
+      const newCam = myCam.copy();
       assert.instanceOf(newCam, p5.Camera);
 
       assert.equal(newCam.cameraFOV, myCam.cameraFOV);
@@ -531,7 +531,7 @@ suite('p5.Camera', function() {
     });
 
     test('_getLocalAxes() returns three normalized, orthogonal vectors', function() {
-      var local = myCam._getLocalAxes();
+      const local = myCam._getLocalAxes();
 
       // assert that all returned values are numbers
       for (let j = 0; j < 3; j++) {
@@ -541,9 +541,9 @@ suite('p5.Camera', function() {
       }
 
       // create p5.Vectors for further assertions
-      var vecX = myp5.createVector(local.x[0], local.x[1], local.x[2]);
-      var vecY = myp5.createVector(local.y[0], local.y[1], local.y[2]);
-      var vecZ = myp5.createVector(local.z[0], local.z[1], local.z[2]);
+      const vecX = myp5.createVector(local.x[0], local.x[1], local.x[2]);
+      const vecY = myp5.createVector(local.y[0], local.y[1], local.y[2]);
+      const vecZ = myp5.createVector(local.z[0], local.z[1], local.z[2]);
 
       // assert vectors are normalized
       assert.equal(vecX.mag(), 1, 'local X vector is not unit vector');
@@ -575,13 +575,13 @@ suite('p5.Camera', function() {
   suite('RendererGL Current Camera', function() {
     test('_isActive() returns true for a camera created with createCamera(),\
      and false for another p5.Camera', function() {
-      var myCam2 = myp5.createCamera();
+      const myCam2 = myp5.createCamera();
       assert.isTrue(myCam2._isActive());
       assert.isFalse(myCam._isActive());
     });
     test('setCamera() correctly sets RendererGL current camera', function() {
-      var myCam2 = myp5.createCamera();
-      var myCam3 = myp5.createCamera();
+      const myCam2 = myp5.createCamera();
+      const myCam3 = myp5.createCamera();
       myp5.setCamera(myCam2);
       assert.deepEqual(myCam2, myp5._renderer._curCamera);
       myp5.setCamera(myCam3);

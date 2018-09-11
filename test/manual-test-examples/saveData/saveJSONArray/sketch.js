@@ -1,13 +1,13 @@
-var species = ['Capra hircus', 'Panthera pardus', 'Equus zebra'];
-var names = ['Goat', 'Leopard', 'Zebra'];
+const species = ['Capra hircus', 'Panthera pardus', 'Equus zebra'];
+const names = ['Goat', 'Leopard', 'Zebra'];
 
-var values; // Array that contains JSON objects
+let values; // Array that contains JSON objects
 
 function setup() {
   values = [];
 
-  for (var i = 0; i < species.length; i++) {
-    var animal = {};
+  for (let i = 0; i < species.length; i++) {
+    const animal = {};
 
     animal.id = i;
     animal.species = species[i];

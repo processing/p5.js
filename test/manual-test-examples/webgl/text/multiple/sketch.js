@@ -1,5 +1,5 @@
-var font;
-var txtWidth;
+let font;
+let txtWidth;
 
 function preload() {
   font = loadFont(
@@ -20,17 +20,17 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-var P1 = 11;
-var P2 = 2;
-var txt = 'p5.js  ';
-var N = Math.floor(400);
+const P1 = 11;
+const P2 = 2;
+const txt = 'p5.js  ';
+const N = Math.floor(400);
 
 function draw() {
   background(0);
   rotateY(millis() / 3000);
   rotateX(1);
-  for (var i = 0; i < N; i++) {
-    var n = 2 * PI * P1 * P2 * i / N - millis() / 300;
+  for (let i = 0; i < N; i++) {
+    const n = 2 * PI * P1 * P2 * i / N - millis() / 300;
 
     fill(i * 400 / N, 255, 255);
 

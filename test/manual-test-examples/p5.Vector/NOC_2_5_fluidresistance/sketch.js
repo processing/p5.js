@@ -9,14 +9,14 @@
 // Bodies experience fluid resistance when in "water"
 
 // Five moving bodies
-var movers = [];
+const movers = [];
 
 // Liquid
-var liquid;
+let liquid;
 
 function setup() {
   // Must be before createGraphics
-  var text = createP('click mouse to reset');
+  const text = createP('click mouse to reset');
 
   createCanvas(640, 360);
   reset();
@@ -33,17 +33,17 @@ function draw() {
   // Draw water
   liquid.display();
 
-  for (var i = 0; i < movers.length; i++) {
+  for (let i = 0; i < movers.length; i++) {
     // Is the Mover in the liquid?
     if (liquid.contains(movers[i])) {
       // Calculate drag force
-      var dragForce = liquid.calculateDrag(movers[i]);
+      const dragForce = liquid.calculateDrag(movers[i]);
       // Apply drag force to Mover
       movers[i].applyForce(dragForce);
     }
 
     // Gravity is scaled by mass here!
-    var gravity = createVector(0, 0.1 * movers[i].mass);
+    const gravity = createVector(0, 0.1 * movers[i].mass);
     // Apply gravity
     movers[i].applyForce(gravity);
 
@@ -61,7 +61,7 @@ function mousePressed() {
 
 // Restart all the Mover objects randomly
 function reset() {
-  for (var i = 0; i < 9; i++) {
+  for (let i = 0; i < 9; i++) {
     movers[i] = new Mover(random(0.5, 3), 40 + i * 70, 0);
   }
 }

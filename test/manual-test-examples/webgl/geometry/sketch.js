@@ -3,7 +3,7 @@ function setup() {
   //cylinder(50, 50);
 }
 
-var theta = 0;
+let theta = 0;
 
 function draw() {
   background(255, 255, 255, 255);

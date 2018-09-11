@@ -6,8 +6,8 @@
 
 // Example 8-2: Two Car objects
 
-var myCar1;
-var myCar2; // Two objects!
+let myCar1;
+let myCar2; // Two objects!
 
 function setup() {
   createCanvas(200, 200);

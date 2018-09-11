@@ -1,5 +1,5 @@
 suite('p5.RendererGL', function() {
-  var myp5;
+  let myp5;
 
   if (!window.Modernizr.webgl) {
     return;
@@ -66,7 +66,7 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(0, 100, 0);
       myp5.loadPixels();
-      var pixels = myp5.pixels;
+      const pixels = myp5.pixels;
       assert.deepEqual(pixels[1], 100);
       assert.deepEqual(pixels[3], 255);
       done();
@@ -74,7 +74,7 @@ suite('p5.RendererGL', function() {
   });
 
   suite('get()', function() {
-    var img;
+    let img;
     test('get() size check', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       img = myp5.get();

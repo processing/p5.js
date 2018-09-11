@@ -1,7 +1,7 @@
-var img;
-var radius = 60;
-var smoothAmount;
-var canvasImg;
+let img;
+const radius = 60;
+let smoothAmount;
+let canvasImg;
 
 function preload() {
   img = loadImage('unicorn.jpg'); // Load an image into the program
@@ -14,7 +14,7 @@ function setup() {
 }
 
 function draw() {
-  for (var i = -5; i < 5; i++) {
+  for (let i = -5; i < 5; i++) {
     set(mouseX + i, mouseY, [0, 0, 255, 100]);
   }
   set(mouseX, mouseY, [255, 0, 255, 255]);

@@ -3,7 +3,7 @@ function setup() {
   createCanvas(600, 600);
   background(200);
 
-  var i = loadImage('unicorn.jpg', function(img) {
+  const i = loadImage('unicorn.jpg', function(img) {
     image(img, 10, 10);
 
     setTimeout(function() {

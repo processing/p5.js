@@ -158,15 +158,16 @@ p5.RendererGL.prototype.endShape = function(
           this.immediateMode.edges.push([i, i + 1]);
           this.immediateMode.edges.push([i, i + 2]);
         }
-        this.immediateMode.edges.push([i, i + 1]);
+        const last = this.immediateMode.vertices.length - 2;
+        this.immediateMode.edges.push([last, last + 1]);
       } else if (this.immediateMode.shapeMode === constants.TRIANGLES) {
-        for (let  i = 0; i < this.immediateMode.vertices.length - 2; i = i + 3) {
+        for (let i = 0; i < this.immediateMode.vertices.length - 2; i = i + 3) {
           this.immediateMode.edges.push([i, i + 1]);
           this.immediateMode.edges.push([i + 1, i + 2]);
           this.immediateMode.edges.push([i + 2, i]);
         }
       } else {
-        for (let  i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+        for (let i = 0; i < this.immediateMode.vertices.length - 1; i++) {
           this.immediateMode.edges.push([i, i + 1]);
         }
       }

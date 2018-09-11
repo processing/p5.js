@@ -17,7 +17,7 @@
     context[name] = factory();
   }
 })('buzz', this, function() {
-  var buzz = {
+  const buzz = {
     defaults: {
       autoplay: false,
       duration: 5e3,
@@ -39,11 +39,11 @@
     el: document.createElement('audio'),
     sound: function(src, options) {
       options = options || {};
-      var doc = options.document || buzz.defaults.document;
-      var pid = 0,
-        events = [],
-        eventsOnce = {},
-        supported = buzz.isSupported();
+      const doc = options.document || buzz.defaults.document;
+      (letpid = 0),
+        (events = []),
+        (eventsOnce = {}),
+        (supported = buzz.isSupported());
       this.load = function() {
         if (!supported) {
           return this;
@@ -172,7 +172,7 @@
         if (!supported) {
           return this;
         }
-        var set = true;
+        let set = true;
         this.whenReady(function() {
           if (set === true) {
             set = false;
@@ -185,7 +185,7 @@
         if (!supported) {
           return null;
         }
-        var time = Math.round(this.sound.currentTime * 100) / 100;
+        const time = Math.round(this.sound.currentTime * 100) / 100;
         return isNaN(time) ? buzz.defaults.placeholder : time;
       };
       this.setPercent = function(percent) {
@@ -198,7 +198,7 @@
         if (!supported) {
           return null;
         }
-        var percent = Math.round(
+        const percent = Math.round(
           buzz.toPercent(this.sound.currentTime, this.sound.duration)
         );
         return isNaN(percent) ? buzz.defaults.placeholder : percent;
@@ -220,7 +220,7 @@
         if (!supported) {
           return null;
         }
-        var duration = Math.round(this.sound.duration * 100) / 100;
+        const duration = Math.round(this.sound.duration * 100) / 100;
         return isNaN(duration) ? buzz.defaults.placeholder : duration;
       };
       this.getPlayed = function() {
@@ -343,13 +343,13 @@
           return this;
         }
         types = types.split(' ');
-        var self = this,
+        const self = this,
           efunc = function(e) {
             func.call(self, e);
           };
-        for (var t = 0; t < types.length; t++) {
-          var type = types[t],
-            idx = type;
+        for (let t = 0; t < types.length; t++) {
+          let type = types[t];
+          const idx = type;
           type = idx.split('.')[0];
           events.push({
             idx: idx,
@@ -364,11 +364,11 @@
           return this;
         }
         types = types.split(' ');
-        for (var t = 0; t < types.length; t++) {
-          var idx = types[t],
+        for (let t = 0; t < types.length; t++) {
+          const idx = types[t],
             type = idx.split('.')[0];
-          for (var i = 0; i < events.length; i++) {
-            var namespace = events[i].idx.split('.');
+          for (let i = 0; i < events.length; i++) {
+            const namespace = events[i].idx.split('.');
             if (
               events[i].idx === idx ||
               (namespace[1] && namespace[1] === idx.replace('.', ''))
@@ -384,7 +384,7 @@
         if (!supported) {
           return this;
         }
-        var self = this;
+        const self = this;
         eventsOnce[pid++] = false;
         this.bind(type + '.' + pid, function() {
           if (!eventsOnce[pid]) {
@@ -400,15 +400,15 @@
           return this;
         }
         types = types.split(' ');
-        for (var t = 0; t < types.length; t++) {
-          var idx = types[t];
-          for (var i = 0; i < events.length; i++) {
-            var eventType = events[i].idx.split('.');
+        for (let t = 0; t < types.length; t++) {
+          const idx = types[t];
+          for (let i = 0; i < events.length; i++) {
+            const eventType = events[i].idx.split('.');
             if (
               events[i].idx === idx ||
               (eventType[0] && eventType[0] === idx.replace('.', ''))
             ) {
-              var evt = doc.createEvent('HTMLEvents');
+              const evt = doc.createEvent('HTMLEvents');
               evt.initEvent(eventType[0], false, true);
               this.sound.dispatchEvent(evt);
             }
@@ -426,7 +426,7 @@
         } else {
           duration = duration || buzz.defaults.duration;
         }
-        var from = this.volume,
+        const from = this.volume,
           delay = duration / Math.abs(from - to),
           self = this;
         this.play();
@@ -474,7 +474,7 @@
         if (!supported) {
           return null;
         }
-        var self = this;
+        const self = this;
         if (this.sound.readyState === 0) {
           this.bind('canplay.buzzwhenready', function() {
             func.call(self);
@@ -484,9 +484,9 @@
         }
       };
       function timerangeToArray(timeRange) {
-        var array = [],
+        const array = [],
           length = timeRange.length - 1;
-        for (var i = 0; i <= length; i++) {
+        for (let i = 0; i <= length; i++) {
           array.push({
             start: timeRange.start(i),
             end: timeRange.end(i)
@@ -498,7 +498,7 @@
         return filename.split('.').pop();
       }
       function addSource(sound, src) {
-        var source = doc.createElement('source');
+        const source = doc.createElement('source');
         source.src = src;
         if (buzz.types[getExt(src)]) {
           source.type = buzz.types[getExt(src)];
@@ -506,20 +506,20 @@
         sound.appendChild(source);
       }
       if (supported && src) {
-        for (var i in buzz.defaults) {
+        for (const i in buzz.defaults) {
           if (buzz.defaults.hasOwnProperty(i)) {
             options[i] = options[i] || buzz.defaults[i];
           }
         }
         this.sound = doc.createElement('audio');
         if (src instanceof Array) {
-          for (var j in src) {
+          for (const j in src) {
             if (src.hasOwnProperty(j)) {
               addSource(this.sound, src[j]);
             }
           }
         } else if (options.formats.length) {
-          for (var k in options.formats) {
+          for (const k in options.formats) {
             if (options.formats.hasOwnProperty(k)) {
               addSource(this.sound, src + '.' + options.formats[k]);
             }
@@ -551,14 +551,14 @@
       };
       this.add = function(soundArray) {
         soundArray = argsToArray(soundArray, arguments);
-        for (var a = 0; a < soundArray.length; a++) {
+        for (let a = 0; a < soundArray.length; a++) {
           sounds.push(soundArray[a]);
         }
       };
       this.remove = function(soundArray) {
         soundArray = argsToArray(soundArray, arguments);
-        for (var a = 0; a < soundArray.length; a++) {
-          for (var i = 0; i < sounds.length; i++) {
+        for (let a = 0; a < soundArray.length; a++) {
+          for (let i = 0; i < sounds.length; i++) {
             if (sounds[i] === soundArray[a]) {
               sounds.splice(i, 1);
               break;
@@ -655,9 +655,9 @@
         return this;
       };
       function fn() {
-        var args = argsToArray(null, arguments),
+        const args = argsToArray(null, arguments),
           func = args.shift();
-        for (var i = 0; i < sounds.length; i++) {
+        for (let i = 0; i < sounds.length; i++) {
           sounds[i][func].apply(sounds[i], args);
         }
       }
@@ -695,7 +695,7 @@
       );
     },
     toTimer: function(time, withHours) {
-      var h, m, s;
+      let h, m, s;
       h = Math.floor(time / 3600);
       h = isNaN(h) ? '--' : h >= 10 ? h : '0' + h;
       m = withHours ? Math.floor((time / 60) % 60) : Math.floor(time / 60);
@@ -705,7 +705,7 @@
       return withHours ? h + ':' + m + ':' + s : m + ':' + s;
     },
     fromTimer: function(time) {
-      var splits = time.toString().split(':');
+      const splits = time.toString().split(':');
       if (splits && splits.length === 3) {
         time =
           parseInt(splits[0], 10) * 3600 +
@@ -718,11 +718,11 @@
       return time;
     },
     toPercent: function(value, total, decimal) {
-      var r = Math.pow(10, decimal || 0);
+      const r = Math.pow(10, decimal || 0);
       return Math.round(value * 100 / total * r) / r;
     },
     fromPercent: function(percent, total, decimal) {
-      var r = Math.pow(10, decimal || 0);
+      const r = Math.pow(10, decimal || 0);
       return Math.round(total / 100 * percent * r) / r;
     }
   };

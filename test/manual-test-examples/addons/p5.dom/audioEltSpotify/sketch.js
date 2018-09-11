@@ -8,11 +8,11 @@
  *  we can use it to play multiple sources.
  */
 
-var songs = [];
-var searchButton;
-var playButton;
-var queryField;
-var audioPlayer;
+let songs = [];
+let searchButton;
+let playButton;
+let queryField;
+let audioPlayer;
 
 function setup() {
   noCanvas();
@@ -31,7 +31,7 @@ function setup() {
 
 // callback when search button is pressed.
 function findSongs() {
-  var searchTerm = queryField.value();
+  const searchTerm = queryField.value();
   loadJSON(
     'https://api.spotify.com/v1/search?q=' + searchTerm + '&type=track',
     gotSongs
@@ -47,8 +47,8 @@ function gotSongs(data) {
 
 // when playButton is pressed, pick a random song and play it
 function playRandomSong() {
-  var i = floor(random(songs.length));
-  var songPreview = songs[i].preview_url;
+  const i = floor(random(songs.length));
+  const songPreview = songs[i].preview_url;
   audioPlayer.src = songPreview;
   audioPlayer.play();
 }

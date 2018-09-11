@@ -1,9 +1,7 @@
-var _setup = function(p, font) {
-  var txt,
-    tb,
-    tw,
-    x = 20,
-    y = 50;
+const _setup = function(p, font) {
+  let txt, tb, tw;
+  const x = 20;
+  let y = 50;
 
   p.createCanvas(240, 160);
   p.textFont(font);
@@ -56,7 +54,7 @@ var _setup = function(p, font) {
   p.line(x, y + 6, x + tw, y + 6);
 };
 
-var textSketch = function(p) {
+const textSketch = function(p) {
   p.setup = function() {
     p.loadFont('../acmesa.ttf', function(f) {
       _setup(p, f);
@@ -64,7 +62,7 @@ var textSketch = function(p) {
   };
 };
 
-var textSketchMono = function(p) {
+const textSketchMono = function(p) {
   p.setup = function() {
     p.loadFont('../AndaleMono.ttf', function(f) {
       _setup(p, f);
@@ -72,11 +70,10 @@ var textSketchMono = function(p) {
   };
 };
 
-var textSketch1958 = function(p) {
+const textSketch1958 = function(p) {
   // issue #1958
-  var font,
-    lineW,
-    words = 'swimming back to the rock';
+  let font, lineW;
+  const words = 'swimming back to the rock';
 
   p.preload = function() {
     font = p.loadFont('../OpenSans-Regular.ttf');
@@ -84,10 +81,10 @@ var textSketch1958 = function(p) {
 
   p.setup = function() {
     function textAsWords(words, x, y) {
-      var tw,
-        spaceW = p.textWidth(' ');
+      let tw;
+      const spaceW = p.textWidth(' ');
       console.log(spaceW);
-      for (var i = 0; i < words.length; i++) {
+      for (let i = 0; i < words.length; i++) {
         if (i !== 0) {
           tw = p.textWidth(words[i - 1]);
           x += tw + spaceW;

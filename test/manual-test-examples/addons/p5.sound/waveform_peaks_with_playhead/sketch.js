@@ -6,9 +6,9 @@
 
 // ====================
 
-var soundFile;
+let soundFile;
 
-var p, peakCount;
+let p, peakCount;
 
 function preload() {
   soundFormats('ogg', 'mp3');
@@ -32,12 +32,12 @@ function draw() {
   if (peakCount < 8) {
     peakCount = 8;
   }
-  var waveform = soundFile.getPeaks(peakCount);
+  const waveform = soundFile.getPeaks(peakCount);
   fill(0);
   stroke(0);
   strokeWeight(2);
   beginShape();
-  for (var i = 0; i < waveform.length; i++) {
+  for (let i = 0; i < waveform.length; i++) {
     vertex(
       map(i, 0, waveform.length, 0, width),
       map(waveform[i], -1, 1, height, 0)

@@ -6,10 +6,10 @@
 
 // Example 6-2: Many lines with variables
 
-var y = 80; // Vertical location of each line
-var x = 50; // Initial horizontal location for first line
-var spacing = 10; // How far apart is each line
-var len = 20; // Length of each line
+const y = 80; // Vertical location of each line
+let x = 50; // Initial horizontal location for first line
+const spacing = 10; // How far apart is each line
+const len = 20; // Length of each line
 
 function setup() {
   createCanvas(200, 200);

@@ -45,9 +45,9 @@ function Boid(target) {
 
   // We accumulate a new acceleration each time based on three rules
   this.flock = function(boids) {
-    var sep = this.separate(boids); // Separation
-    var ali = this.align(boids); // Alignment
-    var coh = this.cohesion(boids); // Cohesion
+    const sep = this.separate(boids); // Separation
+    const ali = this.align(boids); // Alignment
+    const coh = this.cohesion(boids); // Cohesion
     // Arbitrarily weight these forces
     sep.mult(1.5);
     ali.mult(1.0);
@@ -76,19 +76,19 @@ function Boid(target) {
   };
 
   this.seek = function(target) {
-    var desired = p5.Vector.sub(target, this.position);
+    const desired = p5.Vector.sub(target, this.position);
     // Normalize desired and scale to maximum speed
     desired.normalize();
     desired.mult(this.maxspeed);
     // Steering = Desired minus Velocity
-    var steer = p5.Vector.sub(desired, this.velocity);
+    const steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
     return steer;
   };
 
   this.render = function() {
     // Draw a triangle rotated in the direction of velocity
-    var theta = this.velocity.heading() + radians(90);
+    const theta = this.velocity.heading() + radians(90);
     fill(255);
     noStroke();
     push();
@@ -113,16 +113,16 @@ function Boid(target) {
   // Separation
   // Method checks for nearby boids and steers away
   this.separate = function(boids) {
-    var desiredseparation = 25.0;
-    var steer = createVector(0, 0);
-    var count = 0;
+    const desiredseparation = 25.0;
+    const steer = createVector(0, 0);
+    let count = 0;
     // For every boid in the system, check if it's too close
-    for (var i = 0; i < boids.length; i++) {
-      var d = p5.Vector.dist(this.position, boids[i].position);
+    for (let i = 0; i < boids.length; i++) {
+      const d = p5.Vector.dist(this.position, boids[i].position);
       // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
       if (d > 0 && d < desiredseparation) {
         // Calculate vector pointing away from neighbor
-        var diff = p5.Vector.sub(this.position, boids[i].position);
+        const diff = p5.Vector.sub(this.position, boids[i].position);
         diff.normalize();
         diff.div(d); // Weight by distance
         steer.add(diff);
@@ -148,11 +148,11 @@ function Boid(target) {
   // Alignment
   // For every nearby boid in the system, calculate the average velocity
   this.align = function(boids) {
-    var neighbordist = 50;
-    var sum = createVector(0, 0);
-    var count = 0;
-    for (var i = 0; i < boids.length; i++) {
-      var d = p5.Vector.dist(this.position, boids[i].position);
+    const neighbordist = 50;
+    const sum = createVector(0, 0);
+    let count = 0;
+    for (let i = 0; i < boids.length; i++) {
+      const d = p5.Vector.dist(this.position, boids[i].position);
       if (d > 0 && d < neighbordist) {
         sum.add(boids[i].velocity);
         count++;
@@ -162,7 +162,7 @@ function Boid(target) {
       sum.div(count);
       sum.normalize();
       sum.mult(this.maxspeed);
-      var steer = p5.Vector.sub(sum, this.velocity);
+      const steer = p5.Vector.sub(sum, this.velocity);
       steer.limit(this.maxforce);
       return steer;
     } else {
@@ -173,11 +173,11 @@ function Boid(target) {
   // Cohesion
   // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
   this.cohesion = function(boids) {
-    var neighbordist = 50;
-    var sum = createVector(0, 0); // Start with empty vector to accumulate all locations
-    var num = 0;
-    for (var i = 0; i < boids.length; i++) {
-      var d = p5.Vector.dist(this.position, boids[i].position);
+    const neighbordist = 50;
+    const sum = createVector(0, 0); // Start with empty vector to accumulate all locations
+    let num = 0;
+    for (let i = 0; i < boids.length; i++) {
+      const d = p5.Vector.dist(this.position, boids[i].position);
       if (d > 0 && d < neighbordist) {
         sum.add(boids[i].position); // Add location
         num++;
@@ -192,14 +192,14 @@ function Boid(target) {
 
   Boid.prototype.arrive = function(target) {
     // A vector pointing from the location to the target
-    var desired = p5.Vector.sub(target, this.position),
+    const desired = p5.Vector.sub(target, this.position),
       d = desired.mag();
 
     // Scale with arbitrary damping within 100 pixels
     desired.setMag(d < 100 ? map(d, 0, 100, 0, this.maxspeed) : this.maxspeed);
 
     // Steering = Desired minus Velocity
-    var steer = p5.Vector.sub(desired, this.velocity);
+    const steer = p5.Vector.sub(desired, this.velocity);
     steer.limit(this.maxforce); // Limit to maximum steering force
     this.applyForce(steer);
   };
@@ -215,7 +215,7 @@ function Flock() {
   this.assemble = false;
 
   this.arrived = function() {
-    var i;
+    let i;
     if (arguments.length) {
       for (i = 0; i < this.boids.length; i++)
         this.boids[i].arrived = arguments[0];
@@ -233,6 +233,6 @@ function Flock() {
     if (!this.assemble && mouseOnScreen())
       this.boids[this.count++].place(mouseX, mouseY);
 
-    for (var i = 0; i < this.boids.length; i++) this.boids[i].run(this.boids);
+    for (let i = 0; i < this.boids.length; i++) this.boids[i].run(this.boids);
   };
 }

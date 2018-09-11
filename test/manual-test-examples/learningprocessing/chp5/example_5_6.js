@@ -5,8 +5,8 @@
 // Ported by Lauren McCarthy
 
 // Example 5-6: Bouncing Ball
-var x = 0;
-var speed = 1;
+let x = 0;
+let speed = 1;
 
 function setup() {
   createCanvas(200, 200);

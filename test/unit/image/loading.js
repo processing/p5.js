@@ -2,10 +2,10 @@
  * Expects an image file and a p5 instance with an image file loaded and drawn
  * and checks that they are exactly the same. Sends result to the callback.
  */
-var testImageRender = function(file, sketch) {
+const testImageRender = function(file, sketch) {
   sketch.loadPixels();
-  var p = sketch.pixels;
-  var ctx = sketch;
+  const p = sketch.pixels;
+  const ctx = sketch;
 
   sketch.clear();
 
@@ -15,18 +15,18 @@ var testImageRender = function(file, sketch) {
     ctx.image(img, 0, 0);
 
     ctx.loadPixels();
-    var n = 0;
-    for (var i = 0; i < p.length; i++) {
-      var diff = Math.abs(p[i] - ctx.pixels[i]);
+    let n = 0;
+    for (let i = 0; i < p.length; i++) {
+      const diff = Math.abs(p[i] - ctx.pixels[i]);
       n += diff;
     }
-    var same = n === 0 && ctx.pixels.length === p.length;
+    const same = n === 0 && ctx.pixels.length === p.length;
     return same;
   });
 };
 
 suite('loading images', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -41,7 +41,7 @@ suite('loading images', function() {
     myp5.remove();
   });
 
-  var imagePath = 'unit/assets/nyan_cat.gif';
+  const imagePath = 'unit/assets/nyan_cat.gif';
 
   setup(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
@@ -108,8 +108,8 @@ suite('loading images', function() {
   test('Test in setup() after preload()');
   // These tests don't work correctly (You can't use suite and test like that)
   // they simply get added at the root level.
-  var mySketch = function(this_p5) {
-    var myImage;
+  let mySketch = function(this_p5) {
+    let myImage;
     this_p5.preload = function() {
       suite('Test in preload() with success callback', function() {
         test('Load asynchronously and use success callback', function(done) {
@@ -135,7 +135,7 @@ suite('loading images', function() {
 
   // Test loading image in preload() without success callback
   mySketch = function(this_p5) {
-    var myImage;
+    let myImage;
     this_p5.preload = function() {
       myImage = this_p5.loadImage('unit/assets/nyan_cat.gif');
     };

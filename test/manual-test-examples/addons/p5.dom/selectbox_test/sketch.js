@@ -1,6 +1,6 @@
 function setup() {
   // Created a dropdown in DOM
-  var dropdown = createSelect();
+  let dropdown = createSelect();
   dropdown.option('apple');
   dropdown.option('mango');
   dropdown.id('fruitlist');

@@ -9,7 +9,7 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var result;
+let result;
 
 function preload() {
   result = loadJSON(
@@ -29,8 +29,8 @@ function setup() {
   console.log('In setup(), here is the result: ');
   console.log(result);
 
-  var location = result.name;
-  var currentTemp = result.main.temp;
+  const location = result.name;
+  const currentTemp = result.main.temp;
   text(
     'Current temperature in ' + location + ' is ' + currentTemp + 'F',
     width / 2,

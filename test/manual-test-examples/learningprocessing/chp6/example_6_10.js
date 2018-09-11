@@ -6,12 +6,12 @@
 
 // Example 6-10: Zoog with arms
 
-var x = 100;
-var y = 100;
-var w = 60;
-var h = 60;
-var eyeSize = 16;
-var speed = 1;
+let x = 100;
+const y = 100;
+const w = 60;
+const h = 60;
+const eyeSize = 16;
+let speed = 1;
 
 function setup() {
   createCanvas(200, 200);
@@ -35,7 +35,7 @@ function draw() {
   rectMode(CENTER);
 
   // Arms are incorporated into Zoog's design with a for loop.
-  for (var i = y + 5; i < y + h; i += 10) {
+  for (let i = y + 5; i < y + h; i += 10) {
     stroke(0);
     line(x - w / 3, i, x + w / 3, i);
   }

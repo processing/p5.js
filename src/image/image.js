@@ -18,7 +18,7 @@ const p5 = require('../core/main');
 // of saved animation frames.
 
 /* global frames:true */
-var frames = [];
+let frames = [];
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a

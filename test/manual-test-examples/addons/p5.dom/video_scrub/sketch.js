@@ -1,5 +1,5 @@
-var fingers;
-var slider;
+let fingers;
+let slider;
 
 function setup() {
   noCanvas();
@@ -7,7 +7,7 @@ function setup() {
 }
 
 function videoReady() {
-  var len = fingers.duration();
+  const len = fingers.duration();
   slider = createSlider(0, len, 0, 0.1);
   slider.input(scrub);
 }

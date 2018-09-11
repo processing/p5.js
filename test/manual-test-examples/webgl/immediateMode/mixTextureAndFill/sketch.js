@@ -1,5 +1,5 @@
-var img;
-var sz = 100;
+let img;
+const sz = 100;
 
 function preload() {
   img = loadImage('assets/UV_Grid_Sm.jpg');
@@ -13,7 +13,7 @@ function draw() {
   background(255);
   randomSeed(1);
 
-  for (var i = 0; i < 200; i++) {
+  for (let i = 0; i < 200; i++) {
     push();
 
     translate(

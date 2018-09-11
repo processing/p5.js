@@ -1,15 +1,15 @@
 /**
  * PWM
  */
-var freqSlider, freqLabel, ampLabel, ampSlider, widthLabel, widthSlider, button;
+let freqSlider, freqLabel, ampLabel, ampSlider, widthLabel, widthSlider, button;
 
-var pulse;
-var freq = 1; // current frequency (updated by slider)
-var amp = 1.0;
-var w = 0.25;
-var fft;
+let pulse;
+let freq = 1; // current frequency (updated by slider)
+let amp = 1.0;
+let w = 0.25;
+let fft;
 
-var oscOn = false;
+let oscOn = false;
 
 function setup() {
   createCanvas(800, 400);
@@ -59,9 +59,9 @@ function draw() {
   stroke(255);
   strokeWeight(10);
   beginShape();
-  for (var i = 0; i < waveform.length; i++) {
-    var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, -height / 2, height / 2);
+  for (let i = 0; i < waveform.length; i++) {
+    const x = map(i, 0, waveform.length, 0, width);
+    const y = map(waveform[i], -1, 1, -height / 2, height / 2);
     vertex(x, y + height / 2);
   }
   endShape();

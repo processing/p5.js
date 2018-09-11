@@ -4,8 +4,8 @@
  * Music from Damscray, "Dancing Tiger", Creative Commons BY-NC-SA
  */
 
-var playMode = 'sustain';
-var sample1, sample2, button;
+let playMode = 'sustain';
+let sample1, sample2, button;
 
 function preload() {
   sample1 = loadSound([

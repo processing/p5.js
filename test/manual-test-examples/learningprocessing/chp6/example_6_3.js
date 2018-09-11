@@ -6,11 +6,11 @@
 
 // Example 6-3: While loop
 
-var y = 80; // Vertical location of each line
-var x = 50; // Initial horizontal location for first line
-var spacing = 10; // How far apart is each line
-var len = 20; // Length of each line
-var endLegs = 150; // A variable to mark where the legs end.
+const y = 80; // Vertical location of each line
+let x = 50; // Initial horizontal location for first line
+const spacing = 10; // How far apart is each line
+const len = 20; // Length of each line
+const endLegs = 150; // A variable to mark where the legs end.
 
 function setup() {
   createCanvas(200, 200);

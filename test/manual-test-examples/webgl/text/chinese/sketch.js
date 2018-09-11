@@ -1,4 +1,4 @@
-var font;
+let font;
 
 function preload() {
   font = loadFont(
@@ -6,7 +6,7 @@ function preload() {
   );
 }
 
-var chars = [];
+const chars = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -17,22 +17,22 @@ function setup() {
   textFont(font);
   textSize(100);
 
-  var glyphs = font.font.glyphs.glyphs;
-  var glyphNames = Object.getOwnPropertyNames(glyphs);
-  for (var ipn = 0; ipn < glyphNames.length; ipn++) {
-    var glyph = glyphs[glyphNames[ipn]];
-    var char = glyph.unicode;
+  const glyphs = font.font.glyphs.glyphs;
+  const glyphNames = Object.getOwnPropertyNames(glyphs);
+  for (let ipn = 0; ipn < glyphNames.length; ipn++) {
+    const glyph = glyphs[glyphNames[ipn]];
+    const char = glyph.unicode;
     if (char) {
       chars.push(String.fromCharCode(char));
     }
   }
 }
 
-var ich = 0;
-var lines = [];
+let ich = 0;
+const lines = [];
 
 function addLine() {
-  var line = '';
+  let line = '';
   while (textWidth(line + chars[ich]) < width) {
     line += chars[ich++];
     if (ich > chars.length) {
@@ -41,16 +41,16 @@ function addLine() {
   }
   lines.push(line);
 }
-var txt;
-var yoff = 0;
-var timeLast = 0;
+let txt;
+let yoff = 0;
+let timeLast = 0;
 
 function draw() {
   background(0);
 
-  var leading = textLeading();
+  const leading = textLeading();
 
-  var timeNow = millis() / 5;
+  const timeNow = millis() / 5;
   yoff += timeNow - timeLast;
   timeLast = timeNow;
 
