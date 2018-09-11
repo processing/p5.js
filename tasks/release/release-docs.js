@@ -9,11 +9,11 @@ module.exports = function(grunt) {
     'Publishes the new docs of p5.js on the website',
     function() {
       // Async Task
-      var done = this.async();
+      const done = this.async();
       // Keep the version handy
-      var version = require('../../package.json').version;
+      const version = require('../../package.json').version;
       // Keep the release-party ready
-      var releaseParty = grunt.config.get('docsReleaser');
+      const releaseParty = grunt.config.get('docsReleaser');
       // Avoiding Callback Hell and using Promises
       new Promise(function(resolve, reject) {
         // Clone the website locally

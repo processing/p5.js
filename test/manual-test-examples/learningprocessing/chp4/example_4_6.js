@@ -7,14 +7,14 @@
 // Example 4-6: Ellipse with variables
 
 // Declare and initialize your variables!
-var r = 100;
-var g = 150;
-var b = 200;
-var a = 200;
+const r = 100;
+const g = 150;
+const b = 200;
+const a = 200;
 
-var diam = 20;
-var x = 100;
-var y = 100;
+const diam = 20;
+const x = 100;
+const y = 100;
 
 function setup() {
   createCanvas(200, 200);

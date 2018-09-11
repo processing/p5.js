@@ -15,27 +15,27 @@ function Particle(x, y) {
   };
 
   this.attracted = function(target) {
-    var force = p5.Vector.sub(target, this.pos);
-    var dsquared = force.magSq();
+    const force = p5.Vector.sub(target, this.pos);
+    let dsquared = force.magSq();
     dsquared = constrain(dsquared, 25, 500);
-    var G = 10;
-    var strength = G / dsquared;
+    const G = 10;
+    const strength = G / dsquared;
     force.setMag(strength);
     this.acc.add(force);
   };
 }
 
-var attractor_1;
-var attractor_2;
-var attractor_3;
-var attractor_4;
-var particles = [];
+let attractor_1;
+let attractor_2;
+let attractor_3;
+let attractor_4;
+const particles = [];
 
 function setup() {
   background(51);
   createCanvas(800, 600, WEBGL);
 
-  for (var i = 0; i < 5000; i++) {
+  for (let i = 0; i < 5000; i++) {
     particles.push(new Particle(0, 0));
   }
 
@@ -58,8 +58,8 @@ function draw() {
   strokeWeight(1);
 
   beginShape(POINTS);
-  for (var i = 0; i < particles.length; i++) {
-    var particle = particles[i];
+  for (let i = 0; i < particles.length; i++) {
+    const particle = particles[i];
     particle.attracted(attractor_1);
     particle.attracted(attractor_2);
     particle.attracted(attractor_3);

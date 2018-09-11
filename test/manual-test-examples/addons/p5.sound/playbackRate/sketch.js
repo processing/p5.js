@@ -7,8 +7,8 @@
 
 // ====================
 
-var soundFile;
-var p;
+let soundFile;
+let p;
 
 function preload() {
   soundFormats('mp3', 'ogg');
@@ -22,14 +22,14 @@ function setup() {
 
 function draw() {
   // map playback rate of a sound file to mouseX position
-  var newRate = map(mouseX, 0, 1200, -0.5, 1.5);
+  const newRate = map(mouseX, 0, 1200, -0.5, 1.5);
   // newRate = constrain(newRate, 0.1, 1.5);
   soundFile.rate(newRate);
   p.html('Playback Rate: ' + newRate.toFixed(3));
 }
 
 function keyPressed() {
-  var key = keyCode;
+  const key = keyCode;
   // Spacebar: pause
   if (key === 32) {
     soundFile.pause();

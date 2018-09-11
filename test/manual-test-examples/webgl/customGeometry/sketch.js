@@ -1,5 +1,5 @@
-var renderer;
-var geometry;
+let renderer;
+let geometry;
 
 function setup() {
   // put setup code here
@@ -11,11 +11,11 @@ function setup() {
   camera(0, -600, 300, 0, 0, 0, 0, -1, 0);
 
   geometry = new p5.Geometry(100, 100, function() {
-    for (var y = 0; y <= this.detailY; y++) {
-      var v = y / this.detailY;
-      for (var x = 0; x <= this.detailX; x++) {
-        var u = x / this.detailX;
-        var p = new p5.Vector(u - 0.5, v - 0.5, 0);
+    for (let y = 0; y <= this.detailY; y++) {
+      const v = y / this.detailY;
+      for (let x = 0; x <= this.detailX; x++) {
+        const u = x / this.detailX;
+        const p = new p5.Vector(u - 0.5, v - 0.5, 0);
         this.vertices.push(p);
         this.uvs.push(u, v);
       }
@@ -24,30 +24,30 @@ function setup() {
 }
 
 function draw() {
-  var tt = millis();
+  const tt = millis();
 
   background(0);
 
   //stroke(0);
   noStroke();
 
-  var sunPos = p5.Vector.fromAngles(tt / 5000, PI / 4, 1000);
+  const sunPos = p5.Vector.fromAngles(tt / 5000, PI / 4, 1000);
   push();
   fill(255, 250, 136);
   translate(sunPos);
   sphere(60);
   pop();
 
-  var moonPos = p5.Vector.fromAngles(PI + tt / 5000, PI / 4, 1000);
+  const moonPos = p5.Vector.fromAngles(PI + tt / 5000, PI / 4, 1000);
   push();
   translate(moonPos);
   fill(255);
   sphere(40);
   pop();
 
-  for (var y = 0; y <= geometry.detailY; y++) {
-    for (var x = 0; x <= geometry.detailX; x++) {
-      var v = noise(
+  for (let y = 0; y <= geometry.detailY; y++) {
+    for (let x = 0; x <= geometry.detailX; x++) {
+      let v = noise(
         3 * x / geometry.detailX,
         3 * y / geometry.detailY,
         tt / 10000

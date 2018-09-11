@@ -6,12 +6,12 @@
 
 // Example 9-9: An array of Car objects
 
-var cars = []; // An array for Car objects
+const cars = []; // An array for Car objects
 
 function setup() {
   createCanvas(200, 200);
   smooth();
-  for (var i = 0; i < 100; i++) {
+  for (let i = 0; i < 100; i++) {
     // Initialize each Car using a for loop.
     cars[i] = new Car(i * 2, 0, i * 2, i / 20.0);
   }
@@ -19,7 +19,7 @@ function setup() {
 
 function draw() {
   background(255);
-  for (var i = 0; i < cars.length; i++) {
+  for (let i = 0; i < cars.length; i++) {
     // Run each Car using a for loop.
     cars[i].move();
     cars[i].display();

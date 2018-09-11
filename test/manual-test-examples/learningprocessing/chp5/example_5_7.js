@@ -7,13 +7,13 @@
 // Example 5-7: "Bouncing" color
 
 // Two variables for color.
-var c1 = 0;
-var c2 = 255;
+let c1 = 0;
+let c2 = 255;
 
 // Start by incrementing c1.
-var c1dir = 0.1;
+let c1dir = 0.1;
 // Start by decrementing c2.
-var c2dir = -0.1;
+let c2dir = -0.1;
 
 function setup() {
   createCanvas(200, 200);

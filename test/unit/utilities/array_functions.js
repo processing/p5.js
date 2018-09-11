@@ -1,5 +1,5 @@
 suite('Array', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -14,7 +14,7 @@ suite('Array', function() {
     myp5.remove();
   });
 
-  var result;
+  let result;
 
   suite('p5.prototype.append', function() {
     test('should be a function', function() {
@@ -29,7 +29,7 @@ suite('Array', function() {
   });
 
   suite('p5.prototype.arrayCopy', function() {
-    var src, dest;
+    let src, dest;
     setup(function() {
       src = [1, 2, 3, 4, 5];
       dest = [6, 7, 8];

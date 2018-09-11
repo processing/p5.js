@@ -1,5 +1,5 @@
 suite('color/CreatingReading', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -14,10 +14,10 @@ suite('color/CreatingReading', function() {
     myp5.remove();
   });
 
-  var fromColor;
-  var toColor;
-  var c;
-  var val;
+  let fromColor;
+  let toColor;
+  let c;
+  let val;
 
   suite('p5.prototype.alpha', function() {
     setup(function() {
@@ -26,7 +26,7 @@ suite('color/CreatingReading', function() {
     test('no friendly-err-msg I', function() {
       assert.doesNotThrow(
         function() {
-          var string = 'magenta';
+          const string = 'magenta';
           c = myp5.color(string);
           val = myp5.alpha(c);
           assert.approximately(val, 255, 0.01);
@@ -150,28 +150,28 @@ suite('color/CreatingReading', function() {
       toColor = myp5.color(72, 61, 139);
     });
     test('should correctly get lerp colors in RGB', function() {
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [170, 131, 67, 255]);
       assert.deepEqual(interB.levels, [122, 96, 103, 255]);
     });
     test('should correctly get lerp colors in HSL', function() {
       myp5.colorMode(myp5.HSL);
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [66, 190, 44, 255]);
       assert.deepEqual(interB.levels, [53, 164, 161, 255]);
     });
     test('should correctly get lerp colors in HSB', function() {
       myp5.colorMode(myp5.HSB);
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [69, 192, 47, 255]);
       assert.deepEqual(interB.levels, [56, 166, 163, 255]);
     });
     test('should not extrapolate', function() {
-      var interA = myp5.lerpColor(fromColor, toColor, -0.5);
-      var interB = myp5.lerpColor(fromColor, toColor, 1.5);
+      const interA = myp5.lerpColor(fromColor, toColor, -0.5);
+      const interB = myp5.lerpColor(fromColor, toColor, 1.5);
       assert.deepEqual(interA.levels, [218, 165, 32, 255]);
       assert.deepEqual(interB.levels, [72, 61, 139, 255]);
     });
@@ -188,28 +188,28 @@ suite('color/CreatingReading', function() {
       toColor = myp5.color(72, 61, 139, 200);
     });
     test('should correctly get lerp colors in RGB with alpha', function() {
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [170, 131, 67, 99]);
       assert.deepEqual(interB.levels, [122, 96, 103, 149]);
     });
     test('should correctly get lerp colors in HSL with alpha', function() {
       myp5.colorMode(myp5.HSL);
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [66, 190, 44, 99]);
       assert.deepEqual(interB.levels, [53, 164, 161, 149]);
     });
     test('should correctly get lerp colors in HSB with alpha', function() {
       myp5.colorMode(myp5.HSB);
-      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
-      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      const interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      const interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [69, 192, 47, 99]);
       assert.deepEqual(interB.levels, [56, 166, 163, 149]);
     });
     test('should not extrapolate', function() {
-      var interA = myp5.lerpColor(fromColor, toColor, -0.5);
-      var interB = myp5.lerpColor(fromColor, toColor, 1.5);
+      const interA = myp5.lerpColor(fromColor, toColor, -0.5);
+      const interB = myp5.lerpColor(fromColor, toColor, 1.5);
       assert.deepEqual(interA.levels, [218, 165, 32, 49]);
       assert.deepEqual(interB.levels, [72, 61, 139, 200]);
     });

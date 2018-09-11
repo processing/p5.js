@@ -1,5 +1,5 @@
 suite('pixels', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -15,16 +15,16 @@ suite('pixels', function() {
   });
 
   suite('p5.Image.get', function() {
-    var img;
+    let img;
 
     setup(function() {
       //create a 50 x 50 half red half green image
       img = myp5.createImage(50, 50);
       img.loadPixels();
 
-      for (var i = 0; i < img.width; i++) {
-        for (var j = 0; j < img.height; j++) {
-          var col;
+      for (let i = 0; i < img.width; i++) {
+        for (let j = 0; j < img.height; j++) {
+          let col;
 
           if (j <= 25) {
             col = myp5.color(255, 0, 0);

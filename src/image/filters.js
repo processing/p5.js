@@ -483,7 +483,7 @@ function buildBlurKernel(r) {
       blurMult[l] = new Int32Array(256);
     }
 
-    let bk, bki;
+    let bki;
     let bm, bmi;
 
     for (let i = 1, radiusi = radius - 1; i < radius; i++) {
@@ -494,7 +494,7 @@ function buildBlurKernel(r) {
         bm[j] = bmi[j] = bki * j;
       }
     }
-    bk = blurKernel[radius] = radius * radius;
+    const bk = (blurKernel[radius] = radius * radius);
     bm = blurMult[radius];
 
     for (let k = 0; k < 256; k++) {

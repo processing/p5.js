@@ -6,7 +6,7 @@
 
 // Example 10-5: Object-oriented timer
 
-var timer;
+let timer;
 
 function setup() {
   createCanvas(200, 200);

@@ -6,7 +6,7 @@
 
 // Example 10-1: Catcher
 
-var catcher;
+let catcher;
 
 function setup() {
   createCanvas(400, 400);

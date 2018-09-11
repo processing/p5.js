@@ -6,9 +6,8 @@
 // So we use preload() for this type of load operations, which guarantees
 // such functions will complete before setup() is called.
 //
-var font1,
-  font2,
-  x = 30,
+let font1, font2;
+const x = 30,
   y = 80,
   x2 = 50,
   y2 = 160,
@@ -28,9 +27,9 @@ function setup() {
   text(words, x, y);
 
   // metrics
-  var ascent = textAscent();
-  var descent = textDescent();
-  var tw = textWidth(words);
+  let ascent = textAscent();
+  let descent = textDescent();
+  let tw = textWidth(words);
 
   line(0, y, width, y);
   line(x + tw, 30, x + tw, 100);
@@ -39,7 +38,7 @@ function setup() {
   line(x, 30, x, 100);
 
   // tight bounds
-  var tb = font1.textBounds(words, x, y);
+  let tb = font1.textBounds(words, x, y);
   noFill();
   stroke(200, 0, 0);
   rect(tb.x, tb.y, tb.w, tb.h);

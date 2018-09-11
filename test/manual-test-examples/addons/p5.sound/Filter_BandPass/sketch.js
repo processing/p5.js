@@ -5,11 +5,11 @@
  *  and mouseY to resonance/width of the a BandPass filter
  */
 
-var description = 'loading';
-var p;
-var noise;
-var fft;
-var filter, filterFreq, filterWidth;
+let description = 'loading';
+let p;
+let noise;
+let fft;
+let filter, filterFreq, filterWidth;
 
 function setup() {
   createCanvas(710, 256);
@@ -27,7 +27,7 @@ function setup() {
 
   // update description text
   p = createP(description);
-  var p2 = createP(
+  const p2 = createP(
     'Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.'
   );
 }
@@ -45,11 +45,11 @@ function draw() {
   // Draw every value in the FFT spectrum analysis where
   // x = lowest (10Hz) to highest (22050Hz) frequencies,
   // h = energy / amplitude at that frequency
-  var spectrum = fft.analyze();
+  const spectrum = fft.analyze();
   noStroke();
-  for (var i = 0; i < spectrum.length; i++) {
-    var x = map(i, 0, spectrum.length, 0, width);
-    var h = -height + map(spectrum[i], 0, 255, height, 0);
+  for (let i = 0; i < spectrum.length; i++) {
+    const x = map(i, 0, spectrum.length, 0, width);
+    const h = -height + map(spectrum[i], 0, 255, height, 0);
     rect(x, height, width / spectrum.length, h);
   }
 

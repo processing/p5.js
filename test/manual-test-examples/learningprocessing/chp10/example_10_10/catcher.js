@@ -28,7 +28,7 @@ Catcher.prototype.display = function() {
 // if the catcher intersects a raindrop
 Catcher.prototype.intersect = function(d) {
   // Calculate distance
-  var distance = dist(this.x, this.y, d.x, d.y);
+  const distance = dist(this.x, this.y, d.x, d.y);
 
   // Compare distance to sum of radii
   if (distance < this.r + d.r) {

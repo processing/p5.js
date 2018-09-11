@@ -1,7 +1,7 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   normalMaterial();
-  let cam = createCamera();
+  const cam = createCamera();
   cam.move(0, -this.height / 4, 0);
   debugMode();
 }

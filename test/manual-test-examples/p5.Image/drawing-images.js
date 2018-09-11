@@ -1,4 +1,4 @@
-var image5;
+let image5;
 
 function setup() {
   frameRate(1);
@@ -12,7 +12,7 @@ function setup() {
 
   //First fill it with black pixels and draw that to screen
   image1.loadPixels();
-  var i;
+  let i;
   for (i = 0; i < image1.pixels.length; i += 4) {
     image1.pixels[i] = 0;
     image1.pixels[i + 1] = 0;
@@ -57,21 +57,21 @@ function setup() {
 
     img2.loadPixels();
 
-    var col = img2.get(0, 0);
+    const col = img2.get(0, 0);
     console.log(img2.get(0, 0));
     console.log('I got a color: ', col);
 
-    var col2 = img2.get(490, 999);
+    const col2 = img2.get(490, 999);
     console.log('I got a non existent color (black): ', col2);
 
-    var reg = img2.get(100, 80, 65, 35);
+    const reg = img2.get(100, 80, 65, 35);
     console.log('I got a region: ', reg);
     image(reg, 0, 0);
 
     //Also manually manipulate some the pixels in there
     //with set.
-    for (var i = 0; i < 10; i += 1) {
-      for (var j = 0; j < 10; j += 1) {
+    for (let i = 0; i < 10; i += 1) {
+      for (let j = 0; j < 10; j += 1) {
         img2.set(i, j, [255, 0, 255, 255]);
       }
     }
@@ -93,11 +93,11 @@ function draw() {
 
   // this loads the pixels currently on the canvas into the 'pixels' variable
   loadPixels();
-  for (var i = width / 2; i < width; i += 30) {
+  for (let i = width / 2; i < width; i += 30) {
     // every 20 pixels across
-    for (var j = height / 2; j < height; j += 30) {
+    for (let j = height / 2; j < height; j += 30) {
       // every 20 pixels down
-      var ind = 4 * (j * width + i);
+      const ind = 4 * (j * width + i);
       fill(pixels[ind], pixels[ind + 1], pixels[ind + 2], pixels[ind + 3]);
       ellipse(i, j, 30, 30); // the location to draw the circle
     }

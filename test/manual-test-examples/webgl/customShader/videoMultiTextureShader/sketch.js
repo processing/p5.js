@@ -1,5 +1,5 @@
-var sh, img, img2;
-var fingers;
+let sh, img, img2;
+let fingers;
 
 function preload() {
   sh = loadShader('vert.glsl', 'frag.glsl');
@@ -23,11 +23,11 @@ function draw() {
 
   background(0);
 
-  var halfw = fingers.width / 2 * 0.5;
-  var halfh = fingers.height / 2 * 0.5;
+  const halfw = fingers.width / 2 * 0.5;
+  const halfh = fingers.height / 2 * 0.5;
 
-  for (var x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
-    for (var y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
+  for (let x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
+    for (let y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
       push();
       translate(x, y);
       rotateZ(PI / 6);

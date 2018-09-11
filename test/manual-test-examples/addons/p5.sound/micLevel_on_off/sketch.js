@@ -1,12 +1,12 @@
-var mic;
-var amplitude, micLevel, masterLevel, levelLabel;
+let mic;
+let amplitude, micLevel, masterLevel, levelLabel;
 
-var soundToggle;
-var soundOn = false;
-var micOn = true;
-var micToggle;
+let soundToggle;
+let soundOn = false;
+let micOn = true;
+let micToggle;
 
-var h;
+let h;
 
 function setup() {
   createCanvas(400, 400);

@@ -1,6 +1,6 @@
 suite('color/Setting', function() {
   // p5 instance
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {

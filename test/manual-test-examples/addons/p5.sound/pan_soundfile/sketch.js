@@ -3,8 +3,8 @@
 // Pan the sound file left when ball hits left edge and vice versa.
 // ====================
 
-var ball;
-var soundFile;
+let ball;
+let soundFile;
 
 function preload() {
   soundFormats('mp3', 'ogg');
@@ -32,11 +32,11 @@ function draw() {
   // when the ball hits the wall...
   if (ball.x > width || ball.x < 0) {
     // map the ball's x location to a panning degree (float between -1.0 and 1.0)
-    var panning = map(ball.x, 0, width, -1, 1);
+    const panning = map(ball.x, 0, width, -1, 1);
     soundFile.pan(panning);
 
     // set a random playback speed for the sound
-    var newSpeed = random(1);
+    const newSpeed = random(1);
     ball.speed = -ball.speed;
     soundFile.rate(newSpeed);
 

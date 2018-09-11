@@ -1,4 +1,4 @@
-var slider;
+let slider;
 
 function setup() {
   // create canvas
@@ -9,7 +9,7 @@ function setup() {
 }
 
 function draw() {
-  var b = slider.value();
+  const b = slider.value();
   background(b * 255);
 }
 

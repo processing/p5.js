@@ -5,7 +5,7 @@
 // Ported by Lauren McCarthy
 
 // Example 8-3
-var zoog;
+let zoog;
 
 function setup() {
   createCanvas(200, 200);
@@ -16,7 +16,7 @@ function setup() {
 function draw() {
   background(255);
   // mouseX position determines speed factor
-  var factor = constrain(mouseX / 10, 0, 5);
+  const factor = constrain(mouseX / 10, 0, 5);
   zoog.jiggle(factor);
   zoog.display();
 }
@@ -46,7 +46,7 @@ Zoog.prototype.display = function() {
   ellipseMode(CENTER);
   rectMode(CENTER);
   // Draw Zoog's arms with a for loop
-  for (var i = this.y - this.h / 3; i < this.y + this.h / 2; i += 10) {
+  for (let i = this.y - this.h / 3; i < this.y + this.h / 2; i += 10) {
     stroke(0);
     line(this.x - this.w / 4, i, this.x + this.w / 4, i);
   }

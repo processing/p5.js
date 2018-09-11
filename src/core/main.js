@@ -266,7 +266,7 @@ const p5 = function(sketch, node, sync) {
         node.appendChild(loadingScreen);
       }
       const methods = this._preloadMethods;
-      for (let method in methods) {
+      for (const method in methods) {
         // default to p5 if no object defined
         methods[method] = methods[method] || p5;
         let obj = methods[method];
@@ -321,7 +321,7 @@ const p5 = function(sketch, node, sync) {
     // return preload functions to their normal vals if switched by preload
     const context = this._isGlobal ? window : this;
     if (typeof context.preload === 'function') {
-      for (let f in this._preloadMethods) {
+      for (const f in this._preloadMethods) {
         context[f] = this._preloadMethods[f][f];
         if (context[f] && this) {
           context[f] = context[f].bind(this);
@@ -440,7 +440,7 @@ const p5 = function(sketch, node, sync) {
       }
 
       // unregister events sketch-wide
-      for (let ev in this._events) {
+      for (const ev in this._events) {
         window.removeEventListener(ev, this._events[ev]);
       }
 
@@ -450,7 +450,7 @@ const p5 = function(sketch, node, sync) {
         if (e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
         }
-        for (let elt_ev in e._events) {
+        for (const elt_ev in e._events) {
           e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
         }
       }
@@ -465,14 +465,14 @@ const p5 = function(sketch, node, sync) {
     }
     // remove window bound properties and methods
     if (this._isGlobal) {
-      for (let p in p5.prototype) {
+      for (const p in p5.prototype) {
         try {
           delete window[p];
         } catch (x) {
           window[p] = undefined;
         }
       }
-      for (let p2 in this) {
+      for (const p2 in this) {
         if (this.hasOwnProperty(p2)) {
           try {
             delete window[p2];
@@ -500,7 +500,7 @@ const p5 = function(sketch, node, sync) {
     this._isGlobal = true;
     p5.instance = this;
     // Loop through methods on the prototype and attach them to the window
-    for (let p in p5.prototype) {
+    for (const p in p5.prototype) {
       if (typeof p5.prototype[p] === 'function') {
         const ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
@@ -517,7 +517,7 @@ const p5 = function(sketch, node, sync) {
       }
     }
     // Attach its properties to the window
-    for (let p2 in this) {
+    for (const p2 in this) {
       if (this.hasOwnProperty(p2)) {
         friendlyBindGlobal(p2, this[p2]);
       }
@@ -530,7 +530,7 @@ const p5 = function(sketch, node, sync) {
 
   // Bind events to window (not using container div bc key events don't work)
 
-  for (let e in this._events) {
+  for (const e in this._events) {
     const f = this['_on' + e];
     if (f) {
       const m = f.bind(this);
@@ -582,7 +582,7 @@ p5.instance = null;
 p5.disableFriendlyErrors = false;
 
 // attach constants to p5 prototype
-for (let k in constants) {
+for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
 

@@ -1,4 +1,4 @@
-var input, button, greeting;
+let input, button, greeting;
 
 function setup() {
   // create canvas
@@ -20,11 +20,11 @@ function setup() {
 }
 
 function greet() {
-  var name = input.value();
+  const name = input.value();
   greeting.html('hello ' + name + '!');
   input.value('');
 
-  for (var i = 0; i < 200; i++) {
+  for (let i = 0; i < 200; i++) {
     push();
     fill(random(255), 255, 255);
     translate(random(width), random(height));

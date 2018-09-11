@@ -2,9 +2,9 @@
 // We need p5.AudioIn (mic / sound source), p5.SoundRecorder
 // (records the sound), and a p5.SoundFile (play back).
 
-var mic, recorder, soundFile;
+let mic, recorder, soundFile;
 
-var state = 0; // mousePress will increment from Record, to Stop, to Play
+let state = 0; // mousePress will increment from Record, to Stop, to Play
 
 function setup() {
   createCanvas(400, 400);

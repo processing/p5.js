@@ -11,7 +11,7 @@ function setup() {
 
   // // <div id="drop_zone">Drop files here</div>
   // // Make a div to drag a file on
-  var dropZone = createDiv('Drop files here');
+  const dropZone = createDiv('Drop files here');
   dropZone.id('drop_zone');
 
   dropZone.dragOver(function() {
@@ -31,7 +31,7 @@ function dropped() {
 }
 
 function gotFile(file) {
-  var fileDiv = createDiv(
+  const fileDiv = createDiv(
     file.name +
       ' ' +
       file.type +
@@ -42,7 +42,7 @@ function gotFile(file) {
       ' bytes'
   );
   if (file.type === 'image') {
-    var img = createImg(file.data);
+    const img = createImg(file.data);
     img.class('thumb');
   } else if (file.type === 'text') {
     createDiv(file.data);

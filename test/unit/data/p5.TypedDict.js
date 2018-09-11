@@ -1,7 +1,7 @@
 suite('Dictionary Objects', function() {
-  var myp5;
-  var stringDict;
-  var numberDict;
+  let myp5;
+  let stringDict;
+  let numberDict;
 
   setup(function(done) {
     new p5(function(p) {
@@ -31,7 +31,7 @@ suite('Dictionary Objects', function() {
     });
 
     test('should have correct size', function() {
-      var amt = stringDict.size();
+      const amt = stringDict.size();
       assert.isTrue(amt === Object.keys(stringDict.data).length);
     });
 
@@ -69,7 +69,7 @@ suite('Dictionary Objects', function() {
     });
 
     test('should have correct size', function() {
-      var amt = numberDict.size();
+      const amt = numberDict.size();
       assert.isTrue(amt === Object.keys(numberDict.data).length);
     });
 

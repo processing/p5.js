@@ -7,9 +7,9 @@
 // Example 5-2: More conditionals
 
 // Three variables for the background color.
-var r = 0;
-var b = 0;
-var g = 0;
+let r = 0;
+let b = 0;
+let g = 0;
 
 function setup() {
   createCanvas(200, 200);

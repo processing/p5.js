@@ -2,14 +2,14 @@
  * DEMO: Draw the waveform of a sound as it plays using p5.FFT.waveform()
  */
 
-var soundFile;
-var fft;
-var fftSize = 1024;
+let soundFile;
+let fft;
+const fftSize = 1024;
 
-var xOffset = 0;
+let xOffset = 0;
 
 // Array of amplitude values (0-255) over time. Length will be 1/2 fftSize.
-var waveform = [];
+let waveform = [];
 
 function preload() {
   soundFormats('ogg', 'mp3');
@@ -42,7 +42,7 @@ function draw() {
     waveform = fft.waveform();
   }
   // Draw two mirrored snapshots of the waveform
-  for (var i = 0; i < waveform.length; i++) {
+  for (let i = 0; i < waveform.length; i++) {
     noStroke();
     fill(60, 60, 180, waveform[i] % 100);
     ellipse(

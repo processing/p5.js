@@ -1,9 +1,9 @@
-var img;
-var tex;
-var filterShader;
-var filterNearest = true;
+let img;
+let tex;
+let filterShader;
+let filterNearest = true;
 
-var vertexShader = `
+const vertexShader = `
 attribute vec3 aPosition;
 attribute vec2 aTexCoord;
 
@@ -18,7 +18,7 @@ void main() {
   gl_Position = positionVec4;
 }`;
 
-var fragmentShader = `
+const fragmentShader = `
 precision mediump float;
 
 varying vec2 vTexCoord;
@@ -39,7 +39,7 @@ function preload() {
 }
 
 function setup() {
-  let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  const canvas = createCanvas(windowWidth, windowHeight, WEBGL);
 
   filterShader = createShader(vertexShader, fragmentShader);
 

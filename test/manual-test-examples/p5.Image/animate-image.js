@@ -1,5 +1,5 @@
-var runningCat;
-var savanna;
+let runningCat;
+let savanna;
 
 function preload() {
   savanna = loadImage('african-savanna.png');
@@ -11,7 +11,7 @@ function setup() {
   createCanvas(800, 800);
 }
 
-var sX = 0,
+let sX = 0,
   sY = 0;
 
 function draw() {

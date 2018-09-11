@@ -8,19 +8,19 @@
 
 // The only difference between this example and the previous chapter (Example 8-3)
 // is the use of an array for multiple Zoog objects.
-var zoogies = [];
+const zoogies = [];
 
 function setup() {
   createCanvas(400, 400);
   smooth();
-  for (var i = 0; i < 200; i++) {
+  for (let i = 0; i < 200; i++) {
     zoogies[i] = new Zoog(random(width), random(height), 30, 30, 8);
   }
 }
 
 function draw() {
   background(255); // Draw a black background
-  for (var i = 0; i < zoogies.length; i++) {
+  for (let i = 0; i < zoogies.length; i++) {
     zoogies[i].display();
     zoogies[i].jiggle();
   }
@@ -52,7 +52,7 @@ Zoog.prototype.display = function() {
   ellipseMode(CENTER);
   rectMode(CENTER);
   // Draw Zoog's arms with a for loop
-  for (var i = this.y - this.h / 3; i < this.y + this.h / 2; i += 10) {
+  for (let i = this.y - this.h / 3; i < this.y + this.h / 2; i += 10) {
     stroke(0);
     line(this.x - this.w / 4, i, this.x + this.w / 4, i);
   }

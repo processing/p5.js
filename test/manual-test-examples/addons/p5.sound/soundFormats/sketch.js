@@ -7,7 +7,7 @@
  *  file extensions. Both MP3 and OGG are recommended.
  */
 
-var soundFile;
+let soundFile;
 
 function preload() {
   // set the extensions we have included

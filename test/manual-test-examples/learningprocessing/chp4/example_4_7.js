@@ -6,14 +6,14 @@
 
 // Example 4-7: Filling variables with random values
 
-var r;
-var g;
-var b;
-var a;
+let r;
+let g;
+let b;
+let a;
 
-var diam;
-var x;
-var y;
+let diam;
+let x;
+let y;
 
 function setup() {
   createCanvas(200, 200);

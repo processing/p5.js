@@ -4,7 +4,7 @@
 
 // based on http://www.html5rocks.com/en/tutorials/file/dndfiles/
 
-var fileSelect;
+let fileSelect;
 
 function setup() {
   noCanvas();
@@ -12,7 +12,7 @@ function setup() {
 }
 
 function gotFile(file) {
-  var fileDiv = createDiv(
+  const fileDiv = createDiv(
     file.name +
       ' ' +
       file.type +
@@ -23,7 +23,7 @@ function gotFile(file) {
       ' bytes'
   );
   if (file.type === 'image') {
-    var img = createImg(file.data);
+    const img = createImg(file.data);
     img.class('thumb');
   } else if (file.type === 'text') {
     createDiv(file.data);

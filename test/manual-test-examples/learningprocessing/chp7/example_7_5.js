@@ -6,11 +6,11 @@
 
 // Example 7-5: Zoog with functions
 
-var x = 100;
-var y = 100;
-var w = 60;
-var h = 60;
-var eyeSize = 16;
+let x = 100;
+let y = 100;
+const w = 60;
+const h = 60;
+const eyeSize = 16;
 
 function setup() {
   createCanvas(200, 200);
@@ -21,15 +21,15 @@ function draw() {
   background(255); // Draw a black background
 
   // mouseX position determines speed factor for moveZoog function
-  var factor = constrain(mouseX / 10, 0, 5);
+  const factor = constrain(mouseX / 10, 0, 5);
 
   // The code for changing the variables associated with Zoog and displaying Zoog is moved outside of draw() and into functions called here.
   // The functions are given arguments, such as “Jiggle Zoog by the following factor” and “draw Zoog with the following eye color.
   jiggleZoog(factor);
   // pass in a color to drawZoog
   // function for eye's color
-  var d = dist(x, y, mouseX, mouseY);
-  var c = color(d);
+  const d = dist(x, y, mouseX, mouseY);
+  const c = color(d);
   drawZoog(c);
 }
 
@@ -47,7 +47,7 @@ function drawZoog(eyeColor) {
   ellipseMode(CENTER);
   rectMode(CENTER);
   // Draw Zoog's arms with a for loop
-  for (var i = y - h / 3; i < y + h / 2; i += 10) {
+  for (let i = y - h / 3; i < y + h / 2; i += 10) {
     stroke(0);
     line(x - w / 4, i, x + w / 4, i);
   }

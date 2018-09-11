@@ -37,7 +37,7 @@ Drop.prototype.display = function() {
   // Display the drop
   fill(this.c);
   noStroke();
-  for (var i = 2; i < this.r; i++) {
+  for (let i = 2; i < this.r; i++) {
     ellipse(this.x, this.y + i * 4, i * 2, i * 2);
   }
 };

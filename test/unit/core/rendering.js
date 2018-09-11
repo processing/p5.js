@@ -1,5 +1,5 @@
 suite('Rendering', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -16,8 +16,8 @@ suite('Rendering', function() {
 
   suite('p5.prototype.createCanvas', function() {
     test('should have correct initial colors', function() {
-      var white = myp5.color(255, 255, 255).levels;
-      var black = myp5.color(0, 0, 0).levels;
+      const white = myp5.color(255, 255, 255).levels;
+      const black = myp5.color(0, 0, 0).levels;
       assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
       assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
       assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
@@ -69,7 +69,7 @@ suite('Rendering', function() {
   });
 
   suite('p5.prototype.blendMode', function() {
-    var drawX = function() {
+    const drawX = function() {
       myp5.strokeWeight(30);
       myp5.stroke(80, 150, 255);
       myp5.line(25, 25, 75, 75);
@@ -91,7 +91,7 @@ suite('Rendering', function() {
   });
 
   // prettier-ignore
-  var webglMethods = [
+  const webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'orbitControl',
     'ambientLight', 'directionalLight', 'pointLight',
@@ -103,13 +103,13 @@ suite('Rendering', function() {
   ];
 
   suite('webgl assertions', function() {
-    for (var i = 0; i < webglMethods.length; i++) {
-      var webglMethod = webglMethods[i];
+    for (let i = 0; i < webglMethods.length; i++) {
+      const webglMethod = webglMethods[i];
       test(
         webglMethod + '() should throw a WEBGL assertion Error',
         (function(webglMethod) {
           return function() {
-            var validateParamters = myp5.validateParameters;
+            const validateParamters = myp5.validateParameters;
             myp5.validateParameters = false;
             try {
               expect(function() {

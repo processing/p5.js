@@ -1,6 +1,6 @@
-var sketch0 = function(p) {
-  var v;
-  var h1;
+const sketch0 = function(p) {
+  let v;
+  let h1;
 
   p.setup = function() {
     p.createCanvas(400, 400);
@@ -35,4 +35,4 @@ var sketch0 = function(p) {
   };
 };
 
-var myp5_0 = new p5(sketch0, 'div0');
+const myp5_0 = new p5(sketch0, 'div0');

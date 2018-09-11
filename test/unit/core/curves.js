@@ -1,5 +1,5 @@
 suite('Curves', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -41,7 +41,7 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.bezierPoint', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.bezierPoint);
       assert.typeOf(myp5.bezierPoint, 'function');
@@ -59,7 +59,7 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.bezierTangent', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.bezierTangent);
       assert.typeOf(myp5.bezierTangent, 'function');
@@ -102,7 +102,7 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.curvePoint', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.curvePoint);
       assert.typeOf(myp5.curvePoint, 'function');
@@ -120,7 +120,7 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.curveTangent', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.curveTangent);
       assert.typeOf(myp5.curveTangent, 'function');

@@ -1,5 +1,5 @@
-var playing = false;
-var fingers, button;
+let playing = false;
+let fingers, button;
 
 function setup() {
   fingers = createVideo('../fingers.mov');

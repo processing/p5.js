@@ -4,7 +4,7 @@
  *  Display a random line every time the mouse is clicked.
  */
 
-var result;
+let result;
 
 function setup() {
   createCanvas(600, 100);
@@ -20,8 +20,8 @@ function setup() {
 
 function pickLine() {
   background(255);
-  var randomLineNumber = floor(random(0, result.length - 1));
-  var randomLine = result[randomLineNumber];
+  const randomLineNumber = floor(random(0, result.length - 1));
+  const randomLine = result[randomLineNumber];
   text(randomLine, width / 2, height / 2);
 
   print(

@@ -1,5 +1,5 @@
-var angle_1 = 0;
-var angle_2 = 30;
+let angle_1 = 0;
+let angle_2 = 30;
 
 function setup() {
   createCanvas(800, 600, WEBGL);

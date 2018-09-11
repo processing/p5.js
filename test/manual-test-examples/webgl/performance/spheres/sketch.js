@@ -1,4 +1,4 @@
-var theta = 0;
+let theta = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
@@ -11,9 +11,9 @@ function draw() {
   translate(0, 0, -800);
   rotateY(frameCount * 0.01);
 
-  for (var j = 0; j < 5; j++) {
+  for (let j = 0; j < 5; j++) {
     push();
-    for (var i = 0; i < 200; i++) {
+    for (let i = 0; i < 200; i++) {
       translate(sin(theta + j) * 100, sin(theta + j) * 100, i * 0.1);
       rotateZ(theta * 0.2);
       push();

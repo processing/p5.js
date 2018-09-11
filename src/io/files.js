@@ -153,7 +153,7 @@ p5.prototype.loadJSON = function() {
     options,
     t,
     function(resp) {
-      for (let k in resp) {
+      for (const k in resp) {
         ret[k] = resp[k];
       }
       if (typeof callback !== 'undefined') {
@@ -710,7 +710,7 @@ p5.prototype.loadXML = function() {
     'GET',
     'xml',
     function(xml) {
-      for (let key in xml) {
+      for (const key in xml) {
         ret[key] = xml[key];
       }
       if (typeof callback !== 'undefined') {
@@ -1113,7 +1113,7 @@ p5.prototype.httpDo = function() {
         data = a.toString();
       } else if (typeof a === 'object') {
         if (a.hasOwnProperty('jsonpCallback')) {
-          for (let attr in a) {
+          for (const attr in a) {
             jsonpOptions[attr] = a[attr];
           }
         } else {
@@ -1224,7 +1224,7 @@ p5.prototype._pWriters = [];
 p5.prototype.createWriter = function(name, extension) {
   let newPW;
   // check that it doesn't already exist
-  for (let i in p5.prototype._pWriters) {
+  for (const i in p5.prototype._pWriters) {
     if (p5.prototype._pWriters[i].name === name) {
       // if a p5.PrintWriter w/ this name already exists...
       // return p5.prototype._pWriters[i]; // return it w/ contents intact.
@@ -1379,7 +1379,7 @@ p5.PrintWriter = function(filename, extension) {
     arr.push(this.content);
     p5.prototype.writeFile(arr, filename, extension);
     // remove from _pWriters array and delete self
-    for (let i in p5.prototype._pWriters) {
+    for (const i in p5.prototype._pWriters) {
       if (p5.prototype._pWriters[i].name === this.name) {
         // remove from _pWriters array
         p5.prototype._pWriters.splice(i, 1);

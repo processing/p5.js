@@ -33,7 +33,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
   p5.Element.call(this, this.canvas, pInst, false);
 
   // bind methods and props of p5 to the new object
-  for (let p in p5.prototype) {
+  for (const p in p5.prototype) {
     if (!this[p]) {
       if (typeof p5.prototype[p] === 'function') {
         this[p] = p5.prototype[p].bind(this);
@@ -125,7 +125,7 @@ p5.Graphics.prototype.remove = function() {
   if (idx !== -1) {
     this._pInst._elements.splice(idx, 1);
   }
-  for (let elt_ev in this._events) {
+  for (const elt_ev in this._events) {
     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
   }
 };

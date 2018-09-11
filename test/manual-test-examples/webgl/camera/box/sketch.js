@@ -6,8 +6,8 @@ function draw() {
   background(0);
 
   normalMaterial();
-  var tx = map(mouseX, 0, width, -width / 2, width / 2);
-  var ty = map(mouseY, 0, height, -height / 2, height / 2);
+  const tx = map(mouseX, 0, width, -width / 2, width / 2);
+  const ty = map(mouseY, 0, height, -height / 2, height / 2);
 
   push();
   translate(tx, ty);

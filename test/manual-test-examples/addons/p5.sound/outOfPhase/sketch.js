@@ -5,8 +5,8 @@
  */
 
 // create a variable for the sound file
-var osc1, osc2, fft;
-var phaseSlider;
+let osc1, osc2, fft;
+let phaseSlider;
 
 function setup() {
   createCanvas(800, 400);
@@ -35,13 +35,13 @@ function draw() {
   stroke(255);
   strokeWeight(10);
   beginShape();
-  for (var i = 0; i < waveform.length; i++) {
-    var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], -1, 1, -height / 2, height / 2);
+  for (let i = 0; i < waveform.length; i++) {
+    const x = map(i, 0, waveform.length, 0, width);
+    const y = map(waveform[i], -1, 1, -height / 2, height / 2);
     vertex(x, y + height / 2);
   }
   endShape();
 
-  var osc1Phase = phaseSlider.value() / 100;
+  const osc1Phase = phaseSlider.value() / 100;
   osc1.phase(osc1Phase);
 }

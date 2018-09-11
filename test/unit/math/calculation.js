@@ -1,5 +1,5 @@
 suite('Calculation', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -15,7 +15,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.abs', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.abs);
       assert.typeOf(myp5.abs, 'function');
@@ -32,7 +32,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.ceil', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.ceil);
       assert.typeOf(myp5.ceil, 'function');
@@ -52,7 +52,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.dist', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.dist);
       assert.typeOf(myp5.dist, 'function');
@@ -96,7 +96,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.exp', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.exp);
       assert.typeOf(myp5.exp, 'function');
@@ -116,7 +116,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.floor', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.floor);
       assert.typeOf(myp5.floor, 'function');
@@ -136,7 +136,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.lerp', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.lerp);
       assert.typeOf(myp5.lerp, 'function');
@@ -156,7 +156,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.log', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.log);
       assert.typeOf(myp5.log, 'function');
@@ -176,7 +176,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.mag', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.mag);
       assert.typeOf(myp5.mag, 'function');
@@ -196,7 +196,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.map', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.map);
       assert.typeOf(myp5.map, 'function');
@@ -224,7 +224,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.max', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.max);
       assert.typeOf(myp5.max, 'function');
@@ -256,7 +256,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.min', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.min);
       assert.typeOf(myp5.min, 'function');
@@ -288,7 +288,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.norm', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.norm);
       assert.typeOf(myp5.norm, 'function');
@@ -301,7 +301,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.constrain', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.constrain);
       assert.typeOf(myp5.constrain, 'function');
@@ -324,7 +324,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.sq', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.sq);
       assert.typeOf(myp5.sq, 'function');
@@ -342,7 +342,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.pow', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.pow);
       assert.typeOf(myp5.pow, 'function');
@@ -360,7 +360,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.round', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.round);
       assert.typeOf(myp5.round, 'function');
@@ -383,7 +383,7 @@ suite('Calculation', function() {
   });
 
   suite('p5.prototype.sqrt', function() {
-    var result;
+    let result;
     test('should be a function', function() {
       assert.ok(myp5.sqrt);
       assert.typeOf(myp5.sqrt, 'function');

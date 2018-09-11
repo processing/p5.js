@@ -3,7 +3,7 @@
  *
  */
 
-var teapot;
+let teapot;
 
 function preload() {
   teapot = loadModel('../wireframe/assets/teapot.obj', true);
@@ -24,7 +24,7 @@ function draw() {
   model(teapot);
   pop();
 
-  for (var i = -10; i < 10; i++) {
+  for (let i = -10; i < 10; i++) {
     push();
     stroke(0, 200, 0);
     noFill();

@@ -10,14 +10,14 @@
  *  Visualize the output using FFT.
  */
 
-var songs = [];
-var searchButton;
-var playButton;
-var queryField;
-var audioPlayer;
+let songs = [];
+let searchButton;
+let playButton;
+let queryField;
+let audioPlayer;
 
-var fft;
-var fftSize = 512;
+let fft;
+const fftSize = 512;
 
 function setup() {
   createCanvas(700, 300);
@@ -40,11 +40,11 @@ function setup() {
 function draw() {
   background(220);
 
-  var waveform = fft.waveform();
+  const waveform = fft.waveform();
   beginShape();
-  for (var i = 0; i < fftSize; i++) {
-    var x = map(i, 0, fftSize, 0, width);
-    var y = map(waveform[i], -1, 1, height, 0);
+  for (let i = 0; i < fftSize; i++) {
+    const x = map(i, 0, fftSize, 0, width);
+    const y = map(waveform[i], -1, 1, height, 0);
     vertex(x, y);
   }
   endShape();
@@ -52,7 +52,7 @@ function draw() {
 
 // callback when search button is pressed.
 function findSongs() {
-  var searchTerm = queryField.value();
+  const searchTerm = queryField.value();
   loadJSON(
     'https://api.spotify.com/v1/search?q=' + searchTerm + '&type=track',
     gotSongs
@@ -68,8 +68,8 @@ function gotSongs(data) {
 
 // when playButton is pressed, pick a random song and play it
 function playRandomSong() {
-  var i = floor(random(songs.length));
-  var songPreview = songs[i].preview_url;
+  const i = floor(random(songs.length));
+  const songPreview = songs[i].preview_url;
   audioPlayer.src = songPreview;
   audioPlayer.play();
 }

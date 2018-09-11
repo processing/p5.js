@@ -1,4 +1,4 @@
-var canvas, rSlider, gSlider, bSlider, button;
+let canvas, rSlider, gSlider, bSlider, button;
 
 function setup() {
   // create canvas
@@ -20,10 +20,10 @@ function setup() {
 }
 
 function draw() {
-  var r = rSlider.value();
+  const r = rSlider.value();
   console.log(r);
-  var g = gSlider.value();
-  var b = bSlider.value();
+  const g = gSlider.value();
+  const b = bSlider.value();
   background(r, g, b);
 }
 

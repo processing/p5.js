@@ -1,4 +1,4 @@
-var table;
+let table;
 
 function setup() {
   table = new p5.Table();
@@ -6,7 +6,7 @@ function setup() {
   table.addColumn('name');
   table.addColumn('type');
 
-  var newRow = table.addRow();
+  let newRow = table.addRow();
   newRow.setString('name', '   Lion');
   newRow.setString('type', '  Mammal    ');
 

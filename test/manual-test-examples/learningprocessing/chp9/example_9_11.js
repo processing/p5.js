@@ -4,8 +4,8 @@
 
 // Example 9-11: Resizing an array using append()
 
-var balls = [];
-var gravity = 0.1;
+let balls = [];
+const gravity = 0.1;
 
 function setup() {
   createCanvas(200, 200);
@@ -19,7 +19,7 @@ function draw() {
   background(255);
 
   // Update and display all balls
-  for (var i = 0; i < balls.length; i++) {
+  for (let i = 0; i < balls.length; i++) {
     // Whatever the length of that array, update and display all of the objects.
     balls[i].gravity();
     balls[i].move();
@@ -29,7 +29,7 @@ function draw() {
 
 function mousePressed() {
   // A new ball object
-  var b = new Ball(mouseX, mouseY, 16); // Make a new object at the mouse location.
+  const b = new Ball(mouseX, mouseY, 16); // Make a new object at the mouse location.
   console.log(b);
   console.log(balls);
   balls = append(balls, b);

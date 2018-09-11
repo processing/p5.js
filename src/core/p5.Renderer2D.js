@@ -1238,8 +1238,8 @@ p5.Renderer2D.prototype.textWidth = function(s) {
 };
 
 p5.Renderer2D.prototype._applyTextProperties = function() {
-  let font,
-    p = this._pInst;
+  let font;
+  const p = this._pInst;
 
   this._setProperty('_textAscent', null);
   this._setProperty('_textDescent', null);

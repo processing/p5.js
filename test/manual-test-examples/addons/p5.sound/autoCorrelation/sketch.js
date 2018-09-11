@@ -10,9 +10,9 @@
  *  Example by Jason Sigal and Golan Levin.
  */
 
-var source, fft;
-var bNormalize = true;
-var centerClip = false;
+let source, fft;
+const bNormalize = true;
+const centerClip = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -29,42 +29,42 @@ function draw() {
   background(200);
 
   // array of values from -1 to 1
-  var timeDomain = fft.waveform(2048, 'float32');
-  var corrBuff = autoCorrelate(timeDomain);
+  const timeDomain = fft.waveform(2048, 'float32');
+  const corrBuff = autoCorrelate(timeDomain);
 
   beginShape();
-  for (var i = 0; i < corrBuff.length; i++) {
-    var w = map(i, 0, corrBuff.length, 0, width);
-    var h = map(corrBuff[i], -1, 1, height, 0);
+  for (let i = 0; i < corrBuff.length; i++) {
+    const w = map(i, 0, corrBuff.length, 0, width);
+    const h = map(corrBuff[i], -1, 1, height, 0);
     curveVertex(w, h);
   }
   endShape();
 }
 
 function autoCorrelate(buffer) {
-  var newBuffer = [];
-  var nSamples = buffer.length;
+  const newBuffer = [];
+  const nSamples = buffer.length;
 
-  var autocorrelation = [];
-  var index;
+  const autocorrelation = [];
+  let index;
 
   // center clip removes any samples under 0.1
   if (centerClip) {
-    var cutoff = 0.1;
-    for (var i = 0; i < buffer.length; i++) {
-      var val = buffer[i];
+    const cutoff = 0.1;
+    for (let i = 0; i < buffer.length; i++) {
+      const val = buffer[i];
       buffer[i] = Math.abs(val) > cutoff ? val : 0;
     }
   }
 
-  for (var lag = 0; lag < nSamples; lag++) {
-    var sum = 0;
+  for (let lag = 0; lag < nSamples; lag++) {
+    let sum = 0;
     for (index = 0; index < nSamples; index++) {
-      var indexLagged = index + lag;
+      const indexLagged = index + lag;
       if (indexLagged < nSamples) {
-        var sound1 = buffer[index];
-        var sound2 = buffer[indexLagged];
-        var product = sound1 * sound2;
+        const sound1 = buffer[index];
+        const sound2 = buffer[indexLagged];
+        const product = sound1 * sound2;
         sum += product;
       }
     }
@@ -74,7 +74,7 @@ function autoCorrelate(buffer) {
   }
 
   if (bNormalize) {
-    var biggestVal = 0;
+    let biggestVal = 0;
     for (index = 0; index < nSamples; index++) {
       if (abs(newBuffer[index]) > biggestVal) {
         biggestVal = abs(newBuffer[index]);

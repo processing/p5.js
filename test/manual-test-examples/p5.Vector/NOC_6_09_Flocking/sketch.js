@@ -8,9 +8,9 @@
 
 // Click mouse to add boids into the system
 
-var flock;
+let flock;
 
-var text;
+let text;
 
 function setup() {
   text = createP('Drag the mouse to generate new boids.');
@@ -19,8 +19,8 @@ function setup() {
   createCanvas(640, 360);
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (var i = 0; i < 125; i++) {
-    var b = new Boid(width / 2, height / 2);
+  for (let i = 0; i < 125; i++) {
+    const b = new Boid(width / 2, height / 2);
     flock.addBoid(b);
   }
 }

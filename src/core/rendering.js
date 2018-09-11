@@ -146,7 +146,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   if (this._renderer) {
     // save canvas properties
     const props = {};
-    for (let key in this.drawingContext) {
+    for (const key in this.drawingContext) {
       const val = this.drawingContext[key];
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
@@ -156,7 +156,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     this.width = w;
     this.height = h;
     // reset canvas properties
-    for (let savedKey in props) {
+    for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
       } catch (err) {

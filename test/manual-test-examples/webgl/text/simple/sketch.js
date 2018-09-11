@@ -1,5 +1,5 @@
-var txt;
-var lines = [
+let txt;
+const lines = [
   '               Episode IV',
   '            A NEW HOPE',
   'It is a period of civil war.',
@@ -25,8 +25,8 @@ var lines = [
   'freedom to the galaxy.....'
 ];
 
-var font;
-var txtWidth;
+let font;
+let txtWidth;
 
 function preload() {
   font = loadFont('../../../p5.Font/Helvetica.ttf');
@@ -42,7 +42,7 @@ function setup() {
   txt = join(lines, '\n');
 
   txtWidth = 0;
-  for (var i = 0; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     txtWidth = max(txtWidth, textWidth(lines[i]));
   }
 }

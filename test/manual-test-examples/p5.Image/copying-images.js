@@ -1,5 +1,5 @@
-var image1;
-var image2;
+let image1;
+let image2;
 
 function setup() {
   frameRate(1);

@@ -9,8 +9,8 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var sketch = function(p) {
-  var largeImage;
+const sketch = function(p) {
+  let largeImage;
 
   p.preload = function() {
     largeImage = p.loadImage('test.gif'); // preloading the image guarantees it will be ready by setup()
@@ -26,4 +26,4 @@ var sketch = function(p) {
   };
 };
 
-var myp5 = new p5(sketch);
+const myp5 = new p5(sketch);

@@ -7,10 +7,10 @@
 // Example 10-7: Drops one at a time
 
 // An array for drops
-var drops = [];
+const drops = [];
 
 // New variable to keep track of total number of drops we want to use!
-var totalDrops = 0;
+let totalDrops = 0;
 
 function setup() {
   createCanvas(400, 400);
@@ -33,7 +33,7 @@ function draw() {
   }
 
   // Move and display drops
-  for (var i = 0; i < totalDrops; i++) {
+  for (let i = 0; i < totalDrops; i++) {
     // New! We no longer move and display all drops, but rather only the “totalDrops” that are currently present in the game.
     drops[i].move();
     drops[i].display();

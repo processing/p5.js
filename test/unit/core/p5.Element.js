@@ -1,5 +1,5 @@
 suite('p5.Element', function() {
-  var myp5 = new p5(function(sketch) {
+  const myp5 = new p5(function(sketch) {
     sketch.setup = function() {};
     sketch.draw = function() {};
   });
@@ -7,9 +7,9 @@ suite('p5.Element', function() {
   suite('with no events', function() {
     test('attaches and gets events', function() {
       // setup
-      var myElt = myp5.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
+      const myElt = myp5.createDiv('hello');
+      let myFnCounter = 0;
+      const myFn = function() {
         myFnCounter++;
       };
 
@@ -20,13 +20,13 @@ suite('p5.Element', function() {
     });
     test('attaches mutiple handlers and only latest gets events', function() {
       // setup
-      var myElt = myp5.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
+      const myElt = myp5.createDiv('hello');
+      let myFnCounter = 0;
+      const myFn = function() {
         myFnCounter++;
       };
-      var myFnCounterOther = 0;
-      var myFnOther = function() {
+      let myFnCounterOther = 0;
+      const myFnOther = function() {
         myFnCounterOther++;
       };
 
@@ -39,9 +39,9 @@ suite('p5.Element', function() {
     });
     test('detaches and doesnt get events', function() {
       // setup
-      var myElt = myp5.createDiv('hello');
-      var myFnCounter = 0;
-      var myFn = function() {
+      const myElt = myp5.createDiv('hello');
+      let myFnCounter = 0;
+      const myFn = function() {
         myFnCounter++;
       };
 

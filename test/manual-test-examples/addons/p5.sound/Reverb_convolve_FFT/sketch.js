@@ -9,10 +9,10 @@
  *  Convolution samples Creative Commons BY recordinghopkins, via freesound.org
  *  https://www.freesound.org/people/recordinghopkins/
  */
-var sound, env, cVerb, fft;
-var currentIR = 0;
-var p;
-var rawImpulse;
+let sound, env, cVerb, fft;
+let currentIR = 0;
+let p;
+let rawImpulse;
 
 function preload() {
   // we have included both MP3 and OGG versions of all the impulses/sounds
@@ -52,13 +52,13 @@ function draw() {
   background(30);
   fill(0, 255, 40);
 
-  var spectrum = fft.analyze();
+  const spectrum = fft.analyze();
 
   // Draw every value in the frequencySpectrum array as a rectangle
   noStroke();
-  for (var i = 0; i < spectrum.length; i++) {
-    var x = map(i, 0, spectrum.length, 0, width);
-    var h = -height + map(spectrum[i], 0, 255, height, 0);
+  for (let i = 0; i < spectrum.length; i++) {
+    const x = map(i, 0, spectrum.length, 0, width);
+    const h = -height + map(spectrum[i], 0, 255, height, 0);
     rect(x, height, width / spectrum.length, h);
   }
 }

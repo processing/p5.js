@@ -6,14 +6,14 @@
 
 // Example 5-8: Square following edge, uses a 'state' variable
 
-var x = 0; // x location of square
-var y = 0; // y location of square
+let x = 0; // x location of square
+let y = 0; // y location of square
 
-var speed = 5; // speed of square
+const speed = 5; // speed of square
 
 // A variable to keep track of the square�s "state."
 // Depending on the value of its state, it will either move right, down, left, or up.
-var state = 0;
+let state = 0;
 
 function setup() {
   createCanvas(200, 200);

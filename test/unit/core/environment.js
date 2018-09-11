@@ -1,5 +1,5 @@
 suite('Graphics', function() {
-  var myp5;
+  let myp5;
 
   setup(function(done) {
     new p5(function(p) {
@@ -23,28 +23,28 @@ suite('Graphics', function() {
   function assertValidCanvasSizes(canvas, w, h, density) {
     assert.strictEqual(canvas.width, w * density, 'canvas.width');
     assert.strictEqual(canvas.height, h * density, 'canvas.height');
-    var s = canvas.style; // for linting: otherwise line too long...
+    const s = canvas.style; // for linting: otherwise line too long...
     assert.strictEqual(s.width, '' + w + 'px', 'invalid canvas.style.width');
     assert.strictEqual(s.height, '' + h + 'px', 'invalid canvas.style.height');
   }
 
   function assertValidPixels(graph, w, h, density) {
     graph.loadPixels();
-    var real = graph.pixels.length;
-    var expected = w * density * h * density * 4;
+    const real = graph.pixels.length;
+    const expected = w * density * h * density * 4;
     assert.strictEqual(real, expected, 'invalid number of pixels');
   }
 
   suite('p5.prototype.createGraphics', function() {
     test('it creates a graphics', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       assert.isObject(graph);
     });
   });
 
   suite('p5.Graphics', function() {
     test('it has necessary properties', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       assert.property(graph, 'width');
       assert.property(graph, 'height');
       assert.property(graph, 'canvas');
@@ -54,19 +54,19 @@ suite('Graphics', function() {
     });
 
     test('it has consistent sizes', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidGraphSizes(graph, 10, 17, 1);
     });
 
     test('its canvas has consistent sizes', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidCanvasSizes(graph.canvas, 10, 17, 1);
     });
 
     test('it has a valid pixels array', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidPixels(graph, 10, 17, 1);
     });
@@ -74,7 +74,7 @@ suite('Graphics', function() {
 
   suite('p5.Graphics.pixelDensity', function() {
     test('it can change density', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assert.strictEqual(graph.pixelDensity(), 1);
       graph.pixelDensity(3);
@@ -82,7 +82,7 @@ suite('Graphics', function() {
     });
 
     test('it keeps valid sizes after change', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidGraphSizes(graph, 10, 17, 1);
       graph.pixelDensity(3);
@@ -90,7 +90,7 @@ suite('Graphics', function() {
     });
 
     test('its canvas keeps valid sizes after change', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidCanvasSizes(graph.canvas, 10, 17, 1);
       graph.pixelDensity(3);
@@ -98,7 +98,7 @@ suite('Graphics', function() {
     });
 
     test('it keeps a valid pixel array after change', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       assertValidPixels(graph, 10, 17, 1);
 
@@ -109,50 +109,50 @@ suite('Graphics', function() {
 
   suite('p5.Graphics.resizeCanvas', function() {
     test('it can call resizeCanvas', function() {
-      var graph = myp5.createGraphics(10, 17);
-      var resize = function() {
+      const graph = myp5.createGraphics(10, 17);
+      const resize = function() {
         graph.resizeCanvas(19, 16);
       };
       assert.doesNotThrow(resize);
     });
 
     test('it resizes properly with pixelDensity 1', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       graph.resizeCanvas(19, 16);
       assertValidGraphSizes(graph, 19, 16, 1);
     });
 
     test('its canvas resizes properly with pixelDensity 1', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       graph.resizeCanvas(19, 16);
       assertValidCanvasSizes(graph.canvas, 19, 16, 1);
     });
 
     test('it resizes properly the pixels array with density 1', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(1);
       graph.resizeCanvas(19, 16);
       assertValidPixels(graph, 19, 16, 1);
     });
 
     test('it resizes properly with pixelDensity 2', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(2);
       graph.resizeCanvas(19, 16);
       assertValidGraphSizes(graph, 19, 16, 2);
     });
 
     test('its canvas resizes properly with pixelDensity 2', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(2);
       graph.resizeCanvas(19, 16);
       assertValidCanvasSizes(graph.canvas, 19, 16, 2);
     });
 
     test('it resizes properly the pixels array with density 2', function() {
-      var graph = myp5.createGraphics(10, 17);
+      const graph = myp5.createGraphics(10, 17);
       graph.pixelDensity(2);
       graph.resizeCanvas(19, 16);
       assertValidPixels(graph, 19, 16, 2);

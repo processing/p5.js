@@ -2,17 +2,17 @@
  * DEMO:  Use p5.Amplitude (volume) to change the size of an ellipse
  */
 
-var size;
+let size;
 
-var soundFile;
-var amplitude;
+let soundFile;
+let amplitude;
 
 // description text
-var description;
-var p1;
+let description;
+let p1;
 
-var smoothing = 0.01;
-var smoothSlider, smoothLabel;
+let smoothing = 0.01;
+let smoothSlider, smoothLabel;
 
 function preload() {
   soundFile = loadSound(['../_files/beat.mp3', '../_files/beat.ogg']);
@@ -42,7 +42,7 @@ function draw() {
   background(0);
 
   // get volume from the amplitude process
-  var volume = amplitude.getLevel();
+  const volume = amplitude.getLevel();
 
   // print the volume to the canvas. It is a float between 0 and 1.0.
   text('volume: ' + volume, 20, 20);
