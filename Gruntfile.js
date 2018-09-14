@@ -339,7 +339,12 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          base: './',
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
@@ -362,6 +367,9 @@ module.exports = function(grunt) {
     open: {
       yui: {
         path: 'http://127.0.0.1:9001/docs/reference/'
+      },
+      dev: {
+        path: 'http://127.0.0.1:9001/test/'
       }
     },
     'saucelabs-mocha': {

@@ -364,7 +364,7 @@ p5.prototype.curve = function() {
 /**
  * Sets the resolution at which curves display.
  *
- * The default value is 20.
+ * The default value is 20 while the minimum value is 3.
  *
  * This function is only useful when using the WEBGL renderer
  * as the default canvas renderer does not use this
@@ -384,11 +384,7 @@ p5.prototype.curve = function() {
  * function draw() {
  *   background(200);
  *
- *   // prettier-ignore
- *   curve( 250, 600, 0,
- *          -30,  40, 0,
- *           30,  30, 0,
- *         -250, 600, 0);
+ *   curve(250, 600, 0, -30, 40, 0, 30, 30, 0, -250, 600, 0);
  * }
  * </code>
  * </div>
@@ -399,7 +395,11 @@ p5.prototype.curve = function() {
  */
 p5.prototype.curveDetail = function(d) {
   p5._validateParameters('curveDetail', arguments);
-  this._curveDetail = d;
+  if (d < 3) {
+    this._curveDetail = 3;
+  } else {
+    this._curveDetail = d;
+  }
   return this;
 };
 
@@ -452,16 +452,16 @@ p5.prototype.curveTightness = function(t) {
 
 /**
  * Evaluates the curve at position t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points
- * on the curve, and b and c are the control points.
+ * The parameter t varies between 0 and 1, a and d are control points
+ * of the curve, and b and c are the start and end points of the curve.
  * This can be done once with the x coordinates and a second time
  * with the y coordinates to get the location of a curve at t.
  *
  * @method curvePoint
- * @param {Number} a coordinate of first point on the curve
- * @param {Number} b coordinate of first control point
- * @param {Number} c coordinate of second control point
- * @param {Number} d coordinate of second point on the curve
+ * @param {Number} a coordinate of first control point of the curve
+ * @param {Number} b coordinate of first point
+ * @param {Number} c coordinate of second point
+ * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
  * @return {Number} bezier value at position t
  * @example

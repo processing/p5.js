@@ -2,7 +2,9 @@
 
 var p5 = require('../core/main');
 var constants = require('../core/constants');
+var libtess = require('libtess');
 require('./p5.Shader');
+require('./p5.Camera');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
@@ -30,8 +32,12 @@ var defaultShaders = {
   ),
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
   phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
+  fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
-  lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
+  lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8'),
+  pointVert: fs.readFileSync(__dirname + '/shaders/point.vert', 'utf-8'),
+  pointFrag: fs.readFileSync(__dirname + '/shaders/point.frag', 'utf-8')
 };
 
 /**
@@ -83,18 +89,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uNMatrix = new p5.Matrix('mat3');
 
   // Camera
-  this._curCamera = null;
-  // default camera settings, then use those to populate camera fields.
-  this._computeCameraDefaultSettings();
-  this.cameraFOV = this.defaultCameraFOV;
-  this.cameraAspect = this.defaultAspect;
-  this.cameraX = this.defaultCameraX;
-  this.cameraY = this.defaultCameraY;
-  this.cameraZ = this.defaultCameraZ;
-  this.cameraNear = this.defaultCameraNear;
-  this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix();
-  this.camera(); // set default camera matrices
+  this._curCamera = new p5.Camera(this);
+  this._curCamera._computeCameraDefaultSettings();
+  this._curCamera._setDefaultCamera();
 
   //Geometry & Material hashes
   this.gHash = {};
@@ -103,12 +100,17 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
+  this._defaultPointShader = undefined;
 
   this.curFillShader = undefined;
   this.curStrokeShader = undefined;
+  this.curPointShader = undefined;
 
   this._useColorShader();
   this.setStrokeShader(this._getLineShader());
+  this._usePointShader();
+
+  this._pointVertexBuffer = this.GL.createBuffer();
 
   //Imediate Mode
   //default drawing is done in Retained Mode
@@ -124,6 +126,22 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
+
+  this._curveTightness = 6;
+
+  // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
+  this._lookUpTableBezier = [];
+  // lookUpTable for coefficients needed to be calculated for quadraticVertex
+  this._lookUpTableQuadratic = [];
+
+  // current curveDetail in the Bezier lookUpTable
+  this._lutBezierDetail = 0;
+  // current curveDetail in the Quadratic lookUpTable
+  this._lutQuadraticDetail = 0;
+
+  this._tessy = this._initTessy();
+
+  this.fontInfos = {};
   return this;
 };
 
@@ -374,56 +392,26 @@ p5.prototype.setAttributes = function(key, value) {
  * @class p5.RendererGL
  */
 
-p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
-  this.defaultCameraFOV = 60 / 180 * Math.PI;
-  this.defaultCameraAspect = this.width / this.height;
-  this.defaultCameraX = 0;
-  this.defaultCameraY = 0;
-  this.defaultCameraZ =
-    this.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-  this.defaultCameraNear = this.defaultCameraZ * 0.1;
-  this.defaultCameraFar = this.defaultCameraZ * 10;
-};
-
-//detect if user didn't set the camera
-//then call this function below
-p5.RendererGL.prototype._setDefaultCamera = function() {
-  if (this._curCamera === null) {
-    this._computeCameraDefaultSettings();
-    this.cameraFOV = this.defaultCameraFOV;
-    this.cameraAspect = this.defaultAspect;
-    this.cameraX = this.defaultCameraX;
-    this.cameraY = this.defaultCameraY;
-    this.cameraZ = this.defaultCameraZ;
-    this.cameraNear = this.defaultCameraNear;
-    this.cameraFar = this.defaultCameraFar;
-
-    this.perspective();
-    this.camera();
-    this._curCamera = 'default';
-  }
-};
-
 p5.RendererGL.prototype._update = function() {
   // reset model view and apply initial camera transform
   // (containing only look at info; no projection).
   this.uMVMatrix.set(
-    this.cameraMatrix.mat4[0],
-    this.cameraMatrix.mat4[1],
-    this.cameraMatrix.mat4[2],
-    this.cameraMatrix.mat4[3],
-    this.cameraMatrix.mat4[4],
-    this.cameraMatrix.mat4[5],
-    this.cameraMatrix.mat4[6],
-    this.cameraMatrix.mat4[7],
-    this.cameraMatrix.mat4[8],
-    this.cameraMatrix.mat4[9],
-    this.cameraMatrix.mat4[10],
-    this.cameraMatrix.mat4[11],
-    this.cameraMatrix.mat4[12],
-    this.cameraMatrix.mat4[13],
-    this.cameraMatrix.mat4[14],
-    this.cameraMatrix.mat4[15]
+    this._curCamera.cameraMatrix.mat4[0],
+    this._curCamera.cameraMatrix.mat4[1],
+    this._curCamera.cameraMatrix.mat4[2],
+    this._curCamera.cameraMatrix.mat4[3],
+    this._curCamera.cameraMatrix.mat4[4],
+    this._curCamera.cameraMatrix.mat4[5],
+    this._curCamera.cameraMatrix.mat4[6],
+    this._curCamera.cameraMatrix.mat4[7],
+    this._curCamera.cameraMatrix.mat4[8],
+    this._curCamera.cameraMatrix.mat4[9],
+    this._curCamera.cameraMatrix.mat4[10],
+    this._curCamera.cameraMatrix.mat4[11],
+    this._curCamera.cameraMatrix.mat4[12],
+    this._curCamera.cameraMatrix.mat4[13],
+    this._curCamera.cameraMatrix.mat4[14],
+    this._curCamera.cameraMatrix.mat4[15]
   );
 
   // reset light data for new frame.
@@ -543,6 +531,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+  this.curPointShader.setUniform('uMaterialColor', color._array);
 };
 
 /**
@@ -590,6 +579,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
     this.curStrokeShader.setUniform('uStrokeWeight', w);
+    this.curPointShader.setUniform('uPointSize', w);
   }
 };
 
@@ -688,13 +678,9 @@ p5.RendererGL.prototype.resize = function(w, h) {
     this.GL.drawingBufferHeight
   );
   this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
-  // If we're using the default camera, update the aspect ratio
-  if (this._curCamera === null || this._curCamera === 'default') {
-    this._curCamera = null;
-    // camera defaults are dependent on the width & height of the screen,
-    // so we'll want to update them if the size of the screen changes.
-    this._setDefaultCamera();
-  }
+
+  this._curCamera._resize();
+
   //resize pixels buffer
   if (typeof this.pixels !== 'undefined') {
     this.pixels = new Uint8Array(
@@ -757,6 +743,7 @@ p5.RendererGL.prototype.rotate = function(rad, axis) {
   if (typeof axis === 'undefined') {
     return this.rotateZ(rad);
   }
+  arguments[0] = this._pInst._fromRadians(rad);
   p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
   return this;
 };
@@ -784,7 +771,12 @@ p5.RendererGL.prototype.push = function() {
   var properties = style.properties;
 
   properties.uMVMatrix = this.uMVMatrix.copy();
-  properties.cameraMatrix = this.cameraMatrix.copy();
+  properties.uPMatrix = this.uPMatrix.copy();
+  properties._curCamera = this._curCamera;
+
+  // make a copy of the current camera for the push state
+  // this preserves any references stored using 'createCamera'
+  this._curCamera = this._curCamera.copy();
 
   return style;
 };
@@ -792,13 +784,6 @@ p5.RendererGL.prototype.push = function() {
 p5.RendererGL.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity(this._pInst);
   return this;
-};
-
-// Text/Typography
-// @TODO:
-p5.RendererGL.prototype._applyTextProperties = function() {
-  //@TODO finish implementation
-  console.error('text commands not yet implemented in webgl');
 };
 
 //////////////////////////////////////////////
@@ -828,6 +813,18 @@ p5.RendererGL.prototype.setFillShader = function(s) {
   }
   // always return this.curFillShader, even if no change was made.
   return this.curFillShader;
+};
+
+p5.RendererGL.prototype.setPointShader = function(s) {
+  if (this.curPointShader !== s) {
+    // only do setup etc. if shader is actually new.
+    this.curPointShader = s;
+
+    // safe to do this multiple times;
+    // init() will bail early if has already been run.
+    this.curPointShader.init();
+  }
+  return this.curPointShader;
 };
 
 /*
@@ -880,6 +877,13 @@ p5.RendererGL.prototype._useColorShader = function() {
     this.setFillShader(this._getColorShader());
   }
   return this.curFillShader;
+};
+
+p5.RendererGL.prototype._usePointShader = function() {
+  if (!this.curPointShader) {
+    this.setPointShader(this._getPointShader());
+  }
+  return this.curPointShader;
 };
 
 p5.RendererGL.prototype._useImmediateModeShader = function() {
@@ -950,6 +954,17 @@ p5.RendererGL.prototype._getColorShader = function() {
   return this._defaultColorShader;
 };
 
+p5.RendererGL.prototype._getPointShader = function() {
+  if (!this._defaultPointShader) {
+    this._defaultPointShader = new p5.Shader(
+      this,
+      defaultShaders.pointVert,
+      defaultShaders.pointFrag
+    );
+  }
+  return this._defaultPointShader;
+};
+
 p5.RendererGL.prototype._getLineShader = function() {
   if (!this._defaultLineShader) {
     this._defaultLineShader = new p5.Shader(
@@ -960,6 +975,18 @@ p5.RendererGL.prototype._getLineShader = function() {
   }
   //this.drawMode = constants.STROKE;
   return this._defaultLineShader;
+};
+
+p5.RendererGL.prototype._getFontShader = function() {
+  if (!this._defaultFontShader) {
+    this.GL.getExtension('OES_standard_derivatives');
+    this._defaultFontShader = new p5.Shader(
+      this,
+      defaultShaders.fontVert,
+      defaultShaders.fontFrag
+    );
+  }
+  return this._defaultFontShader;
 };
 
 p5.RendererGL.prototype._getEmptyTexture = function() {
@@ -973,16 +1000,14 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
 };
 
 p5.RendererGL.prototype.getTexture = function(img) {
-  var checkSource = function(element) {
-    return element.src === img;
-  };
-  //this.drawMode = constants.TEXTURE;
-  var tex = this.textures.find(checkSource);
-  if (!tex) {
-    tex = new p5.Texture(this, img);
-    this.textures.push(tex);
+  var textures = this.textures;
+  for (var it = 0; it < textures.length; ++it) {
+    var texture = textures[it];
+    if (texture.src === img) return texture;
   }
 
+  var tex = new p5.Texture(this, img);
+  this.textures.push(tex);
   return tex;
 };
 
@@ -1086,6 +1111,96 @@ p5.prototype._assert3d = function(name) {
         ' and WebGL, see  https://p5js.org/examples/form-3d-primitives.html' +
         ' for more information.'
     );
+};
+
+// function to initialize GLU Tesselator
+
+p5.RendererGL.prototype._initTessy = function initTesselator() {
+  // function called for each vertex of tesselator output
+  function vertexCallback(data, polyVertArray) {
+    polyVertArray[polyVertArray.length] = data[0];
+    polyVertArray[polyVertArray.length] = data[1];
+    polyVertArray[polyVertArray.length] = data[2];
+  }
+  function begincallback(type) {
+    if (type !== libtess.primitiveType.GL_TRIANGLES) {
+      console.log('expected TRIANGLES but got type: ' + type);
+    }
+  }
+  function errorcallback(errno) {
+    console.log('error callback');
+    console.log('error number: ' + errno);
+  }
+  // callback for when segments intersect and must be split
+  function combinecallback(coords, data, weight) {
+    return [coords[0], coords[1], coords[2]];
+  }
+  function edgeCallback(flag) {
+    // don't really care about the flag, but need no-strip/no-fan behavior
+  }
+
+  var tessy = new libtess.GluTesselator();
+  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
+  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
+  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
+  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
+  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
+
+  return tessy;
+};
+
+p5.RendererGL.prototype._triangulate = function(contours) {
+  // libtess will take 3d verts and flatten to a plane for tesselation
+  // since only doing 2d tesselation here, provide z=1 normal to skip
+  // iterating over verts only to get the same answer.
+  // comment out to test normal-generation code
+  this._tessy.gluTessNormal(0, 0, 1);
+
+  var triangleVerts = [];
+  this._tessy.gluTessBeginPolygon(triangleVerts);
+
+  for (var i = 0; i < contours.length; i++) {
+    this._tessy.gluTessBeginContour();
+    var contour = contours[i];
+    for (var j = 0; j < contour.length; j += 3) {
+      var coords = [contour[j], contour[j + 1], contour[j + 2]];
+      this._tessy.gluTessVertex(coords, coords);
+    }
+    this._tessy.gluTessEndContour();
+  }
+
+  // finish polygon
+  this._tessy.gluTessEndPolygon();
+
+  return triangleVerts;
+};
+
+// function to calculate BezierVertex Coefficients
+p5.RendererGL.prototype._bezierCoefficients = function(t) {
+  var t2 = t * t;
+  var t3 = t2 * t;
+  var mt = 1 - t;
+  var mt2 = mt * mt;
+  var mt3 = mt2 * mt;
+  return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
+};
+
+// function to calculate QuadraticVertex Coefficients
+p5.RendererGL.prototype._quadraticCoefficients = function(t) {
+  var t2 = t * t;
+  var mt = 1 - t;
+  var mt2 = mt * mt;
+  return [mt2, 2 * mt * t, t2];
+};
+
+// function to convert Bezier coordinates to Catmull Rom Splines
+p5.RendererGL.prototype._bezierToCatmull = function(w) {
+  var p1 = w[1];
+  var p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
+  var p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
+  var p4 = w[2];
+  var p = [p1, p2, p3, p4];
+  return p;
 };
 
 module.exports = p5.RendererGL;

@@ -269,15 +269,17 @@ p5.prototype.beginShape = function(kind) {
 
 /**
  * Specifies vertex coordinates for Bezier curves. Each call to
- * <a href="#/p5/bezierVertex">bezierVertex()</a> defines the position of two control points and
+ * bezierVertex() defines the position of two control points and
  * one anchor point of a Bezier curve, adding a new segment to a
- * line or shape.
+ * line or shape. For WebGL mode bezierVertex() can be used in 2D
+ * as well as 3D mode. 2D mode expects 6 parameters, while 3D mode
+ * expects 9 parameters (including z coordinates).
  * <br><br>
- * The first time <a href="#/p5/bezierVertex">bezierVertex()</a> is used within a
- * <a href="#/p5/beginShape">beginShape()</a> call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a>
- * to set the first anchor point. This function must be used between
- * <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there is no MODE
- * parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
+ * The first time bezierVertex() is used within a <a href="#/p5/beginShape">beginShape()</a>
+ * call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor
+ * point. This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
+ * and only when there is no MODE or POINTS parameter specified to
+ * <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method bezierVertex
  * @param  {Number} x2 x-coordinate for the first control point
@@ -290,39 +292,19 @@ p5.prototype.beginShape = function(kind) {
  * @example
  * <div>
  * <code>
- * strokeWeight(5);
- * point(30, 20);
- * point(80, 20);
- * point(80, 75);
- * point(30, 75);
- *
- * strokeWeight(1);
  * noFill();
  * beginShape();
  * vertex(30, 20);
- * bezierVertex(80, 20, 80, 75, 30, 75);
+ * bezierVertex(80, 0, 80, 75, 30, 75);
  * endShape();
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * strokeWeight(5);
- * point(30, 20);
- * point(80, 20);
- * point(80, 75);
- * point(30, 75);
- *
- * stroke(244, 122, 158);
- * point(50, 80);
- * point(60, 25);
- * point(30, 20);
- *
- * stroke(0);
- * strokeWeight(1);
  * beginShape();
  * vertex(30, 20);
- * bezierVertex(80, 20, 80, 75, 30, 75);
+ * bezierVertex(80, 0, 80, 75, 30, 75);
  * bezierVertex(50, 80, 60, 25, 30, 20);
  * endShape();
  * </code>
@@ -331,23 +313,75 @@ p5.prototype.beginShape = function(kind) {
  * @alt
  * crescent-shaped line in middle of canvas. Points facing left.
  * white crescent shape in middle of canvas. Points facing left.
- *
  */
-p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
+/**
+ * @method bezierVertex
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} [z2] z-coordinate for the first control point (for WebGL mode)
+ * @param  {Number} x3
+ * @param  {Number} y3
+ * @param  {Number} [z3] z-coordinate for the second control point (for WebGL mode)
+ * @param  {Number} x4
+ * @param  {Number} y4
+ * @param  {Number} [z4] z-coordinate for the anchor point (for WebGL mode)
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ * function draw() {
+ *   orbitControl();
+ *   background(50);
+ *   strokeWeight(4);
+ *   stroke(255);
+ *   point(-25, 30);
+ *   point(25, 30);
+ *   point(25, -30);
+ *   point(-25, -30);
+ *
+ *   strokeWeight(1);
+ *   noFill();
+ *
+ *   beginShape();
+ *   vertex(-25, 30);
+ *   bezierVertex(25, 30, 25, -30, -25, -30);
+ *   endShape();
+ *
+ *   beginShape();
+ *   vertex(-25, 30, 20);
+ *   bezierVertex(25, 30, 20, 25, -30, 20, -25, -30, 20);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * crescent shape in middle of canvas with another crescent shape on positive z-axis.
+ */
+
+p5.prototype.bezierVertex = function() {
   p5._validateParameters('bezierVertex', arguments);
-  if (vertices.length === 0) {
-    throw new Error('vertex() must be used once before calling bezierVertex()');
+  if (this._renderer.isP3D) {
+    this._renderer.bezierVertex.apply(this._renderer, arguments);
   } else {
-    isBezier = true;
-    var vert = [];
-    for (var i = 0; i < arguments.length; i++) {
-      vert[i] = arguments[i];
-    }
-    vert.isVert = false;
-    if (isContour) {
-      contourVertices.push(vert);
+    if (vertices.length === 0) {
+      throw 'vertex() must be used once before calling bezierVertex()';
     } else {
-      vertices.push(vert);
+      isBezier = true;
+      var vert = [];
+      for (var i = 0; i < arguments.length; i++) {
+        vert[i] = arguments[i];
+      }
+      vert.isVert = false;
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
     }
   }
   return this;
@@ -357,13 +391,15 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * Specifies vertex coordinates for curves. This function may only
  * be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there
  * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
+ * For WebGL mode curveVertex() can be used in 2D as well as 3D mode.
+ * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  * <br><br>
- * The first and last points in a series of <a href="#/p5/curveVertex">curveVertex()</a> lines will be used to
+ * The first and last points in a series of curveVertex() lines will be used to
  * guide the beginning and end of a the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
- * third points. Adding a fifth point with <a href="#/p5/curveVertex">curveVertex()</a> will draw
+ * third points. Adding a fifth point with curveVertex() will draw
  * the curve between the second, third, and fourth points. The
- * <a href="#/p5/curveVertex">curveVertex()</a> function is an implementation of Catmull-Rom
+ * curveVertex() function is an implementation of Catmull-Rom
  * splines.
  *
  * @method curveVertex
@@ -395,12 +431,69 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  *
  * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
+ */
+/**
+ * @method curveVertex
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} [z] z-coordinate of the vertex (for WebGL mode)
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ * function draw() {
+ *   orbitControl();
+ *   background(50);
+ *   strokeWeight(4);
+ *   stroke(255);
+ *
+ *   point(-25, 25);
+ *   point(-25, 25);
+ *   point(-25, -25);
+ *   point(25, -25);
+ *   point(25, 25);
+ *   point(25, 25);
+ *
+ *   strokeWeight(1);
+ *   noFill();
+ *
+ *   beginShape();
+ *   curveVertex(-25, 25);
+ *   curveVertex(-25, 25);
+ *   curveVertex(-25, -25);
+ *   curveVertex(25, -25);
+ *   curveVertex(25, 25);
+ *   curveVertex(25, 25);
+ *   endShape();
+ *
+ *   beginShape();
+ *   curveVertex(-25, 25, 20);
+ *   curveVertex(-25, 25, 20);
+ *   curveVertex(-25, -25, 20);
+ *   curveVertex(25, -25, 20);
+ *   curveVertex(25, 25, 20);
+ *   curveVertex(25, 25, 20);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
  *
  */
-p5.prototype.curveVertex = function(x, y) {
+p5.prototype.curveVertex = function() {
   p5._validateParameters('curveVertex', arguments);
-  isCurve = true;
-  this.vertex(x, y);
+  if (this._renderer.isP3D) {
+    this._renderer.curveVertex.apply(this._renderer, arguments);
+  } else {
+    isCurve = true;
+    this.vertex(arguments[0], arguments[1]);
+  }
   return this;
 };
 
@@ -552,12 +645,17 @@ p5.prototype.endShape = function(mode) {
 
 /**
  * Specifies vertex coordinates for quadratic Bezier curves. Each call to
- * <a href="#/p5/quadraticVertex">quadraticVertex()</a> defines the position of one control points and one
+ * quadraticVertex() defines the position of one control points and one
  * anchor point of a Bezier curve, adding a new segment to a line or shape.
- * The first time <a href="#/p5/quadraticVertex">quadraticVertex()</a> is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
+ * The first time quadraticVertex() is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
  * must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor point.
- * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only
- * when there is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
+ * For WebGL mode quadraticVertex() can be used in 2D as well as 3D mode.
+ * 2D mode expects 4 parameters, while 3D mode expects 6 parameters
+ * (including z coordinates).
+ * <br><br>
+ * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
+ * and only when there is no MODE or POINTS parameter specified to
+ * <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method quadraticVertex
  * @param  {Number} cx x-coordinate for the control point
@@ -607,39 +705,94 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * arched-shaped black line with 4 pixel thick stroke weight.
  * backwards s-shaped black line with 4 pixel thick stroke weight.
- *
  */
-p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
+/**
+ * @method quadraticVertex
+ * @param  {Number} cx
+ * @param  {Number} cy
+ * @param  {Number} [cz] z-coordinate for the control point (for WebGL mode)
+ * @param  {Number} x3
+ * @param  {Number} y3
+ * @param  {Number} [z3] z-coordinate for the anchor point (for WebGL mode)
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ * function draw() {
+ *   orbitControl();
+ *   background(50);
+ *   strokeWeight(4);
+ *   stroke(255);
+ *
+ *   point(-35, -35);
+ *   point(35, -35);
+ *   point(0, 0);
+ *   point(-35, 35);
+ *   point(35, 35);
+ *   point(35, 10);
+ *
+ *   strokeWeight(1);
+ *   noFill();
+ *
+ *   beginShape();
+ *   vertex(-35, -35);
+ *   quadraticVertex(35, -35, 0, 0);
+ *   quadraticVertex(-35, 35, 35, 35);
+ *   vertex(35, 10);
+ *   endShape();
+ *
+ *   beginShape();
+ *   vertex(-35, -35, 20);
+ *   quadraticVertex(35, -35, 20, 0, 0, 20);
+ *   quadraticVertex(-35, 35, 20, 35, 35, 20);
+ *   vertex(35, 10, 20);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+ */
+p5.prototype.quadraticVertex = function() {
   p5._validateParameters('quadraticVertex', arguments);
-  //if we're drawing a contour, put the points into an
-  // array for inside drawing
-  if (this._contourInited) {
-    var pt = {};
-    pt.x = cx;
-    pt.y = cy;
-    pt.x3 = x3;
-    pt.y3 = y3;
-    pt.type = constants.QUADRATIC;
-    this._contourVertices.push(pt);
-
-    return this;
-  }
-  if (vertices.length > 0) {
-    isQuadratic = true;
-    var vert = [];
-    for (var i = 0; i < arguments.length; i++) {
-      vert[i] = arguments[i];
-    }
-    vert.isVert = false;
-    if (isContour) {
-      contourVertices.push(vert);
-    } else {
-      vertices.push(vert);
-    }
+  if (this._renderer.isP3D) {
+    this._renderer.quadraticVertex.apply(this._renderer, arguments);
   } else {
-    throw new Error(
-      'vertex() must be used once before calling quadraticVertex()'
-    );
+    //if we're drawing a contour, put the points into an
+    // array for inside drawing
+    if (this._contourInited) {
+      var pt = {};
+      pt.x = arguments[0];
+      pt.y = arguments[1];
+      pt.x3 = arguments[2];
+      pt.y3 = arguments[3];
+      pt.type = constants.QUADRATIC;
+      this._contourVertices.push(pt);
+
+      return this;
+    }
+    if (vertices.length > 0) {
+      isQuadratic = true;
+      var vert = [];
+      for (var i = 0; i < arguments.length; i++) {
+        vert[i] = arguments[i];
+      }
+      vert.isVert = false;
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
+    } else {
+      throw new Error(
+        'vertex() must be used once before calling quadraticVertex()'
+      );
+    }
   }
   return this;
 };

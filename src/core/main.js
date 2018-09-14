@@ -48,7 +48,7 @@ var p5 = function(sketch, node, sync) {
 
   /**
    * Called directly before <a href="#/p5/setup">setup()</a>, the <a href="#/p5/preload">preload()</a> function is used to handle
-   * asynchronous loading of external files in a blocking way. If a preload 
+   * asynchronous loading of external files in a blocking way. If a preload
    * function is defined, <a href="#/p5/setup">setup()</a> will wait until any load calls within have
    * finished. Nothing besides load calls (<a href="#/p5/loadImage">loadImage</a>, <a href="#/p5/loadJSON">loadJSON</a>, <a href="#/p5/loadFont">loadFont</a>,
    * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
@@ -238,7 +238,8 @@ var p5 = function(sketch, node, sync) {
       }
     }
 
-    var userPreload = this.preload || window.preload; // look for "preload"
+    var context = this._isGlobal ? window : this;
+    var userPreload = context.preload;
     if (userPreload) {
       // Setup loading screen
       // Set loading screen into dom if not present
@@ -252,11 +253,11 @@ var p5 = function(sketch, node, sync) {
         var node = this._userNode || document.body;
         node.appendChild(loadingScreen);
       }
-      // var methods = this._preloadMethods;
-      for (var method in this._preloadMethods) {
+      var methods = this._preloadMethods;
+      for (var method in methods) {
         // default to p5 if no object defined
-        this._preloadMethods[method] = this._preloadMethods[method] || p5;
-        var obj = this._preloadMethods[method];
+        methods[method] = methods[method] || p5;
+        var obj = methods[method];
         //it's p5, check if it's global or instance
         if (obj === p5.prototype || obj === p5) {
           if (this._isGlobal) {

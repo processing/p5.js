@@ -291,8 +291,10 @@ p5.prototype.noCursor = function() {
 };
 
 /**
- * System variable that stores the width of the entire screen display. This
- * is used to run a full-screen program on any display size.
+ * System variable that stores the width of the screen display according to The
+ * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
+ * full-screen program on any display size. To return actual screen size,
+ * multiply this by pixelDensity.
  *
  * @property {Number} displayWidth
  * @readOnly
@@ -308,8 +310,10 @@ p5.prototype.noCursor = function() {
 p5.prototype.displayWidth = screen.width;
 
 /**
- * System variable that stores the height of the entire screen display. This
- * is used to run a full-screen program on any display size.
+ * System variable that stores the height of the screen display according to The
+ * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
+ * full-screen program on any display size. To return actual screen size,
+ * multiply this by pixelDensity.
  *
  * @property {Number} displayHeight
  * @readOnly
@@ -533,10 +537,10 @@ p5.prototype.pixelDensity = function(val) {
       this._pixelsDirty = true;
     }
     returnValue = this;
+    this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
   } else {
     returnValue = this._pixelDensity;
   }
-  this.resizeCanvas(this.width, this.height, true);
   return returnValue;
 };
 

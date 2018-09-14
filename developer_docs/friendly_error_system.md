@@ -69,7 +69,26 @@ p5.newObject = function(parameter) {
 ````
 * Inline documentation: allowed parameter types are `Boolean`, `Number`, `String`, and name of the object (see the above bullet point). Use `Array` for any types of Array parameters. If needed, explain what kind of the specific types of array parameter are allowed (e.g. `Number[]`, `String[]`) in the description section.
 * Currently supported class types (have their `name` parameter): `p5.Color`, `p5.Element`, `p5.Graphics`, `p5.Renderer`, `p5.Renderer2D`, `p5.Image`, `p5.Table`, `p5.TableRow`, `p5.XML`, `p5.Vector`, `p5.Font`, `p5.Geometry`, `p5.Matrix`, `p5.RendererGL`.
-* By default, FES is enabled for p5.js, whereas completely disabled in p5.min.js to prevent FES functions slowing down the process. It is possible to disable FES by setting `p5.disableFriendlyErrors = true;` even while using p5.js.
+
+## Disable the FES
+
+By default, FES is enabled for p5.js, and disabled in p5.min.js to prevent FES functions slowing down the process. The error checking system can significantly slow down your code (up to ~10x in some cases). See the [friendly error performance test](https://github.com/processing/p5.js-website/blob/master/dist/assets/learn/performance/code/friendly-error-system/).
+
+You can disable this with one line of code at the top of your sketch:
+
+```javascript
+p5.disableFriendlyErrors = true; // disables FES
+
+function setup() {
+  // Do setup stuff
+}
+
+function draw() {
+  // Do drawing stuff
+}
+```
+
+Note that this will disable the parts of the FES that cause performance slowdown (like argument checking). Friendly errors that have no performance cost (like giving an descriptive error if a file load fails, or warning you if you try to override p5.js functions in the global space), will remain in place. 
 
 ## Known Limitations
 * The friendly error system slows the program down, so there is an option to turn it off via setting `p5.disableFriendlyErrors = true;`. In addition, the friendly error system is omitted by default in the minified (`p5.min.js`) version.

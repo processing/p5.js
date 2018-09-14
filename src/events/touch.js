@@ -121,6 +121,7 @@ p5.prototype._ontouchstart = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
+  this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
   if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {

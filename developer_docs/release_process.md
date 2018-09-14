@@ -1,5 +1,9 @@
 # Release process
 
+## Approach
+* While we are below p5.js 1.0.0, we will follow this [versioning pattern](https://semver.org/): `0:MAJOR_or_MINOR:PATCH`. Once we reach 1.0.0, we will follow this versioning pattern: `MAJOR:MINOR:PATCH`.
+
+
 ## Requirements
 * Logged in NPM CLI : Check if you are logged in by `npm whoami`
 * High Bandwidth : Lots of things to download/pull/push (~190 MB total I presume)
@@ -7,7 +11,7 @@
 
 ## Usage
 `grunt release-p5:VALID_SEMVER`
-* For example: `grunt release-p5:0.5.14`, or `grunt release-p5:minor`, or any valid semver.
+* For example: `grunt release-p5:0.5.14`.
 * Note this may require you to enter username/password while pushing/pulling to repos
 
 ## What's actually happening
