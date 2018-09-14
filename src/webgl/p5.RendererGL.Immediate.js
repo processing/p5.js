@@ -139,8 +139,17 @@ p5.RendererGL.prototype.endShape = function(
     this._useImmediateModeShader();
 
     if (this._doStroke && this.drawMode !== constants.TEXTURE) {
-      for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+      if (this.immediateMode.shapeMode === constants.TRIANGLE_STRIP) {
+        var i;
+        for (i = 0; i < this.immediateMode.vertices.length - 2; i++) {
+          this.immediateMode.edges.push([i, i + 1]);
+          this.immediateMode.edges.push([i, i + 2]);
+        }
         this.immediateMode.edges.push([i, i + 1]);
+      } else {
+        for (i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+          this.immediateMode.edges.push([i, i + 1]);
+        }
       }
       if (mode === constants.CLOSE) {
         this.immediateMode.edges.push([
