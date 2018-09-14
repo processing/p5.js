@@ -371,7 +371,7 @@ p5.prototype.curve = function() {
  * information.
  *
  * @method curveDetail
- * @param {Number} resolution of the curves
+ * @param {Number} resolution resolution of the curves
  * @chainable
  * @example
  * <div modernizr='webgl'>
@@ -413,7 +413,7 @@ p5.prototype.curveDetail = function(d) {
  * increase in magnitude, they will continue to deform.
  *
  * @method curveTightness
- * @param {Number} amount of deformation from the original vertices
+ * @param {Number} amount amount of deformation from the original vertices
  * @chainable
  * @example
  * <div>
