@@ -1,0 +1,15 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "assert": false,
+    "sinon": false,
+    "expect": false,
+    "promisedSketch": true,
+    "testSketchWithPromise": true,
+    "createP5Iframe": true,
+    "P5_SCRIPT_URL": true,
+    "P5_SCRIPT_TAG": true
+  }
+}

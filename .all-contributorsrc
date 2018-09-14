@@ -1369,6 +1369,27 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "hydrosquall",
+      "name": "Cameron Yick",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9020979?s=460&v=4",
+      "profile": "https://github.com/hydrosquall",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "TanviKumar",
+      "name": "Tanvi Kumar",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18724229?v=4",
+      "profile": "https://github.com/TanviKumar",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "example"
+      ]
     }
   ]
 }

@@ -1,4 +1,4 @@
-suite('Renderer', function() {
+suite('Rendering', function() {
   var myp5;
 
   setup(function(done) {

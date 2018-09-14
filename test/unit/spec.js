@@ -3,28 +3,21 @@ var spec = {
   color: ['color_conversion', 'creating_reading', 'p5.Color', 'setting'],
   core: [
     '2d_primitives',
-    'core',
     'curves',
-    'element',
+    'environment',
     'error_helpers',
-    'graphics',
-    'renderer',
+    'main',
+    'p5.Element',
+    'rendering',
     'structure'
   ],
-  data: ['dictionary'],
+  data: ['p5.TypedDict'],
   image: ['loading', 'pixels'],
-  io: ['files_input'],
+  io: ['files'],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
-  typography: ['font_loading'],
+  typography: ['loading_displaying'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
-  webgl: [
-    'matrix',
-    'p5.RendererGL',
-    'p5.Shader',
-    'p5.Texture',
-    'pixels',
-    'stroke'
-  ]
+  webgl: ['p5.Matrix', 'p5.Camera', 'p5.RendererGL', 'p5.Shader', 'p5.Texture']
 };
 Object.keys(spec).map(function(folder) {
   spec[folder].map(function(file) {

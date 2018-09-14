@@ -40,12 +40,11 @@ function preload() {
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  
+
   filterShader = createShader(vertexShader, fragmentShader);
 
   tex = canvas.getTexture(img);
   tex.setInterpolation(NEAREST, NEAREST);
-
 }
 
 function draw() {
@@ -55,13 +54,12 @@ function draw() {
 
   filterShader.setUniform('uTex0', img);
   rect(0, 0, width, height);
-  
 }
 
 function keyPressed() {
   filterNearest = !filterNearest;
 
-  if(filterNearest){
+  if (filterNearest) {
     tex.setInterpolation(NEAREST, NEAREST);
   } else {
     tex.setInterpolation(LINEAR, LINEAR);
