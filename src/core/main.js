@@ -273,7 +273,6 @@ var p5 = function(sketch, node, sync) {
       this._runIfPreloadsAreDone();
     } else {
       this._setup();
-      this._runFrames();
       this._draw();
     }
   }.bind(this);
@@ -286,7 +285,6 @@ var p5 = function(sketch, node, sync) {
         loadingScreen.parentNode.removeChild(loadingScreen);
       }
       context._setup();
-      context._runFrames();
       context._draw();
     }
   };
@@ -389,12 +387,6 @@ var p5 = function(sketch, node, sync) {
     // an opportunity to draw.
     if (this._loop) {
       this._requestAnimId = window.requestAnimationFrame(this._draw);
-    }
-  }.bind(this);
-
-  this._runFrames = function() {
-    if (this._updateInterval) {
-      clearInterval(this._updateInterval);
     }
   }.bind(this);
 
