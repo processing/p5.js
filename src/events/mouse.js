@@ -429,6 +429,7 @@ p5.prototype._setMouseButton = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -459,6 +460,16 @@ p5.prototype._setMouseButton = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseMoved(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes lighter with mouse movements until white then resets
  * no image displayed
@@ -474,6 +485,7 @@ p5.prototype._setMouseButton = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseDragged
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -500,6 +512,16 @@ p5.prototype._setMouseButton = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseDragged(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -546,6 +568,7 @@ p5.prototype._onmousemove = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mousePressed
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -573,6 +596,16 @@ p5.prototype._onmousemove = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mousePressed(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -611,6 +644,7 @@ p5.prototype._onmousedown = function(e) {
  *
  *
  * @method mouseReleased
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -639,6 +673,16 @@ p5.prototype._onmousedown = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseReleased(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -679,6 +723,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseClicked
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -712,6 +757,16 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseClicked(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect turns white with mouse click/press.
  * no image displayed
@@ -737,6 +792,7 @@ p5.prototype._onclick = function(e) {
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -766,6 +822,16 @@ p5.prototype._onclick = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function doubleClicked(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -816,6 +882,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
+ * @param  {Object} [event] optional WheelEvent callback argument.
  *
  * @example
  * <div>

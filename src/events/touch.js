@@ -80,6 +80,7 @@ function getTouchInfo(canvas, w, h, e, i) {
  * to the end of the method.
  *
  * @method touchStarted
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -107,6 +108,16 @@ function getTouchInfo(canvas, w, h, e, i) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchStarted(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -144,6 +155,7 @@ p5.prototype._ontouchstart = function(e) {
  * to the end of the method.
  *
  * @method touchMoved
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -170,6 +182,16 @@ p5.prototype._ontouchstart = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchMoved(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -206,6 +228,7 @@ p5.prototype._ontouchmove = function(e) {
  * to the end of the method.
  *
  * @method touchEnded
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -233,6 +256,16 @@ p5.prototype._ontouchmove = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchEnded(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
