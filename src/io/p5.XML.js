@@ -53,12 +53,13 @@ var p5 = require('../core/main');
  * no image displayed
  *
  */
-p5.XML = function() {
-  this.name = null; //done
-  this.attributes = {}; //done
-  this.children = [];
-  this.parent = null;
-  this.content = null; //done
+p5.XML = function(DOM) {
+  if (!DOM) {
+    var xmlDoc = document.implementation.createDocument(null, 'doc');
+    this.DOM = xmlDoc.createElement('root');
+  } else {
+    this.DOM = DOM;
+  }
 };
 
 /**
@@ -96,7 +97,7 @@ p5.XML = function() {
  * </code></div>
  */
 p5.XML.prototype.getParent = function() {
-  return this.parent;
+  return new p5.XML(this.DOM.parentElement);
 };
 
 /**
@@ -131,7 +132,7 @@ p5.XML.prototype.getParent = function() {
  * </code></div>
  */
 p5.XML.prototype.getName = function() {
-  return this.name;
+  return this.DOM.tagName;
 };
 
 /**
@@ -169,7 +170,15 @@ p5.XML.prototype.getName = function() {
  * </code></div>
  */
 p5.XML.prototype.setName = function(name) {
-  this.name = name;
+  var content = this.DOM.innerHTML;
+  var attributes = this.DOM.attributes;
+  var xmlDoc = document.implementation.createDocument(null, 'default');
+  var newDOM = xmlDoc.createElement(name);
+  newDOM.innerHTML = content;
+  for (var i = 0; i < attributes.length; i++) {
+    newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+  }
+  this.DOM = newDOM;
 };
 
 /**
@@ -205,7 +214,7 @@ p5.XML.prototype.setName = function(name) {
  * </code></div>
  */
 p5.XML.prototype.hasChildren = function() {
-  return this.children.length > 0;
+  return this.DOM.children.length > 0;
 };
 
 /**
@@ -242,9 +251,11 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  return this.children.map(function(c) {
-    return c.name;
-  });
+  var arr = [];
+  for (var i = 0; i < this.DOM.childNodes.length; i++) {
+    arr.push(this.DOM.childNodes[i].nodeName);
+  }
+  return arr;
 };
 
 /**
@@ -289,13 +300,19 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) {
-      return c.name === param;
-    });
+    return elementsToP5XML(this.DOM.getElementsByTagName(param));
   } else {
-    return this.children;
+    return elementsToP5XML(this.DOM.children);
   }
 };
+
+function elementsToP5XML(elements) {
+  var arr = [];
+  for (var i = 0; i < elements.length; i++) {
+    arr.push(new p5.XML(elements[i]));
+  }
+  return arr;
+}
 
 /**
  * Returns the first of the element's children that matches the name parameter
@@ -349,12 +366,12 @@ p5.XML.prototype.getChildren = function(param) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    for (var i = 0; i < this.children.length; i++) {
-      var child = this.children[i];
-      if (child.name === param) return child;
+    for (var i = 0; i < this.DOM.children.length; i++) {
+      var child = this.DOM.children[i];
+      if (child.tagName === param) return new p5.XML(child);
     }
   } else {
-    return this.children[param];
+    return new p5.XML(this.DOM.children[param]);
   }
 };
 
@@ -386,6 +403,7 @@ p5.XML.prototype.getChild = function(param) {
  *
  * function setup() {
  *   var child = new p5.XML();
+ *   child.setName('animal');
  *   child.setAttribute('id', '3');
  *   child.setAttribute('species', 'Ornithorhynchus anatinus');
  *   child.setContent('Platypus');
@@ -403,7 +421,7 @@ p5.XML.prototype.getChild = function(param) {
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {
-    this.children.push(node);
+    this.DOM.appendChild(node.DOM);
   } else {
     // PEND
   }
@@ -467,8 +485,8 @@ p5.XML.prototype.addChild = function(node) {
 p5.XML.prototype.removeChild = function(param) {
   var ind = -1;
   if (typeof param === 'string') {
-    for (var i = 0; i < this.children.length; i++) {
-      if (this.children[i].name === param) {
+    for (var i = 0; i < this.DOM.children.length; i++) {
+      if (this.DOM.children[i].tagName === param) {
         ind = i;
         break;
       }
@@ -477,7 +495,7 @@ p5.XML.prototype.removeChild = function(param) {
     ind = param;
   }
   if (ind !== -1) {
-    this.children.splice(ind, 1);
+    this.DOM.removeChild(this.DOM.children[ind]);
   }
 };
 
@@ -514,7 +532,7 @@ p5.XML.prototype.removeChild = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getAttributeCount = function() {
-  return Object.keys(this.attributes).length;
+  return this.DOM.attributes.length;
 };
 
 /**
@@ -551,7 +569,12 @@ p5.XML.prototype.getAttributeCount = function() {
  * </code></div>
  */
 p5.XML.prototype.listAttributes = function() {
-  return Object.keys(this.attributes);
+  var arr = [];
+  for (var i = 0; i < this.DOM.attributes.length; i++) {
+    var attribute = this.DOM.attributes[i];
+    arr.push(attribute.nodeName);
+  }
+  return arr;
 };
 
 /**
@@ -590,7 +613,12 @@ p5.XML.prototype.listAttributes = function() {
  * </code></div>
  */
 p5.XML.prototype.hasAttribute = function(name) {
-  return this.attributes[name] ? true : false;
+  var obj = {};
+  for (var i = 0; i < this.DOM.attributes.length; i++) {
+    var attribute = this.DOM.attributes[i];
+    obj[attribute.nodeName] = attribute.nodeValue;
+  }
+  return obj[name] ? true : false;
 };
 
 /**
@@ -631,7 +659,12 @@ p5.XML.prototype.hasAttribute = function(name) {
  * </code></div>
  */
 p5.XML.prototype.getNum = function(name, defaultValue) {
-  return Number(this.attributes[name]) || defaultValue || 0;
+  var obj = {};
+  for (var i = 0; i < this.DOM.attributes.length; i++) {
+    var attribute = this.DOM.attributes[i];
+    obj[attribute.nodeName] = attribute.nodeValue;
+  }
+  return Number(obj[name]) || defaultValue || 0;
 };
 
 /**
@@ -672,7 +705,12 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.getString = function(name, defaultValue) {
-  return String(this.attributes[name]) || defaultValue || null;
+  var obj = {};
+  for (var i = 0; i < this.DOM.attributes.length; i++) {
+    var attribute = this.DOM.attributes[i];
+    obj[attribute.nodeName] = attribute.nodeValue;
+  }
+  return obj[name] ? String(obj[name]) : defaultValue || null;
 };
 
 /**
@@ -713,9 +751,7 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.setAttribute = function(name, value) {
-  if (this.attributes[name]) {
-    this.attributes[name] = value;
-  }
+  this.DOM.setAttribute(name, value);
 };
 
 /**
@@ -753,7 +789,10 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * </code></div>
  */
 p5.XML.prototype.getContent = function(defaultValue) {
-  return this.content || defaultValue || null;
+  var str;
+  str = this.DOM.textContent;
+  str = str.replace(/\s\s+/g, ',');
+  return str || defaultValue || null;
 };
 
 /**
@@ -792,45 +831,9 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * </code></div>
  */
 p5.XML.prototype.setContent = function(content) {
-  if (!this.children.length) {
-    this.content = content;
+  if (!this.DOM.children.length) {
+    this.DOM.textContent = content;
   }
-};
-
-/* HELPERS */
-/**
- * This method is called while the parsing of XML (when loadXML() is
- * called). The difference between this method and the setContent()
- * method defined later is that this one is used to set the content
- * when the node in question has more nodes under it and so on and
- * not directly text content. While in the other one is used when
- * the node in question directly has text inside it.
- *
- */
-p5.XML.prototype._setCont = function(content) {
-  var str;
-  str = content;
-  str = str.replace(/\s\s+/g, ',');
-  //str = str.split(',');
-  this.content = str;
-};
-
-/**
- * This method is called while the parsing of XML (when loadXML() is
- * called). The XML node is passed and its attributes are stored in the
- * <a href="#/p5.XML">p5.XML</a>'s attribute Object.
- *
- */
-p5.XML.prototype._setAttributes = function(node) {
-  var att = {};
-  var attributes = node.attributes;
-  if (attributes) {
-    for (var i = 0; i < attributes.length; i++) {
-      var attribute = attributes[i];
-      att[attribute.nodeName] = attribute.nodeValue;
-    }
-  }
-  this.attributes = att;
 };
 
 module.exports = p5;

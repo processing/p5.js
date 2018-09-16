@@ -600,29 +600,6 @@ function makeObject(row, headers) {
   return ret;
 }
 
-function parseXML(two) {
-  var one = new p5.XML();
-  var children = two.childNodes;
-  if (children && children.length) {
-    for (var i = 0; i < children.length; i++) {
-      var node = parseXML(children[i]);
-      one.addChild(node);
-    }
-    one.setName(two.nodeName);
-    one._setCont(two.textContent);
-    one._setAttributes(two);
-    for (var j = 0; j < one.children.length; j++) {
-      one.children[j].parent = one;
-    }
-    return one;
-  } else {
-    one.setName(two.nodeName);
-    one._setCont(two.textContent);
-    one._setAttributes(two);
-    return one;
-  }
-}
-
 /**
  * Reads the contents of a file and creates an XML object with its values.
  * If the name of the file is used as the parameter, as in the above example,
@@ -1177,7 +1154,7 @@ p5.prototype.httpDo = function() {
           return res.text().then(function(text) {
             var parser = new DOMParser();
             var xml = parser.parseFromString(text, 'text/xml');
-            return parseXML(xml.documentElement);
+            return new p5.XML(xml.documentElement);
           });
         default:
           return res.text();
