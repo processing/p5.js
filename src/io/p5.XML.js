@@ -836,4 +836,35 @@ p5.XML.prototype.setContent = function(content) {
   }
 };
 
+/**
+ * Serializes the element into a string. This function is useful for preparing
+ * the content to be sent over a http request or saved to file.
+ *
+ * @method serialize
+ * @return {String} Serialized string of the element
+ * @example
+ * <div class='norender'><code>
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML('assets/mammals.xml');
+ * }
+ *
+ * function setup() {
+ *   print(xml.serialize());
+ * }
+ *
+ * // Sketch prints:
+ * // <mammals>
+ * //   <animal id="0" species="Capra hircus">Goat</animal>
+ * //   <animal id="1" species="Panthera pardus">Leopard</animal>
+ * //   <animal id="2" species="Equus zebra">Zebra</animal>
+ * // </mammals>
+ * </code></div>
+ */
+p5.XML.prototype.serialize = function() {
+  var xmlSerializer = new XMLSerializer();
+  return xmlSerializer.serializeToString(this.DOM);
+};
+
 module.exports = p5;
