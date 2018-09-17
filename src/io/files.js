@@ -667,7 +667,7 @@ function makeObject(row, headers) {
  *
  */
 p5.prototype.loadXML = function() {
-  var ret = {};
+  var ret = new p5.XML();
   var callback, errorCallback;
 
   for (var i = 1; i < arguments.length; i++) {
@@ -1093,6 +1093,9 @@ p5.prototype.httpDo = function() {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
+        } else if (a instanceof p5.XML) {
+          data = a.serialize();
+          contentType = 'application/xml';
         } else {
           data = JSON.stringify(a);
           contentType = 'application/json';
