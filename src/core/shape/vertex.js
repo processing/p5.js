@@ -289,6 +289,7 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} x4 x-coordinate for the anchor point
  * @param  {Number} y4 y-coordinate for the anchor point
  * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -300,6 +301,10 @@ p5.prototype.beginShape = function(kind) {
  * </code>
  * </div>
  *
+ * @alt
+ * crescent-shaped line in middle of canvas. Points facing left.
+ *
+ * @example
  * <div>
  * <code>
  * beginShape();
@@ -311,21 +316,8 @@ p5.prototype.beginShape = function(kind) {
  * </div>
  *
  * @alt
- * crescent-shaped line in middle of canvas. Points facing left.
  * white crescent shape in middle of canvas. Points facing left.
- */
-/**
- * @method bezierVertex
- * @param  {Number} x2
- * @param  {Number} y2
- * @param  {Number} [z2] z-coordinate for the first control point (for WebGL mode)
- * @param  {Number} x3
- * @param  {Number} y3
- * @param  {Number} [z3] z-coordinate for the second control point (for WebGL mode)
- * @param  {Number} x4
- * @param  {Number} y4
- * @param  {Number} [z4] z-coordinate for the anchor point (for WebGL mode)
- * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -361,6 +353,20 @@ p5.prototype.beginShape = function(kind) {
  *
  * @alt
  * crescent shape in middle of canvas with another crescent shape on positive z-axis.
+ */
+
+/**
+ * @method bezierVertex
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate for the first control point (for WebGL mode)
+ * @param  {Number} x3
+ * @param  {Number} y3
+ * @param  {Number} z3 z-coordinate for the second control point (for WebGL mode)
+ * @param  {Number} x4
+ * @param  {Number} y4
+ * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
+ * @chainable
  */
 
 p5.prototype.bezierVertex = function() {
@@ -663,6 +669,7 @@ p5.prototype.endShape = function(mode) {
  * @param  {Number} x3 x-coordinate for the anchor point
  * @param  {Number} y3 y-coordinate for the anchor point
  * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -705,16 +712,19 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * arched-shaped black line with 4 pixel thick stroke weight.
  * backwards s-shaped black line with 4 pixel thick stroke weight.
+ *
  */
+
 /**
  * @method quadraticVertex
  * @param  {Number} cx
  * @param  {Number} cy
- * @param  {Number} [cz] z-coordinate for the control point (for WebGL mode)
+ * @param  {Number} cz z-coordinate for the control point (for WebGL mode)
  * @param  {Number} x3
  * @param  {Number} y3
- * @param  {Number} [z3] z-coordinate for the anchor point (for WebGL mode)
+ * @param  {Number} z3 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
+ *
  * @example
  * <div>
  * <code>
