@@ -10,3 +10,4 @@ before_script:
   - sed -i 's/options.logLevel/"verbose"/g' node_modules/mocha-chrome/lib/instance.js
 script: npm run grunt
 sudo: false
+services: docker
