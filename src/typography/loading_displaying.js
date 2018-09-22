@@ -65,7 +65,7 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * <p>You can also use the string name of the font to style other HTML
+ * <p>You can also use the font filename string (without the file extension) to style other HTML
  * elements.</p>
  *
  * <div><code>
