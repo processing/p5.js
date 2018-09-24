@@ -304,13 +304,13 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * @method debugMode
  * @param {Number} [gridSize]
  * @param {Number} [gridDivisions]
- * @param {Number} [xOff]
- * @param {Number} [yOff]
- * @param {Number} [zOff]
+ * @param {Number} [gridXOff]
+ * @param {Number} [gridYOff]
+ * @param {Number} [gridZOff]
  * @param {Number} [axesSize]
- * @param {Number} [xOff]
- * @param {Number} [yOff]
- * @param {Number} [zOff]
+ * @param {Number} [axesXOff]
+ * @param {Number} [axesYOff]
+ * @param {Number} [axesZOff]
  */
 
 p5.prototype.debugMode = function() {
