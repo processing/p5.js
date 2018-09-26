@@ -1,4 +1,4 @@
-This folder contains various documents intended for developers of p5.js.
+Hello! Thanks for your interest in contributing to p5.js! You can get started with some different ways of contributing [here](https://p5js.org/community/#contribute). This folder contains various documents intended for developers of p5.js.
 
 # Project Directory Structure
 
