@@ -339,8 +339,8 @@ p5.prototype._updatePRotations = function() {
 };
 
 /**
- * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> 
- * method is stored in the turnAxis variable. The turnAxis variable is only defined within 
+ * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a>
+ * method is stored in the turnAxis variable. The turnAxis variable is only defined within
  * the scope of deviceTurned().
  * @property {String} turnAxis
  * @readOnly
