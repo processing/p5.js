@@ -339,8 +339,38 @@ p5.prototype._updatePRotations = function() {
 };
 
 /**
+ * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a>
+ * method is stored in the turnAxis variable. The turnAxis variable is only defined within
+ * the scope of deviceTurned().
  * @property {String} turnAxis
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Rotate the device by 90 degrees in the
+ * // X-axis to change the value.
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceTurned() {
+ *   if (turnAxis === 'X') {
+ *     if (value === 0) {
+ *       value = 255;
+ *     } else if (value === 255) {
+ *       value = 0;
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device turns
+ * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
  */
 p5.prototype.turnAxis = undefined;
 
