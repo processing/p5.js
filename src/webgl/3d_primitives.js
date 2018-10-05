@@ -281,10 +281,11 @@ var _truncatedCone = function(
   topCap = topCap === undefined ? topRadius !== 0 : topCap;
   var start = bottomCap ? -2 : 0;
   var end = detailY + (topCap ? 2 : 0);
-  var vertsOnLayer = {};
   //ensure constant slant for interior vertex normals
   var slant = Math.atan2(bottomRadius - topRadius, height);
-  var yy, ii, jj, nextii, nextjj;
+  var sinSlant = Math.sin(slant);
+  var cosSlant = Math.cos(slant);
+  var yy, ii, jj;
   for (yy = start; yy <= end; ++yy) {
     var v = yy / detailY;
     var y = height * v;
@@ -309,29 +310,25 @@ var _truncatedCone = function(
     }
 
     y -= height / 2; //shift coordiate origin to the center of object
-    vertsOnLayer[yy] = ringRadius === 0 ? 1 : detailX;
-    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
+    for (ii = 0; ii < detailX; ++ii) {
       var u = ii / detailX;
+      var ur = 2 * Math.PI * u;
+      var sur = Math.sin(ur);
+      var cur = Math.cos(ur);
+
       //VERTICES
-      this.vertices.push(
-        new p5.Vector(
-          Math.sin(u * 2 * Math.PI) * ringRadius,
-          y,
-          Math.cos(u * 2 * Math.PI) * ringRadius
-        )
-      );
+      this.vertices.push(new p5.Vector(sur * ringRadius, y, cur * ringRadius));
+
       //VERTEX NORMALS
-      this.vertexNormals.push(
-        new p5.Vector(
-          yy < 0 || yy > detailY
-            ? 0
-            : Math.sin(u * 2 * Math.PI) * Math.cos(slant),
-          yy < 0 ? -1 : yy > detailY ? 1 : Math.sin(slant),
-          yy < 0 || yy > detailY
-            ? 0
-            : Math.cos(u * 2 * Math.PI) * Math.cos(slant)
-        )
-      );
+      var vertexNormal;
+      if (yy < 0) {
+        vertexNormal = new p5.Vector(0, -1, 0);
+      } else if (yy > detailY && topRadius) {
+        vertexNormal = new p5.Vector(0, 1, 0);
+      } else {
+        vertexNormal = new p5.Vector(sur * cosSlant, sinSlant, cur * cosSlant);
+      }
+      this.vertexNormals.push(vertexNormal);
       //UVs
       this.uvs.push(u, v);
     }
@@ -339,52 +336,39 @@ var _truncatedCone = function(
 
   var startIndex = 0;
   if (bottomCap) {
-    for (jj = 0; jj < vertsOnLayer[-1]; ++jj) {
-      nextjj = (jj + 1) % vertsOnLayer[-1];
+    for (jj = 0; jj < detailX; ++jj) {
+      var nextjj = (jj + 1) % detailX;
       this.faces.push([
-        startIndex,
-        startIndex + 1 + nextjj,
-        startIndex + 1 + jj
+        startIndex + jj,
+        startIndex + detailX + nextjj,
+        startIndex + detailX + jj
       ]);
     }
-    startIndex += vertsOnLayer[-2] + vertsOnLayer[-1];
+    startIndex += detailX * 2;
   }
   for (yy = 0; yy < detailY; ++yy) {
-    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
-      if (vertsOnLayer[yy + 1] === 1) {
-        //top layer
-        nextii = (ii + 1) % vertsOnLayer[yy];
-        this.faces.push([
-          startIndex + ii,
-          startIndex + nextii,
-          startIndex + vertsOnLayer[yy]
-        ]);
-      } else {
-        //other side faces
-        //should have vertsOnLayer[yy] === vertsOnLayer[yy + 1]
-        nextii = (ii + 1) % vertsOnLayer[yy];
-        this.faces.push([
-          startIndex + ii,
-          startIndex + nextii,
-          startIndex + vertsOnLayer[yy] + nextii
-        ]);
-        this.faces.push([
-          startIndex + ii,
-          startIndex + vertsOnLayer[yy] + nextii,
-          startIndex + vertsOnLayer[yy] + ii
-        ]);
-      }
-    }
-    startIndex += vertsOnLayer[yy];
-  }
-  if (topCap) {
-    startIndex += vertsOnLayer[detailY];
-    for (ii = 0; ii < vertsOnLayer[detailY + 1]; ++ii) {
-      nextii = (ii + 1) % vertsOnLayer[detailY + 1];
+    for (ii = 0; ii < detailX; ++ii) {
+      var nextii = (ii + 1) % detailX;
       this.faces.push([
         startIndex + ii,
         startIndex + nextii,
-        startIndex + vertsOnLayer[detailY + 1]
+        startIndex + detailX + nextii
+      ]);
+      this.faces.push([
+        startIndex + ii,
+        startIndex + detailX + nextii,
+        startIndex + detailX + ii
+      ]);
+    }
+    startIndex += detailX;
+  }
+  if (topCap) {
+    startIndex += detailX;
+    for (ii = 0; ii < detailX; ++ii) {
+      this.faces.push([
+        startIndex + ii,
+        startIndex + (ii + 1) % detailX,
+        startIndex + detailX
       ]);
     }
   }
@@ -534,8 +518,6 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
-    //for cones we need to average Normals
-    coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges()._edgesToVertices();
     } else {
