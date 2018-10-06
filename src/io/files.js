@@ -1487,7 +1487,7 @@ p5.prototype.save = function(object, _filename, _options) {
   // OPTION 1: saveCanvas...
 
   // if no arguments are provided, save canvas
-  var cnv = this._curElement.elt;
+  var cnv = this._curElement ? this._curElement.elt : this.elt;
   if (args.length === 0) {
     p5.prototype.saveCanvas(cnv);
     return;
