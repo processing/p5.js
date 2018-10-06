@@ -180,6 +180,13 @@
       "contributions": []
     },
     {
+      "login": "L05",
+      "name": "L05",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3998826?v=4",
+      "profile": "http://L05.is",
+      "contributions": []
+    },
+    {
       "login": "diygirls",
       "name": "DIYgirls",
       "avatar_url": "https://avatars3.githubusercontent.com/u/1680038?v=4",
@@ -1390,6 +1397,13 @@
         "doc",
         "example"
       ]
+    },
+    {
+      "login": "endoh0509",
+      "name": "Katsuya Endoh",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7820411?v=4",
+      "profile": "https://enkatsu.org",
+      "contributions": []
     }
   ]
 }

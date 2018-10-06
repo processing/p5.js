@@ -26,6 +26,10 @@ var _windowPrint = window.print;
  * the function. Individual elements can be
  * separated with quotes ("") and joined with the addition operator (+).
  *
+ * Note that calling print() without any arguments invokes the window.print()
+ * function which opens the browser's print dialog. To print a blank line
+ * to console you can write print('\n').
+ *
  * @method print
  * @param {Any} contents any combination of Number, String, Object, Boolean,
  *                       Array to print
