@@ -239,7 +239,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
-    return fxn();
+    return fxn.call(this);
   };
   // Pass along the event-prepended form of the callback.
   adjustListener('mousedown', eventPrependedFxn, this);
