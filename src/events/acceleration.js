@@ -466,8 +466,9 @@ p5.prototype.setShakeThreshold = function(val) {
 
 /**
  * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
- * the threshold value along X, Y or Z axis. The default threshold is set to
- * 0.5.
+ * the threshold value along X, Y or Z axis. The default threshold is set to 0.5. 
+ * The threshold value can be changed using <a href="#/p5/setMoveThreshold">setMoveThreshold()</a>.
+ * 
  * @method deviceMoved
  * @example
  * <div class="norender">
