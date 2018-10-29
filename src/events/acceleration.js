@@ -558,6 +558,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
  * changes of accelerationX and accelerationY values is more than
  * the threshold value. The default threshold is set to 30.
+ * The threshold value can be changed using <a href="#/p5/setShakeThreshold">setShakeThreshold()</a>.
+ * 
  * @method deviceShaken
  * @example
  * <div class="norender">
