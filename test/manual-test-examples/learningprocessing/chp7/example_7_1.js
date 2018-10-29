@@ -7,5 +7,5 @@
 // Example 7-1: Defining a function
 var drawBlackCircle = function() {
   fill(0);
-  ellipse(50,50,20,20);
+  ellipse(50, 50, 20, 20);
 };

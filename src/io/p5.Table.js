@@ -6,8 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
-
+var p5 = require('../core/main');
 
 /**
  *  Table Options
@@ -21,9 +20,9 @@ var p5 = require('../core/core');
  *  <p>File names should end with .csv if they're comma separated.</p>
  *  <p>A rough "spec" for CSV can be found
  *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
- *  <p>To load files, use the loadTable method.</p>
- *  <p>To save tables to your computer, use the save method
- *   or the saveTable method.</p>
+ *  <p>To load files, use the <a href="#/p5/loadTable">loadTable</a> method.</p>
+ *  <p>To save tables to your computer, use the <a href="#/p5/save">save</a> method
+ *   or the <a href="#/p5/saveTable">saveTable</a> method.</p>
  *
  *  Possible options include:
  *  <ul>
@@ -34,7 +33,7 @@ var p5 = require('../core/core');
  */
 
 /**
- *  Table objects store data with multiple rows and columns, much
+ *  <a href="#/p5.Table">Table</a> objects store data with multiple rows and columns, much
  *  like in a traditional spreadsheet. Tables can be generated from
  *  scratch, dynamically, or using data from an existing file.
  *
@@ -42,7 +41,7 @@ var p5 = require('../core/core');
  *  @constructor
  *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
  */
-p5.Table = function (rows) {
+p5.Table = function(rows) {
   /**
    *  @property columns {String[]}
    */
@@ -52,55 +51,55 @@ p5.Table = function (rows) {
    *  @property rows {p5.TableRow[]}
    */
   this.rows = [];
-  this.name = 'p5.Table';   // for friendly debugger system
 };
 
 /**
- *  Use addRow() to add a new row of data to a p5.Table object. By default,
+ *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
  *  an empty row is created. Typically, you would store a reference to
  *  the new row in a TableRow object (see newRow in the example above),
- *  and then set individual values using set().
+ *  and then set individual values using <a href="#/p5/set">set()</a>.
  *
- *  If a p5.TableRow object is included as a parameter, then that row is
+ *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
  *  duplicated and added to the table.
  *
  *  @method  addRow
  *  @param   {p5.TableRow} [row] row to be added to the table
+ *  @return  {p5.TableRow} the row that was added
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //add a row
-	*   var newRow = table.addRow();
-	*   newRow.setString("id", table.getRowCount() - 1);
-	*   newRow.setString("species", "Canis Lupus");
-	*   newRow.setString("name", "Wolf");
-	*
-	*   //print the results
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
-	* }
-	* </code>
-	* </div>
-	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //add a row
+ *   var newRow = table.addRow();
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Canis Lupus');
+ *   newRow.setString('name', 'Wolf');
+ *
+ *   //print the results
+ *   for (var r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++)
+ *       print(table.getString(r, c));
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * no image displayed
  *
@@ -109,9 +108,9 @@ p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
   var r = row || new p5.TableRow();
 
-  if (typeof(r.arr) === 'undefined' || typeof(r.obj) === 'undefined') {
+  if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
     //r = new p5.prototype.TableRow(r);
-    throw 'invalid TableRow: ' + r;
+    throw new Error('invalid TableRow: ' + r);
   }
   r.table = this;
   this.rows.push(r);
@@ -122,139 +121,140 @@ p5.Table.prototype.addRow = function(row) {
  * Removes a row from the table object.
  *
  * @method  removeRow
- * @param   {Number} id ID number of the row to remove
+ * @param   {Integer} id ID number of the row to remove
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //remove the first row
-	*   var r = table.removeRow(0);
-	*
-	*   //print the results
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
-	* }
-	* </code>
-	* </div>
-	*
-    * @alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //remove the first row
+ *   table.removeRow(0);
+ *
+ *   //print the results
+ *   for (var r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++)
+ *       print(table.getString(r, c));
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
-  var chunk = this.rows.splice(id+1, this.rows.length);
+  var chunk = this.rows.splice(id + 1, this.rows.length);
   this.rows.pop();
   this.rows = this.rows.concat(chunk);
 };
 
-
 /**
- * Returns a reference to the specified p5.TableRow. The reference
+ * Returns a reference to the specified <a href="#/p5.TableRow">p5.TableRow</a>. The reference
  * can then be used to get and set values of the selected row.
  *
  * @method  getRow
- * @param  {Number}   rowID ID number of the row to get
- * @return {p5.TableRow} p5.TableRow object
+ * @param  {Integer}   rowID ID number of the row to get
+ * @return {p5.TableRow} <a href="#/p5.TableRow">p5.TableRow</a> object
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   var row = table.getRow(1);
-	*   //print it column by column
-	*   //note: a row is an object, not an array
-	*   for (var c = 0; c < table.getColumnCount(); c++)
-	*     print(row.getString(c));
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   var row = table.getRow(1);
+ *   //print it column by column
+ *   //note: a row is an object, not an array
+ *   for (var c = 0; c < table.getColumnCount(); c++) {
+ *     print(row.getString(c));
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
 };
 
 /**
- *  Gets all rows from the table. Returns an array of p5.TableRows.
+ *  Gets all rows from the table. Returns an array of <a href="#/p5.TableRow">p5.TableRow</a>s.
  *
  *  @method  getRows
- *  @return {p5.TableRow[]}   Array of p5.TableRows
+ *  @return {p5.TableRow[]}   Array of <a href="#/p5.TableRow">p5.TableRow</a>s
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   var rows = table.getRows();
-	*
-	*   //warning: rows is an array of objects
-	*   for (var r = 0; r < rows.length; r++)
-	*     rows[r].set("name", "Unicorn");
-	*
-	*   //print the results
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
-	* }
-	* </code>
-	* </div>
-	*
-    * @alt
-    * no image displayed
-    *
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   var rows = table.getRows();
+ *
+ *   //warning: rows is an array of objects
+ *   for (var r = 0; r < rows.length; r++) {
+ *     rows[r].set('name', 'Unicorn');
+ *   }
+ *
+ *   //print the results
+ *   for (r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++)
+ *       print(table.getString(r, c));
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -269,54 +269,53 @@ p5.Table.prototype.getRows = function() {
  *
  *  @method  findRow
  *  @param  {String} value  The value to match
- *  @param  {Number|String} column ID number or title of the
+ *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
  *  @return {p5.TableRow}
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //find the animal named zebra
-	*   var row = table.findRow("Zebra", "name");
-	*   //find the corresponding species
-	*   print(row.getString("species"));
-	* }
-	* </code>
-	* </div>
-	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //find the animal named zebra
+ *   var row = table.findRow('Zebra', 'name');
+ *   //find the corresponding species
+ *   print(row.getString('species'));
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * no image displayed
  *
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
-  if (typeof(column) === 'string') {
-    for (var i = 0; i < this.rows.length; i++){
+  if (typeof column === 'string') {
+    for (var i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column] === value) {
         return this.rows[i];
       }
     }
-  }
-  // try the Array
-  else {
-    for (var j = 0; j < this.rows.length; j++){
+  } else {
+    // try the Array
+    for (var j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column] === value) {
         return this.rows[j];
       }
@@ -335,61 +334,60 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  *  @method  findRows
  *  @param  {String} value  The value to match
- *  @param  {Number|String} column ID number or title of the
+ *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
  *  @return {p5.TableRow[]}        An Array of TableRow objects
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //add another goat
-	*   var newRow = table.addRow();
-	*   newRow.setString("id", table.getRowCount() - 1);
-	*   newRow.setString("species", "Scape Goat");
-	*   newRow.setString("name", "Goat");
-	*
-	*   //find the rows containing animals named Goat
-	*   var rows = table.findRows("Goat", "name");
-	*   print(rows.length + " Goats found");
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //add another goat
+ *   var newRow = table.addRow();
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Scape Goat');
+ *   newRow.setString('name', 'Goat');
+ *
+ *   //find the rows containing animals named Goat
+ *   var rows = table.findRows('Goat', 'name');
+ *   print(rows.length + ' Goats found');
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.findRows = function(value, column) {
   var ret = [];
-  if (typeof(column) === 'string') {
-    for (var i = 0; i < this.rows.length; i++){
+  if (typeof column === 'string') {
+    for (var i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column] === value) {
-        ret.push( this.rows[i] );
+        ret.push(this.rows[i]);
       }
     }
-  }
-  // try the Array
-  else {
-    for (var j = 0; j < this.rows.length; j++){
+  } else {
+    // try the Array
+    for (var j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column] === value) {
-        ret.push( this.rows[j] );
+        ret.push(this.rows[j]);
       }
     }
   }
@@ -397,30 +395,57 @@ p5.Table.prototype.findRows = function(value, column) {
 };
 
 /**
- *  Finds the first row in the Table that matches the regular
- *  expression provided, and returns a reference to that row.
- *  Even if multiple rows are possible matches, only the first
- *  matching row is returned. The column to search may be
- *  specified by either its ID or title.
+ * Finds the first row in the Table that matches the regular
+ * expression provided, and returns a reference to that row.
+ * Even if multiple rows are possible matches, only the first
+ * matching row is returned. The column to search may be
+ * specified by either its ID or title.
  *
- *  @method  matchRow
- *  @param  {String} regexp The regular expression to match
- *  @param  {String|Number} column The column ID (number) or
- *                                   title (string)
- *  @return {p5.TableRow}        TableRow object
+ * @method  matchRow
+ * @param  {String|RegExp} regexp The regular expression to match
+ * @param  {String|Integer} column The column ID (number) or
+ *                                  title (string)
+ * @return {p5.TableRow}        TableRow object
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //Search using specified regex on a given column, return TableRow object
+ *   var mammal = table.matchRow(new RegExp('ant'), 1);
+ *   print(mammal.getString(1));
+ *   //Output "Panthera pardus"
+ * }
+ * </code>
+ * </div>
+ *
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
-  if (typeof(column) === 'number') {
+  if (typeof column === 'number') {
     for (var j = 0; j < this.rows.length; j++) {
-      if ( this.rows[j].arr[column].match(regexp) ) {
+      if (this.rows[j].arr[column].match(regexp)) {
         return this.rows[j];
       }
     }
-  }
-
-  else {
+  } else {
     for (var i = 0; i < this.rows.length; i++) {
-      if ( this.rows[i].obj[column].match(regexp) ) {
+      if (this.rows[i].obj[column].match(regexp)) {
         return this.rows[i];
       }
     }
@@ -429,71 +454,71 @@ p5.Table.prototype.matchRow = function(regexp, column) {
 };
 
 /**
- *  Finds the rows in the Table that match the regular expression provided,
- *  and returns references to those rows. Returns an array, so for must be
- *  used to iterate through all the rows, as shown in the example. The
- *  column to search may be specified by either its ID or title.
+ * Finds the rows in the Table that match the regular expression provided,
+ * and returns references to those rows. Returns an array, so for must be
+ * used to iterate through all the rows, as shown in the example. The
+ * column to search may be specified by either its ID or title.
  *
- *  @method  matchRows
- *  @param  {String} regexp The regular expression to match
- *  @param  {String|Number} [column] The column ID (number) or
- *                                   title (string)
- *  @return {p5.TableRow[]}          An Array of TableRow objects
- *  @example
- *  var table;
+ * @method  matchRows
+ * @param  {String} regexp The regular expression to match
+ * @param  {String|Integer} [column] The column ID (number) or
+ *                                  title (string)
+ * @return {p5.TableRow[]}          An Array of TableRow objects
+ * @example
+ * <div class="norender">
+ * <code>
+ * var table;
  *
- *  function setup() {
+ * function setup() {
+ *   table = new p5.Table();
  *
- *    table = new p5.Table();
+ *   table.addColumn('name');
+ *   table.addColumn('type');
  *
- *    table.addColumn('name');
- *    table.addColumn('type');
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', 'Lion');
+ *   newRow.setString('type', 'Mammal');
  *
- *    var newRow = table.addRow();
- *    newRow.setString('name', 'Lion');
- *    newRow.setString('type', 'Mammal');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Snake');
+ *   newRow.setString('type', 'Reptile');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Snake');
- *    newRow.setString('type', 'Reptile');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Mosquito');
+ *   newRow.setString('type', 'Insect');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Mosquito');
- *    newRow.setString('type', 'Insect');
+ *   newRow = table.addRow();
+ *   newRow.setString('name', 'Lizard');
+ *   newRow.setString('type', 'Reptile');
  *
- *    newRow = table.addRow();
- *    newRow.setString('name', 'Lizard');
- *    newRow.setString('type', 'Reptile');
- *
- *    var rows = table.matchRows('R.*', 'type');
- *    for (var i = 0; i < rows.length; i++) {
- *      print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
- *    }
- *  }
- *  // Sketch prints:
- *  // Snake: Reptile
- *  // Lizard: Reptile
+ *   var rows = table.matchRows('R.*', 'type');
+ *   for (var i = 0; i < rows.length; i++) {
+ *     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
+ *   }
+ * }
+ * // Sketch prints:
+ * // Snake: Reptile
+ * // Lizard: Reptile
+ * </code>
+ * </div>
  */
 p5.Table.prototype.matchRows = function(regexp, column) {
   var ret = [];
-  if (typeof(column) === 'number') {
+  if (typeof column === 'number') {
     for (var j = 0; j < this.rows.length; j++) {
-      if ( this.rows[j].arr[column].match(regexp) ) {
-        ret.push( this.rows[j] );
+      if (this.rows[j].arr[column].match(regexp)) {
+        ret.push(this.rows[j]);
       }
     }
-  }
-
-  else {
+  } else {
     for (var i = 0; i < this.rows.length; i++) {
-      if ( this.rows[i].obj[column].match(regexp) ) {
-        ret.push( this.rows[i] );
+      if (this.rows[i].obj[column].match(regexp)) {
+        ret.push(this.rows[i]);
       }
     }
   }
   return ret;
 };
-
 
 /**
  *  Retrieves all values in the specified column, and returns them
@@ -504,45 +529,45 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  *  @return {Array}       Array of column values
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //getColumn returns an array that can be printed directly
-	*   print(table.getColumn("species"));
-	*   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //getColumn returns an array that can be printed directly
+ *   print(table.getColumn('species'));
+ *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.getColumn = function(value) {
   var ret = [];
-  if (typeof(value) === 'string'){
-    for (var i = 0; i < this.rows.length; i++){
-      ret.push (this.rows[i].obj[value]);
+  if (typeof value === 'string') {
+    for (var i = 0; i < this.rows.length; i++) {
+      ret.push(this.rows[i].obj[value]);
     }
   } else {
-    for (var j = 0; j < this.rows.length; j++){
-      ret.push (this.rows[j].arr[value]);
+    for (var j = 0; j < this.rows.length; j++) {
+      ret.push(this.rows[j].arr[value]);
     }
   }
   return ret;
@@ -555,35 +580,35 @@ p5.Table.prototype.getColumn = function(value) {
  *  @method  clearRows
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   table.clearRows();
-	*   print(table.getRowCount() + " total rows in table");
-	*   print(table.getColumnCount() + " total columns in table");
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   table.clearRows();
+ *   print(table.getRowCount() + ' total rows in table');
+ *   print(table.getColumnCount() + ' total columns in table');
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -591,7 +616,7 @@ p5.Table.prototype.clearRows = function() {
 };
 
 /**
- *  Use addColumn() to add a new column to a Table object.
+ *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
  *  Typically, you will want to specify a title, so the column
  *  may be easily referenced later by name. (If no title is
  *  specified, the new column's title will be null.)
@@ -600,41 +625,41 @@ p5.Table.prototype.clearRows = function() {
  *  @param {String} [title] title of the given column
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   table.addColumn("carnivore");
-	*   table.set(0, "carnivore", "no");
-	*   table.set(1, "carnivore", "yes");
-	*   table.set(2, "carnivore", "no");
-	*
-	*   //print the results
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   table.addColumn('carnivore');
+ *   table.set(0, 'carnivore', 'no');
+ *   table.set(1, 'carnivore', 'yes');
+ *   table.set(2, 'carnivore', 'no');
+ *
+ *   //print the results
+ *   for (var r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++)
+ *       print(table.getString(r, c));
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.addColumn = function(title) {
   var t = title || null;
@@ -645,7 +670,33 @@ p5.Table.prototype.addColumn = function(title) {
  *  Returns the total number of columns in a Table.
  *
  *  @method  getColumnCount
- *  @return {Number} Number of columns in this table
+ *  @return {Integer} Number of columns in this table
+ * @example
+ * <div>
+ * <code>
+ * // given the cvs file "blobs.csv" in /assets directory
+ * // ID, Name, Flavor, Shape, Color
+ * // Blob1, Blobby, Sweet, Blob, Pink
+ * // Blob2, Saddy, Savory, Blob, Blue
+ *
+ * var table;
+ *
+ * function preload() {
+ *   table = loadTable('assets/blobs.csv');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 100);
+ *   textAlign(CENTER);
+ *   background(255);
+ * }
+ *
+ * function draw() {
+ *   var numOfColumn = table.getColumnCount();
+ *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
+ * }
+ * </code>
+ * </div>
  */
 p5.Table.prototype.getColumnCount = function() {
   return this.columns.length;
@@ -655,7 +706,33 @@ p5.Table.prototype.getColumnCount = function() {
  *  Returns the total number of rows in a Table.
  *
  *  @method  getRowCount
- *  @return {Number} Number of rows in this table
+ *  @return {Integer} Number of rows in this table
+ * @example
+ * <div>
+ * <code>
+ * // given the cvs file "blobs.csv" in /assets directory
+ * //
+ * // ID, Name, Flavor, Shape, Color
+ * // Blob1, Blobby, Sweet, Blob, Pink
+ * // Blob2, Saddy, Savory, Blob, Blue
+ *
+ * var table;
+ *
+ * function preload() {
+ *   table = loadTable('assets/blobs.csv');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 100);
+ *   textAlign(CENTER);
+ *   background(255);
+ * }
+ *
+ * function draw() {
+ *   text('There are ' + table.getRowCount() + ' rows in the table.', 100, 50);
+ * }
+ * </code>
+ * </div>
  */
 p5.Table.prototype.getRowCount = function() {
   return this.rows.length;
@@ -670,20 +747,45 @@ p5.Table.prototype.getRowCount = function() {
  *
  *  @method  removeTokens
  *  @param  {String} chars  String listing characters to be removed
- *  @param  {String|Number} [column] Column ID (number)
+ *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
+ *
+ * @example
+ * <div class="norender"><code>
+ * function setup() {
+ *   var table = new p5.Table();
+ *
+ *   table.addColumn('name');
+ *   table.addColumn('type');
+ *
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', '   $Lion  ,');
+ *   newRow.setString('type', ',,,Mammal');
+ *
+ *   newRow = table.addRow();
+ *   newRow.setString('name', '$Snake  ');
+ *   newRow.setString('type', ',,,Reptile');
+ *
+ *   table.removeTokens(',$ ');
+ *   print(table.getArray());
+ * }
+ *
+ * // prints:
+ * //  0  "Lion"   "Mamal"
+ * //  1  "Snake"  "Reptile"
+ * </code></div>
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
-  var escape= function(s) {
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  var escape = function(s) {
+    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   };
   var charArray = [];
   for (var i = 0; i < chars.length; i++) {
-    charArray.push( escape( chars.charAt(i) ) );
+    charArray.push(escape(chars.charAt(i)));
   }
   var regex = new RegExp(charArray.join('|'), 'g');
 
-  if (typeof(column) === 'undefined'){
+  if (typeof column === 'undefined') {
     for (var c = 0; c < this.columns.length; c++) {
       for (var d = 0; d < this.rows.length; d++) {
         var s = this.rows[d].arr[c];
@@ -692,8 +794,7 @@ p5.Table.prototype.removeTokens = function(chars, column) {
         this.rows[d].obj[this.columns[c]] = s;
       }
     }
-  }
-  else if (typeof(column) === 'string'){
+  } else if (typeof column === 'string') {
     for (var j = 0; j < this.rows.length; j++) {
       var val = this.rows[j].obj[column];
       val = val.replace(regex, '');
@@ -701,8 +802,7 @@ p5.Table.prototype.removeTokens = function(chars, column) {
       var pos = this.columns.indexOf(column);
       this.rows[j].arr[pos] = val;
     }
-  }
-  else {
+  } else {
     for (var k = 0; k < this.rows.length; k++) {
       var str = this.rows[k].arr[column];
       str = str.replace(regex, '');
@@ -719,13 +819,37 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  *  may be referenced by either its ID or title.
  *
  *  @method  trim
- *  @param  {String|Number} column Column ID (number)
+ *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
+ * @example
+ * <div class="norender"><code>
+ * function setup() {
+ *   var table = new p5.Table();
+ *
+ *   table.addColumn('name');
+ *   table.addColumn('type');
+ *
+ *   var newRow = table.addRow();
+ *   newRow.setString('name', '   Lion  ,');
+ *   newRow.setString('type', ' Mammal  ');
+ *
+ *   newRow = table.addRow();
+ *   newRow.setString('name', '  Snake  ');
+ *   newRow.setString('type', '  Reptile  ');
+ *
+ *   table.trim();
+ *   print(table.getArray());
+ * }
+ *
+ * // prints:
+ * //  0  "Lion"   "Mamal"
+ * //  1  "Snake"  "Reptile"
+ * </code></div>
  */
 p5.Table.prototype.trim = function(column) {
-  var regex = new RegExp( (' '), 'g');
+  var regex = new RegExp(' ', 'g');
 
-  if (typeof(column) === 'undefined'){
+  if (typeof column === 'undefined') {
     for (var c = 0; c < this.columns.length; c++) {
       for (var d = 0; d < this.rows.length; d++) {
         var s = this.rows[d].arr[c];
@@ -734,8 +858,7 @@ p5.Table.prototype.trim = function(column) {
         this.rows[d].obj[this.columns[c]] = s;
       }
     }
-  }
-  else if (typeof(column) === 'string'){
+  } else if (typeof column === 'string') {
     for (var j = 0; j < this.rows.length; j++) {
       var val = this.rows[j].obj[column];
       val = val.replace(regex, '');
@@ -743,8 +866,7 @@ p5.Table.prototype.trim = function(column) {
       var pos = this.columns.indexOf(column);
       this.rows[j].arr[pos] = val;
     }
-  }
-  else {
+  } else {
     for (var k = 0; k < this.rows.length; k++) {
       var str = this.rows[k].arr[column];
       str = str.replace(regex, '');
@@ -755,73 +877,69 @@ p5.Table.prototype.trim = function(column) {
 };
 
 /**
- *  Use removeColumn() to remove an existing column from a Table
+ *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
  *  object. The column to be removed may be identified by either
  *  its title (a String) or its index value (an int).
  *  removeColumn(0) would remove the first column, removeColumn(1)
  *  would remove the second column, and so on.
  *
  *  @method  removeColumn
- *  @param  {String|Number} column columnName (string) or ID (number)
+ *  @param  {String|Integer} column columnName (string) or ID (number)
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   table.removeColumn("id");
-	*   print(table.getColumnCount());
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   table.removeColumn('id');
+ *   print(table.getColumnCount());
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.removeColumn = function(c) {
   var cString;
   var cNumber;
-  if (typeof(c) === 'string') {
+  if (typeof c === 'string') {
     // find the position of c in the columns
     cString = c;
     cNumber = this.columns.indexOf(c);
-    console.log('string');
-  }
-  else{
+  } else {
     cNumber = c;
     cString = this.columns[c];
   }
 
-  var chunk = this.columns.splice(cNumber+1, this.columns.length);
+  var chunk = this.columns.splice(cNumber + 1, this.columns.length);
   this.columns.pop();
   this.columns = this.columns.concat(chunk);
 
-  for (var i = 0; i < this.rows.length; i++){
+  for (var i = 0; i < this.rows.length; i++) {
     var tempR = this.rows[i].arr;
-    var chip = tempR.splice(cNumber+1, tempR.length);
+    var chip = tempR.splice(cNumber + 1, tempR.length);
     tempR.pop();
     this.rows[i].arr = tempR.concat(chip);
     delete this.rows[i].obj[cString];
   }
-
 };
-
 
 /**
  * Stores a value in the Table's specified row and column.
@@ -829,44 +947,45 @@ p5.Table.prototype.removeColumn = function(c) {
  * by either its ID or title.
  *
  * @method  set
- * @param {String|Number} column column ID (Number)
+ * @param {Integer} row row ID
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String|Number} value  value to assign
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   table.set(0, "species", "Canis Lupus");
-	*   table.set(0, "name", "Wolf");
-	*
-	*   //print the results
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   table.set(0, 'species', 'Canis Lupus');
+ *   table.set(0, 'name', 'Wolf');
+ *
+ *   //print the results
+ *   for (var r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++)
+ *       print(table.getString(r, c));
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -878,46 +997,45 @@ p5.Table.prototype.set = function(row, column, value) {
  * by either its ID or title.
  *
  * @method setNum
- * @param {Number} row row ID
- * @param {String|Number} column column ID (Number)
+ * @param {Integer} row row ID
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {Number} value  value to assign
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   table.setNum(1, "id", 1);
-	*
-	*   print(table.getColumn(0));
-	*   //["0", 1, "2"]
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   table.setNum(1, 'id', 1);
+ *
+ *   print(table.getColumn(0));
+ *   //["0", 1, "2"]
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
  */
-p5.Table.prototype.setNum = function(row, column, value){
+p5.Table.prototype.setNum = function(row, column, value) {
   this.rows[row].setNum(column, value);
 };
-
 
 /**
  * Stores a String value in the Table's specified row and column.
@@ -925,12 +1043,42 @@ p5.Table.prototype.setNum = function(row, column, value){
  * by either its ID or title.
  *
  * @method  setString
- * @param {Number} row row ID
- * @param {String|Number} column column ID (Number)
+ * @param {Integer} row row ID
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String} value  value to assign
+ * @example
+ * <div class="norender"><code>
+ * // Given the CSV file "mammals.csv" in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   //add a row
+ *   var newRow = table.addRow();
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Canis Lupus');
+ *   newRow.setString('name', 'Wolf');
+ *
+ *   print(table.getArray());
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
  */
-p5.Table.prototype.setString = function(row, column, value){
+p5.Table.prototype.setString = function(row, column, value) {
   this.rows[row].setString(column, value);
 };
 
@@ -940,42 +1088,42 @@ p5.Table.prototype.setString = function(row, column, value){
  * either its ID or title.
  *
  * @method  get
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {String|Number}
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   print(table.get(0, 1));
-	*   //Capra hircus
-	*   print(table.get(0, "species"));
-	*   //Capra hircus
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   print(table.get(0, 1));
+ *   //Capra hircus
+ *   print(table.get(0, 'species'));
+ *   //Capra hircus
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -987,40 +1135,40 @@ p5.Table.prototype.get = function(row, column) {
  * either its ID or title.
  *
  * @method  getNum
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {Number}
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   print(table.getNum(1, 0) + 100);
-	*   //id 1 + 100 = 101
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   print(table.getNum(1, 0) + 100);
+ *   //id 1 + 100 = 101
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1032,44 +1180,49 @@ p5.Table.prototype.getNum = function(row, column) {
  * either its ID or title.
  *
  * @method  getString
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {String}
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   var tableArray = table.getArray();
-	*
-	*   //output each row as array
-	*   for (var i = 0; i < tableArray.length; i++)
-	*     print(tableArray[i]);
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   // table is comma separated value "CSV"
+ *   // and has specifiying header for column labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   print(table.getString(0, 0)); // 0
+ *   print(table.getString(0, 1)); // Capra hircus
+ *   print(table.getString(0, 2)); // Goat
+ *   print(table.getString(1, 0)); // 1
+ *   print(table.getString(1, 1)); // Panthera pardus
+ *   print(table.getString(1, 2)); // Leopard
+ *   print(table.getString(2, 0)); // 2
+ *   print(table.getString(2, 1)); // Equus zebra
+ *   print(table.getString(2, 2)); // Zebra
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
+
 p5.Table.prototype.getString = function(row, column) {
   return this.rows[row].getString(column);
 };
@@ -1080,56 +1233,58 @@ p5.Table.prototype.getString = function(row, column) {
  * title.
  *
  * @method  getObject
- * @param {String} headerColumn Name of the column which should be used to
+ * @param {String} [headerColumn] Name of the column which should be used to
  *                              title each row object (optional)
  * @return {Object}
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the CSV file "mammals.csv"
-	* // in the project's "assets" folder:
-	* //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   var tableObject = table.getObject();
-	*
-	*   print(tableObject);
-	*   //outputs an object
-	* }
-	* </code>
-	* </div>
-	*
- 	*@alt
- 	* no image displayed
- 	*
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder:
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   var tableObject = table.getObject();
+ *
+ *   print(tableObject);
+ *   //outputs an object
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
-p5.Table.prototype.getObject = function (headerColumn) {
+p5.Table.prototype.getObject = function(headerColumn) {
   var tableObject = {};
   var obj, cPos, index;
 
-  for(var i = 0; i < this.rows.length; i++) {
+  for (var i = 0; i < this.rows.length; i++) {
     obj = this.rows[i].obj;
 
-    if (typeof(headerColumn) === 'string'){
+    if (typeof headerColumn === 'string') {
       cPos = this.columns.indexOf(headerColumn); // index of columnID
       if (cPos >= 0) {
         index = obj[headerColumn];
         tableObject[index] = obj;
       } else {
-        throw 'This table has no column named "' + headerColumn +'"';
+        throw new Error(
+          'This table has no column named "' + headerColumn + '"'
+        );
       }
     } else {
       tableObject[i] = this.rows[i].obj;
@@ -1143,10 +1298,42 @@ p5.Table.prototype.getObject = function (headerColumn) {
  *
  * @method  getArray
  * @return {Array}
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Given the CSV file "mammals.csv"
+ * // in the project's "assets" folder
+ * //
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leoperd
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   // table is comma separated value "CSV"
+ *   // and has specifiying header for column labels
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+ * }
+ *
+ * function setup() {
+ *   var tableArray = table.getArray();
+ *   for (var i = 0; i < tableArray.length; i++) {
+ *     print(tableArray[i]);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
-p5.Table.prototype.getArray = function () {
+p5.Table.prototype.getArray = function() {
   var tableArray = [];
-  for(var i = 0; i < this.rows.length; i++) {
+  for (var i = 0; i < this.rows.length; i++) {
     tableArray.push(this.rows[i].arr);
   }
   return tableArray;

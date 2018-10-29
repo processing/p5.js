@@ -6,10 +6,9 @@
  * @requires constants
  */
 
-
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /*
@@ -62,7 +61,7 @@ p5.prototype.mouseX = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(0, mouseY, 100, mouseY);
- *}
+ * }
  * </code>
  * </div>
  *
@@ -75,7 +74,8 @@ p5.prototype.mouseY = 0;
 /**
  * The system variable pmouseX always contains the horizontal position of
  * the mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas.
+ * (0, 0) of the canvas. Note: pmouseX will be reset to the current mouseX
+ * value at the start of each touch event.
  *
  * @property {Number} pmouseX
  * @readOnly
@@ -92,9 +92,8 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + " -> " + mouseX);
+ *   print(pmouseX + ' -> ' + mouseX);
  * }
- *
  * </code>
  * </div>
  *
@@ -107,7 +106,8 @@ p5.prototype.pmouseX = 0;
 /**
  * The system variable pmouseY always contains the vertical position of the
  * mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas.
+ * (0, 0) of the canvas. Note: pmouseY will be reset to the current mouseY
+ * value at the start of each touch event.
  *
  * @property {Number} pmouseY
  * @readOnly
@@ -119,12 +119,12 @@ p5.prototype.pmouseX = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *   //draw a square only if the mouse is not moving
- *   if(mouseY == pmouseY && mouseX == pmouseX)
- *     rect(20,20,60,60);
+ *   if (mouseY === pmouseY && mouseX === pmouseX) {
+ *     rect(20, 20, 60, 60);
+ *   }
  *
- *   print(pmouseY + " -> " + mouseY);
+ *   print(pmouseY + ' -> ' + mouseY);
  * }
- *
  * </code>
  * </div>
  *
@@ -156,13 +156,12 @@ p5.prototype.pmouseY = 0;
  *   fill(0);
  *
  *   //move the canvas to the horizontal mouse position
- *   //relative to the window
- *   myCanvas.position(winMouseX+1, windowHeight/2);
+ *   //rela                    tive to the window
+ *   myCanvas.position(winMouseX + 1, windowHeight / 2);
  *
- *  //the y of the square is relative to the canvas
- *  rect(20,mouseY,60,60);
+ *   //the y of the square is relative to the canvas
+ *   rect(20, mouseY, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -182,7 +181,7 @@ p5.prototype.winMouseX = 0;
  * @example
  * <div>
  * <code>
- *var myCanvas;
+ * var myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas
@@ -194,13 +193,12 @@ p5.prototype.winMouseX = 0;
  *   fill(0);
  *
  *   //move the canvas to the vertical mouse position
- *   //relative to the window
- *   myCanvas.position(windowWidth/2, winMouseY+1);
+ *   //rel                    ative to the window
+ *   myCanvas.position(windowWidth / 2, winMouseY + 1);
  *
- *  //the x of the square is relative to the canvas
- *  rect(mouseX,20,60,60);
+ *   //the x of the square is relative to the canvas
+ *   rect(mouseX, 20, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -213,7 +211,8 @@ p5.prototype.winMouseY = 0;
 /**
  * The system variable pwinMouseX always contains the horizontal position
  * of the mouse in the frame previous to the current frame, relative to
- * (0, 0) of the window.
+ * (0, 0) of the window. Note: pwinMouseX will be reset to the current winMouseX
+ * value at the start of each touch event.
  *
  * @property {Number} pwinMouseX
  * @readOnly
@@ -221,7 +220,6 @@ p5.prototype.winMouseY = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -229,20 +227,19 @@ p5.prototype.winMouseY = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current x position is the horizontal mouse speed
- *   var speed = abs(winMouseX-pwinMouseX);
+ *   var speed = abs(winMouseX - pwinMouseX);
  *   //change the size of the circle
  *   //according to the horizontal speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -255,7 +252,8 @@ p5.prototype.pwinMouseX = 0;
 /**
  * The system variable pwinMouseY always contains the vertical position of
  * the mouse in the frame previous to the current frame, relative to (0, 0)
- * of the window.
+ * of the window. Note: pwinMouseY will be reset to the current winMouseY
+ * value at the start of each touch event.
  *
  * @property {Number} pwinMouseY
  * @readOnly
@@ -264,7 +262,6 @@ p5.prototype.pwinMouseX = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -272,20 +269,19 @@ p5.prototype.pwinMouseX = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current y position is the vertical mouse speed
- *   var speed = abs(winMouseY-pwinMouseY);
+ *   var speed = abs(winMouseY - pwinMouseY);
  *   //change the size of the circle
  *   //according to the vertical speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -305,24 +301,27 @@ p5.prototype.pwinMouseY = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed) {
-	*     if (mouseButton == LEFT)
-	*       ellipse(50, 50, 50, 50);
-	*     if (mouseButton == RIGHT)
-	*       rect(25, 25, 50, 50);
-	*     if (mouseButton == CENTER)
-	*       triangle(23, 75, 50, 20, 78, 75);
-	*   }
-	*
-	*   print(mouseButton);
-	* }
-	* </code>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     if (mouseButton === LEFT) {
+ *       ellipse(50, 50, 50, 50);
+ *     }
+ *     if (mouseButton === RIGHT) {
+ *       rect(25, 25, 50, 50);
+ *     }
+ *     if (mouseButton === CENTER) {
+ *       triangle(23, 75, 50, 20, 78, 75);
+ *     }
+ *   }
+ *
+ *   print(mouseButton);
+ * }
+ * </code>
  * </div>
  *
  * @alt
@@ -339,22 +338,23 @@ p5.prototype.mouseButton = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed)
-	*     ellipse(50, 50, 50, 50);
-	*   else
-	*     rect(25, 25, 50, 50);
-	*
-	*   print(mouseIsPressed);
-	* }
-	* </code>
-	* </div>
-  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     ellipse(50, 50, 50, 50);
+ *   } else {
+ *     rect(25, 25, 50, 50);
+ *   }
+ *
+ *   print(mouseIsPressed);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
  *
@@ -362,8 +362,13 @@ p5.prototype.mouseButton = 0;
 p5.prototype.mouseIsPressed = false;
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
-    var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
+  if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
+    var mousePos = getMousePos(
+      this._curElement.elt,
+      this.width,
+      this.height,
+      e
+    );
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -381,10 +386,13 @@ p5.prototype._updateMouseCoords = function() {
   this._setProperty('pmouseY', this.mouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
   this._setProperty('pwinMouseY', this.winMouseY);
+
+  this._setProperty('_pmouseWheelDeltaY', this._mouseWheelDeltaY);
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (evt && !evt.clientX) { // use touches if touch and not mouse
+  if (evt && !evt.clientX) {
+    // use touches if touch and not mouse
     if (evt.touches) {
       evt = evt.touches[0];
     } else if (evt.changedTouches) {
@@ -414,13 +422,14 @@ p5.prototype._setMouseButton = function(e) {
 };
 
 /**
- * The mouseMoved() function is called every time the mouse moves and a mouse
+ * The <a href="#/p5/mouseMoved">mouseMoved()</a> function is called every time the mouse moves and a mouse
  * button is not pressed.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -451,6 +460,16 @@ p5.prototype._setMouseButton = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseMoved(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes lighter with mouse movements until white then resets
  * no image displayed
@@ -458,14 +477,15 @@ p5.prototype._setMouseButton = function(e) {
  */
 
 /**
- * The mouseDragged() function is called once every time the mouse moves and
- * a mouse button is pressed. If no mouseDragged() function is defined, the
- * touchMoved() function will be called instead if it is defined.<br><br>
+ * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
+ * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
+ * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseDragged
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -496,32 +516,41 @@ p5.prototype._setMouseButton = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseDragged(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect turns lighter with mouse click and drag until white, resets
  * no image displayed
  *
  */
-p5.prototype._onmousemove = function(e){
+p5.prototype._onmousemove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
   if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
-  }
-  else {
+  } else {
     if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
@@ -529,16 +558,17 @@ p5.prototype._onmousemove = function(e){
 };
 
 /**
- * The mousePressed() function is called once after every time a mouse button
+ * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
  * is pressed. The mouseButton variable (see the related reference entry)
  * can be used to determine which button has been pressed. If no
- * mousePressed() function is defined, the touchStarted() function will be
+ * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mousePressed
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -551,7 +581,7 @@ p5.prototype._onmousemove = function(e){
  *   rect(25, 25, 50, 50);
  * }
  * function mousePressed() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -566,6 +596,16 @@ p5.prototype._onmousemove = function(e){
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mousePressed(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -583,20 +623,20 @@ p5.prototype._onmousedown = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
 };
 
 /**
- * The mouseReleased() function is called every time a mouse button is
- * released. If no mouseReleased() function is defined, the touchEnded()
+ * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
+ * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
@@ -604,6 +644,7 @@ p5.prototype._onmousedown = function(e) {
  *
  *
  * @method mouseReleased
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -617,7 +658,7 @@ p5.prototype._onmousedown = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function mouseReleased() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -632,6 +673,16 @@ p5.prototype._onmousedown = function(e) {
  *   ellipse(mouseX, mouseY, 5, 5);
  *   // prevent default
  *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseReleased(event) {
+ *   console.log(event);
  * }
  * </code>
  * </div>
@@ -647,12 +698,12 @@ p5.prototype._onmouseup = function(e) {
   this._setProperty('mouseIsPressed', false);
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -662,16 +713,17 @@ p5.prototype._ondragend = p5.prototype._onmouseup;
 p5.prototype._ondragover = p5.prototype._onmousemove;
 
 /**
- * The mouseClicked() function is called once after a mouse button has been
+ * The <a href="#/p5/mouseClicked">mouseClicked()</a> function is called once after a mouse button has been
  * pressed and then released.<br><br>
  * Browsers handle clicks differently, so this function is only guaranteed to be
  * run when the left mouse button is clicked. To handle other mouse buttons
- * being pressed or released, see mousePressed() or mouseReleased().<br><br>
+ * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseClicked
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -686,7 +738,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * }
  *
  * function mouseClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -705,6 +757,16 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function mouseClicked(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect turns white with mouse click/press.
  * no image displayed
@@ -714,14 +776,14 @@ p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
 };
 
 /**
- * The doubleClicked() function is executed every time a event
+ * The <a href="#/p5/doubleClicked">doubleClicked()</a> function is executed every time a event
  * listener has detected a dblclick event which is a part of the
  * DOM L3 specification. The doubleClicked event is fired when a
  * pointing device button (usually a mouse's primary button)
@@ -730,6 +792,7 @@ p5.prototype._onclick = function(e) {
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
+ * @param  {Object} [event] optional MouseEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -744,7 +807,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function doubleClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -763,6 +826,16 @@ p5.prototype._onclick = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a MouseEvent object
+ * // as a callback argument
+ * function doubleClicked(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect turns white with mouse doubleClick/press.
  * no image displayed
@@ -772,14 +845,30 @@ p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.doubleClicked === 'function') {
     var executeDefault = context.doubleClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
 };
 
 /**
- * The function mouseWheel() is executed every time a vertical mouse wheel
+ * For use with WebGL orbitControl.
+ * @property {Number} _mouseWheelDeltaY
+ * @readOnly
+ * @private
+ */
+p5.prototype._mouseWheelDeltaY = 0;
+
+/**
+ * For use with WebGL orbitControl.
+ * @property {Number} _pmouseWheelDeltaY
+ * @readOnly
+ * @private
+ */
+p5.prototype._pmouseWheelDeltaY = 0;
+
+/**
+ * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel
@@ -793,6 +882,7 @@ p5.prototype._ondblclick = function(e) {
  * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
+ * @param  {Object} [event] optional WheelEvent callback argument.
  *
  * @example
  * <div>
@@ -821,10 +911,11 @@ p5.prototype._ondblclick = function(e) {
  */
 p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
+  this._setProperty('_mouseWheelDeltaY', e.deltaY);
   if (typeof context.mouseWheel === 'function') {
     e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

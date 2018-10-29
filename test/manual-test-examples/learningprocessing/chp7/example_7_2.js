@@ -6,17 +6,17 @@
 
 // Example 7-2: Calling a function
 
-function setup(){
- createCanvas(100,100);
- smooth(); 
-};
+function setup() {
+  createCanvas(100, 100);
+  smooth();
+}
 
-function draw(){
+function draw() {
   background(255);
   drawBlackCircle();
-};
+}
 
-var drawBlackCircle = function() {
+function drawBlackCircle() {
   fill(0);
-  ellipse(50,50,20,20);
-};
+  ellipse(50, 50, 20, 20);
+}

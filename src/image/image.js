@@ -6,49 +6,47 @@
  */
 
 /**
- * This module defines the p5 methods for the p5.Image class
+ * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
  * for drawing images to the main display canvas.
  */
 'use strict';
 
-
-var p5 = require('../core/core');
-
-/* global frames:true */// This is not global, but JSHint is not aware that
+var p5 = require('../core/main');
+// This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
 // redefined-global error and permits using the name "frames" for the array
 // of saved animation frames.
-var frames = [];
 
+/* global frames:true */ var frames = [];
 
 /**
- * Creates a new p5.Image (the datatype for storing images). This provides a
+ * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
  * width and height parameters.
  * <br><br>
- * .pixels gives access to an array containing the values for all the pixels
+ * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
- * factor for the pixelDensity) of the display window x4,
+ * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
- * left to right across each row, then down each column. See .pixels for
- * more info. It may also be simpler to use set() or get().
+ * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
+ * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
  * <br><br>
  * Before accessing the pixels of an image, the data must loaded with the
- * loadPixels() function. After the array data has been modified, the
- * updatePixels() function must be run to update the changes.
+ * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
+ * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
  *
  * @method createImage
  * @param  {Integer} width  width in pixels
  * @param  {Integer} height height in pixels
- * @return {p5.Image}       the p5.Image object
+ * @return {p5.Image}       the <a href="#/p5.Image">p5.Image</a> object
  * @example
  * <div>
  * <code>
- * img = createImage(66, 66);
+ * var img = createImage(66, 66);
  * img.loadPixels();
- * for (i = 0; i < img.width; i++) {
- *   for (j = 0; j < img.height; j++) {
+ * for (var i = 0; i < img.width; i++) {
+ *   for (var j = 0; j < img.height; j++) {
  *     img.set(i, j, color(0, 90, 102));
  *   }
  * }
@@ -59,11 +57,11 @@ var frames = [];
  *
  * <div>
  * <code>
- * img = createImage(66, 66);
+ * var img = createImage(66, 66);
  * img.loadPixels();
- * for (i = 0; i < img.width; i++) {
- *   for (j = 0; j < img.height; j++) {
- *     img.set(i, j, color(0, 90, 102, i % img.width * 2));
+ * for (var i = 0; i < img.width; i++) {
+ *   for (var j = 0; j < img.height; j++) {
+ *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
  *   }
  * }
  * img.updatePixels();
@@ -75,15 +73,15 @@ var frames = [];
  * <div>
  * <code>
  * var pink = color(255, 102, 204);
- * img = createImage(66, 66);
+ * var img = createImage(66, 66);
  * img.loadPixels();
  * var d = pixelDensity();
- * var halfImage = 4 * (width * d) * (height/2 * d);
- * for (var i = 0; i < halfImage; i+=4) {
+ * var halfImage = 4 * (img.width * d) * (img.height / 2 * d);
+ * for (var i = 0; i < halfImage; i += 4) {
  *   img.pixels[i] = red(pink);
- *   img.pixels[i+1] = green(pink);
- *   img.pixels[i+2] = blue(pink);
- *   img.pixels[i+3] = alpha(pink);
+ *   img.pixels[i + 1] = green(pink);
+ *   img.pixels[i + 2] = blue(pink);
+ *   img.pixels[i + 3] = alpha(pink);
  * }
  * img.updatePixels();
  * image(img, 17, 17);
@@ -97,13 +95,12 @@ var frames = [];
  *
  */
 p5.prototype.createImage = function(width, height) {
+  p5._validateParameters('createImage', arguments);
   return new p5.Image(width, height);
 };
 
 /**
- *  Save the current canvas as an image. In Safari, this will open the
- *  image in the window and the user must provide their own
- *  filename on save-as. Other browsers will either save the
+ *  Save the current canvas as an image. The browser will either save the
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
@@ -113,31 +110,31 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [extension]      'jpg' or 'png'
  *
  *  @example
- *  <div class='norender'><code>
- *  function setup() {
- *    var c = createCanvas(100, 100);
- *    background(255, 0, 0);
- *    saveCanvas(c, 'myCanvas', 'jpg');
- *  }
- *  </code></div>
- *  <div class='norender'><code>
- *  // note that this example has the same result as above
- *  // if no canvas is specified, defaults to main canvas
- *  function setup() {
- *    createCanvas(100, 100);
- *    background(255, 0, 0);
- *    saveCanvas('myCanvas', 'jpg');
- *  }
- *  </code></div>
- *  <div class='norender'><code>
- *  // all of the following are valid
- *  saveCanvas(c, 'myCanvas', 'jpg');
- *  saveCanvas(c, 'myCanvas');
- *  saveCanvas(c);
- *  saveCanvas('myCanvas', 'png');
- *  saveCanvas('myCanvas');
- *  saveCanvas();
- *  </code></div>
+ * <div class='norender notest'><code>
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(255, 0, 0);
+ *   saveCanvas(c, 'myCanvas', 'jpg');
+ * }
+ * </code></div>
+ * <div class='norender notest'><code>
+ * // note that this example has the same result as above
+ * // if no canvas is specified, defaults to main canvas
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(255, 0, 0);
+ *   saveCanvas('myCanvas', 'jpg');
+ *
+ *   // all of the following are valid
+ *   saveCanvas(c, 'myCanvas', 'jpg');
+ *   saveCanvas(c, 'myCanvas.jpg');
+ *   saveCanvas(c, 'myCanvas');
+ *   saveCanvas(c);
+ *   saveCanvas('myCanvas', 'png');
+ *   saveCanvas('myCanvas');
+ *   saveCanvas();
+ * }
+ * </code></div>
  *
  * @alt
  * no image displayed
@@ -150,83 +147,49 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [extension]
  */
 p5.prototype.saveCanvas = function() {
+  p5._validateParameters('saveCanvas', arguments);
 
-  var cnv, filename, extension;
-  if (arguments.length === 3) {
-    cnv = arguments[0];
-    filename = arguments[1];
-    extension = arguments[2];
-  } else if (arguments.length === 2) {
-    if (typeof arguments[0] === 'object') {
-      cnv = arguments[0];
-      filename = arguments[1];
-    } else {
-      filename = arguments[0];
-      extension = arguments[1];
-    }
-  } else if (arguments.length === 1) {
-    if (typeof arguments[0] === 'object') {
-      cnv = arguments[0];
-    } else {
-      filename = arguments[0];
-    }
-  }
+  // copy arguments to array
+  var args = [].slice.call(arguments);
+  var htmlCanvas, filename, extension;
 
-  if (cnv instanceof p5.Element) {
-    cnv = cnv.elt;
-  }
-  if (!(cnv instanceof HTMLCanvasElement)) {
-    cnv = null;
-  }
-
-  if (!extension) {
-    extension = p5.prototype._checkFileExtension(filename, extension)[1];
-    if (extension === '') {
-      extension = 'png';
-    }
-  }
-
-  if (!cnv) {
-    if (this._curElement && this._curElement.elt) {
-      cnv = this._curElement.elt;
-    }
-  }
-
-  if ( p5.prototype._isSafari() ) {
-    var aText = 'Hello, Safari user!\n';
-    aText += 'Now capturing a screenshot...\n';
-    aText += 'To save this image,\n';
-    aText += 'go to File --> Save As.\n';
-    alert(aText);
-    window.location.href = cnv.toDataURL();
+  if (arguments[0] instanceof HTMLCanvasElement) {
+    htmlCanvas = arguments[0];
+    args.shift();
+  } else if (arguments[0] instanceof p5.Element) {
+    htmlCanvas = arguments[0].elt;
+    args.shift();
   } else {
-    var mimeType;
-    if (typeof(extension) === 'undefined') {
-      extension = 'png';
-      mimeType = 'image/png';
-    }
-    else {
-      switch(extension){
-        case 'png':
-          mimeType = 'image/png';
-          break;
-        case 'jpeg':
-          mimeType = 'image/jpeg';
-          break;
-        case 'jpg':
-          mimeType = 'image/jpeg';
-          break;
-        default:
-          mimeType = 'image/png';
-          break;
-      }
-    }
-    var downloadMime = 'image/octet-stream';
-    var imageData = cnv.toDataURL(mimeType);
-    imageData = imageData.replace(mimeType, downloadMime);
-
-    p5.prototype.downloadFile(imageData, filename, extension);
+    htmlCanvas = this._curElement && this._curElement.elt;
   }
+
+  if (args.length >= 1) {
+    filename = args[0];
+  }
+  if (args.length >= 2) {
+    extension = args[1];
+  }
+
+  extension =
+    extension ||
+    p5.prototype._checkFileExtension(filename, extension)[1] ||
+    'png';
+
+  var mimeType;
+  switch (extension) {
+    default:
+      //case 'png':
+      mimeType = 'image/png';
+      break;
+    case 'jpeg':
+    case 'jpg':
+      mimeType = 'image/jpeg';
+      break;
+  }
+
+  htmlCanvas.toBlob(function(blob) {
+    p5.prototype.downloadFile(blob, filename, extension);
+  }, mimeType);
 };
 
 /**
@@ -239,7 +202,7 @@ p5.prototype.saveCanvas = function() {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
- *  Note that saveFrames() will only save the first 15 frames of an animation.
+ *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 frames of an animation.
  *  To export longer animations, you might look into a library like
  *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
  *
@@ -257,22 +220,23 @@ p5.prototype.saveCanvas = function() {
                                   image/octet-stream, filename and extension.
  *  @example
  *  <div><code>
- *  function draw() {
- *    background(mouseX);
- *  }
+ * function draw() {
+ *   background(mouseX);
+ * }
  *
- *  function mousePressed() {
- *    saveFrames("out", "png", 1, 25, function(data){
- *      print(data);
- *    });
- *  }
- *  </code></div>
+ * function mousePressed() {
+ *   saveFrames('out', 'png', 1, 25, function(data) {
+ *     print(data);
+ *   });
+ * }
+</code></div>
  *
  * @alt
  * canvas background goes from light to dark with mouse x.
  *
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
+  p5._validateParameters('saveFrames', arguments);
   var duration = _duration || 3;
   duration = p5.prototype.constrain(duration, 0, 15);
   duration = duration * 1000;
@@ -282,17 +246,16 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 
   var makeFrame = p5.prototype._makeFrame;
   var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function(){
+  var frameFactory = setInterval(function() {
     makeFrame(fName + count, ext, cnv);
     count++;
-  },1000/fps);
+  }, 1000 / fps);
 
-  setTimeout(function(){
+  setTimeout(function() {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
-    }
-    else {
+    } else {
       for (var i = 0; i < frames.length; i++) {
         var f = frames[i];
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
@@ -313,9 +276,8 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
-  }
-  else {
-    switch(extension.toLowerCase()){
+  } else {
+    switch (extension.toLowerCase()) {
       case 'png':
         mimeType = 'image/png';
         break;

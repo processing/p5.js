@@ -1,15 +1,15 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(250);
 
   randomSeed(1);
   noStroke();
-  for (var i = 0  ;  i < 1000 ;  i++) {
+  for (var i = 0; i < 1000; i++) {
     push();
-    translate(random(-width/2, width/2), random(-height/2, height/2));
+    translate(random(-width / 2, width / 2), random(-height / 2, height / 2));
     rotateZ(random(0, 2 * PI) + frameCount * 0.1);
     fill(random(128, 255), 0, random(128, 255));
     beginShape(TRIANGLES);

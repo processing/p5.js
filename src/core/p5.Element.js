@@ -4,7 +4,9 @@
  * @for p5.Element
  */
 
-var p5 = require('./core');
+'use strict';
+
+var p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -12,18 +14,29 @@ var p5 = require('./core');
  * included in the core functionality, methods in brown are added
  * with the <a href="http://p5js.org/reference/#/libraries/p5.dom">p5.dom
  * library</a>.
- * It is not called directly, but p5.Element
- * objects are created by calling createCanvas, createGraphics,
- * or in the p5.dom library, createDiv, createImg, createInput, etc.
+ * It is not called directly, but <a href="#/p5.Element">p5.Element</a>
+ * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
+ * or in the p5.dom library, <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
  *
  * @class p5.Element
- * @constructor
  * @param {String} elt DOM node that is wrapped
  * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Element = function(elt, pInst) {
   /**
    * Underlying HTML element. All normal HTML methods can be called on this.
+   * @example
+   * <div>
+   * <code>
+   * createCanvas(300, 500);
+   * background(0, 0, 0, 0);
+   * var input = createInput();
+   * input.position(20, 225);
+   * var inputElem = new p5.Element(input.elt);
+   * inputElem.style('width:450px;');
+   * inputElem.value('some string');
+   * </code>
+   * </div>
    *
    * @property elt
    * @readOnly
@@ -33,30 +46,30 @@ p5.Element = function(elt, pInst) {
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;
-  this.name = 'p5.Element';   // for friendly debugger system
 };
 
 /**
  *
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
- * node, or p5.Element. If no arguments given, parent node is returned.
+ * node, or <a href="#/p5.Element">p5.Element</a>. If no arguments given, parent node is returned.
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
  *
  * @method parent
- * @param  {String|p5.Element|Object} parent the ID, DOM node, or p5.Element
+ * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
  *                         of desired parent element
  * @chainable
  *
  * @example
- * <div class="norender"><code>
+ * <div class="norender notest"><code>
  * // in the html file:
- * &lt;div id="myContainer">&lt;/div>
+ * // &lt;div id="myContainer">&lt;/div>
+ *
  * // in the js file:
  * var cnv = createCanvas(100, 100);
- * cnv.parent("myContainer");
+ * cnv.parent('myContainer');
  * </code></div>
  * <div class='norender'><code>
  * var div0 = createDiv('this is the parent');
@@ -69,7 +82,7 @@ p5.Element = function(elt, pInst) {
  * var div1 = createDiv('this is the child');
  * div1.parent('apples'); // use id
  * </code></div>
- * <div class='norender'><code>
+ * <div class='norender notest'><code>
  * var elt = document.getElementById('myParentDiv');
  * var div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
@@ -84,20 +97,20 @@ p5.Element = function(elt, pInst) {
  *
  */
 p5.Element.prototype.parent = function(p) {
-  if (arguments.length === 0){
+  if (typeof p === 'undefined') {
     return this.elt.parentNode;
-  } else {
-    if (typeof p === 'string') {
-      if (p[0] === '#') {
-        p = p.substring(1);
-      }
-      p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
-      p = p.elt;
-    }
-    p.appendChild(this.elt);
-    return this;
   }
+
+  if (typeof p === 'string') {
+    if (p[0] === '#') {
+      p = p.substring(1);
+    }
+    p = document.getElementById(p);
+  } else if (p instanceof p5.Element) {
+    p = p.elt;
+  }
+  p.appendChild(this.elt);
+  return this;
 };
 
 /**
@@ -115,7 +128,7 @@ p5.Element.prototype.parent = function(p) {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
  *   // the canvas element.
- *   cnv.id("mycanvas");
+ *   cnv.id('mycanvas');
  * }
  * </code></div>
  *
@@ -127,14 +140,14 @@ p5.Element.prototype.parent = function(p) {
  * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
-  if (arguments.length === 0) {
+  if (typeof id === 'undefined') {
     return this.elt.id;
-  } else {
-    this.elt.id = id;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
-    return this;
   }
+
+  this.elt.id = id;
+  this.width = this.elt.offsetWidth;
+  this.height = this.elt.offsetHeight;
+  return this;
 };
 
 /**
@@ -145,24 +158,39 @@ p5.Element.prototype.id = function(id) {
  * @method class
  * @param  {String} class class to add
  * @chainable
+ *
+ * @example
+ * <div class='norender'><code>
+ * function setup() {
+ *   var cnv = createCanvas(100, 100);
+ *   // Assigns a CSS selector class 'small'
+ *   // to the canvas element.
+ *   cnv.class('small');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no display.
  */
 /**
  * @method class
  * @return {String} the class of the element
  */
 p5.Element.prototype.class = function(c) {
-  if (arguments.length === 0) {
+  if (typeof c === 'undefined') {
     return this.elt.className;
-  } else {
-    this.elt.className = c;
-    return this;
   }
+
+  this.elt.className = c;
+  return this;
 };
 
 /**
- * The .mousePressed() function is called once after every time a
- * mouse button is pressed over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called once after every time a
+ * mouse button is pressed over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mousePressed
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -178,14 +206,14 @@ p5.Element.prototype.class = function(c) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mousePressed(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any click anywhere
@@ -203,14 +231,23 @@ p5.Element.prototype.class = function(c) {
  * no display.
  *
  */
-p5.Element.prototype.mousePressed = function (fxn) {
-  adjustListener('mousedown', fxn, this);
-  adjustListener('touchstart', fxn, this);
+p5.Element.prototype.mousePressed = function(fxn) {
+  // Prepend the mouse property setters to the event-listener.
+  // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+  // For details, see https://github.com/processing/p5.js/issues/3087.
+  var eventPrependedFxn = function(event) {
+    this._pInst._setProperty('mouseIsPressed', true);
+    this._pInst._setMouseButton(event);
+    // Pass along the return-value of the callback:
+    return fxn();
+  };
+  // Pass along the event-prepended form of the callback.
+  adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
 /**
- * The .doubleClicked() function is called once after every time a
+ * The .<a href="#/p5.Element/doubleClicked">doubleClicked()</a> function is called once after every time a
  * mouse button is pressed twice over the element. This can be used to
  * attach element and action specific event listeners.
  *
@@ -228,14 +265,14 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
- *                                  // canvas double click only
+ *   // canvas double click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any double click anywhere
@@ -253,14 +290,13 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.doubleClicked = function (fxn) {
+p5.Element.prototype.doubleClicked = function(fxn) {
   adjustListener('dblclick', fxn, this);
   return this;
 };
 
-
 /**
- * The .mouseWheel() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseWheel">mouseWheel()</a> function is called once after every time a
  * mouse wheel is scrolled over the element. This can be used to
  * attach element specific event listeners.
  * <br><br>
@@ -288,14 +324,14 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseWheel(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with mousewheel movement
@@ -320,15 +356,17 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseWheel = function (fxn) {
+p5.Element.prototype.mouseWheel = function(fxn) {
   adjustListener('wheel', fxn, this);
   return this;
 };
 
 /**
- * The .mouseReleased() function is called once after every time a
- * mouse button is released over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is called once after every time a
+ * mouse button is released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseReleased
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -344,14 +382,14 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseReleased(changeGray); // attach listener for
- *                                  // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -372,17 +410,17 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseReleased = function (fxn) {
+p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
-  adjustListener('touchend', fxn, this);
   return this;
 };
 
-
 /**
- * The .mouseClicked() function is called once after a mouse button is
- * pressed and released over the element. This can be used to
- * attach element specific event listeners.
+ * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is called once after a mouse button is
+ * pressed and released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -400,14 +438,14 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
- *                                 // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -428,13 +466,13 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseClicked = function (fxn) {
+p5.Element.prototype.mouseClicked = function(fxn) {
   adjustListener('click', fxn, this);
   return this;
 };
 
 /**
- * The .mouseMoved() function is called once every time a
+ * The .<a href="#/p5.Element/mouseMoved">mouseMoved()</a> function is called once every time a
  * mouse moves over the element. This can be used to attach an
  * element specific event listener.
  *
@@ -452,7 +490,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseMoved(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
@@ -460,7 +498,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * function draw() {
  *   background(g);
  *   fill(200);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires when mouse moves anywhere on
@@ -486,14 +524,13 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseMoved = function (fxn) {
+p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
-  adjustListener('touchmove', fxn, this);
   return this;
 };
 
 /**
- * The .mouseOver() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseOver">mouseOver()</a> function is called once after every time a
  * mouse moves onto the element. This can be used to attach an
  * element specific event listener.
  *
@@ -507,7 +544,6 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOver(changeGray);
@@ -515,7 +551,7 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -531,14 +567,13 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOver = function (fxn) {
+p5.Element.prototype.mouseOver = function(fxn) {
   adjustListener('mouseover', fxn, this);
   return this;
 };
 
-
 /**
- * The .changed() function is called when the value of an
+ * The .<a href="#/p5.Element/changed">changed()</a> function is called when the value of an
  * element changes.
  * This can be used to attach an element specific event listener.
  *
@@ -566,7 +601,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * function mySelectEvent() {
  *   var item = sel.value();
  *   background(200);
- *   text("it's a "+item+"!", 50, 50);
+ *   text("it's a " + item + '!', 50, 50);
  * }
  * </code></div>
  * <div><code>
@@ -574,7 +609,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * var cnv;
  *
  * function setup() {
- *   checkbox = createCheckbox(" fill");
+ *   checkbox = createCheckbox(' fill');
  *   checkbox.changed(changeFill);
  *   cnv = createCanvas(100, 100);
  *   cnv.position(0, 30);
@@ -599,13 +634,13 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
  *
  */
-p5.Element.prototype.changed = function (fxn) {
+p5.Element.prototype.changed = function(fxn) {
   adjustListener('change', fxn, this);
   return this;
 };
 
 /**
- * The .input() function is called when any user input is
+ * The .<a href="#/p5.Element/input">input()</a> function is called when any user input is
  * detected with an element. The input event is often used
  * to detect keystrokes in a input element, or changes on a
  * slider element. This can be used to attach an element specific
@@ -634,13 +669,13 @@ p5.Element.prototype.changed = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.input = function (fxn) {
+p5.Element.prototype.input = function(fxn) {
   adjustListener('input', fxn, this);
   return this;
 };
 
 /**
- * The .mouseOut() function is called once after every time a
+ * The .<a href="#/p5.Element/mouseOut">mouseOut()</a> function is called once after every time a
  * mouse moves off the element. This can be used to attach an
  * element specific event listener.
  *
@@ -654,7 +689,6 @@ p5.Element.prototype.input = function (fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOut(changeGray);
@@ -662,7 +696,7 @@ p5.Element.prototype.input = function (fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -677,13 +711,13 @@ p5.Element.prototype.input = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOut = function (fxn) {
+p5.Element.prototype.mouseOut = function(fxn) {
   adjustListener('mouseout', fxn, this);
   return this;
 };
 
 /**
- * The .touchStarted() function is called once after every time a touch is
+ * The .<a href="#/p5.Element/touchStarted">touchStarted()</a> function is called once after every time a touch is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchStarted
@@ -700,14 +734,14 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchStarted(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -725,14 +759,13 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchStarted = function (fxn) {
+p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
-  adjustListener('mousedown', fxn, this);
   return this;
 };
 
 /**
- * The .touchMoved() function is called once after every time a touch move is
+ * The .<a href="#/p5.Element/touchMoved">touchMoved()</a> function is called once after every time a touch move is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchMoved
@@ -748,7 +781,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchMoved(changeGray); // attach listener for
- *                               // canvas click only
+ *   // canvas click only
  *   g = 100;
  * }
  *
@@ -766,14 +799,13 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchMoved = function (fxn) {
+p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
-  adjustListener('mousemove', fxn, this);
   return this;
 };
 
 /**
- * The .touchEnded() function is called once after every time a touch is
+ * The .<a href="#/p5.Element/touchEnded">touchEnded()</a> function is called once after every time a touch is
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchEnded
@@ -789,15 +821,15 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
- *   cnv.touchEnded(changeGray);   // attach listener for
- *                                 // canvas click only
+ *   cnv.touchEnded(changeGray); // attach listener for
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -816,16 +848,13 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchEnded = function (fxn) {
+p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
-  adjustListener('mouseup', fxn, this);
   return this;
 };
 
-
-
 /**
- * The .dragOver() function is called once after every time a
+ * The .<a href="#/p5.Element/dragOver">dragOver()</a> function is called once after every time a
  * file is dragged over the element. This can be used to attach an
  * element specific event listener.
  *
@@ -843,7 +872,7 @@ p5.Element.prototype.touchEnded = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragOver(dragOverCallback);
  * }
  *
@@ -851,13 +880,13 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * // a file is dragged over the canvas
  * function dragOverCallback() {
  *   background(240);
- *   text('Dragged over', width/2, height/2);
+ *   text('Dragged over', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragOver = function (fxn) {
+p5.Element.prototype.dragOver = function(fxn) {
   adjustListener('dragover', fxn, this);
   return this;
 };
@@ -881,7 +910,7 @@ p5.Element.prototype.dragOver = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragLeave(dragLeaveCallback);
  * }
  *
@@ -889,27 +918,33 @@ p5.Element.prototype.dragOver = function (fxn) {
  * // a file is dragged out of the canvas
  * function dragLeaveCallback() {
  *   background(240);
- *   text('Dragged off', width/2, height/2);
+ *   text('Dragged off', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragLeave = function (fxn) {
+p5.Element.prototype.dragLeave = function(fxn) {
   adjustListener('dragleave', fxn, this);
   return this;
 };
 
 /**
- * The .drop() function is called for each file dropped on the element.
- * It requires a callback that is passed a p5.File object.  You can
- * optionally pass two callbacks, the first one (required) is triggered
- * for each file dropped when the file is loaded.  The second (optional)
- * is triggered just once when a file (or files) are dropped.
+ * Registers a callback that gets called every time a file that is
+ * dropped on the element has been loaded.
+ * p5 will load every dropped file into memory and pass it as a p5.File object to the callback.
+ * Multiple files dropped at the same time will result in multiple calls to the callback.
+ *
+ * You can optionally pass a second callback which will be registered to the raw
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/Events/drop">drop</a> event.
+ * The callback will thus be provided the original
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/DragEvent">DragEvent</a>.
+ * Dropping multiple files at the same time will trigger the second callback once per drop,
+ * whereas the first callback will trigger for each loaded file.
  *
  * @method drop
- * @param  {Function|Boolean} callback  callback triggered when files are dropped.
- * @param  {Function|Boolean} fxn       callback to receive loaded file.
+ * @param  {Function} callback  callback to receive loaded file.
+ * @param  {Function} [fxn]     callback triggered when files are dropped.
  * @chainable
  * @example
  * <div><code>
@@ -917,22 +952,43 @@ p5.Element.prototype.dragLeave = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('drop image', width/2, height/2);
+ *   text('drop file', width / 2, height / 2);
  *   c.drop(gotFile);
  * }
  *
  * function gotFile(file) {
- *   var img = createImg(file.data).hide();
- *   // Draw the image onto the canvas
- *   image(img, 0, 0, width, height);
+ *   background(200);
+ *   text('received file:', width / 2, height / 2);
+ *   text(file.name, width / 2, height / 2 + 50);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var img;
+ *
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop image', width / 2, height / 2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function draw() {
+ *   if (img) {
+ *     image(img, 0, 0, width, height);
+ *   }
+ * }
+ *
+ * function gotFile(file) {
+ *   img = createImg(file.data).hide();
  * }
  * </code></div>
  *
  * @alt
  * Canvas turns into whatever image is dragged/dropped onto it.
- *
  */
-p5.Element.prototype.drop = function (callback, fxn) {
+p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback
   function makeLoader(theFile) {
     // Making a p5.File object
@@ -945,50 +1001,59 @@ p5.Element.prototype.drop = function (callback, fxn) {
 
   // Is the file stuff supported?
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-
     // If you want to be able to drop you've got to turn off
     // a lot of default behavior
-    attachListener('dragover',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+    attachListener(
+      'dragover',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },
+      this
+    );
 
     // If this is a drag area we need to turn off the default behavior
-    attachListener('dragleave',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+    attachListener(
+      'dragleave',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },
+      this
+    );
 
-    // If just one argument it's the callback for the files
-    if (arguments.length > 1) {
+    // Attach the second argument as a callback that receives the raw drop event
+    if (typeof fxn !== 'undefined') {
       attachListener('drop', fxn, this);
     }
 
     // Deal with the files
-    attachListener('drop', function(evt) {
+    attachListener(
+      'drop',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
 
-      evt.stopPropagation();
-      evt.preventDefault();
+        // A FileList
+        var files = evt.dataTransfer.files;
 
-      // A FileList
-      var files = evt.dataTransfer.files;
+        // Load each one and trigger the callback
+        for (var i = 0; i < files.length; i++) {
+          var f = files[i];
+          var reader = new FileReader();
+          reader.onload = makeLoader(f);
 
-      // Load each one and trigger the callback
-      for (var i = 0; i < files.length; i++) {
-        var f = files[i];
-        var reader = new FileReader();
-        reader.onload = makeLoader(f);
-
-
-        // Text or data?
-        // This should likely be improved
-        if (f.type.indexOf('text') > -1) {
-          reader.readAsText(f);
-        } else {
-          reader.readAsDataURL(f);
+          // Text or data?
+          // This should likely be improved
+          if (f.type.indexOf('text') > -1) {
+            reader.readAsText(f);
+          } else {
+            reader.readAsDataURL(f);
+          }
         }
-      }
-    }, this);
+      },
+      this
+    );
   } else {
     console.log('The File APIs are not fully supported in this browser.');
   }
@@ -1000,8 +1065,7 @@ p5.Element.prototype.drop = function (callback, fxn) {
 function adjustListener(ev, fxn, ctx) {
   if (fxn === false) {
     detachListener(ev, ctx);
-  }
-  else {
+  } else {
     attachListener(ev, fxn, ctx);
   }
   return this;
@@ -1031,9 +1095,8 @@ function detachListener(ev, ctx) {
  * Helper fxn for sharing pixel methods
  *
  */
-p5.Element.prototype._setProperty = function (prop, value) {
+p5.Element.prototype._setProperty = function(prop, value) {
   this[prop] = value;
 };
-
 
 module.exports = p5.Element;

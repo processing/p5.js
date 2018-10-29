@@ -12,7 +12,7 @@ var p;
 
 function preload() {
   soundFormats('mp3', 'ogg');
-  soundFile = loadSound('../_files/Damscray_-_Dancing_Tiger_02');
+  soundFile = loadSound('../_files/Damscray_02');
 }
 
 function setup() {
@@ -22,16 +22,16 @@ function setup() {
 
 function draw() {
   // map playback rate of a sound file to mouseX position
-  var newRate = (map(mouseX, 0, 1200, -0.5, 1.5));
+  var newRate = map(mouseX, 0, 1200, -0.5, 1.5);
   // newRate = constrain(newRate, 0.1, 1.5);
   soundFile.rate(newRate);
-  p.html( 'Playback Rate: ' + newRate.toFixed(3) )
+  p.html('Playback Rate: ' + newRate.toFixed(3));
 }
 
 function keyPressed() {
   var key = keyCode;
   // Spacebar: pause
-  if (key == 32) {
+  if (key === 32) {
     soundFile.pause();
   }
 }

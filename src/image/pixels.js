@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
 require('../color/p5.Color');
 
@@ -16,7 +16,7 @@ require('../color/p5.Color');
  * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
  * containing the values for all the pixels in the display window.
  * These values are numbers. This array is the size (include an appropriate
- * factor for pixelDensity) of the display window x4,
+ * factor for <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. Retina and other
  * high density displays will have more pixels[] (by a factor of
@@ -42,18 +42,18 @@ require('../color/p5.Color');
  * }
  * ```
  * <p>While the above method is complex, it is flexible enough to work with
- * any pixelDensity. Note that set() will automatically take care of
- * setting all the appropriate values in pixels[] for a given (x, y) at
+ * any pixelDensity. Note that <a href="#/p5/set">set()</a> will automatically take care of
+ * setting all the appropriate values in <a href="#/p5/pixels">pixels[]</a> for a given (x, y) at
  * any pixelDensity, but the performance may not be as fast when lots of
  * modifications are made to the pixel array.
  * <br><br>
- * Before accessing this array, the data must loaded with the loadPixels()
- * function. After the array data has been modified, the updatePixels()
+ * Before accessing this array, the data must loaded with the <a href="#/p5/loadPixels">loadPixels()</a>
+ * function. After the array data has been modified, the <a href="#/p5/updatePixels">updatePixels()</a>
  * function must be run to update the changes.
  * <br><br>
  * Note that this is not a standard javascript array.  This means that
- * standard javascript functions such as <code>slice()</code> or
- * <code>arrayCopy()</code> do not
+ * standard javascript functions such as <a href="#/p5/slice">slice()</a> or
+ * <a href="#/p5/arrayCopy">arrayCopy()</a> do not
  * work.</p>
  *
  * @property {Number[]} pixels
@@ -63,12 +63,12 @@ require('../color/p5.Color');
  * var pink = color(255, 102, 204);
  * loadPixels();
  * var d = pixelDensity();
- * var halfImage = 4 * (width * d) * (height/2 * d);
- * for (var i = 0; i < halfImage; i+=4) {
+ * var halfImage = 4 * (width * d) * (height / 2 * d);
+ * for (var i = 0; i < halfImage; i += 4) {
  *   pixels[i] = red(pink);
- *   pixels[i+1] = green(pink);
- *   pixels[i+2] = blue(pink);
- *   pixels[i+3] = alpha(pink);
+ *   pixels[i + 1] = green(pink);
+ *   pixels[i + 2] = blue(pink);
+ *   pixels[i + 3] = alpha(pink);
  * }
  * updatePixels();
  * </code>
@@ -82,14 +82,10 @@ p5.prototype.pixels = [];
 
 /**
  * Copies a region of pixels from one image to another, using a specified
- * blend mode to do the operation.<br><br>
- * Available blend modes are: BLEND | DARKEST | LIGHTEST | DIFFERENCE |
- * MULTIPLY| EXCLUSION | SCREEN | REPLACE | OVERLAY | HARD_LIGHT |
- * SOFT_LIGHT | DODGE | BURN | ADD | NORMAL
- *
+ * blend mode to do the operation.
  *
  * @method blend
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -98,7 +94,10 @@ p5.prototype.pixels = [];
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
- * @param  {Integer} blendMode the blend mode
+ * @param  {Constant} blendMode the blend mode. either
+ *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+ *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+ *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
  *
  * @example
  * <div><code>
@@ -106,8 +105,8 @@ p5.prototype.pixels = [];
  * var img1;
  *
  * function preload() {
- *   img0 = loadImage("assets/rockies.jpg");
- *   img1 = loadImage("assets/bricks_third.jpg");
+ *   img0 = loadImage('assets/rockies.jpg');
+ *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -121,8 +120,8 @@ p5.prototype.pixels = [];
  * var img1;
  *
  * function preload() {
- *   img0 = loadImage("assets/rockies.jpg");
- *   img1 = loadImage("assets/bricks_third.jpg");
+ *   img0 = loadImage('assets/rockies.jpg');
+ *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -136,8 +135,8 @@ p5.prototype.pixels = [];
  * var img1;
  *
  * function preload() {
- *   img0 = loadImage("assets/rockies.jpg");
- *   img1 = loadImage("assets/bricks_third.jpg");
+ *   img0 = loadImage('assets/rockies.jpg');
+ *   img1 = loadImage('assets/bricks_third.jpg');
  * }
  *
  * function setup() {
@@ -154,7 +153,20 @@ p5.prototype.pixels = [];
  *
  *
  */
+/**
+ * @method blend
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ * @param  {Constant} blendMode
+ */
 p5.prototype.blend = function() {
+  p5._validateParameters('blend', arguments);
   if (this._renderer) {
     this._renderer.blend.apply(this._renderer, arguments);
   } else {
@@ -171,7 +183,7 @@ p5.prototype.blend = function() {
  * target region.
  *
  * @method copy
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image|p5.Element} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -186,7 +198,7 @@ p5.prototype.blend = function() {
  * var img;
  *
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
@@ -205,8 +217,20 @@ p5.prototype.blend = function() {
  * image of rockies. Brickwall images on left and right. Right translucent
  *
  */
-p5.prototype.copy = function () {
-  p5.Renderer2D._copyHelper.apply(this, arguments);
+/**
+ * @method copy
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ */
+p5.prototype.copy = function() {
+  p5._validateParameters('copy', arguments);
+  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
 };
 
 /**
@@ -242,9 +266,9 @@ p5.prototype.copy = function () {
  * <br><br>
  *
  * BLUR
- * Executes a Guassian blur with the level parameter specifying the extent
+ * Executes a Gaussian blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
- * Guassian blur of radius 1. Larger values increase the blur.
+ * Gaussian blur of radius 1. Larger values increase the blur.
  * <br><br>
  *
  * ERODE
@@ -255,22 +279,23 @@ p5.prototype.copy = function () {
  * Increases the light areas. No parameter is used.
  *
  * @method filter
- * @param  {Constant} filterType either THRESHOLD, GRAY, OPAQUE, INVERT,
- *                                POSTERIZE, BLUR, ERODE or DILATE
- * @param  {Number} filterParam an optional parameter unique
- *  to each filter, see above
- *
+ * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                See Filters.js for docs on
+ *                                each available filter
+ * @param  {Number} [filterParam] an optional parameter unique
+ *                                to each filter, see above
  *
  * @example
  * <div>
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(THRESHOLD);
+ *   image(img, 0, 0);
+ *   filter(THRESHOLD);
  * }
  * </code>
  * </div>
@@ -279,11 +304,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(GRAY);
+ *   image(img, 0, 0);
+ *   filter(GRAY);
  * }
  * </code>
  * </div>
@@ -292,11 +317,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(OPAQUE);
+ *   image(img, 0, 0);
+ *   filter(OPAQUE);
  * }
  * </code>
  * </div>
@@ -305,11 +330,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(INVERT);
+ *   image(img, 0, 0);
+ *   filter(INVERT);
  * }
  * </code>
  * </div>
@@ -318,11 +343,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(POSTERIZE,3);
+ *   image(img, 0, 0);
+ *   filter(POSTERIZE, 3);
  * }
  * </code>
  * </div>
@@ -331,11 +356,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(DILATE);
+ *   image(img, 0, 0);
+ *   filter(DILATE);
  * }
  * </code>
  * </div>
@@ -344,11 +369,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(BLUR,3);
+ *   image(img, 0, 0);
+ *   filter(BLUR, 3);
  * }
  * </code>
  * </div>
@@ -357,11 +382,11 @@ p5.prototype.copy = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *  image(img, 0, 0);
- *  filter(ERODE);
+ *   image(img, 0, 0);
+ *   filter(ERODE);
  * }
  * </code>
  * </div>
@@ -379,10 +404,10 @@ p5.prototype.copy = function () {
  *
  */
 p5.prototype.filter = function(operation, value) {
-  if(this.canvas !== undefined) {
+  p5._validateParameters('filter', arguments);
+  if (this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-  }
-  else {
+  } else {
     Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
   }
 };
@@ -393,23 +418,31 @@ p5.prototype.filter = function(operation, value) {
  * Use the x and y parameters to get the value of one pixel. Get a section of
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
- * upper-left corner of the image, regardless of the current imageMode().
+ * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  * <br><br>
  * If the pixel requested is outside of the image window, [0,0,0,255] is
  * returned. To get the numbers scaled according to the current color ranges
- * and taking into account colorMode, use getColor instead of get.
+ * and taking into account <a href="#/p5/colorMode">colorMode</a>, use <a href="#/p5/getColor">getColor</a> instead of get.
  * <br><br>
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
- * as grabbing the data directly from pixels[]. The equivalent statement to
- * get(x, y) using pixels[] with pixel density d is
+ * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
+ * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
  * <code>
+ * var x, y, d; // set these to the coordinates
  * var off = (y * width + x) * d * 4;
- * [pixels[off],
- * pixels[off+1],
- * pixels[off+2],
- * pixels[off+3]]</code>
+ * var components = [
+ *   pixels[off],
+ *   pixels[off + 1],
+ *   pixels[off + 2],
+ *   pixels[off + 3]
+ * ];
+ * print(components);
+ * </code>
  * <br><br>
- * See the reference for pixels[] for more information.
+ * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
+ *
+ * If you want to extract an array of colors or a subimage from an p5.Image object,
+ * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
  *
  * @method get
  * @param  {Number}         [x] x-coordinate of the pixel
@@ -417,18 +450,18 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
  * @return {Number[]|p5.Image}  values of pixel at x,y in array format
- *                              [R, G, B, A] or p5.Image
+ *                              [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div>
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
  *   var c = get();
- *   image(c, width/2, 0);
+ *   image(c, width / 2, 0);
  * }
  * </code>
  * </div>
@@ -437,7 +470,7 @@ p5.prototype.filter = function(operation, value) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
@@ -454,14 +487,14 @@ p5.prototype.filter = function(operation, value) {
  * Image of the rocky mountains with 50x50 green rect in center of canvas
  *
  */
-p5.prototype.get = function(x, y, w, h){
+p5.prototype.get = function(x, y, w, h) {
   return this._renderer.get(x, y, w, h);
 };
 
 /**
- * Loads the pixel data for the display window into the pixels[] array. This
- * function must always be called before reading from or writing to pixels[].
- * Note that only changes made with set() or direct manipulation of pixels[]
+ * Loads the pixel data for the display window into the <a href="#/p5/pixels">pixels[]</a> array. This
+ * function must always be called before reading from or writing to <a href="#/p5/pixels">pixels[]</a>.
+ * Note that only changes made with <a href="#/p5/set">set()</a> or direct manipulation of <a href="#/p5/pixels">pixels[]</a>
  * will occur.
  *
  * @method loadPixels
@@ -470,17 +503,16 @@ p5.prototype.get = function(x, y, w, h){
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   image(img, 0, 0);
  *   var d = pixelDensity();
- *   var halfImage = 4 * (img.width * d) *
-       (img.height/2 * d);
+ *   var halfImage = 4 * (img.width * d) * (img.height * d / 2);
  *   loadPixels();
  *   for (var i = 0; i < halfImage; i++) {
- *     pixels[i+halfImage] = pixels[i];
+ *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();
  * }
@@ -492,6 +524,7 @@ p5.prototype.get = function(x, y, w, h){
  *
  */
 p5.prototype.loadPixels = function() {
+  p5._validateParameters('loadPixels', arguments);
   this._renderer.loadPixels();
 };
 
@@ -499,28 +532,28 @@ p5.prototype.loadPixels = function() {
  * <p>Changes the color of any pixel, or writes an image directly to the
  * display window.</p>
  * <p>The x and y parameters specify the pixel to change and the c parameter
- * specifies the color value. This can be a p5.Color object, or [R, G, B, A]
+ * specifies the color value. This can be a <a href="#/p5.Color">p5.Color</a> object, or [R, G, B, A]
  * pixel array. It can also be a single grayscale value.
  * When setting an image, the x and y parameters define the coordinates for
- * the upper-left corner of the image, regardless of the current imageMode().
+ * the upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  * </p>
  * <p>
- * After using set(), you must call updatePixels() for your changes to appear.
+ * After using <a href="#/p5/set">set()</a>, you must call <a href="#/p5/updatePixels">updatePixels()</a> for your changes to appear.
  * This should be called once all pixels have been set, and must be called before
- * calling .get() or drawing the image.
+ * calling .<a href="#/p5/get">get()</a> or drawing the image.
  * </p>
  * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
- * fast as putting the data directly into pixels[]. Setting the pixels[]
+ * fast as putting the data directly into <a href="#/p5/pixels">pixels[]</a>. Setting the <a href="#/p5/pixels">pixels[]</a>
  * values directly may be complicated when working with a retina display,
  * but will perform better when lots of pixels need to be set directly on
  * every loop.</p>
- * <p>See the reference for pixels[] for more information.</p>
+ * <p>See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.</p>
  *
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Array|Object} c insert a grayscale value | a pixel array |
- *                                a p5.Color object | a p5.Image to copy
+ * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
+ *                                a <a href="#/p5.Color">p5.Color</a> object | a <a href="#/p5.Image">p5.Image</a> to copy
  * @example
  * <div>
  * <code>
@@ -535,9 +568,9 @@ p5.prototype.loadPixels = function() {
  *
  * <div>
  * <code>
- * for (var i = 30; i < width-15; i++) {
- *   for (var j = 20; j < height-25; j++) {
- *     var c = color(204-j, 153-i, 0);
+ * for (var i = 30; i < width - 15; i++) {
+ *   for (var j = 20; j < height - 25; j++) {
+ *     var c = color(204 - j, 153 - i, 0);
  *     set(i, j, c);
  *   }
  * }
@@ -549,7 +582,7 @@ p5.prototype.loadPixels = function() {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
@@ -566,16 +599,16 @@ p5.prototype.loadPixels = function() {
  * square with orangey-brown gradient lightening at bottom right.
  * image of the rocky mountains. with lines like an 'x' through the center.
  */
-p5.prototype.set = function (x, y, imgOrCol) {
+p5.prototype.set = function(x, y, imgOrCol) {
   this._renderer.set(x, y, imgOrCol);
 };
 /**
- * Updates the display window with the data in the pixels[] array.
- * Use in conjunction with loadPixels(). If you're only reading pixels from
- * the array, there's no need to call updatePixels() — updating is only
- * necessary to apply changes. updatePixels() should be called anytime the
- * pixels array is manipulated or set() is called, and only changes made with
- * set() or direct changes to pixels[] will occur.
+ * Updates the display window with the data in the <a href="#/p5/pixels">pixels[]</a> array.
+ * Use in conjunction with <a href="#/p5/loadPixels">loadPixels()</a>. If you're only reading pixels from
+ * the array, there's no need to call <a href="#/p5/updatePixels">updatePixels()</a> — updating is only
+ * necessary to apply changes. <a href="#/p5/updatePixels">updatePixels()</a> should be called anytime the
+ * pixels array is manipulated or <a href="#/p5/set">set()</a> is called, and only changes made with
+ * <a href="#/p5/set">set()</a> or direct changes to <a href="#/p5/pixels">pixels[]</a> will occur.
  *
  * @method updatePixels
  * @param  {Number} [x]    x-coordinate of the upper-left corner of region
@@ -589,16 +622,16 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/rockies.jpg");
+ *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   image(img, 0, 0);
- *   var halfImage = 4 * (img.width * pixelDensity()) *
- *     (img.height * pixelDensity()/2);
+ *   var d = pixelDensity();
+ *   var halfImage = 4 * (img.width * d) * (img.height * d / 2);
  *   loadPixels();
  *   for (var i = 0; i < halfImage; i++) {
- *     pixels[i+halfImage] = pixels[i];
+ *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();
  * }
@@ -607,7 +640,8 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * @alt
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
-p5.prototype.updatePixels = function (x, y, w, h) {
+p5.prototype.updatePixels = function(x, y, w, h) {
+  p5._validateParameters('updatePixels', arguments);
   // graceful fail - if loadPixels() or set() has not been called, pixel
   // array will be empty, ignore call to updatePixels()
   if (this.pixels.length === 0) {

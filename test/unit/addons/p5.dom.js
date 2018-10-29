@@ -1,9 +1,10 @@
-suite('DOM', function(){
+/* global testSketchWithPromise */
+suite('DOM', function() {
   suite('p5.prototype.select', function() {
     var myp5;
 
     setup(function(done) {
-      new p5(function(p){
+      new p5(function(p) {
         p.setup = function() {
           myp5 = p;
           done();
@@ -57,6 +58,25 @@ suite('DOM', function(){
 
     test('should return null when elements by tag name are not found', function() {
       assert.isNull(myp5.select('aside'));
+    });
+
+    test('should create an empty node when no html is provided', function() {
+      const elem = myp5.createDiv();
+      assert.strictEqual(elem.elt.innerHTML, '');
+    });
+  });
+
+  suite('p5.prototype.createButton', function() {
+    testSketchWithPromise('mousePressed works', function(
+      sketch,
+      resolve,
+      reject
+    ) {
+      sketch.setup = function() {
+        var elem = sketch.createButton('test');
+        elem.mousePressed(resolve);
+        elem.elt.dispatchEvent(new Event('mousedown'));
+      };
     });
   });
 });

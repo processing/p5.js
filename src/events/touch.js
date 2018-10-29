@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * The system variable touches[] contains an array of the positions of all
@@ -20,19 +20,41 @@ var p5 = require('../core/core');
  *
  * @property {Object[]} touches
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // On a touchscreen device, touch
+ * // the canvas using one or more fingers
+ * // at the same time
+ * function draw() {
+ *   clear();
+ *   var display = touches.length + ' touches';
+ *   text(display, 5, 10);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Number of touches currently registered are displayed on the canvas
  */
 p5.prototype.touches = [];
 
 p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
     var touches = [];
-    for(var i = 0; i < e.touches.length; i++){
-      touches[i] = getTouchInfo(this._curElement.elt, this.width, this.height, e, i);
+    for (var i = 0; i < e.touches.length; i++) {
+      touches[i] = getTouchInfo(
+        this._curElement.elt,
+        this.width,
+        this.height,
+        e,
+        i
+      );
     }
     this._setProperty('touches', touches);
   }
 };
-
 
 function getTouchInfo(canvas, w, h, e, i) {
   i = i || 0;
@@ -51,13 +73,14 @@ function getTouchInfo(canvas, w, h, e, i) {
 
 /**
  * The touchStarted() function is called once after every time a touch is
- * registered. If no touchStarted() function is defined, the mousePressed()
+ * registered. If no <a href="#/p5/touchStarted">touchStarted()</a> function is defined, the <a href="#/p5/mousePressed">mousePressed()</a>
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
  * to the end of the method.
  *
  * @method touchStarted
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -70,7 +93,7 @@ function getTouchInfo(canvas, w, h, e, i) {
  *   rect(25, 25, 50, 50);
  * }
  * function touchStarted() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -89,6 +112,16 @@ function getTouchInfo(canvas, w, h, e, i) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchStarted(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * 50x50 black rect turns white with touch event.
  * no image displayed
@@ -99,28 +132,30 @@ p5.prototype._ontouchstart = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
-  if(typeof context.touchStarted === 'function') {
+  this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
+  if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
 };
 
 /**
- * The touchMoved() function is called every time a touch move is registered.
- * If no touchMoved() function is defined, the mouseDragged() function will
+ * The <a href="#/p5/touchMoved">touchMoved()</a> function is called every time a touch move is registered.
+ * If no <a href="#/p5/touchMoved">touchMoved()</a> function is defined, the <a href="#/p5/mouseDragged">mouseDragged()</a> function will
  * be called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
  * to the end of the method.
  *
  * @method touchMoved
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -151,6 +186,16 @@ p5.prototype._ontouchstart = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchMoved(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * 50x50 black rect turns lighter with touch until white. resets
  * no image displayed
@@ -163,26 +208,27 @@ p5.prototype._ontouchmove = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.touchMoved === 'function') {
     executeDefault = context.touchMoved(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mouseDragged === 'function') {
     executeDefault = context.mouseDragged(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
 };
 
 /**
- * The touchEnded() function is called every time a touch ends. If no
- * touchEnded() function is defined, the mouseReleased() function will be
+ * The <a href="#/p5/touchEnded">touchEnded()</a> function is called every time a touch ends. If no
+ * <a href="#/p5/touchEnded">touchEnded()</a> function is defined, the <a href="#/p5/mouseReleased">mouseReleased()</a> function will be
  * called instead if it is defined.<br><br>
  * Browsers may have different default behaviors attached to various touch
  * events. To prevent any default behavior for this event, add "return false"
  * to the end of the method.
  *
  * @method touchEnded
+ * @param  {Object} [event] optional TouchEvent callback argument.
  * @example
  * <div>
  * <code>
@@ -195,7 +241,7 @@ p5.prototype._ontouchmove = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function touchEnded() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -214,6 +260,16 @@ p5.prototype._ontouchmove = function(e) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // returns a TouchEvent object
+ * // as a callback argument
+ * function touchEnded(event) {
+ *   console.log(event);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * 50x50 black rect turns white with touch.
  * no image displayed
@@ -227,12 +283,12 @@ p5.prototype._ontouchend = function(e) {
   var executeDefault;
   if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

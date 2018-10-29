@@ -1,9 +1,8 @@
 var table;
 
 function setup() {
-
   table = new p5.Table();
-  
+
   table.addColumn('name');
   table.addColumn('type');
 
@@ -23,7 +22,7 @@ function setup() {
 }
 
 // Sketch saves the following to a file called 'animals.csv':
-// 
+//
 // name,type
 // Lion,Mammal
 // Snake,Reptile

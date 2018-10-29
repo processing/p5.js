@@ -6,11 +6,9 @@
  * @requires constants
  */
 
-
 'use strict';
 
-var p5 = require('./core');
-var constants = require('./constants');
+var p5 = require('./main');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -78,7 +76,7 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
+ *   var step = frameCount % 20;
  *   var angle = map(step, 0, 20, 0, TWO_PI);
  *   var cos_a = cos(angle);
  *   var sin_a = sin(angle);
@@ -98,12 +96,12 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
- *   var angle = map(step, 0, 20, -PI/4, PI/4);
+ *   var step = frameCount % 20;
+ *   var angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
  *   translate(50, 50);
  *   // equivalent to shearX(angle);
- *   var shear_factor = 1 / tan(PI/2 - angle);
+ *   var shear_factor = 1 / tan(PI / 2 - angle);
  *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
  *   rect(0, 0, 50, 50);
  * }
@@ -162,7 +160,7 @@ p5.prototype.resetMatrix = function() {
 
 /**
  * Rotates a shape the amount specified by the angle parameter. This
- * function accounts for angleMode, so angles can be entered in either
+ * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles can be entered in either
  * RADIANS or DEGREES.
  * <br><br>
  * Objects are always rotated around their relative position to the
@@ -170,22 +168,22 @@ p5.prototype.resetMatrix = function() {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when draw() begins again.
+ * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  * <br><br>
- * Technically, rotate() multiplies the current transformation matrix
+ * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
- * the push() and pop().
+ * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
- * @param  {p5.Vector|Array} [axis] (in 3d) the axis to rotate around
+ * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
  * @chainable
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
+ * translate(width / 2, height / 2);
+ * rotate(PI / 3.0);
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
@@ -195,68 +193,98 @@ p5.prototype.resetMatrix = function() {
  *
  */
 p5.prototype.rotate = function(angle, axis) {
-  var args = new Array(arguments.length);
-  var r;
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if (this._angleMode === constants.DEGREES) {
-    r = this.radians(args[0]);
-  } else if (this._angleMode === constants.RADIANS){
-    r = args[0];
-  }
-  //in webgl mode
-  if(args.length > 1){
-    this._renderer.rotate(r, args[1]);
-  }
-  else {
-    this._renderer.rotate(r);
-  }
+  p5._validateParameters('rotate', arguments);
+  this._renderer.rotate(this._toRadians(angle), axis);
   return this;
 };
 
 /**
  * Rotates around X axis.
  * @method  rotateX
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateX(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the x axis.
  */
-p5.prototype.rotateX = function(rad) {
-  if (this._renderer.isP3D) {
-    this._renderer.rotateX(rad);
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+p5.prototype.rotateX = function(angle) {
+  this._assert3d('rotateX');
+  p5._validateParameters('rotateX', arguments);
+  this._renderer.rotateX(this._toRadians(angle));
   return this;
 };
 
 /**
  * Rotates around Y axis.
  * @method rotateY
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateY(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the y axis.
  */
-p5.prototype.rotateY = function(rad) {
-  if (this._renderer.isP3D) {
-    this._renderer.rotateY(rad);
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+p5.prototype.rotateY = function(angle) {
+  this._assert3d('rotateY');
+  p5._validateParameters('rotateY', arguments);
+  this._renderer.rotateY(this._toRadians(angle));
   return this;
 };
 
 /**
  * Rotates around Z axis. Webgl mode only.
  * @method rotateZ
- * @param  {Number} rad angles in radians
+ * @param  {Number} angle the angle of rotation, specified in radians
+ *                        or degrees, depending on current angleMode
  * @chainable
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the z axis.
  */
-p5.prototype.rotateZ = function(rad) {
-  if (this._renderer.isP3D) {
-    this._renderer.rotateZ(rad);
-  } else {
-    throw 'not supported in p2d. Please use webgl mode';
-  }
+p5.prototype.rotateZ = function(angle) {
+  this._assert3d('rotateZ');
+  p5._validateParameters('rotateZ', arguments);
+  this._renderer.rotateZ(this._toRadians(angle));
   return this;
 };
 
@@ -269,23 +297,26 @@ p5.prototype.rotateZ = function(rad) {
  * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function multiply the effect. For example, calling scale(2.0)
- * and then scale(1.5) is the same as scale(3.0). If scale() is called
- * within draw(), the transformation is reset when the loop begins again.
+ * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
+ * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
  * <br><br>
  * Using this function with the z parameter is only available in WEBGL mode.
- * This function can be further controlled with push() and pop().
+ * This function can be further controlled with <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method scale
- * @param  {Number} x   percent to scale the object in the x-axis
- * @param  {Number} y   percent to scale the object in the y-axis
+ * @param  {Number|p5.Vector|Number[]} s
+ *                      percent to scale the object, or percentage to
+ *                      scale the object in the x-axis if multiple arguments
+ *                      are given
+ * @param  {Number} [y] percent to scale the object in the y-axis
  * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @chainable
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
- * rect(-26, -26, 52, 52);
+ * rect(30, 20, 50, 50);
+ * scale(0.5);
+ * rect(30, 20, 50, 50);
  * </code>
  * </div>
  *
@@ -304,43 +335,31 @@ p5.prototype.rotateZ = function(rad) {
  */
 /**
  * @method scale
- * @param  {p5.Vector|Array} scales per-axis percents to scale the object
+ * @param  {p5.Vector|Number[]} scales per-axis percents to scale the object
  * @chainable
  */
-p5.prototype.scale = function() {
-  var x,y,z;
-  var args = new Array(arguments.length);
-  for(var i = 0; i < args.length; i++) {
-    args[i] = arguments[i];
-  }
+p5.prototype.scale = function(x, y, z) {
+  p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
-  if (typeof p5.Vector !== 'undefined' && args[0] instanceof p5.Vector) {
-    x = args[0].x;
-    y = args[0].y;
-    z = args[0].z;
+  if (x instanceof p5.Vector) {
+    var v = x;
+    x = v.x;
+    y = v.y;
+    z = v.z;
+  } else if (x instanceof Array) {
+    var rg = x;
+    x = rg[0];
+    y = rg[1];
+    z = rg[2] || 1;
   }
-  else if(args[0] instanceof Array){
-    x = args[0][0];
-    y = args[0][1];
-    z = args[0][2] || 1;
-  }
-  else {
-    if(args.length === 1){
-      x = y = z = args[0];
-    }
-    else {
-      x = args[0];
-      y = args[1];
-      z = args[2] || 1;
-    }
+  if (isNaN(y)) {
+    y = z = x;
+  } else if (isNaN(z)) {
+    z = 1;
   }
 
-  if(this._renderer.isP3D){
-    this._renderer.scale.call(this._renderer, x,y,z);
-  }
-  else {
-    this._renderer.scale.call(this._renderer, x,y);
-  }
+  this._renderer.scale.call(this._renderer, x, y, z);
+
   return this;
 };
 
@@ -353,12 +372,12 @@ p5.prototype.scale = function() {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
- * If shearX() is called within the draw(), the transformation is reset when
+ * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
  * <br><br>
- * Technically, shearX() multiplies the current transformation matrix by a
+ * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
- * push() and pop() functions.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
  *
  * @method shearX
  * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -367,21 +386,19 @@ p5.prototype.scale = function() {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearX(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearX(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
  *
  * @alt
-  * white irregular quadrilateral with black outline at top middle.
+ * white irregular quadrilateral with black outline at top middle.
  *
  */
 p5.prototype.shearX = function(angle) {
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearX(angle);
+  p5._validateParameters('shearX', arguments);
+  this._renderer.shearX(this._toRadians(angle));
   return this;
 };
 
@@ -394,12 +411,12 @@ p5.prototype.shearX = function(angle) {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
- * shearY() is called within the draw(), the transformation is reset when
+ * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
  * <br><br>
- * Technically, shearY() multiplies the current transformation matrix by a
+ * Technically, <a href="#/p5/shearY">shearY()</a> multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
- * push() and pop() functions.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
  *
  * @method shearY
  * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -408,8 +425,8 @@ p5.prototype.shearX = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearY(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearY(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
@@ -419,10 +436,8 @@ p5.prototype.shearX = function(angle) {
  *
  */
 p5.prototype.shearY = function(angle) {
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearY(angle);
+  p5._validateParameters('shearY', arguments);
+  this._renderer.shearY(this._toRadians(angle));
   return this;
 };
 
@@ -434,9 +449,9 @@ p5.prototype.shearY = function(angle) {
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
  * calling translate(50, 0) and then translate(20, 0) is the same as
- * translate(70, 0). If translate() is called within draw(), the
+ * translate(70, 0). If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
  * transformation is reset when the loop begins again. This function can be
- * further controlled by using push() and pop().
+ * further controlled by using <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method translate
  * @param  {Number} x left/right translation
@@ -453,20 +468,40 @@ p5.prototype.shearY = function(angle) {
  *
  * <div>
  * <code>
- * rect(0, 0, 55, 55);  // Draw rect at original 0,0
+ * rect(0, 0, 55, 55); // Draw rect at original 0,0
  * translate(30, 20);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
  * translate(14, 14);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
+ * </code>
+ * </div>
+ *
+
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   rectMode(CENTER);
+ *   translate(width / 2, height / 2);
+ *   translate(p5.Vector.fromAngle(millis() / 1000, 40));
+ *   rect(0, 0, 20, 20);
+ * }
  * </code>
  * </div>
  *
  * @alt
  * white 55x55 rect with black outline at center right.
  * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+ * a 20x20 white rect moving in a circle around the canvas
  *
  */
+/**
+ * @method translate
+ * @param  {p5.Vector} vector the vector to translate by
+ * @chainable
+ */
 p5.prototype.translate = function(x, y, z) {
+  p5._validateParameters('translate', arguments);
   if (this._renderer.isP3D) {
     this._renderer.translate(x, y, z);
   } else {

@@ -2,7 +2,7 @@ suite('p5.Color', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -28,11 +28,11 @@ suite('p5.Color', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 255]);
     });
 
-    test('shouldn\'t set HSBA property before hsb access func is called', function() {
+    test("shouldn't set HSBA property before hsb access func is called", function() {
       assert.equal(c.hsba, undefined);
     });
 
-    test('shouldn\'t set HSLA property before hsb access func is called', function() {
+    test("shouldn't set HSLA property before hsb access func is called", function() {
       assert.equal(c.hsla, undefined);
     });
 
@@ -77,6 +77,14 @@ suite('p5.Color', function() {
     test('invalid hex values resolve to white', function() {
       c = myp5.color('#cat');
       assert.deepEqual(c.levels, [255, 255, 255, 255]);
+    });
+
+    test('should not be able to pass css & alpha', function() {
+      // TODO: change this to expect p5.ValidationError when
+      // color() docs are fixed.
+      assert.throws(function() {
+        c = myp5.color('#fff', 100);
+      }, Error);
     });
   });
 
@@ -234,7 +242,11 @@ suite('p5.Color', function() {
       c = myp5.color('rgb(100, 40, 3.14159265)');
       assert.deepEqual(c.levels, [255, 255, 255, 255], 'decimal B value');
       c = myp5.color('rgb(.9, 40, 3, 1.0)');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'decimal without leading 0');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'decimal without leading 0'
+      );
       c = myp5.color('skip a beat');
       assert.deepEqual(c.levels, [255, 255, 255, 255], 'non-color strings');
     });
@@ -281,11 +293,19 @@ suite('p5.Color', function() {
 
     test('invalid percentage values default to white', function() {
       c = myp5.color('rgb(50, 100%, 100%');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'mixed percentage and non-percentage input');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'mixed percentage and non-percentage input'
+      );
       c = myp5.color('rgb(,0%,0%)');
       assert.deepEqual(c.levels, [255, 255, 255, 255], 'missing values');
       c = myp5.color('rgb(A%,B%,C%)');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'non-numeric percentages');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'non-numeric percentages'
+      );
     });
   });
 
@@ -333,7 +353,11 @@ suite('p5.Color', function() {
       c = myp5.color('rgba(100, 40, 3.14159265, 1.0)');
       assert.deepEqual(c.levels, [255, 255, 255, 255], 'decimal B% value');
       c = myp5.color('rgba(.9, 40, 3, 1.0)');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'decimal R% without leading 0');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'decimal R% without leading 0'
+      );
     });
   });
 
@@ -371,7 +395,6 @@ suite('p5.Color', function() {
       assert.deepEqual(c.levels, [0, 0, 0, 255]);
       c = myp5.color('rgba(0%,87%, 10% , 0.3)');
       assert.deepEqual(c.levels, [0, 222, 26, 77]);
-
     });
 
     test('spot check decimal percentage values', function() {
@@ -383,14 +406,26 @@ suite('p5.Color', function() {
       c = myp5.color('rgba(90%, 40%, 3.14159265%, 0.45)');
       assert.deepEqual(c.levels, [230, 102, 8, 115], 'Decimal B% value');
       c = myp5.color('rgba(90%, 40%, .9%, 0.45)');
-      assert.deepEqual(c.levels, [230, 102, 2, 115], 'Decimal B% without leading 0');
+      assert.deepEqual(
+        c.levels,
+        [230, 102, 2, 115],
+        'Decimal B% without leading 0'
+      );
     });
 
     test('invalid RGBA percentage values resolve to white', function() {
       c = myp5.color('rgb(50,100%,100%,1');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'mixed percentage and non-percentage input');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'mixed percentage and non-percentage input'
+      );
       c = myp5.color('rgb(A%,B%,C%,0.5)');
-      assert.deepEqual(c.levels, [255, 255, 255, 255], 'non-numeric percentages');
+      assert.deepEqual(
+        c.levels,
+        [255, 255, 255, 255],
+        'non-numeric percentages'
+      );
       c = myp5.color('rgba(,50%,20%,1)');
       assert.deepEqual(c.levels, [255, 255, 255, 255], 'missing values');
     });

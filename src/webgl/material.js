@@ -7,15 +7,14 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Texture');
-
 
 /**
  * Loads a custom shader from the provided vertex and fragment
  * shader paths. The shader files are loaded asynchronously in the
- * background, so this method should be used in preload().
+ * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
  * For now, there are three main types of shaders. p5 will automatically
  * supply appropriate vertices, normals, colors, and lighting attributes
@@ -28,8 +27,35 @@ require('./p5.Texture');
  * source code
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * var mandel;
+ * function preload() {
+ *   // load the shader definitions from files
+ *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // use the shader
+ *   shader(mandel);
+ *   noStroke();
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.loadShader = function (vertFilename, fragFilename) {
+p5.prototype.loadShader = function(vertFilename, fragFilename) {
+  p5._validateParameters('loadShader', arguments);
   var loadedShader = new p5.Shader();
 
   var self = this;
@@ -39,38 +65,107 @@ p5.prototype.loadShader = function (vertFilename, fragFilename) {
   this.loadStrings(fragFilename, function(result) {
     loadedShader._fragSrc = result.join('\n');
     loadedFrag = true;
-    if (!loadedVert) {
-      self._incrementPreload();
+    if (loadedVert) {
+      self._decrementPreload();
     }
   });
   this.loadStrings(vertFilename, function(result) {
     loadedShader._vertSrc = result.join('\n');
     loadedVert = true;
-    if (!loadedFrag) {
-      self._incrementPreload();
+    if (loadedFrag) {
+      self._decrementPreload();
     }
   });
 
   return loadedShader;
 };
 
+/**
+ * @method createShader
+ * @param {String} vertSrc source code for the vertex shader
+ * @param {String} fragSrc source code for the fragment shader
+ * @returns {p5.Shader} a shader object created from the provided
+ * vertex and fragment shaders.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // the 'varying's are shared between both vertex & fragment shaders
+ * var varying = 'precision highp float; varying vec2 vPos;';
+ *
+ * // the vertex shader is called for each vertex
+ * var vs =
+ *   varying +
+ *   'attribute vec3 aPosition;' +
+ *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
+ *
+ * // the fragment shader is called for each pixel
+ * var fs =
+ *   varying +
+ *   'uniform vec2 p;' +
+ *   'uniform float r;' +
+ *   'const int I = 500;' +
+ *   'void main() {' +
+ *   '  vec2 c = p + vPos * r, z = c;' +
+ *   '  float n = 0.0;' +
+ *   '  for (int i = I; i > 0; i --) {' +
+ *   '    if(z.x*z.x+z.y*z.y > 4.0) {' +
+ *   '      n = float(i)/float(I);' +
+ *   '      break;' +
+ *   '    }' +
+ *   '    z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;' +
+ *   '  }' +
+ *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
+ *   '}';
+ *
+ * var mandel;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // create and initialize the shader
+ *   mandel = createShader(vs, fs);
+ *   shader(mandel);
+ *   noStroke();
+ *
+ *   // 'p' is the center point of the Mandelbrot image
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   // 'r' is the size of the image in Mandelbrot-space
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
+ */
+p5.prototype.createShader = function(vertSrc, fragSrc) {
+  this._assert3d('createShader');
+  p5._validateParameters('createShader', arguments);
+  return new p5.Shader(this._renderer, vertSrc, fragSrc);
+};
 
 /**
- * The shader() function lets the user provide a custom shader
+ * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
  * own shaders by loading vertex and fragment shaders with
- * loadShader().
+ * <a href="#/p5/loadShader">loadShader()</a>.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
+ * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
  */
-p5.prototype.shader = function (s) {
+p5.prototype.shader = function(s) {
+  this._assert3d('shader');
+  p5._validateParameters('shader', arguments);
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
-  if(s.isStrokeShader()) {
+  if (s.isStrokeShader()) {
     this._renderer.setStrokeShader(s);
   } else {
     this._renderer.setFillShader(s);
@@ -87,14 +182,14 @@ p5.prototype.shader = function (s) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
- *  background(200);
- *  normalMaterial();
- *  sphere(50);
+ * function draw() {
+ *   background(200);
+ *   normalMaterial();
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -103,10 +198,13 @@ p5.prototype.shader = function (s) {
  * Red, green and blue gradient.
  *
  */
-p5.prototype.normalMaterial = function(){
+p5.prototype.normalMaterial = function() {
+  this._assert3d('normalMaterial');
+  p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
-  this._renderer.noStroke();
+  this._renderer.curFillColor = [1, 1, 1, 1];
+  this.noStroke();
   return this;
 };
 
@@ -121,12 +219,15 @@ p5.prototype.normalMaterial = function(){
  * <div>
  * <code>
  * var img;
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- *   img = loadImage("assets/laDefense.jpg");
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  *
- * function draw(){
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
  *   background(0);
  *   rotateZ(frameCount * 0.01);
  *   rotateX(frameCount * 0.01);
@@ -141,13 +242,13 @@ p5.prototype.normalMaterial = function(){
  * <div>
  * <code>
  * var pg;
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
  *   pg.textSize(100);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   pg.background(255);
  *   pg.text('hello!', 0, 100);
@@ -161,16 +262,16 @@ p5.prototype.normalMaterial = function(){
  * <div>
  * <code>
  * var vid;
- * function preload(){
- *   vid = createVideo("assets/fingers.mov");
+ * function preload() {
+ *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
  *   vid.loop();
  * }
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   //pass video frame as texture
  *   texture(vid);
@@ -185,26 +286,17 @@ p5.prototype.normalMaterial = function(){
  * black canvas
  *
  */
-p5.prototype.texture = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._renderer.GL.depthMask(true);
-  this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA, this._renderer.GL.ONE_MINUS_SRC_ALPHA);
-
+p5.prototype.texture = function(tex) {
+  this._assert3d('texture');
+  p5._validateParameters('texture', arguments);
   this._renderer.drawMode = constants.TEXTURE;
-  if (! this._renderer.curFillShader.isTextureShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
-  this._renderer.curFillShader.setUniform('uSpecular', false);
-  this._renderer.curFillShader.setUniform('isTexture', true);
-  this._renderer.curFillShader.setUniform('uSampler', args[0]);
-  this._renderer.noStroke();
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uSpecular', false);
+  shader.setUniform('isTexture', true);
+  shader.setUniform('uSampler', tex);
+  this.noStroke();
   return this;
 };
-
 
 /**
  * Ambient material for geometry with a given color. You can view all
@@ -212,7 +304,7 @@ p5.prototype.texture = function(){
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method  ambientMaterial
  * @param  {Number} v1  gray value, red or hue value
- *                         (depending on the current color mode)
+ *                         (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
  * @param  {Number} [a]  opacity
@@ -220,15 +312,15 @@ p5.prototype.texture = function(){
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
- *  background(0);
- *  ambientLight(100);
- *  pointLight(250, 250, 250, 100, 100, 0);
- *  ambientMaterial(250);
- *  sphere(50);
+ * function draw() {
+ *   background(0);
+ *   ambientLight(100);
+ *   pointLight(250, 250, 250, 100, 100, 0);
+ *   ambientMaterial(250);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -239,17 +331,19 @@ p5.prototype.texture = function(){
  */
 /**
  * @method  ambientMaterial
- * @param  {Array|String|p5.Color} color  color, color Array, or CSS color string
+ * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
-  this._renderer.curFillShader.setUniform('uSpecular', false);
-  this._renderer.curFillShader.setUniform('isTexture', false);
+  this._assert3d('ambientMaterial');
+  p5._validateParameters('ambientMaterial', arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
+
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  shader.setUniform('uSpecular', false);
+  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -258,8 +352,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method specularMaterial
- * @param  {Number} v1   gray value, red or hue value
- *                        (depending on the current color mode),
+ * @param  {Number} v1  gray value, red or hue value
+ *                       (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
  * @param  {Number} [a]  opacity
@@ -267,15 +361,15 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
- *  background(0);
- *  ambientLight(100);
- *  pointLight(250, 250, 250, 100, 100, 0);
- *  specularMaterial(250);
- *  sphere(50);
+ * function draw() {
+ *   background(0);
+ *   ambientLight(100);
+ *   pointLight(250, 250, 250, 100, 100, 0);
+ *   specularMaterial(250);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -286,18 +380,19 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  */
 /**
  * @method specularMaterial
- * @param  {Array|String|p5.Color} color color Array, or CSS color string
+ * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
+  this._assert3d('specularMaterial');
+  p5._validateParameters('specularMaterial', arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
 
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
-  this._renderer.curFillShader.setUniform('uSpecular', true);
-  this._renderer.curFillShader.setUniform('isTexture', false);
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  shader.setUniform('uSpecular', true);
+  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -305,22 +400,18 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @private blends colors according to color components.
  * If alpha value is less than 1, we need to enable blending
  * on our gl context.  Otherwise opaque objects need to a depthMask.
- * @param  {Number} v1 [description]
- * @param  {Number} v2 [description]
- * @param  {Number} v3 [description]
- * @param  {Number} a  [description]
- * @return {[Number]}  Normalized numbers array
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
+p5.RendererGL.prototype._applyColorBlend = function(colors) {
   var gl = this.GL;
-  var color = this._pInst.color.apply(
-    this._pInst, arguments);
-  var colors = color._array;
-  if(colors[colors.length-1] < 1.0){
-    gl.depthMask(false);
+
+  var isTexture = this.drawMode === constants.TEXTURE;
+  if (isTexture || colors[colors.length - 1] < 1.0) {
+    gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
-    gl.blendEquation( gl.FUNC_ADD );
-    gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
+    gl.blendEquation(gl.FUNC_ADD);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   } else {
     gl.depthMask(true);
     gl.disable(gl.BLEND);

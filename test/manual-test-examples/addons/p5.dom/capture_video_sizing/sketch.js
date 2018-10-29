@@ -4,7 +4,7 @@ function setup() {
   createCanvas(390, 240);
   capture = createCapture(VIDEO);
   capture.size(320, 240);
-  devicePixelScaling(false);
+  pixelDensity(1);
 }
 
 function draw() {
@@ -12,7 +12,7 @@ function draw() {
   image(capture, 0, 0);
 
   capture.loadPixels();
-  console.log(capture.pixels.length === 320*240*4);
+  console.log(capture.pixels.length === 320 * 240 * 4);
 }
 
 function mousePressed() {

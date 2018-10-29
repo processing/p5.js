@@ -3,10 +3,10 @@
  */
 
 var c;
-var currentBackground = [255,0,100];
+var currentBackground = [255, 0, 100];
 
 function setup() {
-  createCanvas(500,500,WEBGL);
+  createCanvas(500, 500, WEBGL);
 }
 
 function draw() {
@@ -16,9 +16,8 @@ function draw() {
   rotateZ(frameCount * 0.02);
   rotateX(frameCount * 0.02);
   rotateY(frameCount * 0.02);
-  fill(0,0,250);
-  if(c)
-  {
+  fill(0, 0, 250);
+  if (c) {
     texture(c);
   }
   box(75);
@@ -27,5 +26,5 @@ function draw() {
 
 function mousePressed() {
   c = get();
-  currentBackground = [random(0,255), random(0,255), random(0,255)];
+  currentBackground = [random(0, 255), random(0, 255), random(0, 255)];
 }

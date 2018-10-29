@@ -9,6 +9,6 @@
 var values = [];
 values.length = 100;
 
-for (var i = 0; i < values.length; i ++ ) {
+for (var i = 0; i < values.length; i++) {
   values[i] = 0;
-}  
+}

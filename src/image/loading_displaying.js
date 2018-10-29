@@ -7,19 +7,19 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
-var canvas = require('../core/canvas');
+var canvas = require('../core/helpers');
 var constants = require('../core/constants');
 
 require('../core/error_helpers');
 
 /**
- * Loads an image from a path and creates a p5.Image from it.
+ * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
  * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
- * anything with it, place the loadImage() call in preload().
+ * anything with it, place the <a href="#/p5/loadImage">loadImage()</a> call in <a href="#/p5/preload">preload()</a>.
  * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
@@ -31,16 +31,16 @@ require('../core/error_helpers');
  * @param  {String} path Path of the image to be loaded
  * @param  {function(p5.Image)} [successCallback] Function to be called once
  *                                the image is loaded. Will be passed the
- *                                p5.Image.
+ *                                <a href="#/p5.Image">p5.Image</a>.
  * @param  {function(Event)}    [failureCallback] called with event error if
  *                                the image fails to load.
- * @return {p5.Image}             the p5.Image object
+ * @return {p5.Image}             the <a href="#/p5.Image">p5.Image</a> object
  * @example
  * <div>
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
@@ -51,7 +51,7 @@ require('../core/error_helpers');
  * <code>
  * function setup() {
  *   // here we use a callback to display the image after loading
- *   loadImage("assets/laDefense.jpg", function(img) {
+ *   loadImage('assets/laDefense.jpg', function(img) {
  *     image(img, 0, 0);
  *   });
  * }
@@ -64,6 +64,7 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+  p5._validateParameters('loadImage', arguments);
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
 
@@ -83,22 +84,22 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     self._decrementPreload();
   };
   img.onerror = function(e) {
-    p5._friendlyFileLoadError(0,img.src);
+    p5._friendlyFileLoadError(0, img.src);
     if (typeof failureCallback === 'function') {
       failureCallback(e);
     }
   };
 
-  //set crossOrigin in case image is served which CORS headers
-  //this will let us draw to canvas without tainting it.
-  //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+  // Set crossOrigin in case image is served with CORS headers.
+  // This will let us draw to the canvas without tainting it.
+  // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
   // When using data-uris the file will be loaded locally
-  // so we don't need to worry about crossOrigin with base64 file types
-  if(path.indexOf('data:image/') !== 0) {
+  // so we don't need to worry about crossOrigin with base64 file types.
+  if (path.indexOf('data:image/') !== 0) {
     img.crossOrigin = 'Anonymous';
   }
 
-  //start loading the image
+  // start loading the image
   img.src = path;
 
   return pImg;
@@ -116,8 +117,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 function _sAssign(sVal, iVal) {
   if (sVal > 0 && sVal < iVal) {
     return sVal;
-  }
-  else {
+  } else {
     return iVal;
   }
 }
@@ -140,7 +140,7 @@ function _sAssign(sVal, iVal) {
  * <img src="assets/drawImage.png"></img>
  *
  * @method image
- * @param  {p5.Image|p5.Graphics} img    the image to display
+ * @param  {p5.Image|p5.Element} img    the image to display
  * @param  {Number}   x     the x-coordinate of the top-left corner of the image
  * @param  {Number}   y     the y-coordinate of the top-left corner of the image
  * @param  {Number}   [width]  the width to draw the image
@@ -150,7 +150,7 @@ function _sAssign(sVal, iVal) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   // Top-left corner of the img is at (0, 0)
@@ -163,7 +163,7 @@ function _sAssign(sVal, iVal) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   background(50);
@@ -177,7 +177,7 @@ function _sAssign(sVal, iVal) {
  * <code>
  * function setup() {
  *   // Here, we use a callback to display the image after loading
- *   loadImage("assets/laDefense.jpg", function(img) {
+ *   loadImage('assets/laDefense.jpg', function(img) {
  *     image(img, 0, 0);
  *   });
  * }
@@ -187,21 +187,21 @@ function _sAssign(sVal, iVal) {
  * <code>
  * var img;
  * function preload() {
- *  img = loadImage("assets/gradient.png");
+ *   img = loadImage('assets/gradient.png');
  * }
  * function setup() {
- *  // 1. Background image
- *  // Top-left corner of the img is at (0, 0)
- *  // Width and height are the img's original width and height, 100 x 100
- *  image(img, 0, 0);
- *  // 2. Top right image
- *  // Top-left corner of destination rectangle is at (50, 0)
- *  // Destination rectangle width and height are 40 x 20
- *  // The next parameters are relative to the source image:
- *  // - Starting at position (50, 50) on the source image, capture a 50 x 50
- *  // subsection
- *  // - Draw this subsection to fill the dimensions of the destination rectangle
- *  image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ *   // 1. Background image
+ *   // Top-left corner of the img is at (0, 0)
+ *   // Width and height are the img's original width and height, 100 x 100
+ *   image(img, 0, 0);
+ *   // 2. Top right image
+ *   // Top-left corner of destination rectangle is at (50, 0)
+ *   // Destination rectangle width and height are 40 x 20
+ *   // The next parameters are relative to the source image:
+ *   // - Starting at position (50, 50) on the source image, capture a 50 x 50
+ *   // subsection
+ *   // - Draw this subsection to fill the dimensions of the destination rectangle
+ *   image(img, 50, 0, 40, 20, 50, 50, 50, 50);
  * }
  * </code>
  * </div>
@@ -212,7 +212,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image|p5.Graphics} img
+ * @param  {p5.Image|p5.Element} img
  * @param  {Number}   dx     the x-coordinate of the destination
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
@@ -229,60 +229,69 @@ function _sAssign(sVal, iVal) {
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
  */
-p5.prototype.image =
-  function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
-    // set defaults per spec: https://goo.gl/3ykfOq
+p5.prototype.image = function(
+  img,
+  dx,
+  dy,
+  dWidth,
+  dHeight,
+  sx,
+  sy,
+  sWidth,
+  sHeight
+) {
+  // set defaults per spec: https://goo.gl/3ykfOq
 
-    var defW = img.width;
-    var defH = img.height;
+  p5._validateParameters('image', arguments);
 
-    if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
-      defW = img.elt.videoWidth;
-      defH = img.elt.videoHeight;
-    }
+  var defW = img.width;
+  var defH = img.height;
 
-    var _dx = dx;
-    var _dy = dy;
-    var _dw = dWidth || defW;
-    var _dh = dHeight || defH;
-    var _sx = sx || 0;
-    var _sy = sy || 0;
-    var _sw = sWidth || defW;
-    var _sh = sHeight || defH;
+  if (img.elt && img.elt.videoWidth && !img.canvas) {
+    // video no canvas
+    defW = img.elt.videoWidth;
+    defH = img.elt.videoHeight;
+  }
 
-    _sw = _sAssign(_sw, defW);
-    _sh = _sAssign(_sh, defH);
+  var _dx = dx;
+  var _dy = dy;
+  var _dw = dWidth || defW;
+  var _dh = dHeight || defH;
+  var _sx = sx || 0;
+  var _sy = sy || 0;
+  var _sw = sWidth || defW;
+  var _sh = sHeight || defH;
 
+  _sw = _sAssign(_sw, defW);
+  _sh = _sAssign(_sh, defH);
 
-    // This part needs cleanup and unit tests
-    // see issues https://github.com/processing/p5.js/issues/1741
-    // and https://github.com/processing/p5.js/issues/1673
-    var pd = 1;
+  // This part needs cleanup and unit tests
+  // see issues https://github.com/processing/p5.js/issues/1741
+  // and https://github.com/processing/p5.js/issues/1673
+  var pd = 1;
 
-    if (img.elt && !img.canvas && img.elt.style.width) {
-      //if img is video and img.elt.size() has been used and
-      //no width passed to image()
-      if(img.elt.videoWidth && !dWidth){
-        pd = img.elt.videoWidth;
-      }
+  if (img.elt && !img.canvas && img.elt.style.width) {
+    //if img is video and img.elt.size() has been used and
+    //no width passed to image()
+    if (img.elt.videoWidth && !dWidth) {
+      pd = img.elt.videoWidth;
+    } else {
       //all other cases
-      else {
-        pd = img.elt.width;
-      }
-      pd /= parseInt(img.elt.style.width, 10);
+      pd = img.elt.width;
     }
+    pd /= parseInt(img.elt.style.width, 10);
+  }
 
-    _sx *= pd;
-    _sy *= pd;
-    _sh *= pd;
-    _sw *= pd;
+  _sx *= pd;
+  _sy *= pd;
+  _sh *= pd;
+  _sw *= pd;
 
-    var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
-    // tint the image if there is a tint
-    this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
-  };
-
+  // tint the image if there is a tint
+  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+};
 
 /**
  * Sets the fill value for displaying images. Images can be tinted to
@@ -291,10 +300,10 @@ p5.prototype.image =
  * To apply transparency to an image without affecting its color, use
  * white as the tint color and specify an alpha value. For instance,
  * tint(255, 128) will make an image 50% transparent (assuming the default
- * alpha range of 0-255, which can be changed with colorMode()).
+ * alpha range of 0-255, which can be changed with <a href="#/p5/colorMode">colorMode()</a>).
  * <br><br>
  * The value for the gray parameter must be less than or equal to the current
- * maximum value as specified by colorMode(). The default maximum value is
+ * maximum value as specified by <a href="#/p5/colorMode">colorMode()</a>. The default maximum value is
  * 255.
  *
  *
@@ -312,11 +321,11 @@ p5.prototype.image =
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
- *   tint(0, 153, 204);  // Tint blue
+ *   tint(0, 153, 204); // Tint blue
  *   image(img, 50, 0);
  * }
  * </code>
@@ -326,11 +335,11 @@ p5.prototype.image =
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
- *   tint(0, 153, 204, 126);  // Tint blue and set transparency
+ *   tint(0, 153, 204, 126); // Tint blue and set transparency
  *   image(img, 50, 0);
  * }
  * </code>
@@ -340,11 +349,11 @@ p5.prototype.image =
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
- *   tint(255, 126);  // Apply transparency without changing color
+ *   tint(255, 126); // Apply transparency without changing color
  *   image(img, 50, 0);
  * }
  * </code>
@@ -360,6 +369,11 @@ p5.prototype.image =
 /**
  * @method tint
  * @param  {String}        value   a color string
+ */
+
+/**
+ * @method tint
+ * @param  {Number}        gray   a gray value
  * @param  {Number}        [alpha]
  */
 
@@ -372,9 +386,9 @@ p5.prototype.image =
 /**
  * @method tint
  * @param  {p5.Color}      color   the tint color
- * @param  {Number}        [alpha]
  */
-p5.prototype.tint = function () {
+p5.prototype.tint = function() {
+  p5._validateParameters('tint', arguments);
   var c = this.color.apply(this, arguments);
   this._renderer._tint = c.levels;
 };
@@ -389,12 +403,12 @@ p5.prototype.tint = function () {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
- *   tint(0, 153, 204);  // Tint blue
+ *   tint(0, 153, 204); // Tint blue
  *   image(img, 0, 0);
- *   noTint();  // Disable tint
+ *   noTint(); // Disable tint
  *   image(img, 50, 0);
  * }
  * </code>
@@ -429,16 +443,16 @@ p5.prototype._getTintedImageCanvas = function(img) {
   var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
   var newPixels = id.data;
 
-  for(var i = 0; i < pixels.length; i += 4) {
+  for (var i = 0; i < pixels.length; i += 4) {
     var r = pixels[i];
-    var g = pixels[i+1];
-    var b = pixels[i+2];
-    var a = pixels[i+3];
+    var g = pixels[i + 1];
+    var b = pixels[i + 2];
+    var a = pixels[i + 3];
 
-    newPixels[i] = r*this._renderer._tint[0]/255;
-    newPixels[i+1] = g*this._renderer._tint[1]/255;
-    newPixels[i+2] = b*this._renderer._tint[2]/255;
-    newPixels[i+3] = a*this._renderer._tint[3]/255;
+    newPixels[i] = r * this._renderer._tint[0] / 255;
+    newPixels[i + 1] = g * this._renderer._tint[1] / 255;
+    newPixels[i + 2] = b * this._renderer._tint[2] / 255;
+    newPixels[i + 3] = a * this._renderer._tint[3] / 255;
   }
 
   tmpCtx.putImageData(id, 0, 0);
@@ -447,17 +461,17 @@ p5.prototype._getTintedImageCanvas = function(img) {
 
 /**
  * Set image mode. Modifies the location from which images are drawn by
- * changing the way in which parameters given to image() are interpreted.
+ * changing the way in which parameters given to <a href="#/p5/image">image()</a> are interpreted.
  * The default mode is imageMode(CORNER), which interprets the second and
- * third parameters of image() as the upper-left corner of the image. If
+ * third parameters of <a href="#/p5/image">image()</a> as the upper-left corner of the image. If
  * two additional parameters are specified, they are used to set the image's
  * width and height.
  * <br><br>
- * imageMode(CORNERS) interprets the second and third parameters of image()
+ * imageMode(CORNERS) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the location of one corner, and the fourth and fifth parameters as the
  * opposite corner.
  * <br><br>
- * imageMode(CENTER) interprets the second and third parameters of image()
+ * imageMode(CENTER) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the image's center point. If two additional parameters are specified,
  * they are used to set the image's width and height.
  *
@@ -469,7 +483,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
  *   imageMode(CORNER);
@@ -482,7 +496,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
  *   imageMode(CORNERS);
@@ -495,7 +509,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * <code>
  * var img;
  * function preload() {
- *   img = loadImage("assets/bricks.jpg");
+ *   img = loadImage('assets/bricks.jpg');
  * }
  * function setup() {
  *   imageMode(CENTER);
@@ -511,12 +525,14 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  */
 p5.prototype.imageMode = function(m) {
-  if (m === constants.CORNER ||
+  p5._validateParameters('imageMode', arguments);
+  if (
+    m === constants.CORNER ||
     m === constants.CORNERS ||
-    m === constants.CENTER) {
+    m === constants.CENTER
+  ) {
     this._renderer._imageMode = m;
   }
 };
-
 
 module.exports = p5;

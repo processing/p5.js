@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Color');
 require('../core/error_helpers');
@@ -17,16 +17,17 @@ require('../core/error_helpers');
  * Extracts the alpha value from a color or pixel array.
  *
  * @method alpha
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the alpha value
  * @example
  * <div>
  * <code>
  * noStroke();
- * c = color(0, 126, 255, 102);
+ * var c = color(0, 126, 255, 102);
  * fill(c);
  * rect(15, 15, 35, 70);
- * value = alpha(c);  // Sets 'value' to 102
+ * var value = alpha(c); // Sets 'value' to 102
  * fill(value);
  * rect(50, 15, 35, 70);
  * </code>
@@ -61,19 +62,20 @@ p5.prototype.alpha = function(c) {
  * Extracts the blue value from a color or pixel array.
  *
  * @method blue
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the blue value
  * @example
  * <div>
  * <code>
- * c = color(175, 100, 220);  // Define color 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * rect(15, 20, 35, 60);  // Draw left rectangle
+ * var c = color(175, 100, 220); // Define color 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * blueValue = blue(c);  // Get blue in 'c'
- * print(blueValue);  // Prints "220.0"
- * fill(0, 0, blueValue);  // Use 'blueValue' in new fill
- * rect(50, 20, 35, 60);  // Draw right rectangle
+ * var blueValue = blue(c); // Get blue in 'c'
+ * print(blueValue); // Prints "220.0"
+ * fill(0, 0, blueValue); // Use 'blueValue' in new fill
+ * rect(50, 20, 35, 60); // Draw right rectangle
  * </code>
  * </div>
  *
@@ -90,17 +92,18 @@ p5.prototype.blue = function(c) {
  * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the brightness value
  * @example
  * <div>
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * c = color(0, 126, 255);
+ * var c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * value = brightness(c);  // Sets 'value' to 255
+ * var value = brightness(c); // Sets 'value' to 255
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -118,11 +121,11 @@ p5.prototype.brightness = function(c) {
 /**
  * Creates colors for storing in variables of the color datatype. The
  * parameters are interpreted as RGB or HSB values depending on the
- * current colorMode(). The default mode is RGB values from 0 to 255
+ * current <a href="#/p5/colorMode">colorMode()</a>. The default mode is RGB values from 0 to 255
  * and, therefore, the function call color(255, 204, 0) will return a
  * bright yellow color.
  * <br><br>
- * Note that if only one value is provided to color(), it will be interpreted
+ * Note that if only one value is provided to <a href="#/p5/color">color()</a>, it will be interpreted
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
  * either RGB or HSB values. Adding a fourth value applies alpha
@@ -143,25 +146,25 @@ p5.prototype.brightness = function(c) {
  * @example
  * <div>
  * <code>
- * var c = color(255, 204, 0);  // Define color 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * noStroke();  // Don't draw a stroke around shapes
- * rect(30, 20, 55, 55);  // Draw rectangle
+ * var c = color(255, 204, 0); // Define color 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * noStroke(); // Don't draw a stroke around shapes
+ * rect(30, 20, 55, 55); // Draw rectangle
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * var c = color(255, 204, 0);  // Define color 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * noStroke();  // Don't draw a stroke around shapes
- * ellipse(25, 25, 80, 80);  // Draw left circle
+ * var c = color(255, 204, 0); // Define color 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * noStroke(); // Don't draw a stroke around shapes
+ * ellipse(25, 25, 80, 80); // Draw left circle
  *
  * // Using only one value with color()
  * // generates a grayscale value.
- * var c = color(65);  // Update 'c' with grayscale value
- * fill(c);  // Use updated 'c' as fill color
- * ellipse(75, 75, 80, 80);  // Draw right circle
+ * c = color(65); // Update 'c' with grayscale value
+ * fill(c); // Use updated 'c' as fill color
+ * ellipse(75, 75, 80, 80); // Draw right circle
  * </code>
  * </div>
  *
@@ -169,23 +172,23 @@ p5.prototype.brightness = function(c) {
  * <code>
  * // Named SVG & CSS colors may be used,
  * var c = color('magenta');
- * fill(c);  // Use 'c' as fill color
- * noStroke();  // Don't draw a stroke around shapes
- * rect(20, 20, 60, 60);  // Draw rectangle
+ * fill(c); // Use 'c' as fill color
+ * noStroke(); // Don't draw a stroke around shapes
+ * rect(20, 20, 60, 60); // Draw rectangle
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * // as can hex color codes:
- * noStroke();  // Don't draw a stroke around shapes
+ * noStroke(); // Don't draw a stroke around shapes
  * var c = color('#0f0');
- * fill(c);  // Use 'c' as fill color
- * rect(0, 10, 45, 80);  // Draw rectangle
+ * fill(c); // Use 'c' as fill color
+ * rect(0, 10, 45, 80); // Draw rectangle
  *
  * c = color('#00ff00');
- * fill(c);  // Use updated 'c' as fill color
- * rect(55, 10, 45, 80);  // Draw rectangle
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 10, 45, 80); // Draw rectangle
  * </code>
  * </div>
  *
@@ -194,22 +197,22 @@ p5.prototype.brightness = function(c) {
  * // RGB and RGBA color strings are also supported:
  * // these all set to the same color (solid blue)
  * var c;
- * noStroke();  // Don't draw a stroke around shapes
+ * noStroke(); // Don't draw a stroke around shapes
  * c = color('rgb(0,0,255)');
  * fill(c); // Use 'c' as fill color
- * rect(10, 10, 35, 35);  // Draw rectangle
+ * rect(10, 10, 35, 35); // Draw rectangle
  *
  * c = color('rgb(0%, 0%, 100%)');
  * fill(c); // Use updated 'c' as fill color
- * rect(55, 10, 35, 35);  // Draw rectangle
+ * rect(55, 10, 35, 35); // Draw rectangle
  *
  * c = color('rgba(0, 0, 255, 1)');
  * fill(c); // Use updated 'c' as fill color
- * rect(10, 55, 35, 35);  // Draw rectangle
+ * rect(10, 55, 35, 35); // Draw rectangle
  *
  * c = color('rgba(0%, 0%, 100%, 1)');
  * fill(c); // Use updated 'c' as fill color
- * rect(55, 55, 35, 35);  // Draw rectangle
+ * rect(55, 55, 35, 35); // Draw rectangle
  * </code>
  * </div>
  *
@@ -218,14 +221,14 @@ p5.prototype.brightness = function(c) {
  * // HSL color is also supported and can be specified
  * // by value
  * var c;
- * noStroke();  // Don't draw a stroke around shapes
+ * noStroke(); // Don't draw a stroke around shapes
  * c = color('hsl(160, 100%, 50%)');
- * fill(c);  // Use 'c' as fill color
- * rect(0, 10, 45, 80);  // Draw rectangle
+ * fill(c); // Use 'c' as fill color
+ * rect(0, 10, 45, 80); // Draw rectangle
  *
  * c = color('hsla(160, 100%, 50%, 0.5)');
  * fill(c); // Use updated 'c' as fill color
- * rect(55, 10, 45, 80);  // Draw rectangle
+ * rect(55, 10, 45, 80); // Draw rectangle
  * </code>
  * </div>
  *
@@ -234,32 +237,32 @@ p5.prototype.brightness = function(c) {
  * // HSB color is also supported and can be specified
  * // by value
  * var c;
- * noStroke();  // Don't draw a stroke around shapes
+ * noStroke(); // Don't draw a stroke around shapes
  * c = color('hsb(160, 100%, 50%)');
- * fill(c);  // Use 'c' as fill color
- * rect(0, 10, 45, 80);  // Draw rectangle
+ * fill(c); // Use 'c' as fill color
+ * rect(0, 10, 45, 80); // Draw rectangle
  *
  * c = color('hsba(160, 100%, 50%, 0.5)');
  * fill(c); // Use updated 'c' as fill color
- * rect(55, 10, 45, 80);  // Draw rectangle
+ * rect(55, 10, 45, 80); // Draw rectangle
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * var c;  // Declare color 'c'
- * noStroke();  // Don't draw a stroke around shapes
+ * var c; // Declare color 'c'
+ * noStroke(); // Don't draw a stroke around shapes
  *
  * // If no colorMode is specified, then the
  * // default of RGB with scale of 0-255 is used.
- * c = color(50, 55, 100);  // Create a color for 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * rect(0, 10, 45, 80);  // Draw left rect
+ * c = color(50, 55, 100); // Create a color for 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * rect(0, 10, 45, 80); // Draw left rect
  *
- * colorMode(HSB, 100);  // Use HSB with scale of 0-100
- * c = color(50, 55, 100);  // Update 'c' with new color
- * fill(c);  // Use updated 'c' as fill color
- * rect(55, 10, 45, 80);  // Draw right rect
+ * colorMode(HSB, 100); // Use HSB with scale of 0-100
+ * c = color(50, 55, 100); // Update 'c' with new color
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 10, 45, 80); // Draw right rect
  * </code>
  * </div>
  *
@@ -289,12 +292,11 @@ p5.prototype.brightness = function(c) {
 /**
  * @method color
  * @param  {String}        value   a color string
- * @param  {Number}        [alpha]
  * @return {p5.Color}
  */
 /**
  * @method color
- * @param  {Array}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
  * @return {p5.Color}
  */
@@ -305,41 +307,33 @@ p5.prototype.brightness = function(c) {
  */
 
 p5.prototype.color = function() {
+  p5._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
-    return arguments[0];  // Do nothing if argument is already a color object.
-  } else if (arguments[0] instanceof Array) {
-    if (this instanceof p5.Renderer) {
-      return new p5.Color(this, arguments[0]);
-    } else {
-      return new p5.Color(this._renderer, arguments[0]);
-    }
-  } else {
-    p5._validateParameters('color', arguments);
-    if (this instanceof p5.Renderer) {
-      return new p5.Color(this, arguments);
-    } else {
-      return new p5.Color(this._renderer, arguments);
-    }
+    return arguments[0]; // Do nothing if argument is already a color object.
   }
+
+  var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+  return new p5.Color(this, args);
 };
 
 /**
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the green value
  * @example
  * <div>
  * <code>
- * c = color(20, 75, 200);  // Define color 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * rect(15, 20, 35, 60);  // Draw left rectangle
+ * var c = color(20, 75, 200); // Define color 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * greenValue = green(c);  // Get green in 'c'
- * print(greenValue);  // Print "75.0"
- * fill(0, greenValue, 0);  // Use 'greenValue' in new fill
- * rect(50, 20, 35, 60);  // Draw right rectangle
+ * var greenValue = green(c); // Get green in 'c'
+ * print(greenValue); // Print "75.0"
+ * fill(0, greenValue, 0); // Use 'greenValue' in new fill
+ * rect(50, 20, 35, 60); // Draw right rectangle
  * </code>
  * </div>
  *
@@ -363,17 +357,18 @@ p5.prototype.green = function(c) {
  * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the hue
  * @example
  * <div>
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * c = color(0, 126, 255);
+ * var c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * value = hue(c);  // Sets 'value' to "0"
+ * var value = hue(c); // Sets 'value' to "0"
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -394,7 +389,7 @@ p5.prototype.hue = function(c) {
  * parameter is the amount to interpolate between the two values where 0.0
  * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
  * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
- * above 1 will be capped at 1. This is different from the behavior of lerp(),
+ * above 1 will be capped at 1. This is different from the behavior of <a href="#/p5/lerp">lerp()</a>,
  * but necessary because otherwise numbers outside the range will produce
  * strange and unexpected colors.
  * <br><br>
@@ -411,11 +406,11 @@ p5.prototype.hue = function(c) {
  * colorMode(RGB);
  * stroke(255);
  * background(51);
- * from = color(218, 165, 32);
- * to = color(72, 61, 139);
- * colorMode(RGB);  // Try changing to HSB.
- * interA = lerpColor(from, to, .33);
- * interB = lerpColor(from, to, .66);
+ * var from = color(218, 165, 32);
+ * var to = color(72, 61, 139);
+ * colorMode(RGB); // Try changing to HSB.
+ * var interA = lerpColor(from, to, 0.33);
+ * var interB = lerpColor(from, to, 0.66);
  * fill(from);
  * rect(10, 20, 20, 60);
  * fill(interA);
@@ -434,40 +429,40 @@ p5.prototype.hue = function(c) {
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
-  var mode = this._renderer._colorMode;
-  var maxes = this._renderer._colorMaxes;
+  var mode = this._colorMode;
+  var maxes = this._colorMaxes;
   var l0, l1, l2, l3;
   var fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = arguments[0].levels.map(function(level) {
+    fromArray = c1.levels.map(function(level) {
       return level / 255;
     });
-    toArray = arguments[1].levels.map(function(level) {
+    toArray = c2.levels.map(function(level) {
       return level / 255;
     });
   } else if (mode === constants.HSB) {
-    arguments[0]._getBrightness();  // Cache hsba so it definitely exists.
-    arguments[1]._getBrightness();
-    fromArray = arguments[0].hsba;
-    toArray = arguments[1].hsba;
+    c1._getBrightness(); // Cache hsba so it definitely exists.
+    c2._getBrightness();
+    fromArray = c1.hsba;
+    toArray = c2.hsba;
   } else if (mode === constants.HSL) {
-    arguments[0]._getLightness();  // Cache hsla so it definitely exists.
-    arguments[1]._getLightness();
-    fromArray = arguments[0].hsla;
-    toArray = arguments[1].hsla;
+    c1._getLightness(); // Cache hsla so it definitely exists.
+    c2._getLightness();
+    fromArray = c1.hsla;
+    toArray = c2.hsla;
   } else {
-    throw new Error (mode + 'cannot be used for interpolation.');
+    throw new Error(mode + 'cannot be used for interpolation.');
   }
 
   // Prevent extrapolation.
-  amt = Math.max(Math.min(arguments[2], 1), 0);
+  amt = Math.max(Math.min(amt, 1), 0);
 
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
-  if(typeof this.lerp === 'undefined') {
-    this.lerp = function (start, stop, amt) {
-      return amt*(stop-start)+start;
+  if (typeof this.lerp === 'undefined') {
+    this.lerp = function(start, stop, amt) {
+      return amt * (stop - start) + start;
     };
   }
 
@@ -490,17 +485,18 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the lightness
  * @example
  * <div>
  * <code>
  * noStroke();
  * colorMode(HSL);
- * c = color(156, 100, 50, 1);
+ * var c = color(156, 100, 50, 1);
  * fill(c);
  * rect(15, 20, 35, 60);
- * value = lightness(c);  // Sets 'value' to 50
+ * var value = lightness(c); // Sets 'value' to 50
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -519,19 +515,20 @@ p5.prototype.lightness = function(c) {
  * Extracts the red value from a color or pixel array.
  *
  * @method red
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the red value
  * @example
  * <div>
  * <code>
- * c = color(255, 204, 0);  // Define color 'c'
- * fill(c);  // Use color variable 'c' as fill color
- * rect(15, 20, 35, 60);  // Draw left rectangle
+ * var c = color(255, 204, 0); // Define color 'c'
+ * fill(c); // Use color variable 'c' as fill color
+ * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * redValue = red(c);  // Get red in 'c'
- * print(redValue);  // Print "255.0"
- * fill(redValue, 0, 0);  // Use 'redValue' in new fill
- * rect(50, 20, 35, 60);  // Draw right rectangle
+ * var redValue = red(c); // Get red in 'c'
+ * print(redValue); // Print "255.0"
+ * fill(redValue, 0, 0); // Use 'redValue' in new fill
+ * rect(50, 20, 35, 60); // Draw right rectangle
  * </code>
  * </div>
  *
@@ -563,17 +560,18 @@ p5.prototype.red = function(c) {
  * HSL saturation otherwise.
  *
  * @method saturation
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, color components,
+ *                                         or CSS color
  * @return {Number} the saturation value
  * @example
  * <div>
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * c = color(0, 126, 255);
+ * var c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * value = saturation(c);  // Sets 'value' to 126
+ * var value = saturation(c); // Sets 'value' to 126
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>

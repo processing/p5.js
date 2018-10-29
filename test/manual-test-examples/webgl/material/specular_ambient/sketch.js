@@ -1,12 +1,12 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(255);
 
-  var locY = (mouseY / height - 0.5) * (-2);
-  var locX = (mouseX / width - 0.5) *2;
+  var locY = mouseY - height / 2;
+  var locX = mouseX - width / 2;
 
   ambientLight(100, 80, 80);
   pointLight(200, 200, 200, locX, locY, 0);
@@ -28,6 +28,4 @@ function draw(){
   rotateY(frameCount * 0.02);
   torus(81, 20, 64, 64);
   pop();
-
-
 }

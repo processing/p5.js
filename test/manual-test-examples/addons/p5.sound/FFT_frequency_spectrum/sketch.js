@@ -1,19 +1,18 @@
 /**
  * This example draws the frequency spectrum of a sound by using
  * the p5.FFT object's analyze() method.
- * 
+ *
  * FFT is a Fast Fourier Transform function that calculates
  * amplitude across the frequency spectrum. The analyze() method returns
  * an array of values. These values represent how much volume exists in a
  * sound at various frequencies (or pitches). The beginning of the
  * array represents the lowest frequencies (bass), and the end of the
  * array represents the highest frequencies (treble).
- * 
+ *
  * By default, the array length is 1024. We can determine the size of the array by including
  * an optional parameter, but the number must be a power of 2 between
  * 16 and 1024.
  */
-
 
 var soundFile;
 var fft;
@@ -25,10 +24,9 @@ var p;
 // This will be an array of amplitude values from lowest to highest frequencies
 var frequencySpectrum = [];
 
-
 function preload() {
   soundFormats('mp3', 'ogg');
-  soundFile = loadSound('../_files/lucky_dragons_-_power_melody');
+  soundFile = loadSound('../_files/lucky_dragons');
 }
 
 function setup() {
@@ -42,10 +40,12 @@ function setup() {
 
   // update description text
   p = createP(description);
-  var p2 = createP('Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.');
+  var p2 = createP(
+    'Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.'
+  );
 
   // set the master volume;
-  masterVolume(.5);
+  masterVolume(0.5);
 }
 
 function draw() {
@@ -54,7 +54,7 @@ function draw() {
   // update the description if the sound is playing
   updateDescription();
 
-  /** 
+  /**
    * Analyze the sound.
    * Return array of frequency volumes, from lowest to highest frequencies.
    */
@@ -62,31 +62,28 @@ function draw() {
 
   // Draw every value in the frequencySpectrum array as a rectangle
   noStroke();
-  for (var i = 0; i< fftBands; i++){
+  for (var i = 0; i < fftBands; i++) {
     var x = map(i, 0, fftBands, 0, width);
     var h = -height + map(frequencySpectrum[i], 0, 255, height, 0);
-    rect(x, height, width/fftBands, h) ;
+    rect(x, height, width / fftBands, h);
   }
 }
-
 
 // Change description text if the song is loading, playing or paused
 function updateDescription() {
   if (soundFile.isPaused()) {
     description = 'Paused...';
     p.html(description);
-  }
-  else if (soundFile.isPlaying()){
+  } else if (soundFile.isPlaying()) {
     description = 'Playing! Press any key to pause';
     p.html(description);
-  }
-  else {
-    for (var i = 0; i < frameCount%3; i++ ) {
+  } else {
+    for (var i = 0; i < frameCount % 3; i++) {
       // add periods to loading to create a fun loading bar effect
-      if (frameCount%4 == 0){
+      if (frameCount % 4 === 0) {
         description += '.';
       }
-      if (frameCount%25 == 0) {
+      if (frameCount % 25 === 0) {
         description = 'loading';
       }
     }
@@ -96,7 +93,7 @@ function updateDescription() {
 
 // pause the song if a key is pressed
 function keyPressed() {
-  if (soundFile.isPlaying()){
+  if (soundFile.isPlaying()) {
     soundFile.pause();
   } else {
     soundFile.play();

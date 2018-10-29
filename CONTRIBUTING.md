@@ -1,28 +1,9 @@
-### The github issues are for bugs and feature requests for the p5.js library itself. If you have a general question or bug programming with p5.js please post it in the [p5.js forum](https://forum.processing.org/two/).
+Hi there! Welcome to p5.js contributing! Here are a few things to know:
 
-### Please make sure you are posting to the right repository. See this [section](https://github.com/processing/p5.js/blob/master/README.md#issues) for a list of all p5.js repositories.
+The github issues are for bugs and feature requests for the p5.js library itself. If you have a general question or bug programming with p5.js please post it in the [p5.js forum](https://forum.processing.org/two/).
 
-## p5.js Code of Conduct
+Please make sure you are posting to the correct repository. See this [section](https://github.com/processing/p5.js/blob/master/README.md#issues) for a list of all p5.js repositories.
 
-* **Be mindful of your language.** Any of the following behavior is unacceptable: 
-  * Offensive comments related to gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, or background
-  * Threats of violence
-  * Deliberate intimidation
-  * Sexually explicit or violent material
-  * Unwelcome sexual attention
-  * Stalking or following
-  * Or any other kinds of harassment
+Please be sure to review our [community statement and code of conduct](https://github.com/processing/p5.js/blob/master/CODE_OF_CONDUCT.md). These things are very important to us.
 
-  Use your best judgement. If it will possibly make others uncomfortable, do not post it.
-
-* **Be respectful.** Disagreement is not an opportunity to attack someone else's thoughts or opinions. Although views may differ, remember to approach every situation with patience and care. 
-* **Be considerate.** Think about how your contribution will affect others in the community. 
-* **Be open minded.** Embrace new people and new ideas. Our community is continually evolving and we welcome positive change.
-
-If you believe someone is violating the code of conduct, we ask that you report it by emailing [hello@p5js.org](mailto:hello@p5js.org). Please include your name and a description of the incident, and we will get back to you ASAP.
-
-Participants asked to stop any harassing behavior are expected to comply immediately. If a participant engages in harassing behavior, the p5.js Team may take any action they deem appropriate, up to and including expulsion from all p5.js spaces and identification of the participant as a harasser to other p5.js members or the general public. 
-
-## Also
-* You can read our [community statement](http://p5js.org/community/) on our website.
-* Check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
+Check out the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/) for more in-depth details about contributing code, bug fixes, and documentation.

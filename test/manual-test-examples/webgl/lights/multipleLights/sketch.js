@@ -1,12 +1,12 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
-function draw(){
+function draw() {
   background(0);
 
-  var locY = (mouseY / height - 0.5) * (-2);
-  var locX = (mouseX / width - 0.5) *2;
+  var locY = mouseY - height / 2;
+  var locX = mouseX - width / 2;
 
   ambientLight(50);
   directionalLight(200, 0, 0, 0.25, 0.25, 0.25);

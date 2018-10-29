@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * The system variable deviceOrientation always contains the orientation of
@@ -82,7 +82,7 @@ p5.prototype.pAccelerationZ = 0;
  *
  * @private
  */
-p5.prototype._updatePAccelerations = function(){
+p5.prototype._updatePAccelerations = function() {
   this._setProperty('pAccelerationX', this.accelerationX);
   this._setProperty('pAccelerationY', this.accelerationY);
   this._setProperty('pAccelerationZ', this.accelerationZ);
@@ -99,11 +99,11 @@ p5.prototype._updatePAccelerations = function(){
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   //rotateZ(radians(rotationZ));
  *   rotateX(radians(rotationX));
@@ -133,11 +133,11 @@ p5.prototype.rotationX = 0;
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   //rotateZ(radians(rotationZ));
  *   //rotateX(radians(rotationX));
@@ -169,11 +169,11 @@ p5.prototype.rotationY = 0;
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateZ(radians(rotationZ));
  *   //rotateX(radians(rotationX));
@@ -217,11 +217,13 @@ p5.prototype.rotationZ = 0;
  * var rX = rotationX + 180;
  * var pRX = pRotationX + 180;
  *
- * if ((rX - pRX > 0 && rX - pRX < 270)|| rX - pRX < -270){
+ * if ((rX - pRX > 0 && rX - pRX < 270) || rX - pRX < -270) {
  *   rotateDirection = 'clockwise';
- * } else if (rX - pRX < 0 || rX - pRX > 270){
+ * } else if (rX - pRX < 0 || rX - pRX > 270) {
  *   rotateDirection = 'counter-clockwise';
  * }
+ *
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -260,11 +262,12 @@ p5.prototype.pRotationX = 0;
  * var rY = rotationY + 180;
  * var pRY = pRotationY + 180;
  *
- * if ((rY - pRY > 0 && rY - pRY < 270)|| rY - pRY < -270){
+ * if ((rY - pRY > 0 && rY - pRY < 270) || rY - pRY < -270) {
  *   rotateDirection = 'clockwise';
- * } else if (rY - pRY < 0 || rY - pRY > 270){
+ * } else if (rY - pRY < 0 || rY - pRY > 270) {
  *   rotateDirection = 'counter-clockwise';
  * }
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -296,18 +299,15 @@ p5.prototype.pRotationY = 0;
  * // the angles wrap around.
  * var rotateDirection = 'clockwise';
  *
- * if ((rotationZ - pRotationZ > 0 &&
- *   rotationZ - pRotationZ < 270)||
- *   rotationZ - pRotationZ < -270){
- *
+ * if (
+ *   (rotationZ - pRotationZ > 0 && rotationZ - pRotationZ < 270) ||
+ *   rotationZ - pRotationZ < -270
+ * ) {
  *   rotateDirection = 'clockwise';
- *
- * } else if (rotationZ - pRotationZ < 0 ||
- *   rotationZ - pRotationZ > 270){
- *
+ * } else if (rotationZ - pRotationZ < 0 || rotationZ - pRotationZ > 270) {
  *   rotateDirection = 'counter-clockwise';
- *
  * }
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -332,15 +332,45 @@ var pRotateDirectionX;
 var pRotateDirectionY;
 var pRotateDirectionZ;
 
-p5.prototype._updatePRotations = function(){
+p5.prototype._updatePRotations = function() {
   this._setProperty('pRotationX', this.rotationX);
   this._setProperty('pRotationY', this.rotationY);
   this._setProperty('pRotationZ', this.rotationZ);
 };
 
 /**
+ * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a>
+ * method is stored in the turnAxis variable. The turnAxis variable is only defined within
+ * the scope of deviceTurned().
  * @property {String} turnAxis
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Rotate the device by 90 degrees in the
+ * // X-axis to change the value.
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceTurned() {
+ *   if (turnAxis === 'X') {
+ *     if (value === 0) {
+ *       value = 255;
+ *     } else if (value === 255) {
+ *       value = 0;
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device turns
+ * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
  */
 p5.prototype.turnAxis = undefined;
 
@@ -348,33 +378,94 @@ var move_threshold = 0.5;
 var shake_threshold = 30;
 
 /**
- * The setMoveThreshold() function is used to set the movement threshold for
- * the deviceMoved() function. The default threshold is set to 0.5.
+ * The <a href="#/p5/setMoveThreshold">setMoveThreshold()</a> function is used to set the movement threshold for
+ * the <a href="#/p5/deviceMoved">deviceMoved()</a> function. The default threshold is set to 0.5.
  *
  * @method setMoveThreshold
  * @param {number} value The threshold value
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Run this example on a mobile device
+ * // You will need to move the device incrementally further
+ * // the closer the square's color gets to white in order to change the value.
+ *
+ * var value = 0;
+ * var threshold = 0.5;
+ * function setup() {
+ *   setMoveThreshold(threshold);
+ * }
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceMoved() {
+ *   value = value + 5;
+ *   threshold = threshold + 0.1;
+ *   if (value > 255) {
+ *     value = 0;
+ *     threshold = 30;
+ *   }
+ *   setMoveThreshold(threshold);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device moves
  */
-p5.prototype.setMoveThreshold = function(val){
-  if(typeof val === 'number'){
-    move_threshold = val;
-  }
+
+p5.prototype.setMoveThreshold = function(val) {
+  p5._validateParameters('setMoveThreshold', arguments);
+  move_threshold = val;
 };
 
 /**
- * The setShakeThreshold() function is used to set the movement threshold for
- * the deviceShaken() function. The default threshold is set to 30.
+ * The <a href="#/p5/setShakeThreshold">setShakeThreshold()</a> function is used to set the movement threshold for
+ * the <a href="#/p5/deviceShaken">deviceShaken()</a> function. The default threshold is set to 30.
  *
  * @method setShakeThreshold
  * @param {number} value The threshold value
+ * @example
+ * <div class="norender">
+ * <code>
+ * // Run this example on a mobile device
+ * // You will need to shake the device more firmly
+ * // the closer the box's fill gets to white in order to change the value.
+ *
+ * var value = 0;
+ * var threshold = 30;
+ * function setup() {
+ *   setShakeThreshold(threshold);
+ * }
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceMoved() {
+ *   value = value + 5;
+ *   threshold = threshold + 5;
+ *   if (value > 255) {
+ *     value = 0;
+ *     threshold = 30;
+ *   }
+ *   setShakeThreshold(threshold);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device
+ * is being shaked
  */
-p5.prototype.setShakeThreshold = function(val){
-  if(typeof val === 'number'){
-    shake_threshold = val;
-  }
+
+p5.prototype.setShakeThreshold = function(val) {
+  p5._validateParameters('setShakeThreshold', arguments);
+  shake_threshold = val;
 };
 
 /**
- * The deviceMoved() function is called when the device is moved by more than
+ * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
  * the threshold value along X, Y or Z axis. The default threshold is set to
  * 0.5.
  * @method deviceMoved
@@ -405,11 +496,11 @@ p5.prototype.setShakeThreshold = function(val){
  */
 
 /**
- * The deviceTurned() function is called when the device rotates by
+ * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
  * more than 90 degrees continuously.
  * <br><br>
- * The axis that triggers the deviceTurned() method is stored in the turnAxis
- * variable. The deviceTurned() method can be locked to trigger on any axis:
+ * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the turnAxis
+ * variable. The <a href="#/p5/deviceTurned">deviceTurned()</a> method can be locked to trigger on any axis:
  * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
  *
  * @method deviceTurned
@@ -426,9 +517,9 @@ p5.prototype.setShakeThreshold = function(val){
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   if (value == 0){
- *     value = 255
- *   } else if (value == 255) {
+ *   if (value === 0) {
+ *     value = 255;
+ *   } else if (value === 255) {
  *     value = 0;
  *   }
  * }
@@ -446,10 +537,10 @@ p5.prototype.setShakeThreshold = function(val){
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   if (turnAxis == 'X'){
- *     if (value == 0){
- *       value = 255
- *     } else if (value == 255) {
+ *   if (turnAxis === 'X') {
+ *     if (value === 0) {
+ *       value = 255;
+ *     } else if (value === 255) {
  *       value = 0;
  *     }
  *   }
@@ -464,7 +555,7 @@ p5.prototype.setShakeThreshold = function(val){
  */
 
 /**
- * The deviceShaken() function is called when the device total acceleration
+ * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
  * changes of accelerationX and accelerationY values is more than
  * the threshold value. The default threshold is set to 30.
  * @method deviceShaken
@@ -493,14 +584,14 @@ p5.prototype.setShakeThreshold = function(val){
  *
  */
 
-p5.prototype._ondeviceorientation = function (e) {
+p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);
   this._handleMotion();
 };
-p5.prototype._ondevicemotion = function (e) {
+p5.prototype._ondevicemotion = function(e) {
   this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
@@ -517,9 +608,11 @@ p5.prototype._handleMotion = function() {
   }
   var deviceMoved = this.deviceMoved || window.deviceMoved;
   if (typeof deviceMoved === 'function') {
-    if (Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
+    if (
+      Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
       Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
-      Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold) {
+      Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
+    ) {
       deviceMoved();
     }
   }
@@ -532,15 +625,15 @@ p5.prototype._handleMotion = function() {
     var wRX = this.rotationX + 180;
     var wPRX = this.pRotationX + 180;
     var wSAX = startAngleX + 180;
-    if ((wRX - wPRX > 0 && wRX - wPRX < 270)|| wRX - wPRX < -270){
+    if ((wRX - wPRX > 0 && wRX - wPRX < 270) || wRX - wPRX < -270) {
       rotateDirectionX = 'clockwise';
-    } else if (wRX - wPRX < 0 || wRX - wPRX > 270){
+    } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
       rotateDirectionX = 'counter-clockwise';
     }
-    if (rotateDirectionX !== pRotateDirectionX){
+    if (rotateDirectionX !== pRotateDirectionX) {
       wSAX = wRX;
     }
-    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
+    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
       wSAX = wRX;
       this._setProperty('turnAxis', 'X');
       deviceTurned();
@@ -552,15 +645,15 @@ p5.prototype._handleMotion = function() {
     var wRY = this.rotationY + 180;
     var wPRY = this.pRotationY + 180;
     var wSAY = startAngleY + 180;
-    if ((wRY - wPRY > 0 && wRY - wPRY < 270)|| wRY - wPRY < -270){
+    if ((wRY - wPRY > 0 && wRY - wPRY < 270) || wRY - wPRY < -270) {
       rotateDirectionY = 'clockwise';
-    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270){
+    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
       rotateDirectionY = 'counter-clockwise';
     }
-    if (rotateDirectionY !== pRotateDirectionY){
+    if (rotateDirectionY !== pRotateDirectionY) {
       wSAY = wRY;
     }
-    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
+    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
       wSAY = wRY;
       this._setProperty('turnAxis', 'Y');
       deviceTurned();
@@ -570,19 +663,25 @@ p5.prototype._handleMotion = function() {
 
     // Z-axis is already in the range 0 to 360
     // so no conversion is needed.
-    if ((this.rotationZ - this.pRotationZ > 0 &&
-      this.rotationZ - this.pRotationZ < 270)||
-      this.rotationZ - this.pRotationZ < -270){
+    if (
+      (this.rotationZ - this.pRotationZ > 0 &&
+        this.rotationZ - this.pRotationZ < 270) ||
+      this.rotationZ - this.pRotationZ < -270
+    ) {
       rotateDirectionZ = 'clockwise';
-    } else if (this.rotationZ - this.pRotationZ < 0 ||
-      this.rotationZ - this.pRotationZ > 270){
+    } else if (
+      this.rotationZ - this.pRotationZ < 0 ||
+      this.rotationZ - this.pRotationZ > 270
+    ) {
       rotateDirectionZ = 'counter-clockwise';
     }
-    if (rotateDirectionZ !== pRotateDirectionZ){
+    if (rotateDirectionZ !== pRotateDirectionZ) {
       startAngleZ = this.rotationZ;
     }
-    if (Math.abs(this.rotationZ - startAngleZ) > 90 &&
-      Math.abs(this.rotationZ - startAngleZ) < 270){
+    if (
+      Math.abs(this.rotationZ - startAngleZ) > 90 &&
+      Math.abs(this.rotationZ - startAngleZ) < 270
+    ) {
       startAngleZ = this.rotationZ;
       this._setProperty('turnAxis', 'Z');
       deviceTurned();
@@ -604,6 +703,5 @@ p5.prototype._handleMotion = function() {
     }
   }
 };
-
 
 module.exports = p5;

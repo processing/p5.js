@@ -1,13 +1,13 @@
-function setup(){
+function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   //cylinder(50, 50);
 }
 
 var theta = 0;
 
-function draw(){
+function draw() {
   background(255, 255, 255, 255);
-  translate(-width/2, 0, 0);
+  translate(-width / 2, 0, 0);
   normalMaterial();
   push();
   rotateZ(theta * mouseX * 0.001);

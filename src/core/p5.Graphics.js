@@ -4,7 +4,9 @@
  * @for p5
  */
 
-var p5 = require('./core');
+'use strict';
+
+var p5 = require('./main');
 var constants = require('./constants');
 
 /**
@@ -15,7 +17,6 @@ var constants = require('./constants');
  * extensive, but mirror the normal drawing API for p5.
  *
  * @class p5.Graphics
- * @constructor
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height
@@ -23,29 +24,13 @@ var constants = require('./constants');
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-
   var r = renderer || constants.P2D;
 
   this.canvas = document.createElement('canvas');
-  var node = this._userNode || document.body;
+  var node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
   p5.Element.call(this, this.canvas, pInst, false);
-  this._styles = [];
-  this.width = w;
-  this.height = h;
-  this._pixelDensity = pInst._pixelDensity;
-
-  if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(this.canvas, this, false);
-  } else {
-    this._renderer = new p5.Renderer2D(this.canvas, this, false);
-  }
-
-  this._renderer.resize(w, h);
-  this._renderer._applyDefaults();
-
-  pInst._elements.push(this);
 
   // bind methods and props of p5 to the new object
   for (var p in p5.prototype) {
@@ -57,18 +42,88 @@ p5.Graphics = function(w, h, renderer, pInst) {
       }
     }
   }
-  this.name = 'p5.Graphics';   // for friendly debugger system
+
+  p5.prototype._initializeInstanceVariables.apply(this);
+  this.width = w;
+  this.height = h;
+  this._pixelDensity = pInst._pixelDensity;
+
+  if (r === constants.WEBGL) {
+    this._renderer = new p5.RendererGL(this.canvas, this, false);
+  } else {
+    this._renderer = new p5.Renderer2D(this.canvas, this, false);
+  }
+  pInst._elements.push(this);
+
+  this._renderer.resize(w, h);
+  this._renderer._applyDefaults();
   return this;
 };
 
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
 /**
+ * Removes a Graphics object from the page and frees any resources
+ * associated with it.
+ *
  * @method remove
+ *
+ * @example
+ * <div class='norender'><code>
+ * var bg;
+ * function setup() {
+ *   bg = createCanvas(100, 100);
+ *   bg.background(0);
+ *   image(bg, 0, 0);
+ *   bg.remove();
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var bg;
+ * function setup() {
+ *   pixelDensity(1);
+ *   createCanvas(100, 100);
+ *   stroke(255);
+ *   fill(0);
+ *
+ *   // create and draw the background image
+ *   bg = createGraphics(100, 100);
+ *   bg.background(200);
+ *   bg.ellipse(50, 50, 80, 80);
+ * }
+ * function draw() {
+ *   var t = millis() / 1000;
+ *   // draw the background
+ *   if (bg) {
+ *     image(bg, frameCount % 100, 0);
+ *     image(bg, frameCount % 100 - 100, 0);
+ *   }
+ *   // draw the foreground
+ *   var p = p5.Vector.fromAngle(t, 35).add(50, 50);
+ *   ellipse(p.x, p.y, 30);
+ * }
+ * function mouseClicked() {
+ *   // remove the background
+ *   if (bg) {
+ *     bg.remove();
+ *     bg = null;
+ *   }
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image
+ * a multi-colored circle moving back and forth over a scrolling background.
+ *
  */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
+  }
+  var idx = this._pInst._elements.indexOf(this);
+  if (idx !== -1) {
+    this._pInst._elements.splice(idx, 1);
   }
   for (var elt_ev in this._events) {
     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);

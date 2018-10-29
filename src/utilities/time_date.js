@@ -7,19 +7,19 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
- * p5.js communicates with the clock on your computer. The day() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/day">day()</a> function
  * returns the current day as a value from 1 - 31.
  *
  * @method day
- * @return {Number} the current day
+ * @return {Integer} the current day
  * @example
  * <div>
  * <code>
  * var d = day();
- * text("Current day: \n" + d, 5, 50);
+ * text('Current day: \n' + d, 5, 50);
  * </code>
  * </div>
  *
@@ -32,16 +32,16 @@ p5.prototype.day = function() {
 };
 
 /**
- * p5.js communicates with the clock on your computer. The hour() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/hour">hour()</a> function
  * returns the current hour as a value from 0 - 23.
  *
  * @method hour
- * @return {Number} the current hour
+ * @return {Integer} the current hour
  * @example
  * <div>
  * <code>
  * var h = hour();
- * text("Current hour:\n" + h, 5, 50);
+ * text('Current hour:\n' + h, 5, 50);
  * </code>
  * </div>
  *
@@ -54,16 +54,16 @@ p5.prototype.hour = function() {
 };
 
 /**
- * p5.js communicates with the clock on your computer. The minute() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/minute">minute()</a> function
  * returns the current minute as a value from 0 - 59.
  *
  * @method minute
- * @return {Number} the current minute
+ * @return {Integer} the current minute
  * @example
  * <div>
  * <code>
  * var m = minute();
- * text("Current minute: \n" + m, 5, 50);
+ * text('Current minute: \n' + m, 5, 50);
  * </code>
  * </div>
  *
@@ -86,7 +86,7 @@ p5.prototype.minute = function() {
  * <div>
  * <code>
  * var millisecond = millis();
- * text("Milliseconds \nrunning: \n" + millisecond, 5, 40);
+ * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
  * </code>
  * </div>
  *
@@ -99,16 +99,16 @@ p5.prototype.millis = function() {
 };
 
 /**
- * p5.js communicates with the clock on your computer. The month() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/month">month()</a> function
  * returns the current month as a value from 1 - 12.
  *
  * @method month
- * @return {Number} the current month
+ * @return {Integer} the current month
  * @example
  * <div>
  * <code>
  * var m = month();
- * text("Current month: \n" + m, 5, 50);
+ * text('Current month: \n' + m, 5, 50);
  * </code>
  * </div>
  *
@@ -121,16 +121,16 @@ p5.prototype.month = function() {
 };
 
 /**
- * p5.js communicates with the clock on your computer. The second() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/second">second()</a> function
  * returns the current second as a value from 0 - 59.
  *
  * @method second
- * @return {Number} the current second
+ * @return {Integer} the current second
  * @example
  * <div>
  * <code>
  * var s = second();
- * text("Current second: \n" + s, 5, 50);
+ * text('Current second: \n' + s, 5, 50);
  * </code>
  * </div>
  *
@@ -143,16 +143,16 @@ p5.prototype.second = function() {
 };
 
 /**
- * p5.js communicates with the clock on your computer. The year() function
+ * p5.js communicates with the clock on your computer. The <a href="#/p5/year">year()</a> function
  * returns the current year as an integer (2014, 2015, 2016, etc).
  *
  * @method year
- * @return {Number} the current year
+ * @return {Integer} the current year
  * @example
  * <div>
  * <code>
  * var y = year();
- * text("Current year: \n" + y, 5, 50);
+ * text('Current year: \n' + y, 5, 50);
  * </code>
  * </div>
  *
