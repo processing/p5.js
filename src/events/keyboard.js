@@ -186,23 +186,23 @@ p5.prototype._onkeydown = function(e) {
   // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
     downKeys[37] = true;
-    this._setProperty('key', 'ArrowLeft');	
-    this._setProperty('keyCode',37);
+    this._setProperty('key', 'ArrowLeft');
+    this._setProperty('keyCode', 37);
   }
   if (e.key === 'UIKeyInputUpArrow') {
     downKeys[38] = true;
     this._setProperty('key', 'ArrowUp');
-    this._setProperty('keyCode',38);
-  }    
+    this._setProperty('keyCode', 38);
+  }
   if (e.key === 'UIKeyInputRightArrow') {
     downKeys[39] = true;
     this._setProperty('key', 'ArrowRight');
-    this._setProperty('keyCode',39);
+    this._setProperty('keyCode', 39);
   }
   if (e.key === 'UIKeyInputDownArrow') {
     downKeys[40] = true;
     this._setProperty('key', 'ArrowDown');
-    this._setProperty('keyCode',40);
+    this._setProperty('keyCode', 40);
   }
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
@@ -248,7 +248,7 @@ p5.prototype._onkeyup = function(e) {
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
   downKeys[e.which] = false;
-  // Workaround for iPad arrow keys	
+  // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
     downKeys[37] = false;
     this._setProperty('key', 'ArrowLeft');
@@ -262,7 +262,7 @@ p5.prototype._onkeyup = function(e) {
   if (e.key === 'UIKeyInputRightArrow') {
     downKeys[39] = false;
     this._setProperty('key', 'ArrowRight');
-    this._setProperty('keyCode', 39);                      
+    this._setProperty('keyCode', 39);
   }
   if (e.key === 'UIKeyInputDownArrow') {
     downKeys[40] = false;
