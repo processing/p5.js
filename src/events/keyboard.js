@@ -174,42 +174,36 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-
   if (downKeys[e.which] && e.which !== 0) {
     // prevent multiple firings
     return;
-  }    
+  }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
   downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-
     // Workaround for iPad arrow keys
     if (e.key === 'UIKeyInputLeftArrow') {
 	downKeys[37] = true;
         this._setProperty('key', 'ArrowLeft');	
         this._setProperty('keyCode',37);
     }
-
     if (e.key === 'UIKeyInputUpArrow') {
 	downKeys[38] = true;
         this._setProperty('key', 'ArrowUp');
         this._setProperty('keyCode',38);
     }    
-    
     if (e.key === 'UIKeyInputRightArrow') {
 	downKeys[39] = true;
         this._setProperty('key', 'ArrowRight');
         this._setProperty('keyCode',39);
     }
-
     if (e.key === 'UIKeyInputDownArrow') {
 	downKeys[40] = true;
         this._setProperty('key', 'ArrowDown');
         this._setProperty('keyCode',40);
     }
-
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
@@ -253,41 +247,33 @@ p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
-
   downKeys[e.which] = false;
-
   // Workaround for iPad arrow keys	
   if (e.key === 'UIKeyInputLeftArrow') {
       downKeys[37] = false;
       this._setProperty('key', 'ArrowLeft');
       this._setProperty('keyCode', 37);
   }
-
   if (e.key === 'UIKeyInputUpArrow') {
       downKeys[38] = false;
       this._setProperty('key', 'ArrowUp');
       this._setProperty('keyCode', 38);
   }
-
   if (e.key === 'UIKeyInputRightArrow') {
       downKeys[39] = false;
       this._setProperty('key', 'ArrowRight');
       this._setProperty('keyCode', 39);                      
   }
-
   if (e.key === 'UIKeyInputDownArrow') {
       downKeys[40] = false;
       this._setProperty('key', 'ArrowDown');
       this._setProperty('keyCode', 40);
   }
-    
   if (!areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
-
   this._setProperty('_lastKeyCodeTyped', null);
-
   if (typeof keyReleased === 'function') {
     var executeDefault = keyReleased(e);
     if (executeDefault === false) {
