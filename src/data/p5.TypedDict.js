@@ -330,22 +330,20 @@ p5.TypedDict.prototype.print = function() {
  * <div>
  * <code>
  * function setup() {
- *     createCanvas(100, 100);
- *     background(200);
- *     text('click here to save', 10, 10, 70, 80);
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   text('click here to save', 10, 10, 70, 80);
  * }
  *
  * function mousePressed() {
- *     if (mouseX > 0 && mouseX < width &&
- *         mouseY > 0 && mouseY < height) {
- *
- *       createStringDict({
- *         john: 1940,
- *         paul: 1942,
- *         george: 1943,
- *         ringo: 1940
- *       }).saveTable('beatles');
- *     }
+ *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+ *     createStringDict({
+ *       john: 1940,
+ *       paul: 1942,
+ *       george: 1943,
+ *       ringo: 1940
+ *     }).saveTable('beatles');
+ *   }
  * }
  * </code>
  * </div>
@@ -370,22 +368,20 @@ p5.TypedDict.prototype.saveTable = function(filename) {
  * <div>
  * <code>
  * function setup() {
- *     createCanvas(100, 100);
- *     background(200);
- *     text('click here to save', 10, 10, 70, 80);
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   text('click here to save', 10, 10, 70, 80);
  * }
  *
  * function mousePressed() {
- *     if (mouseX > 0 && mouseX < width &&
- *         mouseY > 0 && mouseY < height) {
- *
- *       createStringDict({
- *         john: 1940,
- *         paul: 1942,
- *         george: 1943,
- *         ringo: 1940
- *       }).saveJSON('beatles');
- *     }
+ *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+ *     createStringDict({
+ *       john: 1940,
+ *       paul: 1942,
+ *       george: 1943,
+ *       ringo: 1940
+ *     }).saveJSON('beatles');
+ *   }
  * }
  * </code>
  * </div>
