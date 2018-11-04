@@ -26,25 +26,18 @@ p5.prototype.deviceOrientation = undefined;
  *
  * @property {Number} accelerationX
  * @readOnly
- *
  * @example
  * <div>
  * <code>
  * // Move a touchscreen device to register
  * // acceleration changes.
- * function setup() {
- *   createCanvas(50, 50);
- * }
- * 
  * function draw() {
- *   background(220,50);
- *   
+ *   background(220, 50);
  *   fill('magenta');
- *   ellipse(width/2, height/2, accelerationX);
+ *   ellipse(width / 2, height / 2, accelerationX);
  * }
  * </code>
  * </div>
- *
  * @alt
  * Magnitude of device acceleration is displayed as ellipse size
  */
@@ -56,25 +49,18 @@ p5.prototype.accelerationX = 0;
  *
  * @property {Number} accelerationY
  * @readOnly
- *
  * @example
  * <div>
  * <code>
  * // Move a touchscreen device to register
  * // acceleration changes.
- * function setup() {
- *   createCanvas(50, 50);
- * }
- * 
  * function draw() {
- *   background(220,50);
- *   
+ *   background(220, 50);
  *   fill('magenta');
- *   ellipse(width/2, height/2, accelerationY);
+ *   ellipse(width / 2, height / 2, accelerationY);
  * }
  * </code>
  * </div>
- *
  * @alt
  * Magnitude of device acceleration is displayed as ellipse size
  */
@@ -92,15 +78,10 @@ p5.prototype.accelerationY = 0;
  * <code>
  * // Move a touchscreen device to register
  * // acceleration changes.
- * function setup() {
- *   createCanvas(50, 50);
- * }
- * 
  * function draw() {
- *   background(220,50);
- *   
+ *   background(220, 50);
  *   fill('magenta');
- *   ellipse(width/2, height/2, accelerationZ);
+ *   ellipse(width / 2, height / 2, accelerationZ);
  * }
  * </code>
  * </div>
@@ -159,6 +140,8 @@ p5.prototype._updatePAccelerations = function() {
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationX
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -175,13 +158,8 @@ p5.prototype._updatePAccelerations = function() {
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationX
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
- *
  */
 p5.prototype.rotationX = 0;
 
@@ -193,6 +171,8 @@ p5.prototype.rotationX = 0;
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationY
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -209,10 +189,6 @@ p5.prototype.rotationX = 0;
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationY
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
  */
