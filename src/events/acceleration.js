@@ -26,6 +26,27 @@ p5.prototype.deviceOrientation = undefined;
  *
  * @property {Number} accelerationX
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function setup() {
+ *   createCanvas(50, 50);
+ * }
+ * 
+ * function draw() {
+ *   background(220,50);
+ *   
+ *   fill('magenta');
+ *   ellipse(width/2, height/2, accelerationX);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationX = 0;
 
@@ -35,6 +56,27 @@ p5.prototype.accelerationX = 0;
  *
  * @property {Number} accelerationY
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function setup() {
+ *   createCanvas(50, 50);
+ * }
+ * 
+ * function draw() {
+ *   background(220,50);
+ *   
+ *   fill('magenta');
+ *   ellipse(width/2, height/2, accelerationY);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationY = 0;
 
@@ -44,6 +86,27 @@ p5.prototype.accelerationY = 0;
  *
  * @property {Number} accelerationZ
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function setup() {
+ *   createCanvas(50, 50);
+ * }
+ * 
+ * function draw() {
+ *   background(220,50);
+ *   
+ *   fill('magenta');
+ *   ellipse(width/2, height/2, accelerationZ);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationZ = 0;
 
