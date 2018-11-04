@@ -1,14 +1,11 @@
 'use strict';
 
 // core
-var p5 = require('./core/core');
-require('./core/2d_primitives');
-require('./core/attributes');
-require('./core/canvas');
+var p5 = require('./core/main');
 require('./core/constants');
-require('./core/curves');
 require('./core/environment');
 require('./core/error_helpers');
+require('./core/helpers');
 require('./core/legacy');
 require('./core/p5.Element');
 require('./core/p5.Graphics');
@@ -18,7 +15,10 @@ require('./core/rendering');
 require('./core/shim');
 require('./core/structure');
 require('./core/transform');
-require('./core/vertex');
+require('./core/shape/2d_primitives');
+require('./core/shape/attributes');
+require('./core/shape/curves');
+require('./core/shape/vertex');
 
 // color
 require('./color/color_conversion');
@@ -68,11 +68,12 @@ require('./utilities/string_functions');
 require('./utilities/time_date');
 
 // webgl
-require('./webgl/camera');
+require('./webgl/3d_primitives');
 require('./webgl/interaction');
 require('./webgl/light');
 require('./webgl/loading');
 require('./webgl/material');
+require('./webgl/p5.Camera');
 require('./webgl/p5.Geometry');
 require('./webgl/p5.Matrix');
 require('./webgl/p5.RendererGL.Immediate');
@@ -80,7 +81,7 @@ require('./webgl/p5.RendererGL');
 require('./webgl/p5.RendererGL.Retained');
 require('./webgl/p5.Shader');
 require('./webgl/p5.Texture');
-require('./webgl/primitives');
+require('./webgl/text');
 
 require('./core/init');
 

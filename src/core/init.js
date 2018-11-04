@@ -1,6 +1,6 @@
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * _globalInit
@@ -15,7 +15,7 @@ var p5 = require('../core/core');
  * @return {Undefined}
  */
 var _globalInit = function() {
-  if (!window.PHANTOMJS && !window.mocha) {
+  if (!window.mocha) {
     // If there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
     if (

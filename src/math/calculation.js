@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().

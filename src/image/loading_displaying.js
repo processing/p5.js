@@ -7,9 +7,9 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var Filters = require('./filters');
-var canvas = require('../core/canvas');
+var canvas = require('../core/helpers');
 var constants = require('../core/constants');
 
 require('../core/error_helpers');
@@ -90,16 +90,16 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     }
   };
 
-  //set crossOrigin in case image is served which CORS headers
-  //this will let us draw to canvas without tainting it.
-  //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+  // Set crossOrigin in case image is served with CORS headers.
+  // This will let us draw to the canvas without tainting it.
+  // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
   // When using data-uris the file will be loaded locally
-  // so we don't need to worry about crossOrigin with base64 file types
+  // so we don't need to worry about crossOrigin with base64 file types.
   if (path.indexOf('data:image/') !== 0) {
     img.crossOrigin = 'Anonymous';
   }
 
-  //start loading the image
+  // start loading the image
   img.src = path;
 
   return pImg;

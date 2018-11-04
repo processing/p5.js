@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 
 /**
  * Shader class for WEBGL Mode
@@ -192,7 +192,6 @@ p5.Shader.prototype.bindShader = function() {
     this._bound = true;
     this.bindTextures();
 
-    this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
     if (this === this._renderer.curStrokeShader) {
       this._setViewportUniform();
@@ -232,6 +231,16 @@ p5.Shader.prototype.bindTextures = function() {
   }
 };
 
+p5.Shader.prototype.updateTextures = function() {
+  for (var i = 0; i < this.samplers.length; i++) {
+    var uniform = this.samplers[i];
+    var tex = uniform.texture;
+    if (tex) {
+      tex.update();
+    }
+  }
+};
+
 p5.Shader.prototype.unbindTextures = function() {
   // TODO: migrate stuff from material.js here
   // - OR - have material.js define this function
@@ -240,7 +249,7 @@ p5.Shader.prototype.unbindTextures = function() {
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
-  this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
+  this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
   if (this === this._renderer.curFillShader) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
@@ -339,6 +348,27 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
         data.length && gl.uniform4fv(location, data);
       } else {
         gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+      }
+      break;
+    case gl.INT_VEC2:
+      if (uniform.size > 1) {
+        data.length && gl.uniform2iv(location, data);
+      } else {
+        gl.uniform2i(location, data[0], data[1]);
+      }
+      break;
+    case gl.INT_VEC3:
+      if (uniform.size > 1) {
+        data.length && gl.uniform3iv(location, data);
+      } else {
+        gl.uniform3i(location, data[0], data[1], data[2]);
+      }
+      break;
+    case gl.INT_VEC4:
+      if (uniform.size > 1) {
+        data.length && gl.uniform4iv(location, data);
+      } else {
+        gl.uniform4i(location, data[0], data[1], data[2], data[3]);
       }
       break;
     case gl.SAMPLER_2D:

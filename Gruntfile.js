@@ -105,6 +105,33 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
+  var mochaConfig = {
+    yui: {
+      options: {
+        urls: ['http://localhost:9001/test/test-reference.html'],
+        reporter: reporter,
+        run: false,
+        log: true,
+        logErrors: true,
+        growlOnSuccess: false
+      }
+    },
+    test: {
+      options: {
+        urls: [
+          'http://localhost:9001/test/test.html',
+          'http://localhost:9001/test/test-minified.html'
+        ],
+        reporter: reporter,
+        run: true,
+        log: true,
+        logErrors: true,
+        timeout: 100000,
+        growlOnSuccess: false
+      }
+    }
+  };
+
   let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
@@ -243,32 +270,9 @@ module.exports = function(grunt) {
     },
 
     // Set up the mocha task, used for running the automated tests.
-    mocha: {
-      yui: {
-        options: {
-          urls: ['http://localhost:9001/test/test-reference.html'],
-          reporter: reporter,
-          run: false,
-          log: true,
-          logErrors: true,
-          growlOnSuccess: false
-        }
-      },
-      test: {
-        options: {
-          urls: [
-            'http://localhost:9001/test/test.html',
-            'http://localhost:9001/test/test-minified.html'
-          ],
-          reporter: reporter,
-          run: true,
-          log: true,
-          logErrors: true,
-          timeout: 100000,
-          growlOnSuccess: false
-        }
-      }
-    },
+    mocha: mochaConfig,
+
+    mochaChrome: mochaConfig,
 
     // This is a standalone task, used to automatically update the bower.json
     // file to match the values in package.json. It is (likely) used as part
@@ -335,7 +339,12 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          base: './',
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
@@ -358,6 +367,9 @@ module.exports = function(grunt) {
     open: {
       yui: {
         path: 'http://127.0.0.1:9001/docs/reference/'
+      },
+      dev: {
+        path: 'http://127.0.0.1:9001/test/'
       }
     },
     'saucelabs-mocha': {
@@ -415,6 +427,9 @@ module.exports = function(grunt) {
   // Load release task
   grunt.loadTasks('tasks/release');
 
+  // Load tasks for testing
+  grunt.loadTasks('tasks/test');
+
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -424,9 +439,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-http');
   grunt.loadNpmTasks('grunt-minjson');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
@@ -451,16 +464,16 @@ module.exports = function(grunt) {
     //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect',
-    'mocha',
+    'mochaChrome',
     'mochaTest'
   ]);
-  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mochaChrome']);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
     'yuidoc:prod',
     'clean:reference',
     'connect',
-    'mocha:yui'
+    'mochaChrome:yui'
   ]);
   grunt.registerTask('yui:dev', [
     'yui:prod',

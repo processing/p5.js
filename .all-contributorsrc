@@ -180,6 +180,13 @@
       "contributions": []
     },
     {
+      "login": "L05",
+      "name": "L05",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3998826?v=4",
+      "profile": "http://L05.is",
+      "contributions": []
+    },
+    {
       "login": "diygirls",
       "name": "DIYgirls",
       "avatar_url": "https://avatars3.githubusercontent.com/u/1680038?v=4",
@@ -1356,6 +1363,54 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/12074409?v=4",
       "profile": "https://github.com/zoeingram",
       "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "aidannelson",
+      "name": "Aidan Nelson",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6486359?s=460&v=4",
+      "profile": "https://github.com/AidanNelson",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "hydrosquall",
+      "name": "Cameron Yick",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9020979?s=460&v=4",
+      "profile": "https://github.com/hydrosquall",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "TanviKumar",
+      "name": "Tanvi Kumar",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18724229?v=4",
+      "profile": "https://github.com/TanviKumar",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "endoh0509",
+      "name": "Katsuya Endoh",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7820411?v=4",
+      "profile": "https://enkatsu.org",
+      "contributions": []
+    },
+    {
+    "login: "OsakaStarbux",
+    "name": "Kevin Bradley",
+    "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
+    "profile": "https://github.com/OsakaStarbux",
+    "contributions": [
         "doc"
       ]
     }

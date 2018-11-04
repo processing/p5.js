@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 require('./p5.Geometry');
 
 /**
@@ -35,11 +35,11 @@ require('./p5.Geometry');
  * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * var teapot;
+ * //draw a spinning octahedron
+ * var octahedron;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   octahedron = loadModel('assets/octahedron.obj');
  * }
  *
  * function setup() {
@@ -50,6 +50,35 @@ require('./p5.Geometry');
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
+ *   model(octahedron);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Vertically rotating 3-d octahedron.
+ *
+ * @example
+ * <div>
+ * <code>
+ * //draw a spinning teapot
+ * var teapot;
+ *
+ * function preload() {
+ *   // Load model with normalise parameter set to true
+ *   teapot = loadModel('assets/teapot.obj', true);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   scale(0.4); // Scaled to make model fit into canvas
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   normalMaterial(); // For effect
  *   model(teapot);
  * }
  * </code>
@@ -220,11 +249,11 @@ function parseObj(model, lines) {
  * @example
  * <div>
  * <code>
- * //draw a spinning teapot
- * var teapot;
+ * //draw a spinning octahedron
+ * var octahedron;
  *
  * function preload() {
- *   teapot = loadModel('assets/teapot.obj');
+ *   octahedron = loadModel('assets/octahedron.obj');
  * }
  *
  * function setup() {
@@ -235,13 +264,13 @@ function parseObj(model, lines) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   model(teapot);
+ *   model(octahedron);
  * }
  * </code>
  * </div>
  *
  * @alt
- * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * Vertically rotating 3-d octahedron.
  *
  */
 p5.prototype.model = function(model) {

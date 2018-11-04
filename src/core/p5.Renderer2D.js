@@ -1,6 +1,6 @@
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 var constants = require('./constants');
 var filters = require('../image/filters');
 
@@ -867,7 +867,7 @@ p5.Renderer2D.prototype.endShape = function(
         this.drawingContext.moveTo(v[0], v[1]);
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
         this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-        this.drawingContext.lineTo(v[0], v[1]);
+        this.drawingContext.closePath();
         if (this._doFill) {
           this._pInst.fill(vertices[i + 2][5]);
           this.drawingContext.fill();
@@ -876,7 +876,6 @@ p5.Renderer2D.prototype.endShape = function(
           this._pInst.stroke(vertices[i + 2][6]);
           this.drawingContext.stroke();
         }
-        this.drawingContext.closePath();
       }
     } else if (shapeKind === constants.TRIANGLE_STRIP) {
       for (i = 0; i + 1 < numVerts; i++) {
@@ -1169,119 +1168,20 @@ p5.Renderer2D.prototype.translate = function(x, y) {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  var p = this._pInst,
-    cars,
-    n,
-    ii,
-    jj,
-    line,
-    testLine,
-    testWidth,
-    words,
-    totalHeight,
-    baselineHacked,
-    finalMaxHeight = Number.MAX_VALUE;
+  var baselineHacked;
 
   // baselineHacked: (HACK)
   // A temporary fix to conform to Processing's implementation
   // of BASELINE vertical alignment in a bounding box
 
-  if (!(this._doFill || this._doStroke)) {
-    return;
-  }
-
-  if (typeof str === 'undefined') {
-    return;
-  } else if (typeof str !== 'string') {
-    str = str.toString();
-  }
-
-  str = str.replace(/(\t)/g, '  ');
-  cars = str.split('\n');
-
-  if (typeof maxWidth !== 'undefined') {
-    totalHeight = 0;
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
-          line = words[n] + ' ';
-          totalHeight += p.textLeading();
-        } else {
-          line = testLine;
-        }
-      }
-    }
-
-    if (this._rectMode === constants.CENTER) {
-      x -= maxWidth / 2;
-      y -= maxHeight / 2;
-    }
-
-    switch (this.drawingContext.textAlign) {
-      case constants.CENTER:
-        x += maxWidth / 2;
-        break;
-      case constants.RIGHT:
-        x += maxWidth;
-        break;
-    }
-
-    if (typeof maxHeight !== 'undefined') {
-      switch (this.drawingContext.textBaseline) {
-        case constants.BOTTOM:
-          y += maxHeight - totalHeight;
-          break;
-        case constants._CTX_MIDDLE: // CENTER?
-          y += (maxHeight - totalHeight) / 2;
-          break;
-        case constants.BASELINE:
-          baselineHacked = true;
-          this.drawingContext.textBaseline = constants.TOP;
-          break;
-      }
-
-      // remember the max-allowed y-position for any line (fix to #928)
-      finalMaxHeight = y + maxHeight - p.textAscent();
-    }
-
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y, finalMaxHeight);
-          line = words[n] + ' ';
-          y += p.textLeading();
-        } else {
-          line = testLine;
-        }
-      }
-
-      this._renderText(p, line, x, y, finalMaxHeight);
-      y += p.textLeading();
-    }
-  } else {
-    // Offset to account for vertically centering multiple lines of text - no
-    // need to adjust anything for vertical align top or baseline
-    var offset = 0,
-      vAlign = p.textAlign().vertical;
-    if (vAlign === constants.CENTER) {
-      offset = (cars.length - 1) * p.textLeading() / 2;
-    } else if (vAlign === constants.BOTTOM) {
-      offset = (cars.length - 1) * p.textLeading();
-    }
-
-    for (jj = 0; jj < cars.length; jj++) {
-      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
-      y += p.textLeading();
+  if (typeof maxWidth !== 'undefined' && typeof maxHeight !== 'undefined') {
+    if (this.drawingContext.textBaseline === constants.BASELINE) {
+      baselineHacked = true;
+      this.drawingContext.textBaseline = constants.TOP;
     }
   }
+
+  var p = p5.Renderer.prototype.text.apply(this, arguments);
 
   if (baselineHacked) {
     this.drawingContext.textBaseline = constants.BASELINE;
@@ -1333,44 +1233,6 @@ p5.Renderer2D.prototype.textWidth = function(s) {
   return this.drawingContext.measureText(s).width;
 };
 
-p5.Renderer2D.prototype.textAlign = function(h, v) {
-  if (typeof h !== 'undefined') {
-    if (
-      h === constants.LEFT ||
-      h === constants.RIGHT ||
-      h === constants.CENTER
-    ) {
-      this.drawingContext.textAlign = h;
-    }
-
-    if (
-      v === constants.TOP ||
-      v === constants.BOTTOM ||
-      v === constants.CENTER ||
-      v === constants.BASELINE
-    ) {
-      if (v === constants.CENTER) {
-        this.drawingContext.textBaseline = constants._CTX_MIDDLE;
-      } else {
-        this.drawingContext.textBaseline = v;
-      }
-    }
-
-    return this._pInst;
-  } else {
-    var valign = this.drawingContext.textBaseline;
-
-    if (valign === constants._CTX_MIDDLE) {
-      valign = constants.CENTER;
-    }
-
-    return {
-      horizontal: this.drawingContext.textAlign,
-      vertical: valign
-    };
-  }
-};
-
 p5.Renderer2D.prototype._applyTextProperties = function() {
   var font,
     p = this._pInst;
@@ -1391,6 +1253,13 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
     (this._textSize || 12) +
     'px ' +
     (font || 'sans-serif');
+
+  this.drawingContext.textAlign = this._textAlign;
+  if (this._textBaseline === constants.CENTER) {
+    this.drawingContext.textBaseline = constants._CTX_MIDDLE;
+  } else {
+    this.drawingContext.textBaseline = this._textBaseline;
+  }
 
   return p;
 };

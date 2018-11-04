@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -187,8 +187,10 @@ p5.Element.prototype.class = function(c) {
 
 /**
  * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called once after every time a
- * mouse button is pressed over the element. This can be used to
- * attach element specific event listeners.
+ * mouse button is pressed over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mousePressed
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -230,8 +232,17 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
-  adjustListener('mousedown', fxn, this);
-  adjustListener('touchstart', fxn, this);
+  // Prepend the mouse property setters to the event-listener.
+  // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
+  // For details, see https://github.com/processing/p5.js/issues/3087.
+  var eventPrependedFxn = function(event) {
+    this._pInst._setProperty('mouseIsPressed', true);
+    this._pInst._setMouseButton(event);
+    // Pass along the return-value of the callback:
+    return fxn.call(this);
+  };
+  // Pass along the event-prepended form of the callback.
+  adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
@@ -352,8 +363,10 @@ p5.Element.prototype.mouseWheel = function(fxn) {
 
 /**
  * The .<a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is called once after every time a
- * mouse button is released over the element. This can be used to
- * attach element specific event listeners.
+ * mouse button is released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseReleased
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -399,14 +412,15 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
-  adjustListener('touchend', fxn, this);
   return this;
 };
 
 /**
  * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is called once after a mouse button is
- * pressed and released over the element. This can be used to
- * attach element specific event listeners.
+ * pressed and released over the element.
+ * Some mobile browsers may also trigger this event on a touch screen,
+ * if the user performs a quick tap.
+ * This can be used to attach element specific event listeners.
  *
  * @method mouseClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
@@ -512,7 +526,6 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
-  adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -748,7 +761,6 @@ p5.Element.prototype.mouseOut = function(fxn) {
  */
 p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
-  adjustListener('mousedown', fxn, this);
   return this;
 };
 
@@ -789,7 +801,6 @@ p5.Element.prototype.touchStarted = function(fxn) {
  */
 p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
-  adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -839,7 +850,6 @@ p5.Element.prototype.touchMoved = function(fxn) {
  */
 p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
-  adjustListener('mouseup', fxn, this);
   return this;
 };
 
@@ -920,18 +930,42 @@ p5.Element.prototype.dragLeave = function(fxn) {
 };
 
 /**
- * The .<a href="#/p5.Element/drop">drop()</a> function is called for each file dropped on the element.
- * It requires a callback that is passed a p5.File object.  You can
- * optionally pass two callbacks, the first one (required) is triggered
- * for each file dropped when the file is loaded.  The second (optional)
- * is triggered just once when a file (or files) are dropped.
+ * Registers a callback that gets called every time a file that is
+ * dropped on the element has been loaded.
+ * p5 will load every dropped file into memory and pass it as a p5.File object to the callback.
+ * Multiple files dropped at the same time will result in multiple calls to the callback.
+ *
+ * You can optionally pass a second callback which will be registered to the raw
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/Events/drop">drop</a> event.
+ * The callback will thus be provided the original
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/DragEvent">DragEvent</a>.
+ * Dropping multiple files at the same time will trigger the second callback once per drop,
+ * whereas the first callback will trigger for each loaded file.
  *
  * @method drop
- * @param  {Function} callback  callback triggered when files are dropped.
- * @param  {Function} [fxn]       callback to receive loaded file.
+ * @param  {Function} callback  callback to receive loaded file.
+ * @param  {Function} [fxn]     callback triggered when files are dropped.
  * @chainable
  * @example
  * <div><code>
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop file', width / 2, height / 2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function gotFile(file) {
+ *   background(200);
+ *   text('received file:', width / 2, height / 2);
+ *   text(file.name, width / 2, height / 2 + 50);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var img;
+ *
  * function setup() {
  *   var c = createCanvas(100, 100);
  *   background(200);
@@ -940,16 +974,19 @@ p5.Element.prototype.dragLeave = function(fxn) {
  *   c.drop(gotFile);
  * }
  *
+ * function draw() {
+ *   if (img) {
+ *     image(img, 0, 0, width, height);
+ *   }
+ * }
+ *
  * function gotFile(file) {
- *   var img = createImg(file.data).hide();
- *   // Draw the image onto the canvas
- *   image(img, 0, 0, width, height);
+ *   img = createImg(file.data).hide();
  * }
  * </code></div>
  *
  * @alt
  * Canvas turns into whatever image is dragged/dropped onto it.
- *
  */
 p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback
@@ -985,7 +1022,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
       this
     );
 
-    // If just one argument it's the callback for the files
+    // Attach the second argument as a callback that receives the raw drop event
     if (typeof fxn !== 'undefined') {
       attachListener('drop', fxn, this);
     }

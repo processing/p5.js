@@ -1,169 +1,145 @@
-This folder contains various documents for developers of p5.js. This document contains the overview of how to contribute, build the library, test the code, and update the documentation.
+Hello! Thanks for your interest in contributing to p5.js! You can get started with some different ways of contributing [here](https://p5js.org/community/#contribute). This folder contains various documents intended for developers of p5.js.
 
-# Getting started
+# Project Directory Structure
 
-Interested in contributing? Awesome! First, figure out what you'd like to do (a good place to start is the [issues list](https://github.com/processing/p5.js/issues)).
+- `src/` contains all the source code for the library, which is topically organized into separated modules. This is what you'll work on if you are changing p5.js.
+- `lib/` contains the final version of p5.js intended for users to load in their sketches and projects, included in both compressed and uncompressed forms. This is the output when the source code modules are compiled to a single file by [Grunt](https://gruntjs.com/).
+- `developer_docs/` contains various Markdown documents that are likely to be useful to developers of p5.js, in particular because they explain practices and principles.
+- `docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/). 
+- `tests/` contains unit tests which ensure the library continues to function correctly as changes are made.
+- `tasks/` contains scripts which perform automated tasks related to the build, deployment, and release of new versions of p5.js.
+- `patches/` might contain [Git patches](https://git-scm.com/docs/git-format-patch) from time to time, but in almost all cases you can completely ignore this directory.
 
-* **Fix a bug** :
+# Ways To Contribute
 
-    If it's not on the issues list, add it. If it's already on this issues list, assign it to yourself or comment on the issue indicating you're working on it. Go ahead and fix it and submit a PR (see below for instructions for getting set up for development). We are also in the process of adding unit tests and more inline documentation, so if the function you are fixing doesn't have these, please consider adding these as well. [Submit the change to the master branch (see below).](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development) 
-Need help finding an issue to fix? Check out this [list of bite size issues](https://github.com/processing/p5.js/labels/level%3Abeginner) suitable for new contributors (or peruse other [issue labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) for topics that catch your interest).
-* **Implement a new feature** : 
+## Issues
 
-    If you have an original idea about a feature, open an issue describing your idea preferably in the format provided there, and let us know you're interested! Initiate a discussion, wait for the green signal, and then assign it to yourself! _Note: new features will require tests and inline documentation._
-    - Inline documentation:
-        - [Style guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference.
-    - Unit tests:
-        - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to do this.
-        - This helps ensure that the code you write keeps working far into the future when further updates and changes are made.
-    - Benchmarks
-        - See [Benchmarking section](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md)
-        - Helpful for finding and implementing performance optimizations
+Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). If you'd like to contribute code but need suggestions about what to work on, start by looking at the existing issues. Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you start working on an existing issue, make sure to "assign" it to yourself so other contributors know it's being handled and can offer help. If you have discovered a bug or thought of a new feature but don't have code for it yet, you should consider submitting an issue.
 
-* **Add unit tests or documentation for existing code** : 
+## Accompaniments
 
-    Let us know which areas you're working on so we don't duplicate efforts! [Submit the change to the master branch.](https://github.com/processing/p5.js/blob/master/developer_docs/#master-branch-development)
-    - See the [guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) -- by formatting your documentation correctly, it will automatically show up in the p5.js reference (coming soon).
-    - See the [testing section](https://github.com/processing/p5.js/blob/master/developer_docs/#testing) for how to add unit tests.
+Aside from the code itself, you may also need to supply some combination of the following.
 
-* **Add examples to the examples page** : 
+- [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/) 
+- [unit tests](https://github.com/processing/p5.js/blob/master/developer_docs/#testing), small pieces of code which are separate from the library and are used to verify its behavior
+- [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
 
-    Add to the examples on the [p5js.org examples page](http://p5js.org/examples/). See this [guide](https://github.com/processing/p5.js-website/wiki/Adding-examples) for details.
+## Examples
 
-* **Add inline examples to the ref** :
+The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
-  * [List of examples needed](https://github.com/processing/p5.js/issues/1954)
-  * [Guide for p5.js inline docs](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) 
+## Other Ideas
 
-* **Contribute in some other way** :
+If you'd like to contribute in other ways which are not covered here, feel free to write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! Aside from working on this codebase, we can always use help with things like documentation, tutorials, workshops, educational materials, branding, and design. Get in touch and we can talk about ways you might participate.
 
-    Write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! It is our intention that there should be many ways to contribute to p5.js, from writing code, to creating examples, tutorials and documentation, to thinking about workshops and education, to working on branding and design, and anything else you can dream up. Get in touch and we can talk about ways you might participate.
+# Gotchas
 
-# Setup
+The developer tooling included with the p5.js codebase is intentionally very strict about some things. This is a good thing! It makes everything consistent, and it will encourage you to be disciplined. This means you may try to change something only to have your commit rejected by the project, but don't get discouraged; even seasoned p5.js developers get caught by this stuff all the time. Typically the problem will be in one of two areas.
 
-1. Download and install [npm](https://npmjs.org/). The easiest way to do this is to just install [node](http://nodejs.org/).
-2. [Fork and clone](https://help.github.com/articles/fork-a-repo) this library ([p5.js](https://github.com/processing/p5.js)). 
+## Code Syntax
+
+p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as you type them, which will probably help you along as you are coding and saves you the hassle of a failed Git commit.
+
+To detect errors, run the following command in your terminal (do not type the `$` prompt):
+
+```
+$ npm run lint
+```
+
+Some syntax errors can be automatically fixed:
+
+```
+$ npm run lint:fix
+```
+
+Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting.
+
+## Unit Tests
+
+Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
+
+In order to run unit tests, you'll need to have previously installed the project's dependencies.
+
+```
+$ npm install
+```
+
+This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
+
+- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js 
+- [mocha-chrome](https://github.com/shellscape/mocha-chrome), a mocha plugin that runs mocha tests using headless Google Chrome
+
+Once the dependencies are installed, use Grunt to run the unit tests.
+
+```
+$ grunt
+```
+
+Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
+
+```
+$ npm run dev
+```
+
+With the server running, you should be able to open `test/test.html` in a browser.
+
+A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. When writing unit tests, use the [Chai.js reference](http://www.chaijs.com/api/assert/) as a guide for phrasing your assertion messages so that any errors caught by your tests in the future will be consistent and consequently easier for other developers to understand.
+
+# Development Process
+
+1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
+2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
+3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer. 
 
    ```
-   git clone https://github.com/YOUR_USERNAME/p5.js.git
+   $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
-3. Navigate into the project folder and install dependencies via npm.
+4. Navigate into the project folder and install all its necessary dependencies with npm.
    
    ```
-   cd p5.js
-   npm install
+   $ cd p5.js
+   $ npm install
    ```
 
-4. To create the complete library from source, run Grunt. 
+5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code. 
 
    ```
-   npm run grunt
+   $ npm run grunt
    ```
-   **NEW** : To create the library with only certain components, use Grunt [as it is explained here.](https://github.com/processing/p5.js/blob/master/developer_docs/custom_p5_build.md)
+   
+   If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
 
-   If you're continuously changing files in the library, you may want to run `npm run grunt watch:quick` to automatically rebuild the library for you whenever any of its source files change.
+6. Make some changes to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
 
-5. Run `npm run grunt` one last time to make sure all the tests pass, and [submit a pull request](https://help.github.com/articles/creating-a-pull-request).
+7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
 
-# Overview
+8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
 
-This [looking inside p5.js video](http://www.luisapereira.net/teaching/looking-inside-p5/) describes the tools and files used in p5.js workflow.
+   ```
+   $ git push
+   ```
 
-`lib/` Contains the concatenated p5.js and p5.min.js libraries, generated by Grunt.
+9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
-`src/` Contains all the source code for the library. The code is broken up into folders and files corresponding with the [Processing reference page](http://processing.org/reference/). Additionally, there is a core folder that holds constants, and internal helper functions and variables.
+# Building Documentation
 
-`tests/` Contains unit testing files.
+Inline comments in p5.js are built into the public-facing [reference manual](https://p5js.org/reference/). You can also view this locally:
 
-# Code Style
-
-p5.js uses [Prettier](https://prettier.io/) to automatically enforce a consistent code style and [Eslint](https://eslint.org/) to find other problematic code patterns. The rules are checked both when tests are run and before you make a commit.
-
-## Editor integration
-
-It's a good idea to add an [Eslint plugin to your editor](https://eslint.org/docs/user-guide/integrations#editors) which will show problems as you write your code. Many of the Eslint plugins can also fix style problems while you edit your code. You can also use an integration for [Prettier](https://prettier.io/), but the Eslint plugins provide most of the same features and more.
-
-## Automatic style fixing
-
-`npm run lint:fix` will format your code so that it follows the code style rules. You can check for style errors / code problems without fixing them by running `npm run lint`.
-
-## My commit got rejected ?! 
-Whenever you make a commit, Eslint and Prettier will check that your code follows the style rules and reject commits that break the rules. The error often looks like this:
 ```
-eslint found some errors. Please fix them and try committing again.
-
-✖ 3 problem (2 error, 1 warnings)
-  1 error, 1 warnings potentially fixable with the `--fix` option.
+$ npm run docs:dev
 ```
-
-Errors or warnings that are ``fixable with the `--fix` option`` are fixed by running `npm run lint:fix`. 
-
-## My code needs a special format!
-In [some special cases](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) your code needs special formatting to look more clear. Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html) to ignore a block of code from being formatted, via the `// prettier-ignore` comment. Use with caution!
-
-# Testing
-
-With all new functions implemented, please include unit tests and inline documentation. A good example for how to format and write inline documentation can be seen in [PImage](https://github.com/processing/p5.js/blob/master/src/image/image.js). Examples of unit tests can be found in the [test/unit](https://github.com/processing/p5.js/tree/master/test/unit) directory. Directions for adding your own tests and including them are below.
-
-The testing is done with [grunt-mocha](https://github.com/kmiyashiro/grunt-mocha) which uses [mocha](http://visionmedia.github.io/mocha/) test framework with [phantomjs](http://phantomjs.org/download.html). 
-To get started:
-
-1. Install dependencies.
-
-   ```
-   cd p5.js/
-   npm install
-   ```
-
-2. Add test files corresponding to files in `src` (more info about Chai assert style TDD phrasing [here](http://chaijs.com/api/assert/)). 
-3. Link to the src and test files in `test.html`. 
-4. Run the tests with `npm run grunt`.
-
-## Building and testing the Reference Docs & Examples
-
-This will build the p5.js library, generate the documentation files, run a web server, and open a browser to the main documentation page.
-
-    ````
-    npm run docs:dev
-    ````
-
-## Running tests in the browser
-Sometimes it is useful to run tests in browser especially when trying to debug test failures.  To run the tests in the browser:
-
-1. Run the connect server. ```npm run grunt connect -keepalive```
-2. Open test/test.html in your favourite web browser.
-
-# Master branch development
-
-1. Fork p5.js
-2. Create a feature branch: `git checkout -b my_branch`
-3. Make local changes
-4. Commit and push changes. When you first attempt to push your feature branch, `git` will give you instructions on how to have your local branch track a similarly-named one on Github.
-5. Submit a PR against the `p5.js/master` branch
-6. checkout the master branch: `git checkout master`
-
-## Bringing your master branch up-to-date
-
-1. Make sure you have no uncommitted changes, or any additional commits in your master branch. The following commands will discard any changes you have made.
-2. `git checkout master`
-3. `git fetch`
-4. `git reset --hard upstream/master`
-5. `git push -f`
-
 # Repositories
 
-* https://github.com/processing/p5.js - this repo contains the source code for the p5.js library, and the p5.dom.js addon library. The reference is also generated from this code, as the documentation and examples are located in the source code itself, maintained by Lauren McCarthy.
-* https://github.com/processing/p5.js-website - contains the code for http://p5js.org website, maintained by Lauren McCarthy. 
-* https://github.com/processing/p5.js-sound - contains the source code for the p5.sound.js library, maintained by Jason Sigal.
-* https://github.com/processing/p5.js-web-editor - contains the source code for the p5 web editor, maintained by Cassie Tarakajian.
-* https://github.com/processing/p5.js-editor - contains the source code for the p5 editor, which is now depricated.
-* https://github.com/scottgarner/p5.js-video - contains the code for Hello p5.js!, maintained by Scott Garner.
+The overarching p5.js project includes repositories other than this one.
 
-# Alternative Setup - Docker
+- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library, as well as the p5.dom.js addon library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
+- [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart). 
+- [sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
+- [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
 
-An alternative to setting up node, grunt, php, apache, and the p5.js & p5.js-website codebases is to use [toolness/p5.js-docker](https://github.com/toolness/p5.js-docker). While this does require the installation of a tool called Docker, it potentially makes viewing and editing the p5 website with the latest documentation and libraries a lot easier.
+# Miscellaneous
 
-# p5.js API JSON file
-
-[This file](https://p5js.org/reference/data.json) can be used for auto-complete. This [gist](https://gist.github.com/jonohayon/b059a029755f84f42b29f005323ec165) explains how to parse the file. Note that the data.json file is generated when the `npm run grunt` command is run, it is found on the p5js.org website but is not included in the repo.
+- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
+- The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
+- The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.

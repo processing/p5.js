@@ -2,18 +2,18 @@
   "env": {
     "node": true,
     "browser": true,
-    "mocha": true,
     "amd": true,
     "es6": true
   },
   "globals": {
-    "p5": true,
-    "assert": true,
-    "expect": true,
-    "sinon": true
+    "p5": true
   },
+  "root": true,
   "extends": ["eslint:recommended", "prettier"],
   "plugins": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
   "rules": {
     "prettier/prettier": [
       "error",

@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('./main');
 
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
@@ -313,25 +313,25 @@ p5.prototype.redraw = function(n) {
     numberOfRedraws = 1;
   }
 
-  var userSetup = this.setup || window.setup;
-  var userDraw = this.draw || window.draw;
+  var context = this._isGlobal ? window : this;
+  var userSetup = context.setup;
+  var userDraw = context.draw;
   if (typeof userDraw === 'function') {
     if (typeof userSetup === 'undefined') {
-      this.scale(this._pixelDensity, this._pixelDensity);
+      context.scale(context._pixelDensity, context._pixelDensity);
     }
-    var self = this;
     var callMethod = function(f) {
-      f.call(self);
+      f.call(context);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
-      this.resetMatrix();
-      if (this._renderer.isP3D) {
-        this._renderer._update();
+      context.resetMatrix();
+      if (context._renderer.isP3D) {
+        context._renderer._update();
       }
-      this._setProperty('frameCount', this.frameCount + 1);
-      this._registeredMethods.pre.forEach(callMethod);
+      context._setProperty('frameCount', context.frameCount + 1);
+      context._registeredMethods.pre.forEach(callMethod);
       userDraw();
-      this._registeredMethods.post.forEach(callMethod);
+      context._registeredMethods.post.forEach(callMethod);
     }
   }
 };

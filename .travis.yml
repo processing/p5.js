@@ -1,6 +1,13 @@
 language: node_js
 node_js:
-  - "8.9"
-install: npm install
+  - "8"
+  - "10"
+addons:
+  chrome: stable
+install: for i in {1..3}; do travis_wait 5 npm install && break; rm -rf node_modules; done
+before_script:
+  - sed -i 's/'"'"'--disable-gpu'"'"',//g' node_modules/mocha-chrome/lib/instance.js
+  - sed -i 's/options.logLevel/"verbose"/g' node_modules/mocha-chrome/lib/instance.js
 script: npm run grunt
 sudo: false
+services: docker

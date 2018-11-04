@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/core');
+var p5 = require('../core/main');
 var constants = require('../core/constants');
 var opentype = require('opentype.js');
 
@@ -20,7 +20,7 @@ require('../core/error_helpers');
  * is executed.
  * <br><br>
  * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
+ * that links in your sketch. Loading fonts from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
  *
@@ -65,7 +65,7 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * <p>You can also use the string name of the font to style other HTML
+ * <p>You can also use the font filename string (without the file extension) to style other HTML
  * elements.</p>
  *
  * <div><code>
@@ -158,6 +158,10 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * does not fit completely within the rectangle specified will not be drawn
  * to the screen. If x2 and y2 are not specified, the baseline alignment is the
  * default, which means that the text will be drawn upwards from x and y.
+ * <br><br>
+ * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font using the
+ * <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
+ * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
@@ -188,9 +192,32 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * </code>
  * </div>
  *
+ * <div modernizr='webgl'>
+ * <code>
+ * var avenir;
+ * function preload() {
+ *   avenir = loadFont('assets/Avenir.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   textFont(avenir);
+ *   textSize(width / 3);
+ *   textAlign(CENTER, CENTER);
+ * }
+ * function draw() {
+ *   background(0);
+ *   var time = millis();
+ *   rotateX(time / 1000);
+ *   rotateZ(time / 1234);
+ *   text('p5.js', 0, 0);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  *'word' displayed 3 times going from black, blue to translucent blue
  * The quick brown fox jumped over the lazy dog.
+ * the text 'p5.js' spinning in 3d
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
@@ -202,6 +229,8 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
 /**
  * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
+ * <br><br>
+ * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
  *
  * @method textFont
  * @return {Object} the current font

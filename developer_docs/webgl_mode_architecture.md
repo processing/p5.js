@@ -28,10 +28,10 @@ The p5.Shader class provides access to the uniforms and attributes of a GL progr
 * Binds textures the shader needs before a shape is rendered
 * Provides the bindShader() method for use in the render before a shape is drawn, then unbindShader() after the shape is drawn.
 
-There are three default shaders, as documented in the Shader section.
+There are four default shaders, as documented in the Shader section.
 
 ### p5.Texture
-The p5.Texture object manages GL state for a texture based on a `p5.Image`, `p5.MediaElement`, or `p5.Element`. In the future, this object could also be constructed for a piece of text to render in WEBGL mode.
+The p5.Texture object manages GL state for a texture based on a `p5.Image`, `p5.MediaElement`, `p5.Element`, or `ImageData`.
 
 * Internally handles processing image data based on type, so that the p5.Renderer implementation doesnâ€™t have to make special exceptions in its own methods when handling textures
 * Updates conditionally every frame by making a best guess at whether or not image data has changed. Tries not to upload the texture if no change has been made, to help performance.
@@ -49,19 +49,22 @@ All attributes for drawing with Immediate Mode are stored in an object in the re
 ## Geometry: Retain and Immediate Mode
 Retained geometry is used for 3D primitives, while immediate mode is used for shapes created with begin/endShape.
 
-|Functions with retained geometry| Functions with immediate mode geometry | 2D functions not yet implemented|
-|--------------------------------|----------------------------------------|---------------------------------|
-|plane()                         | bezier()                               | arc()                           |
-|box()                           | curve()                                | text()                          |
-|sphere()                        | line()                                 | point()                         |
-|cylinder()                      | beginShape()                           | curveVertex()                   |
-|cone()                          | vertex()                               | bezierVertex()                  |
-|ellipsoid()                     | endShape()                             | quadraticVertex()               |
-|torus()                         |
-|triangle()                      |
+|Functions with retained geometry| Functions with immediate mode geometry |
+|--------------------------------|----------------------------------------|
+|plane()                         | bezier()                               |
+|box()                           | curve()                                |
+|sphere()                        | line()                                 |
+|cylinder()                      | beginShape()                           |
+|cone()                          | vertex()                               |
+|ellipsoid()                     | endShape()                             |
+|torus()                         | point()                                |
+|triangle()                      | curveVertex()                          |
+|arc()                           | bezierVertex()                         |
+|point()                         | quadraticVertex()                      |
 |ellipse()                       |
 |rect()                          |
 |quad()                          |
+|text()                          |
 
 
 
@@ -93,69 +96,69 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 ### Shader Parameters
 
 #### Standard Model View & Camera Uniforms
-|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|---------------------------------|-----------|---------------|------------|-------------|
-|`uniform mat4 uModelViewMatrix;` |x          |x              |x           |x            |
-|`uniform mat4 uProjectionMatrix;`|x          |x              |x           |x            |
-|`uniform vec4 uViewPort;`        |x          |               |            |             |
+|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|---------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform mat4 uModelViewMatrix;` |x          |x              |x           |x            |x           |
+|`uniform mat4 uProjectionMatrix;`|x          |x              |x           |x            |x           |
+|`uniform vec4 uViewPort;`        |x          |               |            |             |            |
 
 
 #### Geometry Attributes and Uniforms
-|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|---------------------------------|-----------|---------------|------------|-------------|
-|`attribute vec3 aPosition;`      |x          |x              |x           |x            |
-|`attribute vec3 aNormal;`        |           |x              |            |x            |
-|`attribute vec2 aTexCoord;`      |           |x              |            |x            |
-|`uniform mat3 uNormalMatrix;`    |           |x              |            |x            |
-|`attribute vec4 aDirection;`     |x          |               |            |             |
-|`uniform float uStrokeWeight;`   |x          |               |            |             |
+|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|---------------------------------|-----------|---------------|------------|-------------|------------|
+|`attribute vec3 aPosition;`      |x          |x              |x           |x            |x           |
+|`attribute vec3 aNormal;`        |           |x              |            |x            |            | 
+|`attribute vec2 aTexCoord;`      |           |x              |            |x            |            |
+|`uniform mat3 uNormalMatrix;`    |           |x              |            |x            |            |
+|`attribute vec4 aDirection;`     |x          |               |            |             |            |
+|`uniform float uStrokeWeight;`   |x          |               |            |             |            |
 
 #### Material Colors
-|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|---------------------------------|-----------|---------------|------------|-------------|
-|`uniform vec4 uMaterialColor;`   |x          |x              |            |             |
-|`attribute vec4 aVertexColor;`   |           |               |x           |             |
+|Parameter                        |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|---------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform vec4 uMaterialColor;`   |x          |x              |            |             |x           |
+|`attribute vec4 aVertexColor;`   |           |               |x           |             |            |
 
 #### Light Parameters
 
-|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|--------------------------------------|-----------|---------------|------------|-------------|
-|`uniform int uAmbientLightCount;`     |           |x              |            |             |
-|`uniform int uAmbientLightCount;`     |           |x              |            |             |
-|`uniform int uDirectionalLightCount;` |           |x              |            |             |
-|`uniform int uPointLightCount;`       |           |x              |            |             |
-|`uniform vec3 uAmbientColor[8];`      |           |x              |            |             |
-|`uniform vec3 uLightingDirection[8];` |           |x              |            |             |
-|`uniform vec3 uDirectionalColor[8];`  |           |x              |            |             |
-|`uniform vec3 uPointLightLocation[8];`|           |x              |            |             |
-|`uniform vec3 uPointLightColor[8];`   |           |x              |            |             |
-|`uniform bool uSpecular;`             |           |x              |            |             |
-|`uniform bool uUseLighting;`          |           |x              |            |             |
+|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|--------------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
+|`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
+|`uniform int uDirectionalLightCount;` |           |x              |            |             |            |
+|`uniform int uPointLightCount;`       |           |x              |            |             |            |
+|`uniform vec3 uAmbientColor[8];`      |           |x              |            |             |            |
+|`uniform vec3 uLightingDirection[8];` |           |x              |            |             |            |
+|`uniform vec3 uDirectionalColor[8];`  |           |x              |            |             |            |
+|`uniform vec3 uPointLightLocation[8];`|           |x              |            |             |            |
+|`uniform vec3 uPointLightColor[8];`   |           |x              |            |             |            |
+|`uniform bool uSpecular;`             |           |x              |            |             |            |
+|`uniform bool uUseLighting;`          |           |x              |            |             |            |
 
 #### Texture Parameters
 
-|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|--------------------------------------|-----------|---------------|------------|-------------|
-|`uniform sampler2D uSampler;`         |           |x              |            |             |
-|`uniform bool isTexture;`             |           |x              |            |             |
+|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|--------------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform sampler2D uSampler;`         |           |x              |            |             |            |
+|`uniform bool isTexture;`             |           |x              |            |             |            |
 
 #### General Parameters
 
-|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|--------------------------------------|-----------|---------------|------------|-------------|
-|`uniform float uResolution;`          |           |               |x           |             |
-|`uniform float uPointSize;`           |           |               |x           |             |
+|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|--------------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform float uResolution;`          |           |               |x           |             |            |
+|`uniform float uPointSize;`           |           |               |x           |             |x           |
 
 #### Varying Parameters
 
-|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|
-|--------------------------------------|-----------|---------------|------------|-------------|
-|`varying vec3 vVertexNormal;`         |           |x              |            |             |
-|`varying vec2 vVertTexCoord;`         |           |x              |            |             |
-|`varying vec3 vLightWeighting;`       |           |x              |            |             |
-|`varying highp vec2 vVertTexCoord;`   |           |               |            |x            |
-|`varying vec4 vColor;`                |           |               |x           |             |
-
+|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|--------------------------------------|-----------|---------------|------------|-------------|------------|
+|`varying vec3 vVertexNormal;`         |           |x              |            |             |            |
+|`varying vec2 vVertTexCoord;`         |           |x              |            |             |            |
+|`varying vec3 vLightWeighting;`       |           |x              |            |             |            |
+|`varying highp vec2 vVertTexCoord;`   |           |               |            |x            |            |
+|`varying vec4 vColor;`                |           |               |x           |             |            |
+|`varying float vStrokeWeight`         |           |               |            |             |x           |
 
 ## Next Steps
 
