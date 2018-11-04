@@ -309,7 +309,7 @@ p5.prototype.texture = function(tex) {
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
  * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
  * @method  textureMode
- * @param  {Constant} mode Either IMAGE or NORMAL
+ * @param {Constant} mode either IMAGE or NORMAL
  * @example
  * <div>
  * <code>
