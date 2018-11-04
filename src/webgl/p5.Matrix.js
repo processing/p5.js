@@ -511,8 +511,6 @@ p5.Matrix.prototype.scale = function(x, y, z) {
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, x, y, z) {
-  var _a = this.p5 ? this.p5._toRadians(a) : a;
-
   if (x instanceof p5.Vector) {
     // x is a vector, extract the components from it.
     y = x.y;
@@ -544,8 +542,8 @@ p5.Matrix.prototype.rotate = function(a, x, y, z) {
   var a23 = this.mat4[11];
 
   //sin,cos, and tan of respective angle
-  var sA = Math.sin(_a);
-  var cA = Math.cos(_a);
+  var sA = Math.sin(a);
+  var cA = Math.cos(a);
   var tA = 1 - cA;
   // Construct the elements of the rotation matrix
   var b00 = x * x * tA + cA;
