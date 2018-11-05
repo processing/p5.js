@@ -152,13 +152,13 @@ p5.prototype.textSize = function(theSize) {
 };
 
 /**
- * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, or BOLD.
+ * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, BOLD or BOLDITALIC.
  * Note: this may be is overridden by CSS styling. For non-system fonts
  * (opentype, truetype, etc.) please load styled fonts instead.
  *
  * @method textStyle
  * @param {Constant} theStyle styling for text, either NORMAL,
- *                            ITALIC, or BOLD
+ *                            ITALIC, BOLD or BOLDITALIC
  * @chainable
  * @example
  * <div>
@@ -166,16 +166,18 @@ p5.prototype.textSize = function(theSize) {
  * strokeWeight(0);
  * textSize(12);
  * textStyle(NORMAL);
- * text('Font Style Normal', 10, 30);
+ * text('Font Style Normal', 10, 15);
  * textStyle(ITALIC);
- * text('Font Style Italic', 10, 60);
+ * text('Font Style Italic', 10, 40);
  * textStyle(BOLD);
- * text('Font Style Bold', 10, 90);
+ * text('Font Style Bold', 10, 65);
+ * textStyle(BOLDITALIC);
+ * text('Font Style Bold Italic', 10, 90);
  * </code>
  * </div>
  *
  * @alt
- *words Font Style Normal displayed normally, Italic in italic and bold in bold
+ *words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
  */
 /**
  * @method textStyle

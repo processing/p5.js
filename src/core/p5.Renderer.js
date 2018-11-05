@@ -133,7 +133,8 @@ p5.Renderer.prototype.textStyle = function(s) {
     if (
       s === constants.NORMAL ||
       s === constants.ITALIC ||
-      s === constants.BOLD
+      s === constants.BOLD ||
+      s === constants.BOLDITALIC
     ) {
       this._setProperty('_textStyle', s);
     }
