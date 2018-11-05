@@ -354,7 +354,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  *
  */
 p5.Image.prototype.get = function(x, y, w, h) {
-  return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
+  return p5.prototype.get.call(this, x, y, w, h);
 };
 
 /**

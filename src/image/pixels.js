@@ -488,7 +488,33 @@ p5.prototype.filter = function(operation, value) {
  *
  */
 p5.prototype.get = function(x, y, w, h) {
-  return this._renderer.get(x, y, w, h);
+  if (typeof w === 'undefined' && typeof h === 'undefined') {
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      x = y = 0;
+      w = this.width;
+      h = this.height;
+    } else {
+      w = h = 1;
+    }
+  }
+
+  // if the section does not overlap the canvas
+  if (x + w < 0 || y + h < 0 || x >= this.width || y >= this.height) {
+    // TODO: is this valid for w,h > 1 ?
+    return [0, 0, 0, 255];
+  }
+
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
+  w = Math.floor(w);
+  h = Math.floor(h);
+
+  if (this instanceof p5.Image) {
+    return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
+  } else {
+    return this._renderer.get(x, y, w, h);
+  }
 };
 
 /**
