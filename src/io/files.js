@@ -600,29 +600,6 @@ function makeObject(row, headers) {
   return ret;
 }
 
-function parseXML(two) {
-  var one = new p5.XML();
-  var children = two.childNodes;
-  if (children && children.length) {
-    for (var i = 0; i < children.length; i++) {
-      var node = parseXML(children[i]);
-      one.addChild(node);
-    }
-    one.setName(two.nodeName);
-    one._setCont(two.textContent);
-    one._setAttributes(two);
-    for (var j = 0; j < one.children.length; j++) {
-      one.children[j].parent = one;
-    }
-    return one;
-  } else {
-    one.setName(two.nodeName);
-    one._setCont(two.textContent);
-    one._setAttributes(two);
-    return one;
-  }
-}
-
 /**
  * Reads the contents of a file and creates an XML object with its values.
  * If the name of the file is used as the parameter, as in the above example,
@@ -690,7 +667,7 @@ function parseXML(two) {
  *
  */
 p5.prototype.loadXML = function() {
-  var ret = {};
+  var ret = new p5.XML();
   var callback, errorCallback;
 
   for (var i = 1; i < arguments.length; i++) {
@@ -1116,6 +1093,9 @@ p5.prototype.httpDo = function() {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
+        } else if (a instanceof p5.XML) {
+          data = a.serialize();
+          contentType = 'application/xml';
         } else {
           data = JSON.stringify(a);
           contentType = 'application/json';
@@ -1177,7 +1157,7 @@ p5.prototype.httpDo = function() {
           return res.text().then(function(text) {
             var parser = new DOMParser();
             var xml = parser.parseFromString(text, 'text/xml');
-            return parseXML(xml.documentElement);
+            return new p5.XML(xml.documentElement);
           });
         default:
           return res.text();
@@ -1493,7 +1473,7 @@ p5.prototype.save = function(object, _filename, _options) {
   // OPTION 1: saveCanvas...
 
   // if no arguments are provided, save canvas
-  var cnv = this._curElement.elt;
+  var cnv = this._curElement ? this._curElement.elt : this.elt;
   if (args.length === 0) {
     p5.prototype.saveCanvas(cnv);
     return;

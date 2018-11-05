@@ -102,6 +102,20 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[3]
   );
 
+  if (this.textureMode === constants.IMAGE) {
+    if (this.textureImage !== undefined) {
+      if (this.textureImage.width > 0 && this.textureImage.height > 0) {
+        u /= this.textureImage.width;
+        v /= this.textureImage.height;
+      }
+    } else {
+      console.warn(
+        'You must first call texture() before using' +
+          ' vertex() with image based u and v coordinates'
+      );
+    }
+  }
+
   this.immediateMode.uvCoords.push(u, v);
 
   this.immediateMode._bezierVertex[0] = x;
@@ -146,6 +160,12 @@ p5.RendererGL.prototype.endShape = function(
           this.immediateMode.edges.push([i, i + 2]);
         }
         this.immediateMode.edges.push([i, i + 1]);
+      } else if (this.immediateMode.shapeMode === constants.TRIANGLES) {
+        for (i = 0; i < this.immediateMode.vertices.length - 2; i = i + 3) {
+          this.immediateMode.edges.push([i, i + 1]);
+          this.immediateMode.edges.push([i + 1, i + 2]);
+          this.immediateMode.edges.push([i + 2, i]);
+        }
       } else {
         for (i = 0; i < this.immediateMode.vertices.length - 1; i++) {
           this.immediateMode.edges.push([i, i + 1]);
@@ -294,7 +314,10 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       case constants.LINES:
       case constants.TRIANGLES:
         this.immediateMode.shapeMode =
-          this.isBezier || this.isQuadratic || this.isCurve
+          this.isBezier ||
+          this.isQuadratic ||
+          this.isCurve ||
+          this.immediateMode.shapeMode === constants.TRIANGLES
             ? constants.TRIANGLES
             : constants.TRIANGLE_FAN;
         break;

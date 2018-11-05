@@ -22,7 +22,7 @@ function draw() {
       if (px > 0) {
         fill(255, 0, 0);
       }
-      if (px == 0 && pz == 0) {
+      if (px === 0 && pz === 0) {
         cone(50, 100);
       } else {
         cone(20, 50);

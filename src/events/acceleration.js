@@ -26,6 +26,20 @@ p5.prototype.deviceOrientation = undefined;
  *
  * @property {Number} accelerationX
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationX);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationX = 0;
 
@@ -35,6 +49,20 @@ p5.prototype.accelerationX = 0;
  *
  * @property {Number} accelerationY
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationY);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationY = 0;
 
@@ -44,6 +72,22 @@ p5.prototype.accelerationY = 0;
  *
  * @property {Number} accelerationZ
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationZ);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationZ = 0;
 
@@ -96,6 +140,8 @@ p5.prototype._updatePAccelerations = function() {
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationX
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -112,13 +158,8 @@ p5.prototype._updatePAccelerations = function() {
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationX
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
- *
  */
 p5.prototype.rotationX = 0;
 
@@ -130,6 +171,8 @@ p5.prototype.rotationX = 0;
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationY
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -146,10 +189,6 @@ p5.prototype.rotationX = 0;
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationY
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
  */
@@ -466,8 +505,9 @@ p5.prototype.setShakeThreshold = function(val) {
 
 /**
  * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
- * the threshold value along X, Y or Z axis. The default threshold is set to
- * 0.5.
+ * the threshold value along X, Y or Z axis. The default threshold is set to 0.5.
+ * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setMoveThreshold">setMoveThreshold()</a>.
+ *
  * @method deviceMoved
  * @example
  * <div class="norender">
@@ -558,6 +598,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
  * changes of accelerationX and accelerationY values is more than
  * the threshold value. The default threshold is set to 30.
+ * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setShakeThreshold">setShakeThreshold()</a>.
+ *
  * @method deviceShaken
  * @example
  * <div class="norender">

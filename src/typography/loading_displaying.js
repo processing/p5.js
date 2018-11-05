@@ -20,7 +20,7 @@ require('../core/error_helpers');
  * is executed.
  * <br><br>
  * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
+ * that links in your sketch. Loading fonts from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
  *

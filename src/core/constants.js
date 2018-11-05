@@ -507,6 +507,11 @@ module.exports = {
    * @final
    */
   BOLD: 'bold',
+  /**
+   * @property {String} BOLDITALIC
+   * @final
+   */
+  BOLDITALIC: 'bold italic',
 
   // TYPOGRAPHY-INTERNAL
   _DEFAULT_TEXT_FILL: '#000000',
@@ -525,7 +530,11 @@ module.exports = {
   TEXTURE: 'texture',
   IMMEDIATE: 'immediate',
 
-  //WEBGL TEXTURE WRAP AND FILTERING
+  // WEBGL TEXTURE MODE
+  // NORMAL already exists for typography
+  IMAGE: 'image',
+
+  // WEBGL TEXTURE WRAP AND FILTERING
   // LINEAR already exists above
   NEAREST: 'nearest',
   REPEAT: 'repeat',

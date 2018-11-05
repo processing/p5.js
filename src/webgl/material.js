@@ -290,12 +290,92 @@ p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
   this._renderer.drawMode = constants.TEXTURE;
+  this._renderer.textureImage = tex;
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
   this.noStroke();
   return this;
+};
+
+/**
+ * Sets the coordinate space for texture mapping. The default mode is IMAGE
+ * which refers to the actual coordinates of the image.
+ * NORMAL refers to a normalized space of values ranging from 0 to 1.
+ * This function only works in WEBGL mode.
+ *
+ * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+ * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
+ * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+ * @method  textureMode
+ * @param {Constant} mode either IMAGE or NORMAL
+ * @example
+ * <div>
+ * <code>
+ * var img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, 1, 0);
+ *   vertex(50, 50, 1, 1);
+ *   vertex(-50, 50, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ * <div>
+ * <code>
+ * var img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, img.width, 0);
+ *   vertex(50, 50, img.width, img.height);
+ *   vertex(-50, 50, 0, img.height);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ */
+p5.prototype.textureMode = function(mode) {
+  if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
+    console.warn(
+      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
+    );
+  } else {
+    this._renderer.textureMode = mode;
+  }
 };
 
 /**

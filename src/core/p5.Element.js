@@ -245,7 +245,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
-    return fxn();
+    return fxn.call(this);
   };
   // Pass along the event-prepended form of the callback.
   adjustListener('mousedown', eventPrependedFxn, this);
@@ -893,38 +893,23 @@ p5.Element.prototype.dragLeave = function(fxn) {
  * Canvas turns into whatever image is dragged/dropped onto it.
  */
 p5.Element.prototype.drop = function(callback, fxn) {
-  // Make a file loader callback and trigger user's callback
-  function makeLoader(theFile) {
-    // Making a p5.File object
-    var p5file = new p5.File(theFile);
-    return function(e) {
-      p5file.data = e.target.result;
-      callback(p5file);
-    };
-  }
-
   // Is the file stuff supported?
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // If you want to be able to drop you've got to turn off
-    // a lot of default behavior
-    attachListener(
-      'dragover',
-      function(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-      },
-      this
-    );
+    if (!this._dragDisabled) {
+      this._dragDisabled = true;
 
-    // If this is a drag area we need to turn off the default behavior
-    attachListener(
-      'dragleave',
-      function(evt) {
-        evt.stopPropagation();
+      var preventDefault = function(evt) {
         evt.preventDefault();
-      },
-      this
-    );
+      };
+
+      // If you want to be able to drop you've got to turn off
+      // a lot of default behavior.
+      // avoid `attachListener` here, since it overrides other handlers.
+      this.elt.addEventListener('dragover', preventDefault);
+
+      // If this is a drag area we need to turn off the default behavior
+      this.elt.addEventListener('dragleave', preventDefault);
+    }
 
     // Attach the second argument as a callback that receives the raw drop event
     if (typeof fxn !== 'undefined') {
@@ -935,7 +920,6 @@ p5.Element.prototype.drop = function(callback, fxn) {
     attachListener(
       'drop',
       function(evt) {
-        evt.stopPropagation();
         evt.preventDefault();
 
         // A FileList
@@ -944,16 +928,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
         // Load each one and trigger the callback
         for (var i = 0; i < files.length; i++) {
           var f = files[i];
-          var reader = new FileReader();
-          reader.onload = makeLoader(f);
-
-          // Text or data?
-          // This should likely be improved
-          if (f.type.indexOf('text') > -1) {
-            reader.readAsText(f);
-          } else {
-            reader.readAsDataURL(f);
-          }
+          p5.File._load(f, callback);
         }
       },
       this

@@ -126,7 +126,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
-
+  this.textureImage = undefined;
+  this.textureMode = constants.IMAGE;
   this._curveTightness = 6;
 
   // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -586,9 +587,40 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
-  return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
-};
+  var ctx = this._pInst || this;
+  var pd = ctx._pixelDensity;
 
+  var sx = x * pd;
+  var sy = y * pd;
+
+  if (w === 1 && h === 1) {
+    var pixels = new Uint8Array(4);
+    this.drawingContext.readPixels(
+      sx,
+      sy,
+      1,
+      1,
+      this.drawingContext.RGBA,
+      this.drawingContext.UNSIGNED_BYTE,
+      pixels
+    );
+    return [pixels[0], pixels[1], pixels[2], pixels[3]];
+  } else {
+    //auto constrain the width and height to
+    //dimensions of the source image
+    var dw = Math.min(w, ctx.width);
+    var dh = Math.min(h, ctx.height);
+    var sw = dw * pd;
+    var sh = dh * pd;
+
+    var region = new p5.Image(dw, dh);
+    region.canvas
+      .getContext('2d') // not sure this is correct
+      .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
+
+    return region;
+  }
+};
 /**
  * Loads the pixels data for this canvas into the pixels[] attribute.
  * Note that updatePixels() and set() do not work.
