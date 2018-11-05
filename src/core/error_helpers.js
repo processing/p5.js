@@ -8,8 +8,12 @@
 var p5 = require('./main');
 var constants = require('./constants');
 
+// p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
+// See testColors below for all the color codes and names
+var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
+
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._friendlyFileLoadError = function() {};
+  p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = function() {};
 } else {
   var doFriendlyWelcome = false; // TEMP until we get it all working LM
   // for parameter validation
@@ -65,6 +69,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Prints out a fancy, colorful message to the console log
    *
+   * @method report
    * @private
    * @param  {String}               message the words to be said
    * @param  {String}               func    the name of the function to link
@@ -72,12 +77,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @return console logs
    */
-  // Wrong number of params, undefined param, wrong type
-  var FILE_LOAD = 3;
-  var ERR_PARAMS = 3;
-  // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
-  // See testColors below for all the color codes and names
-  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
   var report = function(message, func, color) {
     if (doFriendlyWelcome) {
       friendlyWelcome();
@@ -146,6 +145,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
         'we recommend splitting the file into smaller segments and fetching those.'
     }
   };
+
+  /**
+   * This is called internally if there is a error during file loading.
+   *
+   * @method _friendlyFileLoadError
+   * @private
+   * @param  {Number} errorType
+   * @param  {String} filePath
+   */
   p5._friendlyFileLoadError = function(errorType, filePath) {
     var errorInfo = errorCases[errorType];
     var message;
@@ -163,7 +171,20 @@ if (typeof IS_MINIFIED !== 'undefined') {
         (errorInfo.message || '') +
         ' or running a local server.';
     }
-    report(message, errorInfo.method, FILE_LOAD);
+    report(message, errorInfo.method, 3);
+  };
+
+  /**
+   * This is a generic method that can be called from anywhere in the p5
+   * library to alert users to a common error.
+   *
+   * @method _friendlyError
+   * @private
+   * @param  {Number} message message to be printed
+   * @param  {String} method name of method
+   */
+  p5._friendlyError = function(message, method) {
+    report(message, method);
   };
 
   var docCache = {};
@@ -556,7 +577,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         }
       } catch (err) {}
 
-      report(message + '.', func, ERR_PARAMS);
+      report(message + '.', func, 3);
     }
   };
 
