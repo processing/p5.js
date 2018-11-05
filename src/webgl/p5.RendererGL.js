@@ -594,9 +594,7 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
   var sy = y * pd;
 
   if (w === 1 && h === 1) {
-    var dbw = this.drawingContext.drawingBufferWidth;
-    var dbh = this.drawingContext.drawingBufferHeight;
-    var pixels = new Uint8Array(dbw * dbh * 4);
+    var pixels = new Uint8Array(4);
     this.drawingContext.readPixels(
       sx,
       sy,
