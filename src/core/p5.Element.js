@@ -1005,7 +1005,6 @@ p5.Element.prototype.drop = function(callback, fxn) {
       this._dragDisabled = true;
 
       var preventDefault = function(evt) {
-        //evt.stopPropagation();
         evt.preventDefault();
       };
 
@@ -1027,7 +1026,6 @@ p5.Element.prototype.drop = function(callback, fxn) {
     attachListener(
       'drop',
       function(evt) {
-        //evt.stopPropagation();
         evt.preventDefault();
 
         // A FileList
