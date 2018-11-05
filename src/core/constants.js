@@ -507,6 +507,11 @@ module.exports = {
    * @final
    */
   BOLD: 'bold',
+  /**
+   * @property {String} BOLDITALIC
+   * @final
+   */
+  BOLDITALIC: 'bold italic',
 
   // TYPOGRAPHY-INTERNAL
   _DEFAULT_TEXT_FILL: '#000000',
