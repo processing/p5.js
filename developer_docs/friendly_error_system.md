@@ -15,7 +15,7 @@ So far FES is able to detect and print messages for two kinds of errors: (1) `va
 FES provides a generalized error message generation system that developers may use by calling `p5._friendlyError()`.
 
 ### `core/error_helpers/friendlyFileLoadError()`: 
-* This function generates and displays friendly error messages if a file fails to load correctly. 
+* This function generates and displays friendly error messages if a file fails to load correctly. It also checks if the size of a file might be too large to load and produces a warning. 
 * This can be called through : `p5._friendlyFileLoadError(ERROR_TYPE, FILE_PATH)`.
 * file loading error example:
 ````javascript
@@ -34,8 +34,9 @@ function draw() {};
 /// FES will generate the following message in the console:
 /// > p5.js says: It looks like there was a problem loading your font. Try checking if the file path [assets/OpenSans-Regular.ttf] is correct, hosting the font online, or running a local server.[https://github.com/processing/p5.js/wiki/Local-server]
 ````
-* Currently version contains templates for generating error messages for `image`, `XML`, `table`, `text`, and `font` files.
-* Implemented to `image/loading_displaying/loadImage()`, `io/files/loadFont()`, and `io/files/loadTable()`.
+* Currently version contains templates for generating error messages for `image`, `XML`, `table`, `text`, `json` and `font` files.
+* Implemented to `image/loading_displaying/loadImage()`, `io/files/loadFont()`, `io/files/loadTable()`, `io/files/loadJSON()`, `io/files/loadStrings()`, `io/files/loadXML()`, `io/files/loadBytes()`.
+* Error while loading a file due to its large size is implemented to all loadX methods.
 
 ### `core/error_helpers/validateParameters()`:
 * This function runs parameter validation by matching the input parameters with information from `docs/reference/data.json`, which is created from the function's inline documentation. It checks that a function call contains the correct number and the correct type of parameters. 
