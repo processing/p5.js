@@ -991,26 +991,21 @@ p5.Element.prototype.dragLeave = function(fxn) {
 p5.Element.prototype.drop = function(callback, fxn) {
   // Is the file stuff supported?
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // If you want to be able to drop you've got to turn off
-    // a lot of default behavior
-    attachListener(
-      'dragover',
-      function(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-      },
-      this
-    );
+    if (!this._dragDisabled) {
+      this._dragDisabled = true;
 
-    // If this is a drag area we need to turn off the default behavior
-    attachListener(
-      'dragleave',
-      function(evt) {
-        evt.stopPropagation();
+      var preventDefault = function(evt) {
         evt.preventDefault();
-      },
-      this
-    );
+      };
+
+      // If you want to be able to drop you've got to turn off
+      // a lot of default behavior.
+      // avoid `attachListener` here, since it overrides other handlers.
+      this.elt.addEventListener('dragover', preventDefault);
+
+      // If this is a drag area we need to turn off the default behavior
+      this.elt.addEventListener('dragleave', preventDefault);
+    }
 
     // Attach the second argument as a callback that receives the raw drop event
     if (typeof fxn !== 'undefined') {
@@ -1021,7 +1016,6 @@ p5.Element.prototype.drop = function(callback, fxn) {
     attachListener(
       'drop',
       function(evt) {
-        evt.stopPropagation();
         evt.preventDefault();
 
         // A FileList
