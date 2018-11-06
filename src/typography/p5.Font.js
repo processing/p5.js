@@ -48,8 +48,11 @@ p5.Font.prototype.list = function() {
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
- * @param  {Number} [fontSize] font size to use (optional)
+ * @param  {Number} [fontSize] font size to use (optional) Default is 12.
  * @param  {Object} [options] opentype options (optional)
+ *                            opentype fonts contains alignment and baseline options.
+ *                            Default is 'LEFT' and 'alphabetic'
+ *
  *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *
