@@ -116,7 +116,7 @@ p5.prototype.focused = document.hasFocus();
  * must be less than the dimensions of the image.
  *
  * @method cursor
- * @param {String|Constant} type Built-In: ARROW, CROSS, HAND, MOVE, TEXT and WAIT
+ * @param {String|Constant} type Built-In: either ARROW, CROSS, HAND, MOVE, TEXT and WAIT
  *                               Native CSS properties: 'grab', 'progress', 'cell' etc.
  *                               External: path for cursor's images
  *                               (Allowed File extensions: .cur, .gif, .jpg, .jpeg, .png)
@@ -127,20 +127,26 @@ p5.prototype.focused = document.hasFocus();
  * @param {Number}          [y]  the vertical active spot of the cursor (must be less than 32)
  * @example
  * <div><code>
- * // Move the mouse left and right across the image
- * // to see the cursor change from a cross to a hand
+ * // Move the mouse across the quadrants
+ * // to see the cursor change
  * function draw() {
  *   line(width / 2, 0, width / 2, height);
- *   if (mouseX < 50) {
+ *   line(0, height / 2, width, height / 2);
+ *   if (mouseX < 50 && mouseY < 50) {
  *     cursor(CROSS);
+ *   } else if (mouseX > 50 && mouseY < 50) {
+ *     cursor('progress');
+ *   } else if (mouseX > 50 && mouseY > 50) {
+ *     cursor('https://s3.amazonaws.com/mupublicdata/cursor.cur');
  *   } else {
- *     cursor(HAND);
+ *     cursor('grab');
  *   }
  * }
  * </code></div>
  *
  * @alt
- * horizontal line divides canvas. cursor on left is a cross, right is hand.
+ * canvas is divided into four quadrants. cursor on first is a cross, second is a progress,
+ * third is a custom cursor using path to the cursor and fourth is a grab.
  *
  */
 p5.prototype.cursor = function(type, x, y) {
