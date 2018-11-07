@@ -116,10 +116,15 @@ p5.prototype.focused = document.hasFocus();
  * must be less than the dimensions of the image.
  *
  * @method cursor
- * @param {String|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
- *                               WAIT, or path for image
- * @param {Number}          [x]  the horizontal active spot of the cursor
- * @param {Number}          [y]  the vertical active spot of the cursor
+ * @param {String|Constant} type Built-In: ARROW, CROSS, HAND, MOVE, TEXT and WAIT
+ *                               Native CSS properties: 'grab', 'progress', 'cell' etc.
+ *                               External: path for cursor's images
+ *                               (Allowed File extensions: .cur, .gif, .jpg, .jpeg, .png)
+ *
+ *                               For more information on Native CSS cursors and url visit:
+ *                               https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+ * @param {Number}          [x]  the horizontal active spot of the cursor (must be less than 32)
+ * @param {Number}          [y]  the vertical active spot of the cursor (must be less than 32)
  * @example
  * <div><code>
  * // Move the mouse left and right across the image
