@@ -1067,7 +1067,7 @@ p5.Vector.prototype.heading = function heading() {
 };
 
 p5.Vector.prototype.headingVectors = function headingVectors(v) {
-  var dot = this.x * v.x + this.y * v.y;      
+  //var dot = this.x * v.x + this.y * v.y;      
   var det = this.x * v.x - this.y * v.y;
   var h = Math.atan2(det, dot);
   if (this.p5) return this.p5._fromRadians(h);
