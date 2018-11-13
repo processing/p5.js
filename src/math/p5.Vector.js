@@ -1066,8 +1066,69 @@ p5.Vector.prototype.heading = function heading() {
   return h;
 };
 
-p5.Vector.prototype.headingVectors = function headingVectors(v) {
-  //var dot = this.x * v.x + this.y * v.y;      
+/**
+ * Calculate the angle of rotation between two vectors (only 2D vectors)
+ *
+ * @method headingBetween
+ * @param {Vector} Vector to calculate the angle of rotation with the current vector
+ * @return {Number} the angle of rotation
+ * @example
+ * <div class = "norender">
+ * <code>
+ * function setup() {
+ *   var v1 = createVector(30, 50);
+ *   var v2 = createVector(40,80)
+ *   print(v1.headingBetween(v2)); // -0.49394136892
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *   var v0 = createVector(50, 50);
+ *
+ *   var v1 = createVector(50, 0);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   var v2 = createVector(mouseX - 50, mouseY - 50);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   var headingBetween = v1.headingBetween(v2);
+ *   noStroke();
+ *   text(
+ *     'heading between: ' +
+ *       headingBetween.toFixed(2) +
+ *       ' radians or ' +
+ *       degrees(headingBetween).toFixed(2) +
+ *       ' degrees',
+ *     10,
+ *     50,
+ *     90,
+ *     50
+ *   );
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   var arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.prototype.headingBetween = function headingBetween(v) {
+  var dot = this.x * v.x + this.y * v.y;
   var det = this.x * v.x - this.y * v.y;
   var h = Math.atan2(det, dot);
   if (this.p5) return this.p5._fromRadians(h);
