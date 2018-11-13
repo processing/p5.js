@@ -1078,7 +1078,7 @@ p5.Vector.prototype.heading = function heading() {
  * function setup() {
  *   var v1 = createVector(30, 50);
  *   var v2 = createVector(40, 80);
- *   print(v1.headingBetween(v2)); // -0.49394136892
+ *   print(v1.headingBetween(v2)); // 0.07677189126977804
  * }
  * </code>
  * </div>
@@ -1087,18 +1087,23 @@ p5.Vector.prototype.heading = function heading() {
  * <code>
  * function draw() {
  *   background(240);
+ *
  *   var v0 = createVector(50, 50);
  *
- *   var v1 = createVector(50, 0);
+ *   var v1 = createVector(mouseX - 50, mouseY - 50);
  *   drawArrow(v0, v1, 'red');
  *
- *   var v2 = createVector(mouseX - 50, mouseY - 50);
+ *   var v2 = createVector(50, 0); // default vector two
  *   drawArrow(v0, v2, 'blue');
  *
  *   var headingBetween = v1.headingBetween(v2);
+ *
+ *   var vectorRotated = p5.Vector.fromAngle(headingBetween, v2.x); // new vector two rotated to result of heading
+ *   drawArrow(v0, vectorRotated, 'green');
+ *
  *   noStroke();
  *   text(
- *     'heading between: ' +
+ *     'heading: ' +
  *       headingBetween.toFixed(2) +
  *       ' radians or ' +
  *       degrees(headingBetween).toFixed(2) +
@@ -1106,7 +1111,7 @@ p5.Vector.prototype.heading = function heading() {
  *     10,
  *     50,
  *     90,
- *     50
+ *     120
  *   );
  * }
  *
