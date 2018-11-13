@@ -1077,7 +1077,7 @@ p5.Vector.prototype.heading = function heading() {
  * <code>
  * function setup() {
  *   var v1 = createVector(30, 50);
- *   var v2 = createVector(40,80)
+ *   var v2 = createVector(40, 80);
  *   print(v1.headingBetween(v2)); // -0.49394136892
  * }
  * </code>
