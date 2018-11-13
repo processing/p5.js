@@ -374,10 +374,18 @@ function addNfp(num) {
 
 /**
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
- * puts a " " (space) in front of positive numbers and a "-" in front of
- * negative numbers. There are two versions: one for formatting floats, and
- * one for formatting ints. The values for the digits, left, and right
- * parameters should always be positive integers.
+ * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
+ * numbers which includes "-" (minus) sign.
+ * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a positive
+ * number with some negative number (See the example to get a clear picture).
+ * There are two versions: one for formatting float, and one for formatting int.
+ * The values for the digits, left, and right parameters should always be positive integers.
+ * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+ * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
+ * if greater than the current length of the number.
+ * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
+ * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
+ * the result will be 123.200.
  *
  * @method nfs
  * @param {Number}       num      the Number to format
@@ -390,19 +398,27 @@ function addNfp(num) {
  * @example
  * <div>
  * <code>
+ * var myFont;
+ * function preload() {
+ *   myFont = loadFont('assets/fonts/inconsolata.ttf');
+ * }
  * function setup() {
  *   background(200);
- *   var num1 = 11253106.115;
- *   var num2 = -11253106.115;
+ *   var num1 = 321;
+ *   var num2 = -1321;
  *
  *   noStroke();
  *   fill(0);
- *   textSize(12);
- *   // Draw formatted numbers
+ *   textFont(myFont);
+ *   textSize(22);
+ *
+ *   // nfs() aligns num1 (positive number) with num2 (negative number) by
+ *   // adding a blank space in front of the num1 (positive number)
+ *   // [left = 4] in num1 add one 0 in front, to align the digits with num2
+ *   // [right = 2] in num1 and num2 adds two 0's after both numbers
+ *   // To see the differences check the example of nf() too.
  *   text(nfs(num1, 4, 2), 10, 30);
- *
  *   text(nfs(num2, 4, 2), 10, 80);
- *
  *   // Draw dividing line
  *   stroke(120);
  *   line(0, 50, width, 50);
@@ -411,7 +427,7 @@ function addNfp(num) {
  * </div>
  *
  * @alt
- * "11253106.11" top middle and "-11253106.11" displayed bottom middle
+ * "0321.00" top middle and "-1321.00" displayed bottom middle
  */
 /**
  * @method nfs
