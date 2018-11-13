@@ -1129,7 +1129,7 @@ p5.Vector.prototype.heading = function heading() {
  */
 p5.Vector.prototype.headingBetween = function headingBetween(v) {
   var dot = this.x * v.x + this.y * v.y;
-  var det = this.x * v.x - this.y * v.y;
+  var det = this.x * v.y - this.y * v.x;
   var h = Math.atan2(det, dot);
   if (this.p5) return this.p5._fromRadians(h);
   return h;
