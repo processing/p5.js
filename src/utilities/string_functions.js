@@ -134,6 +134,11 @@ p5.prototype.matchAll = function(str, reg) {
  * versions: one for formatting floats, and one for formatting ints.
  * The values for the digits, left, and right parameters should always
  * be positive integers.
+ * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
+ * if greater than the current length of the number.
+ * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
+ * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
+ * the result will be 123.200.
  *
  * @method nf
  * @param {Number|String}       num      the Number to format
@@ -146,30 +151,31 @@ p5.prototype.matchAll = function(str, reg) {
  * @example
  * <div>
  * <code>
+ * var myFont;
+ * function preload() {
+ *   myFont = loadFont('assets/fonts/inconsolata.ttf');
+ * }
  * function setup() {
  *   background(200);
- *   var num = 112.53106115;
+ *   var num1 = 321;
+ *   var num2 = -1321;
  *
  *   noStroke();
  *   fill(0);
- *   textSize(14);
- *   // Draw formatted numbers
- *   text(nf(num, 5, 2), 10, 20);
+ *   textFont(myFont);
+ *   textSize(22);
  *
- *   text(nf(num, 4, 3), 10, 55);
- *
- *   text(nf(num, 3, 6), 10, 85);
- *
- *   // Draw dividing lines
+ *   text(nf(num1, 4, 2), 10, 30);
+ *   text(nf(num2, 4, 2), 10, 80);
+ *   // Draw dividing line
  *   stroke(120);
- *   line(0, 30, width, 30);
- *   line(0, 65, width, 65);
+ *   line(0, 50, width, 50);
  * }
  * </code>
  * </div>
  *
  * @alt
- * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
+ * "0321.00" middle top, -1321.00" middle bottom canvas
  */
 /**
  * @method nf
