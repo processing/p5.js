@@ -38,7 +38,7 @@ module.exports = function(grunt) {
           console.log('Copying new docs ...');
           return new Promise(function(resolve, reject) {
             exec(
-              'cp -r docs/reference/ p5-website/src/templates/pages/reference/',
+              'cp -r docs/reference/{data.json,data.min.json,assets} p5-website/src/templates/pages/reference/',
               function(err, stdout, stderr) {
                 if (err) {
                   reject(err);
