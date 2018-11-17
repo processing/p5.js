@@ -340,14 +340,60 @@ module.exports = function(grunt) {
             return middlewares;
           }
         }
-      }
-    },
-    open: {
-      yui: {
-        path: 'http://127.0.0.1:9001/docs/reference/'
       },
-      dev: {
-        path: 'http://127.0.0.1:9001/test/'
+      yui: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/docs/reference/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
+      },
+      test: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/test/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
       }
     },
     'saucelabs-mocha': {
@@ -411,7 +457,6 @@ module.exports = function(grunt) {
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -440,7 +485,7 @@ module.exports = function(grunt) {
     'lint-no-fix',
     //'yuidoc:prod', // already done by lint-no-fix
     'build',
-    'connect',
+    'connect:server',
     'mochaChrome',
     'mochaTest'
   ]);
@@ -449,18 +494,17 @@ module.exports = function(grunt) {
   grunt.registerTask('yui:test', [
     'yuidoc:prod',
     'clean:reference',
-    'connect',
+    'connect:yui',
     'mochaChrome:yui'
   ]);
   grunt.registerTask('yui:dev', [
     'yui:prod',
     'clean:reference',
     'build',
-    'connect',
-    'open:yui',
+    'connect:yui',
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
   grunt.registerTask('default', ['test']);
-  grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
+  grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
 };
