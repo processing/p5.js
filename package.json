@@ -62,7 +62,6 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-contrib-yuidoc": "1.0.0",
     "grunt-eslint": "^20.1.0",
-    "grunt-jscs": "^3.0.1",
     "grunt-karma": "^3.0.0",
     "grunt-minjson": "^0.4.0",
     "grunt-mocha-test": "^0.13.3",
@@ -72,7 +71,7 @@
     "grunt-saucelabs": "^9.0.0",
     "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
-    "karma": "^3.0.0",
+    "karma": "^3.1.1",
     "karma-benchmark": "^1.0.0",
     "karma-benchmark-reporter": "^0.1.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -114,5 +113,6 @@
     "doc": "docs",
     "test": "test"
   },
-  "author": ""
+  "author": "",
+  "dependencies": {}
 }
