@@ -42,9 +42,6 @@
  *                      docs, and does not perform linting, minification,
  *                      or run tests. It's faster than watch:main.
  *
- *  grunt update_json - This automates updating the bower file
- *                      to match the package.json
- *
  *  grunt karma       - This runs the performance benchmarks in
  *                      multiple real browsers on the developers local machine.
  *                      It will automatically detect which browsers are
@@ -273,25 +270,6 @@ module.exports = function(grunt) {
     mocha: mochaConfig,
 
     mochaChrome: mochaConfig,
-
-    // This is a standalone task, used to automatically update the bower.json
-    // file to match the values in package.json. It is (likely) used as part
-    // of the manual release strategy.
-    update_json: {
-      // set some task-level options
-      options: {
-        src: 'package.json',
-        indent: '\t'
-      },
-
-      // update bower.json with data from package.json
-      bower: {
-        src: 'package.json', // where to read from
-        dest: 'bower.json', // where to write to
-        // the fields to update, as a String Grouping
-        fields: 'name version description repository'
-      }
-    },
 
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.

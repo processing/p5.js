@@ -70,7 +70,6 @@
     "grunt-open": "^0.2.3",
     "grunt-release-it": "^1.0.1",
     "grunt-saucelabs": "^9.0.0",
-    "grunt-update-json": "^0.2.1",
     "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
     "karma": "^3.0.0",
