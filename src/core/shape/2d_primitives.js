@@ -302,6 +302,7 @@ p5.prototype.point = function() {
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
+ * If specified, parameters 9-12 specify the z coordinates (z1, z2, z3, z4)
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -328,15 +329,15 @@ p5.prototype.point = function() {
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
- * @param {Number} z1 the z-coordinate of the first point
  * @param {Number} x2
  * @param {Number} y2
- * @param {Number} z2 the z-coordinate of the second point
  * @param {Number} x3
  * @param {Number} y3
- * @param {Number} z3 the z-coordinate of the third point
  * @param {Number} x4
  * @param {Number} y4
+ * @param {Number} z1 the z-coordinate of the first point
+ * @param {Number} z2 the z-coordinate of the second point
+ * @param {Number} z3 the z-coordinate of the third point
  * @param {Number} z4 the z-coordinate of the fourth point
  * @chainable
  */
