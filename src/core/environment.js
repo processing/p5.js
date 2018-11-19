@@ -120,7 +120,6 @@ p5.prototype.focused = document.hasFocus();
  *                               Native CSS properties: 'grab', 'progress', 'cell' etc.
  *                               External: path for cursor's images
  *                               (Allowed File extensions: .cur, .gif, .jpg, .jpeg, .png)
- *
  *                               For more information on Native CSS cursors and url visit:
  *                               https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
  * @param {Number}          [x]  the horizontal active spot of the cursor (must be less than 32)
