@@ -142,11 +142,24 @@ module.exports = {
    *
    * @example
    * <div><code>
-   * arc(50, 50, 80, 80, 0, TWO_PI);
+   * function draw() {
+   *   background(220);
+   *   // headings
+   *   textStyle(BOLD);
+   *   text('TWO_PI:', 0, 20);
+   *   text('TWO_PI \nin degrees:', 0, 65);
+   *   // values
+   *   textStyle(NORMAL);
+   *   text(TWO_PI, 0, 40);
+   *   text(degrees(TWO_PI), 0, 95);
+   *   // divider
+   *   line(0, height / 2, width, height / 2);
+   * }
    * </code></div>
    *
    * @alt
-   * 80x80 white ellipse shape in center of canvas.
+   * value of TWO_PI constant i.e. '6.283185307179586' in the upper half of the canvas
+   * and coversion of TWO_PI into degrees i.e. '360' in the lower half of the canvas.
    *
    */
   TWO_PI: PI * 2,
