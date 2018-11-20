@@ -14,7 +14,7 @@ Hello! Thanks for your interest in contributing to p5.js! You can get started wi
 
 ## Issues
 
-Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). If you'd like to contribute code but need suggestions about what to work on, start by looking at the existing issues. Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you start working on an existing issue, make sure to "assign" it to yourself so other contributors know it's being handled and can offer help. If you have discovered a bug or thought of a new feature but don't have code for it yet, you should consider submitting an issue.
+Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). If you'd like to contribute code but need suggestions about what to work on, start by looking at the existing issues. Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you start working on an existing issue, make sure comment on the issue that you plan to work on it so other contributors know it's being handled and can offer help. If you have discovered a bug or thought of a new feature but don't have code for it yet, you should consider submitting an issue.
 
 ## Accompaniments
 
