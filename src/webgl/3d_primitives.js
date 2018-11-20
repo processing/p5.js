@@ -1024,30 +1024,61 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+p5.RendererGL.prototype.quad = function(
+  x1,
+  y1,
+  z1, // x2
+  x2, // y2
+  y2, // x3
+  z2, // y3
+  x3, // x4
+  y3, // y4
+  z3,
+  x4,
+  y4,
+  z4
+) {
+  if (arguments.length === 8) {
+    x4 = x3;
+    y4 = y3;
+    x3 = y2;
+    y3 = z2;
+    y2 = x2;
+    x2 = z1;
+    z1 = z2 = z3 = z4 = 0;
+  }
+
   var gId =
     'quad|' +
     x1 +
     '|' +
     y1 +
     '|' +
+    z1 +
+    '|' +
     x2 +
     '|' +
     y2 +
+    '|' +
+    z2 +
     '|' +
     x3 +
     '|' +
     y3 +
     '|' +
+    z3 +
+    '|' +
     x4 +
     '|' +
-    y4;
+    y4 +
+    '|' +
+    z4;
   if (!this.geometryInHash(gId)) {
     var _quad = function() {
-      this.vertices.push(new p5.Vector(x1, y1, 0));
-      this.vertices.push(new p5.Vector(x2, y2, 0));
-      this.vertices.push(new p5.Vector(x3, y3, 0));
-      this.vertices.push(new p5.Vector(x4, y4, 0));
+      this.vertices.push(new p5.Vector(x1, y1, z1));
+      this.vertices.push(new p5.Vector(x2, y2, z2));
+      this.vertices.push(new p5.Vector(x3, y3, z3));
+      this.vertices.push(new p5.Vector(x4, y4, z4));
       this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
@@ -1136,7 +1167,7 @@ p5.RendererGL.prototype.curve = function(
   for (var i = 0; i <= curveDetail; i++) {
     var c1 = Math.pow(i / curveDetail, 3) * 0.5;
     var c2 = Math.pow(i / curveDetail, 2) * 0.5;
-    var c3 = i / curveDetail * 0.5;
+    var c3 = (i / curveDetail) * 0.5;
     var c4 = 0.5;
     var vx =
       c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
