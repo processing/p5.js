@@ -1167,7 +1167,7 @@ p5.RendererGL.prototype.curve = function(
   for (var i = 0; i <= curveDetail; i++) {
     var c1 = Math.pow(i / curveDetail, 3) * 0.5;
     var c2 = Math.pow(i / curveDetail, 2) * 0.5;
-    var c3 = (i / curveDetail) * 0.5;
+    var c3 = i / curveDetail * 0.5;
     var c4 = 0.5;
     var vx =
       c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
