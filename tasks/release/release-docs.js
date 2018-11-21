@@ -35,10 +35,12 @@ module.exports = function(grunt) {
       })
         .then(function() {
           // Copy the new docs over
+          const src = 'docs/reference';
+          const dest = 'p5-website/src/templates/pages/reference/';
           console.log('Copying new docs ...');
           return new Promise(function(resolve, reject) {
             exec(
-              'cp -r docs/reference/{data.json,data.min.json,assets} p5-website/src/templates/pages/reference/',
+              `(cp ${src}/data.json ${dest}) && (cp ${src}/data.json ${dest}) && (cp -r ${src}/assets ${dest})`,
               function(err, stdout, stderr) {
                 if (err) {
                   reject(err);
