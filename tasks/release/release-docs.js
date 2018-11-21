@@ -69,12 +69,14 @@ module.exports = function(grunt) {
                 if (stderr) {
                   reject(stderr);
                 }
-                console.log('Released Docs on Website!');
                 resolve();
-                done();
               }
             );
           });
+        })
+        .then(function() {
+          console.log('Released Docs on Website!');
+          done();
         })
         .catch(function(err) {
           throw new Error(err);
