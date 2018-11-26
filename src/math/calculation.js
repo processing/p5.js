@@ -188,6 +188,50 @@ p5.prototype.dist = function() {
 };
 
 /**
+ * Calculates the distance between two points and squares this value.
+ *
+ * @method distSq
+ * @param  {Number} x1 x-coordinate of the first point
+ * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} x2 x-coordinate of the second point
+ * @param  {Number} y2 y-coordinate of the second point
+ * @return {Number}    distance between the two points, squared
+ *
+ * @example
+ * <code><div>
+//TODO: Example
+ * </code></div>
+ *
+
+ */
+/**
+ * @method distSq
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate of the second point
+ * @return {Number}    distance between the two points, squared
+ */
+p5.prototype.distSq = function() {
+  p5._validateParameters('distSq', arguments);
+  if (arguments.length === 4) {
+    //2D
+    return (
+      Math.pow(arguments[2] - arguments[0], 2) +
+      Math.pow(arguments[3] - arguments[1], 2)
+    );
+  } else if (arguments.length === 6) {
+    //3D
+    return (
+      Math.pow(arguments[3] - arguments[0], 2) +
+      Math.pow(arguments[4] - arguments[1], 2) +
+      Math.pow(arguments[5] - arguments[2], 2)
+    );
+  }
+};
+/**
  * Returns Euler's number e (2.71828...) raised to the power of the n
  * parameter. Maps to Math.exp().
  *
