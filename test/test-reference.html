@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="mocha.css"/>
+  <style> iframe { visibility: hidden; } </style>
+  <title>p5 Reference Documentation Test</title>
+</head>
+<body>
+  <!-- Required for browser reporter -->
+  <div id="mocha"></div>
+
+  <!-- mocha -->
+  <script src="../node_modules/mocha/mocha.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" >
+    // This will be overridden by mocha-helper if you run with grunt
+    mocha.setup('tdd');
+    mocha.reporter('html');
+  </script>
+
+  <!-- Include your assertion lib of choice -->
+  <script src="../node_modules/chai/chai.js" type="text/javascript" ></script>
+  <script src="js/sinon.js" type="text/javascript" ></script>
+  <script src="js/modernizr.js"></script>
+  <script src="js/chai_helpers.js" type="text/javascript" ></script>
+
+  <!-- Include anything you want to test -->
+  <script src="../lib/p5.js" type="text/javascript" ></script>
+  <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
+  <script>
+    // These tests fail. TODO: Work out why.
+    if (Modernizr.webaudio)
+      document.write(
+        '<script src="../lib/addons/p5.sound.js"><\/script>'
+      );
+  </script>
+
+  <script>
+  p5._throwValidationErrors = true;
+
+  var TEST_FILENAME_FILTERS = [
+    {regex: /webgl/, condition: Modernizr.webgl},
+    {regex: /acceleration/, condition: Modernizr.webgl},
+    {regex: /sound/, condition: Modernizr.webaudio}
+  ];
+  var MS_TIMEOUT = 4000;
+  var fxns = [
+    'setup', 'draw', 'preload', 'mousePressed', 'mouseReleased',
+    'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel',
+    'touchStarted', 'touchMoved', 'touchEnded',
+    'keyPressed', 'keyReleased', 'keyTyped'
+  ];
+
+  // TODO: This code has basically been harvested from
+  // https://github.com/processing/p5.js-website/blob/master/js/render.js.
+  // Ideally we should factor out this common code into a shared place
+  // where we're not duplicating code.
+  function createExampleSketch(exampleCode, cb) {
+    var runnable = exampleCode.replace(/^\s+|\s+$/g, '');
+
+    return function( p ) {
+      if (runnable.indexOf('setup()') === -1 &&
+          runnable.indexOf('draw()') === -1){
+        p.setup = function() {
+          p.createCanvas(100, 100);
+          p.background(200);
+          with (p) {
+            eval(runnable);
+          }
+        }
+      } else {
+        with (p) {
+          eval(runnable);
+        }
+
+        fxns.forEach(function(f) {
+          var ind = runnable.indexOf(f+'(');
+          // this is a gross hack within a hacky script that
+          // ensures the function names found are not substrings
+          // proper use of regex would be preferable...
+          if (ind !== -1 && runnable[ind+f.length] === '(' &&
+              eval('typeof ' + f) !== 'undefined') {
+            with (p) {
+              p[f] = eval(f);
+            }
+          }
+        });
+        if (typeof p.setup === 'undefined') {
+          p.setup = function() {
+            p.createCanvas(100, 100);
+            p.background(200);
+          }
+        }
+      }
+
+      if (cb) {
+        cb(p);
+      }
+    };
+  }
+
+  function defineTest(info) {
+    suite(info.name + " documentation", function() {
+      var myp5, myp5Div;
+      var div = document.createElement('div');
+      var examples;
+
+      setup(function() {
+        myp5 = null;
+        myp5Div = null;
+      });
+
+      teardown(function() {
+        if (myp5) {
+          myp5.remove();
+          myp5 = null;
+        }
+        if (myp5Div && myp5Div.parentNode) {
+          myp5Div.parentNode.removeChild(myp5Div);
+          myp5Div = null;
+        }
+      });
+
+      div.style.display = 'none';
+      div.innerHTML = info.example.join('');
+      document.body.appendChild(div);
+      examples = [].slice.call(div.querySelectorAll('div:not(.notest)'));
+      document.body.removeChild(div);
+
+      examples.forEach(function(el, i) {
+
+        var ms = el.attributes['modernizr'];
+        if (ms && ms.value.split(',').some(
+          function (m) { return !Modernizr[m]; })) {
+          return;
+        }
+
+        var exampleCode = el.textContent
+          .replace(/assets\//g, '../docs/reference/assets/');
+        var startTime = null;
+
+        var testFunc = function() {
+          var test_context = this;
+          return new Promise(function(resolve, reject) {
+            startTime = Date.now();
+
+            test_context.timeout(MS_TIMEOUT);
+            myp5Div = document.createElement('div');
+            document.body.appendChild(myp5Div);
+
+            myp5 = new p5(createExampleSketch(exampleCode, function(p) {
+              var drawCalled = false;
+              fxns.forEach(function(f) {
+                var old = p[f];
+                if(old) {
+                  p[f] = function() {
+                    try {
+                      old.apply(this, arguments);
+                    } catch(err) {
+                      reject(err);
+                    }
+                  }
+                }
+              });
+              var oldDraw = p.draw || function() {};
+
+              p.draw = function() {
+                try {
+                  if (drawCalled) return;
+                  oldDraw.call(p);
+                  drawCalled = true;
+
+                  if (Date.now() - startTime > MS_TIMEOUT) {
+                    // This can happen if the page contained processor-intensive
+                    // code that blocked the UI for too long.
+                    reject(new Error("code took too long to execute"));
+                    return;
+                  }
+
+                  resolve();
+                } catch(err) {
+                  reject(err);
+                }
+              };
+            }, myp5Div));
+          });
+        };
+
+
+        testFunc.toString = function() {
+          // When a user clicks on a specific test, mocha shows its
+          // source code; in our case, we want the source of the example
+          // we're running to be shown, *not* the example runner code.
+          return exampleCode;
+        };
+
+        test("example #" + (i + 1) + " works", testFunc);
+      });
+    });
+  }
+
+  onload = function() {
+    var req = new XMLHttpRequest();
+    req.open('GET', '../docs/reference/data.json');
+    req.onload = function() {
+      var data = JSON.parse(req.responseText);
+      var files = {};
+
+      data.classitems
+        .concat(Object.keys(data.classes).map(function(name) {
+          return data.classes[name];
+        })).filter(function(info) {
+          return info.name && info.example && info.example.length;
+        }).forEach(function(info) {
+          if (!files[info.file])
+            files[info.file] = [];
+          files[info.file].push(info);
+        });
+
+      Object.keys(files)
+        .filter(function excludeIfNoBrowserSupportFor(filename) {
+          return !TEST_FILENAME_FILTERS.some(function(filter) {
+            return filter.regex.test(filename) && !filter.condition;
+          });
+        }).forEach(function(filename) {
+          suite(filename, function() {
+            files[filename].forEach(defineTest);
+          });
+        });
+
+      mocha.run();
+    };
+    req.send(null);
+  };
+  </script>
+</body>
+</html>

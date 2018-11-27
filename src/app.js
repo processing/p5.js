@@ -1,72 +1,88 @@
-define(function (require) {
+'use strict';
 
-  'use strict';
+// core
+var p5 = require('./core/main');
+require('./core/constants');
+require('./core/environment');
+require('./core/error_helpers');
+require('./core/helpers');
+require('./core/legacy');
+require('./core/p5.Element');
+require('./core/p5.Graphics');
+require('./core/p5.Renderer');
+require('./core/p5.Renderer2D');
+require('./core/rendering');
+require('./core/shim');
+require('./core/structure');
+require('./core/transform');
+require('./core/shape/2d_primitives');
+require('./core/shape/attributes');
+require('./core/shape/curves');
+require('./core/shape/vertex');
 
-  var p5 = require('core');
-  var PVector = require('math.pvector');
+// color
+require('./color/color_conversion');
+require('./color/creating_reading');
+require('./color/p5.Color');
+require('./color/setting');
 
-  require('color.creating_reading');
-  require('color.setting');
-  require('data.array_functions');
-  require('data.string_functions');
-  require('dom.manipulate');
-  require('dom.pelement');
-  require('environment');
-  require('image');
-  require('image.pixels');
-  require('input.files');
-  require('input.keyboard');
-  require('input.mouse');
-  require('input.time_date');
-  require('input.touch');
-  require('math.calculation');
-  require('math.random');
-  require('math.noise');
-  require('math.trigonometry');
-  require('output.files');
-  require('output.image');
-  require('output.text_area');
-  require('shape.2d_primitives');
-  require('shape.attributes');
-  require('shape.curves');
-  require('shape.vertex');
-  require('structure');
-  require('transform');
-  require('typography.attributes');
-  require('typography.loading_displaying');
+// data
+require('./data/p5.TypedDict');
 
-  /**
-   * _globalInit
-   *
-   * TODO: ???
-   * if sketch is on window
-   * assume "global" mode
-   * and instantiate p5 automatically
-   * otherwise do nothing
-   * 
-   * @return {Undefined}
-   */
-  var _globalInit = function() {
-    if(!window.PHANTOMJS) {
-      // If there is a setup or draw function on the window
-      // then instantiate p5 in "global" mode
-      if((window.setup && typeof window.setup === 'function') ||
-        (window.draw && typeof window.draw === 'function')) {
-        new p5();
-      }
-    }
-  };
+// events
+require('./events/acceleration');
+require('./events/keyboard');
+require('./events/mouse');
+require('./events/touch');
 
-  // TODO: ???
-  if (document.readyState === 'complete') {
-    _globalInit();
-  } else {
-    window.addEventListener('load', _globalInit , false);
-  }
+// image
+require('./image/filters');
+require('./image/image');
+require('./image/loading_displaying');
+require('./image/p5.Image');
+require('./image/pixels');
 
-  window.p5 = p5;
-  window.PVector = PVector;
+// io
+require('./io/files');
+require('./io/p5.Table');
+require('./io/p5.TableRow');
+require('./io/p5.XML');
 
-  return p5;
+// math
+require('./math/calculation');
+require('./math/math');
+require('./math/noise');
+require('./math/p5.Vector');
+require('./math/random');
+require('./math/trigonometry');
 
-});
+// typography
+require('./typography/attributes');
+require('./typography/loading_displaying');
+require('./typography/p5.Font');
+
+// utilities
+require('./utilities/array_functions');
+require('./utilities/conversion');
+require('./utilities/string_functions');
+require('./utilities/time_date');
+
+// webgl
+require('./webgl/3d_primitives');
+require('./webgl/interaction');
+require('./webgl/light');
+require('./webgl/loading');
+require('./webgl/material');
+require('./webgl/p5.Camera');
+require('./webgl/p5.Geometry');
+require('./webgl/p5.Matrix');
+require('./webgl/p5.RendererGL.Immediate');
+require('./webgl/p5.RendererGL');
+require('./webgl/p5.RendererGL.Retained');
+require('./webgl/p5.Shader');
+require('./webgl/p5.Texture');
+require('./webgl/text');
+
+require('./core/init');
+
+module.exports = p5;

@@ -1,181 +1,510 @@
-module.exports = function(grunt) {
+/**
+ *  This is the Gruntfile for p5.js. Grunt is a task runner/builder
+ *  which is what p5.js uses to build the source code into the library
+ *  and handle other housekeeping tasks.
+ *
+ *  There are three main tasks:
+ *
+ *  grunt             - This is the default task, which builds the code, tests it
+ *                      using both jslint and mocha, and then minifies it.
+ *
+ *  grunt yui         - This will build the inline documentation for p5.js.
+ *                      The generated documentation is assumed to be
+ *                      served from the /reference/ folder of the p5js
+ *                      website (https://github.com/processing/p5.js-website).
+ *
+ *  grunt test        - This rebuilds the source and runs the automated tests on
+ *                     both the minified and unminified code. If you need to debug
+ *                     a test suite in a browser, `grunt test --keepalive` will
+ *                     start the connect server and leave it running; the tests
+ *                     can then be opened at localhost:9001/test/test.html
+ *
+ *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
+ *                     each time a change to the source is detected. You can preview
+ *                     the reference at localhost:9001/docs/reference/
+ *
+ *  Note: `grunt test:nobuild` will skip the build step when running the tests,
+ *  and only runs the test files themselves through the linter: this can save
+ *  a lot of time when authoring test specs without making any build changes.
+ *
+ *  And there are several secondary tasks:
+ *
+ *
+ *  grunt watch       - This watches the source for changes and rebuilds on
+ *                      every file change, running the linter and tests.
+ *
+ *  grunt watch:main  - This watches the source for changes and rebuilds on
+ *                      every file change, but does not rebuild the docs.
+ *                      It's faster than the default watch.
+ *
+ *  grunt watch:quick - This watches the source for changes and rebuilds
+ *                      p5.js on every file change, but does not rebuild
+ *                      docs, and does not perform linting, minification,
+ *                      or run tests. It's faster than watch:main.
+ *
+ *  grunt karma       - This runs the performance benchmarks in
+ *                      multiple real browsers on the developers local machine.
+ *                      It will automatically detect which browsers are
+ *                      installed from the following list (Chrome, Firefox,
+ *                      Safari, Edge, IE) and run the benchmarks in all installed
+ *                      browsers and report the results. Running "grunt karma"
+ *                      will execute ALL the benchmarks. If you want to run a
+ *                      specific benchmark you can by specifying the target e.g.
+ *                      "grunt karma:random-dev". The available targets are
+ *                      defined in grunt-karma.js.
+ *
+ *  Contributors list can be updated using all-contributors-cli:
+ *  https://www.npmjs.com/package/all-contributors-cli
+ *
+ *  all-contributors generate - Generates new contributors list for README
+ */
 
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
-    qunit: {
-      files: ['test/*.html']
-    },
-    jshint: {
-      build: {
-        options: {jshintrc: '.jshintrc'},
-        src: ['Gruntfile.js']
-      },
-      source: {
-        options: {jshintrc: 'src/.jshintrc'},
-        src: ['src/**/*.js']
-      },
-      test: {
-        options: {jshintrc: 'test/.jshintrc'},
-        src: ['test/unit/**/*.js']
+function getYuidocOptions() {
+  var BASE_YUIDOC_OPTIONS = {
+    name: '<%= pkg.name %>',
+    description: '<%= pkg.description %>',
+    version: '<%= pkg.version %>',
+    url: '<%= pkg.homepage %>',
+    options: {
+      paths: ['src/', 'lib/addons/'],
+      themedir: 'docs/yuidoc-p5-theme/',
+      helpers: [],
+      preprocessor: './docs/preprocessor.js',
+      outdir: 'docs/reference/'
+    }
+  };
+
+  // note dev is no longer used, prod is used to build both testing and production ready docs
+
+  var o = {
+    prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
+    dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
+  };
+
+  o.prod.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_prod.js');
+  o.dev.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_dev.js');
+
+  return o;
+}
+
+module.exports = function(grunt) {
+  // Specify what reporter we'd like to use for Mocha
+  var quietReport = process.env.TRAVIS || grunt.option('quiet');
+  var reporter = quietReport ? 'spec' : 'Nyan';
+
+  // Load karma tasks from an external file to keep this file clean
+  var karmaTasks = require('./grunt-karma.js');
+
+  // For the static server used in running tests, configure the keepalive.
+  // (might not be useful at all.)
+  var keepalive = false;
+  if (grunt.option('keepalive')) {
+    keepalive = true;
+  }
+
+  var mochaConfig = {
+    yui: {
+      options: {
+        urls: ['http://localhost:9001/test/test-reference.html'],
+        reporter: reporter,
+        run: false,
+        log: true,
+        logErrors: true,
+        growlOnSuccess: false
       }
     },
+    test: {
+      options: {
+        urls: [
+          'http://localhost:9001/test/test.html',
+          'http://localhost:9001/test/test-minified.html'
+        ],
+        reporter: reporter,
+        run: true,
+        log: true,
+        logErrors: true,
+        timeout: 100000,
+        growlOnSuccess: false
+      }
+    }
+  };
+
+  let gruntConfig = {
+    // read in the package, used for knowing the current version, et al.
+    pkg: grunt.file.readJSON('package.json'),
+
+    // Configure style consistency checking for this file, the source, and the tests.
+    eslint: {
+      options: {
+        format: 'unix',
+        configFile: '.eslintrc'
+      },
+      build: {
+        src: [
+          'Gruntfile.js',
+          'grunt-karma.js',
+          'docs/preprocessor.js',
+          'utils/**/*.js',
+          'tasks/**/*.js'
+        ]
+      },
+      fix: {
+        // src: is calculated below...
+        options: {
+          rules: {
+            'no-undef': 0,
+            'no-unused-vars': 0
+          },
+          fix: true
+        }
+      },
+      source: {
+        options: {
+          parserOptions: {
+            ecmaVersion: 5
+          }
+        },
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+      },
+      test: {
+        src: [
+          'bench/**/*.js',
+          'test/test-docs-preprocessor/**/*.js',
+          'test/node/**/*.js',
+          'test/reporter/**/*.js',
+          'test/unit/**/*.js'
+        ]
+      },
+      examples: {
+        options: {
+          rules: {
+            'no-undef': 0,
+            'no-unused-vars': 0
+          }
+        },
+        src: ['test/manual-test-examples/**/*.js']
+      }
+    },
+
+    'eslint-samples': {
+      options: {
+        parserOptions: {
+          ecmaVersion: 5
+        },
+        configFile: '.eslintrc',
+        format: 'unix'
+      },
+      source: {
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+      },
+      fix: {
+        options: {
+          fix: true
+        }
+      }
+    },
+
+    // Set up the watch task, used for live-reloading during development.
+    // This watches both the codebase and the yuidoc theme.  Changing the
+    // code touches files within the theme, so it will also recompile the
+    // documentation.
     watch: {
-      // p5 dist
+      quick: {
+        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
+        tasks: ['browserify'],
+        options: {
+          livereload: true
+        }
+      },
+      // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['jshint', 'requirejs'],
+        tasks: ['newer:eslint:source', 'test'],
+        options: {
+          livereload: true
+        }
       },
-      // reference
+      // watch the theme for changes
       reference_build: {
         files: ['docs/yuidoc-p5-theme/**/*'],
         tasks: ['yuidoc'],
-        options: { livereload: true, interrupt: true }
+        options: {
+          livereload: true,
+          interrupt: true
+        }
       },
-      // scripts for yuidoc/reference theme
-      yuidoc_theme_build: {
-        files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
-        tasks: ['requirejs:yuidoc_theme']
-      },
-      // css for yuidoc/reference theme (see 'sass' task)
-      yuidoc_theme_sass: {
-        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
-        tasks: ['sass']
-      },
-    },
-    sass: {
-      yuidoc_theme: {
-        files: {
-          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
+      // Watch the codebase for doc updates
+      // launch with 'grunt requirejs connect watch:yui'
+      yui: {
+        files: [
+          'src/**/*.js',
+          'lib/addons/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert'
+        ],
+        tasks: [
+          'browserify',
+          'browserify:min',
+          'yuidoc:prod',
+          'clean:reference',
+          'minjson',
+          'uglify'
+        ],
+        options: {
+          livereload: true
         }
       }
     },
-    mocha: {
+
+    // Set up node-side (non-browser) mocha tests.
+    mochaTest: {
       test: {
-        //src: ['test/*.html'],
-        src: ['test/**/*.html'],
+        src: ['test/node/**/*.js'],
         options: {
-          // reporter: 'test/reporter/simple.js',
-          reporter: 'Nyan',
-          run: true,
-          log: true,
-          logErrors: true
-        }
-      },
-    },
-    requirejs: {
-      unmin: {
-        options: {
-          baseUrl: '.',
-          findNestedDependencies: true,
-          include: ['src/app'],
-          onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
-          },
-          optimize: 'none',
-          out: 'dist/p5.js',
-          paths: {
-            'app': 'src/app',
-            'color.creating_reading': 'src/color/creating_reading',
-            'color.setting': 'src/color/setting',
-            'core': 'src/core/core',
-            'data.array_functions': 'src/data/array_functions',
-            'data.string_functions': 'src/data/string_functions',
-            'dom.manipulate': 'src/dom/manipulate',
-            'dom.pelement': 'src/dom/pelement',
-            'environment': 'src/environment/environment',
-            'image': 'src/image/image',
-            'image.pixels': 'src/image/pixels',
-            'input.files': 'src/input/files',
-            'input.keyboard': 'src/input/keyboard',
-            'input.mouse': 'src/input/mouse',
-            'input.time_date': 'src/input/time_date',
-            'input.touch': 'src/input/touch',
-            'math.calculation': 'src/math/calculation',
-            'math.pvector': 'src/math/pvector',
-            'math.random': 'src/math/random',
-            'math.noise': 'src/math/noise',
-            'math.trigonometry': 'src/math/trigonometry',
-            'output.files': 'src/output/files',
-            'output.image': 'src/output/image',
-            'output.text_area': 'src/output/text_area',
-            'shape.2d_primitives': 'src/shape/2d_primitives',
-            'shape.attributes': 'src/shape/attributes',
-            'shape.curves': 'src/shape/curves',
-            'shape.vertex': 'src/shape/vertex',
-            'structure': 'src/structure/structure',
-            'transform': 'src/transform/transform',
-            'typography.attributes': 'src/typography/attributes',
-            'typography.loading_displaying': 'src/typography/loading_displaying',
-            'canvas': 'src/var/canvas',
-            'constants': 'src/var/constants',
-            'linearalgebra': 'src/var/linearalgebra',
-            'polargeometry': 'src/var/polargeometry',
-            'shim': 'src/var/shim',
-            'reqwest': 'node_modules/reqwest/reqwest',
-            'filters': 'src/image/filters'
-          },
-          useStrict: true,
-          wrap: true
-        }
-      },
-      min: {
-        options: {
-          baseUrl: '.',
-          findNestedDependencies: true,
-          include: ['src/app'],
-          onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
-          },
-          optimize: 'uglify2',
-          out: 'dist/p5.min.js',
-          paths: '<%= requirejs.unmin.options.paths %>',
-          useStrict: true,
-          wrap: true
-        }
-      },
-      yuidoc_theme: {
-        options: {
-          baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
-          mainConfigFile: './docs/yuidoc-p5-theme-src/scripts/config.js',
-          name: 'main',
-          out: './docs/yuidoc-p5-theme/assets/js/reference.js',
-          optimize: 'none',
-          generateSourceMaps: true,
-          findNestedDependencies: true,
-          wrap: true,
-          paths: { 'jquery': 'empty:' }
+          reporter: reporter
         }
       }
     },
-    yuidoc: {
-      compile: {
-        name: '<%= pkg.name %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
+
+    // Set up the mocha task, used for running the automated tests.
+    mocha: mochaConfig,
+
+    mochaChrome: mochaConfig,
+
+    // This minifies the javascript into a single file and adds a banner to the
+    // front of the file.
+    uglify: {
+      options: {
+        compress: {
+          global_defs: {
+            IS_MINIFIED: true
+          }
+        },
+        banner:
+          '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
+      },
+      dist: {
+        files: {
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
+          'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
+        }
+      }
+    },
+
+    // this builds the documentation for the codebase.
+    yuidoc: getYuidocOptions(),
+
+    // Clean up unused files generated by yuidoc
+    clean: {
+      reference: {
+        src: [
+          'docs/reference/classes/',
+          'docs/reference/elements/',
+          'docs/reference/files/',
+          'docs/reference/modules/',
+          'docs/reference/api.js'
+        ]
+      }
+    },
+
+    // This runs benchmarks in multiple real browsers for developing
+    // performance optimizations
+    karma: karmaTasks,
+
+    // This is a static server which is used when testing connectivity for the
+    // p5 library. This avoids needing an internet connection to run the tests.
+    // It serves all the files in the test directory at http://localhost:9001/
+    connect: {
+      server: {
         options: {
-          paths: 'src/',
-          //helpers: [],
-          themedir: 'docs/yuidoc-p5-theme/',
-          outdir: 'docs/reference/'
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
+      },
+      yui: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/docs/reference/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
+      },
+      test: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/test/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
+      }
+    },
+    'saucelabs-mocha': {
+      all: {
+        options: {
+          urls: ['http://127.0.0.1:9001/test/test.html'],
+          tunnelTimeout: 5,
+          build: process.env.TRAVIS_JOB_ID,
+          concurrency: 3,
+          browsers: [
+            { browserName: 'chrome' },
+            { browserName: 'firefox', platform: 'Linux', version: '42.0' },
+            { browserName: 'safari' }
+          ],
+          testname: 'p5.js mocha tests',
+          tags: ['master']
+        }
+      }
+    },
+    minjson: {
+      compile: {
+        files: {
+          './docs/reference/data.min.json': './docs/reference/data.json'
         }
       }
     }
+  };
 
-  });
+  // eslint fixes everything it checks:
+  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
+    .map(s => gruntConfig.eslint[s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
 
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
+  /* not yet
+  gruntConfig['eslint-samples'].fix.src = Object.keys(
+    gruntConfig['eslint-samples']
+  )
+    .map(s => gruntConfig['eslint-samples'][s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+  */
+
+  grunt.initConfig(gruntConfig);
+
+  // Load build tasks.
+  // This contains the complete build task ("browserify")
+  // and the task to generate user select modules of p5
+  // ("combineModules") which can be invoked directly by
+  // `grunt combineModules:module_1:module_2` where core
+  // is included by default in all combinations always.
+  // NOTE: "module_x" is the name of it's folder in /src.
+  grunt.loadTasks('tasks/build');
+
+  // Load release task
+  grunt.loadTasks('tasks/release');
+
+  // Load tasks for testing
+  grunt.loadTasks('tasks/test');
+
+  // Load the external libraries used.
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.registerTask('test', ['jshint', 'qunit']);
-  
-  grunt.registerTask('yui', ['yuidoc']);
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-minjson');
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-release-it');
+  grunt.loadNpmTasks('grunt-saucelabs');
+  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
-  //grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
-  grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
-
+  // Create the multitasks.
+  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
+  grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
+    'eslint:build',
+    'eslint:source',
+    'eslint:test',
+    //'eslint:examples',
+    'eslint-samples:source'
+  ]);
+  grunt.registerTask('lint-fix', ['eslint:fix']);
+  grunt.registerTask('test', [
+    'lint-no-fix',
+    //'yuidoc:prod', // already done by lint-no-fix
+    'build',
+    'connect:server',
+    'mochaChrome',
+    'mochaTest'
+  ]);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mochaChrome']);
+  grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
+  grunt.registerTask('yui:test', [
+    'yuidoc:prod',
+    'clean:reference',
+    'connect:yui',
+    'mochaChrome:yui'
+  ]);
+  grunt.registerTask('yui:dev', [
+    'yui:prod',
+    'clean:reference',
+    'build',
+    'connect:yui',
+    'watch:yui'
+  ]);
+  grunt.registerTask('yui:build', ['yui']);
+  grunt.registerTask('default', ['test']);
+  grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
 };

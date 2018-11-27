@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="mocha.css"/>
+  <title>Example Mocha Test</title>
+</head>
+<body>
+  <!-- Required for browser reporter -->
+  <div id="mocha"></div>
+
+  <!-- mocha -->
+  <script src="../node_modules/mocha/mocha.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" >
+    // This will be overridden by mocha-helper if you run with grunt
+    mocha.setup('tdd');
+    mocha.reporter('html');
+  </script>
+
+  <!-- Include your assertion lib of choice -->
+  <script src="../node_modules/chai/chai.js" type="text/javascript" ></script>
+  <script src="js/sinon.js" type="text/javascript" ></script>
+  <script src="js/modernizr.js" type="text/javascript" ></script>
+  <script src="js/chai_helpers.js" type="text/javascript" ></script>
+  <script src="js/p5_helpers.js" type="text/javascript" ></script>
+
+  <!-- Include anything you want to test -->
+  <script src="../lib/p5.min.js" type="text/javascript" ></script>
+  <script src="../lib/addons/p5.dom.min.js" type="text/javascript" ></script>
+
+  <script type="text/javascript">
+    // Let unit tests know we're testing the minified version.
+    window.IS_TESTING_MINIFIED_VERSION = true;
+  </script>
+
+  <!-- Spec files (Now centralised in unit/spec.js) -->
+  <script src="unit/spec.js" type="text/javascript" ></script>
+
+  <!-- run mocha -->
+  <script type="text/javascript" >
+    window.addEventListener('load', function() {
+      mocha.run();
+    }, false);
+  </script>
+</body>
+</html>

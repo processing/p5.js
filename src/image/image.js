@@ -1,524 +1,306 @@
 /**
  * @module Image
+ * @submodule Image
+ * @for p5
  * @requires core
- * @requires canvas
- * @requires constants
- * @requires filters
  */
-define(function (require) {
 
-  /**
-   * This module defines the PImage class and P5 methods for
-   * drawing images to the main display canvas.
-   */
+/**
+ * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
+ * for drawing images to the main display canvas.
+ */
+'use strict';
 
-  'use strict';
+var p5 = require('../core/main');
+// This is not global, but ESLint is not aware that
+// this module is implicitly enclosed with Browserify: this overrides the
+// redefined-global error and permits using the name "frames" for the array
+// of saved animation frames.
 
-  var p5 = require('core');
-  var canvas = require('canvas');
-  var constants = require('constants');
-  var Filters = require('filters');
+/* global frames:true */ var frames = [];
 
-  /*
-   * Global/P5 methods
-   */
+/**
+ * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
+ * fresh buffer of pixels to play with. Set the size of the buffer with the
+ * width and height parameters.
+ * <br><br>
+ * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
+ * in the display window.
+ * These values are numbers. This array is the size (including an appropriate
+ * factor for the <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
+ * representing the R, G, B, A values in order for each pixel, moving from
+ * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
+ * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
+ * <br><br>
+ * Before accessing the pixels of an image, the data must loaded with the
+ * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
+ * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
+ *
+ * @method createImage
+ * @param  {Integer} width  width in pixels
+ * @param  {Integer} height height in pixels
+ * @return {p5.Image}       the <a href="#/p5.Image">p5.Image</a> object
+ * @example
+ * <div>
+ * <code>
+ * var img = createImage(66, 66);
+ * img.loadPixels();
+ * for (var i = 0; i < img.width; i++) {
+ *   for (var j = 0; j < img.height; j++) {
+ *     img.set(i, j, color(0, 90, 102));
+ *   }
+ * }
+ * img.updatePixels();
+ * image(img, 17, 17);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var img = createImage(66, 66);
+ * img.loadPixels();
+ * for (var i = 0; i < img.width; i++) {
+ *   for (var j = 0; j < img.height; j++) {
+ *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
+ *   }
+ * }
+ * img.updatePixels();
+ * image(img, 17, 17);
+ * image(img, 34, 34);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var pink = color(255, 102, 204);
+ * var img = createImage(66, 66);
+ * img.loadPixels();
+ * var d = pixelDensity();
+ * var halfImage = 4 * (img.width * d) * (img.height / 2 * d);
+ * for (var i = 0; i < halfImage; i += 4) {
+ *   img.pixels[i] = red(pink);
+ *   img.pixels[i + 1] = green(pink);
+ *   img.pixels[i + 2] = blue(pink);
+ *   img.pixels[i + 3] = alpha(pink);
+ * }
+ * img.updatePixels();
+ * image(img, 17, 17);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 66x66 dark turquoise rect in center of canvas.
+ * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+ * no image displayed
+ *
+ */
+p5.prototype.createImage = function(width, height) {
+  p5._validateParameters('createImage', arguments);
+  return new p5.Image(width, height);
+};
 
-  /**
-   * Create a new empty PImage object.
-   * @method createImage
-   * @param  {Integer} width
-   * @param  {Integer} height
-   * @return {PImage} the PImage object
-   * @for Image
-   */
-  p5.prototype.createImage = function(width, height) {
-    return new PImage(width, height);
-  };
+/**
+ *  Save the current canvas as an image. The browser will either save the
+ *  file immediately, or prompt the user with a dialogue window.
+ *
+ *  @method saveCanvas
+ *  @param  {p5.Element|HTMLCanvasElement} selectedCanvas   a variable
+ *                                  representing a specific html5 canvas (optional)
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]      'jpg' or 'png'
+ *
+ *  @example
+ * <div class='norender notest'><code>
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(255, 0, 0);
+ *   saveCanvas(c, 'myCanvas', 'jpg');
+ * }
+ * </code></div>
+ * <div class='norender notest'><code>
+ * // note that this example has the same result as above
+ * // if no canvas is specified, defaults to main canvas
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(255, 0, 0);
+ *   saveCanvas('myCanvas', 'jpg');
+ *
+ *   // all of the following are valid
+ *   saveCanvas(c, 'myCanvas', 'jpg');
+ *   saveCanvas(c, 'myCanvas.jpg');
+ *   saveCanvas(c, 'myCanvas');
+ *   saveCanvas(c);
+ *   saveCanvas('myCanvas', 'png');
+ *   saveCanvas('myCanvas');
+ *   saveCanvas();
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
+ * no image displayed
+ * no image displayed
+ */
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
+ */
+p5.prototype.saveCanvas = function() {
+  p5._validateParameters('saveCanvas', arguments);
 
-  /**
-   * Loads an image from a path and creates a PImage from it.
-   *
-   * The image may not be immediately available for rendering
-   * If you want to ensure that the image is ready before doing
-   * anything with it you can do perform those operations in the
-   * callback.
-   * 
-   * @method loadImage
-   * @param  {String}   path
-   * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
-   * @return {PImage} the PImage object
-   * @for Loading & Displaying
-   */
-  p5.prototype.loadImage = function(path, callback) {
-    var img = new Image();
-    var pImg = new PImage(1, 1, this);
+  // copy arguments to array
+  var args = [].slice.call(arguments);
+  var htmlCanvas, filename, extension;
 
-    img.onload = function() {
-      pImg.width = pImg.canvas.width = img.width;
-      pImg.height = pImg.canvas.height = img.height;
-
-      // Draw the image into the backing canvas of the pImage
-      pImg.canvas.getContext('2d').drawImage(img, 0, 0);
-
-      if (typeof callback !== 'undefined') {
-        callback(pImg);
-      }
-    };
-
-    //set crossOrigin in case image is served which CORS headers
-    //this will let us draw to canvas without tainting it.
-    //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-    img.crossOrigin = 'Anonymous';
-
-    //start loading the image
-    img.src = path;
-
-    return pImg;
-  };
-
-  /**
-   * Draw an image to the main canvas of the p5js sketch
-   *
-   * @method image
-   * @param  {PImage} image
-   * @param  {[type]} x
-   * @param  {[type]} y
-   * @param  {[type]} width
-   * @param  {[type]} height   
-   * @for Loading & Displaying
-   */
-  p5.prototype.image = function(image, x, y, width, height) {
-    if (width === undefined){
-      width = image.width;
-    }
-    if (height === undefined){
-      height = image.height;
-    }
-    var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
-    this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
-  };
-
-  /**
-   * Set image mode. Modifies the location from which images are drawn by changing the way in which parameters given to image() are intepreted.
-
-The default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.
-
-imageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.
-
-imageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.
-
-The parameter must be written in ALL CAPS because Processing is a case-sensitive language. 
-   * @method imageMode
-   * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
-   * @for Loading & Displaying
-   */
-  p5.prototype.imageMode = function(m) {
-    if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
-      this.settings.imageMode = m;
-    }
-  };
-
-
-  /*
-   * Class methods
-   */
-
-
-  /**
-   * Creates a new PImage. A PImage is a canvas backed representation of an image.
-   * p5 can display .gif, .jpg and .png images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the loadImage() function. The PImage class contains fields for the width and height of the image, as well as an array called pixels[] that contains the values for every pixel in the image. The methods described below allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
-
-Before using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.
-   * 
-   * @constructor
-   * @class PImage
-   * @param {Number} width 
-   * @param {Number} height 
-   * @param {Object} pInst An instance of a p5 sketch.
-   */
-  function PImage(width, height){
-    this.width = width;
-    this.height = height;
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-    this.pixels = [];
+  if (arguments[0] instanceof HTMLCanvasElement) {
+    htmlCanvas = arguments[0];
+    args.shift();
+  } else if (arguments[0] instanceof p5.Element) {
+    htmlCanvas = arguments[0].elt;
+    args.shift();
+  } else {
+    htmlCanvas = this._curElement && this._curElement.elt;
   }
 
-  /**
-   * Loads the pixels data for this image into the [pixels] attribute.
-   * 
-   * @method loadPixels
-   * @for PImage
-   */
-  PImage.prototype.loadPixels = function(){
-    var x = 0;
-    var y = 0;
-    var w = this.width;
-    var h = this.height;
+  if (args.length >= 1) {
+    filename = args[0];
+  }
+  if (args.length >= 2) {
+    extension = args[1];
+  }
 
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
+  extension =
+    extension ||
+    p5.prototype._checkFileExtension(filename, extension)[1] ||
+    'png';
 
-    var pixels = [];
-    for (var i = 0; i < data.length; i += 4) {
-      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
-    }
-
-    this.pixels = pixels;
-  };
-
-  /**
-   * Updates the backing canvas for this image with the contents of
-   * the [pixels] array.
-   *
-   *
-   * @method updatePixels
-   * @param  {Integer|undefined} x x offset of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} y y offset of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} w height of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} h height of the target update area for the
-   *                               underlying canvas
-   * @for PImage
-   */
-  PImage.prototype.updatePixels = function(x, y, w, h){
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    }
-
-    //unpack pixels[] to the canvas imageData format
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-    for (var i = 0; i < this.pixels.length; i += 1) {
-      var j = i * 4;
-      data[j] = this.pixels[i][0];
-      data[j+1] = this.pixels[i][1];
-      data[j+2] = this.pixels[i][2];
-      data[j+3] = this.pixels[i][3];
-    }
-
-    this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
-  };
-
-
-
-
-  /**
-   * Get a region of pixels from an image.
-   *
-   * If no params are passed, those whole image is returned,
-   * if x and y are the only params passed a single pixel is extracted
-   * if all params are passed a rectangle region is extracted and a Pimage is
-   * returned.
-   *
-   * Returns undefined if the region is outside the bounds of the image
-   *
-   * @method get
-   * @for PImage
-   * @param  {Integer} x
-   * @param  {Integer} y
-   * @param  {Integer} w width
-   * @param  {Integer} h height
-   * @return {[Integer] | PImage | undefined} pixel [4 element integer] array or a PImage
-   */
-  PImage.prototype.get = function(x, y, w, h){
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    } else if (w === undefined && h === undefined){
-      w = 1;
-      h = 1;
-    }
-
-    if(x > this.width || y > this.height){
-      return undefined;
-    }
-
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-
-    if (w === 1 && h === 1){
-      var pixels = [];
-      
-      for (var i = 0; i < data.length; i += 4) {
-        pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
-      }
-      
-      return pixels;
-    } else {
-      //auto constrain the width and height to
-      //dimensions of the source image
-      w = Math.min(w, this.width);
-      h = Math.min(h, this.height);
-
-      var region = new PImage(w, h);
-      region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
-
-      return region;
-    }
-  };
-
-  /**
-   * Set the color of a single pixel or write an image into
-   * this PImage.
-   *
-   * Note that for a large number of pixels this will
-   * be slower than directly manipulating the pixels array
-   * and then calling updatePixels()
-   *
-   * TODO: Should me make the update operation toggleable?
-   *
-   * @method set
-   * @for PImage
-   * @param {Integer} x
-   * @param {Integer} y
-   * @param {PImage|[Integer]}  imageData a pImage or an array representing a color.
-   */
-  PImage.prototype.set = function(x, y, imgOrCol){
-    var idx = (y * this.width) + x;
-
-    if (imgOrCol instanceof Array) {
-      if (idx < this.pixels.length){
-        this.pixels[idx] = imgOrCol;
-        this.updatePixels();
-      }
-    } else {
-      this.canvas.getContext('2d').drawImage(imgOrCol.canvas, 0, 0);
-      this.loadPixels();
-    }
-  };
-
-
-  /**
-   * Resize this PImage.
-   * @method resize
-   * @for PImage
-   * @param  {[type]} width  [description]
-   * @param  {[type]} height [description]
-   * @return {[type]}        [description]
-   */
-  PImage.prototype.resize = function(width, height){
-
-    // Copy contents to a temporary canvas, resize the original
-    // and then copy back.
-    //
-    // There is a faster approach that involves just one copy and swapping the
-    // this.canvas reference. We could switch to that approach if (as i think is
-    // the case) there an expectation that the user would not hold a reference to
-    // the backing canvas of a pImage. But since we do not enforece that at the
-    // moment, I am leaving in the slower, but safer implementation.
-
-    var tempCanvas = document.createElement('canvas');
-    tempCanvas.width = width;
-    tempCanvas.height = height;
-    tempCanvas.getContext('2d').drawImage(this.canvas,
-      0, 0, this.canvas.width, this.canvas.height,
-      0, 0, tempCanvas.width, tempCanvas.width
-    );
-
-
-    // Resize the original canvas, which will clear its contents
-    this.canvas.width = this.width = width;
-    this.canvas.height = this.height = height;
-
-    //Copy the image back
-
-    this.canvas.getContext('2d').drawImage(tempCanvas,
-      0, 0, width, height,
-      0, 0, width, height
-    );
-
-    if(this.pixels.length > 0){
-      this.loadPixels();
-    }
-  };
-
-  /**
-   * Copies a region of pixels from one image to another. If no
-   * srcImage is specified this is used as the source. If the source
-   * and destination regions aren't the same size, it will
-   * automatically resize source pixels to fit the specified
-   * target region.
-   *
-   * @method copy
-   * @for PImage
-   * @param  {PImage|undefined} srcImage source image
-   * @param  {Integer} sx X coordinate of the source's upper left corner
-   * @param  {Integer} sy Y coordinate of the source's upper left corner
-   * @param  {Integer} sw source image width
-   * @param  {Integer} sh source image height
-   * @param  {Integer} dx X coordinate of the destination's upper left corner
-   * @param  {Integer} dy Y coordinate of the destination's upper left corner
-   * @param  {Integer} dw destination image width
-   * @param  {Integer} dh destination image height
-   */
-  PImage.prototype.copy = function() {
-    var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-    if(arguments.length === 9){
-      srcImage = arguments[0];
-      sx = arguments[1];
-      sy = arguments[2];
-      sw = arguments[3];
-      sh = arguments[4];
-      dx = arguments[5];
-      dy = arguments[6];
-      dw = arguments[7];
-      dh = arguments[8];
-    } else if(arguments.length === 8){
-      sx = arguments[0];
-      sy = arguments[1];
-      sw = arguments[2];
-      sh = arguments[3];
-      dx = arguments[4];
-      dy = arguments[5];
-      dw = arguments[6];
-      dh = arguments[7];
-
-      srcImage = this;
-    } else {
-      throw new Error('Signature not supported');
-    }
-
-    this.canvas.getContext('2d').drawImage(srcImage.canvas,
-      sx, sy, sw, sh, dx, dy, dw, dh
-    );
-  };
-
-
-
-
-  /**
-   * Masks part of an image from displaying by loading another
-   * image and using it's alpha channel as an alpha channel for
-   * this image.
-   * 
-   * @method mask
-   * @for PImage
-   * @param  {PImage|undefined} srcImage source image
-   *
-   * TODO: - Accept an array of alpha values.
-   *       - Use other channels of an image. p5 uses the
-   *       blue channel (which feels kind of arbitrary). Note: at the
-   *       moment this method does not match native processings original
-   *       functionality exactly.
-   * 
-   * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
-   * 
-   */
-  PImage.prototype.mask = function(pImage) {
-    if(pImage === undefined){
-      pImage = this;
-    }
-    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-
-    var copyArgs = [pImage, 0, 0, pImage.width, pImage.height, 0, 0, this.width, this.height];
-
-    this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
-    this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
-  };
-
-  /**
-   * Applies an image filter to a PImage
-   * 
-   * @method filter
-   * @for PImage
-   * @param  {String} operation one of threshold, gray, invert, posterize and opaque
-   *                            see Filters.js for docs on each available filter
-   * @param  {Number|undefined} value
-   */
-  PImage.prototype.filter = function(operation, value) {
-    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-  };
-
-  /**
-   * Copies a region of pixels from one image to another, using a specified
-   * blend mode to do the operation.
-   * 
-   * @method blend
-   * @for PImage
-   * @param  {PImage|undefined} srcImage source image
-   * @param  {Integer} sx X coordinate of the source's upper left corner
-   * @param  {Integer} sy Y coordinate of the source's upper left corner
-   * @param  {Integer} sw source image width
-   * @param  {Integer} sh source image height
-   * @param  {Integer} dx X coordinate of the destination's upper left corner
-   * @param  {Integer} dy Y coordinate of the destination's upper left corner
-   * @param  {Integer} dw destination image width
-   * @param  {Integer} dh destination image height
-   * @param  {Integer} blendMode the blend mode
-   *
-   * Available blend modes are: normal | multiply | screen | overlay | 
-   *            darken | lighten | color-dodge | color-burn | hard-light | 
-   *            soft-light | difference | exclusion | hue | saturation | 
-   *            color | luminosity
-
-   * 
-   * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
-   * 
-   */
-  PImage.prototype.blend = function() {
-    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-    var blendMode = arguments[arguments.length - 1];
-    var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
-
-    this.canvas.getContext('2d').globalCompositeOperation = blendMode;
-    this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
-  };
-
-  /**
-   * Saves the image to a file and forces the browser to download it.
-   * Supports png and jpg.
-   * 
-   * @method save
-   * @for PImage
-   * @param  {[type]} extension
-   *
-   * TODO: There doesn't seem to be a way to give the force the
-   * browser to download a file *and* give it a name. Which is why 
-   * this function currently only take an extension parameter.
-   * 
-   */
-  PImage.prototype.save = function(extension) {
-    // var components = name.split('.');
-    // var extension = components[components.length - 1];
-    var mimeType;
-    
-    // http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-    switch(extension.toLowerCase()){
-    case 'png':
+  var mimeType;
+  switch (extension) {
+    default:
+      //case 'png':
       mimeType = 'image/png';
       break;
     case 'jpeg':
-      mimeType = 'image/jpeg';
-      break;
     case 'jpg':
       mimeType = 'image/jpeg';
       break;
-    default:
-      mimeType = 'image/png';
-      break;
-    }
+  }
 
-    if(mimeType !== undefined){
-      var downloadMime = 'image/octet-stream';
-      var imageData = this.canvas.toDataURL(mimeType);
-      imageData = imageData.replace(mimeType, downloadMime);
-      
-      //Make the browser download the file
-      window.location.href = imageData;
+  htmlCanvas.toBlob(function(blob) {
+    p5.prototype.downloadFile(blob, filename, extension);
+  }, mimeType);
+};
+
+/**
+ *  Capture a sequence of frames that can be used to create a movie.
+ *  Accepts a callback. For example, you may wish to send the frames
+ *  to a server where they can be stored or converted into a movie.
+ *  If no callback is provided, the browser will pop up save dialogues in an
+ *  attempt to download all of the images that have just been created. With the
+ *  callback provided the image data isn't saved by default but instead passed
+ *  as an argument to the callback function as an array of objects, with the
+ *  size of array equal to the total number of frames.
+ *
+ *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 frames of an animation.
+ *  To export longer animations, you might look into a library like
+ *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
+ *
+ *  @method saveFrames
+ *  @param  {String}   filename
+ *  @param  {String}   extension 'jpg' or 'png'
+ *  @param  {Number}   duration  Duration in seconds to save the frames for.
+ *  @param  {Number}   framerate  Framerate to save the frames in.
+ *  @param  {function(Array)} [callback] A callback function that will be executed
+                                  to handle the image data. This function
+                                  should accept an array as argument. The
+                                  array will contain the specified number of
+                                  frames of objects. Each object has three
+                                  properties: imageData - an
+                                  image/octet-stream, filename and extension.
+ *  @example
+ *  <div><code>
+ * function draw() {
+ *   background(mouseX);
+ * }
+ *
+ * function mousePressed() {
+ *   saveFrames('out', 'png', 1, 25, function(data) {
+ *     print(data);
+ *   });
+ * }
+</code></div>
+ *
+ * @alt
+ * canvas background goes from light to dark with mouse x.
+ *
+ */
+p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
+  p5._validateParameters('saveFrames', arguments);
+  var duration = _duration || 3;
+  duration = p5.prototype.constrain(duration, 0, 15);
+  duration = duration * 1000;
+  var fps = _fps || 15;
+  fps = p5.prototype.constrain(fps, 0, 22);
+  var count = 0;
+
+  var makeFrame = p5.prototype._makeFrame;
+  var cnv = this._curElement.elt;
+  var frameFactory = setInterval(function() {
+    makeFrame(fName + count, ext, cnv);
+    count++;
+  }, 1000 / fps);
+
+  setTimeout(function() {
+    clearInterval(frameFactory);
+    if (callback) {
+      callback(frames);
+    } else {
+      for (var i = 0; i < frames.length; i++) {
+        var f = frames[i];
+        p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
+      }
     }
-  };
-  return PImage;
-});
+    frames = []; // clear frames
+  }, duration + 0.01);
+};
+
+p5.prototype._makeFrame = function(filename, extension, _cnv) {
+  var cnv;
+  if (this) {
+    cnv = this._curElement.elt;
+  } else {
+    cnv = _cnv;
+  }
+  var mimeType;
+  if (!extension) {
+    extension = 'png';
+    mimeType = 'image/png';
+  } else {
+    switch (extension.toLowerCase()) {
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'jpg':
+        mimeType = 'image/jpeg';
+        break;
+      default:
+        mimeType = 'image/png';
+        break;
+    }
+  }
+  var downloadMime = 'image/octet-stream';
+  var imageData = cnv.toDataURL(mimeType);
+  imageData = imageData.replace(mimeType, downloadMime);
+
+  var thisFrame = {};
+  thisFrame.imageData = imageData;
+  thisFrame.filename = filename;
+  thisFrame.ext = extension;
+  frames.push(thisFrame);
+};
+
+module.exports = p5;

@@ -1,0 +1,15 @@
+html, body {margin:0; padding:0;}
+
+header {
+  width: 100%;
+  position: absolute;
+  color: black;
+  background-color: rgba(240, 240, 240, 0.75);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 105%;
+}
+
+header p {
+  width: 100%;
+  text-align: center;
+}
