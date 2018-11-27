@@ -31,10 +31,10 @@ var _globalInit = function() {
 // TODO: ???
 
 // if the page is ready, initialize p5 immediately
-if (document.readyState === 'complete') {
+if (document.readyState !== 'loading') {
   _globalInit();
   // if the page is still loading, add an event listener
   // and initialize p5 as soon as it finishes loading
 } else {
-  window.addEventListener('load', _globalInit, false);
+  document.addEventListener('DOMContentLoaded', _globalInit, false);
 }

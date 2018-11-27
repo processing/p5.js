@@ -552,10 +552,14 @@ var p5 = function(sketch, node, sync) {
   if (sync) {
     this._start();
   } else {
-    if (document.readyState === 'complete') {
+    if (document.readyState !== 'loading') {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      document.addEventListener(
+        'DOMContentLoaded',
+        this._start.bind(this),
+        false
+      );
     }
   }
 };
