@@ -177,7 +177,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} detail number of radial sectors to draw
+ * @param  {Integer} detail number of radial sectors to draw (for WebGL mode)
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
@@ -270,7 +270,7 @@ p5.prototype.line = function() {
  * @method point
  * @param  {Number} x the x-coordinate
  * @param  {Number} y the y-coordinate
- * @param  {Number} [z] the z-coordinate (for WEBGL mode)
+ * @param  {Number} [z] the z-coordinate (for WebGL mode)
  * @chainable
  * @example
  * <div>
@@ -406,8 +406,8 @@ p5.prototype.quad = function() {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} [detailX] number of segments in the x-direction
- * @param  {Integer} [detailY] number of segments in the y-direction
+ * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
+ * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
  * @chainable
  */
 p5.prototype.rect = function() {
