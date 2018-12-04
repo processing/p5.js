@@ -1024,30 +1024,64 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+p5.RendererGL.prototype.quad = function() {
+  var coords = {},
+    argNames =
+      arguments.length === 8
+        ? ['x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4']
+        : [
+            'x1',
+            'y1',
+            'z1',
+            'x2',
+            'y2',
+            'z2',
+            'x3',
+            'y3',
+            'z3',
+            'x4',
+            'y4',
+            'z4'
+          ];
+
+  Array.from(arguments).forEach(function(val, i) {
+    coords[argNames[i]] = val;
+  });
+
+  if (arguments.length === 8) {
+    coords.z1 = coords.z2 = coords.z3 = coords.z4 = 0;
+  }
   var gId =
     'quad|' +
-    x1 +
+    coords.x1 +
     '|' +
-    y1 +
+    coords.y1 +
     '|' +
-    x2 +
+    coords.z1 +
     '|' +
-    y2 +
+    coords.x2 +
     '|' +
-    x3 +
+    coords.y2 +
     '|' +
-    y3 +
+    coords.z2 +
     '|' +
-    x4 +
+    coords.x3 +
     '|' +
-    y4;
+    coords.y3 +
+    '|' +
+    coords.z3 +
+    '|' +
+    coords.x4 +
+    '|' +
+    coords.y4 +
+    '|' +
+    coords.z4;
   if (!this.geometryInHash(gId)) {
     var _quad = function() {
-      this.vertices.push(new p5.Vector(x1, y1, 0));
-      this.vertices.push(new p5.Vector(x2, y2, 0));
-      this.vertices.push(new p5.Vector(x3, y3, 0));
-      this.vertices.push(new p5.Vector(x4, y4, 0));
+      this.vertices.push(new p5.Vector(coords.x1, coords.y1, coords.z1));
+      this.vertices.push(new p5.Vector(coords.x2, coords.y2, coords.z2));
+      this.vertices.push(new p5.Vector(coords.x3, coords.y3, coords.z3));
+      this.vertices.push(new p5.Vector(coords.x4, coords.y4, coords.z4));
       this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
