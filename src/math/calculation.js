@@ -280,13 +280,16 @@ p5.prototype.floor = Math.floor;
  * Calculates a number between two numbers at a specific increment. The amt
  * parameter is the amount to interpolate between the two values where 0.0
  * equal to the first point, 0.1 is very near the first point, 0.5 is
- * half-way in between, etc. The lerp function is convenient for creating
- * motion along a straight path and for drawing dotted lines.
+ * half-way in between, and 1.0 is equal to the second point. If the
+ * value of amt is more than 1.0 or less than 0.0, the number will be
+ * calculated accordingly in the ratio of the two given numbers. The lerp
+ * function is convenient for creating motion along a straight
+ * path and for drawing dotted lines.
  *
  * @method lerp
  * @param  {Number} start first value
  * @param  {Number} stop  second value
- * @param  {Number} amt   number between 0.0 and 1.0
+ * @param  {Number} amt   number
  * @return {Number}       lerped value
  * @example
  * <div><code>
