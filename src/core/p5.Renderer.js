@@ -178,10 +178,7 @@ p5.Renderer.prototype.textAlign = function(h, v) {
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   const p = this._pInst;
-  let n,
-    ii,
-    jj,
-    line,
+  let line,
     testLine,
     testWidth,
     words,
@@ -203,14 +200,14 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
   if (typeof maxWidth !== 'undefined') {
     totalHeight = 0;
-    for (ii = 0; ii < cars.length; ii++) {
+    for (const car of cars) {
       line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+      words = car.split(' ');
+      for (const word of words) {
+        testLine = line + word + ' ';
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth) {
-          line = words[n] + ' ';
+          line = word + ' ';
           totalHeight += p.textLeading();
         } else {
           line = testLine;
@@ -251,15 +248,15 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       finalMaxHeight = y + maxHeight - p.textAscent();
     }
 
-    for (ii = 0; ii < cars.length; ii++) {
+    for (const car of cars) {
       line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+      words = car.split(' ');
+      for (const word of words) {
+        testLine = line + word + ' ';
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth && line.length > 0) {
           this._renderText(p, line, x, y, finalMaxHeight);
-          line = words[n] + ' ';
+          line = word + ' ';
           y += p.textLeading();
         } else {
           line = testLine;
@@ -284,8 +281,8 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       offset = (cars.length - 1) * p.textLeading();
     }
 
-    for (jj = 0; jj < cars.length; jj++) {
-      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+    for (const car of cars) {
+      this._renderText(p, car, x, y - offset, finalMaxHeight);
       y += p.textLeading();
     }
   }

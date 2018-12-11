@@ -199,10 +199,10 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
       this.edges.push(this.strokeIndices[i]);
     }
   } else {
-    for (let j = 0; j < this.faces.length; j++) {
-      this.edges.push([this.faces[j][0], this.faces[j][1]]);
-      this.edges.push([this.faces[j][1], this.faces[j][2]]);
-      this.edges.push([this.faces[j][2], this.faces[j][0]]);
+    for (const face of this.faces) {
+      this.edges.push([face[0], face[1]]);
+      this.edges.push([face[1], face[2]]);
+      this.edges.push([face[2], face[0]]);
     }
   }
   return this;
@@ -219,9 +219,9 @@ p5.Geometry.prototype._edgesToVertices = function() {
   this.lineVertices.length = 0;
   this.lineNormals.length = 0;
 
-  for (let i = 0; i < this.edges.length; i++) {
-    const begin = this.vertices[this.edges[i][0]];
-    const end = this.vertices[this.edges[i][1]];
+  for (const edge of this.edges) {
+    const begin = this.vertices[edge[0]];
+    const end = this.vertices[edge[1]];
     const dir = end
       .copy()
       .sub(begin)
@@ -253,13 +253,13 @@ p5.Geometry.prototype.normalize = function() {
     const maxPosition = this.vertices[0].copy();
     const minPosition = this.vertices[0].copy();
 
-    for (let i = 0; i < this.vertices.length; i++) {
-      maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
-      minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
-      maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
-      minPosition.y = Math.min(minPosition.y, this.vertices[i].y);
-      maxPosition.z = Math.max(maxPosition.z, this.vertices[i].z);
-      minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
+    for (const vertex of this.vertices) {
+      maxPosition.x = Math.max(maxPosition.x, vertex.x);
+      minPosition.x = Math.min(minPosition.x, vertex.x);
+      maxPosition.y = Math.max(maxPosition.y, vertex.y);
+      minPosition.y = Math.min(minPosition.y, vertex.y);
+      maxPosition.z = Math.max(maxPosition.z, vertex.z);
+      minPosition.z = Math.min(minPosition.z, vertex.z);
     }
 
     const center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
@@ -267,9 +267,9 @@ p5.Geometry.prototype.normalize = function() {
     const longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
     const scale = 200 / longestDist;
 
-    for (let i = 0; i < this.vertices.length; i++) {
-      this.vertices[i].sub(center);
-      this.vertices[i].mult(scale);
+    for (const vertex of this.vertices) {
+      vertex.sub(center);
+      vertex.mult(scale);
     }
   }
   return this;

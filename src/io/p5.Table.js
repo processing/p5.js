@@ -308,16 +308,16 @@ p5.Table.prototype.getRows = function() {
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
   if (typeof column === 'string') {
-    for (let i = 0; i < this.rows.length; i++) {
-      if (this.rows[i].obj[column] === value) {
-        return this.rows[i];
+    for (const row of this.rows) {
+      if (row.obj[column] === value) {
+        return row;
       }
     }
   } else {
     // try the Array
-    for (let j = 0; j < this.rows.length; j++) {
-      if (this.rows[j].arr[column] === value) {
-        return this.rows[j];
+    for (const row of this.rows) {
+      if (row.arr[column] === value) {
+        return row;
       }
     }
   }
@@ -378,16 +378,16 @@ p5.Table.prototype.findRow = function(value, column) {
 p5.Table.prototype.findRows = function(value, column) {
   const ret = [];
   if (typeof column === 'string') {
-    for (let i = 0; i < this.rows.length; i++) {
-      if (this.rows[i].obj[column] === value) {
-        ret.push(this.rows[i]);
+    for (const row of this.rows) {
+      if (row.obj[column] === value) {
+        ret.push(row);
       }
     }
   } else {
     // try the Array
-    for (let j = 0; j < this.rows.length; j++) {
-      if (this.rows[j].arr[column] === value) {
-        ret.push(this.rows[j]);
+    for (const row of this.rows) {
+      if (row.arr[column] === value) {
+        ret.push(row);
       }
     }
   }
@@ -438,15 +438,15 @@ p5.Table.prototype.findRows = function(value, column) {
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
   if (typeof column === 'number') {
-    for (let j = 0; j < this.rows.length; j++) {
-      if (this.rows[j].arr[column].match(regexp)) {
-        return this.rows[j];
+    for (const row of this.rows) {
+      if (row.arr[column].match(regexp)) {
+        return row;
       }
     }
   } else {
-    for (let i = 0; i < this.rows.length; i++) {
-      if (this.rows[i].obj[column].match(regexp)) {
-        return this.rows[i];
+    for (const row of this.rows) {
+      if (row.obj[column].match(regexp)) {
+        return row;
       }
     }
   }
@@ -505,15 +505,15 @@ p5.Table.prototype.matchRow = function(regexp, column) {
 p5.Table.prototype.matchRows = function(regexp, column) {
   const ret = [];
   if (typeof column === 'number') {
-    for (let j = 0; j < this.rows.length; j++) {
-      if (this.rows[j].arr[column].match(regexp)) {
-        ret.push(this.rows[j]);
+    for (const row of this.rows) {
+      if (row.arr[column].match(regexp)) {
+        ret.push(row);
       }
     }
   } else {
-    for (let i = 0; i < this.rows.length; i++) {
-      if (this.rows[i].obj[column].match(regexp)) {
-        ret.push(this.rows[i]);
+    for (const row of this.rows) {
+      if (row.obj[column].match(regexp)) {
+        ret.push(row);
       }
     }
   }
@@ -562,12 +562,12 @@ p5.Table.prototype.matchRows = function(regexp, column) {
 p5.Table.prototype.getColumn = function(value) {
   const ret = [];
   if (typeof value === 'string') {
-    for (let i = 0; i < this.rows.length; i++) {
-      ret.push(this.rows[i].obj[value]);
+    for (const row of this.rows) {
+      ret.push(row.obj[value]);
     }
   } else {
-    for (let j = 0; j < this.rows.length; j++) {
-      ret.push(this.rows[j].arr[value]);
+    for (const row of this.rows) {
+      ret.push(row.arr[value]);
     }
   }
   return ret;
@@ -786,27 +786,27 @@ p5.Table.prototype.removeTokens = function(chars, column) {
 
   if (typeof column === 'undefined') {
     for (let c = 0; c < this.columns.length; c++) {
-      for (let d = 0; d < this.rows.length; d++) {
-        let s = this.rows[d].arr[c];
+      for (const row of this.rows) {
+        let s = row.arr[c];
         s = s.replace(regex, '');
-        this.rows[d].arr[c] = s;
-        this.rows[d].obj[this.columns[c]] = s;
+        row.arr[c] = s;
+        row.obj[this.columns[c]] = s;
       }
     }
   } else if (typeof column === 'string') {
-    for (let j = 0; j < this.rows.length; j++) {
-      let val = this.rows[j].obj[column];
+    for (const row of this.rows) {
+      let val = row.obj[column];
       val = val.replace(regex, '');
-      this.rows[j].obj[column] = val;
+      row.obj[column] = val;
       const pos = this.columns.indexOf(column);
-      this.rows[j].arr[pos] = val;
+      row.arr[pos] = val;
     }
   } else {
-    for (let k = 0; k < this.rows.length; k++) {
-      let str = this.rows[k].arr[column];
+    for (const row of this.rows) {
+      let str = row.arr[column];
       str = str.replace(regex, '');
-      this.rows[k].arr[column] = str;
-      this.rows[k].obj[this.columns[column]] = str;
+      row.arr[column] = str;
+      row.obj[this.columns[column]] = str;
     }
   }
 };
@@ -850,27 +850,27 @@ p5.Table.prototype.trim = function(column) {
 
   if (typeof column === 'undefined') {
     for (let c = 0; c < this.columns.length; c++) {
-      for (let d = 0; d < this.rows.length; d++) {
-        let s = this.rows[d].arr[c];
+      for (const row of this.rows) {
+        let s = row.arr[c];
         s = s.replace(regex, '');
-        this.rows[d].arr[c] = s;
-        this.rows[d].obj[this.columns[c]] = s;
+        row.arr[c] = s;
+        row.obj[this.columns[c]] = s;
       }
     }
   } else if (typeof column === 'string') {
-    for (let j = 0; j < this.rows.length; j++) {
-      let val = this.rows[j].obj[column];
+    for (const row of this.rows) {
+      let val = row.obj[column];
       val = val.replace(regex, '');
-      this.rows[j].obj[column] = val;
+      row.obj[column] = val;
       const pos = this.columns.indexOf(column);
-      this.rows[j].arr[pos] = val;
+      row.arr[pos] = val;
     }
   } else {
-    for (let k = 0; k < this.rows.length; k++) {
-      let str = this.rows[k].arr[column];
+    for (const row of this.rows) {
+      let str = row.arr[column];
       str = str.replace(regex, '');
-      this.rows[k].arr[column] = str;
-      this.rows[k].obj[this.columns[column]] = str;
+      row.arr[column] = str;
+      row.obj[this.columns[column]] = str;
     }
   }
 };
@@ -931,12 +931,12 @@ p5.Table.prototype.removeColumn = function(c) {
   this.columns.pop();
   this.columns = this.columns.concat(chunk);
 
-  for (let i = 0; i < this.rows.length; i++) {
-    const tempR = this.rows[i].arr;
+  for (const row of this.rows) {
+    const tempR = row.arr;
     const chip = tempR.splice(cNumber + 1, tempR.length);
     tempR.pop();
-    this.rows[i].arr = tempR.concat(chip);
-    delete this.rows[i].obj[cString];
+    row.arr = tempR.concat(chip);
+    delete row.obj[cString];
   }
 };
 
@@ -1332,8 +1332,8 @@ p5.Table.prototype.getObject = function(headerColumn) {
  */
 p5.Table.prototype.getArray = function() {
   const tableArray = [];
-  for (let i = 0; i < this.rows.length; i++) {
-    tableArray.push(this.rows[i].arr);
+  for (const row of this.rows) {
+    tableArray.push(row.arr);
   }
   return tableArray;
 };

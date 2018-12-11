@@ -1719,8 +1719,8 @@ p5.prototype.saveTable = function(table, filename, options) {
     // make header if it has values
     if (header[0] !== '0') {
       pWriter.print('    <tr>');
-      for (let k = 0; k < header.length; k++) {
-        const e = escapeHelper(header[k]);
+      for (const k of header) {
+        const e = escapeHelper(k);
         pWriter.print('      <td>' + e);
         pWriter.print('      </td>');
       }
@@ -1728,10 +1728,10 @@ p5.prototype.saveTable = function(table, filename, options) {
     }
 
     // make rows
-    for (let row = 0; row < table.rows.length; row++) {
+    for (const row of table.rows) {
       pWriter.print('    <tr>');
       for (let col = 0; col < table.columns.length; col++) {
-        const entry = table.rows[row].getString(col);
+        const entry = row.getString(col);
         const htmlEntry = escapeHelper(entry);
         pWriter.print('      <td>' + htmlEntry);
         pWriter.print('      </td>');

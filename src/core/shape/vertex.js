@@ -559,8 +559,8 @@ p5.prototype.endContour = function() {
     isFirstContour = false;
   }
 
-  for (let i = 0; i < contourVertices.length; i++) {
-    vertices.push(contourVertices[i]);
+  for (const contourVertex of contourVertices) {
+    vertices.push(contourVertex);
   }
   return this;
 };

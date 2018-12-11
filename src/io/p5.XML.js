@@ -308,8 +308,8 @@ p5.XML.prototype.getChildren = function(param) {
 
 function elementsToP5XML(elements) {
   const arr = [];
-  for (let i = 0; i < elements.length; i++) {
-    arr.push(new p5.XML(elements[i]));
+  for (const element of elements) {
+    arr.push(new p5.XML(element));
   }
   return arr;
 }
@@ -366,8 +366,7 @@ function elementsToP5XML(elements) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    for (let i = 0; i < this.children.length; i++) {
-      const child = this.children[i];
+    for (const child of this.children) {
       if (child.tagName === param) return new p5.XML(child);
     }
   } else {

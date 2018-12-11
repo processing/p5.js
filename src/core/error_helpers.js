@@ -34,8 +34,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     'Object',
     'Error'
   ];
-  for (let n = 0; n < names.length; n++) {
-    class2type['[object ' + names[n] + ']'] = names[n].toLowerCase();
+  for (const name of names) {
+    class2type['[object ' + name + ']'] = name.toLowerCase();
   }
   const getType = obj => {
     if (obj == null) {
@@ -204,8 +204,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     let queryResult;
     const classitems = arrDoc.classitems;
-    for (let ici = 0; ici < classitems.length; ici++) {
-      const x = classitems[ici];
+    for (const x of classitems) {
       if (x.name === funcName && x.class === funcClass) {
         queryResult = x;
         break;
@@ -216,9 +215,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const overloads = [];
     if (queryResult.hasOwnProperty('overloads')) {
       // add all the overloads
-      for (let i = 0; i < queryResult.overloads.length; i++) {
+      for (const overload of queryResult.overloads) {
         overloads.push({
-          formats: queryResult.overloads[i].params
+          formats: overload.params
         });
       }
     } else {
@@ -361,8 +360,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const isArray = param instanceof Array;
     let matches = true;
     if (type.array && isArray) {
-      for (let i = 0; i < param.length; i++) {
-        const error = testParamType(param[i], type.array);
+      for (const p of param.length) {
+        const error = testParamType(p, type.array);
         if (error) return error / 2; // half error for elements
       }
     } else if (type.prototype) {
@@ -640,8 +639,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
       );
 
       // generate err msg
-      for (let n = 0; n < errorArray.length; n++) {
-        p5._friendlyParamError(errorArray[n], func);
+      for (const error of errorArray) {
+        p5._friendlyParamError(error, func);
       }
     }
   };

@@ -233,12 +233,12 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
       const gpath = glyphs[i].getPath(x, y, fontSize),
         paths = splitPaths(gpath.commands);
 
-      for (let j = 0; j < paths.length; j++) {
-        const pts = pathToPoints(paths[j], options);
+      for (const path of paths) {
+        const pts = pathToPoints(path, options);
 
-        for (let k = 0; k < pts.length; k++) {
-          pts[k].x += xoff;
-          result.push(pts[k]);
+        for (const pt of pts) {
+          pt.x += xoff;
+          result.push(pt);
         }
       }
     }
@@ -392,8 +392,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   }
 
   ctx.beginPath();
-  for (let i = 0; i < pdata.length; i += 1) {
-    const cmd = pdata[i];
+  for (const cmd of pdata) {
     if (cmd.type === 'M') {
       ctx.moveTo(cmd.x, cmd.y);
     } else if (cmd.type === 'L') {
@@ -513,14 +512,14 @@ function simplify(pts, angle) {
 function splitPaths(cmds) {
   const paths = [];
   let current;
-  for (let i = 0; i < cmds.length; i++) {
-    if (cmds[i].type === 'M') {
+  for (const cmd of cmds) {
+    if (cmd.type === 'M') {
       if (current) {
         paths.push(current);
       }
       current = [];
     }
-    current.push(cmdToArr(cmds[i]));
+    current.push(cmdToArr(cmd));
   }
   paths.push(current);
 

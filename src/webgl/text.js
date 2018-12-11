@@ -415,9 +415,7 @@ const FontInfo = function(font) {
       const precision = 30 / SQRT3;
 
       // for each of the non-inflected pieces of the original cubic
-      for (let i = 0; i < cubics.length; i++) {
-        let cubic = cubics[i];
-
+      for (let cubic of cubics) {
         // the cubic is iteratively split in 3 pieces:
         // the first piece is accumulated in 'qs', the result.
         // the last piece is accumulated in 'tail', temporarily.
@@ -487,8 +485,7 @@ const FontInfo = function(font) {
     }
 
     let x0, y0, xs, ys;
-    for (let iCmd = 0; iCmd < cmds.length; ++iCmd) {
-      const cmd = cmds[iCmd];
+    for (const cmd of cmds) {
       // scale the coordinates to the range 0-1
       const x1 = (cmd.x - xMin) / gWidth;
       const y1 = (cmd.y - yMin) / gHeight;
@@ -527,8 +524,8 @@ const FontInfo = function(font) {
           const cx2 = (cmd.x2 - xMin) / gWidth;
           const cy2 = (cmd.y2 - yMin) / gHeight;
           const qs = cubicToQuadratics(x0, y0, cx1, cy1, cx2, cy2, x1, y1);
-          for (let iq = 0; iq < qs.length; iq++) {
-            const q = qs[iq].toQuadratic();
+          for (const qn of qs) {
+            const q = qn.toQuadratic();
             push([q.x, q.x1, q.cx], [q.y, q.y1, q.cy], q);
           }
           break;

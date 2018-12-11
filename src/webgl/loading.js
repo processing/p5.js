@@ -160,11 +160,11 @@ function parseObj(model, lines) {
   };
   const indexedVerts = {};
 
-  for (let line = 0; line < lines.length; ++line) {
+  for (const line of lines) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
     // describes the type.
-    const tokens = lines[line].trim().split(/\b\s+/);
+    const tokens = line.trim().split(/\b\s+/);
 
     if (tokens.length > 0) {
       if (tokens[0] === 'v' || tokens[0] === 'vn') {
@@ -189,9 +189,9 @@ function parseObj(model, lines) {
 
           const vertexTokens = [1, tri - 1, tri];
 
-          for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
+          for (const vertexToken of vertexTokens) {
             // Now, convert the given token into an index
-            const vertString = tokens[vertexTokens[tokenInd]];
+            const vertString = tokens[vertexToken];
             let vertIndex = 0;
 
             // TODO: Faces can technically use negative numbers to refer to the

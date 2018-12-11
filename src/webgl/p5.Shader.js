@@ -218,8 +218,7 @@ p5.Shader.prototype.unbindShader = function() {
 
 p5.Shader.prototype.bindTextures = function() {
   const gl = this._renderer.GL;
-  for (let i = 0; i < this.samplers.length; i++) {
-    const uniform = this.samplers[i];
+  for (const uniform of this.samplers) {
     let tex = uniform.texture;
     if (tex === undefined) {
       // user hasn't yet supplied a texture for this slot.
@@ -235,8 +234,7 @@ p5.Shader.prototype.bindTextures = function() {
 };
 
 p5.Shader.prototype.updateTextures = function() {
-  for (let i = 0; i < this.samplers.length; i++) {
-    const uniform = this.samplers[i];
+  for (const uniform of this.samplers) {
     const tex = uniform.texture;
     if (tex) {
       tex.update();
