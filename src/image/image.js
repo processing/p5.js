@@ -43,10 +43,10 @@ var p5 = require('../core/main');
  * @example
  * <div>
  * <code>
- * var img = createImage(66, 66);
+ * let img = createImage(66, 66);
  * img.loadPixels();
- * for (var i = 0; i < img.width; i++) {
- *   for (var j = 0; j < img.height; j++) {
+ * for (let i = 0; i < img.width; i++) {
+ *   for (let j = 0; j < img.height; j++) {
  *     img.set(i, j, color(0, 90, 102));
  *   }
  * }
@@ -57,10 +57,10 @@ var p5 = require('../core/main');
  *
  * <div>
  * <code>
- * var img = createImage(66, 66);
+ * let img = createImage(66, 66);
  * img.loadPixels();
- * for (var i = 0; i < img.width; i++) {
- *   for (var j = 0; j < img.height; j++) {
+ * for (let i = 0; i < img.width; i++) {
+ *   for (let j = 0; j < img.height; j++) {
  *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
  *   }
  * }
@@ -72,12 +72,12 @@ var p5 = require('../core/main');
  *
  * <div>
  * <code>
- * var pink = color(255, 102, 204);
- * var img = createImage(66, 66);
+ * let pink = color(255, 102, 204);
+ * let img = createImage(66, 66);
  * img.loadPixels();
- * var d = pixelDensity();
- * var halfImage = 4 * (img.width * d) * (img.height / 2 * d);
- * for (var i = 0; i < halfImage; i += 4) {
+ * let d = pixelDensity();
+ * let halfImage = 4 * (img.width * d) * (img.height / 2 * d);
+ * for (let i = 0; i < halfImage; i += 4) {
  *   img.pixels[i] = red(pink);
  *   img.pixels[i + 1] = green(pink);
  *   img.pixels[i + 2] = blue(pink);
@@ -112,7 +112,7 @@ p5.prototype.createImage = function(width, height) {
  *  @example
  * <div class='norender notest'><code>
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(255, 0, 0);
  *   saveCanvas(c, 'myCanvas', 'jpg');
  * }
@@ -121,7 +121,7 @@ p5.prototype.createImage = function(width, height) {
  * // note that this example has the same result as above
  * // if no canvas is specified, defaults to main canvas
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(255, 0, 0);
  *   saveCanvas('myCanvas', 'jpg');
  *
@@ -225,7 +225,7 @@ p5.prototype.saveCanvas = function() {
  * }
  *
  * function mousePressed() {
- *   saveFrames('out', 'png', 1, 25, function(data) {
+ *   saveFrames('out', 'png', 1, 25, data => {
  *     print(data);
  *   });
  * }
