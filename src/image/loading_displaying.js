@@ -38,7 +38,7 @@ require('../core/error_helpers');
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -51,7 +51,7 @@ require('../core/error_helpers');
  * <code>
  * function setup() {
  *   // here we use a callback to display the image after loading
- *   loadImage('assets/laDefense.jpg', function(img) {
+ *   loadImage('assets/laDefense.jpg', img => {
  *     image(img, 0, 0);
  *   });
  * }
@@ -148,7 +148,7 @@ function _sAssign(sVal, iVal) {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -161,7 +161,7 @@ function _sAssign(sVal, iVal) {
  * </div>
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -177,7 +177,7 @@ function _sAssign(sVal, iVal) {
  * <code>
  * function setup() {
  *   // Here, we use a callback to display the image after loading
- *   loadImage('assets/laDefense.jpg', function(img) {
+ *   loadImage('assets/laDefense.jpg', img => {
  *     image(img, 0, 0);
  *   });
  * }
@@ -185,7 +185,7 @@ function _sAssign(sVal, iVal) {
  * </div>
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/gradient.png');
  * }
@@ -319,7 +319,7 @@ p5.prototype.image = function(
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -333,7 +333,7 @@ p5.prototype.image = function(
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -347,7 +347,7 @@ p5.prototype.image = function(
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -401,7 +401,7 @@ p5.prototype.tint = function() {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -481,7 +481,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -494,7 +494,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -507,7 +507,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
