@@ -59,15 +59,15 @@ p5.Font.prototype.list = function() {
  * @example
  * <div>
  * <code>
- * var font;
- * var textString = 'Lorem ipsum dolor sit amet.';
+ * let font;
+ * let textString = 'Lorem ipsum dolor sit amet.';
  * function preload() {
  *   font = loadFont('./assets/Regular.otf');
  * }
  * function setup() {
  *   background(210);
  *
- *   var bbox = font.textBounds(textString, 10, 30, 12);
+ *   let bbox = font.textBounds(textString, 10, 30, 12);
  *   fill(255);
  *   stroke(0);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
@@ -179,13 +179,13 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * @example
  * <div>
  * <code>
- * var font;
+ * let font;
  * function preload() {
  *   font = loadFont('./assets/Avenir.otf');
  * }
  *
- * var points;
- * var bounds;
+ * let points;
+ * let bounds;
  * function setup() {
  *   createCanvas(100, 100);
  *   stroke(0);
@@ -202,8 +202,8 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  *   background(255);
  *   beginShape();
  *   translate(-bounds.x * width / bounds.w, -bounds.y * height / bounds.h);
- *   for (var i = 0; i < points.length; i++) {
- *     var p = points[i];
+ *   for (let i = 0; i < points.length; i++) {
+ *     let p = points[i];
  *     vertex(
  *       p.x * width / bounds.w +
  *         sin(20 * p.y / bounds.h + millis() / 1000) * width / 30,
