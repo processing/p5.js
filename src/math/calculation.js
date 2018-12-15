@@ -338,10 +338,11 @@ p5.prototype.lerp = function(start, stop, amt) {
  *
  *   // Compute the natural log of a value between 0 and maxX
  *   let xValue = map(mouseX, 0, width, 0, maxX);
+ *   let yValue, y;
  *   if (xValue > 0) {
     // Cannot take the log of a negative number.
- *     let yValue = log(xValue);
- *     let y = map(yValue, -maxY, maxY, height, 0);
+ *     yValue = log(xValue);
+ *     y = map(yValue, -maxY, maxY, height, 0);
  *
  *     // Display the calculation occurring.
  *     let legend = 'log(' + nf(xValue, 1, 2) + ')\n= ' + nf(yValue, 1, 3);
