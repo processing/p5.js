@@ -26,19 +26,19 @@ var p5 = require('../core/main');
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var children = xml.getChildren('animal');
+ *   let children = xml.getChildren('animal');
  *
- *   for (var i = 0; i < children.length; i++) {
- *     var id = children[i].getNum('id');
- *     var coloring = children[i].getString('species');
- *     var name = children[i].getContent();
+ *   for (let i = 0; i < children.length; i++) {
+ *     let id = children[i].getNum('id');
+ *     let coloring = children[i].getString('species');
+ *     let name = children[i].getContent();
  *     print(id + ', ' + coloring + ', ' + name);
  *   }
  * }
@@ -80,15 +80,15 @@ p5.XML = function(DOM) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var children = xml.getChildren('animal');
- *   var parent = children[1].getParent();
+ *   let children = xml.getChildren('animal');
+ *   let parent = children[1].getParent();
  *   print(parent.getName());
  * }
  *
@@ -117,7 +117,7 @@ p5.XML.prototype.getParent = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -152,7 +152,7 @@ p5.XML.prototype.getName = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -199,7 +199,7 @@ p5.XML.prototype.setName = function(name) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -236,7 +236,7 @@ p5.XML.prototype.hasChildren = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -278,16 +278,16 @@ p5.XML.prototype.listChildren = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var animals = xml.getChildren('animal');
+ *   let animals = xml.getChildren('animal');
  *
- *   for (var i = 0; i < animals.length; i++) {
+ *   for (let i = 0; i < animals.length; i++) {
  *     print(animals[i].getContent());
  *   }
  * }
@@ -334,14 +334,14 @@ function elementsToP5XML(elements) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
  * }
  *
@@ -349,14 +349,14 @@ function elementsToP5XML(elements) {
  * // "Goat"
  * </code></div>
  * <div class='norender'><code>
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var secondChild = xml.getChild(1);
+ *   let secondChild = xml.getChild(1);
  *   print(secondChild.getContent());
  * }
  *
@@ -395,21 +395,21 @@ p5.XML.prototype.getChild = function(param) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var child = new p5.XML();
+ *   let child = new p5.XML();
  *   child.setName('animal');
  *   child.setAttribute('id', '3');
  *   child.setAttribute('species', 'Ornithorhynchus anatinus');
  *   child.setContent('Platypus');
  *   xml.addChild(child);
  *
- *   var animals = xml.getChildren('animal');
+ *   let animals = xml.getChildren('animal');
  *   print(animals[animals.length - 1].getContent());
  * }
  *
@@ -444,7 +444,7 @@ p5.XML.prototype.addChild = function(node) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -452,8 +452,8 @@ p5.XML.prototype.addChild = function(node) {
  *
  * function setup() {
  *   xml.removeChild('animal');
- *   var children = xml.getChildren();
- *   for (var i = 0; i < children.length; i++) {
+ *   let children = xml.getChildren();
+ *   for (let i = 0; i < children.length; i++) {
  *     print(children[i].getContent());
  *   }
  * }
@@ -463,7 +463,7 @@ p5.XML.prototype.addChild = function(node) {
  * // "Zebra"
  * </code></div>
  * <div class='norender'><code>
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
@@ -471,8 +471,8 @@ p5.XML.prototype.addChild = function(node) {
  *
  * function setup() {
  *   xml.removeChild(1);
- *   var children = xml.getChildren();
- *   for (var i = 0; i < children.length; i++) {
+ *   let children = xml.getChildren();
+ *   for (let i = 0; i < children.length; i++) {
  *     print(children[i].getContent());
  *   }
  * }
@@ -516,14 +516,14 @@ p5.XML.prototype.removeChild = function(param) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getAttributeCount());
  * }
  *
@@ -553,14 +553,14 @@ p5.XML.prototype.getAttributeCount = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.listAttributes());
  * }
  *
@@ -595,14 +595,14 @@ p5.XML.prototype.listAttributes = function() {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.hasAttribute('species'));
  *   print(firstChild.hasAttribute('color'));
  * }
@@ -643,14 +643,14 @@ p5.XML.prototype.hasAttribute = function(name) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getNum('id'));
  * }
  *
@@ -689,14 +689,14 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getString('species'));
  * }
  *
@@ -732,14 +732,14 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getString('species'));
  *   firstChild.setAttribute('species', 'Jamides zebra');
  *   print(firstChild.getString('species'));
@@ -773,14 +773,14 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
  * }
  *
@@ -812,14 +812,14 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
  * // &lt;/mammals&gt;
  *
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild('animal');
+ *   let firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
  *   firstChild.setContent('Mountain Goat');
  *   print(firstChild.getContent());
@@ -844,7 +844,7 @@ p5.XML.prototype.setContent = function(content) {
  * @return {String} Serialized string of the element
  * @example
  * <div class='norender'><code>
- * var xml;
+ * let xml;
  *
  * function preload() {
  *   xml = loadXML('assets/mammals.xml');
