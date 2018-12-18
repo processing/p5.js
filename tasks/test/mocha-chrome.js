@@ -9,12 +9,12 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
     const done = this.async();
 
-    try {
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox']
-      });
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox']
+    });
 
+    try {
       const options = this.data.options;
       for (const testURL of options.urls) {
         const eventHandler1 = new EventHandler();
@@ -26,31 +26,41 @@ module.exports = function(grunt) {
               if (typeof mocha !== 'undefined') {
                 const _mochaRun = mocha.run.bind(mocha);
                 mocha.reporter('spec');
+                mocha.useColors(true);
                 mocha.run = function(fn) {
-                  return _mochaRun(function(stats) {
-                    fireMochaEvent('mocha:ended', stats);
-                    fn(stats);
+                  debugger;
+                  var runner = _mochaRun(function(stats) {
+                    if (typeof fn === 'function')
+                      return fn(stats);
                   });
+
+                  runner.on('end', () => {
+                    fireMochaEvent('mocha:end', runner.stats);
+                  });
+
+                  return runner;
                 };
               }
             });
           `);
 
+          page.on('console', async msg => {
+            const args = await mapSeries(msg.args(), v => v.jsonValue());
+            console.log(util.format.apply(util, args));
+          });
+
+          await page.exposeFunction(
+            'fireMochaEvent',
+            eventHandler1.emit.bind(eventHandler1)
+          );
+
           await new Promise(async (resolve, reject) => {
-            page.on('console', async msg => {
-              const args = await mapSeries(msg.args(), v => v.jsonValue());
-              console.log(util.format.apply(util, args));
+            eventHandler1.on('mocha:end', stats => {
+              if (stats.failure) resolve(stats);
+              else reject(stats);
             });
 
-            eventHandler1.on('mocha:ended', resolve);
-
-            await page.exposeFunction(
-              'fireMochaEvent',
-              eventHandler1.emit.bind(eventHandler1)
-            );
             await page.goto(testURL);
-          }).catch(reason => {
-            throw reason;
           });
         } finally {
           await page.close({
@@ -59,8 +69,6 @@ module.exports = function(grunt) {
         }
       }
 
-      await browser.close();
-
       done();
     } catch (e) {
       if (e instanceof Error) {
@@ -68,6 +76,8 @@ module.exports = function(grunt) {
       } else {
         done(new Error(e));
       }
+    } finally {
+      await browser.close();
     }
   });
 };
