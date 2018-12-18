@@ -12,7 +12,6 @@
     "lint:fix": "grunt lint-fix",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
-    "prepare": "patch-package",
     "generate": "all-contributors generate",
     "precommit": "lint-staged"
   },
@@ -85,7 +84,6 @@
     "marked": "^0.3.9",
     "mocha": "^5.2.0",
     "opentype.js": "^0.9.0",
-    "patch-package": "^5.1.1",
     "postinstall-prepare": "^1.0.1",
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
