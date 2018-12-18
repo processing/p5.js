@@ -11,7 +11,8 @@ module.exports = function(grunt) {
 
     try {
       const browser = await puppeteer.launch({
-        headless: false
+        headless: true,
+        args: ['--no-sandbox']
       });
 
       const options = this.data.options;
