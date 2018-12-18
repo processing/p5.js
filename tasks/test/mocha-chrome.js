@@ -1,43 +1,64 @@
 /* Grunt Task to test mocha in a local Chrome instance */
 
-const MochaCrome = require('mocha-chrome');
+const puppeteer = require('puppeteer');
+const EventHandler = require('eventhandler');
+const util = require('util');
+const mapSeries = require('promise-map-series');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
-    var done = this.async();
+    const done = this.async();
 
     try {
-      var options = this.data.options;
+      const browser = await puppeteer.launch({
+        headless: false
+      });
 
-      for (var testURL of options.urls) {
-        var my_opts = Object.assign({}, options);
-        my_opts.urls = undefined;
-        my_opts.url = testURL;
-        my_opts.chromeFlags = ['--no-sandbox', '--mute-audio'];
-        my_opts.logLevel = 'trace';
-        var success, failure;
-        var runner = new MochaCrome(my_opts);
-        runner.on('ended', stats => {
-          if (stats.failures) {
-            failure = stats;
-          } else {
-            success = stats;
-          }
-        });
-        runner.on('failure', e => (failure = e));
+      const options = this.data.options;
+      for (const testURL of options.urls) {
+        const eventHandler1 = new EventHandler();
+        const page = await browser.newPage();
 
-        (async function() {
-          await runner.connect();
-          await runner.run();
-        })();
+        try {
+          await page.evaluateOnNewDocument(`
+            addEventListener('DOMContentLoaded', () => {
+              if (typeof mocha !== 'undefined') {
+                const _mochaRun = mocha.run.bind(mocha);
+                mocha.reporter('spec');
+                mocha.run = function(fn) {
+                  return _mochaRun(function(stats) {
+                    fireMochaEvent('mocha:ended', stats);
+                    fn(stats);
+                  });
+                };
+              }
+            });
+          `);
 
-        await new Promise((resolve, reject) => {
-          runner.on('exit', function() {
-            if (success) resolve(success);
-            else reject(failure);
+          await new Promise(async (resolve, reject) => {
+            page.on('console', async msg => {
+              const args = await mapSeries(msg.args(), v => v.jsonValue());
+              console.log(util.format.apply(util, args));
+            });
+
+            eventHandler1.on('mocha:ended', resolve);
+
+            await page.exposeFunction(
+              'fireMochaEvent',
+              eventHandler1.emit.bind(eventHandler1)
+            );
+            await page.goto(testURL);
+          }).catch(reason => {
+            throw reason;
           });
-        });
+        } finally {
+          await page.close({
+            runBeforeUnload: false
+          });
+        }
       }
+
+      await browser.close();
 
       done();
     } catch (e) {
