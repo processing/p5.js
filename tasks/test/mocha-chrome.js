@@ -56,8 +56,8 @@ module.exports = function(grunt) {
 
           await new Promise(async (resolve, reject) => {
             eventHandler1.on('mocha:end', stats => {
-              if (stats.failure) resolve(stats);
-              else reject(stats);
+              if (stats.failures) reject(stats);
+              else resolve(stats);
             });
 
             await page.goto(testURL);
