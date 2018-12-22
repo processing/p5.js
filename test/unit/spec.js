@@ -20,7 +20,8 @@ var spec = {
     'loadXML',
     'loadJSON',
     'loadTable',
-    'loadImage'
+    'loadImage',
+    'loadModel'
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loadFont'],
