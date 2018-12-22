@@ -39,7 +39,7 @@
   "devDependencies": {
     "all-contributors-cli": "^5.4.0",
     "brfs": "^2.0.1",
-    "browserify": "^16.2.2",
+    "browserify": "^16.2.3",
     "chai": "^3.5.0",
     "connect-modrewrite": "^0.10.1",
     "derequire": "^2.0.0",
