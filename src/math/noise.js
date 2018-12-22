@@ -74,23 +74,23 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  * @example
  * <div>
  * <code>
- * var xoff = 0.0;
+ * let xoff = 0.0;
  *
  * function draw() {
  *   background(204);
  *   xoff = xoff + 0.01;
- *   var n = noise(xoff) * width;
+ *   let n = noise(xoff) * width;
  *   line(n, 0, n, height);
  * }
  * </code>
  * </div>
  * <div>
- * <code>var noiseScale=0.02;
+ * <code>let noiseScale=0.02;
  *
  * function draw() {
  *   background(0);
- *   for (var x=0; x < width; x++) {
- *     var noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+ *   for (let x=0; x < width; x++) {
+ *     let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
  *     stroke(noiseVal*255);
  *     line(x, mouseY+noiseVal*80, x, height);
  *   }
@@ -209,8 +209,8 @@ p5.prototype.noise = function(x, y, z) {
  * @example
  * <div>
  * <code>
- * var noiseVal;
- * var noiseScale = 0.02;
+ * let noiseVal;
+ * let noiseScale = 0.02;
  *
  * function setup() {
  *   createCanvas(100, 100);
@@ -218,8 +218,8 @@ p5.prototype.noise = function(x, y, z) {
  *
  * function draw() {
  *   background(0);
- *   for (var y = 0; y < height; y++) {
- *     for (var x = 0; x < width / 2; x++) {
+ *   for (let y = 0; y < height; y++) {
+ *     for (let x = 0; x < width / 2; x++) {
  *       noiseDetail(2, 0.2);
  *       noiseVal = noise((mouseX + x) * noiseScale, (mouseY + y) * noiseScale);
  *       stroke(noiseVal * 255);
@@ -260,7 +260,7 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  * @param {Number} seed   the seed value
  * @example
  * <div>
- * <code>var xoff = 0.0;
+ * <code>let xoff = 0.0;
  *
  * function setup() {
  *   noiseSeed(99);
@@ -269,7 +269,7 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  *
  * function draw() {
  *   xoff = xoff + .01;
- *   var n = noise(xoff) * width;
+ *   let n = noise(xoff) * width;
  *   line(n, 0, n, height);
  * }
  * </code>

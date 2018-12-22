@@ -29,9 +29,9 @@ p5.prototype._angleMode = constants.RADIANS;
  * @example
  * <div class= “norender">
  * <code>
- * var a = PI;
- * var c = cos(a);
- * var ac = acos(c);
+ * let a = PI;
+ * let c = cos(a);
+ * let ac = acos(c);
  * // Prints: "3.1415927 : -1.0 : 3.1415927"
  * print(a + ' : ' + c + ' : ' + ac);
  * </code>
@@ -39,9 +39,9 @@ p5.prototype._angleMode = constants.RADIANS;
  *
  * <div class= “norender">
  * <code>
- * var a = PI + PI / 4.0;
- * var c = cos(a);
- * var ac = acos(c);
+ * let a = PI + PI / 4.0;
+ * let c = cos(a);
+ * let ac = acos(c);
  * // Prints: "3.926991 : -0.70710665 : 2.3561943"
  * print(a + ' : ' + c + ' : ' + ac);
  * </code>
@@ -63,9 +63,9 @@ p5.prototype.acos = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * var a = PI + PI / 3;
- * var s = sin(a);
- * var as = asin(s);
+ * let a = PI + PI / 3;
+ * let s = sin(a);
+ * let as = asin(s);
  * // Prints: "1.0471976 : 0.86602545 : 1.0471976"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
@@ -73,9 +73,9 @@ p5.prototype.acos = function(ratio) {
  *
  * <div class= “norender">
  * <code>
- * var a = PI + PI / 3.0;
- * var s = sin(a);
- * var as = asin(s);
+ * let a = PI + PI / 3.0;
+ * let s = sin(a);
+ * let as = asin(s);
  * // Prints: "4.1887903 : -0.86602545 : -1.0471976"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
@@ -98,9 +98,9 @@ p5.prototype.asin = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * var a = PI + PI / 3;
- * var t = tan(a);
- * var at = atan(t);
+ * let a = PI + PI / 3;
+ * let t = tan(a);
+ * let at = atan(t);
  * // Prints: "1.0471976 : 1.7320509 : 1.0471976"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
@@ -108,9 +108,9 @@ p5.prototype.asin = function(ratio) {
  *
  * <div class= “norender">
  * <code>
- * var a = PI + PI / 3.0;
- * var t = tan(a);
- * var at = atan(t);
+ * let a = PI + PI / 3.0;
+ * let t = tan(a);
+ * let at = atan(t);
  * // Prints: "4.1887903 : 1.7320513 : 1.0471977"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
@@ -142,7 +142,7 @@ p5.prototype.atan = function(ratio) {
  * function draw() {
  *   background(204);
  *   translate(width / 2, height / 2);
- *   var a = atan2(mouseY - height / 2, mouseX - width / 2);
+ *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
  * }
@@ -168,9 +168,9 @@ p5.prototype.atan2 = function(y, x) {
  * @example
  * <div>
  * <code>
- * var a = 0.0;
- * var inc = TWO_PI / 25.0;
- * for (var i = 0; i < 25; i++) {
+ * let a = 0.0;
+ * let inc = TWO_PI / 25.0;
+ * for (let i = 0; i < 25; i++) {
  *   line(i * 4, 50, i * 4, 50 + cos(a) * 40.0);
  *   a = a + inc;
  * }
@@ -196,9 +196,9 @@ p5.prototype.cos = function(angle) {
  * @example
  * <div>
  * <code>
- * var a = 0.0;
- * var inc = TWO_PI / 25.0;
- * for (var i = 0; i < 25; i++) {
+ * let a = 0.0;
+ * let inc = TWO_PI / 25.0;
+ * for (let i = 0; i < 25; i++) {
  *   line(i * 4, 50, i * 4, 50 + sin(a) * 40.0);
  *   a = a + inc;
  * }
@@ -224,9 +224,9 @@ p5.prototype.sin = function(angle) {
  * @example
  * <div>
  * <code>
- * var a = 0.0;
- * var inc = TWO_PI / 50.0;
- * for (var i = 0; i < 100; i = i + 2) {
+ * let a = 0.0;
+ * let inc = TWO_PI / 50.0;
+ * for (let i = 0; i < 100; i = i + 2) {
  *   line(i, 50, i, 50 + tan(a) * 2.0);
  *   a = a + inc;
  * }
@@ -256,8 +256,8 @@ p5.prototype.tan = function(angle) {
  * @example
  * <div class= “norender">
  * <code>
- * var rad = PI / 4;
- * var deg = degrees(rad);
+ * let rad = PI / 4;
+ * let deg = degrees(rad);
  * print(rad + ' radians is ' + deg + ' degrees');
  * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
@@ -282,8 +282,8 @@ p5.prototype.degrees = function(angle) {
  * @example
  * <div class= “norender">
  * <code>
- * var deg = 45.0;
- * var rad = radians(deg);
+ * let deg = 45.0;
+ * let rad = radians(deg);
  * print(deg + ' degrees is ' + rad + ' radians');
  * // Prints: 45 degrees is 0.7853981633974483 radians
  * </code>
@@ -305,14 +305,14 @@ p5.prototype.radians = function(angle) {
  * function draw() {
  *   background(204);
  *   angleMode(DEGREES); // Change the mode to DEGREES
- *   var a = atan2(mouseY - height / 2, mouseX - width / 2);
+ *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
  *   translate(width / 2, height / 2);
  *   push();
  *   rotate(a);
  *   rect(-20, -5, 40, 10); // Larger rectangle is rotating in degrees
  *   pop();
  *   angleMode(RADIANS); // Change the mode to RADIANS
- *   rotate(a); // var a stays the same
+ *   rotate(a); // variable a stays the same
  *   rect(-40, -5, 20, 10); // Smaller rectangle is rotating in radians
  * }
  * </code>
