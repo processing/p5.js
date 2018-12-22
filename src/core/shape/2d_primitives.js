@@ -446,7 +446,7 @@ p5.prototype.rect = function() {
  * lower-left corners, respectively. An omitted corner radius parameter is set
  * to the value of the previously specified radius value in the parameter list.
  *
- * @method rect
+ * @method square
  * @param  {Number} x  x-coordinate of the square.
  * @param  {Number} y  y-coordinate of the square.
  * @param  {Number} s  side size of the square.
@@ -483,19 +483,12 @@ p5.prototype.rect = function() {
  * 55x55 white square with black outline and rounded edges in mid-right of canvas.
  * 55x55 white square with black outline and rounded edges of different radii.
  */
-/**
- * @method square
- * @param  {Number} x
- * @param  {Number} y
- * @param  {Number} s
- * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
- * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
- * @chainable
- */
-p5.prototype.square = function(x, y, s) {
-  this.rect(x, y, s, s);
-}
-
+p5.prototype.square = function() {
+  var args = Array.prototype.slice.call(arguments, 0, 3);
+  args.push(arguments[2]);
+  args = args.concat(Array.prototype.slice.call(arguments, 4));
+  this.rect.apply(this, args);
+};
 
 /**
  * A triangle is a plane created by connecting three points. The first two
