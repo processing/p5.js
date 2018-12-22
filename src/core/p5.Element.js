@@ -28,13 +28,14 @@ p5.Element = function(elt, pInst) {
    * @example
    * <div>
    * <code>
-   * createCanvas(300, 500);
-   * background(0, 0, 0, 0);
-   * var input = createInput();
-   * input.position(20, 225);
-   * var inputElem = new p5.Element(input.elt);
-   * inputElem.style('width:450px;');
-   * inputElem.value('some string');
+   * function setup() {
+   *   var c = createCanvas(50, 50);
+   *   c.elt.style.border = '5px solid red';
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   * }
    * </code>
    * </div>
    *
@@ -56,6 +57,11 @@ p5.Element = function(elt, pInst) {
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
+ *
+ * All above examples except for the first one require the inclusion of
+ * the p5.dom library in your index.html. See the
+ * <a href='http://p5js.org/libraries/#using-a-library'>using a library</a>
+ * section for information on how to include this library.
  *
  * @method parent
  * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
@@ -242,7 +248,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
     return fxn.call(this);
   };
   // Pass along the event-prepended form of the callback.
-  adjustListener('mousedown', eventPrependedFxn, this);
+  p5.Element._adjustListener('mousedown', eventPrependedFxn, this);
   return this;
 };
 
@@ -291,7 +297,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function(fxn) {
-  adjustListener('dblclick', fxn, this);
+  p5.Element._adjustListener('dblclick', fxn, this);
   return this;
 };
 
@@ -357,7 +363,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  *
  */
 p5.Element.prototype.mouseWheel = function(fxn) {
-  adjustListener('wheel', fxn, this);
+  p5.Element._adjustListener('wheel', fxn, this);
   return this;
 };
 
@@ -411,7 +417,7 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  *
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
-  adjustListener('mouseup', fxn, this);
+  p5.Element._adjustListener('mouseup', fxn, this);
   return this;
 };
 
@@ -467,7 +473,7 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function(fxn) {
-  adjustListener('click', fxn, this);
+  p5.Element._adjustListener('click', fxn, this);
   return this;
 };
 
@@ -525,7 +531,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  *
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
-  adjustListener('mousemove', fxn, this);
+  p5.Element._adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -568,109 +574,7 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  *
  */
 p5.Element.prototype.mouseOver = function(fxn) {
-  adjustListener('mouseover', fxn, this);
-  return this;
-};
-
-/**
- * The .<a href="#/p5.Element/changed">changed()</a> function is called when the value of an
- * element changes.
- * This can be used to attach an element specific event listener.
- *
- * @method changed
- * @param  {Function|Boolean} fxn function to be fired when the value of
- *                                an element changes.
- *                                if `false` is passed instead, the previously
- *                                firing function will no longer fire.
- * @chainable
- * @example
- * <div><code>
- * var sel;
- *
- * function setup() {
- *   textAlign(CENTER);
- *   background(200);
- *   sel = createSelect();
- *   sel.position(10, 10);
- *   sel.option('pear');
- *   sel.option('kiwi');
- *   sel.option('grape');
- *   sel.changed(mySelectEvent);
- * }
- *
- * function mySelectEvent() {
- *   var item = sel.value();
- *   background(200);
- *   text("it's a " + item + '!', 50, 50);
- * }
- * </code></div>
- * <div><code>
- * var checkbox;
- * var cnv;
- *
- * function setup() {
- *   checkbox = createCheckbox(' fill');
- *   checkbox.changed(changeFill);
- *   cnv = createCanvas(100, 100);
- *   cnv.position(0, 30);
- *   noFill();
- * }
- *
- * function draw() {
- *   background(200);
- *   ellipse(50, 50, 50, 50);
- * }
- *
- * function changeFill() {
- *   if (checkbox.checked()) {
- *     fill(0);
- *   } else {
- *     noFill();
- *   }
- * }
- * </code></div>
- *
- * @alt
- * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
- *
- */
-p5.Element.prototype.changed = function(fxn) {
-  adjustListener('change', fxn, this);
-  return this;
-};
-
-/**
- * The .<a href="#/p5.Element/input">input()</a> function is called when any user input is
- * detected with an element. The input event is often used
- * to detect keystrokes in a input element, or changes on a
- * slider element. This can be used to attach an element specific
- * event listener.
- *
- * @method input
- * @param  {Function|Boolean} fxn function to be fired when any user input is
- *                                detected within the element.
- *                                if `false` is passed instead, the previously
- *                                firing function will no longer fire.
- * @chainable
- * @example
- * <div class='norender'><code>
- * // Open your console to see the output
- * function setup() {
- *   var inp = createInput('');
- *   inp.input(myInputEvent);
- * }
- *
- * function myInputEvent() {
- *   console.log('you are typing: ', this.value());
- * }
- * </code></div>
- *
- * @alt
- * no display.
- *
- */
-p5.Element.prototype.input = function(fxn) {
-  adjustListener('input', fxn, this);
+  p5.Element._adjustListener('mouseover', fxn, this);
   return this;
 };
 
@@ -712,7 +616,7 @@ p5.Element.prototype.input = function(fxn) {
  *
  */
 p5.Element.prototype.mouseOut = function(fxn) {
-  adjustListener('mouseout', fxn, this);
+  p5.Element._adjustListener('mouseout', fxn, this);
   return this;
 };
 
@@ -760,7 +664,7 @@ p5.Element.prototype.mouseOut = function(fxn) {
  *
  */
 p5.Element.prototype.touchStarted = function(fxn) {
-  adjustListener('touchstart', fxn, this);
+  p5.Element._adjustListener('touchstart', fxn, this);
   return this;
 };
 
@@ -800,7 +704,7 @@ p5.Element.prototype.touchStarted = function(fxn) {
  *
  */
 p5.Element.prototype.touchMoved = function(fxn) {
-  adjustListener('touchmove', fxn, this);
+  p5.Element._adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -849,7 +753,7 @@ p5.Element.prototype.touchMoved = function(fxn) {
  *
  */
 p5.Element.prototype.touchEnded = function(fxn) {
-  adjustListener('touchend', fxn, this);
+  p5.Element._adjustListener('touchend', fxn, this);
   return this;
 };
 
@@ -887,7 +791,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragOver = function(fxn) {
-  adjustListener('dragover', fxn, this);
+  p5.Element._adjustListener('dragover', fxn, this);
   return this;
 };
 
@@ -925,7 +829,7 @@ p5.Element.prototype.dragOver = function(fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragLeave = function(fxn) {
-  adjustListener('dragleave', fxn, this);
+  p5.Element._adjustListener('dragleave', fxn, this);
   return this;
 };
 
@@ -1009,11 +913,11 @@ p5.Element.prototype.drop = function(callback, fxn) {
 
     // Attach the second argument as a callback that receives the raw drop event
     if (typeof fxn !== 'undefined') {
-      attachListener('drop', fxn, this);
+      p5.Element._attachListener('drop', fxn, this);
     }
 
     // Deal with the files
-    attachListener(
+    p5.Element._attachListener(
       'drop',
       function(evt) {
         evt.preventDefault();
@@ -1037,34 +941,30 @@ p5.Element.prototype.drop = function(callback, fxn) {
 };
 
 // General handler for event attaching and detaching
-function adjustListener(ev, fxn, ctx) {
+p5.Element._adjustListener = function(ev, fxn, ctx) {
   if (fxn === false) {
-    detachListener(ev, ctx);
+    p5.Element._detachListener(ev, ctx);
   } else {
-    attachListener(ev, fxn, ctx);
+    p5.Element._attachListener(ev, fxn, ctx);
   }
   return this;
-}
+};
 
-function attachListener(ev, fxn, ctx) {
-  // LM removing, not sure why we had this?
-  // var _this = ctx;
-  // var f = function (e) { fxn(e, _this); };
-
+p5.Element._attachListener = function(ev, fxn, ctx) {
   // detach the old listener if there was one
   if (ctx._events[ev]) {
-    detachListener(ev, ctx);
+    p5.Element._detachListener(ev, ctx);
   }
   var f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
-}
+};
 
-function detachListener(ev, ctx) {
+p5.Element._detachListener = function(ev, ctx) {
   var f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;
-}
+};
 
 /**
  * Helper fxn for sharing pixel methods

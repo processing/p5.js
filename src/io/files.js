@@ -1188,16 +1188,22 @@ p5.prototype._pWriters = [];
  * @example
  * <div>
  * <code>
- * createButton('save')
- *   .position(10, 10)
- *   .mousePressed(function() {
- *     let writer = createWriter('squares.txt');
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   text('click here to save', 10, 10, 70, 80);
+ * }
+ *
+ * function mousePressed() {
+ *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+ *     var writer = createWriter('squares.txt');
  *     for (let i = 0; i < 10; i++) {
  *       writer.print(i * i);
  *     }
  *     writer.close();
  *     writer.clear();
- *   });
+ *   }
+ * }
  * </code>
  * </div>
  */
@@ -1527,11 +1533,17 @@ p5.prototype.save = function(object, _filename, _options) {
  * json.species = 'Panthera leo';
  * json.name = 'Lion';
  *
- * createButton('save')
- *   .position(10, 10)
- *   .mousePressed(function() {
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   text('click here to save', 10, 10, 70, 80);
+ * }
+ *
+ * function mousePressed() {
+ *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
  *     saveJSON(json, 'lion.json');
- *   });
+ *   }
+ * }
  *
  * // saves the following to a file called "lion.json":
  * // {
@@ -1575,11 +1587,17 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  * // .split() outputs an Array
  * let list = split(words, ' ');
  *
- * createButton('save')
- *   .position(10, 10)
- *   .mousePressed(function() {
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   text('click here to save', 10, 10, 70, 80);
+ * }
+ *
+ * function mousePressed() {
+ *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
  *     saveStrings(list, 'nouns.txt');
- *   });
+ *   }
+ * }
  *
  * // Saves the following to a file called 'nouns.txt':
  * //
