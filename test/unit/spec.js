@@ -13,7 +13,7 @@ var spec = {
   ],
   data: ['p5.TypedDict'],
   image: ['loading', 'pixels'],
-  io: ['files'],
+  io: ['files', 'loadBytes'],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loading_displaying'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
