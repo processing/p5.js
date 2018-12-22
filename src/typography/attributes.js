@@ -93,7 +93,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * <div>
  * <code>
  * // Text to display. The "\n" is a "new line" character
- * var lines = 'L1\nL2\nL3';
+ * let lines = 'L1\nL2\nL3';
  * textSize(12);
  *
  * textLeading(10); // Set leading to 10
@@ -199,13 +199,13 @@ p5.prototype.textStyle = function(theStyle) {
  * <code>
  * textSize(28);
  *
- * var aChar = 'P';
- * var cWidth = textWidth(aChar);
+ * let aChar = 'P';
+ * let cWidth = textWidth(aChar);
  * text(aChar, 0, 40);
  * line(cWidth, 0, cWidth, 50);
  *
- * var aString = 'p5.js';
- * var sWidth = textWidth(aString);
+ * let aString = 'p5.js';
+ * let sWidth = textWidth(aString);
  * text(aString, 0, 85);
  * line(sWidth, 50, sWidth, 100);
  * </code>
@@ -232,11 +232,11 @@ p5.prototype.textWidth = function(theText) {
  * @example
  * <div>
  * <code>
- * var base = height * 0.75;
- * var scalar = 0.8; // Different for each font
+ * let base = height * 0.75;
+ * let scalar = 0.8; // Different for each font
  *
  * textSize(32); // Set initial text size
- * var asc = textAscent() * scalar; // Calc ascent
+ * let asc = textAscent() * scalar; // Calc ascent
  * line(0, base - asc, width, base - asc);
  * text('dp', 0, base); // Draw text on baseline
  *
@@ -261,11 +261,11 @@ p5.prototype.textAscent = function() {
  * @example
  * <div>
  * <code>
- * var base = height * 0.75;
- * var scalar = 0.8; // Different for each font
+ * let base = height * 0.75;
+ * let scalar = 0.8; // Different for each font
  *
  * textSize(32); // Set initial text size
- * var desc = textDescent() * scalar; // Calc ascent
+ * let desc = textDescent() * scalar; // Calc ascent
  * line(0, base + desc, width, base + desc);
  * text('dp', 0, base); // Draw text on baseline
  *
