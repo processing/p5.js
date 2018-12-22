@@ -4,7 +4,7 @@
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
-    "dev": "grunt browserify connect open:dev watch:quick",
+    "dev": "grunt browserify connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
     "test": "grunt",
