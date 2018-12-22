@@ -434,6 +434,70 @@ p5.prototype.rect = function() {
 };
 
 /**
+ * Draws a square to the screen. A square is a four-sided shape with
+ * every angle at ninety degrees, and equal side size.
+ * This function is a special case of the rect() function, where the width and height are the same, and the parameter is called "s" for side size.
+ * By default, the first two parameters set the location of the upper-left corner, the third sets the side size of the square.
+ * The way these parameters are interpreted, however,
+ * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+ * <br><br>
+ * The fourth, fifth, sixth and seventh parameters, if specified,
+ * determine corner radius for the top-left, top-right, lower-right and
+ * lower-left corners, respectively. An omitted corner radius parameter is set
+ * to the value of the previously specified radius value in the parameter list.
+ *
+ * @method rect
+ * @param  {Number} x  x-coordinate of the square.
+ * @param  {Number} y  y-coordinate of the square.
+ * @param  {Number} s  side size of the square.
+ * @param  {Number} [tl] optional radius of top-left corner.
+ * @param  {Number} [tr] optional radius of top-right corner.
+ * @param  {Number} [br] optional radius of bottom-right corner.
+ * @param  {Number} [bl] optional radius of bottom-left corner.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a square at location (30, 20) with a side size of 55.
+ * square(30, 20, 55);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners, each having a radius of 20.
+ * square(30, 20, 55, 20);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners having the following radii:
+ * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+ * square(30, 20, 55, 20, 15, 10, 5);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 55x55 white square with black outline in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges of different radii.
+ */
+/**
+ * @method square
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} s
+ * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
+ * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
+ * @chainable
+ */
+p5.prototype.square = function(x, y, s) {
+  this.rect(x, y, s, s);
+}
+
+
+/**
  * A triangle is a plane created by connecting three points. The first two
  * arguments specify the first point, the middle two arguments specify the
  * second point, and the last two arguments specify the third point.
