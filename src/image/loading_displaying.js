@@ -87,6 +87,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     p5._friendlyFileLoadError(0, img.src);
     if (typeof failureCallback === 'function') {
       failureCallback(e);
+    } else {
+      console.error(e);
     }
   };
 

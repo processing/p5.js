@@ -13,7 +13,15 @@ var spec = {
   ],
   data: ['p5.TypedDict'],
   image: ['loading', 'pixels'],
-  io: ['files', 'loadBytes', 'loadStrings', 'loadXML', 'loadJSON', 'loadTable'],
+  io: [
+    'files',
+    'loadBytes',
+    'loadStrings',
+    'loadXML',
+    'loadJSON',
+    'loadTable',
+    'loadImage'
+  ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
