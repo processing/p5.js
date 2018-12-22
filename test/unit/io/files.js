@@ -136,6 +136,20 @@ suite('Files', function() {
     });
   });
 
+  // loadStrings()
+  suite('loadStrings() in Preload', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadStrings);
+      assert.typeOf(myp5.loadStrings, 'function');
+    });
+
+    test('should return an array', function() {
+      result = myp5.loadStrings('unit/assets/sentences.txt');
+      assert.ok(result);
+      assert.isArray(result, 'result is and array');
+    });
+  });
+
   //tests while preload is false with callbacks
   preload = false;
 
@@ -224,6 +238,65 @@ suite('Files', function() {
     //     assert.isObject(data);
     //   });
     // });
+  });
+
+  // loadStrings()
+  suite('p5.prototype.loadStrings', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadStrings);
+      assert.typeOf(myp5.loadStrings, 'function');
+    });
+
+    test('should call callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/sentences.txt', resolve, reject);
+      });
+    });
+
+    test('should pass an Array to callback function', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/sentences.txt', resolve, reject);
+      }).then(function(data) {
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 68, 'length of data is 68');
+      });
+    });
+
+    test('should include empty strings', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings('unit/assets/empty_lines.txt', resolve, reject);
+      }).then(function(data) {
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 6, 'length of data is 6');
+      });
+    });
+
+    test('should call error callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings(
+          'unit/assets/sen.txt',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
+      });
+    });
+
+    test('should pass error object to error callback function', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadStrings(
+          'unit/assets/sen.txt',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
+      }).then(function(err) {
+        assert.isFalse(err.ok, 'err.ok is false');
+        assert.equal(err.status, 404, 'Error status is 404');
+      });
+    });
   });
 
   suite('p5.prototype.loadTable', function() {
