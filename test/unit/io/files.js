@@ -380,4 +380,87 @@ suite('Files', function() {
       });
     });
   });
+
+  // loadXML()
+  suite('p5.prototype.loadXML', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadXML);
+      assert.typeOf(myp5.loadXML, 'function');
+    });
+
+    //Missing reference to parseXML, might need some test suite rethink
+    // test('should call callback function if provided', function() {
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   });
+    // });
+    //
+    // test('should pass an Object to callback function', function(){
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   }).then(function(data) {
+    //     assert.isObject(data);
+    //   });
+    // });
+  });
+
+  // loadBytes()
+  suite('p5.prototype.loadBytes', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadBytes);
+      assert.typeOf(myp5.loadBytes, 'function');
+    });
+
+    test('should call callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      });
+    });
+
+    test('should call error callback function if not found', function() {
+      var errorCalled = false;
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('notfound.jpg', resolve, reject);
+      })
+        .catch(function() {
+          errorCalled = true;
+        })
+        .then(function() {
+          assert.isTrue(errorCalled);
+        });
+    });
+
+    test('should pass an Object to callback function', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        assert.isObject(data);
+      });
+    });
+
+    test('data.bytes should be an Array/Uint8Array', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        expect(data.bytes).to.satisfy(function(v) {
+          return Array.isArray(v) || v instanceof Uint8Array;
+        });
+      });
+    });
+
+    test('should load correct data', function() {
+      return new Promise(function(resolve, reject) {
+        myp5.loadBytes('unit/assets/nyan_cat.gif', resolve, reject);
+      }).then(function(data) {
+        var str = 'GIF89a';
+        // convert the string to a byte array
+        var rgb = str.split('').map(function(e) {
+          return e.charCodeAt(0);
+        });
+        // this will convert a Uint8Aray to [], if necessary:
+        var loaded = Array.prototype.slice.call(data.bytes, 0, str.length);
+        assert.deepEqual(loaded, rgb);
+      });
+    });
+  });
 });
