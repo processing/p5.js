@@ -237,8 +237,8 @@ p5.prototype.createCamera = function() {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -493,8 +493,8 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -552,8 +552,8 @@ p5.Camera.prototype.pan = function(amount) {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -611,7 +611,7 @@ p5.Camera.prototype.tilt = function(amount) {
  * @example
  * <div>
  * <code>
- * var cam;
+ * let cam;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -759,8 +759,8 @@ p5.Camera.prototype.camera = function(
  * <div>
  * <code>
  * // see the camera move along its own axes while maintaining its orientation
- * var cam;
- * var delta = 0.5;
+ * let cam;
+ * let delta = 0.5;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -833,7 +833,7 @@ p5.Camera.prototype.move = function(x, y, z) {
  * <code>
  * // press '1' '2' or '3' keys to set camera position
  *
- * var cam;
+ * let cam;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -1095,8 +1095,8 @@ p5.Camera.prototype._isActive = function() {
  * @example
  * <div>
  * <code>
- * var cam1, cam2;
- * var currentCamera;
+ * let cam1, cam2;
+ * let currentCamera;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
