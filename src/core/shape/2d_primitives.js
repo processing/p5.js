@@ -205,6 +205,37 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 
   return this;
 };
+
+/**
+ * Draws a circle to the screen. A circle is a simple closed shape.
+ * It is the set of all points in a plane that are at a given distance from a given point, the centre.
+ * This function is a special case of the ellipse() function, where the width and height of the ellipse are the same.
+ * Height and width of the ellipse is equal to twice the radius of the circle..
+ * By default, the first two parameters set the location of the centre of the circle, the third sets the radius of the circle.
+ *
+ * @method circle
+ * @param  {Number} x  x-coordinate of the centre of the circle.
+ * @param  {Number} y  y-coordinate of the centre of the circle.
+ * @param  {Number} r  radius of the circle.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a circle at location (30, 30) with a radius of 20.
+ * circle(30, 30, 20);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * white circle with black outline in mid of canvas that is 55x55.
+ */
+p5.prototype.circle = function() {
+  var args = Array.prototype.slice.call(arguments, 0, 2);
+  args.push(2 * arguments[2]);
+  args.push(2 * arguments[2]);
+  this.ellipse.apply(this, args);
+};
+
 /**
  * Draws a line (a direct path between two points) to the screen. The version
  * of <a href="#/p5/line">line()</a> with four parameters draws the line in 2D. To color a line, use
