@@ -31,7 +31,7 @@ require('./p5.Texture');
  * @example
  * <div modernizr='webgl'>
  * <code>
- * var mandel;
+ * let mandel;
  * function preload() {
  *   // load the shader definitions from files
  *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
@@ -91,16 +91,16 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * <div modernizr='webgl'>
  * <code>
  * // the 'varying's are shared between both vertex & fragment shaders
- * var varying = 'precision highp float; varying vec2 vPos;';
+ * let varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
- * var vs =
+ * let vs =
  *   varying +
  *   'attribute vec3 aPosition;' +
  *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
  *
  * // the fragment shader is called for each pixel
- * var fs =
+ * let fs =
  *   varying +
  *   'uniform vec2 p;' +
  *   'uniform float r;' +
@@ -118,7 +118,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
  *   '}';
  *
- * var mandel;
+ * let mandel;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -218,7 +218,7 @@ p5.prototype.normalMaterial = function() {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -241,7 +241,7 @@ p5.prototype.normalMaterial = function() {
  *
  * <div>
  * <code>
- * var pg;
+ * let pg;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
@@ -261,7 +261,7 @@ p5.prototype.normalMaterial = function() {
  *
  * <div>
  * <code>
- * var vid;
+ * let vid;
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
@@ -313,7 +313,7 @@ p5.prototype.texture = function(tex) {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  *
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
@@ -341,7 +341,7 @@ p5.prototype.texture = function(tex) {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  *
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
