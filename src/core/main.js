@@ -62,8 +62,8 @@ var p5 = function(sketch, node, sync) {
    * @method preload
    * @example
    * <div><code>
-   * var img;
-   * var c;
+   * let img;
+   * let c;
    * function preload() {
    *   // preload() runs once
    *   img = loadImage('assets/laDefense.jpg');
@@ -100,7 +100,7 @@ var p5 = function(sketch, node, sync) {
    * @method setup
    * @example
    * <div><code>
-   * var a = 0;
+   * let a = 0;
    *
    * function setup() {
    *   background(0);
@@ -148,7 +148,7 @@ var p5 = function(sketch, node, sync) {
    * @method draw
    * @example
    * <div><code>
-   * var yPos = 0;
+   * let yPos = 0;
    * function setup() {
    *   // setup() runs once
    *   frameRate(30);
