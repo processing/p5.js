@@ -5,6 +5,7 @@ const rollup = require('rollup');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
+const { terser } = require('rollup-plugin-terser');
 
 module.exports = function(grunt) {
   grunt.registerTask(
@@ -23,7 +24,7 @@ module.exports = function(grunt) {
 
       const inputOptions = {
         input: srcFilePath,
-        plugins: [resolve(), commonjs(), json()]
+        plugins: [resolve(), commonjs(), json(), terser()]
       };
       const outputOptions = {
         format: 'umd',
