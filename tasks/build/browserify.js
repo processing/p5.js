@@ -12,7 +12,7 @@ module.exports = function(grunt) {
     param
   ) {
     var isMin = param === 'min';
-    var filename = isMin ? 'p5.pre-min.js' : 'p5.js';
+    var filename = isMin ? 'p5.min.js' : 'p5.js';
 
     const bannerTemplate = `// banner template goes here`;
 
@@ -21,9 +21,13 @@ module.exports = function(grunt) {
 
     var srcFilePath = path.join(__dirname, '../../src/app.js');
 
+    let plugins = [resolve(), commonjs(), json()];
+
+    plugins = isMin ? [...plugins, terser()] : plugins;
+
     const inputOptions = {
       input: srcFilePath,
-      plugins: [resolve(), commonjs(), json(), terser()]
+      plugins: plugins
     };
     const outputOptions = {
       format: 'umd',
