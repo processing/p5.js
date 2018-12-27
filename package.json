@@ -88,6 +88,8 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.11.0",
     "request": "^2.88.0",
+    "rollup": "^0.68.2",
+    "rollup-plugin-browserify-transform": "^1.0.1",
     "whatwg-fetch": "^2.0.3",
     "word-wrap": "^1.2.3"
   },
