@@ -8,46 +8,44 @@ const json = require('rollup-plugin-json');
 const { terser } = require('rollup-plugin-terser');
 
 module.exports = function(grunt) {
-  grunt.registerTask(
-    'browserify',
-    'Compile the p5.js source with Rollup',
-    function(param) {
-      var isMin = param === 'min';
-      var filename = isMin ? 'p5.pre-min.js' : 'p5.js';
+  grunt.registerTask('rollup', 'Compile the p5.js source with Rollup', function(
+    param
+  ) {
+    var isMin = param === 'min';
+    var filename = isMin ? 'p5.pre-min.js' : 'p5.js';
 
-      const bannerTemplate = `// hiiiii`;
+    const bannerTemplate = `// banner template goes here`;
 
-      // This file will not exist until it has been built
-      var libFilePath = path.join(__dirname, '../../lib/', filename);
+    // This file will not exist until it has been built
+    var libFilePath = path.join(__dirname, '../../lib/', filename);
 
-      var srcFilePath = path.join(__dirname, '../../src/app.js');
+    var srcFilePath = path.join(__dirname, '../../src/app.js');
 
-      const inputOptions = {
-        input: srcFilePath,
-        plugins: [resolve(), commonjs(), json(), terser()]
-      };
-      const outputOptions = {
-        format: 'umd',
-        file: libFilePath,
-        name: 'p5',
-        banner: bannerTemplate
-      };
+    const inputOptions = {
+      input: srcFilePath,
+      plugins: [resolve(), commonjs(), json(), terser()]
+    };
+    const outputOptions = {
+      format: 'umd',
+      file: libFilePath,
+      name: 'p5',
+      banner: bannerTemplate
+    };
 
-      // Reading and writing files is asynchronous
-      var done = this.async();
+    // Reading and writing files is asynchronous
+    const done = this.async();
 
-      rollup.rollup(inputOptions).then(bundle => {
-        bundle.generate(outputOptions).then(() => {
-          bundle.write(outputOptions).then(() => {
-            // Print a success message
-            grunt.log.writeln(
-              '>>'.green + ' Bundle ' + ('lib/' + filename).cyan + ' created.'
-            );
-            // Complete the task
-            done();
-          });
+    rollup.rollup(inputOptions).then(bundle => {
+      bundle.generate(outputOptions).then(() => {
+        bundle.write(outputOptions).then(() => {
+          // Print a success message
+          grunt.log.writeln(
+            '>>'.green + ' Bundle ' + ('lib/' + filename).cyan + ' created.'
+          );
+          // Complete the task
+          done();
         });
       });
-    }
-  );
+    });
+  });
 };
