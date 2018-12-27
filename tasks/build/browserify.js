@@ -2,8 +2,9 @@
 
 const path = require('path');
 const rollup = require('rollup');
-const browserifyPlugin = require('rollup-plugin-browserify-transform');
-const brfs = require('brfs');
+const resolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const json = require('rollup-plugin-json');
 
 module.exports = function(grunt) {
   grunt.registerTask(
@@ -22,7 +23,7 @@ module.exports = function(grunt) {
 
       const inputOptions = {
         input: srcFilePath,
-        plugins: [browserifyPlugin(brfs)]
+        plugins: [resolve(), commonjs(), json()]
       };
       const outputOptions = {
         format: 'umd',
