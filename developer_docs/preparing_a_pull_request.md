@@ -9,7 +9,6 @@ Pull-requests are easier when your code is up to date! You can use git rebase to
     git add -u
     git commit 
 
-
 ### Find out about changes
 Make sure you're tracking upstream p5.js repository.
 
@@ -29,17 +28,23 @@ Then ask git about the latest changes.
 ### Apply changes from master branch, adds your changes *after* 
     git rebase upstream/master 
 
-## CONFLICTS
-You will probably have some conflicts! 
+### Resolving Conflicts
+You may have some conflicts! 
 If it’s just lib/p5.js and lib/p5.min.js, it’s easy to fix. just build the project again with grunt.
 
     grunt 
     git add -u
     git rebase --continue
 
-If you have conflicts in other files & you're not sure how to resolve them... ask for help! Lauren, David, Kevin, and Kate are familiar with recent changes and can help you figure out what's new.
+If you have conflicts in other files & you're not sure how to resolve them... ask for help!
 
-## And finally, for great glory
+### And finally, for great glory
     git push origin
 
 Here's a good reference on rebasing, in case you're intensely curious about the technical details. https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+
+## Creating a pull request
+
+Here are [instructions for creating a pull request on github](https://help.github.com/articles/creating-a-pull-request/). You can name the branch you are working in anything you like. You will submit your pull request against the "master" branch of p5.js.
+
+Once you have submitted your pull request, it will be reviewed and merged as soon as others are available to do so. Changes will show up with the next release of the p5.js library.
