@@ -6,6 +6,8 @@ const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const json = require('rollup-plugin-json');
 const { terser } = require('rollup-plugin-terser');
+const browserifyPlugin = require('rollup-plugin-browserify-transform');
+const brfs = require('brfs');
 
 module.exports = function(grunt) {
   grunt.registerTask('rollup', 'Compile the p5.js source with Rollup', function(
@@ -21,7 +23,15 @@ module.exports = function(grunt) {
 
     var srcFilePath = path.join(__dirname, '../../src/app.js');
 
-    let plugins = [resolve(), commonjs(), json()];
+    let plugins = [
+      browserifyPlugin(brfs, {
+        bare: true,
+        exclude: '**/node_modules/**'
+      }),
+      resolve(),
+      commonjs(),
+      json()
+    ];
 
     plugins = isMin ? [...plugins, terser()] : plugins;
 
