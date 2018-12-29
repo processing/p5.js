@@ -40,7 +40,7 @@ var p5 = require('./main');
  * </code></div>
  *
  * <div><code>
- * var x = 0;
+ * let x = 0;
  * function setup() {
  *   createCanvas(100, 100);
  * }
@@ -79,7 +79,7 @@ p5.prototype.noLoop = function() {
  * @method loop
  * @example
  * <div><code>
- * var x = 0;
+ * let x = 0;
  * function setup() {
  *   createCanvas(100, 100);
  *   noLoop();
@@ -265,7 +265,7 @@ p5.prototype.pop = function() {
  * @param  {Integer} [n] Redraw for n-times. The default value is 1.
  * @example
  * <div><code>
- * var x = 0;
+ * let x = 0;
  *
  * function setup() {
  *   createCanvas(100, 100);
@@ -284,7 +284,7 @@ p5.prototype.pop = function() {
  * </code></div>
  *
  * <div class='norender'><code>
- * var x = 0;
+ * let x = 0;
  *
  * function setup() {
  *   createCanvas(100, 100);
