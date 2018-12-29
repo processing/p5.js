@@ -155,21 +155,21 @@ p5.prototype.bezierDetail = function(d) {
  * <div>
  * <code>
  * noFill();
- * var x1 = 85,
+ * let x1 = 85,
   x2 = 10,
   x3 = 90,
   x4 = 15;
- * var y1 = 20,
+ * let y1 = 20,
   y2 = 10,
   y3 = 90,
   y4 = 80;
  * bezier(x1, y1, x2, y2, x3, y3, x4, y4);
  * fill(255);
- * var steps = 10;
- * for (var i = 0; i <= steps; i++) {
- *   var t = i / steps;
- *   var x = bezierPoint(x1, x2, x3, x4, t);
- *   var y = bezierPoint(y1, y2, y3, y4, t);
+ * let steps = 10;
+ * for (let i = 0; i <= steps; i++) {
+ *   let t = i / steps;
+ *   let x = bezierPoint(x1, x2, x3, x4, t);
+ *   let y = bezierPoint(y1, y2, y3, y4, t);
  *   ellipse(x, y, 5, 5);
  * }
  * </code>
@@ -209,18 +209,18 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * <code>
  * noFill();
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
- * var steps = 6;
+ * let steps = 6;
  * fill(255);
- * for (var i = 0; i <= steps; i++) {
- *   var t = i / steps;
+ * for (let i = 0; i <= steps; i++) {
+ *   let t = i / steps;
  *   // Get the location of the point
- *   var x = bezierPoint(85, 10, 90, 15, t);
- *   var y = bezierPoint(20, 10, 90, 80, t);
+ *   let x = bezierPoint(85, 10, 90, 15, t);
+ *   let y = bezierPoint(20, 10, 90, 80, t);
  *   // Get the tangent points
- *   var tx = bezierTangent(85, 10, 90, 15, t);
- *   var ty = bezierTangent(20, 10, 90, 80, t);
+ *   let tx = bezierTangent(85, 10, 90, 15, t);
+ *   let ty = bezierTangent(20, 10, 90, 80, t);
  *   // Calculate an angle from the tangent points
- *   var a = atan2(ty, tx);
+ *   let a = atan2(ty, tx);
  *   a += PI;
  *   stroke(255, 102, 0);
  *   line(x, y, cos(a) * 30 + x, sin(a) * 30 + y);
@@ -238,14 +238,14 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * noFill();
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
  * stroke(255, 102, 0);
- * var steps = 16;
- * for (var i = 0; i <= steps; i++) {
- *   var t = i / steps;
- *   var x = bezierPoint(85, 10, 90, 15, t);
- *   var y = bezierPoint(20, 10, 90, 80, t);
- *   var tx = bezierTangent(85, 10, 90, 15, t);
- *   var ty = bezierTangent(20, 10, 90, 80, t);
- *   var a = atan2(ty, tx);
+ * let steps = 16;
+ * for (let i = 0; i <= steps; i++) {
+ *   let t = i / steps;
+ *   let x = bezierPoint(85, 10, 90, 15, t);
+ *   let y = bezierPoint(20, 10, 90, 80, t);
+ *   let tx = bezierTangent(85, 10, 90, 15, t);
+ *   let ty = bezierTangent(20, 10, 90, 80, t);
+ *   let a = atan2(ty, tx);
  *   a -= HALF_PI;
  *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
  * }
@@ -305,9 +305,9 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * <div>
  * <code>
  * // Define the curve points as JavaScript objects
- * var p1 = { x: 5, y: 26 },
+ * let p1 = { x: 5, y: 26 },
   p2 = { x: 73, y: 24 };
- * var p3 = { x: 73, y: 61 },
+ * let p3 = { x: 73, y: 61 },
   p4 = { x: 15, y: 65 };
  * noFill();
  * stroke(255, 102, 0);
@@ -427,7 +427,7 @@ p5.prototype.curveDetail = function(d) {
  *
  * function draw() {
  *   background(204);
- *   var t = map(mouseX, 0, width, -5, 5);
+ *   let t = map(mouseX, 0, width, -5, 5);
  *   curveTightness(t);
  *   beginShape();
  *   curveVertex(10, 26);
@@ -472,11 +472,11 @@ p5.prototype.curveTightness = function(t) {
  * curve(5, 26, 73, 24, 73, 61, 15, 65);
  * fill(255);
  * ellipseMode(CENTER);
- * var steps = 6;
- * for (var i = 0; i <= steps; i++) {
- *   var t = i / steps;
- *   var x = curvePoint(5, 5, 73, 73, t);
- *   var y = curvePoint(26, 26, 24, 61, t);
+ * let steps = 6;
+ * for (let i = 0; i <= steps; i++) {
+ *   let t = i / steps;
+ *   let x = curvePoint(5, 5, 73, 73, t);
+ *   let y = curvePoint(26, 26, 24, 61, t);
  *   ellipse(x, y, 5, 5);
  *   x = curvePoint(5, 73, 73, 15, t);
  *   y = curvePoint(26, 24, 61, 65, t);
@@ -516,15 +516,15 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * <code>
  * noFill();
  * curve(5, 26, 73, 24, 73, 61, 15, 65);
- * var steps = 6;
- * for (var i = 0; i <= steps; i++) {
- *   var t = i / steps;
- *   var x = curvePoint(5, 73, 73, 15, t);
- *   var y = curvePoint(26, 24, 61, 65, t);
+ * let steps = 6;
+ * for (let i = 0; i <= steps; i++) {
+ *   let t = i / steps;
+ *   let x = curvePoint(5, 73, 73, 15, t);
+ *   let y = curvePoint(26, 24, 61, 65, t);
  *   //ellipse(x, y, 5, 5);
- *   var tx = curveTangent(5, 73, 73, 15, t);
- *   var ty = curveTangent(26, 24, 61, 65, t);
- *   var a = atan2(ty, tx);
+ *   let tx = curveTangent(5, 73, 73, 15, t);
+ *   let ty = curveTangent(26, 24, 61, 65, t);
+ *   let a = atan2(ty, tx);
  *   a -= PI / 2.0;
  *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
  * }

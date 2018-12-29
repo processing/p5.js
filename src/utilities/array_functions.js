@@ -194,7 +194,6 @@ p5.prototype.shorten = function(list) {
  * Fisher-Yates Shuffle Algorithm</a>.
  *
  * @method shuffle
- * @deprecated See <a href="https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">shuffling an array with JS</a> instead.
  * @param  {Array}   array  Array to shuffle
  * @param  {Boolean} [bool] modify passed array
  * @return {Array}   shuffled Array

@@ -104,7 +104,7 @@ If a method has multiple possible parameter options, you can specify each indivi
 
 /**
  * @method background
- * @param {Number} gray   specifies a value between white and black
+ * @param {Number} gray specifies a value between white and black
  * @param {Number} [a]
  */
 ```

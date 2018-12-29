@@ -5,6 +5,7 @@
 
 
 ## Requirements
+* Operating System: macOS, Linux or Unix. _(For Windows see at the end of this document)_
 * Logged in NPM CLI : Check if you are logged in by `npm whoami`
 * High Bandwidth : Lots of things to download/pull/push (~190 MB total I presume)
 * An environment variable named __GITHUB_TOKEN__ with the value of your Access Token : Make one by going [here](https://github.com/settings/tokens). Once you have it, in your shell, run `export GITHUB_TOKEN=<your token here>`.
@@ -30,8 +31,11 @@ A Grunt Task uses sub tasks to draft and cut a release end-to-end :
 * Upload the Library files and the ZIP file to the GitHub Release.
 
 ## Testing
-Now you can simply edit up a few config vars with your own creds to point the releases at them instead of processing. 
+Now you can simply edit up a few configuration variables with your own credentials to point the releases at them, instead of processing.
 
 In [tasks/release/release-p5.js](https://github.com/processing/p5.js/blob/master/tasks/release/release-p5.js),
-* Update L#60 till L#62 to mention your forks instead of this upstream.
-* Uncomment L#55 to set dry run as true for testing.
+* Update [Line #60](https://github.com/processing/p5.js/blob/master/tasks/release/release-p5.js#L60) till [Line #62](https://github.com/processing/p5.js/blob/master/tasks/release/release-p5.js#L62) to mention your forks instead of this upstream.
+* Uncomment [Line #55](https://github.com/processing/p5.js/blob/master/tasks/release/release-p5.js#L55) to set dry run as true for testing.
+
+## Note for Windows users
+The release process contains many shell commands that may not run or work expectedly on Windows environment. It is recommended to have linux/unix environment running, however you can use [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) which works on Windows 10 Anniversary update onwards (only 64-bit). If you are on Lower version of Windows you can use [Cygwin](https://www.cygwin.com/) or use [Virtual Box](https://www.virtualbox.org/) (or any other preferred virtualization tool) to run Linux.

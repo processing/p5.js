@@ -116,8 +116,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * function draw() {
  *   background(0);
  *   //move your mouse to change light direction
- *   var dirX = (mouseX / width - 0.5) * 2;
- *   var dirY = (mouseY / height - 0.5) * 2;
+ *   let dirX = (mouseX / width - 0.5) * 2;
+ *   let dirY = (mouseY / height - 0.5) * 2;
  *   directionalLight(250, 250, 250, -dirX, -dirY, 0.25);
  *   ambientMaterial(250);
  *   noStroke();
@@ -229,8 +229,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * function draw() {
  *   background(0);
  *   //move your mouse to change light position
- *   var locX = mouseX - width / 2;
- *   var locY = mouseY - height / 2;
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
  *   // to set the light position,
  *   // think of the world's coordinate as:
  *   // -width/2,-height/2 -------- width/2,-height/2

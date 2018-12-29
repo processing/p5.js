@@ -82,7 +82,7 @@ p5.prototype.key = '';
  * @readOnly
  * @example
  * <div><code>
- * var fillVal = 126;
+ * let fillVal = 126;
  * function draw() {
  *   fill(fillVal);
  *   rect(25, 25, 50, 50);
@@ -129,7 +129,7 @@ p5.prototype.keyCode = 0;
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -145,7 +145,7 @@ p5.prototype.keyCode = 0;
  * </div>
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -202,7 +202,7 @@ p5.prototype._onkeydown = function(e) {
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -260,7 +260,7 @@ p5.prototype._onkeyup = function(e) {
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -320,8 +320,8 @@ p5.prototype._onblur = function(e) {
  * @return {Boolean}        whether key is down or not
  * @example
  * <div><code>
- * var x = 100;
- * var y = 100;
+ * let x = 100;
+ * let y = 100;
  *
  * function setup() {
  *   createCanvas(512, 512);
@@ -351,7 +351,7 @@ p5.prototype._onblur = function(e) {
  * </code></div>
  *
  * <div><code>
- * var diameter = 50;
+ * let diameter = 50;
  *
  * function setup() {
  *   createCanvas(512, 512);

@@ -31,7 +31,7 @@ require('./p5.Texture');
  * @example
  * <div modernizr='webgl'>
  * <code>
- * var mandel;
+ * let mandel;
  * function preload() {
  *   // load the shader definitions from files
  *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
@@ -91,16 +91,16 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * <div modernizr='webgl'>
  * <code>
  * // the 'varying's are shared between both vertex & fragment shaders
- * var varying = 'precision highp float; varying vec2 vPos;';
+ * let varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
- * var vs =
+ * let vs =
  *   varying +
  *   'attribute vec3 aPosition;' +
  *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
  *
  * // the fragment shader is called for each pixel
- * var fs =
+ * let fs =
  *   varying +
  *   'uniform vec2 p;' +
  *   'uniform float r;' +
@@ -118,7 +118,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
  *   '}';
  *
- * var mandel;
+ * let mandel;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -218,7 +218,7 @@ p5.prototype.normalMaterial = function() {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -241,7 +241,7 @@ p5.prototype.normalMaterial = function() {
  *
  * <div>
  * <code>
- * var pg;
+ * let pg;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
@@ -261,7 +261,7 @@ p5.prototype.normalMaterial = function() {
  *
  * <div>
  * <code>
- * var vid;
+ * let vid;
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
@@ -290,12 +290,92 @@ p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
   this._renderer.drawMode = constants.TEXTURE;
+  this._renderer.textureImage = tex;
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
   this.noStroke();
   return this;
+};
+
+/**
+ * Sets the coordinate space for texture mapping. The default mode is IMAGE
+ * which refers to the actual coordinates of the image.
+ * NORMAL refers to a normalized space of values ranging from 0 to 1.
+ * This function only works in WEBGL mode.
+ *
+ * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+ * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
+ * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+ * @method  textureMode
+ * @param {Constant} mode either IMAGE or NORMAL
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, 1, 0);
+ *   vertex(50, 50, 1, 1);
+ *   vertex(-50, 50, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, img.width, 0);
+ *   vertex(50, 50, img.width, img.height);
+ *   vertex(-50, 50, 0, img.height);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ */
+p5.prototype.textureMode = function(mode) {
+  if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
+    console.warn(
+      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
+    );
+  } else {
+    this._renderer.textureMode = mode;
+  }
 };
 
 /**

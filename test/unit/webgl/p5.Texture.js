@@ -75,5 +75,13 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
     });
+    test('Set textureMode to NORMAL', function() {
+      myp5.textureMode(myp5.NORMAL);
+      assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
+    });
+    test('Set textureMode to IMAGE', function() {
+      myp5.textureMode(myp5.IMAGE);
+      assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+    });
   });
 });
