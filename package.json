@@ -83,6 +83,7 @@
     "marked": "^0.3.19",
     "mocha": "^5.2.0",
     "opentype.js": "^0.9.0",
+    "parcel-bundler": "^1.11.0",
     "postinstall-prepare": "^1.0.1",
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
