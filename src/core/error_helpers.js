@@ -12,7 +12,7 @@ var constants = require('./constants');
 // See testColors below for all the color codes and names
 var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
 
-if (typeof IS_MINIFIED !== 'undefined') {
+if (typeof process.env.IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = function() {};
 } else {
   var doFriendlyWelcome = false; // TEMP until we get it all working LM
