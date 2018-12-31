@@ -8,13 +8,12 @@ module.exports = function(grunt) {
     param
   ) {
     const isMin = param === 'min';
-    const filename = isMin ? 'p5.min.js' : 'p5.js';
-
+    const outputFilename = isMin ? 'p5.min.js' : 'p5.js';
     const srcFilePath = path.join(__dirname, '../../src/app.js');
 
     const options = {
       outDir: './lib',
-      outFile: filename,
+      outFile: outputFilename,
       minify: isMin,
       global: 'p5',
       watch: false
