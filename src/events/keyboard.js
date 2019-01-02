@@ -112,7 +112,7 @@ p5.prototype.keyCode = 0;
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
  * OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
  * <br><br>
- * For ASCII keys that was pressed is stored in the key variable. However, it
+ * For ASCII keys, the key that was pressed is stored in the key variable. However, it
  * does not distinguish between uppercase and lowercase. For this reason, it
  * is recommended to use <a href="#/p5/keyTyped">keyTyped()</a> to read the key variable, in which the
  * case of the variable will be distinguished.
