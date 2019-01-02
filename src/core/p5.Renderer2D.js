@@ -1083,13 +1083,14 @@ p5.Renderer2D.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype._doFillStrokeClose = function() {
+  this.drawingContext.closePath();
+
   if (this._doFill) {
     this.drawingContext.fill();
   }
   if (this._doStroke) {
     this.drawingContext.stroke();
   }
-  this.drawingContext.closePath();
 
   this._pInst._pixelsDirty = true;
 };
