@@ -18,7 +18,7 @@ npm run grunt
 npm run grunt combineModules:module_x:module_y
 ```
 
-Here, `module_n` refers to the name of the module which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name is their folders in `/src` directory to work correctly. While `core` is included by default, `core/shape` needs to be included for shapes like line() and other core features to work.
+Here, `module_n` refers to the name of the module which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name as their folders in `/src` directory to work correctly. While `core` is included by default, `core/shape` needs to be included for shapes like line() and other core features to work.
 
 ## Example
 
