@@ -115,7 +115,7 @@ p5.prototype.blue = function(c) {
  * let c = color('hsb(60, 100%, 50%)');
  * fill(c);
  * rect(15, 20, 35, 60);
- * let value = brightness(c); // A 'value' of %50 is 127.5
+ * let value = brightness(c); // A 'value' of 50% is 127.5
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
