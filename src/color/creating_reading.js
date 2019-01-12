@@ -551,6 +551,7 @@ p5.prototype.lightness = function(c) {
  * let c = color(127, 255, 0);
  * colorMode(RGB, 1); // Set R in RGB range to 1
  * let myColor = red(c);
+ * print(myColor); // 0.4980392156862745
  * </code>
  * </div>
  *
