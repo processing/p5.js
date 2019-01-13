@@ -98,6 +98,7 @@ p5.prototype.key = '';
  * }
  * </code></div>
  * <div><code>
+ * function draw(){}
  * function keyPressed() {
  *   background('yellow');
  *   text(key, 10, 40);
