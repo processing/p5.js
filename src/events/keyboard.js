@@ -99,10 +99,9 @@ p5.prototype.key = '';
  * </code></div>
  * <div><code>
  * function keyPressed() {
- *  background('yellow')
- *  text(key,10,40)
- *  text(keyCode,10,60)
- *  print(key,' ',keyCode)
+ *   background('yellow');
+ *   text(`${key} ${keyCode}`, 10, 40);
+ *   print(key, ' ', keyCode);
  * }
  * </code></div>
  * @alt
@@ -336,10 +335,10 @@ p5.prototype._onblur = function(e) {
  * }
  *
  * function draw() {
- *   if (keyIsDown(LEFT_ARROW))   x -= 5;
- *   if (keyIsDown(RIGHT_ARROW))  x += 5;
- *   if (keyIsDown(UP_ARROW))     y -= 5;
- *   if (keyIsDown(DOWN_ARROW))   y += 5;
+ *   if (keyIsDown(LEFT_ARROW)) x -= 5;
+ *   if (keyIsDown(RIGHT_ARROW)) x += 5;
+ *   if (keyIsDown(UP_ARROW)) y -= 5;
+ *   if (keyIsDown(DOWN_ARROW)) y += 5;
  *
  *   clear();
  *   ellipse(x, y, 50, 50);
