@@ -101,8 +101,7 @@ p5.prototype.key = '';
  * function draw() {}
  * function keyPressed() {
  *   background('yellow');
- *   text(key, 10, 40);
- *   text(keyCode, 10, 60);
+ *   text(`${key} ${keyCode}`, 10, 40);
  *   print(key, ' ', keyCode);
  *   return false; // prevent default
  * }
