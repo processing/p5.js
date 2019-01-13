@@ -100,7 +100,8 @@ p5.prototype.key = '';
  * <div><code>
  * function keyPressed() {
  *   background('yellow');
- *   text(`${key} ${keyCode}`, 10, 40);
+ *   text(key, 10, 40);
+ *   text(keyCode, 10, 60);
  *   print(key, ' ', keyCode);
  * }
  * </code></div>
