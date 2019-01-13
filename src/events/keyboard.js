@@ -98,12 +98,13 @@ p5.prototype.key = '';
  * }
  * </code></div>
  * <div><code>
- * function draw(){}
+ * function draw() {}
  * function keyPressed() {
  *   background('yellow');
  *   text(key, 10, 40);
  *   text(keyCode, 10, 60);
  *   print(key, ' ', keyCode);
+ *   return false; // prevent default
  * }
  * </code></div>
  * @alt
