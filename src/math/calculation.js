@@ -802,13 +802,20 @@ function hypot(x, y, z) {
   if (typeof Math.hypot === 'function') {
     return Math.hypot.apply(null, arguments);
   }
-  var a2 = Math.pow(x, 2);
-  var b2 = Math.pow(y, 2);
-  var c2 = a2 + b2;
-  var hypoten = Math.sqrt(c2);
-  // Otherwise use the V8 implementation
-  // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
-  return hypoten;
+  if (!z) {
+    var a2 = Math.pow(x, 2);
+    var b2 = Math.pow(y, 2);
+    var c2 = a2 + b2;
+    var hypoten = Math.sqrt(c2);
+    // Otherwise use the V8 implementation
+    // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
+    return hypoten;
+  } else if (z) {
+    // Calculate bottom triangle
+    var bottomTriangle = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
+    var topTriangle = Math.sqrt(Math.pow(y, 2) + Math.pow(bottomTriangle, 2));
+    return topTriangle;
+  }
 }
 
 module.exports = p5;
