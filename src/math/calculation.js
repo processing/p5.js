@@ -812,6 +812,8 @@ function hypot(x, y, z) {
     return hypoten;
   } else if (z) {
     // Calculate bottom triangle
+    // The calculation of the distance between x,y,z is done by using 2 calculations of pythagoras. 
+    // https://mr-mathematics.com/pythagoras-theorem-in-3d-shapes/
     var bottomTriangle = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
     var topTriangle = Math.sqrt(Math.pow(y, 2) + Math.pow(bottomTriangle, 2));
     return topTriangle;
