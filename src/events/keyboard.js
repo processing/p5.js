@@ -135,22 +135,6 @@ p5.prototype.keyCode = 0;
  *   rect(25, 25, 50, 50);
  * }
  * function keyPressed() {
- *   if (value === 0) {
- *     value = 255;
- *   } else {
- *     value = 0;
- *   }
- * }
- * </code>
- * </div>
- * <div>
- * <code>
- * let value = 0;
- * function draw() {
- *   fill(value);
- *   rect(25, 25, 50, 50);
- * }
- * function keyPressed() {
  *   if (keyCode === LEFT_ARROW) {
  *     value = 255;
  *   } else if (keyCode === RIGHT_ARROW) {
