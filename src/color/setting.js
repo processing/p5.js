@@ -14,7 +14,7 @@ require('./p5.Color');
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
- * p5.js canvas. The default background is light gray. This function is
+ * p5.js canvas. The default background is transparent. This function is
  * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
  * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
  * the first frame of animation or if the background need only be set once.
