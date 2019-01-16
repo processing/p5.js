@@ -803,19 +803,18 @@ function hypot(x, y, z) {
     return Math.hypot.apply(null, arguments);
   }
   if (!z) {
-    var a2 = Math.pow(x, 2);
-    var b2 = Math.pow(y, 2);
-    var c2 = a2 + b2;
-    var hypoten = Math.sqrt(c2);
+    var a2 = x * x;
+    var b2 = y * y;
+    var hypoten = Math.sqrt(a2 + b2);
     // Otherwise use the V8 implementation
     // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
     return hypoten;
   } else if (z) {
     // Calculate bottom triangle
-    // The calculation of the distance between x,y,z is done by using 2 calculations of pythagoras. 
+    // The calculation of the distance between x,y,z is done by using 2 calculations of pythagoras
     // https://mr-mathematics.com/pythagoras-theorem-in-3d-shapes/
-    var bottomTriangle = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
-    var topTriangle = Math.sqrt(Math.pow(y, 2) + Math.pow(bottomTriangle, 2));
+    var bottomTriangle = x * x + z * z;
+    var topTriangle = Math.sqrt(y * y + bottomTriangle);
     return topTriangle;
   }
 }
