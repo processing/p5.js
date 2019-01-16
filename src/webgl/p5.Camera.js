@@ -337,7 +337,6 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
     );
   }
 
-  this.cameraFOV = this._renderer._pInst._toRadians(fovy);
   this.aspectRatio = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
