@@ -116,11 +116,18 @@ line(0, 0, 100, 100, x3, Math.PI);
 * Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. So far we've tried `window.onerror` and the following with no success. 
 
 ```javascript
-     const original = window.console;
-      
-     ["log", "warn", "error"].forEach(function(func){
-     window.console[func] = function(msg) {
-      original[func].apply(original, arguments)
-     };
-     });
+//this snippet attempts to wrap window.console methods with a new function to modify their functionality
+const original = window.console;
+const original_functions  = {
+  log: original.log,
+  warn:  original.warn,
+  error: original.error
+}
+
+["log", "warn", "error"].forEach(function(func){
+window.console[func] = function(msg) {
+//do something with the msg caught by the wrapper function, then call the original function
+original_functions[func].apply(original, arguments)
+};
+});
 ```
