@@ -174,6 +174,21 @@ p5.prototype.shader = function(s) {
 };
 
 /**
+ * This function restores the default shaders in WEBGL mode. Code that runs
+ * after resetShader() will not be affected by previously defined
+ * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ *
+ * @method resetShader
+ * @chainable
+ */
+p5.prototype.resetShader = function() {
+  this._renderer.curPointShader = this._renderer._defaultPointShader;
+  this._renderer.curStrokeShader = this._renderer._defaultLineShader;
+  this._renderer.curFillShader = null;
+  return this;
+};
+
+/**
  * Normal material for geometry. You can view all
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
