@@ -26,9 +26,7 @@ module.exports = function(grunt) {
             if (err) {
               reject(err);
             }
-            if (stderr) {
-              reject(stderr);
-            }
+            console.log(stdout);
             resolve();
           }
         );
@@ -45,9 +43,7 @@ module.exports = function(grunt) {
                 if (err) {
                   reject(err);
                 }
-                if (stderr) {
-                  reject(stderr);
-                }
+                console.log(stdout);
                 resolve();
               }
             );
@@ -66,9 +62,7 @@ module.exports = function(grunt) {
                 if (err) {
                   reject(err);
                 }
-                if (stderr) {
-                  reject(stderr);
-                }
+                console.log(stdout);
                 resolve();
               }
             );
