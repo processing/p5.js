@@ -1890,4 +1890,88 @@ function destroyClickedElement(event) {
   document.body.removeChild(event.target);
 }
 
+/**
+ * @module IO
+ * @submodule File
+ * @for p5
+ */
+
+/**
+ * Base class for a file.
+ * Used for Element.drop and createFileInput.
+ *
+ * @class p5.File
+ * @constructor
+ * @param {File} file File that is wrapped
+ */
+p5.File = function(file, pInst) {
+  /**
+   * Underlying File object. All normal File methods can be called on this.
+   *
+   * @property file
+   */
+  this.file = file;
+
+  this._pInst = pInst;
+
+  // Splitting out the file type into two components
+  // This makes determining if image or text etc simpler
+  var typeList = file.type.split('/');
+  /**
+   * File type (image, text, etc.)
+   *
+   * @property type
+   */
+  this.type = typeList[0];
+  /**
+   * File subtype (usually the file extension jpg, png, xml, etc.)
+   *
+   * @property subtype
+   */
+  this.subtype = typeList[1];
+  /**
+   * File name
+   *
+   * @property name
+   */
+  this.name = file.name;
+  /**
+   * File size
+   *
+   * @property size
+   */
+  this.size = file.size;
+
+  /**
+   * URL string containing image data.
+   *
+   * @property data
+   */
+  this.data = undefined;
+};
+
+p5.File._createLoader = function(theFile, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var p5file = new p5.File(theFile);
+    p5file.data = e.target.result;
+    callback(p5file);
+  };
+  return reader;
+};
+
+p5.File._load = function(f, callback) {
+  // Text or data?
+  // This should likely be improved
+  if (/^text\//.test(f.type)) {
+    p5.File._createLoader(f, callback).readAsText(f);
+  } else if (!/^(video|audio)\//.test(f.type)) {
+    p5.File._createLoader(f, callback).readAsDataURL(f);
+  } else {
+    var file = new p5.File(f);
+    file.data = URL.createObjectURL(f);
+    callback(file);
+  }
+};
+
 module.exports = p5;
