@@ -589,7 +589,11 @@ p5.instance = null;
  * @property {Boolean} disableFriendlyErrors
  * @example
  * <div class="norender notest"><code>
- * p5.disableFriendlyErrors = true; // Disables FES
+ * p5.disableFriendlyErrors = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 50);
+ * }
  * </code></div>
  */
 p5.disableFriendlyErrors = false;
