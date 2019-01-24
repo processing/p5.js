@@ -365,10 +365,7 @@ p5.prototype.setAttributes = function(key, value) {
   this.push();
   this._renderer._resetContext(attr);
   this.pop();
-  if (
-    this._renderer._curCamera._renderer !== this._renderer &&
-    this._renderer._curCamera.cameraType === 'default'
-  ) {
+  if (this._renderer._curCamera) {
     this._renderer._curCamera._renderer = this._renderer;
   }
 };
