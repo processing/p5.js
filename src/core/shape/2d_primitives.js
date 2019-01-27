@@ -100,23 +100,9 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   while (stop < 0) {
     stop += constants.TWO_PI;
   }
-
-  if (typeof start !== 'undefined' && typeof stop !== 'undefined') {
-    // don't display anything if the angles are same or they have a difference of 0 - TWO_PI
-    if (
-      stop.toFixed(10) === start.toFixed(10) ||
-      Math.abs(stop - start) === constants.TWO_PI
-    ) {
-      start %= constants.TWO_PI;
-      stop %= constants.TWO_PI;
-      start += constants.TWO_PI;
-    } else if (Math.abs(stop - start) > constants.TWO_PI) {
-      // display a full circle if the difference between them is greater than 0 - TWO_PI
-      start %= constants.TWO_PI;
-      stop %= constants.TWO_PI;
-      stop += constants.TWO_PI;
-    }
-  }
+  // ...and confine them to the interval [0,TWO_PI).
+  start %= constants.TWO_PI;
+  stop %= constants.TWO_PI;
 
   //Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
