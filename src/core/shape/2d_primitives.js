@@ -104,16 +104,20 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   start %= constants.TWO_PI;
   stop %= constants.TWO_PI;
 
-  //Adjust angles to counter linear scaling.
+  // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start));
   } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start)) + constants.PI;
+  } else {
+    start = Math.atan(w / h * Math.tan(start)) + constants.TWO_PI;
   }
   if (stop <= constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop));
   } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop)) + constants.PI;
+  } else {
+    stop = Math.atan(w / h * Math.tan(stop)) + constants.TWO_PI;
   }
 
   // Exceed the interval if necessary in order to preserve the size and
