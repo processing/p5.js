@@ -580,8 +580,22 @@ p5.prototype._initializeInstanceVariables = function() {
 // global mode.
 p5.instance = null;
 
-// Allows for the friendly error system to be turned off when creating a sketch,
-// which can give a significant boost to performance when needed.
+/**
+ * Allows for the friendly error system (FES) to be turned off when creating a sketch,
+ * which can give a significant boost to performance when needed.
+ * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
+ * disabling the friendly error system</a>.
+ *
+ * @property {Boolean} disableFriendlyErrors
+ * @example
+ * <div class="norender notest"><code>
+ * p5.disableFriendlyErrors = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 50);
+ * }
+ * </code></div>
+ */
 p5.disableFriendlyErrors = false;
 
 // attach constants to p5 prototype
