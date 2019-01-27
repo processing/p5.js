@@ -431,6 +431,13 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   };
 };
 
+/*
+ * This function requires that:
+ *
+ *   0 <= start < TWO_PI
+ *
+ *   start <= stop < start + TWO_PI
+ */
 p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
   var rx = w / 2.0;

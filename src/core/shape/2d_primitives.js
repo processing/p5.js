@@ -122,6 +122,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
   // Exceed the interval if necessary in order to preserve the size and
   // orientation of the arc.
+  //
+  // This leaves 0 <= start < TWO_PI; and start <= stop < start + TWO_PI.
   if (start > stop) {
     stop += constants.TWO_PI;
   }
