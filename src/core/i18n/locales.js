@@ -30,16 +30,16 @@ var getString = function(str) {
       break;
   }
 
-  // Fallback on english dict or the original string itself
+  // Fallback to english dict or to the original string itself
   return dict[str] || defaultDict[str] || str;
 };
 
-function interpolate(theString, argumentArray) {
+function interpolate(str, args) {
   var regex = /{\d}/;
   var _r = function(p, c) {
     return p.replace(regex, c);
   };
-  return argumentArray.reduce(_r, theString);
+  return args.reduce(_r, str);
 }
 
 var localize = function(str, args) {
