@@ -34,13 +34,13 @@ var getString = function(str) {
   return dict[str] || defaultDict[str] || str;
 };
 
-function interpolate(str, args) {
+var interpolate = function(str, args) {
   var regex = /{\d}/;
   var _r = function(p, c) {
     return p.replace(regex, c);
   };
   return args.reduce(_r, str);
-}
+};
 
 var localize = function(str, args) {
   var localizedString = getString(str);
