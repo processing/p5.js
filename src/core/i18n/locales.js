@@ -25,14 +25,31 @@ var getString = function(str) {
     case 'es':
       dict = es;
       break;
+    default:
+      dict = en;
+      break;
   }
 
   // Fallback on english dict or the original string itself
   return dict[str] || defaultDict[str] || str;
 };
 
-var localize = function(str) {
-  return getString(str);
+function interpolate(theString, argumentArray) {
+  var regex = /{\d}/;
+  var _r = function(p, c) {
+    return p.replace(regex, c);
+  };
+  return argumentArray.reduce(_r, theString);
+}
+
+var localize = function(str, args) {
+  var localizedString = getString(str);
+
+  if (args) {
+    localizedString = interpolate(localizedString, args);
+  }
+
+  return localizedString;
 };
 
 module.exports = {
