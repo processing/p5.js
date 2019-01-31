@@ -19,6 +19,7 @@ require('./core/shape/2d_primitives');
 require('./core/shape/attributes');
 require('./core/shape/curves');
 require('./core/shape/vertex');
+require('./core/i18n/locales');
 
 // color
 require('./color/color_conversion');
