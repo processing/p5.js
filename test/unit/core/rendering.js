@@ -97,8 +97,8 @@ suite('Rendering', function() {
     'ambientLight', 'directionalLight', 'pointLight',
     'model',
     'createShader', 'shader',
-    'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial',
-    'setAttributes',
+    'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial', 'shininess',
+    'setAttributes',  
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
   ];
 
