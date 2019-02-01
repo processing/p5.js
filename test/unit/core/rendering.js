@@ -98,7 +98,7 @@ suite('Rendering', function() {
     'model',
     'createShader', 'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial', 'shininess',
-    'setAttributes',  
+    'setAttributes',
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
   ];
 
