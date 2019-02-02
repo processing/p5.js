@@ -456,7 +456,7 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
   centerZ -= this.eyeZ;
 
   var rotation = p5.Matrix.identity(this._renderer._pInst);
-  rotation.rotate(a, x, y, z);
+  rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
   // prettier-ignore
   var rotatedCenter = [
