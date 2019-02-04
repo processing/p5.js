@@ -341,8 +341,7 @@ p5.prototype.redraw = function(n) {
       this._inUserDraw = true;
       try {
         userDraw();
-      }
-      catch (err) {
+      } catch (err) {
         this._inUserDraw = false;
         throw err;
       }
