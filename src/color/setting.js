@@ -14,7 +14,7 @@ require('./p5.Color');
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
- * p5.js canvas. The default background is light gray. This function is
+ * p5.js canvas. The default background is transparent. This function is
  * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
  * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
  * the first frame of animation or if the background need only be set once.
@@ -244,8 +244,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(RGB, 100);
- * for (var i = 0; i < 100; i++) {
- *   for (var j = 0; j < 100; j++) {
+ * for (let i = 0; i < 100; i++) {
+ *   for (let j = 0; j < 100; j++) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -257,8 +257,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(HSB, 100);
- * for (var i = 0; i < 100; i++) {
- *   for (var j = 0; j < 100; j++) {
+ * for (let i = 0; i < 100; i++) {
+ *   for (let j = 0; j < 100; j++) {
  *     stroke(i, j, 100);
  *     point(i, j);
  *   }
@@ -269,10 +269,10 @@ p5.prototype.clear = function() {
  * <div>
  * <code>
  * colorMode(RGB, 255);
- * var c = color(127, 255, 0);
+ * let c = color(127, 255, 0);
  *
  * colorMode(RGB, 1);
- * var myColor = c._getRed();
+ * let myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
  * </code>
  * </div>

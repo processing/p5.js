@@ -2,7 +2,6 @@
  * webgl texture mode example
  */
 var img;
-var theta = 0;
 
 function preload() {
   img = loadImage('assets/UV_Grid_Sm.jpg');

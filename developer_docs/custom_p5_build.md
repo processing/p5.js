@@ -14,13 +14,14 @@ Currently, the usage is through invoking a Grunt task manually from the command 
 git clone https://github.com/processing/p5.js.git
 cd p5.js
 npm install
-grunt combineModules:module_x:module_y
+npm run grunt
+npm run grunt combineModules:module_x:module_y
 ```
 
-Here, `module_n` refers to the name of the module which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name is their folders in `/src` directory to work correctly.
+Here, `module_n` refers to the name of the module which you want to select. Multiple modules must be passed as shown above. Also, these modules must have the same name as their folders in `/src` directory to work correctly. While `core` is included by default, `core/shape` needs to be included for shapes like line() and other core features to work.
 
 ## Example
 
-`grunt combineModules:color:util:events:io`
+`npm run grunt combineModules:core/shape:color:math:image`
 
-This will generate your bundle in the `lib/modules` directory.
+This will generate your `p5Custom.js` bundle in the `lib/modules` directory.

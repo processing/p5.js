@@ -108,7 +108,8 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         u /= this.textureImage.width;
         v /= this.textureImage.height;
       }
-    } else {
+    } else if (this.textureImage === undefined && arguments.length >= 4) {
+      // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +
           ' vertex() with image based u and v coordinates'

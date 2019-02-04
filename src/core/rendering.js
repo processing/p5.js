@@ -208,7 +208,7 @@ p5.prototype.noCanvas = function() {
  * @example
  * <div>
  * <code>
- * var pg;
+ * let pg;
  * function setup() {
  *   createCanvas(100, 100);
  *   pg = createGraphics(100, 100);

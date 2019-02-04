@@ -38,28 +38,28 @@ var Filters = require('./filters');
  * @example
  * <div><code>
  * function setup() {
- *   var img = createImage(100, 100); // same as new p5.Image(100, 100);
+ *   let img = createImage(100, 100); // same as new p5.Image(100, 100);
  *   img.loadPixels();
  *   createCanvas(100, 100);
  *   background(0);
  *
  *   // helper for writing color to array
  *   function writeColor(image, x, y, red, green, blue, alpha) {
- *     var index = (x + y * width) * 4;
+ *     let index = (x + y * width) * 4;
  *     image.pixels[index] = red;
  *     image.pixels[index + 1] = green;
  *     image.pixels[index + 2] = blue;
  *     image.pixels[index + 3] = alpha;
  *   }
  *
- *   var x, y;
+ *   let x, y;
  *   // fill with random colors
  *   for (y = 0; y < img.height; y++) {
  *     for (x = 0; x < img.width; x++) {
- *       var red = random(255);
- *       var green = random(255);
- *       var blue = random(255);
- *       var alpha = 255;
+ *       let red = random(255);
+ *       let green = random(255);
+ *       let blue = random(255);
+ *       let alpha = 255;
  *       writeColor(img, x, y, red, green, blue, alpha);
  *     }
  *   }
@@ -93,7 +93,7 @@ p5.Image = function(width, height) {
    * @readOnly
    * @example
    * <div><code>
-   * var img;
+   * let img;
    * function preload() {
    *   img = loadImage('assets/rockies.jpg');
    * }
@@ -101,8 +101,8 @@ p5.Image = function(width, height) {
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
-   *   for (var i = 0; i < img.width; i++) {
-   *     var c = img.get(i, img.height / 2);
+   *   for (let i = 0; i < img.width; i++) {
+   *     let c = img.get(i, img.height / 2);
    *     stroke(c);
    *     line(i, height / 2, i, height);
    *   }
@@ -120,7 +120,7 @@ p5.Image = function(width, height) {
    * @readOnly
    * @example
    * <div><code>
-   * var img;
+   * let img;
    * function preload() {
    *   img = loadImage('assets/rockies.jpg');
    * }
@@ -128,8 +128,8 @@ p5.Image = function(width, height) {
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
-   *   for (var i = 0; i < img.height; i++) {
-   *     var c = img.get(img.width / 2, i);
+   *   for (let i = 0; i < img.height; i++) {
+   *     let c = img.get(img.width / 2, i);
    *     stroke(c);
    *     line(0, i, width / 2, i);
    *   }
@@ -164,15 +164,15 @@ p5.Image = function(width, height) {
    * values of the pixel at (1, 0). More generally, to set values for a pixel
    * at (x, y):
    * ```javascript
-   * var d = pixelDensity();
-   * for (var i = 0; i < d; i++) {
-   *   for (var j = 0; j < d; j++) {
+   * let d = pixelDensity();
+   * for (let i = 0; i < d; i++) {
+   *   for (let j = 0; j < d; j++) {
    *     // loop over
-   *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
-   *     pixels[idx] = r;
-   *     pixels[idx+1] = g;
-   *     pixels[idx+2] = b;
-   *     pixels[idx+3] = a;
+   *     index = 4 * ((y * d + j) * width * d + (x * d + i));
+   *     pixels[index] = r;
+   *     pixels[index+1] = g;
+   *     pixels[index+2] = b;
+   *     pixels[index+3] = a;
    *   }
    * }
    * ```
@@ -184,10 +184,10 @@ p5.Image = function(width, height) {
    * @example
    * <div>
    * <code>
-   * var img = createImage(66, 66);
+   * let img = createImage(66, 66);
    * img.loadPixels();
-   * for (var i = 0; i < img.width; i++) {
-   *   for (var j = 0; j < img.height; j++) {
+   * for (let i = 0; i < img.width; i++) {
+   *   for (let j = 0; j < img.height; j++) {
    *     img.set(i, j, color(0, 90, 102));
    *   }
    * }
@@ -197,10 +197,10 @@ p5.Image = function(width, height) {
    * </div>
    * <div>
    * <code>
-   * var pink = color(255, 102, 204);
-   * var img = createImage(66, 66);
+   * let pink = color(255, 102, 204);
+   * let img = createImage(66, 66);
    * img.loadPixels();
-   * for (var i = 0; i < 4 * (width * height / 2); i += 4) {
+   * for (let i = 0; i < 4 * (width * height / 2); i += 4) {
    *   img.pixels[i] = red(pink);
    *   img.pixels[i + 1] = green(pink);
    *   img.pixels[i + 2] = blue(pink);
@@ -234,8 +234,8 @@ p5.Image.prototype._setProperty = function(prop, value) {
  * @method loadPixels
  * @example
  * <div><code>
- * var myImage;
- * var halfImage;
+ * let myImage;
+ * let halfImage;
  *
  * function preload() {
  *   myImage = loadImage('assets/rockies.jpg');
@@ -244,7 +244,7 @@ p5.Image.prototype._setProperty = function(prop, value) {
  * function setup() {
  *   myImage.loadPixels();
  *   halfImage = 4 * width * height / 2;
- *   for (var i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i++) {
  *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
  *   myImage.updatePixels();
@@ -279,8 +279,8 @@ p5.Image.prototype.loadPixels = function() {
  *                              underlying canvas
  * @example
  * <div><code>
- * var myImage;
- * var halfImage;
+ * let myImage;
+ * let halfImage;
  *
  * function preload() {
  *   myImage = loadImage('assets/rockies.jpg');
@@ -289,7 +289,7 @@ p5.Image.prototype.loadPixels = function() {
  * function setup() {
  *   myImage.loadPixels();
  *   halfImage = 4 * width * height / 2;
- *   for (var i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i++) {
  *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
  *   myImage.updatePixels();
@@ -331,8 +331,8 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div><code>
- * var myImage;
- * var c;
+ * let myImage;
+ * let c;
  *
  * function preload() {
  *   myImage = loadImage('assets/rockies.jpg');
@@ -373,10 +373,10 @@ p5.Image.prototype.get = function(x, y, w, h) {
  * @example
  * <div>
  * <code>
- * var img = createImage(66, 66);
+ * let img = createImage(66, 66);
  * img.loadPixels();
- * for (var i = 0; i < img.width; i++) {
- *   for (var j = 0; j < img.height; j++) {
+ * for (let i = 0; i < img.width; i++) {
+ *   for (let j = 0; j < img.height; j++) {
  *     img.set(i, j, color(0, 90, 102, (i % img.width) * 2));
  *   }
  * }
@@ -406,7 +406,7 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
  * @param {Number} height the resized image height
  * @example
  * <div><code>
- * var img;
+ * let img;
  *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
@@ -499,10 +499,10 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dh destination image height
  * @example
  * <div><code>
- * var photo;
- * var bricks;
- * var x;
- * var y;
+ * let photo;
+ * let bricks;
+ * let x;
+ * let y;
  *
  * function preload() {
  *   photo = loadImage('assets/rockies.jpg');
@@ -570,7 +570,7 @@ p5.Image.prototype.copy = function() {
  * @param {p5.Image} srcImage source image
  * @example
  * <div><code>
- * var photo, maskImage;
+ * let photo, maskImage;
  * function preload() {
  *   photo = loadImage('assets/rockies.jpg');
  *   maskImage = loadImage('assets/mask2.png');
@@ -636,8 +636,8 @@ p5.Image.prototype.mask = function(p5Image) {
  *                                to each filter, see above
  * @example
  * <div><code>
- * var photo1;
- * var photo2;
+ * let photo1;
+ * let photo2;
  *
  * function preload() {
  *   photo1 = loadImage('assets/rockies.jpg');
@@ -688,8 +688,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  * @example
  * <div><code>
- * var mountains;
- * var bricks;
+ * let mountains;
+ * let bricks;
  *
  * function preload() {
  *   mountains = loadImage('assets/rockies.jpg');
@@ -703,8 +703,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * }
  * </code></div>
  * <div><code>
- * var mountains;
- * var bricks;
+ * let mountains;
+ * let bricks;
  *
  * function preload() {
  *   mountains = loadImage('assets/rockies.jpg');
@@ -718,8 +718,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * }
  * </code></div>
  * <div><code>
- * var mountains;
- * var bricks;
+ * let mountains;
+ * let bricks;
  *
  * function preload() {
  *   mountains = loadImage('assets/rockies.jpg');
@@ -792,7 +792,7 @@ p5.Image.prototype.isModified = function() {
  * @param  {String} extension 'png' or 'jpg'
  * @example
  * <div><code>
- * var photo;
+ * let photo;
  *
  * function preload() {
  *   photo = loadImage('assets/rockies.jpg');

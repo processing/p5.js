@@ -773,7 +773,7 @@ p5.Renderer2D.prototype.endShape = function(
       if (closeShape) {
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
       }
-      this._doFillStrokeClose();
+      this._doFillStrokeClose(closeShape);
     }
   } else if (
     isBezier &&
@@ -798,7 +798,7 @@ p5.Renderer2D.prototype.endShape = function(
         );
       }
     }
-    this._doFillStrokeClose();
+    this._doFillStrokeClose(closeShape);
   } else if (
     isQuadratic &&
     (shapeKind === constants.POLYGON || shapeKind === null)
@@ -820,7 +820,7 @@ p5.Renderer2D.prototype.endShape = function(
         );
       }
     }
-    this._doFillStrokeClose();
+    this._doFillStrokeClose(closeShape);
   } else {
     if (shapeKind === constants.POINTS) {
       for (i = 0; i < numVerts; i++) {
@@ -876,7 +876,7 @@ p5.Renderer2D.prototype.endShape = function(
             this._pInst.fill(vertices[i + 2][5]);
           }
         }
-        this._doFillStrokeClose();
+        this._doFillStrokeClose(closeShape);
       }
     } else if (shapeKind === constants.TRIANGLE_FAN) {
       if (numVerts > 2) {
@@ -910,7 +910,7 @@ p5.Renderer2D.prototype.endShape = function(
             }
           }
         }
-        this._doFillStrokeClose();
+        this._doFillStrokeClose(closeShape);
       }
     } else if (shapeKind === constants.QUADS) {
       for (i = 0; i + 3 < numVerts; i += 4) {
@@ -927,7 +927,7 @@ p5.Renderer2D.prototype.endShape = function(
         if (this._doStroke) {
           this._pInst.stroke(vertices[i + 3][6]);
         }
-        this._doFillStrokeClose();
+        this._doFillStrokeClose(closeShape);
       }
     } else if (shapeKind === constants.QUAD_STRIP) {
       if (numVerts > 3) {
@@ -949,7 +949,7 @@ p5.Renderer2D.prototype.endShape = function(
             this.drawingContext.moveTo(v[0], v[1]);
             this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
           }
-          this._doFillStrokeClose();
+          this._doFillStrokeClose(closeShape);
         }
       }
     } else {
@@ -965,7 +965,7 @@ p5.Renderer2D.prototype.endShape = function(
           }
         }
       }
-      this._doFillStrokeClose();
+      this._doFillStrokeClose(closeShape);
     }
   }
   isCurve = false;
@@ -1082,14 +1082,16 @@ p5.Renderer2D.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 // SHAPE | Vertex
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype._doFillStrokeClose = function() {
+p5.Renderer2D.prototype._doFillStrokeClose = function(closeShape) {
+  if (closeShape) {
+    this.drawingContext.closePath();
+  }
   if (this._doFill) {
     this.drawingContext.fill();
   }
   if (this._doStroke) {
     this.drawingContext.stroke();
   }
-  this.drawingContext.closePath();
 
   this._pInst._pixelsDirty = true;
 };

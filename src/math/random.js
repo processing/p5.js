@@ -58,8 +58,8 @@ var lcg = (function() {
  * <div>
  * <code>
  * randomSeed(99);
- * for (var i = 0; i < 100; i++) {
- *   var r = random(0, 255);
+ * for (let i = 0; i < 100; i++) {
+ *   let r = random(0, 255);
  *   stroke(r);
  *   line(i, 0, i, 100);
  * }
@@ -100,8 +100,8 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  * <div>
  * <code>
- * for (var i = 0; i < 100; i++) {
- *   var r = random(50);
+ * for (let i = 0; i < 100; i++) {
+ *   let r = random(50);
  *   stroke(r * 5);
  *   line(50, i, 50 + r, i);
  * }
@@ -109,8 +109,8 @@ p5.prototype.randomSeed = function(seed) {
  * </div>
  * <div>
  * <code>
- * for (var i = 0; i < 100; i++) {
- *   var r = random(-50, 50);
+ * for (let i = 0; i < 100; i++) {
+ *   let r = random(-50, 50);
  *   line(50, i, 50 + r, i);
  * }
  * </code>
@@ -118,8 +118,8 @@ p5.prototype.randomSeed = function(seed) {
  * <div>
  * <code>
  * // Get a random element from an array using the random(Array) syntax
- * var words = ['apple', 'bear', 'cat', 'dog'];
- * var word = random(words); // select random word
+ * let words = ['apple', 'bear', 'cat', 'dog'];
+ * let word = random(words); // select random word
  * text(word, 10, 50); // draw the word
  * </code>
  * </div>
@@ -184,19 +184,19 @@ p5.prototype.random = function(min, max) {
  * @example
  * <div>
  * <code>
- * for (var y = 0; y < 100; y++) {
- *   var x = randomGaussian(50, 15);
+ * for (let y = 0; y < 100; y++) {
+ *   let x = randomGaussian(50, 15);
  *   line(50, y, x, y);
  * }
  * </code>
  * </div>
  * <div>
  * <code>
- * var distribution = new Array(360);
+ * let distribution = new Array(360);
  *
  * function setup() {
  *   createCanvas(100, 100);
- *   for (var i = 0; i < distribution.length; i++) {
+ *   for (let i = 0; i < distribution.length; i++) {
  *     distribution[i] = floor(randomGaussian(0, 15));
  *   }
  * }
@@ -206,10 +206,10 @@ p5.prototype.random = function(min, max) {
  *
  *   translate(width / 2, width / 2);
  *
- *   for (var i = 0; i < distribution.length; i++) {
+ *   for (let i = 0; i < distribution.length; i++) {
  *     rotate(TWO_PI / distribution.length);
  *     stroke(0);
- *     var dist = abs(distribution[i]);
+ *     let dist = abs(distribution[i]);
  *     line(0, 0, dist, 0);
  *   }
  * }

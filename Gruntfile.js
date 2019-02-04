@@ -137,7 +137,7 @@ module.exports = function(grunt) {
     eslint: {
       options: {
         format: 'unix',
-        configFile: '.eslintrc'
+        configFile: '.eslintrc.json'
       },
       build: {
         src: [
@@ -189,9 +189,9 @@ module.exports = function(grunt) {
     'eslint-samples': {
       options: {
         parserOptions: {
-          ecmaVersion: 5
+          ecmaVersion: 6
         },
-        configFile: '.eslintrc',
+        configFile: '.eslintrc.json',
         format: 'unix'
       },
       source: {

@@ -26,9 +26,7 @@ module.exports = function(grunt) {
             if (err) {
               reject(err);
             }
-            if (stderr) {
-              reject(stderr);
-            }
+            console.log(stdout);
             resolve();
           }
         );
@@ -40,14 +38,14 @@ module.exports = function(grunt) {
           console.log('Copying new docs ...');
           return new Promise(function(resolve, reject) {
             exec(
-              `(cp ${src}/data.json ${src}/data.min.json ${dest}) && (cp -r ${src}/assets ${dest})`,
+              `(cp ${src}/data.json ${src}/data.min.json ${dest}) &&
+               (cp -r ${src}/assets ${dest}) &&
+               (cp lib/p5.min.js lib/addons/p5.dom.min.js lib/addons/p5.sound.min.js p5-website/src/assets/js/)`,
               function(err, stdout, stderr) {
                 if (err) {
                   reject(err);
                 }
-                if (stderr) {
-                  reject(stderr);
-                }
+                console.log(stdout);
                 resolve();
               }
             );
@@ -66,9 +64,7 @@ module.exports = function(grunt) {
                 if (err) {
                   reject(err);
                 }
-                if (stderr) {
-                  reject(stderr);
-                }
+                console.log(stdout);
                 resolve();
               }
             );

@@ -328,7 +328,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  *   rotateX(t * 0.77);
  *   rotateY(t * 0.83);
  *   rotateZ(t * 0.91);
- *   torus(width * 0.3, width * 0.07, 30, 10);
+ *   torus(width * 0.3, width * 0.07, 24, 10);
  * }
  *
  * function mousePressed() {

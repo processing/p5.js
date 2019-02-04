@@ -63,7 +63,7 @@ p5.Color = function(pInst, vals) {
  * @example
  * <div>
  * <code>
- * var myColor;
+ * let myColor;
  * function setup() {
  *   createCanvas(200, 200);
  *   stroke(255);
@@ -251,7 +251,7 @@ p5.Color.prototype.toString = function(format) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -278,7 +278,7 @@ p5.Color.prototype.setRed = function(new_red) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -305,7 +305,7 @@ p5.Color.prototype.setGreen = function(new_green) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -332,7 +332,7 @@ p5.Color.prototype.setBlue = function(new_blue) {
  * @example
  * <div>
  * <code>
- * var squareColor;
+ * let squareColor;
  *
  * function setup() {
  *   ellipseMode(CORNERS);

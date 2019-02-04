@@ -36,7 +36,7 @@ require('./p5.Geometry');
  * <div>
  * <code>
  * //draw a spinning octahedron
- * var octahedron;
+ * let octahedron;
  *
  * function preload() {
  *   octahedron = loadModel('assets/octahedron.obj');
@@ -62,7 +62,7 @@ require('./p5.Geometry');
  * <div>
  * <code>
  * //draw a spinning teapot
- * var teapot;
+ * let teapot;
  *
  * function preload() {
  *   // Load model with normalise parameter set to true
@@ -250,7 +250,7 @@ function parseObj(model, lines) {
  * <div>
  * <code>
  * //draw a spinning octahedron
- * var octahedron;
+ * let octahedron;
  *
  * function preload() {
  *   octahedron = loadModel('assets/octahedron.obj');
