@@ -341,9 +341,8 @@ p5.prototype.redraw = function(n) {
       this._inUserDraw = true;
       try {
         userDraw();
-      } catch (err) {
+      } finally {
         this._inUserDraw = false;
-        throw err;
       }
       context._registeredMethods.post.forEach(callMethod);
     }
