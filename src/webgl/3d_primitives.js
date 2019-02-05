@@ -464,7 +464,7 @@ p5.prototype.cylinder = function(
       bottomCap,
       topCap
     );
-    cylinderGeom.computeNormals();
+    // normals are computed in call to _truncatedCone
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges()._edgesToVertices();
     } else {
