@@ -230,7 +230,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * white circle with black outline in mid of canvas that is 55x55.
  */
 p5.prototype.circle = function() {
-  let args = Array.prototype.slice.call(arguments, 0, 2);
+  var args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
   this.ellipse.apply(this, args);
