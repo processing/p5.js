@@ -316,20 +316,17 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
 /**
  * Get a region of pixels from an image.
  *
- * If no params are passed, those whole image is returned,
- * if x and y are the only params passed a single pixel is extracted
- * if all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
+ * If no params are passed, the whole image is returned.
+ * If x and y are the only params passed a single pixel is extracted.
+ * If all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
  * is returned.
  *
- * Returns undefined if the region is outside the bounds of the image
- *
  * @method get
- * @param  {Number}               [x] x-coordinate of the pixel
- * @param  {Number}               [y] y-coordinate of the pixel
- * @param  {Number}               [w] width
- * @param  {Number}               [h] height
- * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
+ * @param  {Number}               x x-coordinate of the pixel
+ * @param  {Number}               y y-coordinate of the pixel
+ * @param  {Number}               w width
+ * @param  {Number}               h height
+ * @return {p5.Image}             the rectangle <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div><code>
  * let myImage;
@@ -354,9 +351,22 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  * image of rocky mountains with 50x50 green rect in front
  *
  */
+/**
+ * @method get
+ * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+ */
+/**
+ * @method get
+ * @param  {Number}        x
+ * @param  {Number}        y
+ * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+ */
 p5.Image.prototype.get = function(x, y, w, h) {
-  return p5.prototype.get.call(this, x, y, w, h);
+  p5._validateParameters('p5.Image.get', arguments);
+  return p5.Renderer2D.prototype.get.apply(this, arguments);
 };
+
+p5.Image.prototype._getPixel = p5.Renderer2D.prototype._getPixel;
 
 /**
  * Set the color of a single pixel or write an image into

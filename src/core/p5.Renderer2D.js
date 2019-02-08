@@ -239,42 +239,23 @@ p5.Renderer2D._copyHelper = function(
   );
 };
 
-p5.Renderer2D.prototype.get = function(x, y, w, h) {
+// x,y are canvas-relative (pre-scaled by _pixelDensity)
+p5.Renderer2D.prototype._getPixel = function(x, y) {
   var pixelsState = this._pixelsState;
-  var pd = pixelsState._pixelDensity;
-
-  var sx = x * pd;
-  var sy = y * pd;
-  if (w === 1 && h === 1) {
-    var imageData, index;
-    if (pixelsState._pixelsDirty) {
-      imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
-      index = 0;
-    } else {
-      imageData = pixelsState.pixels;
-      index = (sx + sy * this.width * pd) * 4;
-    }
-    return [
-      imageData[index + 0],
-      imageData[index + 1],
-      imageData[index + 2],
-      imageData[index + 3]
-    ];
+  var imageData, index;
+  if (pixelsState._pixelsDirty) {
+    imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+    index = 0;
   } else {
-    //auto constrain the width and height to
-    //dimensions of the source image
-    var dw = Math.min(w, pixelsState.width);
-    var dh = Math.min(h, pixelsState.height);
-    var sw = dw * pd;
-    var sh = dh * pd;
-
-    var region = new p5.Image(dw, dh);
-    region.canvas
-      .getContext('2d')
-      .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
-
-    return region;
+    imageData = pixelsState.pixels;
+    index = (Math.floor(x) + Math.floor(y) * this.canvas.width) * 4;
   }
+  return [
+    imageData[index + 0],
+    imageData[index + 1],
+    imageData[index + 2],
+    imageData[index + 3]
+  ];
 };
 
 p5.Renderer2D.prototype.loadPixels = function() {

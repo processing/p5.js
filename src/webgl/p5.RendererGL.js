@@ -565,65 +565,18 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
   }
 };
 
-/**
- * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
- * an image. If no parameters are specified, the entire image is returned.
- * Use the x and y parameters to get the value of one pixel. Get a section of
- * the display window by specifying additional w and h parameters. When
- * getting an image, the x and y parameters define the coordinates for the
- * upper-left corner of the image, regardless of the current imageMode().
- * <br><br>
- * If the pixel requested is outside of the image window, [0,0,0,255] is
- * returned.
- * <br><br>
- * Getting the color of a single pixel with get(x, y) is easy, but not as fast
- * as grabbing the data directly from pixels[]. The equivalent statement to
- * get(x, y) is using pixels[] with pixel density d
- *
- * @private
- * @method get
- * @param  {Number}               [x] x-coordinate of the pixel
- * @param  {Number}               [y] y-coordinate of the pixel
- * @param  {Number}               [w] width
- * @param  {Number}               [h] height
- * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
- *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
- */
-p5.RendererGL.prototype.get = function(x, y, w, h) {
-  var pixelsState = this._pixelsState;
-  var pd = pixelsState._pixelDensity;
-
-  var sx = x * pd;
-  var sy = y * pd;
-
-  if (w === 1 && h === 1) {
-    var pixels = new Uint8Array(4);
-    this.drawingContext.readPixels(
-      sx,
-      sy,
-      1,
-      1,
-      this.drawingContext.RGBA,
-      this.drawingContext.UNSIGNED_BYTE,
-      pixels
-    );
-    return [pixels[0], pixels[1], pixels[2], pixels[3]];
-  } else {
-    //auto constrain the width and height to
-    //dimensions of the source image
-    var dw = Math.min(w, pixelsState.width);
-    var dh = Math.min(h, pixelsState.height);
-    var sw = dw * pd;
-    var sh = dh * pd;
-
-    var region = new p5.Image(dw, dh);
-    region.canvas
-      .getContext('2d') // not sure this is correct
-      .drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
-
-    return region;
-  }
+// x,y are canvas-relative (pre-scaled by _pixelDensity)
+p5.RendererGL.prototype._getPixel = function(x, y) {
+  var pixels = new Uint8Array(4);
+  // prettier-ignore
+  this.drawingContext.readPixels(
+    x, y, 1, 1,
+    this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
+    pixels
+  );
+  return [pixels[0], pixels[1], pixels[2], pixels[3]];
 };
+
 /**
  * Loads the pixels data for this canvas into the pixels[] attribute.
  * Note that updatePixels() and set() do not work.
