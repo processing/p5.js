@@ -1,6 +1,6 @@
 function setup() {
   createCanvas(640, 480, WEBGL);
-  setAttributes('foobar', true);
+  setAttributes('antialias', true);
 }
 
 function mouseClicked() {
