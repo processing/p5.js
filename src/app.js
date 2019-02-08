@@ -7,6 +7,7 @@ require('./core/environment');
 require('./core/error_helpers');
 require('./core/helpers');
 require('./core/legacy');
+require('./core/preload');
 require('./core/p5.Element');
 require('./core/p5.Graphics');
 require('./core/p5.Renderer');

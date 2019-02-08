@@ -268,6 +268,7 @@ var p5 = function(sketch, node, sync) {
         this._registeredPreloadMethods[method] = obj[method];
         obj[method] = this._wrapPreload(obj, method);
       }
+      this._setupPromisePreloads();
 
       userPreload();
       this._runIfPreloadsAreDone();
