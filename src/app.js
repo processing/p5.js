@@ -45,6 +45,7 @@ require('./image/pixels');
 
 // io
 require('./io/files');
+require('./io/loadPromiseAsync');
 require('./io/p5.Table');
 require('./io/p5.TableRow');
 require('./io/p5.XML');

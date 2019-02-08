@@ -16,6 +16,14 @@ p5.prototype._promisePreloads = [
     }
   }
   */
+  {
+    target: p5.prototype,
+    method: 'loadPromiseAsync',
+    addCallbacks: true,
+    legacyPreloadSetup: {
+      method: 'loadPromise'
+    }
+  }
 ];
 
 p5.prototype.registerPromisePreload = function(setup) {

@@ -21,7 +21,9 @@ var spec = {
     'loadJSON',
     'loadTable',
     'loadImage',
-    'loadModel'
+    'loadModel',
+    'loadPromise',
+    'loadPromiseAsync'
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loadFont'],
