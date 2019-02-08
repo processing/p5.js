@@ -246,7 +246,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'rgba':
     default:
-      return 'rgba('.concat(a[0], ', ', a[1], ', ', a[2], ', ', alpha, ')');
+      return 'rgba('.concat(a[0], ',', a[1], ',', a[2], ',', alpha, ')');
   }
 };
 
