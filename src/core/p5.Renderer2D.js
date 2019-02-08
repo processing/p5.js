@@ -61,7 +61,7 @@ p5.Renderer2D.prototype.background = function() {
   }
   this.drawingContext.restore();
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.clear = function() {
@@ -70,7 +70,7 @@ p5.Renderer2D.prototype.clear = function() {
   this.drawingContext.clearRect(0, 0, this.width, this.height);
   this.drawingContext.restore();
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.fill = function() {
@@ -132,7 +132,7 @@ p5.Renderer2D.prototype.image = function(
     }
   }
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
@@ -209,7 +209,7 @@ p5.Renderer2D.prototype.copy = function() {
   }
   p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
 };
 
 p5.Renderer2D._copyHelper = function(
@@ -240,7 +240,7 @@ p5.Renderer2D._copyHelper = function(
 };
 
 p5.Renderer2D.prototype.get = function(x, y, w, h) {
-  var ctx = this._pInst || this;
+  var ctx = this._ctx;
   var pd = ctx._pixelDensity;
 
   var sx = x * pd;
@@ -278,7 +278,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 };
 
 p5.Renderer2D.prototype.loadPixels = function() {
-  var ctx = this._pInst || this; // if called by p5.Image
+  var ctx = this._ctx; // if called by p5.Image
   if (!ctx._pixelsDirty) return;
   ctx._pixelsDirty = false;
 
@@ -296,7 +296,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
-  var ctx = this._pInst || this;
+  var ctx = this._ctx;
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -362,7 +362,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
 };
 
 p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
-  var ctx = this._pInst || this;
+  var ctx = this._ctx;
   var pd = ctx._pixelDensity;
   if (
     x === undefined &&
@@ -976,7 +976,7 @@ p5.Renderer2D.prototype.endShape = function(
     vertices.pop();
   }
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
   return this;
 };
 //////////////////////////////////////////////
@@ -1093,7 +1093,7 @@ p5.Renderer2D.prototype._doFillStrokeClose = function(closeShape) {
     this.drawingContext.stroke();
   }
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
 };
 
 //////////////////////////////////////////////
@@ -1201,7 +1201,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
 
   p.pop();
 
-  this._pInst._pixelsDirty = true;
+  this._ctx._pixelsDirty = true;
   return p;
 };
 

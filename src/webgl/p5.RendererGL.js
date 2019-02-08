@@ -590,7 +590,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
-  var ctx = this._pInst || this;
+  var ctx = this._ctx;
   var pd = ctx._pixelDensity;
 
   var sx = x * pd;
@@ -665,7 +665,7 @@ p5.RendererGL.prototype.loadPixels = function() {
     this.GL.UNSIGNED_BYTE,
     this.pixels
   );
-  this._pInst._setProperty('pixels', this.pixels);
+  this._ctx._setProperty('pixels', this.pixels);
 };
 
 //////////////////////////////////////////////
