@@ -493,6 +493,8 @@ class p5 {
         f.call(this);
       }
     }, this);
+    // Set up promise preloads
+    this._setupPromisePreloads();
 
     const friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
