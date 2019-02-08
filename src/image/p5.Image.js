@@ -145,7 +145,7 @@ p5.Image = function(width, height) {
   this.canvas.width = this.width;
   this.canvas.height = this.height;
   this.drawingContext = this.canvas.getContext('2d');
-  this._ctx = this._pInst = this;
+  this._ctx = this;
   this._pixelDensity = 1;
   //used for webgl texturing only
   this._modified = false;
