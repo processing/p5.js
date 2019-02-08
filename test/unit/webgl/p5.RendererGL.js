@@ -58,6 +58,16 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(pixels[3], 255);
       done();
     });
+
+    test('get() singlePixel color and size, with loadPixels', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.background(100, 115, 100);
+      myp5.loadPixels();
+      var img = myp5.get(0, 0);
+      assert.isTrue(img[1] === 115);
+      assert.isTrue(img.length === 4);
+      done();
+    });
   });
 
   suite('get()', function() {
@@ -78,6 +88,10 @@ suite('p5.RendererGL', function() {
     test('get() singlePixel color and size', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.background(100, 115, 100);
+      img = myp5.get(0, 0);
+      assert.isTrue(img[1] === 115);
+      assert.isTrue(img.length === 4);
+      myp5.loadPixels();
       img = myp5.get(0, 0);
       assert.isTrue(img[1] === 115);
       assert.isTrue(img.length === 4);
