@@ -492,13 +492,18 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
+ *   noStroke();
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
  *   ambientLight(60, 60, 60);
  *   pointLight(255, 255, 255, locX, locY, 50);
  *   specularMaterial(250);
- *   shininess(32);
- *   sphere(35);
+ *   translate(-23, 0, 0);
+ *   shininess(1);
+ *   sphere(20);
+ *   translate(46, 0, 0);
+ *   shininess(10);
+ *   sphere(20);
  * }
  * </code>
  * </div>
