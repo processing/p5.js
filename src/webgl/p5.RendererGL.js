@@ -420,11 +420,6 @@ p5.RendererGL.prototype.background = function() {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
-//@TODO implement this
-// p5.RendererGL.prototype.clear = function() {
-//@TODO
-// };
-
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
@@ -514,6 +509,11 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   this.curStrokeColor = color._array;
   this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
   this.curPointShader.setUniform('uMaterialColor', color._array);
+};
+
+p5.RendererGL.prototype.strokeCap = function(cap) {
+  // @TODO : to be implemented
+  console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
 /**
