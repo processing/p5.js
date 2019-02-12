@@ -510,7 +510,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 
 p5.RendererGL.prototype.strokeCap = function(cap) {
   // @TODO : to be implemented
-  throw new Error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+  console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
 /**
