@@ -645,5 +645,11 @@ suite('p5.Camera', function() {
       myp5.setCamera(myCam);
       assert.deepEqual(myCam, myp5._renderer._curCamera);
     });
+    test("Camera's Renderer is correctly set after setAttributes", function() {
+      var myCam2 = myp5.createCamera();
+      assert.deepEqual(myCam2, myp5._renderer._curCamera);
+      myp5.setAttributes('antialias', true);
+      assert.deepEqual(myCam2._renderer, myp5._renderer);
+    });
   });
 });
