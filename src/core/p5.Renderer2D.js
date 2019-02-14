@@ -466,6 +466,7 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
     }
     ctx.closePath();
     ctx.fill();
+    this._pixelsState._pixelsDirty = true;
   }
 
   // Stroke curves
@@ -487,6 +488,7 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
       ctx.closePath();
     }
     ctx.stroke();
+    this._pixelsState._pixelsDirty = true;
   }
   return this;
 };
@@ -524,9 +526,11 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   ctx.closePath();
   if (doFill) {
     ctx.fill();
+    this._pixelsState._pixelsDirty = true;
   }
   if (doStroke) {
     ctx.stroke();
+    this._pixelsState._pixelsDirty = true;
   }
 };
 
@@ -548,6 +552,7 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
   if (ctx.lineWidth % 2 === 1) {
     ctx.translate(-0.5, -0.5);
   }
+  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -572,6 +577,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
     ctx.fillRect(x, y, 1, 1);
   }
   this._setFill(f);
+  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -599,6 +605,7 @@ p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
   if (doStroke) {
     ctx.stroke();
   }
+  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -692,6 +699,7 @@ p5.Renderer2D.prototype.rect = function(args) {
   if (this._doStroke && ctx.lineWidth % 2 === 1) {
     ctx.translate(-0.5, -0.5);
   }
+  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -721,9 +729,11 @@ p5.Renderer2D.prototype.triangle = function(args) {
   ctx.closePath();
   if (doFill) {
     ctx.fill();
+    this._pixelsState._pixelsDirty = true;
   }
   if (doStroke) {
     ctx.stroke();
+    this._pixelsState._pixelsDirty = true;
   }
 };
 
