@@ -625,11 +625,9 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   p.push(); // fix to #803
 
   // remember this state, so it can be restored later
-  var curFillShader = this.curFillShader;
   var doStroke = this._doStroke;
   var drawMode = this.drawMode;
 
-  this.curFillShader = null;
   this._doStroke = false;
   this.drawMode = constants.TEXTURE;
 
@@ -650,7 +648,9 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   // initialize the font shader
   var gl = this.GL;
   var initializeShader = !this._defaultFontShader;
-  var sh = this.setFillShader(this._getFontShader());
+  var sh = this._getFontShader();
+  sh.bindShader();
+
   if (initializeShader) {
     // these are constants, really. just initialize them one-time.
     sh.setUniform('uGridImageSize', [gridImageWidth, gridImageHeight]);
@@ -726,7 +726,6 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     // clean up
     sh.unbindShader();
 
-    this.curFillShader = curFillShader;
     this._doStroke = doStroke;
     this.drawMode = drawMode;
 

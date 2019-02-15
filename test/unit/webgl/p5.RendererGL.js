@@ -24,6 +24,7 @@ suite('p5.RendererGL', function() {
   });
 
   suite('default stroke shader', function() {
+    /*
     test('check default shader creation', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       assert(
@@ -36,7 +37,7 @@ suite('p5.RendererGL', function() {
       );
       done();
     });
-
+    */
     test('check activate and deactivating fill and stroke', function(done) {
       myp5.noStroke();
       assert(

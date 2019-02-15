@@ -147,10 +147,7 @@ p5.RendererGL.prototype.endShape = function(
       this.immediateMode.vertices,
       this.immediateMode.pointVertexBuffer
     );
-    this.curPointShader.unbindShader();
   } else if (this.immediateMode.vertices.length > 1) {
-    this._useImmediateModeShader();
-
     if (this._doStroke && this.drawMode !== constants.TEXTURE) {
       if (this.immediateMode.shapeMode === constants.TRIANGLE_STRIP) {
         var i;
