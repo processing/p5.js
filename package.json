@@ -16,16 +16,14 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
+    "ignore": ["test/js/**/*.js"],
     "Gruntfile.js": "eslint",
     "grunt-karma.js": "eslint",
     "docs/preprocessor.js": "eslint",
     "utils/**/*.js": "eslint",
     "tasks/**/*.js": "eslint",
     "bench/**/*.js": "eslint",
-    "test/test-docs-preprocessor/**/*.js": "eslint",
-    "test/node/**/*.js": "eslint",
-    "test/reporter/**/*.js": "eslint",
-    "test/unit/**/*.js": "eslint",
+    "test/**/*.js": "eslint",
     "lib/addons/p5.dom.js": [
       "eslint",
       "node ./utils/sample-linter.js"
