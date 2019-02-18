@@ -413,14 +413,14 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
 
   // Return rotated waypoints.
   return {
-    ax: Math.cos(start),
-    ay: Math.sin(start),
-    bx: lambda * cos_phi + mu * sin_phi,
-    by: lambda * sin_phi - mu * cos_phi,
-    cx: lambda * cos_phi - mu * sin_phi,
-    cy: lambda * sin_phi + mu * cos_phi,
-    dx: Math.cos(start + size),
-    dy: Math.sin(start + size)
+    ax: Math.cos(start).toFixed(7),
+    ay: Math.sin(start).toFixed(7),
+    bx: (lambda * cos_phi + mu * sin_phi).toFixed(7),
+    by: (lambda * sin_phi - mu * cos_phi).toFixed(7),
+    cx: (lambda * cos_phi - mu * sin_phi).toFixed(7),
+    cy: (lambda * sin_phi + mu * cos_phi).toFixed(7),
+    dx: Math.cos(start + size).toFixed(7),
+    dy: Math.sin(start + size).toFixed(7)
   };
 };
 
