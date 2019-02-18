@@ -113,10 +113,11 @@ line(0, 0, 100, 100, x3, Math.PI);
 * Having a Spanish translation available.
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
-* Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. So far we've tried `window.onerror` and the following with no success. 
+* Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. 
 
 ```javascript
-//this snippet attempts to wrap window.console methods with a new function to modify their functionality
+// this snippet wraps window.console methods with a new function to modify their functionality
+// it is not currently implemented, but could be to give nicer formatted error messages
 const original = window.console;
 const original_functions  = {
   log: original.log,
