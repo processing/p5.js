@@ -21,10 +21,15 @@ require('./p5.Texture');
  * if the parameters defined in the shader match the names.
  *
  * @method loadShader
- * @param {String} [vertFilename] path to file containing vertex shader
+ * @param {String} vertFilename path to file containing vertex shader
  * source code
- * @param {String} [fragFilename] path to file containing fragment shader
+ * @param {String} fragFilename path to file containing fragment shader
  * source code
+ * @param {function} [callback] callback to be executed after loadShader
+ * completes. On success, the Shader object is passed as the first argument.
+ * @param {function} [errorCallback] callback to be executed when an error
+ * occurs inside loadShader. On error, the error is passed as the first
+ * argument.
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
  *
@@ -54,28 +59,53 @@ require('./p5.Texture');
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.loadShader = function(vertFilename, fragFilename) {
+p5.prototype.loadShader = function(
+  vertFilename,
+  fragFilename,
+  callback,
+  errorCallback
+) {
   p5._validateParameters('loadShader', arguments);
+  if (!errorCallback) {
+    errorCallback = console.error;
+  }
+
   var loadedShader = new p5.Shader();
 
   var self = this;
   var loadedFrag = false;
   var loadedVert = false;
 
-  this.loadStrings(fragFilename, function(result) {
-    loadedShader._fragSrc = result.join('\n');
-    loadedFrag = true;
-    if (loadedVert) {
-      self._decrementPreload();
+  var onLoad = function() {
+    self._decrementPreload();
+    if (callback) {
+      callback(loadedShader);
     }
-  });
-  this.loadStrings(vertFilename, function(result) {
-    loadedShader._vertSrc = result.join('\n');
-    loadedVert = true;
-    if (loadedFrag) {
-      self._decrementPreload();
-    }
-  });
+  };
+
+  this.loadStrings(
+    vertFilename,
+    function(result) {
+      loadedShader._vertSrc = result.join('\n');
+      loadedVert = true;
+      if (loadedFrag) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
+
+  this.loadStrings(
+    fragFilename,
+    function(result) {
+      loadedShader._fragSrc = result.join('\n');
+      loadedFrag = true;
+      if (loadedVert) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
 
   return loadedShader;
 };
