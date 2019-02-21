@@ -43,7 +43,7 @@ p5.Element = function(elt, pInst) {
    * @readOnly
    */
   this.elt = elt;
-  this._pInst = this._ctx = pInst;
+  this._pInst = this._pixelsState = pInst;
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;

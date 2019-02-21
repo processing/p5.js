@@ -61,7 +61,7 @@ p5.Renderer2D.prototype.background = function() {
   }
   this.drawingContext.restore();
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.clear = function() {
@@ -70,7 +70,7 @@ p5.Renderer2D.prototype.clear = function() {
   this.drawingContext.clearRect(0, 0, this.width, this.height);
   this.drawingContext.restore();
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.fill = function() {
@@ -132,7 +132,7 @@ p5.Renderer2D.prototype.image = function(
     }
   }
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
@@ -209,7 +209,7 @@ p5.Renderer2D.prototype.copy = function() {
   }
   p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D._copyHelper = function(
@@ -240,18 +240,18 @@ p5.Renderer2D._copyHelper = function(
 };
 
 p5.Renderer2D.prototype.get = function(x, y, w, h) {
-  var ctx = this._ctx;
-  var pd = ctx._pixelDensity;
+  var pixelsState = this._pixelsState;
+  var pd = pixelsState._pixelDensity;
 
   var sx = x * pd;
   var sy = y * pd;
   if (w === 1 && h === 1) {
     var imageData, index;
-    if (ctx._pixelsDirty) {
+    if (pixelsState._pixelsDirty) {
       imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
       index = 0;
     } else {
-      imageData = ctx.pixels;
+      imageData = pixelsState.pixels;
       index = (sx + sy * this.width * pd) * 4;
     }
     return [
@@ -263,8 +263,8 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   } else {
     //auto constrain the width and height to
     //dimensions of the source image
-    var dw = Math.min(w, ctx.width);
-    var dh = Math.min(h, ctx.height);
+    var dw = Math.min(w, pixelsState.width);
+    var dh = Math.min(h, pixelsState.height);
     var sw = dw * pd;
     var sh = dh * pd;
 
@@ -278,32 +278,35 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 };
 
 p5.Renderer2D.prototype.loadPixels = function() {
-  var ctx = this._ctx; // if called by p5.Image
-  if (!ctx._pixelsDirty) return;
-  ctx._pixelsDirty = false;
+  var pixelsState = this._pixelsState; // if called by p5.Image
+  if (!pixelsState._pixelsDirty) return;
+  pixelsState._pixelsDirty = false;
 
-  var pd = ctx._pixelDensity;
+  var pd = pixelsState._pixelDensity;
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
   // @todo this should actually set pixels per object, so diff buffers can
   // have diff pixel arrays.
-  ctx._setProperty('imageData', imageData);
-  ctx._setProperty('pixels', imageData.data);
+  pixelsState._setProperty('imageData', imageData);
+  pixelsState._setProperty('pixels', imageData.data);
 };
 
 p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
-  var ctx = this._ctx;
+  var pixelsState = this._pixelsState;
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(ctx._pixelDensity, ctx._pixelDensity);
+    this.drawingContext.scale(
+      pixelsState._pixelDensity,
+      pixelsState._pixelDensity
+    );
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.drawingContext.restore();
-    ctx._pixelsDirty = true;
+    pixelsState._pixelsDirty = true;
   } else {
     var r = 0,
       g = 0,
@@ -311,13 +314,15 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
       a = 0;
     var idx =
       4 *
-      (y * ctx._pixelDensity * (this.width * ctx._pixelDensity) +
-        x * ctx._pixelDensity);
-    if (!ctx.imageData || ctx._pixelsDirty) {
-      ctx.loadPixels.call(ctx);
+      (y *
+        pixelsState._pixelDensity *
+        (this.width * pixelsState._pixelDensity) +
+        x * pixelsState._pixelDensity);
+    if (!pixelsState.imageData || pixelsState._pixelsDirty) {
+      pixelsState.loadPixels.call(pixelsState);
     }
     if (typeof imgOrCol === 'number') {
-      if (idx < ctx.pixels.length) {
+      if (idx < pixelsState.pixels.length) {
         r = imgOrCol;
         g = imgOrCol;
         b = imgOrCol;
@@ -328,7 +333,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
       if (imgOrCol.length < 4) {
         throw new Error('pixel array must be of the form [R, G, B, A]');
       }
-      if (idx < ctx.pixels.length) {
+      if (idx < pixelsState.pixels.length) {
         r = imgOrCol[0];
         g = imgOrCol[1];
         b = imgOrCol[2];
@@ -336,7 +341,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
         //this.updatePixels.call(this);
       }
     } else if (imgOrCol instanceof p5.Color) {
-      if (idx < ctx.pixels.length) {
+      if (idx < pixelsState.pixels.length) {
         r = imgOrCol.levels[0];
         g = imgOrCol.levels[1];
         b = imgOrCol.levels[2];
@@ -345,25 +350,27 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
       }
     }
     // loop over pixelDensity * pixelDensity
-    for (var i = 0; i < ctx._pixelDensity; i++) {
-      for (var j = 0; j < ctx._pixelDensity; j++) {
+    for (var i = 0; i < pixelsState._pixelDensity; i++) {
+      for (var j = 0; j < pixelsState._pixelDensity; j++) {
         // loop over
         idx =
           4 *
-          ((y * ctx._pixelDensity + j) * this.width * ctx._pixelDensity +
-            (x * ctx._pixelDensity + i));
-        ctx.pixels[idx] = r;
-        ctx.pixels[idx + 1] = g;
-        ctx.pixels[idx + 2] = b;
-        ctx.pixels[idx + 3] = a;
+          ((y * pixelsState._pixelDensity + j) *
+            this.width *
+            pixelsState._pixelDensity +
+            (x * pixelsState._pixelDensity + i));
+        pixelsState.pixels[idx] = r;
+        pixelsState.pixels[idx + 1] = g;
+        pixelsState.pixels[idx + 2] = b;
+        pixelsState.pixels[idx + 3] = a;
       }
     }
   }
 };
 
 p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
-  var ctx = this._ctx;
-  var pd = ctx._pixelDensity;
+  var pixelsState = this._pixelsState;
+  var pd = pixelsState._pixelDensity;
   if (
     x === undefined &&
     y === undefined &&
@@ -378,10 +385,10 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   w *= pd;
   h *= pd;
 
-  this.drawingContext.putImageData(ctx.imageData, x, y, 0, 0, w, h);
+  this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
 
   if (x !== 0 || y !== 0 || w !== this.width || h !== this.height) {
-    ctx._pixelsDirty = true;
+    pixelsState._pixelsDirty = true;
   }
 };
 
@@ -976,7 +983,7 @@ p5.Renderer2D.prototype.endShape = function(
     vertices.pop();
   }
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
   return this;
 };
 //////////////////////////////////////////////
@@ -1093,7 +1100,7 @@ p5.Renderer2D.prototype._doFillStrokeClose = function(closeShape) {
     this.drawingContext.stroke();
   }
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
 };
 
 //////////////////////////////////////////////
@@ -1201,7 +1208,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
 
   p.pop();
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
   return p;
 };
 

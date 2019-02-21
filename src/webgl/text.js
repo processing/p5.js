@@ -733,6 +733,6 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     p.pop();
   }
 
-  this._ctx._pixelsDirty = true;
+  this._pixelsState._pixelsDirty = true;
   return p;
 };
