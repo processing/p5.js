@@ -39,9 +39,8 @@ function preload() {
 
 function setup() {
   let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  
-  wrapShader = createShader(vertexShader, fragmentShader);
 
+  wrapShader = createShader(vertexShader, fragmentShader);
 }
 
 function draw() {
@@ -53,21 +52,18 @@ function draw() {
   wrapShader.setUniform('uWindowSize', [width, height]);
 
   rect(0, 0, width, height);
-  
 }
 
 function keyPressed() {
   wrapMode = (wrapMode + 1) % 4;
-  
-  if(wrapMode == 0){
+
+  if (wrapMode === 0) {
     textureWrap(CLAMP);
-  } else if( wrapMode == 1){
+  } else if (wrapMode === 1) {
     textureWrap(MIRROR);
-  } else if(wrapMode == 2) {
+  } else if (wrapMode === 2) {
     textureWrap(REPEAT);
-  } else if(wrapMode == 3){
+  } else if (wrapMode === 3) {
     textureWrap(CLAMP, MIRROR);
   }
-
-  
 }

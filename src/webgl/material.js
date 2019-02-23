@@ -413,6 +413,10 @@ p5.prototype.textureMode = function(mode) {
  * when their uv's go outside of the 0 - 1 range. There are three options:
  * CLAMP, REPEAT, and MIRROR.
  *
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ *
  * REPEAT & MIRROR are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  *
@@ -422,8 +426,8 @@ p5.prototype.textureMode = function(mode) {
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
  * @method textureWrap
- * @param {Constant} wrapX Either CLAMP, REPEAT, or MIRROR
- * @param {Constant} [wrapY] Either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
  * @example
  * <div>
  * <code>
@@ -440,16 +444,11 @@ p5.prototype.textureMode = function(mode) {
  * function draw() {
  *   background(0);
  *
-<<<<<<< HEAD
  *   let dX = mouseX / width;
  *   let dY = mouseY / height;
-=======
- *   var dX = mouseX / width;
- *   var dY = mouseY / height;
->>>>>>> prettier formatting
  *
- *   var u = lerp(1.0, 8.0, dX);
- *   var v = lerp(1.0, 8.0, dY);
+ *   let u = lerp(1.0, 8.0, dX);
+ *   let v = lerp(1.0, 8.0, dY);
  *
  *   scale(width / 2);
  *
