@@ -3,7 +3,7 @@ p5.disableFriendlyErrors = true;
 var img;
 function preload() {
   img = createVideo('../addons/p5.dom/fingers.mov');
-  img.loop();
+  //img.loop();
   img.hide();
 }
 
@@ -13,8 +13,6 @@ function setup() {
   background(0);
   noStroke();
   rectMode(CENTER);
-
-  translate((width - img.width) / 2, (height - img.height) / 2);
 }
 
 function draw() {
@@ -29,4 +27,8 @@ function draw() {
     fill(img.get(px, py));
     ellipse(px, py, 3, 3);
   }
+}
+
+function mouseClicked() {
+  img.loop();
 }
