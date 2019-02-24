@@ -517,7 +517,7 @@ p5.prototype.rect = function() {
 p5.prototype.square = function() {
   var args = Array.prototype.slice.call(arguments, 0, 3);
   args.push(arguments[2]);
-  args = args.concat(Array.prototype.slice.call(arguments, 4));
+  args = args.concat(Array.prototype.slice.call(arguments, 3));
   this.rect.apply(this, args);
 };
 
