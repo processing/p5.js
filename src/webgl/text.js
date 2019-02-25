@@ -649,7 +649,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   var gl = this.GL;
   var initializeShader = !this._defaultFontShader;
   var sh = this._getFontShader();
-  sh.bindShader();
+  sh.init();
 
   if (initializeShader) {
     // these are constants, really. just initialize them one-time.
