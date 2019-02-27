@@ -272,10 +272,11 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
- *   pg.textSize(100);
+ *   pg.textSize(75);
  * }
  *
  * function draw() {
@@ -284,7 +285,8 @@ p5.prototype.normalMaterial = function() {
  *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
- *   plane(200);
+ *   rotateX(0.5);
+ *   plane(50);
  * }
  * </code>
  * </div>
@@ -295,7 +297,6 @@ p5.prototype.normalMaterial = function() {
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
- *   vid.loop();
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -306,6 +307,10 @@ p5.prototype.normalMaterial = function() {
  *   //pass video frame as texture
  *   texture(vid);
  *   plane(200);
+ * }
+ *
+ * function mousePressed() {
+ *   vid.loop();
  * }
  * </code>
  * </div>
