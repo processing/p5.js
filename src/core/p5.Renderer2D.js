@@ -239,6 +239,9 @@ p5.Renderer2D._copyHelper = function(
   );
 };
 
+// p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;
+// .get() is not overridden
+
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.Renderer2D.prototype._getPixel = function(x, y) {
   var pixelsState = this._pixelsState;
