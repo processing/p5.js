@@ -107,6 +107,33 @@ var p5 = require('./main');
  * }
  * </code>
  * </div>
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noFill();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateY(PI / 6);
+ *   stroke(153);
+ *   box(35);
+ *   var rad = millis() / 1000;
+ *   // Set rotation angles
+ *   var ct = cos(rad);
+ *   var st = sin(rad);
+ *   // Matrix for rotation around the Y axis
+ *   // prettier-ignore
+ *   applyMatrix(  ct, 0.0,  st,  0.0,
+ *                0.0, 1.0, 0.0,  0.0,
+ *                -st, 0.0,  ct,  0.0,
+ *                0.0, 0.0, 0.0,  1.0);
+ *   stroke(255);
+ *   box(50);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
  * A rectangle translating to the right
@@ -116,7 +143,7 @@ var p5 = require('./main');
  *
  */
 p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix(a, b, c, d, e, f);
+  this._renderer.applyMatrix.apply(this._renderer, arguments);
   return this;
 };
 
@@ -398,7 +425,8 @@ p5.prototype.scale = function(x, y, z) {
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
-  this._renderer.shearX(this._toRadians(angle));
+  var rad = this._toRadians(angle);
+  this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
   return this;
 };
 
@@ -437,7 +465,8 @@ p5.prototype.shearX = function(angle) {
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
-  this._renderer.shearY(this._toRadians(angle));
+  var rad = this._toRadians(angle);
+  this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
   return this;
 };
 

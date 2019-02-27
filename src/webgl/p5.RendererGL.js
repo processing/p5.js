@@ -720,6 +720,20 @@ p5.RendererGL.prototype.clear = function() {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
+p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
+  if (arguments.length === 16) {
+    p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
+  } else {
+    // prettier-ignore
+    this.uMVMatrix.apply([
+      a, b, 0, 0,
+      c, d, 0, 0,
+      0, 0, 1, 0,
+      e, f, 0, 1,
+    ]);
+  }
+};
+
 /**
  * [translate description]
  * @private
