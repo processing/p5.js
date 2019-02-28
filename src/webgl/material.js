@@ -192,14 +192,20 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
+
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
+
   if (s.isStrokeShader()) {
-    this._renderer.setStrokeShader(s);
+    this._renderer.userStrokeShader = s;
   } else {
-    this._renderer.setFillShader(s);
+    this._renderer.userFillShader = s;
+    this._renderer._useNormalMaterial = false;
   }
+
+  s.init();
+
   return this;
 };
 
@@ -232,8 +238,10 @@ p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
-  this._renderer.setFillShader(this._renderer._getNormalShader());
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = true;
   this._renderer.curFillColor = [1, 1, 1, 1];
+  this._renderer._setProperty('_doFill', true);
   this.noStroke();
   return this;
 };
@@ -272,10 +280,11 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
- *   pg.textSize(100);
+ *   pg.textSize(75);
  * }
  *
  * function draw() {
@@ -284,7 +293,8 @@ p5.prototype.normalMaterial = function() {
  *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
- *   plane(200);
+ *   rotateX(0.5);
+ *   plane(50);
  * }
  * </code>
  * </div>
@@ -295,7 +305,6 @@ p5.prototype.normalMaterial = function() {
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
- *   vid.loop();
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -306,6 +315,10 @@ p5.prototype.normalMaterial = function() {
  *   //pass video frame as texture
  *   texture(vid);
  *   plane(200);
+ * }
+ *
+ * function mousePressed() {
+ *   vid.loop();
  * }
  * </code>
  * </div>
@@ -319,13 +332,13 @@ p5.prototype.normalMaterial = function() {
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
+
   this._renderer.drawMode = constants.TEXTURE;
-  this._renderer.textureImage = tex;
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', tex);
-  this.noStroke();
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._tex = tex;
+  this._renderer._setProperty('_doFill', true);
+
   return this;
 };
 
@@ -522,13 +535,14 @@ p5.prototype.textureWrap = function(wrapX, wrapY) {
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -571,13 +585,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = true;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
   return this;
 };
 

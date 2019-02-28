@@ -510,11 +510,10 @@ p5.prototype.get = function(x, y, w, h) {
   w = Math.floor(w);
   h = Math.floor(h);
 
-  if (this instanceof p5.Image) {
-    return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
-  } else {
+  if (this._renderer) {
     return this._renderer.get(x, y, w, h);
   }
+  return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
 };
 
 /**

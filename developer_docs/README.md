@@ -23,7 +23,7 @@ We recognize all types of contributions. This project follows the [all-contribut
 Aside from the code itself, you may also need to supply some combination of the following.
 
 - [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/) 
-- [unit tests](https://github.com/processing/p5.js/blob/master/developer_docs/#testing), small pieces of code which are separate from the library and are used to verify its behavior
+- [unit tests](https://github.com/processing/p5.js/tree/master/developer_docs#unit-tests), small pieces of code which are separate from the library and are used to verify its behavior
 - [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
 
 ## Examples
