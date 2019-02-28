@@ -128,6 +128,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.textures = [];
   this.textureImage = undefined;
   this.textureMode = constants.IMAGE;
+  // default wrap settings
+  this.textureWrapX = constants.CLAMP;
+  this.textureWrapY = constants.CLAMP;
   this._tex = null;
   this._curveTightness = 6;
 
