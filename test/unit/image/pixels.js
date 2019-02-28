@@ -53,7 +53,7 @@ suite('pixels', function() {
       assert.deepEqual(img.get(50, 26), [0, 0, 0, 0]);
     });
 
-    test('get() works', function() {
+    test('get() returns a copy when no arguments are supplied', function() {
       var copy = img.get();
       assert.instanceOf(copy, p5.Image);
       assert.equal(copy.width, img.width);
