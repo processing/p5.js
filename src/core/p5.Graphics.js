@@ -49,12 +49,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
   this._pixelDensity = pInst._pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(
-      this.canvas,
-      this,
-      false,
-      pInst._presetAttributes
-    );
+    this._renderer = new p5.RendererGL(this.canvas, this, false);
   } else {
     this._renderer = new p5.Renderer2D(this.canvas, this, false);
   }

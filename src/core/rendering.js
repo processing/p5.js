@@ -101,10 +101,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
-    this._setProperty(
-      '_renderer',
-      new p5.RendererGL(c, this, true, this._presetAttributes)
-    );
+    this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._elements.push(this._renderer);
   } else {
     //P2D mode

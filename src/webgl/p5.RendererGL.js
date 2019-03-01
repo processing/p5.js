@@ -52,21 +52,7 @@ var defaultShaders = {
  */
 p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
-  this.attributes = {};
-  attr = attr || {};
-  this.attributes.alpha = attr.alpha === undefined ? true : attr.alpha;
-  this.attributes.depth = attr.depth === undefined ? true : attr.depth;
-  this.attributes.stencil = attr.stencil === undefined ? true : attr.stencil;
-  this.attributes.antialias =
-    attr.antialias === undefined ? false : attr.antialias;
-  this.attributes.premultipliedAlpha =
-    attr.premultipliedAlpha === undefined ? false : attr.premultipliedAlpha;
-  this.attributes.preserveDrawingBuffer =
-    attr.preserveDrawingBuffer === undefined
-      ? true
-      : attr.preserveDrawingBuffer;
-  this.attributes.perPixelLighting =
-    attr.perPixelLighting === undefined ? false : attr.perPixelLighting;
+  this.attributes = this._setAttributeDefaults(attr);
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
@@ -156,6 +142,20 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 //////////////////////////////////////////////
 // Setting
 //////////////////////////////////////////////
+
+p5.RendererGL.prototype._setAttributeDefaults = function(attr) {
+  var attributes = attr || this._pInst._presetAttributes || {};
+  var defaults = {
+    alpha: true,
+    depth: true,
+    stencil: true,
+    antialias: false,
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: true,
+    perPixelLighting: false
+  };
+  return Object.assign({}, defaults, attributes);
+};
 
 p5.RendererGL.prototype._initContext = function() {
   try {
