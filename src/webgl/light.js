@@ -33,7 +33,7 @@ var p5 = require('../core/main');
  *   ambientLight(150);
  *   ambientMaterial(250);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -104,10 +104,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *   //move your mouse to change light direction
  *   let dirX = (mouseX / width - 0.5) * 2;
  *   let dirY = (mouseY / height - 0.5) * 2;
- *   directionalLight(250, 250, 250, -dirX, -dirY, 0.25);
- *   ambientMaterial(250);
+ *   directionalLight(250, 250, 250, -dirX, -dirY, -1);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -213,9 +212,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  *   //                |            |
  *   // -width/2,height/2--------width/2,height/2
  *   pointLight(250, 250, 250, locX, locY, 50);
- *   ambientMaterial(250);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
