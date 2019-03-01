@@ -636,8 +636,7 @@ p5.prototype.shininess = function(shine) {
   this._assert3d('shininess');
   p5._validateParameters('shininess', arguments);
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uShininess', shine);
+  this._renderer._useShininess = shine;
   return this;
 };
 
