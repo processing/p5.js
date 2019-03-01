@@ -657,7 +657,7 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   return function(prop, value) {
     if (
       !p5.disableFriendlyErrors &&
-      typeof IS_MINIFIED === 'undefined' &&
+      typeof process.env.IS_MINIFIED === 'undefined' &&
       typeof value === 'function' &&
       !(prop in p5.prototype._preloadMethods)
     ) {
