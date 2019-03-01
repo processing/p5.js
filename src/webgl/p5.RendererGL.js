@@ -358,7 +358,15 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
-  this._assert3d('setAttributes');
+  if (!this._renderer.isP3D) {
+    if (typeof value !== 'undefined') {
+      this._presetAttributes = {};
+      this._presetAttributes[key] = value;
+    } else if (key instanceof Object) {
+      this._presetAttributes = key;
+    }
+    return;
+  }
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {

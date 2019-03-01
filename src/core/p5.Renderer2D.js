@@ -1004,6 +1004,7 @@ p5.Renderer2D.prototype.noSmooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = false;
   }
+  this._pInst._presetAttributes = { antialias: false };
   return this;
 };
 
@@ -1011,6 +1012,7 @@ p5.Renderer2D.prototype.smooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = true;
   }
+  this._pInst._presetAttributes = { antialias: true };
   return this;
 };
 
