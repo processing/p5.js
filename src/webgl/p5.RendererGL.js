@@ -279,8 +279,8 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
