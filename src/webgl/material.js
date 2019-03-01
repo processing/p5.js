@@ -601,7 +601,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
 /**
  * Sets the amount of gloss in the surface of shapes.
  * Used in combination with specularMaterial() in setting
- * the material properties of shapes.
+ * the material properties of shapes. The default and minimum value is 1.
  * @method shininess
  * @param {Number} shine Degree of Shininess.
  *                       Defaults to 1.
@@ -620,11 +620,11 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  *   ambientLight(60, 60, 60);
  *   pointLight(255, 255, 255, locX, locY, 50);
  *   specularMaterial(250);
- *   translate(-23, 0, 0);
+ *   translate(-25, 0, 0);
  *   shininess(1);
  *   sphere(20);
- *   translate(46, 0, 0);
- *   shininess(10);
+ *   translate(50, 0, 0);
+ *   shininess(20);
  *   sphere(20);
  * }
  * </code>
@@ -636,6 +636,9 @@ p5.prototype.shininess = function(shine) {
   this._assert3d('shininess');
   p5._validateParameters('shininess', arguments);
 
+  if (shine < 1) {
+    shine = 1;
+  }
   this._renderer._useShininess = shine;
   return this;
 };

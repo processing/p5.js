@@ -79,6 +79,7 @@ suite('p5.Shader', function() {
         'uPointLightLocation',
         'uPointLightColor',
         'uSpecular',
+        'uShininess',
         'uMaterialColor',
         'uSampler',
         'isTexture'
