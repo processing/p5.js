@@ -288,6 +288,25 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * Sets a default value for ambient and directional light
  * @method lights
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   lights();
+ *   rotateX(millis() / 1000);
+ *   rotateY(millis() / 1000);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * light is different depending on the position of the object
  */
 p5.prototype.lights = function() {
   this.ambientLight(128, 128, 128);
