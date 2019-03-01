@@ -225,7 +225,7 @@ p5.prototype.shader = function(s) {
  * function draw() {
  *   background(200);
  *   normalMaterial();
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -294,6 +294,7 @@ p5.prototype.normalMaterial = function() {
  *   //pass image as texture
  *   texture(pg);
  *   rotateX(0.5);
+ *   noStroke();
  *   plane(50);
  * }
  * </code>
@@ -314,7 +315,7 @@ p5.prototype.normalMaterial = function() {
  *   background(0);
  *   //pass video frame as texture
  *   texture(vid);
- *   plane(200);
+ *   rect(-40, -40, 80, 80);
  * }
  *
  * function mousePressed() {
@@ -457,11 +458,11 @@ p5.prototype.textureMode = function(mode) {
  * function draw() {
  *   background(0);
  *
- *   let dX = mouseX;
- *   let dY = mouseY;
+ *   let dX = mouseX / width;
+ *   let dY = mouseY / height;
  *
- *   let u = lerp(1.0, 8.0, dX);
- *   let v = lerp(1.0, 8.0, dY);
+ *   let u = lerp(1.0, 2.0, dX);
+ *   let v = lerp(1.0, 2.0, dY);
  *
  *   scale(width / 2);
  *
@@ -515,10 +516,10 @@ p5.prototype.textureWrap = function(wrapX, wrapY) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
- *   ambientMaterial(250);
- *   sphere(50);
+ *   noStroke();
+ *   ambientLight(200);
+ *   ambientMaterial(70, 130, 230);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -565,10 +566,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
+ *   noStroke();
+ *   ambientLight(50);
+ *   pointLight(250, 250, 250, 100, 100, 30);
  *   specularMaterial(250);
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
