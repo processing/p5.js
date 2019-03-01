@@ -423,6 +423,8 @@ p5.Matrix.prototype.mult = function(multMatrix) {
     _src = multMatrix.mat4;
   } else if (isMatrixArray(multMatrix)) {
     _src = multMatrix;
+  } else if (arguments.length === 16) {
+    _src = arguments;
   } else {
     return; // nothing to do.
   }
@@ -463,6 +465,63 @@ p5.Matrix.prototype.mult = function(multMatrix) {
   this.mat4[13] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
   this.mat4[14] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
   this.mat4[15] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+
+  return this;
+};
+
+p5.Matrix.prototype.apply = function(multMatrix) {
+  var _src;
+
+  if (multMatrix === this || multMatrix === this.mat4) {
+    _src = this.copy().mat4; // only need to allocate in this rare case
+  } else if (multMatrix instanceof p5.Matrix) {
+    _src = multMatrix.mat4;
+  } else if (isMatrixArray(multMatrix)) {
+    _src = multMatrix;
+  } else if (arguments.length === 16) {
+    _src = arguments;
+  } else {
+    return; // nothing to do.
+  }
+
+  var mat4 = this.mat4;
+
+  // each row is used for the multiplier
+  var m0 = mat4[0];
+  var m4 = mat4[4];
+  var m8 = mat4[8];
+  var m12 = mat4[12];
+  mat4[0] = _src[0] * m0 + _src[1] * m4 + _src[2] * m8 + _src[3] * m12;
+  mat4[4] = _src[4] * m0 + _src[5] * m4 + _src[6] * m8 + _src[7] * m12;
+  mat4[8] = _src[8] * m0 + _src[9] * m4 + _src[10] * m8 + _src[11] * m12;
+  mat4[12] = _src[12] * m0 + _src[13] * m4 + _src[14] * m8 + _src[15] * m12;
+
+  var m1 = mat4[1];
+  var m5 = mat4[5];
+  var m9 = mat4[9];
+  var m13 = mat4[13];
+  mat4[1] = _src[0] * m1 + _src[1] * m5 + _src[2] * m9 + _src[3] * m13;
+  mat4[5] = _src[4] * m1 + _src[5] * m5 + _src[6] * m9 + _src[7] * m13;
+  mat4[9] = _src[8] * m1 + _src[9] * m5 + _src[10] * m9 + _src[11] * m13;
+  mat4[13] = _src[12] * m1 + _src[13] * m5 + _src[14] * m9 + _src[15] * m13;
+
+  var m2 = mat4[2];
+  var m6 = mat4[6];
+  var m10 = mat4[10];
+  var m14 = mat4[14];
+  mat4[2] = _src[0] * m2 + _src[1] * m6 + _src[2] * m10 + _src[3] * m14;
+  mat4[6] = _src[4] * m2 + _src[5] * m6 + _src[6] * m10 + _src[7] * m14;
+  mat4[10] = _src[8] * m2 + _src[9] * m6 + _src[10] * m10 + _src[11] * m14;
+  mat4[14] = _src[12] * m2 + _src[13] * m6 + _src[14] * m10 + _src[15] * m14;
+
+  var m3 = mat4[3];
+  var m7 = mat4[7];
+  var m11 = mat4[11];
+  var m15 = mat4[15];
+  mat4[3] = _src[0] * m3 + _src[1] * m7 + _src[2] * m11 + _src[3] * m15;
+  mat4[7] = _src[4] * m3 + _src[5] * m7 + _src[6] * m11 + _src[7] * m15;
+  mat4[11] = _src[8] * m3 + _src[9] * m7 + _src[10] * m11 + _src[11] * m15;
+  mat4[15] = _src[12] * m3 + _src[13] * m7 + _src[14] * m11 + _src[15] * m15;
 
   return this;
 };

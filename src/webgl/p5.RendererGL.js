@@ -73,12 +73,20 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   // lights
 
+  this._enableLighting = false;
+
   this.ambientLightColors = [];
   this.directionalLightDirections = [];
   this.directionalLightColors = [];
 
   this.pointLightPositions = [];
   this.pointLightColors = [];
+
+  this.curFillColor = [1, 1, 1, 1];
+  this.curStrokeColor = [0, 0, 0, 1];
+
+  this._useSpecularMaterial = false;
+  this._useNormalMaterial = false;
 
   /**
    * model view, projection, & normal
@@ -102,32 +110,28 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultColorShader = undefined;
   this._defaultPointShader = undefined;
 
-  this.curFillShader = undefined;
-  this.curStrokeShader = undefined;
-  this.curPointShader = undefined;
-
-  this._useColorShader();
-  this.setStrokeShader(this._getLineShader());
-  this._usePointShader();
-
   this._pointVertexBuffer = this.GL.createBuffer();
+
+  this.userFillShader = undefined;
+  this.userStrokeShader = undefined;
+  this.userPointShader = undefined;
 
   //Imediate Mode
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
 
-  // note: must call fill() and stroke () AFTER
-  // default shader has been set.
-  this.fill(255, 255, 255, 255);
-  //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0; //default point size
-  this.strokeWeight(1);
-  this.stroke(0, 0, 0);
+  this.curStrokeWeight = 1;
+
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
   this.textureImage = undefined;
   this.textureMode = constants.IMAGE;
+  // default wrap settings
+  this.textureWrapX = constants.CLAMP;
+  this.textureWrapY = constants.CLAMP;
+  this._tex = null;
   this._curveTightness = 6;
 
   // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
@@ -143,6 +147,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._tessy = this._initTessy();
 
   this.fontInfos = {};
+
   return this;
 };
 
@@ -365,6 +370,9 @@ p5.prototype.setAttributes = function(key, value) {
   this.push();
   this._renderer._resetContext(attr);
   this.pop();
+  if (this._renderer._curCamera) {
+    this._renderer._curCamera._renderer = this._renderer;
+  }
 };
 
 /**
@@ -401,6 +409,8 @@ p5.RendererGL.prototype._update = function() {
 
   this.pointLightPositions.length = 0;
   this.pointLightColors.length = 0;
+
+  this._enableLighting = false;
 };
 
 /**
@@ -416,11 +426,6 @@ p5.RendererGL.prototype.background = function() {
   this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
-
-//@TODO implement this
-// p5.RendererGL.prototype.clear = function() {
-//@TODO
-// };
 
 //////////////////////////////////////////////
 // COLOR
@@ -462,14 +467,9 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curFillColor = color._array;
-
-  if (this.isImmediateDrawing) {
-    this.setFillShader(this._getImmediateModeShader());
-  } else {
-    this.setFillShader(this._getColorShader());
-  }
   this.drawMode = constants.FILL;
-  this.curFillShader.setUniform('uMaterialColor', this.curFillColor);
+  this._useNormalMaterial = false;
+  this._tex = null;
 };
 
 /**
@@ -509,8 +509,11 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   arguments[3] = 255;
   var color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
-  this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-  this.curPointShader.setUniform('uMaterialColor', color._array);
+};
+
+p5.RendererGL.prototype.strokeCap = function(cap) {
+  // @TODO : to be implemented
+  console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
 /**
@@ -557,8 +560,6 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
   if (this.curStrokeWeight !== w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
-    this.curStrokeShader.setUniform('uStrokeWeight', w);
-    this.curPointShader.setUniform('uPointSize', w);
   }
 };
 
@@ -587,8 +588,8 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
  *                                    [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
-  var ctx = this._pInst || this;
-  var pd = ctx._pixelDensity;
+  var pixelsState = this._pixelsState;
+  var pd = pixelsState._pixelDensity;
 
   var sx = x * pd;
   var sy = y * pd;
@@ -608,8 +609,8 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
   } else {
     //auto constrain the width and height to
     //dimensions of the source image
-    var dw = Math.min(w, ctx.width);
-    var dh = Math.min(h, ctx.height);
+    var dw = Math.min(w, pixelsState.width);
+    var dh = Math.min(h, pixelsState.height);
     var sw = dw * pd;
     var sh = dh * pd;
 
@@ -662,7 +663,7 @@ p5.RendererGL.prototype.loadPixels = function() {
     this.GL.UNSIGNED_BYTE,
     this.pixels
   );
-  this._pInst._setProperty('pixels', this.pixels);
+  this._pixelsState._setProperty('pixels', this.pixels);
 };
 
 //////////////////////////////////////////////
@@ -717,6 +718,20 @@ p5.RendererGL.prototype.clear = function() {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
+p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
+  if (arguments.length === 16) {
+    p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
+  } else {
+    // prettier-ignore
+    this.uMVMatrix.apply([
+      a, b, 0, 0,
+      c, d, 0, 0,
+      0, 0, 1, 0,
+      e, f, 0, 1,
+    ]);
+  }
+};
+
 /**
  * [translate description]
  * @private
@@ -753,7 +768,6 @@ p5.RendererGL.prototype.rotate = function(rad, axis) {
   if (typeof axis === 'undefined') {
     return this.rotateZ(rad);
   }
-  arguments[0] = this._pInst._fromRadians(rad);
   p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
   return this;
 };
@@ -788,6 +802,30 @@ p5.RendererGL.prototype.push = function() {
   // this preserves any references stored using 'createCamera'
   this._curCamera = this._curCamera.copy();
 
+  properties.ambientLightColors = this.ambientLightColors.slice();
+
+  properties.directionalLightDirections = this.directionalLightDirections.slice();
+  properties.directionalLightColors = this.directionalLightColors.slice();
+
+  properties.pointLightPositions = this.pointLightPositions.slice();
+  properties.pointLightColors = this.pointLightColors.slice();
+
+  properties.userFillShader = this.userFillShader;
+  properties.userStrokeShader = this.userStrokeShader;
+  properties.userPointShader = this.userPointShader;
+
+  properties.pointSize = this.pointSize;
+  properties.curStrokeWeight = this.curStrokeWeight;
+  properties.curStrokeColor = this.curStrokeColor;
+  properties.curFillColor = this.curFillColor;
+
+  properties._useSpecularMaterial = this._useSpecularMaterial;
+
+  properties._enableLighting = this._enableLighting;
+  properties._useNormalMaterial = this._useNormalMaterial;
+  properties._tex = this._tex;
+  properties.drawMode = this.drawMode;
+
   return style;
 };
 
@@ -801,112 +839,82 @@ p5.RendererGL.prototype.resetMatrix = function() {
 //////////////////////////////////////////////
 
 /*
- * Initializes and uses the specified shader, then returns
- * that shader. Note: initialization and resetting the program
- * is only used if needed (say, if a new value is provided)
- * so it is safe to call this method with the same shader multiple
- * times without a signficant performance hit).
- *
- * @method setFillShader
- * @param {p5.Shader} [s] a p5.Shader object
- * @return {p5.Shader} the current, updated fill shader
- */
-p5.RendererGL.prototype.setFillShader = function(s) {
-  if (this.curFillShader !== s) {
-    // only do setup etc. if shader is actually new.
-    this.curFillShader = s;
-
-    // safe to do this multiple times;
-    // init() will bail early if has already been run.
-    this.curFillShader.init();
-    //this.curFillShader.useProgram();
-  }
-  // always return this.curFillShader, even if no change was made.
-  return this.curFillShader;
-};
-
-p5.RendererGL.prototype.setPointShader = function(s) {
-  if (this.curPointShader !== s) {
-    // only do setup etc. if shader is actually new.
-    this.curPointShader = s;
-
-    // safe to do this multiple times;
-    // init() will bail early if has already been run.
-    this.curPointShader.init();
-  }
-  return this.curPointShader;
-};
-
-/*
- * @method setStrokeShader
- * @param {p5.Shader} [s] a p5.Shader object
- * @return {p5.Shader} the current, updated stroke shader
- */
-p5.RendererGL.prototype.setStrokeShader = function(s) {
-  if (this.curStrokeShader !== s) {
-    // only do setup etc. if shader is actually new.
-    this.curStrokeShader = s;
-    // safe to do this multiple times;
-    // init() will bail early if has already been run.
-    this.curStrokeShader.init();
-    //this.curStrokeShader.useProgram();
-  }
-  // always return this.curLineShader, even if no change was made.
-  return this.curStrokeShader;
-};
-
-/*
  * shaders are created and cached on a per-renderer basis,
  * on the grounds that each renderer will have its own gl context
  * and the shader must be valid in that context.
- *
- *
  */
 
-p5.RendererGL.prototype._useLightShader = function() {
-  if (!this.curFillShader || !this.curFillShader.isLightShader()) {
-    this.setFillShader(this._getLightShader());
+p5.RendererGL.prototype._getImmediateStrokeShader = function() {
+  // select the stroke shader to use
+  var stroke = this.userStrokeShader;
+  if (!stroke || !stroke.isStrokeShader()) {
+    return this._getLineShader();
   }
-  return this.curFillShader;
+  return stroke;
 };
 
-p5.RendererGL.prototype._useColorShader = function() {
-  // looking at the code within the glsl files, I'm not really
-  // sure why these are two different shaders. but, they are,
-  // and if we're drawing in retain mode but the shader is the
-  // immediate mode one, we need to switch.
+p5.RendererGL.prototype._getRetainedStrokeShader =
+  p5.RendererGL.prototype._getImmediateStrokeShader;
 
-  // TODO: what if curFillShader is _any_ other shader?
-  if (
-    !this.curFillShader ||
-    this.curFillShader === this._defaultImmediateModeShader
-  ) {
-    // there are different immediate mode and retain mode color shaders.
-    // if we're using the immediate mode one, we need to switch to
-    // one that works for retain mode.
-    this.setFillShader(this._getColorShader());
+/*
+ * selects which fill shader should be used based on renderer state,
+ * for use with begin/endShape and immediate vertex mode.
+ */
+p5.RendererGL.prototype._getImmediateFillShader = function() {
+  if (this._useNormalMaterial) {
+    return this._getNormalShader();
   }
-  return this.curFillShader;
+
+  var fill = this.userFillShader;
+  if (this._enableLighting) {
+    if (!fill || !fill.isLightShader()) {
+      return this._getLightShader();
+    }
+  } else if (this._tex) {
+    if (!fill || !fill.isTextureShader()) {
+      return this._getLightShader();
+    }
+  } else if (!fill /*|| !fill.isColorShader()*/) {
+    return this._getImmediateModeShader();
+  }
+  return fill;
 };
 
-p5.RendererGL.prototype._usePointShader = function() {
-  if (!this.curPointShader) {
-    this.setPointShader(this._getPointShader());
+/*
+ * selects which fill shader should be used based on renderer state
+ * for retained mode.
+ */
+p5.RendererGL.prototype._getRetainedFillShader = function() {
+  if (this._useNormalMaterial) {
+    return this._getNormalShader();
   }
-  return this.curPointShader;
+
+  var fill = this.userFillShader;
+  if (this._enableLighting) {
+    if (!fill || !fill.isLightShader()) {
+      return this._getLightShader();
+    }
+  } else if (this._tex) {
+    if (!fill || !fill.isTextureShader()) {
+      return this._getLightShader();
+    }
+  } else if (!fill /* || !fill.isColorShader()*/) {
+    return this._getColorShader();
+  }
+  return fill;
 };
 
-p5.RendererGL.prototype._useImmediateModeShader = function() {
-  // TODO: what if curFillShader is _any_ other shader?
-  if (!this.curFillShader || this.curFillShader === this._defaultColorShader) {
-    // this is the fill/stroke shader for retain mode.
-    // must switch to immediate mode shader before drawing!
-    this.setFillShader(this._getImmediateModeShader());
-    // note that if we're using the texture shader...
-    // this shouldn't change. :)
+p5.RendererGL.prototype._getImmediatePointShader = function() {
+  // select the point shader to use
+  var point = this.userPointShader;
+  if (!point || !point.isPointShader()) {
+    return this._getPointShader();
   }
-  return this.curFillShader;
+  return point;
 };
+
+p5.RendererGL.prototype._getRetainedLineShader =
+  p5.RendererGL.prototype._getImmediateLineShader;
 
 p5.RendererGL.prototype._getLightShader = function() {
   if (!this._defaultLightShader) {
@@ -924,7 +932,7 @@ p5.RendererGL.prototype._getLightShader = function() {
       );
     }
   }
-  //this.drawMode = constants.FILL;
+
   return this._defaultLightShader;
 };
 
@@ -936,7 +944,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function() {
       defaultShaders.vertexColorFrag
     );
   }
-  //this.drawMode = constants.FILL;
+
   return this._defaultImmediateModeShader;
 };
 
@@ -948,7 +956,7 @@ p5.RendererGL.prototype._getNormalShader = function() {
       defaultShaders.normalFrag
     );
   }
-  //this.drawMode = constants.FILL;
+
   return this._defaultNormalShader;
 };
 
@@ -960,7 +968,7 @@ p5.RendererGL.prototype._getColorShader = function() {
       defaultShaders.basicFrag
     );
   }
-  //this.drawMode = constants.FILL;
+
   return this._defaultColorShader;
 };
 
@@ -983,7 +991,7 @@ p5.RendererGL.prototype._getLineShader = function() {
       defaultShaders.lineFrag
     );
   }
-  //this.drawMode = constants.STROKE;
+
   return this._defaultLineShader;
 };
 
@@ -1017,13 +1025,61 @@ p5.RendererGL.prototype.getTexture = function(img) {
   }
 
   var tex = new p5.Texture(this, img);
-  this.textures.push(tex);
+  textures.push(tex);
   return tex;
 };
 
-//Binds a buffer to the drawing context
-//when passed more than two arguments it also updates or initializes
-//the data associated with the buffer
+p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
+  strokeShader.bindShader();
+
+  // set the uniform values
+  strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+  strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+};
+
+p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
+  fillShader.bindShader();
+
+  // TODO: optimize
+  fillShader.setUniform('uMaterialColor', this.curFillColor);
+  fillShader.setUniform('isTexture', !!this._tex);
+  if (this._tex) {
+    fillShader.setUniform('uSampler', this._tex);
+  }
+  fillShader.setUniform('uSpecular', this._useSpecularMaterial);
+
+  fillShader.setUniform('uUseLighting', this._enableLighting);
+
+  var pointLightCount = this.pointLightColors.length / 3;
+  fillShader.setUniform('uPointLightCount', pointLightCount);
+  fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
+  fillShader.setUniform('uPointLightColor', this.pointLightColors);
+
+  var directionalLightCount = this.directionalLightColors.length / 3;
+  fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
+  fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
+  fillShader.setUniform('uDirectionalColor', this.directionalLightColors);
+
+  // TODO: sum these here...
+  var ambientLightCount = this.ambientLightColors.length / 3;
+  fillShader.setUniform('uAmbientLightCount', ambientLightCount);
+  fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+};
+
+p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
+  pointShader.bindShader();
+
+  // set the uniform values
+  pointShader.setUniform('uMaterialColor', this.curStrokeColor);
+  // @todo is there an instance where this isn't stroke weight?
+  // should be they be same var?
+  pointShader.setUniform('uPointSize', this.pointSize);
+};
+
+/* Binds a buffer to the drawing context
+ * when passed more than two arguments it also updates or initializes
+ * the data associated with the buffer
+ */
 p5.RendererGL.prototype._bindBuffer = function(
   buffer,
   target,

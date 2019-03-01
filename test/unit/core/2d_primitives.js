@@ -251,4 +251,38 @@ suite('2D Primitives', function() {
       });
     });
   });
+  suite('p5.prototype.square', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.square);
+      assert.typeOf(myp5.square, 'function');
+    });
+    test('no friendly-err-msg, format I', function() {
+      assert.doesNotThrow(
+        function() {
+          myp5.square(0, 0, 100);
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+    test('no friendly-err-msg, format II', function() {
+      assert.doesNotThrow(
+        function() {
+          myp5.square(0, 0, 100, 100, Math.PI);
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+    test('missing param #2', function() {
+      assert.validationError(function() {
+        myp5.square(0, 0);
+      });
+    });
+    test('wrong param type at #1', function() {
+      assert.validationError(function() {
+        myp5.square(0, 'a', 100);
+      });
+    });
+  });
 });
