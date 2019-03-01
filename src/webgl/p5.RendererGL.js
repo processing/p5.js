@@ -360,7 +360,9 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
 p5.prototype.setAttributes = function(key, value) {
   if (!this._renderer.isP3D) {
     if (typeof value !== 'undefined') {
-      this._presetAttributes = {};
+      if (this._presetAttributes === null) {
+        this._presetAttributes = {};
+      }
       this._presetAttributes[key] = value;
     } else if (key instanceof Object) {
       this._presetAttributes = key;
