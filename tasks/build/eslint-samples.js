@@ -22,7 +22,7 @@ module.exports = grunt => {
         return true;
       }
 
-      var linter = require('../../utils/sample-linter.js');
+      const linter = require('../../utils/sample-linter.js');
       const result = linter.eslintFiles(opts, this.filesSrc);
       const report = result.report;
       const output = result.output;

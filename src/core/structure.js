@@ -76,6 +76,8 @@ p5.prototype.noLoop = function() {
  * within it. However, the <a href="#/p5/draw">draw()</a> loop may be stopped by calling <a href="#/p5/noLoop">noLoop()</a>.
  * In that case, the <a href="#/p5/draw">draw()</a> loop can be resumed with loop().
  *
+ * Avoid calling loop() from inside setup().
+ *
  * @method loop
  * @example
  * <div><code>

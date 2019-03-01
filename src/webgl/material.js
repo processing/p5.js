@@ -21,10 +21,15 @@ require('./p5.Texture');
  * if the parameters defined in the shader match the names.
  *
  * @method loadShader
- * @param {String} [vertFilename] path to file containing vertex shader
+ * @param {String} vertFilename path to file containing vertex shader
  * source code
- * @param {String} [fragFilename] path to file containing fragment shader
+ * @param {String} fragFilename path to file containing fragment shader
  * source code
+ * @param {function} [callback] callback to be executed after loadShader
+ * completes. On success, the Shader object is passed as the first argument.
+ * @param {function} [errorCallback] callback to be executed when an error
+ * occurs inside loadShader. On error, the error is passed as the first
+ * argument.
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
  *
@@ -54,28 +59,53 @@ require('./p5.Texture');
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.loadShader = function(vertFilename, fragFilename) {
+p5.prototype.loadShader = function(
+  vertFilename,
+  fragFilename,
+  callback,
+  errorCallback
+) {
   p5._validateParameters('loadShader', arguments);
+  if (!errorCallback) {
+    errorCallback = console.error;
+  }
+
   var loadedShader = new p5.Shader();
 
   var self = this;
   var loadedFrag = false;
   var loadedVert = false;
 
-  this.loadStrings(fragFilename, function(result) {
-    loadedShader._fragSrc = result.join('\n');
-    loadedFrag = true;
-    if (loadedVert) {
-      self._decrementPreload();
+  var onLoad = function() {
+    self._decrementPreload();
+    if (callback) {
+      callback(loadedShader);
     }
-  });
-  this.loadStrings(vertFilename, function(result) {
-    loadedShader._vertSrc = result.join('\n');
-    loadedVert = true;
-    if (loadedFrag) {
-      self._decrementPreload();
-    }
-  });
+  };
+
+  this.loadStrings(
+    vertFilename,
+    function(result) {
+      loadedShader._vertSrc = result.join('\n');
+      loadedVert = true;
+      if (loadedFrag) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
+
+  this.loadStrings(
+    fragFilename,
+    function(result) {
+      loadedShader._fragSrc = result.join('\n');
+      loadedFrag = true;
+      if (loadedVert) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
 
   return loadedShader;
 };
@@ -162,14 +192,20 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
+
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
+
   if (s.isStrokeShader()) {
-    this._renderer.setStrokeShader(s);
+    this._renderer.userStrokeShader = s;
   } else {
-    this._renderer.setFillShader(s);
+    this._renderer.userFillShader = s;
+    this._renderer._useNormalMaterial = false;
   }
+
+  s.init();
+
   return this;
 };
 
@@ -204,7 +240,7 @@ p5.prototype.resetShader = function() {
  * function draw() {
  *   background(200);
  *   normalMaterial();
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -217,8 +253,10 @@ p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
-  this._renderer.setFillShader(this._renderer._getNormalShader());
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = true;
   this._renderer.curFillColor = [1, 1, 1, 1];
+  this._renderer._setProperty('_doFill', true);
   this.noStroke();
   return this;
 };
@@ -257,10 +295,11 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
- *   pg.textSize(100);
+ *   pg.textSize(75);
  * }
  *
  * function draw() {
@@ -269,7 +308,9 @@ p5.prototype.normalMaterial = function() {
  *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
- *   plane(200);
+ *   rotateX(0.5);
+ *   noStroke();
+ *   plane(50);
  * }
  * </code>
  * </div>
@@ -280,7 +321,6 @@ p5.prototype.normalMaterial = function() {
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
- *   vid.loop();
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -290,7 +330,11 @@ p5.prototype.normalMaterial = function() {
  *   background(0);
  *   //pass video frame as texture
  *   texture(vid);
- *   plane(200);
+ *   rect(-40, -40, 80, 80);
+ * }
+ *
+ * function mousePressed() {
+ *   vid.loop();
  * }
  * </code>
  * </div>
@@ -304,13 +348,13 @@ p5.prototype.normalMaterial = function() {
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
+
   this._renderer.drawMode = constants.TEXTURE;
-  this._renderer.textureImage = tex;
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', tex);
-  this.noStroke();
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._tex = tex;
+  this._renderer._setProperty('_doFill', true);
+
   return this;
 };
 
@@ -394,6 +438,81 @@ p5.prototype.textureMode = function(mode) {
 };
 
 /**
+ * Sets the global texture wrapping mode. This controls how textures behave
+ * when their uv's go outside of the 0 - 1 range. There are three options:
+ * CLAMP, REPEAT, and MIRROR.
+ *
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ *
+ * REPEAT & MIRROR are only available if the texture
+ * is a power of two size (128, 256, 512, 1024, etc.).
+ *
+ * This method will affect all textures in your sketch until a subsequent
+ * textureWrap call is made.
+ *
+ * If only one argument is provided, it will be applied to both the
+ * horizontal and vertical axes.
+ * @method textureWrap
+ * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   textureWrap(MIRROR);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   let dX = mouseX / width;
+ *   let dY = mouseY / height;
+ *
+ *   let u = lerp(1.0, 2.0, dX);
+ *   let v = lerp(1.0, 2.0, dY);
+ *
+ *   scale(width / 2);
+ *
+ *   texture(img);
+ *
+ *   beginShape(TRIANGLES);
+ *   vertex(-1, -1, 0, 0, 0);
+ *   vertex(1, -1, 0, u, 0);
+ *   vertex(1, 1, 0, u, v);
+ *
+ *   vertex(1, 1, 0, u, v);
+ *   vertex(-1, 1, 0, 0, v);
+ *   vertex(-1, -1, 0, 0, 0);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * an image of the rocky mountains repeated in mirrored tiles
+ *
+ */
+p5.prototype.textureWrap = function(wrapX, wrapY) {
+  wrapY = wrapY || wrapX;
+
+  this._renderer.textureWrapX = wrapX;
+  this._renderer.textureWrapY = wrapY;
+
+  var textures = this._renderer.textures;
+  for (var i = 0; i < textures.length; i++) {
+    textures[i].setWrapMode(wrapX, wrapY);
+  }
+};
+
+/**
  * Ambient material for geometry with a given color. You can view all
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
@@ -412,10 +531,10 @@ p5.prototype.textureMode = function(mode) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
- *   ambientMaterial(250);
- *   sphere(50);
+ *   noStroke();
+ *   ambientLight(200);
+ *   ambientMaterial(70, 130, 230);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -432,13 +551,14 @@ p5.prototype.textureMode = function(mode) {
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -461,10 +581,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
+ *   noStroke();
+ *   ambientLight(50);
+ *   pointLight(250, 250, 250, 100, 100, 30);
  *   specularMaterial(250);
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -481,13 +602,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = true;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
   return this;
 };
 

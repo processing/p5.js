@@ -55,7 +55,7 @@ p5.prototype.getData = function (callback) {
   loadDataFromSpace(function (data) {
 
     // Loop through the properties in data.
-    for (var prop in data) {
+    for (let prop in data) {
       // Set the ret's properties to be the data's properties (cloning).
       // That is, update empty ret object with properties from received data.
       // You CANNOT overwrite/reassign ret with another object though.

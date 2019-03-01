@@ -30,6 +30,16 @@ function smokeTestMethods(data) {
   });
 }
 
+function cleanExamples(data) {
+  data.classitems.forEach(function(classitem) {
+    if (classitem.itemtype === 'method' && classitem.example) {
+      classitem.example = classitem.example.map(i =>
+        i.replace(/[^\n]*\/\/\s*prettier-ignore.*\r?\n/g, '')
+      );
+    }
+  });
+}
+
 function mergeOverloadedMethods(data) {
   var methodsByFullName = {};
   var paramsForOverloadedMethods = {};
@@ -248,6 +258,7 @@ module.exports = function(data, options) {
   renderDescriptionsAsMarkdown(data);
   mergeOverloadedMethods(data);
   smokeTestMethods(data);
+  cleanExamples(data);
 };
 
 module.exports.mergeOverloadedMethods = mergeOverloadedMethods;
