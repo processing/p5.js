@@ -139,16 +139,32 @@ Filters._createImageData = function(width, height) {
  * @param  {Object} filterParam  [description]
  */
 Filters.apply = function(canvas, func, filterParam) {
-  var ctx = canvas.getContext('2d');
-  var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var pixelsState = canvas.getContext('2d');
+  var imageData = pixelsState.getImageData(0, 0, canvas.width, canvas.height);
 
   //Filters can either return a new ImageData object, or just modify
   //the one they received.
   var newImageData = func(imageData, filterParam);
   if (newImageData instanceof ImageData) {
-    ctx.putImageData(newImageData, 0, 0, 0, 0, canvas.width, canvas.height);
+    pixelsState.putImageData(
+      newImageData,
+      0,
+      0,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
   } else {
-    ctx.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
+    pixelsState.putImageData(
+      imageData,
+      0,
+      0,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
   }
 };
 

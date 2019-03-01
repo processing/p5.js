@@ -25,7 +25,8 @@ var constants = require('../core/constants');
  * @example
  * <div>
  * <code>
- * //draw a plane with width 50 and height 50
+ * // draw a plane
+ * // with width 50 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -109,7 +110,8 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * //draw a spinning box with width, height and depth 200
+ * // draw a spinning box
+ * // with width, height and depth of 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -226,7 +228,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * // draw a sphere with radius 200
+ * // draw a sphere with radius 40
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -391,7 +393,8 @@ var _truncatedCone = function(
  * @example
  * <div>
  * <code>
- * //draw a spinning cylinder with radius 20 and height 50
+ * // draw a spinning cylinder
+ * // with radius 20 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -481,7 +484,8 @@ p5.prototype.cylinder = function(
  * @example
  * <div>
  * <code>
- * //draw a spinning cone with radius 40 and height 70
+ * // draw a spinning cone
+ * // with radius 40 and height 70
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -537,9 +541,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
 /**
  * Draw an ellipsoid with given radius
  * @method ellipsoid
- * @param  {Number} [radiusx]         xradius of circle
- * @param  {Number} [radiusy]         yradius of circle
- * @param  {Number} [radiusz]         zradius of circle
+ * @param  {Number} [radiusx]         x-radius of ellipsoid
+ * @param  {Number} [radiusy]         y-radius of ellipsoid
+ * @param  {Number} [radiusz]         z-radius of ellipsoid
  * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
@@ -552,14 +556,15 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid with radius 20, 30 and 40.
+ * // draw an ellipsoid
+ * // with radius 30, 40 and 40.
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
  *   background(200);
- *   ellipsoid(20, 30, 40);
+ *   ellipsoid(30, 40, 40);
  * }
  * </code>
  * </div>
@@ -639,7 +644,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * //draw a spinning torus with radius 200 and tube radius 60
+ * // draw a spinning torus
+ * // with ring radius 30 and tube radius 15
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -648,7 +654,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   torus(50, 15);
+ *   torus(30, 15);
  * }
  * </code>
  * </div>
@@ -757,15 +763,13 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </div>
  */
 p5.RendererGL.prototype.point = function(x, y, z) {
-  this._usePointShader();
-  this.curPointShader.bindShader();
   if (typeof z === 'undefined') {
     z = 0;
   }
+
   var _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
   this._drawPoints(_vertex, this._pointVertexBuffer);
-  this.curPointShader.unbindShader();
 
   return this;
 };

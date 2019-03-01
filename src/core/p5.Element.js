@@ -43,7 +43,7 @@ p5.Element = function(elt, pInst) {
    * @readOnly
    */
   this.elt = elt;
-  this._pInst = pInst;
+  this._pInst = this._pixelsState = pInst;
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;
@@ -123,6 +123,9 @@ p5.Element.prototype.parent = function(p) {
  *
  * Sets the ID of the element. If no ID argument is passed in, it instead
  * returns the current ID of the element.
+ * Note that only one element can have a particular id in a page.
+ * The <a href="#/p5.Element/class">.class()</a> function can be used
+ * to identify multiple elements with the same class name.
  *
  * @method id
  * @param  {String} id ID of the element
