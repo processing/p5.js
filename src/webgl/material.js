@@ -218,9 +218,7 @@ p5.prototype.shader = function(s) {
  * @chainable
  */
 p5.prototype.resetShader = function() {
-  this._renderer.curPointShader = this._renderer._defaultPointShader;
-  this._renderer.curStrokeShader = this._renderer._defaultLineShader;
-  this._renderer.curFillShader = null;
+  this._renderer.userFillShader = null;
   return this;
 };
 

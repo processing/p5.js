@@ -1,5 +1,5 @@
 var toonShader;
-var shaderEnabled=true;
+var shaderEnabled = true;
 
 function preload() {
   toonShader = loadShader('vert.glsl', 'frag.glsl');
@@ -19,15 +19,13 @@ function draw() {
   directionalLight(204, 204, 204, -dirX, -dirY, -1);
   ambientMaterial(0, 255, 255);
   sphere(120);
-  
 }
 
 function mouseClicked() {
   if (shaderEnabled) {
     shaderEnabled = false;
     resetShader();
-  } 
-  else {
+  } else {
     shaderEnabled = true;
     shader(toonShader);
   }
