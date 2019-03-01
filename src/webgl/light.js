@@ -285,7 +285,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * [lights description]
+ * Sets a default value for ambient and directional light
  * @method lights
  * @chainable
  */
