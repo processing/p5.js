@@ -599,15 +599,6 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * @method lights
- * @chainable
- */
-p5.prototype.lights = function() {
-  this._renderer.lights();
-  return this;
-};
-
-/**
  * @private blends colors according to color components.
  * If alpha value is less than 1, we need to enable blending
  * on our gl context.  Otherwise opaque objects need to a depthMask.

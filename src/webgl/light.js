@@ -284,4 +284,15 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   return this;
 };
 
+/**
+ * [lights description]
+ * @method lights
+ * @chainable
+ */
+p5.prototype.lights = function() {
+  this.ambientLight(128, 128, 128);
+  this.directionalLight(128, 128, 128, 0, 0, -1);
+  return this;
+};
+
 module.exports = p5;

@@ -666,17 +666,6 @@ p5.RendererGL.prototype.loadPixels = function() {
   this._pixelsState._setProperty('pixels', this.pixels);
 };
 
-/**
- * [lights description]
- * @method lights
- * @chainable
- */
-p5.RendererGL.prototype.lights = function() {
-  this.ambientLight(128, 128, 128);
-  this.directionalLight(128, 128, 128, 0, 0, -1);
-  return this;
-};
-
 //////////////////////////////////////////////
 // HASH | for geometry
 //////////////////////////////////////////////
