@@ -256,20 +256,11 @@ module.exports = function(grunt) {
 
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
-    uglify: {
-      options: {
-        compress: {
-          global_defs: {
-            IS_MINIFIED: true
-          }
-        },
-        banner:
-          '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
-      },
-      dist: {
+    terser: {
+      options: {},
+      dom: {
         files: {
-          'lib/p5.min.js': 'lib/p5.pre-min.js',
-          'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
+          'lib/addons/p5.dom.min.js': ['lib/addons/p5.dom.js']
         }
       }
     },
@@ -444,7 +435,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-terser');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
@@ -454,7 +445,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['build-p5', 'parcel-dom']);
+  grunt.registerTask('build', ['build-p5', 'terser:dom']);
   grunt.registerTask('build-p5', ['parcel', 'parcel:min']);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
