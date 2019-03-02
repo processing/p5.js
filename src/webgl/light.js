@@ -284,4 +284,35 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   return this;
 };
 
+/**
+ * Sets the default ambient and directional light. The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.
+ * @method lights
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   lights();
+ *   rotateX(millis() / 1000);
+ *   rotateY(millis() / 1000);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the light is partially ambient and partially directional
+ */
+p5.prototype.lights = function() {
+  this._assert3d('lights');
+  this.ambientLight(128, 128, 128);
+  this.directionalLight(128, 128, 128, 0, 0, -1);
+  return this;
+};
+
 module.exports = p5;

@@ -94,7 +94,7 @@ suite('Rendering', function() {
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'orbitControl',
-    'ambientLight', 'directionalLight', 'pointLight',
+    'ambientLight', 'directionalLight', 'pointLight', 'lights',
     'model',
     'createShader', 'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial',
