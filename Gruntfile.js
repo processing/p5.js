@@ -454,7 +454,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['parcel', 'parcel:min']);
+  grunt.registerTask('build', ['build-p5', 'parcel-dom']);
+  grunt.registerTask('build-p5', ['parcel', 'parcel:min']);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
