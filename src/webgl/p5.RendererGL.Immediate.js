@@ -103,12 +103,12 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   if (this.textureMode === constants.IMAGE) {
-    if (this.textureImage !== undefined) {
-      if (this.textureImage.width > 0 && this.textureImage.height > 0) {
-        u /= this.textureImage.width;
-        v /= this.textureImage.height;
+    if (this._tex !== null) {
+      if (this._tex.width > 0 && this._tex.height > 0) {
+        u /= this._tex.width;
+        v /= this._tex.height;
       }
-    } else if (this.textureImage === undefined && arguments.length >= 4) {
+    } else if (this._tex === null && arguments.length >= 4) {
       // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +

@@ -8,15 +8,19 @@ suite('p5.Texture', function() {
     return;
   }
 
-  setup(function() {
+  setup(function(done) {
     myp5 = new p5(function(p) {
-      p.setup = function() {
-        p.createCanvas(100, 100, p.WEBGL);
-        texImg1 = p.loadImage('unit/assets/nyan_cat.gif');
+      p.preload = function() {
         texImg2 = p.loadImage('unit/assets/target.gif');
-        p.texture(texImg1);
+
         // texture object isn't created until it's used for something:
         //p.box(70, 70, 70);
+      };
+      p.setup = function() {
+        p.createCanvas(100, 100, p.WEBGL);
+        texImg1 = p.createGraphics(2, 2, p.WEBGL);
+        p.texture(texImg1);
+        done();
       };
     });
   });
