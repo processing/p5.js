@@ -306,7 +306,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * </div>
  *
  * @alt
- * light is different depending on the position of the object
+ * the light is partially ambient and partially directional
  */
 p5.prototype.lights = function() {
   this._assert3d('lights');
