@@ -49,6 +49,8 @@ Developers, check out the [developer docs](https://github.com/processing/p5.js/b
 
 ## Contributors
 
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
 | [<img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;"/><br /><sub><b>Lauren McCarthy</b></sub>](http://lauren-mccarthy.com)<br /> | [<img src="https://avatars2.githubusercontent.com/u/504124?v=4" width="100px;"/><br /><sub><b>Jason Sigal</b></sub>](http://jasonsigal.cc)<br /> | [<img src="https://avatars3.githubusercontent.com/u/1695075?v=4" width="100px;"/><br /><sub><b>Karen</b></sub>](https://twitter.com/KarenPunkPunk)<br /> | [<img src="https://avatars1.githubusercontent.com/u/699840?v=4" width="100px;"/><br /><sub><b>Evelyn Eastmond</b></sub>](http://www.evelyneastmond.com)<br /> | [<img src="https://avatars0.githubusercontent.com/u/191758?v=4" width="100px;"/><br /><sub><b>Daniel Shiffman</b></sub>](http://www.shiffman.net)<br /> | [<img src="https://avatars2.githubusercontent.com/u/677774?v=4" width="100px;"/><br /><sub><b>Casey Reas</b></sub>](http://reas.com)<br /> | [<img src="https://avatars1.githubusercontent.com/u/1623101?v=4" width="100px;"/><br /><sub><b>Ben Fry</b></sub>](http://fathom.info)<br /> |
@@ -82,5 +84,3 @@ Developers, check out the [developer docs](https://github.com/processing/p5.js/b
 | [<img src="https://avatars0.githubusercontent.com/u/7820411?v=4" width="100px;"/><br /><sub><b>Katsuya Endoh</b></sub>](https://enkatsu.org)<br /> |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
-
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
