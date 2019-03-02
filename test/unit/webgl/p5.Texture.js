@@ -31,7 +31,6 @@ suite('p5.Texture', function() {
 
   var testTextureSet = function(src) {
     test('Light shader set after texture()', function() {
-      console.log('1', texImg1, texImg2);
       var lightShader = myp5._renderer._getLightShader();
       var selectedShader = myp5._renderer._getRetainedFillShader();
       assert(
@@ -106,16 +105,8 @@ suite('p5.Texture', function() {
     });
     test('Set global wrap mode to repeat', function() {
       myp5.textureWrap(myp5.REPEAT);
-      //      console.log('myp5r;', myp5.width);
       var tex1 = myp5._renderer.getTexture(texImg1);
       var tex2 = myp5._renderer.getTexture(texImg2);
-      // //    console.log(
-      //       'myp5r',
-      //       tex1.glWrapS,
-      //       tex1.glWrapT,
-      //       tex2.glWrapS,
-      //       tex2.glWrapT
-      //     );
       assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.REPEAT);
       assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.REPEAT);
       assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.REPEAT);
@@ -123,16 +114,8 @@ suite('p5.Texture', function() {
     });
     test('Set global wrap mode to mirror', function() {
       myp5.textureWrap(myp5.MIRROR);
-      //console.log('myp5m;', myp5.width);
       var tex1 = myp5._renderer.getTexture(texImg1);
       var tex2 = myp5._renderer.getTexture(texImg2);
-      // console.log(
-      //   'myp5t',
-      //   tex1.glWrapS,
-      //   tex1.glWrapT,
-      //   tex2.glWrapS,
-      //   tex2.glWrapT
-      // );
       assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
