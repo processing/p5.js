@@ -296,7 +296,7 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   };
 
   var widthPowerOfTwo = isPowerOfTwo(this.width);
-  var heightPowerOfTwo = isPowerOfTwo(this.width);
+  var heightPowerOfTwo = isPowerOfTwo(this.height);
 
   if (wrapX === constants.REPEAT) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
