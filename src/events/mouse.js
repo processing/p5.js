@@ -149,6 +149,8 @@ p5.prototype.pmouseY = 0;
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
+ *   const body = document.getElementsByTagName('body')[0];
+ *   myCanvas.parent(body);
  * }
  *
  * function draw() {
@@ -156,7 +158,7 @@ p5.prototype.pmouseY = 0;
  *   fill(0);
  *
  *   //move the canvas to the horizontal mouse position
- *   //rela                    tive to the window
+ *   //relative to the window
  *   myCanvas.position(winMouseX + 1, windowHeight / 2);
  *
  *   //the y of the square is relative to the canvas
@@ -186,6 +188,8 @@ p5.prototype.winMouseX = 0;
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
+ *   const body = document.getElementsByTagName('body')[0];
+ *   myCanvas.parent(body);
  * }
  *
  * function draw() {
@@ -193,7 +197,7 @@ p5.prototype.winMouseX = 0;
  *   fill(0);
  *
  *   //move the canvas to the vertical mouse position
- *   //rel                    ative to the window
+ *   //relative to the window
  *   myCanvas.position(windowWidth / 2, winMouseY + 1);
  *
  *   //the x of the square is relative to the canvas

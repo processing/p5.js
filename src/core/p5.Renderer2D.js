@@ -1139,16 +1139,6 @@ p5.Renderer2D.prototype.scale = function(x, y) {
   return this;
 };
 
-p5.Renderer2D.prototype.shearX = function(rad) {
-  this.drawingContext.transform(1, 0, Math.tan(rad), 1, 0, 0);
-  return this;
-};
-
-p5.Renderer2D.prototype.shearY = function(rad) {
-  this.drawingContext.transform(1, Math.tan(rad), 0, 1, 0, 0);
-  return this;
-};
-
 p5.Renderer2D.prototype.translate = function(x, y) {
   // support passing a vector as the 1st parameter
   if (x instanceof p5.Vector) {

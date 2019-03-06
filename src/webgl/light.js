@@ -33,7 +33,7 @@ var p5 = require('../core/main');
  *   ambientLight(150);
  *   ambientMaterial(250);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -73,27 +73,13 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
   p5._validateParameters('ambientLight', arguments);
   var color = this.color.apply(this, arguments);
 
-  var shader = this._renderer._useLightShader();
-
-  //@todo this is a bit icky. array uniforms have
-  //to be multiples of the type 3(rgb) in this case.
-  //a preallocated Float32Array(24) that we copy into
-  //would be better
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-
   this._renderer.ambientLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uAmbientColor', this._renderer.ambientLightColors);
 
-  shader.setUniform(
-    'uAmbientLightCount',
-    this._renderer.ambientLightColors.length / 3
-  );
+  this._renderer._enableLighting = true;
 
   return this;
 };
@@ -118,10 +104,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *   //move your mouse to change light direction
  *   let dirX = (mouseX / width - 0.5) * 2;
  *   let dirY = (mouseY / height - 0.5) * 2;
- *   directionalLight(250, 250, 250, -dirX, -dirY, 0.25);
- *   ambientMaterial(250);
+ *   directionalLight(250, 250, 250, -dirX, -dirY, -1);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -161,7 +146,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
-  var shader = this._renderer._useLightShader();
 
   //@TODO: check parameters number
   var color;
@@ -182,29 +166,18 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
     _y = v.y;
     _z = v.z;
   }
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
 
   // normalize direction
   var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
   this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
-  shader.setUniform(
-    'uLightingDirection',
-    this._renderer.directionalLightDirections
-  );
 
   this._renderer.directionalLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uDirectionalColor', this._renderer.directionalLightColors);
 
-  shader.setUniform(
-    'uDirectionalLightCount',
-    this._renderer.directionalLightColors.length / 3
-  );
+  this._renderer._enableLighting = true;
 
   return this;
 };
@@ -239,9 +212,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  *   //                |            |
  *   // -width/2,height/2--------width/2,height/2
  *   pointLight(250, 250, 250, locX, locY, 50);
- *   ambientMaterial(250);
  *   noStroke();
- *   sphere(25);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -279,6 +251,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
+
   //@TODO: check parameters number
   var color;
   if (v1 instanceof p5.Color) {
@@ -299,26 +272,46 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     _z = v.z;
   }
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-
   this._renderer.pointLightPositions.push(_x, _y, _z);
-  shader.setUniform('uPointLightLocation', this._renderer.pointLightPositions);
-
   this._renderer.pointLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uPointLightColor', this._renderer.pointLightColors);
 
-  shader.setUniform(
-    'uPointLightCount',
-    this._renderer.pointLightColors.length / 3
-  );
+  this._renderer._enableLighting = true;
 
+  return this;
+};
+
+/**
+ * Sets the default ambient and directional light. The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.
+ * @method lights
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   lights();
+ *   rotateX(millis() / 1000);
+ *   rotateY(millis() / 1000);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the light is partially ambient and partially directional
+ */
+p5.prototype.lights = function() {
+  this._assert3d('lights');
+  this.ambientLight(128, 128, 128);
+  this.directionalLight(128, 128, 128, 0, 0, -1);
   return this;
 };
 

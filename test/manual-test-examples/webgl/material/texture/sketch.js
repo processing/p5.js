@@ -24,7 +24,6 @@ function setup() {
 
 function draw() {
   background(255, 255, 255, 255);
-  translate(0, 0, 400);
   translate(-200, 0, 0);
   push();
   rotate(theta * mouseX * 0.001, [1, 1, 1]);
@@ -33,7 +32,7 @@ function draw() {
   // texture(vid);
   texture(img);
   // normalMaterial();
-  sphere(80);
+  sphere();
   pop();
   translate(150, 0, 0);
   push();
