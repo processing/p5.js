@@ -393,6 +393,19 @@ module.exports = function(grunt) {
           './docs/reference/data.min.json': './docs/reference/data.json'
         }
       }
+    },
+    usebanner: {
+      p5: {
+        options: {
+          position: 'top',
+          banner:
+            '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ ',
+          linebreak: true
+        },
+        files: {
+          src: ['lib/p5.js', 'lib/p5.min.js', 'lib/addons/p5.dom.min.js']
+        }
+      }
     }
   };
 
@@ -443,9 +456,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-banner');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['build-p5', 'terser:dom']);
+  grunt.registerTask('build', ['build-p5', 'terser:dom', 'usebanner']);
   grunt.registerTask('build-p5', ['parcel', 'parcel:min']);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
