@@ -225,13 +225,7 @@ module.exports = function(grunt) {
           'src/**/*.frag',
           'src/**/*.vert'
         ],
-        tasks: [
-          'build-p5',
-          'terser:dom',
-          'yuidoc:prod',
-          'clean:reference',
-          'minjson'
-        ],
+        tasks: ['build', 'yui'],
         options: {
           livereload: true
         }
