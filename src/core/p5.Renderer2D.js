@@ -1004,26 +1004,12 @@ p5.Renderer2D.prototype.noSmooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = false;
   }
-  //So that attributes can be adjusted even when
-  //current renderer isn't 3D
-  if (this._pInst._presetAttributes === null) {
-    this._pInst._presetAttributes = { antialias: false };
-  } else {
-    this._pInst._presetAttributes.antialias = false;
-  }
   return this;
 };
 
 p5.Renderer2D.prototype.smooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = true;
-  }
-  //So that attributes can be adjusted even when
-  //current renderer isn't 3D
-  if (this._pInst._presetAttributes === null) {
-    this._pInst._presetAttributes = { antialias: true };
-  } else {
-    this._pInst._presetAttributes.antialias = true;
   }
   return this;
 };

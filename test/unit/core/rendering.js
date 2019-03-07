@@ -91,17 +91,17 @@ suite('Rendering', function() {
   });
 
   suite('p5.prototype.setAttributes', function() {
-    test('_presetAttributes should be null at start', function() {
-      assert.deepEqual(myp5._presetAttributes, null);
+    test('_glAttributes should be null at start', function() {
+      assert.deepEqual(myp5._glAttributes, null);
     });
-    test('_presetAttributes should modify with setAttributes', function() {
+    test('_glAttributes should modify with setAttributes', function() {
       myp5.setAttributes({ antialias: false, perPixelLighting: true });
-      assert.deepEqual(myp5._presetAttributes.antialias, false);
-      assert.deepEqual(myp5._presetAttributes.perPixelLighting, true);
+      assert.deepEqual(myp5._glAttributes.antialias, false);
+      assert.deepEqual(myp5._glAttributes.perPixelLighting, true);
     });
-    test('_presetAttributes.antialias modify with smooth()', function() {
+    test('_glAttributes.antialias modify with smooth()', function() {
       myp5.smooth();
-      assert.deepEqual(myp5._presetAttributes.antialias, true);
+      assert.deepEqual(myp5._glAttributes.antialias, true);
     });
   });
 

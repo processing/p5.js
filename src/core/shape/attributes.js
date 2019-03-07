@@ -106,7 +106,10 @@ p5.prototype.ellipseMode = function(m) {
  *
  */
 p5.prototype.noSmooth = function() {
-  this._renderer.noSmooth();
+  this.setAttributes('antialias', false);
+  if (!this._renderer.isP3D) {
+    this._renderer.noSmooth();
+  }
   return this;
 };
 
@@ -206,7 +209,10 @@ p5.prototype.rectMode = function(m) {
  *
  */
 p5.prototype.smooth = function() {
-  this._renderer.smooth();
+  this.setAttributes('antialias', true);
+  if (!this._renderer.isP3D) {
+    this._renderer.smooth();
+  }
   return this;
 };
 
