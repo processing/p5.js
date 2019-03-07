@@ -194,7 +194,7 @@ module.exports = function(grunt) {
     watch: {
       quick: {
         files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
-        tasks: ['browserify'],
+        tasks: ['build'],
         options: {
           livereload: true
         }
@@ -226,12 +226,11 @@ module.exports = function(grunt) {
           'src/**/*.vert'
         ],
         tasks: [
-          'browserify',
-          'browserify:min',
+          'build-p5',
+          'terser:dom',
           'yuidoc:prod',
           'clean:reference',
-          'minjson',
-          'uglify'
+          'minjson'
         ],
         options: {
           livereload: true
@@ -254,8 +253,7 @@ module.exports = function(grunt) {
 
     mochaChrome: mochaConfig,
 
-    // This minifies the javascript into a single file and adds a banner to the
-    // front of the file.
+    // This minifies the p5.Dom javascript file
     terser: {
       options: {},
       dom: {
@@ -427,7 +425,7 @@ module.exports = function(grunt) {
   grunt.initConfig(gruntConfig);
 
   // Load build tasks.
-  // This contains the complete build task ("browserify")
+  // This contains the default build task ("parcel")
   // and the task to generate user select modules of p5
   // ("combineModules") which can be invoked directly by
   // `grunt combineModules:module_1:module_2` where core
