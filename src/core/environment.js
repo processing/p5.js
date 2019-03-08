@@ -35,7 +35,7 @@ var _windowPrint = window.print;
  *                       Array to print
  * @example
  * <div><code class='norender'>
- * var x = 10;
+ * let x = 10;
  * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
@@ -203,9 +203,9 @@ p5.prototype.cursor = function(type, x, y) {
  * @example
  *
  * <div><code>
- * var rectX = 0;
- * var fr = 30; //starting FPS
- * var clr;
+ * let rectX = 0;
+ * let fr = 30; //starting FPS
+ * let clr;
  *
  * function setup() {
  *   background(200);
@@ -471,7 +471,7 @@ p5.prototype.height = 0;
  * }
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
- *     var fs = fullscreen();
+ *     let fs = fullscreen();
  *     fullscreen(!fs);
  *   }
  * }
@@ -566,7 +566,7 @@ p5.prototype.pixelDensity = function(val) {
  * <div>
  * <code>
  * function setup() {
- *   var density = displayDensity();
+ *   let density = displayDensity();
  *   pixelDensity(density);
  *   createCanvas(100, 100);
  *   background(200);
@@ -621,8 +621,8 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
- * var url;
- * var x = 100;
+ * let url;
+ * let x = 100;
  *
  * function setup() {
  *   fill(0);
@@ -652,8 +652,8 @@ p5.prototype.getURL = function() {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var urlPath = getURLPath();
- *   for (var i = 0; i < urlPath.length; i++) {
+ *   let urlPath = getURLPath();
+ *   for (let i = 0; i < urlPath.length; i++) {
  *     text(urlPath[i], 10, i * 20 + 20);
  *   }
  * }
@@ -678,7 +678,7 @@ p5.prototype.getURLPath = function() {
  * // Example: http://p5js.org?year=2014&month=May&day=15
  *
  * function setup() {
- *   var params = getURLParams();
+ *   let params = getURLParams();
  *   text(params.day, 10, 20);
  *   text(params.month, 10, 40);
  *   text(params.year, 10, 60);

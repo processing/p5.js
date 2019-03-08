@@ -29,15 +29,15 @@ require('../color/p5.Color');
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
  * set values for a pixel at (x, y):
  * ```javascript
- * var d = pixelDensity();
- * for (var i = 0; i < d; i++) {
- *   for (var j = 0; j < d; j++) {
+ * let d = pixelDensity();
+ * for (let i = 0; i < d; i++) {
+ *   for (let j = 0; j < d; j++) {
  *     // loop over
- *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
- *     pixels[idx] = r;
- *     pixels[idx+1] = g;
- *     pixels[idx+2] = b;
- *     pixels[idx+3] = a;
+ *     index = 4 * ((y * d + j) * width * d + (x * d + i));
+ *     pixels[index] = r;
+ *     pixels[index+1] = g;
+ *     pixels[index+2] = b;
+ *     pixels[index+3] = a;
  *   }
  * }
  * ```
@@ -60,11 +60,11 @@ require('../color/p5.Color');
  * @example
  * <div>
  * <code>
- * var pink = color(255, 102, 204);
+ * let pink = color(255, 102, 204);
  * loadPixels();
- * var d = pixelDensity();
- * var halfImage = 4 * (width * d) * (height / 2 * d);
- * for (var i = 0; i < halfImage; i += 4) {
+ * let d = pixelDensity();
+ * let halfImage = 4 * (width * d) * (height / 2 * d);
+ * for (let i = 0; i < halfImage; i += 4) {
  *   pixels[i] = red(pink);
  *   pixels[i + 1] = green(pink);
  *   pixels[i + 2] = blue(pink);
@@ -101,8 +101,8 @@ p5.prototype.pixels = [];
  *
  * @example
  * <div><code>
- * var img0;
- * var img1;
+ * let img0;
+ * let img1;
  *
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
@@ -116,8 +116,8 @@ p5.prototype.pixels = [];
  * }
  * </code></div>
  * <div><code>
- * var img0;
- * var img1;
+ * let img0;
+ * let img1;
  *
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
@@ -131,8 +131,8 @@ p5.prototype.pixels = [];
  * }
  * </code></div>
  * <div><code>
- * var img0;
- * var img1;
+ * let img0;
+ * let img1;
  *
  * function preload() {
  *   img0 = loadImage('assets/rockies.jpg');
@@ -195,7 +195,7 @@ p5.prototype.blend = function() {
  *
  * @example
  * <div><code>
- * var img;
+ * let img;
  *
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
@@ -289,7 +289,7 @@ p5.prototype.copy = function() {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -302,7 +302,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -315,7 +315,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -328,7 +328,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -341,7 +341,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -354,7 +354,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -367,7 +367,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -380,7 +380,7 @@ p5.prototype.copy = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/bricks.jpg');
  * }
@@ -427,17 +427,17 @@ p5.prototype.filter = function(operation, value) {
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
  * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
- * <code>
- * var x, y, d; // set these to the coordinates
- * var off = (y * width + x) * d * 4;
- * var components = [
+ * ```javascript
+ * let x, y, d; // set these to the coordinates
+ * let off = (y * width + x) * d * 4;
+ * let components = [
  *   pixels[off],
  *   pixels[off + 1],
  *   pixels[off + 2],
  *   pixels[off + 3]
  * ];
  * print(components);
- * </code>
+ * ```
  * <br><br>
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
@@ -454,13 +454,13 @@ p5.prototype.filter = function(operation, value) {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
- *   var c = get();
+ *   let c = get();
  *   image(c, width / 2, 0);
  * }
  * </code>
@@ -468,13 +468,13 @@ p5.prototype.filter = function(operation, value) {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  * function setup() {
  *   image(img, 0, 0);
- *   var c = get(50, 90);
+ *   let c = get(50, 90);
  *   fill(c);
  *   noStroke();
  *   rect(25, 25, 50, 50);
@@ -510,11 +510,10 @@ p5.prototype.get = function(x, y, w, h) {
   w = Math.floor(w);
   h = Math.floor(h);
 
-  if (this instanceof p5.Image) {
-    return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
-  } else {
+  if (this._renderer) {
     return this._renderer.get(x, y, w, h);
   }
+  return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
 };
 
 /**
@@ -527,17 +526,17 @@ p5.prototype.get = function(x, y, w, h) {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   image(img, 0, 0);
- *   var d = pixelDensity();
- *   var halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let d = pixelDensity();
+ *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
  *   loadPixels();
- *   for (var i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();
@@ -583,7 +582,7 @@ p5.prototype.loadPixels = function() {
  * @example
  * <div>
  * <code>
- * var black = color(0);
+ * let black = color(0);
  * set(30, 20, black);
  * set(85, 20, black);
  * set(85, 75, black);
@@ -594,9 +593,9 @@ p5.prototype.loadPixels = function() {
  *
  * <div>
  * <code>
- * for (var i = 30; i < width - 15; i++) {
- *   for (var j = 20; j < height - 25; j++) {
- *     var c = color(204 - j, 153 - i, 0);
+ * for (let i = 30; i < width - 15; i++) {
+ *   for (let j = 20; j < height - 25; j++) {
+ *     let c = color(204 - j, 153 - i, 0);
  *     set(i, j, c);
  *   }
  * }
@@ -606,7 +605,7 @@ p5.prototype.loadPixels = function() {
  *
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
@@ -646,17 +645,17 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
  *
  * function setup() {
  *   image(img, 0, 0);
- *   var d = pixelDensity();
- *   var halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let d = pixelDensity();
+ *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
  *   loadPixels();
- *   for (var i = 0; i < halfImage; i++) {
+ *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
  *   }
  *   updatePixels();

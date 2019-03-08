@@ -237,8 +237,8 @@ p5.prototype.createCamera = function() {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -337,7 +337,6 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
     );
   }
 
-  this.cameraFOV = this._renderer._pInst._toRadians(fovy);
   this.aspectRatio = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
@@ -457,7 +456,7 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
   centerZ -= this.eyeZ;
 
   var rotation = p5.Matrix.identity(this._renderer._pInst);
-  rotation.rotate(a, x, y, z);
+  rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
   // prettier-ignore
   var rotatedCenter = [
@@ -493,8 +492,8 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -552,8 +551,8 @@ p5.Camera.prototype.pan = function(amount) {
  * @example
  * <div>
  * <code>
- * var cam;
- * var delta = 0.01;
+ * let cam;
+ * let delta = 0.01;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -611,7 +610,7 @@ p5.Camera.prototype.tilt = function(amount) {
  * @example
  * <div>
  * <code>
- * var cam;
+ * let cam;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -759,8 +758,8 @@ p5.Camera.prototype.camera = function(
  * <div>
  * <code>
  * // see the camera move along its own axes while maintaining its orientation
- * var cam;
- * var delta = 0.5;
+ * let cam;
+ * let delta = 0.5;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -833,7 +832,7 @@ p5.Camera.prototype.move = function(x, y, z) {
  * <code>
  * // press '1' '2' or '3' keys to set camera position
  *
- * var cam;
+ * let cam;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -1095,8 +1094,8 @@ p5.Camera.prototype._isActive = function() {
  * @example
  * <div>
  * <code>
- * var cam1, cam2;
- * var currentCamera;
+ * let cam1, cam2;
+ * let currentCamera;
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);

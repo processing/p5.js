@@ -247,14 +247,14 @@ p5.prototype.rotationZ = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
  * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
- * var rX = rotationX + 180;
- * var pRX = pRotationX + 180;
+ * let rX = rotationX + 180;
+ * let pRX = pRotationX + 180;
  *
  * if ((rX - pRX > 0 && rX - pRX < 270) || rX - pRX < -270) {
  *   rotateDirection = 'clockwise';
@@ -292,14 +292,14 @@ p5.prototype.pRotationX = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
  * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
- * var rY = rotationY + 180;
- * var pRY = pRotationY + 180;
+ * let rY = rotationY + 180;
+ * let pRY = pRotationY + 180;
  *
  * if ((rY - pRY > 0 && rY - pRY < 270) || rY - pRY < -270) {
  *   rotateDirection = 'clockwise';
@@ -336,7 +336,7 @@ p5.prototype.pRotationY = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * if (
  *   (rotationZ - pRotationZ > 0 && rotationZ - pRotationZ < 270) ||
@@ -429,8 +429,8 @@ var shake_threshold = 30;
  * // You will need to move the device incrementally further
  * // the closer the square's color gets to white in order to change the value.
  *
- * var value = 0;
- * var threshold = 0.5;
+ * let value = 0;
+ * let threshold = 0.5;
  * function setup() {
  *   setMoveThreshold(threshold);
  * }
@@ -472,8 +472,8 @@ p5.prototype.setMoveThreshold = function(val) {
  * // You will need to shake the device more firmly
  * // the closer the box's fill gets to white in order to change the value.
  *
- * var value = 0;
- * var threshold = 30;
+ * let value = 0;
+ * let threshold = 30;
  * function setup() {
  *   setShakeThreshold(threshold);
  * }
@@ -516,7 +516,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Move the device around
  * // to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -551,7 +551,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Rotate the device by 90 degrees
  * // to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -571,7 +571,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Rotate the device by 90 degrees in the
  * // X-axis to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -607,7 +607,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Run this example on a mobile device
  * // Shake the device to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);

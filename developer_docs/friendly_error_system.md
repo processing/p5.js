@@ -20,9 +20,9 @@ FES provides a generalized error message generation system that developers may u
 * file loading error example:
 ````javascript
 /// missing font file
-var myFont;
+let myFont;
 function preload() {
-  myFont = sketch.loadFont('assets/OpenSans-Regular.ttf');
+  myFont = loadFont('assets/OpenSans-Regular.ttf');
 };
 function setup() {
   fill('#ED225D');
@@ -97,7 +97,7 @@ Note that this will disable the parts of the FES that cause performance slowdown
 * The friendly error system slows the program down, so there is an option to turn it off via setting `p5.disableFriendlyErrors = true;`. In addition, the friendly error system is omitted by default in the minified (`p5.min.js`) version.
 * FES may still result in false negative cases. These are usually caused by the mismatch between designs of the  functions (e.g. drawing functions those are originally designed to be used interchangeably in both 2D and 3D settings) with actual usage cases. For example, drawing a 3D line with 
 ```javascript 
-var x3; // undefined
+const x3; // undefined
 line(0, 0, 100, 100, x3, Math.PI);
 ```
  will escape FES, because there is an acceptable parameter pattern (`Number`, `Number`, `Number`, `Number`) in `line()`'s inline documentation for drawing in 2D setting. This also means the current version of FES doesn't check for the environmental variables such as `_renderer.isP3D`.
@@ -113,13 +113,22 @@ line(0, 0, 100, 100, x3, Math.PI);
 * Having a Spanish translation available.
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
-* Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. So far we've tried `window.onerror` and the following with no success. 
+* Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. 
 
 ```javascript
-     var original = window.console;
-      
-     ["log", "warn", "error"].forEach(function(func){
-     window.console[func] = function(msg) {
-      original[func].apply(original, arguments)
-     };
+// this snippet wraps window.console methods with a new function to modify their functionality
+// it is not currently implemented, but could be to give nicer formatted error messages
+const original = window.console;
+const original_functions  = {
+  log: original.log,
+  warn:  original.warn,
+  error: original.error
+}
+
+["log", "warn", "error"].forEach(function(func){
+window.console[func] = function(msg) {
+//do something with the msg caught by the wrapper function, then call the original function
+original_functions[func].apply(original, arguments)
+};
+});
 ```

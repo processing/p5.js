@@ -532,6 +532,10 @@ module.exports = {
 
   // WEBGL TEXTURE MODE
   // NORMAL already exists for typography
+  /**
+   * @property {String} IMAGE
+   * @final
+   */
   IMAGE: 'image',
 
   // WEBGL TEXTURE WRAP AND FILTERING

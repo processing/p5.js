@@ -205,6 +205,37 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 
   return this;
 };
+
+/**
+ * Draws a circle to the screen. A circle is a simple closed shape.
+ * It is the set of all points in a plane that are at a given distance from a given point, the centre.
+ * This function is a special case of the ellipse() function, where the width and height of the ellipse are the same.
+ * Height and width of the ellipse correspond to the diameter of the circle.
+ * By default, the first two parameters set the location of the centre of the circle, the third sets the diameter of the circle.
+ *
+ * @method circle
+ * @param  {Number} x  x-coordinate of the centre of the circle.
+ * @param  {Number} y  y-coordinate of the centre of the circle.
+ * @param  {Number} d  diameter of the circle.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a circle at location (30, 30) with a diameter of 20.
+ * circle(30, 30, 20);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * white circle with black outline in mid of canvas that is 55x55.
+ */
+p5.prototype.circle = function() {
+  var args = Array.prototype.slice.call(arguments, 0, 2);
+  args.push(arguments[2]);
+  args.push(arguments[2]);
+  this.ellipse.apply(this, args);
+};
+
 /**
  * Draws a line (a direct path between two points) to the screen. The version
  * of <a href="#/p5/line">line()</a> with four parameters draws the line in 2D. To color a line, use
@@ -431,6 +462,60 @@ p5.prototype.rect = function() {
   }
 
   return this;
+};
+
+/**
+ * Draws a square to the screen. A square is a four-sided shape with
+ * every angle at ninety degrees, and equal side size.
+ * This function is a special case of the rect() function, where the width and height are the same, and the parameter is called "s" for side size.
+ * By default, the first two parameters set the location of the upper-left corner, the third sets the side size of the square.
+ * The way these parameters are interpreted, however,
+ * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+ * <br><br>
+ * The fourth, fifth, sixth and seventh parameters, if specified,
+ * determine corner radius for the top-left, top-right, lower-right and
+ * lower-left corners, respectively. An omitted corner radius parameter is set
+ * to the value of the previously specified radius value in the parameter list.
+ *
+ * @method square
+ * @param  {Number} x  x-coordinate of the square.
+ * @param  {Number} y  y-coordinate of the square.
+ * @param  {Number} s  side size of the square.
+ * @param  {Number} [tl] optional radius of top-left corner.
+ * @param  {Number} [tr] optional radius of top-right corner.
+ * @param  {Number} [br] optional radius of bottom-right corner.
+ * @param  {Number} [bl] optional radius of bottom-left corner.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a square at location (30, 20) with a side size of 55.
+ * square(30, 20, 55);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners, each having a radius of 20.
+ * square(30, 20, 55, 20);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners having the following radii:
+ * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+ * square(30, 20, 55, 20, 15, 10, 5);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 55x55 white square with black outline in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges of different radii.
+ */
+p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
+  this.rect(x, y, s, s, tl, tr, br, bl);
 };
 
 /**

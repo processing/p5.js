@@ -29,7 +29,7 @@ var p5 = require('../core/main');
  * // at the same time
  * function draw() {
  *   clear();
- *   var display = touches.length + ' touches';
+ *   let display = touches.length + ' touches';
  *   text(display, 5, 10);
  * }
  * </code>
@@ -87,7 +87,7 @@ function getTouchInfo(canvas, w, h, e, i) {
  * // Touch within the image to change
  * // the value of the rectangle
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -162,7 +162,7 @@ p5.prototype._ontouchstart = function(e) {
  * // Move your finger across the page
  * // to change its value
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -235,7 +235,7 @@ p5.prototype._ontouchmove = function(e) {
  * // Release touch within the image to
  * // change the value of the rectangle
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);

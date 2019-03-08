@@ -25,7 +25,8 @@ var constants = require('../core/constants');
  * @example
  * <div>
  * <code>
- * //draw a plane with width 50 and height 50
+ * // draw a plane
+ * // with width 50 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -109,7 +110,8 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * //draw a spinning box with width, height and depth 200
+ * // draw a spinning box
+ * // with width, height and depth of 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -226,7 +228,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * // draw a sphere with radius 200
+ * // draw a sphere with radius 40
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -281,10 +283,11 @@ var _truncatedCone = function(
   topCap = topCap === undefined ? topRadius !== 0 : topCap;
   var start = bottomCap ? -2 : 0;
   var end = detailY + (topCap ? 2 : 0);
-  var vertsOnLayer = {};
   //ensure constant slant for interior vertex normals
   var slant = Math.atan2(bottomRadius - topRadius, height);
-  var yy, ii, jj, nextii, nextjj;
+  var sinSlant = Math.sin(slant);
+  var cosSlant = Math.cos(slant);
+  var yy, ii, jj;
   for (yy = start; yy <= end; ++yy) {
     var v = yy / detailY;
     var y = height * v;
@@ -309,29 +312,25 @@ var _truncatedCone = function(
     }
 
     y -= height / 2; //shift coordiate origin to the center of object
-    vertsOnLayer[yy] = ringRadius === 0 ? 1 : detailX;
-    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
+    for (ii = 0; ii < detailX; ++ii) {
       var u = ii / detailX;
+      var ur = 2 * Math.PI * u;
+      var sur = Math.sin(ur);
+      var cur = Math.cos(ur);
+
       //VERTICES
-      this.vertices.push(
-        new p5.Vector(
-          Math.sin(u * 2 * Math.PI) * ringRadius,
-          y,
-          Math.cos(u * 2 * Math.PI) * ringRadius
-        )
-      );
+      this.vertices.push(new p5.Vector(sur * ringRadius, y, cur * ringRadius));
+
       //VERTEX NORMALS
-      this.vertexNormals.push(
-        new p5.Vector(
-          yy < 0 || yy > detailY
-            ? 0
-            : Math.sin(u * 2 * Math.PI) * Math.cos(slant),
-          yy < 0 ? -1 : yy > detailY ? 1 : Math.sin(slant),
-          yy < 0 || yy > detailY
-            ? 0
-            : Math.cos(u * 2 * Math.PI) * Math.cos(slant)
-        )
-      );
+      var vertexNormal;
+      if (yy < 0) {
+        vertexNormal = new p5.Vector(0, -1, 0);
+      } else if (yy > detailY && topRadius) {
+        vertexNormal = new p5.Vector(0, 1, 0);
+      } else {
+        vertexNormal = new p5.Vector(sur * cosSlant, sinSlant, cur * cosSlant);
+      }
+      this.vertexNormals.push(vertexNormal);
       //UVs
       this.uvs.push(u, v);
     }
@@ -339,52 +338,39 @@ var _truncatedCone = function(
 
   var startIndex = 0;
   if (bottomCap) {
-    for (jj = 0; jj < vertsOnLayer[-1]; ++jj) {
-      nextjj = (jj + 1) % vertsOnLayer[-1];
+    for (jj = 0; jj < detailX; ++jj) {
+      var nextjj = (jj + 1) % detailX;
       this.faces.push([
-        startIndex,
-        startIndex + 1 + nextjj,
-        startIndex + 1 + jj
+        startIndex + jj,
+        startIndex + detailX + nextjj,
+        startIndex + detailX + jj
       ]);
     }
-    startIndex += vertsOnLayer[-2] + vertsOnLayer[-1];
+    startIndex += detailX * 2;
   }
   for (yy = 0; yy < detailY; ++yy) {
-    for (ii = 0; ii < vertsOnLayer[yy]; ++ii) {
-      if (vertsOnLayer[yy + 1] === 1) {
-        //top layer
-        nextii = (ii + 1) % vertsOnLayer[yy];
-        this.faces.push([
-          startIndex + ii,
-          startIndex + nextii,
-          startIndex + vertsOnLayer[yy]
-        ]);
-      } else {
-        //other side faces
-        //should have vertsOnLayer[yy] === vertsOnLayer[yy + 1]
-        nextii = (ii + 1) % vertsOnLayer[yy];
-        this.faces.push([
-          startIndex + ii,
-          startIndex + nextii,
-          startIndex + vertsOnLayer[yy] + nextii
-        ]);
-        this.faces.push([
-          startIndex + ii,
-          startIndex + vertsOnLayer[yy] + nextii,
-          startIndex + vertsOnLayer[yy] + ii
-        ]);
-      }
-    }
-    startIndex += vertsOnLayer[yy];
-  }
-  if (topCap) {
-    startIndex += vertsOnLayer[detailY];
-    for (ii = 0; ii < vertsOnLayer[detailY + 1]; ++ii) {
-      nextii = (ii + 1) % vertsOnLayer[detailY + 1];
+    for (ii = 0; ii < detailX; ++ii) {
+      var nextii = (ii + 1) % detailX;
       this.faces.push([
         startIndex + ii,
         startIndex + nextii,
-        startIndex + vertsOnLayer[detailY + 1]
+        startIndex + detailX + nextii
+      ]);
+      this.faces.push([
+        startIndex + ii,
+        startIndex + detailX + nextii,
+        startIndex + detailX + ii
+      ]);
+    }
+    startIndex += detailX;
+  }
+  if (topCap) {
+    startIndex += detailX;
+    for (ii = 0; ii < detailX; ++ii) {
+      this.faces.push([
+        startIndex + ii,
+        startIndex + (ii + 1) % detailX,
+        startIndex + detailX
       ]);
     }
   }
@@ -407,7 +393,8 @@ var _truncatedCone = function(
  * @example
  * <div>
  * <code>
- * //draw a spinning cylinder with radius 20 and height 50
+ * // draw a spinning cylinder
+ * // with radius 20 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -464,7 +451,7 @@ p5.prototype.cylinder = function(
       bottomCap,
       topCap
     );
-    cylinderGeom.computeNormals();
+    // normals are computed in call to _truncatedCone
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges()._edgesToVertices();
     } else {
@@ -497,7 +484,8 @@ p5.prototype.cylinder = function(
  * @example
  * <div>
  * <code>
- * //draw a spinning cone with radius 40 and height 70
+ * // draw a spinning cone
+ * // with radius 40 and height 70
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -534,8 +522,6 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
-    //for cones we need to average Normals
-    coneGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges()._edgesToVertices();
     } else {
@@ -555,9 +541,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
 /**
  * Draw an ellipsoid with given radius
  * @method ellipsoid
- * @param  {Number} [radiusx]         xradius of circle
- * @param  {Number} [radiusy]         yradius of circle
- * @param  {Number} [radiusz]         zradius of circle
+ * @param  {Number} [radiusx]         x-radius of ellipsoid
+ * @param  {Number} [radiusy]         y-radius of ellipsoid
+ * @param  {Number} [radiusz]         z-radius of ellipsoid
  * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
@@ -570,14 +556,15 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid with radius 20, 30 and 40.
+ * // draw an ellipsoid
+ * // with radius 30, 40 and 40.
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
  *   background(200);
- *   ellipsoid(20, 30, 40);
+ *   ellipsoid(30, 40, 40);
  * }
  * </code>
  * </div>
@@ -657,7 +644,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * @example
  * <div>
  * <code>
- * //draw a spinning torus with radius 200 and tube radius 60
+ * // draw a spinning torus
+ * // with ring radius 30 and tube radius 15
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -666,7 +654,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   torus(50, 15);
+ *   torus(30, 15);
  * }
  * </code>
  * </div>
@@ -775,15 +763,13 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
  * </div>
  */
 p5.RendererGL.prototype.point = function(x, y, z) {
-  this._usePointShader();
-  this.curPointShader.bindShader();
   if (typeof z === 'undefined') {
     z = 0;
   }
+
   var _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
   this._drawPoints(_vertex, this._pointVertexBuffer);
-  this.curPointShader.unbindShader();
 
   return this;
 };

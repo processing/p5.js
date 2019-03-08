@@ -8,13 +8,19 @@ suite('p5.Texture', function() {
     return;
   }
 
-  setup(function() {
+  setup(function(done) {
     myp5 = new p5(function(p) {
+      p.preload = function() {
+        texImg2 = p.loadImage('unit/assets/target.gif');
+
+        // texture object isn't created until it's used for something:
+        //p.box(70, 70, 70);
+      };
       p.setup = function() {
         p.createCanvas(100, 100, p.WEBGL);
-        texImg1 = p.loadImage('unit/assets/nyan_cat.gif');
-        texImg2 = p.loadImage('unit/assets/target.gif');
+        texImg1 = p.createGraphics(2, 2, p.WEBGL);
         p.texture(texImg1);
+        done();
       };
     });
   });
@@ -24,11 +30,16 @@ suite('p5.Texture', function() {
   });
 
   var testTextureSet = function(src) {
-    assert(
-      myp5._renderer.curFillShader === myp5._renderer._getLightShader(),
-      'shader was not set to light + texture shader after ' +
-        'calling texture()'
-    );
+    test('Light shader set after texture()', function() {
+      var lightShader = myp5._renderer._getLightShader();
+      var selectedShader = myp5._renderer._getRetainedFillShader();
+      assert(
+        lightShader === selectedShader,
+        "_renderer's retain mode shader was not light shader " +
+          'after call to texture()'
+      );
+    });
+
     var tex = myp5._renderer.getTexture(src);
     assert(tex !== undefined, 'texture was undefined');
     assert(tex instanceof p5.Texture, 'texture was not a p5.Texture object');
@@ -82,6 +93,33 @@ suite('p5.Texture', function() {
     test('Set textureMode to IMAGE', function() {
       myp5.textureMode(myp5.IMAGE);
       assert.deepEqual(myp5._renderer.textureMode, myp5.IMAGE);
+    });
+    test('Set global wrap mode to clamp', function() {
+      myp5.textureWrap(myp5.CLAMP);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+    });
+    test('Set global wrap mode to repeat', function() {
+      myp5.textureWrap(myp5.REPEAT);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.REPEAT);
+    });
+    test('Set global wrap mode to mirror', function() {
+      myp5.textureWrap(myp5.MIRROR);
+      var tex1 = myp5._renderer.getTexture(texImg1);
+      var tex2 = myp5._renderer.getTexture(texImg2);
+      assert.deepEqual(tex1.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
+      assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
     });
   });
 });

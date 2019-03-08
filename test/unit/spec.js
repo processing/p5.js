@@ -13,9 +13,19 @@ var spec = {
   ],
   data: ['p5.TypedDict'],
   image: ['loading', 'pixels'],
-  io: ['files'],
+  io: [
+    'files',
+    'loadBytes',
+    'loadStrings',
+    'loadXML',
+    'loadJSON',
+    'loadTable',
+    'loadImage',
+    'loadModel',
+    'loadShader'
+  ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
-  typography: ['loading_displaying'],
+  typography: ['loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
   webgl: ['p5.Matrix', 'p5.Camera', 'p5.RendererGL', 'p5.Shader', 'p5.Texture']
 };

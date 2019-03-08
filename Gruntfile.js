@@ -136,8 +136,7 @@ module.exports = function(grunt) {
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
-        format: 'unix',
-        configFile: '.eslintrc'
+        format: 'unix'
       },
       build: {
         src: [
@@ -167,31 +166,15 @@ module.exports = function(grunt) {
         src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
-        src: [
-          'bench/**/*.js',
-          'test/test-docs-preprocessor/**/*.js',
-          'test/node/**/*.js',
-          'test/reporter/**/*.js',
-          'test/unit/**/*.js'
-        ]
-      },
-      examples: {
-        options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
-          }
-        },
-        src: ['test/manual-test-examples/**/*.js']
+        src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
       }
     },
 
     'eslint-samples': {
       options: {
         parserOptions: {
-          ecmaVersion: 5
+          ecmaVersion: 6
         },
-        configFile: '.eslintrc',
         format: 'unix'
       },
       source: {
@@ -477,7 +460,6 @@ module.exports = function(grunt) {
     'eslint:build',
     'eslint:source',
     'eslint:test',
-    //'eslint:examples',
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
