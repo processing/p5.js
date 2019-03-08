@@ -312,4 +312,35 @@ suite('Structure', function() {
       });
     });
   });
+
+  suite('loop', function() {
+    testSketchWithPromise('loop in setup does not call draw', function(
+      sketch,
+      resolve,
+      reject
+    ) {
+      sketch.setup = function() {
+        sketch.loop();
+        resolve();
+      };
+
+      sketch.draw = function() {
+        reject(new Error('Entered draw during loop()'));
+      };
+    });
+
+    testSketchWithPromise('loop in draw does not call draw', function(
+      sketch,
+      resolve,
+      reject
+    ) {
+      sketch.draw = function() {
+        if (sketch.frameCount > 1) {
+          reject(new Error('re-entered draw during loop() call'));
+        }
+        sketch.loop();
+        resolve();
+      };
+    });
+  });
 });
