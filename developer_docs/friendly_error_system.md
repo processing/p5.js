@@ -22,7 +22,7 @@ FES provides a generalized error message generation system that developers may u
 /// missing font file
 let myFont;
 function preload() {
-  myFont = sketch.loadFont('assets/OpenSans-Regular.ttf');
+  myFont = loadFont('assets/OpenSans-Regular.ttf');
 };
 function setup() {
   fill('#ED225D');

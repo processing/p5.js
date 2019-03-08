@@ -1188,11 +1188,13 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
     polyVertArray[polyVertArray.length] = data[1];
     polyVertArray[polyVertArray.length] = data[2];
   }
+
   function begincallback(type) {
     if (type !== libtess.primitiveType.GL_TRIANGLES) {
       console.log('expected TRIANGLES but got type: ' + type);
     }
   }
+
   function errorcallback(errno) {
     console.log('error callback');
     console.log('error number: ' + errno);
@@ -1201,6 +1203,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   function combinecallback(coords, data, weight) {
     return [coords[0], coords[1], coords[2]];
   }
+
   function edgeCallback(flag) {
     // don't really care about the flag, but need no-strip/no-fan behavior
   }
