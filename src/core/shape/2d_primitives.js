@@ -376,10 +376,10 @@ p5.prototype.quad = function() {
 
   // if 3D and we weren't passed 12 args, assume Z is 0
   if (this._renderer.isP3D && arguments.length !== 12) {
-    arguments.splice(2, 0, 0);
-    arguments.splice(5, 0, 0);
-    arguments.splice(8, 0, 0);
-    arguments.push(0);
+    Array.prototype.splice.call(arguments, 2, 0, 0);
+    Array.prototype.splice.call(arguments, 5, 0, 0);
+    Array.prototype.splice.call(arguments, 8, 0, 0);
+    Array.prototype.push.call(arguments, 0);
   }
 
   if (this._renderer._doStroke || this._renderer._doFill) {
