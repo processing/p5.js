@@ -218,7 +218,7 @@ p5.prototype.shader = function(s) {
  * @chainable
  */
 p5.prototype.resetShader = function() {
-  this._renderer.userFillShader = null;
+  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
   return this;
 };
 
