@@ -406,9 +406,9 @@ p5.prototype.copy = function() {
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
   if (this.canvas !== undefined) {
-    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+    Filters.apply(this.canvas, Filters[operation], value);
   } else {
-    Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
+    Filters.apply(this.elt, Filters[operation], value);
   }
 };
 
