@@ -23,10 +23,4 @@ function draw() {
 
   angle_1 = angle_1 + 1;
   angle_2 = angle_2 + 2;
-
-  if (angle_2 >= 360) {
-    angle_2 = 0;
-  } else if (angle_1 >= 360) {
-    angle_1 = 0;
-  }
 }
