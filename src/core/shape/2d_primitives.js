@@ -104,11 +104,9 @@ p5.prototype._normalizeArcAngles = function(
  * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
  * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
  * origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.<br><br>
- * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
- * because 0 and TWO_PI are the same position on the unit circle. The
- * best way to handle this is by using the <a href="#/p5/ellipse">ellipse()</a> function instead
- * to create a closed ellipse, and to use the <a href="#/p5/arc">arc()</a> function
- * only to draw parts of an ellipse.
+ * The arc is always drawn clockwise from wherever start falls to wherever stop falls on the ellipse.
+ * Adding or subtracting TWO_PI to either angle does not change where they fall.
+ * If both start and stop fall at the same place, a full ellipse will be drawn.
  *
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse
@@ -185,16 +183,26 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   var angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
-  this._renderer.arc(
-    vals.x,
-    vals.y,
-    vals.w,
-    vals.h,
-    angles.start,
-    angles.stop,
-    mode,
-    detail
-  );
+
+  if (angles.correspondToSamePoint) {
+    // If the arc starts and ends at (near enough) the same place, we choose to
+    // draw an ellipse instead.  This is preferable to faking an ellipse (by
+    // making stop ever-so-slightly less than start + TWO_PI) because the ends
+    // join up to each other rather than at a vertex at the centre (leaving
+    // an unwanted spike in the stroke/fill).
+    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detail]);
+  } else {
+    this._renderer.arc(
+      vals.x,
+      vals.y,
+      vals.w,
+      vals.h,
+      angles.start, // [0, TWO_PI)
+      angles.stop, // [start, start + TWO_PI)
+      mode,
+      detail
+    );
+  }
 
   return this;
 };
