@@ -450,7 +450,7 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   y += ry;
 
   // Create curves
-  while (stop - start > epsilon) {
+  while (stop - start >= epsilon) {
     arcToDraw = Math.min(stop - start, constants.HALF_PI);
     curves.push(this._acuteArcToBezier(start, arcToDraw));
     start += arcToDraw;

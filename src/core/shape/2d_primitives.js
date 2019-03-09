@@ -14,6 +14,92 @@ var canvas = require('../helpers');
 require('../error_helpers');
 
 /**
+ * This function does 3 things:
+ *
+ *   1. Bounds the desired start/stop angles for an arc (in radians) so that:
+ *
+ *          0 <= start < TWO_PI ;    start <= stop < start + TWO_PI
+ *
+ *      This means that the arc rendering functions don't have to be concerned
+ *      with what happens if stop is smaller than start, or if the arc 'goes
+ *      round more than once', etc.: they can just start at start and increase
+ *      until stop and the correct arc will be drawn.
+ *
+ *   2. Optionally adjusts the angles within each quadrant to counter the naive
+ *      scaling of the underlying ellipse up from the unit circle.  Without
+ *      this, the angles become arbitrary when width != height: 45 degrees
+ *      might be drawn at 5 degrees on a 'wide' ellipse, or at 85 degrees on
+ *      a 'tall' ellipse.
+ *
+ *   3. Flags up when start and stop correspond to the same place on the
+ *      underlying ellipse.  This is useful if you want to do something special
+ *      there (like rendering a whole ellipse instead).
+ */
+p5.prototype._normalizeArcAngles = function(
+  start,
+  stop,
+  width,
+  height,
+  correctForScaling
+) {
+  var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+  var separation;
+
+  // The order of the steps is important here: each one builds upon the
+  // adjustments made in the steps that precede it.
+
+  // Constrain both start and stop to [0,TWO_PI).
+  start = start - constants.TWO_PI * Math.floor(start / constants.TWO_PI);
+  stop = stop - constants.TWO_PI * Math.floor(stop / constants.TWO_PI);
+
+  // Get the angular separation between the requested start and stop points.
+  //
+  // Technically this separation only matches what gets drawn if
+  // correctForScaling is enabled.  We could add a more complicated calculation
+  // for when the scaling is uncorrected (in which case the drawn points could
+  // end up pushed together or pulled apart quite dramatically relative to what
+  // was requested), but it would make things more opaque for little practical
+  // benefit.
+  //
+  // (If you do disable correctForScaling and find that correspondToSamePoint
+  // is set too aggressively, the easiest thing to do is probably to just make
+  // epsilon smaller...)
+  separation = Math.min(
+    Math.abs(start - stop),
+    constants.TWO_PI - Math.abs(start - stop)
+  );
+
+  // Optionally adjust the angles to counter linear scaling.
+  if (correctForScaling) {
+    if (start <= constants.HALF_PI) {
+      start = Math.atan(width / height * Math.tan(start));
+    } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
+      start = Math.atan(width / height * Math.tan(start)) + constants.PI;
+    } else {
+      start = Math.atan(width / height * Math.tan(start)) + constants.TWO_PI;
+    }
+    if (stop <= constants.HALF_PI) {
+      stop = Math.atan(width / height * Math.tan(stop));
+    } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
+      stop = Math.atan(width / height * Math.tan(stop)) + constants.PI;
+    } else {
+      stop = Math.atan(width / height * Math.tan(stop)) + constants.TWO_PI;
+    }
+  }
+
+  // Ensure that start <= stop < start + TWO_PI.
+  if (start > stop) {
+    stop += constants.TWO_PI;
+  }
+
+  return {
+    start: start,
+    stop: stop,
+    correspondToSamePoint: separation < epsilon
+  };
+};
+
+/**
  * Draw an arc to the screen. If called with only x, y, w, h, start, and
  * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
  * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
@@ -93,47 +179,22 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   start = this._toRadians(start);
   stop = this._toRadians(stop);
 
-  // Make all angles positive...
-  while (start < 0) {
-    start += constants.TWO_PI;
-  }
-  while (stop < 0) {
-    stop += constants.TWO_PI;
-  }
-  // ...and confine them to the interval [0,TWO_PI).
-  start %= constants.TWO_PI;
-  stop %= constants.TWO_PI;
-
-  // Adjust angles to counter linear scaling.
-  if (start <= constants.HALF_PI) {
-    start = Math.atan(w / h * Math.tan(start));
-  } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
-    start = Math.atan(w / h * Math.tan(start)) + constants.PI;
-  } else {
-    start = Math.atan(w / h * Math.tan(start)) + constants.TWO_PI;
-  }
-  if (stop <= constants.HALF_PI) {
-    stop = Math.atan(w / h * Math.tan(stop));
-  } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
-    stop = Math.atan(w / h * Math.tan(stop)) + constants.PI;
-  } else {
-    stop = Math.atan(w / h * Math.tan(stop)) + constants.TWO_PI;
-  }
-
-  // Exceed the interval if necessary in order to preserve the size and
-  // orientation of the arc.
-  //
-  // This leaves 0 <= start < TWO_PI; and start <= stop < start + TWO_PI.
-  if (start > stop) {
-    stop += constants.TWO_PI;
-  }
-
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-  this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, detail);
+  var angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
+  this._renderer.arc(
+    vals.x,
+    vals.y,
+    vals.w,
+    vals.h,
+    angles.start,
+    angles.stop,
+    mode,
+    detail
+  );
 
   return this;
 };
