@@ -646,7 +646,7 @@ p5.Image.prototype.mask = function(p5Image) {
  * }
  *
  * function setup() {
- *   photo2.filter('gray');
+ *   photo2.filter(GRAY);
  *   image(photo1, 0, 0);
  *   image(photo2, width / 2, 0);
  * }
@@ -657,7 +657,7 @@ p5.Image.prototype.mask = function(p5Image) {
  *
  */
 p5.Image.prototype.filter = function(operation, value) {
-  Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+  Filters.apply(this.canvas, Filters[operation], value);
   this.setModified(true);
 };
 
