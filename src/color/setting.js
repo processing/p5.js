@@ -183,10 +183,11 @@ p5.prototype.background = function() {
 };
 
 /**
- * Clears the pixels within a buffer. This function only works on p5.Canvas
- * objects created with the <a href="#/p5/createCanvas">createCanvas()</a> function; it won't work with the
- * main display window. Unlike the main graphics context, pixels in
- * additional graphics areas created with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
+ * Clears the pixels within a buffer. This function only clears the canvas. 
+ * It will not clear objects created by createX() methods such as 
+ * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a> function.
+ * Unlike the main graphics context, pixels in additional graphics areas created 
+ * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
