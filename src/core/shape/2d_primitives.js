@@ -374,16 +374,19 @@ p5.prototype.point = function() {
 p5.prototype.quad = function() {
   p5._validateParameters('quad', arguments);
 
-  // if 3D and we weren't passed 12 args, assume Z is 0
-  if (this._renderer.isP3D && arguments.length !== 12) {
-    Array.prototype.splice.call(arguments, 2, 0, 0);
-    Array.prototype.splice.call(arguments, 5, 0, 0);
-    Array.prototype.splice.call(arguments, 8, 0, 0);
-    Array.prototype.push.call(arguments, 0);
-  }
-
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.quad.apply(this._renderer, arguments);
+    if (this._renderer.isP3D && arguments.length !== 12) {
+      // if 3D and we weren't passed 12 args, assume Z is 0
+      // prettier-ignore
+      this._renderer.quad.call(
+        this._renderer,
+        arguments[0], arguments[1], 0,
+        arguments[2], arguments[3], 0,
+        arguments[4], arguments[5], 0,
+        arguments[6], arguments[7], 0);
+    } else {
+      this._renderer.quad.apply(this._renderer, arguments);
+    }
   }
 
   return this;
