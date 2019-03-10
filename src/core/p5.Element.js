@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+import * as p5 from "./main";
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -22,7 +22,7 @@ var p5 = require('./main');
  * @param {String} elt DOM node that is wrapped
  * @param {p5} [pInst] pointer to p5 instance
  */
-p5.Element = function(elt, pInst) {
+p5.Element = class {
   /**
    * Underlying HTML element. All normal HTML methods can be called on this.
    * @example
@@ -42,11 +42,14 @@ p5.Element = function(elt, pInst) {
    * @property elt
    * @readOnly
    */
-  this.elt = elt;
-  this._pInst = this._pixelsState = pInst;
-  this._events = {};
-  this.width = this.elt.offsetWidth;
-  this.height = this.elt.offsetHeight;
+  constructor (elt, pInst) {
+    this.elt = elt;
+    this._pInst = this._pixelsState = pInst;
+    this._events = {};
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+  }
+  
 };
 
 /**
@@ -102,7 +105,7 @@ p5.Element = function(elt, pInst) {
  * @return {p5.Element}
  *
  */
-p5.Element.prototype.parent = function(p) {
+p5.Element.prototype.parent = p => {
   if (typeof p === 'undefined') {
     return this.elt.parentNode;
   }
@@ -148,7 +151,7 @@ p5.Element.prototype.parent = function(p) {
  * @method id
  * @return {String} the id of the element
  */
-p5.Element.prototype.id = function(id) {
+p5.Element.prototype.id = id => {
   if (typeof id === 'undefined') {
     return this.elt.id;
   }
@@ -185,7 +188,7 @@ p5.Element.prototype.id = function(id) {
  * @method class
  * @return {String} the class of the element
  */
-p5.Element.prototype.class = function(c) {
+p5.Element.prototype.class = c => {
   if (typeof c === 'undefined') {
     return this.elt.className;
   }
@@ -240,11 +243,11 @@ p5.Element.prototype.class = function(c) {
  * no display.
  *
  */
-p5.Element.prototype.mousePressed = function(fxn) {
+p5.Element.prototype.mousePressed = fxn => {
   // Prepend the mouse property setters to the event-listener.
   // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
   // For details, see https://github.com/processing/p5.js/issues/3087.
-  var eventPrependedFxn = function(event) {
+  var eventPrependedFxn = event => {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
@@ -299,7 +302,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.doubleClicked = function(fxn) {
+p5.Element.prototype.doubleClicked = fxn => {
   p5.Element._adjustListener('dblclick', fxn, this);
   return this;
 };
@@ -365,7 +368,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseWheel = function(fxn) {
+p5.Element.prototype.mouseWheel = fxn => {
   p5.Element._adjustListener('wheel', fxn, this);
   return this;
 };
@@ -419,7 +422,7 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseReleased = function(fxn) {
+p5.Element.prototype.mouseReleased = fxn => {
   p5.Element._adjustListener('mouseup', fxn, this);
   return this;
 };
@@ -475,7 +478,7 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseClicked = function(fxn) {
+p5.Element.prototype.mouseClicked = fxn => {
   p5.Element._adjustListener('click', fxn, this);
   return this;
 };
@@ -533,7 +536,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseMoved = function(fxn) {
+p5.Element.prototype.mouseMoved = fxn => {
   p5.Element._adjustListener('mousemove', fxn, this);
   return this;
 };
@@ -576,7 +579,7 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOver = function(fxn) {
+p5.Element.prototype.mouseOver = fxn => {
   p5.Element._adjustListener('mouseover', fxn, this);
   return this;
 };
@@ -618,7 +621,7 @@ p5.Element.prototype.mouseOver = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOut = function(fxn) {
+p5.Element.prototype.mouseOut = fxn => {
   p5.Element._adjustListener('mouseout', fxn, this);
   return this;
 };
@@ -666,7 +669,7 @@ p5.Element.prototype.mouseOut = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchStarted = function(fxn) {
+p5.Element.prototype.touchStarted = fxn => {
   p5.Element._adjustListener('touchstart', fxn, this);
   return this;
 };
@@ -706,7 +709,7 @@ p5.Element.prototype.touchStarted = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchMoved = function(fxn) {
+p5.Element.prototype.touchMoved = fxn => {
   p5.Element._adjustListener('touchmove', fxn, this);
   return this;
 };
@@ -755,7 +758,7 @@ p5.Element.prototype.touchMoved = function(fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchEnded = function(fxn) {
+p5.Element.prototype.touchEnded = fxn => {
   p5.Element._adjustListener('touchend', fxn, this);
   return this;
 };
@@ -793,7 +796,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragOver = function(fxn) {
+p5.Element.prototype.dragOver = fxn => {
   p5.Element._adjustListener('dragover', fxn, this);
   return this;
 };
@@ -831,13 +834,13 @@ p5.Element.prototype.dragOver = function(fxn) {
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragLeave = function(fxn) {
+p5.Element.prototype.dragLeave = fxn => {
   p5.Element._adjustListener('dragleave', fxn, this);
   return this;
 };
 
 // General handler for event attaching and detaching
-p5.Element._adjustListener = function(ev, fxn, ctx) {
+p5.Element._adjustListener = (ev, fxn, ctx) => {
   if (fxn === false) {
     p5.Element._detachListener(ev, ctx);
   } else {
@@ -846,18 +849,19 @@ p5.Element._adjustListener = function(ev, fxn, ctx) {
   return this;
 };
 
-p5.Element._attachListener = function(ev, fxn, ctx) {
+p5.Element._attachListener = (ev, fxn, ctx) => {
   // detach the old listener if there was one
   if (ctx._events[ev]) {
     p5.Element._detachListener(ev, ctx);
   }
-  var f = fxn.bind(ctx);
+  const f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
 };
 
-p5.Element._detachListener = function(ev, ctx) {
-  var f = ctx._events[ev];
+p5.Element._detachListener = (ev, ctx) => {
+  
+  const f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;
 };
@@ -866,7 +870,7 @@ p5.Element._detachListener = function(ev, ctx) {
  * Helper fxn for sharing pixel methods
  *
  */
-p5.Element.prototype._setProperty = function(prop, value) {
+p5.Element.prototype._setProperty = (prop, value) => {
   this[prop] = value;
 };
 
