@@ -39,7 +39,7 @@ suite('pixels', function() {
       img.updatePixels();
     });
 
-    test('works with integers', function() {
+     test('get(x,y) works with integers', function() {
       assert.deepEqual(img.get(25, 25), [255, 0, 0, 255]);
       assert.deepEqual(img.get(25, 26), [0, 0, 255, 255]);
       assert.deepEqual(img.get(0, 0), [255, 0, 0, 255]);
