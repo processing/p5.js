@@ -407,7 +407,7 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   start,
   size
 ) {
-  // Evauate constants.
+  // Evaluate constants.
   var alpha = size / 2.0,
     cos_alpha = Math.cos(alpha),
     sin_alpha = Math.sin(alpha),
