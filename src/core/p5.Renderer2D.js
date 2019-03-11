@@ -1000,20 +1000,6 @@ p5.Renderer2D.prototype.endShape = function(
 // SHAPE | Attributes
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype.noSmooth = function() {
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = false;
-  }
-  return this;
-};
-
-p5.Renderer2D.prototype.smooth = function() {
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = true;
-  }
-  return this;
-};
-
 p5.Renderer2D.prototype.strokeCap = function(cap) {
   if (
     cap === constants.ROUND ||

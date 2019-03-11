@@ -107,8 +107,8 @@ p5.prototype.ellipseMode = function(m) {
  */
 p5.prototype.noSmooth = function() {
   this.setAttributes('antialias', false);
-  if (!this._renderer.isP3D) {
-    this._renderer.noSmooth();
+  if ('imageSmoothingEnabled' in this.drawingContext) {
+    this.drawingContext.imageSmoothingEnabled = false;
   }
   return this;
 };
@@ -210,8 +210,8 @@ p5.prototype.rectMode = function(m) {
  */
 p5.prototype.smooth = function() {
   this.setAttributes('antialias', true);
-  if (!this._renderer.isP3D) {
-    this._renderer.smooth();
+  if ('imageSmoothingEnabled' in this.drawingContext) {
+    this.drawingContext.imageSmoothingEnabled = true;
   }
   return this;
 };
