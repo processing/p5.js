@@ -10,6 +10,7 @@ function preload() {
 }
 
 function setup() {
+  smooth();
   createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
