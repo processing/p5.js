@@ -46,7 +46,7 @@ suite('pixels', function() {
       assert.deepEqual(img.get(49, 49), [0, 0, 255, 255]);
     });
 
-    test('works when out of bounds', function() {
+    test('get(x,y) returns 0s for out of bounds arguments', function() {
       assert.deepEqual(img.get(25, -1), [0, 0, 0, 0]);
       assert.deepEqual(img.get(-1, 26), [0, 0, 0, 0]);
       assert.deepEqual(img.get(25, 50), [0, 0, 0, 0]);
