@@ -147,18 +147,6 @@ p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
   return this;
 };
 
-p5.prototype.popMatrix = function() {
-  throw new Error('popMatrix() not used, see pop()');
-};
-
-p5.prototype.printMatrix = function() {
-  throw new Error('printMatrix() not implemented');
-};
-
-p5.prototype.pushMatrix = function() {
-  throw new Error('pushMatrix() not used, see push()');
-};
-
 /**
  * Replaces the current matrix with the identity matrix.
  *
