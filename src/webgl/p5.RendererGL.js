@@ -73,6 +73,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this._useSpecularMaterial = false;
   this._useNormalMaterial = false;
+  this._useShininess = 1;
 
   /**
    * model view, projection, & normal
@@ -845,6 +846,7 @@ p5.RendererGL.prototype.push = function() {
   properties.curFillColor = this.curFillColor;
 
   properties._useSpecularMaterial = this._useSpecularMaterial;
+  properties._useShininess = this._useShininess;
 
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;
@@ -1072,6 +1074,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
     fillShader.setUniform('uSampler', this._tex);
   }
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
+  fillShader.setUniform('uShininess', this._useShininess);
 
   fillShader.setUniform('uUseLighting', this._enableLighting);
 
