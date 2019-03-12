@@ -129,7 +129,7 @@ p5.prototype.pmouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect center, fuschia background. rect flickers on mouse movement
+ * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
  *
  */
 p5.prototype.pmouseY = 0;
@@ -168,7 +168,7 @@ p5.prototype.pmouseY = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect y moves with mouse y and fuschia canvas moves with mouse x
+ * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
  *
  */
 p5.prototype.winMouseX = 0;
@@ -207,7 +207,7 @@ p5.prototype.winMouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect x moves with mouse x and fuschia canvas y moves with mouse y
+ * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
  *
  */
 p5.prototype.winMouseY = 0;
@@ -248,7 +248,7 @@ p5.prototype.winMouseY = 0;
  * </div>
  *
  * @alt
- * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  *
  */
 p5.prototype.pwinMouseX = 0;
@@ -290,7 +290,7 @@ p5.prototype.pwinMouseX = 0;
  * </div>
  *
  * @alt
- * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  *
  */
 p5.prototype.pwinMouseY = 0;
@@ -329,7 +329,7 @@ p5.prototype.pwinMouseY = 0;
  * </div>
  *
  * @alt
- * 50x50 black ellipse appears on center of fuschia canvas on mouse click/press.
+ * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
  *
  */
 p5.prototype.mouseButton = 0;
@@ -360,7 +360,7 @@ p5.prototype.mouseButton = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
+ * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
  *
  */
 p5.prototype.mouseIsPressed = false;
@@ -910,7 +910,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with vertical scroll. fuschia background
+ * black 50x50 rect moves up and down with vertical scroll. fuchsia background
  *
  */
 p5.prototype._onwheel = function(e) {
