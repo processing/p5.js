@@ -215,5 +215,14 @@ suite('p5.Shader', function() {
       s.setUniform('uMaterialColor', []);
       s.setUniform('uLightingDirection', []);
     });
+    test('Shader is reset after resetShader is called', function() {
+      myp5.shader(myp5._renderer._getColorShader());
+      var prevShader = myp5._renderer.userFillShader;
+      assert.isTrue(prevShader !== null);
+
+      myp5.resetShader();
+      var curShader = myp5._renderer.userFillShader;
+      assert.isTrue(curShader === null);
+    });
   });
 });
