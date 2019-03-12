@@ -304,7 +304,7 @@ p5.prototype.clear = function() {
  *                              current color mode
  * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lightess
+ * @param {Number} max3     range for the blue or brightness/lightness
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
  * @chainable
@@ -462,7 +462,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * 60x60 light green rect with black outline in center of canvas.
  * 60x60 soft green rect with black outline in center of canvas.
  * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fushsia rect with black outline in center of canvas.
+ * 60x60 dark fuchsia rect with black outline in center of canvas.
  * 60x60 blue rect with black outline in center of canvas.
  */
 
@@ -714,7 +714,7 @@ p5.prototype.noStroke = function() {
  * 60x60 white rect at center. Bright green outline.
  * 60x60 white rect at center. Soft green outline.
  * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fushsia outline.
+ * 60x60 white rect at center. Dark fuchsia outline.
  * 60x60 white rect at center. Blue outline.
  */
 
