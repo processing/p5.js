@@ -407,7 +407,7 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   start,
   size
 ) {
-  // Evauate constants.
+  // Evaluate constants.
   var alpha = size / 2.0,
     cos_alpha = Math.cos(alpha),
     sin_alpha = Math.sin(alpha),
@@ -431,6 +431,13 @@ p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   };
 };
 
+/*
+ * This function requires that:
+ *
+ *   0 <= start < TWO_PI
+ *
+ *   start <= stop < start + TWO_PI
+ */
 p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
   var rx = w / 2.0;
@@ -443,7 +450,7 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
   y += ry;
 
   // Create curves
-  while (stop - start > epsilon) {
+  while (stop - start >= epsilon) {
     arcToDraw = Math.min(stop - start, constants.HALF_PI);
     curves.push(this._acuteArcToBezier(start, arcToDraw));
     start += arcToDraw;
@@ -824,7 +831,7 @@ p5.Renderer2D.prototype.endShape = function(
     for (i = 0; i < numVerts; i++) {
       if (vertices[i].isVert) {
         if (vertices[i].moveTo) {
-          this.drawingContext.moveTo([0], vertices[i][1]);
+          this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
         } else {
           this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
         }
@@ -999,20 +1006,6 @@ p5.Renderer2D.prototype.endShape = function(
 //////////////////////////////////////////////
 // SHAPE | Attributes
 //////////////////////////////////////////////
-
-p5.Renderer2D.prototype.noSmooth = function() {
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = false;
-  }
-  return this;
-};
-
-p5.Renderer2D.prototype.smooth = function() {
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = true;
-  }
-  return this;
-};
 
 p5.Renderer2D.prototype.strokeCap = function(cap) {
   if (

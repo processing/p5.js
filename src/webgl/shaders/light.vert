@@ -16,6 +16,7 @@ uniform vec3 uDirectionalColor[8];
 uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
+uniform float uShininess;
 
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
@@ -33,7 +34,6 @@ void main(void){
   vec4 mvPosition = uModelViewMatrix * vec4(aPosition, 1.0);
   vec3 eyeDirection = normalize(-mvPosition.xyz);
 
-  float shininess = 32.0;
   float specularFactor = 2.0;
   float diffuseFactor = 0.3;
 
@@ -67,7 +67,7 @@ void main(void){
     float specularLightWeighting = 0.0;
     if (uSpecular ){
       vec3 reflectionDirection = reflect(-lightDirection, vertexNormal);
-      specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
+      specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uShininess);
     }
 
     pointLightFactor += uPointLightColor[k] * (specularFactor * specularLightWeighting

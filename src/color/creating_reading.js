@@ -39,7 +39,7 @@ require('../core/error_helpers');
  * Left half of canvas salmon pink and the right half white.
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
@@ -269,7 +269,7 @@ p5.prototype.brightness = function(c) {
  * @alt
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.

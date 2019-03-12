@@ -956,7 +956,7 @@ p5.RendererGL.prototype.arc = function(args) {
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  var perPixelLighting = this.attributes.perPixelLighting;
+  var perPixelLighting = this._pInst._glAttributes.perPixelLighting;
   var x = args[0];
   var y = args[1];
   var width = args[2];

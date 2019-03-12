@@ -79,6 +79,7 @@ suite('p5.Shader', function() {
         'uPointLightLocation',
         'uPointLightColor',
         'uSpecular',
+        'uShininess',
         'uMaterialColor',
         'uSampler',
         'isTexture'
@@ -215,6 +216,13 @@ suite('p5.Shader', function() {
       s.setUniform('uMaterialColor', []);
       s.setUniform('uLightingDirection', []);
     });
+
+    test('Able to set shininess', function() {
+      assert.deepEqual(myp5._renderer._useShininess, 1);
+      myp5.shininess(50);
+      assert.deepEqual(myp5._renderer._useShininess, 50);
+    });
+
     test('Shader is reset after resetShader is called', function() {
       myp5.shader(myp5._renderer._getColorShader());
       var prevShader = myp5._renderer.userFillShader;

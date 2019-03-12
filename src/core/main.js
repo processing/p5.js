@@ -179,6 +179,7 @@ var p5 = function(sketch, node, sync) {
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
+  this._glAttributes = null;
   this._requestAnimId = 0;
   this._preloadCount = 0;
   this._isGlobal = false;

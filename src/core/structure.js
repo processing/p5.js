@@ -111,8 +111,12 @@ p5.prototype.noLoop = function() {
  */
 
 p5.prototype.loop = function() {
-  this._loop = true;
-  this._draw();
+  if (!this._loop) {
+    this._loop = true;
+    if (this._setupDone) {
+      this._draw();
+    }
+  }
 };
 
 /**
@@ -310,6 +314,10 @@ p5.prototype.pop = function() {
  *
  */
 p5.prototype.redraw = function(n) {
+  if (this._inUserDraw || !this._setupDone) {
+    return;
+  }
+
   var numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
@@ -332,7 +340,12 @@ p5.prototype.redraw = function(n) {
       }
       context._setProperty('frameCount', context.frameCount + 1);
       context._registeredMethods.pre.forEach(callMethod);
-      userDraw();
+      this._inUserDraw = true;
+      try {
+        userDraw();
+      } finally {
+        this._inUserDraw = false;
+      }
       context._registeredMethods.post.forEach(callMethod);
     }
   }
