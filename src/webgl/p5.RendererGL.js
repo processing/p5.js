@@ -52,21 +52,7 @@ var defaultShaders = {
  */
 p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
-  this.attributes = {};
-  attr = attr || {};
-  this.attributes.alpha = attr.alpha === undefined ? true : attr.alpha;
-  this.attributes.depth = attr.depth === undefined ? true : attr.depth;
-  this.attributes.stencil = attr.stencil === undefined ? true : attr.stencil;
-  this.attributes.antialias =
-    attr.antialias === undefined ? false : attr.antialias;
-  this.attributes.premultipliedAlpha =
-    attr.premultipliedAlpha === undefined ? false : attr.premultipliedAlpha;
-  this.attributes.preserveDrawingBuffer =
-    attr.preserveDrawingBuffer === undefined
-      ? true
-      : attr.preserveDrawingBuffer;
-  this.attributes.perPixelLighting =
-    attr.perPixelLighting === undefined ? false : attr.perPixelLighting;
+  this._setAttributeDefaults(pInst);
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
@@ -158,11 +144,29 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
+p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
+  var defaults = {
+    alpha: false,
+    depth: true,
+    stencil: true,
+    antialias: false,
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: true,
+    perPixelLighting: false
+  };
+  if (pInst._glAttributes === null) {
+    pInst._glAttributes = defaults;
+  } else {
+    pInst._glAttributes = Object.assign(defaults, pInst._glAttributes);
+  }
+  return;
+};
+
 p5.RendererGL.prototype._initContext = function() {
   try {
     this.drawingContext =
-      this.canvas.getContext('webgl', this.attributes) ||
-      this.canvas.getContext('experimental-webgl', this.attributes);
+      this.canvas.getContext('webgl', this._pInst._glAttributes) ||
+      this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
@@ -183,7 +187,7 @@ p5.RendererGL.prototype._initContext = function() {
 //This is helper function to reset the context anytime the attributes
 //are changed with setAttributes()
 
-p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
+p5.RendererGL.prototype._resetContext = function(options, callback) {
   var w = this.width;
   var h = this.height;
   var defaultId = this.canvas.id;
@@ -200,7 +204,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   }
   this._pInst.canvas = c;
 
-  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
+  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true);
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
@@ -221,13 +225,19 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 /**
  * Set attributes for the WebGL Drawing context.
- * This is a way of adjusting ways that the WebGL
+ * This is a way of adjusting how the WebGL
  * renderer works to fine-tune the display and performance.
- * This should be put in setup().
+ * <br><br>
+ * Note that this will reinitialize the drawing context
+ * if called after the WebGL canvas is made.
+ * <br><br>
+ * If an object is passed as the parameter, all attributes
+ * not declared in the object will be set to defaults.
+ * <br><br>
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is true
+ * default is false
  * <br><br>
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -280,8 +290,8 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
@@ -359,18 +369,33 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
-  this._assert3d('setAttributes');
-  //@todo_FES
-  var attr;
+  var unchanged = true;
   if (typeof value !== 'undefined') {
-    attr = {};
-    attr[key] = value;
+    //first time modifying the attributes
+    if (this._glAttributes === null) {
+      this._glAttributes = {};
+    }
+    if (this._glAttributes[key] !== value) {
+      //changing value of previously altered attribute
+      this._glAttributes[key] = value;
+      unchanged = false;
+    }
+    //setting all attributes with some change
   } else if (key instanceof Object) {
-    attr = key;
+    if (this._glAttributes !== key) {
+      this._glAttributes = key;
+      unchanged = false;
+    }
   }
+  //@todo_FES
+  if (!this._renderer.isP3D || unchanged) {
+    return;
+  }
+
   this.push();
-  this._renderer._resetContext(attr);
+  this._renderer._resetContext();
   this.pop();
+
   if (this._renderer._curCamera) {
     this._renderer._curCamera._renderer = this._renderer;
   }
@@ -635,7 +660,7 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
 
 p5.RendererGL.prototype.loadPixels = function() {
   //@todo_FES
-  if (this.attributes.preserveDrawingBuffer !== true) {
+  if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
     console.log(
       'loadPixels only works in WebGL when preserveDrawingBuffer ' + 'is true.'
     );
@@ -920,7 +945,7 @@ p5.RendererGL.prototype._getRetainedLineShader =
 
 p5.RendererGL.prototype._getLightShader = function() {
   if (!this._defaultLightShader) {
-    if (this.attributes.perPixelLighting) {
+    if (this._pInst._glAttributes.perPixelLighting) {
       this._defaultLightShader = new p5.Shader(
         this,
         defaultShaders.phongVert,
@@ -1097,22 +1122,6 @@ p5.RendererGL.prototype._bindBuffer = function(
   }
 };
 
-//////////////////////////
-//// SMOOTHING
-/////////////////////////
-
-p5.RendererGL.prototype.smooth = function() {
-  if (this.attributes.antialias === false) {
-    this._pInst.setAttributes('antialias', true);
-  }
-};
-
-p5.RendererGL.prototype.noSmooth = function() {
-  if (this.attributes.antialias === true) {
-    this._pInst.setAttributes('antialias', false);
-  }
-};
-
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
@@ -1191,11 +1200,13 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
     polyVertArray[polyVertArray.length] = data[1];
     polyVertArray[polyVertArray.length] = data[2];
   }
+
   function begincallback(type) {
     if (type !== libtess.primitiveType.GL_TRIANGLES) {
       console.log('expected TRIANGLES but got type: ' + type);
     }
   }
+
   function errorcallback(errno) {
     console.log('error callback');
     console.log('error number: ' + errno);
@@ -1204,6 +1215,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   function combinecallback(coords, data, weight) {
     return [coords[0], coords[1], coords[2]];
   }
+
   function edgeCallback(flag) {
     // don't really care about the flag, but need no-strip/no-fan behavior
   }
