@@ -12,7 +12,9 @@
   "extends": ["eslint:recommended", "prettier"],
   "plugins": ["prettier"],
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2017,
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
   },
   "rules": {
     "prettier/prettier": [
