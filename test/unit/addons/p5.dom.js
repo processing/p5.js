@@ -112,6 +112,18 @@ suite('DOM', function() {
       assert.strictEqual(myp5.select('#testdiv').hasClass('testclass2'), false);
     });
 
+    test('should return false if element has class that is partially similar as specified class', function() {
+      elt = document.createElement('div');
+      elt.setAttribute('id', 'testdiv');
+      elt.setAttribute('class', 'testclass slideshow newtestsclas');
+      document.body.appendChild(elt);
+
+      assert.strictEqual(myp5.select('#testdiv').hasClass('show'), false);
+      assert.strictEqual(myp5.select('#testdiv').hasClass('slide'), false);
+      assert.strictEqual(myp5.select('#testdiv').hasClass('test'), false);
+      assert.strictEqual(myp5.select('#testdiv').hasClass('class'), false);
+    });
+
     test('should toggle specified class on element', function() {
       elt = document.createElement('div');
       elt.setAttribute('id', 'testdiv');
