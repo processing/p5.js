@@ -1,7 +1,3 @@
-
-//To do: fix the call to normalMaterial in the mixedMode manual test to follow the current proper usage (hint: no arguments)
-
-
 var theta = 0;
 
 function setup() {
@@ -16,8 +12,7 @@ function draw() {
 
   for (var i = 0; i < 500; i += 100) {
     push();
-    translate(0, 0, i);
-    //removed args
+    translate(0, 0, i); 
     normalMaterial();
     push();
     translate(0, cos(i + frameCount * 0.1) * 10, 0);
