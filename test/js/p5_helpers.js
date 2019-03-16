@@ -1,3 +1,5 @@
+/* eslint no-unused-vars: 0 */
+
 function promisedSketch(sketch_fn) {
   var myInstance;
   var promise = new Promise(function(resolve, reject) {
@@ -31,7 +33,7 @@ function createP5Iframe(html) {
   var elt = document.createElement('iframe');
 
   document.body.appendChild(elt);
-  elt.setAttribute('style', 'visibility: hidden');
+  elt.style.visibility = 'hidden';
 
   elt.contentDocument.open();
   elt.contentDocument.write(html);
