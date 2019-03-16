@@ -79,4 +79,45 @@ suite('DOM', function() {
       };
     });
   });
+  suite('p5.prototype.drop', function() {
+    testSketchWithPromise('drop fires multiple events', function(
+      sketch,
+      resolve,
+      reject
+    ) {
+      var myElt;
+      var myFileFnCounter = 0;
+      var myEventFnCounter = 0;
+      sketch.setup = function() {
+        myFileFnCounter = 0;
+        myEventFnCounter = 0;
+        myElt = sketch.createDiv('drop stuff');
+        function hasFinished() {
+          if (myFileFnCounter > 1 && myEventFnCounter === 1) {
+            resolve();
+          }
+        }
+        var myFileFn = function() {
+          myFileFnCounter++;
+          hasFinished();
+        };
+        var myEventFn = function() {
+          myEventFnCounter++;
+          hasFinished();
+        };
+        myElt.drop(myFileFn, myEventFn);
+        assert.isFunction(myElt._events.drop);
+        //Mock A File Drop Event.
+        var file1 = new File(['foo'], 'foo.txt', {
+          type: 'text/plain'
+        });
+        var file2 = new File(['foo'], 'foo.txt', {
+          type: 'text/plain'
+        });
+        var myMockedEvent = new Event('drop');
+        myMockedEvent.dataTransfer = { files: [file1, file2] };
+        myElt.elt.dispatchEvent(myMockedEvent);
+      };
+    });
+  });
 });
