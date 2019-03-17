@@ -348,6 +348,10 @@ module.exports = {
 
   // DOM EXTENSION
   /**
+   * AUTO allows us to automatically set the width or height of an element (but not both),
+   * based on the current height and width of the element. Only one parameter can
+   * be passed to the <a href="/#/p5.Element/size">size</a> function as AUTO, at a time.
+   *
    * @property {String} AUTO
    * @final
    */

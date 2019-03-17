@@ -1432,6 +1432,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "FreddieRa",
+      "name": "Freddie Rawlins",
+      "avatar_url": "https://discourse-cdn-sjc2.com/standard10/user_avatar/discourse.processing.org/freddiera/120/4078_2.png",
+      "profile": "https://freddierawlins.wixsite.com/site",
+      "contributions": [
+        "code",
+        "doc"
+      ]    
     }
   ]
 }

@@ -599,6 +599,51 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
 };
 
 /**
+ * Sets the amount of gloss in the surface of shapes.
+ * Used in combination with specularMaterial() in setting
+ * the material properties of shapes. The default and minimum value is 1.
+ * @method shininess
+ * @param {Number} shine Degree of Shininess.
+ *                       Defaults to 1.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   ambientLight(60, 60, 60);
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *   specularMaterial(250);
+ *   translate(-25, 0, 0);
+ *   shininess(1);
+ *   sphere(20);
+ *   translate(50, 0, 0);
+ *   shininess(20);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Shininess on Camera changes position with mouse
+ */
+p5.prototype.shininess = function(shine) {
+  this._assert3d('shininess');
+  p5._validateParameters('shininess', arguments);
+
+  if (shine < 1) {
+    shine = 1;
+  }
+  this._renderer._useShininess = shine;
+  return this;
+};
+
+/**
  * @private blends colors according to color components.
  * If alpha value is less than 1, we need to enable blending
  * on our gl context.  Otherwise opaque objects need to a depthMask.
