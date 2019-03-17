@@ -113,6 +113,10 @@
     "doc": "docs",
     "test": "test"
   },
+  "browserslist": [
+    "last 2 versions",
+    "not dead"
+  ],
   "author": "",
   "dependencies": {}
 }
