@@ -162,6 +162,10 @@ p5.RendererGL.prototype.endShape = function(
           this.immediateMode.edges.push([i + 1, i + 2]);
           this.immediateMode.edges.push([i + 2, i]);
         }
+      } else if (this.immediateMode.shapeMode === constants.LINES) {
+        for (i = 0; i < this.immediateMode.vertices.length - 1; i = i + 2) {
+          this.immediateMode.edges.push([i, i + 1]);
+        }
       } else {
         for (i = 0; i < this.immediateMode.vertices.length - 1; i++) {
           this.immediateMode.edges.push([i, i + 1]);
@@ -178,7 +182,7 @@ p5.RendererGL.prototype.endShape = function(
       this._drawStrokeImmediateMode();
     }
 
-    if (this._doFill) {
+    if (this._doFill && this.immediateMode.shapeMode !== constants.LINES) {
       if (this.isBezier || this.isQuadratic || this.isCurve) {
         var contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
