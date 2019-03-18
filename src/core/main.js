@@ -575,6 +575,8 @@ p5.prototype._initializeInstanceVariables = function() {
   };
 
   this._pixelsDirty = true;
+
+  this.downKeys = {}; //Holds the key codes of currently pressed keys
 };
 
 // This is a pointer to our global mode p5 instance, if we're in

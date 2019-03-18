@@ -10,12 +10,6 @@
 var p5 = require('../core/main');
 
 /**
- * Holds the key codes of currently pressed keys.
- * @private
- */
-var downKeys = {};
-
-/**
  * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
  * and false if no keys are pressed.
  *
@@ -174,14 +168,14 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-  if (downKeys[e.which]) {
+  if (this.downKeys[e.which]) {
     // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
-  downKeys[e.which] = true;
+  this.downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
@@ -224,9 +218,9 @@ p5.prototype._onkeydown = function(e) {
  */
 p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
-  downKeys[e.which] = false;
+  this.downKeys[e.which] = false;
 
-  if (!areDownKeys()) {
+  if (!this._areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -304,7 +298,7 @@ p5.prototype._onkeypress = function(e) {
  * been released.
  */
 p5.prototype._onblur = function(e) {
-  downKeys = {};
+  this.downKeys = {};
 };
 
 /**
@@ -381,25 +375,25 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return downKeys[code];
+  return this.downKeys[code];
 };
 
 /**
- * The checkDownKeys function returns a boolean true if any keys pressed
+ * The _areDownKeys function returns a boolean true if any keys pressed
  * and a false if no keys are currently pressed.
 
- * Helps avoid instances where a multiple keys are pressed simultaneously and
+ * Helps avoid instances where multiple keys are pressed simultaneously and
  * releasing a single key will then switch the
  * keyIsPressed property to true.
  * @private
 **/
-function areDownKeys() {
-  for (var key in downKeys) {
-    if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
+p5.prototype._areDownKeys = function() {
+  for (var key in this.downKeys) {
+    if (this.downKeys.hasOwnProperty(key) && this.downKeys[key] === true) {
       return true;
     }
   }
   return false;
-}
+};
 
 module.exports = p5;

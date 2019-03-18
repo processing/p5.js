@@ -12,6 +12,7 @@ var spec = {
     'structure'
   ],
   data: ['p5.TypedDict'],
+  events: ['keyboard'],
   image: ['loading', 'pixels'],
   io: [
     'files',
