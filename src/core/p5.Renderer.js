@@ -92,12 +92,7 @@ p5.Renderer.prototype.push = function() {
 p5.Renderer.prototype.pop = function() {
   var style = this.styles.pop();
   if (typeof style === 'undefined') {
-    var errorMessage = 'You called pop() without first calling push()!';
-    if (this.isP3D) {
-      //prettier-ignore
-      errorMessage += ' Note that in 3D mode calling setAttributes resets push().';
-    }
-    console.error(errorMessage);
+    console.error('You called pop() without first calling push()!');
     return;
   }
   if (style.properties) {

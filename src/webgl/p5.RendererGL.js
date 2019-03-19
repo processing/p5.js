@@ -389,13 +389,9 @@ p5.prototype.setAttributes = function(key, value, successCallback) {
   if (!this._renderer.isP3D || unchanged) {
     return;
   }
+
   // have to retain renderer level styles across the
   // reset of the renderer
-  if (this._renderer.styles.length > 0 && !this._setupDone) {
-    //prettier-ignore
-    console.error('You should not use setAttributes inbetween push() and pop() inside of setup().');
-    return;
-  }
   this.push();
   var styles = this._renderer.styles.slice();
   this._renderer._resetContext();
