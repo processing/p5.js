@@ -187,7 +187,7 @@ p5.RendererGL.prototype._initContext = function() {
 //This is helper function to reset the context anytime the attributes
 //are changed with setAttributes()
 
-p5.RendererGL.prototype._resetContext = function(options, callback) {
+p5.RendererGL.prototype._resetContext = function(callback, options) {
   var w = this.width;
   var h = this.height;
   var defaultId = this.canvas.id;
@@ -213,7 +213,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
     setTimeout(function() {
-      callback.apply(window._renderer, [renderer, options]);
+      callback.apply(window.p5.instance, options);
     }, 0);
   }
 };
@@ -366,7 +366,6 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * @for p5
  * @param  {Object}  obj object with key-value pairs
  */
-
 p5.prototype.setAttributes = function(key, value, successCallback) {
   var unchanged = true;
   if (typeof value !== 'undefined') {
@@ -392,18 +391,22 @@ p5.prototype.setAttributes = function(key, value, successCallback) {
   }
   // have to retain renderer level styles across the
   // reset of the renderer
+  if (this._renderer.styles.length > 0 && !this._setupDone) {
+    //prettier-ignore
+    console.error('You should not use setAttributes inbetween push() and pop() inside of setup().');
+    return;
+  }
   this.push();
-  var styles = this._renderer.styles;
-  this._renderer._resetContext(styles, function(newRenderer, styles) {
-    newRenderer.styles = styles;
-    newRenderer.pop();
-    if (newRenderer._curCamera) {
-      newRenderer._curCamera._renderer = newRenderer;
-    }
-    if (typeof successCallback === 'function') {
-      successCallback(newRenderer);
-    }
-  });
+  var styles = this._renderer.styles.slice();
+  this._renderer._resetContext();
+  this._renderer.styles = styles;
+  this.pop();
+  if (this._renderer._curCamera) {
+    this._renderer._curCamera._renderer = this._renderer;
+  }
+  if (typeof successCallback === 'function') {
+    successCallback(this._renderer);
+  }
 };
 
 /**
