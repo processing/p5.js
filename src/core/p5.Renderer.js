@@ -38,6 +38,8 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
     this._styles = []; // non-main elt styles stored in p5.Renderer
   }
 
+  this.styles = [];
+
   this._textSize = 12;
   this._textLeading = 15;
   this._textFont = 'sans-serif';
@@ -87,7 +89,17 @@ p5.Renderer.prototype.push = function() {
 // a pop() operation is in progress
 // the renderer is passed the 'style' object that it returned
 // from its push() method.
-p5.Renderer.prototype.pop = function(style) {
+p5.Renderer.prototype.pop = function() {
+  var style = this.styles.pop();
+  if (typeof style === 'undefined') {
+    var errorMessage = 'You called pop() without first calling push()!';
+    if (this.isP3D) {
+      //prettier-ignore
+      errorMessage += ' Note that in 3D mode calling setAttributes resets push().';
+    }
+    console.error(errorMessage);
+    return;
+  }
   if (style.properties) {
     // copy the style properties back into the renderer
     Object.assign(this, style.properties);

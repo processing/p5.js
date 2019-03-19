@@ -203,7 +203,6 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-
   var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true);
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
@@ -214,7 +213,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
     setTimeout(function() {
-      callback.apply(window._renderer, options);
+      callback.apply(window._renderer, [renderer, options]);
     }, 0);
   }
 };
@@ -368,7 +367,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * @param  {Object}  obj object with key-value pairs
  */
 
-p5.prototype.setAttributes = function(key, value) {
+p5.prototype.setAttributes = function(key, value, successCallback) {
   var unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
@@ -391,14 +390,20 @@ p5.prototype.setAttributes = function(key, value) {
   if (!this._renderer.isP3D || unchanged) {
     return;
   }
-
+  // have to retain renderer level styles across the
+  // reset of the renderer
   this.push();
-  this._renderer._resetContext();
-  this.pop();
-
-  if (this._renderer._curCamera) {
-    this._renderer._curCamera._renderer = this._renderer;
-  }
+  var styles = this._renderer.styles;
+  this._renderer._resetContext(styles, function(newRenderer, styles) {
+    newRenderer.styles = styles;
+    newRenderer.pop();
+    if (newRenderer._curCamera) {
+      newRenderer._curCamera._renderer = newRenderer;
+    }
+    if (typeof successCallback === 'function') {
+      successCallback(newRenderer);
+    }
+  });
 };
 
 /**
@@ -823,6 +828,7 @@ p5.RendererGL.prototype.push = function() {
   properties._tex = this._tex;
   properties.drawMode = this.drawMode;
 
+  this.styles.push(style);
   return style;
 };
 
