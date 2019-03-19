@@ -237,9 +237,13 @@ p5.prototype.push = function() {
  *
  */
 p5.prototype.pop = function() {
-  this._colorMode = this._colorModes.pop();
-  this._renderer.pop();
-  //renderers can handle "pop() without push()" warnings
+  var colorMode = this._colorModes.pop();
+  if (typeof colorMode === 'undefined') {
+    console.warn('pop() was called without matching push()');
+  } else {
+    this._colorMode = colorMode;
+    this._renderer.pop();
+  }
 };
 
 /**
