@@ -366,7 +366,7 @@ p5.RendererGL.prototype._resetContext = function(callback, options) {
  * @for p5
  * @param  {Object}  obj object with key-value pairs
  */
-p5.prototype.setAttributes = function(key, value, successCallback) {
+p5.prototype.setAttributes = function(key, value) {
   var unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
@@ -399,9 +399,6 @@ p5.prototype.setAttributes = function(key, value, successCallback) {
   this.pop();
   if (this._renderer._curCamera) {
     this._renderer._curCamera._renderer = this._renderer;
-  }
-  if (typeof successCallback === 'function') {
-    successCallback(this._renderer);
   }
 };
 
