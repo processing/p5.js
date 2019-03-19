@@ -176,12 +176,8 @@ p5.prototype.loop = function() {
  *
  */
 p5.prototype.push = function() {
-  this._styles.push({
-    props: {
-      _colorMode: this._colorMode
-    },
-    renderer: this._renderer.push()
-  });
+  this._colorModes.push(this._colorMode);
+  this._renderer.push();
 };
 
 /**
@@ -241,13 +237,9 @@ p5.prototype.push = function() {
  *
  */
 p5.prototype.pop = function() {
-  var style = this._styles.pop();
-  if (style) {
-    this._renderer.pop(style.renderer);
-    Object.assign(this, style.props);
-  } else {
-    console.warn('pop() was called without matching push()');
-  }
+  this._colorMode = this._colorModes.pop();
+  this._renderer.pop();
+  //renderers can handle "pop() without push()" warnings
 };
 
 /**

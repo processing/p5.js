@@ -562,7 +562,7 @@ var p5 = function(sketch, node, sync) {
 };
 
 p5.prototype._initializeInstanceVariables = function() {
-  this._styles = [];
+  this._colorModes = [];
 
   this._bezierDetail = 20;
   this._curveDetail = 20;
