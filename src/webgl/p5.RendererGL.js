@@ -392,15 +392,16 @@ p5.prototype.setAttributes = function(key, value) {
     return;
   }
 
-  if (
-    Object.getOwnPropertyNames(this._renderer.gHash).length > 0 &&
-    !this._setupDone
-  ) {
-    console.error(
-      'Sorry, Could not set the attributes, you need to call setAttributes()' +
-        'before calling the other drawing methods in setup()'
-    );
-    return;
+  if (!this._setupDone) {
+    for (var x in this._renderer.gHash) {
+      if (this._renderer.gHash.hasOwnProperty(x)) {
+        console.error(
+          'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+            'before calling the other drawing methods in setup()'
+        );
+        return;
+      }
+    }
   }
 
   this.push();
