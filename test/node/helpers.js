@@ -8,7 +8,7 @@ var c = 50;
 var d = 150;
 var result;
 
-describe.only('helpers/modeAdjust', function() {
+describe('helpers/modeAdjust', function() {
   it('should set mode to corner', function() {
     result = helpers.modeAdjust(a, b, c, d, constants.CORNER);
     expect(result).to.eql({ x: 100, y: 200, w: 50, h: 150 });
