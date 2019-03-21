@@ -29,7 +29,7 @@ p5.Element = function(elt, pInst) {
    * <div>
    * <code>
    * function setup() {
-   *   var c = createCanvas(50, 50);
+   *   let c = createCanvas(50, 50);
    *   c.elt.style.border = '5px solid red';
    * }
    *
@@ -74,23 +74,23 @@ p5.Element = function(elt, pInst) {
  * // &lt;div id="myContainer">&lt;/div>
  *
  * // in the js file:
- * var cnv = createCanvas(100, 100);
+ * let cnv = createCanvas(100, 100);
  * cnv.parent('myContainer');
  * </code></div>
  * <div class='norender'><code>
- * var div0 = createDiv('this is the parent');
- * var div1 = createDiv('this is the child');
+ * let div0 = createDiv('this is the parent');
+ * let div1 = createDiv('this is the child');
  * div1.parent(div0); // use p5.Element
  * </code></div>
  * <div class='norender'><code>
- * var div0 = createDiv('this is the parent');
+ * let div0 = createDiv('this is the parent');
  * div0.id('apples');
- * var div1 = createDiv('this is the child');
+ * let div1 = createDiv('this is the child');
  * div1.parent('apples'); // use id
  * </code></div>
  * <div class='norender notest'><code>
- * var elt = document.getElementById('myParentDiv');
- * var div1 = createDiv('this is the child');
+ * let elt = document.getElementById('myParentDiv');
+ * let div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
  * </code></div>
  *
@@ -134,7 +134,7 @@ p5.Element.prototype.parent = function(p) {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var cnv = createCanvas(100, 100);
+ *   let cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
  *   // the canvas element.
  *   cnv.id('mycanvas');
@@ -171,7 +171,7 @@ p5.Element.prototype.id = function(id) {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var cnv = createCanvas(100, 100);
+ *   let cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector class 'small'
  *   // to the canvas element.
  *   cnv.class('small');
@@ -209,9 +209,9 @@ p5.Element.prototype.class = function(c) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mousePressed(changeGray); // attach listener for
@@ -268,9 +268,9 @@ p5.Element.prototype.mousePressed = function(fxn) {
  * @return {p5.Element}
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
@@ -327,9 +327,9 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseWheel(changeSize); // attach listener for
@@ -385,9 +385,9 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseReleased(changeGray); // attach listener for
@@ -440,9 +440,9 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  * @example
  * <div class="norender">
  * <code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  *
  * function setup() {
  *   cnv = createCanvas(100, 100);
@@ -493,9 +493,9 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d = 30;
- * var g;
+ * let cnv;
+ * let d = 30;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseMoved(changeSize); // attach listener for
@@ -551,8 +551,8 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
+ * let cnv;
+ * let d;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOver(changeGray);
@@ -594,8 +594,8 @@ p5.Element.prototype.mouseOver = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
+ * let cnv;
+ * let d;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOut(changeGray);
@@ -635,9 +635,9 @@ p5.Element.prototype.mouseOut = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchStarted(changeGray); // attach listener for
@@ -683,8 +683,8 @@ p5.Element.prototype.touchStarted = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var g;
+ * let cnv;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchMoved(changeGray); // attach listener for
@@ -723,9 +723,9 @@ p5.Element.prototype.touchMoved = function(fxn) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var cnv;
- * var d;
- * var g;
+ * let cnv;
+ * let d;
+ * let g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchEnded(changeGray); // attach listener for
@@ -776,7 +776,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  * // To test this sketch, simply drag a
  * // file over the canvas
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
  *   text('Drag file', width / 2, height / 2);
@@ -814,7 +814,7 @@ p5.Element.prototype.dragOver = function(fxn) {
  * // To test this sketch, simply drag a file
  * // over and then out of the canvas area
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
  *   text('Drag file', width / 2, height / 2);

@@ -96,7 +96,7 @@ module.exports = grunt => {
   const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
-  // (might nameot be useful at all.)
+  // (might not be useful at all.)
   let keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
