@@ -168,14 +168,14 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-  if (this.downKeys[e.which]) {
+  if (this._downKeys[e.which]) {
     // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
-  this.downKeys[e.which] = true;
+  this._downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
@@ -218,7 +218,7 @@ p5.prototype._onkeydown = function(e) {
  */
 p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
-  this.downKeys[e.which] = false;
+  this._downKeys[e.which] = false;
 
   if (!this._areDownKeys()) {
     this._setProperty('isKeyPressed', false);
@@ -298,7 +298,7 @@ p5.prototype._onkeypress = function(e) {
  * been released.
  */
 p5.prototype._onblur = function(e) {
-  this.downKeys = {};
+  this._downKeys = {};
 };
 
 /**
@@ -375,7 +375,7 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return this.downKeys[code];
+  return this._downKeys[code];
 };
 
 /**
@@ -388,8 +388,8 @@ p5.prototype.keyIsDown = function(code) {
  * @private
 **/
 p5.prototype._areDownKeys = function() {
-  for (var key in this.downKeys) {
-    if (this.downKeys.hasOwnProperty(key) && this.downKeys[key] === true) {
+  for (var key in this._downKeys) {
+    if (this._downKeys.hasOwnProperty(key) && this._downKeys[key] === true) {
       return true;
     }
   }
