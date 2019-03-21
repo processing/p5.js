@@ -60,7 +60,7 @@
  */
 
 function getYuidocOptions() {
-  var BASE_YUIDOC_OPTIONS = {
+  const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
     description: '<%= pkg.description %>',
     version: '<%= pkg.version %>',
@@ -76,7 +76,7 @@ function getYuidocOptions() {
 
   // note dev is no longer used, prod is used to build both testing and production ready docs
 
-  var o = {
+  const o = {
     prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
     dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
   };
@@ -87,22 +87,22 @@ function getYuidocOptions() {
   return o;
 }
 
-module.exports = function(grunt) {
+module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
-  var quietReport = process.env.TRAVIS || grunt.option('quiet');
-  var reporter = quietReport ? 'spec' : 'Nyan';
+  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
-  var karmaTasks = require('./grunt-karma.js');
+  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
-  var keepalive = false;
+  let keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
   }
 
-  var mochaConfig = {
+  const mochaConfig = {
     yui: {
       options: {
         urls: ['http://localhost:9001/test/test-reference.html'],
