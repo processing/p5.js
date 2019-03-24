@@ -1,4 +1,3 @@
-var expect = require('chai').expect;
 var constants = require('../../src/core/constants.js');
 var helpers = require('../../src/core/helpers.js');
 

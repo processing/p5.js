@@ -1,5 +1,3 @@
-var expect = require('chai').expect;
-
 var preprocessor = require('../../docs/preprocessor');
 
 describe('docs preprocessor', function() {
