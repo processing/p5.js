@@ -519,9 +519,9 @@ p5.prototype.get = function(x, y, w, h) {
  * }
  *
  * function setup() {
- *   image(img, 0, 0);
+ *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let halfImage = 4 * (width * d) * (height * d / 2);
  *   loadPixels();
  *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
@@ -638,9 +638,9 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * }
  *
  * function setup() {
- *   image(img, 0, 0);
+ *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let halfImage = 4 * (width * d) * (height * d / 2);
  *   loadPixels();
  *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
