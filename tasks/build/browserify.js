@@ -35,7 +35,10 @@ module.exports = function(grunt) {
         browseified = browseified.exclude('../../docs/reference/data.json');
       }
 
-      const bundle = browseified.transform('brfs').bundle();
+      const bundle = browseified
+        .transform('brfs')
+        .transform('babelify', { presets: ['@babel/preset-env'] })
+        .bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
