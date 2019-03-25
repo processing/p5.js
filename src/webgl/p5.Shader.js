@@ -190,7 +190,6 @@ p5.Shader.prototype.bindShader = function() {
   if (!this._bound) {
     this.useProgram();
     this._bound = true;
-    this.bindTextures();
 
     this._setMatrixUniforms();
 
