@@ -1543,6 +1543,8 @@ p5.RendererGL.prototype.image = function(
   dWidth,
   dHeight
 ) {
+  this._pInst.push();
+
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
@@ -1576,6 +1578,8 @@ p5.RendererGL.prototype.image = function(
   this.vertex(new_dx + dWidth, new_dy + dHeight, 0, u1, v1);
   this.vertex(new_dx, new_dy + dHeight, 0, u0, v1);
   this.endShape(constants.CLOSE);
+
+  this._pInst.pop();
 };
 
 module.exports = p5;
