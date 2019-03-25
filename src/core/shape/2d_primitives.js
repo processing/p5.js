@@ -294,7 +294,7 @@ p5.prototype.circle = function() {
   var args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  this.ellipse.apply(this, args);
+  return this.ellipse.apply(this, args);
 };
 
 /**
@@ -576,7 +576,7 @@ p5.prototype.rect = function() {
  * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
-  this.rect(x, y, s, s, tl, tr, br, bl);
+  return this.rect(x, y, s, s, tl, tr, br, bl);
 };
 
 /**
