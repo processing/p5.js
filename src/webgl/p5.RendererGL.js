@@ -555,6 +555,11 @@ p5.RendererGL.prototype.strokeCap = function(cap) {
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
+p5.RendererGL.prototype.blendMode = function(mode) {
+  // @TODO : to be implemented
+  console.error('Sorry, blendMode() is not yet implemented in WEBGL mode');
+};
+
 /**
  * Change weight of stroke
  * @method  strokeWeight

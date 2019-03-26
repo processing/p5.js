@@ -239,7 +239,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * with the ones of pixels already in the display window (B):
  * <ul>
  * <li><code>BLEND</code> - linear interpolation of colours: C =
- * A\*factor + B. This is the default blending mode.</li>
+ * A\*factor + B. <b>This is the default blending mode.</b></li>
  * <li><code>ADD</code> - sum of A and B</li>
  * <li><code>DARKEST</code> - only the darkest colour succeeds: C =
  * min(A\*factor, B).</li>
@@ -271,7 +271,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * @param  {Constant} mode blend mode to set for canvas.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
- *                SOFT_LIGHT, DODGE, BURN, ADD or NORMAL
+ *                SOFT_LIGHT, DODGE, BURN, or ADD
  * @example
  * <div>
  * <code>
@@ -314,10 +314,15 @@ p5.prototype.blendMode = function(mode) {
     mode === constants.SOFT_LIGHT ||
     mode === constants.DODGE ||
     mode === constants.BURN ||
-    mode === constants.ADD ||
-    mode === constants.NORMAL
+    mode === constants.ADD
   ) {
     this._renderer.blendMode(mode);
+  } else if (mode === constants.NORMAL) {
+    // Warning added 3/26/19, can be deleted in future (1.0 release?)
+    console.warn(
+      'NORMAL has been deprecated for use in blendMode. defaulting to BLEND instead.'
+    );
+    this._renderer.blendMode(constants.BLEND);
   } else {
     throw new Error('Mode ' + mode + ' not recognized.');
   }
