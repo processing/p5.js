@@ -1074,6 +1074,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   var ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+  fillShader.bindTextures();
 };
 
 p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
