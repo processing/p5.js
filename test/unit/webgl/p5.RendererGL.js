@@ -175,7 +175,7 @@ suite('p5.RendererGL', function() {
         }
         myp5.pop();
       }
-      assert.isTrue(myp5._renderer.styles.length === 0);
+      assert.isTrue(myp5._styles.length === 0);
       done();
     });
   });
