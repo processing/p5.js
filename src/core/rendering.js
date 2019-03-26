@@ -255,21 +255,21 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * <li><code>REPLACE</code> - the pixels entirely replace the others and
  * don't utilize alpha (transparency) values.</li>
  * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
- * </code>. Multiplies dark values, and screens light values. (2D)</li>
+ * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
  * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
- * gray, <code>MULTIPLY</code> when lower. (2D)</li>
+ * gray, <code>MULTIPLY</code> when lower. <em>(2D)</em></li>
  * <li><code>SOFT_LIGHT</code> - mix of <code>DARKEST</code> and
- * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. (2D)
+ * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. <em>(2D)</em>
  * </li>
  * <li><code>DODGE</code> - lightens light tones and increases contrast,
- * ignores darks. (2D)</li>
+ * ignores darks. <em>(2D)</em></li>
  * <li><code>BURN</code> - darker areas are applied, increasing contrast,
- * ignores lights. (2D)</li>
- * <li><code>SUBTRACT</code> - remainder of A and B (3D)</li>
+ * ignores lights. <em>(2D)</em></li>
+ * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
  * </ul>
  * <br><br>
- * (2D) indicates that this blend mode <b>only</b> works in the 2D renderer.
- * (3D) indicates that this blend mode <b>only</b> works in the WEBGL renderer.
+ * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
+ * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
  *
  *
  * @method blendMode
