@@ -70,6 +70,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
+  this.curBlendMode = constants.BLEND;
+  this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;
   this._useNormalMaterial = false;
@@ -556,8 +558,29 @@ p5.RendererGL.prototype.strokeCap = function(cap) {
 };
 
 p5.RendererGL.prototype.blendMode = function(mode) {
-  // @TODO : to be implemented
-  console.error('Sorry, blendMode() is not yet implemented in WEBGL mode');
+  if (
+    mode === constants.DARKEST ||
+    mode === constants.LIGHTEST ||
+    mode === constants.ADD ||
+    mode === constants.BLEND ||
+    mode === constants.SUBTRACT ||
+    mode === constants.SCREEN ||
+    mode === constants.EXCLUSION ||
+    mode === constants.REPLACE ||
+    mode === constants.MULTIPLY
+  )
+    this.curBlendMode = mode;
+  else if (
+    mode === constants.BURN ||
+    mode === constants.OVERLAY ||
+    mode === constants.HARD_LIGHT ||
+    mode === constants.SOFT_LIGHT ||
+    mode === constants.DODGE
+  ) {
+    console.warn(
+      'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
+    );
+  }
 };
 
 /**

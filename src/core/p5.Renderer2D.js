@@ -165,8 +165,30 @@ p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.blendMode = function(mode) {
-  this.drawingContext.globalCompositeOperation = mode;
+  if (mode === constants.SUBTRACT) {
+    console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
+  } else if (
+    mode === constants.BLEND ||
+    mode === constants.DARKEST ||
+    mode === constants.LIGHTEST ||
+    mode === constants.DIFFERENCE ||
+    mode === constants.MULTIPLY ||
+    mode === constants.EXCLUSION ||
+    mode === constants.SCREEN ||
+    mode === constants.REPLACE ||
+    mode === constants.OVERLAY ||
+    mode === constants.HARD_LIGHT ||
+    mode === constants.SOFT_LIGHT ||
+    mode === constants.DODGE ||
+    mode === constants.BURN ||
+    mode === constants.ADD
+  ) {
+    this.drawingContext.globalCompositeOperation = mode;
+  } else {
+    throw new Error('Mode ' + mode + ' not recognized.');
+  }
 };
+
 p5.Renderer2D.prototype.blend = function() {
   var currBlend = this.drawingContext.globalCompositeOperation;
   var blendMode = arguments[arguments.length - 1];
