@@ -356,6 +356,8 @@ p5.prototype.point = function() {
  *
  */
 /**
+ * Draw a quad. z-arguments only work when quad() is used in WEBGL mode.
+ *
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
