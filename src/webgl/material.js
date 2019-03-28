@@ -657,13 +657,78 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   if (isTexture || colors[colors.length - 1] < 1.0) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
-    gl.blendEquation(gl.FUNC_ADD);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    this._applyBlendMode();
   } else {
     gl.depthMask(true);
     gl.disable(gl.BLEND);
   }
   return colors;
+};
+
+/**
+ * @private sets blending in gl context to curBlendMode
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
+ */
+p5.RendererGL.prototype._applyBlendMode = function() {
+  var gl = this.GL;
+  switch (this.curBlendMode) {
+    case constants.BLEND:
+    case constants.ADD:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.MULTIPLY:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ZERO, gl.SRC_COLOR, gl.ONE, gl.ONE);
+      break;
+    case constants.SCREEN:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ONE_MINUS_DST_COLOR, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.EXCLUSION:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(
+        gl.ONE_MINUS_DST_COLOR,
+        gl.ONE_MINUS_SRC_COLOR,
+        gl.ONE,
+        gl.ONE
+      );
+      break;
+    case constants.REPLACE:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ONE, gl.ZERO);
+      break;
+    case constants.SUBTRACT:
+      gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.DARKEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MIN_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    case constants.LIGHTEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MAX_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    default:
+      console.error(
+        'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
+      );
+      break;
+  }
 };
 
 module.exports = p5;

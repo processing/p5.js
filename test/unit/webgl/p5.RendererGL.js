@@ -230,4 +230,59 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
+
+  suite('blendMode()', function() {
+    var testBlend = function(mode, intended) {
+      myp5.blendMode(mode);
+      assert.deepEqual(intended, myp5._renderer.curBlendMode);
+    };
+
+    test('blendMode sets _curBlendMode correctly', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      testBlend(myp5.ADD, myp5.ADD);
+      testBlend(myp5.REPLACE, myp5.REPLACE);
+      testBlend(myp5.SUBTRACT, myp5.SUBTRACT);
+      testBlend(myp5.SCREEN, myp5.SCREEN);
+      testBlend(myp5.EXCLUSION, myp5.EXCLUSION);
+      testBlend(myp5.MULTIPLY, myp5.MULTIPLY);
+      testBlend(myp5.LIGHTEST, myp5.LIGHTEST);
+      testBlend(myp5.DARKEST, myp5.DARKEST);
+      done();
+    });
+
+    test('blendMode doesnt change when mode unavailable in 3D', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.blendMode(myp5.DARKEST);
+      testBlend(myp5.BURN, myp5.DARKEST);
+      testBlend(myp5.DODGE, myp5.DARKEST);
+      testBlend(myp5.SOFT_LIGHT, myp5.DARKEST);
+      testBlend(myp5.HARD_LIGHT, myp5.DARKEST);
+      testBlend(myp5.OVERLAY, myp5.DARKEST);
+      done();
+    });
+
+    var mixAndReturn = function(mode, bgCol) {
+      myp5.background(bgCol);
+      myp5.blendMode(mode);
+      myp5.fill(255, 0, 0, 122);
+      myp5.plane(10);
+      myp5.fill(0, 0, 255, 122);
+      myp5.plane(10);
+      return myp5.get(5, 5);
+    };
+
+    test('blendModes change pixel colors as expected', function(done) {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.noStroke();
+      assert.deepEqual([133, 69, 191, 255], mixAndReturn(myp5.ADD, 255));
+      assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
+      assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
+      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
+      assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));
+      assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.MULTIPLY, 255));
+      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.LIGHTEST, 0));
+      assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.DARKEST, 255));
+      done();
+    });
+  });
 });

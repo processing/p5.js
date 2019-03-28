@@ -405,6 +405,11 @@ module.exports = {
    */
   DIFFERENCE: 'difference',
   /**
+   * @property {String} SUBTRACT
+   * @final
+   */
+  SUBTRACT: 'subtract',
+  /**
    * @property {String} EXCLUSION
    * @final
    */
