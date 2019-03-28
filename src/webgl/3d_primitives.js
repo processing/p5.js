@@ -1010,30 +1010,39 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+// prettier-ignore
+p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
   var gId =
     'quad|' +
     x1 +
     '|' +
     y1 +
     '|' +
+    z1 +
+    '|' +
     x2 +
     '|' +
     y2 +
+    '|' +
+    z2 +
     '|' +
     x3 +
     '|' +
     y3 +
     '|' +
+    z3 +
+    '|' +
     x4 +
     '|' +
-    y4;
+    y4 +
+    '|' +
+    z4;
   if (!this.geometryInHash(gId)) {
     var _quad = function() {
-      this.vertices.push(new p5.Vector(x1, y1, 0));
-      this.vertices.push(new p5.Vector(x2, y2, 0));
-      this.vertices.push(new p5.Vector(x3, y3, 0));
-      this.vertices.push(new p5.Vector(x4, y4, 0));
+      this.vertices.push(new p5.Vector(x1, y1, z1));
+      this.vertices.push(new p5.Vector(x2, y2, z2));
+      this.vertices.push(new p5.Vector(x3, y3, z3));
+      this.vertices.push(new p5.Vector(x4, y4, z4));
       this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };

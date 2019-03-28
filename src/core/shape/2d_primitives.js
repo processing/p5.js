@@ -394,6 +394,8 @@ p5.prototype.point = function() {
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
+ * z-arguments only work when quad() is used in WEBGL mode.
+ *
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -436,7 +438,18 @@ p5.prototype.quad = function() {
   p5._validateParameters('quad', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.quad.apply(this._renderer, arguments);
+    if (this._renderer.isP3D && arguments.length !== 12) {
+      // if 3D and we weren't passed 12 args, assume Z is 0
+      // prettier-ignore
+      this._renderer.quad.call(
+        this._renderer,
+        arguments[0], arguments[1], 0,
+        arguments[2], arguments[3], 0,
+        arguments[4], arguments[5], 0,
+        arguments[6], arguments[7], 0);
+    } else {
+      this._renderer.quad.apply(this._renderer, arguments);
+    }
   }
 
   return this;
