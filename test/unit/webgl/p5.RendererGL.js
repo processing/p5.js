@@ -48,6 +48,138 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('push() and pop() work in WEBGL Mode', function() {
+    test('push/pop and translation works as expected in WEBGL Mode', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      var modelView = myp5._renderer.uMVMatrix.copy();
+      myp5.push();
+      myp5.rotateX(Math.random(0, 100));
+      myp5.translate(20, 100, 5);
+      assert.notEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      myp5.pop();
+      assert.deepEqual(modelView.mat4, myp5._renderer.uMVMatrix.mat4);
+      done();
+    });
+
+    test('push/pop and directionalLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.directionalLight(255, 0, 0, 0, 0, 0);
+      var dirColors = myp5._renderer.directionalLightColors.slice();
+      var dirLightDirections = myp5._renderer.directionalLightDirections.slice();
+      myp5.push();
+      myp5.directionalLight(0, 0, 255, 0, 10, 5);
+      assert.notEqual(dirColors, myp5._renderer.directionalLightColors);
+      assert.notEqual(
+        dirLightDirections,
+        myp5._renderer.directionalLightDirections
+      );
+      myp5.pop();
+      assert.deepEqual(dirColors, myp5._renderer.directionalLightColors);
+      assert.deepEqual(
+        dirLightDirections,
+        myp5._renderer.directionalLightDirections
+      );
+      done();
+    });
+
+    test('push/pop and ambientLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.ambientLight(100, 0, 100);
+      myp5.ambientLight(0, 0, 200);
+      var ambColors = myp5._renderer.ambientLightColors.slice();
+      myp5.push();
+      myp5.ambientLight(0, 0, 0);
+      assert.notEqual(ambColors, myp5._renderer.ambientLightColors);
+      myp5.pop();
+      assert.deepEqual(ambColors, myp5._renderer.ambientLightColors);
+      done();
+    });
+
+    test('push/pop and pointLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.pointLight(255, 0, 0, 0, 0, 0);
+      var pointColors = myp5._renderer.pointLightColors.slice();
+      var pointLocs = myp5._renderer.pointLightPositions.slice();
+      myp5.push();
+      myp5.pointLight(0, 0, 255, 0, 10, 5);
+      assert.notEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
+      myp5.pop();
+      assert.deepEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
+      done();
+    });
+
+    test('push/pop and pointLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.pointLight(255, 0, 0, 0, 0, 0);
+      var pointColors = myp5._renderer.pointLightColors.slice();
+      var pointLocs = myp5._renderer.pointLightPositions.slice();
+      myp5.push();
+      myp5.pointLight(0, 0, 255, 0, 10, 5);
+      assert.notEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
+      myp5.pop();
+      assert.deepEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
+      done();
+    });
+
+    test('push/pop and texture() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      var tex1 = myp5.createGraphics(1, 1);
+      myp5.texture(tex1);
+      assert.equal(tex1, myp5._renderer._tex);
+      myp5.push();
+      var tex2 = myp5.createGraphics(2, 2);
+      myp5.texture(tex2);
+      assert.equal(tex2, myp5._renderer._tex);
+      assert.notEqual(tex1, myp5._renderer._tex);
+      myp5.pop();
+      assert.equal(tex1, myp5._renderer._tex);
+      done();
+    });
+
+    test('push/pop and shader() works with fill', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      var fillShader1 = myp5._renderer._getLightShader();
+      var fillShader2 = myp5._renderer._getColorShader();
+      myp5.shader(fillShader1);
+      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      myp5.push();
+      myp5.shader(fillShader2);
+      assert.equal(fillShader2, myp5._renderer.userFillShader);
+      assert.notEqual(fillShader1, myp5._renderer.userFillShader);
+      myp5.pop();
+      assert.equal(fillShader1, myp5._renderer.userFillShader);
+      done();
+    });
+
+    test('push/pop builds/unbuilds stack properly', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      var col1 = myp5.color(255, 0, 0);
+      var col2 = myp5.color(0, 255, 0);
+      for (var i = 0; i < 10; i++) {
+        myp5.push();
+        if (i % 2 === 0) {
+          myp5.fill(col1);
+        } else {
+          myp5.fill(col2);
+        }
+      }
+      for (var j = i; j > 0; j--) {
+        if (j % 2 === 0) {
+          assert.deepEqual(col2._array, myp5._renderer.curFillColor);
+        } else {
+          assert.deepEqual(col1._array, myp5._renderer.curFillColor);
+        }
+        myp5.pop();
+      }
+      assert.isTrue(myp5._styles.length === 0);
+      done();
+    });
+  });
+
   suite('loadpixels()', function() {
     test('loadPixels color check', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
