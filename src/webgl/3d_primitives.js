@@ -1548,10 +1548,6 @@ p5.RendererGL.prototype.image = function(
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
-  // (dx, dy) maps to center of canvas, so it is transformed to the actual (0,0) of canvas
-  var new_dx = dx - this._pInst.width / 2;
-  var new_dy = dy - this._pInst.height / 2;
-
   var u0 = 0;
   if (sx <= img.width) {
     u0 = sx / img.width;
@@ -1573,10 +1569,10 @@ p5.RendererGL.prototype.image = function(
   }
 
   this.beginShape();
-  this.vertex(new_dx, new_dy, 0, u0, v0);
-  this.vertex(new_dx + dWidth, new_dy, 0, u1, v0);
-  this.vertex(new_dx + dWidth, new_dy + dHeight, 0, u1, v1);
-  this.vertex(new_dx, new_dy + dHeight, 0, u0, v1);
+  this.vertex(dx, dy, 0, u0, v0);
+  this.vertex(dx + dWidth, dy, 0, u1, v0);
+  this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+  this.vertex(dx, dy + dHeight, 0, u0, v1);
   this.endShape(constants.CLOSE);
 
   this._pInst.pop();
