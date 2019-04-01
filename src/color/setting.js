@@ -159,7 +159,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color
  * @chainable
  */
