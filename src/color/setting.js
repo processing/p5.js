@@ -153,7 +153,7 @@ require('./p5.Color');
  *                        color mode)
  * @param {Number} v3     blue or brightness value (depending on the current
  *                        color mode)
- * @param  {Number} [a]
+ * @param  {Number} [a]   alpha value relative to current color range (default is 0–255)
  * @chainable
  */
 
