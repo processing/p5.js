@@ -37,7 +37,7 @@ module.exports = function(grunt) {
 
       const bundle = browseified
         .transform('brfs')
-        .transform('babelify', { presets: ['@babel/preset-env'] })
+        .transform('babelify')
         .bundle();
 
       // Start the generated output with the banner comment,

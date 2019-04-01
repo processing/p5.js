@@ -114,6 +114,14 @@
     "doc": "docs",
     "test": "test"
   },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "generatorOpts": {
+      "compact": true
+    }
+  },
   "browserslist": [
     "last 2 versions",
     "not dead"
