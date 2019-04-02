@@ -268,4 +268,4 @@ The build reference can be found in docs/reference. To preview it locally, run `
 
 ## Spanish language version
 
-The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure) to update this material.
+The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) to update this material.
