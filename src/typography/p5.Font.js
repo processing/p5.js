@@ -177,7 +177,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
  * <code>
  * let font;
  * function preload() {
- *   font = loadFont('./assets/Avenir.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
  * let points;

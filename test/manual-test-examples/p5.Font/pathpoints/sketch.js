@@ -8,7 +8,7 @@ function setup() {
 
   flock = new Flock();
 
-  loadFont('../opentype/AvenirNextLTPro-Demi.otf', function(f) {
+  loadFont('../opentype/inconsolata.otf', function(f) {
     var points = f.textToPoints('p5.js', 80, 185, 150);
     for (var k = 0; k < points.length; k++) {
       flock.boids.push(new Boid(points[k]));
