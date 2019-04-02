@@ -63,6 +63,21 @@ p5.Graphics = function(w, h, renderer, pInst) {
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
 /**
+ * End the drawing loop of p5.Graphics object. This resets the transform
+ * matrices and lighting.
+ *
+ * @method endFrame
+ *
+ */
+p5.Graphics.prototype.endFrame = function() {
+  // just reset the matrix in the Renderer for this p5.Graphics object
+  this._renderer.resetMatrix();
+  if (this._renderer.isP3D) {
+    this._renderer._update();
+  }
+};
+
+/**
  * Removes a Graphics object from the page and frees any resources
  * associated with it.
  *
