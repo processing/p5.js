@@ -1,4 +1,4 @@
-suite.only('Keyboard Events', function() {
+suite('Keyboard Events', function() {
   var myp5;
 
   setup(function(done) {
