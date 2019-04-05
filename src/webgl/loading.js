@@ -109,13 +109,18 @@ p5.prototype.loadModel = function(path) {
     failureCallback = arguments[2];
   }
 
+  var fileType = path.slice(-4);
   var model = new p5.Geometry();
   model.gid = path + '|' + normalize;
   var self = this;
   this.loadStrings(
     path,
     function(strings) {
-      parseObj(model, strings);
+      if (fileType === '.obj') {
+        parseObj(model, strings);
+      } else {
+        parseSTL(model, strings);
+      }
 
       if (normalize) {
         model.normalize();
@@ -241,6 +246,160 @@ function parseObj(model, lines) {
   return model;
 }
 
+/**
+ * STL files can be of two types, ASCII and Binary,
+ *
+ * ASCII file starts with `solid 'nameOfFile'`
+ * Then contain the normal of the face, starting with `facet normal`
+ * Next contain a keyword indicating the start of face vertex, `outer loop`
+ * Next comes the three vertex, starting with `vertex x y z`
+ * Vertices ends with `endloop`
+ * Face ends with `endfacet`
+ * Next face starts with `facet normal`
+ * The end of the file is indicated by `endsolid`
+ */
+function parseSTL(model, lines) {
+  // implement Binary check here
+  parseASCIISTL(model, lines);
+  return model;
+}
+
+function parseASCIISTL(model, lines) {
+  var state = '';
+  var curVertexIndex = [];
+  var newnormal, newVertex;
+
+  for (var iterator = 0; iterator < lines.length; ++iterator) {
+    var line = lines[iterator].trim();
+    var parts = line.split(' ');
+
+    for (var partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+      if (parts[partsiterator] === '') {
+        // Ignoring multiple whitespaces
+        parts.splice(partsiterator, 1);
+      }
+    }
+
+    if (parts.length === 0) {
+      // Remove newline
+      continue;
+    }
+
+    switch (state) {
+      case '': // First run
+        if (parts[0] !== 'solid') {
+          // Invalid state
+          console.error(line);
+          console.error('Invalid state "' + parts[0] + '", should be "solid"');
+          return;
+        } else {
+          state = 'solid';
+        }
+        break;
+
+      case 'solid': // First face
+        if (parts[0] !== 'facet' || parts[1] !== 'normal') {
+          // Invalid state
+          console.error(line);
+          console.error(
+            'Invalid state "' + parts[0] + '", should be "facet normal"'
+          );
+          return;
+        } else {
+          // Push normal for first face
+          newnormal = new p5.Vector(
+            parseFloat(parts[2]),
+            parseFloat(parts[3]),
+            parseFloat(parts[4])
+          );
+          model.vertexNormals.push(newnormal, newnormal, newnormal);
+          state = 'facet normal';
+        }
+        break;
+
+      case 'facet normal': // After normal is defined
+        if (parts[0] !== 'outer' || parts[1] !== 'loop') {
+          // Invalid State
+          console.error(line);
+          console.error(
+            'Invalid state "' + parts[0] + '", should be "outer loop"'
+          );
+          return;
+        } else {
+          // Next should be vertices
+          state = 'vertex';
+        }
+        break;
+
+      case 'vertex':
+        if (parts[0] === 'vertex') {
+          //Vertex of triangle
+          newVertex = new p5.Vector(
+            parseFloat(parts[1]),
+            parseFloat(parts[2]),
+            parseFloat(parts[3])
+          );
+          model.vertices.push(newVertex);
+          curVertexIndex.push(model.vertices.indexOf(newVertex));
+        } else if (parts[0] === 'endloop') {
+          // End of vertices
+          model.faces.push(curVertexIndex);
+          curVertexIndex = [];
+          state = 'endloop';
+        } else {
+          // Invalid State
+          console.error(line);
+          console.error(
+            'Invalid state "' + parts[0] + '", should be "vertex" or "endloop"'
+          );
+          return;
+        }
+        break;
+
+      case 'endloop':
+        if (parts[0] !== 'endfacet') {
+          // End of face
+          console.error(line);
+          console.error(
+            'Invalid state "' + parts[0] + '", should be "endfacet"'
+          );
+          return;
+        } else {
+          state = 'endfacet';
+        }
+        break;
+
+      case 'endfacet':
+        if (parts[0] === 'endsolid') {
+          // End of solid
+        } else if (parts[0] === 'facet' && parts[1] === 'normal') {
+          // Next face
+          newnormal = new p5.Vector(
+            parseFloat(parts[2]),
+            parseFloat(parts[3]),
+            parseFloat(parts[4])
+          );
+          model.vertexNormals.push(newnormal, newnormal, newnormal);
+          state = 'facet normal';
+        } else {
+          // Invalid State
+          console.error(line);
+          console.error(
+            'Invalid state "' +
+              parts[0] +
+              '", should be "endsolid" or "facet normal"'
+          );
+          return;
+        }
+        break;
+
+      default:
+        console.error('Invalid state "' + state + '"');
+        break;
+    }
+  }
+  return model;
+}
 /**
  * Render a 3d model to the screen.
  *
