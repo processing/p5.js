@@ -1,3 +1,4 @@
+var { expect } = require('chai');
 var preprocessor = require('../../docs/preprocessor');
 
 describe('docs preprocessor', function() {

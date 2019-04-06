@@ -1,3 +1,2 @@
 # mocha.opts
-  --file ./js/chai_helpers.js
   --ui tdd
