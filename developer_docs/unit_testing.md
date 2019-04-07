@@ -4,7 +4,7 @@ We use unit testing to ensure that individual components of the codebase work as
 
 ## References
 
-[Here's a good, quick intro to unit testing with a similar tech stack](https://codeburst.io/javascript-unit-testing-using-mocha-and-chai-1d97d9f18e71), and [here's a more in depth walkthrough](https://blog.logrocket.com/a-quick-and-complete-guide-to-mocha-testing-d0e0ea09f09d)
+Here's a [good, quick intro to unit testing](https://codeburst.io/javascript-unit-testing-using-mocha-and-chai-1d97d9f18e71) with a similar tech stack, and here's a [more in depth walkthrough](https://blog.logrocket.com/a-quick-and-complete-guide-to-mocha-testing-d0e0ea09f09d)
 
 ## Running All the Unit Tests
 
