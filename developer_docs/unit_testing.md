@@ -8,7 +8,7 @@ We have a collection of tests under the `test/unit` folder that run in the brows
 
 In the repo root, use the following command in your terminal
 
-```shell
+```shellsession
 npm test
 ```
 
