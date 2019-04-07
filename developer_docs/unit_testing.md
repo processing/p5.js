@@ -32,4 +32,14 @@ Now when you use `npm test`, only tests within that `function()` will be run.
 
 We use [mocha](https://mochajs.org) for structuring and running the unit tests
 
-We use [chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how code should behave
+We use [chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how code should behave.
+
+## Setup and Helpers
+
+These are currently only available to the browser tests (where most of our tests run).
+
+- `test/js/mocha_setup.js`
+- `test/js/chai_helpers.js` sets up chai and adds a couple helpful functions to `chai.assert`
+- `test/js/p5_helpers.js` adds a couple helpers for testing p5 sketches
+
+The setup for Node.js tests is all done in `test/mocha.opts`
