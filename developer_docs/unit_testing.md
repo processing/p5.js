@@ -2,8 +2,6 @@
 
 We use unit testing to ensure that individual components of the codebase work as we expect them to.
 
-We have a collection of tests under the `test/unit` folder that run in the browser and a collection of tests under `test/node` that run in node.
-
 ## Running All the Unit Tests
 
 In the repo root, use the following command in your terminal
@@ -43,3 +41,12 @@ These are currently only available to the browser tests (where most of our tests
 - `test/js/p5_helpers.js` adds a couple helpers for testing p5 sketches
 
 The setup for Node.js tests is all done in `test/mocha.opts`
+
+## Testing Environments
+
+We have a collection of tests under the `test/unit` folder that run in the browser and a collection of tests under `test/node` that run in Node.js.
+
+The browser tests run in ["headless" Chrome](https://developers.google.com/web/updates/2017/06/headless-karma-mocha-chai). This is why you don't see a browser window pop up when you run the tests.
+### Continuous Integration Testing
+
+When you open a pull request in the p5.js repo, it will automatically run the tests [on Travis CI](https://travis-ci.org/processing/p5.js/pull_requests), too. Travis CI helps us double check that the tests pass for each pull request, with no extra work from individual contributors.
