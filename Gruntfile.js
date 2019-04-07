@@ -474,7 +474,8 @@ module.exports = grunt => {
   grunt.registerTask('test:nobuild', [
     'eslint:test',
     'connect:server',
-    'mochaChrome'
+    'mochaChrome',
+    'mochaTest'
   ]);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
