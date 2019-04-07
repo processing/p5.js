@@ -2,6 +2,10 @@
 
 We use unit testing to ensure that individual components of the codebase work as we expect them to.
 
+## References
+
+[Here's a good, quick intro to unit testing with a similar tech stack](https://codeburst.io/javascript-unit-testing-using-mocha-and-chai-1d97d9f18e71), and [here's a more in depth walkthrough](https://blog.logrocket.com/a-quick-and-complete-guide-to-mocha-testing-d0e0ea09f09d)
+
 ## Running All the Unit Tests
 
 In the repo root, use the following command in your terminal
