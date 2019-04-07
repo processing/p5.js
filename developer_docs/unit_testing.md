@@ -51,6 +51,7 @@ The setup for Node.js tests is all done in `test/mocha.opts`
 We have a collection of tests under the `test/unit` folder that run in the browser and a collection of tests under `test/node` that run in Node.js.
 
 The browser tests run in ["headless" Chrome](https://developers.google.com/web/updates/2017/06/headless-karma-mocha-chai). This is why you don't see a browser window pop up when you run the tests.
+
 ### Continuous Integration Testing
 
-When you open a pull request in the p5.js repo, it will automatically run the tests [on Travis CI](https://travis-ci.org/processing/p5.js/pull_requests), too. Travis CI helps us double check that the tests pass for each pull request, with no extra work from individual contributors.
+When you open a pull request in the p5.js repo, it will automatically run the tests [on Travis CI](https://travis-ci.org/processing/p5.js/pull_requests) too. Travis CI helps us double check that the tests pass for each pull request, with no extra work from individual contributors.
