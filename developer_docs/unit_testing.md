@@ -34,9 +34,9 @@ We use [chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to w
 
 ## Setup and Helpers
 
-These are currently only available to the browser tests (where most of our tests run).
+These are currently only available to the browser tests (where most of our tests run):
 
-- `test/js/mocha_setup.js`
+- `test/js/mocha_setup.js` configures a few options for mocha
 - `test/js/chai_helpers.js` sets up chai and adds a couple helpful functions to `chai.assert`
 - `test/js/p5_helpers.js` adds a couple helpers for testing p5 sketches
 
