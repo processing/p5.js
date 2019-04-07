@@ -55,3 +55,11 @@ The browser tests run in ["headless" Chrome](https://developers.google.com/web/u
 ### Continuous Integration Testing
 
 When you open a pull request in the p5.js repo, it will automatically run the tests [on Travis CI](https://travis-ci.org/processing/p5.js/pull_requests) too. Travis CI helps us double check that the tests pass for each pull request, with no extra work from individual contributors.
+
+## Adding Unit Tests
+
+If you want to add more unit tests, look and see if there's already a test file for the component you want to add tests for. Generally, tests for a given file in `src/` are at the same path under `test/unit`. (For example the tests for `src/color/p5.Color.js` are in `test/unit/color/p5.Color.js`.)
+
+If you can't find one, that's probably because there aren't any tests for that file (yet 😉), so create a new file according to the conventions above. If the module you're testing requires a browser to work, you'll want to put it in `test/unit`, but if it doesn't, you might want to add it under `test/node`. **When in doubt, default to adding a browser test in `test/unit`! (It's pretty easy to move a later if we need to.)**
+
+If you have to add a test file for a module to `test/unit`, then you'll also need to the module under test to the `spec` array in `test/unit/spec.js`. This will make sure the necessary modules are loaded for your test to run.
