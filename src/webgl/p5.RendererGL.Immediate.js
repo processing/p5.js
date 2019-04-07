@@ -183,7 +183,12 @@ p5.RendererGL.prototype.endShape = function(
     }
 
     if (this._doFill && this.immediateMode.shapeMode !== constants.LINES) {
-      if (this.isBezier || this.isQuadratic || this.isCurve) {
+      if (
+        this.isBezier ||
+        this.isQuadratic ||
+        this.isCurve ||
+        this.immediateMode.shapeMode === constants.LINE_STRIP
+      ) {
         var contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
         ];
@@ -312,6 +317,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
           this.isBezier ||
           this.isQuadratic ||
           this.isCurve ||
+          this.immediateMode.shapeMode === constants.LINE_STRIP ||
           this.immediateMode.shapeMode === constants.TRIANGLES
             ? constants.TRIANGLES
             : constants.TRIANGLE_FAN;
