@@ -38,6 +38,11 @@ suite.only('Conversion', function() {
       assert.strictEqual(result, Infinity);
     });
 
+    test('should return -Infinity for -Infinity', function() {
+      result = myp5.float(-Infinity);
+      assert.strictEqual(result, -Infinity);
+    });
+
     test('should return array of floating points and Nan', function() {
       result = myp5.float(['1', '2.0', '3.1', 'giraffe']);
       assert.typeOf(result, 'Array');
@@ -75,6 +80,11 @@ suite.only('Conversion', function() {
     test('should return Infinity for Infinity', function() {
       result = myp5.int(Infinity);
       assert.strictEqual(result, Infinity);
+    });
+
+    test('should return -Infinity for -Infinity', function() {
+      result = myp5.int(-Infinity);
+      assert.strictEqual(result, -Infinity);
     });
 
     test('should convert float to its integer representation', function() {
@@ -269,10 +279,16 @@ suite.only('Conversion', function() {
       assert.strictEqual(result, '00000041');
     });
 
-    test('should return Infinity for Infinity', function() {
+    test('should return FFFFFFFF for Infinity', function() {
       result = myp5.hex(Infinity);
       assert.typeOf(result, 'Number');
-      assert.strictEqual(result, Infinity);
+      assert.strictEqual(result, 'FFFFFFFF');
+    });
+
+    test('should return 00000000 for -Infinity', function() {
+      result = myp5.hex(-Infinity);
+      assert.typeOf(result, 'Number');
+      assert.strictEqual(result, '00000000');
     });
 
     test('should return array', function() {
