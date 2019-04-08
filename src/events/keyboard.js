@@ -188,22 +188,22 @@ p5.prototype._onkeydown = function(e) {
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
-    downKeys[37] = true;
+    this.downKeys[37] = true;
     this._setProperty('key', 'ArrowLeft');
     this._setProperty('keyCode', 37);
   }
   if (e.key === 'UIKeyInputUpArrow') {
-    downKeys[38] = true;
+    this.downKeys[38] = true;
     this._setProperty('key', 'ArrowUp');
     this._setProperty('keyCode', 38);
   }
   if (e.key === 'UIKeyInputRightArrow') {
-    downKeys[39] = true;
+    this.downKeys[39] = true;
     this._setProperty('key', 'ArrowRight');
     this._setProperty('keyCode', 39);
   }
   if (e.key === 'UIKeyInputDownArrow') {
-    downKeys[40] = true;
+    this.downKeys[40] = true;
     this._setProperty('key', 'ArrowDown');
     this._setProperty('keyCode', 40);
   }
@@ -253,22 +253,22 @@ p5.prototype._onkeyup = function(e) {
   this.downKeys[e.which] = false;
   // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
-    downKeys[37] = false;
+    this.downKeys[37] = false;
     this._setProperty('key', 'ArrowLeft');
     this._setProperty('keyCode', 37);
   }
   if (e.key === 'UIKeyInputUpArrow') {
-    downKeys[38] = false;
+    this.downKeys[38] = false;
     this._setProperty('key', 'ArrowUp');
     this._setProperty('keyCode', 38);
   }
   if (e.key === 'UIKeyInputRightArrow') {
-    downKeys[39] = false;
+    this.downKeys[39] = false;
     this._setProperty('key', 'ArrowRight');
     this._setProperty('keyCode', 39);
   }
   if (e.key === 'UIKeyInputDownArrow') {
-    downKeys[40] = false;
+    this.downKeys[40] = false;
     this._setProperty('key', 'ArrowDown');
     this._setProperty('keyCode', 40);
   }
