@@ -124,6 +124,8 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
 9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
+This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
+
 # Building Documentation
 
 Inline comments in p5.js are built into the public-facing [reference manual](https://p5js.org/reference/). You can also view this locally:
