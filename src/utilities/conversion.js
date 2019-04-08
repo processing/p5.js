@@ -122,7 +122,7 @@ p5.prototype.str = function(n) {
  * print(boolean(1)); // true
  * print(boolean('true')); // true
  * print(boolean('abcd')); // false
- * print(boolean([0, 12, 'true'])); // [false, true, false]
+ * print(boolean([0, 12, 'true'])); // [false, true, true]
  * </code></div>
  */
 p5.prototype.boolean = function(n) {
