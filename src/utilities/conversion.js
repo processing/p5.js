@@ -27,6 +27,11 @@ var p5 = require('../core/main');
  * var diameter = float(str);
  * ellipse(width / 2, height / 2, diameter, diameter);
  * </code></div>
+ * <div class='norender'><code>
+ * print(float('10.31')); // 10.31
+ * print(float('Infinity')); // Infinity
+ * print(float('-Infinity')); // -Infinity
+ * </code></div>
  *
  * @alt
  * 20 by 20 white ellipse in the center of the canvas
@@ -57,6 +62,8 @@ p5.prototype.float = function(str) {
  * print(int(true)); // 1
  * print(int(false)); // 0
  * print(int([false, true, '10.3', 9.8])); // [0, 1, 10, 9]
+ * print(int(Infinity)); // Infinity
+ * print(int('-Infinity')); // -Infinity
  * </code></div>
  */
 /**
@@ -66,7 +73,11 @@ p5.prototype.float = function(str) {
  */
 p5.prototype.int = function(n, radix) {
   radix = radix || 10;
-  if (typeof n === 'string') {
+  if (n === Infinity || n === 'Infinity') {
+    return Infinity;
+  } else if (n === -Infinity || n === '-Infinity') {
+    return -Infinity;
+  } else if (typeof n === 'string') {
     return parseInt(n, radix);
   } else if (typeof n === 'number') {
     return n | 0;
@@ -122,7 +133,7 @@ p5.prototype.str = function(n) {
  * print(boolean(1)); // true
  * print(boolean('true')); // true
  * print(boolean('abcd')); // false
- * print(boolean([0, 12, 'true'])); // [false, true, false]
+ * print(boolean([0, 12, 'true'])); // [false, true, true]
  * </code></div>
  */
 p5.prototype.boolean = function(n) {
@@ -252,6 +263,8 @@ p5.prototype.unchar = function(n) {
  * print(hex(255)); // "000000FF"
  * print(hex(255, 6)); // "0000FF"
  * print(hex([0, 127, 255], 6)); // [ "000000", "00007F", "0000FF" ]
+ * print(Infinity); // "FFFFFFFF"
+ * print(-Infinity); // "00000000"
  * </code></div>
  */
 /**
@@ -266,6 +279,9 @@ p5.prototype.hex = function(n, digits) {
     return n.map(function(n) {
       return p5.prototype.hex(n, digits);
     });
+  } else if (n === Infinity || n === -Infinity) {
+    var c = n === Infinity ? 'F' : '0';
+    return c.repeat(digits);
   } else if (typeof n === 'number') {
     if (n < 0) {
       n = 0xffffffff + n + 1;
