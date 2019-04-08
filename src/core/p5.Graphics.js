@@ -30,7 +30,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
   var node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
-  p5.Element.call(this, this.canvas, pInst, false);
+  p5.Element.call(this, this.canvas, pInst);
 
   // bind methods and props of p5 to the new object
   for (var p in p5.prototype) {
