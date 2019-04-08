@@ -1141,7 +1141,10 @@ p5.prototype.httpDo = function() {
       err.ok = false;
       throw err;
     } else {
-      var fileSize = res.headers.get('content-length');
+      var fileSize = 0;
+      if (type !== 'jsonp') {
+        fileSize = res.headers.get('content-length');
+      }
       if (fileSize && fileSize > 64000000) {
         p5._friendlyFileLoadError(7, path);
       }
