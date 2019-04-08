@@ -1541,4 +1541,50 @@ p5.RendererGL.prototype.curveVertex = function() {
   }
 };
 
+p5.RendererGL.prototype.image = function(
+  img,
+  sx,
+  sy,
+  sWidth,
+  sHeight,
+  dx,
+  dy,
+  dWidth,
+  dHeight
+) {
+  this._pInst.push();
+
+  this._pInst.texture(img);
+  this._pInst.textureMode(constants.NORMAL);
+
+  var u0 = 0;
+  if (sx <= img.width) {
+    u0 = sx / img.width;
+  }
+
+  var u1 = 1;
+  if (sx + sWidth <= img.width) {
+    u1 = (sx + sWidth) / img.width;
+  }
+
+  var v0 = 0;
+  if (sy <= img.height) {
+    v0 = sy / img.height;
+  }
+
+  var v1 = 1;
+  if (sy + sHeight <= img.height) {
+    v1 = (sy + sHeight) / img.height;
+  }
+
+  this.beginShape();
+  this.vertex(dx, dy, 0, u0, v0);
+  this.vertex(dx + dWidth, dy, 0, u1, v0);
+  this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+  this.vertex(dx, dy + dHeight, 0, u0, v1);
+  this.endShape(constants.CLOSE);
+
+  this._pInst.pop();
+};
+
 module.exports = p5;
