@@ -35,7 +35,7 @@ var _windowPrint = window.print;
  *                       Array to print
  * @example
  * <div><code class='norender'>
- * var x = 10;
+ * let x = 10;
  * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
@@ -116,26 +116,36 @@ p5.prototype.focused = document.hasFocus();
  * must be less than the dimensions of the image.
  *
  * @method cursor
- * @param {String|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
- *                               WAIT, or path for image
- * @param {Number}          [x]  the horizontal active spot of the cursor
- * @param {Number}          [y]  the vertical active spot of the cursor
+ * @param {String|Constant} type Built-In: either ARROW, CROSS, HAND, MOVE, TEXT and WAIT
+ *                               Native CSS properties: 'grab', 'progress', 'cell' etc.
+ *                               External: path for cursor's images
+ *                               (Allowed File extensions: .cur, .gif, .jpg, .jpeg, .png)
+ *                               For more information on Native CSS cursors and url visit:
+ *                               https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+ * @param {Number}          [x]  the horizontal active spot of the cursor (must be less than 32)
+ * @param {Number}          [y]  the vertical active spot of the cursor (must be less than 32)
  * @example
  * <div><code>
- * // Move the mouse left and right across the image
- * // to see the cursor change from a cross to a hand
+ * // Move the mouse across the quadrants
+ * // to see the cursor change
  * function draw() {
  *   line(width / 2, 0, width / 2, height);
- *   if (mouseX < 50) {
+ *   line(0, height / 2, width, height / 2);
+ *   if (mouseX < 50 && mouseY < 50) {
  *     cursor(CROSS);
+ *   } else if (mouseX > 50 && mouseY < 50) {
+ *     cursor('progress');
+ *   } else if (mouseX > 50 && mouseY > 50) {
+ *     cursor('https://s3.amazonaws.com/mupublicdata/cursor.cur');
  *   } else {
- *     cursor(HAND);
+ *     cursor('grab');
  *   }
  * }
  * </code></div>
  *
  * @alt
- * horizontal line divides canvas. cursor on left is a cross, right is hand.
+ * canvas is divided into four quadrants. cursor on first is a cross, second is a progress,
+ * third is a custom cursor using path to the cursor and fourth is a grab.
  *
  */
 p5.prototype.cursor = function(type, x, y) {
@@ -193,9 +203,9 @@ p5.prototype.cursor = function(type, x, y) {
  * @example
  *
  * <div><code>
- * var rectX = 0;
- * var fr = 30; //starting FPS
- * var clr;
+ * let rectX = 0;
+ * let fr = 30; //starting FPS
+ * let clr;
  *
  * function setup() {
  *   background(200);
@@ -239,7 +249,6 @@ p5.prototype.frameRate = function(fps) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
-    this._runFrames();
     return this;
   }
 };
@@ -462,7 +471,7 @@ p5.prototype.height = 0;
  * }
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
- *     var fs = fullscreen();
+ *     let fs = fullscreen();
  *     fullscreen(!fs);
  *   }
  * }
@@ -557,7 +566,7 @@ p5.prototype.pixelDensity = function(val) {
  * <div>
  * <code>
  * function setup() {
- *   var density = displayDensity();
+ *   let density = displayDensity();
  *   pixelDensity(density);
  *   createCanvas(100, 100);
  *   background(200);
@@ -612,8 +621,8 @@ function exitFullscreen() {
  * @example
  * <div>
  * <code>
- * var url;
- * var x = 100;
+ * let url;
+ * let x = 100;
  *
  * function setup() {
  *   fill(0);
@@ -643,8 +652,8 @@ p5.prototype.getURL = function() {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var urlPath = getURLPath();
- *   for (var i = 0; i < urlPath.length; i++) {
+ *   let urlPath = getURLPath();
+ *   for (let i = 0; i < urlPath.length; i++) {
  *     text(urlPath[i], 10, i * 20 + 20);
  *   }
  * }
@@ -669,7 +678,7 @@ p5.prototype.getURLPath = function() {
  * // Example: http://p5js.org?year=2014&month=May&day=15
  *
  * function setup() {
- *   var params = getURLParams();
+ *   let params = getURLParams();
  *   text(params.day, 10, 20);
  *   text(params.month, 10, 40);
  *   text(params.year, 10, 60);

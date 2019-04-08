@@ -39,9 +39,42 @@ suite('pixels', function() {
       img.updatePixels();
     });
 
-    test('works with integers', function() {
+    test('get(x,y) works with integers', function() {
       assert.deepEqual(img.get(25, 25), [255, 0, 0, 255]);
       assert.deepEqual(img.get(25, 26), [0, 0, 255, 255]);
+      assert.deepEqual(img.get(0, 0), [255, 0, 0, 255]);
+      assert.deepEqual(img.get(49, 49), [0, 0, 255, 255]);
+    });
+
+    test('get(x,y) returns 0s for out of bounds arguments', function() {
+      assert.deepEqual(img.get(25, -1), [0, 0, 0, 0]);
+      assert.deepEqual(img.get(-1, 26), [0, 0, 0, 0]);
+      assert.deepEqual(img.get(25, 50), [0, 0, 0, 0]);
+      assert.deepEqual(img.get(50, 26), [0, 0, 0, 0]);
+    });
+
+    test('get() returns a copy when no arguments are supplied', function() {
+      var copy = img.get();
+      assert.instanceOf(copy, p5.Image);
+      assert.equal(copy.width, img.width);
+      assert.equal(copy.height, img.height);
+
+      assert.deepEqual(copy.get(25, 25), [255, 0, 0, 255]);
+      assert.deepEqual(copy.get(25, 26), [0, 0, 255, 255]);
+      assert.deepEqual(copy.get(0, 0), [255, 0, 0, 255]);
+      assert.deepEqual(copy.get(49, 49), [0, 0, 255, 255]);
+    });
+
+    test('get(x,y,w,h) works', function() {
+      for (var w = 1; w < img.width + 5; w += 2) {
+        for (var x = -w * 2; x <= img.width + w * 2; x += 4) {
+          var copy = img.get(x, x, w, w);
+          assert.instanceOf(copy, p5.Image);
+          assert.equal(copy.width, w);
+          assert.equal(copy.height, w);
+          assert.deepEqual(copy.get(0, 0), img.get(x, x));
+        }
+      }
     });
 
     test('rounds down when given decimal numbers', function() {

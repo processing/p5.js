@@ -24,10 +24,10 @@ require('../core/error_helpers');
  * <div>
  * <code>
  * noStroke();
- * var c = color(0, 126, 255, 102);
+ * let c = color(0, 126, 255, 102);
  * fill(c);
  * rect(15, 15, 35, 70);
- * var value = alpha(c); // Sets 'value' to 102
+ * let value = alpha(c); // Sets 'value' to 102
  * fill(value);
  * rect(50, 15, 35, 70);
  * </code>
@@ -39,7 +39,7 @@ require('../core/error_helpers');
  * Left half of canvas salmon pink and the right half white.
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
@@ -68,11 +68,11 @@ p5.prototype.alpha = function(c) {
  * @example
  * <div>
  * <code>
- * var c = color(175, 100, 220); // Define color 'c'
+ * let c = color(175, 100, 220); // Define color 'c'
  * fill(c); // Use color variable 'c' as fill color
  * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * var blueValue = blue(c); // Get blue in 'c'
+ * let blueValue = blue(c); // Get blue in 'c'
  * print(blueValue); // Prints "220.0"
  * fill(0, 0, blueValue); // Use 'blueValue' in new fill
  * rect(50, 20, 35, 60); // Draw right rectangle
@@ -100,10 +100,22 @@ p5.prototype.blue = function(c) {
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * var c = color(0, 126, 255);
+ * let c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * var value = brightness(c); // Sets 'value' to 255
+ * let value = brightness(c); // Sets 'value' to 255
+ * fill(value);
+ * rect(50, 20, 35, 60);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * noStroke();
+ * colorMode(HSB, 255);
+ * let c = color('hsb(60, 100%, 50%)');
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * let value = brightness(c); // A 'value' of 50% is 127.5
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -111,6 +123,7 @@ p5.prototype.blue = function(c) {
  *
  * @alt
  * Left half of canvas salmon pink and the right half white.
+ * Left half of canvas yellow at half brightness and the right gray .
  *
  */
 p5.prototype.brightness = function(c) {
@@ -146,7 +159,7 @@ p5.prototype.brightness = function(c) {
  * @example
  * <div>
  * <code>
- * var c = color(255, 204, 0); // Define color 'c'
+ * let c = color(255, 204, 0); // Define color 'c'
  * fill(c); // Use color variable 'c' as fill color
  * noStroke(); // Don't draw a stroke around shapes
  * rect(30, 20, 55, 55); // Draw rectangle
@@ -155,7 +168,7 @@ p5.prototype.brightness = function(c) {
  *
  * <div>
  * <code>
- * var c = color(255, 204, 0); // Define color 'c'
+ * let c = color(255, 204, 0); // Define color 'c'
  * fill(c); // Use color variable 'c' as fill color
  * noStroke(); // Don't draw a stroke around shapes
  * ellipse(25, 25, 80, 80); // Draw left circle
@@ -171,7 +184,7 @@ p5.prototype.brightness = function(c) {
  * <div>
  * <code>
  * // Named SVG & CSS colors may be used,
- * var c = color('magenta');
+ * let c = color('magenta');
  * fill(c); // Use 'c' as fill color
  * noStroke(); // Don't draw a stroke around shapes
  * rect(20, 20, 60, 60); // Draw rectangle
@@ -182,7 +195,7 @@ p5.prototype.brightness = function(c) {
  * <code>
  * // as can hex color codes:
  * noStroke(); // Don't draw a stroke around shapes
- * var c = color('#0f0');
+ * let c = color('#0f0');
  * fill(c); // Use 'c' as fill color
  * rect(0, 10, 45, 80); // Draw rectangle
  *
@@ -196,7 +209,7 @@ p5.prototype.brightness = function(c) {
  * <code>
  * // RGB and RGBA color strings are also supported:
  * // these all set to the same color (solid blue)
- * var c;
+ * let c;
  * noStroke(); // Don't draw a stroke around shapes
  * c = color('rgb(0,0,255)');
  * fill(c); // Use 'c' as fill color
@@ -220,7 +233,7 @@ p5.prototype.brightness = function(c) {
  * <code>
  * // HSL color is also supported and can be specified
  * // by value
- * var c;
+ * let c;
  * noStroke(); // Don't draw a stroke around shapes
  * c = color('hsl(160, 100%, 50%)');
  * fill(c); // Use 'c' as fill color
@@ -236,7 +249,7 @@ p5.prototype.brightness = function(c) {
  * <code>
  * // HSB color is also supported and can be specified
  * // by value
- * var c;
+ * let c;
  * noStroke(); // Don't draw a stroke around shapes
  * c = color('hsb(160, 100%, 50%)');
  * fill(c); // Use 'c' as fill color
@@ -250,7 +263,7 @@ p5.prototype.brightness = function(c) {
  *
  * <div>
  * <code>
- * var c; // Declare color 'c'
+ * let c; // Declare color 'c'
  * noStroke(); // Don't draw a stroke around shapes
  *
  * // If no colorMode is specified, then the
@@ -269,7 +282,7 @@ p5.prototype.brightness = function(c) {
  * @alt
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
@@ -326,11 +339,11 @@ p5.prototype.color = function() {
  * @example
  * <div>
  * <code>
- * var c = color(20, 75, 200); // Define color 'c'
+ * let c = color(20, 75, 200); // Define color 'c'
  * fill(c); // Use color variable 'c' as fill color
  * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * var greenValue = green(c); // Get green in 'c'
+ * let greenValue = green(c); // Get green in 'c'
  * print(greenValue); // Print "75.0"
  * fill(0, greenValue, 0); // Use 'greenValue' in new fill
  * rect(50, 20, 35, 60); // Draw right rectangle
@@ -365,10 +378,10 @@ p5.prototype.green = function(c) {
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * var c = color(0, 126, 255);
+ * let c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * var value = hue(c); // Sets 'value' to "0"
+ * let value = hue(c); // Sets 'value' to "0"
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -406,11 +419,11 @@ p5.prototype.hue = function(c) {
  * colorMode(RGB);
  * stroke(255);
  * background(51);
- * var from = color(218, 165, 32);
- * var to = color(72, 61, 139);
+ * let from = color(218, 165, 32);
+ * let to = color(72, 61, 139);
  * colorMode(RGB); // Try changing to HSB.
- * var interA = lerpColor(from, to, 0.33);
- * var interB = lerpColor(from, to, 0.66);
+ * let interA = lerpColor(from, to, 0.33);
+ * let interB = lerpColor(from, to, 0.66);
  * fill(from);
  * rect(10, 20, 20, 60);
  * fill(interA);
@@ -493,10 +506,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * <code>
  * noStroke();
  * colorMode(HSL);
- * var c = color(156, 100, 50, 1);
+ * let c = color(156, 100, 50, 1);
  * fill(c);
  * rect(15, 20, 35, 60);
- * var value = lightness(c); // Sets 'value' to 50
+ * let value = lightness(c); // Sets 'value' to 50
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>
@@ -521,24 +534,24 @@ p5.prototype.lightness = function(c) {
  * @example
  * <div>
  * <code>
- * var c = color(255, 204, 0); // Define color 'c'
+ * let c = color(255, 204, 0); // Define color 'c'
  * fill(c); // Use color variable 'c' as fill color
  * rect(15, 20, 35, 60); // Draw left rectangle
  *
- * var redValue = red(c); // Get red in 'c'
+ * let redValue = red(c); // Get red in 'c'
  * print(redValue); // Print "255.0"
  * fill(redValue, 0, 0); // Use 'redValue' in new fill
  * rect(50, 20, 35, 60); // Draw right rectangle
  * </code>
  * </div>
  *
- * <div>
+ * <div class="norender">
  * <code>
- * colorMode(RGB, 255);
- * var c = color(127, 255, 0);
- * colorMode(RGB, 1);
- * var myColor = red(c);
- * print(myColor);
+ * colorMode(RGB, 255); // Sets the range for red, green, and blue to 255
+ * let c = color(127, 255, 0);
+ * colorMode(RGB, 1); // Sets the range for red, green, and blue to 1
+ * let myColor = red(c);
+ * print(myColor); // 0.4980392156862745
  * </code>
  * </div>
  *
@@ -568,10 +581,10 @@ p5.prototype.red = function(c) {
  * <code>
  * noStroke();
  * colorMode(HSB, 255);
- * var c = color(0, 126, 255);
+ * let c = color(0, 126, 255);
  * fill(c);
  * rect(15, 20, 35, 60);
- * var value = saturation(c); // Sets 'value' to 126
+ * let value = saturation(c); // Sets 'value' to 126
  * fill(value);
  * rect(50, 20, 35, 60);
  * </code>

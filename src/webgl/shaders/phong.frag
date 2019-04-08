@@ -13,6 +13,7 @@ uniform vec3 uDirectionalColor[8];
 uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
+uniform float uShininess;
 
 uniform int uDirectionalLightCount;
 uniform int uPointLightCount;
@@ -25,7 +26,6 @@ varying vec3 vAmbientColor;
 vec3 V;
 vec3 N;
 
-const float shininess = 32.0;
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
 
@@ -57,7 +57,7 @@ LightResult light(vec3 lightVector) {
   //compute our diffuse & specular terms
   LightResult lr;
   if (uSpecular)
-    lr.specular = phongSpecular(L, V, N, shininess);
+    lr.specular = phongSpecular(L, V, N, uShininess);
   lr.diffuse = lambertDiffuse(L, N);
   return lr;
 }

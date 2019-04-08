@@ -1406,13 +1406,51 @@
       "contributions": []
     },
     {
-    "login: "OsakaStarbux",
+    "login": "OsakaStarbux",
     "name": "Kevin Bradley",
     "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
     "profile": "https://github.com/OsakaStarbux",
     "contributions": [
         "doc"
       ]
-    }
+    },
+    {
+    "login": "justinsunho",
+    "name": "Justin Kim",
+    "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
+    "profile": "https://justinsunho.com/",
+    "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "EndBug",
+      "name": "Federico Grandi",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/26386270?s=460&v=4",
+      "profile": "https://github.com/EndBug",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "FreddieRa",
+      "name": "Freddie Rawlins",
+      "avatar_url": "https://discourse-cdn-sjc2.com/standard10/user_avatar/discourse.processing.org/freddiera/120/4078_2.png",
+      "profile": "https://freddierawlins.wixsite.com/site",
+      "contributions": [
+        "code",
+        "doc"
+      ]    
+    },
+    {
+      "login": "mcuz",
+      "name": "Mark Nikora",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/44824130?s=40&v=4",
+      "profile": "https://github.com/mcuz",
+      "contributions": [
+        "code"
+      ]
+    }    
   ]
 }

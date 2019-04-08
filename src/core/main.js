@@ -62,8 +62,8 @@ var p5 = function(sketch, node, sync) {
    * @method preload
    * @example
    * <div><code>
-   * var img;
-   * var c;
+   * let img;
+   * let c;
    * function preload() {
    *   // preload() runs once
    *   img = loadImage('assets/laDefense.jpg');
@@ -100,7 +100,7 @@ var p5 = function(sketch, node, sync) {
    * @method setup
    * @example
    * <div><code>
-   * var a = 0;
+   * let a = 0;
    *
    * function setup() {
    *   background(0);
@@ -148,7 +148,7 @@ var p5 = function(sketch, node, sync) {
    * @method draw
    * @example
    * <div><code>
-   * var yPos = 0;
+   * let yPos = 0;
    * function setup() {
    *   // setup() runs once
    *   frameRate(30);
@@ -179,6 +179,7 @@ var p5 = function(sketch, node, sync) {
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
+  this._glAttributes = null;
   this._requestAnimId = 0;
   this._preloadCount = 0;
   this._isGlobal = false;
@@ -273,7 +274,6 @@ var p5 = function(sketch, node, sync) {
       this._runIfPreloadsAreDone();
     } else {
       this._setup();
-      this._runFrames();
       this._draw();
     }
   }.bind(this);
@@ -286,7 +286,6 @@ var p5 = function(sketch, node, sync) {
         loadingScreen.parentNode.removeChild(loadingScreen);
       }
       context._setup();
-      context._runFrames();
       context._draw();
     }
   };
@@ -389,12 +388,6 @@ var p5 = function(sketch, node, sync) {
     // an opportunity to draw.
     if (this._loop) {
       this._requestAnimId = window.requestAnimationFrame(this._draw);
-    }
-  }.bind(this);
-
-  this._runFrames = function() {
-    if (this._updateInterval) {
-      clearInterval(this._updateInterval);
     }
   }.bind(this);
 
@@ -582,14 +575,30 @@ p5.prototype._initializeInstanceVariables = function() {
   };
 
   this._pixelsDirty = true;
+
+  this._downKeys = {}; //Holds the key codes of currently pressed keys
 };
 
 // This is a pointer to our global mode p5 instance, if we're in
 // global mode.
 p5.instance = null;
 
-// Allows for the friendly error system to be turned off when creating a sketch,
-// which can give a significant boost to performance when needed.
+/**
+ * Allows for the friendly error system (FES) to be turned off when creating a sketch,
+ * which can give a significant boost to performance when needed.
+ * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
+ * disabling the friendly error system</a>.
+ *
+ * @property {Boolean} disableFriendlyErrors
+ * @example
+ * <div class="norender notest"><code>
+ * p5.disableFriendlyErrors = true;
+ *
+ * function setup() {
+ *   createCanvas(100, 50);
+ * }
+ * </code></div>
+ */
 p5.disableFriendlyErrors = false;
 
 // attach constants to p5 prototype

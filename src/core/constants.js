@@ -348,6 +348,10 @@ module.exports = {
 
   // DOM EXTENSION
   /**
+   * AUTO allows us to automatically set the width or height of an element (but not both),
+   * based on the current height and width of the element. Only one parameter can
+   * be passed to the <a href="/#/p5.Element/size">size</a> function as AUTO, at a time.
+   *
    * @property {String} AUTO
    * @final
    */
@@ -400,6 +404,11 @@ module.exports = {
    * @final
    */
   DIFFERENCE: 'difference',
+  /**
+   * @property {String} SUBTRACT
+   * @final
+   */
+  SUBTRACT: 'subtract',
   /**
    * @property {String} EXCLUSION
    * @final
@@ -507,6 +516,11 @@ module.exports = {
    * @final
    */
   BOLD: 'bold',
+  /**
+   * @property {String} BOLDITALIC
+   * @final
+   */
+  BOLDITALIC: 'bold italic',
 
   // TYPOGRAPHY-INTERNAL
   _DEFAULT_TEXT_FILL: '#000000',
@@ -525,7 +539,15 @@ module.exports = {
   TEXTURE: 'texture',
   IMMEDIATE: 'immediate',
 
-  //WEBGL TEXTURE WRAP AND FILTERING
+  // WEBGL TEXTURE MODE
+  // NORMAL already exists for typography
+  /**
+   * @property {String} IMAGE
+   * @final
+   */
+  IMAGE: 'image',
+
+  // WEBGL TEXTURE WRAP AND FILTERING
   // LINEAR already exists above
   NEAREST: 'nearest',
   REPEAT: 'repeat',

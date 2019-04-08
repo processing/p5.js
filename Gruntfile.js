@@ -42,9 +42,6 @@
  *                      docs, and does not perform linting, minification,
  *                      or run tests. It's faster than watch:main.
  *
- *  grunt update_json - This automates updating the bower file
- *                      to match the package.json
- *
  *  grunt karma       - This runs the performance benchmarks in
  *                      multiple real browsers on the developers local machine.
  *                      It will automatically detect which browsers are
@@ -63,7 +60,7 @@
  */
 
 function getYuidocOptions() {
-  var BASE_YUIDOC_OPTIONS = {
+  const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
     description: '<%= pkg.description %>',
     version: '<%= pkg.version %>',
@@ -79,7 +76,7 @@ function getYuidocOptions() {
 
   // note dev is no longer used, prod is used to build both testing and production ready docs
 
-  var o = {
+  const o = {
     prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
     dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
   };
@@ -90,22 +87,22 @@ function getYuidocOptions() {
   return o;
 }
 
-module.exports = function(grunt) {
+module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
-  var quietReport = process.env.TRAVIS || grunt.option('quiet');
-  var reporter = quietReport ? 'spec' : 'Nyan';
+  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
-  var karmaTasks = require('./grunt-karma.js');
+  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
-  var keepalive = false;
+  let keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
   }
 
-  var mochaConfig = {
+  const mochaConfig = {
     yui: {
       options: {
         urls: ['http://localhost:9001/test/test-reference.html'],
@@ -139,8 +136,7 @@ module.exports = function(grunt) {
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
-        format: 'unix',
-        configFile: '.eslintrc'
+        format: 'unix'
       },
       build: {
         src: [
@@ -170,31 +166,15 @@ module.exports = function(grunt) {
         src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
-        src: [
-          'bench/**/*.js',
-          'test/test-docs-preprocessor/**/*.js',
-          'test/node/**/*.js',
-          'test/reporter/**/*.js',
-          'test/unit/**/*.js'
-        ]
-      },
-      examples: {
-        options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
-          }
-        },
-        src: ['test/manual-test-examples/**/*.js']
+        src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
       }
     },
 
     'eslint-samples': {
       options: {
         parserOptions: {
-          ecmaVersion: 5
+          ecmaVersion: 6
         },
-        configFile: '.eslintrc',
         format: 'unix'
       },
       source: {
@@ -274,25 +254,6 @@ module.exports = function(grunt) {
 
     mochaChrome: mochaConfig,
 
-    // This is a standalone task, used to automatically update the bower.json
-    // file to match the values in package.json. It is (likely) used as part
-    // of the manual release strategy.
-    update_json: {
-      // set some task-level options
-      options: {
-        src: 'package.json',
-        indent: '\t'
-      },
-
-      // update bower.json with data from package.json
-      bower: {
-        src: 'package.json', // where to read from
-        dest: 'bower.json', // where to write to
-        // the fields to update, as a String Grouping
-        fields: 'name version description repository'
-      }
-    },
-
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
     uglify: {
@@ -362,14 +323,60 @@ module.exports = function(grunt) {
             return middlewares;
           }
         }
-      }
-    },
-    open: {
-      yui: {
-        path: 'http://127.0.0.1:9001/docs/reference/'
       },
-      dev: {
-        path: 'http://127.0.0.1:9001/test/'
+      yui: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/docs/reference/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
+      },
+      test: {
+        options: {
+          directory: {
+            path: './',
+            options: {
+              icons: true
+            }
+          },
+          port: 9001,
+          open: 'http://127.0.0.1:9001/test/',
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
+            return middlewares;
+          }
+        }
       }
     },
     'saucelabs-mocha': {
@@ -433,7 +440,6 @@ module.exports = function(grunt) {
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -444,7 +450,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
-  grunt.loadNpmTasks('grunt-update-json');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
@@ -455,7 +460,6 @@ module.exports = function(grunt) {
     'eslint:build',
     'eslint:source',
     'eslint:test',
-    //'eslint:examples',
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
@@ -463,7 +467,7 @@ module.exports = function(grunt) {
     'lint-no-fix',
     //'yuidoc:prod', // already done by lint-no-fix
     'build',
-    'connect',
+    'connect:server',
     'mochaChrome',
     'mochaTest'
   ]);
@@ -472,18 +476,17 @@ module.exports = function(grunt) {
   grunt.registerTask('yui:test', [
     'yuidoc:prod',
     'clean:reference',
-    'connect',
+    'connect:yui',
     'mochaChrome:yui'
   ]);
   grunt.registerTask('yui:dev', [
     'yui:prod',
     'clean:reference',
     'build',
-    'connect',
-    'open:yui',
+    'connect:yui',
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
   grunt.registerTask('default', ['test']);
-  grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
+  grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
 };

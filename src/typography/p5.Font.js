@@ -12,12 +12,6 @@
 var p5 = require('../core/main');
 var constants = require('../core/constants');
 
-/*
- * TODO:
- * -- kerning
- * -- alignment: justified?
- */
-
 /**
  * Base class for font handling
  * @class p5.Font
@@ -35,11 +29,6 @@ p5.Font = function(p) {
   this.font = undefined;
 };
 
-p5.Font.prototype.list = function() {
-  // TODO
-  throw new Error('not yet implemented');
-};
-
 /**
  * Returns a tight bounding box for the given text string using this
  * font (currently only supports single lines)
@@ -48,23 +37,26 @@ p5.Font.prototype.list = function() {
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
- * @param  {Number} [fontSize] font size to use (optional)
+ * @param  {Number} [fontSize] font size to use (optional) Default is 12.
  * @param  {Object} [options] opentype options (optional)
+ *                            opentype fonts contains alignment and baseline options.
+ *                            Default is 'LEFT' and 'alphabetic'
+ *
  *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *
  * @example
  * <div>
  * <code>
- * var font;
- * var textString = 'Lorem ipsum dolor sit amet.';
+ * let font;
+ * let textString = 'Lorem ipsum dolor sit amet.';
  * function preload() {
  *   font = loadFont('./assets/Regular.otf');
  * }
  * function setup() {
  *   background(210);
  *
- *   var bbox = font.textBounds(textString, 10, 30, 12);
+ *   let bbox = font.textBounds(textString, 10, 30, 12);
  *   fill(255);
  *   stroke(0);
  *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
@@ -82,21 +74,28 @@ p5.Font.prototype.list = function() {
  *words Lorem ipsum dol go off canvas and contained by white bounding box
  *
  */
-p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
+p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
   x = x !== undefined ? x : 0;
   y = y !== undefined ? y : 0;
-  fontSize = fontSize || this.parent._renderer._textSize;
 
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
-  var p =
-      (options && options.renderer && options.renderer._pInst) || this.parent,
-    renderer = p._renderer,
-    alignment = renderer._textAlign || constants.LEFT,
-    baseline = renderer._textBaseline || constants.BASELINE,
-    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline),
+  var p = (opts && opts.renderer && opts.renderer._pInst) || this.parent,
+    ctx = p._renderer.drawingContext,
+    alignment = ctx.textAlign || constants.LEFT,
+    baseline = ctx.textBaseline || constants.BASELINE,
+    cacheResults = false,
+    result,
+    key;
+
+  fontSize = fontSize || p._renderer._textSize;
+
+  // NOTE: cache disabled for now pending further discussion of #3436
+  if (cacheResults) {
+    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline);
     result = this.cache[key];
+  }
 
   if (!result) {
     var minX,
@@ -108,7 +107,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
       yCoords = [],
       scale = this._scale(fontSize);
 
-    this.font.forEachGlyph(str, x, y, fontSize, options, function(
+    this.font.forEachGlyph(str, x, y, fontSize, opts, function(
       glyph,
       gX,
       gY,
@@ -136,7 +135,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
     pos = this._handleAlignment(
-      renderer,
+      p._renderer,
       str,
       result.x,
       result.y,
@@ -146,9 +145,9 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     result.x = pos.x;
     result.y = pos.y;
 
-    this.cache[
-      cacheKey('textBounds', str, x, y, fontSize, alignment, baseline)
-    ] = result;
+    if (cacheResults) {
+      this.cache[key] = result;
+    }
   }
 
   return result;
@@ -165,7 +164,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * @param  {Object} [options] an (optional) object that can contain:
  *
  * <br>sampleFactor - the ratio of path-length to number of samples
- * (default=.25); higher values yield more points and are therefore
+ * (default=.1); higher values yield more points and are therefore
  * more precise
  *
  * <br>simplifyThreshold - if set to a non-zero value, collinear points will be
@@ -176,13 +175,13 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * @example
  * <div>
  * <code>
- * var font;
+ * let font;
  * function preload() {
- *   font = loadFont('./assets/Avenir.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
- * var points;
- * var bounds;
+ * let points;
+ * let bounds;
  * function setup() {
  *   createCanvas(100, 100);
  *   stroke(0);
@@ -199,8 +198,8 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  *   background(255);
  *   beginShape();
  *   translate(-bounds.x * width / bounds.w, -bounds.y * height / bounds.h);
- *   for (var i = 0; i < points.length; i++) {
- *     var p = points[i];
+ *   for (let i = 0; i < points.length; i++) {
+ *     let p = points[i];
  *     vertex(
  *       p.x * width / bounds.w +
  *         sin(20 * p.y / bounds.h + millis() / 1000) * width / 30,
@@ -491,8 +490,7 @@ function pathToPoints(cmds, options) {
   }
 
   if (opts.simplifyThreshold) {
-    /*var count = */ simplify(pts, opts.simplifyThreshold);
-    //console.log('Simplify: removed ' + count + ' pts');
+    simplify(pts, opts.simplifyThreshold);
   }
 
   return pts;
@@ -1235,8 +1233,7 @@ function base3(t, p1, p2, p3, p4) {
 function cacheKey() {
   var hash = '';
   for (var i = arguments.length - 1; i >= 0; --i) {
-    var v = arguments[i];
-    hash += v === Object(v) ? JSON.stringify(v) : v;
+    hash += '？' + arguments[i];
   }
   return hash;
 }

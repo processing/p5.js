@@ -24,6 +24,7 @@ var constants = require('../core/constants');
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
   this.canvas = elt;
+  this._pixelsState = pInst;
   if (isMainCanvas) {
     this._isMainCanvas = true;
     // for pixel method sharing with pimage
@@ -109,6 +110,39 @@ p5.Renderer.prototype.resize = function(w, h) {
   }
 };
 
+p5.Renderer.prototype.get = function(x, y, w, h) {
+  var pixelsState = this._pixelsState;
+  var pd = pixelsState._pixelDensity;
+  var canvas = this.canvas;
+
+  if (typeof x === 'undefined' && typeof y === 'undefined') {
+    // get()
+    x = y = 0;
+    w = pixelsState.width;
+    h = pixelsState.height;
+  } else {
+    x *= pd;
+    y *= pd;
+
+    if (typeof w === 'undefined' && typeof h === 'undefined') {
+      // get(x,y)
+      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+        return [0, 0, 0, 0];
+      }
+
+      return this._getPixel(x, y);
+    }
+    // get(x,y,w,h)
+  }
+
+  var region = new p5.Image(w, h);
+  region.canvas
+    .getContext('2d')
+    .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
+
+  return region;
+};
+
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
     this._setProperty('_textLeading', l);
@@ -133,7 +167,8 @@ p5.Renderer.prototype.textStyle = function(s) {
     if (
       s === constants.NORMAL ||
       s === constants.ITALIC ||
-      s === constants.BOLD
+      s === constants.BOLD ||
+      s === constants.BOLDITALIC
     ) {
       this._setProperty('_textStyle', s);
     }

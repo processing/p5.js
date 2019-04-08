@@ -40,7 +40,7 @@ var p5 = require('./main');
  * </code></div>
  *
  * <div><code>
- * var x = 0;
+ * let x = 0;
  * function setup() {
  *   createCanvas(100, 100);
  * }
@@ -76,10 +76,12 @@ p5.prototype.noLoop = function() {
  * within it. However, the <a href="#/p5/draw">draw()</a> loop may be stopped by calling <a href="#/p5/noLoop">noLoop()</a>.
  * In that case, the <a href="#/p5/draw">draw()</a> loop can be resumed with loop().
  *
+ * Avoid calling loop() from inside setup().
+ *
  * @method loop
  * @example
  * <div><code>
- * var x = 0;
+ * let x = 0;
  * function setup() {
  *   createCanvas(100, 100);
  *   noLoop();
@@ -109,8 +111,12 @@ p5.prototype.noLoop = function() {
  */
 
 p5.prototype.loop = function() {
-  this._loop = true;
-  this._draw();
+  if (!this._loop) {
+    this._loop = true;
+    if (this._setupDone) {
+      this._draw();
+    }
+  }
 };
 
 /**
@@ -126,7 +132,11 @@ p5.prototype.loop = function() {
  * and style settings controlled by the following functions: <a href="#/p5/fill">fill()</a>,
  * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/tint">tint()</a>, <a href="#/p5/strokeWeight">strokeWeight()</a>, <a href="#/p5/strokeCap">strokeCap()</a>, <a href="#/p5/strokeJoin">strokeJoin()</a>,
  * <a href="#/p5/imageMode">imageMode()</a>, <a href="#/p5/rectMode">rectMode()</a>, <a href="#/p5/ellipseMode">ellipseMode()</a>, <a href="#/p5/colorMode">colorMode()</a>, <a href="#/p5/textAlign">textAlign()</a>,
- * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textMode">textMode()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
+ * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
+ * <br><br>
+ * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>, <a href="#/p5/texture">texture()</a>, <a href="#/p5/specularMaterial">specularMaterial()</a>, <a href="#/p5/shininess">shininess()</a>, <a href="#/p5/normalMaterial">normalMaterial()</a>
+ * and <a href="#/p5/shader">shader()</a>.
  *
  * @method push
  * @example
@@ -191,7 +201,11 @@ p5.prototype.push = function() {
  * and style settings controlled by the following functions: <a href="#/p5/fill">fill()</a>,
  * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/tint">tint()</a>, <a href="#/p5/strokeWeight">strokeWeight()</a>, <a href="#/p5/strokeCap">strokeCap()</a>, <a href="#/p5/strokeJoin">strokeJoin()</a>,
  * <a href="#/p5/imageMode">imageMode()</a>, <a href="#/p5/rectMode">rectMode()</a>, <a href="#/p5/ellipseMode">ellipseMode()</a>, <a href="#/p5/colorMode">colorMode()</a>, <a href="#/p5/textAlign">textAlign()</a>,
- * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textMode">textMode()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
+ * <a href="#/p5/textFont">textFont()</a>, <a href="#/p5/textSize">textSize()</a>, <a href="#/p5/textLeading">textLeading()</a>.
+ * <br><br>
+ * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>, <a href="#/p5/texture">texture()</a>, <a href="#/p5/specularMaterial">specularMaterial()</a>, <a href="#/p5/shininess">shininess()</a>, <a href="#/p5/normalMaterial">normalMaterial()</a>
+ * and <a href="#/p5/shader">shader()</a>.
  *
  * @method pop
  * @example
@@ -265,7 +279,7 @@ p5.prototype.pop = function() {
  * @param  {Integer} [n] Redraw for n-times. The default value is 1.
  * @example
  * <div><code>
- * var x = 0;
+ * let x = 0;
  *
  * function setup() {
  *   createCanvas(100, 100);
@@ -284,7 +298,7 @@ p5.prototype.pop = function() {
  * </code></div>
  *
  * <div class='norender'><code>
- * var x = 0;
+ * let x = 0;
  *
  * function setup() {
  *   createCanvas(100, 100);
@@ -308,6 +322,10 @@ p5.prototype.pop = function() {
  *
  */
 p5.prototype.redraw = function(n) {
+  if (this._inUserDraw || !this._setupDone) {
+    return;
+  }
+
   var numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
@@ -330,7 +348,12 @@ p5.prototype.redraw = function(n) {
       }
       context._setProperty('frameCount', context.frameCount + 1);
       context._registeredMethods.pre.forEach(callMethod);
-      userDraw();
+      this._inUserDraw = true;
+      try {
+        userDraw();
+      } finally {
+        this._inUserDraw = false;
+      }
       context._registeredMethods.post.forEach(callMethod);
     }
   }

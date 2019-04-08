@@ -122,6 +122,19 @@ suite('Files', function() {
       assert.isObject(result, 'result is an object');
     });
   });
+  // loadXML()
+  suite('loadXML() in Preload', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadXML);
+      assert.typeOf(myp5.loadXML, 'function');
+    });
+
+    test('should return an Object', function() {
+      result = myp5.loadXML('unit/assets/books.xml');
+      assert.ok(result);
+      assert.isObject(result, 'result is an object');
+    });
+  });
 
   // loadStrings()
   suite('loadStrings() in Preload', function() {
@@ -134,20 +147,6 @@ suite('Files', function() {
       result = myp5.loadStrings('unit/assets/sentences.txt');
       assert.ok(result);
       assert.isArray(result, 'result is and array');
-    });
-  });
-
-  // loadXML()
-  suite('loadXML() in Preload', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadXML);
-      assert.typeOf(myp5.loadXML, 'function');
-    });
-
-    test('should return an Object', function() {
-      result = myp5.loadXML('unit/assets/books.xml');
-      assert.ok(result);
-      assert.isObject(result, 'result is an object');
     });
   });
 
@@ -218,6 +217,29 @@ suite('Files', function() {
     });
   });
 
+  // loadXML()
+  suite('p5.prototype.loadXML', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadXML);
+      assert.typeOf(myp5.loadXML, 'function');
+    });
+
+    //Missing reference to parseXML, might need some test suite rethink
+    // test('should call callback function if provided', function() {
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   });
+    // });
+    //
+    // test('should pass an Object to callback function', function(){
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   }).then(function(data) {
+    //     assert.isObject(data);
+    //   });
+    // });
+  });
+
   // loadStrings()
   suite('p5.prototype.loadStrings', function() {
     test('should be a function', function() {
@@ -275,29 +297,6 @@ suite('Files', function() {
         assert.equal(err.status, 404, 'Error status is 404');
       });
     });
-  });
-
-  // loadXML()
-  suite('p5.prototype.loadXML', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.loadXML);
-      assert.typeOf(myp5.loadXML, 'function');
-    });
-
-    //Missing reference to parseXML, might need some test suite rethink
-    // test('should call callback function if provided', function() {
-    //   return new Promise(function(resolve, reject) {
-    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
-    //   });
-    // });
-    //
-    // test('should pass an Object to callback function', function(){
-    //   return new Promise(function(resolve, reject) {
-    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
-    //   }).then(function(data) {
-    //     assert.isObject(data);
-    //   });
-    // });
   });
 
   suite('p5.prototype.loadTable', function() {
@@ -380,6 +379,29 @@ suite('Files', function() {
         assert.equal(resp.getRow(3).get(0), 'David,\nSr. "the boss"');
       });
     });
+  });
+
+  // loadXML()
+  suite('p5.prototype.loadXML', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.loadXML);
+      assert.typeOf(myp5.loadXML, 'function');
+    });
+
+    //Missing reference to parseXML, might need some test suite rethink
+    // test('should call callback function if provided', function() {
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   });
+    // });
+    //
+    // test('should pass an Object to callback function', function(){
+    //   return new Promise(function(resolve, reject) {
+    //     myp5.loadXML('unit/assets/books.xml', resolve, reject);
+    //   }).then(function(data) {
+    //     assert.isObject(data);
+    //   });
+    // });
   });
 
   // loadBytes()

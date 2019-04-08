@@ -21,17 +21,22 @@ require('./p5.Texture');
  * if the parameters defined in the shader match the names.
  *
  * @method loadShader
- * @param {String} [vertFilename] path to file containing vertex shader
+ * @param {String} vertFilename path to file containing vertex shader
  * source code
- * @param {String} [fragFilename] path to file containing fragment shader
+ * @param {String} fragFilename path to file containing fragment shader
  * source code
+ * @param {function} [callback] callback to be executed after loadShader
+ * completes. On success, the Shader object is passed as the first argument.
+ * @param {function} [errorCallback] callback to be executed when an error
+ * occurs inside loadShader. On error, the error is passed as the first
+ * argument.
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
  *
  * @example
  * <div modernizr='webgl'>
  * <code>
- * var mandel;
+ * let mandel;
  * function preload() {
  *   // load the shader definitions from files
  *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
@@ -54,28 +59,53 @@ require('./p5.Texture');
  * @alt
  * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
  */
-p5.prototype.loadShader = function(vertFilename, fragFilename) {
+p5.prototype.loadShader = function(
+  vertFilename,
+  fragFilename,
+  callback,
+  errorCallback
+) {
   p5._validateParameters('loadShader', arguments);
+  if (!errorCallback) {
+    errorCallback = console.error;
+  }
+
   var loadedShader = new p5.Shader();
 
   var self = this;
   var loadedFrag = false;
   var loadedVert = false;
 
-  this.loadStrings(fragFilename, function(result) {
-    loadedShader._fragSrc = result.join('\n');
-    loadedFrag = true;
-    if (loadedVert) {
-      self._decrementPreload();
+  var onLoad = function() {
+    self._decrementPreload();
+    if (callback) {
+      callback(loadedShader);
     }
-  });
-  this.loadStrings(vertFilename, function(result) {
-    loadedShader._vertSrc = result.join('\n');
-    loadedVert = true;
-    if (loadedFrag) {
-      self._decrementPreload();
-    }
-  });
+  };
+
+  this.loadStrings(
+    vertFilename,
+    function(result) {
+      loadedShader._vertSrc = result.join('\n');
+      loadedVert = true;
+      if (loadedFrag) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
+
+  this.loadStrings(
+    fragFilename,
+    function(result) {
+      loadedShader._fragSrc = result.join('\n');
+      loadedFrag = true;
+      if (loadedVert) {
+        onLoad();
+      }
+    },
+    errorCallback
+  );
 
   return loadedShader;
 };
@@ -91,16 +121,16 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * <div modernizr='webgl'>
  * <code>
  * // the 'varying's are shared between both vertex & fragment shaders
- * var varying = 'precision highp float; varying vec2 vPos;';
+ * let varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
- * var vs =
+ * let vs =
  *   varying +
  *   'attribute vec3 aPosition;' +
  *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
  *
  * // the fragment shader is called for each pixel
- * var fs =
+ * let fs =
  *   varying +
  *   'uniform vec2 p;' +
  *   'uniform float r;' +
@@ -118,7 +148,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
  *   '}';
  *
- * var mandel;
+ * let mandel;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *
@@ -162,14 +192,33 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
   p5._validateParameters('shader', arguments);
+
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
+
   if (s.isStrokeShader()) {
-    this._renderer.setStrokeShader(s);
+    this._renderer.userStrokeShader = s;
   } else {
-    this._renderer.setFillShader(s);
+    this._renderer.userFillShader = s;
+    this._renderer._useNormalMaterial = false;
   }
+
+  s.init();
+
+  return this;
+};
+
+/**
+ * This function restores the default shaders in WEBGL mode. Code that runs
+ * after resetShader() will not be affected by previously defined
+ * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ *
+ * @method resetShader
+ * @chainable
+ */
+p5.prototype.resetShader = function() {
+  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
   return this;
 };
 
@@ -189,7 +238,7 @@ p5.prototype.shader = function(s) {
  * function draw() {
  *   background(200);
  *   normalMaterial();
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -202,8 +251,10 @@ p5.prototype.normalMaterial = function() {
   this._assert3d('normalMaterial');
   p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
-  this._renderer.setFillShader(this._renderer._getNormalShader());
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = true;
   this._renderer.curFillColor = [1, 1, 1, 1];
+  this._renderer._setProperty('_doFill', true);
   this.noStroke();
   return this;
 };
@@ -218,7 +269,7 @@ p5.prototype.normalMaterial = function() {
  * @example
  * <div>
  * <code>
- * var img;
+ * let img;
  * function preload() {
  *   img = loadImage('assets/laDefense.jpg');
  * }
@@ -241,11 +292,12 @@ p5.prototype.normalMaterial = function() {
  *
  * <div>
  * <code>
- * var pg;
+ * let pg;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
- *   pg.textSize(100);
+ *   pg.textSize(75);
  * }
  *
  * function draw() {
@@ -254,18 +306,19 @@ p5.prototype.normalMaterial = function() {
  *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
- *   plane(200);
+ *   rotateX(0.5);
+ *   noStroke();
+ *   plane(50);
  * }
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * var vid;
+ * let vid;
  * function preload() {
  *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
- *   vid.loop();
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -275,7 +328,11 @@ p5.prototype.normalMaterial = function() {
  *   background(0);
  *   //pass video frame as texture
  *   texture(vid);
- *   plane(200);
+ *   rect(-40, -40, 80, 80);
+ * }
+ *
+ * function mousePressed() {
+ *   vid.loop();
  * }
  * </code>
  * </div>
@@ -289,13 +346,168 @@ p5.prototype.normalMaterial = function() {
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
+
   this._renderer.drawMode = constants.TEXTURE;
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', tex);
-  this.noStroke();
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._tex = tex;
+  this._renderer._setProperty('_doFill', true);
+
   return this;
+};
+
+/**
+ * Sets the coordinate space for texture mapping. The default mode is IMAGE
+ * which refers to the actual coordinates of the image.
+ * NORMAL refers to a normalized space of values ranging from 0 to 1.
+ * This function only works in WEBGL mode.
+ *
+ * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+ * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
+ * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+ * @method  textureMode
+ * @param {Constant} mode either IMAGE or NORMAL
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, 1, 0);
+ *   vertex(50, 50, 1, 1);
+ *   vertex(-50, 50, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-50, -50, 0, 0);
+ *   vertex(50, -50, img.width, 0);
+ *   vertex(50, 50, img.width, img.height);
+ *   vertex(-50, 50, 0, img.height);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * the underside of a white umbrella and gridded ceiling above
+ *
+ */
+p5.prototype.textureMode = function(mode) {
+  if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
+    console.warn(
+      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
+    );
+  } else {
+    this._renderer.textureMode = mode;
+  }
+};
+
+/**
+ * Sets the global texture wrapping mode. This controls how textures behave
+ * when their uv's go outside of the 0 - 1 range. There are three options:
+ * CLAMP, REPEAT, and MIRROR.
+ *
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ *
+ * REPEAT & MIRROR are only available if the texture
+ * is a power of two size (128, 256, 512, 1024, etc.).
+ *
+ * This method will affect all textures in your sketch until a subsequent
+ * textureWrap call is made.
+ *
+ * If only one argument is provided, it will be applied to both the
+ * horizontal and vertical axes.
+ * @method textureWrap
+ * @param {Constant} wrapX either CLAMP, REPEAT, or MIRROR
+ * @param {Constant} [wrapY] either CLAMP, REPEAT, or MIRROR
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   textureWrap(MIRROR);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   let dX = mouseX;
+ *   let dY = mouseY;
+ *
+ *   let u = lerp(1.0, 2.0, dX);
+ *   let v = lerp(1.0, 2.0, dY);
+ *
+ *   scale(width / 2);
+ *
+ *   texture(img);
+ *
+ *   beginShape(TRIANGLES);
+ *   vertex(-1, -1, 0, 0, 0);
+ *   vertex(1, -1, 0, u, 0);
+ *   vertex(1, 1, 0, u, v);
+ *
+ *   vertex(1, 1, 0, u, v);
+ *   vertex(-1, 1, 0, 0, v);
+ *   vertex(-1, -1, 0, 0, 0);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * an image of the rocky mountains repeated in mirrored tiles
+ *
+ */
+p5.prototype.textureWrap = function(wrapX, wrapY) {
+  wrapY = wrapY || wrapX;
+
+  this._renderer.textureWrapX = wrapX;
+  this._renderer.textureWrapY = wrapY;
+
+  var textures = this._renderer.textures;
+  for (var i = 0; i < textures.length; i++) {
+    textures[i].setWrapMode(wrapX, wrapY);
+  }
 };
 
 /**
@@ -317,10 +529,10 @@ p5.prototype.texture = function(tex) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
- *   ambientMaterial(250);
- *   sphere(50);
+ *   noStroke();
+ *   ambientLight(200);
+ *   ambientMaterial(70, 130, 230);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -337,13 +549,14 @@ p5.prototype.texture = function(tex) {
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -366,10 +579,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
- *   ambientLight(100);
- *   pointLight(250, 250, 250, 100, 100, 0);
+ *   noStroke();
+ *   ambientLight(50);
+ *   pointLight(250, 250, 250, 100, 100, 30);
  *   specularMaterial(250);
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -386,13 +600,59 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
+
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = true;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
 
-  var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
+  return this;
+};
+
+/**
+ * Sets the amount of gloss in the surface of shapes.
+ * Used in combination with specularMaterial() in setting
+ * the material properties of shapes. The default and minimum value is 1.
+ * @method shininess
+ * @param {Number} shine Degree of Shininess.
+ *                       Defaults to 1.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   ambientLight(60, 60, 60);
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *   specularMaterial(250);
+ *   translate(-25, 0, 0);
+ *   shininess(1);
+ *   sphere(20);
+ *   translate(50, 0, 0);
+ *   shininess(20);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Shininess on Camera changes position with mouse
+ */
+p5.prototype.shininess = function(shine) {
+  this._assert3d('shininess');
+  p5._validateParameters('shininess', arguments);
+
+  if (shine < 1) {
+    shine = 1;
+  }
+  this._renderer._useShininess = shine;
   return this;
 };
 
@@ -410,13 +670,78 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   if (isTexture || colors[colors.length - 1] < 1.0) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
-    gl.blendEquation(gl.FUNC_ADD);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    this._applyBlendMode();
   } else {
     gl.depthMask(true);
     gl.disable(gl.BLEND);
   }
   return colors;
+};
+
+/**
+ * @private sets blending in gl context to curBlendMode
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
+ */
+p5.RendererGL.prototype._applyBlendMode = function() {
+  var gl = this.GL;
+  switch (this.curBlendMode) {
+    case constants.BLEND:
+    case constants.ADD:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.MULTIPLY:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ZERO, gl.SRC_COLOR, gl.ONE, gl.ONE);
+      break;
+    case constants.SCREEN:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ONE_MINUS_DST_COLOR, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.EXCLUSION:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(
+        gl.ONE_MINUS_DST_COLOR,
+        gl.ONE_MINUS_SRC_COLOR,
+        gl.ONE,
+        gl.ONE
+      );
+      break;
+    case constants.REPLACE:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ONE, gl.ZERO);
+      break;
+    case constants.SUBTRACT:
+      gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.DARKEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MIN_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    case constants.LIGHTEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MAX_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    default:
+      console.error(
+        'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
+      );
+      break;
+  }
 };
 
 module.exports = p5;

@@ -368,14 +368,16 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
  */
-
 p5.prototype.bezierVertex = function() {
   p5._validateParameters('bezierVertex', arguments);
   if (this._renderer.isP3D) {
     this._renderer.bezierVertex.apply(this._renderer, arguments);
   } else {
     if (vertices.length === 0) {
-      throw 'vertex() must be used once before calling bezierVertex()';
+      p5._friendlyError(
+        'vertex() must be used once before calling bezierVertex()',
+        'bezierVertex'
+      );
     } else {
       isBezier = true;
       var vert = [];
@@ -799,8 +801,9 @@ p5.prototype.quadraticVertex = function() {
         vertices.push(vert);
       }
     } else {
-      throw new Error(
-        'vertex() must be used once before calling quadraticVertex()'
+      p5._friendlyError(
+        'vertex() must be used once before calling quadraticVertex()',
+        'quadraticVertex'
       );
     }
   }

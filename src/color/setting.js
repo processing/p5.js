@@ -14,7 +14,7 @@ require('./p5.Color');
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
- * p5.js canvas. The default background is light gray. This function is
+ * p5.js canvas. The default background is transparent. This function is
  * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
  * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
  * the first frame of animation or if the background need only be set once.
@@ -159,7 +159,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color
  * @chainable
  */
@@ -183,10 +183,11 @@ p5.prototype.background = function() {
 };
 
 /**
- * Clears the pixels within a buffer. This function only works on p5.Canvas
- * objects created with the <a href="#/p5/createCanvas">createCanvas()</a> function; it won't work with the
- * main display window. Unlike the main graphics context, pixels in
- * additional graphics areas created with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
+ * Clears the pixels within a buffer. This function only clears the canvas.
+ * It will not clear objects created by createX() methods such as
+ * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
+ * Unlike the main graphics context, pixels in additional graphics areas created
+ * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
@@ -244,8 +245,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(RGB, 100);
- * for (var i = 0; i < 100; i++) {
- *   for (var j = 0; j < 100; j++) {
+ * for (let i = 0; i < 100; i++) {
+ *   for (let j = 0; j < 100; j++) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -257,8 +258,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(HSB, 100);
- * for (var i = 0; i < 100; i++) {
- *   for (var j = 0; j < 100; j++) {
+ * for (let i = 0; i < 100; i++) {
+ *   for (let j = 0; j < 100; j++) {
  *     stroke(i, j, 100);
  *     point(i, j);
  *   }
@@ -269,10 +270,10 @@ p5.prototype.clear = function() {
  * <div>
  * <code>
  * colorMode(RGB, 255);
- * var c = color(127, 255, 0);
+ * let c = color(127, 255, 0);
  *
  * colorMode(RGB, 1);
- * var myColor = c._getRed();
+ * let myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
  * </code>
  * </div>
@@ -294,7 +295,7 @@ p5.prototype.clear = function() {
  *Green to red gradient from bottom L to top R. shading originates from top left.
  *Rainbow gradient from left to right. Brightness increasing to white at top.
  *unknown image.
- *50x50 ellipse at middle L & 40x40 ellipse at center. Transluscent pink outlines.
+ *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
  *
  */
 /**
@@ -304,7 +305,7 @@ p5.prototype.clear = function() {
  *                              current color mode
  * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lighntess
+ * @param {Number} max3     range for the blue or brightness/lightness
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
  * @chainable
@@ -462,7 +463,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * 60x60 light green rect with black outline in center of canvas.
  * 60x60 soft green rect with black outline in center of canvas.
  * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fushcia rect with black outline in center of canvas.
+ * 60x60 dark fuchsia rect with black outline in center of canvas.
  * 60x60 blue rect with black outline in center of canvas.
  */
 
@@ -714,7 +715,7 @@ p5.prototype.noStroke = function() {
  * 60x60 white rect at center. Bright green outline.
  * 60x60 white rect at center. Soft green outline.
  * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fushcia outline.
+ * 60x60 white rect at center. Dark fuchsia outline.
  * 60x60 white rect at center. Blue outline.
  */
 

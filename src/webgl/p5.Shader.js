@@ -190,12 +190,10 @@ p5.Shader.prototype.bindShader = function() {
   if (!this._bound) {
     this.useProgram();
     this._bound = true;
-    this.bindTextures();
 
     this._setMatrixUniforms();
-    if (this === this._renderer.curStrokeShader) {
-      this._setViewportUniform();
-    }
+
+    this.setUniform('uViewport', this._renderer._viewport);
   }
 };
 
@@ -250,14 +248,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
-  if (this === this._renderer.curFillShader) {
+  if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
   }
-};
-
-p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('uViewport', this._renderer._viewport);
 };
 
 /**
@@ -289,17 +283,13 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
 
   var uniform = this.uniforms[uniformName];
   if (!uniform) {
-    //@todo warning?
     return;
   }
+
   var location = uniform.location;
 
   var gl = this._renderer.GL;
-  // todo: is this safe to do here?
-  // todo: store the values another way?
   this.useProgram();
-
-  // TODO BIND?
 
   switch (uniform.type) {
     case gl.BOOL:
@@ -393,6 +383,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
 
 p5.Shader.prototype.isLightShader = function() {
   return (
+    this.attributes.aNormal !== undefined ||
     this.uniforms.uUseLighting !== undefined ||
     this.uniforms.uAmbientLightCount !== undefined ||
     this.uniforms.uDirectionalLightCount !== undefined ||

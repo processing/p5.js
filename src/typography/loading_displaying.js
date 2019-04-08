@@ -20,7 +20,7 @@ require('../core/error_helpers');
  * is executed.
  * <br><br>
  * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
+ * that links in your sketch. Loading fonts from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
  *
@@ -37,9 +37,9 @@ require('../core/error_helpers');
  * operation will have completed before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
- * var myFont;
+ * let myFont;
  * function preload() {
- *   myFont = loadFont('assets/AvenirNextLTPro-Demi.otf');
+ *   myFont = loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
@@ -55,7 +55,7 @@ require('../core/error_helpers');
  *
  * <div><code>
  * function setup() {
- *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
+ *   loadFont('assets/inconsolata.otf', drawText);
  * }
  *
  * function drawText(font) {
@@ -70,12 +70,12 @@ require('../core/error_helpers');
  *
  * <div><code>
  * function preload() {
- *   loadFont('assets/Avenir.otf');
+ *   loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
- *   var myDiv = createDiv('hello there');
- *   myDiv.style('font-family', 'Avenir');
+ *   let myDiv = createDiv('hello there');
+ *   myDiv.style('font-family', 'Inconsolata');
  * }
  * </code></div>
  *
@@ -91,10 +91,10 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
   var self = this;
   opentype.load(path, function(err, font) {
     if (err) {
+      p5._friendlyFileLoadError(4, path);
       if (typeof onError !== 'undefined') {
         return onError(err);
       }
-      p5._friendlyFileLoadError(4, path);
       console.error(err, path);
       return;
     }
@@ -186,7 +186,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * </div>
  * <div>
  * <code>
- * var s = 'The quick brown fox jumped over the lazy dog.';
+ * let s = 'The quick brown fox jumped over the lazy dog.';
  * fill(50);
  * text(s, 10, 10, 70, 80); // Text wraps within text box
  * </code>
@@ -194,19 +194,19 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  * <div modernizr='webgl'>
  * <code>
- * var avenir;
+ * let inconsolata;
  * function preload() {
- *   avenir = loadFont('assets/Avenir.otf');
+ *   inconsolata = loadFont('assets/inconsolata.otf');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   textFont(avenir);
+ *   textFont(inconsolata);
  *   textSize(width / 3);
  *   textAlign(CENTER, CENTER);
  * }
  * function draw() {
  *   background(0);
- *   var time = millis();
+ *   let time = millis();
  *   rotateX(time / 1000);
  *   rotateZ(time / 1234);
  *   text('p5.js', 0, 0);
@@ -248,7 +248,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * </div>
  * <div>
  * <code>
- * var fontRegular, fontItalic, fontBold;
+ * let fontRegular, fontItalic, fontBold;
  * function preload() {
  *   fontRegular = loadFont('assets/Regular.otf');
  *   fontItalic = loadFont('assets/Italic.ttf');

@@ -104,7 +104,7 @@ If a method has multiple possible parameter options, you can specify each indivi
 
 /**
  * @method background
- * @param {Number} gray   specifies a value between white and black
+ * @param {Number} gray specifies a value between white and black
  * @param {Number} [a]
  */
 ```
@@ -166,7 +166,7 @@ Constructors are defined with `@class`. Each constructor should have the tag `@c
    * @param {Object} [node] The canvas element. A canvas will be added to the DOM if not provided.
    * @param {Object} [sketch] The sketch object.
    */
-   var p5 = function( node, sketch) {
+   const p5 = function( node, sketch) {
      ...
    }
 ```
@@ -213,7 +213,7 @@ If you do not want the example to be run as part of the build tests (for example
 @example
 <div class='norender notest'><code>
 function setup() {
-  var c = createCanvas(100, 100);
+  const c = createCanvas(100, 100);
   saveCanvas(c, 'myCanvas', 'jpg');
 }
 </code></div>
@@ -231,21 +231,22 @@ Finally, if you add an example, please add [alt-text](https://moz.com/learn/seo/
 @example
 <div>
 <code>
-var xoff = 0.0;
+let xoff = 0.0;
 function draw() {
   background(204);
   xoff = xoff + 0.01;
-  var n = noise(xoff) * width;
+  const n = noise(xoff) * width;
   line(n, 0, n, height);
 }
 </code>
 </div>
 <div>
-<code>var noiseScale=0.02;
+<code>
+const noiseScale=0.02;
 function draw() {
   background(0);
-  for (var x=0; x < width; x++) {
-    var noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+  for (let x=0; x < width; x++) {
+    const noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
     stroke(noiseVal*255);
     line(x, mouseY+noiseVal*80, x, height);
   }
@@ -267,4 +268,4 @@ The build reference can be found in docs/reference. To preview it locally, run `
 
 ## Spanish language version
 
-The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure) to update this material.
+The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) to update this material.

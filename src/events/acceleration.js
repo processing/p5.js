@@ -26,6 +26,20 @@ p5.prototype.deviceOrientation = undefined;
  *
  * @property {Number} accelerationX
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationX);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationX = 0;
 
@@ -35,6 +49,20 @@ p5.prototype.accelerationX = 0;
  *
  * @property {Number} accelerationY
  * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationY);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationY = 0;
 
@@ -44,6 +72,22 @@ p5.prototype.accelerationY = 0;
  *
  * @property {Number} accelerationZ
  * @readOnly
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Move a touchscreen device to register
+ * // acceleration changes.
+ * function draw() {
+ *   background(220, 50);
+ *   fill('magenta');
+ *   ellipse(width / 2, height / 2, accelerationZ);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Magnitude of device acceleration is displayed as ellipse size
  */
 p5.prototype.accelerationZ = 0;
 
@@ -96,6 +140,8 @@ p5.prototype._updatePAccelerations = function() {
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationX
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -112,13 +158,8 @@ p5.prototype._updatePAccelerations = function() {
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationX
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
- *
  */
 p5.prototype.rotationX = 0;
 
@@ -130,6 +171,8 @@ p5.prototype.rotationX = 0;
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
  *
+ * @property {Number} rotationY
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -146,10 +189,6 @@ p5.prototype.rotationX = 0;
  * }
  * </code>
  * </div>
- *
- * @property {Number} rotationY
- * @readOnly
- *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
  */
@@ -208,14 +247,14 @@ p5.prototype.rotationZ = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
  * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
- * var rX = rotationX + 180;
- * var pRX = pRotationX + 180;
+ * let rX = rotationX + 180;
+ * let pRX = pRotationX + 180;
  *
  * if ((rX - pRX > 0 && rX - pRX < 270) || rX - pRX < -270) {
  *   rotateDirection = 'clockwise';
@@ -253,14 +292,14 @@ p5.prototype.pRotationX = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
  * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
- * var rY = rotationY + 180;
- * var pRY = pRotationY + 180;
+ * let rY = rotationY + 180;
+ * let pRY = pRotationY + 180;
  *
  * if ((rY - pRY > 0 && rY - pRY < 270) || rY - pRY < -270) {
  *   rotateDirection = 'clockwise';
@@ -297,7 +336,7 @@ p5.prototype.pRotationY = 0;
  *
  * // Some extra logic is needed to account for cases where
  * // the angles wrap around.
- * var rotateDirection = 'clockwise';
+ * let rotateDirection = 'clockwise';
  *
  * if (
  *   (rotationZ - pRotationZ > 0 && rotationZ - pRotationZ < 270) ||
@@ -390,8 +429,8 @@ var shake_threshold = 30;
  * // You will need to move the device incrementally further
  * // the closer the square's color gets to white in order to change the value.
  *
- * var value = 0;
- * var threshold = 0.5;
+ * let value = 0;
+ * let threshold = 0.5;
  * function setup() {
  *   setMoveThreshold(threshold);
  * }
@@ -433,8 +472,8 @@ p5.prototype.setMoveThreshold = function(val) {
  * // You will need to shake the device more firmly
  * // the closer the box's fill gets to white in order to change the value.
  *
- * var value = 0;
- * var threshold = 30;
+ * let value = 0;
+ * let threshold = 30;
  * function setup() {
  *   setShakeThreshold(threshold);
  * }
@@ -466,8 +505,9 @@ p5.prototype.setShakeThreshold = function(val) {
 
 /**
  * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
- * the threshold value along X, Y or Z axis. The default threshold is set to
- * 0.5.
+ * the threshold value along X, Y or Z axis. The default threshold is set to 0.5.
+ * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setMoveThreshold">setMoveThreshold()</a>.
+ *
  * @method deviceMoved
  * @example
  * <div class="norender">
@@ -476,7 +516,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Move the device around
  * // to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -511,7 +551,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Rotate the device by 90 degrees
  * // to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -531,7 +571,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Rotate the device by 90 degrees in the
  * // X-axis to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -558,6 +598,8 @@ p5.prototype.setShakeThreshold = function(val) {
  * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
  * changes of accelerationX and accelerationY values is more than
  * the threshold value. The default threshold is set to 30.
+ * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setShakeThreshold">setShakeThreshold()</a>.
+ *
  * @method deviceShaken
  * @example
  * <div class="norender">
@@ -565,7 +607,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * // Run this example on a mobile device
  * // Shake the device to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);

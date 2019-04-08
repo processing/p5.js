@@ -10,12 +10,6 @@
 var p5 = require('../core/main');
 
 /**
- * Holds the key codes of currently pressed keys.
- * @private
- */
-var downKeys = {};
-
-/**
  * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
  * and false if no keys are pressed.
  *
@@ -82,7 +76,7 @@ p5.prototype.key = '';
  * @readOnly
  * @example
  * <div><code>
- * var fillVal = 126;
+ * let fillVal = 126;
  * function draw() {
  *   fill(fillVal);
  *   rect(25, 25, 50, 50);
@@ -97,10 +91,18 @@ p5.prototype.key = '';
  *   return false; // prevent default
  * }
  * </code></div>
- *
+ * <div><code>
+ * function draw() {}
+ * function keyPressed() {
+ *   background('yellow');
+ *   text(`${key} ${keyCode}`, 10, 40);
+ *   print(key, ' ', keyCode);
+ *   return false; // prevent default
+ * }
+ * </code></div>
  * @alt
  * Grey rect center. turns white when up arrow pressed and black when down
- *
+ * Display key pressed and its keyCode in a yellow box
  */
 p5.prototype.keyCode = 0;
 
@@ -112,7 +114,7 @@ p5.prototype.keyCode = 0;
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
  * OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
  * <br><br>
- * For ASCII keys that was pressed is stored in the key variable. However, it
+ * For ASCII keys, the key that was pressed is stored in the key variable. However, it
  * does not distinguish between uppercase and lowercase. For this reason, it
  * is recommended to use <a href="#/p5/keyTyped">keyTyped()</a> to read the key variable, in which the
  * case of the variable will be distinguished.
@@ -129,7 +131,7 @@ p5.prototype.keyCode = 0;
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -145,7 +147,7 @@ p5.prototype.keyCode = 0;
  * </div>
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -174,14 +176,15 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-  if (downKeys[e.which] && e.which !== 0) {
+
+  if (this._downKeys[e.which] && e.which !== 0) {
     // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
-  downKeys[e.which] = true;
+  this._downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
@@ -223,7 +226,7 @@ p5.prototype._onkeydown = function(e) {
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -247,7 +250,7 @@ p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
-  downKeys[e.which] = false;
+  this.downKeys[e.which] = false;
   // Workaround for iPad arrow keys
   if (e.key === 'UIKeyInputLeftArrow') {
     downKeys[37] = false;
@@ -269,7 +272,8 @@ p5.prototype._onkeyup = function(e) {
     this._setProperty('key', 'ArrowDown');
     this._setProperty('keyCode', 40);
   }
-  if (!areDownKeys()) {
+
+  if (!this._areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -299,7 +303,7 @@ p5.prototype._onkeyup = function(e) {
  * @example
  * <div>
  * <code>
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -343,7 +347,7 @@ p5.prototype._onkeypress = function(e) {
  * been released.
  */
 p5.prototype._onblur = function(e) {
-  downKeys = {};
+  this._downKeys = {};
 };
 
 /**
@@ -359,11 +363,12 @@ p5.prototype._onblur = function(e) {
  * @return {Boolean}        whether key is down or not
  * @example
  * <div><code>
- * var x = 100;
- * var y = 100;
+ * let x = 100;
+ * let y = 100;
  *
  * function setup() {
  *   createCanvas(512, 512);
+ *   fill(255, 0, 0);
  * }
  *
  * function draw() {
@@ -384,13 +389,12 @@ p5.prototype._onblur = function(e) {
  *   }
  *
  *   clear();
- *   fill(255, 0, 0);
  *   ellipse(x, y, 50, 50);
  * }
  * </code></div>
  *
  * <div><code>
- * var diameter = 50;
+ * let diameter = 50;
  *
  * function setup() {
  *   createCanvas(512, 512);
@@ -420,25 +424,25 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return downKeys[code];
+  return this._downKeys[code];
 };
 
 /**
- * The checkDownKeys function returns a boolean true if any keys pressed
+ * The _areDownKeys function returns a boolean true if any keys pressed
  * and a false if no keys are currently pressed.
 
- * Helps avoid instances where a multiple keys are pressed simultaneously and
+ * Helps avoid instances where multiple keys are pressed simultaneously and
  * releasing a single key will then switch the
  * keyIsPressed property to true.
  * @private
 **/
-function areDownKeys() {
-  for (var key in downKeys) {
-    if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
+p5.prototype._areDownKeys = function() {
+  for (var key in this._downKeys) {
+    if (this._downKeys.hasOwnProperty(key) && this._downKeys[key] === true) {
       return true;
     }
   }
   return false;
-}
+};
 
 module.exports = p5;

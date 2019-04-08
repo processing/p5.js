@@ -90,15 +90,29 @@ suite('Rendering', function() {
     });
   });
 
+  suite('p5.prototype.setAttributes', function() {
+    test('_glAttributes should be null at start', function() {
+      assert.deepEqual(myp5._glAttributes, null);
+    });
+    test('_glAttributes should modify with setAttributes', function() {
+      myp5.setAttributes({ antialias: false, perPixelLighting: true });
+      assert.deepEqual(myp5._glAttributes.antialias, false);
+      assert.deepEqual(myp5._glAttributes.perPixelLighting, true);
+    });
+    test('_glAttributes.antialias modify with smooth()', function() {
+      myp5.smooth();
+      assert.deepEqual(myp5._glAttributes.antialias, true);
+    });
+  });
+
   // prettier-ignore
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'orbitControl',
-    'ambientLight', 'directionalLight', 'pointLight',
+    'ambientLight', 'directionalLight', 'pointLight', 'lights',
     'model',
     'createShader', 'shader',
-    'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial',
-    'setAttributes',
+    'normalMaterial', 'texture', 'ambientMaterial', 'specularMaterial', 'shininess',
     'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
   ];
 

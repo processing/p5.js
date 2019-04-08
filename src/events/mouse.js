@@ -129,7 +129,7 @@ p5.prototype.pmouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect center, fuschia background. rect flickers on mouse movement
+ * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
  *
  */
 p5.prototype.pmouseY = 0;
@@ -144,11 +144,13 @@ p5.prototype.pmouseY = 0;
  * @example
  * <div>
  * <code>
- * var myCanvas;
+ * let myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
+ *   const body = document.getElementsByTagName('body')[0];
+ *   myCanvas.parent(body);
  * }
  *
  * function draw() {
@@ -156,7 +158,7 @@ p5.prototype.pmouseY = 0;
  *   fill(0);
  *
  *   //move the canvas to the horizontal mouse position
- *   //rela                    tive to the window
+ *   //relative to the window
  *   myCanvas.position(winMouseX + 1, windowHeight / 2);
  *
  *   //the y of the square is relative to the canvas
@@ -166,7 +168,7 @@ p5.prototype.pmouseY = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect y moves with mouse y and fuschia canvas moves with mouse x
+ * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
  *
  */
 p5.prototype.winMouseX = 0;
@@ -181,11 +183,13 @@ p5.prototype.winMouseX = 0;
  * @example
  * <div>
  * <code>
- * var myCanvas;
+ * let myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
+ *   const body = document.getElementsByTagName('body')[0];
+ *   myCanvas.parent(body);
  * }
  *
  * function draw() {
@@ -193,7 +197,7 @@ p5.prototype.winMouseX = 0;
  *   fill(0);
  *
  *   //move the canvas to the vertical mouse position
- *   //rel                    ative to the window
+ *   //relative to the window
  *   myCanvas.position(windowWidth / 2, winMouseY + 1);
  *
  *   //the x of the square is relative to the canvas
@@ -203,7 +207,7 @@ p5.prototype.winMouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect x moves with mouse x and fuschia canvas y moves with mouse y
+ * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
  *
  */
 p5.prototype.winMouseY = 0;
@@ -220,7 +224,7 @@ p5.prototype.winMouseY = 0;
  * @example
  * <div>
  * <code>
- * var myCanvas;
+ * let myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas
@@ -233,7 +237,7 @@ p5.prototype.winMouseY = 0;
  *   clear();
  *   //the difference between previous and
  *   //current x position is the horizontal mouse speed
- *   var speed = abs(winMouseX - pwinMouseX);
+ *   let speed = abs(winMouseX - pwinMouseX);
  *   //change the size of the circle
  *   //according to the horizontal speed
  *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
@@ -244,7 +248,7 @@ p5.prototype.winMouseY = 0;
  * </div>
  *
  * @alt
- * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  *
  */
 p5.prototype.pwinMouseX = 0;
@@ -262,7 +266,7 @@ p5.prototype.pwinMouseX = 0;
  * @example
  * <div>
  * <code>
- * var myCanvas;
+ * let myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas
@@ -275,7 +279,7 @@ p5.prototype.pwinMouseX = 0;
  *   clear();
  *   //the difference between previous and
  *   //current y position is the vertical mouse speed
- *   var speed = abs(winMouseY - pwinMouseY);
+ *   let speed = abs(winMouseY - pwinMouseY);
  *   //change the size of the circle
  *   //according to the vertical speed
  *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
@@ -286,7 +290,7 @@ p5.prototype.pwinMouseX = 0;
  * </div>
  *
  * @alt
- * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
  *
  */
 p5.prototype.pwinMouseY = 0;
@@ -325,7 +329,7 @@ p5.prototype.pwinMouseY = 0;
  * </div>
  *
  * @alt
- * 50x50 black ellipse appears on center of fuschia canvas on mouse click/press.
+ * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
  *
  */
 p5.prototype.mouseButton = 0;
@@ -356,7 +360,7 @@ p5.prototype.mouseButton = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
+ * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
  *
  */
 p5.prototype.mouseIsPressed = false;
@@ -436,7 +440,7 @@ p5.prototype._setMouseButton = function(e) {
  * // Move the mouse across the page
  * // to change its value
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -492,7 +496,7 @@ p5.prototype._setMouseButton = function(e) {
  * // Drag the mouse across the page
  * // to change its value
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -575,7 +579,7 @@ p5.prototype._onmousemove = function(e) {
  * // Click within the image to change
  * // the value of the rectangle
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -652,7 +656,7 @@ p5.prototype._onmousedown = function(e) {
  * // the value of the rectangle
  * // after the mouse has been clicked
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -731,7 +735,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * // the value of the rectangle
  * // after the mouse has been clicked
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -800,7 +804,7 @@ p5.prototype._onclick = function(e) {
  * // the value of the rectangle
  * // after the mouse has been double clicked
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
@@ -887,7 +891,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * @example
  * <div>
  * <code>
- * var pos = 25;
+ * let pos = 25;
  *
  * function draw() {
  *   background(237, 34, 93);
@@ -906,7 +910,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with vertical scroll. fuschia background
+ * black 50x50 rect moves up and down with vertical scroll. fuchsia background
  *
  */
 p5.prototype._onwheel = function(e) {

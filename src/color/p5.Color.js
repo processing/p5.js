@@ -63,7 +63,7 @@ p5.Color = function(pInst, vals) {
  * @example
  * <div>
  * <code>
- * var myColor;
+ * let myColor;
  * function setup() {
  *   createCanvas(200, 200);
  *   stroke(255);
@@ -84,9 +84,6 @@ p5.Color = function(pInst, vals) {
  * canvas with text representation of color
  */
 p5.Color.prototype.toString = function(format) {
-  if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
-  if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-
   var a = this.levels;
   var f = this._array;
   var alpha = f[3]; // String representation uses normalized alpha
@@ -149,6 +146,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'hsb':
     case 'hsv':
+      if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
       return 'hsb('.concat(
         this.hsba[0] * this.maxes[constants.HSB][0],
         ', ',
@@ -160,6 +158,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'hsb%':
     case 'hsv%':
+      if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
       return 'hsb('.concat(
         (100 * this.hsba[0]).toPrecision(3),
         '%, ',
@@ -171,6 +170,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'hsba':
     case 'hsva':
+      if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
       return 'hsba('.concat(
         this.hsba[0] * this.maxes[constants.HSB][0],
         ', ',
@@ -184,6 +184,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'hsba%':
     case 'hsva%':
+      if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
       return 'hsba('.concat(
         (100 * this.hsba[0]).toPrecision(3),
         '%, ',
@@ -196,6 +197,7 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case 'hsl':
+      if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
       return 'hsl('.concat(
         this.hsla[0] * this.maxes[constants.HSL][0],
         ', ',
@@ -206,6 +208,7 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case 'hsl%':
+      if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
       return 'hsl('.concat(
         (100 * this.hsla[0]).toPrecision(3),
         '%, ',
@@ -216,6 +219,7 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case 'hsla':
+      if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
       return 'hsla('.concat(
         this.hsla[0] * this.maxes[constants.HSL][0],
         ', ',
@@ -228,6 +232,7 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case 'hsla%':
+      if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
       return 'hsl('.concat(
         (100 * this.hsla[0]).toPrecision(3),
         '%, ',
@@ -241,7 +246,7 @@ p5.Color.prototype.toString = function(format) {
 
     case 'rgba':
     default:
-      return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
+      return 'rgba('.concat(a[0], ',', a[1], ',', a[2], ',', alpha, ')');
   }
 };
 
@@ -251,7 +256,7 @@ p5.Color.prototype.toString = function(format) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -278,7 +283,7 @@ p5.Color.prototype.setRed = function(new_red) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -305,7 +310,7 @@ p5.Color.prototype.setGreen = function(new_green) {
  * @example
  * <div>
  * <code>
- * var backgroundColor;
+ * let backgroundColor;
  *
  * function setup() {
  *   backgroundColor = color(100, 50, 150);
@@ -332,7 +337,7 @@ p5.Color.prototype.setBlue = function(new_blue) {
  * @example
  * <div>
  * <code>
- * var squareColor;
+ * let squareColor;
  *
  * function setup() {
  *   ellipseMode(CORNERS);

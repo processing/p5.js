@@ -30,7 +30,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
   var node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
-  p5.Element.call(this, this.canvas, pInst, false);
+  p5.Element.call(this, this.canvas, pInst);
 
   // bind methods and props of p5 to the new object
   for (var p in p5.prototype) {
@@ -70,7 +70,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *
  * @example
  * <div class='norender'><code>
- * var bg;
+ * let bg;
  * function setup() {
  *   bg = createCanvas(100, 100);
  *   bg.background(0);
@@ -80,7 +80,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * </code></div>
  *
  * <div><code>
- * var bg;
+ * let bg;
  * function setup() {
  *   pixelDensity(1);
  *   createCanvas(100, 100);
@@ -93,14 +93,14 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *   bg.ellipse(50, 50, 80, 80);
  * }
  * function draw() {
- *   var t = millis() / 1000;
+ *   let t = millis() / 1000;
  *   // draw the background
  *   if (bg) {
  *     image(bg, frameCount % 100, 0);
  *     image(bg, frameCount % 100 - 100, 0);
  *   }
  *   // draw the foreground
- *   var p = p5.Vector.fromAngle(t, 35).add(50, 50);
+ *   let p = p5.Vector.fromAngle(t, 35).add(50, 50);
  *   ellipse(p.x, p.y, 30);
  * }
  * function mouseClicked() {

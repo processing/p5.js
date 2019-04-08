@@ -14,15 +14,99 @@ var canvas = require('../helpers');
 require('../error_helpers');
 
 /**
+ * This function does 3 things:
+ *
+ *   1. Bounds the desired start/stop angles for an arc (in radians) so that:
+ *
+ *          0 <= start < TWO_PI ;    start <= stop < start + TWO_PI
+ *
+ *      This means that the arc rendering functions don't have to be concerned
+ *      with what happens if stop is smaller than start, or if the arc 'goes
+ *      round more than once', etc.: they can just start at start and increase
+ *      until stop and the correct arc will be drawn.
+ *
+ *   2. Optionally adjusts the angles within each quadrant to counter the naive
+ *      scaling of the underlying ellipse up from the unit circle.  Without
+ *      this, the angles become arbitrary when width != height: 45 degrees
+ *      might be drawn at 5 degrees on a 'wide' ellipse, or at 85 degrees on
+ *      a 'tall' ellipse.
+ *
+ *   3. Flags up when start and stop correspond to the same place on the
+ *      underlying ellipse.  This is useful if you want to do something special
+ *      there (like rendering a whole ellipse instead).
+ */
+p5.prototype._normalizeArcAngles = function(
+  start,
+  stop,
+  width,
+  height,
+  correctForScaling
+) {
+  var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+  var separation;
+
+  // The order of the steps is important here: each one builds upon the
+  // adjustments made in the steps that precede it.
+
+  // Constrain both start and stop to [0,TWO_PI).
+  start = start - constants.TWO_PI * Math.floor(start / constants.TWO_PI);
+  stop = stop - constants.TWO_PI * Math.floor(stop / constants.TWO_PI);
+
+  // Get the angular separation between the requested start and stop points.
+  //
+  // Technically this separation only matches what gets drawn if
+  // correctForScaling is enabled.  We could add a more complicated calculation
+  // for when the scaling is uncorrected (in which case the drawn points could
+  // end up pushed together or pulled apart quite dramatically relative to what
+  // was requested), but it would make things more opaque for little practical
+  // benefit.
+  //
+  // (If you do disable correctForScaling and find that correspondToSamePoint
+  // is set too aggressively, the easiest thing to do is probably to just make
+  // epsilon smaller...)
+  separation = Math.min(
+    Math.abs(start - stop),
+    constants.TWO_PI - Math.abs(start - stop)
+  );
+
+  // Optionally adjust the angles to counter linear scaling.
+  if (correctForScaling) {
+    if (start <= constants.HALF_PI) {
+      start = Math.atan(width / height * Math.tan(start));
+    } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
+      start = Math.atan(width / height * Math.tan(start)) + constants.PI;
+    } else {
+      start = Math.atan(width / height * Math.tan(start)) + constants.TWO_PI;
+    }
+    if (stop <= constants.HALF_PI) {
+      stop = Math.atan(width / height * Math.tan(stop));
+    } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
+      stop = Math.atan(width / height * Math.tan(stop)) + constants.PI;
+    } else {
+      stop = Math.atan(width / height * Math.tan(stop)) + constants.TWO_PI;
+    }
+  }
+
+  // Ensure that start <= stop < start + TWO_PI.
+  if (start > stop) {
+    stop += constants.TWO_PI;
+  }
+
+  return {
+    start: start,
+    stop: stop,
+    correspondToSamePoint: separation < epsilon
+  };
+};
+
+/**
  * Draw an arc to the screen. If called with only x, y, w, h, start, and
  * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
  * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
  * origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.<br><br>
- * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
- * because 0 and TWO_PI are the same position on the unit circle. The
- * best way to handle this is by using the <a href="#/p5/ellipse">ellipse()</a> function instead
- * to create a closed ellipse, and to use the <a href="#/p5/arc">arc()</a> function
- * only to draw parts of an ellipse.
+ * The arc is always drawn clockwise from wherever start falls to wherever stop falls on the ellipse.
+ * Adding or subtracting TWO_PI to either angle does not change where they fall.
+ * If both start and stop fall at the same place, a full ellipse will be drawn.
  *
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse
@@ -93,55 +177,32 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   start = this._toRadians(start);
   stop = this._toRadians(stop);
 
-  // Make all angles positive...
-  while (start < 0) {
-    start += constants.TWO_PI;
-  }
-  while (stop < 0) {
-    stop += constants.TWO_PI;
-  }
-
-  if (typeof start !== 'undefined' && typeof stop !== 'undefined') {
-    // don't display anything if the angles are same or they have a difference of 0 - TWO_PI
-    if (
-      stop.toFixed(10) === start.toFixed(10) ||
-      Math.abs(stop - start) === constants.TWO_PI
-    ) {
-      start %= constants.TWO_PI;
-      stop %= constants.TWO_PI;
-      start += constants.TWO_PI;
-    } else if (Math.abs(stop - start) > constants.TWO_PI) {
-      // display a full circle if the difference between them is greater than 0 - TWO_PI
-      start %= constants.TWO_PI;
-      stop %= constants.TWO_PI;
-      stop += constants.TWO_PI;
-    }
-  }
-
-  //Adjust angles to counter linear scaling.
-  if (start <= constants.HALF_PI) {
-    start = Math.atan(w / h * Math.tan(start));
-  } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
-    start = Math.atan(w / h * Math.tan(start)) + constants.PI;
-  }
-  if (stop <= constants.HALF_PI) {
-    stop = Math.atan(w / h * Math.tan(stop));
-  } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
-    stop = Math.atan(w / h * Math.tan(stop)) + constants.PI;
-  }
-
-  // Exceed the interval if necessary in order to preserve the size and
-  // orientation of the arc.
-  if (start > stop) {
-    stop += constants.TWO_PI;
-  }
-
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
 
   var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-  this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, detail);
+  var angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
+
+  if (angles.correspondToSamePoint) {
+    // If the arc starts and ends at (near enough) the same place, we choose to
+    // draw an ellipse instead.  This is preferable to faking an ellipse (by
+    // making stop ever-so-slightly less than start + TWO_PI) because the ends
+    // join up to each other rather than at a vertex at the centre (leaving
+    // an unwanted spike in the stroke/fill).
+    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detail]);
+  } else {
+    this._renderer.arc(
+      vals.x,
+      vals.y,
+      vals.w,
+      vals.h,
+      angles.start, // [0, TWO_PI)
+      angles.stop, // [start, start + TWO_PI)
+      mode,
+      detail
+    );
+  }
 
   return this;
 };
@@ -177,7 +238,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} detail number of radial sectors to draw
+ * @param  {Integer} detail number of radial sectors to draw (for WebGL mode)
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
@@ -205,6 +266,37 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 
   return this;
 };
+
+/**
+ * Draws a circle to the screen. A circle is a simple closed shape.
+ * It is the set of all points in a plane that are at a given distance from a given point, the centre.
+ * This function is a special case of the ellipse() function, where the width and height of the ellipse are the same.
+ * Height and width of the ellipse correspond to the diameter of the circle.
+ * By default, the first two parameters set the location of the centre of the circle, the third sets the diameter of the circle.
+ *
+ * @method circle
+ * @param  {Number} x  x-coordinate of the centre of the circle.
+ * @param  {Number} y  y-coordinate of the centre of the circle.
+ * @param  {Number} d  diameter of the circle.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a circle at location (30, 30) with a diameter of 20.
+ * circle(30, 30, 20);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * white circle with black outline in mid of canvas that is 55x55.
+ */
+p5.prototype.circle = function() {
+  var args = Array.prototype.slice.call(arguments, 0, 2);
+  args.push(arguments[2]);
+  args.push(arguments[2]);
+  return this.ellipse.apply(this, args);
+};
+
 /**
  * Draws a line (a direct path between two points) to the screen. The version
  * of <a href="#/p5/line">line()</a> with four parameters draws the line in 2D. To color a line, use
@@ -270,7 +362,7 @@ p5.prototype.line = function() {
  * @method point
  * @param  {Number} x the x-coordinate
  * @param  {Number} y the y-coordinate
- * @param  {Number} [z] the z-coordinate (for WEBGL mode)
+ * @param  {Number} [z] the z-coordinate (for WebGL mode)
  * @chainable
  * @example
  * <div>
@@ -302,6 +394,8 @@ p5.prototype.point = function() {
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
+ * z-arguments only work when quad() is used in WEBGL mode.
+ *
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -344,7 +438,18 @@ p5.prototype.quad = function() {
   p5._validateParameters('quad', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.quad.apply(this._renderer, arguments);
+    if (this._renderer.isP3D && arguments.length !== 12) {
+      // if 3D and we weren't passed 12 args, assume Z is 0
+      // prettier-ignore
+      this._renderer.quad.call(
+        this._renderer,
+        arguments[0], arguments[1], 0,
+        arguments[2], arguments[3], 0,
+        arguments[4], arguments[5], 0,
+        arguments[6], arguments[7], 0);
+    } else {
+      this._renderer.quad.apply(this._renderer, arguments);
+    }
   }
 
   return this;
@@ -406,8 +511,8 @@ p5.prototype.quad = function() {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} [detailX] number of segments in the x-direction
- * @param  {Integer} [detailY] number of segments in the y-direction
+ * @param  {Integer} [detailX] number of segments in the x-direction (for WebGL mode)
+ * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
  * @chainable
  */
 p5.prototype.rect = function() {
@@ -431,6 +536,60 @@ p5.prototype.rect = function() {
   }
 
   return this;
+};
+
+/**
+ * Draws a square to the screen. A square is a four-sided shape with
+ * every angle at ninety degrees, and equal side size.
+ * This function is a special case of the rect() function, where the width and height are the same, and the parameter is called "s" for side size.
+ * By default, the first two parameters set the location of the upper-left corner, the third sets the side size of the square.
+ * The way these parameters are interpreted, however,
+ * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+ * <br><br>
+ * The fourth, fifth, sixth and seventh parameters, if specified,
+ * determine corner radius for the top-left, top-right, lower-right and
+ * lower-left corners, respectively. An omitted corner radius parameter is set
+ * to the value of the previously specified radius value in the parameter list.
+ *
+ * @method square
+ * @param  {Number} x  x-coordinate of the square.
+ * @param  {Number} y  y-coordinate of the square.
+ * @param  {Number} s  side size of the square.
+ * @param  {Number} [tl] optional radius of top-left corner.
+ * @param  {Number} [tr] optional radius of top-right corner.
+ * @param  {Number} [br] optional radius of bottom-right corner.
+ * @param  {Number} [bl] optional radius of bottom-left corner.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // Draw a square at location (30, 20) with a side size of 55.
+ * square(30, 20, 55);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners, each having a radius of 20.
+ * square(30, 20, 55, 20);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a square with rounded corners having the following radii:
+ * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+ * square(30, 20, 55, 20, 15, 10, 5);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 55x55 white square with black outline in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges in mid-right of canvas.
+ * 55x55 white square with black outline and rounded edges of different radii.
+ */
+p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
+  return this.rect(x, y, s, s, tl, tr, br, bl);
 };
 
 /**

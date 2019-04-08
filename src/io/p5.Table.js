@@ -77,7 +77,7 @@ p5.Table = function(rows) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -87,14 +87,14 @@ p5.Table = function(rows) {
  *
  * function setup() {
  *   //add a row
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('id', table.getRowCount() - 1);
  *   newRow.setString('species', 'Canis Lupus');
  *   newRow.setString('name', 'Wolf');
  *
  *   //print the results
- *   for (var r = 0; r < table.getRowCount(); r++)
- *     for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (let r = 0; r < table.getRowCount(); r++)
+ *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
  * </code>
@@ -134,7 +134,7 @@ p5.Table.prototype.addRow = function(row) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -147,8 +147,8 @@ p5.Table.prototype.addRow = function(row) {
  *   table.removeRow(0);
  *
  *   //print the results
- *   for (var r = 0; r < table.getRowCount(); r++)
- *     for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (let r = 0; r < table.getRowCount(); r++)
+ *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
  * </code>
@@ -184,7 +184,7 @@ p5.Table.prototype.removeRow = function(id) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -193,10 +193,10 @@ p5.Table.prototype.removeRow = function(id) {
  * }
  *
  * function setup() {
- *   var row = table.getRow(1);
+ *   let row = table.getRow(1);
  *   //print it column by column
  *   //note: a row is an object, not an array
- *   for (var c = 0; c < table.getColumnCount(); c++) {
+ *   for (let c = 0; c < table.getColumnCount(); c++) {
  *     print(row.getString(c));
  *   }
  * }
@@ -228,7 +228,7 @@ p5.Table.prototype.getRow = function(r) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -237,16 +237,16 @@ p5.Table.prototype.getRow = function(r) {
  * }
  *
  * function setup() {
- *   var rows = table.getRows();
+ *   let rows = table.getRows();
  *
  *   //warning: rows is an array of objects
- *   for (var r = 0; r < rows.length; r++) {
+ *   for (let r = 0; r < rows.length; r++) {
  *     rows[r].set('name', 'Unicorn');
  *   }
  *
  *   //print the results
- *   for (r = 0; r < table.getRowCount(); r++)
- *     for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (let r = 0; r < table.getRowCount(); r++)
+ *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
  * </code>
@@ -284,7 +284,7 @@ p5.Table.prototype.getRows = function() {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -294,7 +294,7 @@ p5.Table.prototype.getRows = function() {
  *
  * function setup() {
  *   //find the animal named zebra
- *   var row = table.findRow('Zebra', 'name');
+ *   let row = table.findRow('Zebra', 'name');
  *   //find the corresponding species
  *   print(row.getString('species'));
  * }
@@ -349,7 +349,7 @@ p5.Table.prototype.findRow = function(value, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -359,13 +359,13 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  * function setup() {
  *   //add another goat
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('id', table.getRowCount() - 1);
  *   newRow.setString('species', 'Scape Goat');
  *   newRow.setString('name', 'Goat');
  *
  *   //find the rows containing animals named Goat
- *   var rows = table.findRows('Goat', 'name');
+ *   let rows = table.findRows('Goat', 'name');
  *   print(rows.length + ' Goats found');
  * }
  * </code>
@@ -418,7 +418,7 @@ p5.Table.prototype.findRows = function(value, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -428,7 +428,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *
  * function setup() {
  *   //Search using specified regex on a given column, return TableRow object
- *   var mammal = table.matchRow(new RegExp('ant'), 1);
+ *   let mammal = table.matchRow(new RegExp('ant'), 1);
  *   print(mammal.getString(1));
  *   //Output "Panthera pardus"
  * }
@@ -467,7 +467,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  * @example
  * <div class="norender">
  * <code>
- * var table;
+ * let table;
  *
  * function setup() {
  *   table = new p5.Table();
@@ -475,7 +475,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  *   table.addColumn('name');
  *   table.addColumn('type');
  *
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('name', 'Lion');
  *   newRow.setString('type', 'Mammal');
  *
@@ -491,8 +491,8 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  *   newRow.setString('name', 'Lizard');
  *   newRow.setString('type', 'Reptile');
  *
- *   var rows = table.matchRows('R.*', 'type');
- *   for (var i = 0; i < rows.length; i++) {
+ *   let rows = table.matchRows('R.*', 'type');
+ *   for (let i = 0; i < rows.length; i++) {
  *     print(rows[i].getString('name') + ': ' + rows[i].getString('type'));
  *   }
  * }
@@ -539,7 +539,7 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -590,7 +590,7 @@ p5.Table.prototype.getColumn = function(value) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -635,7 +635,7 @@ p5.Table.prototype.clearRows = function() {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -650,8 +650,8 @@ p5.Table.prototype.clearRows = function() {
  *   table.set(2, 'carnivore', 'no');
  *
  *   //print the results
- *   for (var r = 0; r < table.getRowCount(); r++)
- *     for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (let r = 0; r < table.getRowCount(); r++)
+ *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
  * </code>
@@ -679,7 +679,7 @@ p5.Table.prototype.addColumn = function(title) {
  * // Blob1, Blobby, Sweet, Blob, Pink
  * // Blob2, Saddy, Savory, Blob, Blue
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   table = loadTable('assets/blobs.csv');
@@ -692,7 +692,7 @@ p5.Table.prototype.addColumn = function(title) {
  * }
  *
  * function draw() {
- *   var numOfColumn = table.getColumnCount();
+ *   let numOfColumn = table.getColumnCount();
  *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
  * }
  * </code>
@@ -716,7 +716,7 @@ p5.Table.prototype.getColumnCount = function() {
  * // Blob1, Blobby, Sweet, Blob, Pink
  * // Blob2, Saddy, Savory, Blob, Blue
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   table = loadTable('assets/blobs.csv');
@@ -753,12 +753,12 @@ p5.Table.prototype.getRowCount = function() {
  * @example
  * <div class="norender"><code>
  * function setup() {
- *   var table = new p5.Table();
+ *   let table = new p5.Table();
  *
  *   table.addColumn('name');
  *   table.addColumn('type');
  *
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('name', '   $Lion  ,');
  *   newRow.setString('type', ',,,Mammal');
  *
@@ -824,12 +824,12 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  * @example
  * <div class="norender"><code>
  * function setup() {
- *   var table = new p5.Table();
+ *   let table = new p5.Table();
  *
  *   table.addColumn('name');
  *   table.addColumn('type');
  *
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('name', '   Lion  ,');
  *   newRow.setString('type', ' Mammal  ');
  *
@@ -897,7 +897,7 @@ p5.Table.prototype.trim = function(column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -963,7 +963,7 @@ p5.Table.prototype.removeColumn = function(c) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -976,8 +976,8 @@ p5.Table.prototype.removeColumn = function(c) {
  *   table.set(0, 'name', 'Wolf');
  *
  *   //print the results
- *   for (var r = 0; r < table.getRowCount(); r++)
- *     for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (let r = 0; r < table.getRowCount(); r++)
+ *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
  * </code>
@@ -1013,7 +1013,7 @@ p5.Table.prototype.set = function(row, column, value) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -1056,7 +1056,7 @@ p5.Table.prototype.setNum = function(row, column, value) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -1066,7 +1066,7 @@ p5.Table.prototype.setNum = function(row, column, value) {
  *
  * function setup() {
  *   //add a row
- *   var newRow = table.addRow();
+ *   let newRow = table.addRow();
  *   newRow.setString('id', table.getRowCount() - 1);
  *   newRow.setString('species', 'Canis Lupus');
  *   newRow.setString('name', 'Wolf');
@@ -1104,7 +1104,7 @@ p5.Table.prototype.setString = function(row, column, value) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -1151,7 +1151,7 @@ p5.Table.prototype.get = function(row, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -1196,7 +1196,7 @@ p5.Table.prototype.getNum = function(row, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   // table is comma separated value "CSV"
@@ -1248,7 +1248,7 @@ p5.Table.prototype.getString = function(row, column) {
  * // 1,Panthera pardus,Leopard
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   //my table is comma separated value "csv"
@@ -1257,7 +1257,7 @@ p5.Table.prototype.getString = function(row, column) {
  * }
  *
  * function setup() {
- *   var tableObject = table.getObject();
+ *   let tableObject = table.getObject();
  *
  *   print(tableObject);
  *   //outputs an object
@@ -1310,7 +1310,7 @@ p5.Table.prototype.getObject = function(headerColumn) {
  * // 1,Panthera pardus,Leoperd
  * // 2,Equus zebra,Zebra
  *
- * var table;
+ * let table;
  *
  * function preload() {
  *   // table is comma separated value "CSV"
@@ -1319,8 +1319,8 @@ p5.Table.prototype.getObject = function(headerColumn) {
  * }
  *
  * function setup() {
- *   var tableArray = table.getArray();
- *   for (var i = 0; i < tableArray.length; i++) {
+ *   let tableArray = table.getArray();
+ *   for (let i = 0; i < tableArray.length; i++) {
  *     print(tableArray[i]);
  *   }
  * }

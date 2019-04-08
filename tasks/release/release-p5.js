@@ -8,7 +8,7 @@ MUST HAVES BEFOREHAND :
 
 module.exports = function(grunt) {
   // Options for this custom task
-  var opts = {
+  const opts = {
     releaseIt: {
       options: {
         'non-interactive': true,
