@@ -7,7 +7,6 @@
  */
 
 'use strict';
-
 var p5 = require('../core/main');
 require('./p5.Geometry');
 var constants = require('../core/constants');
@@ -1076,15 +1075,14 @@ p5.RendererGL.prototype.bezier = function(
   z4
 ) {
   if (arguments.length === 8) {
-    x4 = x3;
     y4 = y3;
+    x4 = x3;
+    y3 = z2;
     x3 = y2;
-    y3 = x2;
-    x2 = z1;
     y2 = x2;
+    x2 = z1;
     z1 = z2 = z3 = z4 = 0;
   }
-
   var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (var i = 0; i <= bezierDetail; i++) {
