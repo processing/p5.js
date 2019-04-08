@@ -176,7 +176,6 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-
   if (this._downKeys[e.which] && e.which !== 0) {
     // prevent multiple firings
     return;
