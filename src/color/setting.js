@@ -174,11 +174,7 @@ require('./p5.Color');
  */
 
 p5.prototype.background = function() {
-  if (arguments[0] instanceof p5.Image) {
-    this.image(arguments[0], 0, 0, this.width, this.height);
-  } else {
-    this._renderer.background.apply(this._renderer, arguments);
-  }
+  this._renderer.background.apply(this._renderer, arguments);
   return this;
 };
 
