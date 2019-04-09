@@ -388,6 +388,8 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
     w = this.width;
     h = this.height;
   }
+  x *= pd;
+  y *= pd;
   w *= pd;
   h *= pd;
 
