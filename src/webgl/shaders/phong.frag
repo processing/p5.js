@@ -73,7 +73,8 @@ void main(void) {
   for (int j = 0; j < 8; j++) {
     if (uDirectionalLightCount == j) break;
 
-    LightResult result = light(uLightingDirection[j]);
+    vec3 dir = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
+    LightResult result = light(dir);
     diffuse += result.diffuse * uDirectionalColor[j];
     specular += result.specular;
   }

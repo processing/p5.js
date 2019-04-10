@@ -49,7 +49,7 @@ void main(void){
 
   for (int j = 0; j < 8; j++) {
     if (uDirectionalLightCount == j) break;
-    vec3 dir = uLightingDirection[j];
+    vec3 dir = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
     float directionalLightWeighting = max(dot(vertexNormal, -dir), 0.0);
     directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
   }
