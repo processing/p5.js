@@ -1,7 +1,9 @@
-suite('loadJSON', function() {
+suite.only('loadJSON', function() {
   var invalidFile = '404file';
   var jsonArrayFile = 'unit/assets/array.json';
   var jsonObjectFile = 'unit/assets/object.json';
+  var jsonpObjectFile = 'unit/assets/object.js';
+  var jsonpArrayFile = 'unit/assets/array.js';
 
   test('_friendlyFileLoadError is called', async function() {
     const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
@@ -144,6 +146,37 @@ suite('loadJSON', function() {
     const json = await promisedSketch(function(sketch, resolve, reject) {
       sketch.preload = function() {
         sketch.loadJSON(jsonArrayFile, resolve, reject);
+      };
+    });
+    assert.isArray(json);
+    assert.lengthOf(json, 3);
+  });
+
+  test('passes an object to success callback for object JSONP.', async function() {
+    const json = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadJSON(
+          jsonpObjectFile,
+          { jsonpCallbackFunction: 'jsonpCallbackFunction' },
+          'jsonp',
+          resolve,
+          reject
+        );
+      };
+    });
+    assert.isObject(json);
+  });
+
+  test('passes an array to success callback for array JSONP.', async function() {
+    const json = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadJSON(
+          jsonpArrayFile,
+          { jsonpCallbackFunction: 'jsonpCallbackFunction' },
+          'jsonp',
+          resolve,
+          reject
+        );
       };
     });
     assert.isArray(json);
