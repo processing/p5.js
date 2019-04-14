@@ -207,14 +207,16 @@ p5.RendererGL.prototype.endShape = function(
           );
         }
       }
-      this._drawFillImmediateMode(
-        mode,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind
-      );
+      if (this.immediateMode.vertices.length > 0) {
+        this._drawFillImmediateMode(
+          mode,
+          isCurve,
+          isBezier,
+          isQuadratic,
+          isContour,
+          shapeKind
+        );
+      }
     }
   }
   //clear out our vertexPositions & colors arrays
