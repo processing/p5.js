@@ -650,6 +650,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   var initializeShader = !this._defaultFontShader;
   var sh = this._getFontShader();
   sh.init();
+  sh.bindShader(); // first time around, bind the shader fully
 
   if (initializeShader) {
     // these are constants, really. just initialize them one-time.
@@ -688,7 +689,6 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   try {
     var dx = 0; // the x position in the line
     var glyphPrev = null; // the previous glyph, used for kerning
-    var shaderBound = false;
     // fetch the glyphs in the line of text
     var glyphs = font.stringToGlyphs(line);
     for (var ig = 0; ig < glyphs.length; ++ig) {
@@ -709,12 +709,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
         sh.setUniform('uGlyphRect', gi.uGlyphRect);
         sh.setUniform('uGlyphOffset', dx);
 
-        if (!shaderBound) {
-          shaderBound = true;
-          sh.bindShader(); // first time around, bind the shader fully
-        } else {
-          sh.bindTextures(); // afterwards, only textures need updating
-        }
+        sh.bindTextures(); // afterwards, only textures need updating
 
         // draw it
         gl.drawElements(gl.TRIANGLES, 6, this.GL.UNSIGNED_SHORT, 0);
