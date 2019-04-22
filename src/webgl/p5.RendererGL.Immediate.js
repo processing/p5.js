@@ -52,6 +52,8 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode._bezierVertex = [];
     this.immediateMode._quadraticVertex = [];
     this.immediateMode._curveVertex = [];
+    this.immediateMode._isCoplanar = true;
+    this.immediateMode._testIfCoplanar = null;
   } else {
     this.immediateMode.vertices.length = 0;
     this.immediateMode.edges.length = 0;
@@ -91,6 +93,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     z = arguments[2];
     u = arguments[3];
     v = arguments[4];
+  }
+  if (this.immediateMode._testIfCoplanar == null) {
+    this.immediateMode._testIfCoplanar = z;
+  } else if (this.immediateMode._testIfCoplanar !== z) {
+    this.immediateMode._isCoplanar = false;
   }
   var vert = new p5.Vector(x, y, z);
   this.immediateMode.vertices.push(vert);
@@ -184,11 +191,12 @@ p5.RendererGL.prototype.endShape = function(
 
     if (this._doFill && this.immediateMode.shapeMode !== constants.LINES) {
       if (
-        (this.isBezier ||
-          this.isQuadratic ||
-          this.isCurve ||
-          this.immediateMode.shapeMode === constants.LINE_STRIP) &&
-        this.drawMode === constants.FILL
+        this.isBezier ||
+        this.isQuadratic ||
+        this.isCurve ||
+        (this.immediateMode.shapeMode === constants.LINE_STRIP &&
+          this.drawMode === constants.FILL &&
+          this.immediateMode._isCoplanar === true)
       ) {
         var contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
@@ -230,8 +238,9 @@ p5.RendererGL.prototype.endShape = function(
   this.isCurve = false;
   this.immediateMode._bezierVertex.length = 0;
   this.immediateMode._quadraticVertex.length = 0;
-
   this.immediateMode._curveVertex.length = 0;
+  this.immediateMode._isCoplanar = true;
+  this.immediateMode._testIfCoplanar = null;
 
   return this;
 };

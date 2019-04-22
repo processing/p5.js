@@ -1246,7 +1246,7 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   // since only doing 2d tesselation here, provide z=1 normal to skip
   // iterating over verts only to get the same answer.
   // comment out to test normal-generation code
-  // this._tessy.gluTessNormal(0, 0, 1);
+  this._tessy.gluTessNormal(0, 0, 1);
 
   var triangleVerts = [];
   this._tessy.gluTessBeginPolygon(triangleVerts);
