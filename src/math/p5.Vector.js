@@ -1376,7 +1376,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *
  * @method fromAngle
  * @static
- * @param {Number}     angle the desired angle, in radians
+ * @param {Number}     angle the desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
  * @param {Number}     [length] the length of the new vector (defaults to 1)
  * @return {p5.Vector}       the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
@@ -1387,7 +1387,6 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *
  *   // Create a variable, proportional to the mouseX,
  *   // varying from 0-360, to represent an angle in degrees.
- *   angleMode(DEGREES);
  *   let myDegrees = map(mouseX, 0, width, 0, 360);
  *
  *   // Display that variable in an onscreen text.
