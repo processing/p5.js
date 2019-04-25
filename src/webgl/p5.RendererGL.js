@@ -1083,6 +1083,11 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   if (this._tex) {
     fillShader.setUniform('uSampler', this._tex);
   }
+  fillShader.setUniform('isTint', !!this._tint);
+  if (this._tint) {
+    fillShader.setUniform('uTint', this._tint);
+  }
+
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
 
