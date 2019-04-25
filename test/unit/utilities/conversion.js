@@ -1,4 +1,4 @@
-suite.only('Conversion', function() {
+suite('Conversion', function() {
   var myp5;
 
   setup(function(done) {
