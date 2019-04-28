@@ -244,7 +244,8 @@ module.exports = grunt => {
       test: {
         src: ['test/node/**/*.js'],
         options: {
-          reporter: reporter
+          reporter: reporter,
+          ui: 'tdd'
         }
       }
     },
