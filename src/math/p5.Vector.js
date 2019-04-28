@@ -1125,7 +1125,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
 /**
  * Calculates and returns the angle (in radians) between two vectors.
  * @method angleBetween
- * @param  {p5.Vector}    the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}       the angle between (in radians)
  * @example
  * <div class="norender">
