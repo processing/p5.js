@@ -10,7 +10,6 @@ docs/reference/*
 !*.gitkeep
 examples/3d/
 .idea
-.vscode
 dist/
 p5.zip
 bower-repo/
