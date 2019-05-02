@@ -1270,7 +1270,7 @@ p5.Table.prototype.getString = function(row, column) {
  *
  */
 p5.Table.prototype.getObject = function(headerColumn) {
-  var tableObject = {};
+  var tableObject = [];
   var obj, cPos, index;
 
   for (var i = 0; i < this.rows.length; i++) {
