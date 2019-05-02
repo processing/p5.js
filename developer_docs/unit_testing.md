@@ -28,13 +28,13 @@ To only run the "p5.ColorConversion" suite of tests, you would change the first 
 suite.only('color/p5.ColorConversion', function() {
 ```
 
-Now when you use `npm test`, only tests within that `function()` will be run.
+Now when you use `npm test`, only tests within that `function()` body will be run.
 
 ## Infrastucture
 
 ### Frameworks
 
-We use [mocha](https://mochajs.org) for structuring and running the unit tests
+We use [mocha](https://mochajs.org) for structuring and running our unit tests
 
 We use [chai's `assert` (and `expect`)](https://www.chaijs.com/api/assert/) to write individual statements about how code should behave.
 
