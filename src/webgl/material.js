@@ -188,6 +188,49 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * @chainable
  * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Click within the image to toggle
+ * // the shader used by the quad shape
+ *
+ * let mandel;
+ * let gradient;
+ * let useMandel = false;
+ *
+ * function preload() {
+ *   // load the shader definitions from files
+ *   mandel = loadShader('assets/shader.vert', 'assets/shader.frag');
+ *   gradient = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+ * }
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // initially use the gradient shader
+ *   shader(gradient);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   gradient.setUniform('pos', sin(millis() / 2000) + 1);
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ *
+ * function mouseClicked() {
+ *   useMandel = !useMandel;
+ *   if (useMandel === true) {
+ *     shader(mandel);
+ *     mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *   } else {
+ *     shader(gradient);
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas toggles between a circular gradient of orange and blue moving up and down. and an infinitely detailed fractal with mouse click/press.
  */
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
