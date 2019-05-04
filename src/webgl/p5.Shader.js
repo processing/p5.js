@@ -307,13 +307,13 @@ p5.Shader.prototype.useProgram = function() {
  *   // horizontal direction each with differing colors
  *
  *   if (showRedGreen === true) {
- *      grad.setUniform('colorCenter', [1, 0, 0]);
- *      grad.setUniform('colorBackground', [0, 1, 0]);
- *      grad.setUniform('offset', [sin(millis() / 2000), 1]);
+ *     grad.setUniform('colorCenter', [1, 0, 0]);
+ *     grad.setUniform('colorBackground', [0, 1, 0]);
+ *     grad.setUniform('offset', [sin(millis() / 2000), 1]);
  *   } else {
- *      grad.setUniform('colorCenter', [1, 0.5, 0]);
- *      grad.setUniform('colorBackground', [0.226, 0, 0.615]);
- *      grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
+ *     grad.setUniform('colorCenter', [1, 0.5, 0]);
+ *     grad.setUniform('colorBackground', [0.226, 0, 0.615]);
+ *     grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
  *   }
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
  * }
