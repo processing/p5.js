@@ -148,7 +148,7 @@ p5.Image = function(width, height) {
   this._pixelsState = this;
   this._pixelDensity = 1;
   this._pixelsDirty = true;
-  //used for webgl texturing only determines whether to reupload texture to GPU
+  //For WebGL Texturing only: used to determine whether to reupload texture to GPU
   this._modified = false;
   /**
    * Array containing the values for all the pixels in the display window.
