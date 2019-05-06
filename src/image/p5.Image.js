@@ -147,9 +147,9 @@ p5.Image = function(width, height) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelsState = this;
   this._pixelDensity = 1;
-  //used for webgl texturing only
-  this._modified = false;
   this._pixelsDirty = true;
+  //used for webgl texturing only determines whether to reupload texture to GPU
+  this._modified = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
