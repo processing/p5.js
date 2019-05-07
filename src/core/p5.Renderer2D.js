@@ -99,6 +99,30 @@ p5.Renderer2D.prototype.image = function(
   dHeight
 ) {
   var cnv;
+  if (img.gifProperties) {
+    var props = img.gifProperties;
+    if (props.playing) {
+      props.timeDisplayed += this._pInst.millis() - props.timeSinceStart;
+    }
+    props.timeSinceStart = this._pInst.millis();
+    if (props.timeDisplayed >= props.delay) {
+      var skips = Math.floor(props.timeDisplayed / props.delay);
+      props.timeDisplayed = 0;
+      props.displayIndex += skips;
+      if (
+        props.looping !== 0 &&
+        props.displayIndex >= props.numFrames * props.looping
+      ) {
+        props.playing = false;
+      } else {
+        var ind = props.displayIndex % props.numFrames;
+        var imageData = new ImageData(props.frames[ind], img.width, img.height);
+        img.drawingContext.putImageData(imageData, 0, 0);
+        props.displayIndex = ind;
+        img._pixelsDirty = true;
+      }
+    }
+  }
   try {
     if (this._tint) {
       if (p5.MediaElement && img instanceof p5.MediaElement) {
@@ -392,7 +416,6 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   y *= pd;
   w *= pd;
   h *= pd;
-
   this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
 
   if (x !== 0 || y !== 0 || w !== this.width || h !== this.height) {

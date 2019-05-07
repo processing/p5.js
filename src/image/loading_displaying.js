@@ -100,10 +100,24 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   if (path.indexOf('data:image/') !== 0) {
     img.crossOrigin = 'Anonymous';
   }
-
+  //reading url to determine whether this is a gif, unsure of approach
   // start loading the image
   img.src = path;
-
+  if (path.match(/\.[gif]+$/i)) {
+    var oReq = new XMLHttpRequest();
+    oReq.open('GET', img.src, true);
+    oReq.responseType = 'arraybuffer';
+    var arrayBuffer;
+    var byteArray;
+    oReq.onload = function(oEvent) {
+      arrayBuffer = oReq.response;
+      if (arrayBuffer) {
+        byteArray = new Uint8Array(arrayBuffer);
+        pImg._createGIF(byteArray);
+      }
+    };
+    oReq.send(null);
+  }
   return pImg;
 };
 

@@ -82,6 +82,7 @@
     "lint-staged": "^4.3.0",
     "marked": "^0.3.19",
     "mocha": "^5.2.0",
+    "omggif": "^1.0.9",
     "opentype.js": "^0.9.0",
     "postinstall-prepare": "^1.0.1",
     "prettier": "^1.7.4",

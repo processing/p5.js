@@ -15,6 +15,7 @@
 
 var p5 = require('../core/main');
 var Filters = require('./filters');
+var omggif = require('omggif');
 
 /*
  * Class methods
@@ -150,6 +151,9 @@ p5.Image = function(width, height) {
   //used for webgl texturing only
   this._modified = false;
   this._pixelsDirty = true;
+  //Object for working with GIFs, defaults to null
+  this.gifProperties = null;
+  this.globalDebugImage = null;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -826,6 +830,57 @@ p5.Image.prototype.isModified = function() {
  */
 p5.Image.prototype.save = function(filename, extension) {
   p5.prototype.saveCanvas(this.canvas, filename, extension);
+};
+
+function _loadGIFFrameIntoImage(frameNum, gifReader) {
+  var framePixels = [];
+  gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+  return new Uint8ClampedArray(framePixels);
+}
+
+p5.Image.prototype.play = function() {
+  if (this.gifProperties === null || this.gifProperties.playing === true) {
+    return;
+  } else {
+    this.gifProperties.playing = true;
+  }
+};
+
+p5.Image.prototype.pause = function() {
+  if (this.gifProperties === null || this.gifProperties.playing === false) {
+    return;
+  } else {
+    this.gifProperties.playing = false;
+  }
+};
+
+p5.Image.prototype._createGIF = function(arrayBuffer) {
+  var gifReader = new omggif.GifReader(arrayBuffer);
+  var frames = [];
+  var numFrames = gifReader.numFrames();
+  //this p5.Image will be the first frame
+  for (var i = 0; i < numFrames; i++) {
+    frames.push(_loadGIFFrameIntoImage(i, gifReader));
+  }
+  //Uses Netscape block encoding
+  //to repeat forever, this will be 0
+  //to repeat just once, this will be null
+  //to repeat N times (1<N), should contain integer for loop number
+  var loopCount = gifReader.loopCount();
+  if (loopCount === null) {
+    loopCount = 1;
+  }
+  this.gifProperties = {
+    isGif: true,
+    displayIndex: 0,
+    delay: gifReader.frameInfo(0).delay * 10,
+    looping: loopCount,
+    frames: frames,
+    numFrames: numFrames,
+    timeSinceStart: 0,
+    playing: true,
+    timeDisplayed: 0
+  };
 };
 
 module.exports = p5.Image;
