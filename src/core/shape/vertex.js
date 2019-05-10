@@ -836,6 +836,7 @@ p5.prototype.quadraticVertex = function() {
  * @alt
  * 4 black points in a square shape in middle-right of canvas.
  *
+ * @example
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -854,6 +855,7 @@ p5.prototype.quadraticVertex = function() {
  * @alt
  * 4 points making a diamond shape
  *
+ * @example
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -876,6 +878,7 @@ p5.prototype.quadraticVertex = function() {
  * @alt
  * 8 points making a star
  *
+ * @example
  * <div>
  * <code>
  * strokeWeight(3);
@@ -895,6 +898,56 @@ p5.prototype.quadraticVertex = function() {
  *
  * @alt
  * 8 points making 4 lines
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Shape with a hollow section in the middle. Click to change the number of sides.
+ * // Custom shapes drawn with beginShape() would make use of the tessellator by default.
+ * // Custom shapes with different z-values (i.e non-coplanar shapes) would not use the tessellator.
+ * // So, it is recommended to draw all custom shapes on a flat z-plane.
+ *
+ * let sides = 3;
+ * let angle, px, py;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   fill(237, 34, 93);
+ *   strokeWeight(3);
+ * }
+ *
+ * function ngon(n, x, y, d) {
+ *   beginShape();
+ *   for (var i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 2;
+ *     py = y - cos(angle) * d / 2;
+ *     vertex(px, py, 0);
+ *   }
+ *   for (i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 4;
+ *     py = y - cos(angle) * d / 4;
+ *     vertex(px, py, 0);
+ *   }
+ *   endShape();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   ngon(sides, 0, 0, 80);
+ * }
+ *
+ * function mouseClicked() {
+ *   sides > 6 ? (sides = 3) : sides++;
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Shape with a hollow section in the middle
  *
  */
 /**
