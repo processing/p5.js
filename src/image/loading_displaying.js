@@ -12,6 +12,7 @@ var Filters = require('./filters');
 var canvas = require('../core/helpers');
 var constants = require('../core/constants');
 
+require('whatwg-fetch');
 require('../core/error_helpers');
 
 /**
@@ -79,24 +80,31 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
     //GIF
     if (path.match(/\.[gif]+$/i)) {
-      var req = new XMLHttpRequest();
-      req.open('GET', img.src, true);
-      req.responseType = 'arraybuffer';
-      var arrayBuffer;
-      var byteArray;
-      req.onload = function() {
-        arrayBuffer = req.response;
-        if (arrayBuffer) {
-          byteArray = new Uint8Array(arrayBuffer);
-          var finish = function() {
-            self._decrementPreload();
-          };
-          pImg._createGIF(byteArray, successCallback, failureCallback, finish);
-        } else {
+      fetch(img.src)
+        .then(function(data) {
+          data.arrayBuffer().then(function(arrayBuffer) {
+            if (arrayBuffer) {
+              var byteArray = new Uint8Array(arrayBuffer);
+              var finish = function() {
+                self._decrementPreload();
+              };
+              pImg._createGIF(
+                byteArray,
+                successCallback,
+                failureCallback,
+                finish
+              );
+            }
+          });
+        })
+        .catch(function(e) {
           console.error('Unable to get ArrayBuffer from Image.');
-        }
-      };
-      req.send(null);
+          if (typeof failureCallback == 'function') {
+            failureCallback(e);
+          } else {
+            console.log(e);
+          }
+        });
     } else {
       //Non-GIF
       if (typeof successCallback === 'function') {

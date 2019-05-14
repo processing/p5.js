@@ -118,8 +118,7 @@ p5.Renderer2D.prototype.image = function(
         props.playing = false;
       } else {
         var ind = props.displayIndex % props.numFrames;
-        var imageData = new ImageData(props.frames[ind], img.width, img.height);
-        img.drawingContext.putImageData(imageData, 0, 0);
+        img.drawingContext.putImageData(props.frames[ind], 0, 0);
         props.displayIndex = ind;
         img._pixelsDirty = true;
       }

@@ -881,7 +881,9 @@ p5.Image.prototype._createGIF = function(
   };
 
   for (var i = 0; i < numFrames; i++) {
-    frames.push(loadGIFFrameIntoImage(i, gifReader));
+    var framePixels = loadGIFFrameIntoImage(i, gifReader);
+    var imageData = new ImageData(framePixels, this.width, this.height);
+    frames.push(imageData);
   }
 
   //Uses Netscape block encoding
