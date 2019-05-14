@@ -117,7 +117,10 @@
   "babel": {
     "presets": [
       "@babel/preset-env"
-    ]
+    ],
+    "generatorOpts": {
+      "retainLines": true
+    }
   },
   "browserslist": [
     "last 2 versions",
