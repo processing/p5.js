@@ -153,7 +153,6 @@ p5.Image = function(width, height) {
   this._pixelsDirty = true;
   //Object for working with GIFs, defaults to null
   this.gifProperties = null;
-  this.globalDebugImage = null;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -860,7 +859,8 @@ p5.Image.prototype.delay = function(d) {
 p5.Image.prototype._createGIF = function(
   arrayBuffer,
   successCallback,
-  failureCallback
+  failureCallback,
+  finished
 ) {
   var gifReader = new omggif.GifReader(arrayBuffer);
   var frames = [];
@@ -909,7 +909,7 @@ p5.Image.prototype._createGIF = function(
     successCallback(this);
   }
 
-  p5.instance._decrementPreload();
+  finished();
 };
 
 module.exports = p5.Image;

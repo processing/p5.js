@@ -88,7 +88,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         arrayBuffer = req.response;
         if (arrayBuffer) {
           byteArray = new Uint8Array(arrayBuffer);
-          pImg._createGIF(byteArray, successCallback, failureCallback);
+          var finish = function() {
+            self._decrementPreload();
+          };
+          pImg._createGIF(byteArray, successCallback, failureCallback, finish);
         } else {
           console.error('Unable to get ArrayBuffer from Image.');
         }
