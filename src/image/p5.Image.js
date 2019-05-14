@@ -832,12 +832,6 @@ p5.Image.prototype.save = function(filename, extension) {
   p5.prototype.saveCanvas(this.canvas, filename, extension);
 };
 
-function _loadGIFFrameIntoImage(frameNum, gifReader) {
-  var framePixels = [];
-  gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-  return new Uint8ClampedArray(framePixels);
-}
-
 p5.Image.prototype.play = function() {
   if (this.gifProperties === null || this.gifProperties.playing === true) {
     return;
@@ -854,14 +848,42 @@ p5.Image.prototype.pause = function() {
   }
 };
 
-p5.Image.prototype._createGIF = function(arrayBuffer) {
+p5.Image.prototype.delay = function(d) {
+  if (this.gifProperties === null) {
+    console.error('This is not a gif');
+    return;
+  } else {
+    this.gifProperties.delay = d;
+  }
+};
+
+p5.Image.prototype._createGIF = function(
+  arrayBuffer,
+  successCallback,
+  failureCallback
+) {
   var gifReader = new omggif.GifReader(arrayBuffer);
   var frames = [];
   var numFrames = gifReader.numFrames();
-  //this p5.Image will be the first frame
+  var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+    var framePixels = [];
+    try {
+      gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+    } catch (e) {
+      p5._friendlyFileLoadError(8, this.src);
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
+      } else {
+        console.error(e);
+      }
+    }
+    return new Uint8ClampedArray(framePixels);
+  };
+
   for (var i = 0; i < numFrames; i++) {
-    frames.push(_loadGIFFrameIntoImage(i, gifReader));
+    frames.push(loadGIFFrameIntoImage(i, gifReader));
   }
+
   //Uses Netscape block encoding
   //to repeat forever, this will be 0
   //to repeat just once, this will be null
@@ -870,6 +892,7 @@ p5.Image.prototype._createGIF = function(arrayBuffer) {
   if (loopCount === null) {
     loopCount = 1;
   }
+
   this.gifProperties = {
     isGif: true,
     displayIndex: 0,
@@ -881,6 +904,12 @@ p5.Image.prototype._createGIF = function(arrayBuffer) {
     playing: true,
     timeDisplayed: 0
   };
+
+  if (typeof successCallback === 'function') {
+    successCallback(this);
+  }
+
+  p5.instance._decrementPreload();
 };
 
 module.exports = p5.Image;

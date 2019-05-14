@@ -102,10 +102,12 @@ p5.Renderer2D.prototype.image = function(
   if (img.gifProperties) {
     var props = img.gifProperties;
     if (props.playing) {
-      props.timeDisplayed += this._pInst.millis() - props.timeSinceStart;
+      //to be replaced with deltaTime
+      props.timeDisplayed += this._pInst.millis() - this._pInst._lastFrameTime;
     }
-    props.timeSinceStart = this._pInst.millis();
+
     if (props.timeDisplayed >= props.delay) {
+      //GIF is bound to 'realtime' so can skip frames
       var skips = Math.floor(props.timeDisplayed / props.delay);
       props.timeDisplayed = 0;
       props.displayIndex += skips;

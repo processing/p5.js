@@ -77,12 +77,32 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     pImg.drawingContext.drawImage(img, 0, 0);
     pImg.modified = true;
 
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
+    //GIF
+    if (path.match(/\.[gif]+$/i)) {
+      var req = new XMLHttpRequest();
+      req.open('GET', img.src, true);
+      req.responseType = 'arraybuffer';
+      var arrayBuffer;
+      var byteArray;
+      req.onload = function() {
+        arrayBuffer = req.response;
+        if (arrayBuffer) {
+          byteArray = new Uint8Array(arrayBuffer);
+          pImg._createGIF(byteArray, successCallback, failureCallback);
+        } else {
+          console.error('Unable to get ArrayBuffer from Image.');
+        }
+      };
+      req.send(null);
+    } else {
+      //Non-GIF
+      if (typeof successCallback === 'function') {
+        successCallback(pImg);
+      }
+      self._decrementPreload();
     }
-
-    self._decrementPreload();
   };
+
   img.onerror = function(e) {
     p5._friendlyFileLoadError(0, img.src);
     if (typeof failureCallback === 'function') {
@@ -103,21 +123,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   //reading url to determine whether this is a gif, unsure of approach
   // start loading the image
   img.src = path;
-  if (path.match(/\.[gif]+$/i)) {
-    var oReq = new XMLHttpRequest();
-    oReq.open('GET', img.src, true);
-    oReq.responseType = 'arraybuffer';
-    var arrayBuffer;
-    var byteArray;
-    oReq.onload = function(oEvent) {
-      arrayBuffer = oReq.response;
-      if (arrayBuffer) {
-        byteArray = new Uint8Array(arrayBuffer);
-        pImg._createGIF(byteArray);
-      }
-    };
-    oReq.send(null);
-  }
   return pImg;
 };
 
