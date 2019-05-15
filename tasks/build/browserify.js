@@ -60,7 +60,7 @@ module.exports = function(grunt) {
           // and prettify the code
           if (!isMin) {
             code = prettier.format(code, {
-              singleQuote: true,
+              singleQuote: false,
               printWidth: 80 + 12
             });
           }
