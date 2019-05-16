@@ -1461,6 +1461,15 @@
       "contributions": [
         "code"
       ]
-    }    
+    },
+    {
+      "login": "Nekzuris",
+      "name": "Louis Demange",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/48560751?s=400&u=652ea1a1720b1986c3ea5b96028bdcb5f4f18f96&v=4",
+      "profile": "https://github.com/Nekzuris",
+      "contributions": [
+        "bug"
+      ]
+    }
   ]
 }
