@@ -1,11 +1,19 @@
-let data;
+let teapot;
 
 function preload() {
-  data = loadModel('./yolo.stl');
+  teapot = loadModel('./colored.stl');
 }
 
 function setup() {
-  for (let i = 0; i < 5; i++) {
-    console.log(data.bytes[i].toString(16));
-  }
+  createCanvas(600, 600, WEBGL);
+  noStroke();
+}
+
+function draw() {
+  background(200);
+  scale(100);
+  rotateX(frameCount * 0.01);
+  rotateY(frameCount * 0.01);
+  normalMaterial();
+  model(teapot);
 }

@@ -12,9 +12,9 @@ var p5 = require('../core/main');
 require('./p5.Geometry');
 
 /**
- * Load a 3d model from an OBJ file.
+ * Load a 3d model from an OBJ or STL file.
  * <br><br>
- * One of the limitations of the OBJ format is that it doesn't have a built-in
+ * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
  * sense of scale. This means that models exported from different programs might
  * be very different sizes. If your model isn't displaying, try calling
  * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
@@ -114,37 +114,42 @@ p5.prototype.loadModel = function(path) {
   model.gid = path + '|' + normalize;
   var self = this;
 
-  this.httpDo(
-    path,
-    'GET',
-    'arrayBuffer',
-    function(arrayBuffer) {
-      parseBinarySTL(model, arrayBuffer);
-    },
-    function(err) {
-      console.error(err);
-    }
-  );
+  if (fileType === '.stl') {
+    this.httpDo(
+      path,
+      'GET',
+      'arrayBuffer',
+      function(arrayBuffer) {
+        parseSTL(model, arrayBuffer);
 
-  // this.loadStrings(
-  //   path,
-  //   function(strings) {
-  //     if (fileType === '.obj') {
-  //       parseObj(model, strings);
-  //     } else {
-  //       parseSTL(model, strings);
-  //     }
-  //     if (normalize) {
-  //       model.normalize();
-  //     }
+        if (normalize) {
+          model.normalize();
+        }
+        self._decrementPreload();
+        if (typeof successCallback === 'function') {
+          successCallback(model);
+        }
+      }.bind(this),
+      failureCallback
+    );
+  } else {
+    this.loadStrings(
+      path,
+      function(strings) {
+        parseObj(model, strings);
 
-  //     self._decrementPreload();
-  //     if (typeof successCallback === 'function') {
-  //       successCallback(model);
-  //     }
-  //   }.bind(this),
-  //   failureCallback
-  // );
+        if (normalize) {
+          model.normalize();
+        }
+
+        self._decrementPreload();
+        if (typeof successCallback === 'function') {
+          successCallback(model);
+        }
+      }.bind(this),
+      failureCallback
+    );
+  }
   return model;
 };
 
@@ -260,32 +265,83 @@ function parseObj(model, lines) {
 /**
  * STL files can be of two types, ASCII and Binary,
  *
- * ASCII file starts with `solid 'nameOfFile'`
- * Then contain the normal of the face, starting with `facet normal`
- * Next contain a keyword indicating the start of face vertex, `outer loop`
- * Next comes the three vertex, starting with `vertex x y z`
- * Vertices ends with `endloop`
- * Face ends with `endfacet`
- * Next face starts with `facet normal`
- * The end of the file is indicated by `endsolid`
+ * We need to convert the arrayBuffer to an array of strings,
+ * to parse it as an ASCII file.
  */
-function parseSTL(model, lines) {
-  // implement Binary check here
-
-  parseASCIISTL(model, lines);
+function parseSTL(model, buffer) {
+  if (isBinary(buffer)) {
+    parseBinarySTL(model, buffer);
+  } else {
+    var reader = new DataView(buffer);
+    var decoder = new TextDecoder('utf-8');
+    var lines = decoder.decode(reader);
+    var lineArray = lines.split('\n');
+    parseASCIISTL(model, lineArray);
+  }
   return model;
 }
 
+/**
+ * This function checks if the file is in ASCII format or in Binary format
+ *
+ * It is done by searching keyword `solid` at the start of the file.
+ *
+ * An ASCII STL data must begin with `solid` as the first six bytes.
+ * However, ASCII STLs lacking the SPACE after the `d` are known to be
+ * plentiful. So, check the first 5 bytes for `solid`.
+ *
+ * Several encodings, such as UTF-8, precede the text with up to 5 bytes:
+ * https://en.wikipedia.org/wiki/Byte_order_mark#Byte_order_marks_by_encoding
+ * Search for `solid` to start anywhere after those prefixes.
+ *
+ *
+ */
+function isBinary(data) {
+  var expect, face_size, n_faces, reader;
+  reader = new DataView(data);
+  face_size = 32 / 8 * 3 + 32 / 8 * 3 * 3 + 16 / 8;
+  n_faces = reader.getUint32(80, true);
+  expect = 80 + 32 / 8 + n_faces * face_size;
+
+  if (expect === reader.byteLength) {
+    return true;
+  }
+
+  // US-ASCII ordinal values for `s`, `o`, `l`, `i`, `d`
+  var solid = [115, 111, 108, 105, 100];
+  for (var off = 0; off < 5; off++) {
+    // If "solid" text is matched to the current offset, declare it to be an ASCII STL.
+    if (matchDataViewAt(solid, reader, off)) return false;
+  }
+
+  // Couldn't find "solid" text at the beginning; it is binary STL.
+  return true;
+}
+
+/**
+ * This function matches the `query` at the provided `offset`
+ */
+function matchDataViewAt(query, reader, offset) {
+  // Check if each byte in query matches the corresponding byte from the current offset
+  for (var i = 0, il = query.length; i < il; i++) {
+    if (query[i] !== reader.getUint8(offset + i, false)) return false;
+  }
+
+  return true;
+}
+
+/**
+ * This function
+ */
 function parseBinarySTL(model, buffer) {
   var reader = new DataView(buffer);
   var faces = reader.getUint32(80, true);
-
   var r,
     g,
     b,
     hasColors = false,
     colors;
-  var defaultR, defaultG, defaultB, alpha;
+  var defaultR, defaultG, defaultB;
   for (var index = 0; index < 80 - 10; index++) {
     if (
       reader.getUint32(index, false) === 0x434f4c4f /*COLO*/ &&
@@ -298,7 +354,7 @@ function parseBinarySTL(model, buffer) {
       defaultR = reader.getUint8(index + 6) / 255;
       defaultG = reader.getUint8(index + 7) / 255;
       defaultB = reader.getUint8(index + 8) / 255;
-      alpha = reader.getUint8(index + 9) / 255;
+      //      alpha = reader.getUint8(index + 9) / 255;
     }
   }
   var dataOffset = 84;
@@ -327,28 +383,48 @@ function parseBinarySTL(model, buffer) {
     }
 
     for (var i = 1; i <= 3; i++) {
+      //debugger;
       var vertexstart = start + i * 12;
 
-      model.vertices.push(reader.getFloat32(vertexstart, true));
-      model.vertices.push(reader.getFloat32(vertexstart + 4, true));
-      model.vertices.push(reader.getFloat32(vertexstart + 8, true));
+      var newVertex = new p5.Vector(
+        reader.getFloat32(vertexstart, true),
+        reader.getFloat32(vertexstart + 8, true),
+        reader.getFloat32(vertexstart + 4, true)
+      );
 
-      model.vertexNormals.push(normalX, normalY, normalZ);
+      model.vertices.push(newVertex);
 
       if (hasColors) {
         colors.push(r, g, b);
       }
     }
+
+    var newNormal = new p5.Vector(normalX, normalY, normalZ);
+
+    model.vertexNormals.push(newNormal, newNormal, newNormal);
+
+    model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
   }
   if (hasColors) {
-    //add color
+    // add colors somehow
   }
+  return model;
 }
 
+/**
+ * ASCII file starts with `solid 'nameOfFile'`
+ * Then contain the normal of the face, starting with `facet normal`
+ * Next contain a keyword indicating the start of face vertex, `outer loop`
+ * Next comes the three vertex, starting with `vertex x y z`
+ * Vertices ends with `endloop`
+ * Face ends with `endfacet`
+ * Next face starts with `facet normal`
+ * The end of the file is indicated by `endsolid`
+ */
 function parseASCIISTL(model, lines) {
   var state = '';
   var curVertexIndex = [];
-  var newnormal, newVertex;
+  var newNormal, newVertex;
 
   for (var iterator = 0; iterator < lines.length; ++iterator) {
     var line = lines[iterator].trim();
@@ -388,12 +464,12 @@ function parseASCIISTL(model, lines) {
           return;
         } else {
           // Push normal for first face
-          newnormal = new p5.Vector(
+          newNormal = new p5.Vector(
             parseFloat(parts[2]),
             parseFloat(parts[3]),
             parseFloat(parts[4])
           );
-          model.vertexNormals.push(newnormal, newnormal, newnormal);
+          model.vertexNormals.push(newNormal, newNormal, newNormal);
           state = 'facet normal';
         }
         break;
@@ -455,12 +531,12 @@ function parseASCIISTL(model, lines) {
           // End of solid
         } else if (parts[0] === 'facet' && parts[1] === 'normal') {
           // Next face
-          newnormal = new p5.Vector(
+          newNormal = new p5.Vector(
             parseFloat(parts[2]),
             parseFloat(parts[3]),
             parseFloat(parts[4])
           );
-          model.vertexNormals.push(newnormal, newnormal, newnormal);
+          model.vertexNormals.push(newNormal, newNormal, newNormal);
           state = 'facet normal';
         } else {
           // Invalid State
@@ -481,6 +557,7 @@ function parseASCIISTL(model, lines) {
   }
   return model;
 }
+
 /**
  * Render a 3d model to the screen.
  *
