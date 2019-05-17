@@ -1406,20 +1406,20 @@
       "contributions": []
     },
     {
-    "login": "OsakaStarbux",
-    "name": "Kevin Bradley",
-    "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
-    "profile": "https://github.com/OsakaStarbux",
-    "contributions": [
+      "login": "OsakaStarbux",
+      "name": "Kevin Bradley",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
+      "profile": "https://github.com/OsakaStarbux",
+      "contributions": [
         "doc"
       ]
     },
     {
-    "login": "justinsunho",
-    "name": "Justin Kim",
-    "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
-    "profile": "https://justinsunho.com/",
-    "contributions": [
+      "login": "justinsunho",
+      "name": "Justin Kim",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
+      "profile": "https://justinsunho.com/",
+      "contributions": [
         "doc"
       ]
     },
@@ -1441,7 +1441,7 @@
       "contributions": [
         "code",
         "doc"
-      ]    
+      ]
     },
     {
       "login": "Luke_",
@@ -1451,7 +1451,7 @@
       "contributions": [
         "code",
         "bug"
-      ]    
+      ]
     },
     {
       "login": "mcuz",
@@ -1470,6 +1470,19 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "sanketsingh24",
+      "name": "Sanket Singh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/24548786?v=4",
+      "profile": "https://twitter.com/sanket24singh",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example"
+      ]
     }
-  ]
+  ],
+  "repoType": "github"
 }
