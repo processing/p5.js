@@ -1,4 +1,4 @@
-suite.only('loadModel', function() {
+suite('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
   var validSTLfile = 'unit/assets/ascii.stl';
