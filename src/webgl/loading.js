@@ -20,7 +20,7 @@ require('./p5.Geometry');
  * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
  * model to a scale appropriate for p5. You can also make additional changes to
  * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
- * 
+ *
  * Also, the support for colored STL files is not present. STL files with color will be
  * rendered colorless.
  *
@@ -332,13 +332,15 @@ function matchDataViewAt(query, reader, offset) {
 }
 
 /**
- * This function parses the Binary STL files. 
+ * This function parses the Binary STL files.
  * https://en.wikipedia.org/wiki/STL_%28file_format%29#Binary_STL
- * 
+ *
  * Currently there is no support for the colors provided in STL files.
  */
 function parseBinarySTL(model, buffer) {
   var reader = new DataView(buffer);
+
+  // Number of faces is present following the header
   var faces = reader.getUint32(80, true);
   var r,
     g,
@@ -346,7 +348,10 @@ function parseBinarySTL(model, buffer) {
     hasColors = false,
     colors;
   var defaultR, defaultG, defaultB;
+
+  // Binary files contain 80-byte header, which is generally ignored.
   for (var index = 0; index < 80 - 10; index++) {
+    // Check for `COLOR=`
     if (
       reader.getUint32(index, false) === 0x434f4c4f /*COLO*/ &&
       reader.getUint8(index + 4) === 0x52 /*'R'*/ &&
@@ -358,12 +363,14 @@ function parseBinarySTL(model, buffer) {
       defaultR = reader.getUint8(index + 6) / 255;
       defaultG = reader.getUint8(index + 7) / 255;
       defaultB = reader.getUint8(index + 8) / 255;
-      //      alpha = reader.getUint8(index + 9) / 255;
+      // To be used when color support is added
+      // alpha = reader.getUint8(index + 9) / 255;
     }
   }
   var dataOffset = 84;
   var faceLength = 12 * 4 + 2;
 
+  // Iterate the faces
   for (var face = 0; face < faces; face++) {
     var start = dataOffset + face * faceLength;
     var normalX = reader.getFloat32(start, true);
@@ -375,7 +382,6 @@ function parseBinarySTL(model, buffer) {
 
       if ((packedColor & 0x8000) === 0) {
         // facet has its own unique color
-
         r = (packedColor & 0x1f) / 31;
         g = ((packedColor >> 5) & 0x1f) / 31;
         b = ((packedColor >> 10) & 0x1f) / 31;
@@ -387,7 +393,6 @@ function parseBinarySTL(model, buffer) {
     }
 
     for (var i = 1; i <= 3; i++) {
-      //debugger;
       var vertexstart = start + i * 12;
 
       var newVertex = new p5.Vector(
@@ -410,7 +415,7 @@ function parseBinarySTL(model, buffer) {
     model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
   }
   if (hasColors) {
-    // add colors somehow
+    // add support for colors here.
   }
   return model;
 }
