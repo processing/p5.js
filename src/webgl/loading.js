@@ -20,6 +20,9 @@ require('./p5.Geometry');
  * <a href="#/p5/loadModel">loadModel()</a> with the normalized parameter set to true. This will resize the
  * model to a scale appropriate for p5. You can also make additional changes to
  * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
+ * 
+ * Also, the support for colored STL files is not present. STL files with color will be
+ * rendered colorless.
  *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
@@ -293,8 +296,6 @@ function parseSTL(model, buffer) {
  * Several encodings, such as UTF-8, precede the text with up to 5 bytes:
  * https://en.wikipedia.org/wiki/Byte_order_mark#Byte_order_marks_by_encoding
  * Search for `solid` to start anywhere after those prefixes.
- *
- *
  */
 function isBinary(data) {
   var expect, face_size, n_faces, reader;
@@ -331,7 +332,10 @@ function matchDataViewAt(query, reader, offset) {
 }
 
 /**
- * This function
+ * This function parses the Binary STL files. 
+ * https://en.wikipedia.org/wiki/STL_%28file_format%29#Binary_STL
+ * 
+ * Currently there is no support for the colors provided in STL files.
  */
 function parseBinarySTL(model, buffer) {
   var reader = new DataView(buffer);
@@ -412,7 +416,7 @@ function parseBinarySTL(model, buffer) {
 }
 
 /**
- * ASCII file starts with `solid 'nameOfFile'`
+ * ASCII STL file starts with `solid 'nameOfFile'`
  * Then contain the normal of the face, starting with `facet normal`
  * Next contain a keyword indicating the start of face vertex, `outer loop`
  * Next comes the three vertex, starting with `vertex x y z`
