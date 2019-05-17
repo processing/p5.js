@@ -382,7 +382,7 @@ function addNfp(num) {
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
  * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
  * numbers which includes "-" (minus) sign.
- * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a positive
+ * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
  * number with some negative number (See the example to get a clear picture).
  * There are two versions: one for formatting float, and one for formatting int.
  * The values for the digits, left, and right parameters should always be positive integers.
@@ -453,7 +453,7 @@ p5.prototype.nfs = function() {
 };
 
 function addNfs(num) {
-  return parseFloat(num) > 0 ? ' ' + num.toString() : num.toString();
+  return parseFloat(num) >= 0 ? ' ' + num.toString() : num.toString();
 }
 
 /**

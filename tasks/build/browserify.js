@@ -2,6 +2,7 @@
 
 const path = require('path');
 const browserify = require('browserify');
+const prettier = require('prettier');
 const derequire = require('derequire');
 
 const bannerTemplate =
@@ -35,7 +36,10 @@ module.exports = function(grunt) {
         browseified = browseified.exclude('../../docs/reference/data.json');
       }
 
-      const bundle = browseified.transform('brfs').bundle();
+      const bundle = browseified
+        .transform('brfs')
+        .transform('babelify')
+        .bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
@@ -47,11 +51,22 @@ module.exports = function(grunt) {
         })
         .on('end', function() {
           // "code" is complete: create the distributable UMD build by running
-          // the bundle through derequire, then write the bundle to disk.
+          // the bundle through derequire
           // (Derequire changes the bundle's internal "require" function to
           // something that will not interfere with this module being used
           // within a separate browserify bundle.)
-          grunt.file.write(libFilePath, derequire(code));
+          code = derequire(code);
+
+          // and prettify the code
+          if (!isMin) {
+            code = prettier.format(code, {
+              singleQuote: true,
+              printWidth: 80 + 12
+            });
+          }
+
+          // finally, write it to disk
+          grunt.file.write(libFilePath, code);
 
           // Print a success message
           grunt.log.writeln(

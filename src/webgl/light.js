@@ -285,7 +285,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * Sets the default ambient and directional light. The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.
+ * Sets the default ambient and directional light. The defaults are <a href="#/p5/ambientLight">ambientLight(128, 128, 128)</a> and <a href="#/p5/directionalLight">directionalLight(128, 128, 128, 0, 0, -1)</a>. Lights need to be included in the <a href="#/p5/draw">draw()</a> to remain persistent in a looping program. Placing them in the <a href="#/p5/setup">setup()</a> of a looping program will cause them to only have an effect the first time through the loop.
  * @method lights
  * @chainable
  * @example
