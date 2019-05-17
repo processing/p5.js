@@ -1,6 +1,7 @@
-suite('loadModel', function() {
+suite.only('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
+  var validSTLfile = 'unit/assets/ascii.stl';
 
   test('_friendlyFileLoadError is called', async function() {
     const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
@@ -116,6 +117,15 @@ suite('loadModel', function() {
     const model = await promisedSketch(function(sketch, resolve, reject) {
       sketch.preload = function() {
         sketch.loadModel(validFile, resolve, reject);
+      };
+    });
+    assert.instanceOf(model, p5.Geometry);
+  });
+
+  test('resolves STL file correctly', async function() {
+    const model = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadModel(validSTLfile, resolve, reject);
       };
     });
     assert.instanceOf(model, p5.Geometry);

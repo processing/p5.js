@@ -1,7 +1,7 @@
 let teapot;
 
 function preload() {
-  teapot = loadModel('./colored.stl');
+  teapot = loadModel('./model-bin.stl');
 }
 
 function setup() {

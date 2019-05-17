@@ -22,7 +22,7 @@ require('./p5.Geometry');
  * the final size of your model with the <a href="#/p5/scale">scale()</a> function.
  *
  * Also, the support for colored STL files is not present. STL files with color will be
- * rendered colorless.
+ * rendered without color properties.
  *
  * @method loadModel
  * @param  {String} path              Path of the model to be loaded
@@ -298,15 +298,7 @@ function parseSTL(model, buffer) {
  * Search for `solid` to start anywhere after those prefixes.
  */
 function isBinary(data) {
-  var expect, face_size, n_faces, reader;
-  reader = new DataView(data);
-  face_size = 32 / 8 * 3 + 32 / 8 * 3 * 3 + 16 / 8;
-  n_faces = reader.getUint32(80, true);
-  expect = 80 + 32 / 8 + n_faces * face_size;
-
-  if (expect === reader.byteLength) {
-    return true;
-  }
+  var reader = new DataView(data);
 
   // US-ASCII ordinal values for `s`, `o`, `l`, `i`, `d`
   var solid = [115, 111, 108, 105, 100];
