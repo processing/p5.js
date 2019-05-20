@@ -11,6 +11,7 @@ var PI = Math.PI;
 module.exports = {
   // GRAPHICS RENDERER
   /**
+   * The default, two-dimensional renderer.
    * @property {String} P2D
    * @final
    */
