@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
-  "eslint.run": "onSave"
+  "eslint.run": "onSave",
+  "prettier.requireConfig": true
 }
