@@ -286,6 +286,14 @@ function parseSTL(model, buffer) {
     parseBinarySTL(model, buffer);
   } else {
     var reader = new DataView(buffer);
+
+    if (!('TextDecoder' in window)) {
+      console.error(
+        'Sorry, this browser is not supported for loading STL files.'
+      );
+      return model;
+    }
+
     var decoder = new TextDecoder('utf-8');
     var lines = decoder.decode(reader);
     var lineArray = lines.split('\n');
