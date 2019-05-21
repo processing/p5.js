@@ -93,6 +93,46 @@ suite('Calculation', function() {
       result = myp5.dist(2, 3, 5, 2, 3, 5);
       assert.equal(result, 0);
     });
+    test('should return infinity if coordinate of a point is at infinity (2D)', function() {
+      result = myp5.dist(0, 0, Infinity, 0);
+      assert.equal(result, Infinity);
+    });
+    test('should return infinity if coordinate of a point is at -infinity (2D)', function() {
+      result = myp5.dist(0, 0, -Infinity, 0);
+      assert.equal(result, Infinity);
+    });
+    test('should handle overflow correctly (2D)', function() {
+      result = myp5.dist(0, 1e200, 0, 1e199);
+      assert.equal(result, 9e199);
+    });
+    test('should handle rounding correctly (2D)', function() {
+      result = myp5.dist(0, 1e-200, 0, 1e-199);
+      assert.equal(result, 9e-200);
+    });
+    test('should handle string parameters correctly (2D)', function() {
+      result = myp5.dist(0, 0, '4', '3');
+      assert.equal(result, 5);
+    });
+    test('should return infinity if coordinate of a point is at infinity (3D)', function() {
+      result = myp5.dist(0, 0, 0, Infinity, 0, 0);
+      assert.equal(result, Infinity);
+    });
+    test('should return infinity if coordinate of a point is at -infinity (3D)', function() {
+      result = myp5.dist(0, 0, 0, -Infinity, 0, 0);
+      assert.equal(result, Infinity);
+    });
+    test('should handle overflow correctly (3D)', function() {
+      result = myp5.dist(0, 0, 1e200, 0, 0, 1e199);
+      assert.equal(result, 9e199);
+    });
+    test('should handle rounding correctly (3D)', function() {
+      result = myp5.dist(0, 0, 1e-200, 0, 0, 1e-199);
+      assert.equal(result, 9e-200);
+    });
+    test('should handle string parameters correctly (3D)', function() {
+      result = myp5.dist(0, 0, 0, '4', '4', '2');
+      assert.equal(result, 6);
+    });
   });
 
   suite('p5.prototype.exp', function() {

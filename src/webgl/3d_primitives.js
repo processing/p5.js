@@ -7,7 +7,6 @@
  */
 
 'use strict';
-
 var p5 = require('../core/main');
 require('./p5.Geometry');
 var constants = require('../core/constants');
@@ -1010,30 +1009,39 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+// prettier-ignore
+p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
   var gId =
     'quad|' +
     x1 +
     '|' +
     y1 +
     '|' +
+    z1 +
+    '|' +
     x2 +
     '|' +
     y2 +
+    '|' +
+    z2 +
     '|' +
     x3 +
     '|' +
     y3 +
     '|' +
+    z3 +
+    '|' +
     x4 +
     '|' +
-    y4;
+    y4 +
+    '|' +
+    z4;
   if (!this.geometryInHash(gId)) {
     var _quad = function() {
-      this.vertices.push(new p5.Vector(x1, y1, 0));
-      this.vertices.push(new p5.Vector(x2, y2, 0));
-      this.vertices.push(new p5.Vector(x3, y3, 0));
-      this.vertices.push(new p5.Vector(x4, y4, 0));
+      this.vertices.push(new p5.Vector(x1, y1, z1));
+      this.vertices.push(new p5.Vector(x2, y2, z2));
+      this.vertices.push(new p5.Vector(x3, y3, z3));
+      this.vertices.push(new p5.Vector(x4, y4, z4));
       this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
@@ -1067,15 +1075,14 @@ p5.RendererGL.prototype.bezier = function(
   z4
 ) {
   if (arguments.length === 8) {
-    x4 = x3;
     y4 = y3;
+    x4 = x3;
+    y3 = z2;
     x3 = y2;
-    y3 = x2;
-    x2 = z1;
     y2 = x2;
+    x2 = z1;
     z1 = z2 = z3 = z4 = 0;
   }
-
   var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (var i = 0; i <= bezierDetail; i++) {
@@ -1530,6 +1537,52 @@ p5.RendererGL.prototype.curveVertex = function() {
       }
     }
   }
+};
+
+p5.RendererGL.prototype.image = function(
+  img,
+  sx,
+  sy,
+  sWidth,
+  sHeight,
+  dx,
+  dy,
+  dWidth,
+  dHeight
+) {
+  this._pInst.push();
+
+  this._pInst.texture(img);
+  this._pInst.textureMode(constants.NORMAL);
+
+  var u0 = 0;
+  if (sx <= img.width) {
+    u0 = sx / img.width;
+  }
+
+  var u1 = 1;
+  if (sx + sWidth <= img.width) {
+    u1 = (sx + sWidth) / img.width;
+  }
+
+  var v0 = 0;
+  if (sy <= img.height) {
+    v0 = sy / img.height;
+  }
+
+  var v1 = 1;
+  if (sy + sHeight <= img.height) {
+    v1 = (sy + sHeight) / img.height;
+  }
+
+  this.beginShape();
+  this.vertex(dx, dy, 0, u0, v0);
+  this.vertex(dx + dWidth, dy, 0, u1, v0);
+  this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
+  this.vertex(dx, dy + dHeight, 0, u0, v1);
+  this.endShape(constants.CLOSE);
+
+  this._pInst.pop();
 };
 
 module.exports = p5;

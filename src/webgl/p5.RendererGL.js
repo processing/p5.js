@@ -70,6 +70,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
+  this.curBlendMode = constants.BLEND;
+  this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;
   this._useNormalMaterial = false;
@@ -392,6 +394,18 @@ p5.prototype.setAttributes = function(key, value) {
     return;
   }
 
+  if (!this._setupDone) {
+    for (var x in this._renderer.gHash) {
+      if (this._renderer.gHash.hasOwnProperty(x)) {
+        console.error(
+          'Sorry, Could not set the attributes, you need to call setAttributes() ' +
+            'before calling the other drawing methods in setup()'
+        );
+        return;
+      }
+    }
+  }
+
   this.push();
   this._renderer._resetContext();
   this.pop();
@@ -541,6 +555,32 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 p5.RendererGL.prototype.strokeCap = function(cap) {
   // @TODO : to be implemented
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+};
+
+p5.RendererGL.prototype.blendMode = function(mode) {
+  if (
+    mode === constants.DARKEST ||
+    mode === constants.LIGHTEST ||
+    mode === constants.ADD ||
+    mode === constants.BLEND ||
+    mode === constants.SUBTRACT ||
+    mode === constants.SCREEN ||
+    mode === constants.EXCLUSION ||
+    mode === constants.REPLACE ||
+    mode === constants.MULTIPLY
+  )
+    this.curBlendMode = mode;
+  else if (
+    mode === constants.BURN ||
+    mode === constants.OVERLAY ||
+    mode === constants.HARD_LIGHT ||
+    mode === constants.SOFT_LIGHT ||
+    mode === constants.DODGE
+  ) {
+    console.warn(
+      'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
+    );
+  }
 };
 
 /**
@@ -1062,6 +1102,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   var ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+  fillShader.bindTextures();
 };
 
 p5.RendererGL.prototype._setPointUniforms = function(pointShader) {

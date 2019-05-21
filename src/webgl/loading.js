@@ -32,7 +32,7 @@ require('./p5.Geometry');
  *                                     once the model is loaded. Will be passed
  *                                     the 3D model object.
  * @param  {function(Event)} [failureCallback] called with event error if
- *                                         the image fails to load.
+ *                                         the model fails to load.
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  *
  * @example

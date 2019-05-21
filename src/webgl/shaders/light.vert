@@ -38,41 +38,41 @@ void main(void){
   float diffuseFactor = 0.3;
 
   vec3 ambientLightFactor = vec3(0.0);
-
-  for (int i = 0; i < 8; i++) {
-    if (uAmbientLightCount == i) break;
-    ambientLightFactor += uAmbientColor[i];
-  }
-
-
   vec3 directionalLightFactor = vec3(0.0);
-
-  for (int j = 0; j < 8; j++) {
-    if (uDirectionalLightCount == j) break;
-    vec3 dir = uLightingDirection[j];
-    float directionalLightWeighting = max(dot(vertexNormal, -dir), 0.0);
-    directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
-  }
-
-
   vec3 pointLightFactor = vec3(0.0);
 
-  for (int k = 0; k < 8; k++) {
-    if (uPointLightCount == k) break;
-    vec3 loc = (uViewMatrix * vec4(uPointLightLocation[k], 1.0)).xyz;
-    vec3 lightDirection = normalize(loc - mvPosition.xyz);
+  for (int i = 0; i < 8; i++) {
 
-    float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
+    // Calculate ambient light factor
+    if(i < uAmbientLightCount){
+      ambientLightFactor += uAmbientColor[i];
+    } 
 
-    float specularLightWeighting = 0.0;
-    if (uSpecular ){
-      vec3 reflectionDirection = reflect(-lightDirection, vertexNormal);
-      specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uShininess);
+    // Calculate directional light factor
+    if(i < uDirectionalLightCount){
+      vec3 dir = (uViewMatrix * vec4(uLightingDirection[i], 0.0)).xyz;
+      float directionalLightWeighting = max(dot(vertexNormal, -dir), 0.0);
+      directionalLightFactor += uDirectionalColor[i] * directionalLightWeighting;
     }
 
-    pointLightFactor += uPointLightColor[k] * (specularFactor * specularLightWeighting
-      + directionalLightWeighting * diffuseFactor);
+    // Calculate point light factor
+    if(i < uPointLightCount){
+      vec3 loc = (uViewMatrix * vec4(uPointLightLocation[i], 1.0)).xyz;
+      vec3 lightDirection = normalize(loc - mvPosition.xyz);
+
+      float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
+
+      float specularLightWeighting = 0.0;
+      if (uSpecular ){
+        vec3 reflectionDirection = reflect(-lightDirection, vertexNormal);
+        specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uShininess);
+      }
+
+      pointLightFactor += uPointLightColor[i] * (specularFactor * specularLightWeighting
+        + directionalLightWeighting * diffuseFactor);
+    }
   }
+
 
   vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
 }

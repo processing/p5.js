@@ -140,7 +140,11 @@ p5.prototype.loadJSON = function() {
       } else {
         errorCallback = arg;
       }
-    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')) {
+    } else if (
+      typeof arg === 'object' &&
+      (arg.hasOwnProperty('jsonpCallback') ||
+        arg.hasOwnProperty('jsonpCallbackFunction'))
+    ) {
       t = 'jsonp';
       options = arg;
     }
@@ -1089,7 +1093,10 @@ p5.prototype.httpDo = function() {
       } else if (typeof a === 'number') {
         data = a.toString();
       } else if (typeof a === 'object') {
-        if (a.hasOwnProperty('jsonpCallback')) {
+        if (
+          a.hasOwnProperty('jsonpCallback') ||
+          a.hasOwnProperty('jsonpCallbackFunction')
+        ) {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
@@ -1141,7 +1148,10 @@ p5.prototype.httpDo = function() {
       err.ok = false;
       throw err;
     } else {
-      var fileSize = res.headers.get('content-length');
+      var fileSize = 0;
+      if (type !== 'jsonp') {
+        fileSize = res.headers.get('content-length');
+      }
       if (fileSize && fileSize > 64000000) {
         p5._friendlyFileLoadError(7, path);
       }

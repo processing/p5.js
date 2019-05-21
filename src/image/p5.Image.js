@@ -147,9 +147,9 @@ p5.Image = function(width, height) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelsState = this;
   this._pixelDensity = 1;
-  //used for webgl texturing only
-  this._modified = false;
   this._pixelsDirty = true;
+  //For WebGL Texturing only: used to determine whether to reupload texture to GPU
+  this._modified = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -244,7 +244,7 @@ p5.Image.prototype._setProperty = function(prop, value) {
  *
  * function setup() {
  *   myImage.loadPixels();
- *   halfImage = 4 * width * height / 2;
+ *   halfImage = 4 * myImage.width * myImage.height / 2;
  *   for (let i = 0; i < halfImage; i++) {
  *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
@@ -252,7 +252,7 @@ p5.Image.prototype._setProperty = function(prop, value) {
  * }
  *
  * function draw() {
- *   image(myImage, 0, 0);
+ *   image(myImage, 0, 0, width, height);
  * }
  * </code></div>
  *
@@ -289,7 +289,7 @@ p5.Image.prototype.loadPixels = function() {
  *
  * function setup() {
  *   myImage.loadPixels();
- *   halfImage = 4 * width * height / 2;
+ *   halfImage = 4 * myImage.width * myImage.height / 2;
  *   for (let i = 0; i < halfImage; i++) {
  *     myImage.pixels[i + halfImage] = myImage.pixels[i];
  *   }
@@ -297,7 +297,7 @@ p5.Image.prototype.loadPixels = function() {
  * }
  *
  * function draw() {
- *   image(myImage, 0, 0);
+ *   image(myImage, 0, 0, width, height);
  * }
  * </code></div>
  *

@@ -39,7 +39,7 @@ require('../core/error_helpers');
  * <div><code>
  * let myFont;
  * function preload() {
- *   myFont = loadFont('assets/AvenirNextLTPro-Demi.otf');
+ *   myFont = loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
@@ -55,7 +55,7 @@ require('../core/error_helpers');
  *
  * <div><code>
  * function setup() {
- *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
+ *   loadFont('assets/inconsolata.otf', drawText);
  * }
  *
  * function drawText(font) {
@@ -70,12 +70,12 @@ require('../core/error_helpers');
  *
  * <div><code>
  * function preload() {
- *   loadFont('assets/Avenir.otf');
+ *   loadFont('assets/inconsolata.otf');
  * }
  *
  * function setup() {
  *   let myDiv = createDiv('hello there');
- *   myDiv.style('font-family', 'Avenir');
+ *   myDiv.style('font-family', 'Inconsolata');
  * }
  * </code></div>
  *
@@ -194,13 +194,13 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *
  * <div modernizr='webgl'>
  * <code>
- * let avenir;
+ * let inconsolata;
  * function preload() {
- *   avenir = loadFont('assets/Avenir.otf');
+ *   inconsolata = loadFont('assets/inconsolata.otf');
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   textFont(avenir);
+ *   textFont(inconsolata);
  *   textSize(width / 3);
  *   textAlign(CENTER, CENTER);
  * }

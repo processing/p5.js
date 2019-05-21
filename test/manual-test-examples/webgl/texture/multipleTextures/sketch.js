@@ -1,8 +1,8 @@
-var im1, im2;
+var grid, cat;
 
 function preload() {
-  im1 = loadImage('../../assets/UV_Grid_Sm.jpg');
-  im2 = loadImage('../../assets/cat.jpg');
+  grid = loadImage('../../assets/UV_Grid_Sm.jpg');
+  cat = loadImage('../../assets/cat.jpg');
 }
 
 function setup() {
@@ -13,30 +13,24 @@ function setup() {
 function draw() {
   background(255);
 
-  var halfw = im1.width / 2 * 0.5;
-  var halfh = im1.height / 2 * 0.5;
+  drawSquare(-width / 4, 0, 200, 200, grid);
+  drawSquare(width / 4, 0, 200, 200, cat);
+}
 
-  var i = 0;
-  for (var x = -width / 2 + halfw; x <= width / 2 - halfw; x += halfw * 2) {
-    for (var y = -height / 2 + halfh; y <= height / 2 - halfh; y += halfh * 2) {
-      push();
-      if (i % 2 === 0) {
-        texture(im1);
-      } else {
-        texture(im2);
-      }
-      translate(x, y);
-      rotateZ(frameCount * 0.01);
-      beginShape(TRIANGLES);
-      vertex(-halfw, -halfh, 0, 0, 0);
-      vertex(halfw, -halfh, 0, 1, 0);
-      vertex(halfw, halfh, 0, 1, 1);
-      vertex(halfw, halfh, 0, 1, 1);
-      vertex(-halfw, halfh, 0, 0, 1);
-      vertex(-halfw, -halfh, 0, 0, 0);
-      endShape();
-      pop();
-      i++;
-    }
-  }
+function drawSquare(x, y, w, h, tex) {
+  push();
+  texture(tex);
+  var halfW = w / 2;
+  var halfH = h / 2;
+  translate(x, 0);
+  rotateZ(frameCount * 0.01);
+  beginShape(TRIANGLES);
+  vertex(-halfW, -halfH, 0, 0, 0);
+  vertex(halfW, -halfH, 0, 1, 0);
+  vertex(halfW, halfH, 0, 1, 1);
+  vertex(halfW, halfH, 0, 1, 1);
+  vertex(-halfW, halfH, 0, 0, 1);
+  vertex(-halfW, -halfH, 0, 0, 0);
+  endShape();
+  pop();
 }

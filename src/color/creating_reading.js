@@ -108,9 +108,22 @@ p5.prototype.blue = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * noStroke();
+ * colorMode(HSB, 255);
+ * let c = color('hsb(60, 100%, 50%)');
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * let value = brightness(c); // A 'value' of 50% is 127.5
+ * fill(value);
+ * rect(50, 20, 35, 60);
+ * </code>
+ * </div>
  *
  * @alt
  * Left half of canvas salmon pink and the right half white.
+ * Left half of canvas yellow at half brightness and the right gray .
  *
  */
 p5.prototype.brightness = function(c) {
@@ -532,13 +545,13 @@ p5.prototype.lightness = function(c) {
  * </code>
  * </div>
  *
- * <div>
+ * <div class="norender">
  * <code>
- * colorMode(RGB, 255);
+ * colorMode(RGB, 255); // Sets the range for red, green, and blue to 255
  * let c = color(127, 255, 0);
- * colorMode(RGB, 1);
+ * colorMode(RGB, 1); // Sets the range for red, green, and blue to 1
  * let myColor = red(c);
- * print(myColor);
+ * print(myColor); // 0.4980392156862745
  * </code>
  * </div>
  *

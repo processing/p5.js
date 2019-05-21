@@ -159,7 +159,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color
  * @chainable
  */
@@ -174,11 +174,7 @@ require('./p5.Color');
  */
 
 p5.prototype.background = function() {
-  if (arguments[0] instanceof p5.Image) {
-    this.image(arguments[0], 0, 0, this.width, this.height);
-  } else {
-    this._renderer.background.apply(this._renderer, arguments);
-  }
+  this._renderer.background.apply(this._renderer, arguments);
   return this;
 };
 
@@ -344,7 +340,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 
 /**
  * Sets the color used to fill shapes. For example, if you run
- * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
+ * fill(204, 102, 0), all shapes drawn after the fill command will be filled with the color orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space is RGB, with each value
  * in the range from 0 to 255). The alpha range by default is also 0 to 255.

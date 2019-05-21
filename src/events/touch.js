@@ -59,8 +59,8 @@ p5.prototype._updateTouchCoords = function(e) {
 function getTouchInfo(canvas, w, h, e, i) {
   i = i || 0;
   var rect = canvas.getBoundingClientRect();
-  var sx = canvas.scrollWidth / w;
-  var sy = canvas.scrollHeight / h;
+  var sx = canvas.scrollWidth / w || 1;
+  var sy = canvas.scrollHeight / h || 1;
   var touch = e.touches[i] || e.changedTouches[i];
   return {
     x: (touch.clientX - rect.left) / sx,

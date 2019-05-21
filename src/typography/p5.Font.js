@@ -164,7 +164,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
  * @param  {Object} [options] an (optional) object that can contain:
  *
  * <br>sampleFactor - the ratio of path-length to number of samples
- * (default=.25); higher values yield more points and are therefore
+ * (default=.1); higher values yield more points and are therefore
  * more precise
  *
  * <br>simplifyThreshold - if set to a non-zero value, collinear points will be
@@ -177,7 +177,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
  * <code>
  * let font;
  * function preload() {
- *   font = loadFont('./assets/Avenir.otf');
+ *   font = loadFont('assets/inconsolata.otf');
  * }
  *
  * let points;

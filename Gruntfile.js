@@ -244,7 +244,8 @@ module.exports = grunt => {
       test: {
         src: ['test/node/**/*.js'],
         options: {
-          reporter: reporter
+          reporter: reporter,
+          ui: 'tdd'
         }
       }
     },
@@ -471,7 +472,12 @@ module.exports = grunt => {
     'mochaChrome',
     'mochaTest'
   ]);
-  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mochaChrome']);
+  grunt.registerTask('test:nobuild', [
+    'eslint:test',
+    'connect:server',
+    'mochaChrome',
+    'mochaTest'
+  ]);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
     'yuidoc:prod',

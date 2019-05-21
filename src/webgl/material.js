@@ -188,6 +188,66 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * @chainable
  * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
  * shapes.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Click within the image to toggle
+ * // the shader used by the quad shape
+ * // Note: for an alternative approach to the same example,
+ * // involving changing uniforms please refer to:
+ * // https://p5js.org/reference/#/p5.Shader/setUniform
+ *
+ * let redGreen;
+ * let orangeBlue;
+ * let showRedGreen = false;
+ *
+ * function preload() {
+ *   // note that we are using two instances
+ *   // of the same vertex and fragment shaders
+ *   redGreen = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+ *   orangeBlue = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // initialize the colors for redGreen shader
+ *   shader(redGreen);
+ *   redGreen.setUniform('colorCenter', [1.0, 0.0, 0.0]);
+ *   redGreen.setUniform('colorBackground', [0.0, 1.0, 0.0]);
+ *
+ *   // initialize the colors for orangeBlue shader
+ *   shader(orangeBlue);
+ *   orangeBlue.setUniform('colorCenter', [1.0, 0.5, 0.0]);
+ *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
+ *
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // update the offset values for each shader,
+ *   // moving orangeBlue in vertical and redGreen
+ *   // in horizontal direction
+ *   orangeBlue.setUniform('offset', [0, sin(millis() / 2000) + 1]);
+ *   redGreen.setUniform('offset', [sin(millis() / 2000), 1]);
+ *
+ *   if (showRedGreen === true) {
+ *     shader(redGreen);
+ *   } else {
+ *     shader(orangeBlue);
+ *   }
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ *
+ * function mouseClicked() {
+ *   showRedGreen = !showRedGreen;
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.prototype.shader = function(s) {
   this._assert3d('shader');
@@ -206,6 +266,19 @@ p5.prototype.shader = function(s) {
 
   s.init();
 
+  return this;
+};
+
+/**
+ * This function restores the default shaders in WEBGL mode. Code that runs
+ * after resetShader() will not be affected by previously defined
+ * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ *
+ * @method resetShader
+ * @chainable
+ */
+p5.prototype.resetShader = function() {
+  this._renderer.userFillShader = this._renderer.userStrokeShader = null;
   return this;
 };
 
@@ -657,13 +730,78 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   if (isTexture || colors[colors.length - 1] < 1.0) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
-    gl.blendEquation(gl.FUNC_ADD);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    this._applyBlendMode();
   } else {
     gl.depthMask(true);
     gl.disable(gl.BLEND);
   }
   return colors;
+};
+
+/**
+ * @private sets blending in gl context to curBlendMode
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
+ */
+p5.RendererGL.prototype._applyBlendMode = function() {
+  var gl = this.GL;
+  switch (this.curBlendMode) {
+    case constants.BLEND:
+    case constants.ADD:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.MULTIPLY:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ZERO, gl.SRC_COLOR, gl.ONE, gl.ONE);
+      break;
+    case constants.SCREEN:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.ONE_MINUS_DST_COLOR, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.EXCLUSION:
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
+      gl.blendFuncSeparate(
+        gl.ONE_MINUS_DST_COLOR,
+        gl.ONE_MINUS_SRC_COLOR,
+        gl.ONE,
+        gl.ONE
+      );
+      break;
+    case constants.REPLACE:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ONE, gl.ZERO);
+      break;
+    case constants.SUBTRACT:
+      gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
+      break;
+    case constants.DARKEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MIN_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(DARKEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    case constants.LIGHTEST:
+      if (this.blendExt) {
+        gl.blendEquationSeparate(this.blendExt.MAX_EXT, gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
+      } else {
+        console.warn(
+          'blendMode(LIGHTEST) does not work in your browser in WEBGL mode.'
+        );
+      }
+      break;
+    default:
+      console.error(
+        'Oops! Somehow RendererGL set curBlendMode to an unsupported mode.'
+      );
+      break;
+  }
 };
 
 module.exports = p5;

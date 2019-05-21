@@ -91,10 +91,18 @@ p5.prototype.key = '';
  *   return false; // prevent default
  * }
  * </code></div>
- *
+ * <div><code>
+ * function draw() {}
+ * function keyPressed() {
+ *   background('yellow');
+ *   text(`${key} ${keyCode}`, 10, 40);
+ *   print(key, ' ', keyCode);
+ *   return false; // prevent default
+ * }
+ * </code></div>
  * @alt
  * Grey rect center. turns white when up arrow pressed and black when down
- *
+ * Display key pressed and its keyCode in a yellow box
  */
 p5.prototype.keyCode = 0;
 
@@ -319,6 +327,7 @@ p5.prototype._onblur = function(e) {
  *
  * function setup() {
  *   createCanvas(512, 512);
+ *   fill(255, 0, 0);
  * }
  *
  * function draw() {
@@ -339,7 +348,6 @@ p5.prototype._onblur = function(e) {
  *   }
  *
  *   clear();
- *   fill(255, 0, 0);
  *   ellipse(x, y, 50, 50);
  * }
  * </code></div>
@@ -375,7 +383,7 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return this._downKeys[code];
+  return this._downKeys[code] || false;
 };
 
 /**

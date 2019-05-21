@@ -106,8 +106,8 @@ p5.prototype._normalizeArcAngles = function(
  * origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.<br><br>
  * The arc is always drawn clockwise from wherever start falls to wherever stop falls on the ellipse.
  * Adding or subtracting TWO_PI to either angle does not change where they fall.
- * If both start and stop fall at the same place, a full ellipse will be drawn.
- *
+ * If both start and stop fall at the same place, a full ellipse will be drawn. Be aware that the the
+ * y-axis increases in the downward direction therefore the values of PI is counter clockwise.
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse
  * @param  {Number} y      y-coordinate of the arc's ellipse
@@ -294,7 +294,7 @@ p5.prototype.circle = function() {
   var args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  this.ellipse.apply(this, args);
+  return this.ellipse.apply(this, args);
 };
 
 /**
@@ -394,6 +394,8 @@ p5.prototype.point = function() {
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
+ * z-arguments only work when quad() is used in WEBGL mode.
+ *
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -436,7 +438,18 @@ p5.prototype.quad = function() {
   p5._validateParameters('quad', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.quad.apply(this._renderer, arguments);
+    if (this._renderer.isP3D && arguments.length !== 12) {
+      // if 3D and we weren't passed 12 args, assume Z is 0
+      // prettier-ignore
+      this._renderer.quad.call(
+        this._renderer,
+        arguments[0], arguments[1], 0,
+        arguments[2], arguments[3], 0,
+        arguments[4], arguments[5], 0,
+        arguments[6], arguments[7], 0);
+    } else {
+      this._renderer.quad.apply(this._renderer, arguments);
+    }
   }
 
   return this;
@@ -576,7 +589,7 @@ p5.prototype.rect = function() {
  * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
-  this.rect(x, y, s, s, tl, tr, br, bl);
+  return this.rect(x, y, s, s, tl, tr, br, bl);
 };
 
 /**

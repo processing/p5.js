@@ -1406,20 +1406,20 @@
       "contributions": []
     },
     {
-    "login": "OsakaStarbux",
-    "name": "Kevin Bradley",
-    "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
-    "profile": "https://github.com/OsakaStarbux",
-    "contributions": [
+      "login": "OsakaStarbux",
+      "name": "Kevin Bradley",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
+      "profile": "https://github.com/OsakaStarbux",
+      "contributions": [
         "doc"
       ]
     },
     {
-    "login": "justinsunho",
-    "name": "Justin Kim",
-    "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
-    "profile": "https://justinsunho.com/",
-    "contributions": [
+      "login": "justinsunho",
+      "name": "Justin Kim",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
+      "profile": "https://justinsunho.com/",
+      "contributions": [
         "doc"
       ]
     },
@@ -1441,7 +1441,57 @@
       "contributions": [
         "code",
         "doc"
-      ]    
+      ]
+    },
+    {
+      "login": "Luke_",
+      "name": "Luc de wit",
+      "avatar_url": "https://media.discordapp.net/attachments/499488127245615135/499488260435869696/normal_luke.png",
+      "profile": "https://github.com/justlucdewit",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "mcuz",
+      "name": "Mark Nikora",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/44824130?s=40&v=4",
+      "profile": "https://github.com/mcuz",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Nekzuris",
+      "name": "Louis Demange",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/48560751?s=400&u=652ea1a1720b1986c3ea5b96028bdcb5f4f18f96&v=4",
+      "profile": "https://github.com/Nekzuris",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "sanketsingh24",
+      "name": "Sanket Singh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/24548786?v=4",
+      "profile": "https://twitter.com/sanket24singh",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "oshoham",
+      "name": "Oren Shoham",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2325893?s=460&v=4",
+      "profile": "https://orenshoham.com",
+      "contributions": [
+        "code"
+      ]
     }
-  ]
+  ],
+  "repoType": "github"
 }
