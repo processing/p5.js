@@ -15,7 +15,6 @@
 
 var p5 = require('../core/main');
 var Filters = require('./filters');
-var omggif = require('omggif');
 
 /*
  * Class methods
@@ -828,90 +827,84 @@ p5.Image.prototype.isModified = function() {
  *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  p5.prototype.saveCanvas(this.canvas, filename, extension);
+  if (this.isGIF()) {
+    p5.prototype.saveGIF(this, filename);
+  } else {
+    p5.prototype.saveCanvas(this.canvas, filename, extension);
+  }
+};
+
+//GIF Section
+
+p5.Image.prototype.reset = function() {
+  if (!this.isGIF(true)) {
+    return;
+  }
+
+  var props = this.gifProperties;
+  props.playing = true;
+  props.timeSinceStart = 0;
+  props.timeDisplayed = 0;
+  props.loopCount = 0;
+  props.displayIndex = 0;
+  this.drawingContext.putImageData(props.frames[0], 0, 0);
+};
+
+p5.Image.prototype.getCurrentFrame = function() {
+  if (!this.isGIF(true)) {
+    return;
+  }
+  var props = this.gifProperties;
+  return props.displayIndex % props.numFrames;
+};
+
+p5.Image.prototype.setFrame = function(index) {
+  if (!this.isGIF(true)) {
+    return;
+  }
+  var props = this.gifProperties;
+  if (index >= props.numFrames) {
+    console.warn(
+      'Cannot set GIF to a frame number that is higher than total number of frames.'
+    );
+    return;
+  }
+  props.timeDisplayed = 0;
+  props.displayIndex = index;
+  this.drawingContext.putImageData(props.frames[index], 0, 0);
 };
 
 p5.Image.prototype.play = function() {
-  if (this.gifProperties === null || this.gifProperties.playing === true) {
+  if (!this.isGIF(true)) {
     return;
-  } else {
-    this.gifProperties.playing = true;
   }
+
+  this.gifProperties.playing = true;
 };
 
 p5.Image.prototype.pause = function() {
-  if (this.gifProperties === null || this.gifProperties.playing === false) {
+  if (!this.isGIF(true)) {
     return;
-  } else {
-    this.gifProperties.playing = false;
   }
+  this.gifProperties.playing = false;
 };
 
 p5.Image.prototype.delay = function(d) {
-  if (this.gifProperties === null) {
-    console.error('This is not a gif');
+  if (!this.isGIF(true)) {
     return;
-  } else {
-    this.gifProperties.delay = d;
   }
+  this.gifProperties.delay = d;
 };
 
-p5.Image.prototype._createGIF = function(
-  arrayBuffer,
-  successCallback,
-  failureCallback,
-  finished
-) {
-  var gifReader = new omggif.GifReader(arrayBuffer);
-  var frames = [];
-  var numFrames = gifReader.numFrames();
-  var loadGIFFrameIntoImage = function(frameNum, gifReader) {
-    var framePixels = [];
-    try {
-      gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-    } catch (e) {
-      p5._friendlyFileLoadError(8, this.src);
-      if (typeof failureCallback === 'function') {
-        failureCallback(e);
-      } else {
-        console.error(e);
-      }
-    }
-    return new Uint8ClampedArray(framePixels);
-  };
-
-  for (var i = 0; i < numFrames; i++) {
-    var framePixels = loadGIFFrameIntoImage(i, gifReader);
-    var imageData = new ImageData(framePixels, this.width, this.height);
-    frames.push(imageData);
+p5.Image.prototype.isGIF = function(doLogError) {
+  //TODO handle this w friendlier error
+  var isGIF = this.gifProperties !== null;
+  if (doLogError && !isGIF) {
+    console.error(
+      'This is not a GIF. This method only works with multi-frame GIF files'
+    );
   }
-
-  //Uses Netscape block encoding
-  //to repeat forever, this will be 0
-  //to repeat just once, this will be null
-  //to repeat N times (1<N), should contain integer for loop number
-  var loopCount = gifReader.loopCount();
-  if (loopCount === null) {
-    loopCount = 1;
-  }
-
-  this.gifProperties = {
-    isGif: true,
-    displayIndex: 0,
-    delay: gifReader.frameInfo(0).delay * 10,
-    looping: loopCount,
-    frames: frames,
-    numFrames: numFrames,
-    timeSinceStart: 0,
-    playing: true,
-    timeDisplayed: 0
-  };
-
-  if (typeof successCallback === 'function') {
-    successCallback(this);
-  }
-
-  finished();
+  return isGIF;
 };
 
 module.exports = p5.Image;

@@ -11,8 +11,8 @@ var p5 = require('../core/main');
 var Filters = require('./filters');
 var canvas = require('../core/helpers');
 var constants = require('../core/constants');
+var omggif = require('omggif');
 
-require('whatwg-fetch');
 require('../core/error_helpers');
 
 /**
@@ -80,31 +80,32 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
     //GIF
     if (path.match(/\.[gif]+$/i)) {
-      fetch(img.src)
-        .then(function(data) {
-          data.arrayBuffer().then(function(arrayBuffer) {
-            if (arrayBuffer) {
-              var byteArray = new Uint8Array(arrayBuffer);
-              var finish = function() {
+      self.httpDo(
+        path,
+        'GET',
+        'arrayBuffer',
+        function(arrayBuffer) {
+          if (arrayBuffer) {
+            var byteArray = new Uint8Array(arrayBuffer);
+            _createGIF(
+              byteArray,
+              pImg,
+              successCallback,
+              failureCallback,
+              function(pImg) {
                 self._decrementPreload();
-              };
-              pImg._createGIF(
-                byteArray,
-                successCallback,
-                failureCallback,
-                finish
-              );
-            }
-          });
-        })
-        .catch(function(e) {
-          console.error('Unable to get ArrayBuffer from Image.');
-          if (typeof failureCallback == 'function') {
+              }.bind(self)
+            );
+          }
+        },
+        function(e) {
+          if (typeof failureCallback === 'function') {
             failureCallback(e);
           } else {
-            console.log(e);
+            console.error(e);
           }
-        });
+        }
+      );
     } else {
       //Non-GIF
       if (typeof successCallback === 'function') {
@@ -122,6 +123,75 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       console.error(e);
     }
   };
+
+  //helper function for decoding and setting up GIF properties
+  function _createGIF(
+    arrayBuffer,
+    pImg,
+    successCallback,
+    failureCallback,
+    finishCallback
+  ) {
+    var gifReader = new omggif.GifReader(arrayBuffer);
+    var frames = [];
+    var numFrames = gifReader.numFrames();
+    var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+      var framePixels = [];
+      try {
+        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+      } catch (e) {
+        p5._friendlyFileLoadError(8, pImg.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      }
+      return new Uint8ClampedArray(framePixels);
+    };
+
+    for (var i = 0; i < numFrames; i++) {
+      var framePixels = loadGIFFrameIntoImage(i, gifReader);
+      var imageData = new ImageData(framePixels, pImg.width, pImg.height);
+      frames.push(imageData);
+    }
+
+    //Uses Netscape block encoding
+    //to repeat forever, this will be 0
+    //to repeat just once, this will be null
+    //to repeat N times (1<N), should contain integer for loop number
+    //this is changed to more usable values for us
+    //to repeat forever, loopCount = null
+    //everything else is just the number of loops
+    var loopLimit = gifReader.loopCount();
+    if (loopLimit === null) {
+      loopLimit = 1;
+    } else if (loopLimit === 0) {
+      loopLimit = null;
+    }
+    var globalPalette = arrayBuffer.slice(
+      gifReader.global_palette_offset,
+      gifReader.global_palette_size
+    );
+
+    pImg.gifProperties = {
+      isGif: true,
+      displayIndex: 0,
+      delay: gifReader.frameInfo(0).delay * 10,
+      loopLimit: loopLimit,
+      loopCount: 0,
+      frames: frames,
+      numFrames: numFrames,
+      playing: true,
+      timeDisplayed: 0,
+      globalPalette: globalPalette
+    };
+
+    if (typeof successCallback === 'function') {
+      successCallback(pImg);
+    }
+    finishCallback();
+  }
 
   // Set crossOrigin in case image is served with CORS headers.
   // This will let us draw to the canvas without tainting it.

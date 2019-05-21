@@ -111,10 +111,8 @@ p5.Renderer2D.prototype.image = function(
       var skips = Math.floor(props.timeDisplayed / props.delay);
       props.timeDisplayed = 0;
       props.displayIndex += skips;
-      if (
-        props.looping !== 0 &&
-        props.displayIndex >= props.numFrames * props.looping
-      ) {
+      props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+      if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
         props.playing = false;
       } else {
         var ind = props.displayIndex % props.numFrames;

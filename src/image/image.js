@@ -12,12 +12,14 @@
 'use strict';
 
 var p5 = require('../core/main');
+var omggif = require('omggif');
+
 // This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
 // redefined-global error and permits using the name "frames" for the array
 // of saved animation frames.
 
-/* global frames:true */ var frames = [];
+/* global frames:true */ var frames = []; // eslint-disable-line no-unused-vars
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
@@ -190,6 +192,38 @@ p5.prototype.saveCanvas = function() {
   htmlCanvas.toBlob(function(blob) {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
+};
+
+p5.prototype.saveGIF = function(pImg, filename) {
+  //TODO
+  // p5._validateParameters('saveGIF', arguments);
+  var props = pImg.gifProperties;
+  var arrayBuffer = new ArrayBuffer();
+  var opts = {
+    loop: props.loopLimit,
+    delay: props.delay,
+    palette: props.globalPalette
+  };
+  var gifWriter = new omggif.GifWriter(
+    arrayBuffer,
+    pImg.width,
+    pImg.height,
+    opts
+  );
+  for (var i = 0; i < props.numFrames; i++) {
+    gifWriter.addFrame(
+      0,
+      0,
+      pImg.width,
+      pImg.height,
+      props.frames[i].data.buffer,
+      opts
+    );
+  }
+  var finalArrayBuffer = gifWriter.end();
+  var extension = 'gif';
+  var blob = new Blob([finalArrayBuffer], { type: 'image/gif' });
+  p5.prototype.downloadFile(blob, filename, extension);
 };
 
 /**
