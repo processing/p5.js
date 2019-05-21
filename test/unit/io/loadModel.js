@@ -8,7 +8,7 @@ suite('loadModel', function() {
     try {
       await promisedSketch(function(sketch, resolve, reject) {
         sketch.preload = function() {
-          sketch.loadImage(invalidFile, reject, resolve);
+          sketch.loadModel(invalidFile, reject, resolve);
         };
       });
       expect(

@@ -135,7 +135,7 @@ p5.prototype.loadModel = function(path) {
       }.bind(this),
       failureCallback
     );
-  } else {
+  } else if (fileType === '.obj') {
     this.loadStrings(
       path,
       function(strings) {
@@ -152,6 +152,16 @@ p5.prototype.loadModel = function(path) {
       }.bind(this),
       failureCallback
     );
+  } else {
+    p5._friendlyFileLoadError(3, path);
+
+    if (failureCallback) {
+      failureCallback();
+    } else {
+      console.error(
+        'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
+      );
+    }
   }
   return model;
 };
