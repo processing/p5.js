@@ -198,11 +198,12 @@ p5.prototype.saveGIF = function(pImg, filename) {
   //TODO
   // p5._validateParameters('saveGIF', arguments);
   var props = pImg.gifProperties;
-  var arrayBuffer = new ArrayBuffer();
+  var arrayBuffer = new Uint8Array(props.ab);
   var opts = {
     loop: props.loopLimit,
     delay: props.delay,
-    palette: props.globalPalette
+    palette: props.globalPalette,
+    transparent: 0
   };
   var gifWriter = new omggif.GifWriter(
     arrayBuffer,
@@ -216,13 +217,14 @@ p5.prototype.saveGIF = function(pImg, filename) {
       0,
       pImg.width,
       pImg.height,
-      props.frames[i].data.buffer,
+      props.frames[i].data,
       opts
     );
   }
-  var finalArrayBuffer = gifWriter.end();
+  gifWriter.end();
   var extension = 'gif';
-  var blob = new Blob([finalArrayBuffer], { type: 'image/gif' });
+  var blob = new Blob([arrayBuffer], { type: 'image/gif' });
+  // var abBlob = new Blob([props.ab], { type: 'image/gif' });
   p5.prototype.downloadFile(blob, filename, extension);
 };
 

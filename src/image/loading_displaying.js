@@ -133,6 +133,18 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     finishCallback
   ) {
     var gifReader = new omggif.GifReader(arrayBuffer);
+    var paletteOffset = gifReader.frameInfo(0).palette_offset;
+    var paletteEnd = paletteOffset + gifReader.frameInfo(0).palette_size * 3;
+    var paletteSeparated = arrayBuffer.slice(paletteOffset, paletteEnd);
+    var paletteCombined = [];
+    for (var i = 0, l = 0; i < paletteSeparated.length; i += 3, l++) {
+      var r = paletteSeparated[i] & 0xff;
+      var g = paletteSeparated[i + 1] & 0xff;
+      var b = paletteSeparated[i + 2] & 0xff;
+      var rgb = (r << 16) | (g << 8) | b;
+      paletteCombined.push(rgb);
+    }
+    console.log(paletteCombined);
     var frames = [];
     var numFrames = gifReader.numFrames();
     var loadGIFFrameIntoImage = function(frameNum, gifReader) {
@@ -150,8 +162,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       return new Uint8ClampedArray(framePixels);
     };
 
-    for (var i = 0; i < numFrames; i++) {
-      var framePixels = loadGIFFrameIntoImage(i, gifReader);
+    for (var j = 0; j < numFrames; j++) {
+      var framePixels = loadGIFFrameIntoImage(j, gifReader);
       var imageData = new ImageData(framePixels, pImg.width, pImg.height);
       frames.push(imageData);
     }
@@ -169,10 +181,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     } else if (loopLimit === 0) {
       loopLimit = null;
     }
-    var globalPalette = arrayBuffer.slice(
-      gifReader.global_palette_offset,
-      gifReader.global_palette_size
-    );
 
     pImg.gifProperties = {
       isGif: true,
@@ -184,7 +192,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       numFrames: numFrames,
       playing: true,
       timeDisplayed: 0,
-      globalPalette: globalPalette
+      globalPalette: paletteCombined,
+      ab: arrayBuffer
     };
 
     if (typeof successCallback === 'function') {
