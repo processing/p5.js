@@ -451,6 +451,9 @@ p5.RendererGL.prototype._update = function() {
   this.pointLightColors.length = 0;
 
   this._enableLighting = false;
+
+  //reset tint value for new frame
+  this._tint = [255, 255, 255, 255];
 };
 
 /**
@@ -1083,7 +1086,6 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   if (this._tex) {
     fillShader.setUniform('uSampler', this._tex);
   }
-  fillShader.setUniform('isTint', !!this._tint);
   if (this._tint) {
     fillShader.setUniform('uTint', this._tint);
   }
