@@ -200,10 +200,9 @@ p5.prototype.saveGIF = function(pImg, filename) {
   var props = pImg.gifProperties;
   var arrayBuffer = new Uint8Array(props.ab);
   var opts = {
-    loop: props.loopLimit,
-    delay: props.delay / 10,
-    palette: props.globalPalette,
-    transparent: 0
+    loop: props.loopLimit, //will need to convert back to netscape block
+    delay: props.delay / 10, //shift from ms back into 1/100 of second
+    palette: props.globalPalette
   };
   var gifWriter = new omggif.GifWriter(
     arrayBuffer,
@@ -224,7 +223,7 @@ p5.prototype.saveGIF = function(pImg, filename) {
   gifWriter.end();
   var extension = 'gif';
   var blob = new Blob([arrayBuffer], { type: 'image/gif' });
-  // var abBlob = new Blob([props.ab], { type: 'image/gif' });
+  // var abBlob = new Blob([props.ab], { type: 'image/gif' }); //correct blob makes the original gif
   p5.prototype.downloadFile(blob, filename, extension);
 };
 
