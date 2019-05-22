@@ -833,10 +833,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 4 black points in a square shape in middle-right of canvas.
- *
- * @example
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -852,10 +848,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 4 points making a diamond shape
- *
- * @example
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -875,10 +867,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making a star
- *
- * @example
  * <div>
  * <code>
  * strokeWeight(3);
@@ -896,16 +884,12 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making 4 lines
- *
- * @example
  * <div>
  * <code>
- * // Shape with a hollow section in the middle. Click to change the number of sides.
- * // Custom shapes drawn with beginShape() would make use of the tessellator by default.
- * // Custom shapes with different z-values (i.e non-coplanar shapes) would not use the tessellator.
- * // So, it is recommended to draw all custom shapes on a flat z-plane.
+ * // Click to change the number of sides.
+ * // In WebGL mode, custom shapes will only
+ * // display hollow fill sections when
+ * // all calls to vertex() use the same z-value.
  *
  * let sides = 3;
  * let angle, px, py;
@@ -915,6 +899,21 @@ p5.prototype.quadraticVertex = function() {
  *   setAttributes('antialias', true);
  *   fill(237, 34, 93);
  *   strokeWeight(3);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   ngon(sides, 0, 0, 80);
+ * }
+ *
+ * function mouseClicked() {
+ *   if (sides > 6) {
+ *     sides = 3;
+ *   } else {
+ *     sides++;
+ *   }
  * }
  *
  * function ngon(n, x, y, d) {
@@ -933,21 +932,14 @@ p5.prototype.quadraticVertex = function() {
  *   }
  *   endShape();
  * }
- *
- * function draw() {
- *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateZ(frameCount * 0.01);
- *   ngon(sides, 0, 0, 80);
- * }
- *
- * function mouseClicked() {
- *   sides > 6 ? (sides = 3) : sides++;
- * }
  * </code>
  * </div>
  * @alt
- * Shape with a hollow section in the middle
+ * 4 black points in a square shape in middle-right of canvas.
+ * 4 points making a diamond shape.
+ * 8 points making a star.
+ * 8 points making 4 lines.
+ * A rotating 3D shape with a hollow section in the middle.
  *
  */
 /**
