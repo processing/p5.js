@@ -119,7 +119,7 @@ p5.prototype.constrain = function(n, low, high) {
 };
 
 /**
- * Calculates the distance between two points.
+ * Calculates the distance between two points, in either two or three dimensions.
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point

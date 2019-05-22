@@ -277,6 +277,55 @@ p5.Shader.prototype.useProgram = function() {
  * @param {Object|Number|Boolean|Number[]} data the data to be associated
  * with that uniform; type varies (could be a single numerical value, array,
  * matrix, or texture / sampler reference)
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // Click within the image to toggle the value of uniforms
+ * // Note: for an alternative approach to the same example,
+ * // involving toggling between shaders please refer to:
+ * // https://p5js.org/reference/#/p5/shader
+ *
+ * let grad;
+ * let showRedGreen = false;
+ *
+ * function preload() {
+ *   // note that we are using two instances
+ *   // of the same vertex and fragment shaders
+ *   grad = loadShader('assets/shader.vert', 'assets/shader-gradient.frag');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   shader(grad);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // update the offset values for each scenario,
+ *   // moving the "grad" shader in either vertical or
+ *   // horizontal direction each with differing colors
+ *
+ *   if (showRedGreen === true) {
+ *     grad.setUniform('colorCenter', [1, 0, 0]);
+ *     grad.setUniform('colorBackground', [0, 1, 0]);
+ *     grad.setUniform('offset', [sin(millis() / 2000), 1]);
+ *   } else {
+ *     grad.setUniform('colorCenter', [1, 0.5, 0]);
+ *     grad.setUniform('colorBackground', [0.226, 0, 0.615]);
+ *     grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
+ *   }
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ *
+ * function mouseClicked() {
+ *   showRedGreen = !showRedGreen;
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
