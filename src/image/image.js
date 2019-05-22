@@ -201,7 +201,7 @@ p5.prototype.saveGIF = function(pImg, filename) {
   var arrayBuffer = new Uint8Array(props.ab);
   var opts = {
     loop: props.loopLimit,
-    delay: props.delay,
+    delay: props.delay / 10,
     palette: props.globalPalette,
     transparent: 0
   };

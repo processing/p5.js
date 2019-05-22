@@ -144,7 +144,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       var rgb = (r << 16) | (g << 8) | b;
       paletteCombined.push(rgb);
     }
-    console.log(paletteCombined);
     var frames = [];
     var numFrames = gifReader.numFrames();
     var loadGIFFrameIntoImage = function(frameNum, gifReader) {
@@ -185,7 +184,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     pImg.gifProperties = {
       isGif: true,
       displayIndex: 0,
-      delay: gifReader.frameInfo(0).delay * 10,
+      delay: gifReader.frameInfo(0).delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
       loopLimit: loopLimit,
       loopCount: 0,
       frames: frames,
@@ -210,7 +209,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   if (path.indexOf('data:image/') !== 0) {
     img.crossOrigin = 'Anonymous';
   }
-  //reading url to determine whether this is a gif, unsure of approach
   // start loading the image
   img.src = path;
   return pImg;
