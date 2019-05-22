@@ -200,6 +200,7 @@ p5.prototype.saveGIF = function(pImg, filename) {
   var props = pImg.gifProperties;
   var arrayBuffer = new Uint8Array(props.ab);
   var gifWriter = new omggif.GifWriter(arrayBuffer, pImg.width, pImg.height);
+
   for (var i = 0; i < props.numFrames; i++) {
     var palette = [];
     var pixels = new Uint8Array(pImg.width * pImg.height);
@@ -233,7 +234,6 @@ p5.prototype.saveGIF = function(pImg, filename) {
   gifWriter.end();
   var extension = 'gif';
   var blob = new Blob([arrayBuffer], { type: 'image/gif' });
-  // var abBlob = new Blob([props.ab], { type: 'image/gif' }); //correct blob makes the original gif
   p5.prototype.downloadFile(blob, filename, extension);
 };
 
