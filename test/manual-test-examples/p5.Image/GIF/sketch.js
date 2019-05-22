@@ -4,8 +4,8 @@ let layer0, layer1;
 
 function preload() {
   // img0 = loadImage('./assets/counting-gif@endlessLoop-1secDelay.gif');
-  img1 = loadImage('./assets/counting-gif@1xLoop-0.2secDelay.gif');
-  // img1 = loadImage('./assets/giphy.gif');
+  // img1 = loadImage('./assets/counting-gif@1xLoop-0.2secDelay.gif');
+  img1 = loadImage('./assets/giphy.gif');
   //   layer1 = loadImage('./assets/giphy.gif');
 }
 

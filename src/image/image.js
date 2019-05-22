@@ -199,26 +199,36 @@ p5.prototype.saveGIF = function(pImg, filename) {
   // p5._validateParameters('saveGIF', arguments);
   var props = pImg.gifProperties;
   var arrayBuffer = new Uint8Array(props.ab);
-  var opts = {
-    loop: props.loopLimit, //will need to convert back to netscape block
-    delay: props.delay / 10, //shift from ms back into 1/100 of second
-    palette: props.globalPalette
-  };
-  var gifWriter = new omggif.GifWriter(
-    arrayBuffer,
-    pImg.width,
-    pImg.height,
-    opts
-  );
+  var gifWriter = new omggif.GifWriter(arrayBuffer, pImg.width, pImg.height);
   for (var i = 0; i < props.numFrames; i++) {
-    gifWriter.addFrame(
-      0,
-      0,
-      pImg.width,
-      pImg.height,
-      props.frames[i].data,
-      opts
-    );
+    var palette = [];
+    var pixels = new Uint8Array(pImg.width * pImg.height);
+    var data = props.frames[i].data;
+    for (var j = 0, k = 0, jl = data.length; j < jl; j += 4, k++) {
+      var r = Math.floor(data[j + 0] * 0.1) * 10;
+      var g = Math.floor(data[j + 1] * 0.1) * 10;
+      var b = Math.floor(data[j + 2] * 0.1) * 10;
+      var color = (r << 16) | (g << 8) | (b << 0);
+      var index = palette.indexOf(color);
+      if (index === -1) {
+        pixels[k] = palette.length;
+        palette.push(color);
+      } else {
+        pixels[k] = index;
+      }
+    }
+    // force palette to be power of 2
+    var powof2 = 1;
+    while (powof2 < palette.length) {
+      powof2 <<= 1;
+    }
+    palette.length = powof2;
+    var opts = {
+      loop: props.loopLimit, //will need to convert back to netscape block
+      delay: props.delay / 10, //shift from ms back into 1/100 of second
+      palette: new Uint32Array(palette)
+    };
+    gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixels, opts);
   }
   gifWriter.end();
   var extension = 'gif';
