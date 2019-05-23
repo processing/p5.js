@@ -57,9 +57,6 @@ int getInt16(vec2 v) {
   return iv.x * INT(128) + iv.y;
 }
 
-vec2 pixelScale;
-vec2 coverage = vec2(0.0);
-vec2 weight = vec2(0.5);
 const float minDistance = 1.0/8192.0;
 const float hardness = 1.05; // amount of antialias
 
@@ -75,7 +72,7 @@ vec4 getTexel(sampler2D sampler, int pos, ivec2 size) {
   return texture2D(sampler, (vec2(x, y) + 0.5) / vec2(size));
 }
 
-void calulateCrossings(vec2 p0, vec2 p1, vec2 p2, out vec2 C1, out vec2 C2) {
+void calulateCrossings(vec2 p0, vec2 p1, vec2 p2, out vec2 C1, out vec2 C2, vec2 pixelScale) {
 
   // get the coefficients of the quadratic in t
   vec2 a = p0 - p1 * 2.0 + p2;
@@ -99,10 +96,10 @@ void calulateCrossings(vec2 p0, vec2 p1, vec2 p2, out vec2 C1, out vec2 C2) {
   C2 = ((a * t2 - b * 2.0) * t2 + c) * pixelScale;
 }
 
-void coverageX(vec2 p0, vec2 p1, vec2 p2) {
+void coverageX(vec2 p0, vec2 p1, vec2 p2, inout vec2 coverage, inout vec2 weight, vec2 pixelScale) {
 
   vec2 C1, C2;
-  calulateCrossings(p0, p1, p2, C1, C2);
+  calulateCrossings(p0, p1, p2, C1, C2, pixelScale);
 
   // determine on which side of the x-axis the points lie
   bool y0 = p0.y > vTexCoord.y;
@@ -127,10 +124,10 @@ void coverageX(vec2 p0, vec2 p1, vec2 p2) {
 }
 
 // this is essentially the same as coverageX, but with the axes swapped
-void coverageY(vec2 p0, vec2 p1, vec2 p2) {
+void coverageY(vec2 p0, vec2 p1, vec2 p2, inout vec2 coverage, inout vec2 weight, vec2 pixelScale) {
 
   vec2 C1, C2;
-  calulateCrossings(p0, p1, p2, C1, C2);
+  calulateCrossings(p0, p1, p2, C1, C2, pixelScale);
 
   bool x0 = p0.x > vTexCoord.x;
   bool x1 = p1.x > vTexCoord.x;
@@ -148,15 +145,17 @@ void coverageY(vec2 p0, vec2 p1, vec2 p2) {
 }
 
 void main() {
+  
+  vec2 coverage = vec2(0.0);
+  vec2 weight = vec2(0.5);
 
   // calculate the pixel scale based on screen-coordinates
-  pixelScale = hardness / fwidth(vTexCoord);
+  vec2 pixelScale = hardness / fwidth(vTexCoord);
 
   // which grid cell is this pixel in?
   ivec2 gridCoord = ifloor(vTexCoord * vec2(uGridSize));
 
   // intersect curves in this row
-  {
     // the index into the row info bitmap
     int rowIndex = gridCoord.y + uGridOffset.y;
     // fetch the info texel
@@ -182,12 +181,10 @@ void main() {
       vec4 stroke1 = getTexel(uSamplerStrokes, strokePos + INT(1), uStrokeImageSize);
 
       // calculate the coverage
-      coverageX(stroke0.xy, stroke0.zw, stroke1.xy);
+      coverageX(stroke0.xy, stroke0.zw, stroke1.xy, coverage, weight, pixelScale);
     }
-  }
 
   // intersect curves in this column
-  {
     int colIndex = gridCoord.x + uGridOffset.x;
     vec4 colInfo = getTexel(uSamplerCols, colIndex, uGridImageSize);
     int colStrokeIndex = getInt16(colInfo.xy);
@@ -202,9 +199,8 @@ void main() {
       int strokePos = getInt16(strokeIndices.xy);
       vec4 stroke0 = getTexel(uSamplerStrokes, strokePos + INT(0), uStrokeImageSize);
       vec4 stroke1 = getTexel(uSamplerStrokes, strokePos + INT(1), uStrokeImageSize);
-      coverageY(stroke0.xy, stroke0.zw, stroke1.xy);
+      coverageY(stroke0.xy, stroke0.zw, stroke1.xy, coverage, weight, pixelScale);
     }
-  }
 
   weight = saturate(1.0 - weight * 2.0);
   float distance = max(weight.x + weight.y, minDistance); // manhattan approx.
