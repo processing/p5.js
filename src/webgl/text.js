@@ -662,6 +662,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   this._applyColorBlend(this.curFillColor);
 
   var g = this.gHash['glyph'];
+
   if (!g) {
     // create the geometry for rendering a quad
     var geom = (this._textGeom = new p5.Geometry(1, 1, function() {
@@ -677,10 +678,32 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   // bind the shader buffers
+
+  // position buffers
   this._bindBuffer(g.vertexBuffer, gl.ARRAY_BUFFER);
   sh.enableAttrib(sh.attributes.aPosition.location, 3, gl.FLOAT, false, 0, 0);
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
-  this._bindBuffer(g.uvBuffer, gl.ARRAY_BUFFER);
+
+  // texcoords buffers
+  // For some reason the uvs being created and bound in create buffers are not
+  // being retained on mobile hardware. So we explicitly bind them again here.
+
+  // This is just a copy of the uv's in the larger function scope
+  var uvs = [];
+  for (var i = 0; i <= 1; i++) {
+    for (var j = 0; j <= 1; j++) {
+      uvs.push(j, i);
+    }
+  }
+
+  this._bindBuffer(
+    gl.createBuffer(),
+    gl.ARRAY_BUFFER,
+    uvs,
+    Float32Array,
+    gl.STATIC_DRAW
+  );
+
   sh.enableAttrib(sh.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
 
   // this will have to do for now...
