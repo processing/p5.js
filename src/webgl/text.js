@@ -678,10 +678,10 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
 
   // bind the shader buffers
   this._bindBuffer(g.vertexBuffer, gl.ARRAY_BUFFER);
-  sh.enableAttrib(sh.attributes.aPosition.location, 3, gl.FLOAT, false, 0, 0);
+  sh.enableAttrib(sh.attributes.aPosition, 3, gl.FLOAT, false, 0, 0);
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
   this._bindBuffer(g.uvBuffer, gl.ARRAY_BUFFER);
-  sh.enableAttrib(sh.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
+  sh.enableAttrib(sh.attributes.aTexCoord, 2, gl.FLOAT, false, 0, 0);
 
   // this will have to do for now...
   sh.setUniform('uMaterialColor', this.curFillColor);
