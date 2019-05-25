@@ -152,7 +152,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     // allocate space for faces
     if (!indexBuffer) indexBuffer = geometry.indexBuffer = gl.createBuffer();
     var vals = p5.RendererGL.prototype._flatten(model.faces);
-    this._bindBuffer(indexBuffer, vals, gl.ELEMENT_ARRAY_BUFFER, Uint16Array);
+    this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, Uint16Array);
 
     // the vertex count is based on the number of faces
     geometry.vertexCount = model.faces.length * 3;
