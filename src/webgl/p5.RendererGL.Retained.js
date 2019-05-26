@@ -31,6 +31,11 @@ var fillBuffers = [
   new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
 ];
 
+p5.RendererGL._textBuffers = [
+  new BufferDef(3, 'vertices', 'vertexBuffer', 'aPosition', _vToNArray),
+  new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
+];
+
 var hashCount = 0;
 /**
  * _initBufferDefaults

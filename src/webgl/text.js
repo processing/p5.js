@@ -3,7 +3,7 @@
 var p5 = require('../core/main');
 var constants = require('../core/constants');
 require('./p5.Shader');
-require('./p5.RendererGL');
+require('./p5.RendererGL.Retained');
 
 // Text/Typography
 // @TODO:
@@ -677,11 +677,8 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   // bind the shader buffers
-  this._bindBuffer(g.vertexBuffer, gl.ARRAY_BUFFER);
-  sh.enableAttrib(sh.attributes.aPosition, 3, gl.FLOAT, false, 0, 0);
+  this._prepareBuffers(g, sh, p5.RendererGL._textBuffers);
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
-  this._bindBuffer(g.uvBuffer, gl.ARRAY_BUFFER);
-  sh.enableAttrib(sh.attributes.aTexCoord, 2, gl.FLOAT, false, 0, 0);
 
   // this will have to do for now...
   sh.setUniform('uMaterialColor', this.curFillColor);
