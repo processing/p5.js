@@ -190,10 +190,14 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     strokeShader.unbindShader();
   }
 
-  if (this._doFill !== false) {
+  if (this._doFill) {
     var fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
     this._prepareBuffers(g, fillShader, fillBuffers);
+    if (g.indexBuffer) {
+      //vertex index buffer
+      this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+    }
     this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);
     fillShader.unbindShader();
