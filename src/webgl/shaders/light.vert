@@ -17,6 +17,9 @@ uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
 uniform float uShininess;
+uniform float constAtt;
+uniform float linearAtt;
+uniform float quadAtt;
 
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;

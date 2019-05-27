@@ -14,6 +14,9 @@ uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
 uniform float uShininess;
+uniform float constAtt;
+uniform float linearAtt;
+uniform float quadAtt;
 
 uniform int uDirectionalLightCount;
 uniform int uPointLightCount;

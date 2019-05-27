@@ -77,6 +77,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useNormalMaterial = false;
   this._useShininess = 1;
 
+  // Falloff variables
+  this.constAtt = 1;
+  this.linearAtt = 0;
+  this.quadAtt = 0;
+
   /**
    * model view, projection, & normal
    * matrices
@@ -858,6 +863,10 @@ p5.RendererGL.prototype.push = function() {
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useShininess = this._useShininess;
 
+  properties.constAtt = this._renderer.constAtt;
+  properties.linearAtt = this._renderer.linearAtt;
+  properties.quadAtt = this._renderer.quadAtt;
+
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;
   properties._tex = this._tex;
@@ -1102,6 +1111,11 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   var ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+  fillShader.setUniform('constAtt', this.constAtt);
+  fillShader.setUniform('linearAtt', this.linearAtt);
+  fillShader.setUniform('quadAtt', this.quadAtt);
+
   fillShader.bindTextures();
 };
 

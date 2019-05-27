@@ -315,4 +315,39 @@ p5.prototype.lights = function() {
   return this;
 };
 
+/**
+ * @method fallOff
+ * @chainable
+ */
+p5.prototype.fallOff = function() {
+  this._assert3d('fallOff');
+  p5._validateParameters('fallOff', arguments);
+
+  var constAtt = arguments[0];
+  var linearAtt = arguments[1];
+  var quadAtt = arguments[2];
+
+  if (constAtt < 0) {
+    constAtt = 0;
+  }
+
+  if (linearAtt < 0) {
+    linearAtt = 0;
+  }
+
+  if (quadAtt < 0) {
+    quadAtt = 0;
+  }
+
+  if (constAtt === 0 && (linearAtt === 0 && quadAtt === 0)) {
+    constAtt = 1;
+  }
+
+  this._renderer.constAtt = constAtt;
+  this._renderer.linearAtt = linearAtt;
+  this._renderer.quadAtt = quadAtt;
+
+  return this;
+};
+
 module.exports = p5;
