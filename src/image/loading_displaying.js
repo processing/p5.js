@@ -135,51 +135,53 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     var gifReader = new omggif.GifReader(arrayBuffer);
     var frames = [];
     var numFrames = gifReader.numFrames();
-    var loadGIFFrameIntoImage = function(frameNum, gifReader) {
-      var framePixels = [];
-      try {
-        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-      } catch (e) {
-        p5._friendlyFileLoadError(8, pImg.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
+    if (numFrames > 1) {
+      var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+        var framePixels = [];
+        try {
+          gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+        } catch (e) {
+          p5._friendlyFileLoadError(8, pImg.src);
+          if (typeof failureCallback === 'function') {
+            failureCallback(e);
+          } else {
+            console.error(e);
+          }
         }
+        return new Uint8ClampedArray(framePixels);
+      };
+
+      for (var j = 0; j < numFrames; j++) {
+        var framePixels = loadGIFFrameIntoImage(j, gifReader);
+        var imageData = new ImageData(framePixels, pImg.width, pImg.height);
+        frames.push(imageData);
       }
-      return new Uint8ClampedArray(framePixels);
-    };
 
-    for (var j = 0; j < numFrames; j++) {
-      var framePixels = loadGIFFrameIntoImage(j, gifReader);
-      var imageData = new ImageData(framePixels, pImg.width, pImg.height);
-      frames.push(imageData);
+      //Uses Netscape block encoding
+      //to repeat forever, this will be 0
+      //to repeat just once, this will be null
+      //to repeat N times (1<N), should contain integer for loop number
+      //this is changed to more usable values for us
+      //to repeat forever, loopCount = null
+      //everything else is just the number of loops
+      var loopLimit = gifReader.loopCount();
+      if (loopLimit === null) {
+        loopLimit = 1;
+      } else if (loopLimit === 0) {
+        loopLimit = null;
+      }
+
+      pImg.gifProperties = {
+        displayIndex: 0,
+        delay: gifReader.frameInfo(0).delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
+        loopLimit: loopLimit,
+        loopCount: 0,
+        frames: frames,
+        numFrames: numFrames,
+        playing: true,
+        timeDisplayed: 0
+      };
     }
-
-    //Uses Netscape block encoding
-    //to repeat forever, this will be 0
-    //to repeat just once, this will be null
-    //to repeat N times (1<N), should contain integer for loop number
-    //this is changed to more usable values for us
-    //to repeat forever, loopCount = null
-    //everything else is just the number of loops
-    var loopLimit = gifReader.loopCount();
-    if (loopLimit === null) {
-      loopLimit = 1;
-    } else if (loopLimit === 0) {
-      loopLimit = null;
-    }
-
-    pImg.gifProperties = {
-      displayIndex: 0,
-      delay: gifReader.frameInfo(0).delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
-      loopLimit: loopLimit,
-      loopCount: 0,
-      frames: frames,
-      numFrames: numFrames,
-      playing: true,
-      timeDisplayed: 0
-    };
 
     if (typeof successCallback === 'function') {
       successCallback(pImg);
