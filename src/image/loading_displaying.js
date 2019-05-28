@@ -87,7 +87,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         function(arrayBuffer) {
           if (arrayBuffer) {
             var byteArray = new Uint8Array(arrayBuffer);
-            _createGIF(
+            _createGif(
               byteArray,
               pImg,
               successCallback,
@@ -125,7 +125,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   };
 
   //helper function for decoding and setting up GIF properties
-  function _createGIF(
+  function _createGif(
     arrayBuffer,
     pImg,
     successCallback,
@@ -133,17 +133,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     finishCallback
   ) {
     var gifReader = new omggif.GifReader(arrayBuffer);
-    var paletteOffset = gifReader.frameInfo(0).palette_offset;
-    var paletteEnd = paletteOffset + gifReader.frameInfo(0).palette_size * 3;
-    var paletteSeparated = arrayBuffer.slice(paletteOffset, paletteEnd);
-    var paletteCombined = [];
-    for (var i = 0, l = 0; i < paletteSeparated.length; i += 3, l++) {
-      var r = paletteSeparated[i] & 0xff;
-      var g = paletteSeparated[i + 1] & 0xff;
-      var b = paletteSeparated[i + 2] & 0xff;
-      var rgb = (r << 16) | (g << 8) | b;
-      paletteCombined.push(rgb);
-    }
     var frames = [];
     var numFrames = gifReader.numFrames();
     var loadGIFFrameIntoImage = function(frameNum, gifReader) {
@@ -182,7 +171,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     }
 
     pImg.gifProperties = {
-      isGif: true,
       displayIndex: 0,
       delay: gifReader.frameInfo(0).delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
       loopLimit: loopLimit,
@@ -191,8 +179,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       numFrames: numFrames,
       playing: true,
       timeDisplayed: 0,
-      globalPalette: paletteCombined,
-      ab: arrayBuffer
+      numBytes: arrayBuffer.length
     };
 
     if (typeof successCallback === 'function') {

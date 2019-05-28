@@ -194,28 +194,40 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.saveGIF = function(pImg, filename) {
-  //TODO
-  // p5._validateParameters('saveGIF', arguments);
+p5.prototype.saveGif = function(pImg, filename) {
   var props = pImg.gifProperties;
-  var arrayBuffer = new Uint8Array(props.ab);
-  var gifWriter = new omggif.GifWriter(arrayBuffer, pImg.width, pImg.height);
 
+  //convert loopLimit back into Netscape Block formatting
+  var loopLimit = props.loopLimit;
+  if (loopLimit === 1) {
+    loopLimit = null;
+  } else if (loopLimit === null) {
+    loopLimit = 0;
+  }
+  var opts = {
+    loop: props.loopLimit, //will need to convert back to netscape block
+    delay: props.delay / 10 //shift from ms back into 1/100 of second
+  };
+
+  var buffer = new Uint8Array(props.numBytes);
+  var gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height);
+  var palette = [];
+  //loop over frames and build pixel -> palette index for each
   for (var i = 0; i < props.numFrames; i++) {
-    var palette = [];
-    var pixels = new Uint8Array(pImg.width * pImg.height);
+    var pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
     var data = props.frames[i].data;
-    for (var j = 0, k = 0, jl = data.length; j < jl; j += 4, k++) {
-      var r = Math.floor(data[j + 0] * 0.1) * 10;
-      var g = Math.floor(data[j + 1] * 0.1) * 10;
-      var b = Math.floor(data[j + 2] * 0.1) * 10;
+    var dataLength = data.length;
+    for (var j = 0, k = 0; j < dataLength; j += 4, k++) {
+      var r = data[j + 0];
+      var g = data[j + 1];
+      var b = data[j + 2];
       var color = (r << 16) | (g << 8) | (b << 0);
       var index = palette.indexOf(color);
       if (index === -1) {
-        pixels[k] = palette.length;
+        pixelPaletteIndex[k] = palette.length;
         palette.push(color);
       } else {
-        pixels[k] = index;
+        pixelPaletteIndex[k] = index;
       }
     }
     // force palette to be power of 2
@@ -224,16 +236,13 @@ p5.prototype.saveGIF = function(pImg, filename) {
       powof2 <<= 1;
     }
     palette.length = powof2;
-    var opts = {
-      loop: props.loopLimit, //will need to convert back to netscape block
-      delay: props.delay / 10, //shift from ms back into 1/100 of second
-      palette: new Uint32Array(palette)
-    };
-    gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixels, opts);
+
+    opts.palette = new Uint32Array(palette);
+    gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
   }
   gifWriter.end();
   var extension = 'gif';
-  var blob = new Blob([arrayBuffer], { type: 'image/gif' });
+  var blob = new Blob([buffer], { type: 'image/gif' });
   p5.prototype.downloadFile(blob, filename, extension);
 };
 

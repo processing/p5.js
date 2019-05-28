@@ -798,8 +798,10 @@ p5.Image.prototype.isModified = function() {
 /**
  * Saves the image to a file and force the browser to download it.
  * Accepts two strings for filename and file extension
- * Supports png (default) and jpg.
- *
+ * Supports png (default), jpg, and gif
+ *<br><br>
+ * Note that the file will only be downloaded as an animated GIF
+ * if the p5.Image was loaded from a GIF file.
  * @method save
  * @param {String} filename give your file a name
  * @param  {String} extension 'png' or 'jpg'
@@ -827,84 +829,65 @@ p5.Image.prototype.isModified = function() {
  *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  if (this.isGIF()) {
-    p5.prototype.saveGIF(this, filename);
+  if (this.gifProperties) {
+    p5.prototype.saveGif(this, filename);
   } else {
     p5.prototype.saveCanvas(this.canvas, filename, extension);
   }
 };
 
-//GIF Section
+// GIF Section
 
 p5.Image.prototype.reset = function() {
-  if (!this.isGIF(true)) {
-    return;
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    props.playing = true;
+    props.timeSinceStart = 0;
+    props.timeDisplayed = 0;
+    props.loopCount = 0;
+    props.displayIndex = 0;
+    this.drawingContext.putImageData(props.frames[0], 0, 0);
   }
-
-  var props = this.gifProperties;
-  props.playing = true;
-  props.timeSinceStart = 0;
-  props.timeDisplayed = 0;
-  props.loopCount = 0;
-  props.displayIndex = 0;
-  this.drawingContext.putImageData(props.frames[0], 0, 0);
 };
 
 p5.Image.prototype.getCurrentFrame = function() {
-  if (!this.isGIF(true)) {
-    return;
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    return props.displayIndex % props.numFrames;
   }
-  var props = this.gifProperties;
-  return props.displayIndex % props.numFrames;
 };
 
 p5.Image.prototype.setFrame = function(index) {
-  if (!this.isGIF(true)) {
-    return;
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    if (index >= props.numFrames) {
+      console.log(
+        'Cannot set GIF to a frame number that is higher than total number of frames.'
+      );
+      return;
+    }
+    props.timeDisplayed = 0;
+    props.displayIndex = index;
+    this.drawingContext.putImageData(props.frames[index], 0, 0);
   }
-  var props = this.gifProperties;
-  if (index >= props.numFrames) {
-    console.warn(
-      'Cannot set GIF to a frame number that is higher than total number of frames.'
-    );
-    return;
-  }
-  props.timeDisplayed = 0;
-  props.displayIndex = index;
-  this.drawingContext.putImageData(props.frames[index], 0, 0);
 };
 
 p5.Image.prototype.play = function() {
-  if (!this.isGIF(true)) {
-    return;
+  if (!this.gifProperties) {
+    this.gifProperties.playing = true;
   }
-
-  this.gifProperties.playing = true;
 };
 
 p5.Image.prototype.pause = function() {
-  if (!this.isGIF(true)) {
-    return;
+  if (this.gifProperties) {
+    this.gifProperties.playing = false;
   }
-  this.gifProperties.playing = false;
 };
 
 p5.Image.prototype.delay = function(d) {
-  if (!this.isGIF(true)) {
-    return;
+  if (this.gifProperties) {
+    this.gifProperties.delay = d;
   }
-  this.gifProperties.delay = d;
-};
-
-p5.Image.prototype.isGIF = function(doLogError) {
-  //TODO handle this w friendlier error
-  var isGIF = this.gifProperties !== null;
-  if (doLogError && !isGIF) {
-    console.error(
-      'This is not a GIF. This method only works with multi-frame GIF files'
-    );
-  }
-  return isGIF;
 };
 
 module.exports = p5.Image;
