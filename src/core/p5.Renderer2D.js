@@ -122,6 +122,7 @@ p5.Renderer2D.prototype.image = function(
       }
     }
   }
+
   try {
     if (this._tint) {
       if (p5.MediaElement && img instanceof p5.MediaElement) {
@@ -415,6 +416,12 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   y *= pd;
   w *= pd;
   h *= pd;
+
+  if (this.gifProperties) {
+    this.gifProperties.frames[this.gifProperties.displayIndex] =
+      pixelsState.imageData;
+  }
+
   this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
 
   if (x !== 0 || y !== 0 || w !== this.width || h !== this.height) {

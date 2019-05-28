@@ -270,6 +270,9 @@ p5.Image.prototype.loadPixels = function() {
 /**
  * Updates the backing canvas for this image with the contents of
  * the [pixels] array.
+ * <br><br>
+ * If this image is an animated GIF then the pixels will be updated
+ * in the frame that is currently displayed.
  *
  * @method updatePixels
  * @param {Integer} x x-offset of the target update area for the
