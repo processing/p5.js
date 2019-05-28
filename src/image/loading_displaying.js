@@ -178,8 +178,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       frames: frames,
       numFrames: numFrames,
       playing: true,
-      timeDisplayed: 0,
-      numBytes: arrayBuffer.length
+      timeDisplayed: 0
     };
 
     if (typeof successCallback === 'function') {

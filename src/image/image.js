@@ -204,13 +204,16 @@ p5.prototype.saveGif = function(pImg, filename) {
   } else if (loopLimit === null) {
     loopLimit = 0;
   }
+  var gifFormatDelay = props.delay / 10;
   var opts = {
-    loop: props.loopLimit, //will need to convert back to netscape block
-    delay: props.delay / 10 //shift from ms back into 1/100 of second
+    loop: loopLimit,
+    delay: gifFormatDelay
   };
 
-  var buffer = new Uint8Array(props.numBytes);
-  var gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height);
+  var buffer = new Uint8Array(
+    pImg.width * pImg.height * props.numFrames * gifFormatDelay
+  );
+  var gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
   var palette = [];
   //loop over frames and build pixel -> palette index for each
   for (var i = 0; i < props.numFrames; i++) {
@@ -236,7 +239,6 @@ p5.prototype.saveGif = function(pImg, filename) {
       powof2 <<= 1;
     }
     palette.length = powof2;
-
     opts.palette = new Uint32Array(palette);
     gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
   }

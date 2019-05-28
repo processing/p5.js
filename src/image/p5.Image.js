@@ -468,6 +468,31 @@ p5.Image.prototype.resize = function(width, height) {
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
+
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    //adapted from github.com/LinusU/resize-image-data
+    var nearestNeighbor = function(src, dst) {
+      var pos = 0;
+      for (var y = 0; y < dst.height; y++) {
+        for (var x = 0; x < dst.width; x++) {
+          var srcX = Math.floor(x * src.width / dst.width);
+          var srcY = Math.floor(y * src.height / dst.height);
+          var srcPos = (srcY * src.width + srcX) * 4;
+          dst.data[pos++] = src.data[srcPos++]; // R
+          dst.data[pos++] = src.data[srcPos++]; // G
+          dst.data[pos++] = src.data[srcPos++]; // B
+          dst.data[pos++] = src.data[srcPos++]; // A
+        }
+      }
+    };
+    for (var i = 0; i < props.numFrames; i++) {
+      var resizedImageData = this.drawingContext.createImageData(width, height);
+      nearestNeighbor(props.frames[i], resizedImageData);
+      props.frames[i] = resizedImageData;
+    }
+  }
+
   // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
