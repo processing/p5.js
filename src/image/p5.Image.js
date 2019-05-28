@@ -865,7 +865,33 @@ p5.Image.prototype.save = function(filename, extension) {
 };
 
 // GIF Section
-
+/**
+ * Starts a animated GIF over at the beginning state.
+ * Does nothing if Image was not created with an animated GIF.
+ *
+ * @method reset
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * function draw() {
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   // Click to reset the GIF
+ *   gif.reset();
+ * }
+ * </code></div>
+ * @alt
+ * image of a GIF that counts from 0 - 9 repeatedly, changing
+ * every second. When you click it starts back over at 0.
+ *
+ */
 p5.Image.prototype.reset = function() {
   if (this.gifProperties) {
     var props = this.gifProperties;
@@ -878,6 +904,37 @@ p5.Image.prototype.reset = function() {
   }
 };
 
+/**
+ * Gets the index for the frame that is currently visible in an animated GIF.
+ * Nothing is returned if run on an Image that is not an animated GIF.
+ *
+ * @method getCurrentFrame
+ * @return {Number}       The index for the currently displaying frame in animated GIF
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * function setup() {
+ *   fill(149, 66, 244);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gif, 0, 0);
+ *   ellipse(gif.getCurrentFrame() * 10, height / 2, 40);
+ * }
+ * </code></div>
+ * @alt
+ * image of a GIF that counts up 1 with every second, rounding
+ * back to 0 after 9. An ellipse moves from the left side of the screen
+ * to the right as the number on the GIF goes up.
+ *
+ */
 p5.Image.prototype.getCurrentFrame = function() {
   if (this.gifProperties) {
     var props = this.gifProperties;
@@ -885,33 +942,165 @@ p5.Image.prototype.getCurrentFrame = function() {
   }
 };
 
+/**
+ * Sets the index of the frame that is currently visible in an animated GIF
+ *
+ * @method setFrame
+ * @param {Number}       index the index for the frame that should be displayed
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF frames change
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, gif.numFrames()));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A number that goes down as the mouse goes higher, and up as it goes lower
+ *
+ */
 p5.Image.prototype.setFrame = function(index) {
   if (this.gifProperties) {
     var props = this.gifProperties;
-    if (index >= props.numFrames) {
+    if (index < props.numFrames && index >= 0) {
+      props.timeDisplayed = 0;
+      props.displayIndex = index;
+      this.drawingContext.putImageData(props.frames[index], 0, 0);
+    } else {
       console.log(
-        'Cannot set GIF to a frame number that is higher than total number of frames.'
+        'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
       );
-      return;
     }
-    props.timeDisplayed = 0;
-    props.displayIndex = index;
-    this.drawingContext.putImageData(props.frames[index], 0, 0);
   }
 };
 
+/**
+ * Returns the number of frames in an animated GIF
+ *
+ * @method numFrames
+ * @return {Number}       The number of frames in the animated GIF
+ */
+p5.Image.prototype.numFrames = function() {
+  if (this.gifProperties) {
+    return this.gifProperties.numFrames;
+  }
+};
+
+/**
+ * Causes an animated GIF paused with <a href="#/p5.Image/pause">pause()</a>
+ * to begin playing again
+ *
+ * @method play
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * function draw() {
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * image of a GIF that counts up 1 with every second, when
+ * you click the counting pauses. It continues upon release
+ * of the mouse button.
+ *
+ */
 p5.Image.prototype.play = function() {
-  if (!this.gifProperties) {
+  if (this.gifProperties) {
     this.gifProperties.playing = true;
   }
 };
 
+/**
+ * Causes an animated GIF to pause
+ *
+ * @method pause
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * function draw() {
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * image of a GIF that counts up 1 with every second, when
+ * you click the counting pauses. It continues upon release
+ * of the mouse button.
+ *
+ */
 p5.Image.prototype.pause = function() {
   if (this.gifProperties) {
     this.gifProperties.playing = false;
   }
 };
 
+/**
+ * Changes the delay between frames in an animated GIF
+ *
+ * @method delay
+ * @param {Number}    d the amount in milliseconds to delay between switching frames
+ * @example
+ * <div><code>
+ * let gifFast, gifSlow;
+ *
+ * function preload() {
+ *   gifFast = loadImage('assets/animated-counting.gif');
+ *   gifSlow = loadImage('assets/animated-counting.gif');
+ * }
+ *
+ * function setup() {
+ *   gifFast.resize(width / 2, height / 2);
+ *   gifSlow.resize(width / 2, height / 2);
+ *
+ *   //Change the delay here
+ *   gifFast.delay(200);
+ *   gifSlow.delay(4000);
+ * }
+ *
+ * function draw() {
+ *   image(gifFast, 0, 0);
+ *   image(gifSlow, width / 2, 0);
+ * }
+ * </code></div>
+ * @alt
+ * image of a GIF that counts up 1 with every second, when
+ * you click the counting pauses. It continues upon release
+ * of the mouse button.
+ *
+ */
 p5.Image.prototype.delay = function(d) {
   if (this.gifProperties) {
     this.gifProperties.delay = d;
