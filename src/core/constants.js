@@ -11,11 +11,14 @@ var PI = Math.PI;
 module.exports = {
   // GRAPHICS RENDERER
   /**
+   * The default, two-dimensional renderer.
    * @property {String} P2D
    * @final
    */
   P2D: 'p2d',
   /**
+   * One of the two render modes in p5.js: P2D (default renderer) and WEBGL
+   * Enables 3D render by introducing the third dimension: Z
    * @property {String} WEBGL
    * @final
    */

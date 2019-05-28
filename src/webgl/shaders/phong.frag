@@ -71,27 +71,25 @@ void main(void) {
   float specular = 0.0;
 
   for (int j = 0; j < 8; j++) {
-    if (uDirectionalLightCount == j) break;
+    if( j < uDirectionalLightCount){
+      vec3 dir = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
+      LightResult result = light(dir);
+      diffuse += result.diffuse * uDirectionalColor[j];
+      specular += result.specular;
+    }
 
-    vec3 dir = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
-    LightResult result = light(dir);
-    diffuse += result.diffuse * uDirectionalColor[j];
-    specular += result.specular;
-  }
+    if( j < uPointLightCount){
+      vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[j], 1.0)).xyz;
+      vec3 lightVector = vViewPosition - lightPosition;
+    
+      //calculate attenuation
+      float lightDistance = length(lightVector);
+      float falloff = 500.0 / (lightDistance + 500.0);
 
-  for (int k = 0; k < 8; k++) {
-    if (uPointLightCount == k) break;
-
-    vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[k], 1.0)).xyz;
-    vec3 lightVector = vViewPosition - lightPosition;
-	
-    //calculate attenuation
-    float lightDistance = length(lightVector);
-    float falloff = 500.0 / (lightDistance + 500.0);
-
-    LightResult result = light(lightVector);
-    diffuse += result.diffuse * falloff * uPointLightColor[k];
-    specular += result.specular * falloff;
+      LightResult result = light(lightVector);
+      diffuse += result.diffuse * falloff * uPointLightColor[j];
+      specular += result.specular * falloff;
+    }
   }
 
   gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) : uMaterialColor;

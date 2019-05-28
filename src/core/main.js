@@ -374,6 +374,8 @@ var p5 = function(sketch, node, sync) {
       //mandatory update values(matrixs and stack)
       this.redraw();
       this._frameRate = 1000.0 / (now - this._lastFrameTime);
+      this.deltaTime = now - this._lastFrameTime;
+      this._setProperty('deltaTime', this.deltaTime);
       this._lastFrameTime = now;
 
       // If the user is actually using mouse module, then update

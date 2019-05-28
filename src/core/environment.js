@@ -78,6 +78,57 @@ p5.prototype.print = function() {
 p5.prototype.frameCount = 0;
 
 /**
+ * The system variable <a href="#/p5/deltaTime">deltaTime</a> contains the time
+ * difference between the beginning of the previous frame and the beginning
+ * of the current frame in milliseconds.
+ * <br><br>
+ * This variable is useful for creating time sensitive animation or physics
+ * calculation that should stay constant regardless of frame rate.
+ *
+ * @property {Integer} deltaTime
+ * @readOnly
+ * @example
+ * <div><code>
+ * let rectX = 0;
+ * let fr = 30; //starting FPS
+ * let clr;
+ *
+ * function setup() {
+ *   background(200);
+ *   frameRate(fr); // Attempt to refresh at starting FPS
+ *   clr = color(255, 0, 0);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rectX = rectX + 1 * (deltaTime / 50); // Move Rectangle in relation to deltaTime
+ *
+ *   if (rectX >= width) {
+ *     // If you go off screen.
+ *     if (fr === 30) {
+ *       clr = color(0, 0, 255);
+ *       fr = 10;
+ *       frameRate(fr); // make frameRate 10 FPS
+ *     } else {
+ *       clr = color(255, 0, 0);
+ *       fr = 30;
+ *       frameRate(fr); // make frameRate 30 FPS
+ *     }
+ *     rectX = 0;
+ *   }
+ *   fill(clr);
+ *   rect(rectX, 40, 20, 20);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * red rect moves left to right, followed by blue rect moving at the same speed
+ * with a lower frame rate. Loops.
+ *
+ */
+p5.prototype.deltaTime = 0;
+
+/**
  * Confirms if the window a p5.js program is in is "focused," meaning that
  * the sketch will accept mouse or keyboard input. This variable is
  * "true" if the window is focused and "false" if not.
