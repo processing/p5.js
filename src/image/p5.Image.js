@@ -896,7 +896,6 @@ p5.Image.prototype.save = function(filename, extension) {
 // GIF Section
 /**
  * Starts an animated GIF over at the beginning state.
- * Does nothing if Image was not created with an animated GIF.
  *
  * @method reset
  * @example
@@ -908,6 +907,7 @@ p5.Image.prototype.save = function(filename, extension) {
  * }
  *
  * function draw() {
+ *   background(255);
  *   image(gif, 0, 0);
  * }
  *
@@ -935,7 +935,6 @@ p5.Image.prototype.reset = function() {
 
 /**
  * Gets the index for the frame that is currently visible in an animated GIF.
- * Nothing is returned if run on an Image that is not an animated GIF.
  *
  * @method getCurrentFrame
  * @return {Number}       The index for the currently displaying frame in animated GIF
@@ -948,14 +947,19 @@ p5.Image.prototype.reset = function() {
  * }
  *
  * function setup() {
- *   fill(149, 66, 244);
  *   noStroke();
  * }
  *
  * function draw() {
  *   background(255);
+ *   let frame = gif.getCurrentFrame();
+ *   if (frame % 2 === 0) {
+ *     fill(149, 66, 244);
+ *   } else {
+ *     fill(106, 225, 140);
+ *   }
  *   image(gif, 0, 0);
- *   ellipse(gif.getCurrentFrame() * 10, height / 2, 40);
+ *   ellipse(frame * 10, height / 2, 40);
  * }
  * </code></div>
  * @alt
@@ -987,6 +991,7 @@ p5.Image.prototype.getCurrentFrame = function() {
  * // Move your mouse up and down over canvas to see the GIF frames change
  * function draw() {
  *   gif.pause();
+ *   background(255);
  *   image(gif, 0, 0);
  *   let frameNumber = floor(map(mouseY, 0, height, 0, gif.numFrames()));
  *   gif.setFrame(frameNumber);
@@ -1024,8 +1029,8 @@ p5.Image.prototype.numFrames = function() {
 };
 
 /**
- * Causes an animated GIF paused with <a href="#/p5.Image/pause">pause()</a>
- * to begin playing again
+ * Plays an animated GIF that was paused with
+ * <a href="#/p5.Image/pause">pause()</a>
  *
  * @method play
  * @example
@@ -1037,6 +1042,7 @@ p5.Image.prototype.numFrames = function() {
  * }
  *
  * function draw() {
+ *   background(255);
  *   image(gif, 0, 0);
  * }
  *
@@ -1061,7 +1067,7 @@ p5.Image.prototype.play = function() {
 };
 
 /**
- * Causes an animated GIF to pause
+ * Pauses an animated GIF.
  *
  * @method pause
  * @example
@@ -1073,6 +1079,7 @@ p5.Image.prototype.play = function() {
  * }
  *
  * function draw() {
+ *   background(255);
  *   image(gif, 0, 0);
  * }
  *
@@ -1120,14 +1127,14 @@ p5.Image.prototype.pause = function() {
  * }
  *
  * function draw() {
+ *   background(255);
  *   image(gifFast, 0, 0);
  *   image(gifSlow, width / 2, 0);
  * }
  * </code></div>
  * @alt
- * image of a GIF that counts up 1 with every second, when
- * you click the counting pauses. It continues upon release
- * of the mouse button.
+ * Two animated gifs count up side by side, the one on the left
+ * counts up much faster
  *
  */
 p5.Image.prototype.delay = function(d) {
