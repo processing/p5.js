@@ -100,27 +100,7 @@ p5.Renderer2D.prototype.image = function(
 ) {
   var cnv;
   if (img.gifProperties) {
-    var props = img.gifProperties;
-    if (props.playing) {
-      //to be replaced with deltaTime
-      props.timeDisplayed += this._pInst.millis() - this._pInst._lastFrameTime;
-    }
-
-    if (props.timeDisplayed >= props.delay) {
-      //GIF is bound to 'realtime' so can skip frames
-      var skips = Math.floor(props.timeDisplayed / props.delay);
-      props.timeDisplayed = 0;
-      props.displayIndex += skips;
-      props.loopCount = Math.floor(props.displayIndex / props.numFrames);
-      if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
-        props.playing = false;
-      } else {
-        var ind = props.displayIndex % props.numFrames;
-        img.drawingContext.putImageData(props.frames[ind], 0, 0);
-        props.displayIndex = ind;
-        img._pixelsDirty = true;
-      }
-    }
+    img._animateGif(this._pInst);
   }
 
   try {

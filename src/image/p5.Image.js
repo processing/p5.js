@@ -223,6 +223,35 @@ p5.Image = function(width, height) {
 };
 
 /**
+ * Helper function for animating GIF-based images with time
+ *
+ */
+p5.Image.prototype._animateGif = function(pInst) {
+  var props = this.gifProperties;
+  if (props.playing) {
+    //to be replaced with deltaTime
+    props.timeDisplayed += pInst.millis() - pInst._lastFrameTime;
+  }
+
+  if (props.timeDisplayed >= props.delay) {
+    //GIF is bound to 'realtime' so can skip frames
+    var skips = Math.floor(props.timeDisplayed / props.delay);
+    props.timeDisplayed = 0;
+    props.displayIndex += skips;
+    props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+    if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+      props.playing = false;
+    } else {
+      var ind = props.displayIndex % props.numFrames;
+      this.drawingContext.putImageData(props.frames[ind], 0, 0);
+      props.displayIndex = ind;
+      this._pixelsDirty = true;
+      this.setModified(true);
+    }
+  }
+};
+
+/**
  * Helper fxn for sharing pixel methods
  *
  */
@@ -866,7 +895,7 @@ p5.Image.prototype.save = function(filename, extension) {
 
 // GIF Section
 /**
- * Starts a animated GIF over at the beginning state.
+ * Starts an animated GIF over at the beginning state.
  * Does nothing if Image was not created with an animated GIF.
  *
  * @method reset
