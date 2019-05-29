@@ -43,7 +43,7 @@ var hashCount = 0;
  * @description initializes buffer defaults. runs each time a new geometry is
  * registered
  * @param  {String} gId  key of the geometry object
- * @returns {Object} a new geometry object
+ * @returns {Object} a new buffer object
  */
 p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this._freeBuffers(gId);
@@ -61,8 +61,8 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-  var geometry = this.gHash[gId];
-  if (!geometry) {
+  var buffers = this.gHash[gId];
+  if (!buffers) {
     return;
   }
 
@@ -70,14 +70,16 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   hashCount--;
 
   var gl = this.GL;
-  geometry.indexBuffer && gl.deleteBuffer(geometry.indexBuffer);
+  if (buffers.indexBuffer) {
+    gl.deleteBuffer(buffers.indexBuffer);
+  }
 
   function freeBuffers(defs) {
     for (var i = 0; i < defs.length; i++) {
       var def = defs[i];
-      if (geometry[def.dst]) {
-        gl.deleteBuffer(geometry[def.dst]);
-        geometry[def.dst] = null;
+      if (buffers[def.dst]) {
+        gl.deleteBuffer(buffers[def.dst]);
+        buffers[def.dst] = null;
       }
     }
   }
@@ -87,8 +89,8 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   freeBuffers(fillBuffers);
 };
 
-p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
-  var model = geometry.model;
+p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
+  var model = buffers.model;
   var attributes = shader.attributes;
   var gl = this.GL;
 
@@ -99,7 +101,7 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
     var attr = attributes[def.attr];
     if (!attr) continue;
 
-    var buffer = geometry[def.dst];
+    var buffer = buffers[def.dst];
 
     // check if the model has the appropriate source array
     var src = model[def.src];
@@ -108,7 +110,7 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
       var createBuffer = !buffer;
       if (createBuffer) {
         // create and remember the buffer
-        geometry[def.dst] = buffer = gl.createBuffer();
+        buffers[def.dst] = buffer = gl.createBuffer();
       }
       // bind the buffer
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -131,7 +133,7 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
       if (buffer) {
         // remove the unused buffer
         gl.deleteBuffer(buffer);
-        geometry[def.dst] = null;
+        buffers[def.dst] = null;
       }
       // disable the vertex
       gl.disableVertexAttribArray(attr.index);
@@ -140,7 +142,8 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
 };
 
 /**
- * createBuffers description
+ * creates a buffers object that holds the WebGL render buffers
+ * for a geometry.
  * @private
  * @param  {String} gId    key of the geometry object
  * @param  {p5.Geometry}  model contains geometry data
@@ -148,32 +151,32 @@ p5.RendererGL.prototype._prepareBuffers = function(geometry, shader, defs) {
 p5.RendererGL.prototype.createBuffers = function(gId, model) {
   var gl = this.GL;
   //initialize the gl buffers for our geom groups
-  var geometry = this._initBufferDefaults(gId);
-  geometry.model = model;
+  var buffers = this._initBufferDefaults(gId);
+  buffers.model = model;
 
-  var indexBuffer = geometry.indexBuffer;
+  var indexBuffer = buffers.indexBuffer;
 
   if (model.faces.length) {
     // allocate space for faces
-    if (!indexBuffer) indexBuffer = geometry.indexBuffer = gl.createBuffer();
+    if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
     var vals = p5.RendererGL.prototype._flatten(model.faces);
     this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, Uint16Array);
 
     // the vertex count is based on the number of faces
-    geometry.vertexCount = model.faces.length * 3;
+    buffers.vertexCount = model.faces.length * 3;
   } else {
     // the index buffer is unused, remove it
     if (indexBuffer) {
       gl.deleteBuffer(indexBuffer);
-      geometry.indexBuffer = null;
+      buffers.indexBuffer = null;
     }
     // the vertex count comes directly from the model
-    geometry.vertexCount = model.vertices && model.vertices.length;
+    buffers.vertexCount = model.vertices ? model.vertices.length : 0;
   }
 
-  geometry.lineVertexCount = model.lineVertices && model.lineVertices.length;
+  buffers.lineVertexCount = model.lineVertices ? model.lineVertices.length : 0;
 
-  return geometry;
+  return buffers;
 };
 
 /**
@@ -184,12 +187,12 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   var gl = this.GL;
-  var g = this.gHash[gId];
+  var buffers = this.gHash[gId];
 
-  if (this._doStroke && g.lineVertexCount > 0) {
+  if (this._doStroke && buffers.lineVertexCount > 0) {
     var strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);
-    this._prepareBuffers(g, strokeShader, strokeBuffers);
+    this._prepareBuffers(buffers, strokeShader, strokeBuffers);
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();
@@ -198,10 +201,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if (this._doFill) {
     var fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
-    this._prepareBuffers(g, fillShader, fillBuffers);
-    if (g.indexBuffer) {
+    this._prepareBuffers(buffers, fillShader, fillBuffers);
+    if (buffers.indexBuffer) {
       //vertex index buffer
-      this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+      this._bindBuffer(buffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
     }
     this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);
@@ -247,15 +250,15 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
 };
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  var g = this.gHash[gId];
+  var buffers = this.gHash[gId];
   var gl = this.GL;
   // render the fill
-  if (g.indexBuffer) {
+  if (buffers.indexBuffer) {
     // we're drawing faces
-    gl.drawElements(gl.TRIANGLES, g.vertexCount, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, buffers.vertexCount, gl.UNSIGNED_SHORT, 0);
   } else {
     // drawing vertices
-    gl.drawArrays(drawMode || gl.TRIANGLES, 0, g.vertexCount);
+    gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
   }
   this._pixelsState._pixelsDirty = true;
 };
