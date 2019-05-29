@@ -484,7 +484,7 @@ p5.Shader.prototype.enableAttrib = function(
       typeof IS_MINIFIED === 'undefined' &&
       this.attributes[attr.name] !== attr
     ) {
-      console.error(
+      console.warn(
         'The attribute "' +
           attr.name +
           '"passed to enableAttrib does not belong to this shader.'
