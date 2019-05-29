@@ -5,13 +5,11 @@ uniform sampler2D uSampler;
 uniform bool isTexture;
 uniform bool uUseLighting;
 
-varying vec3 vLightWeighting;
 varying highp vec2 vVertTexCoord;
+varying vec3 vDiffuseColor;
+varying vec3 vSpecularColor;
 
 void main(void) {
-  // Lets init gl_FragColor just to be safe
-  gl_FragColor = vec4(1.0,1.0,1.0,1.0);
-
   gl_FragColor = isTexture ? texture2D(uSampler, vVertTexCoord) : uMaterialColor;
-  if (uUseLighting) gl_FragColor.rgb *= vLightWeighting;
+  gl_FragColor.rgb = gl_FragColor.rgb * vDiffuseColor + vSpecularColor;
 }
