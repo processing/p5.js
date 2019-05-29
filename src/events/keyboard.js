@@ -247,8 +247,9 @@ p5.prototype._onkeyup = function(e) {
 
 /**
  * The <a href="#/p5/keyTyped">keyTyped()</a> function is called once every time a key is pressed, but
- * action keys such as Ctrl, Shift, and Alt are ignored. The most recent
- * key pressed will be stored in the key variable.
+ * action keys such as Backspace, Delete, Ctrl, Shift, and Alt are ignored. If you are trying to detect
+ * a keyCode for one of these keys, use the <a href="#/p5/keyPressed">keyPressed()</a> function instead.
+ * The most recent key typed will be stored in the key variable.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
  * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
@@ -288,7 +289,6 @@ p5.prototype._onkeypress = function(e) {
     // prevent multiple firings
     return;
   }
-  this._setProperty('keyCode', e.which);
   this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
   this._setProperty('key', String.fromCharCode(e.which));
   var keyTyped = this.keyTyped || window.keyTyped;
