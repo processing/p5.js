@@ -137,7 +137,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     var numFrames = gifReader.numFrames();
     if (numFrames > 1) {
       var loadGIFFrameIntoImage = function(frameNum, gifReader) {
-        var framePixels = [];
+        var framePixels = new Uint8Array(pImg.width * pImg.height * 4);
         try {
           gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
         } catch (e) {
