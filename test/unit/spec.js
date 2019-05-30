@@ -4,14 +4,14 @@ var spec = {
   core: [
     '2d_primitives',
     'attributes',
-    'constants',
     'curves',
     'environment',
     'error_helpers',
     'main',
     'p5.Element',
     'rendering',
-    'structure'
+    'structure',
+    'vertex'
   ],
   data: ['p5.TypedDict'],
   events: ['keyboard'],
