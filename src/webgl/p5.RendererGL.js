@@ -1126,10 +1126,11 @@ p5.RendererGL.prototype._bindBuffer = function(
   type,
   usage
 ) {
+  if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    var data = new type(values);
-    this.GL.bufferData(target, data, usage);
+    var data = new (type || Float32Array)(values);
+    this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
   }
 };
 
@@ -1182,11 +1183,12 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._vToNArray = function(arr) {
-  return this._flatten(
-    arr.map(function(item) {
-      return [item.x, item.y, item.z];
-    })
-  );
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    var item = arr[i];
+    ret.push(item.x, item.y, item.z);
+  }
+  return ret;
 };
 
 /**

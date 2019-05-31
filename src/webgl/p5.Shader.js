@@ -126,6 +126,7 @@ p5.Shader.prototype._loadAttributes = function() {
     var attribute = {};
     attribute.name = name;
     attribute.location = location;
+    attribute.index = i;
     attribute.type = attributeInfo.type;
     attribute.size = attributeInfo.size;
     this.attributes[name] = attribute;
@@ -471,17 +472,37 @@ p5.Shader.prototype.isStrokeShader = function() {
  * @private
  */
 p5.Shader.prototype.enableAttrib = function(
-  loc,
+  attr,
   size,
   type,
   normalized,
   stride,
   offset
 ) {
-  var gl = this._renderer.GL;
-  if (loc !== -1) {
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
+  if (attr) {
+    if (
+      typeof IS_MINIFIED === 'undefined' &&
+      this.attributes[attr.name] !== attr
+    ) {
+      console.warn(
+        'The attribute "' +
+          attr.name +
+          '"passed to enableAttrib does not belong to this shader.'
+      );
+    }
+    var loc = attr.location;
+    if (loc !== -1) {
+      var gl = this._renderer.GL;
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(
+        loc,
+        size,
+        type || gl.FLOAT,
+        normalized || false,
+        stride || 0,
+        offset || 0
+      );
+    }
   }
   return this;
 };
