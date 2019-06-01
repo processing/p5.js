@@ -2,6 +2,8 @@ precision mediump float;
 
 uniform mat4 uViewMatrix;
 
+uniform bool uUseLighting;
+
 uniform int uAmbientLightCount;
 uniform vec3 uAmbientColor[8];
 
@@ -58,8 +60,14 @@ void totalLight(
 	out vec3 totalSpecular
 ) {
 
-  totalDiffuse = vec3(0.0);
   totalSpecular = vec3(0.0);
+
+  if (!uUseLighting) {
+    totalDiffuse = vec3(1.0);
+    return;
+  }
+
+  totalDiffuse = vec3(0.0);
 
 	vec3 viewDirection = normalize(-modelPosition);
 

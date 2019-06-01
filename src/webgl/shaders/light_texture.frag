@@ -3,7 +3,6 @@ precision mediump float;
 uniform vec4 uMaterialColor;
 uniform sampler2D uSampler;
 uniform bool isTexture;
-uniform bool uUseLighting;
 
 varying highp vec2 vVertTexCoord;
 varying vec3 vDiffuseColor;
