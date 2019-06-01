@@ -11,6 +11,7 @@ var spec = {
     'p5.Element',
     'rendering',
     'structure',
+    'transform',
     'vertex'
   ],
   data: ['p5.TypedDict'],
