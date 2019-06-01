@@ -1,4 +1,4 @@
-suite.only('Vertex', function() {
+suite('Vertex', function() {
   var myp5;
   let _friendlyErrorSpy;
   setup(function(done) {
@@ -39,6 +39,27 @@ suite.only('Vertex', function() {
       assert.validationError(function() {
         myp5.beginShape(20);
       });
+    });
+  });
+
+  suite('p5.prototype.quadraticVertex', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.quadraticVertex);
+      assert.typeOf(myp5.quadraticVertex, 'function');
+    });
+    test('missing param #3', function() {
+      assert.validationError(function() {
+        myp5.quadraticVertex(80, 20, 50);
+      });
+    });
+    test('missing param #5', function() {
+      assert.validationError(function() {
+        myp5.quadraticVertex(80, 20, 50, 50, 10);
+      });
+    });
+    test('_friendlyError is called. vertex() should be used once before quadraticVertex()', function() {
+      myp5.quadraticVertex(80, 20, 50, 50, 10, 20);
+      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
     });
   });
 
@@ -96,31 +117,10 @@ suite.only('Vertex', function() {
     });
   });
 
-  suite('p5.prototype.quadraticVertex', function() {
-    test('should be a function', function() {
-      assert.ok(myp5.quadraticVertex);
-      assert.typeOf(myp5.quadraticVertex, 'function');
-    });
-    test('missing param #3', function() {
-      assert.validationError(function() {
-        myp5.quadraticVertex(80, 20, 50);
-      });
-    });
-    test('missing param #5', function() {
-      assert.validationError(function() {
-        myp5.quadraticVertex(80, 20, 50, 50, 10);
-      });
-    });
-    test('_friendlyError is called. vertex() should be used once before quadraticVertex()', function() {
-      myp5.quadraticVertex(80, 20, 50, 50, 10, 20);
-      assert(_friendlyErrorSpy.calledOnce, 'p5._friendlyError was not called');
-    });
-  });
-
   suite('p5.prototype.vertex', function() {
     test('should be a function', function() {
-      assert.ok(myp5.beginContour);
-      assert.typeOf(myp5.beginContour, 'function');
+      assert.ok(myp5.vertex);
+      assert.typeOf(myp5.vertex, 'function');
     });
     /*test('missing param #1', function() {
       assert.validationError(function() {
