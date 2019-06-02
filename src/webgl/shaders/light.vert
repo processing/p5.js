@@ -62,8 +62,12 @@ void main(void){
     if(i < uPointLightCount){
       vec3 loc = (uViewMatrix * vec4(uPointLightLocation[i], 1.0)).xyz;
       vec3 lightDirection = normalize(loc - mvPosition.xyz);
+      vec3 lightVector = mvPosition.xyz - loc;
 
       float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
+
+      float lightDistance = length(lightVector);
+      float fallOffFactor =  1.0 / (constAtt + lightDistance * (linearAtt + quadAtt * lightDistance));
 
       float specularLightWeighting = 0.0;
       if (uSpecular ){
@@ -72,7 +76,7 @@ void main(void){
       }
 
       pointLightFactor += uPointLightColor[i] * (specularFactor * specularLightWeighting
-        + directionalLightWeighting * diffuseFactor);
+        + directionalLightWeighting * diffuseFactor) * fallOffFactor;
     }
   }
 

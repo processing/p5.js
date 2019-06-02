@@ -863,9 +863,9 @@ p5.RendererGL.prototype.push = function() {
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useShininess = this._useShininess;
 
-  properties.constAtt = this._renderer.constAtt;
-  properties.linearAtt = this._renderer.linearAtt;
-  properties.quadAtt = this._renderer.quadAtt;
+  properties.constAtt = this.constAtt;
+  properties.linearAtt = this.linearAtt;
+  properties.quadAtt = this.quadAtt;
 
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;

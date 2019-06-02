@@ -87,11 +87,11 @@ void main(void) {
     
       //calculate attenuation
       float lightDistance = length(lightVector);
-      float falloff = 500.0 / (lightDistance + 500.0);
+      float fallOffFactor =  1.0 / (constAtt + lightDistance * (linearAtt + quadAtt * lightDistance));
 
       LightResult result = light(lightVector);
-      diffuse += result.diffuse * falloff * uPointLightColor[j];
-      specular += result.specular * falloff;
+      diffuse += result.diffuse * uPointLightColor[j] * fallOffFactor;
+      specular += result.specular * fallOffFactor;
     }
   }
 

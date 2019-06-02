@@ -319,13 +319,9 @@ p5.prototype.lights = function() {
  * @method fallOff
  * @chainable
  */
-p5.prototype.fallOff = function() {
+p5.prototype.fallOff = function(constAtt, linearAtt, quadAtt) {
   this._assert3d('fallOff');
-  p5._validateParameters('fallOff', arguments);
-
-  var constAtt = arguments[0];
-  var linearAtt = arguments[1];
-  var quadAtt = arguments[2];
+  // p5._validateParameters('fallOff', arguments);
 
   if (constAtt < 0) {
     constAtt = 0;
