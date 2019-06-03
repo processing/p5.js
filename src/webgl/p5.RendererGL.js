@@ -58,7 +58,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.GL = this.drawingContext;
 
   // lights
-
   this._enableLighting = false;
 
   this.ambientLightColors = [];
@@ -68,6 +67,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.pointLightPositions = [];
   this.pointLightColors = [];
 
+  this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
   this.curBlendMode = constants.BLEND;
