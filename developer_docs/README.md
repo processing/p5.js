@@ -5,7 +5,7 @@ Hello! Thanks for your interest in contributing to p5.js! You can get started wi
 - `src/` contains all the source code for the library, which is topically organized into separated modules. This is what you'll work on if you are changing p5.js.
 - `lib/` contains the final version of p5.js intended for users to load in their sketches and projects, included in both compressed and uncompressed forms. This is the output when the source code modules are compiled to a single file by [Grunt](https://gruntjs.com/).
 - `developer_docs/` contains various Markdown documents that are likely to be useful to developers of p5.js, in particular because they explain practices and principles.
-- `docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/). 
+- `docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/).
 - `tests/` contains unit tests which ensure the library continues to function correctly as changes are made.
 - `tasks/` contains scripts which perform automated tasks related to the build, deployment, and release of new versions of p5.js.
 - `patches/` might contain [Git patches](https://git-scm.com/docs/git-format-patch) from time to time, but in almost all cases you can completely ignore this directory.
@@ -16,13 +16,15 @@ Known bugs and intended new features are tracked using [GitHub issues](https://g
 
 If you discover a bug or have an idea for a new feature you'd like to add, begin by submitting an issue. Please do not simply submit a pull request containing the fix or new feature without making an issue first, we will probably not be able to accept it. Once you have gotten some feedback on the issue and a go ahead to address it, you can follow the process above to contribute the fix or feature.
 
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to p5.js on CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+
 We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/master/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)!
 
 ## Accompaniments
 
 Aside from the code itself, you may also need to supply some combination of the following.
 
-- [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/) 
+- [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/)
 - [unit tests](https://github.com/processing/p5.js/tree/master/developer_docs#unit-tests), small pieces of code which are separate from the library and are used to verify its behavior
 - [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
 
@@ -68,7 +70,7 @@ $ npm install
 
 This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
 
-- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js 
+- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js
 - [mocha-chrome](https://github.com/shellscape/mocha-chrome), a mocha plugin that runs mocha tests using headless Google Chrome
 
 Once the dependencies are installed, use Grunt to run the unit tests.
@@ -91,25 +93,25 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
 1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
 2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
-3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer. 
+3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer.
 
    ```
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
 4. Navigate into the project folder and install all its necessary dependencies with npm.
-   
+
    ```
    $ cd p5.js
    $ npm install
    ```
 
-5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code. 
+5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
 
    ```
    $ npm run grunt
    ```
-   
+
    If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
 
 6. Make some changes to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
@@ -138,7 +140,7 @@ $ npm run docs:dev
 The overarching p5.js project includes repositories other than this one.
 
 - [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library, as well as the p5.dom.js addon library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
-- [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart). 
+- [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
 - [sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
 - [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
 

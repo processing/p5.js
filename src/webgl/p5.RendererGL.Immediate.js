@@ -268,14 +268,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aPosition, 3);
   }
 
   // initialize the fill shader's 'aVertexColor' buffer
@@ -288,14 +281,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aVertexColor.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aVertexColor, 4);
   }
 
   // initialize the fill shader's 'aTexCoord' buffer
@@ -309,14 +295,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aTexCoord.location,
-      2,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aTexCoord, 2);
   }
 
   //if (true || mode) {
@@ -385,14 +364,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
       gl.STATIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aPosition, 3);
   }
 
   // initialize the stroke shader's 'aDirection' buffer
@@ -404,14 +376,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
       Float32Array,
       gl.STATIC_DRAW
     );
-    shader.enableAttrib(
-      shader.attributes.aDirection.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aDirection, 4);
   }
 
   this._applyColorBlend(this.curStrokeColor);
