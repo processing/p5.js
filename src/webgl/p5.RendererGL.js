@@ -172,7 +172,6 @@ p5.RendererGL.prototype._initContext = function() {
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
-      console.log('p5.RendererGL: enabled webgl context');
       var gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
