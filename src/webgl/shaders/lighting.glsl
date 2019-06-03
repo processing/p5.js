@@ -23,8 +23,8 @@ const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
 
 struct LightResult {
-	float specular;
-	float diffuse;
+  float specular;
+  float diffuse;
 };
 
 float _phongSpecular(
@@ -54,10 +54,10 @@ LightResult _light(vec3 viewDirection, vec3 normal, vec3 lightVector) {
 }
 
 void totalLight(
-	vec3 modelPosition,
-	vec3 normal,
-	out vec3 totalDiffuse,
-	out vec3 totalSpecular
+  vec3 modelPosition,
+  vec3 normal,
+  out vec3 totalDiffuse,
+  out vec3 totalSpecular
 ) {
 
   totalSpecular = vec3(0.0);
@@ -69,12 +69,12 @@ void totalLight(
 
   totalDiffuse = vec3(0.0);
 
-	vec3 viewDirection = normalize(-modelPosition);
+  vec3 viewDirection = normalize(-modelPosition);
 
   for (int j = 0; j < 8; j++) {
     if (j < uDirectionalLightCount) {
       vec3 lightVector = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
-			vec3 lightColor = uDirectionalColor[j];
+      vec3 lightColor = uDirectionalColor[j];
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor;
@@ -87,7 +87,7 @@ void totalLight(
       //calculate attenuation
       float lightDistance = length(lightVector);
       float falloff = 1.0; // TODO: 500.0 / (lightDistance + 500.0);
-			vec3 lightColor = falloff * uPointLightColor[j];
+      vec3 lightColor = falloff * uPointLightColor[j];
 
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;
@@ -95,6 +95,6 @@ void totalLight(
     }
   }
 
-	totalDiffuse *= diffuseFactor;
-	totalSpecular *= specularFactor;
+  totalDiffuse *= diffuseFactor;
+  totalSpecular *= specularFactor;
 }
