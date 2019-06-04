@@ -229,8 +229,7 @@ p5.Image = function(width, height) {
 p5.Image.prototype._animateGif = function(pInst) {
   var props = this.gifProperties;
   if (props.playing) {
-    //to be replaced with deltaTime
-    props.timeDisplayed += pInst.millis() - pInst._lastFrameTime;
+    props.timeDisplayed += pInst.deltaTime;
   }
 
   if (props.timeDisplayed >= props.delay) {
