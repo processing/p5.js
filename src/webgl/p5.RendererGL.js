@@ -9,6 +9,11 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
 
+var lightingShader = fs.readFileSync(
+  __dirname + '/shaders/lighting.glsl',
+  'utf-8'
+);
+
 var defaultShaders = {
   immediateVert: fs.readFileSync(
     __dirname + '/shaders/immediate.vert',
@@ -25,13 +30,17 @@ var defaultShaders = {
   normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
   normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert: fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
+  lightVert:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag: fs.readFileSync(
     __dirname + '/shaders/light_texture.frag',
     'utf-8'
   ),
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
-  phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  phongFrag:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
   fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
