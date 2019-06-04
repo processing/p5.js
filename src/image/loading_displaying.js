@@ -180,13 +180,16 @@ function _createGif(
     };
     for (var j = 0; j < numFrames; j++) {
       var frameInfo = gifReader.frameInfo(j);
+      averageDelay += frameInfo.delay;
       // Some GIFs are encoded so that they expect the previous frame
       // to be under the current frame. This can occur at a sub-frame level
       // There are possible disposal codes but I didn't encounter any
       if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
         pImg.drawingContext.putImageData(frames[j - 1], 0, 0);
+      } else {
+        pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
+        framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
       }
-      averageDelay += frameInfo.delay;
       loadGIFFrameIntoImage(j, gifReader);
       var imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
