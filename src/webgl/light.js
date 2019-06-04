@@ -319,29 +319,36 @@ p5.prototype.lights = function() {
  * @method fallOff
  * @chainable
  */
-p5.prototype.fallOff = function(constAtt, linearAtt, quadAtt) {
+p5.prototype.fallOff = function(
+  constantAttenuation,
+  linearAttenuation,
+  quadraticAttenuation
+) {
   this._assert3d('fallOff');
   // p5._validateParameters('fallOff', arguments);
 
-  if (constAtt < 0) {
-    constAtt = 0;
+  if (constantAttenuation < 0) {
+    constantAttenuation = 0;
   }
 
-  if (linearAtt < 0) {
-    linearAtt = 0;
+  if (linearAttenuation < 0) {
+    linearAttenuation = 0;
   }
 
-  if (quadAtt < 0) {
-    quadAtt = 0;
+  if (quadraticAttenuation < 0) {
+    quadraticAttenuation = 0;
   }
 
-  if (constAtt === 0 && (linearAtt === 0 && quadAtt === 0)) {
-    constAtt = 1;
+  if (
+    constantAttenuation === 0 &&
+    (linearAttenuation === 0 && quadraticAttenuation === 0)
+  ) {
+    constantAttenuation = 1;
   }
 
-  this._renderer.constAtt = constAtt;
-  this._renderer.linearAtt = linearAtt;
-  this._renderer.quadAtt = quadAtt;
+  this._renderer.constantAttenuation = constantAttenuation;
+  this._renderer.linearAttenuation = linearAttenuation;
+  this._renderer.quadraticAttenuation = quadraticAttenuation;
 
   return this;
 };

@@ -17,9 +17,9 @@ uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
 uniform float uShininess;
-uniform float constAtt;
-uniform float linearAtt;
-uniform float quadAtt;
+uniform float uConstantAttenuation;
+uniform float uLinearAttenuation;
+uniform float uQuadraticAttenuation;
 
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
@@ -67,7 +67,7 @@ void main(void){
       float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
 
       float lightDistance = length(lightVector);
-      float fallOffFactor =  1.0 / (constAtt + lightDistance * (linearAtt + quadAtt * lightDistance));
+      float fallOffFactor =  1.0 / (constantAttenuation + lightDistance * (linearAttenuation + quadraticAttenuation * lightDistance));
 
       float specularLightWeighting = 0.0;
       if (uSpecular ){

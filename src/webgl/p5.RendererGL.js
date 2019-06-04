@@ -78,9 +78,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useShininess = 1;
 
   // Falloff variables
-  this.constAtt = 1;
-  this.linearAtt = 0;
-  this.quadAtt = 0;
+  this.constantAttenuation = 1;
+  this.linearAttenuation = 0;
+  this.quadraticAttenuation = 0;
 
   /**
    * model view, projection, & normal
@@ -863,9 +863,9 @@ p5.RendererGL.prototype.push = function() {
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useShininess = this._useShininess;
 
-  properties.constAtt = this.constAtt;
-  properties.linearAtt = this.linearAtt;
-  properties.quadAtt = this.quadAtt;
+  properties.constantAttenuation = this.constantAttenuation;
+  properties.linearAttenuation = this.linearAttenuation;
+  properties.quadraticAttenuation = this.quadraticAttenuation;
 
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;
@@ -1112,9 +1112,9 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
 
-  fillShader.setUniform('constAtt', this.constAtt);
-  fillShader.setUniform('linearAtt', this.linearAtt);
-  fillShader.setUniform('quadAtt', this.quadAtt);
+  fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
+  fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
+  fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
   fillShader.bindTextures();
 };

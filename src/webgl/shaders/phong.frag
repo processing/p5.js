@@ -14,9 +14,9 @@ uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
 uniform float uShininess;
-uniform float constAtt;
-uniform float linearAtt;
-uniform float quadAtt;
+uniform float uConstantAttenuation;
+uniform float uLinearAttenuation;
+uniform float uQuadraticAttenuation;
 
 uniform int uDirectionalLightCount;
 uniform int uPointLightCount;
@@ -87,7 +87,7 @@ void main(void) {
     
       //calculate attenuation
       float lightDistance = length(lightVector);
-      float fallOffFactor =  1.0 / (constAtt + lightDistance * (linearAtt + quadAtt * lightDistance));
+      float fallOffFactor =  1.0 / (constantAttenuation + lightDistance * (linearAttenuation + quadraticAttenuation * lightDistance));
 
       LightResult result = light(lightVector);
       diffuse += result.diffuse * uPointLightColor[j] * fallOffFactor;
