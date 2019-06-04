@@ -903,22 +903,24 @@ p5.Image.prototype.save = function(filename, extension) {
  * let gif;
  *
  * function preload() {
- *   gif = loadImage('assets/animated-counting.gif');
+ *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
  * }
  *
  * function draw() {
  *   background(255);
+ *   // The GIF file that we loaded only loops once
+ *   // so it freezes on the last frame after playing through
  *   image(gif, 0, 0);
  * }
  *
  * function mousePressed() {
- *   // Click to reset the GIF
+ *   // Click to reset the GIF and begin playback from start
  *   gif.reset();
  * }
  * </code></div>
  * @alt
- * image of a GIF that counts from 0 - 9 repeatedly, changing
- * every second. When you click it starts back over at 0.
+ * Animated image of a cartoon face that winks once and then freezes
+ * When you click it animates again, winks once and freezes
  *
  */
 p5.Image.prototype.reset = function() {
@@ -943,29 +945,19 @@ p5.Image.prototype.reset = function() {
  * let gif;
  *
  * function preload() {
- *   gif = loadImage('assets/animated-counting.gif');
- * }
- *
- * function setup() {
- *   noStroke();
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
  * }
  *
  * function draw() {
- *   background(255);
  *   let frame = gif.getCurrentFrame();
- *   if (frame % 2 === 0) {
- *     fill(149, 66, 244);
- *   } else {
- *     fill(106, 225, 140);
- *   }
  *   image(gif, 0, 0);
- *   ellipse(frame * 10, height / 2, 40);
+ *   text(frame, 10, 90);
  * }
  * </code></div>
  * @alt
- * image of a GIF that counts up 1 with every second, rounding
- * back to 0 after 9. An ellipse moves from the left side of the screen
- * to the right as the number on the GIF goes up.
+ * Animated image of a cartoon eye looking around and then
+ * looking outwards, in the lower-left hand corner a number counts
+ * up quickly to 124 and then starts back over at 0
  *
  */
 p5.Image.prototype.getCurrentFrame = function() {
@@ -985,20 +977,24 @@ p5.Image.prototype.getCurrentFrame = function() {
  * let gif;
  *
  * function preload() {
- *   gif = loadImage('assets/animated-counting.gif');
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
  * }
  *
- * // Move your mouse up and down over canvas to see the GIF frames change
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
  * function draw() {
  *   gif.pause();
- *   background(255);
  *   image(gif, 0, 0);
- *   let frameNumber = floor(map(mouseY, 0, height, 0, gif.numFrames()));
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
  *   gif.setFrame(frameNumber);
  * }
  * </code></div>
  * @alt
- * A number that goes down as the mouse goes higher, and up as it goes lower
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
  *
  */
 p5.Image.prototype.setFrame = function(index) {
@@ -1020,7 +1016,31 @@ p5.Image.prototype.setFrame = function(index) {
  * Returns the number of frames in an animated GIF
  *
  * @method numFrames
- * @return {Number}       The number of frames in the animated GIF
+ * @return {Number}
+ * @example     The number of frames in the animated GIF
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
+ *
  */
 p5.Image.prototype.numFrames = function() {
   if (this.gifProperties) {
@@ -1038,7 +1058,7 @@ p5.Image.prototype.numFrames = function() {
  * let gif;
  *
  * function preload() {
- *   gif = loadImage('assets/animated-counting.gif');
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
  * }
  *
  * function draw() {
@@ -1055,9 +1075,9 @@ p5.Image.prototype.numFrames = function() {
  * }
  * </code></div>
  * @alt
- * image of a GIF that counts up 1 with every second, when
- * you click the counting pauses. It continues upon release
- * of the mouse button.
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
  *
  */
 p5.Image.prototype.play = function() {
@@ -1075,7 +1095,7 @@ p5.Image.prototype.play = function() {
  * let gif;
  *
  * function preload() {
- *   gif = loadImage('assets/animated-counting.gif');
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
  * }
  *
  * function draw() {
@@ -1092,9 +1112,9 @@ p5.Image.prototype.play = function() {
  * }
  * </code></div>
  * @alt
- * image of a GIF that counts up 1 with every second, when
- * you click the counting pauses. It continues upon release
- * of the mouse button.
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
  *
  */
 p5.Image.prototype.pause = function() {
@@ -1113,8 +1133,8 @@ p5.Image.prototype.pause = function() {
  * let gifFast, gifSlow;
  *
  * function preload() {
- *   gifFast = loadImage('assets/animated-counting.gif');
- *   gifSlow = loadImage('assets/animated-counting.gif');
+ *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
  * }
  *
  * function setup() {
@@ -1122,8 +1142,8 @@ p5.Image.prototype.pause = function() {
  *   gifSlow.resize(width / 2, height / 2);
  *
  *   //Change the delay here
- *   gifFast.delay(200);
- *   gifSlow.delay(4000);
+ *   gifFast.delay(10);
+ *   gifSlow.delay(100);
  * }
  *
  * function draw() {
@@ -1133,8 +1153,9 @@ p5.Image.prototype.pause = function() {
  * }
  * </code></div>
  * @alt
- * Two animated gifs count up side by side, the one on the left
- * counts up much faster
+ * Two animated gifs of cartoon eyes looking around
+ * The gif on the left animates quickly, on the right
+ * the animation is much slower
  *
  */
 p5.Image.prototype.delay = function(d) {
