@@ -1,4 +1,4 @@
-suite.only('p5.Element', function() {
+suite('p5.Element', function() {
   var myp5 = new p5(function(sketch) {
     sketch.setup = function() {};
     sketch.draw = function() {};
