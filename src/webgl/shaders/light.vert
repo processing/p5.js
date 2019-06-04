@@ -7,23 +7,6 @@ attribute vec2 aTexCoord;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat3 uNormalMatrix;
-<<<<<<< HEAD
-uniform int uAmbientLightCount;
-uniform int uDirectionalLightCount;
-uniform int uPointLightCount;
-
-uniform vec3 uAmbientColor[8];
-uniform vec3 uLightingDirection[8];
-uniform vec3 uDirectionalColor[8];
-uniform vec3 uPointLightLocation[8];
-uniform vec3 uPointLightColor[8];
-uniform bool uSpecular;
-uniform float uShininess;
-uniform float uConstantAttenuation;
-uniform float uLinearAttenuation;
-uniform float uQuadraticAttenuation;
-=======
->>>>>>> upstream/master
 
 varying highp vec2 vVertTexCoord;
 varying vec3 vDiffuseColor;
