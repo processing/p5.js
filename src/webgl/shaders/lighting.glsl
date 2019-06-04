@@ -18,6 +18,9 @@ uniform vec3 uPointLightColor[8];
 uniform bool uSpecular;
 uniform float uShininess;
 
+uniform float uConstantAttenuation;
+uniform float uLinearAttenuation;
+uniform float uQuadraticAttenuation;
 
 const float specularFactor = 2.0;
 const float diffuseFactor = 0.73;
@@ -86,7 +89,7 @@ void totalLight(
     
       //calculate attenuation
       float lightDistance = length(lightVector);
-      float falloff = 1.0; // TODO: 500.0 / (lightDistance + 500.0);
+      float falloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
       vec3 lightColor = falloff * uPointLightColor[j];
 
       LightResult result = _light(viewDirection, normal, lightVector);
