@@ -66,24 +66,17 @@ require('../core/error_helpers');
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
-  var img = new Image();
   var pImg = new p5.Image(1, 1, this);
-
   var self = this;
-  img.onload = function() {
-    pImg.width = pImg.canvas.width = img.width;
-    pImg.height = pImg.canvas.height = img.height;
 
-    // Draw the image into the backing canvas of the p5.Image
-    pImg.drawingContext.drawImage(img, 0, 0);
-    pImg.modified = true;
+  var req = new Request(path, {
+    method: 'GET',
+    mode: 'cors'
+  });
 
-    //GIF
-    if (path.match(/\.[gif]+$/i)) {
-      self.httpDo(
-        path,
-        'GET',
-        'arrayBuffer',
+  fetch(path, req).then(function(response) {
+    if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
+      response.arrayBuffer().then(
         function(arrayBuffer) {
           if (arrayBuffer) {
             var byteArray = new Uint8Array(arrayBuffer);
@@ -107,22 +100,43 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         }
       );
     } else {
-      //Non-GIF
-      if (typeof successCallback === 'function') {
-        successCallback(pImg);
-      }
-      self._decrementPreload();
-    }
-  };
+      var img = new Image();
 
-  img.onerror = function(e) {
-    p5._friendlyFileLoadError(0, img.src);
-    if (typeof failureCallback === 'function') {
-      failureCallback(e);
-    } else {
-      console.error(e);
+      img.onload = function() {
+        pImg.width = pImg.canvas.width = img.width;
+        pImg.height = pImg.canvas.height = img.height;
+
+        // Draw the image into the backing canvas of the p5.Image
+        pImg.drawingContext.drawImage(img, 0, 0);
+        pImg.modified = true;
+        if (typeof successCallback === 'function') {
+          successCallback(pImg);
+        }
+        self._decrementPreload();
+      };
+
+      img.onerror = function(e) {
+        p5._friendlyFileLoadError(0, img.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      };
+
+      // Set crossOrigin in case image is served with CORS headers.
+      // This will let us draw to the canvas without tainting it.
+      // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+      // When using data-uris the file will be loaded locally
+      // so we don't need to worry about crossOrigin with base64 file types.
+      if (path.indexOf('data:image/') !== 0) {
+        img.crossOrigin = 'Anonymous';
+      }
+      // start loading the image
+      img.src = path;
     }
-  };
+    pImg.modified = true;
+  });
 
   //helper function for decoding and setting up GIF properties
   function _createGif(
@@ -133,6 +147,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     finishCallback
   ) {
     var gifReader = new omggif.GifReader(arrayBuffer);
+    pImg.width = pImg.canvas.width = gifReader.width;
+    pImg.height = pImg.canvas.height = gifReader.height;
     var frames = [];
     var numFrames = gifReader.numFrames();
     if (numFrames > 1) {
@@ -188,17 +204,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     }
     finishCallback();
   }
-
-  // Set crossOrigin in case image is served with CORS headers.
-  // This will let us draw to the canvas without tainting it.
-  // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-  // When using data-uris the file will be loaded locally
-  // so we don't need to worry about crossOrigin with base64 file types.
-  if (path.indexOf('data:image/') !== 0) {
-    img.crossOrigin = 'Anonymous';
-  }
-  // start loading the image
-  img.src = path;
   return pImg;
 };
 
