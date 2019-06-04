@@ -329,14 +329,23 @@ p5.prototype.fallOff = function(
 
   if (constantAttenuation < 0) {
     constantAttenuation = 0;
+    console.warn(
+      'Value of constant argument in fallOff() should be never be negative. Set to 0.'
+    );
   }
 
   if (linearAttenuation < 0) {
     linearAttenuation = 0;
+    console.warn(
+      'Value of linear argument in fallOff() should be never be negative. Set to 0.'
+    );
   }
 
   if (quadraticAttenuation < 0) {
     quadraticAttenuation = 0;
+    console.warn(
+      'Value of quadratic argument in fallOff() should be never be negative. Set to 0.'
+    );
   }
 
   if (
@@ -344,6 +353,9 @@ p5.prototype.fallOff = function(
     (linearAttenuation === 0 && quadraticAttenuation === 0)
   ) {
     constantAttenuation = 1;
+    console.warn(
+      'Either one of the three arguments should be greater than zero. Set constant argument to 1.'
+    );
   }
 
   this._renderer.constantAttenuation = constantAttenuation;
