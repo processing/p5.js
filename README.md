@@ -14,7 +14,7 @@ If you have found a bug in the p5.js library, you can file it here under the [â€
 
 ## p5.js library
 
-To use the complete p5.js library, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/) for more information about our build process to generate the complete as well as selective library.	
+To use the complete p5.js library, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [developer docs](https://github.com/processing/p5.js/blob/master/developer_docs/) for more information about our build process to generate the complete as well as selective library.
 
 You can also start with the [codepen template](https://codepen.io/p5js/pen/wreBKy). You may need to update the version of the p5.js library that is linked into the html section.
 

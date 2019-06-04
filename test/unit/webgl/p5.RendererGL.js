@@ -285,4 +285,28 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
+
+  suite('BufferDef', function() {
+    test('render buffer properties are correctly set', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.fill(255);
+      myp5.stroke(255);
+      myp5.triangle(0, 0, 1, 0, 0, 1);
+
+      var buffers = renderer.gHash['tri'];
+
+      assert.isObject(buffers);
+      assert.isDefined(buffers.indexBuffer);
+      assert.isDefined(buffers.vertexBuffer);
+      assert.isDefined(buffers.lineNormalBuffer);
+      assert.isDefined(buffers.lineVertexBuffer);
+      assert.isDefined(buffers.vertexBuffer);
+
+      assert.equal(buffers.vertexCount, 3);
+      assert.equal(buffers.lineVertexCount, 18);
+
+      done();
+    });
+  });
 });

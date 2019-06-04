@@ -9,6 +9,11 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
 
+var lightingShader = fs.readFileSync(
+  __dirname + '/shaders/lighting.glsl',
+  'utf-8'
+);
+
 var defaultShaders = {
   immediateVert: fs.readFileSync(
     __dirname + '/shaders/immediate.vert',
@@ -25,13 +30,17 @@ var defaultShaders = {
   normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
   normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert: fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
+  lightVert:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag: fs.readFileSync(
     __dirname + '/shaders/light_texture.frag',
     'utf-8'
   ),
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
-  phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  phongFrag:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
   fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
@@ -177,7 +186,6 @@ p5.RendererGL.prototype._initContext = function() {
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
-      console.log('p5.RendererGL: enabled webgl context');
       var gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
@@ -1140,10 +1148,11 @@ p5.RendererGL.prototype._bindBuffer = function(
   type,
   usage
 ) {
+  if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    var data = new type(values);
-    this.GL.bufferData(target, data, usage);
+    var data = new (type || Float32Array)(values);
+    this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
   }
 };
 
@@ -1196,11 +1205,12 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._vToNArray = function(arr) {
-  return this._flatten(
-    arr.map(function(item) {
-      return [item.x, item.y, item.z];
-    })
-  );
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    var item = arr[i];
+    ret.push(item.x, item.y, item.z);
+  }
+  return ret;
 };
 
 /**

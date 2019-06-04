@@ -15,16 +15,8 @@
     "ecmaVersion": 2017
   },
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true
-      }
-    ],
-    "no-cond-assign": [
-      2,
-      "except-parens"
-    ],
+    "prettier/prettier": ["error"],
+    "no-cond-assign": [2, "except-parens"],
     "eqeqeq": ["error", "smart"],
     "no-use-before-define": [
       2,
