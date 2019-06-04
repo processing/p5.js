@@ -67,7 +67,7 @@ void main(void){
       float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
 
       float lightDistance = length(lightVector);
-      float fallOffFactor =  1.0 / (constantAttenuation + lightDistance * (linearAttenuation + quadraticAttenuation * lightDistance));
+      float fallOffFactor =  1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
 
       float specularLightWeighting = 0.0;
       if (uSpecular ){

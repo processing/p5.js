@@ -87,7 +87,7 @@ void main(void) {
     
       //calculate attenuation
       float lightDistance = length(lightVector);
-      float fallOffFactor =  1.0 / (constantAttenuation + lightDistance * (linearAttenuation + quadraticAttenuation * lightDistance));
+      float fallOffFactor =  1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
 
       LightResult result = light(lightVector);
       diffuse += result.diffuse * uPointLightColor[j] * fallOffFactor;
