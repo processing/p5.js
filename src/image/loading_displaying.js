@@ -75,6 +75,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   });
 
   fetch(path, req).then(function(response) {
+    // GIF section
     if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
       response.arrayBuffer().then(
         function(arrayBuffer) {
@@ -100,6 +101,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         }
       );
     } else {
+      // Non-GIF Section
       var img = new Image();
 
       img.onload = function() {
@@ -137,75 +139,96 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     }
     pImg.modified = true;
   });
-
-  //helper function for decoding and setting up GIF properties
-  function _createGif(
-    arrayBuffer,
-    pImg,
-    successCallback,
-    failureCallback,
-    finishCallback
-  ) {
-    var gifReader = new omggif.GifReader(arrayBuffer);
-    pImg.width = pImg.canvas.width = gifReader.width;
-    pImg.height = pImg.canvas.height = gifReader.height;
-    var frames = [];
-    var numFrames = gifReader.numFrames();
-    if (numFrames > 1) {
-      var loadGIFFrameIntoImage = function(frameNum, gifReader) {
-        var framePixels = new Uint8Array(pImg.width * pImg.height * 4);
-        try {
-          gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-        } catch (e) {
-          p5._friendlyFileLoadError(8, pImg.src);
-          if (typeof failureCallback === 'function') {
-            failureCallback(e);
-          } else {
-            console.error(e);
-          }
-        }
-        return new Uint8ClampedArray(framePixels);
-      };
-
-      for (var j = 0; j < numFrames; j++) {
-        var framePixels = loadGIFFrameIntoImage(j, gifReader);
-        var imageData = new ImageData(framePixels, pImg.width, pImg.height);
-        frames.push(imageData);
-      }
-
-      //Uses Netscape block encoding
-      //to repeat forever, this will be 0
-      //to repeat just once, this will be null
-      //to repeat N times (1<N), should contain integer for loop number
-      //this is changed to more usable values for us
-      //to repeat forever, loopCount = null
-      //everything else is just the number of loops
-      var loopLimit = gifReader.loopCount();
-      if (loopLimit === null) {
-        loopLimit = 1;
-      } else if (loopLimit === 0) {
-        loopLimit = null;
-      }
-
-      pImg.gifProperties = {
-        displayIndex: 0,
-        delay: gifReader.frameInfo(0).delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
-        loopLimit: loopLimit,
-        loopCount: 0,
-        frames: frames,
-        numFrames: numFrames,
-        playing: true,
-        timeDisplayed: 0
-      };
-    }
-
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
-    }
-    finishCallback();
-  }
   return pImg;
 };
+
+/**
+ * Helper function for loading GIF-based images
+ *
+ */
+function _createGif(
+  arrayBuffer,
+  pImg,
+  successCallback,
+  failureCallback,
+  finishCallback
+) {
+  var gifReader = new omggif.GifReader(arrayBuffer);
+  pImg.width = pImg.canvas.width = gifReader.width;
+  pImg.height = pImg.canvas.height = gifReader.height;
+  var frames = [];
+  var numFrames = gifReader.numFrames();
+  var framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+  // I didn't realize this at first but some GIFs encode with frame
+  // Reworking delay to be frame level will make it less powerful
+  // to modify for users. For now this works with 99% of GIFs that
+  // I can find and for those that it doesn't there is just a retiming
+  // of the frames, which would be minor for all but the strangest GIFs
+  var averageDelay = 0;
+  if (numFrames > 1) {
+    var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+      try {
+        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+      } catch (e) {
+        p5._friendlyFileLoadError(8, pImg.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      }
+    };
+    for (var j = 0; j < numFrames; j++) {
+      var frameInfo = gifReader.frameInfo(j);
+      // Some GIFs are encoded so that they expect the previous frame
+      // to be under the current frame. This can occur at a sub-frame level
+      // There are possible disposal codes but I didn't encounter any
+      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
+        pImg.drawingContext.putImageData(frames[j - 1], 0, 0);
+      }
+      averageDelay += frameInfo.delay;
+      loadGIFFrameIntoImage(j, gifReader);
+      var imageData = new ImageData(framePixels, pImg.width, pImg.height);
+      pImg.drawingContext.putImageData(imageData, 0, 0);
+      frames.push(
+        pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height)
+      );
+    }
+
+    //Uses Netscape block encoding
+    //to repeat forever, this will be 0
+    //to repeat just once, this will be null
+    //to repeat N times (1<N), should contain integer for loop number
+    //this is changed to more usable values for us
+    //to repeat forever, loopCount = null
+    //everything else is just the number of loops
+    var loopLimit = gifReader.loopCount();
+    if (loopLimit === null) {
+      loopLimit = 1;
+    } else if (loopLimit === 0) {
+      loopLimit = null;
+    }
+
+    // See note about this at variable creation above
+    averageDelay /= numFrames;
+
+    pImg.gifProperties = {
+      displayIndex: 0,
+      delay: averageDelay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
+      loopLimit: loopLimit,
+      loopCount: 0,
+      frames: frames,
+      numFrames: numFrames,
+      playing: true,
+      timeDisplayed: 0
+    };
+  }
+
+  if (typeof successCallback === 'function') {
+    successCallback(pImg);
+  }
+  finishCallback();
+}
 
 /**
  * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
