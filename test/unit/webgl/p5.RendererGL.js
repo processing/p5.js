@@ -309,4 +309,42 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
+
+  suite('tint() in WEBGL mode', function() {
+    test('default tint value is set and not null', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
+    });
+
+    test('tint value is modified correctly when tint() is called', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.tint(0, 153, 204, 126);
+      assert.deepEqual(myp5._renderer._tint, [0, 153, 204, 126]);
+      myp5.tint(100, 120, 140);
+      assert.deepEqual(myp5._renderer._tint, [100, 120, 140, 255]);
+      myp5.tint('violet');
+      assert.deepEqual(myp5._renderer._tint, [238, 130, 238, 255]);
+      myp5.tint(100);
+      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      myp5.tint(100, 126);
+      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      myp5.tint([100, 126, 0, 200]);
+      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 200]);
+      myp5.tint([100, 126, 0]);
+      assert.deepEqual(myp5._renderer._tint, [100, 126, 0, 255]);
+      myp5.tint([100]);
+      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 255]);
+      myp5.tint([100, 126]);
+      assert.deepEqual(myp5._renderer._tint, [100, 100, 100, 126]);
+      myp5.tint(myp5.color(255, 204, 0));
+      assert.deepEqual(myp5._renderer._tint, [255, 204, 0, 255]);
+    });
+
+    // test('tint should be reset after draw loop', function() {
+    //   myp5.createCanvas(100, 100, myp5.WEBGL);
+    //   myp5.tint(0, 153, 204, 126);
+
+    //   assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
+    // });
+  });
 });
