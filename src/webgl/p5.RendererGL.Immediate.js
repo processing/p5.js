@@ -52,6 +52,8 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode._bezierVertex = [];
     this.immediateMode._quadraticVertex = [];
     this.immediateMode._curveVertex = [];
+    this.immediateMode._isCoplanar = true;
+    this.immediateMode._testIfCoplanar = null;
   } else {
     this.immediateMode.vertices.length = 0;
     this.immediateMode.edges.length = 0;
@@ -91,6 +93,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     z = arguments[2];
     u = arguments[3];
     v = arguments[4];
+  }
+  if (this.immediateMode._testIfCoplanar == null) {
+    this.immediateMode._testIfCoplanar = z;
+  } else if (this.immediateMode._testIfCoplanar !== z) {
+    this.immediateMode._isCoplanar = false;
   }
   var vert = new p5.Vector(x, y, z);
   this.immediateMode.vertices.push(vert);
@@ -183,7 +190,14 @@ p5.RendererGL.prototype.endShape = function(
     }
 
     if (this._doFill && this.immediateMode.shapeMode !== constants.LINES) {
-      if (this.isBezier || this.isQuadratic || this.isCurve) {
+      if (
+        this.isBezier ||
+        this.isQuadratic ||
+        this.isCurve ||
+        (this.immediateMode.shapeMode === constants.LINE_STRIP &&
+          this.drawMode === constants.FILL &&
+          this.immediateMode._isCoplanar === true)
+      ) {
         var contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
         ];
@@ -201,14 +215,16 @@ p5.RendererGL.prototype.endShape = function(
           );
         }
       }
-      this._drawFillImmediateMode(
-        mode,
-        isCurve,
-        isBezier,
-        isQuadratic,
-        isContour,
-        shapeKind
-      );
+      if (this.immediateMode.vertices.length > 0) {
+        this._drawFillImmediateMode(
+          mode,
+          isCurve,
+          isBezier,
+          isQuadratic,
+          isContour,
+          shapeKind
+        );
+      }
     }
   }
   //clear out our vertexPositions & colors arrays
@@ -222,8 +238,9 @@ p5.RendererGL.prototype.endShape = function(
   this.isCurve = false;
   this.immediateMode._bezierVertex.length = 0;
   this.immediateMode._quadraticVertex.length = 0;
-
   this.immediateMode._curveVertex.length = 0;
+  this.immediateMode._isCoplanar = true;
+  this.immediateMode._testIfCoplanar = null;
 
   return this;
 };
@@ -251,14 +268,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aPosition, 3);
   }
 
   // initialize the fill shader's 'aVertexColor' buffer
@@ -271,14 +281,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aVertexColor.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aVertexColor, 4);
   }
 
   // initialize the fill shader's 'aTexCoord' buffer
@@ -292,14 +295,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       gl.DYNAMIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aTexCoord.location,
-      2,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aTexCoord, 2);
   }
 
   //if (true || mode) {
@@ -312,6 +308,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
           this.isBezier ||
           this.isQuadratic ||
           this.isCurve ||
+          this.immediateMode.shapeMode === constants.LINE_STRIP ||
           this.immediateMode.shapeMode === constants.TRIANGLES
             ? constants.TRIANGLES
             : constants.TRIANGLE_FAN;
@@ -367,14 +364,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
       gl.STATIC_DRAW
     );
 
-    shader.enableAttrib(
-      shader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aPosition, 3);
   }
 
   // initialize the stroke shader's 'aDirection' buffer
@@ -386,14 +376,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
       Float32Array,
       gl.STATIC_DRAW
     );
-    shader.enableAttrib(
-      shader.attributes.aDirection.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    shader.enableAttrib(shader.attributes.aDirection, 4);
   }
 
   this._applyColorBlend(this.curStrokeColor);

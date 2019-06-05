@@ -833,9 +833,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 4 black points in a square shape in middle-right of canvas.
- *
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -850,9 +847,6 @@ p5.prototype.quadraticVertex = function() {
  * endShape();
  * </code>
  * </div>
- *
- * @alt
- * 4 points making a diamond shape
  *
  * <div>
  * <code>
@@ -873,9 +867,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making a star
- *
  * <div>
  * <code>
  * strokeWeight(3);
@@ -893,8 +884,62 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * // Click to change the number of sides.
+ * // In WebGL mode, custom shapes will only
+ * // display hollow fill sections when
+ * // all calls to vertex() use the same z-value.
+ *
+ * let sides = 3;
+ * let angle, px, py;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   fill(237, 34, 93);
+ *   strokeWeight(3);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   ngon(sides, 0, 0, 80);
+ * }
+ *
+ * function mouseClicked() {
+ *   if (sides > 6) {
+ *     sides = 3;
+ *   } else {
+ *     sides++;
+ *   }
+ * }
+ *
+ * function ngon(n, x, y, d) {
+ *   beginShape();
+ *   for (var i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 2;
+ *     py = y - cos(angle) * d / 2;
+ *     vertex(px, py, 0);
+ *   }
+ *   for (i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 4;
+ *     py = y - cos(angle) * d / 4;
+ *     vertex(px, py, 0);
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
  * @alt
- * 8 points making 4 lines
+ * 4 black points in a square shape in middle-right of canvas.
+ * 4 points making a diamond shape.
+ * 8 points making a star.
+ * 8 points making 4 lines.
+ * A rotating 3D shape with a hollow section in the middle.
  *
  */
 /**
