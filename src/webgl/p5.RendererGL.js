@@ -77,6 +77,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useNormalMaterial = false;
   this._useShininess = 1;
 
+  this._tint = [255, 255, 255, 255];
+
   /**
    * model view, projection, & normal
    * matrices
@@ -1086,9 +1088,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   if (this._tex) {
     fillShader.setUniform('uSampler', this._tex);
   }
-  if (this._tint) {
-    fillShader.setUniform('uTint', this._tint);
-  }
+  fillShader.setUniform('uTint', this._tint);
 
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
