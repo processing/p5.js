@@ -21,9 +21,10 @@ p5.prototype._hasMouseInteracted = false;
 
 /**
  * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas. If touch is
- * used instead of mouse input, mouseX will hold the x value of the most
- * recent touch point.
+ * position of the mouse, relative to (0, 0) of the canvas. The value at
+ * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+ * If touch is used instead of mouse input, mouseX will hold the x value
+ * of the most recent touch point.
  *
  * @property {Number} mouseX
  * @readOnly
@@ -46,10 +47,11 @@ p5.prototype._hasMouseInteracted = false;
 p5.prototype.mouseX = 0;
 
 /**
- * The system variable mouseY always contains the current vertical position
- * of the mouse, relative to (0, 0) of the canvas. If touch is
- * used instead of mouse input, mouseY will hold the y value of the most
- * recent touch point.
+ * The system variable mouseY always contains the current vertical
+ * position of the mouse, relative to (0, 0) of the canvas. The value at
+ * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
+ * If touch is used instead of mouse input, mouseY will hold the y value
+ * of the most recent touch point.
  *
  * @property {Number} mouseY
  * @readOnly
@@ -74,7 +76,8 @@ p5.prototype.mouseY = 0;
 /**
  * The system variable pmouseX always contains the horizontal position of
  * the mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas. Note: pmouseX will be reset to the current mouseX
+ * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
+ * (-width/2, -height/2) for WebGL. Note: pmouseX will be reset to the current mouseX
  * value at the start of each touch event.
  *
  * @property {Number} pmouseX
@@ -104,9 +107,10 @@ p5.prototype.mouseY = 0;
 p5.prototype.pmouseX = 0;
 
 /**
- * The system variable pmouseY always contains the vertical position of the
- * mouse or finger in the frame previous to the current frame, relative to
- * (0, 0) of the canvas. Note: pmouseY will be reset to the current mouseY
+ * The system variable pmouseY always contains the vertical position of
+ * the mouse or finger in the frame previous to the current frame, relative to
+ * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
+ * (-width/2, -height/2) for WebGL. Note: pmouseY will be reset to the current mouseY
  * value at the start of each touch event.
  *
  * @property {Number} pmouseY
