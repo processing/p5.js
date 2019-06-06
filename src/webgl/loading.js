@@ -289,7 +289,7 @@ function parseSTL(model, buffer) {
 
     if (!('TextDecoder' in window)) {
       console.error(
-        'Sorry, this browser is not supported for loading STL files.'
+        'Sorry, ASCII STL loading only works in browsers that support TextDecoder (https://caniuse.com/#feat=textencoder)'
       );
       return model;
     }
