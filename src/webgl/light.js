@@ -316,7 +316,13 @@ p5.prototype.lights = function() {
 };
 
 /**
- * Sets the falloff rates for point lights.
+ * Sets the falloff rates for point lights. It affects only the elements which are created after it in the code.
+ * The default value is lightFalloff(1.0, 0.0, 0.0), and the parameters are used to calculate the falloff with the following equation:
+ *
+ * d = distance from light position to vertex position
+ *
+ * falloff = 1 / (CONSTANT + d \* LINEAR + ( d \* d ) \* QUADRATIC)
+ *
  * @method lightFalloff
  * @param {Number} constant   constant value for determining falloff
  * @param {Number} linear     linear value for determining falloff
@@ -331,7 +337,7 @@ p5.prototype.lights = function() {
  * }
  * function draw() {
  *   background(0);
- *   lightFalloff(1, 0.01, 0);
+ *   lightFalloff(0.5, 0.01, 0);
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
  *   pointLight(250, 250, 250, locX, locY, 50);
@@ -339,6 +345,10 @@ p5.prototype.lights = function() {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * A brighter point light that changes position with mouse
+ *
  */
 p5.prototype.lightFalloff = function(
   constantAttenuation,
