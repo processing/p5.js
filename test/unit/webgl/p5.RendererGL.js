@@ -340,11 +340,22 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5._renderer._tint, [255, 204, 0, 255]);
     });
 
-    // test('tint should be reset after draw loop', function() {
-    //   myp5.createCanvas(100, 100, myp5.WEBGL);
-    //   myp5.tint(0, 153, 204, 126);
-
-    //   assert.deepEqual(myp5._renderer._tint, [255, 255, 255, 255]);
-    // });
+    test('tint should be reset after draw loop', function() {
+      return new Promise(function(resolve, reject) {
+        new p5(function(p) {
+          p.setup = function() {
+            p.createCanvas(100, 100, myp5.WEBGL);
+          };
+          p.draw = function() {
+            if (p.frameCount === 2) {
+              resolve(p._renderer._tint);
+            }
+            p.tint(0, 153, 204, 126);
+          };
+        });
+      }).then(function(_tint) {
+        assert.deepEqual(_tint, [255, 255, 255, 255]);
+      });
+    });
   });
 });
