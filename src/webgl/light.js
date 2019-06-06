@@ -316,8 +316,29 @@ p5.prototype.lights = function() {
 };
 
 /**
+ * Sets the falloff rates for point lights.
  * @method fallOff
+ * @param {Number} constant   constant value for determining falloff
+ * @param {Number} linear     linear value for determining falloff
+ * @param {Number} quadratic  quadratic value for determining falloff
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ * function draw() {
+ *   background(0);
+ *   fallOff(1, 0.01, 0);
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(250, 250, 250, locX, locY, 50);
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.fallOff = function(
   constantAttenuation,
