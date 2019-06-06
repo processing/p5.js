@@ -86,7 +86,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useNormalMaterial = false;
   this._useShininess = 1;
 
-  // Falloff variables
+  // lightFalloff variables
   this.constantAttenuation = 1;
   this.linearAttenuation = 0;
   this.quadraticAttenuation = 0;

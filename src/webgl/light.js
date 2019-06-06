@@ -317,7 +317,7 @@ p5.prototype.lights = function() {
 
 /**
  * Sets the falloff rates for point lights.
- * @method fallOff
+ * @method lightFalloff
  * @param {Number} constant   constant value for determining falloff
  * @param {Number} linear     linear value for determining falloff
  * @param {Number} quadratic  quadratic value for determining falloff
@@ -331,7 +331,7 @@ p5.prototype.lights = function() {
  * }
  * function draw() {
  *   background(0);
- *   fallOff(1, 0.01, 0);
+ *   lightFalloff(1, 0.01, 0);
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
  *   pointLight(250, 250, 250, locX, locY, 50);
@@ -340,32 +340,32 @@ p5.prototype.lights = function() {
  * </code>
  * </div>
  */
-p5.prototype.fallOff = function(
+p5.prototype.lightFalloff = function(
   constantAttenuation,
   linearAttenuation,
   quadraticAttenuation
 ) {
-  this._assert3d('fallOff');
-  // p5._validateParameters('fallOff', arguments);
+  this._assert3d('lightFalloff');
+  // p5._validateParameters('lightFalloff', arguments);
 
   if (constantAttenuation < 0) {
     constantAttenuation = 0;
     console.warn(
-      'Value of constant argument in fallOff() should be never be negative. Set to 0.'
+      'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
     );
   }
 
   if (linearAttenuation < 0) {
     linearAttenuation = 0;
     console.warn(
-      'Value of linear argument in fallOff() should be never be negative. Set to 0.'
+      'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
     );
   }
 
   if (quadraticAttenuation < 0) {
     quadraticAttenuation = 0;
     console.warn(
-      'Value of quadratic argument in fallOff() should be never be negative. Set to 0.'
+      'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
     );
   }
 
@@ -375,7 +375,7 @@ p5.prototype.fallOff = function(
   ) {
     constantAttenuation = 1;
     console.warn(
-      'Either one of the three arguments should be greater than zero. Set constant argument to 1.'
+      'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
     );
   }
 

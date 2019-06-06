@@ -89,8 +89,8 @@ void totalLight(
     
       //calculate attenuation
       float lightDistance = length(lightVector);
-      float fallOff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
-      vec3 lightColor = fallOff * uPointLightColor[j];
+      float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
+      vec3 lightColor = lightFalloff * uPointLightColor[j];
 
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;

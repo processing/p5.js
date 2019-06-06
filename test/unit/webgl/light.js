@@ -18,11 +18,11 @@ suite('light', function() {
   });
 
   suite('Light', function() {
-    test('fallOff is set properly', function() {
+    test('lightFalloff is initialised and set properly', function() {
       assert.deepEqual(myp5._renderer.constantAttenuation, 1);
       assert.deepEqual(myp5._renderer.linearAttenuation, 0);
       assert.deepEqual(myp5._renderer.quadraticAttenuation, 0);
-      myp5.fallOff(2, 3, 4);
+      myp5.lightFalloff(2, 3, 4);
       assert.deepEqual(myp5._renderer.constantAttenuation, 2);
       assert.deepEqual(myp5._renderer.linearAttenuation, 3);
       assert.deepEqual(myp5._renderer.quadraticAttenuation, 4);
