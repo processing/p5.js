@@ -356,7 +356,7 @@ p5.prototype.lightFalloff = function(
   quadraticAttenuation
 ) {
   this._assert3d('lightFalloff');
-  // p5._validateParameters('lightFalloff', arguments);
+  p5._validateParameters('lightFalloff', arguments);
 
   if (constantAttenuation < 0) {
     constantAttenuation = 0;
