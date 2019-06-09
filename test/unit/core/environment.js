@@ -1,4 +1,4 @@
-suite.only('Graphics', function() {
+suite('Graphics', function() {
   var myp5;
 
   setup(function(done) {
