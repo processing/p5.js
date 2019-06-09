@@ -122,14 +122,16 @@ suite('Vertex', function() {
       assert.ok(myp5.vertex);
       assert.typeOf(myp5.vertex, 'function');
     });
-    /*test('missing param #1', function() {
+    // p5.prototype.vertex parameter validation is absent
+    test.skip('missing param #1', function() {
       assert.validationError(function() {
         myp5.vertex(10);
       });
-    test('wrong param type at #0', function() {
+    });
+    test.skip('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.vertex('a', 1);
       });
-    });*/
+    });
   });
 });
