@@ -961,8 +961,8 @@ p5.prototype._onwheel = function(e) {
  * let x = 0;
  * let y = 0;
  * function draw() {
- *   x += window.daltaX % 100;
- *   y += window.deltaY % 100;
+ *   x += deltaX % 100;
+ *   y += deltaY % 100;
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(x, y, 50, 50);
