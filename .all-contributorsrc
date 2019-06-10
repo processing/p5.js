@@ -1500,6 +1500,18 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jonnytest1",
+      "name": "Jonathan Heindl",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/13507796?s=40&v=4",
+      "profile": "https://github.com/jonnytest1",
+      "contributions": [
+        "code",
+        "example",
+        "ideas",
+        "doc"
+      ]
     }
   ],
   "repoType": "github"
