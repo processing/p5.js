@@ -11,6 +11,20 @@
 var p5 = require('../core/main');
 var constants = require('../core/constants');
 
+/**
+
+ * @property {Number} deltaX
+ * @readOnly
+
+ */
+p5.prototype.deltaX = 0;
+/**
+
+ * @property {Number} deltaY
+ * @readOnly
+
+ */
+p5.prototype.deltaY = 0;
 /*
  * This is a flag which is false until the first time
  * we receive a mouse event. The pmouseX and pmouseY
@@ -377,6 +391,8 @@ p5.prototype._updateNextMouseCoords = function(e) {
       this.height,
       e
     );
+    this._setProperty('deltaX', e.movementX);
+    this._setProperty('deltaY', e.movementY);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -927,6 +943,47 @@ p5.prototype._onwheel = function(e) {
       e.preventDefault();
     }
   }
+};
+
+/**
+ * The Function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
+ * locks the pointer to its current position and makes it invisible.
+ * Use offsetX and offsetY to get the difference the mouse was moved since
+ * the last call of draw
+ *
+ * @method requestPointerLock
+ * @returns {void}
+ * @example
+ * <div class='notest'>
+ * <code>
+ * //click the canvas to lock the pointer
+ * //press ESC to exit lock mode
+ * let x = 0;
+ * let y = 0;
+ * function draw() {
+ *   x += window.daltaX % 100;
+ *   y += window.deltaY % 100;
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(x, y, 50, 50);
+ * }
+ * function mouseClicked() {
+ *   requestPointerLock();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black 50x50 rect moves up and down with mouse move while no cursor is visible
+ *
+ */
+p5.prototype.requestPointerLock = function() {
+  // pointer lock object forking for cross browser
+  var canvas = this._curElement.elt;
+  canvas.requestPointerLock =
+    canvas.requestPointerLock || canvas.mozRequestPointerLock;
+
+  canvas.requestPointerLock();
 };
 
 module.exports = p5;
