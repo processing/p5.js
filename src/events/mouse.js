@@ -946,7 +946,7 @@ p5.prototype._onwheel = function(e) {
 };
 
 /**
- * The Function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
+ * The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
  * locks the pointer to its current position and makes it invisible.
  * Use offsetX and offsetY to get the difference the mouse was moved since
  * the last call of draw
