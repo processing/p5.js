@@ -12,17 +12,41 @@ var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /**
-
  * @property {Number} deltaX
  * @readOnly
-
+ * @example
+ * <div class="notest">
+ * <code>
+ * let x = 0;
+ * function draw() {
+ *   x = (x + deltaX) % 100;
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(x, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ *
  */
 p5.prototype.deltaX = 0;
-/**
 
+/**
  * @property {Number} deltaY
  * @readOnly
-
+ * @example
+ * <div class="notest">
+ * <code>
+ * let y = 0;
+ * function draw() {
+ *   y = (y + deltaY) % 100;
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(50, y, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
  */
 p5.prototype.deltaY = 0;
 /*
@@ -948,24 +972,19 @@ p5.prototype._onwheel = function(e) {
 /**
  * The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
  * locks the pointer to its current position and makes it invisible.
- * Use offsetX and offsetY to get the difference the mouse was moved since
+ * Use deltaX and deltaX to get the difference the mouse was moved since
  * the last call of draw
  *
  * @method requestPointerLock
  * @returns {void}
  * @example
- * <div class='notest'>
+ * <div class="notest">
  * <code>
  * //click the canvas to lock the pointer
  * //press ESC to exit lock mode
- * let x = 0;
- * let y = 0;
  * function draw() {
- *   x += deltaX % 100;
- *   y += deltaY % 100;
  *   background(237, 34, 93);
  *   fill(0);
- *   rect(x, y, 50, 50);
  * }
  * function mouseClicked() {
  *   requestPointerLock();
