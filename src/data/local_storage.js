@@ -12,7 +12,7 @@ var p5 = require('../core/main');
  *
  * Stores a value in local storage under the key name. The key can
  * be the name of the variable but it does not have to be. To retrieve
- * stored items see <a href="#/p5/loadItem">loadItem</a>.
+ * stored items see <a href="#/p5/getItem">getItem</a>.
  *
  * @method storeItem
  * @for p5
@@ -30,7 +30,7 @@ var p5 = require('../core/main');
  *
  * function setup() {
  *   createCanvas(100, 100);
- *   myText = loadItem('myText');
+ *   myText = getItem('myText');
  *   if (myText === null) {
  *     myText = '';
  *   }
@@ -81,7 +81,7 @@ p5.prototype.storeItem = function(key, value) {
  * Returns the value of an item that was stored in local storage
  * using storeItem()
  *
- * @method loadItem
+ * @method getItem
  * @for p5
  * @param {String} key name that you wish to use to store in local storage
  * @return {Number|Object|String|Boolean|p5.Color} Value of stored item
@@ -98,7 +98,7 @@ p5.prototype.storeItem = function(key, value) {
  *
  * function setup() {
  *   createCanvas(100, 100);
- *   myColor = loadItem('myColor');
+ *   myColor = getItem('myColor');
  * }
  *
  * function draw() {
@@ -119,7 +119,7 @@ p5.prototype.storeItem = function(key, value) {
  * was when the page was previously loaded.
  *
  */
-p5.prototype.loadItem = function(key) {
+p5.prototype.getItem = function(key) {
   var value = localStorage.getItem(key);
   var type = localStorage.getItem(key + 'Type');
   if (typeof type === 'undefined') {
@@ -167,11 +167,11 @@ p5.prototype.loadItem = function(key) {
  *   let myBool = false;
  *   storeItem('myNum', myNum);
  *   storeItem('myBool', myBool);
- *   print(loadItem('myNum')); // logs 10 to the console
- *   print(loadItem('myBool')); // logs false to the console
+ *   print(getItem('myNum')); // logs 10 to the console
+ *   print(getItem('myBool')); // logs false to the console
  *   clearStorage();
- *   print(loadItem('myNum')); // logs null to the console
- *   print(loadItem('myBool')); // logs null to the console
+ *   print(getItem('myNum')); // logs null to the console
+ *   print(getItem('myBool')); // logs null to the console
  * }
  * </code></div>
  */
@@ -193,9 +193,9 @@ p5.prototype.clearStorage = function() {
  * function setup() {
  *   let myVar = 10;
  *   storeItem('myVar', myVar);
- *   print(loadItem('myVar')); // logs 10 to the console
+ *   print(getItem('myVar')); // logs 10 to the console
  *   removeItem('myVar');
- *   print(loadItem('myVar')); // logs null to the console
+ *   print(getItem('myVar')); // logs null to the console
  * }
  * </code></div>
  */
