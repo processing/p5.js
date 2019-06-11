@@ -54,7 +54,7 @@ var p5 = require('../core/main');
  *
  */
 p5.prototype.storeItem = function(key, value) {
-  if (value === 'undefined') {
+  if (typeof value === 'undefined') {
     console.log('You cannot store undefined variables using storeItem()');
   }
   var type = typeof value;
@@ -122,7 +122,7 @@ p5.prototype.storeItem = function(key, value) {
 p5.prototype.loadItem = function(key) {
   var value = localStorage.getItem(key);
   var type = localStorage.getItem(key + 'Type');
-  if (type === undefined) {
+  if (typeof type === 'undefined') {
     console.log(
       'Unable to determine type of item stored under ' +
         key +
@@ -139,7 +139,7 @@ p5.prototype.loadItem = function(key) {
       case 'object':
         value = JSON.parse(value);
         //If an object is meant to be a p5.Color
-        if (value.maxes.hsb !== undefined) {
+        if (typeof value.maxes.hsb !== 'undefined') {
           value = this.color.apply(this, value.levels);
         }
         break;
