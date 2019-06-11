@@ -72,7 +72,7 @@ p5.prototype.storeItem = function(key, value) {
   }
 
   localStorage.setItem(key, value);
-  var typeKey = key + 'Type';
+  var typeKey = key + 'p5TypeID';
   localStorage.setItem(typeKey, type);
 };
 
@@ -121,7 +121,7 @@ p5.prototype.storeItem = function(key, value) {
  */
 p5.prototype.getItem = function(key) {
   var value = localStorage.getItem(key);
-  var type = localStorage.getItem(key + 'Type');
+  var type = localStorage.getItem(key + 'p5TypeID');
   if (typeof type === 'undefined') {
     console.log(
       'Unable to determine type of item stored under ' +
@@ -208,5 +208,5 @@ p5.prototype.removeItem = function(key) {
     );
   }
   localStorage.removeItem(key);
-  localStorage.removeItem(key + 'Type');
+  localStorage.removeItem(key + 'p5TypeID');
 };
