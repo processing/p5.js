@@ -1,4 +1,4 @@
-suite.only('Mouse Events', function() {
+suite('Mouse Events', function() {
   let myp5;
 
   let canvas;
