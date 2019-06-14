@@ -16,14 +16,14 @@ var y2 = 0;
 // Linear Congruential Generator
 // Variant of a Lehman Generator
 var lcg = (function() {
-  // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+  // Set to values from glibc(useb by GCC) (https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use)
   // m is basically chosen to be large (as it is the max period)
   // and for its relationships to a and c
-  var m = 4294967296,
+  var m = 2147483647,
     // a - 1 should be divisible by m's prime factors
-    a = 1664525,
+    a = 1103515245,
     // c and m should be co-prime
-    c = 1013904223,
+    c = 12345,
     seed,
     z;
   return {
