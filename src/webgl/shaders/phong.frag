@@ -3,6 +3,7 @@
 uniform vec4 uMaterialColor;
 uniform sampler2D uSampler;
 uniform bool isTexture;
+uniform bool uEmissive;
 
 varying vec3 vNormal;
 varying vec2 vTexCoord;
