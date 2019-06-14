@@ -312,6 +312,7 @@ p5.prototype.normalMaterial = function() {
   p5._validateParameters('normalMaterial', arguments);
   this._renderer.drawMode = constants.FILL;
   this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = true;
   this._renderer.curFillColor = [1, 1, 1, 1];
   this._renderer._setProperty('_doFill', true);
@@ -409,6 +410,7 @@ p5.prototype.texture = function(tex) {
 
   this._renderer.drawMode = constants.TEXTURE;
   this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._tex = tex;
   this._renderer._setProperty('_doFill', true);
@@ -613,6 +615,36 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
   this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = false;
+  this._renderer._useNormalMaterial = false;
+  this._renderer._enableLighting = true;
+  this._renderer._tex = null;
+
+  return this;
+};
+
+/**
+ * @method emissiveMaterial
+ * @param  {Number} v1  gray value, red or hue value
+ *                         (depending on the current color mode),
+ * @param  {Number} [v2] green or saturation value
+ * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} [a]  opacity
+ * @chainable
+ */
+/**
+ * @method  emissiveMaterial
+ * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+ * @chainable
+ */
+p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
+  this._assert3d('emissiveMaterial');
+  p5._validateParameters('emissiveMaterial', arguments);
+
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = true;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
@@ -664,6 +696,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
   this._renderer._useSpecularMaterial = true;
+  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
