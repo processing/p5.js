@@ -1,6 +1,6 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  setAttributes('perPixelLighting', true);
+  // setAttributes('perPixelLighting', true);
 }
 
 function draw() {
@@ -23,7 +23,7 @@ function draw() {
 
   translate(400, 0, 0);
   push();
-  emissiveMaterial(200);
+  emissiveMaterial(200, 0, 0);
   rotateZ(frameCount * 0.02);
   rotateX(frameCount * 0.02);
   rotateY(frameCount * 0.02);
