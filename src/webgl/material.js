@@ -624,6 +624,12 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
+ * Sets the emissive color of the material used for drawing shapes drawn to
+ * the screen. This is a misnomer in the sense that the material does not
+ * actually emit light that effects surrounding polygons. Instead,
+ * it gives the appearance that the object is glowing. Emissive material's
+ * property is that the polygon will display at full strength even if there
+ * is no light for it to reflect.
  * @method emissiveMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                         (depending on the current color mode),
@@ -631,6 +637,24 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number} [v3] blue or brightness value
  * @param  {Number} [a]  opacity
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   ambientLight(0);
+ *   emissiveMaterial(130, 230, 0);
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * radiating light source from top right of canvas
  */
 /**
  * @method  emissiveMaterial
