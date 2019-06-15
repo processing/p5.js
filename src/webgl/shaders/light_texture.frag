@@ -10,7 +10,6 @@ varying vec3 vDiffuseColor;
 varying vec3 vSpecularColor;
 
 void main(void) {
-
   if(uEmissive && !isTexture) {
     gl_FragColor = uMaterialColor;
   }
