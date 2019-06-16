@@ -464,7 +464,7 @@ suite('Mouse Events', function() {
       assert.deepEqual(count, 1);
     });
 
-    test('doubleClicked functions on multiple instances must run once', async function() {
+    test('mouseWheel functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
 
