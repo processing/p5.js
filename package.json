@@ -7,7 +7,7 @@
     "dev": "grunt browserify connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
-    "test": "grunt",
+    "test": "cross-env NODE_ENV=test grunt",
     "lint": "grunt lint-no-fix",
     "lint:fix": "grunt lint-fix",
     "contributors:add": "all-contributors add",
@@ -40,11 +40,13 @@
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "all-contributors-cli": "^5.11.0",
+    "babel-plugin-istanbul": "^5.1.4",
     "babelify": "^10.0.0",
     "brfs": "^2.0.2",
     "browserify": "^16.2.3",
     "chai": "^3.5.0",
     "connect-modrewrite": "^0.10.1",
+    "cross-env": "^5.2.0",
     "derequire": "^2.0.0",
     "es6-promise": "^4.2.6",
     "eslint": "^5.14.1",
@@ -115,11 +117,14 @@
     "test": "test"
   },
   "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ],
+    "presets": ["@babel/preset-env"],
     "generatorOpts": {
       "retainLines": true
+    },
+    "env": {
+      "test": {
+        "plugins": [["istanbul", { "include": ["src/**/*.js"] }]]
+      }
     }
   },
   "browserslist": [
