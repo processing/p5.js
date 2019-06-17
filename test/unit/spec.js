@@ -15,7 +15,7 @@ var spec = {
     'vertex'
   ],
   data: ['p5.TypedDict'],
-  events: ['keyboard', 'touch', 'acceleration'],
+  events: ['keyboard', 'mouse', 'touch', 'acceleration'],
   image: ['loading', 'pixels'],
   io: [
     'files',

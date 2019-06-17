@@ -1,4 +1,4 @@
-/*suite.only('Acceleration Events', function() {
+suite('Acceleration Events', function() {
   var myp5;
   setup(function(done) {
     new p5(function(p) {
@@ -16,19 +16,28 @@
   let deviceMotionEvent1 = new DeviceMotionEvent('devicemotion', {
     acceleration: { x: 10, y: 20, z: 30 }
   });
+
   let deviceMotionEvent2 = new DeviceMotionEvent('devicemotion', {
     acceleration: { x: 20, y: 40, z: 10 }
   });
-  let deviceOrientationEvent1 = new DeviceOrientationEvent('deviceorientation', {
-    alpha: 10,
-    beta: 45,
-    gamma: 90
-  });
-  let deviceOrientationEvent2 = new DeviceOrientationEvent('deviceorientation', {
-    alpha: 15,
-    beta: 30,
-    gamma: 180
-  });
+
+  let deviceOrientationEvent1 = new DeviceOrientationEvent(
+    'deviceorientation',
+    {
+      alpha: 10,
+      beta: 45,
+      gamma: 90
+    }
+  );
+
+  let deviceOrientationEvent2 = new DeviceOrientationEvent(
+    'deviceorientation',
+    {
+      alpha: 15,
+      beta: 30,
+      gamma: 180
+    }
+  );
 
   suite('acceleration', function() {
     test('accelerationX should be 20', function() {
@@ -96,24 +105,106 @@
     });
   });
 
+  suite('deviceMoved', function() {
+    test('deviceMoved must run when device is moved more than the threshold value', function() {
+      let count = 0;
+      myp5.deviceMoved = function() {
+        count += 1;
+      };
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 10 } })
+      );
+      assert.strictEqual(count, 1);
+    });
+
+    test('deviceMoved should not run when device is moved less than the threshold value', function() {
+      let count = 0;
+      myp5.deviceMoved = function() {
+        count += 1;
+      };
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 0.1 } })
+      );
+      //deviceMoved should not run since move threshold is by default 0.5
+      assert.strictEqual(count, 0);
+    });
+
+    test('p5.prototype.setMoveThreshold', function() {
+      let count = 0;
+      myp5.deviceMoved = function() {
+        count += 1;
+      };
+      myp5.setMoveThreshold(0.1);
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 0.1 } })
+      );
+      //deviceMoved should run since move threshold is set to 0.1 now
+      assert.strictEqual(count, 1);
+    });
+  });
+
   suite('deviceTurned', function() {
     test('deviceTurned must run when device is turned more than 90 degrees', function() {
       let count = 0;
       myp5.deviceTurned = function() {
         count += 1;
       };
-      window.dispatchEvent(new DeviceOrientationEvent('deviceorientation', { beta: 100 }));
+      window.dispatchEvent(
+        new DeviceOrientationEvent('deviceorientation', { beta: 5 })
+      );
+      window.dispatchEvent(
+        new DeviceOrientationEvent('deviceorientation', { beta: 100 })
+      );
       assert.strictEqual(count, 1);
     });
 
     test('turnAxis should be X', function() {
       let count = 0;
       myp5.deviceTurned = function() {
-        if (myp5.turnAxis == 'X')
-          count += 1;
+        if (myp5.turnAxis === 'X') count += 1;
       };
-      window.dispatchEvent(new DeviceOrientationEvent('deviceorientation', { beta: 10 }));
+      window.dispatchEvent(
+        new DeviceOrientationEvent('deviceorientation', { beta: 5 })
+      );
       assert.strictEqual(count, 1);
     });
   });
-}); */
+
+  suite('deviceShaken', function() {
+    test('deviceShaken must run when device acceleration is more than the threshold value', function() {
+      let count = 0;
+      myp5.deviceShaken = function() {
+        count += 1;
+      };
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 5, y: 15 } })
+      );
+      assert.strictEqual(count, 1);
+    });
+
+    test('deviceMoved should not run when device acceleration is less than the threshold value', function() {
+      let count = 0;
+      myp5.deviceShaken = function() {
+        count += 1;
+      };
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 10 } })
+      );
+      //deviceMoved should not run since shake threshold is by default 30
+      assert.strictEqual(count, 0);
+    });
+
+    test('p5.prototype.setShakeThreshold', function() {
+      let count = 0;
+      myp5.deviceShaken = function() {
+        count += 1;
+      };
+      myp5.setShakeThreshold(10);
+      window.dispatchEvent(
+        new DeviceMotionEvent('devicemotion', { acceleration: { x: 10 } })
+      );
+      //deviceMoved should run since shake threshold is set to 10 now
+      assert.strictEqual(count, 1);
+    });
+  });
+});
