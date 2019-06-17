@@ -250,4 +250,238 @@ suite('Mouse Events', function() {
       assert.strictEqual(myp5.mouseIsPressed, true);
     });
   });
+
+  suite('mouseMoved', function() {
+    test('mouseMoved function must run when mouse is moved', async function() {
+      let count = 0;
+
+      myp5.mouseMoved = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('mousemove'));
+      window.dispatchEvent(new MouseEvent('mousemove'));
+      assert.deepEqual(count, 2);
+    });
+
+    test('mouseMoved functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mouseMoved = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch a mouse event to trigger the mouseMoved functions
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseMoved was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('mouseDragged', function() {
+    test('mouseDragged function must run when mouse is dragged', async function() {
+      let count = 0;
+
+      myp5.mouseDragged = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
+      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      assert.deepEqual(count, 1);
+    });
+
+    test('mouseDragged functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mouseDragged = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
+      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseDragged was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('mousePressed', function() {
+    test('mousePressed function must run when mouse is pressed', async function() {
+      let count = 0;
+
+      myp5.mousePressed = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('mousedown'));
+      assert.deepEqual(count, 1);
+    });
+
+    test('mousePressed functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mousePressed = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('mousedown'));
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseDragged was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('mouseReleased', function() {
+    test('mouseReleased function must run when mouse is released', async function() {
+      let count = 0;
+
+      myp5.mouseReleased = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('mouseup'));
+      assert.deepEqual(count, 1);
+    });
+
+    test('mouseReleased functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mouseReleased = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('mouseup'));
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseReleased was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('mouseClicked', function() {
+    test('mouseClicked function must run when mouse is clicked', async function() {
+      let count = 0;
+
+      myp5.mouseClicked = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('click'));
+      assert.deepEqual(count, 1);
+    });
+
+    test('mouseClicked functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mouseClicked = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('click'));
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseClicked was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('doubleClicked', function() {
+    test('doubleClicked function must run when mouse is double clicked', async function() {
+      let count = 0;
+
+      myp5.doubleClicked = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('dblclick'));
+      assert.deepEqual(count, 1);
+    });
+
+    test('doubleClicked functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.doubleClicked = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('dblclick'));
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times doubleClicked was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
+
+  suite('mouseWheel', function() {
+    test('mouseWheel function must run when mouse wheel event is detected', async function() {
+      let count = 0;
+
+      myp5.mouseWheel = function() {
+        count += 1;
+      };
+
+      window.dispatchEvent(new MouseEvent('wheel'));
+      assert.deepEqual(count, 1);
+    });
+
+    test('mouseWheel functions on multiple instances must run once', async function() {
+      let sketchFn = function(sketch, resolve, reject) {
+        let count = 0;
+
+        sketch.mouseWheel = function() {
+          count += 1;
+        };
+
+        sketch.finish = function() {
+          resolve(count);
+        };
+      };
+      let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
+      await sketches.setup; //wait for all sketches to setup
+      window.dispatchEvent(new MouseEvent('wheel'));
+      sketches.end(); //resolve all sketches by calling their finish functions
+      let counts = await sketches.result; //get array holding number of times mouseWheel was called. Rejected sketches also thrown here
+      assert.deepEqual(counts, [1, 1]);
+    });
+  });
 });
