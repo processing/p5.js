@@ -139,7 +139,7 @@ p5.prototype.getItem = function(key) {
       case 'object':
         value = JSON.parse(value);
         //If an object is meant to be a p5.Color
-        if (typeof value.maxes.hsb !== 'undefined') {
+        if (typeof value.maxes !== 'undefined') {
           value = this.color.apply(this, value.levels);
         }
         break;
