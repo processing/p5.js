@@ -64,6 +64,9 @@ p5.prototype.storeItem = function(key, value) {
       value = value.toString();
       break;
     case 'object':
+      if (value instanceof p5.Color) {
+        type = 'p5.Color';
+      }
       value = JSON.stringify(value);
       break;
     case 'string':
@@ -138,10 +141,10 @@ p5.prototype.getItem = function(key) {
         break;
       case 'object':
         value = JSON.parse(value);
-        //If an object is meant to be a p5.Color
-        if (typeof value.maxes !== 'undefined') {
-          value = this.color.apply(this, value.levels);
-        }
+        break;
+      case 'p5.Color':
+        value = JSON.parse(value);
+        value = this.color.apply(this, value.levels);
         break;
       case 'string':
       default:
