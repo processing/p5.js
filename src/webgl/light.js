@@ -352,7 +352,7 @@ p5.prototype.lights = function() {
  * </div>
  *
  * @alt
- * A brighter point light that changes position with mouse
+ * Two spheres with different falloff values show different intensity of light
  *
  */
 p5.prototype.lightFalloff = function(
