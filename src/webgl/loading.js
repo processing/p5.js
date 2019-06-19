@@ -288,7 +288,7 @@ function parseSTL(model, buffer) {
     var reader = new DataView(buffer);
 
     if (!('TextDecoder' in window)) {
-      console.error(
+      console.warn(
         'Sorry, ASCII STL loading only works in browsers that support TextDecoder (https://caniuse.com/#feat=textencoder)'
       );
       return model;
