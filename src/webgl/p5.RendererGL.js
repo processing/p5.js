@@ -912,7 +912,11 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
   if (this._useNormalMaterial) {
-    return this._getNormalShader();
+    console.log(
+      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
+        ' created with beginShape(). Falling back to standard fill material.'
+    );
+    return this._getImmediateModeShader();
   }
 
   var fill = this.userFillShader;
