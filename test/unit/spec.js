@@ -3,16 +3,19 @@ var spec = {
   color: ['color_conversion', 'creating_reading', 'p5.Color', 'setting'],
   core: [
     '2d_primitives',
+    'attributes',
     'curves',
     'environment',
     'error_helpers',
     'main',
     'p5.Element',
     'rendering',
-    'structure'
+    'structure',
+    'transform',
+    'vertex'
   ],
   data: ['p5.TypedDict'],
-  events: ['keyboard'],
+  events: ['keyboard', 'mouse', 'touch'],
   image: ['loading', 'pixels'],
   io: [
     'files',

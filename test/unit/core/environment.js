@@ -35,6 +35,85 @@ suite('Graphics', function() {
     assert.strictEqual(real, expected, 'invalid number of pixels');
   }
 
+  suite('p5.frameCount', function() {
+    test('starts at zero', function() {
+      return new Promise(function(resolve, reject) {
+        // Has to use a custom p5 to hook setup correctly
+        new p5(function(p) {
+          p.setup = function() {
+            if (p.frameCount !== 0) {
+              reject('frameCount is not 0 in setup');
+            }
+          };
+          p.draw = function() {
+            if (p.frameCount === 1) {
+              resolve();
+            }
+          };
+        });
+      });
+    });
+    test('matches draw calls', function() {
+      return new Promise(function(resolve, reject) {
+        var frames = myp5.frameCount;
+        var start = myp5.frameCount;
+        myp5.draw = function() {
+          try {
+            frames += 1;
+            assert.equal(myp5.frameCount, frames);
+            if (frames === start + 5) {
+              // Test 5 seperate redraws
+              myp5.noLoop();
+              setTimeout(myp5.redraw.bind(myp5), 10);
+              setTimeout(myp5.redraw.bind(myp5), 20);
+              setTimeout(myp5.redraw.bind(myp5), 30);
+              setTimeout(myp5.redraw.bind(myp5), 40);
+              setTimeout(myp5.redraw.bind(myp5), 50);
+            } else if (frames === start + 10) {
+              // Test loop resuming
+              myp5.loop();
+            } else if (frames === start + 15) {
+              // Test queuing multiple redraws
+              myp5.noLoop();
+              setTimeout(myp5.redraw.bind(myp5, 5), 10);
+            } else if (frames === start + 20) {
+              resolve();
+            }
+            assert.equal(myp5.frameCount, frames);
+          } catch (err) {
+            reject(err);
+          }
+        };
+      });
+    });
+  });
+
+  suite('p5.prototype.focused', function() {
+    test('it should return true on focus', function() {
+      window.dispatchEvent(new Event('focus'));
+      assert.strictEqual(myp5.focused, true);
+    });
+
+    test('it should return true on blur', function() {
+      window.dispatchEvent(new Event('blur'));
+      assert.strictEqual(myp5.focused, false);
+    });
+  });
+
+  suite('p5.prototype.cursor', function() {
+    test('should change cursor to cross', function() {
+      myp5.cursor(myp5.CROSS);
+      assert.strictEqual(myp5._curElement.elt.style.cursor, 'crosshair');
+    });
+  });
+
+  suite('p5.prototype.noCursor', function() {
+    test('should change cursor to none', function() {
+      myp5.noCursor();
+      assert.strictEqual(myp5._curElement.elt.style.cursor, 'none');
+    });
+  });
+
   suite('p5.prototype.createGraphics', function() {
     test('it creates a graphics', function() {
       var graph = myp5.createGraphics(10, 17);
