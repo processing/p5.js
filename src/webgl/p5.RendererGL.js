@@ -67,7 +67,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.GL = this.drawingContext;
 
   // lights
-
   this._enableLighting = false;
 
   this.ambientLightColors = [];
@@ -77,6 +76,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.pointLightPositions = [];
   this.pointLightColors = [];
 
+  this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
   this.curBlendMode = constants.BLEND;
@@ -86,6 +86,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useEmissiveMaterial = false;
   this._useNormalMaterial = false;
   this._useShininess = 1;
+
+  this._tint = [255, 255, 255, 255];
 
   /**
    * model view, projection, & normal
@@ -460,6 +462,9 @@ p5.RendererGL.prototype._update = function() {
   this.pointLightColors.length = 0;
 
   this._enableLighting = false;
+
+  //reset tint value for new frame
+  this._tint = [255, 255, 255, 255];
 };
 
 /**
@@ -1093,6 +1098,8 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   if (this._tex) {
     fillShader.setUniform('uSampler', this._tex);
   }
+  fillShader.setUniform('uTint', this._tint);
+
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
