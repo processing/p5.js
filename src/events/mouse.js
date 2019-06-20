@@ -1001,7 +1001,10 @@ p5.prototype.requestPointerLock = function() {
   var canvas = this._curElement.elt;
   canvas.requestPointerLock =
     canvas.requestPointerLock || canvas.mozRequestPointerLock;
-
+  if (!canvas.requestPointerLock) {
+    console.log('requestPointerLock is not implemented in this browser');
+    return;
+  }
   canvas.requestPointerLock();
 };
 
