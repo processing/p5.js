@@ -1,4 +1,4 @@
-suite.only('pixels', function() {
+suite('pixels', function() {
   var myp5;
 
   setup(function(done) {
