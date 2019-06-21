@@ -1,4 +1,4 @@
-suite.only('p5.Image', function() {
+suite('p5.Image', function() {
   var myp5;
 
   setup(function(done) {
