@@ -16,7 +16,7 @@ var spec = {
   ],
   data: ['p5.TypedDict'],
   events: ['keyboard', 'mouse', 'touch'],
-  image: ['loading', 'pixels'],
+  image: ['p5.Image', 'loading', 'pixels'],
   io: [
     'files',
     'loadBytes',
