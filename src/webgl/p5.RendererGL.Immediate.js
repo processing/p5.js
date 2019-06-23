@@ -198,6 +198,7 @@ p5.RendererGL.prototype.endShape = function(
           this.drawMode === constants.FILL &&
           this.immediateMode._isCoplanar === true)
       ) {
+        this.immediateMode.shapeMode = constants.TRIANGLES;
         var contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
         ];
@@ -303,15 +304,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
     switch (this.immediateMode.shapeMode) {
       case constants.LINE_STRIP:
       case constants.LINES:
-      case constants.TRIANGLES:
-        this.immediateMode.shapeMode =
-          this.isBezier ||
-          this.isQuadratic ||
-          this.isCurve ||
-          this.immediateMode.shapeMode === constants.LINE_STRIP ||
-          this.immediateMode.shapeMode === constants.TRIANGLES
-            ? constants.TRIANGLES
-            : constants.TRIANGLE_FAN;
+        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
         break;
     }
   } else {
