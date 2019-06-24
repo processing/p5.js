@@ -164,7 +164,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 
 p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   var defaults = {
-    alpha: false,
+    alpha: true,
     depth: true,
     stencil: true,
     antialias: false,
