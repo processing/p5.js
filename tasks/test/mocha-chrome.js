@@ -63,9 +63,7 @@ module.exports = function(grunt) {
             await page.goto(testURL);
           });
         } finally {
-          await page.close({
-            runBeforeUnload: false
-          });
+          await page.close();
         }
       }
 
