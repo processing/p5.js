@@ -133,6 +133,11 @@ module.exports = grunt => {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
+    env: {
+      test: {
+        NODE_ENV: 'test'
+      }
+    },
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
@@ -462,6 +467,7 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
+  grunt.loadNpmTasks('grunt-env');
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
@@ -474,6 +480,7 @@ module.exports = grunt => {
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
+    'env:test',
     'lint-no-fix',
     //'yuidoc:prod', // already done by lint-no-fix
     'build',
@@ -483,6 +490,7 @@ module.exports = grunt => {
     'nyc:report'
   ]);
   grunt.registerTask('test:nobuild', [
+    'env:test',
     'eslint:test',
     'connect:server',
     'mochaChrome',
