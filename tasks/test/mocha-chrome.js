@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const EventHandler = require('eventhandler');
 const util = require('util');
 const mapSeries = require('promise-map-series');
+const fs = require('fs');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
@@ -35,7 +36,8 @@ module.exports = function(grunt) {
                   });
 
                   runner.on('end', () => {
-                    fireMochaEvent('mocha:end', runner.stats);
+                    const results = { stats: runner.stats, coverage: window.__coverage__ }
+                    fireMochaEvent('mocha:end', results);
                   });
 
                   return runner;
@@ -55,9 +57,19 @@ module.exports = function(grunt) {
           );
 
           await new Promise(async (resolve, reject) => {
-            eventHandler1.on('mocha:end', stats => {
-              if (stats.failures) reject(stats);
-              else resolve(stats);
+            eventHandler1.on('mocha:end', results => {
+              const { stats, coverage } = results;
+              if (stats.failures) {
+                reject(stats);
+              } else {
+                if (coverage) {
+                  fs.writeFileSync(
+                    './.nyc_output/out.json',
+                    JSON.stringify(coverage)
+                  );
+                }
+                resolve(stats);
+              }
             });
 
             await page.goto(testURL);
