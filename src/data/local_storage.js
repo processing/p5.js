@@ -10,9 +10,15 @@
 var p5 = require('../core/main');
 /**
  *
- * Stores a value in local storage under the key name. The key can
- * be the name of the variable but it does not have to be. To retrieve
- * stored items see <a href="#/p5/getItem">getItem</a>.
+ * Stores a value in local storage under the key name.
+ * Local storage is saved in the browser and persists
+ * between browsing sessions and page reloads.
+ * The key can be the name of the variable but doesn't
+ * have to be. To retrieve stored items
+ * see <a href="#/p5/getItem">getItem</a>.
+ * <br><br>
+ * Sensitive data such as passwords or personal information
+ * should not be stored in local storage.
  *
  * @method storeItem
  * @for p5
