@@ -85,6 +85,62 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 };
 
 /**
+ * Creates an specular light with a color
+ *
+ * @method specularLight
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha] the alpha value
+ * @chainable
+ *
+ */
+
+/**
+ * @method specularLight
+ * @param  {String}        value   a color string
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {Number}        gray   a gray value
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {p5.Color}      color   the ambient light color
+ * @chainable
+ */
+p5.prototype.specularLight = function(v1, v2, v3, a) {
+  this._assert3d('specularLight');
+  // p5._validateParameters('specularLight', arguments);
+  var color = this.color.apply(this, arguments);
+
+  this._renderer.specularLightColors.push(
+    color._array[0],
+    color._array[1],
+    color._array[2]
+  );
+
+  this._renderer._enableLighting = true;
+
+  return this;
+};
+
+/**
  * Creates a directional light with a color and a direction
  * @method directionalLight
  * @param  {Number}    v1       red or hue value (depending on the current

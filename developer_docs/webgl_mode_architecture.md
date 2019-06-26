@@ -124,14 +124,15 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
 |--------------------------------------|-----------|---------------|------------|-------------|------------|
 |`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
-|`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
 |`uniform int uDirectionalLightCount;` |           |x              |            |             |            |
 |`uniform int uPointLightCount;`       |           |x              |            |             |            |
+|`uniform int uSpecularLightCount;`    |           |x              |            |             |            |
 |`uniform vec3 uAmbientColor[8];`      |           |x              |            |             |            |
 |`uniform vec3 uLightingDirection[8];` |           |x              |            |             |            |
 |`uniform vec3 uDirectionalColor[8];`  |           |x              |            |             |            |
 |`uniform vec3 uPointLightLocation[8];`|           |x              |            |             |            |
 |`uniform vec3 uPointLightColor[8];`   |           |x              |            |             |            |
+|`uniform vec3 uSpecularColor[8];`     |           |x              |            |             |            |
 |`uniform bool uSpecular;`             |           |x              |            |             |            |
 |`uniform int  uShininess;`            |           |x              |            |             |            |
 |`uniform bool uUseLighting;`          |           |x              |            |             |            |
