@@ -12,7 +12,7 @@ var p5 = require('../core/main');
 var constants = require('../core/constants');
 
 /**
- * 
+ *
  * The variable deltaX contains the vertical movement of the mouse since the last frame
  * @property {Number} deltaX
  * @readOnly
@@ -978,9 +978,9 @@ p5.prototype._onwheel = function (e) {
  * Use <a href="#/p5/deltaX">deltaX</a> and <a href="#/p5/deltaY">deltaY</a> to get the difference the mouse was moved since
  * the last call of draw</p>
  * <p>Note that not all browsers support this feature</p>
- * <p>This enables you to create experiences that arent limited by the mouse moving out of the screen
- * even if it is repeatedly moved into one direction . </p>
- * <p>For Example a first person perspective experience</p>
+ * <p>This enables you to create experiences that aren't limited by the mouse moving out of the screen
+ * even if it is repeatedly moved into one direction. </p>
+ * <p>For example a first person perspective experience</p>
  *
  * @method requestPointerLock
  * @example
