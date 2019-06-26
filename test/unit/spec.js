@@ -16,7 +16,7 @@ var spec = {
   ],
   data: ['p5.TypedDict'],
   events: ['keyboard', 'mouse', 'touch'],
-  image: ['loading', 'pixels'],
+  image: ['p5.Image', 'loading', 'pixels'],
   io: [
     'files',
     'loadBytes',
@@ -31,7 +31,14 @@ var spec = {
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
-  webgl: ['p5.Matrix', 'p5.Camera', 'p5.RendererGL', 'p5.Shader', 'p5.Texture']
+  webgl: [
+    'p5.Matrix',
+    'p5.Camera',
+    'p5.RendererGL',
+    'p5.Shader',
+    'p5.Texture',
+    'light'
+  ]
 };
 Object.keys(spec).map(function(folder) {
   spec[folder].map(function(file) {

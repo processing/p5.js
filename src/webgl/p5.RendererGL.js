@@ -89,6 +89,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this._tint = [255, 255, 255, 255];
 
+  // lightFalloff variables
+  this.constantAttenuation = 1;
+  this.linearAttenuation = 0;
+  this.quadraticAttenuation = 0;
+
   /**
    * model view, projection, & normal
    * matrices
@@ -874,6 +879,10 @@ p5.RendererGL.prototype.push = function() {
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useShininess = this._useShininess;
 
+  properties.constantAttenuation = this.constantAttenuation;
+  properties.linearAttenuation = this.linearAttenuation;
+  properties.quadraticAttenuation = this.quadraticAttenuation;
+
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;
   properties._tex = this._tex;
@@ -1124,6 +1133,11 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   var ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+  fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
+  fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
+  fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
+
   fillShader.bindTextures();
 
   var specularLightCount = this.specularLightColors.length / 3;

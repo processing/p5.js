@@ -371,4 +371,90 @@ p5.prototype.lights = function() {
   return this;
 };
 
+/**
+ * Sets the falloff rates for point lights. It affects only the elements which are created after it in the code.
+ * The default value is lightFalloff(1.0, 0.0, 0.0), and the parameters are used to calculate the falloff with the following equation:
+ *
+ * d = distance from light position to vertex position
+ *
+ * falloff = 1 / (CONSTANT + d \* LINEAR + ( d \* d ) \* QUADRATIC)
+ *
+ * @method lightFalloff
+ * @param {Number} constant   constant value for determining falloff
+ * @param {Number} linear     linear value for determining falloff
+ * @param {Number} quadratic  quadratic value for determining falloff
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ * function draw() {
+ *   background(0);
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   translate(-25, 0, 0);
+ *   lightFalloff(1, 0, 0);
+ *   pointLight(250, 250, 250, locX, locY, 50);
+ *   sphere(20);
+ *   translate(50, 0, 0);
+ *   lightFalloff(0.9, 0.01, 0);
+ *   pointLight(250, 250, 250, locX, locY, 50);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Two spheres with different falloff values show different intensity of light
+ *
+ */
+p5.prototype.lightFalloff = function(
+  constantAttenuation,
+  linearAttenuation,
+  quadraticAttenuation
+) {
+  this._assert3d('lightFalloff');
+  p5._validateParameters('lightFalloff', arguments);
+
+  if (constantAttenuation < 0) {
+    constantAttenuation = 0;
+    console.warn(
+      'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+    );
+  }
+
+  if (linearAttenuation < 0) {
+    linearAttenuation = 0;
+    console.warn(
+      'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+    );
+  }
+
+  if (quadraticAttenuation < 0) {
+    quadraticAttenuation = 0;
+    console.warn(
+      'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+    );
+  }
+
+  if (
+    constantAttenuation === 0 &&
+    (linearAttenuation === 0 && quadraticAttenuation === 0)
+  ) {
+    constantAttenuation = 1;
+    console.warn(
+      'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+    );
+  }
+
+  this._renderer.constantAttenuation = constantAttenuation;
+  this._renderer.linearAttenuation = linearAttenuation;
+  this._renderer.quadraticAttenuation = quadraticAttenuation;
+
+  return this;
+};
+
 module.exports = p5;
