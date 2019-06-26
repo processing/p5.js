@@ -410,7 +410,7 @@ p5.prototype.mouseButton = 0;
  */
 p5.prototype.mouseIsPressed = false;
 
-p5.prototype._updateNextMouseCoords = function (e) {
+p5.prototype._updateNextMouseCoords = function(e) {
   if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
     var mousePos = getMousePos(
       this._curElement.elt,
@@ -432,7 +432,7 @@ p5.prototype._updateNextMouseCoords = function (e) {
   }
 };
 
-p5.prototype._updateMouseCoords = function () {
+p5.prototype._updateMouseCoords = function() {
   this._setProperty('pmouseX', this.mouseX);
   this._setProperty('pmouseY', this.mouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
@@ -462,7 +462,7 @@ function getMousePos(canvas, w, h, evt) {
   };
 }
 
-p5.prototype._setMouseButton = function (e) {
+p5.prototype._setMouseButton = function(e) {
   if (e.button === 1) {
     this._setProperty('mouseButton', constants.CENTER);
   } else if (e.button === 2) {
@@ -582,7 +582,7 @@ p5.prototype._setMouseButton = function (e) {
  * no image displayed
  *
  */
-p5.prototype._onmousemove = function (e) {
+p5.prototype._onmousemove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
@@ -666,7 +666,7 @@ p5.prototype._onmousemove = function (e) {
  * no image displayed
  *
  */
-p5.prototype._onmousedown = function (e) {
+p5.prototype._onmousedown = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._setProperty('mouseIsPressed', true);
@@ -743,7 +743,7 @@ p5.prototype._onmousedown = function (e) {
  * no image displayed
  *
  */
-p5.prototype._onmouseup = function (e) {
+p5.prototype._onmouseup = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._setProperty('mouseIsPressed', false);
@@ -823,7 +823,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * no image displayed
  *
  */
-p5.prototype._onclick = function (e) {
+p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
@@ -892,7 +892,7 @@ p5.prototype._onclick = function (e) {
  * no image displayed
  */
 
-p5.prototype._ondblclick = function (e) {
+p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.doubleClicked === 'function') {
     var executeDefault = context.doubleClicked(e);
@@ -960,7 +960,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * black 50x50 rect moves up and down with vertical scroll. fuchsia background
  *
  */
-p5.prototype._onwheel = function (e) {
+p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
   this._setProperty('_mouseWheelDeltaY', e.deltaY);
   if (typeof context.mouseWheel === 'function') {
@@ -1001,7 +1001,7 @@ p5.prototype._onwheel = function (e) {
  * black 50x50 rect moves up and down with mouse move while no cursor is visible
  *
  */
-p5.prototype.requestPointerLock = function () {
+p5.prototype.requestPointerLock = function() {
   // pointer lock object forking for cross browser
   var canvas = this._curElement.elt;
   canvas.requestPointerLock =
