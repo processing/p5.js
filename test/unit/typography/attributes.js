@@ -1,4 +1,4 @@
-suite.only('Typography Attributes', function() {
+suite('Typography Attributes', function() {
   let myp5;
 
   setup(function(done) {
