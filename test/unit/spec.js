@@ -29,7 +29,7 @@ var spec = {
     'loadShader'
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
-  typography: ['loadFont'],
+  typography: ['attributes', 'loadFont'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
   webgl: [
     'p5.Matrix',
