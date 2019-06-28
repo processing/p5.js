@@ -11,6 +11,7 @@ uniform mat3 uNormalMatrix;
 varying highp vec2 vVertTexCoord;
 varying vec3 vDiffuseColor;
 varying vec3 vSpecularColor;
+varying vec3 specularLight;
 
 void main(void) {
 
@@ -22,9 +23,14 @@ void main(void) {
 
   totalLight(viewModelPosition.xyz, vertexNormal, vDiffuseColor, vSpecularColor);
 
+  specularLight = vec3(0.0);
   for (int i = 0; i < 8; i++) {
     if (i < uAmbientLightCount) {
       vDiffuseColor += uAmbientColor[i];
+    }
+
+    if (i < uSpecularLightCount) {
+      specularLight += uSpecularColor[i];
     }
   }
 }

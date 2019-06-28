@@ -8,8 +8,9 @@ uniform bool isTexture;
 varying highp vec2 vVertTexCoord;
 varying vec3 vDiffuseColor;
 varying vec3 vSpecularColor;
+varying vec3 specularLight;
 
 void main(void) {
   gl_FragColor = isTexture ? texture2D(uSampler, vVertTexCoord) * (uTint / vec4(255, 255, 255, 255)) : uMaterialColor;
-  gl_FragColor.rgb = gl_FragColor.rgb * vDiffuseColor + vSpecularColor;
+  gl_FragColor.rgb = gl_FragColor.rgb * vDiffuseColor + (specularLight * vSpecularColor);
 }
