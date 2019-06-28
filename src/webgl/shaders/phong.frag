@@ -17,5 +17,5 @@ void main(void) {
   totalLight(vViewPosition, normalize(vNormal), diffuse, specular);
 
   gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) : uMaterialColor;
-  gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + vAmbientColor) + (specular * uSpecularColor);
+  gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + vAmbientColor) + (specular * vSpecularColor);
 }

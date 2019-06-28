@@ -39,10 +39,10 @@ void main(void) {
     }
   }
 
-  // vSpecularColor = vec3(0.0);
-  // for (int i = 0; i < 8; i++) {
-  //   if (i < uSpecularLightCount) {
-  //     vSpecularColor += uSpecularColor[i];
-  //   }
-  // }
+  vSpecularColor = vec3(0.0);
+  for (int i = 0; i < 8; i++) {
+    if (i < uSpecularLightCount) {
+      vSpecularColor += uSpecularColor[i];
+    }
+  }
 }
