@@ -6,16 +6,19 @@ attribute vec3 aNormal;
 attribute vec2 aTexCoord;
 
 uniform vec3 uAmbientColor[8];
+uniform vec3 uSpecularColor[8];
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat3 uNormalMatrix;
 uniform int uAmbientLightCount;
+uniform int uSpecularLightCount;
 
 varying vec3 vNormal;
 varying vec2 vTexCoord;
 varying vec3 vViewPosition;
 varying vec3 vAmbientColor;
+varying vec3 vSpecularColor;
 
 void main(void) {
 
@@ -35,4 +38,11 @@ void main(void) {
       vAmbientColor += uAmbientColor[i];
     }
   }
+
+  // vSpecularColor = vec3(0.0);
+  // for (int i = 0; i < 8; i++) {
+  //   if (i < uSpecularLightCount) {
+  //     vSpecularColor += uSpecularColor[i];
+  //   }
+  // }
 }

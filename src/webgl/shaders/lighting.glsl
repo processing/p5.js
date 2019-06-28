@@ -15,6 +15,9 @@ uniform int uPointLightCount;
 uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 
+uniform int uSpecularLightCount;
+uniform vec3 uSpecularColor[8];
+
 uniform bool uSpecular;
 uniform float uShininess;
 
