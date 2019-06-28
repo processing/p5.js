@@ -136,7 +136,10 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform bool uEmissive;`             |           |x              |            |             |            |
 |`uniform int  uShininess;`            |           |x              |            |             |            |
 |`uniform bool uUseLighting;`          |           |x              |            |             |            |
-
+|`uniform float uConstantAttenuation;` |           |x              |            |             |            |
+|`uniform float uLinearAttenuation;`   |           |x              |            |             |            |
+|`uniform float uQuadraticAttenuation;`|           |x              |            |             |            |
+    
 #### Texture Parameters
 
 |Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
