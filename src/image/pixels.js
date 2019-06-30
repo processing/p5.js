@@ -422,9 +422,6 @@ p5.prototype.filter = function(operation, value) {
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  * <br><br>
- * To get the color components scaled according to the current color ranges
- * and taking into account <a href="#/p5/colorMode">colorMode</a>, use <a href="#/p5/getColor">getColor</a> instead of get.
- * <br><br>
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
  * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
