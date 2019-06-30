@@ -28,20 +28,13 @@ var constants = require('./constants');
  *
  * @class p5
  * @constructor
- * @param  {function}    sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
+ * @param  {function}           sketch a closure that can set optional <a href="#/p5/preload">preload()</a>,
  *                              <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a> properties on the
  *                              given p5 instance
- * @param  {HTMLElement|Boolean} [node] element to attach canvas to, if a
- *                                      boolean is passed in use it as sync
- * @param  {Boolean}     [sync] start synchronously (optional)
+ * @param  {HTMLElement}        [node] element to attach canvas to
  * @return {p5}                 a p5 instance
  */
 var p5 = function(sketch, node, sync) {
-  if (typeof node === 'boolean' && typeof sync === 'undefined') {
-    sync = node;
-    node = undefined;
-  }
-
   //////////////////////////////////////////////
   // PUBLIC p5 PROPERTIES AND METHODS
   //////////////////////////////////////////////
@@ -552,14 +545,10 @@ var p5 = function(sketch, node, sync) {
     window.removeEventListener('blur', blurHandler);
   });
 
-  if (sync) {
+  if (document.readyState === 'complete') {
     this._start();
   } else {
-    if (document.readyState === 'complete') {
-      this._start();
-    } else {
-      window.addEventListener('load', this._start.bind(this), false);
-    }
+    window.addEventListener('load', this._start.bind(this), false);
   }
 };
 
