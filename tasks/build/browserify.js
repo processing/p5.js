@@ -16,7 +16,10 @@ module.exports = function(grunt) {
     'Compile the p5.js source with Browserify',
     function(param) {
       const isMin = param === 'min';
-      const filename = isMin ? 'p5.pre-min.js' : 'p5.js';
+      const isTest = param === 'test';
+      const filename = isMin
+        ? 'p5.pre-min.js'
+        : isTest ? 'p5-test.js' : 'p5.js';
 
       // This file will not exist until it has been built
       const libFilePath = path.resolve('lib/' + filename);
@@ -36,9 +39,15 @@ module.exports = function(grunt) {
         browseified = browseified.exclude('../../docs/reference/data.json');
       }
 
+      const babelifyOpts = {};
+
+      if (isTest) {
+        babelifyOpts.envName = 'test';
+      }
+
       const bundle = browseified
         .transform('brfs')
-        .transform('babelify')
+        .transform('babelify', babelifyOpts)
         .bundle();
 
       // Start the generated output with the banner comment,
