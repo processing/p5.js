@@ -13,15 +13,15 @@ var constants = require('../core/constants');
 
 /**
  *
- * The variable deltaX contains the vertical movement of the mouse since the last frame
- * @property {Number} deltaX
+ * The variable movedX contains the vertical movement of the mouse since the last frame
+ * @property {Number} movedX
  * @readOnly
  * @example
  * <div class="notest">
  * <code>
  * let x = 0;
  * function draw() {
- *   x = (x + deltaX) % 100;
+ *   x = (x + movedX) % 100;
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(x, 50, 50, 50);
@@ -31,18 +31,18 @@ var constants = require('../core/constants');
  *
  *
  */
-p5.prototype.deltaX = 0;
+p5.prototype.movedX = 0;
 
 /**
- * The variable deltaY contains the horizontal movement of the mouse since the last frame
- * @property {Number} deltaY
+ * The variable movedY contains the horizontal movement of the mouse since the last frame
+ * @property {Number} movedY
  * @readOnly
  * @example
  * <div class="notest">
  * <code>
  * let y = 0;
  * function draw() {
- *   y = (y + deltaY) % 100;
+ *   y = (y + movedY) % 100;
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(50, y, 50, 50);
@@ -51,7 +51,7 @@ p5.prototype.deltaX = 0;
  * </div>
  *
  */
-p5.prototype.deltaY = 0;
+p5.prototype.movedY = 0;
 /*
  * This is a flag which is false until the first time
  * we receive a mouse event. The pmouseX and pmouseY
@@ -418,8 +418,8 @@ p5.prototype._updateNextMouseCoords = function(e) {
       this.height,
       e
     );
-    this._setProperty('deltaX', e.movementX);
-    this._setProperty('deltaY', e.movementY);
+    this._setProperty('movedX', e.movementX);
+    this._setProperty('movedY', e.movementY);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -975,7 +975,7 @@ p5.prototype._onwheel = function(e) {
 /**
  * <p>The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
  * locks the pointer to its current position and makes it invisible.
- * Use <a href="#/p5/deltaX">deltaX</a> and <a href="#/p5/deltaY">deltaY</a> to get the difference the mouse was moved since
+ * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
  * the last call of draw</p>
  * <p>Note that not all browsers support this feature</p>
  * <p>This enables you to create experiences that aren't limited by the mouse moving out of the screen
@@ -1008,9 +1008,45 @@ p5.prototype.requestPointerLock = function() {
     canvas.requestPointerLock || canvas.mozRequestPointerLock;
   if (!canvas.requestPointerLock) {
     console.log('requestPointerLock is not implemented in this browser');
-    return;
+    return false;
   }
   canvas.requestPointerLock();
+  return true;
+};
+
+/**
+ * <p>The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a> programmatically
+ * for example to make ui elements usable etc
+ *
+ * @method exitPointerLock
+ * @example
+ * <div class="notest">
+ * <code>
+ * //click the canvas to lock the pointer
+ * //click again to exit (otherwise escape)
+ * let locked = false;
+ * function draw() {
+ *   background(237, 34, 93);
+ * }
+ * function mouseClicked() {
+ *   if (!locked) {
+ *     locked = true;
+ *     requestPointerLock();
+ *   } else {
+ *     exitPointerLock();
+ *     locked = false;
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black 50x50 rect moves up and down with mouse move while no cursor is visible
+ *
+ */
+p5.prototype.exitPointerLock = function() {
+  document.exitPointerLock();
 };
 
 module.exports = p5;
