@@ -64,7 +64,6 @@
     "grunt-contrib-uglify": "^4.0.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-contrib-yuidoc": "1.0.0",
-    "grunt-env": "^0.4.4",
     "grunt-eslint": "^20.2.0",
     "grunt-karma": "^3.0.1",
     "grunt-minjson": "^0.4.0",
