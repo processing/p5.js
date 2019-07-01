@@ -20,8 +20,16 @@ var constants = require('../core/constants');
  * <div class="notest">
  * <code>
  * let x = 0;
+ * function setup() {
+ *   rectMode(CENTER);
+ * }
  * function draw() {
- *   x = (x + movedX) % 100;
+ *   if (x > 50) {
+ *     x--;
+ *   } else if (x < 50) {
+ *     x++;
+ *   }
+ *   x += floor(movedX);
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(x, 50, 50, 50);
