@@ -986,13 +986,18 @@ p5.prototype._onwheel = function(e) {
  * @example
  * <div class="notest">
  * <code>
- * //click the canvas to lock the pointer
- * //press ESC to exit lock mode
- * function draw() {
- *   background(237, 34, 93);
- * }
- * function mouseClicked() {
+ * let cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
  *   requestPointerLock();
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   cam.pan(-movedX * 0.001);
+ *   cam.tilt(movedY * 0.001);
+ *   sphere(25);
  * }
  * </code>
  * </div>
