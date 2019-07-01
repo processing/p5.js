@@ -59,21 +59,14 @@ module.exports = function(grunt) {
             eventHandler1.emit.bind(eventHandler1)
           );
 
-          await new Promise(async (resolve, reject) => {
+          await new Promise(async resolve => {
             eventHandler1.on('mocha:end', async results => {
               const { stats, coverage } = results;
               if (stats.failures) {
-                reject(stats);
-              } else {
-                if (coverage) {
-                  await mkdir('./.nyc_output/', { recursive: true });
-                  await writeFile(
-                    './.nyc_output/out.json',
-                    JSON.stringify(coverage)
-                  );
-                }
-                resolve(stats);
+                throw new Error(stats);
               }
+              await saveCoverage(coverage);
+              resolve(stats);
             });
 
             await page.goto(testURL);
@@ -95,3 +88,14 @@ module.exports = function(grunt) {
     }
   });
 };
+
+async function saveCoverage(cov) {
+  if (cov) {
+    try {
+      await mkdir('./.nyc_output/', { recursive: true });
+      await writeFile('./.nyc_output/out.json', JSON.stringify(cov));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
