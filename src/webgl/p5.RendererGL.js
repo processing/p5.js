@@ -223,10 +223,14 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     }
     this._pInst.canvas = c;
   } else {
-    this._pInst.canvas.parentNode.removeChild(this._pInst.canvas);
-    this._pInst.canvas = document.createElement('canvas');
-    var node = this._pInst._pInst._userNode || document.body;
-    node.appendChild(this._pInst.canvas);
+    var pg = this._pInst;
+    pg.canvas.parentNode.removeChild(pg.canvas);
+    pg.canvas = document.createElement('canvas');
+    var node = pg._pInst._userNode || document.body;
+    node.appendChild(pg.canvas);
+    p5.Element.call(pg, pg.canvas, pg._pInst);
+    pg.width = w;
+    pg.height = h;
   }
 
   var renderer = new p5.RendererGL(
@@ -237,6 +241,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
+
   if (!isPGraphics) {
     this._pInst._elements.push(renderer);
   }
@@ -400,6 +405,13 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  if (typeof this._glAttributes === 'undefined') {
+    console.log(
+      'You are trying to use setAttributes on a p5.Graphics object ' +
+        'that does not use a WEBGL renderer.'
+    );
+    return;
+  }
   var unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
