@@ -193,7 +193,12 @@ module.exports = grunt => {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
+        files: [
+          'src/**/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert',
+          'src/**/*.glsl'
+        ],
         tasks: ['browserify'],
         options: {
           livereload: true
@@ -223,7 +228,8 @@ module.exports = grunt => {
           'src/**/*.js',
           'lib/addons/*.js',
           'src/**/*.frag',
-          'src/**/*.vert'
+          'src/**/*.vert',
+          'src/**/*.glsl'
         ],
         tasks: [
           'browserify',

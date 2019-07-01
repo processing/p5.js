@@ -14,9 +14,9 @@ var spec = {
     'transform',
     'vertex'
   ],
-  data: ['p5.TypedDict'],
+  data: ['p5.TypedDict', 'local_storage'],
   events: ['keyboard', 'mouse', 'touch'],
-  image: ['p5.Image', 'loading', 'pixels'],
+  image: ['p5.Image', 'loading', 'pixels', 'filters'],
   io: [
     'files',
     'loadBytes',
@@ -29,7 +29,7 @@ var spec = {
     'loadShader'
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
-  typography: ['attributes', 'loadFont'],
+  typography: ['attributes', 'loadFont', 'p5.Font'],
   utilities: ['array_functions', 'string_functions', 'time_date'],
   webgl: [
     'p5.Matrix',
