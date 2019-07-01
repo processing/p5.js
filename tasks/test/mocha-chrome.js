@@ -4,7 +4,10 @@ const puppeteer = require('puppeteer');
 const EventHandler = require('eventhandler');
 const util = require('util');
 const mapSeries = require('promise-map-series');
-const fs = require('fs').promises;
+const fs = require('fs');
+
+const mkdir = util.promisify(fs.mkdir);
+const writeFile = util.promisify(fs.writeFile);
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
@@ -63,8 +66,8 @@ module.exports = function(grunt) {
                 reject(stats);
               } else {
                 if (coverage) {
-                  await fs.mkdir('./.nyc_output/', { recursive: true });
-                  await fs.writeFile(
+                  await mkdir('./.nyc_output/', { recursive: true });
+                  await writeFile(
                     './.nyc_output/out.json',
                     JSON.stringify(coverage)
                   );
