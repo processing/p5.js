@@ -209,25 +209,20 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   var h = this.height;
   var defaultId = this.canvas.id;
   var isPGraphics = this._pInst instanceof p5.Graphics;
+
+  var replaceCanvas = function(owner) {
+    owner.canvas.parentNode.removeChild(owner.canvas);
+    owner.canvas = document.createElement('canvas');
+    var node = owner._pInst._userNode || document.body;
+    node.appendChild(owner.canvas);
+  };
+
   if (!isPGraphics) {
-    var c = this.canvas;
-    if (c) {
-      c.parentNode.removeChild(c);
-    }
-    c = document.createElement('canvas');
-    c.id = defaultId;
-    if (this._pInst._userNode) {
-      this._pInst._userNode.appendChild(c);
-    } else {
-      document.body.appendChild(c);
-    }
-    this._pInst.canvas = c;
+    replaceCanvas(this);
+    this.canvas.id = defaultId;
   } else {
     var pg = this._pInst;
-    pg.canvas.parentNode.removeChild(pg.canvas);
-    pg.canvas = document.createElement('canvas');
-    var node = pg._pInst._userNode || document.body;
-    node.appendChild(pg.canvas);
+    replaceCanvas(pg);
     p5.Element.call(pg, pg.canvas, pg._pInst);
     pg.width = w;
     pg.height = h;
