@@ -16,3 +16,4 @@ bower-repo/
 p5-website/
 .vscode/settings.json
 .nyc_output/*
+lib/p5-test.js

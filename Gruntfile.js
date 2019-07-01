@@ -464,7 +464,12 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-simple-nyc');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'browserify:test'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
