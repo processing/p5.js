@@ -217,15 +217,15 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     node.appendChild(owner.canvas);
   };
 
-  if (!isPGraphics) {
-    replaceCanvas(this);
-    this.canvas.id = defaultId;
-  } else {
+  if (isPGraphics) {
     var pg = this._pInst;
     replaceCanvas(pg);
     p5.Element.call(pg, pg.canvas, pg._pInst);
     pg.width = w;
     pg.height = h;
+  } else {
+    replaceCanvas(this);
+    this.canvas.id = defaultId;
   }
 
   var renderer = new p5.RendererGL(
