@@ -386,8 +386,8 @@ var p5 = function(sketch, node, sync) {
 
         //reset delta values so they reset even if there is no mouse event to set them
         // for example if the mouse is outside the screen
-        this._setProperty('deltaX', 0);
-        this._setProperty('deltaY', 0);
+        this._setProperty('movedX', 0);
+        this._setProperty('movedY', 0);
       }
     }
 
