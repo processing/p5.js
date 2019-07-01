@@ -13,7 +13,7 @@ var constants = require('../core/constants');
 
 /**
  *
- * The variable movedX contains the vertical movement of the mouse since the last frame
+ * The variable movedX contains the horizontal movement of the mouse since the last frame
  * @property {Number} movedX
  * @readOnly
  * @example
@@ -34,7 +34,7 @@ var constants = require('../core/constants');
 p5.prototype.movedX = 0;
 
 /**
- * The variable movedY contains the horizontal movement of the mouse since the last frame
+ * The variable movedY contains the vertical movement of the mouse since the last frame
  * @property {Number} movedY
  * @readOnly
  * @example
