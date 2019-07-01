@@ -1016,7 +1016,7 @@ p5.prototype.requestPointerLock = function() {
 
 /**
  * <p>The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
- * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a> programmatically
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
  * for example to make ui elements usable etc
  *
  * @method exitPointerLock
