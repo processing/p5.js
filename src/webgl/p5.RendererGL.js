@@ -208,24 +208,44 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   var w = this.width;
   var h = this.height;
   var defaultId = this.canvas.id;
-  var c = this.canvas;
-  if (c) {
-    c.parentNode.removeChild(c);
-  }
-  c = document.createElement('canvas');
-  c.id = defaultId;
-  if (this._pInst._userNode) {
-    this._pInst._userNode.appendChild(c);
-  } else {
-    document.body.appendChild(c);
-  }
-  this._pInst.canvas = c;
+  var isPGraphics = this._pInst instanceof p5.Graphics;
 
-  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true);
+  if (isPGraphics) {
+    var pg = this._pInst;
+    pg.canvas.parentNode.removeChild(pg.canvas);
+    pg.canvas = document.createElement('canvas');
+    var node = pg._pInst._userNode || document.body;
+    node.appendChild(pg.canvas);
+    p5.Element.call(pg, pg.canvas, pg._pInst);
+    pg.width = w;
+    pg.height = h;
+  } else {
+    var c = this.canvas;
+    if (c) {
+      c.parentNode.removeChild(c);
+    }
+    c = document.createElement('canvas');
+    c.id = defaultId;
+    if (this._pInst._userNode) {
+      this._pInst._userNode.appendChild(c);
+    } else {
+      document.body.appendChild(c);
+    }
+    this._pInst.canvas = c;
+  }
+
+  var renderer = new p5.RendererGL(
+    this._pInst.canvas,
+    this._pInst,
+    !isPGraphics
+  );
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
-  this._pInst._elements.push(renderer);
+
+  if (!isPGraphics) {
+    this._pInst._elements.push(renderer);
+  }
 
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -386,6 +406,13 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  if (typeof this._glAttributes === 'undefined') {
+    console.log(
+      'You are trying to use setAttributes on a p5.Graphics object ' +
+        'that does not use a WEBGL renderer.'
+    );
+    return;
+  }
   var unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
