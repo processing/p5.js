@@ -133,7 +133,7 @@ p5.prototype._ontouchstart = function(e) {
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
   this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
-  // only safari needs this manual duplication for consistency
+
   if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
