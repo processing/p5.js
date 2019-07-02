@@ -1147,11 +1147,6 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
   fillShader.bindTextures();
-
-  var specularLightCount = this.specularLightColors.length / 3;
-  fillShader.setUniform('uSpecularLightCount', specularLightCount);
-  fillShader.setUniform('uSpecularColor', this.specularLightColors);
-  fillShader.bindTextures();
 };
 
 p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
