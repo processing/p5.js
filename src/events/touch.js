@@ -141,7 +141,7 @@ p5.prototype._ontouchstart = function(e) {
     }
     // only safari needs this manual duplication for consistency
   } else if (
-    navigator.userAgent[0].toLowerCase().includes('safari') &&
+    navigator.userAgent.toLowerCase().includes('safari') &&
     typeof context.touchStarted === 'function'
   ) {
     executeDefault = context.mousePressed(e);
