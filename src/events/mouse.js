@@ -37,7 +37,8 @@ var constants = require('../core/constants');
  * }
  * </code>
  * </div>
- *
+ * @alt
+ * box moves left and right according to mouse movement then slowly back towards the center
  *
  */
 p5.prototype.movedX = 0;
@@ -67,6 +68,8 @@ p5.prototype.movedX = 0;
  * }
  * </code>
  * </div>
+ * @alt
+ * box moves up and down according to mouse movement then slowly back towards the center
  *
  */
 p5.prototype.movedY = 0;
@@ -100,7 +103,7 @@ p5.prototype._hasMouseInteracted = false;
  * </div>
  *
  * @alt
- * box moves left and right according to mouse movement then slowly back towards the center
+ * horizontal black line moves left and right with mouse x-position
  *
  */
 p5.prototype.mouseX = 0;
@@ -127,7 +130,7 @@ p5.prototype.mouseX = 0;
  * </div>
  *
  * @alt
- *  box moves up and down according to mouse movement then slowly back towards the center
+ * vertical black line moves up and down with mouse y-position
  *
  */
 p5.prototype.mouseY = 0;
@@ -1021,7 +1024,7 @@ p5.prototype._onwheel = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with mouse move while no cursor is visible
+ * 3D scene moves according to mouse mouse movement in a first person perspective
  *
  */
 p5.prototype.requestPointerLock = function() {
@@ -1065,7 +1068,7 @@ p5.prototype.requestPointerLock = function() {
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with mouse move while no cursor is visible
+ * cursor gets locked / unlocked on mouse-click
  *
  */
 p5.prototype.exitPointerLock = function() {
