@@ -635,7 +635,7 @@ p5.prototype._onmousedown = function(e) {
     if (executeDefault === false) {
       e.preventDefault();
     }
-    // only safari needs this manual duplication for consistency
+    // only safari needs this manual fallback for consistency
   } else if (
     navigator.userAgent.toLowerCase().includes('safari') &&
     typeof context.touchStarted === 'function'
