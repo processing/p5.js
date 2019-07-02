@@ -100,7 +100,7 @@ p5.prototype._hasMouseInteracted = false;
  * </div>
  *
  * @alt
- * horizontal black line moves left and right with mouse x-position
+ * box moves left and right according to mouse movement then slowly back towards the center
  *
  */
 p5.prototype.mouseX = 0;
@@ -127,7 +127,7 @@ p5.prototype.mouseX = 0;
  * </div>
  *
  * @alt
- * vertical black line moves up and down with mouse y-position
+ *  box moves up and down according to mouse movement then slowly back towards the center
  *
  */
 p5.prototype.mouseY = 0;
