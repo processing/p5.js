@@ -376,6 +376,11 @@ var p5 = function(sketch, node, sync) {
       // NOTE : This reflects only in complete build or modular build.
       if (typeof this._updateMouseCoords !== 'undefined') {
         this._updateMouseCoords();
+
+        //reset delta values so they reset even if there is no mouse event to set them
+        // for example if the mouse is outside the screen
+        this._setProperty('movedX', 0);
+        this._setProperty('movedY', 0);
       }
     }
 
