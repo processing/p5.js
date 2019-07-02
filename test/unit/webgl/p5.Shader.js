@@ -80,7 +80,6 @@ suite('p5.Shader', function() {
         'uPointLightLocation',
         'uPointLightColor',
         'uPointLightSpecular',
-        'uSpecularColor',
         'uSpecular',
         'uShininess',
         'uMaterialColor',

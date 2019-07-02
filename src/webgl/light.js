@@ -135,8 +135,6 @@ p5.prototype.specularLight = function(v1, v2, v3) {
     color._array[2]
   ];
 
-  this._renderer._enableLighting = true;
-
   return this;
 };
 

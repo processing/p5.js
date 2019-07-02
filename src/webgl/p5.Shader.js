@@ -445,7 +445,6 @@ p5.Shader.prototype.isLightShader = function() {
     this.uniforms.uPointLightColor !== undefined ||
     this.uniforms.uPointLightSpecular !== undefined ||
     this.uniforms.uLightingDirection !== undefined ||
-    this.uniforms.uSpecularColor !== undefined ||
     this.uniforms.uSpecular !== undefined
   );
 };
