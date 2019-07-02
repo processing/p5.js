@@ -1129,11 +1129,13 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.setUniform('uPointLightCount', pointLightCount);
   fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
   fillShader.setUniform('uPointLightColor', this.pointLightColors);
+  fillShader.setUniform('uPointLightSpecular', this.pointLightSpecular);
 
   var directionalLightCount = this.directionalLightColors.length / 3;
   fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
   fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
   fillShader.setUniform('uDirectionalColor', this.directionalLightColors);
+  fillShader.setUniform('uDirectionalSpecular', this.directionalLightSpecular);
 
   // TODO: sum these here...
   var ambientLightCount = this.ambientLightColors.length / 3;
