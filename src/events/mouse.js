@@ -19,9 +19,18 @@ var constants = require('../core/constants');
  * @example
  * <div class="notest">
  * <code>
- * let x = 0;
+ * let x = 50;
+ * function setup() {
+ *   rectMode(CENTER);
+ * }
+ *
  * function draw() {
- *   x = (x + movedX) % 100;
+ *   if (x > 48) {
+ *     x -= 2;
+ *   } else if (x < 48) {
+ *     x += 2;
+ *   }
+ *   x += floor(movedX / 5);
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(x, 50, 50, 50);
@@ -40,12 +49,21 @@ p5.prototype.movedX = 0;
  * @example
  * <div class="notest">
  * <code>
- * let y = 0;
+ * let y = 50;
+ * function setup() {
+ *   rectMode(CENTER);
+ * }
+ *
  * function draw() {
- *   y = (y + movedY) % 100;
+ *   if (y > 48) {
+ *     y -= 2;
+ *   } else if (y < 48) {
+ *     y += 2;
+ *   }
+ *   y += floor(movedY / 5);
  *   background(237, 34, 93);
  *   fill(0);
- *   rect(50, y, 50, 50);
+ *   rect(y, 50, 50, 50);
  * }
  * </code>
  * </div>
