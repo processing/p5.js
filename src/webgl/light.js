@@ -129,11 +129,11 @@ p5.prototype.specularLight = function(v1, v2, v3, a) {
   // p5._validateParameters('specularLight', arguments);
   var color = this.color.apply(this, arguments);
 
-  this._renderer.specularLightColors.push(
+  this._renderer.specularLightColors = [
     color._array[0],
     color._array[1],
     color._array[2]
-  );
+  ];
 
   this._renderer._enableLighting = true;
 
@@ -231,6 +231,12 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
     color._array[0],
     color._array[1],
     color._array[2]
+  );
+  var specularLightColors = this._renderer.specularLightColors;
+  this._renderer.directionalLightSpecular.push(
+    specularLightColors[0],
+    specularLightColors[1],
+    specularLightColors[2]
   );
 
   this._renderer._enableLighting = true;
@@ -333,6 +339,12 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     color._array[0],
     color._array[1],
     color._array[2]
+  );
+  var specularLightColors = this._renderer.specularLightColors;
+  this._renderer.pointLightSpecular.push(
+    specularLightColors[0],
+    specularLightColors[1],
+    specularLightColors[2]
   );
 
   this._renderer._enableLighting = true;

@@ -70,12 +70,15 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._enableLighting = false;
 
   this.ambientLightColors = [];
-  this.specularLightColors = [];
+  this.specularLightColors = [1, 1, 1];
+
   this.directionalLightDirections = [];
   this.directionalLightColors = [];
+  this.directionalLightSpecular = [];
 
   this.pointLightPositions = [];
   this.pointLightColors = [];
+  this.pointLightSpecular = [];
 
   this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
@@ -460,12 +463,13 @@ p5.RendererGL.prototype._update = function() {
   // reset light data for new frame.
 
   this.ambientLightColors.length = 0;
-  this.specularLightColors.length = 0;
+  this.specularLightColors = [1, 1, 1];
   this.directionalLightDirections.length = 0;
   this.directionalLightColors.length = 0;
-
+  this.directionalLightSpecular.length = 0;
   this.pointLightPositions.length = 0;
   this.pointLightColors.length = 0;
+  this.pointLightSpecular.length = 0;
 
   this._enableLighting = false;
 
@@ -863,9 +867,11 @@ p5.RendererGL.prototype.push = function() {
 
   properties.directionalLightDirections = this.directionalLightDirections.slice();
   properties.directionalLightColors = this.directionalLightColors.slice();
+  properties.directionalLightSpecular = this.directionalLightSpecular.slice();
 
   properties.pointLightPositions = this.pointLightPositions.slice();
   properties.pointLightColors = this.pointLightColors.slice();
+  properties.pointLightSpecular = this.pointLightSpecular.slice();
 
   properties.userFillShader = this.userFillShader;
   properties.userStrokeShader = this.userStrokeShader;
