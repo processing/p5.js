@@ -10,7 +10,9 @@ function draw() {
   var locY = mouseY - height / 2;
   var locX = mouseX - width / 2;
   specularLight(0, 0, 256);
-  pointLight(0, 0, 256, locX, locY, 100);
+  pointLight(0, 0, 256, -locX, locY, 100);
+  specularLight(0, 256, 0);
+  pointLight(0, 256, 0, locX, locY, 100);
   ambientLight(100);
 
   shininess(10);
