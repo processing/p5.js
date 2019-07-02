@@ -35,7 +35,7 @@
       "node ./utils/sample-linter.js"
     ]
   },
-  "version": "0.8.0",
+  "version": "0.9.0",
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
@@ -117,13 +117,24 @@
     "test": "test"
   },
   "babel": {
-    "presets": ["@babel/preset-env"],
+    "presets": [
+      "@babel/preset-env"
+    ],
     "generatorOpts": {
       "retainLines": true
     },
     "env": {
       "test": {
-        "plugins": [["istanbul", { "include": ["src/**/*.js"] }]]
+        "plugins": [
+          [
+            "istanbul",
+            {
+              "include": [
+                "src/**/*.js"
+              ]
+            }
+          ]
+        ]
       }
     }
   },
