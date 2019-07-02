@@ -80,9 +80,10 @@ void totalLight(
     if (j < uDirectionalLightCount) {
       vec3 lightVector = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
       vec3 lightColor = uDirectionalColor[j];
+      vec3 specularColor = uDirectionalSpecular[j];
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;
-      totalSpecular += result.specular * lightColor;
+      totalSpecular += result.specular * lightColor * specularColor;
     }
 
     if (j < uPointLightCount) {
@@ -93,10 +94,11 @@ void totalLight(
       float lightDistance = length(lightVector);
       float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
       vec3 lightColor = lightFalloff * uPointLightColor[j];
+      vec3 specularColor = lightFalloff * uPointLightSpecular[j];
 
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;
-      totalSpecular += result.specular * lightColor;
+      totalSpecular += result.specular * lightColor * specularColor;
     }
   }
 
