@@ -29,7 +29,7 @@ void main(void) {
   vTexCoord = aTexCoord;
 
   // TODO: this should be a uniform
-  vAmbientColor = vec3(0.0);  
+  vAmbientColor = vec3(0.0);
   for (int i = 0; i < 8; i++) {
     if (i < uAmbientLightCount) {
       vAmbientColor += uAmbientColor[i];

@@ -464,9 +464,11 @@ p5.RendererGL.prototype._update = function() {
 
   this.ambientLightColors.length = 0;
   this.specularLightColors = [1, 1, 1];
+
   this.directionalLightDirections.length = 0;
   this.directionalLightColors.length = 0;
   this.directionalLightSpecular.length = 0;
+
   this.pointLightPositions.length = 0;
   this.pointLightColors.length = 0;
   this.pointLightSpecular.length = 0;

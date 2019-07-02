@@ -86,7 +86,7 @@ Provides flat shading of objects, based on the current fill color.
 
 #### Light Shader (for lighting AND textures)
 Accounts for:
-* Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, ans `specularLight()`
+* Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, and `specularLight()`
 * Material parameters set by `ambientMaterial()`, and `specularMaterial()`
 * Texture parameters, set by `texture()`
 

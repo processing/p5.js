@@ -94,7 +94,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha] the alpha value
  * @chainable
  *
  */
@@ -108,7 +107,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 /**
  * @method specularLight
  * @param  {Number}        gray   a gray value
- * @param  {Number}        [alpha]
  * @chainable
  */
 
