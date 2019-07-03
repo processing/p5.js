@@ -83,6 +83,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;
+  this._useEmissiveMaterial = false;
   this._useNormalMaterial = false;
   this._useShininess = 1;
 
@@ -901,6 +902,7 @@ p5.RendererGL.prototype.push = function() {
   properties.curFillColor = this.curFillColor;
 
   properties._useSpecularMaterial = this._useSpecularMaterial;
+  properties._useEmissiveMaterial = this._useEmissiveMaterial;
   properties._useShininess = this._useShininess;
 
   properties.constantAttenuation = this.constantAttenuation;
@@ -1139,6 +1141,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.setUniform('uTint', this._tint);
 
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
+  fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
 
   fillShader.setUniform('uUseLighting', this._enableLighting);
