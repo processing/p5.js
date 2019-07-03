@@ -73,11 +73,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.specularLightColors = [1, 1, 1];
 
   this.directionalLightDirections = [];
-  this.directionalLightColors = [];
+  this.directionalLightDiffuse = [];
   this.directionalLightSpecular = [];
 
   this.pointLightPositions = [];
-  this.pointLightColors = [];
+  this.pointLightDiffuse = [];
   this.pointLightSpecular = [];
 
   this.drawMode = constants.FILL;
@@ -466,11 +466,11 @@ p5.RendererGL.prototype._update = function() {
   this.specularLightColors = [1, 1, 1];
 
   this.directionalLightDirections.length = 0;
-  this.directionalLightColors.length = 0;
+  this.directionalLightDiffuse.length = 0;
   this.directionalLightSpecular.length = 0;
 
   this.pointLightPositions.length = 0;
-  this.pointLightColors.length = 0;
+  this.pointLightDiffuse.length = 0;
   this.pointLightSpecular.length = 0;
 
   this._enableLighting = false;
@@ -868,11 +868,11 @@ p5.RendererGL.prototype.push = function() {
   properties.specularLightColors = this.specularLightColors.slice();
 
   properties.directionalLightDirections = this.directionalLightDirections.slice();
-  properties.directionalLightColors = this.directionalLightColors.slice();
+  properties.directionalLightDiffuse = this.directionalLightDiffuse.slice();
   properties.directionalLightSpecular = this.directionalLightSpecular.slice();
 
   properties.pointLightPositions = this.pointLightPositions.slice();
-  properties.pointLightColors = this.pointLightColors.slice();
+  properties.pointLightDiffuse = this.pointLightDiffuse.slice();
   properties.pointLightSpecular = this.pointLightSpecular.slice();
 
   properties.userFillShader = this.userFillShader;
@@ -1127,16 +1127,16 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
 
   fillShader.setUniform('uUseLighting', this._enableLighting);
 
-  var pointLightCount = this.pointLightColors.length / 3;
+  var pointLightCount = this.pointLightDiffuse.length / 3;
   fillShader.setUniform('uPointLightCount', pointLightCount);
   fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
-  fillShader.setUniform('uPointLightColor', this.pointLightColors);
+  fillShader.setUniform('uPointLightDiffuse', this.pointLightDiffuse);
   fillShader.setUniform('uPointLightSpecular', this.pointLightSpecular);
 
-  var directionalLightCount = this.directionalLightColors.length / 3;
+  var directionalLightCount = this.directionalLightDiffuse.length / 3;
   fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
   fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
-  fillShader.setUniform('uDirectionalColor', this.directionalLightColors);
+  fillShader.setUniform('uDirectionalDiffuse', this.directionalLightDiffuse);
   fillShader.setUniform('uDirectionalSpecular', this.directionalLightSpecular);
 
   // TODO: sum these here...
