@@ -624,12 +624,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Sets the emissive color of the material used for drawing shapes drawn to
+ * Sets the emissive color of the material used for geometry drawn to
  * the screen. This is a misnomer in the sense that the material does not
  * actually emit light that effects surrounding polygons. Instead,
- * it gives the appearance that the object is glowing. Emissive material's
- * property is that the polygon will display at full strength even if there
- * is no light for it to reflect.
+ * it gives the appearance that the object is glowing. An emissive material
+ * will display at full strength even if there is no light for it to reflect.
  * @method emissiveMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                         (depending on the current color mode),
