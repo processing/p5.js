@@ -95,7 +95,27 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   ambientLight(50);
+ *   specularLight(0, 250, 0);
+ *   shininess(15);
+ *   pointLight(250, 250, 250, 100, 100, 30);
+ *   specularMaterial(250);
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
  *
+ * @alt
+ * diffused radiating light source from top right of canvas
  */
 
 /**
