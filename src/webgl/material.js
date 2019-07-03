@@ -406,6 +406,9 @@ p5.prototype.normalMaterial = function() {
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
   p5._validateParameters('texture', arguments);
+  if (tex.gifProperties) {
+    tex._animateGif(this);
+  }
 
   this._renderer.drawMode = constants.TEXTURE;
   this._renderer._useSpecularMaterial = false;

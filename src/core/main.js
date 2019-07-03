@@ -278,6 +278,7 @@ var p5 = function(sketch, node, sync) {
       if (loadingScreen) {
         loadingScreen.parentNode.removeChild(loadingScreen);
       }
+      this._lastFrameTime = window.performance.now();
       context._setup();
       context._draw();
     }
@@ -341,6 +342,7 @@ var p5 = function(sketch, node, sync) {
         delete k.dataset.hidden;
       }
     }
+    this._lastFrameTime = window.performance.now();
     this._setupDone = true;
   }.bind(this);
 
@@ -363,7 +365,6 @@ var p5 = function(sketch, node, sync) {
       time_since_last >= target_time_between_frames - epsilon
     ) {
       //mandatory update values(matrixs and stack)
-
       this.redraw();
       this._frameRate = 1000.0 / (now - this._lastFrameTime);
       this.deltaTime = now - this._lastFrameTime;
@@ -376,6 +377,11 @@ var p5 = function(sketch, node, sync) {
       // NOTE : This reflects only in complete build or modular build.
       if (typeof this._updateMouseCoords !== 'undefined') {
         this._updateMouseCoords();
+
+        //reset delta values so they reset even if there is no mouse event to set them
+        // for example if the mouse is outside the screen
+        this._setProperty('movedX', 0);
+        this._setProperty('movedY', 0);
       }
     }
 
