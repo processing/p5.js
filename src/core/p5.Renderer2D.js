@@ -1157,7 +1157,7 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   // A temporary fix to conform to Processing's implementation
   // of BASELINE vertical alignment in a bounding box
 
-  if (typeof maxWidth !== 'undefined' && typeof maxHeight !== 'undefined') {
+  if (typeof maxWidth !== 'undefined') {
     if (this.drawingContext.textBaseline === constants.BASELINE) {
       baselineHacked = true;
       this.drawingContext.textBaseline = constants.TOP;

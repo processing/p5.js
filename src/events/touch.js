@@ -133,12 +133,17 @@ p5.prototype._ontouchstart = function(e) {
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
   this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
+
   if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mousePressed === 'function') {
+    // only safari needs this manual fallback for consistency
+  } else if (
+    navigator.userAgent.toLowerCase().includes('safari') &&
+    typeof context.touchStarted === 'function'
+  ) {
     executeDefault = context.mousePressed(e);
     if (executeDefault === false) {
       e.preventDefault();

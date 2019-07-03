@@ -1,4 +1,5 @@
 precision mediump float;
+precision mediump int;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
@@ -16,7 +17,7 @@ varying vec2 vTexCoord;
 varying vec3 vViewPosition;
 varying vec3 vAmbientColor;
 
-void main(void){
+void main(void) {
 
   vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
 
@@ -24,12 +25,13 @@ void main(void){
   vViewPosition = viewModelPosition.xyz;
   gl_Position = uProjectionMatrix * viewModelPosition;  
 
-  vNormal = normalize(uNormalMatrix * normalize(aNormal));
+  vNormal = uNormalMatrix * aNormal;
   vTexCoord = aTexCoord;
 
+  // TODO: this should be a uniform
   vAmbientColor = vec3(0.0);
   for (int i = 0; i < 8; i++) {
-    if(i < uAmbientLightCount){
+    if (i < uAmbientLightCount) {
       vAmbientColor += uAmbientColor[i];
     }
   }

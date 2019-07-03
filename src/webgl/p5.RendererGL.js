@@ -9,6 +9,11 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
 
+var lightingShader = fs.readFileSync(
+  __dirname + '/shaders/lighting.glsl',
+  'utf-8'
+);
+
 var defaultShaders = {
   immediateVert: fs.readFileSync(
     __dirname + '/shaders/immediate.vert',
@@ -25,13 +30,17 @@ var defaultShaders = {
   normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
   normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert: fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
+  lightVert:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag: fs.readFileSync(
     __dirname + '/shaders/light_texture.frag',
     'utf-8'
   ),
   phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
-  phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  phongFrag:
+    lightingShader +
+    fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
   fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
@@ -58,7 +67,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.GL = this.drawingContext;
 
   // lights
-
   this._enableLighting = false;
 
   this.ambientLightColors = [];
@@ -68,6 +76,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.pointLightPositions = [];
   this.pointLightColors = [];
 
+  this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
   this.curBlendMode = constants.BLEND;
@@ -76,6 +85,13 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useSpecularMaterial = false;
   this._useNormalMaterial = false;
   this._useShininess = 1;
+
+  this._tint = [255, 255, 255, 255];
+
+  // lightFalloff variables
+  this.constantAttenuation = 1;
+  this.linearAttenuation = 0;
+  this.quadraticAttenuation = 0;
 
   /**
    * model view, projection, & normal
@@ -148,7 +164,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 
 p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   var defaults = {
-    alpha: false,
+    alpha: true,
     depth: true,
     stencil: true,
     antialias: false,
@@ -172,7 +188,6 @@ p5.RendererGL.prototype._initContext = function() {
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
-      console.log('p5.RendererGL: enabled webgl context');
       var gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
@@ -193,24 +208,44 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   var w = this.width;
   var h = this.height;
   var defaultId = this.canvas.id;
-  var c = this.canvas;
-  if (c) {
-    c.parentNode.removeChild(c);
-  }
-  c = document.createElement('canvas');
-  c.id = defaultId;
-  if (this._pInst._userNode) {
-    this._pInst._userNode.appendChild(c);
-  } else {
-    document.body.appendChild(c);
-  }
-  this._pInst.canvas = c;
+  var isPGraphics = this._pInst instanceof p5.Graphics;
 
-  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true);
+  if (isPGraphics) {
+    var pg = this._pInst;
+    pg.canvas.parentNode.removeChild(pg.canvas);
+    pg.canvas = document.createElement('canvas');
+    var node = pg._pInst._userNode || document.body;
+    node.appendChild(pg.canvas);
+    p5.Element.call(pg, pg.canvas, pg._pInst);
+    pg.width = w;
+    pg.height = h;
+  } else {
+    var c = this.canvas;
+    if (c) {
+      c.parentNode.removeChild(c);
+    }
+    c = document.createElement('canvas');
+    c.id = defaultId;
+    if (this._pInst._userNode) {
+      this._pInst._userNode.appendChild(c);
+    } else {
+      document.body.appendChild(c);
+    }
+    this._pInst.canvas = c;
+  }
+
+  var renderer = new p5.RendererGL(
+    this._pInst.canvas,
+    this._pInst,
+    !isPGraphics
+  );
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
-  this._pInst._elements.push(renderer);
+
+  if (!isPGraphics) {
+    this._pInst._elements.push(renderer);
+  }
 
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
@@ -239,7 +274,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is false
+ * default is true
  * <br><br>
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -371,6 +406,13 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  */
 
 p5.prototype.setAttributes = function(key, value) {
+  if (typeof this._glAttributes === 'undefined') {
+    console.log(
+      'You are trying to use setAttributes on a p5.Graphics object ' +
+        'that does not use a WEBGL renderer.'
+    );
+    return;
+  }
   var unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
@@ -451,6 +493,9 @@ p5.RendererGL.prototype._update = function() {
   this.pointLightColors.length = 0;
 
   this._enableLighting = false;
+
+  //reset tint value for new frame
+  this._tint = [255, 255, 255, 255];
 };
 
 /**
@@ -858,6 +903,10 @@ p5.RendererGL.prototype.push = function() {
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useShininess = this._useShininess;
 
+  properties.constantAttenuation = this.constantAttenuation;
+  properties.linearAttenuation = this.linearAttenuation;
+  properties.quadraticAttenuation = this.quadraticAttenuation;
+
   properties._enableLighting = this._enableLighting;
   properties._useNormalMaterial = this._useNormalMaterial;
   properties._tex = this._tex;
@@ -899,7 +948,11 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
   if (this._useNormalMaterial) {
-    return this._getNormalShader();
+    console.log(
+      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
+        ' created with beginShape(). Falling back to standard fill material.'
+    );
+    return this._getImmediateModeShader();
   }
 
   var fill = this.userFillShader;
@@ -1083,6 +1136,8 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   if (this._tex) {
     fillShader.setUniform('uSampler', this._tex);
   }
+  fillShader.setUniform('uTint', this._tint);
+
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
 
@@ -1102,6 +1157,11 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   var ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+  fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
+  fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
+  fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
+
   fillShader.bindTextures();
 };
 

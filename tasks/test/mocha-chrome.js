@@ -4,6 +4,10 @@ const puppeteer = require('puppeteer');
 const EventHandler = require('eventhandler');
 const util = require('util');
 const mapSeries = require('promise-map-series');
+const fs = require('fs');
+
+const mkdir = util.promisify(fs.mkdir);
+const writeFile = util.promisify(fs.writeFile);
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('mochaChrome', async function() {
@@ -35,7 +39,8 @@ module.exports = function(grunt) {
                   });
 
                   runner.on('end', () => {
-                    fireMochaEvent('mocha:end', runner.stats);
+                    const results = { stats: runner.stats, coverage: window.__coverage__ }
+                    fireMochaEvent('mocha:end', results);
                   });
 
                   return runner;
@@ -54,18 +59,20 @@ module.exports = function(grunt) {
             eventHandler1.emit.bind(eventHandler1)
           );
 
-          await new Promise(async (resolve, reject) => {
-            eventHandler1.on('mocha:end', stats => {
-              if (stats.failures) reject(stats);
-              else resolve(stats);
+          await new Promise(async resolve => {
+            eventHandler1.on('mocha:end', async results => {
+              const { stats, coverage } = results;
+              if (stats.failures) {
+                throw new Error(stats);
+              }
+              await saveCoverage(coverage);
+              resolve(stats);
             });
 
             await page.goto(testURL);
           });
         } finally {
-          await page.close({
-            runBeforeUnload: false
-          });
+          await page.close();
         }
       }
 
@@ -81,3 +88,14 @@ module.exports = function(grunt) {
     }
   });
 };
+
+async function saveCoverage(cov) {
+  if (cov) {
+    try {
+      await mkdir('./.nyc_output/', { recursive: true });
+      await writeFile('./.nyc_output/out.json', JSON.stringify(cov));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}

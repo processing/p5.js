@@ -35,11 +35,12 @@
       "node ./utils/sample-linter.js"
     ]
   },
-  "version": "0.8.0",
+  "version": "0.9.0",
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "all-contributors-cli": "^5.11.0",
+    "babel-plugin-istanbul": "^5.1.4",
     "babelify": "^10.0.0",
     "brfs": "^2.0.2",
     "browserify": "^16.2.3",
@@ -70,6 +71,7 @@
     "grunt-newer": "^1.1.0",
     "grunt-release-it": "^1.0.1",
     "grunt-saucelabs": "^9.0.1",
+    "grunt-simple-nyc": "^2.0.0",
     "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
     "karma": "^3.1.4",
@@ -121,6 +123,20 @@
     ],
     "generatorOpts": {
       "retainLines": true
+    },
+    "env": {
+      "test": {
+        "plugins": [
+          [
+            "istanbul",
+            {
+              "include": [
+                "src/**/*.js"
+              ]
+            }
+          ]
+        ]
+      }
     }
   },
   "browserslist": [
