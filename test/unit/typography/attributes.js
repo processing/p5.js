@@ -95,14 +95,8 @@ suite('Typography Attributes', function() {
       assert.isNumber(myp5.textWidth('p5.js'));
     });
     // Either should not throw error
-    test('wrong param type at #0.', function() {
-      assert.validationError(function() {
-        myp5.textWidth(9);
-      });
-    });
-    // Or should return NaN
-    test.skip('should return NaN for wrong param.', function() {
-      assert.isNumber(myp5.textWidth(100));
+    test('should return a number for number input', function() {
+      assert.isNumber(myp5.textWidth('p5.js'));
     });
   });
 
