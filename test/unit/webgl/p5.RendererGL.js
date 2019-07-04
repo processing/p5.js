@@ -140,21 +140,6 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and pointLight() works', function(done) {
-      myp5.createCanvas(100, 100, myp5.WEBGL);
-      myp5.pointLight(255, 0, 0, 0, 0, 0);
-      var pointColors = myp5._renderer.pointLightDiffuseColors.slice();
-      var pointLocs = myp5._renderer.pointLightPositions.slice();
-      myp5.push();
-      myp5.pointLight(0, 0, 255, 0, 10, 5);
-      assert.notEqual(pointColors, myp5._renderer.pointLightDiffuseColors);
-      assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
-      myp5.pop();
-      assert.deepEqual(pointColors, myp5._renderer.pointLightDiffuseColors);
-      assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
-      done();
-    });
-
     test('push/pop and specularLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.specularLight(255, 0, 0);
