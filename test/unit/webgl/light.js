@@ -27,5 +27,11 @@ suite('light', function() {
       assert.deepEqual(myp5._renderer.linearAttenuation, 3);
       assert.deepEqual(myp5._renderer.quadraticAttenuation, 4);
     });
+
+    test('specularLight is initialised and set properly', function() {
+      assert.deepEqual(myp5._renderer.specularLightColors, [1, 1, 1]);
+      myp5.specularLight(255, 0, 0);
+      assert.deepEqual(myp5._renderer.specularLightColors, [1, 0, 0]);
+    });
   });
 });

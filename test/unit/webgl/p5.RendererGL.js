@@ -130,7 +130,7 @@ suite('p5.RendererGL', function() {
       myp5.specularLight(255, 0, 0);
       var specularColors = myp5._renderer.specularLightColors.slice();
       myp5.push();
-      myp5.pointLight(0, 0, 255);
+      myp5.specularLight(0, 0, 255);
       assert.notEqual(specularColors, myp5._renderer.specularLightColors);
       myp5.pop();
       assert.deepEqual(specularColors, myp5._renderer.specularLightColors);
