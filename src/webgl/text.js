@@ -613,6 +613,12 @@ var FontInfo = function(font) {
 };
 
 p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
+  if (!this._textFont || typeof this._textFont === 'string') {
+    console.log(
+      'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
+    );
+    return;
+  }
   if (y >= maxY || !this._doFill) {
     return; // don't render lines beyond our maxY position
   }

@@ -87,7 +87,7 @@ Provides flat shading of objects, based on the current fill color.
 #### Light Shader (for lighting AND textures)
 Accounts for:
 * Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, and `specularLight()`
-* Material parameters set by `ambientMaterial()`, and `specularMaterial()`
+* Material parameters set by `ambientMaterial()`, `emissiveMaterial()` and `specularMaterial()`
 * Texture parameters, set by `texture()`
 
 #### Normal Shader
@@ -134,6 +134,7 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform vec3 uPointLightDiffuseColors[8];`    |           |x              |            |             |            |
 |`uniform vec3 uPointLightSpecularColors[8];`   |           |x              |            |             |            |
 |`uniform bool uSpecular;`                      |           |x              |            |             |            |
+|`uniform bool uEmissive;`                      |           |x              |            |             |            |
 |`uniform int  uShininess;`                     |           |x              |            |             |            |
 |`uniform bool uUseLighting;`                   |           |x              |            |             |            |
 |`uniform float uConstantAttenuation;`          |           |x              |            |             |            |

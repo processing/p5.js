@@ -12,12 +12,14 @@
 'use strict';
 
 var p5 = require('../core/main');
+var omggif = require('omggif');
+
 // This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
 // redefined-global error and permits using the name "frames" for the array
 // of saved animation frames.
 
-/* global frames:true */ var frames = [];
+/* global frames:true */ var frames = []; // eslint-disable-line no-unused-vars
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
@@ -190,6 +192,60 @@ p5.prototype.saveCanvas = function() {
   htmlCanvas.toBlob(function(blob) {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
+};
+
+p5.prototype.saveGif = function(pImg, filename) {
+  var props = pImg.gifProperties;
+
+  //convert loopLimit back into Netscape Block formatting
+  var loopLimit = props.loopLimit;
+  if (loopLimit === 1) {
+    loopLimit = null;
+  } else if (loopLimit === null) {
+    loopLimit = 0;
+  }
+  var gifFormatDelay = props.delay / 10;
+  var opts = {
+    loop: loopLimit,
+    delay: gifFormatDelay
+  };
+
+  var buffer = new Uint8Array(
+    pImg.width * pImg.height * props.numFrames * gifFormatDelay
+  );
+  var gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  var palette = [];
+  //loop over frames and build pixel -> palette index for each
+  for (var i = 0; i < props.numFrames; i++) {
+    var pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+    var data = props.frames[i].data;
+    var dataLength = data.length;
+    for (var j = 0, k = 0; j < dataLength; j += 4, k++) {
+      var r = data[j + 0];
+      var g = data[j + 1];
+      var b = data[j + 2];
+      var color = (r << 16) | (g << 8) | (b << 0);
+      var index = palette.indexOf(color);
+      if (index === -1) {
+        pixelPaletteIndex[k] = palette.length;
+        palette.push(color);
+      } else {
+        pixelPaletteIndex[k] = index;
+      }
+    }
+    // force palette to be power of 2
+    var powof2 = 1;
+    while (powof2 < palette.length) {
+      powof2 <<= 1;
+    }
+    palette.length = powof2;
+    opts.palette = new Uint32Array(palette);
+    gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
+  }
+  gifWriter.end();
+  var extension = 'gif';
+  var blob = new Blob([buffer], { type: 'image/gif' });
+  p5.prototype.downloadFile(blob, filename, extension);
 };
 
 /**

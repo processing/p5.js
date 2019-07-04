@@ -99,6 +99,10 @@ p5.Renderer2D.prototype.image = function(
   dHeight
 ) {
   var cnv;
+  if (img.gifProperties) {
+    img._animateGif(this._pInst);
+  }
+
   try {
     if (this._tint) {
       if (p5.MediaElement && img instanceof p5.MediaElement) {
@@ -392,6 +396,11 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   y *= pd;
   w *= pd;
   h *= pd;
+
+  if (this.gifProperties) {
+    this.gifProperties.frames[this.gifProperties.displayIndex] =
+      pixelsState.imageData;
+  }
 
   this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
 
@@ -1148,7 +1157,7 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   // A temporary fix to conform to Processing's implementation
   // of BASELINE vertical alignment in a bounding box
 
-  if (typeof maxWidth !== 'undefined' && typeof maxHeight !== 'undefined') {
+  if (typeof maxWidth !== 'undefined') {
     if (this.drawingContext.textBaseline === constants.BASELINE) {
       baselineHacked = true;
       this.drawingContext.textBaseline = constants.TOP;

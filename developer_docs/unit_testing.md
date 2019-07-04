@@ -14,6 +14,12 @@ In the repo root, use the following command in your terminal
 npm test
 ```
 
+## Test Coverage
+
+Every time the tests are run, a coverage report is generated. This coverage report details which parts of which source code files were exercised by the test suite, effectively telling us how much of the codebase was tested.
+
+A summary is printed out after running the tests, and you can view the detailed report at `coverage/index.html` in any web browser. You can run `open coverage/index.html` from the command line on Mac to open the page in your default web browser. 
+
 ### Running One Suite
 
 To run a single test or group of tests, append `.only` on a `suite` or `test` in your `.js` file and run the tests using the above command.

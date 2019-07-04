@@ -258,6 +258,76 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('GL Renderer clear()', function() {
+    var pg;
+    var pixel;
+    test('webgl graphics background draws into webgl canvas', function(done) {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.background(0, 255, 255, 255);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      pg.background(0);
+      myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      done();
+    });
+
+    test('transparent GL graphics with GL canvas', function(done) {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      myp5.background(0, 255, 255);
+      pg.clear();
+      myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
+      done();
+    });
+
+    test('semi-transparent GL graphics with GL canvas', function(done) {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      myp5.background(0, 255, 255);
+      pg.background(100, 100, 100, 100);
+      myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [39, 194, 194, 194]);
+      done();
+    });
+
+    test('webgl graphics background draws into 2D canvas', function(done) {
+      myp5.createCanvas(50, 50);
+      myp5.background(0, 255, 255, 255);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      pg.background(0);
+      myp5.image(pg, 0, 0);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      done();
+    });
+
+    test('transparent GL graphics with 2D canvas', function(done) {
+      myp5.createCanvas(50, 50);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      myp5.background(0, 255, 255);
+      pg.clear();
+      myp5.image(pg, 0, 0);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
+      done();
+    });
+
+    test('semi-transparent GL graphics with 2D canvas', function(done) {
+      myp5.createCanvas(50, 50);
+      pg = myp5.createGraphics(25, 50, myp5.WEBGL);
+      myp5.background(0, 255, 255);
+      pg.background(100, 100, 100, 100);
+      myp5.image(pg, 0, 0);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [39, 194, 194, 255]);
+      done();
+    });
+  });
+
   suite('blendMode()', function() {
     var testBlend = function(mode, intended) {
       myp5.blendMode(mode);
@@ -301,8 +371,8 @@ suite('p5.RendererGL', function() {
     test('blendModes change pixel colors as expected', function(done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
-      assert.deepEqual([133, 69, 191, 255], mixAndReturn(myp5.ADD, 255));
-      assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
+      assert.deepEqual([133, 69, 191, 158], mixAndReturn(myp5.ADD, 255));
+      assert.deepEqual([0, 0, 255, 122], mixAndReturn(myp5.REPLACE, 255));
       assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
       assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
       assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));
