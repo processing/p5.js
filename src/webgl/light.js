@@ -85,7 +85,12 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 };
 
 /**
- * Creates an specular light with a color
+ * Adds a specular component to other lighting methods. It affects only the
+ * elements which are created after it in the code.
+ * This method can be combined with specularMaterial() and shininess()
+ * functions to set specular highlights. The default color is white, ie
+ * (255, 255, 255), which is used if this method is not called before
+ * specularMaterial().
  *
  * @method specularLight
  * @param  {Number}        v1      red or hue value relative to
