@@ -30,8 +30,18 @@ suite('light', function() {
 
     test('specularLight is initialised and set properly', function() {
       assert.deepEqual(myp5._renderer.specularLightColors, [1, 1, 1]);
+      assert.deepEqual(myp5._renderer.pointLightSpecularColors, []);
+      assert.deepEqual(myp5._renderer.directionalLightSpecularColors, []);
       myp5.specularLight(255, 0, 0);
       assert.deepEqual(myp5._renderer.specularLightColors, [1, 0, 0]);
+      myp5.pointLight(255, 0, 0, 1, 0, 0);
+      myp5.directionalLight(255, 0, 0, 0, 0, 0);
+      assert.deepEqual(myp5._renderer.pointLightSpecularColors, [1, 0, 0]);
+      assert.deepEqual(myp5._renderer.directionalLightSpecularColors, [
+        1,
+        0,
+        0
+      ]);
     });
   });
 });
