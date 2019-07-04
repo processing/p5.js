@@ -121,24 +121,24 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 
 #### Light Parameters
 
-|Parameter                              |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
-|---------------------------------------|-----------|---------------|------------|-------------|------------|
-|`uniform int uAmbientLightCount;`      |           |x              |            |             |            |
-|`uniform int uDirectionalLightCount;`  |           |x              |            |             |            |
-|`uniform int uPointLightCount;`        |           |x              |            |             |            |
-|`uniform vec3 uAmbientColor[8];`       |           |x              |            |             |            |
-|`uniform vec3 uLightingDirection[8];`  |           |x              |            |             |            |
-|`uniform vec3 uDirectionalDiffuse[8];`   |           |x              |            |             |            |
-|`uniform vec3 uDirectionalSpecular[8];`|           |x              |            |             |            |
-|`uniform vec3 uPointLightLocation[8];` |           |x              |            |             |            |
-|`uniform vec3 uPointLightDiffuse[8];`    |           |x              |            |             |            |
-|`uniform vec3 uPointLightSpecular[8];` |           |x              |            |             |            |
-|`uniform bool uSpecular;`              |           |x              |            |             |            |
-|`uniform int  uShininess;`             |           |x              |            |             |            |
-|`uniform bool uUseLighting;`           |           |x              |            |             |            |
-|`uniform float uConstantAttenuation;`  |           |x              |            |             |            |
-|`uniform float uLinearAttenuation;`    |           |x              |            |             |            |
-|`uniform float uQuadraticAttenuation;` |           |x              |            |             |            |
+|Parameter                                      |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|-----------------------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform int uAmbientLightCount;`              |           |x              |            |             |            |
+|`uniform int uDirectionalLightCount;`          |           |x              |            |             |            |
+|`uniform int uPointLightCount;`                |           |x              |            |             |            |
+|`uniform vec3 uAmbientColor[8];`               |           |x              |            |             |            |
+|`uniform vec3 uLightingDirection[8];`          |           |x              |            |             |            |
+|`uniform vec3 uDirectionalDiffuseColors[8];`   |           |x              |            |             |            |
+|`uniform vec3 uDirectionalSpecularColors[8];`  |           |x              |            |             |            |
+|`uniform vec3 uPointLightLocation[8];`         |           |x              |            |             |            |
+|`uniform vec3 uPointLightDiffuseColors[8];`    |           |x              |            |             |            |
+|`uniform vec3 uPointLightSpecularColors[8];`   |           |x              |            |             |            |
+|`uniform bool uSpecular;`                      |           |x              |            |             |            |
+|`uniform int  uShininess;`                     |           |x              |            |             |            |
+|`uniform bool uUseLighting;`                   |           |x              |            |             |            |
+|`uniform float uConstantAttenuation;`          |           |x              |            |             |            |
+|`uniform float uLinearAttenuation;`            |           |x              |            |             |            |
+|`uniform float uQuadraticAttenuation;`         |           |x              |            |             |            |
     
 #### Texture Parameters
 

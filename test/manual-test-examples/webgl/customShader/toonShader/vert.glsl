@@ -9,7 +9,7 @@ uniform mat3 uNormalMatrix;
 
 uniform int uDirectionalLightCount;
 uniform vec3 uLightingDirection;
-uniform vec3 uDirectionalDiffuse;
+uniform vec3 uDirectionalColor;
 uniform vec4 uMaterialColor;
 
 varying vec4 vertColor;
