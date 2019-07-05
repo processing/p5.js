@@ -567,7 +567,7 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endshape()</a> is called, all of image data
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
  * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
  * buffer. The constant CLOSE as the value for the MODE parameter to close
  * the shape (to connect the beginning and the end).
