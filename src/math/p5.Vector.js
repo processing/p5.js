@@ -570,6 +570,20 @@ p5.Vector.prototype.div = function div(n) {
   return this;
 };
 
+p5.Vector.prototype.rem = function rem(n) {
+  if (!(typeof n === 'number' && isFinite(n))) {
+    console.warn(
+      'p5.Vector.prototype.rem:',
+      'n is undefined or not a finite number'
+    );
+    return this;
+  }
+  this.x %= n;
+  this.y %= n;
+  this.z %= n;
+  return this;
+};
+
 /**
  * Calculates the magnitude (length) of the vector and returns the result as
  * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
@@ -1658,6 +1672,16 @@ p5.Vector.div = function div(v, n, target) {
     target.set(v);
   }
   target.div(n);
+  return target;
+};
+
+p5.Vector.rem = function rem(v, n, target) {
+  if (!target) {
+    target = v.copy();
+  } else {
+    target.set(v);
+  }
+  target.rem(n);
   return target;
 };
 

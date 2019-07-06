@@ -457,6 +457,39 @@ suite('p5.Vector', function() {
     });
   });
 
+  suite('rem()', function() {
+    setup(function() {
+      v.x = -18;
+      v.y = 30;
+      v.z = 31;
+    });
+
+    test('should return the same object', function() {
+      expect(v.rem(0)).to.eql(v);
+    });
+
+    test('should not change x, y, z if no argument is given', function() {
+      v.rem();
+      expect(v.x).to.eql(-18);
+      expect(v.y).to.eql(30);
+      expect(v.z).to.eql(31);
+    });
+
+    test('should not change x, y, z if n is not a finite number', function() {
+      v.rem(NaN);
+      expect(v.x).to.eql(-18);
+      expect(v.y).to.eql(30);
+      expect(v.z).to.eql(31);
+    });
+
+    test('rem(5)', function() {
+      v.rem(5);
+      expect(v.x).to.eql(-3);
+      expect(v.y).to.eql(0);
+      expect(v.z).to.eql(1);
+    });
+  });
+
   suite('dot', function() {
     setup(function() {
       v.x = 1;
