@@ -446,7 +446,7 @@ var p5 = function(sketch, node, sync) {
       // remove DOM elements created by p5, and listeners
       for (var i = 0; i < this._elements.length; i++) {
         var e = this._elements[i];
-        if (e.elt.parentNode) {
+        if (e.elt && e.elt.parentNode) {
           e.elt.parentNode.removeChild(e.elt);
         }
         for (var elt_ev in e._events) {
