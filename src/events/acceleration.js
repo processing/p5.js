@@ -367,9 +367,9 @@ var rotateDirectionX = 'clockwise';
 var rotateDirectionY = 'clockwise';
 var rotateDirectionZ = 'clockwise';
 
-var pRotateDirectionX;
-var pRotateDirectionY;
-var pRotateDirectionZ;
+p5.prototype.pRotateDirectionX = undefined;
+p5.prototype.pRotateDirectionY = undefined;
+p5.prototype.pRotateDirectionZ = undefined;
 
 p5.prototype._updatePRotations = function() {
   this._setProperty('pRotationX', this.rotationX);
@@ -672,7 +672,7 @@ p5.prototype._handleMotion = function() {
     } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
       rotateDirectionX = 'counter-clockwise';
     }
-    if (rotateDirectionX !== pRotateDirectionX) {
+    if (rotateDirectionX !== this.pRotateDirectionX) {
       wSAX = wRX;
     }
     if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
@@ -680,7 +680,7 @@ p5.prototype._handleMotion = function() {
       this._setProperty('turnAxis', 'X');
       deviceTurned();
     }
-    pRotateDirectionX = rotateDirectionX;
+    this.pRotateDirectionX = rotateDirectionX;
     startAngleX = wSAX - 180;
 
     // Y-axis is identical to X-axis except for changing some names.
@@ -692,7 +692,7 @@ p5.prototype._handleMotion = function() {
     } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
       rotateDirectionY = 'counter-clockwise';
     }
-    if (rotateDirectionY !== pRotateDirectionY) {
+    if (rotateDirectionY !== this.pRotateDirectionY) {
       wSAY = wRY;
     }
     if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
@@ -700,7 +700,7 @@ p5.prototype._handleMotion = function() {
       this._setProperty('turnAxis', 'Y');
       deviceTurned();
     }
-    pRotateDirectionY = rotateDirectionY;
+    this.pRotateDirectionY = rotateDirectionY;
     startAngleY = wSAY - 180;
 
     // Z-axis is already in the range 0 to 360
@@ -717,7 +717,7 @@ p5.prototype._handleMotion = function() {
     ) {
       rotateDirectionZ = 'counter-clockwise';
     }
-    if (rotateDirectionZ !== pRotateDirectionZ) {
+    if (rotateDirectionZ !== this.pRotateDirectionZ) {
       startAngleZ = this.rotationZ;
     }
     if (
@@ -728,7 +728,7 @@ p5.prototype._handleMotion = function() {
       this._setProperty('turnAxis', 'Z');
       deviceTurned();
     }
-    pRotateDirectionZ = rotateDirectionZ;
+    this.pRotateDirectionZ = rotateDirectionZ;
     this._setProperty('turnAxis', undefined);
   }
   var deviceShaken = this.deviceShaken || window.deviceShaken;
