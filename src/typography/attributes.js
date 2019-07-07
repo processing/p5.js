@@ -215,9 +215,10 @@ p5.prototype.textStyle = function(theStyle) {
  *Letter P and p5.js are displayed with vertical lines at end. P is wide
  *
  */
-p5.prototype.textWidth = function(theText) {
+p5.prototype.textWidth = function() {
+  arguments[0] += '';
   p5._validateParameters('textWidth', arguments);
-  if (theText.length === 0) {
+  if (arguments[0].length === 0) {
     return 0;
   }
   return this._renderer.textWidth.apply(this._renderer, arguments);

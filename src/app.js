@@ -28,6 +28,7 @@ require('./color/setting');
 
 // data
 require('./data/p5.TypedDict');
+require('./data/local_storage.js');
 
 // events
 require('./events/acceleration');

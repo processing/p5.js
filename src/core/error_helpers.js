@@ -143,6 +143,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
       message:
         "In case your large file isn't fetched successfully," +
         'we recommend splitting the file into smaller segments and fetching those.'
+    },
+    '8': {
+      method: 'loadImage',
+      message:
+        'There was some trouble loading your GIF. Make sure that your' +
+        ' GIF is using 87a or 89a encoding.'
     }
   };
 
@@ -157,7 +163,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyFileLoadError = function(errorType, filePath) {
     var errorInfo = errorCases[errorType];
     var message;
-    if (errorType === 7) {
+    if (errorType === 7 || errorType === 8) {
       message = errorInfo.message;
     } else {
       message =

@@ -11,6 +11,7 @@ var p5 = require('../core/main');
 var Filters = require('./filters');
 var canvas = require('../core/helpers');
 var constants = require('../core/constants');
+var omggif = require('omggif');
 
 require('../core/error_helpers');
 
@@ -65,47 +66,172 @@ require('../core/error_helpers');
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
-  var img = new Image();
   var pImg = new p5.Image(1, 1, this);
-
   var self = this;
-  img.onload = function() {
-    pImg.width = pImg.canvas.width = img.width;
-    pImg.height = pImg.canvas.height = img.height;
 
-    // Draw the image into the backing canvas of the p5.Image
-    pImg.drawingContext.drawImage(img, 0, 0);
-    pImg.modified = true;
+  var req = new Request(path, {
+    method: 'GET',
+    mode: 'cors'
+  });
 
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
-    }
-
-    self._decrementPreload();
-  };
-  img.onerror = function(e) {
-    p5._friendlyFileLoadError(0, img.src);
-    if (typeof failureCallback === 'function') {
-      failureCallback(e);
+  fetch(path, req).then(function(response) {
+    // GIF section
+    if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
+      response.arrayBuffer().then(
+        function(arrayBuffer) {
+          if (arrayBuffer) {
+            var byteArray = new Uint8Array(arrayBuffer);
+            _createGif(
+              byteArray,
+              pImg,
+              successCallback,
+              failureCallback,
+              function(pImg) {
+                self._decrementPreload();
+              }.bind(self)
+            );
+          }
+        },
+        function(e) {
+          if (typeof failureCallback === 'function') {
+            failureCallback(e);
+          } else {
+            console.error(e);
+          }
+        }
+      );
     } else {
-      console.error(e);
+      // Non-GIF Section
+      var img = new Image();
+
+      img.onload = function() {
+        pImg.width = pImg.canvas.width = img.width;
+        pImg.height = pImg.canvas.height = img.height;
+
+        // Draw the image into the backing canvas of the p5.Image
+        pImg.drawingContext.drawImage(img, 0, 0);
+        pImg.modified = true;
+        if (typeof successCallback === 'function') {
+          successCallback(pImg);
+        }
+        self._decrementPreload();
+      };
+
+      img.onerror = function(e) {
+        p5._friendlyFileLoadError(0, img.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      };
+
+      // Set crossOrigin in case image is served with CORS headers.
+      // This will let us draw to the canvas without tainting it.
+      // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+      // When using data-uris the file will be loaded locally
+      // so we don't need to worry about crossOrigin with base64 file types.
+      if (path.indexOf('data:image/') !== 0) {
+        img.crossOrigin = 'Anonymous';
+      }
+      // start loading the image
+      img.src = path;
     }
-  };
-
-  // Set crossOrigin in case image is served with CORS headers.
-  // This will let us draw to the canvas without tainting it.
-  // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-  // When using data-uris the file will be loaded locally
-  // so we don't need to worry about crossOrigin with base64 file types.
-  if (path.indexOf('data:image/') !== 0) {
-    img.crossOrigin = 'Anonymous';
-  }
-
-  // start loading the image
-  img.src = path;
-
+    pImg.modified = true;
+  });
   return pImg;
 };
+
+/**
+ * Helper function for loading GIF-based images
+ *
+ */
+function _createGif(
+  arrayBuffer,
+  pImg,
+  successCallback,
+  failureCallback,
+  finishCallback
+) {
+  var gifReader = new omggif.GifReader(arrayBuffer);
+  pImg.width = pImg.canvas.width = gifReader.width;
+  pImg.height = pImg.canvas.height = gifReader.height;
+  var frames = [];
+  var numFrames = gifReader.numFrames();
+  var framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+  // I didn't realize this at first but some GIFs encode with frame
+  // Reworking delay to be frame level will make it less powerful
+  // to modify for users. For now this works with 99% of GIFs that
+  // I can find and for those that it doesn't there is just a retiming
+  // of the frames, which would be minor for all but the strangest GIFs
+  var averageDelay = 0;
+  if (numFrames > 1) {
+    var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+      try {
+        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+      } catch (e) {
+        p5._friendlyFileLoadError(8, pImg.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      }
+    };
+    for (var j = 0; j < numFrames; j++) {
+      var frameInfo = gifReader.frameInfo(j);
+      averageDelay += frameInfo.delay;
+      // Some GIFs are encoded so that they expect the previous frame
+      // to be under the current frame. This can occur at a sub-frame level
+      // There are possible disposal codes but I didn't encounter any
+      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
+        pImg.drawingContext.putImageData(frames[j - 1], 0, 0);
+      } else {
+        pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
+        framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+      }
+      loadGIFFrameIntoImage(j, gifReader);
+      var imageData = new ImageData(framePixels, pImg.width, pImg.height);
+      pImg.drawingContext.putImageData(imageData, 0, 0);
+      frames.push(
+        pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height)
+      );
+    }
+
+    //Uses Netscape block encoding
+    //to repeat forever, this will be 0
+    //to repeat just once, this will be null
+    //to repeat N times (1<N), should contain integer for loop number
+    //this is changed to more usable values for us
+    //to repeat forever, loopCount = null
+    //everything else is just the number of loops
+    var loopLimit = gifReader.loopCount();
+    if (loopLimit === null) {
+      loopLimit = 1;
+    } else if (loopLimit === 0) {
+      loopLimit = null;
+    }
+
+    // See note about this at variable creation above
+    averageDelay /= numFrames;
+
+    pImg.gifProperties = {
+      displayIndex: 0,
+      delay: averageDelay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
+      loopLimit: loopLimit,
+      loopCount: 0,
+      frames: frames,
+      numFrames: numFrames,
+      playing: true,
+      timeDisplayed: 0
+    };
+  }
+
+  if (typeof successCallback === 'function') {
+    successCallback(pImg);
+  }
+  finishCallback();
+}
 
 /**
  * Validates clipping params. Per drawImage spec sWidth and sHight cannot be

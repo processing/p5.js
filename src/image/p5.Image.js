@@ -148,6 +148,8 @@ p5.Image = function(width, height) {
   this._pixelsState = this;
   this._pixelDensity = 1;
   this._pixelsDirty = true;
+  //Object for working with GIFs, defaults to null
+  this.gifProperties = null;
   //For WebGL Texturing only: used to determine whether to reupload texture to GPU
   this._modified = false;
   /**
@@ -221,6 +223,34 @@ p5.Image = function(width, height) {
 };
 
 /**
+ * Helper function for animating GIF-based images with time
+ *
+ */
+p5.Image.prototype._animateGif = function(pInst) {
+  var props = this.gifProperties;
+  if (props.playing) {
+    props.timeDisplayed += pInst.deltaTime;
+  }
+
+  if (props.timeDisplayed >= props.delay) {
+    //GIF is bound to 'realtime' so can skip frames
+    var skips = Math.floor(props.timeDisplayed / props.delay);
+    props.timeDisplayed = 0;
+    props.displayIndex += skips;
+    props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+    if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+      props.playing = false;
+    } else {
+      var ind = props.displayIndex % props.numFrames;
+      this.drawingContext.putImageData(props.frames[ind], 0, 0);
+      props.displayIndex = ind;
+      this._pixelsDirty = true;
+      this.setModified(true);
+    }
+  }
+};
+
+/**
  * Helper fxn for sharing pixel methods
  *
  */
@@ -268,6 +298,9 @@ p5.Image.prototype.loadPixels = function() {
 /**
  * Updates the backing canvas for this image with the contents of
  * the [pixels] array.
+ * <br><br>
+ * If this image is an animated GIF then the pixels will be updated
+ * in the frame that is currently displayed.
  *
  * @method updatePixels
  * @param {Integer} x x-offset of the target update area for the
@@ -463,6 +496,31 @@ p5.Image.prototype.resize = function(width, height) {
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
+
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    //adapted from github.com/LinusU/resize-image-data
+    var nearestNeighbor = function(src, dst) {
+      var pos = 0;
+      for (var y = 0; y < dst.height; y++) {
+        for (var x = 0; x < dst.width; x++) {
+          var srcX = Math.floor(x * src.width / dst.width);
+          var srcY = Math.floor(y * src.height / dst.height);
+          var srcPos = (srcY * src.width + srcX) * 4;
+          dst.data[pos++] = src.data[srcPos++]; // R
+          dst.data[pos++] = src.data[srcPos++]; // G
+          dst.data[pos++] = src.data[srcPos++]; // B
+          dst.data[pos++] = src.data[srcPos++]; // A
+        }
+      }
+    };
+    for (var i = 0; i < props.numFrames; i++) {
+      var resizedImageData = this.drawingContext.createImageData(width, height);
+      nearestNeighbor(props.frames[i], resizedImageData);
+      props.frames[i] = resizedImageData;
+    }
+  }
+
   // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
@@ -796,8 +854,10 @@ p5.Image.prototype.isModified = function() {
 /**
  * Saves the image to a file and force the browser to download it.
  * Accepts two strings for filename and file extension
- * Supports png (default) and jpg.
- *
+ * Supports png (default), jpg, and gif
+ *<br><br>
+ * Note that the file will only be downloaded as an animated GIF
+ * if the p5.Image was loaded from a GIF file.
  * @method save
  * @param {String} filename give your file a name
  * @param  {String} extension 'png' or 'jpg'
@@ -825,7 +885,282 @@ p5.Image.prototype.isModified = function() {
  *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  p5.prototype.saveCanvas(this.canvas, filename, extension);
+  if (this.gifProperties) {
+    p5.prototype.saveGif(this, filename);
+  } else {
+    p5.prototype.saveCanvas(this.canvas, filename, extension);
+  }
+};
+
+// GIF Section
+/**
+ * Starts an animated GIF over at the beginning state.
+ *
+ * @method reset
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   // The GIF file that we loaded only loops once
+ *   // so it freezes on the last frame after playing through
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   // Click to reset the GIF and begin playback from start
+ *   gif.reset();
+ * }
+ * </code></div>
+ * @alt
+ * Animated image of a cartoon face that winks once and then freezes
+ * When you click it animates again, winks once and freezes
+ *
+ */
+p5.Image.prototype.reset = function() {
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    props.playing = true;
+    props.timeSinceStart = 0;
+    props.timeDisplayed = 0;
+    props.loopCount = 0;
+    props.displayIndex = 0;
+    this.drawingContext.putImageData(props.frames[0], 0, 0);
+  }
+};
+
+/**
+ * Gets the index for the frame that is currently visible in an animated GIF.
+ *
+ * @method getCurrentFrame
+ * @return {Number}       The index for the currently displaying frame in animated GIF
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   let frame = gif.getCurrentFrame();
+ *   image(gif, 0, 0);
+ *   text(frame, 10, 90);
+ * }
+ * </code></div>
+ * @alt
+ * Animated image of a cartoon eye looking around and then
+ * looking outwards, in the lower-left hand corner a number counts
+ * up quickly to 124 and then starts back over at 0
+ *
+ */
+p5.Image.prototype.getCurrentFrame = function() {
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    return props.displayIndex % props.numFrames;
+  }
+};
+
+/**
+ * Sets the index of the frame that is currently visible in an animated GIF
+ *
+ * @method setFrame
+ * @param {Number}       index the index for the frame that should be displayed
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
+ *
+ */
+p5.Image.prototype.setFrame = function(index) {
+  if (this.gifProperties) {
+    var props = this.gifProperties;
+    if (index < props.numFrames && index >= 0) {
+      props.timeDisplayed = 0;
+      props.displayIndex = index;
+      this.drawingContext.putImageData(props.frames[index], 0, 0);
+    } else {
+      console.log(
+        'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
+      );
+    }
+  }
+};
+
+/**
+ * Returns the number of frames in an animated GIF
+ *
+ * @method numFrames
+ * @return {Number}
+ * @example     The number of frames in the animated GIF
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
+ *
+ */
+p5.Image.prototype.numFrames = function() {
+  if (this.gifProperties) {
+    return this.gifProperties.numFrames;
+  }
+};
+
+/**
+ * Plays an animated GIF that was paused with
+ * <a href="#/p5.Image/pause">pause()</a>
+ *
+ * @method play
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
+ *
+ */
+p5.Image.prototype.play = function() {
+  if (this.gifProperties) {
+    this.gifProperties.playing = true;
+  }
+};
+
+/**
+ * Pauses an animated GIF.
+ *
+ * @method pause
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
+ *
+ */
+p5.Image.prototype.pause = function() {
+  if (this.gifProperties) {
+    this.gifProperties.playing = false;
+  }
+};
+
+/**
+ * Changes the delay between frames in an animated GIF
+ *
+ * @method delay
+ * @param {Number}    d the amount in milliseconds to delay between switching frames
+ * @example
+ * <div><code>
+ * let gifFast, gifSlow;
+ *
+ * function preload() {
+ *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * function setup() {
+ *   gifFast.resize(width / 2, height / 2);
+ *   gifSlow.resize(width / 2, height / 2);
+ *
+ *   //Change the delay here
+ *   gifFast.delay(10);
+ *   gifSlow.delay(100);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gifFast, 0, 0);
+ *   image(gifSlow, width / 2, 0);
+ * }
+ * </code></div>
+ * @alt
+ * Two animated gifs of cartoon eyes looking around
+ * The gif on the left animates quickly, on the right
+ * the animation is much slower
+ *
+ */
+p5.Image.prototype.delay = function(d) {
+  if (this.gifProperties) {
+    this.gifProperties.delay = d;
+  }
 };
 
 module.exports = p5.Image;

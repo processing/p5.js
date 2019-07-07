@@ -11,6 +11,68 @@
 var p5 = require('../core/main');
 var constants = require('../core/constants');
 
+/**
+ *
+ * The variable movedX contains the horizontal movement of the mouse since the last frame
+ * @property {Number} movedX
+ * @readOnly
+ * @example
+ * <div class="notest">
+ * <code>
+ * let x = 50;
+ * function setup() {
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   if (x > 48) {
+ *     x -= 2;
+ *   } else if (x < 48) {
+ *     x += 2;
+ *   }
+ *   x += floor(movedX / 5);
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(x, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * box moves left and right according to mouse movement then slowly back towards the center
+ *
+ */
+p5.prototype.movedX = 0;
+
+/**
+ * The variable movedY contains the vertical movement of the mouse since the last frame
+ * @property {Number} movedY
+ * @readOnly
+ * @example
+ * <div class="notest">
+ * <code>
+ * let y = 50;
+ * function setup() {
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   if (y > 48) {
+ *     y -= 2;
+ *   } else if (y < 48) {
+ *     y += 2;
+ *   }
+ *   y += floor(movedY / 5);
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(y, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * box moves up and down according to mouse movement then slowly back towards the center
+ *
+ */
+p5.prototype.movedY = 0;
 /*
  * This is a flag which is false until the first time
  * we receive a mouse event. The pmouseX and pmouseY
@@ -377,6 +439,8 @@ p5.prototype._updateNextMouseCoords = function(e) {
       this.height,
       e
     );
+    this._setProperty('movedX', e.movementX);
+    this._setProperty('movedY', e.movementY);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -629,12 +693,17 @@ p5.prototype._onmousedown = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
+
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.touchStarted === 'function') {
+    // only safari needs this manual fallback for consistency
+  } else if (
+    navigator.userAgent.toLowerCase().includes('safari') &&
+    typeof context.touchStarted === 'function'
+  ) {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
       e.preventDefault();
@@ -927,6 +996,88 @@ p5.prototype._onwheel = function(e) {
       e.preventDefault();
     }
   }
+};
+
+/**
+ * <p>The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
+ * locks the pointer to its current position and makes it invisible.
+ * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
+ * the last call of draw</p>
+ * <p>Note that not all browsers support this feature</p>
+ * <p>This enables you to create experiences that aren't limited by the mouse moving out of the screen
+ * even if it is repeatedly moved into one direction. </p>
+ * <p>For example a first person perspective experience</p>
+ *
+ * @method requestPointerLock
+ * @example
+ * <div class="notest">
+ * <code>
+ * let cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   requestPointerLock();
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   cam.pan(-movedX * 0.001);
+ *   cam.tilt(movedY * 0.001);
+ *   sphere(25);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3D scene moves according to mouse mouse movement in a first person perspective
+ *
+ */
+p5.prototype.requestPointerLock = function() {
+  // pointer lock object forking for cross browser
+  var canvas = this._curElement.elt;
+  canvas.requestPointerLock =
+    canvas.requestPointerLock || canvas.mozRequestPointerLock;
+  if (!canvas.requestPointerLock) {
+    console.log('requestPointerLock is not implemented in this browser');
+    return false;
+  }
+  canvas.requestPointerLock();
+  return true;
+};
+
+/**
+ * <p>The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
+ * for example to make ui elements usable etc
+ *
+ * @method exitPointerLock
+ * @example
+ * <div class="notest">
+ * <code>
+ * //click the canvas to lock the pointer
+ * //click again to exit (otherwise escape)
+ * let locked = false;
+ * function draw() {
+ *   background(237, 34, 93);
+ * }
+ * function mouseClicked() {
+ *   if (!locked) {
+ *     locked = true;
+ *     requestPointerLock();
+ *   } else {
+ *     exitPointerLock();
+ *     locked = false;
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * cursor gets locked / unlocked on mouse-click
+ *
+ */
+p5.prototype.exitPointerLock = function() {
+  document.exitPointerLock();
 };
 
 module.exports = p5;

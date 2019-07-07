@@ -193,7 +193,12 @@ module.exports = grunt => {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
+        files: [
+          'src/**/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert',
+          'src/**/*.glsl'
+        ],
         tasks: ['browserify'],
         options: {
           livereload: true
@@ -223,7 +228,8 @@ module.exports = grunt => {
           'src/**/*.js',
           'lib/addons/*.js',
           'src/**/*.frag',
-          'src/**/*.vert'
+          'src/**/*.vert',
+          'src/**/*.glsl'
         ],
         tasks: [
           'browserify',
@@ -254,6 +260,14 @@ module.exports = grunt => {
     mocha: mochaConfig,
 
     mochaChrome: mochaConfig,
+
+    nyc: {
+      report: {
+        options: {
+          reporter: ['text-summary', 'html']
+        }
+      }
+    },
 
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
@@ -453,9 +467,15 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-simple-nyc');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'browserify:test'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
@@ -470,13 +490,15 @@ module.exports = grunt => {
     'build',
     'connect:server',
     'mochaChrome',
-    'mochaTest'
+    'mochaTest',
+    'nyc:report'
   ]);
   grunt.registerTask('test:nobuild', [
     'eslint:test',
     'connect:server',
     'mochaChrome',
-    'mochaTest'
+    'mochaTest',
+    'nyc:report'
   ]);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
