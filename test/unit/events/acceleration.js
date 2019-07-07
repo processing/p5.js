@@ -166,6 +166,9 @@ suite('Acceleration Events', function() {
       window.dispatchEvent(
         new DeviceOrientationEvent('deviceorientation', { beta: 5 })
       );
+      window.dispatchEvent(
+        new DeviceOrientationEvent('deviceorientation', { beta: 100 })
+      );
       assert.strictEqual(count, 1);
     });
   });
