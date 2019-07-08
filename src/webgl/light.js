@@ -87,10 +87,18 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 /**
  * Adds a specular component to other lighting methods. It affects only the
  * elements which are created after it in the code.
- * This method can be combined with specularMaterial() and shininess()
+ *
+ * If your sketch contains a red rubber ball, and a white light shines on it,
+ * a diffuse red light is reflected in all directions. If that ball were to land
+ * in a puddle, it would react to light differently. The water on the surface
+ * of the ball would shine, or reflect a specular light, more commonly referred
+ * to as a highlight.
+ *
+ *  This method can be combined with specularMaterial() and shininess()
  * functions to set specular highlights. The default color is white, ie
  * (255, 255, 255), which is used if this method is not called before
- * specularMaterial().
+ * specularMaterial(). If this method is called without specularMaterial(),
+ * There will be no effect.
  *
  * @method specularLight
  * @param  {Number}        v1      red or hue value relative to
