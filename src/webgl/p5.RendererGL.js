@@ -469,6 +469,9 @@ p5.RendererGL.prototype._update = function() {
 
   //reset tint value for new frame
   this._tint = [255, 255, 255, 255];
+
+  //Clear depth every frame
+  this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
 };
 
 /**
