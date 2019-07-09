@@ -203,6 +203,10 @@ var p5 = function(sketch, node, sync) {
     blur: null
   };
 
+  // States used in the custom random generators
+  this._lcg_random_state = null;
+  this._gaussian_previous = false;
+
   this._events.wheel = null;
   this._loadingScreenId = 'p5_loading';
 

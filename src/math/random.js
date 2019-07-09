@@ -9,41 +9,32 @@
 
 var p5 = require('../core/main');
 
-var seeded = false;
-var previous = false;
+// variables used for random number generators
+var randomStateProp = '_lcg_random_state';
+// Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+// m is basically chosen to be large (as it is the max period)
+// and for its relationships to a and c
+var m = 4294967296;
+// a - 1 should be divisible by m's prime factors
+var a = 1664525;
+// c and m should be co-prime
+var c = 1013904223;
 var y2 = 0;
 
-// Linear Congruential Generator
-// Variant of a Lehman Generator
-var lcg = (function() {
-  // Set to values from glibc(useb by GCC) (https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use)
-  // m is basically chosen to be large (as it is the max period)
-  // and for its relationships to a and c
-  var m = 2147483647,
-    // a - 1 should be divisible by m's prime factors
-    a = 1103515245,
-    // c and m should be co-prime
-    c = 12345,
-    seed,
-    z;
-  return {
-    setSeed: function(val) {
-      // pick a random seed if val is undefined or null
-      // the >>> 0 casts the seed to an unsigned 32-bit integer
-      z = seed = (val == null ? Math.random() * m : val) >>> 0;
-    },
-    getSeed: function() {
-      return seed;
-    },
-    rand: function() {
-      // define the recurrence relationship
-      z = (a * z + c) % m;
-      // return a float in [0, 1)
-      // if z = m then z / m = 0 therefore (z % m) / m < 1 always
-      return z / m;
-    }
-  };
-})();
+// Linear Congruential Generator that stores its state at instance[stateProperty]
+p5.prototype._lcg = function(stateProperty) {
+  // define the recurrence relationship
+  this[stateProperty] = (a * this[stateProperty] + c) % m;
+  // return a float in [0, 1)
+  // we've just used % m, so / m is always < 1
+  return this[stateProperty] / m;
+};
+
+p5.prototype._lcgSetSeed = function(stateProperty, val) {
+  // pick a random seed if val is undefined or null
+  // the >>> 0 casts the seed to an unsigned 32-bit integer
+  this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
+};
 
 /**
  * Sets the seed value for <a href="#/p5/random">random()</a>.
@@ -71,9 +62,8 @@ var lcg = (function() {
  *
  */
 p5.prototype.randomSeed = function(seed) {
-  lcg.setSeed(seed);
-  seeded = true;
-  previous = false;
+  this._lcgSetSeed(randomStateProp, seed);
+  this._gaussian_previous = false;
 };
 
 /**
@@ -139,8 +129,8 @@ p5.prototype.randomSeed = function(seed) {
 p5.prototype.random = function(min, max) {
   var rand;
 
-  if (seeded) {
-    rand = lcg.rand();
+  if (this[randomStateProp] != null) {
+    rand = this._lcg(randomStateProp);
   } else {
     rand = Math.random();
   }
@@ -221,9 +211,9 @@ p5.prototype.random = function(min, max) {
  */
 p5.prototype.randomGaussian = function(mean, sd) {
   var y1, x1, x2, w;
-  if (previous) {
+  if (this._gaussian_previous) {
     y1 = y2;
-    previous = false;
+    this._gaussian_previous = false;
   } else {
     do {
       x1 = this.random(2) - 1;
@@ -233,7 +223,7 @@ p5.prototype.randomGaussian = function(mean, sd) {
     w = Math.sqrt(-2 * Math.log(w) / w);
     y1 = x1 * w;
     y2 = x2 * w;
-    previous = true;
+    this._gaussian_previous = true;
   }
 
   var m = mean || 0;

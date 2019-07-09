@@ -72,4 +72,99 @@ suite('Random', function() {
       });
     });
   });
+  suite('instance mode', function() {
+    var instances = [];
+
+    function addInstance(max, done) {
+      new p5(function(p) {
+        p.setup = function() {
+          instances.push(p);
+          if (instances.length >= max) {
+            done();
+          }
+        };
+      });
+    }
+
+    setup(function(done) {
+      var instanceCount = 2;
+      for (var i = 0; i < instanceCount; i++) {
+        addInstance(instanceCount, done);
+      }
+    });
+
+    teardown(function() {
+      instances.forEach(function(instance) {
+        instance.remove();
+      });
+    });
+
+    test('should be independent', function() {
+      var SEED = 42;
+
+      instances.forEach(function(instance) {
+        instance.randomSeed(SEED);
+      });
+
+      for (var i = 0; i < 10; i++) {
+        instances.reduce(function(prev, instance) {
+          var randomValue = instance.random();
+          if (prev != null) {
+            assert.equal(randomValue, prev);
+          }
+
+          return randomValue;
+        }, null);
+      }
+    });
+  });
+
+  suite('p5.prototype.randomGaussian', function() {
+    suite('instance mode', function() {
+      var instances = [];
+
+      function addInstance(max, done) {
+        new p5(function(p) {
+          p.setup = function() {
+            instances.push(p);
+            if (instances.length >= max) {
+              done();
+            }
+          };
+        });
+      }
+
+      setup(function(done) {
+        var instanceCount = 2;
+        for (var i = 0; i < instanceCount; i++) {
+          addInstance(instanceCount, done);
+        }
+      });
+
+      teardown(function() {
+        instances.forEach(function(instance) {
+          instance.remove();
+        });
+      });
+
+      test('should be independent', function() {
+        var SEED = 42;
+
+        instances.forEach(function(instance) {
+          instance.randomSeed(SEED);
+        });
+
+        for (var i = 0; i < 10; i++) {
+          instances.reduce(function(prev, instance) {
+            var randomValue = instance.randomGaussian(0, 15);
+            if (prev != null) {
+              assert.equal(randomValue, prev);
+            }
+
+            return randomValue;
+          }, null);
+        }
+      });
+    });
+  });
 });
