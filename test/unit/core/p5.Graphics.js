@@ -23,9 +23,16 @@ suite('Graphics', function() {
   function assertValidCanvasSizes(canvas, w, h, density) {
     assert.strictEqual(canvas.width, w * density, 'canvas.width');
     assert.strictEqual(canvas.height, h * density, 'canvas.height');
-    var s = canvas.style; // for linting: otherwise line too long...
-    assert.strictEqual(s.width, '' + w + 'px', 'invalid canvas.style.width');
-    assert.strictEqual(s.height, '' + h + 'px', 'invalid canvas.style.height');
+    assert.strictEqual(
+      canvas.style.width,
+      '' + w + 'px',
+      'invalid canvas.style.width'
+    );
+    assert.strictEqual(
+      canvas.style.height,
+      '' + h + 'px',
+      'invalid canvas.style.height'
+    );
   }
 
   function assertValidPixels(graph, w, h, density) {
