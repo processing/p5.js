@@ -9,6 +9,7 @@ var spec = {
     'error_helpers',
     'main',
     'p5.Element',
+    'p5.Graphics',
     'rendering',
     'structure',
     'transform',
