@@ -2,9 +2,6 @@ var renderer;
 var geometry;
 
 function setup() {
-  // put setup code here
-
-  //setAttributes('antialias', true);
   renderer = createCanvas(windowWidth, windowHeight, WEBGL);
   stroke(0);
 
@@ -28,7 +25,6 @@ function draw() {
 
   background(0);
 
-  //stroke(0);
   noStroke();
 
   var sunPos = p5.Vector.fromAngles(tt / 5000, PI / 4, 1000);
