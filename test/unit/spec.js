@@ -31,7 +31,7 @@ var spec = {
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['attributes', 'loadFont', 'p5.Font'],
-  utilities: ['array_functions', 'string_functions', 'time_date'],
+  utilities: ['array_functions', 'conversion', 'string_functions', 'time_date'],
   webgl: [
     'p5.Matrix',
     'p5.Camera',
