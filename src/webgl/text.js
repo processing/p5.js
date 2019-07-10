@@ -103,14 +103,14 @@ function ImageInfos(width, height) {
         }
       }
       // construct & dd the new image info
-      imageInfo = { index: 0, imageData: imageData };
+      imageInfo = { index: 0, imageData };
       this.infos.push(imageInfo);
     }
 
     const index = imageInfo.index;
     imageInfo.index += space; // move to the start of the next image
     imageData._dirty = true;
-    return { imageData: imageData, index: index };
+    return { imageData, index };
   };
 }
 
@@ -216,7 +216,7 @@ const FontInfo = function(font) {
           if (min > v) min = v;
           if (max < v) max = v;
         }
-        return { min: min, max: max };
+        return { min, max };
       }
 
       // loop through the rows & columns that the curve intersects
@@ -512,7 +512,7 @@ const FontInfo = function(font) {
           // quadratic
           const cx = (cmd.x1 - xMin) / gWidth;
           const cy = (cmd.y1 - yMin) / gHeight;
-          push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx: cx, cy: cy });
+          push([x0, x1, cx], [y0, y1, cy], { x: x0, y: y0, cx, cy });
           break;
         }
         case 'Z': {
@@ -605,18 +605,18 @@ const FontInfo = function(font) {
       }
 
       return {
-        cellImageInfo: cellImageInfo,
-        dimOffset: dimOffset,
-        dimImageInfo: dimImageInfo
+        cellImageInfo,
+        dimOffset,
+        dimImageInfo
       };
     }
 
     // initialize the info for this glyph
     gi = this.glyphInfos[glyph.index] = {
-      glyph: glyph,
+      glyph,
       uGlyphRect: [bb.x1, -bb.y1, bb.x2, -bb.y2],
-      strokeImageInfo: strokeImageInfo,
-      strokes: strokes,
+      strokeImageInfo,
+      strokes,
       colInfo: layout(cols, this.colDimImageInfos, this.colCellImageInfos),
       rowInfo: layout(rows, this.rowDimImageInfos, this.rowCellImageInfos)
     };

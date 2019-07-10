@@ -218,10 +218,10 @@ function _createGif(
     pImg.gifProperties = {
       displayIndex: 0,
       delay: averageDelay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
-      loopLimit: loopLimit,
+      loopLimit,
       loopCount: 0,
-      frames: frames,
-      numFrames: numFrames,
+      frames,
+      numFrames,
       playing: true,
       timeDisplayed: 0
     };

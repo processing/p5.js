@@ -93,8 +93,8 @@ p5.prototype._normalizeArcAngles = function(
   }
 
   return {
-    start: start,
-    stop: stop,
+    start,
+    stop,
     correspondToSamePoint: separation < epsilon
   };
 };

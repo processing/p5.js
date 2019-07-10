@@ -471,7 +471,7 @@ p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
       break;
   }
 
-  return { x: x, y: y };
+  return { x, y };
 };
 
 // path-utils
@@ -617,13 +617,13 @@ function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
   }
 
   return {
-    x: x,
-    y: y,
+    x,
+    y,
     m: { x: mx, y: my },
     n: { x: nx, y: ny },
     start: { x: ax, y: ay },
     end: { x: cx, y: cy },
-    alpha: alpha
+    alpha
   };
 }
 

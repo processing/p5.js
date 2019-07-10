@@ -1118,7 +1118,7 @@ p5.prototype.httpDo = function(...args) {
     }
 
     request = new Request(path, {
-      method: method,
+      method,
       mode: 'cors',
       body: data,
       headers: new Headers({
@@ -1793,7 +1793,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
     type = 'text/plain';
   }
   const blob = new Blob(dataToDownload, {
-    type: type
+    type
   });
   p5.prototype.downloadFile(blob, filename, extension);
 };
