@@ -69,8 +69,7 @@ p5.prototype.float = str => {
  * @param {Array} ns                    values to parse
  * @return {Number[]}                   integer representation of values
  */
-p5.prototype.int = (n, radix) => {
-  radix = radix || 10;
+p5.prototype.int = (n, radix = 10) => {
   if (n === Infinity || n === 'Infinity') {
     return Infinity;
   } else if (n === -Infinity || n === '-Infinity') {

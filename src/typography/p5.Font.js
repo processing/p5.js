@@ -72,10 +72,7 @@ p5.Font = function(p) {
  *words Lorem ipsum dol go off canvas and contained by white bounding box
  *
  */
-p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
-  x = x !== undefined ? x : 0;
-  y = y !== undefined ? y : 0;
-
+p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
@@ -498,9 +495,7 @@ function pathToPoints(cmds, options) {
   return pts;
 }
 
-function simplify(pts, angle) {
-  angle = typeof angle === 'undefined' ? 0 : angle;
-
+function simplify(pts, angle = 0) {
   let num = 0;
   for (let i = pts.length - 1; pts.length > 3 && i >= 0; --i) {
     if (collinear(at(pts, i - 1), at(pts, i), at(pts, i + 1), angle)) {

@@ -100,10 +100,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *
  */
 
-p5.prototype.noise = (x, y, z) => {
-  y = y || 0;
-  z = z || 0;
-
+p5.prototype.noise = (x, y = 0, z = 0) => {
   if (perlin == null) {
     perlin = new Array(PERLIN_SIZE + 1);
     for (let i = 0; i < PERLIN_SIZE + 1; i++) {

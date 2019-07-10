@@ -561,9 +561,7 @@ p5.prototype.textureMode = function(mode) {
  * an image of the rocky mountains repeated in mirrored tiles
  *
  */
-p5.prototype.textureWrap = function(wrapX, wrapY) {
-  wrapY = wrapY || wrapX;
-
+p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
   this._renderer.textureWrapY = wrapY;
 

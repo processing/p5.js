@@ -599,9 +599,7 @@ class p5 {
   // way to redefine what "global" means for the binding function so it
   // can be used in scenarios like unit testing where the window object
   // might not exist
-  _createFriendlyGlobalFunctionBinder(options) {
-    options = options || {};
-
+  _createFriendlyGlobalFunctionBinder(options = {}) {
     const globalObject = options.globalObject || window;
     const log = options.log || console.log.bind(console);
     const propsToForciblyOverwrite = {

@@ -334,8 +334,7 @@ p5.Renderer.prototype._applyDefaults = function() {
 /**
  * Helper fxn to check font type (system or otf)
  */
-p5.Renderer.prototype._isOpenType = function(f) {
-  f = f || this._textFont;
+p5.Renderer.prototype._isOpenType = function(f = this._textFont) {
   return typeof f === 'object' && f.font && f.font.supported;
 };
 
