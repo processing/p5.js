@@ -433,7 +433,7 @@ const FontInfo = function(font) {
           }
 
           // find a split point based on the error
-          const t = t3 ** (1.0 / 3.0);
+          const t = Math.pow(t3, 1.0 / 3.0);
           // split the cubic in 3
           const start = cubic.split(t);
           const middle = cubic.split(1 - t / (1 - t));

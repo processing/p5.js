@@ -596,8 +596,8 @@ function areaTriangle(a, b, c) {
 
 function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
   const t1 = 1 - t;
-  const t13 = t1 ** 3;
-  const t12 = t1 ** 2;
+  const t13 = Math.pow(t1, 3);
+  const t12 = Math.pow(t1, 2);
   const t2 = t * t;
   const t3 = t2 * t;
   const x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x + t3 * p2x;
