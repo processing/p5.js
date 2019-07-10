@@ -302,7 +302,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             lowerType = 'function';
           }
           // builtin
-          if (builtinTypes.indexOf(lowerType) >= 0) {
+          if (builtinTypes.includes(lowerType)) {
             return { name: type, builtin: lowerType };
           }
 

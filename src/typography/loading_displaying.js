@@ -120,7 +120,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with p5.dom
-    if (validFontTypes.indexOf(fileExt) > -1) {
+    if (validFontTypes.includes(fileExt)) {
       fontFamily = fileNoPath.substr(0, lastDotIdx);
       newStyle = document.createElement('style');
       newStyle.appendChild(

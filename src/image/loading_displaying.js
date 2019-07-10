@@ -74,7 +74,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
   fetch(path, req).then(response => {
     // GIF section
-    if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
+    if (response.headers.get('content-type').includes('image/gif')) {
       response.arrayBuffer().then(
         arrayBuffer => {
           if (arrayBuffer) {

@@ -1126,9 +1126,9 @@ p5.prototype.httpDo = (...args) => {
   }
   // do some sort of smart type checking
   if (!type) {
-    if (path.indexOf('json') !== -1) {
+    if (path.includes('json')) {
       type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
+    } else if (path.includes('xml')) {
       type = 'xml';
     } else {
       type = 'text';
@@ -1861,7 +1861,7 @@ function _checkFileExtension(filename, extension) {
   }
   let ext = '';
   // make sure the file will have a name, see if filename needs extension
-  if (filename && filename.indexOf('.') > -1) {
+  if (filename && filename.includes('.')) {
     ext = filename.split('.').pop();
   }
   // append extension if it doesn't exist

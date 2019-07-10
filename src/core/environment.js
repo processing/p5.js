@@ -200,7 +200,7 @@ p5.prototype.focused = document.hasFocus();
 p5.prototype.cursor = function(type, x, y) {
   let cursor = 'auto';
   const canvas = this._curElement.elt;
-  if (standardCursors.indexOf(type) > -1) {
+  if (standardCursors.includes(type)) {
     // Standard css cursor
     cursor = type;
   } else if (typeof type === 'string') {
