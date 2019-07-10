@@ -39,6 +39,7 @@
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
+    "@babel/register": "^7.4.4",
     "all-contributors-cli": "^5.11.0",
     "babel-plugin-istanbul": "^5.1.4",
     "babelify": "^10.0.0",
