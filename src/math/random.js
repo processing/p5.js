@@ -5,21 +5,19 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 // variables used for random number generators
-var randomStateProp = '_lcg_random_state';
+const randomStateProp = '_lcg_random_state';
 // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
 // m is basically chosen to be large (as it is the max period)
 // and for its relationships to a and c
-var m = 4294967296;
+const m = 4294967296;
 // a - 1 should be divisible by m's prime factors
-var a = 1664525;
+const a = 1664525;
 // c and m should be co-prime
-var c = 1013904223;
-var y2 = 0;
+const c = 1013904223;
+let y2 = 0;
 
 // Linear Congruential Generator that stores its state at instance[stateProperty]
 p5.prototype._lcg = function(stateProperty) {
@@ -127,7 +125,7 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  */
 p5.prototype.random = function(min, max) {
-  var rand;
+  let rand;
 
   if (this[randomStateProp] != null) {
     rand = this._lcg(randomStateProp);
@@ -144,7 +142,7 @@ p5.prototype.random = function(min, max) {
     }
   } else {
     if (min > max) {
-      var tmp = min;
+      const tmp = min;
       min = max;
       max = tmp;
     }
@@ -210,7 +208,7 @@ p5.prototype.random = function(min, max) {
  * black lines radiate from center of canvas. size determined each render
  */
 p5.prototype.randomGaussian = function(mean, sd) {
-  var y1, x1, x2, w;
+  let y1, x1, x2, w;
   if (this._gaussian_previous) {
     y1 = y2;
     this._gaussian_previous = false;
@@ -226,9 +224,9 @@ p5.prototype.randomGaussian = function(mean, sd) {
     this._gaussian_previous = true;
   }
 
-  var m = mean || 0;
-  var s = sd || 1;
+  const m = mean || 0;
+  const s = sd || 1;
   return y1 * s + m;
 };
 
-module.exports = p5;
+export default p5;

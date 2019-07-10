@@ -5,13 +5,11 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import * as opentype from 'opentype.js';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var opentype = require('opentype.js');
-
-require('../core/error_helpers');
+import '../core/error_helpers';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
@@ -86,10 +84,10 @@ require('../core/error_helpers');
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
-  var p5Font = new p5.Font(this);
+  const p5Font = new p5.Font(this);
 
-  var self = this;
-  opentype.load(path, function(err, font) {
+  const self = this;
+  opentype.load(path, (err, font) => {
     if (err) {
       p5._friendlyFileLoadError(4, path);
       if (typeof onError !== 'undefined') {
@@ -108,29 +106,26 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
-      fileNoPath = path
-        .split('\\')
-        .pop()
-        .split('/')
-        .pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'),
-      fontFamily,
-      newStyle,
-      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+
+    const fileNoPath = path
+      .split('\\')
+      .pop()
+      .split('/')
+      .pop();
+
+    const lastDotIdx = fileNoPath.lastIndexOf('.');
+    let fontFamily;
+    let newStyle;
+    const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with p5.dom
-    if (validFontTypes.indexOf(fileExt) > -1) {
+    if (validFontTypes.includes(fileExt)) {
       fontFamily = fileNoPath.substr(0, lastDotIdx);
       newStyle = document.createElement('style');
       newStyle.appendChild(
         document.createTextNode(
-          '\n@font-face {' +
-            '\nfont-family: ' +
-            fontFamily +
-            ';\nsrc: url(' +
-            path +
-            ');\n}\n'
+          `\n@font-face {\nfont-family: ${fontFamily};\nsrc: url(${path});\n}\n`
         )
       );
       document.head.appendChild(newStyle);
@@ -224,7 +219,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   p5._validateParameters('text', arguments);
   return !(this._renderer._doFill || this._renderer._doStroke)
     ? this
-    : this._renderer.text.apply(this._renderer, arguments);
+    : this._renderer.text(...arguments);
 };
 
 /**
@@ -303,4 +298,4 @@ p5.prototype.textFont = function(theFont, theSize) {
   return this._renderer._textFont;
 };
 
-module.exports = p5;
+export default p5;

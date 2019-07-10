@@ -5,15 +5,13 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
+import Filters from './filters';
+import canvas from '../core/helpers';
+import * as constants from '../core/constants';
+import omggif from 'omggif';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
-var canvas = require('../core/helpers');
-var constants = require('../core/constants');
-var omggif = require('omggif');
-
-require('../core/error_helpers');
+import '../core/error_helpers';
 
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
@@ -66,33 +64,33 @@ require('../core/error_helpers');
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
-  var pImg = new p5.Image(1, 1, this);
-  var self = this;
+  const pImg = new p5.Image(1, 1, this);
+  const self = this;
 
-  var req = new Request(path, {
+  const req = new Request(path, {
     method: 'GET',
     mode: 'cors'
   });
 
-  fetch(path, req).then(function(response) {
+  fetch(path, req).then(response => {
     // GIF section
-    if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
+    if (response.headers.get('content-type').includes('image/gif')) {
       response.arrayBuffer().then(
-        function(arrayBuffer) {
+        arrayBuffer => {
           if (arrayBuffer) {
-            var byteArray = new Uint8Array(arrayBuffer);
+            const byteArray = new Uint8Array(arrayBuffer);
             _createGif(
               byteArray,
               pImg,
               successCallback,
               failureCallback,
-              function(pImg) {
+              (pImg => {
                 self._decrementPreload();
-              }.bind(self)
+              }).bind(self)
             );
           }
         },
-        function(e) {
+        e => {
           if (typeof failureCallback === 'function') {
             failureCallback(e);
           } else {
@@ -102,9 +100,9 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       );
     } else {
       // Non-GIF Section
-      var img = new Image();
+      const img = new Image();
 
-      img.onload = function() {
+      img.onload = () => {
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
 
@@ -117,7 +115,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         self._decrementPreload();
       };
 
-      img.onerror = function(e) {
+      img.onerror = e => {
         p5._friendlyFileLoadError(0, img.src);
         if (typeof failureCallback === 'function') {
           failureCallback(e);
@@ -153,20 +151,20 @@ function _createGif(
   failureCallback,
   finishCallback
 ) {
-  var gifReader = new omggif.GifReader(arrayBuffer);
+  const gifReader = new omggif.GifReader(arrayBuffer);
   pImg.width = pImg.canvas.width = gifReader.width;
   pImg.height = pImg.canvas.height = gifReader.height;
-  var frames = [];
-  var numFrames = gifReader.numFrames();
-  var framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+  const frames = [];
+  const numFrames = gifReader.numFrames();
+  let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
   // I didn't realize this at first but some GIFs encode with frame
   // Reworking delay to be frame level will make it less powerful
   // to modify for users. For now this works with 99% of GIFs that
   // I can find and for those that it doesn't there is just a retiming
   // of the frames, which would be minor for all but the strangest GIFs
-  var averageDelay = 0;
+  let averageDelay = 0;
   if (numFrames > 1) {
-    var loadGIFFrameIntoImage = function(frameNum, gifReader) {
+    const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
@@ -178,8 +176,8 @@ function _createGif(
         }
       }
     };
-    for (var j = 0; j < numFrames; j++) {
-      var frameInfo = gifReader.frameInfo(j);
+    for (let j = 0; j < numFrames; j++) {
+      const frameInfo = gifReader.frameInfo(j);
       averageDelay += frameInfo.delay;
       // Some GIFs are encoded so that they expect the previous frame
       // to be under the current frame. This can occur at a sub-frame level
@@ -191,7 +189,7 @@ function _createGif(
         framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
       }
       loadGIFFrameIntoImage(j, gifReader);
-      var imageData = new ImageData(framePixels, pImg.width, pImg.height);
+      const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
       frames.push(
         pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height)
@@ -205,7 +203,7 @@ function _createGif(
     //this is changed to more usable values for us
     //to repeat forever, loopCount = null
     //everything else is just the number of loops
-    var loopLimit = gifReader.loopCount();
+    let loopLimit = gifReader.loopCount();
     if (loopLimit === null) {
       loopLimit = 1;
     } else if (loopLimit === 0) {
@@ -218,10 +216,10 @@ function _createGif(
     pImg.gifProperties = {
       displayIndex: 0,
       delay: averageDelay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
-      loopLimit: loopLimit,
+      loopLimit,
       loopCount: 0,
-      frames: frames,
-      numFrames: numFrames,
+      frames,
+      numFrames,
       playing: true,
       timeDisplayed: 0
     };
@@ -372,8 +370,8 @@ p5.prototype.image = function(
 
   p5._validateParameters('image', arguments);
 
-  var defW = img.width;
-  var defH = img.height;
+  let defW = img.width;
+  let defH = img.height;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -381,14 +379,14 @@ p5.prototype.image = function(
     defH = img.elt.videoHeight;
   }
 
-  var _dx = dx;
-  var _dy = dy;
-  var _dw = dWidth || defW;
-  var _dh = dHeight || defH;
-  var _sx = sx || 0;
-  var _sy = sy || 0;
-  var _sw = sWidth || defW;
-  var _sh = sHeight || defH;
+  const _dx = dx;
+  const _dy = dy;
+  const _dw = dWidth || defW;
+  const _dh = dHeight || defH;
+  let _sx = sx || 0;
+  let _sy = sy || 0;
+  let _sw = sWidth || defW;
+  let _sh = sHeight || defH;
 
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
@@ -396,7 +394,7 @@ p5.prototype.image = function(
   // This part needs cleanup and unit tests
   // see issues https://github.com/processing/p5.js/issues/1741
   // and https://github.com/processing/p5.js/issues/1673
-  var pd = 1;
+  let pd = 1;
 
   if (img.elt && !img.canvas && img.elt.style.width) {
     //if img is video and img.elt.size() has been used and
@@ -415,7 +413,7 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
   // tint the image if there is a tint
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
@@ -515,9 +513,9 @@ p5.prototype.image = function(
  * @method tint
  * @param  {p5.Color}      color   the tint color
  */
-p5.prototype.tint = function() {
-  p5._validateParameters('tint', arguments);
-  var c = this.color.apply(this, arguments);
+p5.prototype.tint = function(...args) {
+  p5._validateParameters('tint', args);
+  const c = this.color(...args);
   this._renderer._tint = c.levels;
 };
 
@@ -563,19 +561,19 @@ p5.prototype._getTintedImageCanvas = function(img) {
   if (!img.canvas) {
     return img;
   }
-  var pixels = Filters._toPixels(img.canvas);
-  var tmpCanvas = document.createElement('canvas');
+  const pixels = Filters._toPixels(img.canvas);
+  const tmpCanvas = document.createElement('canvas');
   tmpCanvas.width = img.canvas.width;
   tmpCanvas.height = img.canvas.height;
-  var tmpCtx = tmpCanvas.getContext('2d');
-  var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  var newPixels = id.data;
+  const tmpCtx = tmpCanvas.getContext('2d');
+  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+  const newPixels = id.data;
 
-  for (var i = 0; i < pixels.length; i += 4) {
-    var r = pixels[i];
-    var g = pixels[i + 1];
-    var b = pixels[i + 2];
-    var a = pixels[i + 3];
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    const a = pixels[i + 3];
 
     newPixels[i] = r * this._renderer._tint[0] / 255;
     newPixels[i + 1] = g * this._renderer._tint[1] / 255;
@@ -663,4 +661,4 @@ p5.prototype.imageMode = function(m) {
   }
 };
 
-module.exports = p5;
+export default p5;

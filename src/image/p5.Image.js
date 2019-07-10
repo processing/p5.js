@@ -11,10 +11,8 @@
  * drawing images to the main display canvas.
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var Filters = require('./filters');
+import p5 from '../core/main';
+import Filters from './filters';
 
 /*
  * Class methods
@@ -227,21 +225,21 @@ p5.Image = function(width, height) {
  *
  */
 p5.Image.prototype._animateGif = function(pInst) {
-  var props = this.gifProperties;
+  const props = this.gifProperties;
   if (props.playing) {
     props.timeDisplayed += pInst.deltaTime;
   }
 
   if (props.timeDisplayed >= props.delay) {
     //GIF is bound to 'realtime' so can skip frames
-    var skips = Math.floor(props.timeDisplayed / props.delay);
+    const skips = Math.floor(props.timeDisplayed / props.delay);
     props.timeDisplayed = 0;
     props.displayIndex += skips;
     props.loopCount = Math.floor(props.displayIndex / props.numFrames);
     if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
       props.playing = false;
     } else {
-      var ind = props.displayIndex % props.numFrames;
+      const ind = props.displayIndex % props.numFrames;
       this.drawingContext.putImageData(props.frames[ind], 0, 0);
       props.displayIndex = ind;
       this._pixelsDirty = true;
@@ -493,20 +491,20 @@ p5.Image.prototype.resize = function(width, height) {
   width = Math.floor(width);
   height = Math.floor(height);
 
-  var tempCanvas = document.createElement('canvas');
+  const tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
 
   if (this.gifProperties) {
-    var props = this.gifProperties;
+    const props = this.gifProperties;
     //adapted from github.com/LinusU/resize-image-data
-    var nearestNeighbor = function(src, dst) {
-      var pos = 0;
-      for (var y = 0; y < dst.height; y++) {
-        for (var x = 0; x < dst.width; x++) {
-          var srcX = Math.floor(x * src.width / dst.width);
-          var srcY = Math.floor(y * src.height / dst.height);
-          var srcPos = (srcY * src.width + srcX) * 4;
+    const nearestNeighbor = (src, dst) => {
+      let pos = 0;
+      for (let y = 0; y < dst.height; y++) {
+        for (let x = 0; x < dst.width; x++) {
+          const srcX = Math.floor(x * src.width / dst.width);
+          const srcY = Math.floor(y * src.height / dst.height);
+          let srcPos = (srcY * src.width + srcX) * 4;
           dst.data[pos++] = src.data[srcPos++]; // R
           dst.data[pos++] = src.data[srcPos++]; // G
           dst.data[pos++] = src.data[srcPos++]; // B
@@ -514,8 +512,11 @@ p5.Image.prototype.resize = function(width, height) {
         }
       }
     };
-    for (var i = 0; i < props.numFrames; i++) {
-      var resizedImageData = this.drawingContext.createImageData(width, height);
+    for (let i = 0; i < props.numFrames; i++) {
+      const resizedImageData = this.drawingContext.createImageData(
+        width,
+        height
+      );
       nearestNeighbor(props.frames[i], resizedImageData);
       props.frames[i] = resizedImageData;
     }
@@ -601,28 +602,28 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.Image.prototype.copy = function() {
-  var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (arguments.length === 9) {
-    srcImage = arguments[0];
-    sx = arguments[1];
-    sy = arguments[2];
-    sw = arguments[3];
-    sh = arguments[4];
-    dx = arguments[5];
-    dy = arguments[6];
-    dw = arguments[7];
-    dh = arguments[8];
-  } else if (arguments.length === 8) {
+p5.Image.prototype.copy = function(...args) {
+  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  if (args.length === 9) {
+    srcImage = args[0];
+    sx = args[1];
+    sy = args[2];
+    sw = args[3];
+    sh = args[4];
+    dx = args[5];
+    dy = args[6];
+    dw = args[7];
+    dh = args[8];
+  } else if (args.length === 8) {
     srcImage = this;
-    sx = arguments[0];
-    sy = arguments[1];
-    sw = arguments[2];
-    sh = arguments[3];
-    dx = arguments[4];
-    dy = arguments[5];
-    dw = arguments[6];
-    dh = arguments[7];
+    sx = args[0];
+    sy = args[1];
+    sw = args[2];
+    sh = args[3];
+    dx = args[4];
+    dy = args[5];
+    dw = args[6];
+    dh = args[7];
   } else {
     throw new Error('Signature not supported');
   }
@@ -668,14 +669,14 @@ p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
     p5Image = this;
   }
-  var currBlend = this.drawingContext.globalCompositeOperation;
+  const currBlend = this.drawingContext.globalCompositeOperation;
 
-  var scaleFactor = 1;
+  let scaleFactor = 1;
   if (p5Image instanceof p5.Renderer) {
     scaleFactor = p5Image._pInst._pixelDensity;
   }
 
-  var copyArgs = [
+  const copyArgs = [
     p5Image,
     0,
     0,
@@ -820,8 +821,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.Image.prototype.blend = function() {
-  p5.prototype.blend.apply(this, arguments);
+p5.Image.prototype.blend = function(...args) {
+  p5.prototype.blend.apply(this, args);
   this.setModified(true);
 };
 
@@ -924,7 +925,7 @@ p5.Image.prototype.save = function(filename, extension) {
  */
 p5.Image.prototype.reset = function() {
   if (this.gifProperties) {
-    var props = this.gifProperties;
+    const props = this.gifProperties;
     props.playing = true;
     props.timeSinceStart = 0;
     props.timeDisplayed = 0;
@@ -961,7 +962,7 @@ p5.Image.prototype.reset = function() {
  */
 p5.Image.prototype.getCurrentFrame = function() {
   if (this.gifProperties) {
-    var props = this.gifProperties;
+    const props = this.gifProperties;
     return props.displayIndex % props.numFrames;
   }
 };
@@ -998,7 +999,7 @@ p5.Image.prototype.getCurrentFrame = function() {
  */
 p5.Image.prototype.setFrame = function(index) {
   if (this.gifProperties) {
-    var props = this.gifProperties;
+    const props = this.gifProperties;
     if (index < props.numFrames && index >= 0) {
       props.timeDisplayed = 0;
       props.displayIndex = index;
@@ -1163,4 +1164,4 @@ p5.Image.prototype.delay = function(d) {
   }
 };
 
-module.exports = p5.Image;
+export default p5.Image;
