@@ -184,10 +184,10 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
 
   const adjustedT = 1 - t;
   return (
-    Math.pow(adjustedT, 3) * a +
-    3 * Math.pow(adjustedT, 2) * t * b +
-    3 * adjustedT * Math.pow(t, 2) * c +
-    Math.pow(t, 3) * d
+    adjustedT ** 3 * a +
+    3 * adjustedT ** 2 * t * b +
+    3 * adjustedT * t ** 2 * c +
+    t ** 3 * d
   );
 };
 
@@ -261,12 +261,12 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
 
   const adjustedT = 1 - t;
   return (
-    3 * d * Math.pow(t, 2) -
-    3 * c * Math.pow(t, 2) +
+    3 * d * t ** 2 -
+    3 * c * t ** 2 +
     6 * c * adjustedT * t -
     6 * b * adjustedT * t +
-    3 * b * Math.pow(adjustedT, 2) -
-    3 * a * Math.pow(adjustedT, 2)
+    3 * b * adjustedT ** 2 -
+    3 * a * adjustedT ** 2
   );
 };
 

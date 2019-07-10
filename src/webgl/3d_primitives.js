@@ -1090,10 +1090,10 @@ p5.RendererGL.prototype.bezier = function(
   const bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
   for (let i = 0; i <= bezierDetail; i++) {
-    const c1 = Math.pow(1 - i / bezierDetail, 3);
-    const c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
-    const c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
-    const c4 = Math.pow(i / bezierDetail, 3);
+    const c1 = (1 - i / bezierDetail) ** 3;
+    const c2 = 3 * (i / bezierDetail) * (1 - i / bezierDetail) ** 2;
+    const c3 = 3 * (i / bezierDetail ** 2) * (1 - i / bezierDetail);
+    const c4 = i / bezierDetail ** 3;
     this.vertex(
       x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
       y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
@@ -1131,8 +1131,8 @@ p5.RendererGL.prototype.curve = function(
   const curveDetail = this._pInst._curveDetail;
   this.beginShape();
   for (let i = 0; i <= curveDetail; i++) {
-    const c1 = Math.pow(i / curveDetail, 3) * 0.5;
-    const c2 = Math.pow(i / curveDetail, 2) * 0.5;
+    const c1 = i / curveDetail ** 3 * 0.5;
+    const c2 = i / curveDetail ** 2 * 0.5;
     const c3 = i / curveDetail * 0.5;
     const c4 = 0.5;
     const vx =
