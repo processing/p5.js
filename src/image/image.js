@@ -310,8 +310,7 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
     if (callback) {
       callback(frames);
     } else {
-      for (let i = 0; i < frames.length; i++) {
-        const f = frames[i];
+      for (const f of frames) {
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
       }
     }

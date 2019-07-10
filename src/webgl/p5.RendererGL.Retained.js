@@ -73,8 +73,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   }
 
   function freeBuffers(defs) {
-    for (let i = 0; i < defs.length; i++) {
-      const def = defs[i];
+    for (const def of defs) {
       if (buffers[def.dst]) {
         gl.deleteBuffer(buffers[def.dst]);
         buffers[def.dst] = null;
@@ -93,9 +92,7 @@ p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
   const gl = this.GL;
 
   // loop through each of the buffer definitions
-  for (let i = 0; i < defs.length; i++) {
-    const def = defs[i];
-
+  for (const def of defs) {
     const attr = attributes[def.attr];
     if (!attr) continue;
 

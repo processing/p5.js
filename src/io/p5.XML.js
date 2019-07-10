@@ -364,8 +364,7 @@ function elementsToP5XML(elements) {
  */
 p5.XML.prototype.getChild = function(param) {
   if (typeof param === 'string') {
-    for (let i = 0; i < this.DOM.children.length; i++) {
-      const child = this.DOM.children[i];
+    for (const child of this.DOM.children) {
       if (child.tagName === param) return new p5.XML(child);
     }
   } else {
@@ -568,10 +567,11 @@ p5.XML.prototype.getAttributeCount = function() {
  */
 p5.XML.prototype.listAttributes = function() {
   const arr = [];
-  for (let i = 0; i < this.DOM.attributes.length; i++) {
-    const attribute = this.DOM.attributes[i];
+
+  for (const attribute of this.DOM.attributes) {
     arr.push(attribute.nodeName);
   }
+
   return arr;
 };
 
@@ -612,10 +612,11 @@ p5.XML.prototype.listAttributes = function() {
  */
 p5.XML.prototype.hasAttribute = function(name) {
   const obj = {};
-  for (let i = 0; i < this.DOM.attributes.length; i++) {
-    const attribute = this.DOM.attributes[i];
+
+  for (const attribute of this.DOM.attributes) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
+
   return obj[name] ? true : false;
 };
 
@@ -658,10 +659,11 @@ p5.XML.prototype.hasAttribute = function(name) {
  */
 p5.XML.prototype.getNum = function(name, defaultValue) {
   const obj = {};
-  for (let i = 0; i < this.DOM.attributes.length; i++) {
-    const attribute = this.DOM.attributes[i];
+
+  for (const attribute of this.DOM.attributes) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
+
   return Number(obj[name]) || defaultValue || 0;
 };
 
@@ -704,10 +706,11 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  */
 p5.XML.prototype.getString = function(name, defaultValue) {
   const obj = {};
-  for (let i = 0; i < this.DOM.attributes.length; i++) {
-    const attribute = this.DOM.attributes[i];
+
+  for (const attribute of this.DOM.attributes) {
     obj[attribute.nodeName] = attribute.nodeValue;
   }
+
   return obj[name] ? String(obj[name]) : defaultValue || null;
 };
 

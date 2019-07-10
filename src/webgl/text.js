@@ -413,9 +413,7 @@ const FontInfo = function(font) {
       const precision = 30 / SQRT3;
 
       // for each of the non-inflected pieces of the original cubic
-      for (let i = 0; i < cubics.length; i++) {
-        let cubic = cubics[i];
-
+      for (let cubic of cubics) {
         // the cubic is iteratively split in 3 pieces:
         // the first piece is accumulated in 'qs', the result.
         // the last piece is accumulated in 'tail', temporarily.
@@ -485,8 +483,8 @@ const FontInfo = function(font) {
     }
 
     let x0, y0, xs, ys;
-    for (let iCmd = 0; iCmd < cmds.length; ++iCmd) {
-      const cmd = cmds[iCmd];
+
+    for (const cmd of cmds) {
       // scale the coordinates to the range 0-1
       const x1 = (cmd.x - xMin) / gWidth;
       const y1 = (cmd.y - yMin) / gHeight;
@@ -705,8 +703,8 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
     let glyphPrev = null; // the previous glyph, used for kerning
     // fetch the glyphs in the line of text
     const glyphs = font.stringToGlyphs(line);
-    for (let ig = 0; ig < glyphs.length; ++ig) {
-      const glyph = glyphs[ig];
+
+    for (const glyph of glyphs) {
       // kern
       if (glyphPrev) dx += font.getKerningValue(glyphPrev, glyph);
 

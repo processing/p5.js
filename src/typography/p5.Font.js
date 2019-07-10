@@ -391,8 +391,8 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   }
 
   ctx.beginPath();
-  for (let i = 0; i < pdata.length; i += 1) {
-    const cmd = pdata[i];
+
+  for (const cmd of pdata) {
     if (cmd.type === 'M') {
       ctx.moveTo(cmd.x, cmd.y);
     } else if (cmd.type === 'L') {

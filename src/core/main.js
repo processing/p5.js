@@ -213,8 +213,8 @@ class p5 {
     // are instance-specific.
     this._registeredMethods = {};
     const methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
-    for (let i = 0; i < methods.length; i++) {
-      const prop = methods[i];
+
+    for (const prop of methods) {
       this._registeredMethods[prop] = p5.prototype._registeredMethods[
         prop
       ].slice();
@@ -338,13 +338,14 @@ class p5 {
 
       // unhide any hidden canvases that were created
       const canvases = document.getElementsByTagName('canvas');
-      for (let i = 0; i < canvases.length; i++) {
-        const k = canvases[i];
+
+      for (const k of canvases) {
         if (k.dataset.hidden === 'true') {
           k.style.visibility = '';
           delete k.dataset.hidden;
         }
       }
+
       this._lastFrameTime = window.performance.now();
       this._setupDone = true;
     };
@@ -447,8 +448,7 @@ class p5 {
         }
 
         // remove DOM elements created by p5, and listeners
-        for (let i = 0; i < this._elements.length; i++) {
-          const e = this._elements[i];
+        for (const e of this._elements) {
           if (e.elt && e.elt.parentNode) {
             e.elt.parentNode.removeChild(e.elt);
           }

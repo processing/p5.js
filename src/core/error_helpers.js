@@ -202,8 +202,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     let queryResult;
     const classitems = arrDoc.classitems;
-    for (let ici = 0; ici < classitems.length; ici++) {
-      const x = classitems[ici];
+
+    for (const x of classitems) {
       if (x.name === funcName && x.class === funcClass) {
         queryResult = x;
         break;
