@@ -1262,7 +1262,10 @@ p5.RendererGL.prototype._vToNArray = arr => {
 p5.prototype._assert3d = function(name) {
   if (!this._renderer.isP3D)
     throw new Error(
-      `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
+      name +
+        "() is only supported in WEBGL mode. If you'd like to use 3D graphics" +
+        ' and WebGL, see  https://p5js.org/examples/form-3d-primitives.html' +
+        ' for more information.'
     );
 };
 
@@ -1278,13 +1281,13 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
 
   function begincallback(type) {
     if (type !== libtess.primitiveType.GL_TRIANGLES) {
-      console.log(`expected TRIANGLES but got type: ${type}`);
+      console.log('expected TRIANGLES but got type: ' + type);
     }
   }
 
   function errorcallback(errno) {
     console.log('error callback');
-    console.log(`error number: ${errno}`);
+    console.log('error number: ' + errno);
   }
   // callback for when segments intersect and must be split
   function combinecallback(coords, data, weight) {

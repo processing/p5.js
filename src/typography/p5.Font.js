@@ -1239,7 +1239,7 @@ function base3(t, p1, p2, p3, p4) {
 function cacheKey(...args) {
   let hash = '';
   for (let i = args.length - 1; i >= 0; --i) {
-    hash += `？${args[i]}`;
+    hash += '？' + args[i];
   }
   return hash;
 }

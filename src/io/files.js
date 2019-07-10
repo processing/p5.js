@@ -1325,7 +1325,7 @@ p5.PrintWriter = function(filename, extension) {
    * </div>
    */
   this.print = function(data) {
-    this.content += `${data}\n`;
+    this.content += data + '\n';
   };
   /**
    * Clears the data already written to the PrintWriter object
@@ -1748,7 +1748,7 @@ p5.prototype.saveTable = function(table, filename, options) {
       pWriter.print('    <tr>');
       for (let k = 0; k < header.length; k++) {
         const e = escapeHelper(header[k]);
-        pWriter.print(`      <td>${e}`);
+        pWriter.print('      <td>' + e);
         pWriter.print('      </td>');
       }
       pWriter.print('    </tr>');
@@ -1760,7 +1760,7 @@ p5.prototype.saveTable = function(table, filename, options) {
       for (let col = 0; col < table.columns.length; col++) {
         const entry = table.rows[row].getString(col);
         const htmlEntry = escapeHelper(entry);
-        pWriter.print(`      <td>${htmlEntry}`);
+        pWriter.print('      <td>' + htmlEntry);
         pWriter.print('      </td>');
       }
       pWriter.print('    </tr>');
@@ -1836,7 +1836,7 @@ p5.prototype.downloadFile = (data, fName, extension) => {
     let aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += `3. Name it with this extension: ."${fx[1]}"`;
+    aText += '3. Name it with this extension: ."' + fx[1] + '"';
     alert(aText);
   }
   a.click();
@@ -1868,7 +1868,7 @@ function _checkFileExtension(filename, extension) {
   if (extension) {
     if (ext !== extension) {
       ext = extension;
-      filename = `${filename}.${ext}`;
+      filename = filename + '.' + ext;
     }
   }
   return [filename, ext];

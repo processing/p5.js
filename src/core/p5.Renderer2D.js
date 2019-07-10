@@ -187,7 +187,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
   ) {
     this.drawingContext.globalCompositeOperation = mode;
   } else {
-    throw new Error(`Mode ${mode} not recognized.`);
+    throw new Error('Mode ' + mode + ' not recognized.');
   }
 };
 
@@ -1234,8 +1234,12 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
     this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
-    12}px ${font || 'sans-serif'}`;
+  this.drawingContext.font =
+    (this._textStyle || 'normal') +
+    ' ' +
+    (this._textSize || 12) +
+    'px ' +
+    (font || 'sans-serif');
 
   this.drawingContext.textAlign = this._textAlign;
   if (this._textBaseline === constants.CENTER) {

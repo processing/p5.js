@@ -85,7 +85,7 @@ p5.TableRow.prototype.set = function(column, value) {
       this.obj[column] = value;
       this.arr[cPos] = value;
     } else {
-      throw new Error(`This table has no column named "${column}"`);
+      throw new Error('This table has no column named "' + column + '"');
     }
   } else {
     // if typeof column is number, use .arr
@@ -94,7 +94,9 @@ p5.TableRow.prototype.set = function(column, value) {
       const cTitle = this.table.columns[column];
       this.obj[cTitle] = value;
     } else {
-      throw new Error(`Column #${column} is out of the range of this table`);
+      throw new Error(
+        'Column #' + column + ' is out of the range of this table'
+      );
     }
   }
 };
@@ -287,7 +289,7 @@ p5.TableRow.prototype.getNum = function(column) {
   }
 
   if (ret.toString() === 'NaN') {
-    throw `Error: ${this.obj[column]} is NaN (Not a Number)`;
+    throw 'Error: ' + this.obj[column] + ' is NaN (Not a Number)';
   }
   return ret;
 };

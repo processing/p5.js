@@ -33,11 +33,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     'Error'
   ];
   for (let n = 0; n < names.length; n++) {
-    class2type[`[object ${names[n]}]`] = names[n].toLowerCase();
+    class2type['[object ' + names[n] + ']'] = names[n].toLowerCase();
   }
   const getType = obj => {
     if (obj == null) {
-      return `${obj}`;
+      return obj + '';
     }
     return typeof obj === 'object' || typeof obj === 'function'
       ? class2type[toString.call(obj)] || 'object'
@@ -87,14 +87,20 @@ if (typeof IS_MINIFIED !== 'undefined') {
       color = typeColors[color];
     }
     if (func === 'loadX') {
-      console.log(`> p5.js says: ${message}`);
+      console.log('> p5.js says: ' + message);
     } else if (func.substring(0, 4) === 'load') {
       console.log(
-        `> p5.js says: ${message}[https://github.com/processing/p5.js/wiki/Local-server]`
+        '> p5.js says: ' +
+          message +
+          '[https://github.com/processing/p5.js/wiki/Local-server]'
       );
     } else {
       console.log(
-        `> p5.js says: ${message} [http://p5js.org/reference/#p5/${func}]`
+        '> p5.js says: ' +
+          message +
+          ' [http://p5js.org/reference/#p5/' +
+          func +
+          ']'
       );
     }
   };
@@ -158,10 +164,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (errorType === 7 || errorType === 8) {
       message = errorInfo.message;
     } else {
-      message = `It looks like there was a problem loading your ${
-        errorInfo.fileType
-      }. Try checking if the file path [${filePath}] is correct,${errorInfo.message ||
-        ''} or running a local server.`;
+      message =
+        'It looks like there was a problem' +
+        ' loading your ' +
+        errorInfo.fileType +
+        '.' +
+        ' Try checking if the file path [' +
+        filePath +
+        '] is correct,' +
+        (errorInfo.message || '') +
+        ' or running a local server.';
     }
     report(message, errorInfo.method, 3);
   };
@@ -512,9 +524,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     switch (errorObj.type) {
       case 'EMPTY_VAR': {
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received an empty variable instead. If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]`;
+        message =
+          func +
+          '() was expecting ' +
+          formatType() +
+          ' for parameter #' +
+          errorObj.position +
+          ' (zero-based index), received an empty variable instead.' +
+          ' If not intentional, this is often a problem with scope:' +
+          ' [https://p5js.org/examples/data-variable-scope.html]';
         break;
       }
       case 'WRONG_TYPE': {
@@ -523,21 +541,33 @@ if (typeof IS_MINIFIED !== 'undefined') {
           arg instanceof Array
             ? 'array'
             : arg === null ? 'null' : arg.name || typeof arg;
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received ${argType} instead`;
+        message =
+          func +
+          '() was expecting ' +
+          formatType() +
+          ' for parameter #' +
+          errorObj.position +
+          ' (zero-based index), received ' +
+          argType +
+          ' instead';
         break;
       }
       case 'TOO_FEW_ARGUMENTS': {
-        message = `${func}() was expecting at least ${
-          errorObj.minParams
-        } arguments, but received only ${errorObj.argCount}`;
+        message =
+          func +
+          '() was expecting at least ' +
+          errorObj.minParams +
+          ' arguments, but received only ' +
+          errorObj.argCount;
         break;
       }
       case 'TOO_MANY_ARGUMENTS': {
-        message = `${func}() was expecting no more than ${
-          errorObj.maxParams
-        } arguments, but received ${errorObj.argCount}`;
+        message =
+          func +
+          '() was expecting no more than ' +
+          errorObj.maxParams +
+          ' arguments, but received ' +
+          errorObj.argCount;
         break;
       }
     }
@@ -551,11 +581,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
         const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
         const location = re.exec(new Error().stack)[1];
         if (location) {
-          message += ` at ${location}`;
+          message += ' at ' + location;
         }
       } catch (err) {}
 
-      report(`${message}.`, func, 3);
+      report(message + '.', func, 3);
     }
   };
 
@@ -736,13 +766,16 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
     //   * ReferenceError: PI is undefined             (Firefox)
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
-    if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
+    if (e.message && e.message.match('\\W?' + symbol.name + '\\W') !== null) {
       log(
-        `Did you just try to use p5.js's ${symbol.name}${
-          symbol.type === 'function' ? '() ' : ' '
-        }${
-          symbol.type
-        }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+        "Did you just try to use p5.js's " +
+          symbol.name +
+          (symbol.type === 'function' ? '() ' : ' ') +
+          symbol.type +
+          '? If so, you may want to ' +
+          "move it into your sketch's setup() function.\n\n" +
+          'For more details, see: ' +
+          FAQ_URL
       );
       return true;
     }

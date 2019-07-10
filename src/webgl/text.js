@@ -538,7 +538,7 @@ const FontInfo = function(font) {
           break;
         }
         default:
-          throw new Error(`unknown command type: ${cmd.type}`);
+          throw new Error('unknown command type: ' + cmd.type);
       }
       x0 = x1;
       y0 = y1;

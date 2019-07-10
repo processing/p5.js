@@ -369,7 +369,7 @@ p5.prototype.nfp = function(...args) {
 };
 
 function addNfp(num) {
-  return parseFloat(num) > 0 ? `+${num.toString()}` : num.toString();
+  return parseFloat(num) > 0 ? '+' + num.toString() : num.toString();
 }
 
 /**
@@ -447,7 +447,7 @@ p5.prototype.nfs = function(...args) {
 };
 
 function addNfs(num) {
-  return parseFloat(num) >= 0 ? ` ${num.toString()}` : num.toString();
+  return parseFloat(num) >= 0 ? ' ' + num.toString() : num.toString();
 }
 
 /**
@@ -521,15 +521,15 @@ p5.prototype.splitTokens = function(value, delims) {
       str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);
       str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
-      d = new RegExp(`[\\[${str}\\]]`, 'g');
+      d = new RegExp('[\\[' + str + '\\]]', 'g');
     } else if (sqc) {
       str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
-      d = new RegExp(`[${str}\\]]`, 'g');
+      d = new RegExp('[' + str + '\\]]', 'g');
     } else if (sqo) {
       str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
-      d = new RegExp(`[${str}\\[]`, 'g');
+      d = new RegExp('[' + str + '\\[]', 'g');
     } else {
-      d = new RegExp(`[${str}]`, 'g');
+      d = new RegExp('[' + str + ']', 'g');
     }
   } else {
     d = /\s/g;

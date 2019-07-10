@@ -208,17 +208,17 @@ p5.prototype.cursor = function(type, x, y) {
     if (x && y && (typeof x === 'number' && typeof y === 'number')) {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-      coords = `${x} ${y}`;
+      coords = x + ' ' + y;
     }
     if (
       type.substring(0, 7) === 'http://' ||
       type.substring(0, 8) === 'https://'
     ) {
       // Image (absolute url)
-      cursor = `url(${type}) ${coords}, auto`;
+      cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
       // Image file (relative path) - Separated for performance reasons
-      cursor = `url(${type}) ${coords}, auto`;
+      cursor = 'url(' + type + ') ' + coords + ', auto';
     } else {
       // Any valid string for the css cursor property
       cursor = type;

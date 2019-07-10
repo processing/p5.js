@@ -166,7 +166,7 @@ p5.TypedDict.prototype.get = function(key) {
   if (this.data.hasOwnProperty(key)) {
     return this.data[key];
   } else {
-    console.log(`${key} does not exist in this Dictionary`);
+    console.log(key + ' does not exist in this Dictionary');
   }
 };
 
@@ -292,7 +292,7 @@ p5.TypedDict.prototype.remove = function(key) {
   if (this.data.hasOwnProperty(key)) {
     delete this.data[key];
   } else {
-    throw new Error(`${key} does not exist in this Dictionary`);
+    throw new Error(key + ' does not exist in this Dictionary');
   }
 };
 
@@ -316,7 +316,7 @@ p5.TypedDict.prototype.remove = function(key) {
 
 p5.TypedDict.prototype.print = function() {
   for (const item in this.data) {
-    console.log(`key:${item} value:${this.data[item]}`);
+    console.log('key:' + item + ' value:' + this.data[item]);
   }
 };
 
@@ -351,7 +351,7 @@ p5.TypedDict.prototype.saveTable = function(filename) {
   let output = '';
 
   for (const key in this.data) {
-    output += `${key},${this.data[key]}\n`;
+    output += key + ',' + this.data[key] + '\n';
   }
 
   const blob = new Blob([output], { type: 'text/csv' });
@@ -459,7 +459,7 @@ p5.NumberDict.prototype.add = function(key, amount) {
   if (this.data.hasOwnProperty(key)) {
     this.data[key] += amount;
   } else {
-    console.log(`The key - ${key} does not exist in this dictionary.`);
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
   }
 };
 
@@ -511,7 +511,7 @@ p5.NumberDict.prototype.mult = function(key, amount) {
   if (this.data.hasOwnProperty(key)) {
     this.data[key] *= amount;
   } else {
-    console.log(`The key - ${key} does not exist in this dictionary.`);
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
   }
 };
 
@@ -539,7 +539,7 @@ p5.NumberDict.prototype.div = function(key, amount) {
   if (this.data.hasOwnProperty(key)) {
     this.data[key] /= amount;
   } else {
-    console.log(`The key - ${key} does not exist in this dictionary.`);
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
   }
 };
 

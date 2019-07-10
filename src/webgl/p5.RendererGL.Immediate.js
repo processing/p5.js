@@ -321,9 +321,9 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
     this.immediateMode.shapeMode === constants.QUAD_STRIP
   ) {
     throw new Error(
-      `sorry, ${
-        this.immediateMode.shapeMode
-      } not yet implemented in webgl mode.`
+      'sorry, ' +
+        this.immediateMode.shapeMode +
+        ' not yet implemented in webgl mode.'
     );
   } else {
     this._applyColorBlend(this.curFillColor);
