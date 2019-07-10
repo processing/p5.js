@@ -497,15 +497,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // a custom error type, used by the mocha
   // tests when expecting validation errors
   p5.ValidationError = (name => {
-    const err = function(message, func) {
-      this.message = message;
-      this.func = func;
-      if ('captureStackTrace' in Error) Error.captureStackTrace(this, err);
-      else this.stack = new Error().stack;
-    };
-    err.prototype = Object.create(Error.prototype);
+    class err extends Error {
+      constructor(message, func) {
+        super();
+        this.message = message;
+        this.func = func;
+        if ('captureStackTrace' in Error) Error.captureStackTrace(this, err);
+        else this.stack = new Error().stack;
+      }
+    }
+
     err.prototype.name = name;
-    err.prototype.constructor = err;
     return err;
   })('ValidationError');
 
