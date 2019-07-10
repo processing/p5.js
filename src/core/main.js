@@ -5,8 +5,6 @@
  * @requires constants
  */
 
-'use strict';
-
 import './shim';
 
 // Core needs the PVariables object

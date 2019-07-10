@@ -5,8 +5,6 @@
  * @requires core
  */
 
-'use strict';
-
 /**
  * Conversions adapted from <http://www.easyrgb.com/en/math.php>.
  *

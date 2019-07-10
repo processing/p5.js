@@ -1,7 +1,5 @@
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
-'use strict';
-
 import p5 from '../core/main';
 /**
  * p5 Geometry class

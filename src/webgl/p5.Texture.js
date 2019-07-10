@@ -6,8 +6,6 @@
  * @requires core
  */
 
-'use strict';
-
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 

@@ -7,8 +7,6 @@
  *   Reference/Global_Objects/SIMD
  */
 
-'use strict';
-
 import p5 from '../core/main';
 
 let GLMAT_ARRAY_TYPE = Array;

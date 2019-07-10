@@ -1,5 +1,3 @@
-'use strict';
-
 // requestAnim shim layer by Paul Irish
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/
@@ -25,7 +23,6 @@ window.requestAnimationFrame = (() =>
  * Uint8ClampedArray.prototype pollution.
  */
 (() => {
-  'use strict';
   if (
     typeof Uint8ClampedArray !== 'undefined' &&
     !Uint8ClampedArray.prototype.slice
@@ -48,7 +45,6 @@ window.requestAnimationFrame = (() =>
  * Modified from https://github.com/ljharb/object.assign
  */
 (() => {
-  'use strict';
   if (!Object.assign) {
     const keys = Object.keys;
     const defineProperty = Object.defineProperty;

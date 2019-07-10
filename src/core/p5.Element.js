@@ -4,8 +4,6 @@
  * @for p5.Element
  */
 
-'use strict';
-
 import p5 from './main';
 
 /**

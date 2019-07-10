@@ -6,7 +6,6 @@
  * This module defines the p5 methods for working with local storage
  */
 
-'use strict';
 import p5 from '../core/main';
 /**
  *

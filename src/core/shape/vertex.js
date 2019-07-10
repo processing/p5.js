@@ -6,8 +6,6 @@
  * @requires constants
  */
 
-'use strict';
-
 import p5 from '../main';
 import * as constants from '../constants';
 let shapeKind = null;

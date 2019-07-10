@@ -11,8 +11,6 @@
  * however, Immediate Mode is useful for sketching quick
  * geometric ideas.
  */
-'use strict';
-
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 

@@ -15,8 +15,6 @@
  * or the java processing implementation.
  */
 
-'use strict';
-
 const Filters = {};
 
 /*

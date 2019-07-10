@@ -1,5 +1,3 @@
-'use strict';
-
 // core
 import p5 from './core/main';
 import './core/constants';

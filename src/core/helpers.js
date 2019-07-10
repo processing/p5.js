@@ -2,8 +2,6 @@
  * @requires constants
  */
 
-'use strict';
-
 import * as constants from './constants';
 
 function modeAdjust(a, b, c, d, mode) {

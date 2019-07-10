@@ -6,8 +6,6 @@
  * @requires p5.Geometry
  */
 
-'use strict';
-
 import p5 from '../core/main';
 import './p5.Geometry';
 

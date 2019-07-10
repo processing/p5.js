@@ -4,8 +4,6 @@
  * @for p5
  */
 
-'use strict';
-
 const _PI = Math.PI;
 
 // GRAPHICS RENDERER

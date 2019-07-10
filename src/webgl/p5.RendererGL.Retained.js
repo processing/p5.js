@@ -1,7 +1,5 @@
 //Retained Mode. The default mode for rendering 3D primitives
 //in WEBGL.
-'use strict';
-
 import p5 from '../core/main';
 import './p5.RendererGL';
 

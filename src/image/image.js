@@ -9,8 +9,6 @@
  * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
  * for drawing images to the main display canvas.
  */
-'use strict';
-
 import p5 from '../core/main';
 import omggif from 'omggif';
 

@@ -4,8 +4,6 @@
  * @requires core
  */
 
-'use strict';
-
 import p5 from '../core/main';
 
 /**

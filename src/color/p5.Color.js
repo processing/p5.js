@@ -7,8 +7,6 @@
  * @requires color_conversion
  */
 
-'use strict';
-
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import color_conversion from './color_conversion';

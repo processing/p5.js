@@ -1,5 +1,3 @@
-'use strict';
-
 import p5 from './main';
 import * as constants from './constants';
 import filters from '../image/filters';
