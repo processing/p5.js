@@ -409,8 +409,8 @@ p5.TypedDict.prototype._validate = function(value) {
  *
  */
 
-p5.StringDict = function() {
-  p5.TypedDict.apply(this, arguments);
+p5.StringDict = function(...args) {
+  p5.TypedDict.apply(this, args);
 };
 
 p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
@@ -428,8 +428,8 @@ p5.StringDict.prototype._validate = function(value) {
  *
  */
 
-p5.NumberDict = function() {
-  p5.TypedDict.apply(this, arguments);
+p5.NumberDict = function(...args) {
+  p5.TypedDict.apply(this, args);
 };
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);

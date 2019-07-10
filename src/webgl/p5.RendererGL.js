@@ -506,8 +506,8 @@ p5.RendererGL.prototype._update = function() {
 /**
  * [background description]
  */
-p5.RendererGL.prototype.background = function() {
-  const _col = this._pInst.color.apply(this._pInst, arguments);
+p5.RendererGL.prototype.background = function(...args) {
+  const _col = this._pInst.color.apply(this._pInst, args);
   const _r = _col.levels[0] / 255;
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
@@ -794,11 +794,11 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
-p5.RendererGL.prototype.clear = function() {
-  const _r = arguments[0] || 0;
-  const _g = arguments[1] || 0;
-  const _b = arguments[2] || 0;
-  const _a = arguments[3] || 0;
+p5.RendererGL.prototype.clear = function(...args) {
+  const _r = args[0] || 0;
+  const _g = args[1] || 0;
+  const _b = args[2] || 0;
+  const _a = args[3] || 0;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
   this._pixelsState._pixelsDirty = true;

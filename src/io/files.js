@@ -118,9 +118,9 @@ import '../core/error_helpers';
  * @param  {function}      [errorCallback]
  * @return {Object|Array}
  */
-p5.prototype.loadJSON = function() {
-  p5._validateParameters('loadJSON', arguments);
-  const path = arguments[0];
+p5.prototype.loadJSON = function(...args) {
+  p5._validateParameters('loadJSON', args);
+  const path = args[0];
   let callback;
   let errorCallback;
   let options;
@@ -129,8 +129,8 @@ p5.prototype.loadJSON = function() {
   let t = 'json';
 
   // check for explicit data type argument
-  for (let i = 1; i < arguments.length; i++) {
-    const arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'string') {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
@@ -243,14 +243,14 @@ p5.prototype.loadJSON = function() {
  * randomly generated text from a file, for example "i have three feet"
  *
  */
-p5.prototype.loadStrings = function() {
-  p5._validateParameters('loadStrings', arguments);
+p5.prototype.loadStrings = function(...args) {
+  p5._validateParameters('loadStrings', args);
 
   const ret = [];
   let callback, errorCallback;
 
-  for (let i = 1; i < arguments.length; i++) {
-    const arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'function') {
       if (typeof callback === 'undefined') {
         callback = arg;
@@ -263,7 +263,7 @@ p5.prototype.loadStrings = function() {
   const self = this;
   p5.prototype.httpDo.call(
     this,
-    arguments[0],
+    args[0],
     'GET',
     'text',
     function(data) {
@@ -671,12 +671,12 @@ function makeObject(row, headers) {
  * no image displayed
  *
  */
-p5.prototype.loadXML = function() {
+p5.prototype.loadXML = function(...args) {
   const ret = new p5.XML();
   let callback, errorCallback;
 
-  for (let i = 1; i < arguments.length; i++) {
-    const arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'function') {
       if (typeof callback === 'undefined') {
         callback = arg;
@@ -688,7 +688,7 @@ p5.prototype.loadXML = function() {
 
   const self = this;
   this.httpDo(
-    arguments[0],
+    args[0],
     'GET',
     'xml',
     function(xml) {
@@ -1039,7 +1039,7 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpDo = function() {
+p5.prototype.httpDo = function(...args) {
   let type;
   let callback;
   let errorCallback;
@@ -1049,32 +1049,32 @@ p5.prototype.httpDo = function() {
   let cbCount = 0;
   let contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
-  for (let i = arguments.length - 1; i > 0; i--) {
-    if (typeof arguments[i] === 'function') {
+  for (let i = args.length - 1; i > 0; i--) {
+    if (typeof args[i] === 'function') {
       cbCount++;
     } else {
       break;
     }
   }
   // The number of arguments minus callbacks
-  const argsCount = arguments.length - cbCount;
-  const path = arguments[0];
+  const argsCount = args.length - cbCount;
+  const path = args[0];
   if (
     argsCount === 2 &&
     typeof path === 'string' &&
-    typeof arguments[1] === 'object'
+    typeof args[1] === 'object'
   ) {
     // Intended for more advanced use, pass in Request parameters directly
-    request = new Request(path, arguments[1]);
-    callback = arguments[2];
-    errorCallback = arguments[3];
+    request = new Request(path, args[1]);
+    callback = args[2];
+    errorCallback = args[3];
   } else {
     // Provided with arguments
     let method = 'GET';
     let data;
 
-    for (let j = 1; j < arguments.length; j++) {
-      const a = arguments[j];
+    for (let j = 1; j < args.length; j++) {
+      const a = args[j];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;

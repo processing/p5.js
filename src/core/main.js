@@ -297,11 +297,11 @@ const p5 = function(sketch, node, sync) {
   };
 
   this._wrapPreload = function(obj, fnName) {
-    return function() {
+    return function(...args) {
       //increment counter
       this._incrementPreload();
       //call original function
-      return this._registeredPreloadMethods[fnName].apply(obj, arguments);
+      return this._registeredPreloadMethods[fnName].apply(obj, args);
     }.bind(this);
   };
 

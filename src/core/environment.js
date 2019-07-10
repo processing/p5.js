@@ -42,11 +42,11 @@ const _windowPrint = window.print;
  * @alt
  * default grey canvas
  */
-p5.prototype.print = function() {
-  if (!arguments.length) {
+p5.prototype.print = function(...args) {
+  if (!args.length) {
     _windowPrint();
   } else {
-    console.log.apply(console, arguments);
+    console.log.apply(console, args);
   }
 };
 

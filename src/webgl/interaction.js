@@ -314,9 +314,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * @param {Number} [axesZOff]
  */
 
-p5.prototype.debugMode = function() {
+p5.prototype.debugMode = function(...args) {
   this._assert3d('debugMode');
-  p5._validateParameters('debugMode', arguments);
+  p5._validateParameters('debugMode', args);
 
   // start by removing existing 'post' registered debug methods
   for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {
@@ -330,50 +330,24 @@ p5.prototype.debugMode = function() {
   }
 
   // then add new debugMode functions according to the argument list
-  if (arguments[0] === constants.GRID) {
+  if (args[0] === constants.GRID) {
     this.registerMethod(
       'post',
-      this._grid.call(
-        this,
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5]
-      )
+      this._grid.call(this, args[1], args[2], args[3], args[4], args[5])
     );
-  } else if (arguments[0] === constants.AXES) {
+  } else if (args[0] === constants.AXES) {
     this.registerMethod(
       'post',
-      this._axesIcon.call(
-        this,
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4]
-      )
+      this._axesIcon.call(this, args[1], args[2], args[3], args[4])
     );
   } else {
     this.registerMethod(
       'post',
-      this._grid.call(
-        this,
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4]
-      )
+      this._grid.call(this, args[0], args[1], args[2], args[3], args[4])
     );
     this.registerMethod(
       'post',
-      this._axesIcon.call(
-        this,
-        arguments[5],
-        arguments[6],
-        arguments[7],
-        arguments[8]
-      )
+      this._axesIcon.call(this, args[5], args[6], args[7], args[8])
     );
   }
 };

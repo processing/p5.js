@@ -79,8 +79,8 @@ import '../error_helpers';
  * @param  {Number} z4 z-coordinate for the second anchor point
  * @chainable
  */
-p5.prototype.bezier = function() {
-  p5._validateParameters('bezier', arguments);
+p5.prototype.bezier = function(...args) {
+  p5._validateParameters('bezier', args);
 
   // if the current stroke and fill settings wouldn't result in something
   // visible, exit immediately
@@ -88,7 +88,7 @@ p5.prototype.bezier = function() {
     return this;
   }
 
-  this._renderer.bezier.apply(this._renderer, arguments);
+  this._renderer.bezier.apply(this._renderer, args);
 
   return this;
 };
@@ -351,11 +351,11 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} z4 z-coordinate for the ending control point
  * @chainable
  */
-p5.prototype.curve = function() {
-  p5._validateParameters('curve', arguments);
+p5.prototype.curve = function(...args) {
+  p5._validateParameters('curve', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.curve.apply(this._renderer, arguments);
+    this._renderer.curve.apply(this._renderer, args);
   }
 
   return this;

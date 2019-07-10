@@ -43,16 +43,16 @@ p5.Renderer2D.prototype.resize = function(w, h) {
 // COLOR | Setting
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype.background = function() {
+p5.Renderer2D.prototype.background = function(...args) {
   this.drawingContext.save();
   this.resetMatrix();
 
-  if (arguments[0] instanceof p5.Image) {
-    this._pInst.image(arguments[0], 0, 0, this.width, this.height);
+  if (args[0] instanceof p5.Image) {
+    this._pInst.image(args[0], 0, 0, this.width, this.height);
   } else {
     const curFill = this._getFill();
     // create background rect
-    const color = this._pInst.color.apply(this._pInst, arguments);
+    const color = this._pInst.color.apply(this._pInst, args);
     const newFill = color.toString();
     this._setFill(newFill);
     this.drawingContext.fillRect(0, 0, this.width, this.height);
@@ -73,13 +73,13 @@ p5.Renderer2D.prototype.clear = function() {
   this._pixelsState._pixelsDirty = true;
 };
 
-p5.Renderer2D.prototype.fill = function() {
-  const color = this._pInst.color.apply(this._pInst, arguments);
+p5.Renderer2D.prototype.fill = function(...args) {
+  const color = this._pInst.color.apply(this._pInst, args);
   this._setFill(color.toString());
 };
 
-p5.Renderer2D.prototype.stroke = function() {
-  const color = this._pInst.color.apply(this._pInst, arguments);
+p5.Renderer2D.prototype.stroke = function(...args) {
+  const color = this._pInst.color.apply(this._pInst, args);
   this._setStroke(color.toString());
 };
 
@@ -193,15 +193,11 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
   }
 };
 
-p5.Renderer2D.prototype.blend = function() {
+p5.Renderer2D.prototype.blend = function(...args) {
   const currBlend = this.drawingContext.globalCompositeOperation;
-  const blendMode = arguments[arguments.length - 1];
+  const blendMode = args[args.length - 1];
 
-  const copyArgs = Array.prototype.slice.call(
-    arguments,
-    0,
-    arguments.length - 1
-  );
+  const copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
 
   this.drawingContext.globalCompositeOperation = blendMode;
   if (this._pInst) {
@@ -212,28 +208,28 @@ p5.Renderer2D.prototype.blend = function() {
   this.drawingContext.globalCompositeOperation = currBlend;
 };
 
-p5.Renderer2D.prototype.copy = function() {
+p5.Renderer2D.prototype.copy = function(...args) {
   let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (arguments.length === 9) {
-    srcImage = arguments[0];
-    sx = arguments[1];
-    sy = arguments[2];
-    sw = arguments[3];
-    sh = arguments[4];
-    dx = arguments[5];
-    dy = arguments[6];
-    dw = arguments[7];
-    dh = arguments[8];
-  } else if (arguments.length === 8) {
+  if (args.length === 9) {
+    srcImage = args[0];
+    sx = args[1];
+    sy = args[2];
+    sw = args[3];
+    sh = args[4];
+    dx = args[5];
+    dy = args[6];
+    dw = args[7];
+    dh = args[8];
+  } else if (args.length === 8) {
     srcImage = this._pInst;
-    sx = arguments[0];
-    sy = arguments[1];
-    sw = arguments[2];
-    sh = arguments[3];
-    dx = arguments[4];
-    dy = arguments[5];
-    dw = arguments[6];
-    dh = arguments[7];
+    sx = args[0];
+    sy = args[1];
+    sw = args[2];
+    sh = args[3];
+    dx = args[4];
+    dy = args[5];
+    dw = args[6];
+    dh = args[7];
   } else {
     throw new Error('Signature not supported');
   }

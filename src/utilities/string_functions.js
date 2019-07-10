@@ -364,9 +364,9 @@ function doNfc(num, right) {
  * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
-p5.prototype.nfp = function() {
-  p5._validateParameters('nfp', arguments);
-  const nfRes = p5.prototype.nf.apply(this, arguments);
+p5.prototype.nfp = function(...args) {
+  p5._validateParameters('nfp', args);
+  const nfRes = p5.prototype.nf.apply(this, args);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
   } else {
@@ -442,9 +442,9 @@ function addNfp(num) {
  * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
-p5.prototype.nfs = function() {
-  p5._validateParameters('nfs', arguments);
-  const nfRes = p5.prototype.nf.apply(this, arguments);
+p5.prototype.nfs = function(...args) {
+  p5._validateParameters('nfs', args);
+  const nfRes = p5.prototype.nf.apply(this, args);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
   } else {

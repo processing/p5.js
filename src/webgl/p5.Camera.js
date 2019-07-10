@@ -51,10 +51,10 @@ import p5 from '../core/main';
  * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
-p5.prototype.camera = function() {
+p5.prototype.camera = function(...args) {
   this._assert3d('camera');
-  p5._validateParameters('camera', arguments);
-  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
+  p5._validateParameters('camera', args);
+  this._renderer._curCamera.camera.apply(this._renderer._curCamera, args);
   return this;
 };
 
@@ -113,13 +113,10 @@ p5.prototype.camera = function() {
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
-p5.prototype.perspective = function() {
+p5.prototype.perspective = function(...args) {
   this._assert3d('perspective');
-  p5._validateParameters('perspective', arguments);
-  this._renderer._curCamera.perspective.apply(
-    this._renderer._curCamera,
-    arguments
-  );
+  p5._validateParameters('perspective', args);
+  this._renderer._curCamera.perspective.apply(this._renderer._curCamera, args);
   return this;
 };
 
@@ -173,10 +170,10 @@ p5.prototype.perspective = function() {
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  *
  */
-p5.prototype.ortho = function() {
+p5.prototype.ortho = function(...args) {
   this._assert3d('ortho');
-  p5._validateParameters('ortho', arguments);
-  this._renderer._curCamera.ortho.apply(this._renderer._curCamera, arguments);
+  p5._validateParameters('ortho', args);
+  this._renderer._curCamera.ortho.apply(this._renderer._curCamera, args);
   return this;
 };
 

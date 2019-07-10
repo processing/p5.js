@@ -307,9 +307,9 @@ p5.prototype.resetShader = function() {
  * Red, green and blue gradient.
  *
  */
-p5.prototype.normalMaterial = function() {
+p5.prototype.normalMaterial = function(...args) {
   this._assert3d('normalMaterial');
-  p5._validateParameters('normalMaterial', arguments);
+  p5._validateParameters('normalMaterial', args);
   this._renderer.drawMode = constants.FILL;
   this._renderer._useSpecularMaterial = false;
   this._renderer._useEmissiveMaterial = false;

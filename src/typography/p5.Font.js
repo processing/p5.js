@@ -1236,10 +1236,10 @@ function base3(t, p1, p2, p3, p4) {
   return t * t2 - 3 * p1 + 3 * p2;
 }
 
-function cacheKey() {
+function cacheKey(...args) {
   let hash = '';
-  for (let i = arguments.length - 1; i >= 0; --i) {
-    hash += '？' + arguments[i];
+  for (let i = args.length - 1; i >= 0; --i) {
+    hash += '？' + args[i];
   }
   return hash;
 }

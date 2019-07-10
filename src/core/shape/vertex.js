@@ -368,10 +368,10 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
  */
-p5.prototype.bezierVertex = function() {
-  p5._validateParameters('bezierVertex', arguments);
+p5.prototype.bezierVertex = function(...args) {
+  p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.bezierVertex.apply(this._renderer, arguments);
+    this._renderer.bezierVertex.apply(this._renderer, args);
   } else {
     if (vertices.length === 0) {
       p5._friendlyError(
@@ -381,8 +381,8 @@ p5.prototype.bezierVertex = function() {
     } else {
       isBezier = true;
       const vert = [];
-      for (let i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {
@@ -494,13 +494,13 @@ p5.prototype.bezierVertex = function() {
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
  *
  */
-p5.prototype.curveVertex = function() {
-  p5._validateParameters('curveVertex', arguments);
+p5.prototype.curveVertex = function(...args) {
+  p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.curveVertex.apply(this._renderer, arguments);
+    this._renderer.curveVertex.apply(this._renderer, args);
   } else {
     isCurve = true;
-    this.vertex(arguments[0], arguments[1]);
+    this.vertex(args[0], args[1]);
   }
   return this;
 };
@@ -770,19 +770,19 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * backwards s-shaped black line with the same s-shaped line in postive z-axis.
  */
-p5.prototype.quadraticVertex = function() {
-  p5._validateParameters('quadraticVertex', arguments);
+p5.prototype.quadraticVertex = function(...args) {
+  p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.quadraticVertex.apply(this._renderer, arguments);
+    this._renderer.quadraticVertex.apply(this._renderer, args);
   } else {
     //if we're drawing a contour, put the points into an
     // array for inside drawing
     if (this._contourInited) {
       const pt = {};
-      pt.x = arguments[0];
-      pt.y = arguments[1];
-      pt.x3 = arguments[2];
-      pt.y3 = arguments[3];
+      pt.x = args[0];
+      pt.y = args[1];
+      pt.x3 = args[2];
+      pt.y3 = args[3];
       pt.type = constants.QUADRATIC;
       this._contourVertices.push(pt);
 
@@ -791,8 +791,8 @@ p5.prototype.quadraticVertex = function() {
     if (vertices.length > 0) {
       isQuadratic = true;
       const vert = [];
-      for (let i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {

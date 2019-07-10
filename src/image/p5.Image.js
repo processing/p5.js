@@ -604,28 +604,28 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.Image.prototype.copy = function() {
+p5.Image.prototype.copy = function(...args) {
   let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (arguments.length === 9) {
-    srcImage = arguments[0];
-    sx = arguments[1];
-    sy = arguments[2];
-    sw = arguments[3];
-    sh = arguments[4];
-    dx = arguments[5];
-    dy = arguments[6];
-    dw = arguments[7];
-    dh = arguments[8];
-  } else if (arguments.length === 8) {
+  if (args.length === 9) {
+    srcImage = args[0];
+    sx = args[1];
+    sy = args[2];
+    sw = args[3];
+    sh = args[4];
+    dx = args[5];
+    dy = args[6];
+    dw = args[7];
+    dh = args[8];
+  } else if (args.length === 8) {
     srcImage = this;
-    sx = arguments[0];
-    sy = arguments[1];
-    sw = arguments[2];
-    sh = arguments[3];
-    dx = arguments[4];
-    dy = arguments[5];
-    dw = arguments[6];
-    dh = arguments[7];
+    sx = args[0];
+    sy = args[1];
+    sw = args[2];
+    sh = args[3];
+    dx = args[4];
+    dy = args[5];
+    dw = args[6];
+    dh = args[7];
   } else {
     throw new Error('Signature not supported');
   }
@@ -823,8 +823,8 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.Image.prototype.blend = function() {
-  p5.prototype.blend.apply(this, arguments);
+p5.Image.prototype.blend = function(...args) {
+  p5.prototype.blend.apply(this, args);
   this.setModified(true);
 };
 

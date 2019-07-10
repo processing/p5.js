@@ -165,12 +165,12 @@ p5.prototype.pixels = [];
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.prototype.blend = function() {
-  p5._validateParameters('blend', arguments);
+p5.prototype.blend = function(...args) {
+  p5._validateParameters('blend', args);
   if (this._renderer) {
-    this._renderer.blend.apply(this._renderer, arguments);
+    this._renderer.blend.apply(this._renderer, args);
   } else {
-    p5.Renderer2D.prototype.blend.apply(this, arguments);
+    p5.Renderer2D.prototype.blend.apply(this, args);
   }
 };
 
@@ -228,9 +228,9 @@ p5.prototype.blend = function() {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.prototype.copy = function() {
-  p5._validateParameters('copy', arguments);
-  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
+p5.prototype.copy = function(...args) {
+  p5._validateParameters('copy', args);
+  p5.Renderer2D.prototype.copy.apply(this._renderer, args);
 };
 
 /**
@@ -532,8 +532,8 @@ p5.prototype.get = function(x, y, w, h) {
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  *
  */
-p5.prototype.loadPixels = function() {
-  p5._validateParameters('loadPixels', arguments);
+p5.prototype.loadPixels = function(...args) {
+  p5._validateParameters('loadPixels', args);
   this._renderer.loadPixels();
 };
 

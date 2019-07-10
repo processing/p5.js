@@ -172,18 +172,14 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} z2 z-coordinate of the second point
  * @return {Number}    distance between the two points
  */
-p5.prototype.dist = function() {
-  p5._validateParameters('dist', arguments);
-  if (arguments.length === 4) {
+p5.prototype.dist = function(...args) {
+  p5._validateParameters('dist', args);
+  if (args.length === 4) {
     //2D
-    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
-  } else if (arguments.length === 6) {
+    return hypot(args[2] - args[0], args[3] - args[1]);
+  } else if (args.length === 6) {
     //3D
-    return hypot(
-      arguments[3] - arguments[0],
-      arguments[4] - arguments[1],
-      arguments[5] - arguments[2]
-    );
+    return hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
   }
 };
 
@@ -516,12 +512,12 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = function() {
-  p5._validateParameters('max', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.max.apply(null, arguments[0]);
+p5.prototype.max = function(...args) {
+  p5._validateParameters('max', args);
+  if (args[0] instanceof Array) {
+    return Math.max.apply(null, args[0]);
   } else {
-    return Math.max.apply(null, arguments);
+    return Math.max.apply(null, args);
   }
 };
 
@@ -566,12 +562,12 @@ p5.prototype.max = function() {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = function() {
-  p5._validateParameters('min', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.min.apply(null, arguments[0]);
+p5.prototype.min = function(...args) {
+  p5._validateParameters('min', args);
+  if (args[0] instanceof Array) {
+    return Math.min.apply(null, args[0]);
   } else {
-    return Math.min.apply(null, arguments);
+    return Math.min.apply(null, args);
   }
 };
 

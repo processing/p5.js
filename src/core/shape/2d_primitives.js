@@ -343,11 +343,11 @@ p5.prototype.circle = function() {
  * @param  {Number} z2 the z-coordinate of the second point
  * @chainable
  */
-p5.prototype.line = function() {
-  p5._validateParameters('line', arguments);
+p5.prototype.line = function(...args) {
+  p5._validateParameters('line', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.line.apply(this._renderer, arguments);
+    this._renderer.line.apply(this._renderer, args);
   }
 
   return this;
@@ -378,11 +378,11 @@ p5.prototype.line = function() {
  *4 points centered in the middle-right of the canvas.
  *
  */
-p5.prototype.point = function() {
-  p5._validateParameters('point', arguments);
+p5.prototype.point = function(...args) {
+  p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.point.apply(this._renderer, arguments);
+    this._renderer.point.apply(this._renderer, args);
   }
 
   return this;
@@ -434,21 +434,21 @@ p5.prototype.point = function() {
  * @param {Number} z4 the z-coordinate of the fourth point
  * @chainable
  */
-p5.prototype.quad = function() {
-  p5._validateParameters('quad', arguments);
+p5.prototype.quad = function(...args) {
+  p5._validateParameters('quad', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    if (this._renderer.isP3D && arguments.length !== 12) {
+    if (this._renderer.isP3D && args.length !== 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
       // prettier-ignore
       this._renderer.quad.call(
         this._renderer,
-        arguments[0], arguments[1], 0,
-        arguments[2], arguments[3], 0,
-        arguments[4], arguments[5], 0,
-        arguments[6], arguments[7], 0);
+        args[0], args[1], 0,
+        args[2], args[3], 0,
+        args[4], args[5], 0,
+        args[6], args[7], 0);
     } else {
-      this._renderer.quad.apply(this._renderer, arguments);
+      this._renderer.quad.apply(this._renderer, args);
     }
   }
 
@@ -616,11 +616,11 @@ p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
  * white triangle with black outline in mid-right of canvas.
  *
  */
-p5.prototype.triangle = function() {
-  p5._validateParameters('triangle', arguments);
+p5.prototype.triangle = function(...args) {
+  p5._validateParameters('triangle', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.triangle(arguments);
+    this._renderer.triangle(args);
   }
 
   return this;

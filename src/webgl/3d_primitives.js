@@ -1185,22 +1185,22 @@ p5.RendererGL.prototype.curve = function(
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.line = function() {
-  if (arguments.length === 6) {
+p5.RendererGL.prototype.line = function(...args) {
+  if (args.length === 6) {
     this.beginShape();
-    this.vertex(arguments[0], arguments[1], arguments[2]);
-    this.vertex(arguments[3], arguments[4], arguments[5]);
+    this.vertex(args[0], args[1], args[2]);
+    this.vertex(args[3], args[4], args[5]);
     this.endShape();
-  } else if (arguments.length === 4) {
+  } else if (args.length === 4) {
     this.beginShape();
-    this.vertex(arguments[0], arguments[1], 0);
-    this.vertex(arguments[2], arguments[3], 0);
+    this.vertex(args[0], args[1], 0);
+    this.vertex(args[2], args[3], 0);
     this.endShape();
   }
   return this;
 };
 
-p5.RendererGL.prototype.bezierVertex = function() {
+p5.RendererGL.prototype.bezierVertex = function(...args) {
   if (this.immediateMode._bezierVertex.length === 0) {
     throw Error('vertex() must be used once before calling bezierVertex()');
   } else {
@@ -1208,7 +1208,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
     let w_y = [];
     let w_z = [];
     let t, _x, _y, _z, i;
-    const argLength = arguments.length;
+    const argLength = args.length;
 
     t = 0;
 
@@ -1242,18 +1242,8 @@ p5.RendererGL.prototype.bezierVertex = function() {
     if (argLength === 6) {
       this.isBezier = true;
 
-      w_x = [
-        this.immediateMode._bezierVertex[0],
-        arguments[0],
-        arguments[2],
-        arguments[4]
-      ];
-      w_y = [
-        this.immediateMode._bezierVertex[1],
-        arguments[1],
-        arguments[3],
-        arguments[5]
-      ];
+      w_x = [this.immediateMode._bezierVertex[0], args[0], args[2], args[4]];
+      w_y = [this.immediateMode._bezierVertex[1], args[1], args[3], args[5]];
 
       for (i = 0; i < LUTLength; i++) {
         _x =
@@ -1268,29 +1258,14 @@ p5.RendererGL.prototype.bezierVertex = function() {
           w_y[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y);
       }
-      this.immediateMode._bezierVertex[0] = arguments[4];
-      this.immediateMode._bezierVertex[1] = arguments[5];
+      this.immediateMode._bezierVertex[0] = args[4];
+      this.immediateMode._bezierVertex[1] = args[5];
     } else if (argLength === 9) {
       this.isBezier = true;
 
-      w_x = [
-        this.immediateMode._bezierVertex[0],
-        arguments[0],
-        arguments[3],
-        arguments[6]
-      ];
-      w_y = [
-        this.immediateMode._bezierVertex[1],
-        arguments[1],
-        arguments[4],
-        arguments[7]
-      ];
-      w_z = [
-        this.immediateMode._bezierVertex[2],
-        arguments[2],
-        arguments[5],
-        arguments[8]
-      ];
+      w_x = [this.immediateMode._bezierVertex[0], args[0], args[3], args[6]];
+      w_y = [this.immediateMode._bezierVertex[1], args[1], args[4], args[7]];
+      w_z = [this.immediateMode._bezierVertex[2], args[2], args[5], args[8]];
       for (i = 0; i < LUTLength; i++) {
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
@@ -1309,14 +1284,14 @@ p5.RendererGL.prototype.bezierVertex = function() {
           w_z[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y, _z);
       }
-      this.immediateMode._bezierVertex[0] = arguments[6];
-      this.immediateMode._bezierVertex[1] = arguments[7];
-      this.immediateMode._bezierVertex[2] = arguments[8];
+      this.immediateMode._bezierVertex[0] = args[6];
+      this.immediateMode._bezierVertex[1] = args[7];
+      this.immediateMode._bezierVertex[2] = args[8];
     }
   }
 };
 
-p5.RendererGL.prototype.quadraticVertex = function() {
+p5.RendererGL.prototype.quadraticVertex = function(...args) {
   if (this.immediateMode._quadraticVertex.length === 0) {
     throw Error('vertex() must be used once before calling quadraticVertex()');
   } else {
@@ -1324,7 +1299,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
     let w_y = [];
     let w_z = [];
     let t, _x, _y, _z, i;
-    const argLength = arguments.length;
+    const argLength = args.length;
 
     t = 0;
 
@@ -1358,16 +1333,8 @@ p5.RendererGL.prototype.quadraticVertex = function() {
     if (argLength === 4) {
       this.isQuadratic = true;
 
-      w_x = [
-        this.immediateMode._quadraticVertex[0],
-        arguments[0],
-        arguments[2]
-      ];
-      w_y = [
-        this.immediateMode._quadraticVertex[1],
-        arguments[1],
-        arguments[3]
-      ];
+      w_x = [this.immediateMode._quadraticVertex[0], args[0], args[2]];
+      w_y = [this.immediateMode._quadraticVertex[1], args[1], args[3]];
 
       for (i = 0; i < LUTLength; i++) {
         _x =
@@ -1381,26 +1348,14 @@ p5.RendererGL.prototype.quadraticVertex = function() {
         this.vertex(_x, _y);
       }
 
-      this.immediateMode._quadraticVertex[0] = arguments[2];
-      this.immediateMode._quadraticVertex[1] = arguments[3];
+      this.immediateMode._quadraticVertex[0] = args[2];
+      this.immediateMode._quadraticVertex[1] = args[3];
     } else if (argLength === 6) {
       this.isQuadratic = true;
 
-      w_x = [
-        this.immediateMode._quadraticVertex[0],
-        arguments[0],
-        arguments[3]
-      ];
-      w_y = [
-        this.immediateMode._quadraticVertex[1],
-        arguments[1],
-        arguments[4]
-      ];
-      w_z = [
-        this.immediateMode._quadraticVertex[2],
-        arguments[2],
-        arguments[5]
-      ];
+      w_x = [this.immediateMode._quadraticVertex[0], args[0], args[3]];
+      w_y = [this.immediateMode._quadraticVertex[1], args[1], args[4]];
+      w_z = [this.immediateMode._quadraticVertex[2], args[2], args[5]];
 
       for (i = 0; i < LUTLength; i++) {
         _x =
@@ -1418,20 +1373,20 @@ p5.RendererGL.prototype.quadraticVertex = function() {
         this.vertex(_x, _y, _z);
       }
 
-      this.immediateMode._quadraticVertex[0] = arguments[3];
-      this.immediateMode._quadraticVertex[1] = arguments[4];
-      this.immediateMode._quadraticVertex[2] = arguments[5];
+      this.immediateMode._quadraticVertex[0] = args[3];
+      this.immediateMode._quadraticVertex[1] = args[4];
+      this.immediateMode._quadraticVertex[2] = args[5];
     }
   }
 };
 
-p5.RendererGL.prototype.curveVertex = function() {
+p5.RendererGL.prototype.curveVertex = function(...args) {
   let w_x = [];
   let w_y = [];
   let w_z = [];
   let t, _x, _y, _z, i;
   t = 0;
-  const argLength = arguments.length;
+  const argLength = args.length;
 
   if (
     this._lookUpTableBezier.length === 0 ||
@@ -1461,8 +1416,8 @@ p5.RendererGL.prototype.curveVertex = function() {
   const LUTLength = this._lookUpTableBezier.length;
 
   if (argLength === 2) {
-    this.immediateMode._curveVertex.push(arguments[0]);
-    this.immediateMode._curveVertex.push(arguments[1]);
+    this.immediateMode._curveVertex.push(args[0]);
+    this.immediateMode._curveVertex.push(args[1]);
     if (this.immediateMode._curveVertex.length === 8) {
       this.isCurve = true;
       w_x = this._bezierToCatmull([
@@ -1495,9 +1450,9 @@ p5.RendererGL.prototype.curveVertex = function() {
       }
     }
   } else if (argLength === 3) {
-    this.immediateMode._curveVertex.push(arguments[0]);
-    this.immediateMode._curveVertex.push(arguments[1]);
-    this.immediateMode._curveVertex.push(arguments[2]);
+    this.immediateMode._curveVertex.push(args[0]);
+    this.immediateMode._curveVertex.push(args[1]);
+    this.immediateMode._curveVertex.push(args[2]);
     if (this.immediateMode._curveVertex.length === 12) {
       this.isCurve = true;
       w_x = this._bezierToCatmull([

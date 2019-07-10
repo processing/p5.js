@@ -215,13 +215,13 @@ p5.prototype.textStyle = function(theStyle) {
  *Letter P and p5.js are displayed with vertical lines at end. P is wide
  *
  */
-p5.prototype.textWidth = function() {
-  arguments[0] += '';
-  p5._validateParameters('textWidth', arguments);
-  if (arguments[0].length === 0) {
+p5.prototype.textWidth = function(...args) {
+  args[0] += '';
+  p5._validateParameters('textWidth', args);
+  if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth.apply(this._renderer, arguments);
+  return this._renderer.textWidth.apply(this._renderer, args);
 };
 
 /**
@@ -248,8 +248,8 @@ p5.prototype.textWidth = function() {
  * </code>
  * </div>
  */
-p5.prototype.textAscent = function() {
-  p5._validateParameters('textAscent', arguments);
+p5.prototype.textAscent = function(...args) {
+  p5._validateParameters('textAscent', args);
   return this._renderer.textAscent();
 };
 
@@ -277,8 +277,8 @@ p5.prototype.textAscent = function() {
  * </code>
  * </div>
  */
-p5.prototype.textDescent = function() {
-  p5._validateParameters('textDescent', arguments);
+p5.prototype.textDescent = function(...args) {
+  p5._validateParameters('textDescent', args);
   return this._renderer.textDescent();
 };
 
