@@ -62,7 +62,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     detailY = 1;
   }
 
-  const gId = 'plane|' + detailX + '|' + detailY;
+  const gId = `plane|${detailX}|${detailY}`;
 
   if (!this._renderer.geometryInHash(gId)) {
     const _plane = function() {
@@ -145,7 +145,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     detailY = perPixelLighting ? 1 : 4;
   }
 
-  const gId = 'box|' + detailX + '|' + detailY;
+  const gId = `box|${detailX}|${detailY}`;
   if (!this._renderer.geometryInHash(gId)) {
     const _box = function() {
       const cubeIndices = [
@@ -435,8 +435,7 @@ p5.prototype.cylinder = function(
     bottomCap = true;
   }
 
-  const gId =
-    'cylinder|' + detailX + '|' + detailY + '|' + bottomCap + '|' + topCap;
+  const gId = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
   if (!this._renderer.geometryInHash(gId)) {
     const cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
@@ -516,7 +515,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     cap = true;
   }
 
-  const gId = 'cone|' + detailX + '|' + detailY + '|' + cap;
+  const gId = `cone|${detailX}|${detailY}|${cap}`;
   if (!this._renderer.geometryInHash(gId)) {
     const coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
@@ -587,7 +586,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     detailY = 16;
   }
 
-  const gId = 'ellipsoid|' + detailX + '|' + detailY;
+  const gId = `ellipsoid|${detailX}|${detailY}`;
 
   if (!this._renderer.geometryInHash(gId)) {
     const _ellipsoid = function() {
@@ -680,7 +679,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
   }
 
   const tubeRatio = (tubeRadius / radius).toPrecision(4);
-  const gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
+  const gId = `torus|${tubeRatio}|${detailX}|${detailY}`;
 
   if (!this._renderer.geometryInHash(gId)) {
     const _torus = function() {
@@ -857,10 +856,10 @@ p5.RendererGL.prototype.arc = function(args) {
   // check if it is an ellipse or an arc
   if (Math.abs(stop - start) >= constants.TWO_PI) {
     shape = 'ellipse';
-    gId = shape + '|' + detail + '|';
+    gId = `${shape}|${detail}|`;
   } else {
     shape = 'arc';
-    gId = shape + '|' + start + '|' + stop + '|' + mode + '|' + detail + '|';
+    gId = `${shape}|${start}|${stop}|${mode}|${detail}|`;
   }
 
   if (!this.geometryInHash(gId)) {
@@ -937,7 +936,7 @@ p5.RendererGL.prototype.arc = function(args) {
     if (detail <= 50) {
       arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
     } else {
-      console.log('Cannot stroke ' + shape + ' with more than 50 detail');
+      console.log(`Cannot stroke ${shape} with more than 50 detail`);
     }
 
     this.createBuffers(gId, arcGeom);
@@ -965,7 +964,7 @@ p5.RendererGL.prototype.rect = function(args) {
   const height = args[3];
   const detailX = args[4] || (perPixelLighting ? 1 : 24);
   const detailY = args[5] || (perPixelLighting ? 1 : 16);
-  const gId = 'rect|' + detailX + '|' + detailY;
+  const gId = `rect|${detailX}|${detailY}`;
   if (!this.geometryInHash(gId)) {
     const _rect = function() {
       for (let i = 0; i <= this.detailY; i++) {
@@ -1015,30 +1014,7 @@ p5.RendererGL.prototype.rect = function(args) {
 // prettier-ignore
 p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
   const gId =
-    'quad|' +
-    x1 +
-    '|' +
-    y1 +
-    '|' +
-    z1 +
-    '|' +
-    x2 +
-    '|' +
-    y2 +
-    '|' +
-    z2 +
-    '|' +
-    x3 +
-    '|' +
-    y3 +
-    '|' +
-    z3 +
-    '|' +
-    x4 +
-    '|' +
-    y4 +
-    '|' +
-    z4;
+    `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}`;
   if (!this.geometryInHash(gId)) {
     const _quad = function() {
       this.vertices.push(new p5.Vector(x1, y1, z1));

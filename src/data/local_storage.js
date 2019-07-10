@@ -80,7 +80,7 @@ p5.prototype.storeItem = (key, value) => {
   }
 
   localStorage.setItem(key, value);
-  const typeKey = key + 'p5TypeID';
+  const typeKey = `${key}p5TypeID`;
   localStorage.setItem(typeKey, type);
 };
 
@@ -129,12 +129,10 @@ p5.prototype.storeItem = (key, value) => {
  */
 p5.prototype.getItem = function(key) {
   let value = localStorage.getItem(key);
-  const type = localStorage.getItem(key + 'p5TypeID');
+  const type = localStorage.getItem(`${key}p5TypeID`);
   if (typeof type === 'undefined') {
     console.log(
-      'Unable to determine type of item stored under ' +
-        key +
-        'in local storage. Did you save the item with something other than setItem()?'
+      `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`
     );
   } else if (value !== null) {
     switch (type) {
@@ -210,11 +208,9 @@ p5.prototype.clearStorage = () => {
 p5.prototype.removeItem = key => {
   if (typeof key !== 'string') {
     console.log(
-      'The argument that you passed to removeItem() - ' +
-        key +
-        ' is not a string.'
+      `The argument that you passed to removeItem() - ${key} is not a string.`
     );
   }
   localStorage.removeItem(key);
-  localStorage.removeItem(key + 'p5TypeID');
+  localStorage.removeItem(`${key}p5TypeID`);
 };

@@ -62,8 +62,9 @@ p5.Shader.prototype.init = function() {
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
       console.error(
-        'Yikes! An error occurred compiling the vertex shader:' +
-          gl.getShaderInfoLog(this._vertShader)
+        `Yikes! An error occurred compiling the vertex shader:${gl.getShaderInfoLog(
+          this._vertShader
+        )}`
       );
       return null;
     }
@@ -75,8 +76,9 @@ p5.Shader.prototype.init = function() {
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
       console.error(
-        'Darn! An error occurred compiling the fragment shader:' +
-          gl.getShaderInfoLog(this._fragShader)
+        `Darn! An error occurred compiling the fragment shader:${gl.getShaderInfoLog(
+          this._fragShader
+        )}`
       );
       return null;
     }
@@ -87,8 +89,9 @@ p5.Shader.prototype.init = function() {
     gl.linkProgram(this._glProgram);
     if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
       console.error(
-        'Snap! Error linking shader program: ' +
-          gl.getProgramInfoLog(this._glProgram)
+        `Snap! Error linking shader program: ${gl.getProgramInfoLog(
+          this._glProgram
+        )}`
       );
     }
 
@@ -486,9 +489,9 @@ p5.Shader.prototype.enableAttrib = function(
       this.attributes[attr.name] !== attr
     ) {
       console.warn(
-        'The attribute "' +
-          attr.name +
-          '"passed to enableAttrib does not belong to this shader.'
+        `The attribute "${
+          attr.name
+        }"passed to enableAttrib does not belong to this shader.`
       );
     }
     const loc = attr.location;

@@ -491,7 +491,7 @@ p5.prototype.texture = function(tex) {
 p5.prototype.textureMode = function(mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
     console.warn(
-      'You tried to set ' + mode + ' textureMode only supports IMAGE & NORMAL '
+      `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
     );
   } else {
     this._renderer.textureMode = mode;

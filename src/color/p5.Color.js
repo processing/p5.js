@@ -37,7 +37,7 @@ p5.Color = function(pInst, vals) {
     this.mode !== constants.HSL &&
     this.mode !== constants.HSB
   ) {
-    throw new Error(this.mode + ' is an invalid colorMode.');
+    throw new Error(`${this.mode} is an invalid colorMode.`);
   } else {
     this._array = p5.Color._parseInputs.apply(this, vals);
   }
@@ -624,7 +624,7 @@ const namedColors = {
 const WHITESPACE = /\s*/; // Match zero or more whitespace characters.
 const INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
 const DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
-const PERCENT = new RegExp(DECIMAL.source + '%'); // Match 12.9%, 79%, .9%, etc.
+const PERCENT = new RegExp(`${DECIMAL.source}%`); // Match 12.9%, 79%, .9%, etc.
 
 /**
  * Full color string patterns. The capture groups are necessary.
@@ -994,7 +994,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     // Constrain components to the range [0,1].
     results = results.map(value => Math.max(Math.min(value, 1), 0));
   } else {
-    throw new Error(arguments + 'is not a valid color representation.');
+    throw new Error(`${arguments}is not a valid color representation.`);
   }
 
   return results;
