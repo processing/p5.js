@@ -12,7 +12,7 @@
 
 import p5 from '../core/main';
 import 'whatwg-fetch';
-require('es6-promise').polyfill();
+import 'es6-promise/auto';
 import fetchJsonp from 'fetch-jsonp';
 import '../core/error_helpers';
 
