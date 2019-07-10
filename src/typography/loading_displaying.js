@@ -9,7 +9,7 @@
 
 import p5 from '../core/main';
 import constants from '../core/constants';
-import opentype from 'opentype.js';
+import * as opentype from 'opentype.js';
 
 import '../core/error_helpers';
 
