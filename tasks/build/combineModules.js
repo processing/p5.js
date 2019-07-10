@@ -28,10 +28,12 @@ module.exports = function(grunt) {
       // Make a list of sources from app.js in that sequence only
       const sources = [];
       const dump = fs.readFileSync('./src/app.js', 'utf8');
-      const regexp = /\('.+'/g;
+      const regexp = /import\s.*('.+')/g; // Used for ES6 import syntax
+      // const regexp = /\('.+'/g; // Used for require syntax
       let match;
       while ((match = regexp.exec(dump)) != null) {
-        let text = match[0];
+        let text = match[1]; // Used for ES6 import syntax
+        // let text = match[0]; // Used for require syntax
         text = text.substring(text.indexOf('./') + 2, text.length - 1);
         sources.push(text);
       }
@@ -59,7 +61,7 @@ module.exports = function(grunt) {
       const bundle = browserify(srcFilePath, {
         standalone: 'p5'
       })
-        .transform('brfs')
+        .transform('babelify', { plugins: ['static-fs'] })
         .bundle();
 
       // Start the generated output with the banner comment,
