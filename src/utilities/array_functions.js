@@ -138,9 +138,7 @@ p5.prototype.arrayCopy = (src, srcPosition, dst, dstPosition, length) => {
  * }
  * </code></div>
  */
-p5.prototype.concat = (list0, list1) => {
-  return list0.concat(list1);
-};
+p5.prototype.concat = (list0, list1) => list0.concat(list1);
 
 /**
  * Reverses the order of an array, maps to Array.reverse()
@@ -160,9 +158,7 @@ p5.prototype.concat = (list0, list1) => {
  * }
  * </code></div>
  */
-p5.prototype.reverse = list => {
-  return list.reverse();
-};
+p5.prototype.reverse = list => list.reverse();
 
 /**
  * Decreases an array by one element and returns the shortened array,
@@ -271,9 +267,7 @@ p5.prototype.sort = (list, count) => {
   if (typeof arr[0] === 'string') {
     arr = arr.sort();
   } else {
-    arr = arr.sort((a, b) => {
-      return a - b;
-    });
+    arr = arr.sort((a, b) => a - b);
   }
   return arr.concat(rest);
 };

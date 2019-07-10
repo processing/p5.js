@@ -518,9 +518,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     function formatType() {
       const format = errorObj.format;
       return format.types
-        .map(type => {
-          return type.names ? type.names.join('|') : type.name;
-        })
+        .map(type => (type.names ? type.names.join('|') : type.name))
         .join('|');
     }
 
@@ -694,8 +692,8 @@ const FAQ_URL =
 const defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
 
-  const getSymbols = obj => {
-    return Object.getOwnPropertyNames(obj)
+  const getSymbols = obj =>
+    Object.getOwnPropertyNames(obj)
       .filter(name => {
         if (name[0] === '_') {
           return false;
@@ -721,7 +719,6 @@ const defineMisusedAtTopLevelCode = () => {
 
         return { name, type };
       });
-  };
 
   misusedAtTopLevelCode = [].concat(
     getSymbols(p5.prototype),
@@ -734,9 +731,7 @@ const defineMisusedAtTopLevelCode = () => {
   // This will ultimately ensure that we report the most specific error
   // possible to the user, e.g. advising them about HALF_PI instead of PI
   // when their code misuses the former.
-  misusedAtTopLevelCode.sort((a, b) => {
-    return b.name.length - a.name.length;
-  });
+  misusedAtTopLevelCode.sort((a, b) => b.name.length - a.name.length);
 };
 
 const helpForMisusedAtTopLevelCode = (e, log) => {

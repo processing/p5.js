@@ -629,9 +629,7 @@ p5.prototype.pixelDensity = function(val) {
  * @alt
  * 50x50 white ellipse with black outline in center of canvas.
  */
-p5.prototype.displayDensity = () => {
-  return window.devicePixelRatio;
-};
+p5.prototype.displayDensity = () => window.devicePixelRatio;
 
 function launchFullscreen(element) {
   const enabled =
@@ -693,9 +691,7 @@ function exitFullscreen() {
  * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
  *
  */
-p5.prototype.getURL = () => {
-  return location.href;
-};
+p5.prototype.getURL = () => location.href;
 /**
  * Gets the current URL path as an array.
  * @method getURLPath
@@ -714,11 +710,8 @@ p5.prototype.getURL = () => {
  *no display
  *
  */
-p5.prototype.getURLPath = () => {
-  return location.pathname.split('/').filter(v => {
-    return v !== '';
-  });
-};
+p5.prototype.getURLPath = () =>
+  location.pathname.split('/').filter(v => v !== '');
 /**
  * Gets the current URL params as an Object.
  * @method getURLParams

@@ -12,14 +12,10 @@
 import p5 from '../core/main';
 
 let GLMAT_ARRAY_TYPE = Array;
-let isMatrixArray = x => {
-  return x instanceof Array;
-};
+let isMatrixArray = x => x instanceof Array;
 if (typeof Float32Array !== 'undefined') {
   GLMAT_ARRAY_TYPE = Float32Array;
-  isMatrixArray = x => {
-    return x instanceof Array || x instanceof Float32Array;
-  };
+  isMatrixArray = x => x instanceof Array || x instanceof Float32Array;
 }
 
 /**
@@ -139,9 +135,7 @@ p5.Matrix.prototype.copy = function() {
  * @method identity
  * @return {p5.Matrix}   the result matrix
  */
-p5.Matrix.identity = pInst => {
-  return new p5.Matrix(pInst);
-};
+p5.Matrix.identity = pInst => new p5.Matrix(pInst);
 
 /**
  * transpose according to a given matrix

@@ -27,9 +27,7 @@ import p5 from '../core/main';
  * Current day is displayed
  *
  */
-p5.prototype.day = () => {
-  return new Date().getDate();
-};
+p5.prototype.day = () => new Date().getDate();
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/hour">hour()</a> function
@@ -49,9 +47,7 @@ p5.prototype.day = () => {
  * Current hour is displayed
  *
  */
-p5.prototype.hour = () => {
-  return new Date().getHours();
-};
+p5.prototype.hour = () => new Date().getHours();
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/minute">minute()</a> function
@@ -71,9 +67,7 @@ p5.prototype.hour = () => {
  * Current minute is displayed
  *
  */
-p5.prototype.minute = () => {
-  return new Date().getMinutes();
-};
+p5.prototype.minute = () => new Date().getMinutes();
 
 /**
  * Returns the number of milliseconds (thousandths of a second) since
@@ -94,9 +88,7 @@ p5.prototype.minute = () => {
  * number of milliseconds since program has started displayed
  *
  */
-p5.prototype.millis = () => {
-  return window.performance.now();
-};
+p5.prototype.millis = () => window.performance.now();
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/month">month()</a> function
@@ -116,9 +108,9 @@ p5.prototype.millis = () => {
  * Current month is displayed
  *
  */
-p5.prototype.month = () => {
-  return new Date().getMonth() + 1; //January is 0!
-};
+p5.prototype.month = () =>
+  //January is 0!
+  new Date().getMonth() + 1;
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/second">second()</a> function
@@ -138,9 +130,7 @@ p5.prototype.month = () => {
  * Current second is displayed
  *
  */
-p5.prototype.second = () => {
-  return new Date().getSeconds();
-};
+p5.prototype.second = () => new Date().getSeconds();
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/year">year()</a> function
@@ -160,8 +150,6 @@ p5.prototype.second = () => {
  * Current year is displayed
  *
  */
-p5.prototype.year = () => {
-  return new Date().getFullYear();
-};
+p5.prototype.year = () => new Date().getFullYear();
 
 export default p5;

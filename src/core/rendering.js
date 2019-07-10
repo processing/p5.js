@@ -62,9 +62,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
       //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
       const thisRenderer = this._renderer;
-      this._elements = this._elements.filter(e => {
-        return e !== thisRenderer;
-      });
+      this._elements = this._elements.filter(e => e !== thisRenderer);
     }
     c = document.createElement('canvas');
     c.id = defaultId;

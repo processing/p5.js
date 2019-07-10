@@ -776,9 +776,7 @@ p5.Table.prototype.getRowCount = function() {
  * </code></div>
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
-  const escape = s => {
-    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  };
+  const escape = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   const charArray = [];
   for (let i = 0; i < chars.length; i++) {
     charArray.push(escape(chars.charAt(i)));

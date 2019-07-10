@@ -847,52 +847,40 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rgb
       results = colorPatterns.HEX3.exec(str)
         .slice(1)
-        .map(color => {
-          return parseInt(color + color, 16) / 255;
-        });
+        .map(color => parseInt(color + color, 16) / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.HEX6.test(str)) {
       // #rrggbb
       results = colorPatterns.HEX6.exec(str)
         .slice(1)
-        .map(color => {
-          return parseInt(color, 16) / 255;
-        });
+        .map(color => parseInt(color, 16) / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.HEX4.test(str)) {
       // #rgba
       results = colorPatterns.HEX4.exec(str)
         .slice(1)
-        .map(color => {
-          return parseInt(color + color, 16) / 255;
-        });
+        .map(color => parseInt(color + color, 16) / 255);
       return results;
     } else if (colorPatterns.HEX8.test(str)) {
       // #rrggbbaa
       results = colorPatterns.HEX8.exec(str)
         .slice(1)
-        .map(color => {
-          return parseInt(color, 16) / 255;
-        });
+        .map(color => parseInt(color, 16) / 255);
       return results;
     } else if (colorPatterns.RGB.test(str)) {
       // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str)
         .slice(1)
-        .map(color => {
-          return color / 255;
-        });
+        .map(color => color / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.RGB_PERCENT.test(str)) {
       // rgb(R%,G%,B%)
       results = colorPatterns.RGB_PERCENT.exec(str)
         .slice(1)
-        .map(color => {
-          return parseFloat(color) / 100;
-        });
+        .map(color => parseFloat(color) / 100);
       results[3] = 1;
       return results;
     } else if (colorPatterns.RGBA.test(str)) {
@@ -944,9 +932,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
           return parseInt(color, 10) / 100;
         });
     }
-    results = results.map(value => {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    results = results.map(value => Math.max(Math.min(value, 1), 0));
     if (results.length) {
       return color_conversion._hslaToRGBA(results);
     }
@@ -1008,9 +994,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     }
 
     // Constrain components to the range [0,1].
-    results = results.map(value => {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    results = results.map(value => Math.max(Math.min(value, 1), 0));
   } else {
     throw new Error(arguments + 'is not a valid color representation.');
   }

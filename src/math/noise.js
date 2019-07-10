@@ -31,9 +31,7 @@ const PERLIN_SIZE = 4095;
 let perlin_octaves = 4; // default to medium smooth
 let perlin_amp_falloff = 0.5; // 50% reduction/octave
 
-const scaled_cosine = i => {
-  return 0.5 * (1.0 - Math.cos(i * Math.PI));
-};
+const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 
 let perlin; // will be initialized lazily by noise() or noiseSeed()
 

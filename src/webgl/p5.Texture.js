@@ -291,9 +291,7 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   // for webgl 1 we need to check if the texture is power of two
   // if it isn't we will set the wrap mode to CLAMP
   // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
-  const isPowerOfTwo = x => {
-    return (x & (x - 1)) === 0;
-  };
+  const isPowerOfTwo = x => (x & (x - 1)) === 0;
 
   const widthPowerOfTwo = isPowerOfTwo(this.width);
   const heightPowerOfTwo = isPowerOfTwo(this.height);

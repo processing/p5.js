@@ -6,19 +6,16 @@
 // requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller
 // fixes from Paul Irish and Tino Zijdel
-window.requestAnimationFrame = (() => {
-  return (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    ((callback, element) => {
-      // should '60' here be framerate?
-      window.setTimeout(callback, 1000 / 60);
-    })
-  );
-})();
+window.requestAnimationFrame = (() =>
+  window.requestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.oRequestAnimationFrame ||
+  window.msRequestAnimationFrame ||
+  ((callback, element) => {
+    // should '60' here be framerate?
+    window.setTimeout(callback, 1000 / 60);
+  }))();
 
 /**
  * shim for Uint8ClampedArray.slice
@@ -55,17 +52,14 @@ window.requestAnimationFrame = (() => {
   if (!Object.assign) {
     const keys = Object.keys;
     const defineProperty = Object.defineProperty;
-    const canBeObject = obj => {
-      return typeof obj !== 'undefined' && obj !== null;
-    };
+    const canBeObject = obj => typeof obj !== 'undefined' && obj !== null;
     const hasSymbols =
       typeof Symbol === 'function' && typeof Symbol() === 'symbol';
     const propIsEnumerable = Object.prototype.propertyIsEnumerable;
-    const isEnumerableOn = obj => {
-      return function isEnumerable(prop) {
+    const isEnumerableOn = obj =>
+      function isEnumerable(prop) {
         return propIsEnumerable.call(obj, prop);
       };
-    };
 
     // per ES6 spec, this function has to have a length of 2
     const assignShim = function assign(target, source1) {
