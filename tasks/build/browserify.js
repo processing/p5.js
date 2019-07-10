@@ -39,16 +39,13 @@ module.exports = function(grunt) {
         browseified = browseified.exclude('../../docs/reference/data.json');
       }
 
-      const babelifyOpts = {};
+      const babelifyOpts = { plugins: ['static-fs'] };
 
       if (isTest) {
         babelifyOpts.envName = 'test';
       }
 
-      const bundle = browseified
-        .transform('babelify', babelifyOpts)
-        .transform('brfs')
-        .bundle();
+      const bundle = browseified.transform('babelify', babelifyOpts).bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
