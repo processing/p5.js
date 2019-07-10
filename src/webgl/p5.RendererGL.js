@@ -7,7 +7,7 @@ import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
-import fs from 'fs';
+const fs = require('fs');
 
 var lightingShader = fs.readFileSync(
   __dirname + '/shaders/lighting.glsl',
