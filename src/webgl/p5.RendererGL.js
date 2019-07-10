@@ -7,46 +7,47 @@ import './p5.Shader';
 import './p5.Camera';
 import '../core/p5.Renderer';
 import './p5.Matrix';
-const fs = require('fs');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-var lightingShader = fs.readFileSync(
-  __dirname + '/shaders/lighting.glsl',
+var lightingShader = readFileSync(
+  join(__dirname, '/shaders/lighting.glsl'),
   'utf-8'
 );
 
 var defaultShaders = {
-  immediateVert: fs.readFileSync(
-    __dirname + '/shaders/immediate.vert',
+  immediateVert: readFileSync(
+    join(__dirname, '/shaders/immediate.vert'),
     'utf-8'
   ),
-  vertexColorVert: fs.readFileSync(
-    __dirname + '/shaders/vertexColor.vert',
+  vertexColorVert: readFileSync(
+    join(__dirname, '/shaders/vertexColor.vert'),
     'utf-8'
   ),
-  vertexColorFrag: fs.readFileSync(
-    __dirname + '/shaders/vertexColor.frag',
+  vertexColorFrag: readFileSync(
+    join(__dirname, '/shaders/vertexColor.frag'),
     'utf-8'
   ),
-  normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
-  normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
-  basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
+  normalVert: readFileSync(join(__dirname, '/shaders/normal.vert'), 'utf-8'),
+  normalFrag: readFileSync(join(__dirname, '/shaders/normal.frag'), 'utf-8'),
+  basicFrag: readFileSync(join(__dirname, '/shaders/basic.frag'), 'utf-8'),
   lightVert:
     lightingShader +
-    fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
-  lightTextureFrag: fs.readFileSync(
-    __dirname + '/shaders/light_texture.frag',
+    readFileSync(join(__dirname, '/shaders/light.vert'), 'utf-8'),
+  lightTextureFrag: readFileSync(
+    join(__dirname, '/shaders/light_texture.frag'),
     'utf-8'
   ),
-  phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
+  phongVert: readFileSync(join(__dirname, '/shaders/phong.vert'), 'utf-8'),
   phongFrag:
     lightingShader +
-    fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
-  fontVert: fs.readFileSync(__dirname + '/shaders/font.vert', 'utf-8'),
-  fontFrag: fs.readFileSync(__dirname + '/shaders/font.frag', 'utf-8'),
-  lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
-  lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8'),
-  pointVert: fs.readFileSync(__dirname + '/shaders/point.vert', 'utf-8'),
-  pointFrag: fs.readFileSync(__dirname + '/shaders/point.frag', 'utf-8')
+    readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
+  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  lineVert: readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
+  lineFrag: readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
+  pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
+  pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
 
 /**
