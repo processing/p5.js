@@ -1,6 +1,6 @@
 var { expect } = require('chai');
 var constants = require('../../src/core/constants.js');
-var helpers = require('../../src/core/helpers.js');
+import helpers from '../../src/core/helpers.js';
 
 var a = 100;
 var b = 200;
