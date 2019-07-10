@@ -10,7 +10,7 @@ import './p5.Renderer';
  * extends p5.Renderer
  */
 const styleEmpty = 'rgba(0,0,0,0)';
-// var alphaThreshold = 0.00125; // minimum visible
+// const alphaThreshold = 0.00125; // minimum visible
 
 p5.Renderer2D = function(elt, pInst, isMainCanvas) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);

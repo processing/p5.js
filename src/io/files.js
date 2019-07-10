@@ -1205,7 +1205,7 @@ p5.prototype._pWriters = [];
  *
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     var writer = createWriter('squares.txt');
+ *     const writer = createWriter('squares.txt');
  *     for (let i = 0; i < 10; i++) {
  *       writer.print(i * i);
  *     }

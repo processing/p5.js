@@ -21,8 +21,8 @@ import p5 from '../core/main';
  * @return {Number}     floating point representation of string
  * @example
  * <div><code>
- * var str = '20';
- * var diameter = float(str);
+ * let str = '20';
+ * let diameter = float(str);
  * ellipse(width / 2, height / 2, diameter, diameter);
  * </code></div>
  * <div class='norender'><code>

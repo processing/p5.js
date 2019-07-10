@@ -388,7 +388,7 @@ p5.prototype._updatePRotations = function() {
  * // Rotate the device by 90 degrees in the
  * // X-axis to change the value.
  *
- * var value = 0;
+ * let value = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);

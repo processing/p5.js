@@ -353,7 +353,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *   fill(255);
  * }
  *
- * var lights = [
+ * const lights = [
  *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
  *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
  *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
@@ -363,12 +363,12 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * ];
  *
  * function draw() {
- *   var t = millis() / 1000 + 1000;
+ *   let t = millis() / 1000 + 1000;
  *   background(0);
  *   directionalLight(color('#222'), 1, 1, 1);
  *
- *   for (var i = 0; i < lights.length; i++) {
- *     var light = lights[i];
+ *   for (let i = 0; i < lights.length; i++) {
+ *     let light = lights[i];
  *     pointLight(
  *       color(light.c),
  *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)

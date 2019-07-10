@@ -916,13 +916,13 @@ p5.prototype.quadraticVertex = function(...args) {
  *
  * function ngon(n, x, y, d) {
  *   beginShape();
- *   for (var i = 0; i < n + 1; i++) {
+ *   for (let i = 0; i < n + 1; i++) {
  *     angle = TWO_PI / n * i;
  *     px = x + sin(angle) * d / 2;
  *     py = y - cos(angle) * d / 2;
  *     vertex(px, py, 0);
  *   }
- *   for (i = 0; i < n + 1; i++) {
+ *   for (let i = 0; i < n + 1; i++) {
  *     angle = TWO_PI / n * i;
  *     px = x + sin(angle) * d / 4;
  *     py = y - cos(angle) * d / 4;

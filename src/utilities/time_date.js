@@ -16,7 +16,7 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
- * var d = day();
+ * let d = day();
  * text('Current day: \n' + d, 5, 50);
  * </code>
  * </div>
@@ -36,7 +36,7 @@ p5.prototype.day = () => new Date().getDate();
  * @example
  * <div>
  * <code>
- * var h = hour();
+ * let h = hour();
  * text('Current hour:\n' + h, 5, 50);
  * </code>
  * </div>
@@ -56,7 +56,7 @@ p5.prototype.hour = () => new Date().getHours();
  * @example
  * <div>
  * <code>
- * var m = minute();
+ * let m = minute();
  * text('Current minute: \n' + m, 5, 50);
  * </code>
  * </div>
@@ -77,7 +77,7 @@ p5.prototype.minute = () => new Date().getMinutes();
  * @example
  * <div>
  * <code>
- * var millisecond = millis();
+ * let millisecond = millis();
  * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
  * </code>
  * </div>
@@ -97,7 +97,7 @@ p5.prototype.millis = () => window.performance.now();
  * @example
  * <div>
  * <code>
- * var m = month();
+ * let m = month();
  * text('Current month: \n' + m, 5, 50);
  * </code>
  * </div>
@@ -119,7 +119,7 @@ p5.prototype.month = () =>
  * @example
  * <div>
  * <code>
- * var s = second();
+ * let s = second();
  * text('Current second: \n' + s, 5, 50);
  * </code>
  * </div>
@@ -139,7 +139,7 @@ p5.prototype.second = () => new Date().getSeconds();
  * @example
  * <div>
  * <code>
- * var y = year();
+ * let y = year();
  * text('Current year: \n' + y, 5, 50);
  * </code>
  * </div>

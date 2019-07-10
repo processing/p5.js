@@ -727,10 +727,10 @@ p5.Matrix.prototype.ortho = function(left, right, bottom, top, near, far) {
 // gluPerspective
 //
 // function _makePerspective(fovy, aspect, znear, zfar){
-//    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
-//    var ymin = -ymax;
-//    var xmin = ymin * aspect;
-//    var xmax = ymax * aspect;
+//    const ymax = znear * Math.tan(fovy * Math.PI / 360.0);
+//    const ymin = -ymax;
+//    const xmin = ymin * aspect;
+//    const xmax = ymax * aspect;
 //    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
 //  }
 
@@ -738,13 +738,13 @@ p5.Matrix.prototype.ortho = function(left, right, bottom, top, near, far) {
 //// glFrustum
 ////
 //function _makeFrustum(left, right, bottom, top, znear, zfar){
-//  var X = 2*znear/(right-left);
-//  var Y = 2*znear/(top-bottom);
-//  var A = (right+left)/(right-left);
-//  var B = (top+bottom)/(top-bottom);
-//  var C = -(zfar+znear)/(zfar-znear);
-//  var D = -2*zfar*znear/(zfar-znear);
-//  var frustrumMatrix =[
+//  const X = 2*znear/(right-left);
+//  const Y = 2*znear/(top-bottom);
+//  const A = (right+left)/(right-left);
+//  const B = (top+bottom)/(top-bottom);
+//  const C = -(zfar+znear)/(zfar-znear);
+//  const D = -2*zfar*znear/(zfar-znear);
+//  const frustrumMatrix =[
 //  X, 0, A, 0,
 //  0, Y, B, 0,
 //  0, 0, C, D,
@@ -757,7 +757,7 @@ p5.Matrix.prototype.ortho = function(left, right, bottom, top, near, far) {
 ////an identity matrix
 ////@TODO use the p5.Matrix class to abstract away our MV matrices and
 ///other math
-//var _mvMatrix =
+//const _mvMatrix =
 //[
 //  1.0,0.0,0.0,0.0,
 //  0.0,1.0,0.0,0.0,
