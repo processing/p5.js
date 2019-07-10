@@ -459,7 +459,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
     fromArray = c1.hsla;
     toArray = c2.hsla;
   } else {
-    throw new Error(mode + 'cannot be used for interpolation.');
+    throw new Error(`${mode}cannot be used for interpolation.`);
   }
 
   // Prevent extrapolation.

@@ -100,8 +100,8 @@ p5.Renderer.prototype.resize = function(w, h) {
   this.height = h;
   this.elt.width = w * this._pInst._pixelDensity;
   this.elt.height = h * this._pInst._pixelDensity;
-  this.elt.style.width = w + 'px';
-  this.elt.style.height = h + 'px';
+  this.elt.style.width = `${w}px`;
+  this.elt.style.height = `${h}px`;
   if (this._isMainCanvas) {
     this._pInst._setProperty('width', this.width);
     this._pInst._setProperty('height', this.height);
@@ -240,10 +240,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+        testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth) {
-          line = words[n] + ' ';
+          line = `${words[n]} `;
           totalHeight += p.textLeading();
         } else {
           line = testLine;
@@ -288,11 +288,11 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+        testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth && line.length > 0) {
           this._renderText(p, line, x, y, finalMaxHeight);
-          line = words[n] + ' ';
+          line = `${words[n]} `;
           y += p.textLeading();
         } else {
           line = testLine;
@@ -349,7 +349,7 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   // Adapted from http://stackoverflow.com/a/25355178
   const text = document.createElement('span');
   text.style.fontFamily = this._textFont;
-  text.style.fontSize = this._textSize + 'px';
+  text.style.fontSize = `${this._textSize}px`;
   text.innerHTML = 'ABCjgq|';
 
   const block = document.createElement('div');

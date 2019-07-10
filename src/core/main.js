@@ -533,7 +533,7 @@ class p5 {
     // Bind events to window (not using container div bc key events don't work)
 
     for (const e in this._events) {
-      const f = this['_on' + e];
+      const f = this[`_on${e}`];
       if (f) {
         const m = f.bind(this);
         window.addEventListener(e, m, { passive: false });
@@ -630,7 +630,7 @@ class p5 {
           //   https://github.com/processing/p5.js/issues/1317
 
           if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
-            throw new Error('global "' + prop + '" already exists');
+            throw new Error(`global "${prop}" already exists`);
           }
 
           // It's possible that this might throw an error because there
@@ -652,22 +652,13 @@ class p5 {
                 writable: true
               });
               log(
-                'You just changed the value of "' +
-                  prop +
-                  '", which was ' +
-                  "a p5 function. This could cause problems later if you're " +
-                  'not careful.'
+                `You just changed the value of "${prop}", which was a p5 function. This could cause problems later if you're not careful.`
               );
             }
           });
         } catch (e) {
           log(
-            'p5 had problems creating the global function "' +
-              prop +
-              '", ' +
-              'possibly because your code is already using that name as ' +
-              'a variable. You may want to rename your variable to something ' +
-              'else.'
+            `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`
           );
           globalObject[prop] = value;
         }

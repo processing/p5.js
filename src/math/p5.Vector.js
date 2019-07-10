@@ -126,7 +126,7 @@ p5.Vector = function Vector() {
  * </div>
  */
 p5.Vector.prototype.toString = function p5VectorToString() {
-  return 'p5.Vector Object : [' + this.x + ', ' + this.y + ', ' + this.z + ']';
+  return `p5.Vector Object : [${this.x}, ${this.y}, ${this.z}]`;
 };
 
 /**

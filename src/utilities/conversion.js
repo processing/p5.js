@@ -284,7 +284,7 @@ p5.prototype.hex = (n, digits) => {
       .toString(16)
       .toUpperCase();
     while (hex.length < digits) {
-      hex = '0' + hex;
+      hex = `0${hex}`;
     }
     if (hex.length >= digits) {
       hex = hex.substring(hex.length - digits, hex.length);
@@ -318,7 +318,7 @@ p5.prototype.unhex = n => {
   if (n instanceof Array) {
     return n.map(p5.prototype.unhex);
   } else {
-    return parseInt('0x' + n, 16);
+    return parseInt(`0x${n}`, 16);
   }
 };
 

@@ -125,12 +125,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
       newStyle = document.createElement('style');
       newStyle.appendChild(
         document.createTextNode(
-          '\n@font-face {' +
-            '\nfont-family: ' +
-            fontFamily +
-            ';\nsrc: url(' +
-            path +
-            ');\n}\n'
+          `\n@font-face {\nfont-family: ${fontFamily};\nsrc: url(${path});\n}\n`
         )
       );
       document.head.appendChild(newStyle);
