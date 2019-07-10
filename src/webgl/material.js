@@ -76,7 +76,7 @@ p5.prototype.loadShader = function(
   let loadedFrag = false;
   let loadedVert = false;
 
-  const onLoad = function() {
+  const onLoad = () => {
     self._decrementPreload();
     if (callback) {
       callback(loadedShader);
@@ -85,7 +85,7 @@ p5.prototype.loadShader = function(
 
   this.loadStrings(
     vertFilename,
-    function(result) {
+    result => {
       loadedShader._vertSrc = result.join('\n');
       loadedVert = true;
       if (loadedFrag) {
@@ -97,7 +97,7 @@ p5.prototype.loadShader = function(
 
   this.loadStrings(
     fragFilename,
-    function(result) {
+    result => {
       loadedShader._fragSrc = result.join('\n');
       loadedFrag = true;
       if (loadedVert) {

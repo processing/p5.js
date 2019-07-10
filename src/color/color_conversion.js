@@ -21,7 +21,7 @@ p5.ColorConversion = {};
 /**
  * Convert an HSBA array to HSLA.
  */
-p5.ColorConversion._hsbaToHSLA = function(hsba) {
+p5.ColorConversion._hsbaToHSLA = hsba => {
   const hue = hsba[0];
   let sat = hsba[1];
   const val = hsba[2];
@@ -47,7 +47,7 @@ p5.ColorConversion._hsbaToHSLA = function(hsba) {
 /**
  * Convert an HSBA array to RGBA.
  */
-p5.ColorConversion._hsbaToRGBA = function(hsba) {
+p5.ColorConversion._hsbaToRGBA = hsba => {
   const hue = hsba[0] * 6; // We will split hue into 6 sectors.
   const sat = hsba[1];
   const val = hsba[2];
@@ -102,7 +102,7 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
 /**
  * Convert an HSLA array to HSBA.
  */
-p5.ColorConversion._hslaToHSBA = function(hsla) {
+p5.ColorConversion._hslaToHSBA = hsla => {
   const hue = hsla[0];
   let sat = hsla[1];
   const li = hsla[2];
@@ -130,7 +130,7 @@ p5.ColorConversion._hslaToHSBA = function(hsla) {
  * components, and pick a convenient third one ('zest') so that we don't need
  * to calculate formal HSBA saturation.
  */
-p5.ColorConversion._hslaToRGBA = function(hsla) {
+p5.ColorConversion._hslaToRGBA = hsla => {
   const hue = hsla[0] * 6; // We will split hue into 6 sectors.
   const sat = hsla[1];
   const li = hsla[2];
@@ -152,7 +152,7 @@ p5.ColorConversion._hslaToRGBA = function(hsla) {
     const zest = 2 * li - val;
 
     // Implement projection (project onto green by default).
-    const hzvToRGB = function(hue, zest, val) {
+    const hzvToRGB = (hue, zest, val) => {
       if (hue < 0) {
         // Hue must wrap to allow projection onto red and blue.
         hue += 6;
@@ -189,7 +189,7 @@ p5.ColorConversion._hslaToRGBA = function(hsla) {
 /**
  * Convert an RGBA array to HSBA.
  */
-p5.ColorConversion._rgbaToHSBA = function(rgba) {
+p5.ColorConversion._rgbaToHSBA = rgba => {
   const red = rgba[0];
   const green = rgba[1];
   const blue = rgba[2];
@@ -228,7 +228,7 @@ p5.ColorConversion._rgbaToHSBA = function(rgba) {
 /**
  * Convert an RGBA array to HSLA.
  */
-p5.ColorConversion._rgbaToHSLA = function(rgba) {
+p5.ColorConversion._rgbaToHSLA = rgba => {
   const red = rgba[0];
   const green = rgba[1];
   const blue = rgba[2];

@@ -846,7 +846,7 @@ p5.Element._adjustListener = function(ev, fxn, ctx) {
   return this;
 };
 
-p5.Element._attachListener = function(ev, fxn, ctx) {
+p5.Element._attachListener = (ev, fxn, ctx) => {
   // detach the old listener if there was one
   if (ctx._events[ev]) {
     p5.Element._detachListener(ev, ctx);
@@ -856,7 +856,7 @@ p5.Element._attachListener = function(ev, fxn, ctx) {
   ctx._events[ev] = f;
 };
 
-p5.Element._detachListener = function(ev, ctx) {
+p5.Element._detachListener = (ev, ctx) => {
   const f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;

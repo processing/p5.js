@@ -338,7 +338,7 @@ p5.prototype.redraw = function(n) {
     if (typeof userSetup === 'undefined') {
       context.scale(context._pixelDensity, context._pixelDensity);
     }
-    const callMethod = function(f) {
+    const callMethod = f => {
       f.call(context);
     };
     for (let idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {

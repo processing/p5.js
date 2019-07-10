@@ -75,7 +75,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   // disable context menu for canvas element and add 'contextMenuDisabled'
   // flag to p5 instance
   if (this.contextMenuDisabled !== true) {
-    this.canvas.oncontextmenu = function() {
+    this.canvas.oncontextmenu = () => {
       return false;
     };
     this._setProperty('contextMenuDisabled', true);
@@ -84,7 +84,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   // disable default scrolling behavior on the canvas element and add
   // 'wheelDefaultDisabled' flag to p5 instance
   if (this.wheelDefaultDisabled !== true) {
-    this.canvas.onwheel = function() {
+    this.canvas.onwheel = () => {
       return false;
     };
     this._setProperty('wheelDefaultDisabled', true);

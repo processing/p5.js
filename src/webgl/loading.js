@@ -122,7 +122,7 @@ p5.prototype.loadModel = function(path) {
       path,
       'GET',
       'arrayBuffer',
-      function(arrayBuffer) {
+      arrayBuffer => {
         parseSTL(model, arrayBuffer);
 
         if (normalize) {
@@ -132,13 +132,13 @@ p5.prototype.loadModel = function(path) {
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
-      }.bind(this),
+      },
       failureCallback
     );
   } else if (fileType === '.obj') {
     this.loadStrings(
       path,
-      function(strings) {
+      strings => {
         parseObj(model, strings);
 
         if (normalize) {
@@ -149,7 +149,7 @@ p5.prototype.loadModel = function(path) {
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
-      }.bind(this),
+      },
       failureCallback
     );
   } else {

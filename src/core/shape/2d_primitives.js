@@ -35,13 +35,13 @@ import '../error_helpers';
  *      underlying ellipse.  This is useful if you want to do something special
  *      there (like rendering a whole ellipse instead).
  */
-p5.prototype._normalizeArcAngles = function(
+p5.prototype._normalizeArcAngles = (
   start,
   stop,
   width,
   height,
   correctForScaling
-) {
+) => {
   const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
   let separation;
 

@@ -172,7 +172,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} z2 z-coordinate of the second point
  * @return {Number}    distance between the two points
  */
-p5.prototype.dist = function(...args) {
+p5.prototype.dist = (...args) => {
   p5._validateParameters('dist', args);
   if (args.length === 4) {
     //2D
@@ -512,7 +512,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = function(...args) {
+p5.prototype.max = (...args) => {
   p5._validateParameters('max', args);
   if (args[0] instanceof Array) {
     return Math.max.apply(null, args[0]);
@@ -562,7 +562,7 @@ p5.prototype.max = function(...args) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = function(...args) {
+p5.prototype.min = (...args) => {
   p5._validateParameters('min', args);
   if (args[0] instanceof Array) {
     return Math.min.apply(null, args[0]);
@@ -740,7 +740,7 @@ p5.prototype.round = Math.round;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.sq = function(n) {
+p5.prototype.sq = n => {
   return n * n;
 };
 

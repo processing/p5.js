@@ -187,7 +187,7 @@ p5.prototype.matchAll = function(str, reg) {
 p5.prototype.nf = function(nums, left, right) {
   p5._validateParameters('nf', arguments);
   if (nums instanceof Array) {
-    return nums.map(function(x) {
+    return nums.map(x => {
       return doNf(x, left, right);
     });
   } else {
@@ -287,7 +287,7 @@ function doNf(num, left, right) {
 p5.prototype.nfc = function(num, right) {
   p5._validateParameters('nfc', arguments);
   if (num instanceof Array) {
-    return num.map(function(x) {
+    return num.map(x => {
       return doNfc(x, right);
     });
   } else {
@@ -540,7 +540,7 @@ p5.prototype.splitTokens = function(value, delims) {
   } else {
     d = /\s/g;
   }
-  return value.split(d).filter(function(n) {
+  return value.split(d).filter(n => {
     return n;
   });
 };

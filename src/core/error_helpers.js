@@ -13,7 +13,7 @@ import * as constants from './constants';
 const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = function() {};
+  p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = () => {};
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
   // for parameter validation
@@ -37,7 +37,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   for (let n = 0; n < names.length; n++) {
     class2type['[object ' + names[n] + ']'] = names[n].toLowerCase();
   }
-  const getType = function(obj) {
+  const getType = obj => {
     if (obj == null) {
       return obj + '';
     }
@@ -48,7 +48,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // -- End borrow --
 
-  const friendlyWelcome = function() {
+  const friendlyWelcome = () => {
     // p5.js brand - magenta: #ED225D
     //var astrixBgColor = 'transparent';
     //var astrixTxtColor = '#ED225D';
@@ -77,7 +77,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @return console logs
    */
-  const report = function(message, func, color) {
+  const report = (message, func, color) => {
     if (doFriendlyWelcome) {
       friendlyWelcome();
       doFriendlyWelcome = false;
@@ -160,7 +160,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {Number} errorType
    * @param  {String} filePath
    */
-  p5._friendlyFileLoadError = function(errorType, filePath) {
+  p5._friendlyFileLoadError = (errorType, filePath) => {
     const errorInfo = errorCases[errorType];
     let message;
     if (errorType === 7 || errorType === 8) {
@@ -189,7 +189,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {Number} message message to be printed
    * @param  {String} method name of method
    */
-  p5._friendlyError = function(message, method) {
+  p5._friendlyError = (message, method) => {
     report(message, method);
   };
 
@@ -207,7 +207,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // validateParameters() helper functions:
   // lookupParamDoc() for querying data.json
-  const lookupParamDoc = function(func) {
+  const lookupParamDoc = func => {
     // look for the docs in the `data.json` datastructure
 
     const ichDot = func.lastIndexOf('.');
@@ -239,7 +239,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // parse the parameter types for each overload
     const mapConstants = {};
     let maxParams = 0;
-    overloads.forEach(function(overload) {
+    overloads.forEach(overload => {
       const formats = overload.formats;
 
       // keep a record of the maximum number of arguments
@@ -257,7 +257,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       overload.minParams = minParams;
 
       // loop through each parameter position, and parse its types
-      formats.forEach(function(format) {
+      formats.forEach(format => {
         // split this parameter's types
         format.types = format.type.split('|').map(function ct(type) {
           // array
@@ -330,7 +330,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             typeParts.shift();
           }
 
-          typeParts.forEach(function(p) {
+          typeParts.forEach(p => {
             t = t && t[p];
           });
           if (t) {
@@ -347,7 +347,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     };
   };
 
-  const isNumber = function(param) {
+  const isNumber = param => {
     switch (typeof param) {
       case 'number':
         return true;
@@ -358,7 +358,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
-  const testParamType = function(param, type) {
+  const testParamType = (param, type) => {
     const isArray = param instanceof Array;
     let matches = true;
     if (type.array && isArray) {
@@ -403,7 +403,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // testType() for non-object type parameter validation
-  const testParamTypes = function(param, types) {
+  const testParamTypes = (param, types) => {
     let minScore = 9999;
     for (let i = 0; minScore > 0 && i < types.length; i++) {
       const score = testParamType(param, types[i]);
@@ -414,7 +414,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // generate a score (higher is worse) for applying these args to
   // this overload.
-  const scoreOverload = function(args, argCount, overload, minScore) {
+  const scoreOverload = (args, argCount, overload, minScore) => {
     let score = 0;
     const formats = overload.formats;
     const minParams = overload.minParams;
@@ -446,7 +446,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // gets a list of errors for this overload
-  const getOverloadErrors = function(args, argCount, overload) {
+  const getOverloadErrors = (args, argCount, overload) => {
     const formats = overload.formats;
     const minParams = overload.minParams;
 
@@ -498,7 +498,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // a custom error type, used by the mocha
   // tests when expecting validation errors
-  p5.ValidationError = (function(name) {
+  p5.ValidationError = (name => {
     const err = function(message, func) {
       this.message = message;
       this.func = func;
@@ -512,13 +512,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
   })('ValidationError');
 
   // function for generating console.log() msg
-  p5._friendlyParamError = function(errorObj, func) {
+  p5._friendlyParamError = (errorObj, func) => {
     let message;
 
     function formatType() {
       const format = errorObj.format;
       return format.types
-        .map(function(type) {
+        .map(type => {
           return type.names ? type.names.join('|') : type.name;
         })
         .join('|');
@@ -691,12 +691,12 @@ const FAQ_URL =
   '#why-cant-i-assign-variables-using-p5-functions-and-' +
   'variables-before-setup';
 
-const defineMisusedAtTopLevelCode = function() {
+const defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
 
-  const getSymbols = function(obj) {
+  const getSymbols = obj => {
     return Object.getOwnPropertyNames(obj)
-      .filter(function(name) {
+      .filter(name => {
         if (name[0] === '_') {
           return false;
         }
@@ -708,7 +708,7 @@ const defineMisusedAtTopLevelCode = function() {
 
         return true;
       })
-      .map(function(name) {
+      .map(name => {
         let type;
 
         if (typeof obj[name] === 'function') {
@@ -734,12 +734,12 @@ const defineMisusedAtTopLevelCode = function() {
   // This will ultimately ensure that we report the most specific error
   // possible to the user, e.g. advising them about HALF_PI instead of PI
   // when their code misuses the former.
-  misusedAtTopLevelCode.sort(function(a, b) {
+  misusedAtTopLevelCode.sort((a, b) => {
     return b.name.length - a.name.length;
   });
 };
 
-const helpForMisusedAtTopLevelCode = function(e, log) {
+const helpForMisusedAtTopLevelCode = (e, log) => {
   if (!log) {
     log = console.log.bind(console);
   }
@@ -757,7 +757,7 @@ const helpForMisusedAtTopLevelCode = function(e, log) {
   //  return;
   //}
 
-  misusedAtTopLevelCode.some(function(symbol) {
+  misusedAtTopLevelCode.some(symbol => {
     // Note that while just checking for the occurrence of the
     // symbol name in the error message could result in false positives,
     // a more rigorous test is difficult because different browsers
@@ -797,7 +797,7 @@ if (document.readyState !== 'complete') {
   // global (non-instance mode) p5 APIs are used at the top-level
   // scope of a file, so we'll unbind our error listener now to make
   // sure we don't log false positives later.
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
   });
 }

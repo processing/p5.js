@@ -1076,7 +1076,7 @@ p5.prototype.requestPointerLock = function() {
  * cursor gets locked / unlocked on mouse-click
  *
  */
-p5.prototype.exitPointerLock = function() {
+p5.prototype.exitPointerLock = () => {
   document.exitPointerLock();
 };
 

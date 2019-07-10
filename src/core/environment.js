@@ -42,7 +42,7 @@ const _windowPrint = window.print;
  * @alt
  * default grey canvas
  */
-p5.prototype.print = function(...args) {
+p5.prototype.print = (...args) => {
   if (!args.length) {
     _windowPrint();
   } else {
@@ -629,7 +629,7 @@ p5.prototype.pixelDensity = function(val) {
  * @alt
  * 50x50 white ellipse with black outline in center of canvas.
  */
-p5.prototype.displayDensity = function() {
+p5.prototype.displayDensity = () => {
   return window.devicePixelRatio;
 };
 
@@ -693,7 +693,7 @@ function exitFullscreen() {
  * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
  *
  */
-p5.prototype.getURL = function() {
+p5.prototype.getURL = () => {
   return location.href;
 };
 /**
@@ -714,8 +714,8 @@ p5.prototype.getURL = function() {
  *no display
  *
  */
-p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v) {
+p5.prototype.getURLPath = () => {
+  return location.pathname.split('/').filter(v => {
     return v !== '';
   });
 };
@@ -740,7 +740,7 @@ p5.prototype.getURLPath = function() {
  * no display.
  *
  */
-p5.prototype.getURLParams = function() {
+p5.prototype.getURLParams = () => {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   let m;
   const v = {};

@@ -847,7 +847,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rgb
       results = colorPatterns.HEX3.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return parseInt(color + color, 16) / 255;
         });
       results[3] = 1;
@@ -856,7 +856,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rrggbb
       results = colorPatterns.HEX6.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return parseInt(color, 16) / 255;
         });
       results[3] = 1;
@@ -865,7 +865,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rgba
       results = colorPatterns.HEX4.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return parseInt(color + color, 16) / 255;
         });
       return results;
@@ -873,7 +873,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rrggbbaa
       results = colorPatterns.HEX8.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return parseInt(color, 16) / 255;
         });
       return results;
@@ -881,7 +881,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return color / 255;
         });
       results[3] = 1;
@@ -890,7 +890,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // rgb(R%,G%,B%)
       results = colorPatterns.RGB_PERCENT.exec(str)
         .slice(1)
-        .map(function(color) {
+        .map(color => {
           return parseFloat(color) / 100;
         });
       results[3] = 1;
@@ -899,7 +899,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // rgba(R,G,B,A)
       results = colorPatterns.RGBA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 3) {
             return parseFloat(color);
           }
@@ -910,7 +910,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // rgba(R%,G%,B%,A%)
       results = colorPatterns.RGBA_PERCENT.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 3) {
             return parseFloat(color);
           }
@@ -924,7 +924,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsl(H,S,L)
       results = colorPatterns.HSL.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           }
@@ -935,7 +935,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           } else if (idx === 3) {
@@ -944,7 +944,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
           return parseInt(color, 10) / 100;
         });
     }
-    results = results.map(function(value) {
+    results = results.map(value => {
       return Math.max(Math.min(value, 1), 0);
     });
     if (results.length) {
@@ -956,7 +956,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsb(H,S,B)
       results = colorPatterns.HSB.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           }
@@ -967,7 +967,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           } else if (idx === 3) {
@@ -1008,7 +1008,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     }
 
     // Constrain components to the range [0,1].
-    results = results.map(function(value) {
+    results = results.map(value => {
       return Math.max(Math.min(value, 1), 0);
     });
   } else {

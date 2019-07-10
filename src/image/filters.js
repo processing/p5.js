@@ -33,7 +33,7 @@ const Filters = {};
  *                                   the data in thc RGBA order, with integer
  *                                   values between 0 and 255
  */
-Filters._toPixels = function(canvas) {
+Filters._toPixels = canvas => {
   if (canvas instanceof ImageData) {
     return canvas.data;
   } else {
@@ -54,7 +54,7 @@ Filters._toPixels = function(canvas) {
  * @return {Integer}                32 bit integer value representing
  *                                  ARGB value.
  */
-Filters._getARGB = function(data, i) {
+Filters._getARGB = (data, i) => {
   const offset = i * 4;
   return (
     ((data[offset + 3] << 24) & 0xff000000) |
@@ -73,7 +73,7 @@ Filters._getARGB = function(data, i) {
  * @param {Int32Array}        data   source 1D array where each value
  *                                   represents ARGB values
  */
-Filters._setPixels = function(pixels, data) {
+Filters._setPixels = (pixels, data) => {
   let offset = 0;
   for (let i = 0, al = pixels.length; i < al; i++) {
     offset = i * 4;
@@ -94,7 +94,7 @@ Filters._setPixels = function(pixels, data) {
  * @return {ImageData}               Holder of pixel data (and width and
  *                                   height) for a canvas
  */
-Filters._toImageData = function(canvas) {
+Filters._toImageData = canvas => {
   if (canvas instanceof ImageData) {
     return canvas;
   } else {
@@ -138,7 +138,7 @@ Filters._createImageData = function(width, height) {
  * @param  {function(ImageData,Object)} func   [description]
  * @param  {Object} filterParam  [description]
  */
-Filters.apply = function(canvas, func, filterParam) {
+Filters.apply = (canvas, func, filterParam) => {
   const pixelsState = canvas.getContext('2d');
   const imageData = pixelsState.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -183,7 +183,7 @@ Filters.apply = function(canvas, func, filterParam) {
  * @param  {Canvas} canvas
  * @param  {Float} level
  */
-Filters.threshold = function(canvas, level) {
+Filters.threshold = (canvas, level) => {
   const pixels = Filters._toPixels(canvas);
 
   if (level === undefined) {
@@ -215,7 +215,7 @@ Filters.threshold = function(canvas, level) {
  * @private
  * @param {Canvas} canvas
  */
-Filters.gray = function(canvas) {
+Filters.gray = canvas => {
   const pixels = Filters._toPixels(canvas);
 
   for (let i = 0; i < pixels.length; i += 4) {
@@ -235,7 +235,7 @@ Filters.gray = function(canvas) {
  * @private
  * @param {Canvas} canvas
  */
-Filters.opaque = function(canvas) {
+Filters.opaque = canvas => {
   const pixels = Filters._toPixels(canvas);
 
   for (let i = 0; i < pixels.length; i += 4) {
@@ -250,7 +250,7 @@ Filters.opaque = function(canvas) {
  * @private
  * @param  {Canvas} canvas
  */
-Filters.invert = function(canvas) {
+Filters.invert = canvas => {
   const pixels = Filters._toPixels(canvas);
 
   for (let i = 0; i < pixels.length; i += 4) {
@@ -271,7 +271,7 @@ Filters.invert = function(canvas) {
  * @param  {Canvas} canvas
  * @param  {Integer} level
  */
-Filters.posterize = function(canvas, level) {
+Filters.posterize = (canvas, level) => {
   const pixels = Filters._toPixels(canvas);
 
   if (level < 2 || level > 255) {
@@ -298,7 +298,7 @@ Filters.posterize = function(canvas, level) {
  * @param  {Canvas} canvas
  *
  */
-Filters.dilate = function(canvas) {
+Filters.dilate = canvas => {
   const pixels = Filters._toPixels(canvas);
   let currIdx = 0;
   const maxIdx = pixels.length ? pixels.length / 4 : 0;
@@ -386,7 +386,7 @@ Filters.dilate = function(canvas) {
  * @param  {Canvas} canvas
  *
  */
-Filters.erode = function(canvas) {
+Filters.erode = canvas => {
   const pixels = Filters._toPixels(canvas);
   let currIdx = 0;
   const maxIdx = pixels.length ? pixels.length / 4 : 0;
@@ -617,7 +617,7 @@ function blurARGB(canvas, radius) {
   Filters._setPixels(pixels, argb);
 }
 
-Filters.blur = function(canvas, radius) {
+Filters.blur = (canvas, radius) => {
   blurARGB(canvas, radius);
 };
 

@@ -180,7 +180,7 @@ p5.Shader.prototype._loadUniforms = function() {
   this._loadedUniforms = true;
 };
 
-p5.Shader.prototype.compile = function() {
+p5.Shader.prototype.compile = () => {
   // TODO
 };
 
@@ -243,7 +243,7 @@ p5.Shader.prototype.updateTextures = function() {
   }
 };
 
-p5.Shader.prototype.unbindTextures = function() {
+p5.Shader.prototype.unbindTextures = () => {
   // TODO: migrate stuff from material.js here
   // - OR - have material.js define this function
 };

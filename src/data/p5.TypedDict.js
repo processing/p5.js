@@ -396,7 +396,7 @@ p5.TypedDict.prototype.saveJSON = function(filename, opt) {
  * values for the Dictionary type
  */
 
-p5.TypedDict.prototype._validate = function(value) {
+p5.TypedDict.prototype._validate = value => {
   return true;
 };
 
@@ -415,7 +415,7 @@ p5.StringDict = function(...args) {
 
 p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 
-p5.StringDict.prototype._validate = function(value) {
+p5.StringDict.prototype._validate = value => {
   return typeof value === 'string';
 };
 
@@ -439,7 +439,7 @@ p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
  * values for the Dictionary type
  */
 
-p5.NumberDict.prototype._validate = function(value) {
+p5.NumberDict.prototype._validate = value => {
   return typeof value === 'number';
 };
 

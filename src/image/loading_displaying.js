@@ -74,11 +74,11 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     mode: 'cors'
   });
 
-  fetch(path, req).then(function(response) {
+  fetch(path, req).then(response => {
     // GIF section
     if (response.headers.get('content-type').indexOf('image/gif') !== -1) {
       response.arrayBuffer().then(
-        function(arrayBuffer) {
+        arrayBuffer => {
           if (arrayBuffer) {
             const byteArray = new Uint8Array(arrayBuffer);
             _createGif(
@@ -86,13 +86,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
               pImg,
               successCallback,
               failureCallback,
-              function(pImg) {
+              (pImg => {
                 self._decrementPreload();
-              }.bind(self)
+              }).bind(self)
             );
           }
         },
-        function(e) {
+        e => {
           if (typeof failureCallback === 'function') {
             failureCallback(e);
           } else {
@@ -104,7 +104,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       // Non-GIF Section
       const img = new Image();
 
-      img.onload = function() {
+      img.onload = () => {
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
 
@@ -117,7 +117,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         self._decrementPreload();
       };
 
-      img.onerror = function(e) {
+      img.onerror = e => {
         p5._friendlyFileLoadError(0, img.src);
         if (typeof failureCallback === 'function') {
           failureCallback(e);
@@ -166,7 +166,7 @@ function _createGif(
   // of the frames, which would be minor for all but the strangest GIFs
   let averageDelay = 0;
   if (numFrames > 1) {
-    const loadGIFFrameIntoImage = function(frameNum, gifReader) {
+    const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {

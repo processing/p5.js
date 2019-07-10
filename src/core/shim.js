@@ -6,17 +6,17 @@
 // requestanimationframe-for-smart-er-animating
 // requestAnimationFrame polyfill by Erik Möller
 // fixes from Paul Irish and Tino Zijdel
-window.requestAnimationFrame = (function() {
+window.requestAnimationFrame = (() => {
   return (
     window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
-    function(callback, element) {
+    ((callback, element) => {
       // should '60' here be framerate?
       window.setTimeout(callback, 1000 / 60);
-    }
+    })
   );
 })();
 
@@ -27,7 +27,7 @@ window.requestAnimationFrame = (function() {
  * Enumerable set to false to protect for...in from
  * Uint8ClampedArray.prototype pollution.
  */
-(function() {
+(() => {
   'use strict';
   if (
     typeof Uint8ClampedArray !== 'undefined' &&
@@ -50,18 +50,18 @@ window.requestAnimationFrame = (function() {
  * It will return the target object.
  * Modified from https://github.com/ljharb/object.assign
  */
-(function() {
+(() => {
   'use strict';
   if (!Object.assign) {
     const keys = Object.keys;
     const defineProperty = Object.defineProperty;
-    const canBeObject = function(obj) {
+    const canBeObject = obj => {
       return typeof obj !== 'undefined' && obj !== null;
     };
     const hasSymbols =
       typeof Symbol === 'function' && typeof Symbol() === 'symbol';
     const propIsEnumerable = Object.prototype.propertyIsEnumerable;
-    const isEnumerableOn = function(obj) {
+    const isEnumerableOn = obj => {
       return function isEnumerable(prop) {
         return propIsEnumerable.call(obj, prop);
       };

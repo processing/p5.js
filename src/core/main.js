@@ -228,7 +228,7 @@ const p5 = function(sketch, node, sync) {
     this._events.devicemotion = null;
   }
 
-  this._start = function() {
+  this._start = () => {
     // Find node if id given
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
@@ -273,7 +273,7 @@ const p5 = function(sketch, node, sync) {
       this._setup();
       this._draw();
     }
-  }.bind(this);
+  };
 
   this._runIfPreloadsAreDone = function() {
     const context = this._isGlobal ? window : this;
@@ -297,12 +297,12 @@ const p5 = function(sketch, node, sync) {
   };
 
   this._wrapPreload = function(obj, fnName) {
-    return function(...args) {
+    return (...args) => {
       //increment counter
       this._incrementPreload();
       //call original function
       return this._registeredPreloadMethods[fnName].apply(obj, args);
-    }.bind(this);
+    };
   };
 
   this._incrementPreload = function() {
@@ -310,7 +310,7 @@ const p5 = function(sketch, node, sync) {
     context._setProperty('_preloadCount', context._preloadCount + 1);
   };
 
-  this._setup = function() {
+  this._setup = () => {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
@@ -348,9 +348,9 @@ const p5 = function(sketch, node, sync) {
     }
     this._lastFrameTime = window.performance.now();
     this._setupDone = true;
-  }.bind(this);
+  };
 
-  this._draw = function() {
+  this._draw = () => {
     const now = window.performance.now();
     const time_since_last = now - this._lastFrameTime;
     const target_time_between_frames = 1000 / this._targetFrameRate;
@@ -394,14 +394,14 @@ const p5 = function(sketch, node, sync) {
     if (this._loop) {
       this._requestAnimId = window.requestAnimationFrame(this._draw);
     }
-  }.bind(this);
+  };
 
-  this._setProperty = function(prop, value) {
+  this._setProperty = (prop, value) => {
     this[prop] = value;
     if (this._isGlobal) {
       window[prop] = value;
     }
-  }.bind(this);
+  };
 
   /**
    * Removes the entire p5 sketch. This will remove the canvas and any
@@ -428,7 +428,7 @@ const p5 = function(sketch, node, sync) {
    * nothing displayed
    *
    */
-  this.remove = function() {
+  this.remove = () => {
     const loadingScreen = document.getElementById(this._loadingScreenId);
     if (loadingScreen) {
       loadingScreen.parentNode.removeChild(loadingScreen);
@@ -460,7 +460,7 @@ const p5 = function(sketch, node, sync) {
 
       // call any registered remove functions
       const self = this;
-      this._registeredMethods.remove.forEach(function(f) {
+      this._registeredMethods.remove.forEach(f => {
         if (typeof f !== 'undefined') {
           f.call(self);
         }
@@ -486,7 +486,7 @@ const p5 = function(sketch, node, sync) {
       }
       p5.instance = null;
     }
-  }.bind(this);
+  };
 
   // call any registered init functions
   this._registeredMethods.init.forEach(function(f) {
@@ -542,15 +542,15 @@ const p5 = function(sketch, node, sync) {
     }
   }
 
-  const focusHandler = function() {
+  const focusHandler = () => {
     this._setProperty('focused', true);
-  }.bind(this);
-  const blurHandler = function() {
+  };
+  const blurHandler = () => {
     this._setProperty('focused', false);
-  }.bind(this);
+  };
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
-  this.registerMethod('remove', function() {
+  this.registerMethod('remove', () => {
     window.removeEventListener('focus', focusHandler);
     window.removeEventListener('blur', blurHandler);
   });
@@ -625,7 +625,7 @@ p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 p5.prototype._registeredPreloadMethods = {};
 
-p5.prototype.registerPreloadMethod = function(fnString, obj) {
+p5.prototype.registerPreloadMethod = (fnString, obj) => {
   // obj = obj || p5.prototype;
   if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
     p5.prototype._preloadMethods[fnString] = obj;
@@ -645,7 +645,7 @@ p5.prototype.registerMethod = function(name, m) {
 // way to redefine what "global" means for the binding function so it
 // can be used in scenarios like unit testing where the window object
 // might not exist
-p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
+p5.prototype._createFriendlyGlobalFunctionBinder = options => {
   options = options || {};
 
   const globalObject = options.globalObject || window;
@@ -658,7 +658,7 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
     print: true
   };
 
-  return function(prop, value) {
+  return (prop, value) => {
     if (
       !p5.disableFriendlyErrors &&
       typeof IS_MINIFIED === 'undefined' &&

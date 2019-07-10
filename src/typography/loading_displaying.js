@@ -89,7 +89,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
   const p5Font = new p5.Font(this);
 
   const self = this;
-  opentype.load(path, function(err, font) {
+  opentype.load(path, (err, font) => {
     if (err) {
       p5._friendlyFileLoadError(4, path);
       if (typeof onError !== 'undefined') {

@@ -164,7 +164,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
-p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
+p5.RendererGL.prototype._setAttributeDefaults = pInst => {
   const defaults = {
     alpha: true,
     depth: true,
@@ -252,7 +252,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
-    setTimeout(function() {
+    setTimeout(() => {
       callback.apply(window._renderer, options);
     }, 0);
   }
@@ -602,7 +602,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   this.curStrokeColor = color._array;
 };
 
-p5.RendererGL.prototype.strokeCap = function(cap) {
+p5.RendererGL.prototype.strokeCap = cap => {
   // @TODO : to be implemented
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
@@ -1211,7 +1211,7 @@ p5.RendererGL.prototype._bindBuffer = function(
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._flatten = function(arr) {
+p5.RendererGL.prototype._flatten = arr => {
   //when empty, return empty
   if (arr.length === 0) {
     return [];
@@ -1249,7 +1249,7 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._vToNArray = function(arr) {
+p5.RendererGL.prototype._vToNArray = arr => {
   const ret = [];
   for (let i = 0; i < arr.length; i++) {
     const item = arr[i];
@@ -1337,7 +1337,7 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 };
 
 // function to calculate BezierVertex Coefficients
-p5.RendererGL.prototype._bezierCoefficients = function(t) {
+p5.RendererGL.prototype._bezierCoefficients = t => {
   const t2 = t * t;
   const t3 = t2 * t;
   const mt = 1 - t;
@@ -1347,7 +1347,7 @@ p5.RendererGL.prototype._bezierCoefficients = function(t) {
 };
 
 // function to calculate QuadraticVertex Coefficients
-p5.RendererGL.prototype._quadraticCoefficients = function(t) {
+p5.RendererGL.prototype._quadraticCoefficients = t => {
   const t2 = t * t;
   const mt = 1 - t;
   const mt2 = mt * mt;

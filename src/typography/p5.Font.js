@@ -108,18 +108,20 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, opts) {
     const yCoords = [];
     const scale = this._scale(fontSize);
 
-    this.font.forEachGlyph(str, x, y, fontSize, opts, function(
-      glyph,
-      gX,
-      gY,
-      gFontSize
-    ) {
-      const gm = glyph.getMetrics();
-      xCoords.push(gX + gm.xMin * scale);
-      xCoords.push(gX + gm.xMax * scale);
-      yCoords.push(gY + -gm.yMin * scale);
-      yCoords.push(gY + -gm.yMax * scale);
-    });
+    this.font.forEachGlyph(
+      str,
+      x,
+      y,
+      fontSize,
+      opts,
+      (glyph, gX, gY, gFontSize) => {
+        const gm = glyph.getMetrics();
+        xCoords.push(gX + gm.xMin * scale);
+        xCoords.push(gX + gm.xMax * scale);
+        yCoords.push(gY + -gm.yMin * scale);
+        yCoords.push(gY + -gm.yMax * scale);
+      }
+    );
 
     minX = Math.min.apply(null, xCoords);
     minY = Math.min.apply(null, yCoords);
@@ -814,7 +816,7 @@ function path2curve(path, path2) {
   const pcoms2 = []; // path commands of original path p2
   let ii;
 
-  const processPath = function(path, d, pcom) {
+  const processPath = (path, d, pcom) => {
       let nx;
       let ny;
       const tq = { T: 1, Q: 1 };
@@ -874,7 +876,7 @@ function path2curve(path, path2) {
       }
       return path;
     },
-    fixArc = function(pp, i) {
+    fixArc = (pp, i) => {
       if (pp[i].length > 7) {
         pp[i].shift();
         const pi = pp[i];
@@ -889,7 +891,7 @@ function path2curve(path, path2) {
         ii = Math.max(p.length, (p2 && p2.length) || 0);
       }
     },
-    fixM = function(path1, path2, a1, a2, i) {
+    fixM = (path1, path2, a1, a2, i) => {
       if (path1 && path2 && path1[i][0] === 'M' && path2[i][0] !== 'M') {
         path2.splice(i, 0, ['M', a2.x, a2.y]);
         a1.bx = 0;
@@ -975,7 +977,7 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
   let res = [];
   let xy;
 
-  const rotate = function(x, y, rad) {
+  const rotate = (x, y, rad) => {
     const X = x * Math.cos(rad) - y * Math.sin(rad),
       Y = x * Math.sin(rad) + y * Math.cos(rad);
     return { x: X, y: Y };

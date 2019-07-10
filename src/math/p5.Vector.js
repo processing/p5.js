@@ -1455,7 +1455,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  * </code>
  * </div>
  */
-p5.Vector.fromAngles = function(theta, phi, length) {
+p5.Vector.fromAngles = (theta, phi, length) => {
   if (typeof length === 'undefined') {
     length = 1;
   }

@@ -264,7 +264,7 @@ p5.prototype.tan = function(angle) {
  * </div>
  *
  */
-p5.prototype.degrees = function(angle) {
+p5.prototype.degrees = angle => {
   return angle * constants.RAD_TO_DEG;
 };
 
@@ -289,7 +289,7 @@ p5.prototype.degrees = function(angle) {
  * </code>
  * </div>
  */
-p5.prototype.radians = function(angle) {
+p5.prototype.radians = angle => {
   return angle * constants.DEG_TO_RAD;
 };
 

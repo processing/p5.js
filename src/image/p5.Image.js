@@ -500,7 +500,7 @@ p5.Image.prototype.resize = function(width, height) {
   if (this.gifProperties) {
     const props = this.gifProperties;
     //adapted from github.com/LinusU/resize-image-data
-    const nearestNeighbor = function(src, dst) {
+    const nearestNeighbor = (src, dst) => {
       let pos = 0;
       for (let y = 0; y < dst.height; y++) {
         for (let x = 0; x < dst.width; x++) {

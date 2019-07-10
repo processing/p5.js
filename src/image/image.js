@@ -189,12 +189,12 @@ p5.prototype.saveCanvas = function() {
       break;
   }
 
-  htmlCanvas.toBlob(function(blob) {
+  htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
 };
 
-p5.prototype.saveGif = function(pImg, filename) {
+p5.prototype.saveGif = (pImg, filename) => {
   const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
@@ -302,12 +302,12 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 
   const makeFrame = p5.prototype._makeFrame;
   const cnv = this._curElement.elt;
-  const frameFactory = setInterval(function() {
+  const frameFactory = setInterval(() => {
     makeFrame(fName + count, ext, cnv);
     count++;
   }, 1000 / fps);
 
-  setTimeout(function() {
+  setTimeout(() => {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);

@@ -31,7 +31,7 @@ const PERLIN_SIZE = 4095;
 let perlin_octaves = 4; // default to medium smooth
 let perlin_amp_falloff = 0.5; // 50% reduction/octave
 
-const scaled_cosine = function(i) {
+const scaled_cosine = i => {
   return 0.5 * (1.0 - Math.cos(i * Math.PI));
 };
 
@@ -104,7 +104,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *
  */
 
-p5.prototype.noise = function(x, y, z) {
+p5.prototype.noise = (x, y, z) => {
   y = y || 0;
   z = z || 0;
 
@@ -241,7 +241,7 @@ p5.prototype.noise = function(x, y, z) {
  * 2 vertical grey smokey patterns affected my mouse x-position and noise.
  *
  */
-p5.prototype.noiseDetail = function(lod, falloff) {
+p5.prototype.noiseDetail = (lod, falloff) => {
   if (lod > 0) {
     perlin_octaves = lod;
   }
@@ -279,10 +279,10 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  * vertical grey lines drawing in pattern affected by noise.
  *
  */
-p5.prototype.noiseSeed = function(seed) {
+p5.prototype.noiseSeed = seed => {
   // Linear Congruential Generator
   // Variant of a Lehman Generator
-  const lcg = (function() {
+  const lcg = (() => {
     // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
     // m is basically chosen to be large (as it is the max period)
     // and for its relationships to a and c
