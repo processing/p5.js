@@ -6,8 +6,8 @@
 
 'use strict';
 
-var p5 = require('./main');
-var constants = require('./constants');
+import p5 from './main';
+import constants from './constants';
 
 /**
  * Thin wrapper around a renderer, to be used for creating a
@@ -182,4 +182,4 @@ p5.Graphics.prototype.remove = function() {
   }
 };
 
-module.exports = p5.Graphics;
+export default p5.Graphics;

@@ -7,7 +7,7 @@
  */
 
 'use strict';
-var p5 = require('../core/main');
+import p5 from '../core/main';
 /**
  *
  * Stores a value in local storage under the key name.

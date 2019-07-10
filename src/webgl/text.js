@@ -1,9 +1,9 @@
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Shader');
-require('./p5.RendererGL.Retained');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import './p5.Shader';
+import './p5.RendererGL.Retained';
 
 // Text/Typography
 // @TODO:

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  *  A TableRow object represents a single row of data values,
@@ -347,4 +347,4 @@ p5.TableRow.prototype.getString = function(column) {
   }
 };
 
-module.exports = p5;
+export default p5;

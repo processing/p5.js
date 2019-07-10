@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 ////////////////////////////////////////////////////////////////////////////////
 // p5.Prototype Methods
@@ -1180,4 +1180,4 @@ p5.prototype.setCamera = function(cam) {
   );
 };
 
-module.exports = p5.Camera;
+export default p5.Camera;

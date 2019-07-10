@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  *  Table Options
@@ -1339,4 +1339,4 @@ p5.Table.prototype.getArray = function() {
   return tableArray;
 };
 
-module.exports = p5;
+export default p5;

@@ -13,8 +13,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
+import p5 from '../core/main';
+import Filters from './filters';
 
 /*
  * Class methods
@@ -1163,4 +1163,4 @@ p5.Image.prototype.delay = function(d) {
   }
 };
 
-module.exports = p5.Image;
+export default p5.Image;

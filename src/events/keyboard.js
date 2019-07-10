@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
@@ -404,4 +404,4 @@ p5.prototype._areDownKeys = function() {
   return false;
 };
 
-module.exports = p5;
+export default p5;

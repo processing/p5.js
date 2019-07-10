@@ -15,7 +15,7 @@
  * interchangeably.
  */
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 p5.ColorConversion = {};
 
 /**
@@ -270,4 +270,4 @@ p5.ColorConversion._rgbaToHSLA = function(rgba) {
   return [hue / 6, sat, li / 2, rgba[3]];
 };
 
-module.exports = p5.ColorConversion;
+export default p5.ColorConversion;

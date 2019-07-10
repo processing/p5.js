@@ -10,11 +10,11 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-require('whatwg-fetch');
+import p5 from '../core/main';
+import 'whatwg-fetch';
 require('es6-promise').polyfill();
-var fetchJsonp = require('fetch-jsonp');
-require('../core/error_helpers');
+import fetchJsonp from 'fetch-jsonp';
+import '../core/error_helpers';
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.
@@ -1900,4 +1900,4 @@ function destroyClickedElement(event) {
   document.body.removeChild(event.target);
 }
 
-module.exports = p5;
+export default p5;

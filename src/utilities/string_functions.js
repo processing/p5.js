@@ -7,8 +7,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-require('../core/error_helpers');
+import p5 from '../core/main';
+import '../core/error_helpers';
 
 //return p5; //LM is this a mistake?
 
@@ -579,4 +579,4 @@ p5.prototype.trim = function(str) {
   }
 };
 
-module.exports = p5;
+export default p5;

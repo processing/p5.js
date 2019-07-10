@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Converts a string to its floating point representation. The contents of a
@@ -328,4 +328,4 @@ p5.prototype.unhex = function(n) {
   }
 };
 
-module.exports = p5;
+export default p5;

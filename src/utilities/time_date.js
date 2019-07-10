@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/day">day()</a> function
@@ -164,4 +164,4 @@ p5.prototype.year = function() {
   return new Date().getFullYear();
 };
 
-module.exports = p5;
+export default p5;

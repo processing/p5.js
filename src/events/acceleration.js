@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * The system variable deviceOrientation always contains the orientation of
@@ -746,4 +746,4 @@ p5.prototype._handleMotion = function() {
   }
 };
 
-module.exports = p5;
+export default p5;

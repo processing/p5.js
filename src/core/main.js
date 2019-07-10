@@ -7,10 +7,10 @@
 
 'use strict';
 
-require('./shim');
+import './shim';
 
 // Core needs the PVariables object
-var constants = require('./constants');
+import constants from './constants';
 
 /**
  * This is the p5 instance constructor.
@@ -723,4 +723,4 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   };
 };
 
-module.exports = p5;
+export default p5;

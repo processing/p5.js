@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-require('./p5.Geometry');
+import p5 from '../core/main';
+import './p5.Geometry';
 
 /**
  * Load a 3d model from an OBJ or STL file.
@@ -622,4 +622,4 @@ p5.prototype.model = function(model) {
   }
 };
 
-module.exports = p5;
+export default p5;

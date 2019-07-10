@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
@@ -359,4 +359,4 @@ p5.prototype.redraw = function(n) {
   }
 };
 
-module.exports = p5;
+export default p5;

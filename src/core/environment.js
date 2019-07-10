@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('./main');
-var C = require('./constants');
+import p5 from './main';
+import C from './constants';
 
 var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
@@ -753,4 +753,4 @@ p5.prototype.getURLParams = function() {
   return v;
 };
 
-module.exports = p5;
+export default p5;

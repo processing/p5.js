@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Sets the current alignment for drawing text. Accepts two
@@ -289,4 +289,4 @@ p5.prototype._updateTextMetrics = function() {
   return this._renderer._updateTextMetrics();
 };
 
-module.exports = p5;
+export default p5;

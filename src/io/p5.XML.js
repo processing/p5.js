@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * XML is a representation of an XML object, able to parse XML code. Use
@@ -867,4 +867,4 @@ p5.XML.prototype.serialize = function() {
   return xmlSerializer.serializeToString(this.DOM);
 };
 
-module.exports = p5;
+export default p5;

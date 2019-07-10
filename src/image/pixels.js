@@ -7,9 +7,9 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
-require('../color/p5.Color');
+import p5 from '../core/main';
+import Filters from './filters';
+import '../color/p5.Color';
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -659,4 +659,4 @@ p5.prototype.updatePixels = function(x, y, w, h) {
   this._renderer.updatePixels(x, y, w, h);
 };
 
-module.exports = p5;
+export default p5;

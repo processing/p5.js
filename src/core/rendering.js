@@ -6,11 +6,11 @@
 
 'use strict';
 
-var p5 = require('./main');
-var constants = require('./constants');
-require('./p5.Graphics');
-require('./p5.Renderer2D');
-require('../webgl/p5.RendererGL');
+import p5 from './main';
+import constants from './constants';
+import './p5.Graphics';
+import './p5.Renderer2D';
+import '../webgl/p5.RendererGL';
 var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 var defaultClass = 'p5Canvas';
 
@@ -315,4 +315,4 @@ p5.prototype.blendMode = function(mode) {
   this._renderer.blendMode(mode);
 };
 
-module.exports = p5;
+export default p5;

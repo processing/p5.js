@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /**
  *
@@ -1080,4 +1080,4 @@ p5.prototype.exitPointerLock = function() {
   document.exitPointerLock();
 };
 
-module.exports = p5;
+export default p5;

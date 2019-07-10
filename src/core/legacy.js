@@ -10,7 +10,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+import p5 from './main';
 
 p5.prototype.pushStyle = function() {
   throw new Error('pushStyle() not used, see push()');
@@ -36,4 +36,4 @@ p5.prototype.pushMatrix = function() {
   throw new Error('pushMatrix() not used, see push()');
 };
 
-module.exports = p5;
+export default p5;

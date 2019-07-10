@@ -6,7 +6,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Base class for all elements added to a sketch, including canvas,
@@ -870,4 +870,4 @@ p5.Element.prototype._setProperty = function(prop, value) {
   this[prop] = value;
 };
 
-module.exports = p5.Element;
+export default p5.Element;

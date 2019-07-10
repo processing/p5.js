@@ -8,9 +8,9 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import './p5.Color';
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
@@ -748,4 +748,4 @@ p5.prototype.stroke = function() {
   return this;
 };
 
-module.exports = p5;
+export default p5;

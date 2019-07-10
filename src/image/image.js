@@ -11,8 +11,8 @@
  */
 'use strict';
 
-var p5 = require('../core/main');
-var omggif = require('omggif');
+import p5 from '../core/main';
+import omggif from 'omggif';
 
 // This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
@@ -359,4 +359,4 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   frames.push(thisFrame);
 };
 
-module.exports = p5;
+export default p5;

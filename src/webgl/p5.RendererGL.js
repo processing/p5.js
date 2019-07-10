@@ -1,13 +1,13 @@
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var libtess = require('libtess');
-require('./p5.Shader');
-require('./p5.Camera');
-require('../core/p5.Renderer');
-require('./p5.Matrix');
-var fs = require('fs');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import libtess from 'libtess';
+import './p5.Shader';
+import './p5.Camera';
+import '../core/p5.Renderer';
+import './p5.Matrix';
+import fs from 'fs';
 
 var lightingShader = fs.readFileSync(
   __dirname + '/shaders/lighting.glsl',
@@ -1363,4 +1363,4 @@ p5.RendererGL.prototype._bezierToCatmull = function(w) {
   return p;
 };
 
-module.exports = p5.RendererGL;
+export default p5.RendererGL;

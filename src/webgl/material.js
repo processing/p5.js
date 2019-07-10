@@ -7,9 +7,9 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Texture');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import './p5.Texture';
 
 /**
  * Loads a custom shader from the provided vertex and fragment
@@ -863,4 +863,4 @@ p5.RendererGL.prototype._applyBlendMode = function() {
   }
 };
 
-module.exports = p5;
+export default p5;

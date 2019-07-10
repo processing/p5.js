@@ -2,8 +2,8 @@
 //in WEBGL.
 'use strict';
 
-var p5 = require('../core/main');
-require('./p5.RendererGL');
+import p5 from '../core/main';
+import './p5.RendererGL';
 
 // a render buffer definition
 function BufferDef(size, src, dst, attr, map) {
@@ -284,4 +284,4 @@ p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
   this._pixelsState._pixelsDirty = true;
 };
 
-module.exports = p5.RendererGL;
+export default p5.RendererGL;

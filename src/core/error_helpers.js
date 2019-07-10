@@ -5,8 +5,8 @@
 
 'use strict';
 
-var p5 = require('./main');
-var constants = require('./constants');
+import p5 from './main';
+import constants from './constants';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
@@ -798,4 +798,4 @@ if (document.readyState !== 'complete') {
   });
 }
 
-module.exports = p5;
+export default p5;

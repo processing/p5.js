@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 // variables used for random number generators
 var randomStateProp = '_lcg_random_state';
@@ -231,4 +231,4 @@ p5.prototype.randomGaussian = function(mean, sd) {
   return y1 * s + m;
 };
 
-module.exports = p5;
+export default p5;

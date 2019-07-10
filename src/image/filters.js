@@ -621,4 +621,4 @@ Filters.blur = function(canvas, radius) {
   blurARGB(canvas, radius);
 };
 
-module.exports = Filters;
+export default Filters;

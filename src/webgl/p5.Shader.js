@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Shader class for WEBGL Mode
@@ -507,4 +507,4 @@ p5.Shader.prototype.enableAttrib = function(
   return this;
 };
 
-module.exports = p5.Shader;
+export default p5.Shader;

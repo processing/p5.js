@@ -9,9 +9,9 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var color_conversion = require('./color_conversion');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import color_conversion from './color_conversion';
 
 /**
  * Each color stores the color mode and level maxes that applied at the
@@ -1018,4 +1018,4 @@ p5.Color._parseInputs = function(r, g, b, a) {
   return results;
 };
 
-module.exports = p5.Color;
+export default p5.Color;

@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
@@ -836,4 +836,4 @@ function hypot(x, y, z) {
   return Math.sqrt(sum) * max;
 }
 
-module.exports = p5;
+export default p5;

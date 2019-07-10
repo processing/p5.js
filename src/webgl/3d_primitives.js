@@ -7,9 +7,9 @@
  */
 
 'use strict';
-var p5 = require('../core/main');
-require('./p5.Geometry');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import './p5.Geometry';
+import constants from '../core/constants';
 
 /**
  * Draw a plane with given a width and height
@@ -1585,4 +1585,4 @@ p5.RendererGL.prototype.image = function(
   this._pInst.pop();
 };
 
-module.exports = p5;
+export default p5;

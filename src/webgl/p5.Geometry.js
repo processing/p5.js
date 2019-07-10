@@ -2,7 +2,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 /**
  * p5 Geometry class
  * @class p5.Geometry
@@ -291,4 +291,4 @@ p5.Geometry.prototype.normalize = function() {
   return this;
 };
 
-module.exports = p5.Geometry;
+export default p5.Geometry;

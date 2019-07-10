@@ -6,8 +6,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /**
  * A class to describe a two or three dimensional vector, specifically
@@ -1748,4 +1748,4 @@ p5.Vector.mag = function mag(vecT) {
   return Math.sqrt(magSq);
 };
 
-module.exports = p5.Vector;
+export default p5.Vector;

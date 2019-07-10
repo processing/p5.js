@@ -7,11 +7,11 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var opentype = require('opentype.js');
+import p5 from '../core/main';
+import constants from '../core/constants';
+import opentype from 'opentype.js';
 
-require('../core/error_helpers');
+import '../core/error_helpers';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
@@ -303,4 +303,4 @@ p5.prototype.textFont = function(theFont, theSize) {
   return this._renderer._textFont;
 };
 
-module.exports = p5;
+export default p5;

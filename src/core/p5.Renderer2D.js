@@ -1,10 +1,10 @@
 'use strict';
 
-var p5 = require('./main');
-var constants = require('./constants');
-var filters = require('../image/filters');
+import p5 from './main';
+import constants from './constants';
+import filters from '../image/filters';
 
-require('./p5.Renderer');
+import './p5.Renderer';
 
 /**
  * p5.Renderer2D
@@ -1277,4 +1277,4 @@ p5.Renderer2D.prototype.pop = function(style) {
   p5.Renderer.prototype.pop.call(this, style);
 };
 
-module.exports = p5.Renderer2D;
+export default p5.Renderer2D;

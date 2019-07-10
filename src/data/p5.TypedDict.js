@@ -11,7 +11,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  *
@@ -683,4 +683,4 @@ p5.NumberDict.prototype.maxKey = function() {
   return this._keyTest(-1);
 };
 
-module.exports = p5.TypedDict;
+export default p5.TypedDict;

@@ -7,8 +7,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /**
  * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking
@@ -566,4 +566,4 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
   };
 };
 
-module.exports = p5;
+export default p5;

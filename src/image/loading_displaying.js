@@ -7,13 +7,13 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
-var canvas = require('../core/helpers');
-var constants = require('../core/constants');
-var omggif = require('omggif');
+import p5 from '../core/main';
+import Filters from './filters';
+import canvas from '../core/helpers';
+import constants from '../core/constants';
+import omggif from 'omggif';
 
-require('../core/error_helpers');
+import '../core/error_helpers';
 
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
@@ -663,4 +663,4 @@ p5.prototype.imageMode = function(m) {
   }
 };
 
-module.exports = p5;
+export default p5;

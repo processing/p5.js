@@ -13,8 +13,8 @@
  */
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /**
  * Begin shape drawing.  This is a helpful way of generating
@@ -380,4 +380,4 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   shader.unbindShader();
 };
 
-module.exports = p5.RendererGL;
+export default p5.RendererGL;

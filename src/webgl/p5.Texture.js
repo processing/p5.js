@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /**
  * Texture class for WEBGL Mode
@@ -350,4 +350,4 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   this.unbindTexture();
 };
 
-module.exports = p5.Texture;
+export default p5.Texture;

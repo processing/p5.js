@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../main');
-var constants = require('../constants');
+import p5 from '../main';
+import constants from '../constants';
 var shapeKind = null;
 var vertices = [];
 var contourVertices = [];
@@ -980,4 +980,4 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

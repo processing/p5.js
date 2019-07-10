@@ -1,6 +1,6 @@
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * _globalInit

@@ -6,8 +6,8 @@
 
 'use strict';
 
-var p5 = require('./main');
-var constants = require('../core/constants');
+import p5 from './main';
+import constants from '../core/constants';
 
 /**
  * Main graphics and rendering context, as well as the base API
@@ -404,4 +404,4 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 
-module.exports = p5.Renderer;
+export default p5.Renderer;

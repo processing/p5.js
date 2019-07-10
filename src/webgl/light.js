@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Creates an ambient light with a color
@@ -401,4 +401,4 @@ p5.prototype.lightFalloff = function(
   return this;
 };
 
-module.exports = p5;
+export default p5;

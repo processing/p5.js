@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * The system variable touches[] contains an array of the positions of all
@@ -299,4 +299,4 @@ p5.prototype._ontouchend = function(e) {
   }
 };
 
-module.exports = p5;
+export default p5;

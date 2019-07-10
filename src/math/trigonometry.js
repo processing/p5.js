@@ -8,8 +8,8 @@
 
 'use strict';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import constants from '../core/constants';
 
 /*
  * all DEGREES/RADIANS conversion should be done in the p5 instance
@@ -374,4 +374,4 @@ p5.prototype._fromRadians = function(angle) {
   return angle;
 };
 
-module.exports = p5;
+export default p5;

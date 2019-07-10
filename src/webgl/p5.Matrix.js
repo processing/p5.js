@@ -9,7 +9,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 var GLMAT_ARRAY_TYPE = Array;
 var isMatrixArray = function(x) {
@@ -773,4 +773,4 @@ p5.Matrix.prototype.ortho = function(left, right, bottom, top, near, far) {
 //  0.0,0.0,0.0,1.0
 //];
 
-module.exports = p5.Matrix;
+export default p5.Matrix;

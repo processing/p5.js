@@ -20,7 +20,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 var PERLIN_YWRAPB = 4;
 var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
@@ -318,4 +318,4 @@ p5.prototype.noiseSeed = function(seed) {
   }
 };
 
-module.exports = p5;
+export default p5;

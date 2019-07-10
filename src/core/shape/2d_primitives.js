@@ -8,10 +8,10 @@
 
 'use strict';
 
-var p5 = require('../main');
-var constants = require('../constants');
-var canvas = require('../helpers');
-require('../error_helpers');
+import p5 from '../main';
+import constants from '../constants';
+import canvas from '../helpers';
+import '../error_helpers';
 
 /**
  * This function does 3 things:
@@ -626,4 +626,4 @@ p5.prototype.triangle = function() {
   return this;
 };
 
-module.exports = p5;
+export default p5;

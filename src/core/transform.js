@@ -8,7 +8,7 @@
 
 'use strict';
 
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -527,4 +527,4 @@ p5.prototype.translate = function(x, y, z) {
   return this;
 };
 
-module.exports = p5;
+export default p5;
