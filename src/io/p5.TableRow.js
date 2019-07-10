@@ -23,15 +23,15 @@ import p5 from '../core/main';
  *  @param {String} [separator] comma separated values (csv) by default
  */
 p5.TableRow = function(str, separator) {
-  var arr = [];
-  var obj = {};
+  let arr = [];
+  const obj = {};
   if (str) {
     separator = separator || ',';
     arr = str.split(separator);
   }
-  for (var i = 0; i < arr.length; i++) {
-    var key = i;
-    var val = arr[i];
+  for (let i = 0; i < arr.length; i++) {
+    const key = i;
+    const val = arr[i];
     obj[key] = val;
   }
   this.arr = arr;
@@ -82,7 +82,7 @@ p5.TableRow = function(str, separator) {
 p5.TableRow.prototype.set = function(column, value) {
   // if typeof column is string, use .obj
   if (typeof column === 'string') {
-    var cPos = this.table.columns.indexOf(column); // index of columnID
+    const cPos = this.table.columns.indexOf(column); // index of columnID
     if (cPos >= 0) {
       this.obj[column] = value;
       this.arr[cPos] = value;
@@ -93,7 +93,7 @@ p5.TableRow.prototype.set = function(column, value) {
     // if typeof column is number, use .arr
     if (column < this.table.columns.length) {
       this.arr[column] = value;
-      var cTitle = this.table.columns[column];
+      const cTitle = this.table.columns[column];
       this.obj[cTitle] = value;
     } else {
       throw new Error(
@@ -143,7 +143,7 @@ p5.TableRow.prototype.set = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setNum = function(column, value) {
-  var floatVal = parseFloat(value);
+  const floatVal = parseFloat(value);
   this.set(column, floatVal);
 };
 
@@ -188,7 +188,7 @@ p5.TableRow.prototype.setNum = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setString = function(column, value) {
-  var stringVal = value.toString();
+  const stringVal = value.toString();
   this.set(column, stringVal);
 };
 
@@ -283,7 +283,7 @@ p5.TableRow.prototype.get = function(column) {
  * no image displayed
  */
 p5.TableRow.prototype.getNum = function(column) {
-  var ret;
+  let ret;
   if (typeof column === 'string') {
     ret = parseFloat(this.obj[column]);
   } else {

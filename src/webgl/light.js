@@ -71,7 +71,7 @@ import p5 from '../core/main';
 p5.prototype.ambientLight = function(v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
-  var color = this.color.apply(this, arguments);
+  const color = this.color.apply(this, arguments);
 
   this._renderer.ambientLightColors.push(
     color._array[0],
@@ -148,15 +148,15 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   p5._validateParameters('directionalLight', arguments);
 
   //@TODO: check parameters number
-  var color;
+  let color;
   if (v1 instanceof p5.Color) {
     color = v1;
   } else {
     color = this.color(v1, v2, v3);
   }
 
-  var _x, _y, _z;
-  var v = arguments[arguments.length - 1];
+  let _x, _y, _z;
+  const v = arguments[arguments.length - 1];
   if (typeof v === 'number') {
     _x = arguments[arguments.length - 3];
     _y = arguments[arguments.length - 2];
@@ -168,7 +168,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   }
 
   // normalize direction
-  var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+  const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
   this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
   this._renderer.directionalLightColors.push(
@@ -253,15 +253,15 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   p5._validateParameters('pointLight', arguments);
 
   //@TODO: check parameters number
-  var color;
+  let color;
   if (v1 instanceof p5.Color) {
     color = v1;
   } else {
     color = this.color(v1, v2, v3);
   }
 
-  var _x, _y, _z;
-  var v = arguments[arguments.length - 1];
+  let _x, _y, _z;
+  const v = arguments[arguments.length - 1];
   if (typeof v === 'number') {
     _x = arguments[arguments.length - 3];
     _y = arguments[arguments.length - 2];

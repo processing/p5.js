@@ -23,7 +23,7 @@ import * as constants from '../core/constants';
 p5.Texture = function(renderer, obj) {
   this._renderer = renderer;
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
   this.src = obj;
   this.glTex = undefined;
@@ -49,7 +49,7 @@ p5.Texture = function(renderer, obj) {
   this.isImageData =
     typeof ImageData !== 'undefined' && obj instanceof ImageData;
 
-  var textureData = this._getTextureDataFromSource();
+  const textureData = this._getTextureDataFromSource();
   this.width = textureData.width;
   this.height = textureData.height;
 
@@ -58,7 +58,7 @@ p5.Texture = function(renderer, obj) {
 };
 
 p5.Texture.prototype._getTextureDataFromSource = function() {
-  var textureData;
+  let textureData;
   if (this.isSrcP5Image) {
     // param is a p5.Image
     textureData = this.src.canvas;
@@ -83,7 +83,7 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
  * @method init
  */
 p5.Texture.prototype.init = function(data) {
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   this.glTex = gl.createTexture();
 
   this.glWrapS = this._renderer.textureWrapX;
@@ -103,7 +103,7 @@ p5.Texture.prototype.init = function(data) {
   ) {
     // assign a 1x1 empty texture initially, because data is not yet ready,
     // so that no errors occur in gl console!
-    var tmpdata = new Uint8Array([1, 1, 1, 1]);
+    const tmpdata = new Uint8Array([1, 1, 1, 1]);
     gl.texImage2D(
       this.glTarget,
       0,
@@ -136,15 +136,15 @@ p5.Texture.prototype.init = function(data) {
  * @method update
  */
 p5.Texture.prototype.update = function() {
-  var data = this.src;
+  const data = this.src;
   if (data.width === 0 || data.height === 0) {
     return false; // nothing to do!
   }
 
-  var textureData = this._getTextureDataFromSource();
-  var updated = false;
+  const textureData = this._getTextureDataFromSource();
+  let updated = false;
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   // pull texture from data, make sure width & height are appropriate
   if (textureData.width !== this.width || textureData.height !== this.height) {
     updated = true;
@@ -228,7 +228,7 @@ p5.Texture.prototype.update = function() {
 p5.Texture.prototype.bindTexture = function() {
   // bind texture using gl context + glTarget and
   // generated gl texture object
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   gl.bindTexture(this.glTarget, this.glTex);
 
   return this;
@@ -240,7 +240,7 @@ p5.Texture.prototype.bindTexture = function() {
  */
 p5.Texture.prototype.unbindTexture = function() {
   // unbind per above, disable texturing on glTarget
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
   gl.bindTexture(this.glTarget, null);
 };
 
@@ -256,7 +256,7 @@ p5.Texture.prototype.unbindTexture = function() {
  * @todo implement mipmapping filters
  */
 p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
   if (downScale === constants.NEAREST) {
     this.glMinFilter = gl.NEAREST;
@@ -286,17 +286,17 @@ p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
  * @param {String} wrapY Controls the vertical texture wrapping behavior
  */
 p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
   // for webgl 1 we need to check if the texture is power of two
   // if it isn't we will set the wrap mode to CLAMP
   // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
-  var isPowerOfTwo = function(x) {
+  const isPowerOfTwo = function(x) {
     return (x & (x - 1)) === 0;
   };
 
-  var widthPowerOfTwo = isPowerOfTwo(this.width);
-  var heightPowerOfTwo = isPowerOfTwo(this.height);
+  const widthPowerOfTwo = isPowerOfTwo(this.width);
+  const heightPowerOfTwo = isPowerOfTwo(this.height);
 
   if (wrapX === constants.REPEAT) {
     if (widthPowerOfTwo && heightPowerOfTwo) {

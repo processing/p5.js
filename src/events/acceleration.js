@@ -359,13 +359,13 @@ p5.prototype.pRotationY = 0;
  */
 p5.prototype.pRotationZ = 0;
 
-var startAngleX = 0;
-var startAngleY = 0;
-var startAngleZ = 0;
+let startAngleX = 0;
+let startAngleY = 0;
+let startAngleZ = 0;
 
-var rotateDirectionX = 'clockwise';
-var rotateDirectionY = 'clockwise';
-var rotateDirectionZ = 'clockwise';
+let rotateDirectionX = 'clockwise';
+let rotateDirectionY = 'clockwise';
+let rotateDirectionZ = 'clockwise';
 
 p5.prototype.pRotateDirectionX = undefined;
 p5.prototype.pRotateDirectionY = undefined;
@@ -413,8 +413,8 @@ p5.prototype._updatePRotations = function() {
  */
 p5.prototype.turnAxis = undefined;
 
-var move_threshold = 0.5;
-var shake_threshold = 30;
+let move_threshold = 0.5;
+let shake_threshold = 30;
 
 /**
  * The <a href="#/p5/setMoveThreshold">setMoveThreshold()</a> function is used to set the movement threshold for
@@ -648,7 +648,7 @@ p5.prototype._handleMotion = function() {
   } else if (window.orientation === undefined) {
     this._setProperty('deviceOrientation', 'undefined');
   }
-  var deviceMoved = this.deviceMoved || window.deviceMoved;
+  const deviceMoved = this.deviceMoved || window.deviceMoved;
   if (typeof deviceMoved === 'function') {
     if (
       Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
@@ -658,15 +658,15 @@ p5.prototype._handleMotion = function() {
       deviceMoved();
     }
   }
-  var deviceTurned = this.deviceTurned || window.deviceTurned;
+  const deviceTurned = this.deviceTurned || window.deviceTurned;
   if (typeof deviceTurned === 'function') {
     // The angles given by rotationX etc is from range -180 to 180.
     // The following will convert them to 0 to 360 for ease of calculation
     // of cases when the angles wrapped around.
     // _startAngleX will be converted back at the end and updated.
-    var wRX = this.rotationX + 180;
-    var wPRX = this.pRotationX + 180;
-    var wSAX = startAngleX + 180;
+    const wRX = this.rotationX + 180;
+    const wPRX = this.pRotationX + 180;
+    let wSAX = startAngleX + 180;
     if ((wRX - wPRX > 0 && wRX - wPRX < 270) || wRX - wPRX < -270) {
       rotateDirectionX = 'clockwise';
     } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
@@ -684,9 +684,9 @@ p5.prototype._handleMotion = function() {
     startAngleX = wSAX - 180;
 
     // Y-axis is identical to X-axis except for changing some names.
-    var wRY = this.rotationY + 180;
-    var wPRY = this.pRotationY + 180;
-    var wSAY = startAngleY + 180;
+    const wRY = this.rotationY + 180;
+    const wPRY = this.pRotationY + 180;
+    let wSAY = startAngleY + 180;
     if ((wRY - wPRY > 0 && wRY - wPRY < 270) || wRY - wPRY < -270) {
       rotateDirectionY = 'clockwise';
     } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
@@ -731,10 +731,10 @@ p5.prototype._handleMotion = function() {
     this.pRotateDirectionZ = rotateDirectionZ;
     this._setProperty('turnAxis', undefined);
   }
-  var deviceShaken = this.deviceShaken || window.deviceShaken;
+  const deviceShaken = this.deviceShaken || window.deviceShaken;
   if (typeof deviceShaken === 'function') {
-    var accelerationChangeX;
-    var accelerationChangeY;
+    let accelerationChangeX;
+    let accelerationChangeY;
     // Add accelerationChangeZ if acceleration change on Z is needed
     if (this.pAccelerationX !== null) {
       accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);

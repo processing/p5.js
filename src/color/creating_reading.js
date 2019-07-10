@@ -325,7 +325,7 @@ p5.prototype.color = function() {
     return arguments[0]; // Do nothing if argument is already a color object.
   }
 
-  var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+  const args = arguments[0] instanceof Array ? arguments[0] : arguments;
   return new p5.Color(this, args);
 };
 
@@ -442,10 +442,10 @@ p5.prototype.hue = function(c) {
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
-  var mode = this._colorMode;
-  var maxes = this._colorMaxes;
-  var l0, l1, l2, l3;
-  var fromArray, toArray;
+  const mode = this._colorMode;
+  const maxes = this._colorMaxes;
+  let l0, l1, l2, l3;
+  let fromArray, toArray;
 
   if (mode === constants.RGB) {
     fromArray = c1.levels.map(function(level) {

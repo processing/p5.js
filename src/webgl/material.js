@@ -70,13 +70,13 @@ p5.prototype.loadShader = function(
     errorCallback = console.error;
   }
 
-  var loadedShader = new p5.Shader();
+  const loadedShader = new p5.Shader();
 
-  var self = this;
-  var loadedFrag = false;
-  var loadedVert = false;
+  const self = this;
+  let loadedFrag = false;
+  let loadedVert = false;
 
-  var onLoad = function() {
+  const onLoad = function() {
     self._decrementPreload();
     if (callback) {
       callback(loadedShader);
@@ -569,8 +569,8 @@ p5.prototype.textureWrap = function(wrapX, wrapY) {
   this._renderer.textureWrapX = wrapX;
   this._renderer.textureWrapY = wrapY;
 
-  var textures = this._renderer.textures;
-  for (var i = 0; i < textures.length; i++) {
+  const textures = this._renderer.textures;
+  for (let i = 0; i < textures.length; i++) {
     textures[i].setWrapMode(wrapX, wrapY);
   }
 };
@@ -615,7 +615,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
 
-  var color = p5.prototype.color.apply(this, arguments);
+  const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
   this._renderer._useSpecularMaterial = false;
   this._renderer._useEmissiveMaterial = false;
@@ -667,7 +667,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   this._assert3d('emissiveMaterial');
   p5._validateParameters('emissiveMaterial', arguments);
 
-  var color = p5.prototype.color.apply(this, arguments);
+  const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
   this._renderer._useSpecularMaterial = false;
   this._renderer._useEmissiveMaterial = true;
@@ -719,7 +719,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
 
-  var color = p5.prototype.color.apply(this, arguments);
+  const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
   this._renderer._useSpecularMaterial = true;
   this._renderer._useEmissiveMaterial = false;
@@ -783,9 +783,9 @@ p5.prototype.shininess = function(shine) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyColorBlend = function(colors) {
-  var gl = this.GL;
+  const gl = this.GL;
 
-  var isTexture = this.drawMode === constants.TEXTURE;
+  const isTexture = this.drawMode === constants.TEXTURE;
   if (isTexture || colors[colors.length - 1] < 1.0) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
@@ -803,7 +803,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function() {
-  var gl = this.GL;
+  const gl = this.GL;
   switch (this.curBlendMode) {
     case constants.BLEND:
     case constants.ADD:

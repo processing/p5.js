@@ -22,12 +22,12 @@ p5.ColorConversion = {};
  * Convert an HSBA array to HSLA.
  */
 p5.ColorConversion._hsbaToHSLA = function(hsba) {
-  var hue = hsba[0];
-  var sat = hsba[1];
-  var val = hsba[2];
+  const hue = hsba[0];
+  let sat = hsba[1];
+  const val = hsba[2];
 
   // Calculate lightness.
-  var li = (2 - sat) * val / 2;
+  const li = (2 - sat) * val / 2;
 
   // Convert saturation.
   if (li !== 0) {
@@ -48,20 +48,20 @@ p5.ColorConversion._hsbaToHSLA = function(hsba) {
  * Convert an HSBA array to RGBA.
  */
 p5.ColorConversion._hsbaToRGBA = function(hsba) {
-  var hue = hsba[0] * 6; // We will split hue into 6 sectors.
-  var sat = hsba[1];
-  var val = hsba[2];
+  const hue = hsba[0] * 6; // We will split hue into 6 sectors.
+  const sat = hsba[1];
+  const val = hsba[2];
 
-  var RGBA = [];
+  let RGBA = [];
 
   if (sat === 0) {
     RGBA = [val, val, val, hsba[3]]; // Return early if grayscale.
   } else {
-    var sector = Math.floor(hue);
-    var tint1 = val * (1 - sat);
-    var tint2 = val * (1 - sat * (hue - sector));
-    var tint3 = val * (1 - sat * (1 + sector - hue));
-    var red, green, blue;
+    const sector = Math.floor(hue);
+    const tint1 = val * (1 - sat);
+    const tint2 = val * (1 - sat * (hue - sector));
+    const tint3 = val * (1 - sat * (1 + sector - hue));
+    let red, green, blue;
     if (sector === 1) {
       // Yellow to green.
       red = tint2;
@@ -103,12 +103,12 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
  * Convert an HSLA array to HSBA.
  */
 p5.ColorConversion._hslaToHSBA = function(hsla) {
-  var hue = hsla[0];
-  var sat = hsla[1];
-  var li = hsla[2];
+  const hue = hsla[0];
+  let sat = hsla[1];
+  const li = hsla[2];
 
   // Calculate brightness.
-  var val;
+  let val;
   if (li < 0.5) {
     val = (1 + sat) * li;
   } else {
@@ -131,17 +131,17 @@ p5.ColorConversion._hslaToHSBA = function(hsla) {
  * to calculate formal HSBA saturation.
  */
 p5.ColorConversion._hslaToRGBA = function(hsla) {
-  var hue = hsla[0] * 6; // We will split hue into 6 sectors.
-  var sat = hsla[1];
-  var li = hsla[2];
+  const hue = hsla[0] * 6; // We will split hue into 6 sectors.
+  const sat = hsla[1];
+  const li = hsla[2];
 
-  var RGBA = [];
+  let RGBA = [];
 
   if (sat === 0) {
     RGBA = [li, li, li, hsla[3]]; // Return early if grayscale.
   } else {
     // Calculate brightness.
-    var val;
+    let val;
     if (li < 0.5) {
       val = (1 + sat) * li;
     } else {
@@ -149,10 +149,10 @@ p5.ColorConversion._hslaToRGBA = function(hsla) {
     }
 
     // Define zest.
-    var zest = 2 * li - val;
+    const zest = 2 * li - val;
 
     // Implement projection (project onto green by default).
-    var hzvToRGB = function(hue, zest, val) {
+    const hzvToRGB = function(hue, zest, val) {
       if (hue < 0) {
         // Hue must wrap to allow projection onto red and blue.
         hue += 6;
@@ -190,14 +190,14 @@ p5.ColorConversion._hslaToRGBA = function(hsla) {
  * Convert an RGBA array to HSBA.
  */
 p5.ColorConversion._rgbaToHSBA = function(rgba) {
-  var red = rgba[0];
-  var green = rgba[1];
-  var blue = rgba[2];
+  const red = rgba[0];
+  const green = rgba[1];
+  const blue = rgba[2];
 
-  var val = Math.max(red, green, blue);
-  var chroma = val - Math.min(red, green, blue);
+  const val = Math.max(red, green, blue);
+  const chroma = val - Math.min(red, green, blue);
 
-  var hue, sat;
+  let hue, sat;
   if (chroma === 0) {
     // Return early if grayscale.
     hue = 0;
@@ -229,16 +229,16 @@ p5.ColorConversion._rgbaToHSBA = function(rgba) {
  * Convert an RGBA array to HSLA.
  */
 p5.ColorConversion._rgbaToHSLA = function(rgba) {
-  var red = rgba[0];
-  var green = rgba[1];
-  var blue = rgba[2];
+  const red = rgba[0];
+  const green = rgba[1];
+  const blue = rgba[2];
 
-  var val = Math.max(red, green, blue);
-  var min = Math.min(red, green, blue);
-  var li = val + min; // We will halve this later.
-  var chroma = val - min;
+  const val = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const li = val + min; // We will halve this later.
+  const chroma = val - min;
 
-  var hue, sat;
+  let hue, sat;
   if (chroma === 0) {
     // Return early if grayscale.
     hue = 0;

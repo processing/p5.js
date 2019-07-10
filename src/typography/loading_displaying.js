@@ -86,9 +86,9 @@ import '../core/error_helpers';
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
-  var p5Font = new p5.Font(this);
+  const p5Font = new p5.Font(this);
 
-  var self = this;
+  const self = this;
   opentype.load(path, function(err, font) {
     if (err) {
       p5._friendlyFileLoadError(4, path);
@@ -108,16 +108,18 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
-      fileNoPath = path
-        .split('\\')
-        .pop()
-        .split('/')
-        .pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'),
-      fontFamily,
-      newStyle,
-      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
+
+    const fileNoPath = path
+      .split('\\')
+      .pop()
+      .split('/')
+      .pop();
+
+    const lastDotIdx = fileNoPath.lastIndexOf('.');
+    let fontFamily;
+    let newStyle;
+    const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with p5.dom
     if (validFontTypes.indexOf(fileExt) > -1) {

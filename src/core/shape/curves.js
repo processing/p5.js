@@ -182,7 +182,7 @@ p5.prototype.bezierDetail = function(d) {
 p5.prototype.bezierPoint = function(a, b, c, d, t) {
   p5._validateParameters('bezierPoint', arguments);
 
-  var adjustedT = 1 - t;
+  const adjustedT = 1 - t;
   return (
     Math.pow(adjustedT, 3) * a +
     3 * Math.pow(adjustedT, 2) * t * b +
@@ -259,7 +259,7 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
 p5.prototype.bezierTangent = function(a, b, c, d, t) {
   p5._validateParameters('bezierTangent', arguments);
 
-  var adjustedT = 1 - t;
+  const adjustedT = 1 - t;
   return (
     3 * d * Math.pow(t, 2) -
     3 * c * Math.pow(t, 2) +
@@ -490,7 +490,7 @@ p5.prototype.curveTightness = function(t) {
 p5.prototype.curvePoint = function(a, b, c, d, t) {
   p5._validateParameters('curvePoint', arguments);
 
-  var t3 = t * t * t,
+  const t3 = t * t * t,
     t2 = t * t,
     f1 = -0.5 * t3 + t2 - 0.5 * t,
     f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
@@ -537,7 +537,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 p5.prototype.curveTangent = function(a, b, c, d, t) {
   p5._validateParameters('curveTangent', arguments);
 
-  var t2 = t * t,
+  const t2 = t * t,
     f1 = -3 * t2 / 2 + 2 * t - 0.5,
     f2 = 9 * t2 / 2 - 5 * t,
     f3 = -9 * t2 / 2 + 4 * t + 0.5,

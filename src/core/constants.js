@@ -6,7 +6,7 @@
 
 'use strict';
 
-var _PI = Math.PI;
+const _PI = Math.PI;
 
 // GRAPHICS RENDERER
 /**

@@ -11,13 +11,13 @@
 import p5 from './main';
 import * as C from './constants';
 
-var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
 p5.prototype._frameRate = 0;
 p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
-var _windowPrint = window.print;
+const _windowPrint = window.print;
 
 /**
  * The <a href="#/p5/print">print()</a> function writes to the console area of your browser.
@@ -200,13 +200,13 @@ p5.prototype.focused = document.hasFocus();
  *
  */
 p5.prototype.cursor = function(type, x, y) {
-  var cursor = 'auto';
-  var canvas = this._curElement.elt;
+  let cursor = 'auto';
+  const canvas = this._curElement.elt;
   if (standardCursors.indexOf(type) > -1) {
     // Standard css cursor
     cursor = type;
   } else if (typeof type === 'string') {
-    var coords = '';
+    let coords = '';
     if (x && y && (typeof x === 'number' && typeof y === 'number')) {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -450,8 +450,8 @@ p5.prototype.windowHeight = getWindowHeight();
 p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   if (typeof context.windowResized === 'function') {
     executeDefault = context.windowResized(e);
     if (executeDefault !== undefined && !executeDefault) {
@@ -594,7 +594,7 @@ p5.prototype.fullscreen = function(val) {
  */
 p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
-  var returnValue;
+  let returnValue;
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
@@ -634,7 +634,7 @@ p5.prototype.displayDensity = function() {
 };
 
 function launchFullscreen(element) {
-  var enabled =
+  const enabled =
     document.fullscreenEnabled ||
     document.webkitFullscreenEnabled ||
     document.mozFullScreenEnabled ||
@@ -741,9 +741,9 @@ p5.prototype.getURLPath = function() {
  *
  */
 p5.prototype.getURLParams = function() {
-  var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
-  var m;
-  var v = {};
+  const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+  let m;
+  const v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;

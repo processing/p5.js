@@ -176,7 +176,7 @@ p5.prototype.boolean = function(n) {
  * @return {Number[]}                  array of byte representation of values
  */
 p5.prototype.byte = function(n) {
-  var nn = p5.prototype.int(n, 10);
+  const nn = p5.prototype.int(n, 10);
   if (typeof nn === 'number') {
     return (nn + 128) % 256 - 128;
   } else if (nn instanceof Array) {
@@ -280,13 +280,13 @@ p5.prototype.hex = function(n, digits) {
       return p5.prototype.hex(n, digits);
     });
   } else if (n === Infinity || n === -Infinity) {
-    var c = n === Infinity ? 'F' : '0';
+    const c = n === Infinity ? 'F' : '0';
     return c.repeat(digits);
   } else if (typeof n === 'number') {
     if (n < 0) {
       n = 0xffffffff + n + 1;
     }
-    var hex = Number(n)
+    let hex = Number(n)
       .toString(16)
       .toUpperCase();
     while (hex.length < digits) {

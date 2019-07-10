@@ -63,7 +63,7 @@ p5.prototype.storeItem = function(key, value) {
   if (typeof value === 'undefined') {
     console.log('You cannot store undefined variables using storeItem()');
   }
-  var type = typeof value;
+  let type = typeof value;
   switch (type) {
     case 'number':
     case 'boolean':
@@ -81,7 +81,7 @@ p5.prototype.storeItem = function(key, value) {
   }
 
   localStorage.setItem(key, value);
-  var typeKey = key + 'p5TypeID';
+  const typeKey = key + 'p5TypeID';
   localStorage.setItem(typeKey, type);
 };
 
@@ -129,8 +129,8 @@ p5.prototype.storeItem = function(key, value) {
  *
  */
 p5.prototype.getItem = function(key) {
-  var value = localStorage.getItem(key);
-  var type = localStorage.getItem(key + 'p5TypeID');
+  let value = localStorage.getItem(key);
+  const type = localStorage.getItem(key + 'p5TypeID');
   if (typeof type === 'undefined') {
     console.log(
       'Unable to determine type of item stored under ' +

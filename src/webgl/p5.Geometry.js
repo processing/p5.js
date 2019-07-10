@@ -69,10 +69,10 @@ p5.Geometry.prototype.reset = function() {
  */
 p5.Geometry.prototype.computeFaces = function() {
   this.faces.length = 0;
-  var sliceCount = this.detailX + 1;
-  var a, b, c, d;
-  for (var i = 0; i < this.detailY; i++) {
-    for (var j = 0; j < this.detailX; j++) {
+  const sliceCount = this.detailX + 1;
+  let a, b, c, d;
+  for (let i = 0; i < this.detailY; i++) {
+    for (let j = 0; j < this.detailX; j++) {
       a = i * sliceCount + j; // + offset;
       b = i * sliceCount + j + 1; // + offset;
       c = (i + 1) * sliceCount + j + 1; // + offset;
@@ -86,15 +86,15 @@ p5.Geometry.prototype.computeFaces = function() {
 
 p5.Geometry.prototype._getFaceNormal = function(faceId) {
   //This assumes that vA->vB->vC is a counter-clockwise ordering
-  var face = this.faces[faceId];
-  var vA = this.vertices[face[0]];
-  var vB = this.vertices[face[1]];
-  var vC = this.vertices[face[2]];
-  var ab = p5.Vector.sub(vB, vA);
-  var ac = p5.Vector.sub(vC, vA);
-  var n = p5.Vector.cross(ab, ac);
-  var ln = p5.Vector.mag(n);
-  var sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
+  const face = this.faces[faceId];
+  const vA = this.vertices[face[0]];
+  const vB = this.vertices[face[1]];
+  const vC = this.vertices[face[2]];
+  const ab = p5.Vector.sub(vB, vA);
+  const ac = p5.Vector.sub(vC, vA);
+  const n = p5.Vector.cross(ab, ac);
+  const ln = p5.Vector.mag(n);
+  let sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
   if (sinAlpha === 0 || isNaN(sinAlpha)) {
     console.warn(
       'p5.Geometry.prototype._getFaceNormal:',
@@ -112,10 +112,10 @@ p5.Geometry.prototype._getFaceNormal = function(faceId) {
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function() {
-  var vertexNormals = this.vertexNormals;
-  var vertices = this.vertices;
-  var faces = this.faces;
-  var iv;
+  const vertexNormals = this.vertexNormals;
+  const vertices = this.vertices;
+  const faces = this.faces;
+  let iv;
 
   // initialize the vertexNormals array with empty vectors
   vertexNormals.length = 0;
@@ -125,13 +125,13 @@ p5.Geometry.prototype.computeNormals = function() {
 
   // loop through all the faces adding its normal to the normal
   // of each of its vertices
-  for (var f = 0; f < faces.length; ++f) {
-    var face = faces[f];
-    var faceNormal = this._getFaceNormal(f);
+  for (let f = 0; f < faces.length; ++f) {
+    const face = faces[f];
+    const faceNormal = this._getFaceNormal(f);
 
     // all three vertices get the normal added
-    for (var fv = 0; fv < 3; ++fv) {
-      var vertexIndex = face[fv];
+    for (let fv = 0; fv < 3; ++fv) {
+      const vertexIndex = face[fv];
       vertexNormals[vertexIndex].add(faceNormal);
     }
   }
@@ -151,9 +151,9 @@ p5.Geometry.prototype.computeNormals = function() {
  * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
-  for (var i = 0; i <= this.detailY; i++) {
-    var offset = this.detailX + 1;
-    var temp = p5.Vector.add(
+  for (let i = 0; i <= this.detailY; i++) {
+    const offset = this.detailX + 1;
+    let temp = p5.Vector.add(
       this.vertexNormals[i * offset],
       this.vertexNormals[i * offset + this.detailX]
     );
@@ -172,20 +172,20 @@ p5.Geometry.prototype.averageNormals = function() {
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
   //average the north pole
-  var sum = new p5.Vector(0, 0, 0);
-  for (var i = 0; i < this.detailX; i++) {
+  let sum = new p5.Vector(0, 0, 0);
+  for (let i = 0; i < this.detailX; i++) {
     sum.add(this.vertexNormals[i]);
   }
   sum = p5.Vector.div(sum, this.detailX);
 
-  for (i = 0; i < this.detailX; i++) {
+  for (let i = 0; i < this.detailX; i++) {
     this.vertexNormals[i] = sum;
   }
 
   //average the south pole
   sum = new p5.Vector(0, 0, 0);
   for (
-    i = this.vertices.length - 1;
+    let i = this.vertices.length - 1;
     i > this.vertices.length - 1 - this.detailX;
     i--
   ) {
@@ -194,7 +194,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   sum = p5.Vector.div(sum, this.detailX);
 
   for (
-    i = this.vertices.length - 1;
+    let i = this.vertices.length - 1;
     i > this.vertices.length - 1 - this.detailX;
     i--
   ) {
@@ -211,11 +211,11 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 p5.Geometry.prototype._makeTriangleEdges = function() {
   this.edges.length = 0;
   if (Array.isArray(this.strokeIndices)) {
-    for (var i = 0, max = this.strokeIndices.length; i < max; i++) {
+    for (let i = 0, max = this.strokeIndices.length; i < max; i++) {
       this.edges.push(this.strokeIndices[i]);
     }
   } else {
-    for (var j = 0; j < this.faces.length; j++) {
+    for (let j = 0; j < this.faces.length; j++) {
       this.edges.push([this.faces[j][0], this.faces[j][1]]);
       this.edges.push([this.faces[j][1], this.faces[j][2]]);
       this.edges.push([this.faces[j][2], this.faces[j][0]]);
@@ -235,19 +235,19 @@ p5.Geometry.prototype._edgesToVertices = function() {
   this.lineVertices.length = 0;
   this.lineNormals.length = 0;
 
-  for (var i = 0; i < this.edges.length; i++) {
-    var begin = this.vertices[this.edges[i][0]];
-    var end = this.vertices[this.edges[i][1]];
-    var dir = end
+  for (let i = 0; i < this.edges.length; i++) {
+    const begin = this.vertices[this.edges[i][0]];
+    const end = this.vertices[this.edges[i][1]];
+    const dir = end
       .copy()
       .sub(begin)
       .normalize();
-    var a = begin.array();
-    var b = begin.array();
-    var c = end.array();
-    var d = end.array();
-    var dirAdd = dir.array();
-    var dirSub = dir.array();
+    const a = begin.array();
+    const b = begin.array();
+    const c = end.array();
+    const d = end.array();
+    const dirAdd = dir.array();
+    const dirSub = dir.array();
     // below is used to displace the pair of vertices at beginning and end
     // in opposite directions
     dirAdd.push(1);
@@ -266,10 +266,10 @@ p5.Geometry.prototype._edgesToVertices = function() {
 p5.Geometry.prototype.normalize = function() {
   if (this.vertices.length > 0) {
     // Find the corners of our bounding box
-    var maxPosition = this.vertices[0].copy();
-    var minPosition = this.vertices[0].copy();
+    const maxPosition = this.vertices[0].copy();
+    const minPosition = this.vertices[0].copy();
 
-    for (var i = 0; i < this.vertices.length; i++) {
+    for (let i = 0; i < this.vertices.length; i++) {
       maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
       minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
       maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
@@ -278,12 +278,12 @@ p5.Geometry.prototype.normalize = function() {
       minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
     }
 
-    var center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
-    var dist = p5.Vector.sub(maxPosition, minPosition);
-    var longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
-    var scale = 200 / longestDist;
+    const center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
+    const dist = p5.Vector.sub(maxPosition, minPosition);
+    const longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
+    const scale = 200 / longestDist;
 
-    for (i = 0; i < this.vertices.length; i++) {
+    for (let i = 0; i < this.vertices.length; i++) {
       this.vertices[i].sub(center);
       this.vertices[i].mult(scale);
     }

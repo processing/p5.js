@@ -111,9 +111,9 @@ p5.Renderer.prototype.resize = function(w, h) {
 };
 
 p5.Renderer.prototype.get = function(x, y, w, h) {
-  var pixelsState = this._pixelsState;
-  var pd = pixelsState._pixelDensity;
-  var canvas = this.canvas;
+  const pixelsState = this._pixelsState;
+  const pd = pixelsState._pixelDensity;
+  const canvas = this.canvas;
 
   if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
@@ -135,7 +135,7 @@ p5.Renderer.prototype.get = function(x, y, w, h) {
     // get(x,y,w,h)
   }
 
-  var region = new p5.Image(w, h);
+  const region = new p5.Image(w, h);
   region.canvas
     .getContext('2d')
     .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
@@ -211,17 +211,17 @@ p5.Renderer.prototype.textAlign = function(h, v) {
 };
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  var p = this._pInst,
-    cars,
-    n,
-    ii,
-    jj,
-    line,
-    testLine,
-    testWidth,
-    words,
-    totalHeight,
-    finalMaxHeight = Number.MAX_VALUE;
+  const p = this._pInst;
+  let cars;
+  let n;
+  let ii;
+  let jj;
+  let line;
+  let testLine;
+  let testWidth;
+  let words;
+  let totalHeight;
+  let finalMaxHeight = Number.MAX_VALUE;
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -267,7 +267,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         break;
     }
 
-    var baselineHacked = false;
+    let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
       switch (this._textBaseline) {
         case constants.BOTTOM:
@@ -311,8 +311,9 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   } else {
     // Offset to account for vertically centering multiple lines of text - no
     // need to adjust anything for vertical align top or baseline
-    var offset = 0,
-      vAlign = p.textAlign().vertical;
+    let offset = 0;
+
+    const vAlign = p.textAlign().vertical;
     if (vAlign === constants.CENTER) {
       offset = (cars.length - 1) * p.textLeading() / 2;
     } else if (vAlign === constants.BOTTOM) {
@@ -348,17 +349,17 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   }
 
   // Adapted from http://stackoverflow.com/a/25355178
-  var text = document.createElement('span');
+  const text = document.createElement('span');
   text.style.fontFamily = this._textFont;
   text.style.fontSize = this._textSize + 'px';
   text.innerHTML = 'ABCjgq|';
 
-  var block = document.createElement('div');
+  const block = document.createElement('div');
   block.style.display = 'inline-block';
   block.style.width = '1px';
   block.style.height = '0px';
 
-  var container = document.createElement('div');
+  const container = document.createElement('div');
   container.appendChild(text);
   container.appendChild(block);
 
@@ -367,15 +368,15 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   document.body.appendChild(container);
 
   block.style.verticalAlign = 'baseline';
-  var blockOffset = calculateOffset(block);
-  var textOffset = calculateOffset(text);
-  var ascent = blockOffset[1] - textOffset[1];
+  let blockOffset = calculateOffset(block);
+  let textOffset = calculateOffset(text);
+  const ascent = blockOffset[1] - textOffset[1];
 
   block.style.verticalAlign = 'bottom';
   blockOffset = calculateOffset(block);
   textOffset = calculateOffset(text);
-  var height = blockOffset[1] - textOffset[1];
-  var descent = height - ascent;
+  const height = blockOffset[1] - textOffset[1];
+  const descent = height - ascent;
 
   document.body.removeChild(container);
 
@@ -390,7 +391,7 @@ p5.Renderer.prototype._updateTextMetrics = function() {
  * Adapted from http://stackoverflow.com/a/25355178
  */
 function calculateOffset(object) {
-  var currentLeft = 0,
+  let currentLeft = 0,
     currentTop = 0;
   if (object.offsetParent) {
     do {

@@ -10,12 +10,12 @@ import './p5.Matrix';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-var lightingShader = readFileSync(
+const lightingShader = readFileSync(
   join(__dirname, '/shaders/lighting.glsl'),
   'utf-8'
 );
 
-var defaultShaders = {
+const defaultShaders = {
   immediateVert: readFileSync(
     join(__dirname, '/shaders/immediate.vert'),
     'utf-8'
@@ -165,7 +165,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 //////////////////////////////////////////////
 
 p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
-  var defaults = {
+  const defaults = {
     alpha: true,
     depth: true,
     stencil: true,
@@ -190,7 +190,7 @@ p5.RendererGL.prototype._initContext = function() {
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
-      var gl = this.drawingContext;
+      const gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -207,22 +207,22 @@ p5.RendererGL.prototype._initContext = function() {
 //are changed with setAttributes()
 
 p5.RendererGL.prototype._resetContext = function(options, callback) {
-  var w = this.width;
-  var h = this.height;
-  var defaultId = this.canvas.id;
-  var isPGraphics = this._pInst instanceof p5.Graphics;
+  const w = this.width;
+  const h = this.height;
+  const defaultId = this.canvas.id;
+  const isPGraphics = this._pInst instanceof p5.Graphics;
 
   if (isPGraphics) {
-    var pg = this._pInst;
+    const pg = this._pInst;
     pg.canvas.parentNode.removeChild(pg.canvas);
     pg.canvas = document.createElement('canvas');
-    var node = pg._pInst._userNode || document.body;
+    const node = pg._pInst._userNode || document.body;
     node.appendChild(pg.canvas);
     p5.Element.call(pg, pg.canvas, pg._pInst);
     pg.width = w;
     pg.height = h;
   } else {
-    var c = this.canvas;
+    let c = this.canvas;
     if (c) {
       c.parentNode.removeChild(c);
     }
@@ -236,7 +236,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     this._pInst.canvas = c;
   }
 
-  var renderer = new p5.RendererGL(
+  const renderer = new p5.RendererGL(
     this._pInst.canvas,
     this._pInst,
     !isPGraphics
@@ -415,7 +415,7 @@ p5.prototype.setAttributes = function(key, value) {
     );
     return;
   }
-  var unchanged = true;
+  let unchanged = true;
   if (typeof value !== 'undefined') {
     //first time modifying the attributes
     if (this._glAttributes === null) {
@@ -439,7 +439,7 @@ p5.prototype.setAttributes = function(key, value) {
   }
 
   if (!this._setupDone) {
-    for (var x in this._renderer.gHash) {
+    for (const x in this._renderer.gHash) {
       if (this._renderer.gHash.hasOwnProperty(x)) {
         console.error(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
@@ -507,11 +507,11 @@ p5.RendererGL.prototype._update = function() {
  * [background description]
  */
 p5.RendererGL.prototype.background = function() {
-  var _col = this._pInst.color.apply(this._pInst, arguments);
-  var _r = _col.levels[0] / 255;
-  var _g = _col.levels[1] / 255;
-  var _b = _col.levels[2] / 255;
-  var _a = _col.levels[3] / 255;
+  const _col = this._pInst.color.apply(this._pInst, arguments);
+  const _r = _col.levels[0] / 255;
+  const _g = _col.levels[1] / 255;
+  const _b = _col.levels[2] / 255;
+  const _a = _col.levels[3] / 255;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
@@ -556,7 +556,7 @@ p5.RendererGL.prototype.background = function() {
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
-  var color = p5.prototype.color.apply(this._pInst, arguments);
+  const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curFillColor = color._array;
   this.drawMode = constants.FILL;
   this._useNormalMaterial = false;
@@ -598,7 +598,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   //@todo allow transparency in stroking currently doesn't have
   //any impact and causes problems with specularMaterial
   arguments[3] = 255;
-  var color = p5.prototype.color.apply(this._pInst, arguments);
+  const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
 };
 
@@ -682,8 +682,8 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.RendererGL.prototype._getPixel = function(x, y) {
-  var pixelsState = this._pixelsState;
-  var imageData, index;
+  const pixelsState = this._pixelsState;
+  let imageData, index;
   if (pixelsState._pixelsDirty) {
     imageData = new Uint8Array(4);
     // prettier-ignore
@@ -716,7 +716,7 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
  */
 
 p5.RendererGL.prototype.loadPixels = function() {
-  var pixelsState = this._pixelsState;
+  const pixelsState = this._pixelsState;
   if (!pixelsState._pixelsDirty) return;
   pixelsState._pixelsDirty = false;
 
@@ -730,14 +730,14 @@ p5.RendererGL.prototype.loadPixels = function() {
 
   //if there isn't a renderer-level temporary pixels buffer
   //make a new one
-  var pixels = pixelsState.pixels;
-  var len = this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4;
+  let pixels = pixelsState.pixels;
+  const len = this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4;
   if (!(pixels instanceof Uint8Array) || pixels.length !== len) {
     pixels = new Uint8Array(len);
     this._pixelsState._setProperty('pixels', pixels);
   }
 
-  var pd = this._pInst._pixelDensity;
+  const pd = this._pInst._pixelDensity;
   // prettier-ignore
   this.GL.readPixels(
     0, 0, this.width * pd, this.height * pd,
@@ -773,7 +773,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
   this._curCamera._resize();
 
   //resize pixels buffer
-  var pixelsState = this._pixelsState;
+  const pixelsState = this._pixelsState;
   pixelsState._pixelsDirty = true;
   if (typeof pixelsState.pixels !== 'undefined') {
     pixelsState._setProperty(
@@ -795,10 +795,10 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  var _r = arguments[0] || 0;
-  var _g = arguments[1] || 0;
-  var _b = arguments[2] || 0;
-  var _a = arguments[3] || 0;
+  const _r = arguments[0] || 0;
+  const _g = arguments[1] || 0;
+  const _b = arguments[2] || 0;
+  const _a = arguments[3] || 0;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
   this._pixelsState._pixelsDirty = true;
@@ -875,10 +875,10 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
 
 p5.RendererGL.prototype.push = function() {
   // get the base renderer style
-  var style = p5.Renderer.prototype.push.apply(this);
+  const style = p5.Renderer.prototype.push.apply(this);
 
   // add webgl-specific style properties
-  var properties = style.properties;
+  const properties = style.properties;
 
   properties.uMVMatrix = this.uMVMatrix.copy();
   properties.uPMatrix = this.uPMatrix.copy();
@@ -938,7 +938,7 @@ p5.RendererGL.prototype.resetMatrix = function() {
 
 p5.RendererGL.prototype._getImmediateStrokeShader = function() {
   // select the stroke shader to use
-  var stroke = this.userStrokeShader;
+  const stroke = this.userStrokeShader;
   if (!stroke || !stroke.isStrokeShader()) {
     return this._getLineShader();
   }
@@ -961,7 +961,7 @@ p5.RendererGL.prototype._getImmediateFillShader = function() {
     return this._getImmediateModeShader();
   }
 
-  var fill = this.userFillShader;
+  const fill = this.userFillShader;
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();
@@ -985,7 +985,7 @@ p5.RendererGL.prototype._getRetainedFillShader = function() {
     return this._getNormalShader();
   }
 
-  var fill = this.userFillShader;
+  const fill = this.userFillShader;
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();
@@ -1002,7 +1002,7 @@ p5.RendererGL.prototype._getRetainedFillShader = function() {
 
 p5.RendererGL.prototype._getImmediatePointShader = function() {
   // select the point shader to use
-  var point = this.userPointShader;
+  const point = this.userPointShader;
   if (!point || !point.isPointShader()) {
     return this._getPointShader();
   }
@@ -1106,7 +1106,7 @@ p5.RendererGL.prototype._getFontShader = function() {
 p5.RendererGL.prototype._getEmptyTexture = function() {
   if (!this._emptyTexture) {
     // a plain white texture RGBA, full alpha, single pixel.
-    var im = new p5.Image(1, 1);
+    const im = new p5.Image(1, 1);
     im.set(0, 0, 255);
     this._emptyTexture = new p5.Texture(this, im);
   }
@@ -1114,13 +1114,13 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
 };
 
 p5.RendererGL.prototype.getTexture = function(img) {
-  var textures = this.textures;
-  for (var it = 0; it < textures.length; ++it) {
-    var texture = textures[it];
+  const textures = this.textures;
+  for (let it = 0; it < textures.length; ++it) {
+    const texture = textures[it];
     if (texture.src === img) return texture;
   }
 
-  var tex = new p5.Texture(this, img);
+  const tex = new p5.Texture(this, img);
   textures.push(tex);
   return tex;
 };
@@ -1150,18 +1150,18 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
 
   fillShader.setUniform('uUseLighting', this._enableLighting);
 
-  var pointLightCount = this.pointLightColors.length / 3;
+  const pointLightCount = this.pointLightColors.length / 3;
   fillShader.setUniform('uPointLightCount', pointLightCount);
   fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
   fillShader.setUniform('uPointLightColor', this.pointLightColors);
 
-  var directionalLightCount = this.directionalLightColors.length / 3;
+  const directionalLightCount = this.directionalLightColors.length / 3;
   fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
   fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
   fillShader.setUniform('uDirectionalColor', this.directionalLightColors);
 
   // TODO: sum these here...
-  var ambientLightCount = this.ambientLightColors.length / 3;
+  const ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
 
@@ -1196,7 +1196,7 @@ p5.RendererGL.prototype._bindBuffer = function(
   if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    var data = new (type || Float32Array)(values);
+    const data = new (type || Float32Array)(values);
     this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
   }
 };
@@ -1219,11 +1219,11 @@ p5.RendererGL.prototype._flatten = function(arr) {
     //big models , load slower to avoid stack overflow
     //faster non-recursive flatten via axelduch
     //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
-    var toString = Object.prototype.toString;
-    var arrayTypeStr = '[object Array]';
-    var result = [];
-    var nodes = arr.slice();
-    var node;
+    const toString = Object.prototype.toString;
+    const arrayTypeStr = '[object Array]';
+    const result = [];
+    const nodes = arr.slice();
+    let node;
     node = nodes.pop();
     do {
       if (toString.call(node) === arrayTypeStr) {
@@ -1250,9 +1250,9 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._vToNArray = function(arr) {
-  var ret = [];
-  for (var i = 0; i < arr.length; i++) {
-    var item = arr[i];
+  const ret = [];
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
     ret.push(item.x, item.y, item.z);
   }
   return ret;
@@ -1300,7 +1300,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
     // don't really care about the flag, but need no-strip/no-fan behavior
   }
 
-  var tessy = new libtess.GluTesselator();
+  const tessy = new libtess.GluTesselator();
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
   tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
@@ -1317,14 +1317,14 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   // comment out to test normal-generation code
   this._tessy.gluTessNormal(0, 0, 1);
 
-  var triangleVerts = [];
+  const triangleVerts = [];
   this._tessy.gluTessBeginPolygon(triangleVerts);
 
-  for (var i = 0; i < contours.length; i++) {
+  for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
-    var contour = contours[i];
-    for (var j = 0; j < contour.length; j += 3) {
-      var coords = [contour[j], contour[j + 1], contour[j + 2]];
+    const contour = contours[i];
+    for (let j = 0; j < contour.length; j += 3) {
+      const coords = [contour[j], contour[j + 1], contour[j + 2]];
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();
@@ -1338,29 +1338,29 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 
 // function to calculate BezierVertex Coefficients
 p5.RendererGL.prototype._bezierCoefficients = function(t) {
-  var t2 = t * t;
-  var t3 = t2 * t;
-  var mt = 1 - t;
-  var mt2 = mt * mt;
-  var mt3 = mt2 * mt;
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const mt = 1 - t;
+  const mt2 = mt * mt;
+  const mt3 = mt2 * mt;
   return [mt3, 3 * mt2 * t, 3 * mt * t2, t3];
 };
 
 // function to calculate QuadraticVertex Coefficients
 p5.RendererGL.prototype._quadraticCoefficients = function(t) {
-  var t2 = t * t;
-  var mt = 1 - t;
-  var mt2 = mt * mt;
+  const t2 = t * t;
+  const mt = 1 - t;
+  const mt2 = mt * mt;
   return [mt2, 2 * mt * t, t2];
 };
 
 // function to convert Bezier coordinates to Catmull Rom Splines
 p5.RendererGL.prototype._bezierToCatmull = function(w) {
-  var p1 = w[1];
-  var p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
-  var p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
-  var p4 = w[2];
-  var p = [p1, p2, p3, p4];
+  const p1 = w[1];
+  const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
+  const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
+  const p4 = w[2];
+  const p = [p1, p2, p3, p4];
   return p;
 };
 

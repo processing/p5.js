@@ -22,20 +22,20 @@
 
 import p5 from '../core/main';
 
-var PERLIN_YWRAPB = 4;
-var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
-var PERLIN_ZWRAPB = 8;
-var PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
-var PERLIN_SIZE = 4095;
+const PERLIN_YWRAPB = 4;
+const PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
+const PERLIN_ZWRAPB = 8;
+const PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
+const PERLIN_SIZE = 4095;
 
-var perlin_octaves = 4; // default to medium smooth
-var perlin_amp_falloff = 0.5; // 50% reduction/octave
+let perlin_octaves = 4; // default to medium smooth
+let perlin_amp_falloff = 0.5; // 50% reduction/octave
 
-var scaled_cosine = function(i) {
+const scaled_cosine = function(i) {
   return 0.5 * (1.0 - Math.cos(i * Math.PI));
 };
 
-var perlin; // will be initialized lazily by noise() or noiseSeed()
+let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
  * Returns the Perlin noise value at specified coordinates. Perlin noise is
@@ -110,7 +110,7 @@ p5.prototype.noise = function(x, y, z) {
 
   if (perlin == null) {
     perlin = new Array(PERLIN_SIZE + 1);
-    for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+    for (let i = 0; i < PERLIN_SIZE + 1; i++) {
       perlin[i] = Math.random();
     }
   }
@@ -125,21 +125,21 @@ p5.prototype.noise = function(x, y, z) {
     z = -z;
   }
 
-  var xi = Math.floor(x),
+  let xi = Math.floor(x),
     yi = Math.floor(y),
     zi = Math.floor(z);
-  var xf = x - xi;
-  var yf = y - yi;
-  var zf = z - zi;
-  var rxf, ryf;
+  let xf = x - xi;
+  let yf = y - yi;
+  let zf = z - zi;
+  let rxf, ryf;
 
-  var r = 0;
-  var ampl = 0.5;
+  let r = 0;
+  let ampl = 0.5;
 
-  var n1, n2, n3;
+  let n1, n2, n3;
 
-  for (var o = 0; o < perlin_octaves; o++) {
-    var of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
+  for (let o = 0; o < perlin_octaves; o++) {
+    let of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
 
     rxf = scaled_cosine(xf);
     ryf = scaled_cosine(yf);
@@ -282,16 +282,16 @@ p5.prototype.noiseDetail = function(lod, falloff) {
 p5.prototype.noiseSeed = function(seed) {
   // Linear Congruential Generator
   // Variant of a Lehman Generator
-  var lcg = (function() {
+  const lcg = (function() {
     // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
     // m is basically chosen to be large (as it is the max period)
     // and for its relationships to a and c
-    var m = 4294967296;
+    const m = 4294967296;
     // a - 1 should be divisible by m's prime factors
-    var a = 1664525;
+    const a = 1664525;
     // c and m should be co-prime
-    var c = 1013904223;
-    var seed, z;
+    const c = 1013904223;
+    let seed, z;
     return {
       setSeed: function(val) {
         // pick a random seed if val is undefined or null
@@ -313,7 +313,7 @@ p5.prototype.noiseSeed = function(seed) {
 
   lcg.setSeed(seed);
   perlin = new Array(PERLIN_SIZE + 1);
-  for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+  for (let i = 0; i < PERLIN_SIZE + 1; i++) {
     perlin[i] = lcg.rand();
   }
 };

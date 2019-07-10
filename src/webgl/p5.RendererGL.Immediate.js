@@ -76,7 +76,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
  */
 p5.RendererGL.prototype.vertex = function(x, y) {
-  var z, u, v;
+  let z, u, v;
 
   // default to (x, y) mode: all other arugments assumed to be 0.
   z = u = v = 0;
@@ -99,9 +99,9 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   } else if (this.immediateMode._testIfCoplanar !== z) {
     this.immediateMode._isCoplanar = false;
   }
-  var vert = new p5.Vector(x, y, z);
+  const vert = new p5.Vector(x, y, z);
   this.immediateMode.vertices.push(vert);
-  var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
+  const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
@@ -157,24 +157,24 @@ p5.RendererGL.prototype.endShape = function(
   } else if (this.immediateMode.vertices.length > 1) {
     if (this._doStroke && this.drawMode !== constants.TEXTURE) {
       if (this.immediateMode.shapeMode === constants.TRIANGLE_STRIP) {
-        var i;
+        let i;
         for (i = 0; i < this.immediateMode.vertices.length - 2; i++) {
           this.immediateMode.edges.push([i, i + 1]);
           this.immediateMode.edges.push([i, i + 2]);
         }
         this.immediateMode.edges.push([i, i + 1]);
       } else if (this.immediateMode.shapeMode === constants.TRIANGLES) {
-        for (i = 0; i < this.immediateMode.vertices.length - 2; i = i + 3) {
+        for (let i = 0; i < this.immediateMode.vertices.length - 2; i = i + 3) {
           this.immediateMode.edges.push([i, i + 1]);
           this.immediateMode.edges.push([i + 1, i + 2]);
           this.immediateMode.edges.push([i + 2, i]);
         }
       } else if (this.immediateMode.shapeMode === constants.LINES) {
-        for (i = 0; i < this.immediateMode.vertices.length - 1; i = i + 2) {
+        for (let i = 0; i < this.immediateMode.vertices.length - 1; i = i + 2) {
           this.immediateMode.edges.push([i, i + 1]);
         }
       } else {
-        for (i = 0; i < this.immediateMode.vertices.length - 1; i++) {
+        for (let i = 0; i < this.immediateMode.vertices.length - 1; i++) {
           this.immediateMode.edges.push([i, i + 1]);
         }
       }
@@ -199,13 +199,13 @@ p5.RendererGL.prototype.endShape = function(
           this.immediateMode._isCoplanar === true)
       ) {
         this.immediateMode.shapeMode = constants.TRIANGLES;
-        var contours = [
+        const contours = [
           new Float32Array(this._vToNArray(this.immediateMode.vertices))
         ];
-        var polyTriangles = this._triangulate(contours);
+        const polyTriangles = this._triangulate(contours);
         this.immediateMode.vertices = [];
         for (
-          var j = 0, polyTriLength = polyTriangles.length;
+          let j = 0, polyTriLength = polyTriangles.length;
           j < polyTriLength;
           j = j + 3
         ) {
@@ -254,8 +254,8 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
   isContour,
   shapeKind
 ) {
-  var gl = this.GL;
-  var shader = this._getImmediateFillShader();
+  const gl = this.GL;
+  const shader = this._getImmediateFillShader();
   this._setFillUniforms(shader);
 
   // initialize the fill shader's 'aPosition' buffer
@@ -343,8 +343,8 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
 };
 
 p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
-  var gl = this.GL;
-  var shader = this._getImmediateStrokeShader();
+  const gl = this.GL;
+  const shader = this._getImmediateStrokeShader();
   this._setStrokeUniforms(shader);
 
   // initialize the stroke shader's 'aPosition' buffer

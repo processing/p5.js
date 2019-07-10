@@ -357,12 +357,12 @@ p5.prototype.scale = function(x, y, z) {
   p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
   if (x instanceof p5.Vector) {
-    var v = x;
+    const v = x;
     x = v.x;
     y = v.y;
     z = v.z;
   } else if (x instanceof Array) {
-    var rg = x;
+    const rg = x;
     x = rg[0];
     y = rg[1];
     z = rg[2] || 1;
@@ -413,7 +413,7 @@ p5.prototype.scale = function(x, y, z) {
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
-  var rad = this._toRadians(angle);
+  const rad = this._toRadians(angle);
   this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
   return this;
 };
@@ -453,7 +453,7 @@ p5.prototype.shearX = function(angle) {
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
-  var rad = this._toRadians(angle);
+  const rad = this._toRadians(angle);
   this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
   return this;
 };

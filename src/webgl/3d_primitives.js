@@ -63,14 +63,14 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     detailY = 1;
   }
 
-  var gId = 'plane|' + detailX + '|' + detailY;
+  const gId = 'plane|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
-    var _plane = function() {
-      var u, v, p;
-      for (var i = 0; i <= this.detailY; i++) {
+    const _plane = function() {
+      let u, v, p;
+      for (let i = 0; i <= this.detailY; i++) {
         v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++) {
+        for (let j = 0; j <= this.detailX; j++) {
           u = j / this.detailX;
           p = new p5.Vector(u - 0.5, v - 0.5, 0);
           this.vertices.push(p);
@@ -78,7 +78,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
         }
       }
     };
-    var planeGeom = new p5.Geometry(detailX, detailY, _plane);
+    const planeGeom = new p5.Geometry(detailX, detailY, _plane);
     planeGeom.computeFaces().computeNormals();
     if (detailX <= 1 && detailY <= 1) {
       planeGeom._makeTriangleEdges()._edgesToVertices();
@@ -137,7 +137,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     depth = height;
   }
 
-  var perPixelLighting =
+  const perPixelLighting =
     this._renderer.attributes && this._renderer.attributes.perPixelLighting;
   if (typeof detailX === 'undefined') {
     detailX = perPixelLighting ? 1 : 4;
@@ -146,10 +146,10 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     detailY = perPixelLighting ? 1 : 4;
   }
 
-  var gId = 'box|' + detailX + '|' + detailY;
+  const gId = 'box|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
-    var _box = function() {
-      var cubeIndices = [
+    const _box = function() {
+      const cubeIndices = [
         [0, 4, 2, 6], // -1, 0, 0],// -x
         [1, 3, 5, 7], // +1, 0, 0],// +x
         [0, 1, 4, 5], // 0, -1, 0],// -y
@@ -173,15 +173,15 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
         [20, 21],
         [22, 23]
       ];
-      for (var i = 0; i < cubeIndices.length; i++) {
-        var cubeIndex = cubeIndices[i];
-        var v = i * 4;
-        for (var j = 0; j < 4; j++) {
-          var d = cubeIndex[j];
+      for (let i = 0; i < cubeIndices.length; i++) {
+        const cubeIndex = cubeIndices[i];
+        const v = i * 4;
+        for (let j = 0; j < 4; j++) {
+          const d = cubeIndex[j];
           //inspired by lightgl:
           //https://github.com/evanw/lightgl.js
           //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
-          var octant = new p5.Vector(
+          const octant = new p5.Vector(
             ((d & 1) * 2 - 1) / 2,
             ((d & 2) - 1) / 2,
             ((d & 4) / 2 - 1) / 2
@@ -193,7 +193,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
         this.faces.push([v + 2, v + 1, v + 3]);
       }
     };
-    var boxGeom = new p5.Geometry(detailX, detailY, _box);
+    const boxGeom = new p5.Geometry(detailX, detailY, _box);
     boxGeom.computeNormals();
     if (detailX <= 4 && detailY <= 4) {
       boxGeom._makeTriangleEdges()._edgesToVertices();
@@ -264,7 +264,7 @@ p5.prototype.sphere = function(radius, detailX, detailY) {
  * and topRadius >= 0
  * If topRadius == 0, topCap should be false
  */
-var _truncatedCone = function(
+const _truncatedCone = function(
   bottomRadius,
   topRadius,
   height,
@@ -280,17 +280,17 @@ var _truncatedCone = function(
   detailY = detailY < 1 ? 1 : detailY;
   bottomCap = bottomCap === undefined ? true : bottomCap;
   topCap = topCap === undefined ? topRadius !== 0 : topCap;
-  var start = bottomCap ? -2 : 0;
-  var end = detailY + (topCap ? 2 : 0);
+  const start = bottomCap ? -2 : 0;
+  const end = detailY + (topCap ? 2 : 0);
   //ensure constant slant for interior vertex normals
-  var slant = Math.atan2(bottomRadius - topRadius, height);
-  var sinSlant = Math.sin(slant);
-  var cosSlant = Math.cos(slant);
-  var yy, ii, jj;
+  const slant = Math.atan2(bottomRadius - topRadius, height);
+  const sinSlant = Math.sin(slant);
+  const cosSlant = Math.cos(slant);
+  let yy, ii, jj;
   for (yy = start; yy <= end; ++yy) {
-    var v = yy / detailY;
-    var y = height * v;
-    var ringRadius;
+    let v = yy / detailY;
+    let y = height * v;
+    let ringRadius;
     if (yy < 0) {
       //for the bottomCap edge
       y = 0;
@@ -312,16 +312,16 @@ var _truncatedCone = function(
 
     y -= height / 2; //shift coordiate origin to the center of object
     for (ii = 0; ii < detailX; ++ii) {
-      var u = ii / detailX;
-      var ur = 2 * Math.PI * u;
-      var sur = Math.sin(ur);
-      var cur = Math.cos(ur);
+      const u = ii / detailX;
+      const ur = 2 * Math.PI * u;
+      const sur = Math.sin(ur);
+      const cur = Math.cos(ur);
 
       //VERTICES
       this.vertices.push(new p5.Vector(sur * ringRadius, y, cur * ringRadius));
 
       //VERTEX NORMALS
-      var vertexNormal;
+      let vertexNormal;
       if (yy < 0) {
         vertexNormal = new p5.Vector(0, -1, 0);
       } else if (yy > detailY && topRadius) {
@@ -335,10 +335,10 @@ var _truncatedCone = function(
     }
   }
 
-  var startIndex = 0;
+  let startIndex = 0;
   if (bottomCap) {
     for (jj = 0; jj < detailX; ++jj) {
-      var nextjj = (jj + 1) % detailX;
+      const nextjj = (jj + 1) % detailX;
       this.faces.push([
         startIndex + jj,
         startIndex + detailX + nextjj,
@@ -349,7 +349,7 @@ var _truncatedCone = function(
   }
   for (yy = 0; yy < detailY; ++yy) {
     for (ii = 0; ii < detailX; ++ii) {
-      var nextii = (ii + 1) % detailX;
+      const nextii = (ii + 1) % detailX;
       this.faces.push([
         startIndex + ii,
         startIndex + nextii,
@@ -436,10 +436,10 @@ p5.prototype.cylinder = function(
     bottomCap = true;
   }
 
-  var gId =
+  const gId =
     'cylinder|' + detailX + '|' + detailY + '|' + bottomCap + '|' + topCap;
   if (!this._renderer.geometryInHash(gId)) {
-    var cylinderGeom = new p5.Geometry(detailX, detailY);
+    const cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
       cylinderGeom,
       1,
@@ -517,9 +517,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
     cap = true;
   }
 
-  var gId = 'cone|' + detailX + '|' + detailY + '|' + cap;
+  const gId = 'cone|' + detailX + '|' + detailY + '|' + cap;
   if (!this._renderer.geometryInHash(gId)) {
-    var coneGeom = new p5.Geometry(detailX, detailY);
+    const coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom, 1, 0, 1, detailX, detailY, cap, false);
     if (detailX <= 24 && detailY <= 16) {
       coneGeom._makeTriangleEdges()._edgesToVertices();
@@ -588,29 +588,29 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     detailY = 16;
   }
 
-  var gId = 'ellipsoid|' + detailX + '|' + detailY;
+  const gId = 'ellipsoid|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
-    var _ellipsoid = function() {
-      for (var i = 0; i <= this.detailY; i++) {
-        var v = i / this.detailY;
-        var phi = Math.PI * v - Math.PI / 2;
-        var cosPhi = Math.cos(phi);
-        var sinPhi = Math.sin(phi);
+    const _ellipsoid = function() {
+      for (let i = 0; i <= this.detailY; i++) {
+        const v = i / this.detailY;
+        const phi = Math.PI * v - Math.PI / 2;
+        const cosPhi = Math.cos(phi);
+        const sinPhi = Math.sin(phi);
 
-        for (var j = 0; j <= this.detailX; j++) {
-          var u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          var cosTheta = Math.cos(theta);
-          var sinTheta = Math.sin(theta);
-          var p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
+        for (let j = 0; j <= this.detailX; j++) {
+          const u = j / this.detailX;
+          const theta = 2 * Math.PI * u;
+          const cosTheta = Math.cos(theta);
+          const sinTheta = Math.sin(theta);
+          const p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
           this.vertices.push(p);
           this.vertexNormals.push(p);
           this.uvs.push(u, v);
         }
       }
     };
-    var ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
+    const ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
     ellipsoidGeom.computeFaces();
     if (detailX <= 24 && detailY <= 24) {
       ellipsoidGeom._makeTriangleEdges()._edgesToVertices();
@@ -680,27 +680,31 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     detailY = 16;
   }
 
-  var tubeRatio = (tubeRadius / radius).toPrecision(4);
-  var gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
+  const tubeRatio = (tubeRadius / radius).toPrecision(4);
+  const gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
-    var _torus = function() {
-      for (var i = 0; i <= this.detailY; i++) {
-        var v = i / this.detailY;
-        var phi = 2 * Math.PI * v;
-        var cosPhi = Math.cos(phi);
-        var sinPhi = Math.sin(phi);
-        var r = 1 + tubeRatio * cosPhi;
+    const _torus = function() {
+      for (let i = 0; i <= this.detailY; i++) {
+        const v = i / this.detailY;
+        const phi = 2 * Math.PI * v;
+        const cosPhi = Math.cos(phi);
+        const sinPhi = Math.sin(phi);
+        const r = 1 + tubeRatio * cosPhi;
 
-        for (var j = 0; j <= this.detailX; j++) {
-          var u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          var cosTheta = Math.cos(theta);
-          var sinTheta = Math.sin(theta);
+        for (let j = 0; j <= this.detailX; j++) {
+          const u = j / this.detailX;
+          const theta = 2 * Math.PI * u;
+          const cosTheta = Math.cos(theta);
+          const sinTheta = Math.sin(theta);
 
-          var p = new p5.Vector(r * cosTheta, r * sinTheta, tubeRatio * sinPhi);
+          const p = new p5.Vector(
+            r * cosTheta,
+            r * sinTheta,
+            tubeRatio * sinPhi
+          );
 
-          var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+          const n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
 
           this.vertices.push(p);
           this.vertexNormals.push(n);
@@ -708,7 +712,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
         }
       }
     };
-    var torusGeom = new p5.Geometry(detailX, detailY, _torus);
+    const torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges()._edgesToVertices();
@@ -766,7 +770,7 @@ p5.RendererGL.prototype.point = function(x, y, z) {
     z = 0;
   }
 
-  var _vertex = [];
+  const _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
   this._drawPoints(_vertex, this._pointVertexBuffer);
 
@@ -774,17 +778,17 @@ p5.RendererGL.prototype.point = function(x, y, z) {
 };
 
 p5.RendererGL.prototype.triangle = function(args) {
-  var x1 = args[0],
+  const x1 = args[0],
     y1 = args[1];
-  var x2 = args[2],
+  const x2 = args[2],
     y2 = args[3];
-  var x3 = args[4],
+  const x3 = args[4],
     y3 = args[5];
 
-  var gId = 'tri';
+  const gId = 'tri';
   if (!this.geometryInHash(gId)) {
-    var _triangle = function() {
-      var vertices = [];
+    const _triangle = function() {
+      const vertices = [];
       vertices.push(new p5.Vector(0, 0, 0));
       vertices.push(new p5.Vector(0, 1, 0));
       vertices.push(new p5.Vector(1, 0, 0));
@@ -793,7 +797,7 @@ p5.RendererGL.prototype.triangle = function(args) {
       this.faces = [[0, 1, 2]];
       this.uvs = [0, 0, 0, 1, 1, 1];
     };
-    var triGeom = new p5.Geometry(1, 1, _triangle);
+    const triGeom = new p5.Geometry(1, 1, _triangle);
     triGeom._makeTriangleEdges()._edgesToVertices();
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
@@ -805,10 +809,10 @@ p5.RendererGL.prototype.triangle = function(args) {
   // this matrix multiplication transforms those two unit vectors
   // onto the required vector prior to rendering, and moves the
   // origin appropriately.
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
   try {
     // prettier-ignore
-    var mult = new p5.Matrix([
+    const mult = new p5.Matrix([
       x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
       0, 0, 1, 0,             // the resulting unit Z-axis (unchanged)
@@ -839,17 +843,17 @@ p5.RendererGL.prototype.ellipse = function(args) {
 };
 
 p5.RendererGL.prototype.arc = function(args) {
-  var x = arguments[0];
-  var y = arguments[1];
-  var width = arguments[2];
-  var height = arguments[3];
-  var start = arguments[4];
-  var stop = arguments[5];
-  var mode = arguments[6];
-  var detail = arguments[7] || 25;
+  const x = arguments[0];
+  const y = arguments[1];
+  const width = arguments[2];
+  const height = arguments[3];
+  const start = arguments[4];
+  const stop = arguments[5];
+  const mode = arguments[6];
+  const detail = arguments[7] || 25;
 
-  var shape;
-  var gId;
+  let shape;
+  let gId;
 
   // check if it is an ellipse or an arc
   if (Math.abs(stop - start) >= constants.TWO_PI) {
@@ -861,7 +865,7 @@ p5.RendererGL.prototype.arc = function(args) {
   }
 
   if (!this.geometryInHash(gId)) {
-    var _arc = function() {
+    const _arc = function() {
       this.strokeIndices = [];
 
       // if the start and stop angles are not the same, push vertices to the array
@@ -873,12 +877,12 @@ p5.RendererGL.prototype.arc = function(args) {
         }
 
         // vertices for the perimeter of the circle
-        for (var i = 0; i <= detail; i++) {
-          var u = i / detail;
-          var theta = (stop - start) * u + start;
+        for (let i = 0; i <= detail; i++) {
+          const u = i / detail;
+          const theta = (stop - start) * u + start;
 
-          var _x = 0.5 + Math.cos(theta) / 2;
-          var _y = 0.5 + Math.sin(theta) / 2;
+          const _x = 0.5 + Math.cos(theta) / 2;
+          const _y = 0.5 + Math.sin(theta) / 2;
 
           this.vertices.push(new p5.Vector(_x, _y, 0));
           this.uvs.push([_x, _y]);
@@ -928,7 +932,7 @@ p5.RendererGL.prototype.arc = function(args) {
       }
     };
 
-    var arcGeom = new p5.Geometry(detail, 1, _arc);
+    const arcGeom = new p5.Geometry(detail, 1, _arc);
     arcGeom.computeNormals();
 
     if (detail <= 50) {
@@ -940,7 +944,7 @@ p5.RendererGL.prototype.arc = function(args) {
     this.createBuffers(gId, arcGeom);
   }
 
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
 
   try {
     this.uMVMatrix.translate([x, y, 0]);
@@ -955,21 +959,21 @@ p5.RendererGL.prototype.arc = function(args) {
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  var perPixelLighting = this._pInst._glAttributes.perPixelLighting;
-  var x = args[0];
-  var y = args[1];
-  var width = args[2];
-  var height = args[3];
-  var detailX = args[4] || (perPixelLighting ? 1 : 24);
-  var detailY = args[5] || (perPixelLighting ? 1 : 16);
-  var gId = 'rect|' + detailX + '|' + detailY;
+  const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
+  const x = args[0];
+  const y = args[1];
+  const width = args[2];
+  const height = args[3];
+  const detailX = args[4] || (perPixelLighting ? 1 : 24);
+  const detailY = args[5] || (perPixelLighting ? 1 : 16);
+  const gId = 'rect|' + detailX + '|' + detailY;
   if (!this.geometryInHash(gId)) {
-    var _rect = function() {
-      for (var i = 0; i <= this.detailY; i++) {
-        var v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++) {
-          var u = j / this.detailX;
-          var p = new p5.Vector(u, v, 0);
+    const _rect = function() {
+      for (let i = 0; i <= this.detailY; i++) {
+        const v = i / this.detailY;
+        for (let j = 0; j <= this.detailX; j++) {
+          const u = j / this.detailX;
+          const p = new p5.Vector(u, v, 0);
           this.vertices.push(p);
           this.uvs.push(u, v);
         }
@@ -984,7 +988,7 @@ p5.RendererGL.prototype.rect = function(args) {
         ];
       }
     };
-    var rectGeom = new p5.Geometry(detailX, detailY, _rect);
+    const rectGeom = new p5.Geometry(detailX, detailY, _rect);
     rectGeom
       .computeFaces()
       .computeNormals()
@@ -997,7 +1001,7 @@ p5.RendererGL.prototype.rect = function(args) {
   // opposite corners at (0,0) & (1,1).
   //
   // before rendering, this square is scaled & moved to the required location.
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
   try {
     this.uMVMatrix.translate([x, y, 0]);
     this.uMVMatrix.scale(width, height, 1);
@@ -1011,7 +1015,7 @@ p5.RendererGL.prototype.rect = function(args) {
 
 // prettier-ignore
 p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
-  var gId =
+  const gId =
     'quad|' +
     x1 +
     '|' +
@@ -1037,7 +1041,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
     '|' +
     z4;
   if (!this.geometryInHash(gId)) {
-    var _quad = function() {
+    const _quad = function() {
       this.vertices.push(new p5.Vector(x1, y1, z1));
       this.vertices.push(new p5.Vector(x2, y2, z2));
       this.vertices.push(new p5.Vector(x3, y3, z3));
@@ -1045,7 +1049,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
       this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
       this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
     };
-    var quadGeom = new p5.Geometry(2, 2, _quad);
+    const quadGeom = new p5.Geometry(2, 2, _quad);
     quadGeom
       .computeNormals()
       ._makeTriangleEdges()
@@ -1083,13 +1087,13 @@ p5.RendererGL.prototype.bezier = function(
     x2 = z1;
     z1 = z2 = z3 = z4 = 0;
   }
-  var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
+  const bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
-  for (var i = 0; i <= bezierDetail; i++) {
-    var c1 = Math.pow(1 - i / bezierDetail, 3);
-    var c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
-    var c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
-    var c4 = Math.pow(i / bezierDetail, 3);
+  for (let i = 0; i <= bezierDetail; i++) {
+    const c1 = Math.pow(1 - i / bezierDetail, 3);
+    const c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
+    const c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
+    const c4 = Math.pow(i / bezierDetail, 3);
     this.vertex(
       x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
       y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
@@ -1124,24 +1128,24 @@ p5.RendererGL.prototype.curve = function(
     y2 = x2;
     z1 = z2 = z3 = z4 = 0;
   }
-  var curveDetail = this._pInst._curveDetail;
+  const curveDetail = this._pInst._curveDetail;
   this.beginShape();
-  for (var i = 0; i <= curveDetail; i++) {
-    var c1 = Math.pow(i / curveDetail, 3) * 0.5;
-    var c2 = Math.pow(i / curveDetail, 2) * 0.5;
-    var c3 = i / curveDetail * 0.5;
-    var c4 = 0.5;
-    var vx =
+  for (let i = 0; i <= curveDetail; i++) {
+    const c1 = Math.pow(i / curveDetail, 3) * 0.5;
+    const c2 = Math.pow(i / curveDetail, 2) * 0.5;
+    const c3 = i / curveDetail * 0.5;
+    const c4 = 0.5;
+    const vx =
       c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
       c2 * (2 * x1 - 5 * x2 + 4 * x3 - x4) +
       c3 * (-x1 + x3) +
       c4 * (2 * x2);
-    var vy =
+    const vy =
       c1 * (-y1 + 3 * y2 - 3 * y3 + y4) +
       c2 * (2 * y1 - 5 * y2 + 4 * y3 - y4) +
       c3 * (-y1 + y3) +
       c4 * (2 * y2);
-    var vz =
+    const vz =
       c1 * (-z1 + 3 * z2 - 3 * z3 + z4) +
       c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
       c3 * (-z1 + z3) +
@@ -1200,11 +1204,11 @@ p5.RendererGL.prototype.bezierVertex = function() {
   if (this.immediateMode._bezierVertex.length === 0) {
     throw Error('vertex() must be used once before calling bezierVertex()');
   } else {
-    var w_x = [];
-    var w_y = [];
-    var w_z = [];
-    var t, _x, _y, _z, i;
-    var argLength = arguments.length;
+    let w_x = [];
+    let w_y = [];
+    let w_z = [];
+    let t, _x, _y, _z, i;
+    const argLength = arguments.length;
 
     t = 0;
 
@@ -1214,10 +1218,10 @@ p5.RendererGL.prototype.bezierVertex = function() {
     ) {
       this._lookUpTableBezier = [];
       this._lutBezierDetail = this._pInst._curveDetail;
-      var step = 1 / this._lutBezierDetail;
-      var start = 0;
-      var end = 1;
-      var j = 0;
+      const step = 1 / this._lutBezierDetail;
+      let start = 0;
+      let end = 1;
+      let j = 0;
       while (start < 1) {
         t = parseFloat(start.toFixed(6));
         this._lookUpTableBezier[j] = this._bezierCoefficients(t);
@@ -1233,7 +1237,7 @@ p5.RendererGL.prototype.bezierVertex = function() {
       }
     }
 
-    var LUTLength = this._lookUpTableBezier.length;
+    const LUTLength = this._lookUpTableBezier.length;
 
     if (argLength === 6) {
       this.isBezier = true;
@@ -1316,11 +1320,11 @@ p5.RendererGL.prototype.quadraticVertex = function() {
   if (this.immediateMode._quadraticVertex.length === 0) {
     throw Error('vertex() must be used once before calling quadraticVertex()');
   } else {
-    var w_x = [];
-    var w_y = [];
-    var w_z = [];
-    var t, _x, _y, _z, i;
-    var argLength = arguments.length;
+    let w_x = [];
+    let w_y = [];
+    let w_z = [];
+    let t, _x, _y, _z, i;
+    const argLength = arguments.length;
 
     t = 0;
 
@@ -1330,10 +1334,10 @@ p5.RendererGL.prototype.quadraticVertex = function() {
     ) {
       this._lookUpTableQuadratic = [];
       this._lutQuadraticDetail = this._pInst._curveDetail;
-      var step = 1 / this._lutQuadraticDetail;
-      var start = 0;
-      var end = 1;
-      var j = 0;
+      const step = 1 / this._lutQuadraticDetail;
+      let start = 0;
+      let end = 1;
+      let j = 0;
       while (start < 1) {
         t = parseFloat(start.toFixed(6));
         this._lookUpTableQuadratic[j] = this._quadraticCoefficients(t);
@@ -1349,7 +1353,7 @@ p5.RendererGL.prototype.quadraticVertex = function() {
       }
     }
 
-    var LUTLength = this._lookUpTableQuadratic.length;
+    const LUTLength = this._lookUpTableQuadratic.length;
 
     if (argLength === 4) {
       this.isQuadratic = true;
@@ -1422,12 +1426,12 @@ p5.RendererGL.prototype.quadraticVertex = function() {
 };
 
 p5.RendererGL.prototype.curveVertex = function() {
-  var w_x = [];
-  var w_y = [];
-  var w_z = [];
-  var t, _x, _y, _z, i;
+  let w_x = [];
+  let w_y = [];
+  let w_z = [];
+  let t, _x, _y, _z, i;
   t = 0;
-  var argLength = arguments.length;
+  const argLength = arguments.length;
 
   if (
     this._lookUpTableBezier.length === 0 ||
@@ -1435,10 +1439,10 @@ p5.RendererGL.prototype.curveVertex = function() {
   ) {
     this._lookUpTableBezier = [];
     this._lutBezierDetail = this._pInst._curveDetail;
-    var step = 1 / this._lutBezierDetail;
-    var start = 0;
-    var end = 1;
-    var j = 0;
+    const step = 1 / this._lutBezierDetail;
+    let start = 0;
+    let end = 1;
+    let j = 0;
     while (start < 1) {
       t = parseFloat(start.toFixed(6));
       this._lookUpTableBezier[j] = this._bezierCoefficients(t);
@@ -1454,7 +1458,7 @@ p5.RendererGL.prototype.curveVertex = function() {
     }
   }
 
-  var LUTLength = this._lookUpTableBezier.length;
+  const LUTLength = this._lookUpTableBezier.length;
 
   if (argLength === 2) {
     this.immediateMode._curveVertex.push(arguments[0]);
@@ -1555,22 +1559,22 @@ p5.RendererGL.prototype.image = function(
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
-  var u0 = 0;
+  let u0 = 0;
   if (sx <= img.width) {
     u0 = sx / img.width;
   }
 
-  var u1 = 1;
+  let u1 = 1;
   if (sx + sWidth <= img.width) {
     u1 = (sx + sWidth) / img.width;
   }
 
-  var v0 = 0;
+  let v0 = 0;
   if (sy <= img.height) {
     v0 = sy / img.height;
   }
 
-  var v1 = 1;
+  let v1 = 1;
   if (sy + sHeight <= img.height) {
     v1 = (sy + sHeight) / img.height;
   }

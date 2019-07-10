@@ -84,9 +84,9 @@ p5.Color = function(pInst, vals) {
  * canvas with text representation of color
  */
 p5.Color.prototype.toString = function(format) {
-  var a = this.levels;
-  var f = this._array;
-  var alpha = f[3]; // String representation uses normalized alpha
+  const a = this.levels;
+  const f = this._array;
+  const alpha = f[3]; // String representation uses normalized alpha
 
   switch (format) {
     case '#rrggbb':
@@ -370,10 +370,10 @@ p5.Color.prototype.setAlpha = function(new_alpha) {
 
 // calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
-  var array = this._array;
+  const array = this._array;
   // (loop backwards for performance)
-  var levels = (this.levels = new Array(array.length));
-  for (var i = array.length - 1; i >= 0; --i) {
+  const levels = (this.levels = new Array(array.length));
+  for (let i = array.length - 1; i >= 0; --i) {
     levels[i] = Math.round(array[i] * 255);
   }
 };
@@ -465,7 +465,7 @@ p5.Color.prototype._getSaturation = function() {
 /**
  * CSS named colors.
  */
-var namedColors = {
+const namedColors = {
   aliceblue: '#f0f8ff',
   antiquewhite: '#faebd7',
   aqua: '#00ffff',
@@ -623,15 +623,15 @@ var namedColors = {
  * Note that RGB values of .9 are not parsed by IE, but are supported here for
  * color string consistency.
  */
-var WHITESPACE = /\s*/; // Match zero or more whitespace characters.
-var INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
-var DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
-var PERCENT = new RegExp(DECIMAL.source + '%'); // Match 12.9%, 79%, .9%, etc.
+const WHITESPACE = /\s*/; // Match zero or more whitespace characters.
+const INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
+const DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
+const PERCENT = new RegExp(DECIMAL.source + '%'); // Match 12.9%, 79%, .9%, etc.
 
 /**
  * Full color string patterns. The capture groups are necessary.
  */
-var colorPatterns = {
+const colorPatterns = {
   // Match colors in format #XXX, e.g. #416.
   HEX3: /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 
@@ -795,11 +795,11 @@ var colorPatterns = {
  *
  */
 p5.Color._parseInputs = function(r, g, b, a) {
-  var numArgs = arguments.length;
-  var mode = this.mode;
-  var maxes = this.maxes[mode];
-  var results = [];
-  var i;
+  const numArgs = arguments.length;
+  const mode = this.mode;
+  const maxes = this.maxes[mode];
+  let results = [];
+  let i;
 
   if (numArgs >= 3) {
     // Argument is a list of component values.
@@ -818,7 +818,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     // Constrain components to the range [0,1].
     // (loop backwards for performance)
     for (i = results.length - 1; i >= 0; --i) {
-      var result = results[i];
+      const result = results[i];
       if (result < 0) {
         results[i] = 0;
       } else if (result > 1) {
@@ -835,7 +835,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       return results;
     }
   } else if (numArgs === 1 && typeof r === 'string') {
-    var str = r.trim().toLowerCase();
+    const str = r.trim().toLowerCase();
 
     // Return if string is a named colour.
     if (namedColors[str]) {

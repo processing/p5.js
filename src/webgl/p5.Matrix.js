@@ -11,8 +11,8 @@
 
 import p5 from '../core/main';
 
-var GLMAT_ARRAY_TYPE = Array;
-var isMatrixArray = function(x) {
+let GLMAT_ARRAY_TYPE = Array;
+let isMatrixArray = function(x) {
   return x instanceof Array;
 };
 if (typeof Float32Array !== 'undefined') {
@@ -31,8 +31,8 @@ if (typeof Float32Array !== 'undefined') {
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
 p5.Matrix = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  const args = new Array(arguments.length);
+  for (let i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
 
@@ -114,7 +114,7 @@ p5.Matrix.prototype.get = function() {
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function() {
-  var copied = new p5.Matrix(this.p5);
+  const copied = new p5.Matrix(this.p5);
   copied.mat4[0] = this.mat4[0];
   copied.mat4[1] = this.mat4[1];
   copied.mat4[2] = this.mat4[2];
@@ -151,7 +151,7 @@ p5.Matrix.identity = function(pInst) {
  * @chainable
  */
 p5.Matrix.prototype.transpose = function(a) {
-  var a01, a02, a03, a12, a13, a23;
+  let a01, a02, a03, a12, a13, a23;
   if (a instanceof p5.Matrix) {
     a01 = a.mat4[1];
     a02 = a.mat4[2];
@@ -212,8 +212,8 @@ p5.Matrix.prototype.transpose = function(a) {
  * @chainable
  */
 p5.Matrix.prototype.invert = function(a) {
-  var a00, a01, a02, a03, a10, a11, a12, a13;
-  var a20, a21, a22, a23, a30, a31, a32, a33;
+  let a00, a01, a02, a03, a10, a11, a12, a13;
+  let a20, a21, a22, a23, a30, a31, a32, a33;
   if (a instanceof p5.Matrix) {
     a00 = a.mat4[0];
     a01 = a.mat4[1];
@@ -249,21 +249,21 @@ p5.Matrix.prototype.invert = function(a) {
     a32 = a[14];
     a33 = a[15];
   }
-  var b00 = a00 * a11 - a01 * a10;
-  var b01 = a00 * a12 - a02 * a10;
-  var b02 = a00 * a13 - a03 * a10;
-  var b03 = a01 * a12 - a02 * a11;
-  var b04 = a01 * a13 - a03 * a11;
-  var b05 = a02 * a13 - a03 * a12;
-  var b06 = a20 * a31 - a21 * a30;
-  var b07 = a20 * a32 - a22 * a30;
-  var b08 = a20 * a33 - a23 * a30;
-  var b09 = a21 * a32 - a22 * a31;
-  var b10 = a21 * a33 - a23 * a31;
-  var b11 = a22 * a33 - a23 * a32;
+  const b00 = a00 * a11 - a01 * a10;
+  const b01 = a00 * a12 - a02 * a10;
+  const b02 = a00 * a13 - a03 * a10;
+  const b03 = a01 * a12 - a02 * a11;
+  const b04 = a01 * a13 - a03 * a11;
+  const b05 = a02 * a13 - a03 * a12;
+  const b06 = a20 * a31 - a21 * a30;
+  const b07 = a20 * a32 - a22 * a30;
+  const b08 = a20 * a33 - a23 * a30;
+  const b09 = a21 * a32 - a22 * a31;
+  const b10 = a21 * a33 - a23 * a31;
+  const b11 = a22 * a33 - a23 * a32;
 
   // Calculate the determinant
-  var det =
+  let det =
     b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
   if (!det) {
@@ -297,21 +297,21 @@ p5.Matrix.prototype.invert = function(a) {
  * @chainable
  */
 p5.Matrix.prototype.invert3x3 = function() {
-  var a00 = this.mat3[0];
-  var a01 = this.mat3[1];
-  var a02 = this.mat3[2];
-  var a10 = this.mat3[3];
-  var a11 = this.mat3[4];
-  var a12 = this.mat3[5];
-  var a20 = this.mat3[6];
-  var a21 = this.mat3[7];
-  var a22 = this.mat3[8];
-  var b01 = a22 * a11 - a12 * a21;
-  var b11 = -a22 * a10 + a12 * a20;
-  var b21 = a21 * a10 - a11 * a20;
+  const a00 = this.mat3[0];
+  const a01 = this.mat3[1];
+  const a02 = this.mat3[2];
+  const a10 = this.mat3[3];
+  const a11 = this.mat3[4];
+  const a12 = this.mat3[5];
+  const a20 = this.mat3[6];
+  const a21 = this.mat3[7];
+  const a22 = this.mat3[8];
+  const b01 = a22 * a11 - a12 * a21;
+  const b11 = -a22 * a10 + a12 * a20;
+  const b21 = a21 * a10 - a11 * a20;
 
   // Calculate the determinant
-  var det = a00 * b01 + a01 * b11 + a02 * b21;
+  let det = a00 * b01 + a01 * b11 + a02 * b21;
   if (!det) {
     return null;
   }
@@ -335,7 +335,7 @@ p5.Matrix.prototype.invert3x3 = function() {
  * @chainable
  */
 p5.Matrix.prototype.transpose3x3 = function(mat3) {
-  var a01 = mat3[1],
+  const a01 = mat3[1],
     a02 = mat3[2],
     a12 = mat3[5];
   this.mat3[1] = mat3[3];
@@ -371,13 +371,13 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
     this.mat3[8] = matrix.mat4[10];
   }
 
-  var inverse = this.invert3x3();
+  const inverse = this.invert3x3();
   // check inverse succeeded
   if (inverse) {
     inverse.transpose3x3(this.mat3);
   } else {
     // in case of singularity, just zero the matrix
-    for (var i = 0; i < 9; i++) {
+    for (let i = 0; i < 9; i++) {
       this.mat3[i] = 0;
     }
   }
@@ -390,7 +390,7 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
  * @return {Number} Determinant of our 4x4 matrix
  */
 p5.Matrix.prototype.determinant = function() {
-  var d00 = this.mat4[0] * this.mat4[5] - this.mat4[1] * this.mat4[4],
+  const d00 = this.mat4[0] * this.mat4[5] - this.mat4[1] * this.mat4[4],
     d01 = this.mat4[0] * this.mat4[6] - this.mat4[2] * this.mat4[4],
     d02 = this.mat4[0] * this.mat4[7] - this.mat4[3] * this.mat4[4],
     d03 = this.mat4[1] * this.mat4[6] - this.mat4[2] * this.mat4[5],
@@ -415,7 +415,7 @@ p5.Matrix.prototype.determinant = function() {
  * @chainable
  */
 p5.Matrix.prototype.mult = function(multMatrix) {
-  var _src;
+  let _src;
 
   if (multMatrix === this || multMatrix === this.mat4) {
     _src = this.copy().mat4; // only need to allocate in this rare case
@@ -430,7 +430,7 @@ p5.Matrix.prototype.mult = function(multMatrix) {
   }
 
   // each row is used for the multiplier
-  var b0 = this.mat4[0],
+  let b0 = this.mat4[0],
     b1 = this.mat4[1],
     b2 = this.mat4[2],
     b3 = this.mat4[3];
@@ -470,7 +470,7 @@ p5.Matrix.prototype.mult = function(multMatrix) {
 };
 
 p5.Matrix.prototype.apply = function(multMatrix) {
-  var _src;
+  let _src;
 
   if (multMatrix === this || multMatrix === this.mat4) {
     _src = this.copy().mat4; // only need to allocate in this rare case
@@ -484,40 +484,40 @@ p5.Matrix.prototype.apply = function(multMatrix) {
     return; // nothing to do.
   }
 
-  var mat4 = this.mat4;
+  const mat4 = this.mat4;
 
   // each row is used for the multiplier
-  var m0 = mat4[0];
-  var m4 = mat4[4];
-  var m8 = mat4[8];
-  var m12 = mat4[12];
+  const m0 = mat4[0];
+  const m4 = mat4[4];
+  const m8 = mat4[8];
+  const m12 = mat4[12];
   mat4[0] = _src[0] * m0 + _src[1] * m4 + _src[2] * m8 + _src[3] * m12;
   mat4[4] = _src[4] * m0 + _src[5] * m4 + _src[6] * m8 + _src[7] * m12;
   mat4[8] = _src[8] * m0 + _src[9] * m4 + _src[10] * m8 + _src[11] * m12;
   mat4[12] = _src[12] * m0 + _src[13] * m4 + _src[14] * m8 + _src[15] * m12;
 
-  var m1 = mat4[1];
-  var m5 = mat4[5];
-  var m9 = mat4[9];
-  var m13 = mat4[13];
+  const m1 = mat4[1];
+  const m5 = mat4[5];
+  const m9 = mat4[9];
+  const m13 = mat4[13];
   mat4[1] = _src[0] * m1 + _src[1] * m5 + _src[2] * m9 + _src[3] * m13;
   mat4[5] = _src[4] * m1 + _src[5] * m5 + _src[6] * m9 + _src[7] * m13;
   mat4[9] = _src[8] * m1 + _src[9] * m5 + _src[10] * m9 + _src[11] * m13;
   mat4[13] = _src[12] * m1 + _src[13] * m5 + _src[14] * m9 + _src[15] * m13;
 
-  var m2 = mat4[2];
-  var m6 = mat4[6];
-  var m10 = mat4[10];
-  var m14 = mat4[14];
+  const m2 = mat4[2];
+  const m6 = mat4[6];
+  const m10 = mat4[10];
+  const m14 = mat4[14];
   mat4[2] = _src[0] * m2 + _src[1] * m6 + _src[2] * m10 + _src[3] * m14;
   mat4[6] = _src[4] * m2 + _src[5] * m6 + _src[6] * m10 + _src[7] * m14;
   mat4[10] = _src[8] * m2 + _src[9] * m6 + _src[10] * m10 + _src[11] * m14;
   mat4[14] = _src[12] * m2 + _src[13] * m6 + _src[14] * m10 + _src[15] * m14;
 
-  var m3 = mat4[3];
-  var m7 = mat4[7];
-  var m11 = mat4[11];
-  var m15 = mat4[15];
+  const m3 = mat4[3];
+  const m7 = mat4[7];
+  const m11 = mat4[11];
+  const m15 = mat4[15];
   mat4[3] = _src[0] * m3 + _src[1] * m7 + _src[2] * m11 + _src[3] * m15;
   mat4[7] = _src[4] * m3 + _src[5] * m7 + _src[6] * m11 + _src[7] * m15;
   mat4[11] = _src[8] * m3 + _src[9] * m7 + _src[10] * m11 + _src[11] * m15;
@@ -582,38 +582,38 @@ p5.Matrix.prototype.rotate = function(a, x, y, z) {
     x = x[0]; //must be last
   }
 
-  var len = Math.sqrt(x * x + y * y + z * z);
+  const len = Math.sqrt(x * x + y * y + z * z);
   x *= 1 / len;
   y *= 1 / len;
   z *= 1 / len;
 
-  var a00 = this.mat4[0];
-  var a01 = this.mat4[1];
-  var a02 = this.mat4[2];
-  var a03 = this.mat4[3];
-  var a10 = this.mat4[4];
-  var a11 = this.mat4[5];
-  var a12 = this.mat4[6];
-  var a13 = this.mat4[7];
-  var a20 = this.mat4[8];
-  var a21 = this.mat4[9];
-  var a22 = this.mat4[10];
-  var a23 = this.mat4[11];
+  const a00 = this.mat4[0];
+  const a01 = this.mat4[1];
+  const a02 = this.mat4[2];
+  const a03 = this.mat4[3];
+  const a10 = this.mat4[4];
+  const a11 = this.mat4[5];
+  const a12 = this.mat4[6];
+  const a13 = this.mat4[7];
+  const a20 = this.mat4[8];
+  const a21 = this.mat4[9];
+  const a22 = this.mat4[10];
+  const a23 = this.mat4[11];
 
   //sin,cos, and tan of respective angle
-  var sA = Math.sin(a);
-  var cA = Math.cos(a);
-  var tA = 1 - cA;
+  const sA = Math.sin(a);
+  const cA = Math.cos(a);
+  const tA = 1 - cA;
   // Construct the elements of the rotation matrix
-  var b00 = x * x * tA + cA;
-  var b01 = y * x * tA + z * sA;
-  var b02 = z * x * tA - y * sA;
-  var b10 = x * y * tA - z * sA;
-  var b11 = y * y * tA + cA;
-  var b12 = z * y * tA + x * sA;
-  var b20 = x * z * tA + y * sA;
-  var b21 = y * z * tA - x * sA;
-  var b22 = z * z * tA + cA;
+  const b00 = x * x * tA + cA;
+  const b01 = y * x * tA + z * sA;
+  const b02 = z * x * tA - y * sA;
+  const b10 = x * y * tA - z * sA;
+  const b11 = y * y * tA + cA;
+  const b12 = z * y * tA + x * sA;
+  const b20 = x * z * tA + y * sA;
+  const b21 = y * z * tA - x * sA;
+  const b22 = z * z * tA + cA;
 
   // rotation-specific matrix multiplication
   this.mat4[0] = a00 * b00 + a10 * b01 + a20 * b02;
@@ -640,7 +640,7 @@ p5.Matrix.prototype.rotate = function(a, x, y, z) {
  * @chainable
  */
 p5.Matrix.prototype.translate = function(v) {
-  var x = v[0],
+  const x = v[0],
     y = v[1],
     z = v[2] || 0;
   this.mat4[12] += this.mat4[0] * x + this.mat4[4] * y + this.mat4[8] * z;
@@ -669,7 +669,7 @@ p5.Matrix.prototype.rotateZ = function(a) {
  * @chainable
  */
 p5.Matrix.prototype.perspective = function(fovy, aspect, near, far) {
-  var f = 1.0 / Math.tan(fovy / 2),
+  const f = 1.0 / Math.tan(fovy / 2),
     nf = 1 / (near - far);
 
   this.mat4[0] = f / aspect;
@@ -704,7 +704,7 @@ p5.Matrix.prototype.perspective = function(fovy, aspect, near, far) {
  * @chainable
  */
 p5.Matrix.prototype.ortho = function(left, right, bottom, top, near, far) {
-  var lr = 1 / (left - right),
+  const lr = 1 / (left - right),
     bt = 1 / (bottom - top),
     nf = 1 / (near - far);
   this.mat4[0] = -2 * lr;

@@ -17,7 +17,7 @@
 
 'use strict';
 
-var Filters = {};
+const Filters = {};
 
 /*
  * Helper functions
@@ -55,7 +55,7 @@ Filters._toPixels = function(canvas) {
  *                                  ARGB value.
  */
 Filters._getARGB = function(data, i) {
-  var offset = i * 4;
+  const offset = i * 4;
   return (
     ((data[offset + 3] << 24) & 0xff000000) |
     ((data[offset] << 16) & 0x00ff0000) |
@@ -74,8 +74,8 @@ Filters._getARGB = function(data, i) {
  *                                   represents ARGB values
  */
 Filters._setPixels = function(pixels, data) {
-  var offset = 0;
-  for (var i = 0, al = pixels.length; i < al; i++) {
+  let offset = 0;
+  for (let i = 0, al = pixels.length; i < al; i++) {
     offset = i * 4;
     pixels[offset + 0] = (data[i] & 0x00ff0000) >>> 16;
     pixels[offset + 1] = (data[i] & 0x0000ff00) >>> 8;
@@ -139,12 +139,12 @@ Filters._createImageData = function(width, height) {
  * @param  {Object} filterParam  [description]
  */
 Filters.apply = function(canvas, func, filterParam) {
-  var pixelsState = canvas.getContext('2d');
-  var imageData = pixelsState.getImageData(0, 0, canvas.width, canvas.height);
+  const pixelsState = canvas.getContext('2d');
+  const imageData = pixelsState.getImageData(0, 0, canvas.width, canvas.height);
 
   //Filters can either return a new ImageData object, or just modify
   //the one they received.
-  var newImageData = func(imageData, filterParam);
+  const newImageData = func(imageData, filterParam);
   if (newImageData instanceof ImageData) {
     pixelsState.putImageData(
       newImageData,
@@ -184,19 +184,19 @@ Filters.apply = function(canvas, func, filterParam) {
  * @param  {Float} level
  */
 Filters.threshold = function(canvas, level) {
-  var pixels = Filters._toPixels(canvas);
+  const pixels = Filters._toPixels(canvas);
 
   if (level === undefined) {
     level = 0.5;
   }
-  var thresh = Math.floor(level * 255);
+  const thresh = Math.floor(level * 255);
 
-  for (var i = 0; i < pixels.length; i += 4) {
-    var r = pixels[i];
-    var g = pixels[i + 1];
-    var b = pixels[i + 2];
-    var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    var val;
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    let val;
     if (gray >= thresh) {
       val = 255;
     } else {
@@ -216,15 +216,15 @@ Filters.threshold = function(canvas, level) {
  * @param {Canvas} canvas
  */
 Filters.gray = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
+  const pixels = Filters._toPixels(canvas);
 
-  for (var i = 0; i < pixels.length; i += 4) {
-    var r = pixels[i];
-    var g = pixels[i + 1];
-    var b = pixels[i + 2];
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
 
     // CIE luminance for RGB
-    var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    const gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
   }
 };
@@ -236,9 +236,9 @@ Filters.gray = function(canvas) {
  * @param {Canvas} canvas
  */
 Filters.opaque = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
+  const pixels = Filters._toPixels(canvas);
 
-  for (var i = 0; i < pixels.length; i += 4) {
+  for (let i = 0; i < pixels.length; i += 4) {
     pixels[i + 3] = 255;
   }
 
@@ -251,9 +251,9 @@ Filters.opaque = function(canvas) {
  * @param  {Canvas} canvas
  */
 Filters.invert = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
+  const pixels = Filters._toPixels(canvas);
 
-  for (var i = 0; i < pixels.length; i += 4) {
+  for (let i = 0; i < pixels.length; i += 4) {
     pixels[i] = 255 - pixels[i];
     pixels[i + 1] = 255 - pixels[i + 1];
     pixels[i + 2] = 255 - pixels[i + 2];
@@ -272,7 +272,7 @@ Filters.invert = function(canvas) {
  * @param  {Integer} level
  */
 Filters.posterize = function(canvas, level) {
-  var pixels = Filters._toPixels(canvas);
+  const pixels = Filters._toPixels(canvas);
 
   if (level < 2 || level > 255) {
     throw new Error(
@@ -280,11 +280,11 @@ Filters.posterize = function(canvas, level) {
     );
   }
 
-  var levels1 = level - 1;
-  for (var i = 0; i < pixels.length; i += 4) {
-    var rlevel = pixels[i];
-    var glevel = pixels[i + 1];
-    var blevel = pixels[i + 2];
+  const levels1 = level - 1;
+  for (let i = 0; i < pixels.length; i += 4) {
+    const rlevel = pixels[i];
+    const glevel = pixels[i + 1];
+    const blevel = pixels[i + 2];
 
     pixels[i] = ((rlevel * level) >> 8) * 255 / levels1;
     pixels[i + 1] = ((glevel * level) >> 8) * 255 / levels1;
@@ -299,15 +299,15 @@ Filters.posterize = function(canvas, level) {
  *
  */
 Filters.dilate = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
-  var currIdx = 0;
-  var maxIdx = pixels.length ? pixels.length / 4 : 0;
-  var out = new Int32Array(maxIdx);
-  var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+  const pixels = Filters._toPixels(canvas);
+  let currIdx = 0;
+  const maxIdx = pixels.length ? pixels.length / 4 : 0;
+  const out = new Int32Array(maxIdx);
+  let currRowIdx, maxRowIdx, colOrig, colOut, currLum;
 
-  var idxRight, idxLeft, idxUp, idxDown;
-  var colRight, colLeft, colUp, colDown;
-  var lumRight, lumLeft, lumUp, lumDown;
+  let idxRight, idxLeft, idxUp, idxDown;
+  let colRight, colLeft, colUp, colDown;
+  let lumRight, lumLeft, lumUp, lumDown;
 
   while (currIdx < maxIdx) {
     currRowIdx = currIdx;
@@ -387,14 +387,14 @@ Filters.dilate = function(canvas) {
  *
  */
 Filters.erode = function(canvas) {
-  var pixels = Filters._toPixels(canvas);
-  var currIdx = 0;
-  var maxIdx = pixels.length ? pixels.length / 4 : 0;
-  var out = new Int32Array(maxIdx);
-  var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-  var idxRight, idxLeft, idxUp, idxDown;
-  var colRight, colLeft, colUp, colDown;
-  var lumRight, lumLeft, lumUp, lumDown;
+  const pixels = Filters._toPixels(canvas);
+  let currIdx = 0;
+  const maxIdx = pixels.length ? pixels.length / 4 : 0;
+  const out = new Int32Array(maxIdx);
+  let currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+  let idxRight, idxLeft, idxUp, idxDown;
+  let colRight, colLeft, colUp, colDown;
+  let lumRight, lumLeft, lumUp, lumDown;
 
   while (currIdx < maxIdx) {
     currRowIdx = currIdx;
@@ -471,10 +471,10 @@ Filters.erode = function(canvas) {
 // BLUR
 
 // internal kernel stuff for the gaussian blur filter
-var blurRadius;
-var blurKernelSize;
-var blurKernel;
-var blurMult;
+let blurRadius;
+let blurKernelSize;
+let blurKernel;
+let blurMult;
 
 /*
  * Port of https://github.com/processing/processing/blob/
@@ -487,7 +487,7 @@ var blurMult;
  * [toxi 050728]
  */
 function buildBlurKernel(r) {
-  var radius = (r * 3.5) | 0;
+  let radius = (r * 3.5) | 0;
   radius = radius < 1 ? 1 : radius < 248 ? radius : 248;
 
   if (blurRadius !== radius) {
@@ -495,25 +495,25 @@ function buildBlurKernel(r) {
     blurKernelSize = (1 + blurRadius) << 1;
     blurKernel = new Int32Array(blurKernelSize);
     blurMult = new Array(blurKernelSize);
-    for (var l = 0; l < blurKernelSize; l++) {
+    for (let l = 0; l < blurKernelSize; l++) {
       blurMult[l] = new Int32Array(256);
     }
 
-    var bk, bki;
-    var bm, bmi;
+    let bk, bki;
+    let bm, bmi;
 
-    for (var i = 1, radiusi = radius - 1; i < radius; i++) {
+    for (let i = 1, radiusi = radius - 1; i < radius; i++) {
       blurKernel[radius + i] = blurKernel[radiusi] = bki = radiusi * radiusi;
       bm = blurMult[radius + i];
       bmi = blurMult[radiusi--];
-      for (var j = 0; j < 256; j++) {
+      for (let j = 0; j < 256; j++) {
         bm[j] = bmi[j] = bki * j;
       }
     }
     bk = blurKernel[radius] = radius * radius;
     bm = blurMult[radius];
 
-    for (var k = 0; k < 256; k++) {
+    for (let k = 0; k < 256; k++) {
       bm[k] = bk * k;
     }
   }
@@ -522,24 +522,24 @@ function buildBlurKernel(r) {
 // Port of https://github.com/processing/processing/blob/
 // master/core/src/processing/core/PImage.java#L1433
 function blurARGB(canvas, radius) {
-  var pixels = Filters._toPixels(canvas);
-  var width = canvas.width;
-  var height = canvas.height;
-  var numPackedPixels = width * height;
-  var argb = new Int32Array(numPackedPixels);
-  for (var j = 0; j < numPackedPixels; j++) {
+  const pixels = Filters._toPixels(canvas);
+  const width = canvas.width;
+  const height = canvas.height;
+  const numPackedPixels = width * height;
+  const argb = new Int32Array(numPackedPixels);
+  for (let j = 0; j < numPackedPixels; j++) {
     argb[j] = Filters._getARGB(pixels, j);
   }
-  var sum, cr, cg, cb, ca;
-  var read, ri, ym, ymi, bk0;
-  var a2 = new Int32Array(numPackedPixels);
-  var r2 = new Int32Array(numPackedPixels);
-  var g2 = new Int32Array(numPackedPixels);
-  var b2 = new Int32Array(numPackedPixels);
-  var yi = 0;
+  let sum, cr, cg, cb, ca;
+  let read, ri, ym, ymi, bk0;
+  const a2 = new Int32Array(numPackedPixels);
+  const r2 = new Int32Array(numPackedPixels);
+  const g2 = new Int32Array(numPackedPixels);
+  const b2 = new Int32Array(numPackedPixels);
+  let yi = 0;
   buildBlurKernel(radius);
-  var x, y, i;
-  var bm;
+  let x, y, i;
+  let bm;
   for (y = 0; y < height; y++) {
     for (x = 0; x < width; x++) {
       cb = cg = cr = ca = sum = 0;
@@ -557,7 +557,7 @@ function blurARGB(canvas, radius) {
         if (read >= width) {
           break;
         }
-        var c = argb[read + yi];
+        const c = argb[read + yi];
         bm = blurMult[i];
         ca += bm[(c & -16777216) >>> 24];
         cr += bm[(c & 16711680) >> 16];

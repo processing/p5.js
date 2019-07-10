@@ -50,7 +50,7 @@ import * as constants from '../core/constants';
  *
  */
 p5.Vector = function Vector() {
-  var x, y, z;
+  let x, y, z;
   // This is how it comes in with createVector()
   if (arguments[0] instanceof p5) {
     // save reference to p5 if passed in
@@ -666,9 +666,9 @@ p5.Vector.prototype.mag = function mag() {
  * </div>
  */
 p5.Vector.prototype.magSq = function magSq() {
-  var x = this.x;
-  var y = this.y;
-  var z = this.z;
+  const x = this.x;
+  const y = this.y;
+  const z = this.z;
   return x * x + y * y + z * z;
 };
 
@@ -746,9 +746,9 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  * </div>
  */
 p5.Vector.prototype.cross = function cross(v) {
-  var x = this.y * v.z - this.z * v.y;
-  var y = this.z * v.x - this.x * v.z;
-  var z = this.x * v.y - this.y * v.x;
+  const x = this.y * v.z - this.z * v.y;
+  const y = this.z * v.x - this.x * v.z;
+  const z = this.x * v.y - this.y * v.x;
   if (this.p5) {
     return new p5.Vector(this.p5, [x, y, z]);
   } else {
@@ -876,7 +876,7 @@ p5.Vector.prototype.dist = function dist(v) {
  * </div>
  */
 p5.Vector.prototype.normalize = function normalize() {
-  var len = this.mag();
+  const len = this.mag();
   // here we multiply by the reciprocal instead of calling 'div()'
   // since div duplicates this zero check.
   if (len !== 0) this.mult(1 / len);
@@ -933,7 +933,7 @@ p5.Vector.prototype.normalize = function normalize() {
  * </div>
  */
 p5.Vector.prototype.limit = function limit(max) {
-  var mSq = this.magSq();
+  const mSq = this.magSq();
   if (mSq > max * max) {
     this.div(Math.sqrt(mSq)) //normalize it
       .mult(max);
@@ -1061,7 +1061,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * </div>
  */
 p5.Vector.prototype.heading = function heading() {
-  var h = Math.atan2(this.y, this.x);
+  const h = Math.atan2(this.y, this.x);
   if (this.p5) return this.p5._fromRadians(h);
   return h;
 };
@@ -1114,9 +1114,9 @@ p5.Vector.prototype.heading = function heading() {
  * </div>
  */
 p5.Vector.prototype.rotate = function rotate(a) {
-  var newHeading = this.heading() + a;
+  let newHeading = this.heading() + a;
   if (this.p5) newHeading = this.p5._toRadians(newHeading);
-  var mag = this.mag();
+  const mag = this.mag();
   this.x = Math.cos(newHeading) * mag;
   this.y = Math.sin(newHeading) * mag;
   return this;
@@ -1184,13 +1184,13 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * </div>
  */
 p5.Vector.prototype.angleBetween = function angleBetween(v) {
-  var dotmagmag = this.dot(v) / (this.mag() * v.mag());
+  const dotmagmag = this.dot(v) / (this.mag() * v.mag());
   // Mathematically speaking: the dotmagmag variable will be between -1 and 1
   // inclusive. Practically though it could be slightly outside this range due
   // to floating-point rounding issues. This can make Math.acos return NaN.
   //
   // Solution: we'll clamp the value to the -1,1 range
-  var angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+  const angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
   if (this.p5) return this.p5._fromRadians(angle);
   return angle;
 };
@@ -1352,7 +1352,7 @@ p5.Vector.prototype.array = function array() {
  * @return {Boolean}
  */
 p5.Vector.prototype.equals = function equals(x, y, z) {
-  var a, b, c;
+  let a, b, c;
   if (x instanceof p5.Vector) {
     a = x.x || 0;
     b = x.y || 0;
@@ -1459,10 +1459,10 @@ p5.Vector.fromAngles = function(theta, phi, length) {
   if (typeof length === 'undefined') {
     length = 1;
   }
-  var cosPhi = Math.cos(phi);
-  var sinPhi = Math.sin(phi);
-  var cosTheta = Math.cos(theta);
-  var sinTheta = Math.sin(theta);
+  const cosPhi = Math.cos(phi);
+  const sinPhi = Math.sin(phi);
+  const cosTheta = Math.cos(theta);
+  const sinTheta = Math.sin(theta);
 
   return new p5.Vector(
     length * sinTheta * sinPhi,
@@ -1543,11 +1543,11 @@ p5.Vector.random2D = function random2D() {
  * </div>
  */
 p5.Vector.random3D = function random3D() {
-  var angle = Math.random() * constants.TWO_PI;
-  var vz = Math.random() * 2 - 1;
-  var vzBase = Math.sqrt(1 - vz * vz);
-  var vx = vzBase * Math.cos(angle);
-  var vy = vzBase * Math.sin(angle);
+  const angle = Math.random() * constants.TWO_PI;
+  const vz = Math.random() * 2 - 1;
+  const vzBase = Math.sqrt(1 - vz * vz);
+  const vx = vzBase * Math.cos(angle);
+  const vy = vzBase * Math.sin(angle);
   return new p5.Vector(vx, vy, vz);
 };
 
@@ -1741,10 +1741,10 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
  * @static
  */
 p5.Vector.mag = function mag(vecT) {
-  var x = vecT.x,
+  const x = vecT.x,
     y = vecT.y,
     z = vecT.z;
-  var magSq = x * x + y * y + z * z;
+  const magSq = x * x + y * y + z * z;
   return Math.sqrt(magSq);
 };
 

@@ -464,7 +464,7 @@ p5.prototype.mag = function(x, y) {
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
-  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+  const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -805,11 +805,11 @@ function hypot(x, y, z) {
 
   // Otherwise use the V8 implementation
   // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
-  var length = arguments.length;
-  var args = [];
-  var max = 0;
-  for (var i = 0; i < length; i++) {
-    var n = arguments[i];
+  const length = arguments.length;
+  const args = [];
+  let max = 0;
+  for (let i = 0; i < length; i++) {
+    let n = arguments[i];
     n = +n;
     if (n === Infinity || n === -Infinity) {
       return Infinity;
@@ -824,12 +824,12 @@ function hypot(x, y, z) {
   if (max === 0) {
     max = 1;
   }
-  var sum = 0;
-  var compensation = 0;
-  for (var j = 0; j < length; j++) {
-    var m = args[j] / max;
-    var summand = m * m - compensation;
-    var preliminary = sum + summand;
+  let sum = 0;
+  let compensation = 0;
+  for (let j = 0; j < length; j++) {
+    const m = args[j] / max;
+    const summand = m * m - compensation;
+    const preliminary = sum + summand;
     compensation = preliminary - sum - summand;
     sum = preliminary;
   }

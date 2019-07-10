@@ -116,9 +116,9 @@ p5.prototype.match = function(str, reg) {
  */
 p5.prototype.matchAll = function(str, reg) {
   p5._validateParameters('matchAll', arguments);
-  var re = new RegExp(reg, 'g');
-  var match = re.exec(str);
-  var matches = [];
+  const re = new RegExp(reg, 'g');
+  let match = re.exec(str);
+  const matches = [];
   while (match !== null) {
     matches.push(match);
     // matched text: match[0]
@@ -191,7 +191,7 @@ p5.prototype.nf = function(nums, left, right) {
       return doNf(x, left, right);
     });
   } else {
-    var typeOfFirst = Object.prototype.toString.call(nums);
+    const typeOfFirst = Object.prototype.toString.call(nums);
     if (typeOfFirst === '[object Arguments]') {
       if (nums.length === 3) {
         return this.nf(nums[0], nums[1], nums[2]);
@@ -207,32 +207,32 @@ p5.prototype.nf = function(nums, left, right) {
 };
 
 function doNf(num, left, right) {
-  var neg = num < 0;
-  var n = neg ? num.toString().substring(1) : num.toString();
-  var decimalInd = n.indexOf('.');
-  var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
-  var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
-  var str = neg ? '-' : '';
+  const neg = num < 0;
+  const n = neg ? num.toString().substring(1) : num.toString();
+  const decimalInd = n.indexOf('.');
+  const intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
+  let decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
+  let str = neg ? '-' : '';
   if (typeof right !== 'undefined') {
-    var decimal = '';
+    let decimal = '';
     if (decimalInd !== -1 || right - decPart.length > 0) {
       decimal = '.';
     }
     if (decPart.length > right) {
       decPart = decPart.substring(0, right);
     }
-    for (var i = 0; i < left - intPart.length; i++) {
+    for (let i = 0; i < left - intPart.length; i++) {
       str += '0';
     }
     str += intPart;
     str += decimal;
     str += decPart;
-    for (var j = 0; j < right - decPart.length; j++) {
+    for (let j = 0; j < right - decPart.length; j++) {
       str += '0';
     }
     return str;
   } else {
-    for (var k = 0; k < Math.max(left - intPart.length, 0); k++) {
+    for (let k = 0; k < Math.max(left - intPart.length, 0); k++) {
       str += '0';
     }
     str += n;
@@ -296,17 +296,17 @@ p5.prototype.nfc = function(num, right) {
 };
 function doNfc(num, right) {
   num = num.toString();
-  var dec = num.indexOf('.');
-  var rem = dec !== -1 ? num.substring(dec) : '';
-  var n = dec !== -1 ? num.substring(0, dec) : num;
+  const dec = num.indexOf('.');
+  let rem = dec !== -1 ? num.substring(dec) : '';
+  let n = dec !== -1 ? num.substring(0, dec) : num;
   n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (right === 0) {
     rem = '';
   } else if (typeof right !== 'undefined') {
     if (right > rem.length) {
       rem += dec === -1 ? '.' : '';
-      var len = right - rem.length + 1;
-      for (var i = 0; i < len; i++) {
+      const len = right - rem.length + 1;
+      for (let i = 0; i < len; i++) {
         rem += '0';
       }
     } else {
@@ -366,7 +366,7 @@ function doNfc(num, right) {
  */
 p5.prototype.nfp = function() {
   p5._validateParameters('nfp', arguments);
-  var nfRes = p5.prototype.nf.apply(this, arguments);
+  const nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
   } else {
@@ -444,7 +444,7 @@ function addNfp(num) {
  */
 p5.prototype.nfs = function() {
   p5._validateParameters('nfs', arguments);
-  var nfRes = p5.prototype.nf.apply(this, arguments);
+  const nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
   } else {
@@ -518,11 +518,11 @@ p5.prototype.split = function(str, delim) {
  */
 p5.prototype.splitTokens = function(value, delims) {
   p5._validateParameters('splitTokens', arguments);
-  var d;
+  let d;
   if (typeof delims !== 'undefined') {
-    var str = delims;
-    var sqc = /\]/g.exec(str);
-    var sqo = /\[/g.exec(str);
+    let str = delims;
+    const sqc = /\]/g.exec(str);
+    let sqo = /\[/g.exec(str);
     if (sqo && sqc) {
       str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);

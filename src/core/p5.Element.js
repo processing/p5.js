@@ -244,7 +244,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
   // Prepend the mouse property setters to the event-listener.
   // This is required so that mouseButton is set correctly prior to calling the callback (fxn).
   // For details, see https://github.com/processing/p5.js/issues/3087.
-  var eventPrependedFxn = function(event) {
+  const eventPrependedFxn = function(event) {
     this._pInst._setProperty('mouseIsPressed', true);
     this._pInst._setMouseButton(event);
     // Pass along the return-value of the callback:
@@ -851,13 +851,13 @@ p5.Element._attachListener = function(ev, fxn, ctx) {
   if (ctx._events[ev]) {
     p5.Element._detachListener(ev, ctx);
   }
-  var f = fxn.bind(ctx);
+  const f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
 };
 
 p5.Element._detachListener = function(ev, ctx) {
-  var f = ctx._events[ev];
+  const f = ctx._events[ev];
   ctx.elt.removeEventListener(ev, f, false);
   ctx._events[ev] = null;
 };

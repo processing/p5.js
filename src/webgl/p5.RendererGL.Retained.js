@@ -14,15 +14,15 @@ function BufferDef(size, src, dst, attr, map) {
   this.map = map; // optional, a transformation function to apply to src
 }
 
-var _flatten = p5.RendererGL.prototype._flatten;
-var _vToNArray = p5.RendererGL.prototype._vToNArray;
+const _flatten = p5.RendererGL.prototype._flatten;
+const _vToNArray = p5.RendererGL.prototype._vToNArray;
 
-var strokeBuffers = [
+const strokeBuffers = [
   new BufferDef(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', _flatten),
   new BufferDef(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', _flatten)
 ];
 
-var fillBuffers = [
+const fillBuffers = [
   new BufferDef(3, 'vertices', 'vertexBuffer', 'aPosition', _vToNArray),
   new BufferDef(3, 'vertexNormals', 'normalBuffer', 'aNormal', _vToNArray),
   new BufferDef(4, 'vertexColors', 'colorBuffer', 'aMaterialColor'),
@@ -36,7 +36,7 @@ p5.RendererGL._textBuffers = [
   new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
 ];
 
-var hashCount = 0;
+let hashCount = 0;
 /**
  * _initBufferDefaults
  * @private
@@ -51,7 +51,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   //@TODO remove this limit on hashes in gHash
   hashCount++;
   if (hashCount > 1000) {
-    var key = Object.keys(this.gHash)[0];
+    const key = Object.keys(this.gHash)[0];
     delete this.gHash[key];
     hashCount--;
   }
@@ -61,7 +61,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-  var buffers = this.gHash[gId];
+  const buffers = this.gHash[gId];
   if (!buffers) {
     return;
   }
@@ -69,14 +69,14 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   delete this.gHash[gId];
   hashCount--;
 
-  var gl = this.GL;
+  const gl = this.GL;
   if (buffers.indexBuffer) {
     gl.deleteBuffer(buffers.indexBuffer);
   }
 
   function freeBuffers(defs) {
-    for (var i = 0; i < defs.length; i++) {
-      var def = defs[i];
+    for (let i = 0; i < defs.length; i++) {
+      const def = defs[i];
       if (buffers[def.dst]) {
         gl.deleteBuffer(buffers[def.dst]);
         buffers[def.dst] = null;
@@ -90,24 +90,24 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
 };
 
 p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
-  var model = buffers.model;
-  var attributes = shader.attributes;
-  var gl = this.GL;
+  const model = buffers.model;
+  const attributes = shader.attributes;
+  const gl = this.GL;
 
   // loop through each of the buffer definitions
-  for (var i = 0; i < defs.length; i++) {
-    var def = defs[i];
+  for (let i = 0; i < defs.length; i++) {
+    const def = defs[i];
 
-    var attr = attributes[def.attr];
+    const attr = attributes[def.attr];
     if (!attr) continue;
 
-    var buffer = buffers[def.dst];
+    let buffer = buffers[def.dst];
 
     // check if the model has the appropriate source array
-    var src = model[def.src];
+    const src = model[def.src];
     if (src) {
       // check if we need to create the GL buffer
-      var createBuffer = !buffer;
+      const createBuffer = !buffer;
       if (createBuffer) {
         // create and remember the buffer
         buffers[def.dst] = buffer = gl.createBuffer();
@@ -117,9 +117,9 @@ p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
 
       // check if we need to fill the buffer with data
       if (createBuffer || model.dirtyFlags[def.src] !== false) {
-        var map = def.map;
+        const map = def.map;
         // get the values from the model, possibly transformed
-        var values = map ? map(src) : src;
+        const values = map ? map(src) : src;
 
         // fill the buffer with the values
         this._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
@@ -149,17 +149,17 @@ p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
  * @param  {p5.Geometry}  model contains geometry data
  */
 p5.RendererGL.prototype.createBuffers = function(gId, model) {
-  var gl = this.GL;
+  const gl = this.GL;
   //initialize the gl buffers for our geom groups
-  var buffers = this._initBufferDefaults(gId);
+  const buffers = this._initBufferDefaults(gId);
   buffers.model = model;
 
-  var indexBuffer = buffers.indexBuffer;
+  let indexBuffer = buffers.indexBuffer;
 
   if (model.faces.length) {
     // allocate space for faces
     if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
-    var vals = p5.RendererGL.prototype._flatten(model.faces);
+    const vals = p5.RendererGL.prototype._flatten(model.faces);
     this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, Uint16Array);
 
     // the vertex count is based on the number of faces
@@ -186,11 +186,11 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
  * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
-  var gl = this.GL;
-  var buffers = this.gHash[gId];
+  const gl = this.GL;
+  const buffers = this.gHash[gId];
 
   if (this._doStroke && buffers.lineVertexCount > 0) {
-    var strokeShader = this._getRetainedStrokeShader();
+    const strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);
     this._prepareBuffers(buffers, strokeShader, strokeBuffers);
     this._applyColorBlend(this.curStrokeColor);
@@ -199,7 +199,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   }
 
   if (this._doFill) {
-    var fillShader = this._getRetainedFillShader();
+    const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
     this._prepareBuffers(buffers, fillShader, fillBuffers);
     if (buffers.indexBuffer) {
@@ -234,7 +234,7 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleY,
   scaleZ
 ) {
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
   try {
     this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
     this.drawBuffers(gId);
@@ -250,8 +250,8 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
 };
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  var buffers = this.gHash[gId];
-  var gl = this.GL;
+  const buffers = this.gHash[gId];
+  const gl = this.GL;
   // render the fill
   if (buffers.indexBuffer) {
     // we're drawing faces
@@ -264,8 +264,8 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
 };
 
 p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
-  var gl = this.GL;
-  var pointShader = this._getImmediatePointShader();
+  const gl = this.GL;
+  const pointShader = this._getImmediatePointShader();
   this._setPointUniforms(pointShader);
 
   this._bindBuffer(
