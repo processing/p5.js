@@ -14,6 +14,7 @@ import p5 from '../core/main';
 import 'whatwg-fetch';
 import 'es6-promise/auto';
 import fetchJsonp from 'fetch-jsonp';
+import fileSaver from 'file-saver';
 import '../core/error_helpers';
 
 /**
@@ -1815,7 +1816,6 @@ p5.prototype.downloadFile = function(data, fName, extension) {
   var filename = fx[0];
 
   if (data instanceof Blob) {
-    var fileSaver = require('file-saver');
     fileSaver.saveAs(data, filename);
     return;
   }
