@@ -9,7 +9,7 @@
 'use strict';
 
 import p5 from '../main';
-import constants from '../constants';
+import * as constants from '../constants';
 var shapeKind = null;
 var vertices = [];
 var contourVertices = [];

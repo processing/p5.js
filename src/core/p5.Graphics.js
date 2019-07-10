@@ -7,7 +7,7 @@
 'use strict';
 
 import p5 from './main';
-import constants from './constants';
+import * as constants from './constants';
 
 /**
  * Thin wrapper around a renderer, to be used for creating a

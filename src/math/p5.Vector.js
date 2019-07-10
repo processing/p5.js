@@ -7,7 +7,7 @@
 'use strict';
 
 import p5 from '../core/main';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 
 /**
  * A class to describe a two or three dimensional vector, specifically

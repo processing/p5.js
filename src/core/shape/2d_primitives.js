@@ -9,7 +9,7 @@
 'use strict';
 
 import p5 from '../main';
-import constants from '../constants';
+import * as constants from '../constants';
 import canvas from '../helpers';
 import '../error_helpers';
 

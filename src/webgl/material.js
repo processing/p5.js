@@ -8,7 +8,7 @@
 'use strict';
 
 import p5 from '../core/main';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 import './p5.Texture';
 
 /**

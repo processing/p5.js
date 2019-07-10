@@ -7,7 +7,7 @@
 'use strict';
 
 import p5 from './main';
-import constants from './constants';
+import * as constants from './constants';
 import './p5.Graphics';
 import './p5.Renderer2D';
 import '../webgl/p5.RendererGL';

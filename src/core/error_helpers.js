@@ -6,7 +6,7 @@
 'use strict';
 
 import p5 from './main';
-import constants from './constants';
+import * as constants from './constants';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names

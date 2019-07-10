@@ -10,7 +10,7 @@
 import './shim';
 
 // Core needs the PVariables object
-import constants from './constants';
+import * as constants from './constants';
 
 /**
  * This is the p5 instance constructor.

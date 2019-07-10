@@ -1,7 +1,7 @@
 'use strict';
 
 import p5 from './main';
-import constants from './constants';
+import * as constants from './constants';
 import filters from '../image/filters';
 
 import './p5.Renderer';

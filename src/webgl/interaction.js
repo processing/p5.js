@@ -8,7 +8,7 @@
 'use strict';
 
 import p5 from '../core/main';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 
 /**
  * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking

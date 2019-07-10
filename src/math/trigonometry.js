@@ -9,7 +9,7 @@
 'use strict';
 
 import p5 from '../core/main';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 
 /*
  * all DEGREES/RADIANS conversion should be done in the p5 instance

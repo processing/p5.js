@@ -4,7 +4,7 @@
 
 'use strict';
 
-import constants from './constants';
+import * as constants from './constants';
 
 module.exports = {
   modeAdjust: function(a, b, c, d, mode) {

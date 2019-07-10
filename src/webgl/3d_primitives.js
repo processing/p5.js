@@ -9,7 +9,7 @@
 'use strict';
 import p5 from '../core/main';
 import './p5.Geometry';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 
 /**
  * Draw a plane with given a width and height

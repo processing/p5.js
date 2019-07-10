@@ -10,7 +10,7 @@
 import p5 from '../core/main';
 import Filters from './filters';
 import canvas from '../core/helpers';
-import constants from '../core/constants';
+import * as constants from '../core/constants';
 import omggif from 'omggif';
 
 import '../core/error_helpers';
