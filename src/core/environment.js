@@ -9,7 +9,7 @@
 'use strict';
 
 import p5 from './main';
-import C from './constants';
+import * as C from './constants';
 
 var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
