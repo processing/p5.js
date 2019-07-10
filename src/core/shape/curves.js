@@ -88,7 +88,7 @@ p5.prototype.bezier = function(...args) {
     return this;
   }
 
-  this._renderer.bezier.apply(this._renderer, args);
+  this._renderer.bezier(...args);
 
   return this;
 };
@@ -355,7 +355,7 @@ p5.prototype.curve = function(...args) {
   p5._validateParameters('curve', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.curve.apply(this._renderer, args);
+    this._renderer.curve(...args);
   }
 
   return this;

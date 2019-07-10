@@ -294,7 +294,7 @@ p5.prototype.circle = function() {
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this.ellipse.apply(this, args);
+  return this.ellipse(...args);
 };
 
 /**
@@ -347,7 +347,7 @@ p5.prototype.line = function(...args) {
   p5._validateParameters('line', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.line.apply(this._renderer, args);
+    this._renderer.line(...args);
   }
 
   return this;
@@ -382,7 +382,7 @@ p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.point.apply(this._renderer, args);
+    this._renderer.point(...args);
   }
 
   return this;
@@ -448,7 +448,7 @@ p5.prototype.quad = function(...args) {
         args[4], args[5], 0,
         args[6], args[7], 0);
     } else {
-      this._renderer.quad.apply(this._renderer, args);
+      this._renderer.quad(...args);
     }
   }
 

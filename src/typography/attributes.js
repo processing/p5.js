@@ -78,7 +78,7 @@ import p5 from '../core/main';
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
   p5._validateParameters('textAlign', arguments);
-  return this._renderer.textAlign.apply(this._renderer, arguments);
+  return this._renderer.textAlign(...arguments);
 };
 
 /**
@@ -116,7 +116,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  */
 p5.prototype.textLeading = function(theLeading) {
   p5._validateParameters('textLeading', arguments);
-  return this._renderer.textLeading.apply(this._renderer, arguments);
+  return this._renderer.textLeading(...arguments);
 };
 
 /**
@@ -148,7 +148,7 @@ p5.prototype.textLeading = function(theLeading) {
  */
 p5.prototype.textSize = function(theSize) {
   p5._validateParameters('textSize', arguments);
-  return this._renderer.textSize.apply(this._renderer, arguments);
+  return this._renderer.textSize(...arguments);
 };
 
 /**
@@ -185,7 +185,7 @@ p5.prototype.textSize = function(theSize) {
  */
 p5.prototype.textStyle = function(theStyle) {
   p5._validateParameters('textStyle', arguments);
-  return this._renderer.textStyle.apply(this._renderer, arguments);
+  return this._renderer.textStyle(...arguments);
 };
 
 /**
@@ -221,7 +221,7 @@ p5.prototype.textWidth = function(...args) {
   if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth.apply(this._renderer, args);
+  return this._renderer.textWidth(...args);
 };
 
 /**

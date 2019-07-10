@@ -150,7 +150,7 @@ p5.prototype.getItem = function(key) {
         break;
       case 'p5.Color':
         value = JSON.parse(value);
-        value = this.color.apply(this, value.levels);
+        value = this.color(...value.levels);
         break;
       case 'string':
       default:

@@ -54,7 +54,7 @@ import p5 from '../core/main';
 p5.prototype.camera = function(...args) {
   this._assert3d('camera');
   p5._validateParameters('camera', args);
-  this._renderer._curCamera.camera.apply(this._renderer._curCamera, args);
+  this._renderer._curCamera.camera(...args);
   return this;
 };
 
@@ -116,7 +116,7 @@ p5.prototype.camera = function(...args) {
 p5.prototype.perspective = function(...args) {
   this._assert3d('perspective');
   p5._validateParameters('perspective', args);
-  this._renderer._curCamera.perspective.apply(this._renderer._curCamera, args);
+  this._renderer._curCamera.perspective(...args);
   return this;
 };
 
@@ -173,7 +173,7 @@ p5.prototype.perspective = function(...args) {
 p5.prototype.ortho = function(...args) {
   this._assert3d('ortho');
   p5._validateParameters('ortho', args);
-  this._renderer._curCamera.ortho.apply(this._renderer._curCamera, args);
+  this._renderer._curCamera.ortho(...args);
   return this;
 };
 

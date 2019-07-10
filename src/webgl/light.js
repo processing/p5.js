@@ -71,7 +71,7 @@ import p5 from '../core/main';
 p5.prototype.ambientLight = function(v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
-  const color = this.color.apply(this, arguments);
+  const color = this.color(...arguments);
 
   this._renderer.ambientLightColors.push(
     color._array[0],

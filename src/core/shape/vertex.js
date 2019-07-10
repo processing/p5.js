@@ -245,7 +245,7 @@ p5.prototype.beginContour = function() {
 p5.prototype.beginShape = function(kind) {
   p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.beginShape.apply(this._renderer, arguments);
+    this._renderer.beginShape(...arguments);
   } else {
     if (
       kind === constants.POINTS ||
@@ -371,7 +371,7 @@ p5.prototype.beginShape = function(kind) {
 p5.prototype.bezierVertex = function(...args) {
   p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.bezierVertex.apply(this._renderer, args);
+    this._renderer.bezierVertex(...args);
   } else {
     if (vertices.length === 0) {
       p5._friendlyError(
@@ -497,7 +497,7 @@ p5.prototype.bezierVertex = function(...args) {
 p5.prototype.curveVertex = function(...args) {
   p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.curveVertex.apply(this._renderer, args);
+    this._renderer.curveVertex(...args);
   } else {
     isCurve = true;
     this.vertex(args[0], args[1]);
@@ -773,7 +773,7 @@ p5.prototype.endShape = function(mode) {
 p5.prototype.quadraticVertex = function(...args) {
   p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.quadraticVertex.apply(this._renderer, args);
+    this._renderer.quadraticVertex(...args);
   } else {
     //if we're drawing a contour, put the points into an
     // array for inside drawing
@@ -953,7 +953,7 @@ p5.prototype.quadraticVertex = function(...args) {
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
-    this._renderer.vertex.apply(this._renderer, arguments);
+    this._renderer.vertex(...arguments);
   } else {
     const vert = [];
     vert.isVert = true;

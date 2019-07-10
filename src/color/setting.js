@@ -174,7 +174,7 @@ import './p5.Color';
  */
 
 p5.prototype.background = function(...args) {
-  this._renderer.background.apply(this._renderer, args);
+  this._renderer.background(...args);
   return this;
 };
 
@@ -491,7 +491,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 p5.prototype.fill = function(...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
-  this._renderer.fill.apply(this._renderer, args);
+  this._renderer.fill(...args);
   return this;
 };
 
@@ -744,7 +744,7 @@ p5.prototype.noStroke = function() {
 p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
-  this._renderer.stroke.apply(this._renderer, args);
+  this._renderer.stroke(...args);
   return this;
 };
 

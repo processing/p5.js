@@ -168,7 +168,7 @@ p5.prototype.pixels = [];
 p5.prototype.blend = function(...args) {
   p5._validateParameters('blend', args);
   if (this._renderer) {
-    this._renderer.blend.apply(this._renderer, args);
+    this._renderer.blend(...args);
   } else {
     p5.Renderer2D.prototype.blend.apply(this, args);
   }
@@ -497,7 +497,7 @@ p5.prototype.filter = function(operation, value) {
  */
 p5.prototype.get = function(x, y, w, h) {
   p5._validateParameters('get', arguments);
-  return this._renderer.get.apply(this._renderer, arguments);
+  return this._renderer.get(...arguments);
 };
 
 /**

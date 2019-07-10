@@ -46,7 +46,7 @@ p5.prototype.print = function(...args) {
   if (!args.length) {
     _windowPrint();
   } else {
-    console.log.apply(console, args);
+    console.log(...args);
   }
 };
 

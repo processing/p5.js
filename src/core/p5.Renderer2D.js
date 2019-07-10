@@ -52,7 +52,7 @@ p5.Renderer2D.prototype.background = function(...args) {
   } else {
     const curFill = this._getFill();
     // create background rect
-    const color = this._pInst.color.apply(this._pInst, args);
+    const color = this._pInst.color(...args);
     const newFill = color.toString();
     this._setFill(newFill);
     this.drawingContext.fillRect(0, 0, this.width, this.height);
@@ -74,12 +74,12 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function(...args) {
-  const color = this._pInst.color.apply(this._pInst, args);
+  const color = this._pInst.color(...args);
   this._setFill(color.toString());
 };
 
 p5.Renderer2D.prototype.stroke = function(...args) {
-  const color = this._pInst.color.apply(this._pInst, args);
+  const color = this._pInst.color(...args);
   this._setStroke(color.toString());
 };
 
@@ -201,9 +201,9 @@ p5.Renderer2D.prototype.blend = function(...args) {
 
   this.drawingContext.globalCompositeOperation = blendMode;
   if (this._pInst) {
-    this._pInst.copy.apply(this._pInst, copyArgs);
+    this._pInst.copy(...copyArgs);
   } else {
-    this.copy.apply(this, copyArgs);
+    this.copy(...copyArgs);
   }
   this.drawingContext.globalCompositeOperation = currBlend;
 };

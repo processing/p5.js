@@ -143,7 +143,7 @@ import p5 from './main';
  *
  */
 p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix.apply(this._renderer, arguments);
+  this._renderer.applyMatrix(...arguments);
   return this;
 };
 
