@@ -293,15 +293,15 @@ p5.prototype.noiseSeed = function(seed) {
     const c = 1013904223;
     let seed, z;
     return {
-      setSeed: function(val) {
+      setSeed(val) {
         // pick a random seed if val is undefined or null
         // the >>> 0 casts the seed to an unsigned 32-bit integer
         z = seed = (val == null ? Math.random() * m : val) >>> 0;
       },
-      getSeed: function() {
+      getSeed() {
         return seed;
       },
-      rand: function() {
+      rand() {
         // define the recurrence relationship
         z = (a * z + c) % m;
         // return a float in [0, 1)

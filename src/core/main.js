@@ -687,10 +687,10 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
         Object.defineProperty(globalObject, prop, {
           configurable: true,
           enumerable: true,
-          get: function() {
+          get() {
             return value;
           },
-          set: function(newValue) {
+          set(newValue) {
             Object.defineProperty(globalObject, prop, {
               configurable: true,
               enumerable: true,
