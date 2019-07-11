@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/day">day()</a> function
@@ -18,7 +18,7 @@ var p5 = require('../core/main');
  * @example
  * <div>
  * <code>
- * var d = day();
+ * const d = day();
  * text('Current day: \n' + d, 5, 50);
  * </code>
  * </div>
@@ -27,7 +27,7 @@ var p5 = require('../core/main');
  * Current day is displayed
  *
  */
-p5.prototype.day = function() {
+p5.prototype.day = () => {
   return new Date().getDate();
 };
 
@@ -40,7 +40,7 @@ p5.prototype.day = function() {
  * @example
  * <div>
  * <code>
- * var h = hour();
+ * const h = hour();
  * text('Current hour:\n' + h, 5, 50);
  * </code>
  * </div>
@@ -49,7 +49,7 @@ p5.prototype.day = function() {
  * Current hour is displayed
  *
  */
-p5.prototype.hour = function() {
+p5.prototype.hour = () => {
   return new Date().getHours();
 };
 
@@ -62,7 +62,7 @@ p5.prototype.hour = function() {
  * @example
  * <div>
  * <code>
- * var m = minute();
+ * const m = minute();
  * text('Current minute: \n' + m, 5, 50);
  * </code>
  * </div>
@@ -71,7 +71,7 @@ p5.prototype.hour = function() {
  * Current minute is displayed
  *
  */
-p5.prototype.minute = function() {
+p5.prototype.minute = () => {
   return new Date().getMinutes();
 };
 
@@ -85,7 +85,7 @@ p5.prototype.minute = function() {
  * @example
  * <div>
  * <code>
- * var millisecond = millis();
+ * const millisecond = millis();
  * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
  * </code>
  * </div>
@@ -94,7 +94,7 @@ p5.prototype.minute = function() {
  * number of milliseconds since program has started displayed
  *
  */
-p5.prototype.millis = function() {
+p5.prototype.millis = () => {
   return window.performance.now();
 };
 
@@ -107,7 +107,7 @@ p5.prototype.millis = function() {
  * @example
  * <div>
  * <code>
- * var m = month();
+ * const m = month();
  * text('Current month: \n' + m, 5, 50);
  * </code>
  * </div>
@@ -116,7 +116,7 @@ p5.prototype.millis = function() {
  * Current month is displayed
  *
  */
-p5.prototype.month = function() {
+p5.prototype.month = () => {
   return new Date().getMonth() + 1; //January is 0!
 };
 
@@ -129,7 +129,7 @@ p5.prototype.month = function() {
  * @example
  * <div>
  * <code>
- * var s = second();
+ * const s = second();
  * text('Current second: \n' + s, 5, 50);
  * </code>
  * </div>
@@ -138,7 +138,7 @@ p5.prototype.month = function() {
  * Current second is displayed
  *
  */
-p5.prototype.second = function() {
+p5.prototype.second = () => {
   return new Date().getSeconds();
 };
 
@@ -151,7 +151,7 @@ p5.prototype.second = function() {
  * @example
  * <div>
  * <code>
- * var y = year();
+ * const y = year();
  * text('Current year: \n' + y, 5, 50);
  * </code>
  * </div>
@@ -160,7 +160,7 @@ p5.prototype.second = function() {
  * Current year is displayed
  *
  */
-p5.prototype.year = function() {
+p5.prototype.year = () => {
   return new Date().getFullYear();
 };
 

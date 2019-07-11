@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 require('../core/error_helpers');
 
 //return p5; //LM is this a mistake?
@@ -25,9 +25,9 @@ require('../core/error_helpers');
  * @example
  * <div>
  * <code>
- * var array = ['Hello', 'world!'];
- * var separator = ' ';
- * var message = join(array, separator);
+ * const array = ['Hello', 'world!'];
+ * const separator = ' ';
+ * const message = join(array, separator);
  * text(message, 5, 50);
  * </code>
  * </div>
@@ -36,7 +36,7 @@ require('../core/error_helpers');
  * "hello world!" displayed middle left of canvas.
  *
  */
-p5.prototype.join = function(list, separator) {
+p5.prototype.join = (list, separator) => {
   p5._validateParameters('join', arguments);
   return list.join(separator);
 };
@@ -66,9 +66,9 @@ p5.prototype.join = function(list, separator) {
  * @example
  * <div>
  * <code>
- * var string = 'Hello p5js*!';
- * var regexp = 'p5js\\*';
- * var m = match(string, regexp);
+ * const string = 'Hello p5js*!';
+ * const regexp = 'p5js\\*';
+ * const m = match(string, regexp);
  * text(m, 5, 50);
  * </code>
  * </div>
@@ -77,7 +77,7 @@ p5.prototype.join = function(list, separator) {
  * "p5js*" displayed middle left of canvas.
  *
  */
-p5.prototype.match = function(str, reg) {
+p5.prototype.match = (str, reg) => {
   p5._validateParameters('match', arguments);
   return str.match(reg);
 };
@@ -96,7 +96,7 @@ p5.prototype.match = function(str, reg) {
  * <br><br>
  * If there are groups (specified by sets of parentheses) in the regular
  * expression, then the contents of each will be returned in the array.
- * Assuming a loop with counter variable i, element [i][0] of a regular
+ * Assuming a loop with counter constiable i, element [i][0] of a regular
  * expression match returns the entire matching string, and the match groups
  * start at element [i][1] (the first group is [i][1], the second [i][2],
  * and so on).
@@ -108,17 +108,17 @@ p5.prototype.match = function(str, reg) {
  * @example
  * <div class="norender">
  * <code>
- * var string = 'Hello p5js*! Hello world!';
- * var regexp = 'Hello';
+ * const string = 'Hello p5js*! Hello world!';
+ * const regexp = 'Hello';
  * matchAll(string, regexp);
  * </code>
  * </div>
  */
-p5.prototype.matchAll = function(str, reg) {
+p5.prototype.matchAll = (str, reg) => {
   p5._validateParameters('matchAll', arguments);
-  var re = new RegExp(reg, 'g');
-  var match = re.exec(str);
-  var matches = [];
+  const re = new RegExp(reg, 'g');
+  const match = re.exec(str);
+  const matches = [];
   while (match !== null) {
     matches.push(match);
     // matched text: match[0]
@@ -151,14 +151,14 @@ p5.prototype.matchAll = function(str, reg) {
  * @example
  * <div>
  * <code>
- * var myFont;
+ * const myFont;
  * function preload() {
  *   myFont = loadFont('assets/fonts/inconsolata.ttf');
  * }
  * function setup() {
  *   background(200);
- *   var num1 = 321;
- *   var num2 = -1321;
+ *   const num1 = 321;
+ *   const num2 = -1321;
  *
  *   noStroke();
  *   fill(0);
@@ -184,14 +184,14 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Integer|String}      [right]
  * @return {String[]}                formatted Strings
  */
-p5.prototype.nf = function(nums, left, right) {
+p5.prototype.nf = (nums, left, right) => {
   p5._validateParameters('nf', arguments);
   if (nums instanceof Array) {
     return nums.map(function(x) {
       return doNf(x, left, right);
     });
   } else {
-    var typeOfFirst = Object.prototype.toString.call(nums);
+    const typeOfFirst = Object.prototype.toString.call(nums);
     if (typeOfFirst === '[object Arguments]') {
       if (nums.length === 3) {
         return this.nf(nums[0], nums[1], nums[2]);
@@ -207,32 +207,32 @@ p5.prototype.nf = function(nums, left, right) {
 };
 
 function doNf(num, left, right) {
-  var neg = num < 0;
-  var n = neg ? num.toString().substring(1) : num.toString();
-  var decimalInd = n.indexOf('.');
-  var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
-  var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
-  var str = neg ? '-' : '';
+  const neg = num < 0;
+  const n = neg ? num.toString().substring(1) : num.toString();
+  const decimalInd = n.indexOf('.');
+  const intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
+  const decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
+  const str = neg ? '-' : '';
   if (typeof right !== 'undefined') {
-    var decimal = '';
+    const decimal = '';
     if (decimalInd !== -1 || right - decPart.length > 0) {
       decimal = '.';
     }
     if (decPart.length > right) {
       decPart = decPart.substring(0, right);
     }
-    for (var i = 0; i < left - intPart.length; i++) {
+    for (const i = 0; i < left - intPart.length; i++) {
       str += '0';
     }
     str += intPart;
     str += decimal;
     str += decPart;
-    for (var j = 0; j < right - decPart.length; j++) {
+    for (const j = 0; j < right - decPart.length; j++) {
       str += '0';
     }
     return str;
   } else {
-    for (var k = 0; k < Math.max(left - intPart.length, 0); k++) {
+    for (const k = 0; k < Math.max(left - intPart.length, 0); k++) {
       str += '0';
     }
     str += n;
@@ -257,8 +257,8 @@ function doNf(num, left, right) {
  * <code>
  * function setup() {
  *   background(200);
- *   var num = 11253106.115;
- *   var numArr = [1, 1, 2];
+ *   const num = 11253106.115;
+ *   const numArr = [1, 1, 2];
  *
  *   noStroke();
  *   fill(0);
@@ -284,7 +284,7 @@ function doNf(num, left, right) {
  * @param  {Integer|String}  [right]
  * @return {String[]}           formatted Strings
  */
-p5.prototype.nfc = function(num, right) {
+p5.prototype.nfc = (num, right) => {
   p5._validateParameters('nfc', arguments);
   if (num instanceof Array) {
     return num.map(function(x) {
@@ -296,17 +296,17 @@ p5.prototype.nfc = function(num, right) {
 };
 function doNfc(num, right) {
   num = num.toString();
-  var dec = num.indexOf('.');
-  var rem = dec !== -1 ? num.substring(dec) : '';
-  var n = dec !== -1 ? num.substring(0, dec) : num;
+  const dec = num.indexOf('.');
+  const rem = dec !== -1 ? num.substring(dec) : '';
+  const n = dec !== -1 ? num.substring(0, dec) : num;
   n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (right === 0) {
     rem = '';
   } else if (typeof right !== 'undefined') {
     if (right > rem.length) {
       rem += dec === -1 ? '.' : '';
-      var len = right - rem.length + 1;
-      for (var i = 0; i < len; i++) {
+      const len = right - rem.length + 1;
+      for (const i = 0; i < len; i++) {
         rem += '0';
       }
     } else {
@@ -336,8 +336,8 @@ function doNfc(num, right) {
  * <code>
  * function setup() {
  *   background(200);
- *   var num1 = 11253106.115;
- *   var num2 = -11253106.115;
+ *   const num1 = 11253106.115;
+ *   const num2 = -11253106.115;
  *
  *   noStroke();
  *   fill(0);
@@ -364,9 +364,9 @@ function doNfc(num, right) {
  * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
-p5.prototype.nfp = function() {
+p5.prototype.nfp = () => {
   p5._validateParameters('nfp', arguments);
-  var nfRes = p5.prototype.nf.apply(this, arguments);
+  const nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
   } else {
@@ -386,7 +386,7 @@ function addNfp(num) {
  * number with some negative number (See the example to get a clear picture).
  * There are two versions: one for formatting float, and one for formatting int.
  * The values for the digits, left, and right parameters should always be positive integers.
- * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+ * (IMP): The result on the canvas basically the expected alignment can consty based on the typeface you are using.
  * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
  * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
@@ -404,14 +404,14 @@ function addNfp(num) {
  * @example
  * <div>
  * <code>
- * var myFont;
+ * let myFont;
  * function preload() {
  *   myFont = loadFont('assets/fonts/inconsolata.ttf');
  * }
  * function setup() {
  *   background(200);
- *   var num1 = 321;
- *   var num2 = -1321;
+ *   const num1 = 321;
+ *   const num2 = -1321;
  *
  *   noStroke();
  *   fill(0);
@@ -442,9 +442,9 @@ function addNfp(num) {
  * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
-p5.prototype.nfs = function() {
+p5.prototype.nfs = () => {
   p5._validateParameters('nfs', arguments);
-  var nfRes = p5.prototype.nf.apply(this, arguments);
+  const nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
   } else {
@@ -473,8 +473,8 @@ function addNfs(num) {
  * @example
  * <div>
  * <code>
- * var names = 'Pat,Xio,Alex';
- * var splitString = split(names, ',');
+ * const names = 'Pat,Xio,Alex';
+ * const splitString = split(names, ',');
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
@@ -485,7 +485,7 @@ function addNfs(num) {
  * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
  *
  */
-p5.prototype.split = function(str, delim) {
+p5.prototype.split = (str, delim) => {
   p5._validateParameters('split', arguments);
   return str.split(delim);
 };
@@ -508,21 +508,21 @@ p5.prototype.split = function(str, delim) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var myStr = 'Mango, Banana, Lime';
- *   var myStrArr = splitTokens(myStr, ',');
+ *   const myStr = 'Mango, Banana, Lime';
+ *   const myStrArr = splitTokens(myStr, ',');
  *
  *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
  * }
  * </code>
  * </div>
  */
-p5.prototype.splitTokens = function(value, delims) {
+p5.prototype.splitTokens = (value, delims) => {
   p5._validateParameters('splitTokens', arguments);
-  var d;
+  let d;
   if (typeof delims !== 'undefined') {
-    var str = delims;
-    var sqc = /\]/g.exec(str);
-    var sqo = /\[/g.exec(str);
+    const str = delims;
+    const sqc = /\]/g.exec(str);
+    const sqo = /\[/g.exec(str);
     if (sqo && sqc) {
       str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);
@@ -557,7 +557,7 @@ p5.prototype.splitTokens = function(value, delims) {
  * @example
  * <div>
  * <code>
- * var string = trim('  No new lines\n   ');
+ * const string = trim('  No new lines\n   ');
  * text(string + ' here', 2, 50);
  * </code>
  * </div>
@@ -570,7 +570,7 @@ p5.prototype.splitTokens = function(value, delims) {
  * @param  {Array} strs an Array of Strings to be trimmed
  * @return {String[]}   an Array of trimmed Strings
  */
-p5.prototype.trim = function(str) {
+p5.prototype.trim = (str) => {
   p5._validateParameters('trim', arguments);
   if (str instanceof Array) {
     return str.map(this.trim);

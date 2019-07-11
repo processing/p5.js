@@ -7,7 +7,7 @@
 
 'use strict';
 
-var p5 = require('../core/main');
+const p5 = require('../core/main');
 
 /**
  * Adds a value to the end of an array. Extends the length of
@@ -21,7 +21,7 @@ var p5 = require('../core/main');
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var myArray = ['Mango', 'Apple', 'Papaya'];
+ *   const myArray = ['Mango', 'Apple', 'Papaya'];
  *   print(myArray); // ['Mango', 'Apple', 'Papaya']
  *
  *   append(myArray, 'Peach');
@@ -59,11 +59,11 @@ p5.prototype.append = function(array, value) {
  *
  * @example
  * <div class='norender'><code>
- * var src = ['A', 'B', 'C'];
- * var dst = [1, 2, 3];
- * var srcPosition = 1;
- * var dstPosition = 0;
- * var length = 2;
+ * const src = ['A', 'B', 'C'];
+ * const dst = [1, 2, 3];
+ * const srcPosition = 1;
+ * const dstPosition = 0;
+ * const length = 2;
  *
  * print(src); // ['A', 'B', 'C']
  * print(dst); // [ 1 ,  2 ,  3 ]
@@ -81,8 +81,8 @@ p5.prototype.append = function(array, value) {
  */
 p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
   // the index to begin splicing from dst array
-  var start;
-  var end;
+  let start;
+  let end;
 
   if (typeof length !== 'undefined') {
     end = Math.min(length, src.length);
@@ -124,13 +124,13 @@ p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
  * @example
  * <div class = 'norender'><code>
  * function setup() {
- *   var arr1 = ['A', 'B', 'C'];
- *   var arr2 = [1, 2, 3];
+ *   const arr1 = ['A', 'B', 'C'];
+ *   const arr2 = [1, 2, 3];
  *
  *   print(arr1); // ['A','B','C']
  *   print(arr2); // [1,2,3]
  *
- *   var arr3 = concat(arr1, arr2);
+ *   const arr3 = concat(arr1, arr2);
  *
  *   print(arr1); // ['A','B','C']
  *   print(arr2); // [1, 2, 3]
@@ -152,7 +152,7 @@ p5.prototype.concat = function(list0, list1) {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var myArray = ['A', 'B', 'C'];
+ *   const myArray = ['A', 'B', 'C'];
  *   print(myArray); // ['A','B','C']
  *
  *   reverse(myArray);
@@ -175,9 +175,9 @@ p5.prototype.reverse = function(list) {
  * @example
  * <div class = 'norender'><code>
  * function setup() {
- *   var myArray = ['A', 'B', 'C'];
+ *   const myArray = ['A', 'B', 'C'];
  *   print(myArray); // ['A', 'B', 'C']
- *   var newArray = shorten(myArray);
+ *   const newArray = shorten(myArray);
  *   print(myArray); // ['A','B','C']
  *   print(newArray); // ['A','B']
  * }
@@ -200,23 +200,23 @@ p5.prototype.shorten = function(list) {
  * @example
  * <div><code>
  * function setup() {
- *   var regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
+ *   const regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
  *   print(regularArr);
  *   shuffle(regularArr, true); // force modifications to passed array
  *   print(regularArr);
  *
  *   // By default shuffle() returns a shuffled cloned array:
- *   var newArr = shuffle(regularArr);
+ *   const newArr = shuffle(regularArr);
  *   print(regularArr);
  *   print(newArr);
  * }
  * </code></div>
  */
 p5.prototype.shuffle = function(arr, bool) {
-  var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+  const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
   arr = bool || isView ? arr : arr.slice();
 
-  var rnd,
+  let rnd,
     tmp,
     idx = arr.length;
   while (idx > 1) {
@@ -246,9 +246,9 @@ p5.prototype.shuffle = function(arr, bool) {
  * @example
  * <div class = 'norender'><code>
  * function setup() {
- *   var words = ['banana', 'apple', 'pear', 'lime'];
+ *   const words = ['banana', 'apple', 'pear', 'lime'];
  *   print(words); // ['banana', 'apple', 'pear', 'lime']
- *   var count = 4; // length of array
+ *   const count = 4; // length of array
  *
  *   words = sort(words, count);
  *   print(words); // ['apple', 'banana', 'lime', 'pear']
@@ -256,18 +256,18 @@ p5.prototype.shuffle = function(arr, bool) {
  * </code></div>
  * <div class = 'norender'><code>
  * function setup() {
- *   var numbers = [2, 6, 1, 5, 14, 9, 8, 12];
+ *   const numbers = [2, 6, 1, 5, 14, 9, 8, 12];
  *   print(numbers); // [2, 6, 1, 5, 14, 9, 8, 12]
- *   var count = 5; // Less than the length of the array
+ *   const count = 5; // Less than the length of the array
  *
  *   numbers = sort(numbers, count);
  *   print(numbers); // [1,2,5,6,14,9,8,12]
  * }
  * </code></div>
  */
-p5.prototype.sort = function(list, count) {
-  var arr = count ? list.slice(0, Math.min(count, list.length)) : list;
-  var rest = count ? list.slice(Math.min(count, list.length)) : [];
+p5.prototype.sort = (list, count) => {
+  const arr = count ? list.slice(0, Math.min(count, list.length)) : list;
+  const rest = count ? list.slice(Math.min(count, list.length)) : [];
   if (typeof arr[0] === 'string') {
     arr = arr.sort();
   } else {
@@ -296,8 +296,8 @@ p5.prototype.sort = function(list, count) {
  * @example
  * <div class = 'norender'><code>
  * function setup() {
- *   var myArray = [0, 1, 2, 3, 4];
- *   var insArray = ['A', 'B', 'C'];
+ *   const myArray = [0, 1, 2, 3, 4];
+ *   const insArray = ['A', 'B', 'C'];
  *   print(myArray); // [0, 1, 2, 3, 4]
  *   print(insArray); // ['A','B','C']
  *
@@ -331,17 +331,17 @@ p5.prototype.splice = function(list, value, index) {
  * @example
  * <div class = 'norender'><code>
  * function setup() {
- *   var myArray = [1, 2, 3, 4, 5];
+ *   const myArray = [1, 2, 3, 4, 5];
  *   print(myArray); // [1, 2, 3, 4, 5]
  *
- *   var sub1 = subset(myArray, 0, 3);
- *   var sub2 = subset(myArray, 2, 2);
+ *   const sub1 = subset(myArray, 0, 3);
+ *   const sub2 = subset(myArray, 2, 2);
  *   print(sub1); // [1,2,3]
  *   print(sub2); // [3,4]
  * }
  * </code></div>
  */
-p5.prototype.subset = function(list, start, count) {
+p5.prototype.subset = (list, start, count) => {
   if (typeof count !== 'undefined') {
     return list.slice(start, start + count);
   } else {
