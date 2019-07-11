@@ -7,7 +7,7 @@
 
 'use strict';
 
-const p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Adds a value to the end of an array. Extends the length of
