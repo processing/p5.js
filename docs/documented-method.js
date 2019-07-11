@@ -36,8 +36,8 @@
   DocumentedMethod.prototype = {
     // Merge parameters across all overloaded versions of this item.
     _getMergedParams: function() {
-      let paramNames = {};
-      let params = [];
+      const paramNames = {};
+      const params = [];
 
       this.overloads.forEach(function(overload) {
         if (!overload.params) {
