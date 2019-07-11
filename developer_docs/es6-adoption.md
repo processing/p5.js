@@ -50,14 +50,14 @@ While for the most part browser compatibility can be ignored, the same is not tr
 ### ES6 Coding Guidelines
 - Abandoning `require` in favor of ES6 `import` [[Read More](https://exploringjs.com/es6/ch_modules.html#sec_importing-exporting-details)]
 - Abandoning `module.exports` in favor of ES6 `export` [[Read More](https://exploringjs.com/es6/ch_modules.html#sec_importing-exporting-details)]
-  **Exception:** `app.js` still using `module.exports = p5;` due to build system limitations
+  - **Exception:** `app.js` still using `module.exports = p5;` due to build system limitations
 - Use `const` always and switch to `let` only when reassignment is necessary [[Discussion](https://github.com/processing/p5.js/issues/3877)]
 - Prototype members should all use function declarations instead of arrow functions [[Discussion](https://github.com/processing/p5.js/issues/3875)]
- **Correct:** `p5.prototype.myMethod = function() { }`
- **Incorrect:** `p5.prototype.myMethod = () => { }`
+  - **Correct:** `p5.prototype.myMethod = function() { }`
+  - **Incorrect:** `p5.prototype.myMethod = () => { }`
 - Prototype members that need `.bind(this)` should be converted to arrow functions [[Discussion](https://github.com/processing/p5.js/issues/3875)]
- **Correct:** `p5.prototype.myMethod = () => { }`
- **Incorrect:** `p5.prototype.myMethod = function() {...}.bind(this);`
+  - **Correct:** `p5.prototype.myMethod = () => { }`
+  - **Incorrect:** `p5.prototype.myMethod = function() {...}.bind(this);`
 - Constants are imported such that syntax replicates old format: `constants.TWO_PI`
 
 
