@@ -7,11 +7,9 @@
  * @requires color_conversion
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var color_conversion = require('./color_conversion');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import color_conversion from './color_conversion';
 
 /**
  * Each color stores the color mode and level maxes that applied at the
@@ -39,7 +37,7 @@ p5.Color = function(pInst, vals) {
     this.mode !== constants.HSL &&
     this.mode !== constants.HSB
   ) {
-    throw new Error(this.mode + ' is an invalid colorMode.');
+    throw new Error(`${this.mode} is an invalid colorMode.`);
   } else {
     this._array = p5.Color._parseInputs.apply(this, vals);
   }
@@ -84,9 +82,9 @@ p5.Color = function(pInst, vals) {
  * canvas with text representation of color
  */
 p5.Color.prototype.toString = function(format) {
-  var a = this.levels;
-  var f = this._array;
-  var alpha = f[3]; // String representation uses normalized alpha
+  const a = this.levels;
+  const f = this._array;
+  const alpha = f[3]; // String representation uses normalized alpha
 
   switch (format) {
     case '#rrggbb':
@@ -370,10 +368,10 @@ p5.Color.prototype.setAlpha = function(new_alpha) {
 
 // calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
-  var array = this._array;
+  const array = this._array;
   // (loop backwards for performance)
-  var levels = (this.levels = new Array(array.length));
-  for (var i = array.length - 1; i >= 0; --i) {
+  const levels = (this.levels = new Array(array.length));
+  for (let i = array.length - 1; i >= 0; --i) {
     levels[i] = Math.round(array[i] * 255);
   }
 };
@@ -465,7 +463,7 @@ p5.Color.prototype._getSaturation = function() {
 /**
  * CSS named colors.
  */
-var namedColors = {
+const namedColors = {
   aliceblue: '#f0f8ff',
   antiquewhite: '#faebd7',
   aqua: '#00ffff',
@@ -623,15 +621,15 @@ var namedColors = {
  * Note that RGB values of .9 are not parsed by IE, but are supported here for
  * color string consistency.
  */
-var WHITESPACE = /\s*/; // Match zero or more whitespace characters.
-var INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
-var DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
-var PERCENT = new RegExp(DECIMAL.source + '%'); // Match 12.9%, 79%, .9%, etc.
+const WHITESPACE = /\s*/; // Match zero or more whitespace characters.
+const INTEGER = /(\d{1,3})/; // Match integers: 79, 255, etc.
+const DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/; // Match 129.6, 79, .9, etc.
+const PERCENT = new RegExp(`${DECIMAL.source}%`); // Match 12.9%, 79%, .9%, etc.
 
 /**
  * Full color string patterns. The capture groups are necessary.
  */
-var colorPatterns = {
+const colorPatterns = {
   // Match colors in format #XXX, e.g. #416.
   HEX3: /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 
@@ -795,11 +793,11 @@ var colorPatterns = {
  *
  */
 p5.Color._parseInputs = function(r, g, b, a) {
-  var numArgs = arguments.length;
-  var mode = this.mode;
-  var maxes = this.maxes[mode];
-  var results = [];
-  var i;
+  const numArgs = arguments.length;
+  const mode = this.mode;
+  const maxes = this.maxes[mode];
+  let results = [];
+  let i;
 
   if (numArgs >= 3) {
     // Argument is a list of component values.
@@ -818,7 +816,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
     // Constrain components to the range [0,1].
     // (loop backwards for performance)
     for (i = results.length - 1; i >= 0; --i) {
-      var result = results[i];
+      const result = results[i];
       if (result < 0) {
         results[i] = 0;
       } else if (result > 1) {
@@ -835,7 +833,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       return results;
     }
   } else if (numArgs === 1 && typeof r === 'string') {
-    var str = r.trim().toLowerCase();
+    const str = r.trim().toLowerCase();
 
     // Return if string is a named colour.
     if (namedColors[str]) {
@@ -847,59 +845,47 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // #rgb
       results = colorPatterns.HEX3.exec(str)
         .slice(1)
-        .map(function(color) {
-          return parseInt(color + color, 16) / 255;
-        });
+        .map(color => parseInt(color + color, 16) / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.HEX6.test(str)) {
       // #rrggbb
       results = colorPatterns.HEX6.exec(str)
         .slice(1)
-        .map(function(color) {
-          return parseInt(color, 16) / 255;
-        });
+        .map(color => parseInt(color, 16) / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.HEX4.test(str)) {
       // #rgba
       results = colorPatterns.HEX4.exec(str)
         .slice(1)
-        .map(function(color) {
-          return parseInt(color + color, 16) / 255;
-        });
+        .map(color => parseInt(color + color, 16) / 255);
       return results;
     } else if (colorPatterns.HEX8.test(str)) {
       // #rrggbbaa
       results = colorPatterns.HEX8.exec(str)
         .slice(1)
-        .map(function(color) {
-          return parseInt(color, 16) / 255;
-        });
+        .map(color => parseInt(color, 16) / 255);
       return results;
     } else if (colorPatterns.RGB.test(str)) {
       // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str)
         .slice(1)
-        .map(function(color) {
-          return color / 255;
-        });
+        .map(color => color / 255);
       results[3] = 1;
       return results;
     } else if (colorPatterns.RGB_PERCENT.test(str)) {
       // rgb(R%,G%,B%)
       results = colorPatterns.RGB_PERCENT.exec(str)
         .slice(1)
-        .map(function(color) {
-          return parseFloat(color) / 100;
-        });
+        .map(color => parseFloat(color) / 100);
       results[3] = 1;
       return results;
     } else if (colorPatterns.RGBA.test(str)) {
       // rgba(R,G,B,A)
       results = colorPatterns.RGBA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 3) {
             return parseFloat(color);
           }
@@ -910,7 +896,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // rgba(R%,G%,B%,A%)
       results = colorPatterns.RGBA_PERCENT.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 3) {
             return parseFloat(color);
           }
@@ -924,7 +910,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsl(H,S,L)
       results = colorPatterns.HSL.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           }
@@ -935,7 +921,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           } else if (idx === 3) {
@@ -944,9 +930,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
           return parseInt(color, 10) / 100;
         });
     }
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    results = results.map(value => Math.max(Math.min(value, 1), 0));
     if (results.length) {
       return color_conversion._hslaToRGBA(results);
     }
@@ -956,7 +940,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsb(H,S,B)
       results = colorPatterns.HSB.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           }
@@ -967,7 +951,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
       // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str)
         .slice(1)
-        .map(function(color, idx) {
+        .map((color, idx) => {
           if (idx === 0) {
             return parseInt(color, 10) / 360;
           } else if (idx === 3) {
@@ -1008,14 +992,12 @@ p5.Color._parseInputs = function(r, g, b, a) {
     }
 
     // Constrain components to the range [0,1].
-    results = results.map(function(value) {
-      return Math.max(Math.min(value, 1), 0);
-    });
+    results = results.map(value => Math.max(Math.min(value, 1), 0));
   } else {
-    throw new Error(arguments + 'is not a valid color representation.');
+    throw new Error(`${arguments}is not a valid color representation.`);
   }
 
   return results;
 };
 
-module.exports = p5.Color;
+export default p5.Color;

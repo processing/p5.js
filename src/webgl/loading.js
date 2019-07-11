@@ -6,10 +6,8 @@
  * @requires p5.Geometry
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-require('./p5.Geometry');
+import p5 from '../core/main';
+import './p5.Geometry';
 
 /**
  * Load a 3d model from an OBJ or STL file.
@@ -99,9 +97,9 @@ require('./p5.Geometry');
  */
 p5.prototype.loadModel = function(path) {
   p5._validateParameters('loadModel', arguments);
-  var normalize;
-  var successCallback;
-  var failureCallback;
+  let normalize;
+  let successCallback;
+  let failureCallback;
   if (typeof arguments[1] === 'boolean') {
     normalize = arguments[1];
     successCallback = arguments[2];
@@ -112,17 +110,17 @@ p5.prototype.loadModel = function(path) {
     failureCallback = arguments[2];
   }
 
-  var fileType = path.slice(-4);
-  var model = new p5.Geometry();
-  model.gid = path + '|' + normalize;
-  var self = this;
+  const fileType = path.slice(-4);
+  const model = new p5.Geometry();
+  model.gid = `${path}|${normalize}`;
+  const self = this;
 
   if (fileType === '.stl') {
     this.httpDo(
       path,
       'GET',
       'arrayBuffer',
-      function(arrayBuffer) {
+      arrayBuffer => {
         parseSTL(model, arrayBuffer);
 
         if (normalize) {
@@ -132,13 +130,13 @@ p5.prototype.loadModel = function(path) {
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
-      }.bind(this),
+      },
       failureCallback
     );
   } else if (fileType === '.obj') {
     this.loadStrings(
       path,
-      function(strings) {
+      strings => {
         parseObj(model, strings);
 
         if (normalize) {
@@ -149,7 +147,7 @@ p5.prototype.loadModel = function(path) {
         if (typeof successCallback === 'function') {
           successCallback(model);
         }
-      }.bind(this),
+      },
       failureCallback
     );
   } else {
@@ -187,24 +185,24 @@ function parseObj(model, lines) {
   // used to map a specific combination (keyed on, for example, the string
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
-  var loadedVerts = {
+  const loadedVerts = {
     v: [],
     vt: [],
     vn: []
   };
-  var indexedVerts = {};
+  const indexedVerts = {};
 
-  for (var line = 0; line < lines.length; ++line) {
+  for (let line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
     // For each line, split it into tokens on whitespace. The first token
     // describes the type.
-    var tokens = lines[line].trim().split(/\b\s+/);
+    const tokens = lines[line].trim().split(/\b\s+/);
 
     if (tokens.length > 0) {
       if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
-        var vertex = new p5.Vector(
+        const vertex = new p5.Vector(
           parseFloat(tokens[1]),
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
@@ -213,20 +211,20 @@ function parseObj(model, lines) {
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
         // It will have two numeric parameters.
-        var texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
+        const texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
         loadedVerts[tokens[0]].push(texVertex);
       } else if (tokens[0] === 'f') {
         // Check if this line describes a face.
         // OBJ faces can have more than three points. Triangulate points.
-        for (var tri = 3; tri < tokens.length; ++tri) {
-          var face = [];
+        for (let tri = 3; tri < tokens.length; ++tri) {
+          const face = [];
 
-          var vertexTokens = [1, tri - 1, tri];
+          const vertexTokens = [1, tri - 1, tri];
 
-          for (var tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
+          for (let tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
             // Now, convert the given token into an index
-            var vertString = tokens[vertexTokens[tokenInd]];
-            var vertIndex = 0;
+            const vertString = tokens[vertexTokens[tokenInd]];
+            let vertIndex = 0;
 
             // TODO: Faces can technically use negative numbers to refer to the
             // previous nth vertex. I haven't seen this used in practice, but
@@ -235,8 +233,8 @@ function parseObj(model, lines) {
             if (indexedVerts[vertString] !== undefined) {
               vertIndex = indexedVerts[vertString];
             } else {
-              var vertParts = vertString.split('/');
-              for (var i = 0; i < vertParts.length; i++) {
+              const vertParts = vertString.split('/');
+              for (let i = 0; i < vertParts.length; i++) {
                 vertParts[i] = parseInt(vertParts[i]) - 1;
               }
 
@@ -285,7 +283,7 @@ function parseSTL(model, buffer) {
   if (isBinary(buffer)) {
     parseBinarySTL(model, buffer);
   } else {
-    var reader = new DataView(buffer);
+    const reader = new DataView(buffer);
 
     if (!('TextDecoder' in window)) {
       console.warn(
@@ -294,9 +292,9 @@ function parseSTL(model, buffer) {
       return model;
     }
 
-    var decoder = new TextDecoder('utf-8');
-    var lines = decoder.decode(reader);
-    var lineArray = lines.split('\n');
+    const decoder = new TextDecoder('utf-8');
+    const lines = decoder.decode(reader);
+    const lineArray = lines.split('\n');
     parseASCIISTL(model, lineArray);
   }
   return model;
@@ -316,11 +314,11 @@ function parseSTL(model, buffer) {
  * Search for `solid` to start anywhere after those prefixes.
  */
 function isBinary(data) {
-  var reader = new DataView(data);
+  const reader = new DataView(data);
 
   // US-ASCII ordinal values for `s`, `o`, `l`, `i`, `d`
-  var solid = [115, 111, 108, 105, 100];
-  for (var off = 0; off < 5; off++) {
+  const solid = [115, 111, 108, 105, 100];
+  for (let off = 0; off < 5; off++) {
     // If "solid" text is matched to the current offset, declare it to be an ASCII STL.
     if (matchDataViewAt(solid, reader, off)) return false;
   }
@@ -334,7 +332,7 @@ function isBinary(data) {
  */
 function matchDataViewAt(query, reader, offset) {
   // Check if each byte in query matches the corresponding byte from the current offset
-  for (var i = 0, il = query.length; i < il; i++) {
+  for (let i = 0, il = query.length; i < il; i++) {
     if (query[i] !== reader.getUint8(offset + i, false)) return false;
   }
 
@@ -348,19 +346,19 @@ function matchDataViewAt(query, reader, offset) {
  * Currently there is no support for the colors provided in STL files.
  */
 function parseBinarySTL(model, buffer) {
-  var reader = new DataView(buffer);
+  const reader = new DataView(buffer);
 
   // Number of faces is present following the header
-  var faces = reader.getUint32(80, true);
-  var r,
+  const faces = reader.getUint32(80, true);
+  let r,
     g,
     b,
     hasColors = false,
     colors;
-  var defaultR, defaultG, defaultB;
+  let defaultR, defaultG, defaultB;
 
   // Binary files contain 80-byte header, which is generally ignored.
-  for (var index = 0; index < 80 - 10; index++) {
+  for (let index = 0; index < 80 - 10; index++) {
     // Check for `COLOR=`
     if (
       reader.getUint32(index, false) === 0x434f4c4f /*COLO*/ &&
@@ -377,18 +375,18 @@ function parseBinarySTL(model, buffer) {
       // alpha = reader.getUint8(index + 9) / 255;
     }
   }
-  var dataOffset = 84;
-  var faceLength = 12 * 4 + 2;
+  const dataOffset = 84;
+  const faceLength = 12 * 4 + 2;
 
   // Iterate the faces
-  for (var face = 0; face < faces; face++) {
-    var start = dataOffset + face * faceLength;
-    var normalX = reader.getFloat32(start, true);
-    var normalY = reader.getFloat32(start + 4, true);
-    var normalZ = reader.getFloat32(start + 8, true);
+  for (let face = 0; face < faces; face++) {
+    const start = dataOffset + face * faceLength;
+    const normalX = reader.getFloat32(start, true);
+    const normalY = reader.getFloat32(start + 4, true);
+    const normalZ = reader.getFloat32(start + 8, true);
 
     if (hasColors) {
-      var packedColor = reader.getUint16(start + 48, true);
+      const packedColor = reader.getUint16(start + 48, true);
 
       if ((packedColor & 0x8000) === 0) {
         // facet has its own unique color
@@ -402,10 +400,10 @@ function parseBinarySTL(model, buffer) {
       }
     }
 
-    for (var i = 1; i <= 3; i++) {
-      var vertexstart = start + i * 12;
+    for (let i = 1; i <= 3; i++) {
+      const vertexstart = start + i * 12;
 
-      var newVertex = new p5.Vector(
+      const newVertex = new p5.Vector(
         reader.getFloat32(vertexstart, true),
         reader.getFloat32(vertexstart + 8, true),
         reader.getFloat32(vertexstart + 4, true)
@@ -418,7 +416,7 @@ function parseBinarySTL(model, buffer) {
       }
     }
 
-    var newNormal = new p5.Vector(normalX, normalY, normalZ);
+    const newNormal = new p5.Vector(normalX, normalY, normalZ);
 
     model.vertexNormals.push(newNormal, newNormal, newNormal);
 
@@ -441,15 +439,15 @@ function parseBinarySTL(model, buffer) {
  * The end of the file is indicated by `endsolid`
  */
 function parseASCIISTL(model, lines) {
-  var state = '';
-  var curVertexIndex = [];
-  var newNormal, newVertex;
+  let state = '';
+  let curVertexIndex = [];
+  let newNormal, newVertex;
 
-  for (var iterator = 0; iterator < lines.length; ++iterator) {
-    var line = lines[iterator].trim();
-    var parts = line.split(' ');
+  for (let iterator = 0; iterator < lines.length; ++iterator) {
+    const line = lines[iterator].trim();
+    const parts = line.split(' ');
 
-    for (var partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
+    for (let partsiterator = 0; partsiterator < parts.length; ++partsiterator) {
       if (parts[partsiterator] === '') {
         // Ignoring multiple whitespaces
         parts.splice(partsiterator, 1);
@@ -466,7 +464,7 @@ function parseASCIISTL(model, lines) {
         if (parts[0] !== 'solid') {
           // Invalid state
           console.error(line);
-          console.error('Invalid state "' + parts[0] + '", should be "solid"');
+          console.error(`Invalid state "${parts[0]}", should be "solid"`);
           return;
         } else {
           state = 'solid';
@@ -478,7 +476,7 @@ function parseASCIISTL(model, lines) {
           // Invalid state
           console.error(line);
           console.error(
-            'Invalid state "' + parts[0] + '", should be "facet normal"'
+            `Invalid state "${parts[0]}", should be "facet normal"`
           );
           return;
         } else {
@@ -497,9 +495,7 @@ function parseASCIISTL(model, lines) {
         if (parts[0] !== 'outer' || parts[1] !== 'loop') {
           // Invalid State
           console.error(line);
-          console.error(
-            'Invalid state "' + parts[0] + '", should be "outer loop"'
-          );
+          console.error(`Invalid state "${parts[0]}", should be "outer loop"`);
           return;
         } else {
           // Next should be vertices
@@ -526,7 +522,7 @@ function parseASCIISTL(model, lines) {
           // Invalid State
           console.error(line);
           console.error(
-            'Invalid state "' + parts[0] + '", should be "vertex" or "endloop"'
+            `Invalid state "${parts[0]}", should be "vertex" or "endloop"`
           );
           return;
         }
@@ -536,9 +532,7 @@ function parseASCIISTL(model, lines) {
         if (parts[0] !== 'endfacet') {
           // End of face
           console.error(line);
-          console.error(
-            'Invalid state "' + parts[0] + '", should be "endfacet"'
-          );
+          console.error(`Invalid state "${parts[0]}", should be "endfacet"`);
           return;
         } else {
           state = 'endfacet';
@@ -561,16 +555,16 @@ function parseASCIISTL(model, lines) {
           // Invalid State
           console.error(line);
           console.error(
-            'Invalid state "' +
-              parts[0] +
-              '", should be "endsolid" or "facet normal"'
+            `Invalid state "${
+              parts[0]
+            }", should be "endsolid" or "facet normal"`
           );
           return;
         }
         break;
 
       default:
-        console.error('Invalid state "' + state + '"');
+        console.error(`Invalid state "${state}"`);
         break;
     }
   }
@@ -622,4 +616,4 @@ p5.prototype.model = function(model) {
   }
 };
 
-module.exports = p5;
+export default p5;

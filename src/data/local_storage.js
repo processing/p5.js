@@ -6,8 +6,7 @@
  * This module defines the p5 methods for working with local storage
  */
 
-'use strict';
-var p5 = require('../core/main');
+import p5 from '../core/main';
 /**
  *
  * Stores a value in local storage under the key name.
@@ -59,11 +58,11 @@ var p5 = require('../core/main');
  * If you reload the page, the last letter typed is still displaying.
  *
  */
-p5.prototype.storeItem = function(key, value) {
+p5.prototype.storeItem = (key, value) => {
   if (typeof value === 'undefined') {
     console.log('You cannot store undefined variables using storeItem()');
   }
-  var type = typeof value;
+  let type = typeof value;
   switch (type) {
     case 'number':
     case 'boolean':
@@ -81,7 +80,7 @@ p5.prototype.storeItem = function(key, value) {
   }
 
   localStorage.setItem(key, value);
-  var typeKey = key + 'p5TypeID';
+  const typeKey = `${key}p5TypeID`;
   localStorage.setItem(typeKey, type);
 };
 
@@ -129,13 +128,11 @@ p5.prototype.storeItem = function(key, value) {
  *
  */
 p5.prototype.getItem = function(key) {
-  var value = localStorage.getItem(key);
-  var type = localStorage.getItem(key + 'p5TypeID');
+  let value = localStorage.getItem(key);
+  const type = localStorage.getItem(`${key}p5TypeID`);
   if (typeof type === 'undefined') {
     console.log(
-      'Unable to determine type of item stored under ' +
-        key +
-        'in local storage. Did you save the item with something other than setItem()?'
+      `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`
     );
   } else if (value !== null) {
     switch (type) {
@@ -150,7 +147,7 @@ p5.prototype.getItem = function(key) {
         break;
       case 'p5.Color':
         value = JSON.parse(value);
-        value = this.color.apply(this, value.levels);
+        value = this.color(...value.levels);
         break;
       case 'string':
       default:
@@ -184,7 +181,7 @@ p5.prototype.getItem = function(key) {
  * }
  * </code></div>
  */
-p5.prototype.clearStorage = function() {
+p5.prototype.clearStorage = () => {
   localStorage.clear();
 };
 
@@ -208,14 +205,12 @@ p5.prototype.clearStorage = function() {
  * }
  * </code></div>
  */
-p5.prototype.removeItem = function(key) {
+p5.prototype.removeItem = key => {
   if (typeof key !== 'string') {
     console.log(
-      'The argument that you passed to removeItem() - ' +
-        key +
-        ' is not a string.'
+      `The argument that you passed to removeItem() - ${key} is not a string.`
     );
   }
   localStorage.removeItem(key);
-  localStorage.removeItem(key + 'p5TypeID');
+  localStorage.removeItem(`${key}p5TypeID`);
 };

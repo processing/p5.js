@@ -6,12 +6,10 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
-require('../core/error_helpers');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import './p5.Color';
+import '../core/error_helpers';
 
 /**
  * Extracts the alpha value from a color or pixel array.
@@ -325,7 +323,7 @@ p5.prototype.color = function() {
     return arguments[0]; // Do nothing if argument is already a color object.
   }
 
-  var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+  const args = arguments[0] instanceof Array ? arguments[0] : arguments;
   return new p5.Color(this, args);
 };
 
@@ -442,18 +440,14 @@ p5.prototype.hue = function(c) {
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
-  var mode = this._colorMode;
-  var maxes = this._colorMaxes;
-  var l0, l1, l2, l3;
-  var fromArray, toArray;
+  const mode = this._colorMode;
+  const maxes = this._colorMaxes;
+  let l0, l1, l2, l3;
+  let fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = c1.levels.map(function(level) {
-      return level / 255;
-    });
-    toArray = c2.levels.map(function(level) {
-      return level / 255;
-    });
+    fromArray = c1.levels.map(level => level / 255);
+    toArray = c2.levels.map(level => level / 255);
   } else if (mode === constants.HSB) {
     c1._getBrightness(); // Cache hsba so it definitely exists.
     c2._getBrightness();
@@ -465,7 +459,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
     fromArray = c1.hsla;
     toArray = c2.hsla;
   } else {
-    throw new Error(mode + 'cannot be used for interpolation.');
+    throw new Error(`${mode}cannot be used for interpolation.`);
   }
 
   // Prevent extrapolation.
@@ -474,9 +468,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
   if (typeof this.lerp === 'undefined') {
-    this.lerp = function(start, stop, amt) {
-      return amt * (stop - start) + start;
-    };
+    this.lerp = (start, stop, amt) => amt * (stop - start) + start;
   }
 
   // Perform interpolation.
@@ -600,4 +592,4 @@ p5.prototype.saturation = function(c) {
   return this.color(c)._getSaturation();
 };
 
-module.exports = p5;
+export default p5;

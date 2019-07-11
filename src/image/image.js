@@ -9,17 +9,15 @@
  * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
  * for drawing images to the main display canvas.
  */
-'use strict';
-
-var p5 = require('../core/main');
-var omggif = require('omggif');
+import p5 from '../core/main';
+import omggif from 'omggif';
 
 // This is not global, but ESLint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
 // redefined-global error and permits using the name "frames" for the array
 // of saved animation frames.
 
-/* global frames:true */ var frames = []; // eslint-disable-line no-unused-vars
+/* global frames:true */ let frames = []; // eslint-disable-line no-unused-vars
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
@@ -152,8 +150,8 @@ p5.prototype.saveCanvas = function() {
   p5._validateParameters('saveCanvas', arguments);
 
   // copy arguments to array
-  var args = [].slice.call(arguments);
-  var htmlCanvas, filename, extension;
+  const args = [].slice.call(arguments);
+  let htmlCanvas, filename, extension;
 
   if (arguments[0] instanceof HTMLCanvasElement) {
     htmlCanvas = arguments[0];
@@ -177,7 +175,7 @@ p5.prototype.saveCanvas = function() {
     p5.prototype._checkFileExtension(filename, extension)[1] ||
     'png';
 
-  var mimeType;
+  let mimeType;
   switch (extension) {
     default:
       //case 'png':
@@ -189,43 +187,43 @@ p5.prototype.saveCanvas = function() {
       break;
   }
 
-  htmlCanvas.toBlob(function(blob) {
+  htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
 };
 
-p5.prototype.saveGif = function(pImg, filename) {
-  var props = pImg.gifProperties;
+p5.prototype.saveGif = (pImg, filename) => {
+  const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
-  var loopLimit = props.loopLimit;
+  let loopLimit = props.loopLimit;
   if (loopLimit === 1) {
     loopLimit = null;
   } else if (loopLimit === null) {
     loopLimit = 0;
   }
-  var gifFormatDelay = props.delay / 10;
-  var opts = {
+  const gifFormatDelay = props.delay / 10;
+  const opts = {
     loop: loopLimit,
     delay: gifFormatDelay
   };
 
-  var buffer = new Uint8Array(
+  const buffer = new Uint8Array(
     pImg.width * pImg.height * props.numFrames * gifFormatDelay
   );
-  var gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
-  var palette = [];
+  const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  const palette = [];
   //loop over frames and build pixel -> palette index for each
-  for (var i = 0; i < props.numFrames; i++) {
-    var pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
-    var data = props.frames[i].data;
-    var dataLength = data.length;
-    for (var j = 0, k = 0; j < dataLength; j += 4, k++) {
-      var r = data[j + 0];
-      var g = data[j + 1];
-      var b = data[j + 2];
-      var color = (r << 16) | (g << 8) | (b << 0);
-      var index = palette.indexOf(color);
+  for (let i = 0; i < props.numFrames; i++) {
+    const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+    const data = props.frames[i].data;
+    const dataLength = data.length;
+    for (let j = 0, k = 0; j < dataLength; j += 4, k++) {
+      const r = data[j + 0];
+      const g = data[j + 1];
+      const b = data[j + 2];
+      const color = (r << 16) | (g << 8) | (b << 0);
+      const index = palette.indexOf(color);
       if (index === -1) {
         pixelPaletteIndex[k] = palette.length;
         palette.push(color);
@@ -234,7 +232,7 @@ p5.prototype.saveGif = function(pImg, filename) {
       }
     }
     // force palette to be power of 2
-    var powof2 = 1;
+    let powof2 = 1;
     while (powof2 < palette.length) {
       powof2 <<= 1;
     }
@@ -243,8 +241,8 @@ p5.prototype.saveGif = function(pImg, filename) {
     gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
   }
   gifWriter.end();
-  var extension = 'gif';
-  var blob = new Blob([buffer], { type: 'image/gif' });
+  const extension = 'gif';
+  const blob = new Blob([buffer], { type: 'image/gif' });
   p5.prototype.downloadFile(blob, filename, extension);
 };
 
@@ -293,27 +291,26 @@ p5.prototype.saveGif = function(pImg, filename) {
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   p5._validateParameters('saveFrames', arguments);
-  var duration = _duration || 3;
+  let duration = _duration || 3;
   duration = p5.prototype.constrain(duration, 0, 15);
   duration = duration * 1000;
-  var fps = _fps || 15;
+  let fps = _fps || 15;
   fps = p5.prototype.constrain(fps, 0, 22);
-  var count = 0;
+  let count = 0;
 
-  var makeFrame = p5.prototype._makeFrame;
-  var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function() {
+  const makeFrame = p5.prototype._makeFrame;
+  const cnv = this._curElement.elt;
+  const frameFactory = setInterval(() => {
     makeFrame(fName + count, ext, cnv);
     count++;
   }, 1000 / fps);
 
-  setTimeout(function() {
+  setTimeout(() => {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
     } else {
-      for (var i = 0; i < frames.length; i++) {
-        var f = frames[i];
+      for (const f of frames) {
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
       }
     }
@@ -322,13 +319,13 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 };
 
 p5.prototype._makeFrame = function(filename, extension, _cnv) {
-  var cnv;
+  let cnv;
   if (this) {
     cnv = this._curElement.elt;
   } else {
     cnv = _cnv;
   }
-  var mimeType;
+  let mimeType;
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
@@ -348,15 +345,15 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
         break;
     }
   }
-  var downloadMime = 'image/octet-stream';
-  var imageData = cnv.toDataURL(mimeType);
+  const downloadMime = 'image/octet-stream';
+  let imageData = cnv.toDataURL(mimeType);
   imageData = imageData.replace(mimeType, downloadMime);
 
-  var thisFrame = {};
+  const thisFrame = {};
   thisFrame.imageData = imageData;
   thisFrame.filename = filename;
   thisFrame.ext = extension;
   frames.push(thisFrame);
 };
 
-module.exports = p5;
+export default p5;

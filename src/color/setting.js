@@ -6,11 +6,9 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import './p5.Color';
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
@@ -173,8 +171,8 @@ require('./p5.Color');
  * @chainable
  */
 
-p5.prototype.background = function() {
-  this._renderer.background.apply(this._renderer, arguments);
+p5.prototype.background = function(...args) {
+  this._renderer.background(...args);
   return this;
 };
 
@@ -317,7 +315,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
     this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._colorMaxes[mode];
+    const maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
       maxes[0] = max1; // Red
       maxes[1] = max1; // Green
@@ -488,10 +486,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @param  {p5.Color}      color   the fill color
  * @chainable
  */
-p5.prototype.fill = function() {
+p5.prototype.fill = function(...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
-  this._renderer.fill.apply(this._renderer, arguments);
+  this._renderer.fill(...args);
   return this;
 };
 
@@ -741,11 +739,11 @@ p5.prototype.noStroke = function() {
  * @chainable
  */
 
-p5.prototype.stroke = function() {
+p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
-  this._renderer.stroke.apply(this._renderer, arguments);
+  this._renderer.stroke(...args);
   return this;
 };
 
-module.exports = p5;
+export default p5;

@@ -4,15 +4,13 @@
  * @for p5
  */
 
-'use strict';
-
-var p5 = require('./main');
-var constants = require('./constants');
-require('./p5.Graphics');
-require('./p5.Renderer2D');
-require('../webgl/p5.RendererGL');
-var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
-var defaultClass = 'p5Canvas';
+import p5 from './main';
+import * as constants from './constants';
+import './p5.Graphics';
+import './p5.Renderer2D';
+import '../webgl/p5.RendererGL';
+let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
+const defaultClass = 'p5Canvas';
 
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
@@ -53,18 +51,16 @@ var defaultClass = 'p5Canvas';
 p5.prototype.createCanvas = function(w, h, renderer) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
-  var r = renderer || constants.P2D;
-  var c;
+  const r = renderer || constants.P2D;
+  let c;
 
   if (r === constants.WEBGL) {
     c = document.getElementById(defaultId);
     if (c) {
       //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
-      var thisRenderer = this._renderer;
-      this._elements = this._elements.filter(function(e) {
-        return e !== thisRenderer;
-      });
+      const thisRenderer = this._renderer;
+      this._elements = this._elements.filter(e => e !== thisRenderer);
     }
     c = document.createElement('canvas');
     c.id = defaultId;
@@ -72,11 +68,11 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   } else {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
-      var i = 0;
-      while (document.getElementById('defaultCanvas' + i)) {
+      let i = 0;
+      while (document.getElementById(`defaultCanvas${i}`)) {
         i++;
       }
-      defaultId = 'defaultCanvas' + i;
+      defaultId = `defaultCanvas${i}`;
       c.id = defaultId;
       c.classList.add(defaultClass);
     } else {
@@ -147,9 +143,9 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save canvas properties
-    var props = {};
-    for (var key in this.drawingContext) {
-      var val = this.drawingContext[key];
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
       }
@@ -158,7 +154,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     this.width = w;
     this.height = h;
     // reset canvas properties
-    for (var savedKey in props) {
+    for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
       } catch (err) {
@@ -315,4 +311,4 @@ p5.prototype.blendMode = function(mode) {
   this._renderer.blendMode(mode);
 };
 
-module.exports = p5;
+export default p5;

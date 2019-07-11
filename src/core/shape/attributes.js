@@ -6,10 +6,8 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../main');
-var constants = require('../constants');
+import p5 from '../main';
+import * as constants from '../constants';
 
 /**
  * Modifies the location from which ellipses are drawn by changing the way
@@ -349,4 +347,4 @@ p5.prototype.strokeWeight = function(w) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

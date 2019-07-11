@@ -6,9 +6,7 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Sets the current alignment for drawing text. Accepts two
@@ -78,7 +76,7 @@ var p5 = require('../core/main');
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
   p5._validateParameters('textAlign', arguments);
-  return this._renderer.textAlign.apply(this._renderer, arguments);
+  return this._renderer.textAlign(...arguments);
 };
 
 /**
@@ -116,7 +114,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  */
 p5.prototype.textLeading = function(theLeading) {
   p5._validateParameters('textLeading', arguments);
-  return this._renderer.textLeading.apply(this._renderer, arguments);
+  return this._renderer.textLeading(...arguments);
 };
 
 /**
@@ -148,7 +146,7 @@ p5.prototype.textLeading = function(theLeading) {
  */
 p5.prototype.textSize = function(theSize) {
   p5._validateParameters('textSize', arguments);
-  return this._renderer.textSize.apply(this._renderer, arguments);
+  return this._renderer.textSize(...arguments);
 };
 
 /**
@@ -185,7 +183,7 @@ p5.prototype.textSize = function(theSize) {
  */
 p5.prototype.textStyle = function(theStyle) {
   p5._validateParameters('textStyle', arguments);
-  return this._renderer.textStyle.apply(this._renderer, arguments);
+  return this._renderer.textStyle(...arguments);
 };
 
 /**
@@ -215,12 +213,13 @@ p5.prototype.textStyle = function(theStyle) {
  *Letter P and p5.js are displayed with vertical lines at end. P is wide
  *
  */
-p5.prototype.textWidth = function(theText) {
-  p5._validateParameters('textWidth', arguments);
-  if (theText.length === 0) {
+p5.prototype.textWidth = function(...args) {
+  args[0] += '';
+  p5._validateParameters('textWidth', args);
+  if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth.apply(this._renderer, arguments);
+  return this._renderer.textWidth(...args);
 };
 
 /**
@@ -247,8 +246,8 @@ p5.prototype.textWidth = function(theText) {
  * </code>
  * </div>
  */
-p5.prototype.textAscent = function() {
-  p5._validateParameters('textAscent', arguments);
+p5.prototype.textAscent = function(...args) {
+  p5._validateParameters('textAscent', args);
   return this._renderer.textAscent();
 };
 
@@ -276,8 +275,8 @@ p5.prototype.textAscent = function() {
  * </code>
  * </div>
  */
-p5.prototype.textDescent = function() {
-  p5._validateParameters('textDescent', arguments);
+p5.prototype.textDescent = function(...args) {
+  p5._validateParameters('textDescent', args);
   return this._renderer.textDescent();
 };
 
@@ -288,4 +287,4 @@ p5.prototype._updateTextMetrics = function() {
   return this._renderer._updateTextMetrics();
 };
 
-module.exports = p5;
+export default p5;

@@ -6,12 +6,10 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../main');
-var constants = require('../constants');
-var canvas = require('../helpers');
-require('../error_helpers');
+import p5 from '../main';
+import * as constants from '../constants';
+import canvas from '../helpers';
+import '../error_helpers';
 
 /**
  * This function does 3 things:
@@ -35,15 +33,15 @@ require('../error_helpers');
  *      underlying ellipse.  This is useful if you want to do something special
  *      there (like rendering a whole ellipse instead).
  */
-p5.prototype._normalizeArcAngles = function(
+p5.prototype._normalizeArcAngles = (
   start,
   stop,
   width,
   height,
   correctForScaling
-) {
-  var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
-  var separation;
+) => {
+  const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+  let separation;
 
   // The order of the steps is important here: each one builds upon the
   // adjustments made in the steps that precede it.
@@ -93,8 +91,8 @@ p5.prototype._normalizeArcAngles = function(
   }
 
   return {
-    start: start,
-    stop: stop,
+    start,
+    stop,
     correspondToSamePoint: separation < epsilon
   };
 };
@@ -181,8 +179,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   w = Math.abs(w);
   h = Math.abs(h);
 
-  var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-  var angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
 
   if (angles.correspondToSamePoint) {
     // If the arc starts and ends at (near enough) the same place, we choose to
@@ -261,7 +259,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
     h = Math.abs(h);
   }
 
-  var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
   return this;
@@ -291,10 +289,10 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * white circle with black outline in mid of canvas that is 55x55.
  */
 p5.prototype.circle = function() {
-  var args = Array.prototype.slice.call(arguments, 0, 2);
+  const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this.ellipse.apply(this, args);
+  return this.ellipse(...args);
 };
 
 /**
@@ -343,11 +341,11 @@ p5.prototype.circle = function() {
  * @param  {Number} z2 the z-coordinate of the second point
  * @chainable
  */
-p5.prototype.line = function() {
-  p5._validateParameters('line', arguments);
+p5.prototype.line = function(...args) {
+  p5._validateParameters('line', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.line.apply(this._renderer, arguments);
+    this._renderer.line(...args);
   }
 
   return this;
@@ -378,11 +376,11 @@ p5.prototype.line = function() {
  *4 points centered in the middle-right of the canvas.
  *
  */
-p5.prototype.point = function() {
-  p5._validateParameters('point', arguments);
+p5.prototype.point = function(...args) {
+  p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.point.apply(this._renderer, arguments);
+    this._renderer.point(...args);
   }
 
   return this;
@@ -434,21 +432,21 @@ p5.prototype.point = function() {
  * @param {Number} z4 the z-coordinate of the fourth point
  * @chainable
  */
-p5.prototype.quad = function() {
-  p5._validateParameters('quad', arguments);
+p5.prototype.quad = function(...args) {
+  p5._validateParameters('quad', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    if (this._renderer.isP3D && arguments.length !== 12) {
+    if (this._renderer.isP3D && args.length !== 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
       // prettier-ignore
       this._renderer.quad.call(
         this._renderer,
-        arguments[0], arguments[1], 0,
-        arguments[2], arguments[3], 0,
-        arguments[4], arguments[5], 0,
-        arguments[6], arguments[7], 0);
+        args[0], args[1], 0,
+        args[2], args[3], 0,
+        args[4], args[5], 0,
+        args[6], args[7], 0);
     } else {
-      this._renderer.quad.apply(this._renderer, arguments);
+      this._renderer.quad(...args);
     }
   }
 
@@ -519,17 +517,17 @@ p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    var vals = canvas.modeAdjust(
+    const vals = canvas.modeAdjust(
       arguments[0],
       arguments[1],
       arguments[2],
       arguments[3],
       this._renderer._rectMode
     );
-    var args = [vals.x, vals.y, vals.w, vals.h];
+    const args = [vals.x, vals.y, vals.w, vals.h];
     // append the additional arguments (either cornder radii, or
     // segment details) to the argument list
-    for (var i = 4; i < arguments.length; i++) {
+    for (let i = 4; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
     this._renderer.rect(args);
@@ -616,14 +614,14 @@ p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
  * white triangle with black outline in mid-right of canvas.
  *
  */
-p5.prototype.triangle = function() {
-  p5._validateParameters('triangle', arguments);
+p5.prototype.triangle = function(...args) {
+  p5._validateParameters('triangle', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.triangle(arguments);
+    this._renderer.triangle(args);
   }
 
   return this;
 };
 
-module.exports = p5;
+export default p5;

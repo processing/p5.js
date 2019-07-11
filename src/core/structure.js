@@ -5,9 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
@@ -249,7 +247,7 @@ p5.prototype.push = function() {
  *
  */
 p5.prototype.pop = function() {
-  var style = this._styles.pop();
+  const style = this._styles.pop();
   if (style) {
     this._renderer.pop(style.renderer);
     Object.assign(this, style.props);
@@ -326,22 +324,22 @@ p5.prototype.redraw = function(n) {
     return;
   }
 
-  var numberOfRedraws = parseInt(n);
+  let numberOfRedraws = parseInt(n);
   if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
     numberOfRedraws = 1;
   }
 
-  var context = this._isGlobal ? window : this;
-  var userSetup = context.setup;
-  var userDraw = context.draw;
+  const context = this._isGlobal ? window : this;
+  const userSetup = context.setup;
+  const userDraw = context.draw;
   if (typeof userDraw === 'function') {
     if (typeof userSetup === 'undefined') {
       context.scale(context._pixelDensity, context._pixelDensity);
     }
-    var callMethod = function(f) {
+    const callMethod = f => {
       f.call(context);
     };
-    for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+    for (let idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
       context.resetMatrix();
       if (context._renderer.isP3D) {
         context._renderer._update();
@@ -359,4 +357,4 @@ p5.prototype.redraw = function(n) {
   }
 };
 
-module.exports = p5;
+export default p5;

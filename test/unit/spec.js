@@ -9,13 +9,14 @@ var spec = {
     'error_helpers',
     'main',
     'p5.Element',
+    'p5.Graphics',
     'rendering',
     'structure',
     'transform',
     'vertex'
   ],
   data: ['p5.TypedDict', 'local_storage'],
-  events: ['keyboard', 'mouse', 'touch'],
+  events: ['keyboard', 'mouse', 'touch', 'acceleration'],
   image: ['p5.Image', 'loading', 'pixels', 'filters'],
   io: [
     'files',
@@ -30,7 +31,7 @@ var spec = {
   ],
   math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
   typography: ['attributes', 'loadFont', 'p5.Font'],
-  utilities: ['array_functions', 'string_functions', 'time_date'],
+  utilities: ['array_functions', 'conversion', 'string_functions', 'time_date'],
   webgl: [
     'p5.Matrix',
     'p5.Camera',
