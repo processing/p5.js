@@ -156,7 +156,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 p5.prototype.specularLight = function(v1, v2, v3) {
   this._assert3d('specularLight');
   // p5._validateParameters('specularLight', arguments);
-  var color = this.color.apply(this, arguments);
+  const color = this.color(...arguments);
 
   this._renderer.specularLightColors = [
     color._array[0],
