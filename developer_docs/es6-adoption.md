@@ -84,4 +84,4 @@ While for the most part browser compatibility can be ignored, the same is not tr
 **Note:** Please Update the list above as new features are incorporated into the library.
 
  ### Current Issues
-- https://github.com/processing/p5.js/issues/3883: Failure to construct `new p5()` when using `combineModules` to create custom bundles. Global mode is unaffected and behaves as expected.
+- [`#3883`](https://github.com/processing/p5.js/issues/3883): Failure to construct `new p5()` when using `combineModules` to create custom bundles. Global mode is unaffected and behaves as expected.
