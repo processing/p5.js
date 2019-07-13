@@ -16,8 +16,8 @@ uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
 
 uniform int uSpotLightCount;
-uniform float uSpotLightAngle;
-uniform float uSpotLightConc;
+uniform float uSpotLightAngle[8];
+uniform float uSpotLightConc[8];
 uniform vec3 uSpotLightColor[8];
 uniform vec3 uSpotLightLocation[8];
 uniform vec3 uSpotLightDirection[8];

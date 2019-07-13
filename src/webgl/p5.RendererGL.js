@@ -78,8 +78,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.spotLightPositions = [];
   this.spotLightDirections = [];
   this.spotLightColors = [];
-  this.spotLightAngle = constants.PI;
-  this.spotLightConc = 1;
+  this.spotLightAngle = [];
+  this.spotLightConc = [];
 
   this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
@@ -501,8 +501,8 @@ p5.RendererGL.prototype._update = function() {
   this.spotLightPositions.length = 0;
   this.spotLightDirections.length = 0;
   this.spotLightColors.length = 0;
-  this.spotLightAngle = constants.PI;
-  this.spotLightConc = 1;
+  this.spotLightAngle.length = 0;
+  this.spotLightConc.length = 0;
 
   this._enableLighting = false;
 
@@ -909,8 +909,8 @@ p5.RendererGL.prototype.push = function() {
   properties.spotLightPositions = this.spotLightPositions.slice();
   properties.spotLightDirections = this.spotLightDirections.slice();
   properties.spotLightColors = this.spotLightColors.slice();
-  properties.spotLightAngle = this.spotLightAngle;
-  properties.spotLightConc = this.spotLightConc;
+  properties.spotLightAngle = this.spotLightAngle.slice();
+  properties.spotLightConc = this.spotLightConc.slice();
 
   properties.userFillShader = this.userFillShader;
   properties.userStrokeShader = this.userStrokeShader;
