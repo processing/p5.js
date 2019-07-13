@@ -400,10 +400,95 @@ p5.prototype.lightFalloff = function(
 };
 
 /**
- *
  * @method spotLight
+ * @param  {Number}    v1       red or hue value (depending on the current
+ * color mode),
+ * @param  {Number}    v2       green or saturation value
+ * @param  {Number}    v3       blue or brightness value
+ * @param  {Number}    x        x axis position
+ * @param  {Number}    y        y axis position
+ * @param  {Number}    z        z axis position
+ * @param  {Number}    nx       x axis direction
+ * @param  {Number}    ny       y axis direction
+ * @param  {Number}    nz       z axis direction
+ * @param  {Number}    angle    angle
+ * @param  {Number}    conc     concentration
  * @chainable
- *
+ */
+/**
+ * @method spotLight
+ * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+ * or <a href="#/p5.Color">p5.Color</a> value
+ * @param  {Number}                   x
+ * @param  {Number}                   y
+ * @param  {Number}                   z
+ * @param  {Number}                   nx
+ * @param  {Number}                   ny
+ * @param  {Number}                   nz
+ * @param  {Number}                   angle
+ * @param  {Number}                   conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number[]|String|p5.Color} color
+ * @param  {p5.Vector}                position the position of the light
+ * @param  {Number}                   nx
+ * @param  {Number}                   ny
+ * @param  {Number}                   nz
+ * @param  {Number}                   angle
+ * @param  {Number}                   conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number[]|String|p5.Color} color
+ * @param  {p5.Vector}                position
+ * @param  {p5.Vector}                direction the direction of the light
+ * @param  {Number}                   angle
+ * @param  {Number}                   conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number}     v1
+ * @param  {Number}     v2
+ * @param  {Number}     v3
+ * @param  {p5.Vector}  position
+ * @param  {Number}     nx
+ * @param  {Number}     ny
+ * @param  {Number}     nz
+ * @param  {Number}     angle
+ * @param  {Number}     conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number}     v1
+ * @param  {Number}     v2
+ * @param  {Number}     v3
+ * @param  {p5.Vector}  position
+ * @param  {p5.Vector}  direction
+ * @param  {Number}     angle
+ * @param  {Number}     conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number}     v1
+ * @param  {Number}     v2
+ * @param  {Number}     v3
+ * @param  {Number}     x
+ * @param  {Number}     y
+ * @param  {Number}     z
+ * @param  {p5.Vector}  direction
+ * @param  {Number}     angle
+ * @param  {Number}     conc
+ */
+/**
+ * @method spotLight
+ * @param  {Number[]|String|p5.Color} color
+ * @param  {Number}                   x
+ * @param  {Number}                   y
+ * @param  {Number}                   z
+ * @param  {p5.Vector}                direction
+ * @param  {Number}                   angle
+ * @param  {Number}                   conc
  */
 p5.prototype.spotLight = function(
   v1,
@@ -418,6 +503,20 @@ p5.prototype.spotLight = function(
   angle,
   concentration
 ) {
+  // const color = this.color(v1, v2, v3);
+
+  // this._renderer.spotLightColors.push(
+  //   color._array[0],
+  //   color._array[1],
+  //   color._array[2]
+  // );
+  // this._renderer.spotLightPositions.push(x, y, z);
+  // const l = Math.sqrt(nx * nx + ny * ny + nz * nz);
+  // this._renderer.spotLightDirections.push(nx / l, ny / l, nz / l);
+
+  // this._renderer.spotLightAngle = angle;
+  // this._renderer.spotLightConc = concentration;
+
   return this;
 };
 

@@ -17,7 +17,7 @@ uniform vec3 uPointLightColor[8];
 
 uniform int uSpotLightCount;
 uniform float uSpotLightAngle;
-uniform vec3 uSpotLightConc;
+uniform float uSpotLightConc;
 uniform vec3 uSpotLightColor[8];
 uniform vec3 uSpotLightLocation[8];
 uniform vec3 uSpotLightDirection[8];
@@ -102,6 +102,10 @@ void totalLight(
       LightResult result = _light(viewDirection, normal, lightVector);
       totalDiffuse += result.diffuse * lightColor;
       totalSpecular += result.specular * lightColor;
+    }
+
+    if(j < uSpotLightCount) {
+      
     }
   }
 
