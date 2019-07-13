@@ -399,4 +399,26 @@ p5.prototype.lightFalloff = function(
   return this;
 };
 
+/**
+ *
+ * @method spotLight
+ * @chainable
+ *
+ */
+p5.prototype.spotLight = function(
+  v1,
+  v2,
+  v3,
+  x,
+  y,
+  z,
+  nx,
+  ny,
+  nz,
+  angle,
+  concentration
+) {
+  return this;
+};
+
 export default p5;

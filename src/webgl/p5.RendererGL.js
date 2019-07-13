@@ -75,6 +75,12 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.pointLightPositions = [];
   this.pointLightColors = [];
 
+  this.spotLightPositions = [];
+  this.spotLightDirections = [];
+  this.spotLightColors = [];
+  this.spotLightAngle = constants.PI;
+  this.spotLightConc = 1;
+
   this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
@@ -492,6 +498,12 @@ p5.RendererGL.prototype._update = function() {
   this.pointLightPositions.length = 0;
   this.pointLightColors.length = 0;
 
+  this.spotLightPositions.length = 0;
+  this.spotLightDirections.length = 0;
+  this.spotLightColors.length = 0;
+  this.spotLightAngle = constants.PI;
+  this.spotLightConc = 1;
+
   this._enableLighting = false;
 
   //reset tint value for new frame
@@ -894,6 +906,12 @@ p5.RendererGL.prototype.push = function() {
   properties.pointLightPositions = this.pointLightPositions.slice();
   properties.pointLightColors = this.pointLightColors.slice();
 
+  properties.spotLightPositions = this.spotLightPositions.slice();
+  properties.spotLightDirections = this.spotLightDirections.slice();
+  properties.spotLightColors = this.spotLightColors.slice();
+  properties.spotLightAngle = this.spotLightAngle;
+  properties.spotLightConc = this.spotLightConc;
+
   properties.userFillShader = this.userFillShader;
   properties.userStrokeShader = this.userStrokeShader;
   properties.userPointShader = this.userPointShader;
@@ -1162,6 +1180,14 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   const ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+  const spotLightCount = this.spotLightColors.length / 3;
+  fillShader.setUniform('uSpotLightCount', spotLightCount);
+  fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
+  fillShader.setUniform('uSpotLightConc', this.spotLightConc);
+  fillShader.setUniform('uSpotLightColor', this.spotLightColors);
+  fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
+  fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
 
   fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
   fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
