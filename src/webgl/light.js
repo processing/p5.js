@@ -503,20 +503,129 @@ p5.prototype.spotLight = function(
   angle,
   concentration
 ) {
-  // const color = this.color(v1, v2, v3);
+  let color, l;
+  const length = arguments.length;
+  switch (length) {
+    case 11:
+      color = this.color(v1, v2, v3);
 
-  // this._renderer.spotLightColors.push(
-  //   color._array[0],
-  //   color._array[1],
-  //   color._array[2]
-  // );
-  // this._renderer.spotLightPositions.push(x, y, z);
-  // const l = Math.sqrt(nx * nx + ny * ny + nz * nz);
-  // this._renderer.spotLightDirections.push(nx / l, ny / l, nz / l);
+      this._renderer.spotLightColors.push(
+        color._array[0],
+        color._array[1],
+        color._array[2]
+      );
+      this._renderer.spotLightPositions.push(x, y, z);
+      l = Math.sqrt(nx * nx + ny * ny + nz * nz);
+      this._renderer.spotLightDirections.push(nx / l, ny / l, nz / l);
 
-  // this._renderer.spotLightAngle = angle;
-  // this._renderer.spotLightConc = concentration;
+      this._renderer.spotLightAngle = angle;
+      this._renderer.spotLightConc = concentration;
 
+      break;
+
+    case 9:
+      color = this.color(v1, v2, v3);
+
+      this._renderer.spotLightColors.push(
+        color._array[0],
+        color._array[1],
+        color._array[2]
+      );
+      this._renderer.spotLightPositions.push(x, y, z);
+      l = Math.sqrt(nx * nx + ny * ny + nz * nz);
+      this._renderer.spotLightDirections.push(nx / l, ny / l, nz / l);
+
+      break;
+    case 7:
+      if (v1 instanceof p5.Color) {
+        color = v1;
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(v2, v3, x);
+        l = Math.sqrt(y * y + z * z + nx * nx);
+        this._renderer.spotLightDirections.push(y / l, z / l, nx / l);
+      } else if (x instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(x.x, x.y, x.z);
+        l = Math.sqrt(y * y + z * z + nx * nx);
+        this._renderer.spotLightDirections.push(y / l, z / l, nx / l);
+      } else {
+        color = this.color(v1, v2, v3);
+
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(x, y, z);
+        l = Math.sqrt(nx.x * nx.x + nx.y * nx.y + nx.z * nx.z);
+        this._renderer.spotLightDirections.push(nx.x / l, nx.y / l, nx.z / l);
+      }
+
+      break;
+
+    case 5:
+      if (!(v1 instanceof p5.Color)) {
+        color = this.color(v1, v2, v3);
+
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(x.x, x.y, x.z);
+        l = Math.sqrt(y.x * y.x + y.y * y.y + y.z * y.z);
+        this._renderer.spotLightDirections.push(y.x / l, y.y / l, y.z / l);
+      } else if (!(x instanceof p5.Vector)) {
+        color = v1;
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(v2, v3, x);
+        l = Math.sqrt(y.x * y.x + y.y * y.y + y.z * y.z);
+        this._renderer.spotLightDirections.push(y.x / l, y.y / l, y.z / l);
+      } else {
+        color = v1;
+        this._renderer.spotLightColors.push(
+          color._array[0],
+          color._array[1],
+          color._array[2]
+        );
+        this._renderer.spotLightPositions.push(v2.x, v2.y, v2.z);
+        l = Math.sqrt(v3 * v3 + x * x + y * y);
+        this._renderer.spotLightDirections.push(v3 / l, x / l, y / l);
+      }
+
+      break;
+
+    case 3:
+      color = v1;
+      this._renderer.spotLightColors.push(
+        color._array[0],
+        color._array[1],
+        color._array[2]
+      );
+      this._renderer.spotLightPositions.push(v2.x, v2.y, v2.z);
+      l = Math.sqrt(v3.x * v3.x + v3.y * v3.y + v3.z * v3.z);
+      this._renderer.spotLightDirections.push(v3.x / l, v3.y / l, v3.z / l);
+
+      break;
+
+    default:
+      console.warn(`Sorry, input for spotlight() is not in prescribed format`);
+      break;
+  }
   return this;
 };
 
