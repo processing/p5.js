@@ -116,7 +116,7 @@ module.exports = {
 
           const re = /(<code[^>]*>\s*(?:\r\n|\r|\n))((?:.|\r|\n)*?)<\/code>/gm;
           while ((m = re.exec(commentText)) != null) {
-            const code = m[2];
+            let code = m[2];
             if (!code) continue;
             code = code.replace(/^ *\* ?/gm, '');
 
@@ -222,7 +222,7 @@ function eslintFiles(opts, filesSrc) {
     eslint.CLIEngine.outputFixes(report);
   }
 
-  const results = report.results;
+  let results = report.results;
   if (opts.quiet) {
     results = eslint.CLIEngine.getErrorResults(results);
   }
