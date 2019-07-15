@@ -1,34 +1,43 @@
 let teapot;
-let colored;
+let tinted;
+let obj;
 
 function preload() {
-  colored = loadModel('../assets/model-bin.stl');
+  tinted = loadModel('../assets/model-bin.stl');
   teapot = loadModel('../assets/teapot-ascii.stl');
+  obj = loadModel('../../../unit/assets/teapot.obj');
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
+  createCanvas(1000, 500, WEBGL);
   noStroke();
+  normalMaterial();
 }
 
 function draw() {
   background(200);
 
-  push();
   translate(-300, 0, 0);
-  scale(15);
+  push();
+  scale(20);
   rotateX(frameCount * 0.01);
   rotateY(frameCount * 0.01);
-  normalMaterial();
   model(teapot);
   pop();
 
-  push();
   translate(300, 0, 0);
-  scale(90);
+  push();
+  scale(50);
   rotateX(frameCount * 0.01);
   rotateY(frameCount * 0.01);
-  normalMaterial();
-  model(colored);
+  model(tinted);
+  pop();
+
+  translate(300, 0, 0);
+  push();
+  scale(40);
+  rotateX(frameCount * 0.01);
+  rotateY(frameCount * 0.01);
+  model(obj);
   pop();
 }
