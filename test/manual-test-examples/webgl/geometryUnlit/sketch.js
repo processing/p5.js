@@ -53,13 +53,14 @@ function draw() {
 }
 
 function drawGeometry() {
-  translate(-rowWidth * 2.5, 0, 0);
+  translate(-rowWidth * 3, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
   rotateX(theta * mouseX * 0.001);
   rotateY(theta * mouseX * 0.001);
   plane(25);
   pop();
+
   translate(rowWidth, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
@@ -67,6 +68,7 @@ function drawGeometry() {
   rotateY(theta * mouseX * 0.001);
   box(25, 25, 25);
   pop();
+
   translate(rowWidth, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
@@ -74,6 +76,7 @@ function drawGeometry() {
   rotateY(theta * mouseX * 0.001);
   cylinder(25, 25);
   pop();
+
   translate(rowWidth, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
@@ -81,6 +84,7 @@ function drawGeometry() {
   rotateY(theta * mouseX * 0.001);
   cone(25, 25);
   pop();
+
   translate(rowWidth, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
@@ -88,11 +92,20 @@ function drawGeometry() {
   rotateY(theta * mouseX * 0.001);
   torus(25, 10);
   pop();
+
   translate(rowWidth, 0, 0);
   push();
   rotateZ(theta * mouseX * 0.001);
   rotateX(theta * mouseX * 0.001);
   rotateY(theta * mouseX * 0.001);
   sphere(25);
+  pop();
+
+  translate(rowWidth, 0, 0);
+  push();
+  rotateZ(theta * mouseX * 0.001);
+  rotateX(theta * mouseX * 0.001);
+  rotateY(theta * mouseX * 0.001);
+  rect(0, 0, 25, 25);
   pop();
 }
