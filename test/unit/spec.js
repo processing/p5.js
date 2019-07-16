@@ -33,6 +33,7 @@ var spec = {
   typography: ['attributes', 'loadFont', 'p5.Font'],
   utilities: ['array_functions', 'conversion', 'string_functions', 'time_date'],
   webgl: [
+    'interaction',
     'p5.Matrix',
     'p5.Camera',
     'p5.RendererGL',
