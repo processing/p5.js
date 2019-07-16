@@ -421,6 +421,7 @@ function parseBinarySTL(model, buffer) {
     model.vertexNormals.push(newNormal, newNormal, newNormal);
 
     model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
+    model.uvs.push([0, 0], [0, 0], [0, 0]);
   }
   if (hasColors) {
     // add support for colors here.
@@ -512,6 +513,7 @@ function parseASCIISTL(model, lines) {
             parseFloat(parts[3])
           );
           model.vertices.push(newVertex);
+          model.uvs.push([0, 0]);
           curVertexIndex.push(model.vertices.indexOf(newVertex));
         } else if (parts[0] === 'endloop') {
           // End of vertices
