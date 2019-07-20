@@ -597,7 +597,6 @@ p5.prototype.spotLight = function(
   concentration
 ) {
   let color, position, direction;
-  // debugger;
   const length = arguments.length;
   switch (length) {
     case 11:

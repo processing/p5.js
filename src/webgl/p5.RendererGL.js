@@ -1208,7 +1208,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   const ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
-  //
+
   const spotLightCount = this.spotLightDiffuseColors.length / 3;
   fillShader.setUniform('uSpotLightCount', spotLightCount);
   fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
