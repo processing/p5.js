@@ -682,6 +682,7 @@ p5.prototype.spotLight = function(
     concentration = 1;
   }
 
+  angle = this._renderer._pInst._toRadians(angle);
   this._renderer.spotLightAngle.push(Math.cos(angle));
   this._renderer.spotLightConc.push(concentration);
 
