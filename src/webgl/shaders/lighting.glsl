@@ -18,7 +18,8 @@ uniform vec3 uPointLightColor[8];
 uniform int uSpotLightCount;
 uniform float uSpotLightAngle[8];
 uniform float uSpotLightConc[8];
-uniform vec3 uSpotLightColor[8];
+uniform vec3 uSpotLightDiffuseColors[8];
+uniform vec3 uSpotLightSpecularColors[8];
 uniform vec3 uSpotLightLocation[8];
 uniform vec3 uSpotLightDirection[8];
 
@@ -105,7 +106,29 @@ void totalLight(
     }
 
     if(j < uSpotLightCount) {
+      vec3 lightPosition = (uViewMatrix * vec4(uSpotLightLocation[j], 1.0)).xyz;
+      vec3 lightVector = modelPosition - lightPosition;
+    
+      float lightDistance = length(lightVector);
+      float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
+
+      float spotDot = dot(-1.0 * normalize(lightVector), normalize(uSpotLightDirection[j]));
+      float spotFalloff;
+      if(spotDot < uSpotLightAngle[j]) {
+        spotFalloff = 0.0;
+      }
+      else {
+        spotFalloff = pow(spotDot, uSpotLightConc[j]);
+      }
+      lightFalloff *= spotFalloff;
+
+      vec3 lightColor = uSpotLightDiffuseColors[j];
+      vec3 specularColor = uSpotLightSpecularColors[j];
+     
+      LightResult result = _light(viewDirection, normal, lightVector);
       
+      totalDiffuse += result.diffuse * lightColor * lightFalloff;
+      totalSpecular += result.specular * lightColor * specularColor * lightFalloff;
     }
   }
 

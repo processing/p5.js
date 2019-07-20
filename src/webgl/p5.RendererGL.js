@@ -77,7 +77,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.spotLightPositions = [];
   this.spotLightDirections = [];
-  this.spotLightColors = [];
+  this.spotLightDiffuseColors = [];
+  this.spotLightSpecularColors = [];
   this.spotLightAngle = [];
   this.spotLightConc = [];
 
@@ -500,7 +501,8 @@ p5.RendererGL.prototype._update = function() {
 
   this.spotLightPositions.length = 0;
   this.spotLightDirections.length = 0;
-  this.spotLightColors.length = 0;
+  this.spotLightDiffuseColors.length = 0;
+  this.spotLightSpecularColors.length = 0;
   this.spotLightAngle.length = 0;
   this.spotLightConc.length = 0;
 
@@ -908,7 +910,8 @@ p5.RendererGL.prototype.push = function() {
 
   properties.spotLightPositions = this.spotLightPositions.slice();
   properties.spotLightDirections = this.spotLightDirections.slice();
-  properties.spotLightColors = this.spotLightColors.slice();
+  properties.spotLightDiffuseColors = this.spotLightDiffuseColors.slice();
+  properties.spotLightSpecularColors = this.spotLightSpecularColors.slice();
   properties.spotLightAngle = this.spotLightAngle.slice();
   properties.spotLightConc = this.spotLightConc.slice();
 
@@ -1180,12 +1183,16 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   const ambientLightCount = this.ambientLightColors.length / 3;
   fillShader.setUniform('uAmbientLightCount', ambientLightCount);
   fillShader.setUniform('uAmbientColor', this.ambientLightColors);
-
-  const spotLightCount = this.spotLightColors.length / 3;
+  //
+  const spotLightCount = this.spotLightDiffuseColors.length / 3;
   fillShader.setUniform('uSpotLightCount', spotLightCount);
   fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
   fillShader.setUniform('uSpotLightConc', this.spotLightConc);
-  fillShader.setUniform('uSpotLightColor', this.spotLightColors);
+  fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
+  fillShader.setUniform(
+    'uSpotLightSpecularColors',
+    this.spotLightSpecularColors
+  );
   fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
   fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
 

@@ -504,6 +504,7 @@ p5.prototype.spotLight = function(
   concentration
 ) {
   let color, position, direction;
+  // debugger;
   const length = arguments.length;
   switch (length) {
     case 11:
@@ -561,11 +562,12 @@ p5.prototype.spotLight = function(
       break;
   }
 
-  this._renderer.spotLightColors.push(
+  this._renderer.spotLightDiffuseColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
+  this._renderer.spotLightSpecularColors.push(0, 0, 0);
   this._renderer.spotLightPositions.push(position.x, position.y, position.z);
   direction.normalize();
   this._renderer.spotLightDirections.push(
@@ -582,7 +584,7 @@ p5.prototype.spotLight = function(
     concentration = 1;
   }
 
-  this._renderer.spotLightAngle.push(angle);
+  this._renderer.spotLightAngle.push(Math.cos(angle));
   this._renderer.spotLightConc.push(concentration);
 
   return this;
