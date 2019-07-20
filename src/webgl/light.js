@@ -83,6 +83,91 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 };
 
 /**
+ * Adds a specular component to other lighting methods. It affects only the
+ * elements which are created after it in the code.
+ *
+ * If your sketch contains a red rubber ball, and a white light shines on it,
+ * a diffuse red light is reflected in all directions. If that ball were to land
+ * in a puddle, it would react to light differently. The water on the surface
+ * of the ball would shine, or reflect a specular light, more commonly referred
+ * to as a highlight.
+ *
+ *  This method can be combined with specularMaterial() and shininess()
+ * functions to set specular highlights. The default color is white, ie
+ * (255, 255, 255), which is used if this method is not called before
+ * specularMaterial(). If this method is called without specularMaterial(),
+ * There will be no effect.
+ *
+ * @method specularLight
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   ambientLight(50);
+ *   specularLight(0, 250, 0);
+ *   shininess(15);
+ *   pointLight(250, 250, 250, 100, 100, 30);
+ *   specularMaterial(250);
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * diffused radiating light source from top right of canvas
+ */
+
+/**
+ * @method specularLight
+ * @param  {String}        value   a color string
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {Number}        gray   a gray value
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method specularLight
+ * @param  {p5.Color}      color   the ambient light color
+ * @chainable
+ */
+p5.prototype.specularLight = function(v1, v2, v3) {
+  this._assert3d('specularLight');
+  // p5._validateParameters('specularLight', arguments);
+  const color = this.color(...arguments);
+
+  this._renderer.specularLightColors = [
+    color._array[0],
+    color._array[1],
+    color._array[2]
+  ];
+
+  return this;
+};
+
+/**
  * Creates a directional light with a color and a direction
  * @method directionalLight
  * @param  {Number}    v1       red or hue value (depending on the current
@@ -169,10 +254,14 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
   this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
-  this._renderer.directionalLightColors.push(
+  this._renderer.directionalLightDiffuseColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
+  );
+  Array.prototype.push.apply(
+    this._renderer.directionalLightSpecularColors,
+    this._renderer.specularLightColors
   );
 
   this._renderer._enableLighting = true;
@@ -271,10 +360,14 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   }
 
   this._renderer.pointLightPositions.push(_x, _y, _z);
-  this._renderer.pointLightColors.push(
+  this._renderer.pointLightDiffuseColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
+  );
+  Array.prototype.push.apply(
+    this._renderer.pointLightSpecularColors,
+    this._renderer.specularLightColors
   );
 
   this._renderer._enableLighting = true;
