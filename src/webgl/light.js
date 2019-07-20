@@ -660,7 +660,12 @@ p5.prototype.spotLight = function(
     color._array[1],
     color._array[2]
   );
-  this._renderer.spotLightSpecularColors.push(0, 0, 0);
+
+  Array.prototype.push.apply(
+    this._renderer.directionalLightSpecularColors,
+    this._renderer.specularLightColors
+  );
+
   this._renderer.spotLightPositions.push(position.x, position.y, position.z);
   direction.normalize();
   this._renderer.spotLightDirections.push(
