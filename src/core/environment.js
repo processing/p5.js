@@ -298,6 +298,9 @@ p5.prototype.frameRate = function(fps) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
+    if (fps === 0) {
+      this._setProperty('_frameRate', fps);
+    }
     return this;
   }
 };
