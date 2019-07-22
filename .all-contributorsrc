@@ -1512,6 +1512,18 @@
         "ideas",
         "doc"
       ]
+    },
+    {
+      "login": "hsab",
+      "name": "Hirad Sab",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11205091",
+      "profile": "https://hiradsab.com",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example"
+      ]
     }
   ],
   "repoType": "github"

@@ -32,6 +32,9 @@ Aside from the code itself, you may also need to supply some combination of the 
 
 The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
+## ES6
+p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](https://github.com/processing/p5.js/blob/master/developer_docs/es6-adoption.md).
+
 ## Other Ideas
 
 If you'd like to contribute in other ways which are not covered here, feel free to write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! Aside from working on this codebase, we can always use help with things like documentation, tutorials, workshops, educational materials, branding, and design. Get in touch and we can talk about ways you might participate.
