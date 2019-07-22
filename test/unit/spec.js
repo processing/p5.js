@@ -34,6 +34,7 @@ var spec = {
   utilities: ['array_functions', 'conversion', 'string_functions', 'time_date'],
   webgl: [
     '3d_primitives',
+    'interaction',
     'p5.Matrix',
     'p5.Camera',
     'p5.RendererGL',
