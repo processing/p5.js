@@ -59,6 +59,9 @@
  *  all-contributors generate - Generates new contributors list for README
  */
 
+require('regenerator-runtime/runtime');
+require('@babel/register');
+
 function getYuidocOptions() {
   const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',

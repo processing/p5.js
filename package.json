@@ -94,6 +94,7 @@
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.18.1",
+    "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4",
     "word-wrap": "^1.2.3"
