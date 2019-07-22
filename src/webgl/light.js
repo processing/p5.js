@@ -501,9 +501,9 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}    x        x axis position
  * @param  {Number}    y        y axis position
  * @param  {Number}    z        z axis position
- * @param  {Number}    nx       x axis direction
- * @param  {Number}    ny       y axis direction
- * @param  {Number}    nz       z axis direction
+ * @param  {Number}    rx       x axis direction
+ * @param  {Number}    ry       y axis direction
+ * @param  {Number}    rz       z axis direction
  * @param  {Number}    angle    angle
  * @param  {Number}    conc     concentration
  * @chainable
@@ -515,9 +515,9 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   x
  * @param  {Number}                   y
  * @param  {Number}                   z
- * @param  {Number}                   nx
- * @param  {Number}                   ny
- * @param  {Number}                   nz
+ * @param  {Number}                   rx
+ * @param  {Number}                   ry
+ * @param  {Number}                   rz
  * @param  {Number}                   angle
  * @param  {Number}                   conc
  */
@@ -525,9 +525,9 @@ p5.prototype.lightFalloff = function(
  * @method spotLight
  * @param  {Number[]|String|p5.Color} color
  * @param  {p5.Vector}                position the position of the light
- * @param  {Number}                   nx
- * @param  {Number}                   ny
- * @param  {Number}                   nz
+ * @param  {Number}                   rx
+ * @param  {Number}                   ry
+ * @param  {Number}                   rz
  * @param  {Number}                   angle
  * @param  {Number}                   conc
  */
@@ -545,9 +545,9 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}     v2
  * @param  {Number}     v3
  * @param  {p5.Vector}  position
- * @param  {Number}     nx
- * @param  {Number}     ny
- * @param  {Number}     nz
+ * @param  {Number}     rx
+ * @param  {Number}     ry
+ * @param  {Number}     rz
  * @param  {Number}     angle
  * @param  {Number}     conc
  */
@@ -599,20 +599,77 @@ p5.prototype.spotLight = function(
   let color, position, direction;
   const length = arguments.length;
   switch (length) {
-    case 11:
+    case 11 && 10:
       color = this.color(v1, v2, v3);
       position = new p5.Vector(x, y, z);
       direction = new p5.Vector(nx, ny, nz);
       break;
 
     case 9:
-      color = this.color(v1, v2, v3);
-      position = new p5.Vector(x, y, z);
-      direction = new p5.Vector(nx, ny, nz);
+      if (v1 instanceof p5.Color) {
+        color = v1;
+        position = new p5.Vector(v2, v3, x);
+        direction = new p5.Vector(y, z, nx);
+        angle = ny;
+        concentration = nz;
+      } else if (x instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+        position = x;
+        direction = new p5.Vector(y, z, nx);
+        angle = ny;
+        concentration = nz;
+      } else if (nx instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+        position = new p5.Vector(x, y, z);
+        direction = nx;
+        angle = ny;
+        concentration = nz;
+      } else {
+        color = this.color(v1, v2, v3);
+        position = new p5.Vector(x, y, z);
+        direction = new p5.Vector(nx, ny, nz);
+      }
+      break;
+
+    case 8:
+      if (v1 instanceof p5.Color) {
+        color = v1;
+        position = new p5.Vector(v2, v3, x);
+        direction = new p5.Vector(y, z, nx);
+        angle = ny;
+      } else if (x instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+        position = x;
+        direction = new p5.Vector(y, z, nx);
+        angle = ny;
+      } else {
+        color = this.color(v1, v2, v3);
+        position = new p5.Vector(x, y, z);
+        direction = nx;
+        angle = ny;
+      }
       break;
 
     case 7:
-      if (v1 instanceof p5.Color) {
+      if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
+        color = v1;
+        position = v2;
+        direction = new p5.Vector(v3, x, y);
+        angle = z;
+        concentration = nx;
+      } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
+        color = v1;
+        position = new p5.Vector(v2, v3, x);
+        direction = y;
+        angle = z;
+        concentration = nx;
+      } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+        position = x;
+        direction = y;
+        angle = z;
+        concentration = nx;
+      } else if (v1 instanceof p5.Color) {
         color = v1;
         position = new p5.Vector(v2, v3, x);
         direction = new p5.Vector(y, z, nx);
@@ -622,25 +679,57 @@ p5.prototype.spotLight = function(
         direction = new p5.Vector(y, z, nx);
       } else {
         color = this.color(v1, v2, v3);
-        position = new p5.Vector(v2, v3, x);
+        position = new p5.Vector(x, y, z);
         direction = nx;
       }
       break;
 
-    case 5:
-      if (!(v1 instanceof p5.Color)) {
+    case 6:
+      if (x instanceof p5.Vector && y instanceof p5.Vector) {
         color = this.color(v1, v2, v3);
         position = x;
         direction = y;
-      } else if (!(x instanceof p5.Vector)) {
+        angle = z;
+      } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
         color = v1;
         position = new p5.Vector(v2, v3, x);
         direction = y;
-      } else {
+        angle = z;
+      } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
         color = v1;
         position = v2;
         direction = new p5.Vector(v3, x, y);
+        angle = z;
       }
+      break;
+
+    case 5:
+      if (x instanceof p5.Vector && y instanceof p5.Vector) {
+        color = this.color(v1, v2, v3);
+        position = x;
+        direction = y;
+      } else if (v1 instanceof p5.Color && y instanceof p5.Vector) {
+        color = v1;
+        position = new p5.Vector(v2, v3, x);
+        direction = y;
+      } else if (v1 instanceof p5.Color && v2 instanceof p5.Vector) {
+        color = v1;
+        position = v2;
+        direction = new p5.Vector(v3, x, y);
+      } else {
+        color = v1;
+        position = v2;
+        direction = v3;
+        angle = x;
+        concentration = y;
+      }
+      break;
+
+    case 4:
+      color = v1;
+      position = v2;
+      direction = v3;
+      angle = x;
       break;
 
     case 3:
@@ -680,7 +769,7 @@ p5.prototype.spotLight = function(
   if (concentration === undefined) {
     concentration = 1;
   }
-
+  // check conc
   angle = this._renderer._pInst._toRadians(angle);
   this._renderer.spotLightAngle.push(Math.cos(angle));
   this._renderer.spotLightConc.push(concentration);

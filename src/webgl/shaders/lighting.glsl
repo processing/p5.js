@@ -113,12 +113,13 @@ void totalLight(
       float lightFalloff = 1.0 / (uConstantAttenuation + lightDistance * uLinearAttenuation + (lightDistance * lightDistance) * uQuadraticAttenuation);
 
       vec3 lightDirection = (uViewMatrix * vec4(uSpotLightDirection[j], 0.0)).xyz;
-      float spotDot = dot(-1.0 * normalize(lightVector), normalize(lightDirection));
+      float spotDot = dot(normalize(lightVector), normalize(lightDirection));
       float spotFalloff;
       if(spotDot < uSpotLightAngle[j]) {
         spotFalloff = 0.0;
       }
       else {
+        // insert max here in exponent
         spotFalloff = pow(spotDot, uSpotLightConc[j]);
       }
       lightFalloff *= spotFalloff;
