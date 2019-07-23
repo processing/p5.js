@@ -633,7 +633,9 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   if (!this._isOpenType()) {
-    console.log('WEBGL: only opentype fonts are supported');
+    console.log(
+      'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts are supported'
+    );
     return p;
   }
 
