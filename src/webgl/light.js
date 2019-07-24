@@ -596,10 +596,15 @@ p5.prototype.spotLight = function(
   angle,
   concentration
 ) {
+  this._assert3d('spotLight');
+  // p5._validateParameters('spotLight', arguments);
+
   let color, position, direction;
   const length = arguments.length;
+
   switch (length) {
-    case 11 && 10:
+    case 11:
+    case 10:
       color = this.color(v1, v2, v3);
       position = new p5.Vector(x, y, z);
       direction = new p5.Vector(nx, ny, nz);
@@ -704,7 +709,17 @@ p5.prototype.spotLight = function(
       break;
 
     case 5:
-      if (x instanceof p5.Vector && y instanceof p5.Vector) {
+      if (
+        v1 instanceof p5.Color &&
+        v2 instanceof p5.Vector &&
+        v3 instanceof p5.Vector
+      ) {
+        color = v1;
+        position = v2;
+        direction = v3;
+        angle = x;
+        concentration = y;
+      } else if (x instanceof p5.Vector && y instanceof p5.Vector) {
         color = this.color(v1, v2, v3);
         position = x;
         direction = y;
@@ -717,11 +732,7 @@ p5.prototype.spotLight = function(
         position = v2;
         direction = new p5.Vector(v3, x, y);
       } else {
-        color = v1;
-        position = v2;
-        direction = v3;
-        angle = x;
-        concentration = y;
+        console.warn(length);
       }
       break;
 
@@ -739,7 +750,7 @@ p5.prototype.spotLight = function(
       break;
 
     default:
-      console.warn(`Sorry, input for spotlight() is not in prescribed format`);
+      console.warn(length);
       break;
   }
 
@@ -750,7 +761,7 @@ p5.prototype.spotLight = function(
   );
 
   Array.prototype.push.apply(
-    this._renderer.directionalLightSpecularColors,
+    this._renderer.spotLightSpecularColors,
     this._renderer.specularLightColors
   );
 
