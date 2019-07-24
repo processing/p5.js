@@ -5,7 +5,7 @@ There are several ways to contribute to documentation:
 ## ✏️ Contribute to the reference  
 Read through the [reference](http://p5js.org/reference/), and look for typos, broken examples, confusing documentation. If it's a straightforward fix, go ahead and work on it! If it's a more involved question that requires discussion, create an [issue](https://github.com/processing/p5.js/issues/new).
 * Here are instructions for [getting setup for the first time with the p5.js repo](https://github.com/processing/p5.js/tree/master/developer_docs).
-* The reference is built from the inline documentation in the source code (found in the src/ folder).
+* The reference is built from the inline documentation in the source code (found in the `src/` folder).
 * Here is information on [how to update or add inline documentation and examples](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md).
 * If you find errors with the [spanish documentation](http://p5js.org/es), there are instructions to update this [here](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure).
 
