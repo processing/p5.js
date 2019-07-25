@@ -152,6 +152,45 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('push/pop and spotLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
+      let spotLightDiffuseColors = myp5._renderer.spotLightDiffuseColors.slice();
+      let spotLightSpecularColors = myp5._renderer.spotLightSpecularColors.slice();
+      let spotLightPositions = myp5._renderer.spotLightPositions.slice();
+      let spotLightDirections = myp5._renderer.spotLightDirections.slice();
+      let spotLightAngle = myp5._renderer.spotLightAngle.slice();
+      let spotLightConc = myp5._renderer.spotLightConc.slice();
+      myp5.push();
+      myp5.spotLight(255, 0, 0, 2, 2, 3, 1, 0, 0, Math.PI / 3, 8);
+      assert.notEqual(
+        spotLightDiffuseColors,
+        myp5._renderer.spotLightDiffuseColors
+      );
+      assert.notEqual(
+        spotLightSpecularColors,
+        myp5._renderer.spotLightSpecularColors
+      );
+      assert.notEqual(spotLightPositions, myp5._renderer.spotLightPositions);
+      assert.notEqual(spotLightDirections, myp5._renderer.spotLightDirections);
+      assert.notEqual(spotLightAngle, myp5._renderer.spotLightAngle);
+      assert.notEqual(spotLightConc, myp5._renderer.spotLightConc);
+      myp5.pop();
+      assert.deepEqual(
+        spotLightDiffuseColors,
+        myp5._renderer.spotLightDiffuseColors
+      );
+      assert.deepEqual(
+        spotLightSpecularColors,
+        myp5._renderer.spotLightSpecularColors
+      );
+      assert.deepEqual(spotLightPositions, myp5._renderer.spotLightPositions);
+      assert.deepEqual(spotLightDirections, myp5._renderer.spotLightDirections);
+      assert.deepEqual(spotLightAngle, myp5._renderer.spotLightAngle);
+      assert.deepEqual(spotLightConc, myp5._renderer.spotLightConc);
+      done();
+    });
+
     test('push/pop and texture() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var tex1 = myp5.createGraphics(1, 1);
