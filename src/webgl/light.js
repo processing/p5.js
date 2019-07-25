@@ -493,7 +493,10 @@ p5.prototype.lightFalloff = function(
 };
 
 /**
- * Creates a spot light with given color, position and direction of light.
+ * Creates a spot light with given color, position, direction of light,
+ * along with angle and concentration. Here, angle refers to the opening or
+ * aperture of the cone of spot light, and concentration is used to focus the
+ * light towards the center.
  *
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
@@ -503,60 +506,21 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}    x        x axis position
  * @param  {Number}    y        y axis position
  * @param  {Number}    z        z axis position
- * @param  {Number}    rx       x axis direction
- * @param  {Number}    ry       y axis direction
- * @param  {Number}    rz       z axis direction
- * @param  {Number}    angle    angle
- * @param  {Number}    conc     concentration
+ * @param  {Number}    rx       x axis direction of light
+ * @param  {Number}    ry       y axis direction of light
+ * @param  {Number}    rz       z axis direction of light
+ * @param  {Number}    [angle]  optional parameter for angle. Defaults to PI/3
+ * @param  {Number}    [conc]   optional parameter for concentration. Defaults to 1
  * @chainable
  */
 /**
  * @method spotLight
- * @param  {Number[]|String|p5.Color} color  color Array, CSS color string,
+ * @param  {Number[]|String|p5.Color} color color Array, CSS color string,
  * or <a href="#/p5.Color">p5.Color</a> value
  * @param  {p5.Vector}                position the position of the light
  * @param  {p5.Vector}                direction the direction of the light
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {p5.Vector}                position
- * @param  {p5.Vector}                direction
- * @param  {Number}                   angle
- */
-
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {p5.Vector}                position
- * @param  {p5.Vector}                direction
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {p5.Vector}  position
- * @param  {p5.Vector}  direction
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {Number}                   x
- * @param  {Number}                   y
- * @param  {Number}                   z
- * @param  {p5.Vector}                direction
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {p5.Vector}                position
- * @param  {Number}                   rx
- * @param  {Number}                   ry
- * @param  {Number}                   rz
+ * @param  {Number}                   [angle]
+ * @param  {Number}                   [conc]
  */
 /**
  * @method spotLight
@@ -565,7 +529,8 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}     v3
  * @param  {p5.Vector}  position
  * @param  {p5.Vector}  direction
- * @param  {Number}                   angle
+ * @param  {Number}     [angle]
+ * @param  {Number}     [conc]
  */
 /**
  * @method spotLight
@@ -574,7 +539,8 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   y
  * @param  {Number}                   z
  * @param  {p5.Vector}                direction
- * @param  {Number}                   angle
+ * @param  {Number}                   [angle]
+ * @param  {Number}                   [conc]
  */
 /**
  * @method spotLight
@@ -583,37 +549,8 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   rx
  * @param  {Number}                   ry
  * @param  {Number}                   rz
- * @param  {Number}                   angle
- */
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {p5.Vector}  position
- * @param  {p5.Vector}  direction
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {Number}                   x
- * @param  {Number}                   y
- * @param  {Number}                   z
- * @param  {p5.Vector}                direction
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {p5.Vector}                position
- * @param  {Number}                   rx
- * @param  {Number}                   ry
- * @param  {Number}                   rz
- * @param  {Number}                   angle
- * @param  {Number}                   conc
+ * @param  {Number}                   [angle]
+ * @param  {Number}                   [conc]
  */
 /**
  * @method spotLight
@@ -624,6 +561,8 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}     y
  * @param  {Number}     z
  * @param  {p5.Vector}  direction
+ * @param  {Number}     [angle]
+ * @param  {Number}     [conc]
  */
 /**
  * @method spotLight
@@ -634,6 +573,8 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}     rx
  * @param  {Number}     ry
  * @param  {Number}     rz
+ * @param  {Number}     [angle]
+ * @param  {Number}     [conc]
  */
 /**
  * @method spotLight
@@ -644,102 +585,9 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   rx
  * @param  {Number}                   ry
  * @param  {Number}                   rz
+ * @param  {Number}                   [angle]
+ * @param  {Number}                   [conc]
  */
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {Number}     x
- * @param  {Number}     y
- * @param  {Number}     z
- * @param  {p5.Vector}  direction
- * @param  {Number}                   angle
- */
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {p5.Vector}  position
- * @param  {Number}     rx
- * @param  {Number}     ry
- * @param  {Number}     rz
- * @param  {Number}                   angle
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {Number}                   x
- * @param  {Number}                   y
- * @param  {Number}                   z
- * @param  {Number}                   rx
- * @param  {Number}                   ry
- * @param  {Number}                   rz
- * @param  {Number}                   angle
- */
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {Number}     x
- * @param  {Number}     y
- * @param  {Number}     z
- * @param  {p5.Vector}  direction
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-/**
- * @method spotLight
- * @param  {Number}     v1
- * @param  {Number}     v2
- * @param  {Number}     v3
- * @param  {p5.Vector}  position
- * @param  {Number}     rx
- * @param  {Number}     ry
- * @param  {Number}     rz
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-/**
- * @method spotLight
- * @param  {Number[]|String|p5.Color} color
- * @param  {Number}                   x
- * @param  {Number}                   y
- * @param  {Number}                   z
- * @param  {Number}                   rx
- * @param  {Number}                   ry
- * @param  {Number}                   rz
- * @param  {Number}                   angle
- * @param  {Number}                   conc
- */
-/**
- * @method spotLight
- * @param  {Number}    v1
- * @param  {Number}    v2
- * @param  {Number}    v3
- * @param  {Number}    x
- * @param  {Number}    y
- * @param  {Number}    z
- * @param  {Number}    rx
- * @param  {Number}    ry
- * @param  {Number}    rz
- */
-/**
- * @method spotLight
- * @param  {Number}    v1
- * @param  {Number}    v2
- * @param  {Number}    v3
- * @param  {Number}    x
- * @param  {Number}    y
- * @param  {Number}    z
- * @param  {Number}    rx
- * @param  {Number}    ry
- * @param  {Number}    rz
- * @param  {Number}    angle
- */
-
 p5.prototype.spotLight = function(
   v1,
   v2,
@@ -888,8 +736,6 @@ p5.prototype.spotLight = function(
         color = v1;
         position = v2;
         direction = new p5.Vector(v3, x, y);
-      } else {
-        console.warn(length);
       }
       break;
 
@@ -907,10 +753,13 @@ p5.prototype.spotLight = function(
       break;
 
     default:
-      console.warn(length);
-      break;
+      console.warn(
+        `Sorry, input for spotlight() is not in prescribed format. Too ${
+          length < 3 ? `few` : `many`
+        } arguments were provided`
+      );
+      return this;
   }
-
   this._renderer.spotLightDiffuseColors.push(
     color._array[0],
     color._array[1],
@@ -934,7 +783,10 @@ p5.prototype.spotLight = function(
     angle = Math.PI / 3;
   }
 
-  if (concentration === undefined) {
+  if (concentration !== undefined && concentration < 1) {
+    concentration = 1;
+    console.warn('Value of concentration needs to be greater than 1');
+  } else if (concentration === undefined) {
     concentration = 1;
   }
   // check conc
