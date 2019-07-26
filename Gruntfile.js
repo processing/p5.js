@@ -59,6 +59,12 @@
  *  all-contributors generate - Generates new contributors list for README
  */
 
+// these requires allow us to use es6 features such as
+// `import`/`export` and `async`/`await` in the Grunt tasks
+// we load from other files (`tasks/`)
+require('regenerator-runtime/runtime');
+require('@babel/register');
+
 function getYuidocOptions() {
   const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
