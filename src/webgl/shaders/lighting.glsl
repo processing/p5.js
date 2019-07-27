@@ -123,7 +123,6 @@ void totalLight(
         spotFalloff = 0.0;
       }
       else {
-        // insert max here in exponent
         spotFalloff = pow(spotDot, uSpotLightConc[j]);
       }
       lightFalloff *= spotFalloff;

@@ -493,10 +493,11 @@ p5.prototype.lightFalloff = function(
 };
 
 /**
- * Creates a spot light with given color, position, direction of light,
+ * Creates a spotlight with a given color, position, the direction of light,
  * along with angle and concentration. Here, angle refers to the opening or
- * aperture of the cone of spot light, and concentration is used to focus the
- * light towards the center.
+ * aperture of the cone of the spotlight, and concentration is used to focus the
+ * light towards the center. Both angle and concentration are optional, but if
+ * you want to provide concentration, you will have to specify the angle too.
  *
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
@@ -512,6 +513,35 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}    [angle]  optional parameter for angle. Defaults to PI/3
  * @param  {Number}    [conc]   optional parameter for concentration. Defaults to 1
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('perPixelLighting', true);
+ * }
+ * function draw() {
+ *   background(0);
+ *   //move your mouse to change light position
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   // to set the light position,
+ *   // think of the world's coordinate as:
+ *   // -width/2,-height/2 -------- width/2,-height/2
+ *   //                |            |
+ *   //                |     0,0    |
+ *   //                |            |
+ *   // -width/2,height/2--------width/2,height/2
+ *   spotLight(0, 250, 0, locX, locY, 100, 0, 0, -1, Math.PI / 16);
+ *   noStroke();
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Something
  */
 /**
  * @method spotLight
@@ -602,7 +632,7 @@ p5.prototype.spotLight = function(
   concentration
 ) {
   this._assert3d('spotLight');
-  // p5._validateParameters('spotLight', arguments);
+  p5._validateParameters('spotLight', arguments);
 
   let color, position, direction;
   const length = arguments.length;
@@ -785,14 +815,18 @@ p5.prototype.spotLight = function(
 
   if (concentration !== undefined && concentration < 1) {
     concentration = 1;
-    console.warn('Value of concentration needs to be greater than 1');
+    console.warn(
+      'Value of concentration needs to be greater than 1. Setting it to 1'
+    );
   } else if (concentration === undefined) {
     concentration = 1;
   }
-  // check conc
+
   angle = this._renderer._pInst._toRadians(angle);
   this._renderer.spotLightAngle.push(Math.cos(angle));
   this._renderer.spotLightConc.push(concentration);
+
+  this._renderer._enableLighting = true;
 
   return this;
 };
