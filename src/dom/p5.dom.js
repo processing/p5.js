@@ -1,4 +1,3 @@
-/*! p5.js v0.9.0 July 01, 2019 */
 /**
  * <p>The web is much more than just canvas and p5.dom makes it easy to interact
  * with other HTML5 objects, including text, hyperlink, image, input, video,
