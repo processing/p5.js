@@ -493,11 +493,11 @@ p5.prototype.lightFalloff = function(
 };
 
 /**
- * Creates a spotlight with a given color, position, the direction of light,
- * along with angle and concentration. Here, angle refers to the opening or
- * aperture of the cone of the spotlight, and concentration is used to focus the
+ * Creates a spotlight with a given color, position, direction of light,
+ * angle and concentration. Here, angle refers to the opening or aperture
+ * of the cone of the spotlight, and concentration is used to focus the
  * light towards the center. Both angle and concentration are optional, but if
- * you want to provide concentration, you will have to specify the angle too.
+ * you want to provide concentration, you will also have to specify the angle.
  *
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
@@ -511,7 +511,7 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}    ry       y axis direction of light
  * @param  {Number}    rz       z axis direction of light
  * @param  {Number}    [angle]  optional parameter for angle. Defaults to PI/3
- * @param  {Number}    [conc]   optional parameter for concentration. Defaults to 1
+ * @param  {Number}    [conc]   optional parameter for concentration. Defaults to 100
  * @chainable
  *
  * @example
@@ -533,6 +533,7 @@ p5.prototype.lightFalloff = function(
  *   //                |     0,0    |
  *   //                |            |
  *   // -width/2,height/2--------width/2,height/2
+ *   ambientLight(50);
  *   spotLight(0, 250, 0, locX, locY, 100, 0, 0, -1, Math.PI / 16);
  *   noStroke();
  *   sphere(40);
@@ -819,7 +820,7 @@ p5.prototype.spotLight = function(
       'Value of concentration needs to be greater than 1. Setting it to 1'
     );
   } else if (concentration === undefined) {
-    concentration = 1;
+    concentration = 100;
   }
 
   angle = this._renderer._pInst._toRadians(angle);
