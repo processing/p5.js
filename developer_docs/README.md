@@ -117,7 +117,12 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
    If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
 
-6. Make some changes to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
+6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
+
+   ```
+   $ git add -A
+   $ git commit -m "YOUR COMMIT MESSAGE"
+   ```
 
 7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
 
