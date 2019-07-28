@@ -50,7 +50,7 @@ suite('light', function() {
     let defaultAngle = Math.cos(Math.PI / 3);
     let cosAngle = Math.cos(angle);
     let conc = 7;
-    let defaultConc = 1;
+    let defaultConc = 100;
     test('default', function() {
       assert.deepEqual(myp5._renderer.spotLightDiffuseColors, []);
       assert.deepEqual(myp5._renderer.spotLightSpecularColors, []);
