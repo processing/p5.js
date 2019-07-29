@@ -1,5 +1,5 @@
-import expect from 'chai';
-import constants from '../../src/core/constants.js';
+import { expect } from 'chai';
+import * as constants from '../../src/core/constants.js';
 import helpers from '../../src/core/helpers.js';
 
 const a = 100;
