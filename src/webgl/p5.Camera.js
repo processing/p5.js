@@ -188,25 +188,22 @@ p5.prototype.ortho = function(...args) {
  * @example
  * <div>
  * <code>
- * //drag the mouse to look around!
- * //there's no vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   frustum(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ *   frustum(-width / 2, width / 2, -height / 2, height / 2, -50, 20);
  * }
  * function draw() {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
  *
- *   rotateX(0.2);
- *   rotateY(-0.2);
+ *   rotateY(-PI / 4);
  *   push();
- *   translate(-15, 0, sin(frameCount / 30) * 65);
+ *   translate(-15, 0, sin(frameCount / 30) * 25);
  *   box(30);
  *   pop();
  *   push();
- *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
  *   box(30);
  *   pop();
  * }
