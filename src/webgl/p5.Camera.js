@@ -175,6 +175,55 @@ p5.prototype.ortho = function(...args) {
   return this;
 };
 
+/**
+ * @method frustum
+ * @for p5
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * //drag the mouse to look around!
+ * //there's no vanishing point
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   frustum(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ * }
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   normalMaterial();
+ *
+ *   rotateX(0.2);
+ *   rotateY(-0.2);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 65);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ *
+ */
+p5.prototype.frustum = function(...args) {
+  this._assert3d('frustum');
+  p5._validateParameters('frustum', args);
+  this._renderer._curCamera.frustum(...args);
+  return this;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // p5.Camera
 ////////////////////////////////////////////////////////////////////////////////
@@ -405,6 +454,63 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
                         0, -y,  0,  0,
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
+
+  if (this._isActive()) {
+    this._renderer.uPMatrix.set(
+      this.projMatrix.mat4[0],
+      this.projMatrix.mat4[1],
+      this.projMatrix.mat4[2],
+      this.projMatrix.mat4[3],
+      this.projMatrix.mat4[4],
+      this.projMatrix.mat4[5],
+      this.projMatrix.mat4[6],
+      this.projMatrix.mat4[7],
+      this.projMatrix.mat4[8],
+      this.projMatrix.mat4[9],
+      this.projMatrix.mat4[10],
+      this.projMatrix.mat4[11],
+      this.projMatrix.mat4[12],
+      this.projMatrix.mat4[13],
+      this.projMatrix.mat4[14],
+      this.projMatrix.mat4[15]
+    );
+  }
+
+  this.cameraType = 'custom';
+};
+
+/**
+ * @method frustum
+ * @for p5.Camera
+ */
+p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
+  if (left === undefined) left = -this._renderer.width / 2;
+  if (right === undefined) right = +this._renderer.width / 2;
+  if (bottom === undefined) bottom = -this._renderer.height / 2;
+  if (top === undefined) top = +this._renderer.height / 2;
+  if (near === undefined) near = 0;
+  if (far === undefined)
+    far = Math.max(this._renderer.width, this._renderer.height);
+
+  const w = right - left;
+  const h = top - bottom;
+  const d = far - near;
+
+  const x = +(2.0 * near) / w;
+  const y = +(2.0 * near) / h;
+  const z = -(2.0 * far * near) / d;
+
+  const tx = (right + left) / w;
+  const ty = (top + bottom) / h;
+  const tz = -(far + near) / d;
+
+  this.projMatrix = p5.Matrix.identity();
+
+  // prettier-ignore
+  this.projMatrix.set(  x,  0,  0,  0,
+                        0,  y,  0,  0,
+                       tx, ty, tz, -1,
+                        0,  0,  z,  0);
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(
