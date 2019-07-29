@@ -1,6 +1,6 @@
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+  frustum(-width / 2, width / 2, height / 2, -height / 2, -500, 500);
 }
 
 function draw() {
