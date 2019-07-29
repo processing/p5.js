@@ -120,7 +120,7 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
 
    ```
-   $ git add -A
+   $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
 
