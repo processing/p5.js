@@ -1,10 +1,12 @@
 'use strict';
-const eslint = require('eslint');
+import eslint from 'eslint';
+
+// envs: ['eslint-samples/p5'],
 
 const itemtypes = ['method', 'property'];
-const classes = ['p5'];
+const classes = ['p5', 'p5.dom'];
 
-const dataDoc = require('../docs/reference/data.min.json');
+import dataDoc from '../docs/reference/data.min.json';
 const globals = {};
 dataDoc.classitems
   .filter(
@@ -196,7 +198,7 @@ function eslintFiles(opts, filesSrc) {
     outputFile: false,
     quiet: false,
     maxWarnings: -1,
-    envs: ['amd'],
+    envs: ['eslint-samples/p5', 'amd'],
     format: 'unix'
   };
 
