@@ -84,4 +84,7 @@ import './webgl/text';
 
 import './core/init';
 
+// DOM
+import './dom/p5.dom';
+
 module.exports = p5;
