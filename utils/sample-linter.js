@@ -4,7 +4,7 @@ import eslint from 'eslint';
 // envs: ['eslint-samples/p5'],
 
 const itemtypes = ['method', 'property'];
-const classes = ['p5', 'p5.dom'];
+const classes = ['p5'];
 
 import dataDoc from '../docs/reference/data.min.json';
 const globals = {};

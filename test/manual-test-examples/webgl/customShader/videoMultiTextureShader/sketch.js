@@ -8,7 +8,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  fingers = createVideo('../../../addons/p5.dom/fingers.mov');
+  fingers = createVideo('../../../dom/fingers.mov');
   fingers.hide();
   fingers.loop();
   //img2 = loadImage('../assets/cat.jpg');

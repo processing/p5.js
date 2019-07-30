@@ -28,6 +28,9 @@ import './color/setting';
 import './data/p5.TypedDict';
 import './data/local_storage.js';
 
+// DOM
+import './dom/dom';
+
 // events
 import './events/acceleration';
 import './events/keyboard';
@@ -83,8 +86,5 @@ import './webgl/p5.Texture';
 import './webgl/text';
 
 import './core/init';
-
-// DOM
-import './dom/p5.dom';
 
 module.exports = p5;
