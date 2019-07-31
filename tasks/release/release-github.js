@@ -46,16 +46,6 @@ module.exports = function(grunt) {
     const uploadReleaseData = {
       p5js: ['p5.js', './lib/p5.js', 'application/javascript'],
       p5minjs: ['p5.min.js', './lib/p5.min.js', 'application/javascript'],
-      p5domjs: [
-        'p5.dom.js',
-        './lib/addons/p5.dom.js',
-        'application/javascript'
-      ],
-      p5domminjs: [
-        'p5.dom.min.js',
-        './lib/addons/p5.dom.min.js',
-        'application/javascript'
-      ],
       p5soundjs: [
         'p5.sound.js',
         './lib/addons/p5.sound.js',

@@ -2,7 +2,7 @@ p5.disableFriendlyErrors = true;
 
 var img;
 function preload() {
-  img = createVideo('../addons/p5.dom/fingers.mov');
+  img = createVideo('../dom/fingers.mov');
   img.hide();
 }
 

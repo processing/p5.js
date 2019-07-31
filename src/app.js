@@ -28,6 +28,9 @@ import './color/setting';
 import './data/p5.TypedDict';
 import './data/local_storage.js';
 
+// DOM
+import './dom/dom';
+
 // events
 import './events/acceleration';
 import './events/keyboard';

@@ -4,7 +4,7 @@ var fingers, button;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  fingers = createVideo('../../../addons/p5.dom/fingers.mov');
+  fingers = createVideo('../../../dom/fingers.mov');
   fingers.hide();
   textureMode(NORMAL);
 }
