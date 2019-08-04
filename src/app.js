@@ -5,6 +5,7 @@ import './core/environment';
 import './core/error_helpers';
 import './core/helpers';
 import './core/legacy';
+import './core/preload';
 import './core/p5.Element';
 import './core/p5.Graphics';
 import './core/p5.Renderer';

@@ -9,6 +9,7 @@ var spec = {
     'main',
     'p5.Element',
     'p5.Graphics',
+    'preload',
     'rendering',
     'structure',
     'transform',
