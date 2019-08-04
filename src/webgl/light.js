@@ -105,22 +105,25 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
  * }
+ *
  * function draw() {
  *   background(0);
- *   noStroke();
+ *   shininess(20);
  *   ambientLight(50);
- *   specularColor(0, 250, 0);
- *   shininess(15);
- *   pointLight(250, 250, 250, 100, 100, 30);
- *   specularMaterial(250);
+ *   specularColor(255, 0, 0);
+ *   pointLight(255, 0, 0, 0, -50, 50);
+ *   specularColor(0, 255, 0);
+ *   pointLight(0, 255, 0, 0, 50, 50);
+ *   specularMaterial(255);
  *   sphere(40);
  * }
  * </code>
  * </div>
  *
  * @alt
- * diffused radiating light source from top right of canvas
+ * different specular light source from top and bottom of canvas
  */
 
 /**
