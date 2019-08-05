@@ -92,6 +92,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * specularMaterial(). If this method is called without specularMaterial(),
  * There will be no effect.
  *
+ * Note: specularColor is equivalent to the processing function
+ * <a href="https://processing.org/reference/lightSpecular_.html">lightSpecular</a>.
+ *
  * @method specularColor
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range
@@ -123,7 +126,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * </div>
  *
  * @alt
- * different specular light source from top and bottom of canvas
+ * different specular light sources from top and bottom of canvas
  */
 
 /**
