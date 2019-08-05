@@ -105,8 +105,10 @@ p5.prototype.ellipseMode = function(m) {
  */
 p5.prototype.noSmooth = function() {
   this.setAttributes('antialias', false);
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = false;
+  if (!this._renderer.isP3D) {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = false;
+    }
   }
   return this;
 };
