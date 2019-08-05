@@ -208,8 +208,10 @@ p5.prototype.rectMode = function(m) {
  */
 p5.prototype.smooth = function() {
   this.setAttributes('antialias', true);
-  if ('imageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.imageSmoothingEnabled = true;
+  if (!this._renderer.isP3D) {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = true;
+    }
   }
   return this;
 };
