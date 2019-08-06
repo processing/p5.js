@@ -428,7 +428,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesn't get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
