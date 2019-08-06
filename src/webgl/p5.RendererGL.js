@@ -69,11 +69,15 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._enableLighting = false;
 
   this.ambientLightColors = [];
+  this.specularColors = [1, 1, 1];
+
   this.directionalLightDirections = [];
-  this.directionalLightColors = [];
+  this.directionalLightDiffuseColors = [];
+  this.directionalLightSpecularColors = [];
 
   this.pointLightPositions = [];
-  this.pointLightColors = [];
+  this.pointLightDiffuseColors = [];
+  this.pointLightSpecularColors = [];
 
   this.drawMode = constants.FILL;
   this.curFillColor = [1, 1, 1, 1];
@@ -486,11 +490,15 @@ p5.RendererGL.prototype._update = function() {
   // reset light data for new frame.
 
   this.ambientLightColors.length = 0;
+  this.specularColors = [1, 1, 1];
+
   this.directionalLightDirections.length = 0;
-  this.directionalLightColors.length = 0;
+  this.directionalLightDiffuseColors.length = 0;
+  this.directionalLightSpecularColors.length = 0;
 
   this.pointLightPositions.length = 0;
-  this.pointLightColors.length = 0;
+  this.pointLightDiffuseColors.length = 0;
+  this.pointLightSpecularColors.length = 0;
 
   this._enableLighting = false;
 
@@ -887,12 +895,15 @@ p5.RendererGL.prototype.push = function() {
   this._curCamera = this._curCamera.copy();
 
   properties.ambientLightColors = this.ambientLightColors.slice();
+  properties.specularColors = this.specularColors.slice();
 
   properties.directionalLightDirections = this.directionalLightDirections.slice();
-  properties.directionalLightColors = this.directionalLightColors.slice();
+  properties.directionalLightDiffuseColors = this.directionalLightDiffuseColors.slice();
+  properties.directionalLightSpecularColors = this.directionalLightSpecularColors.slice();
 
   properties.pointLightPositions = this.pointLightPositions.slice();
-  properties.pointLightColors = this.pointLightColors.slice();
+  properties.pointLightDiffuseColors = this.pointLightDiffuseColors.slice();
+  properties.pointLightSpecularColors = this.pointLightSpecularColors.slice();
 
   properties.userFillShader = this.userFillShader;
   properties.userStrokeShader = this.userStrokeShader;
@@ -1148,15 +1159,29 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
 
   fillShader.setUniform('uUseLighting', this._enableLighting);
 
-  const pointLightCount = this.pointLightColors.length / 3;
+  const pointLightCount = this.pointLightDiffuseColors.length / 3;
   fillShader.setUniform('uPointLightCount', pointLightCount);
   fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
-  fillShader.setUniform('uPointLightColor', this.pointLightColors);
+  fillShader.setUniform(
+    'uPointLightDiffuseColors',
+    this.pointLightDiffuseColors
+  );
+  fillShader.setUniform(
+    'uPointLightSpecularColors',
+    this.pointLightSpecularColors
+  );
 
-  const directionalLightCount = this.directionalLightColors.length / 3;
+  const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
   fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
   fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
-  fillShader.setUniform('uDirectionalColor', this.directionalLightColors);
+  fillShader.setUniform(
+    'uDirectionalDiffuseColors',
+    this.directionalLightDiffuseColors
+  );
+  fillShader.setUniform(
+    'uDirectionalSpecularColors',
+    this.directionalLightSpecularColors
+  );
 
   // TODO: sum these here...
   const ambientLightCount = this.ambientLightColors.length / 3;
