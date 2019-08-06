@@ -79,7 +79,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -115,7 +115,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -135,7 +135,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -166,7 +166,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -186,7 +186,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -219,7 +219,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -255,7 +255,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -275,7 +275,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -306,7 +306,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -326,7 +326,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -357,7 +357,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -377,7 +377,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -408,7 +408,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -428,7 +428,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -459,7 +459,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -479,7 +479,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -510,7 +510,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -530,7 +530,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -561,7 +561,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -581,7 +581,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -611,7 +611,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -631,7 +631,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -661,7 +661,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches mutiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
@@ -681,7 +681,7 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and doesnt get events', function() {
+    test('detaches and does not get events', function() {
       // setup
       elt = myp5.createDiv('hello');
       var myFnCounter = 0;
