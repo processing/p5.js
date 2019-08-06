@@ -250,17 +250,32 @@ p5.Renderer2D._copyHelper = (
 ) => {
   srcImage.loadPixels();
   const s = srcImage.canvas.width / srcImage.width;
-  dstImage.drawingContext.drawImage(
-    srcImage.canvas,
-    s * sx,
-    s * sy,
-    s * sw,
-    s * sh,
-    dx,
-    dy,
-    dw,
-    dh
-  );
+  if (dstImage.isP3D) {
+    p5.RendererGL.prototype.image.call(
+      dstImage,
+      srcImage,
+      sx,
+      sy,
+      sw,
+      sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  } else {
+    dstImage.drawingContext.drawImage(
+      srcImage.canvas,
+      s * sx,
+      s * sy,
+      s * sw,
+      s * sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  }
 };
 
 // p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;
