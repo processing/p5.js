@@ -140,15 +140,15 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('push/pop and specularLight() works', function(done) {
+    test('push/pop and specularColor() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      myp5.specularLight(255, 0, 0);
-      var specularColors = myp5._renderer.specularLightColors.slice();
+      myp5.specularColor(255, 0, 0);
+      var specularColors = myp5._renderer.specularColors.slice();
       myp5.push();
-      myp5.specularLight(0, 0, 255);
-      assert.notEqual(specularColors, myp5._renderer.specularLightColors);
+      myp5.specularColor(0, 0, 255);
+      assert.notEqual(specularColors, myp5._renderer.specularColors);
       myp5.pop();
-      assert.deepEqual(specularColors, myp5._renderer.specularLightColors);
+      assert.deepEqual(specularColors, myp5._renderer.specularColors);
       done();
     });
 

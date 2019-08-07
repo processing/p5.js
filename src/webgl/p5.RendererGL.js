@@ -69,7 +69,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._enableLighting = false;
 
   this.ambientLightColors = [];
-  this.specularLightColors = [1, 1, 1];
+  this.specularColors = [1, 1, 1];
 
   this.directionalLightDirections = [];
   this.directionalLightDiffuseColors = [];
@@ -497,7 +497,7 @@ p5.RendererGL.prototype._update = function() {
   // reset light data for new frame.
 
   this.ambientLightColors.length = 0;
-  this.specularLightColors = [1, 1, 1];
+  this.specularColors = [1, 1, 1];
 
   this.directionalLightDirections.length = 0;
   this.directionalLightDiffuseColors.length = 0;
@@ -909,7 +909,7 @@ p5.RendererGL.prototype.push = function() {
   this._curCamera = this._curCamera.copy();
 
   properties.ambientLightColors = this.ambientLightColors.slice();
-  properties.specularLightColors = this.specularLightColors.slice();
+  properties.specularColors = this.specularColors.slice();
 
   properties.directionalLightDirections = this.directionalLightDirections.slice();
   properties.directionalLightDiffuseColors = this.directionalLightDiffuseColors.slice();

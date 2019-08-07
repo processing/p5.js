@@ -357,20 +357,76 @@ export const HSL = 'hsl';
  */
 export const AUTO = 'auto';
 
+/**
+ * @property {Number} ALT
+ * @final
+ */
 // INPUT
 export const ALT = 18;
+/**
+ * @property {Number} BACKSPACE
+ * @final
+ */
 export const BACKSPACE = 8;
+/**
+ * @property {Number} CONTROL
+ * @final
+ */
 export const CONTROL = 17;
+/**
+ * @property {Number} DELETE
+ * @final
+ */
 export const DELETE = 46;
+/**
+ * @property {Number} DOWN_ARROW
+ * @final
+ */
 export const DOWN_ARROW = 40;
+/**
+ * @property {Number} ENTER
+ * @final
+ */
 export const ENTER = 13;
+/**
+ * @property {Number} ESCAPE
+ * @final
+ */
 export const ESCAPE = 27;
+/**
+ * @property {Number} LEFT_ARROW
+ * @final
+ */
 export const LEFT_ARROW = 37;
+/**
+ * @property {Number} OPTION
+ * @final
+ */
 export const OPTION = 18;
+/**
+ * @property {Number} RETURN
+ * @final
+ */
 export const RETURN = 13;
+/**
+ * @property {Number} RIGHT_ARROW
+ * @final
+ */
 export const RIGHT_ARROW = 39;
+/**
+ * @property {Number} SHIFT
+ * @final
+ */
 export const SHIFT = 16;
+/**
+ * @property {Number} TAB
+ * @final
+ */
 export const TAB = 9;
+/**
+ * @property {Number} UP_ARROW
+ * @final
+ */
 export const UP_ARROW = 38;
 
 // RENDERING
@@ -528,15 +584,47 @@ export const _DEFAULT_LEADMULT = 1.25;
 export const _CTX_MIDDLE = 'middle';
 
 // VERTICES
+/**
+ * @property {String} LINEAR
+ * @final
+ */
 export const LINEAR = 'linear';
+/**
+ * @property {String} QUADRATIC
+ * @final
+ */
 export const QUADRATIC = 'quadratic';
+/**
+ * @property {String} BEZIER
+ * @final
+ */
 export const BEZIER = 'bezier';
+/**
+ * @property {String} CURVE
+ * @final
+ */
 export const CURVE = 'curve';
 
 // WEBGL DRAWMODES
+/**
+ * @property {String} STROKE
+ * @final
+ */
 export const STROKE = 'stroke';
+/**
+ * @property {String} FILL
+ * @final
+ */
 export const FILL = 'fill';
+/**
+ * @property {String} TEXTURE
+ * @final
+ */
 export const TEXTURE = 'texture';
+/**
+ * @property {String} IMMEDIATE
+ * @final
+ */
 export const IMMEDIATE = 'immediate';
 
 // WEBGL TEXTURE MODE
@@ -549,9 +637,25 @@ export const IMAGE = 'image';
 
 // WEBGL TEXTURE WRAP AND FILTERING
 // LINEAR already exists above
+/**
+ * @property {String} NEAREST
+ * @final
+ */
 export const NEAREST = 'nearest';
+/**
+ * @property {String} REPEAT
+ * @final
+ */
 export const REPEAT = 'repeat';
+/**
+ * @property {String} CLAMP
+ * @final
+ */
 export const CLAMP = 'clamp';
+/**
+ * @property {String} MIRROR
+ * @final
+ */
 export const MIRROR = 'mirror';
 
 // DEVICE-ORIENTATION

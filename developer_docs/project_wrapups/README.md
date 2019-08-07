@@ -4,6 +4,8 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 *Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
 
 
+### Google Summer of Code 2019
+* [title](url) by [name](url), 2019
 
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018

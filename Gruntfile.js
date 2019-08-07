@@ -59,6 +59,12 @@
  *  all-contributors generate - Generates new contributors list for README
  */
 
+// these requires allow us to use es6 features such as
+// `import`/`export` and `async`/`await` in the Grunt tasks
+// we load from other files (`tasks/`)
+require('regenerator-runtime/runtime');
+require('@babel/register');
+
 function getYuidocOptions() {
   const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
@@ -163,7 +169,7 @@ module.exports = grunt => {
             ecmaVersion: 5
           }
         },
-        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+        src: ['src/**/*.js']
       },
       test: {
         src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
@@ -178,7 +184,7 @@ module.exports = grunt => {
         format: 'unix'
       },
       source: {
-        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+        src: ['src/**/*.js']
       },
       fix: {
         options: {
@@ -284,8 +290,7 @@ module.exports = grunt => {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.pre-min.js',
-          'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
+          'lib/p5.min.js': 'lib/p5.pre-min.js'
         }
       }
     },
@@ -328,7 +333,7 @@ module.exports = grunt => {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -355,7 +360,7 @@ module.exports = grunt => {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -382,7 +387,7 @@ module.exports = grunt => {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');

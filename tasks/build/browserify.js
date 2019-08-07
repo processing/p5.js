@@ -1,9 +1,9 @@
 'use strict';
 
-const path = require('path');
-const browserify = require('browserify');
-const prettier = require('prettier');
-const derequire = require('derequire');
+import { resolve } from 'path';
+import browserify from 'browserify';
+import { format } from 'prettier';
+import derequire from 'derequire';
 
 const bannerTemplate =
   '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         : isTest ? 'p5-test.js' : 'p5.js';
 
       // This file will not exist until it has been built
-      const libFilePath = path.resolve('lib/' + filename);
+      const libFilePath = resolve('lib/' + filename);
 
       // Reading and writing files is asynchronous
       const done = this.async();
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
 
           // and prettify the code
           if (!isMin) {
-            code = prettier.format(code, {
+            code = format(code, {
               singleQuote: true,
               printWidth: 80 + 12
             });
