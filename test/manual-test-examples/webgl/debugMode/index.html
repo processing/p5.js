@@ -8,13 +8,20 @@
   <link rel="stylesheet" href="../../styles.css">
   <script language="javascript" type="text/javascript" src="../../../../../lib/p5.js"></script>
   <script language="javascript" type="text/javascript" src="sketch.js"></script>
-  <script src="../../stats.js"></script>
+  <script src="../stats.js"></script>
 </head>
 
 <body>
-  <header>
-    <p>Press and drag mouse to rotate view.</p>
-  </header>
+    <div id="gl-info">
+        <p>
+          You should see a grid plane with rotating box line and a gizmo indicating x-y-z.<br>
+          When you click and drag the view should shift, and when you scroll you should move in z-space
+        <em>Tests: debugMode, orbitControl</em>
+        </p>
+        <p>
+          Average FPS should be above 30 on a modern laptop/desktop
+        </p>
+</div>
 </body>
 
 </html>
