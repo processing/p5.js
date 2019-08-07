@@ -16,8 +16,8 @@ let orthoP5 = new p5(sketch => {
 
   sketch.draw = function() {
     sketch.background(0);
-    sketch.rotateX(sketch.map(sketch.mouseY, 0, height / 2, 0, sketch.TWO_PI));
-    sketch.rotateY(sketch.map(sketch.mouseX, 0, width, 0, sketch.TWO_PI));
+    sketch.rotateX(sketch.map(sketch.mouseY, 0, height, 0, sketch.PI));
+    sketch.rotateY(sketch.map(sketch.mouseX, 0, width, 0, sketch.PI));
     sketch.normalMaterial();
     for (let i = -5; i < 6; i++) {
       for (let j = -5; j < 6; j++) {
@@ -49,12 +49,8 @@ let perspP5 = new p5(sketch => {
 
   sketch.draw = function() {
     sketch.background(0);
-    sketch.rotateX(
-      sketch.map(sketch.mouseY, 0, sketch.height / 2, 0, sketch.TWO_PI)
-    );
-    sketch.rotateY(
-      sketch.map(sketch.mouseX, 0, sketch.width, 0, sketch.TWO_PI)
-    );
+    sketch.rotateX(sketch.map(sketch.mouseY, 0, sketch.height, 0, sketch.PI));
+    sketch.rotateY(sketch.map(sketch.mouseX, 0, sketch.width, 0, sketch.PI));
     sketch.normalMaterial();
     for (let i = -5; i < 6; i++) {
       for (let j = -5; j < 6; j++) {
