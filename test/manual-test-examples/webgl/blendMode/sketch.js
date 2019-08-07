@@ -7,7 +7,7 @@ var colors;
 var img;
 
 function preload() {
-  img = loadImage('../../assets/UV_Grid_Sm.jpg');
+  img = loadImage('../assets/UV_Grid_Sm.jpg');
 }
 
 function setup() {
@@ -60,11 +60,13 @@ function keyPressed() {
 }
 
 function changeBanner(msg) {
-  document.getElementById('banner').innerHTML =
+  document.getElementById('gl-info').innerHTML =
     msg +
     '<br>' +
     'Click to change blendMode.<br>' +
-    'Key to toggle white/black background.';
+    'Key to toggle white/black background.<br><br>' +
+    '<em>Tests: blendMode</em><br><br>' +
+    'Average FPS should be above 30 on a modern laptop/desktop';
 }
 
 function mousePressed() {
