@@ -250,7 +250,7 @@ p5.Color.prototype.toString = function(format) {
 
 /**
  * @method setRed
- * @param {Number} red the new red value
+ * @param {Number} red the new red value (range depends on your color mode, by the default RGB model it is between 0 and 255)
  * @example
  * <div>
  * <code>
@@ -277,7 +277,7 @@ p5.Color.prototype.setRed = function(new_red) {
 
 /**
  * @method setGreen
- * @param {Number} green the new green value
+ * @param {Number} green the new green value (range depends on your color mode, by the default RGB model it is between 0 and 255)
  * @example
  * <div>
  * <code>
@@ -304,7 +304,7 @@ p5.Color.prototype.setGreen = function(new_green) {
 
 /**
  * @method setBlue
- * @param {Number} blue the new blue value
+ * @param {Number} blue the new blue value (range depends on your color mode, by the default RGB model it is between 0 and 255)
  * @example
  * <div>
  * <code>
@@ -331,7 +331,7 @@ p5.Color.prototype.setBlue = function(new_blue) {
 
 /**
  * @method setAlpha
- * @param {Number} alpha the new alpha value
+ * @param {Number} alpha the new alpha value (range depends on your color mode, by the default RGB model it is between 0 and 255)
  * @example
  * <div>
  * <code>
