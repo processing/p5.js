@@ -6,9 +6,7 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -43,7 +41,7 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
+ *   let step = frameCount % 20;
  *   background(200);
  *   // Equivalent to translate(x, y);
  *   applyMatrix(1, 0, 0, 1, 40 + step, 50);
@@ -59,7 +57,7 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
+ *   let step = frameCount % 20;
  *   background(200);
  *   translate(50, 50);
  *   // Equivalent to scale(x, y);
@@ -76,10 +74,10 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
- *   var angle = map(step, 0, 20, 0, TWO_PI);
- *   var cos_a = cos(angle);
- *   var sin_a = sin(angle);
+ *   let step = frameCount % 20;
+ *   let angle = map(step, 0, 20, 0, TWO_PI);
+ *   let cos_a = cos(angle);
+ *   let sin_a = sin(angle);
  *   background(200);
  *   translate(50, 50);
  *   // Equivalent to rotate(angle);
@@ -96,14 +94,41 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
- *   var angle = map(step, 0, 20, -PI / 4, PI / 4);
+ *   let step = frameCount % 20;
+ *   let angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
  *   translate(50, 50);
  *   // equivalent to shearX(angle);
- *   var shear_factor = 1 / tan(PI / 2 - angle);
+ *   let shear_factor = 1 / tan(PI / 2 - angle);
  *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
  *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noFill();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateY(PI / 6);
+ *   stroke(153);
+ *   box(35);
+ *   let rad = millis() / 1000;
+ *   // Set rotation angles
+ *   let ct = cos(rad);
+ *   let st = sin(rad);
+ *   // Matrix for rotation around the Y axis
+ *   // prettier-ignore
+ *   applyMatrix(  ct, 0.0,  st,  0.0,
+ *                0.0, 1.0, 0.0,  0.0,
+ *                -st, 0.0,  ct,  0.0,
+ *                0.0, 0.0, 0.0,  1.0);
+ *   stroke(255);
+ *   box(50);
  * }
  * </code>
  * </div>
@@ -116,20 +141,8 @@ var p5 = require('./main');
  *
  */
 p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix(a, b, c, d, e, f);
+  this._renderer.applyMatrix(...arguments);
   return this;
-};
-
-p5.prototype.popMatrix = function() {
-  throw new Error('popMatrix() not used, see pop()');
-};
-
-p5.prototype.printMatrix = function() {
-  throw new Error('printMatrix() not implemented');
-};
-
-p5.prototype.pushMatrix = function() {
-  throw new Error('pushMatrix() not used, see push()');
 };
 
 /**
@@ -342,12 +355,12 @@ p5.prototype.scale = function(x, y, z) {
   p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
   if (x instanceof p5.Vector) {
-    var v = x;
+    const v = x;
     x = v.x;
     y = v.y;
     z = v.z;
   } else if (x instanceof Array) {
-    var rg = x;
+    const rg = x;
     x = rg[0];
     y = rg[1];
     z = rg[2] || 1;
@@ -398,7 +411,8 @@ p5.prototype.scale = function(x, y, z) {
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
-  this._renderer.shearX(this._toRadians(angle));
+  const rad = this._toRadians(angle);
+  this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
   return this;
 };
 
@@ -437,7 +451,8 @@ p5.prototype.shearX = function(angle) {
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
-  this._renderer.shearY(this._toRadians(angle));
+  const rad = this._toRadians(angle);
+  this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
   return this;
 };
 
@@ -510,4 +525,4 @@ p5.prototype.translate = function(x, y, z) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

@@ -1,0 +1,17 @@
+# Configuration for welcome - https://github.com/behaviorbot/welcome
+
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+
+# Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+  Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, be sure to follow the issue template if you haven't already.
+
+# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+
+# Comment to be posted to on PRs from first time contributors in your repository
+newPRWelcomeComment: >
+  🎉 Thanks for opening this pull request! Please check out our [contributing guidelines](https://github.com/processing/p5.js/blob/master/CONTRIBUTING.md) if you haven't already. And be sure to add yourself to the [list of contributors on the readme page](https://github.com/processing/p5.js#contributors)!
+
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+
+# Comment to be posted to on pull requests merged by a first time user

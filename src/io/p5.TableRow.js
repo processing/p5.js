@@ -4,9 +4,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  *  A TableRow object represents a single row of data values,
@@ -23,15 +21,15 @@ var p5 = require('../core/main');
  *  @param {String} [separator] comma separated values (csv) by default
  */
 p5.TableRow = function(str, separator) {
-  var arr = [];
-  var obj = {};
+  let arr = [];
+  const obj = {};
   if (str) {
     separator = separator || ',';
     arr = str.split(separator);
   }
-  for (var i = 0; i < arr.length; i++) {
-    var key = i;
-    var val = arr[i];
+  for (let i = 0; i < arr.length; i++) {
+    const key = i;
+    const val = arr[i];
     obj[key] = val;
   }
   this.arr = arr;
@@ -82,23 +80,21 @@ p5.TableRow = function(str, separator) {
 p5.TableRow.prototype.set = function(column, value) {
   // if typeof column is string, use .obj
   if (typeof column === 'string') {
-    var cPos = this.table.columns.indexOf(column); // index of columnID
+    const cPos = this.table.columns.indexOf(column); // index of columnID
     if (cPos >= 0) {
       this.obj[column] = value;
       this.arr[cPos] = value;
     } else {
-      throw new Error('This table has no column named "' + column + '"');
+      throw new Error(`This table has no column named "${column}"`);
     }
   } else {
     // if typeof column is number, use .arr
     if (column < this.table.columns.length) {
       this.arr[column] = value;
-      var cTitle = this.table.columns[column];
+      const cTitle = this.table.columns[column];
       this.obj[cTitle] = value;
     } else {
-      throw new Error(
-        'Column #' + column + ' is out of the range of this table'
-      );
+      throw new Error(`Column #${column} is out of the range of this table`);
     }
   }
 };
@@ -143,7 +139,7 @@ p5.TableRow.prototype.set = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setNum = function(column, value) {
-  var floatVal = parseFloat(value);
+  const floatVal = parseFloat(value);
   this.set(column, floatVal);
 };
 
@@ -188,7 +184,7 @@ p5.TableRow.prototype.setNum = function(column, value) {
  * no image displayed
  */
 p5.TableRow.prototype.setString = function(column, value) {
-  var stringVal = value.toString();
+  const stringVal = value.toString();
   this.set(column, stringVal);
 };
 
@@ -283,7 +279,7 @@ p5.TableRow.prototype.get = function(column) {
  * no image displayed
  */
 p5.TableRow.prototype.getNum = function(column) {
-  var ret;
+  let ret;
   if (typeof column === 'string') {
     ret = parseFloat(this.obj[column]);
   } else {
@@ -291,7 +287,7 @@ p5.TableRow.prototype.getNum = function(column) {
   }
 
   if (ret.toString() === 'NaN') {
-    throw 'Error: ' + this.obj[column] + ' is NaN (Not a Number)';
+    throw `Error: ${this.obj[column]} is NaN (Not a Number)`;
   }
   return ret;
 };
@@ -347,4 +343,4 @@ p5.TableRow.prototype.getString = function(column) {
   }
 };
 
-module.exports = p5;
+export default p5;

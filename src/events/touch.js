@@ -5,9 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * The system variable touches[] contains an array of the positions of all
@@ -42,8 +40,8 @@ p5.prototype.touches = [];
 
 p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
-    var touches = [];
-    for (var i = 0; i < e.touches.length; i++) {
+    const touches = [];
+    for (let i = 0; i < e.touches.length; i++) {
       touches[i] = getTouchInfo(
         this._curElement.elt,
         this.width,
@@ -56,12 +54,11 @@ p5.prototype._updateTouchCoords = function(e) {
   }
 };
 
-function getTouchInfo(canvas, w, h, e, i) {
-  i = i || 0;
-  var rect = canvas.getBoundingClientRect();
-  var sx = canvas.scrollWidth / w;
-  var sy = canvas.scrollHeight / h;
-  var touch = e.touches[i] || e.changedTouches[i];
+function getTouchInfo(canvas, w, h, e, i = 0) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.scrollWidth / w || 1;
+  const sy = canvas.scrollHeight / h || 1;
+  const touch = e.touches[i] || e.changedTouches[i];
   return {
     x: (touch.clientX - rect.left) / sx,
     y: (touch.clientY - rect.top) / sy,
@@ -127,18 +124,23 @@ function getTouchInfo(canvas, w, h, e, i) {
  * no image displayed
  */
 p5.prototype._ontouchstart = function(e) {
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   this._setProperty('mouseIsPressed', true);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
   this._updateMouseCoords(); // reset pmouseXY at the start of each touch event
+
   if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mousePressed === 'function') {
+    // only safari needs this manual fallback for consistency
+  } else if (
+    navigator.userAgent.toLowerCase().includes('safari') &&
+    typeof context.touchStarted === 'function'
+  ) {
     executeDefault = context.mousePressed(e);
     if (executeDefault === false) {
       e.preventDefault();
@@ -202,8 +204,8 @@ p5.prototype._ontouchstart = function(e) {
  *
  */
 p5.prototype._ontouchmove = function(e) {
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
   if (typeof context.touchMoved === 'function') {
@@ -279,8 +281,8 @@ p5.prototype._ontouchend = function(e) {
   this._setProperty('mouseIsPressed', false);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
     if (executeDefault === false) {
@@ -294,4 +296,4 @@ p5.prototype._ontouchend = function(e) {
   }
 };
 
-module.exports = p5;
+export default p5;

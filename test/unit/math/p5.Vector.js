@@ -297,7 +297,7 @@ suite('p5.Vector', function() {
         });
       });
 
-      test("should substract from the array's 0,1,2 index", function() {
+      test("should subtract from the array's 0,1,2 index", function() {
         v.sub([2, 5, 6]);
         expect(v.x).to.eql(-2);
         expect(v.y).to.eql(-5);
@@ -306,7 +306,7 @@ suite('p5.Vector', function() {
     });
 
     suite('sub(3,5)', function() {
-      test('should substract the x and y components', function() {
+      test('should subtract the x and y components', function() {
         v.sub(3, 5);
         expect(v.x).to.eql(-3);
         expect(v.y).to.eql(-5);
@@ -315,7 +315,7 @@ suite('p5.Vector', function() {
     });
 
     suite('sub(2,3,4)', function() {
-      test('should substract the x, y, z components', function() {
+      test('should subtract the x, y, z components', function() {
         v.sub(5, 5, 5);
         expect(v.x).to.eql(-5);
         expect(v.y).to.eql(-5);

@@ -6,11 +6,9 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import './p5.Color';
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
@@ -159,7 +157,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color
  * @chainable
  */
@@ -173,20 +171,17 @@ require('./p5.Color');
  * @chainable
  */
 
-p5.prototype.background = function() {
-  if (arguments[0] instanceof p5.Image) {
-    this.image(arguments[0], 0, 0, this.width, this.height);
-  } else {
-    this._renderer.background.apply(this._renderer, arguments);
-  }
+p5.prototype.background = function(...args) {
+  this._renderer.background(...args);
   return this;
 };
 
 /**
- * Clears the pixels within a buffer. This function only works on p5.Canvas
- * objects created with the <a href="#/p5/createCanvas">createCanvas()</a> function; it won't work with the
- * main display window. Unlike the main graphics context, pixels in
- * additional graphics areas created with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
+ * Clears the pixels within a buffer. This function only clears the canvas.
+ * It will not clear objects created by createX() methods such as
+ * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
+ * Unlike the main graphics context, pixels in additional graphics areas created
+ * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
@@ -294,7 +289,7 @@ p5.prototype.clear = function() {
  *Green to red gradient from bottom L to top R. shading originates from top left.
  *Rainbow gradient from left to right. Brightness increasing to white at top.
  *unknown image.
- *50x50 ellipse at middle L & 40x40 ellipse at center. Transluscent pink outlines.
+ *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
  *
  */
 /**
@@ -304,7 +299,7 @@ p5.prototype.clear = function() {
  *                              current color mode
  * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lighntess
+ * @param {Number} max3     range for the blue or brightness/lightness
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
  * @chainable
@@ -320,7 +315,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
     this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._colorMaxes[mode];
+    const maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
       maxes[0] = max1; // Red
       maxes[1] = max1; // Green
@@ -343,7 +338,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 
 /**
  * Sets the color used to fill shapes. For example, if you run
- * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
+ * fill(204, 102, 0), all shapes drawn after the fill command will be filled with the color orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space is RGB, with each value
  * in the range from 0 to 255). The alpha range by default is also 0 to 255.
@@ -462,7 +457,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * 60x60 light green rect with black outline in center of canvas.
  * 60x60 soft green rect with black outline in center of canvas.
  * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fushcia rect with black outline in center of canvas.
+ * 60x60 dark fuchsia rect with black outline in center of canvas.
  * 60x60 blue rect with black outline in center of canvas.
  */
 
@@ -491,10 +486,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @param  {p5.Color}      color   the fill color
  * @chainable
  */
-p5.prototype.fill = function() {
+p5.prototype.fill = function(...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
-  this._renderer.fill.apply(this._renderer, arguments);
+  this._renderer.fill(...args);
   return this;
 };
 
@@ -714,7 +709,7 @@ p5.prototype.noStroke = function() {
  * 60x60 white rect at center. Bright green outline.
  * 60x60 white rect at center. Soft green outline.
  * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fushcia outline.
+ * 60x60 white rect at center. Dark fuchsia outline.
  * 60x60 white rect at center. Blue outline.
  */
 
@@ -744,11 +739,11 @@ p5.prototype.noStroke = function() {
  * @chainable
  */
 
-p5.prototype.stroke = function() {
+p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
-  this._renderer.stroke.apply(this._renderer, arguments);
+  this._renderer.stroke(...args);
   return this;
 };
 
-module.exports = p5;
+export default p5;

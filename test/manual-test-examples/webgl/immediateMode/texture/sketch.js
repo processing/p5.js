@@ -8,6 +8,7 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   sz = 0.25 * min(width, height);
+  textureMode(NORMAL);
 }
 
 function draw() {

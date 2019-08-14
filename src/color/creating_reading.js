@@ -6,12 +6,10 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
-require('../core/error_helpers');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import './p5.Color';
+import '../core/error_helpers';
 
 /**
  * Extracts the alpha value from a color or pixel array.
@@ -39,7 +37,7 @@ require('../core/error_helpers');
  * Left half of canvas salmon pink and the right half white.
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
@@ -108,9 +106,22 @@ p5.prototype.blue = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * noStroke();
+ * colorMode(HSB, 255);
+ * let c = color('hsb(60, 100%, 50%)');
+ * fill(c);
+ * rect(15, 20, 35, 60);
+ * let value = brightness(c); // A 'value' of 50% is 127.5
+ * fill(value);
+ * rect(50, 20, 35, 60);
+ * </code>
+ * </div>
  *
  * @alt
  * Left half of canvas salmon pink and the right half white.
+ * Left half of canvas yellow at half brightness and the right gray .
  *
  */
 p5.prototype.brightness = function(c) {
@@ -269,7 +280,7 @@ p5.prototype.brightness = function(c) {
  * @alt
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
- * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45x80.
  * Four blue rects in each corner of the canvas, each are 35x35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
@@ -312,7 +323,7 @@ p5.prototype.color = function() {
     return arguments[0]; // Do nothing if argument is already a color object.
   }
 
-  var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+  const args = arguments[0] instanceof Array ? arguments[0] : arguments;
   return new p5.Color(this, args);
 };
 
@@ -429,18 +440,14 @@ p5.prototype.hue = function(c) {
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
-  var mode = this._colorMode;
-  var maxes = this._colorMaxes;
-  var l0, l1, l2, l3;
-  var fromArray, toArray;
+  const mode = this._colorMode;
+  const maxes = this._colorMaxes;
+  let l0, l1, l2, l3;
+  let fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = c1.levels.map(function(level) {
-      return level / 255;
-    });
-    toArray = c2.levels.map(function(level) {
-      return level / 255;
-    });
+    fromArray = c1.levels.map(level => level / 255);
+    toArray = c2.levels.map(level => level / 255);
   } else if (mode === constants.HSB) {
     c1._getBrightness(); // Cache hsba so it definitely exists.
     c2._getBrightness();
@@ -452,7 +459,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
     fromArray = c1.hsla;
     toArray = c2.hsla;
   } else {
-    throw new Error(mode + 'cannot be used for interpolation.');
+    throw new Error(`${mode}cannot be used for interpolation.`);
   }
 
   // Prevent extrapolation.
@@ -461,9 +468,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
   if (typeof this.lerp === 'undefined') {
-    this.lerp = function(start, stop, amt) {
-      return amt * (stop - start) + start;
-    };
+    this.lerp = (start, stop, amt) => amt * (stop - start) + start;
   }
 
   // Perform interpolation.
@@ -532,13 +537,13 @@ p5.prototype.lightness = function(c) {
  * </code>
  * </div>
  *
- * <div>
+ * <div class="norender">
  * <code>
- * colorMode(RGB, 255);
+ * colorMode(RGB, 255); // Sets the range for red, green, and blue to 255
  * let c = color(127, 255, 0);
- * colorMode(RGB, 1);
+ * colorMode(RGB, 1); // Sets the range for red, green, and blue to 1
  * let myColor = red(c);
- * print(myColor);
+ * print(myColor); // 0.4980392156862745
  * </code>
  * </div>
  *
@@ -587,4 +592,4 @@ p5.prototype.saturation = function(c) {
   return this.color(c)._getSaturation();
 };
 
-module.exports = p5;
+export default p5;

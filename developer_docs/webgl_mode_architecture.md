@@ -86,8 +86,8 @@ Provides flat shading of objects, based on the current fill color.
 
 #### Light Shader (for lighting AND textures)
 Accounts for:
-* Lighting parameters set by `ambientLight()`, `directionalLight()`, and `pointLight()`
-* Material parameters set by `ambientMaterial()`, and `specularMaterial()`
+* Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, `spotLight()` and `specularColor()`
+* Material parameters set by `ambientMaterial()`, `emissiveMaterial()` and `specularMaterial()`
 * Texture parameters, set by `texture()`
 
 #### Normal Shader
@@ -121,19 +121,32 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 
 #### Light Parameters
 
-|Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
-|--------------------------------------|-----------|---------------|------------|-------------|------------|
-|`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
-|`uniform int uAmbientLightCount;`     |           |x              |            |             |            |
-|`uniform int uDirectionalLightCount;` |           |x              |            |             |            |
-|`uniform int uPointLightCount;`       |           |x              |            |             |            |
-|`uniform vec3 uAmbientColor[8];`      |           |x              |            |             |            |
-|`uniform vec3 uLightingDirection[8];` |           |x              |            |             |            |
-|`uniform vec3 uDirectionalColor[8];`  |           |x              |            |             |            |
-|`uniform vec3 uPointLightLocation[8];`|           |x              |            |             |            |
-|`uniform vec3 uPointLightColor[8];`   |           |x              |            |             |            |
-|`uniform bool uSpecular;`             |           |x              |            |             |            |
-|`uniform bool uUseLighting;`          |           |x              |            |             |            |
+|Parameter                                      |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|
+|-----------------------------------------------|-----------|---------------|------------|-------------|------------|
+|`uniform int uAmbientLightCount;`              |           |x              |            |             |            |
+|`uniform int uDirectionalLightCount;`          |           |x              |            |             |            |
+|`uniform int uPointLightCount;`                |           |x              |            |             |            |
+|`uniform int uSpotLightCount;`                 |           |x              |            |             |            |
+|`uniform vec3 uAmbientColor[8];`               |           |x              |            |             |            |
+|`uniform vec3 uLightingDirection[8];`          |           |x              |            |             |            |
+|`uniform vec3 uDirectionalDiffuseColors[8];`   |           |x              |            |             |            |
+|`uniform vec3 uDirectionalSpecularColors[8];`  |           |x              |            |             |            |
+|`uniform vec3 uPointLightLocation[8];`         |           |x              |            |             |            |
+|`uniform vec3 uPointLightDiffuseColors[8];`    |           |x              |            |             |            |
+|`uniform vec3 uPointLightSpecularColors[8];`   |           |x              |            |             |            |
+|`uniform float uSpotLightAngle[8];`            |           |x              |            |             |            |
+|`uniform float uSpotLightConc[8];`             |           |x              |            |             |            |
+|`uniform vec3 uSpotLightDiffuseColors[8];`     |           |x              |            |             |            |
+|`uniform vec3 uSpotLightSpecularColors[8];`    |           |x              |            |             |            |
+|`uniform vec3 uSpotLightLocation[8];`          |           |x              |            |             |            |
+|`uniform vec3 uSpotLightDirection[8];`         |           |x              |            |             |            |
+|`uniform bool uSpecular;`                      |           |x              |            |             |            |
+|`uniform bool uEmissive;`                      |           |x              |            |             |            |
+|`uniform int  uShininess;`                     |           |x              |            |             |            |
+|`uniform bool uUseLighting;`                   |           |x              |            |             |            |
+|`uniform float uConstantAttenuation;`          |           |x              |            |             |            |
+|`uniform float uLinearAttenuation;`            |           |x              |            |             |            |
+|`uniform float uQuadraticAttenuation;`         |           |x              |            |             |            |
 
 #### Texture Parameters
 

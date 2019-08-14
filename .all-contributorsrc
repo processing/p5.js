@@ -1406,22 +1406,125 @@
       "contributions": []
     },
     {
-    "login: "OsakaStarbux",
-    "name": "Kevin Bradley",
-    "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
-    "profile": "https://github.com/OsakaStarbux",
-    "contributions": [
+      "login": "OsakaStarbux",
+      "name": "Kevin Bradley",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7752014?v=4",
+      "profile": "https://github.com/OsakaStarbux",
+      "contributions": [
         "doc"
       ]
     },
     {
-    "login": "justinsunho",
-    "name": "Justin Kim",
-    "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
-    "profile": "https://justinsunho.com/",
-    "contributions": [
-      "doc"
-    ]
+      "login": "justinsunho",
+      "name": "Justin Kim",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/31749430?v=4",
+      "profile": "https://justinsunho.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "EndBug",
+      "name": "Federico Grandi",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/26386270?s=460&v=4",
+      "profile": "https://github.com/EndBug",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "FreddieRa",
+      "name": "Freddie Rawlins",
+      "avatar_url": "https://discourse-cdn-sjc2.com/standard10/user_avatar/discourse.processing.org/freddiera/120/4078_2.png",
+      "profile": "https://freddierawlins.wixsite.com/site",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Luke_",
+      "name": "Luc de wit",
+      "avatar_url": "https://media.discordapp.net/attachments/499488127245615135/499488260435869696/normal_luke.png",
+      "profile": "https://github.com/justlucdewit",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "mcuz",
+      "name": "Mark Nikora",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/44824130?s=40&v=4",
+      "profile": "https://github.com/mcuz",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Nekzuris",
+      "name": "Louis Demange",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/48560751?s=400&u=652ea1a1720b1986c3ea5b96028bdcb5f4f18f96&v=4",
+      "profile": "https://github.com/Nekzuris",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "sanketsingh24",
+      "name": "Sanket Singh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/24548786?v=4",
+      "profile": "https://twitter.com/sanket24singh",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "oshoham",
+      "name": "Oren Shoham",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2325893?s=460&v=4",
+      "profile": "https://orenshoham.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "abhinavsagar",
+      "name": "Abhinav Sagar",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/40603139?v=4",
+      "profile": "https://github.com/abhinavsagar",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jonnytest1",
+      "name": "Jonathan Heindl",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/13507796?s=40&v=4",
+      "profile": "https://github.com/jonnytest1",
+      "contributions": [
+        "code",
+        "example",
+        "ideas",
+        "doc"
+      ]
+    },
+    {
+      "login": "hsab",
+      "name": "Hirad Sab",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11205091",
+      "profile": "https://hiradsab.com",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example"
+      ]
     }
-  ]
+  ],
+  "repoType": "github"
 }

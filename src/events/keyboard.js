@@ -5,15 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-
-/**
- * Holds the key codes of currently pressed keys.
- * @private
- */
-var downKeys = {};
+import p5 from '../core/main';
 
 /**
  * The boolean system variable <a href="#/p5/keyIsPressed">keyIsPressed</a> is true if any key is pressed
@@ -97,10 +89,18 @@ p5.prototype.key = '';
  *   return false; // prevent default
  * }
  * </code></div>
- *
+ * <div><code>
+ * function draw() {}
+ * function keyPressed() {
+ *   background('yellow');
+ *   text(`${key} ${keyCode}`, 10, 40);
+ *   print(key, ' ', keyCode);
+ *   return false; // prevent default
+ * }
+ * </code></div>
  * @alt
  * Grey rect center. turns white when up arrow pressed and black when down
- *
+ * Display key pressed and its keyCode in a yellow box
  */
 p5.prototype.keyCode = 0;
 
@@ -174,18 +174,18 @@ p5.prototype.keyCode = 0;
  *
  */
 p5.prototype._onkeydown = function(e) {
-  if (downKeys[e.which]) {
+  if (this._downKeys[e.which]) {
     // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
-  downKeys[e.which] = true;
+  this._downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-  var keyPressed = this.keyPressed || window.keyPressed;
+  const keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
-    var executeDefault = keyPressed(e);
+    const executeDefault = keyPressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -223,10 +223,10 @@ p5.prototype._onkeydown = function(e) {
  *
  */
 p5.prototype._onkeyup = function(e) {
-  var keyReleased = this.keyReleased || window.keyReleased;
-  downKeys[e.which] = false;
+  const keyReleased = this.keyReleased || window.keyReleased;
+  this._downKeys[e.which] = false;
 
-  if (!areDownKeys()) {
+  if (!this._areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -236,7 +236,7 @@ p5.prototype._onkeyup = function(e) {
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
-    var executeDefault = keyReleased(e);
+    const executeDefault = keyReleased(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -245,8 +245,9 @@ p5.prototype._onkeyup = function(e) {
 
 /**
  * The <a href="#/p5/keyTyped">keyTyped()</a> function is called once every time a key is pressed, but
- * action keys such as Ctrl, Shift, and Alt are ignored. The most recent
- * key pressed will be stored in the key variable.
+ * action keys such as Backspace, Delete, Ctrl, Shift, and Alt are ignored. If you are trying to detect
+ * a keyCode for one of these keys, use the <a href="#/p5/keyPressed">keyPressed()</a> function instead.
+ * The most recent key typed will be stored in the key variable.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
  * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
@@ -286,12 +287,11 @@ p5.prototype._onkeypress = function(e) {
     // prevent multiple firings
     return;
   }
-  this._setProperty('keyCode', e.which);
   this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
   this._setProperty('key', String.fromCharCode(e.which));
-  var keyTyped = this.keyTyped || window.keyTyped;
+  const keyTyped = this.keyTyped || window.keyTyped;
   if (typeof keyTyped === 'function') {
-    var executeDefault = keyTyped(e);
+    const executeDefault = keyTyped(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -304,7 +304,7 @@ p5.prototype._onkeypress = function(e) {
  * been released.
  */
 p5.prototype._onblur = function(e) {
-  downKeys = {};
+  this._downKeys = {};
 };
 
 /**
@@ -325,6 +325,7 @@ p5.prototype._onblur = function(e) {
  *
  * function setup() {
  *   createCanvas(512, 512);
+ *   fill(255, 0, 0);
  * }
  *
  * function draw() {
@@ -345,7 +346,6 @@ p5.prototype._onblur = function(e) {
  *   }
  *
  *   clear();
- *   fill(255, 0, 0);
  *   ellipse(x, y, 50, 50);
  * }
  * </code></div>
@@ -381,25 +381,25 @@ p5.prototype._onblur = function(e) {
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
-  return downKeys[code];
+  return this._downKeys[code] || false;
 };
 
 /**
- * The checkDownKeys function returns a boolean true if any keys pressed
+ * The _areDownKeys function returns a boolean true if any keys pressed
  * and a false if no keys are currently pressed.
 
- * Helps avoid instances where a multiple keys are pressed simultaneously and
+ * Helps avoid instances where multiple keys are pressed simultaneously and
  * releasing a single key will then switch the
  * keyIsPressed property to true.
  * @private
 **/
-function areDownKeys() {
-  for (var key in downKeys) {
-    if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
+p5.prototype._areDownKeys = function() {
+  for (const key in this._downKeys) {
+    if (this._downKeys.hasOwnProperty(key) && this._downKeys[key] === true) {
       return true;
     }
   }
   return false;
-}
+};
 
-module.exports = p5;
+export default p5;

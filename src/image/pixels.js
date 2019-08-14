@@ -5,11 +5,9 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var Filters = require('./filters');
-require('../color/p5.Color');
+import p5 from '../core/main';
+import Filters from './filters';
+import '../color/p5.Color';
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -165,12 +163,12 @@ p5.prototype.pixels = [];
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.prototype.blend = function() {
-  p5._validateParameters('blend', arguments);
+p5.prototype.blend = function(...args) {
+  p5._validateParameters('blend', args);
   if (this._renderer) {
-    this._renderer.blend.apply(this._renderer, arguments);
+    this._renderer.blend(...args);
   } else {
-    p5.Renderer2D.prototype.blend.apply(this, arguments);
+    p5.Renderer2D.prototype.blend.apply(this, args);
   }
 };
 
@@ -228,9 +226,9 @@ p5.prototype.blend = function() {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.prototype.copy = function() {
-  p5._validateParameters('copy', arguments);
-  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
+p5.prototype.copy = function(...args) {
+  p5._validateParameters('copy', args);
+  p5.Renderer2D.prototype.copy.apply(this._renderer, args);
 };
 
 /**
@@ -406,23 +404,21 @@ p5.prototype.copy = function() {
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
   if (this.canvas !== undefined) {
-    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+    Filters.apply(this.canvas, Filters[operation], value);
   } else {
-    Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
+    Filters.apply(this.elt, Filters[operation], value);
   }
 };
 
 /**
+ * Get a region of pixels, or a single pixel, from the canvas.
+ *
  * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
  * an image. If no parameters are specified, the entire image is returned.
  * Use the x and y parameters to get the value of one pixel. Get a section of
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
- * <br><br>
- * If the pixel requested is outside of the image window, [0,0,0,255] is
- * returned. To get the numbers scaled according to the current color ranges
- * and taking into account <a href="#/p5/colorMode">colorMode</a>, use <a href="#/p5/getColor">getColor</a> instead of get.
  * <br><br>
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
@@ -439,18 +435,18 @@ p5.prototype.filter = function(operation, value) {
  * print(components);
  * ```
  * <br><br>
+ *
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
  * If you want to extract an array of colors or a subimage from an p5.Image object,
  * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
  *
  * @method get
- * @param  {Number}         [x] x-coordinate of the pixel
- * @param  {Number}         [y] y-coordinate of the pixel
- * @param  {Number}         [w] width
- * @param  {Number}         [h] height
- * @return {Number[]|p5.Image}  values of pixel at x,y in array format
- *                              [R, G, B, A] or <a href="#/p5.Image">p5.Image</a>
+ * @param  {Number}         x x-coordinate of the pixel
+ * @param  {Number}         y y-coordinate of the pixel
+ * @param  {Number}         w width
+ * @param  {Number}         h height
+ * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div>
  * <code>
@@ -487,34 +483,19 @@ p5.prototype.filter = function(operation, value) {
  * Image of the rocky mountains with 50x50 green rect in center of canvas
  *
  */
+/**
+ * @method get
+ * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+ */
+/**
+ * @method get
+ * @param  {Number}        x
+ * @param  {Number}        y
+ * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+ */
 p5.prototype.get = function(x, y, w, h) {
-  if (typeof w === 'undefined' && typeof h === 'undefined') {
-    if (typeof x === 'undefined' && typeof y === 'undefined') {
-      x = y = 0;
-      w = this.width;
-      h = this.height;
-    } else {
-      w = h = 1;
-    }
-  }
-
-  // if the section does not overlap the canvas
-  if (x + w < 0 || y + h < 0 || x >= this.width || y >= this.height) {
-    // TODO: is this valid for w,h > 1 ?
-    return [0, 0, 0, 255];
-  }
-
-  // round down to get integer numbers
-  x = Math.floor(x);
-  y = Math.floor(y);
-  w = Math.floor(w);
-  h = Math.floor(h);
-
-  if (this instanceof p5.Image) {
-    return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
-  } else {
-    return this._renderer.get(x, y, w, h);
-  }
+  p5._validateParameters('get', arguments);
+  return this._renderer.get(...arguments);
 };
 
 /**
@@ -533,9 +514,9 @@ p5.prototype.get = function(x, y, w, h) {
  * }
  *
  * function setup() {
- *   image(img, 0, 0);
+ *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let halfImage = 4 * (width * d) * (height * d / 2);
  *   loadPixels();
  *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
@@ -549,8 +530,8 @@ p5.prototype.get = function(x, y, w, h) {
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  *
  */
-p5.prototype.loadPixels = function() {
-  p5._validateParameters('loadPixels', arguments);
+p5.prototype.loadPixels = function(...args) {
+  p5._validateParameters('loadPixels', args);
   this._renderer.loadPixels();
 };
 
@@ -652,9 +633,9 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * }
  *
  * function setup() {
- *   image(img, 0, 0);
+ *   image(img, 0, 0, width, height);
  *   let d = pixelDensity();
- *   let halfImage = 4 * (img.width * d) * (img.height * d / 2);
+ *   let halfImage = 4 * (width * d) * (height * d / 2);
  *   loadPixels();
  *   for (let i = 0; i < halfImage; i++) {
  *     pixels[i + halfImage] = pixels[i];
@@ -676,4 +657,4 @@ p5.prototype.updatePixels = function(x, y, w, h) {
   this._renderer.updatePixels(x, y, w, h);
 };
 
-module.exports = p5;
+export default p5;

@@ -1,19 +1,18 @@
-var expect = require('chai').expect;
+import { expect } from 'chai';
+import preprocessor from '../../docs/preprocessor';
 
-var preprocessor = require('../../docs/preprocessor');
+suite('docs preprocessor', function() {
+  suite('mergeOverloadedMethods()', function() {
+    const merge = preprocessor.mergeOverloadedMethods;
 
-describe('docs preprocessor', function() {
-  describe('mergeOverloadedMethods()', function() {
-    var merge = preprocessor.mergeOverloadedMethods;
-
-    var ensureMergeDoesNothing = function(data) {
-      var dataCopy = JSON.parse(JSON.stringify(data));
+    const ensureMergeDoesNothing = function(data) {
+      const dataCopy = JSON.parse(JSON.stringify(data));
       merge(dataCopy);
       expect(dataCopy).to.eql(data);
     };
 
-    it('should merge methods with the same name', function() {
-      var data = {
+    test('should merge methods with the same name', function() {
+      const data = {
         classes: {
           Bar: {},
           Baz: {}
@@ -71,7 +70,7 @@ describe('docs preprocessor', function() {
       });
     });
 
-    it('should not merge methods from different classes', function() {
+    test('should not merge methods from different classes', function() {
       ensureMergeDoesNothing({
         classes: {
           Bar: {},
@@ -85,7 +84,7 @@ describe('docs preprocessor', function() {
       });
     });
 
-    it('should not merge properties', function() {
+    test('should not merge properties', function() {
       ensureMergeDoesNothing({
         classes: {
           Bar: {},
@@ -100,11 +99,11 @@ describe('docs preprocessor', function() {
     });
   });
 
-  describe('renderDescriptionsAsMarkdown', function() {
-    var render = preprocessor.renderDescriptionsAsMarkdown;
+  suite('renderDescriptionsAsMarkdown', function() {
+    const render = preprocessor.renderDescriptionsAsMarkdown;
 
-    it('should work', function() {
-      var data = {
+    test('should work', function() {
+      const data = {
         modules: {},
         classes: {
           Bar: {},

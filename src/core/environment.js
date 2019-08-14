@@ -6,18 +6,16 @@
  * @requires constants
  */
 
-'use strict';
+import p5 from './main';
+import * as C from './constants';
 
-var p5 = require('./main');
-var C = require('./constants');
-
-var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
 p5.prototype._frameRate = 0;
 p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
-var _windowPrint = window.print;
+const _windowPrint = window.print;
 
 /**
  * The <a href="#/p5/print">print()</a> function writes to the console area of your browser.
@@ -42,11 +40,11 @@ var _windowPrint = window.print;
  * @alt
  * default grey canvas
  */
-p5.prototype.print = function() {
-  if (!arguments.length) {
+p5.prototype.print = (...args) => {
+  if (!args.length) {
     _windowPrint();
   } else {
-    console.log.apply(console, arguments);
+    console.log(...args);
   }
 };
 
@@ -76,6 +74,57 @@ p5.prototype.print = function() {
  *
  */
 p5.prototype.frameCount = 0;
+
+/**
+ * The system variable <a href="#/p5/deltaTime">deltaTime</a> contains the time
+ * difference between the beginning of the previous frame and the beginning
+ * of the current frame in milliseconds.
+ * <br><br>
+ * This variable is useful for creating time sensitive animation or physics
+ * calculation that should stay constant regardless of frame rate.
+ *
+ * @property {Integer} deltaTime
+ * @readOnly
+ * @example
+ * <div><code>
+ * let rectX = 0;
+ * let fr = 30; //starting FPS
+ * let clr;
+ *
+ * function setup() {
+ *   background(200);
+ *   frameRate(fr); // Attempt to refresh at starting FPS
+ *   clr = color(255, 0, 0);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rectX = rectX + 1 * (deltaTime / 50); // Move Rectangle in relation to deltaTime
+ *
+ *   if (rectX >= width) {
+ *     // If you go off screen.
+ *     if (fr === 30) {
+ *       clr = color(0, 0, 255);
+ *       fr = 10;
+ *       frameRate(fr); // make frameRate 10 FPS
+ *     } else {
+ *       clr = color(255, 0, 0);
+ *       fr = 30;
+ *       frameRate(fr); // make frameRate 30 FPS
+ *     }
+ *     rectX = 0;
+ *   }
+ *   fill(clr);
+ *   rect(rectX, 40, 20, 20);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * red rect moves left to right, followed by blue rect moving at the same speed
+ * with a lower frame rate. Loops.
+ *
+ */
+p5.prototype.deltaTime = 0;
 
 /**
  * Confirms if the window a p5.js program is in is "focused," meaning that
@@ -149,27 +198,27 @@ p5.prototype.focused = document.hasFocus();
  *
  */
 p5.prototype.cursor = function(type, x, y) {
-  var cursor = 'auto';
-  var canvas = this._curElement.elt;
-  if (standardCursors.indexOf(type) > -1) {
+  let cursor = 'auto';
+  const canvas = this._curElement.elt;
+  if (standardCursors.includes(type)) {
     // Standard css cursor
     cursor = type;
   } else if (typeof type === 'string') {
-    var coords = '';
+    let coords = '';
     if (x && y && (typeof x === 'number' && typeof y === 'number')) {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-      coords = x + ' ' + y;
+      coords = `${x} ${y}`;
     }
     if (
       type.substring(0, 7) === 'http://' ||
       type.substring(0, 8) === 'https://'
     ) {
       // Image (absolute url)
-      cursor = 'url(' + type + ') ' + coords + ', auto';
+      cursor = `url(${type}) ${coords}, auto`;
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
       // Image file (relative path) - Separated for performance reasons
-      cursor = 'url(' + type + ') ' + coords + ', auto';
+      cursor = `url(${type}) ${coords}, auto`;
     } else {
       // Any valid string for the css cursor property
       cursor = type;
@@ -249,6 +298,9 @@ p5.prototype.frameRate = function(fps) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
+    if (fps === 0) {
+      this._setProperty('_frameRate', fps);
+    }
     return this;
   }
 };
@@ -399,8 +451,8 @@ p5.prototype.windowHeight = getWindowHeight();
 p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   if (typeof context.windowResized === 'function') {
     executeDefault = context.windowResized(e);
     if (executeDefault !== undefined && !executeDefault) {
@@ -543,7 +595,7 @@ p5.prototype.fullscreen = function(val) {
  */
 p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
-  var returnValue;
+  let returnValue;
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
@@ -578,12 +630,10 @@ p5.prototype.pixelDensity = function(val) {
  * @alt
  * 50x50 white ellipse with black outline in center of canvas.
  */
-p5.prototype.displayDensity = function() {
-  return window.devicePixelRatio;
-};
+p5.prototype.displayDensity = () => window.devicePixelRatio;
 
 function launchFullscreen(element) {
-  var enabled =
+  const enabled =
     document.fullscreenEnabled ||
     document.webkitFullscreenEnabled ||
     document.mozFullScreenEnabled ||
@@ -642,9 +692,7 @@ function exitFullscreen() {
  * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
  *
  */
-p5.prototype.getURL = function() {
-  return location.href;
-};
+p5.prototype.getURL = () => location.href;
 /**
  * Gets the current URL path as an array.
  * @method getURLPath
@@ -663,11 +711,8 @@ p5.prototype.getURL = function() {
  *no display
  *
  */
-p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v) {
-    return v !== '';
-  });
-};
+p5.prototype.getURLPath = () =>
+  location.pathname.split('/').filter(v => v !== '');
 /**
  * Gets the current URL params as an Object.
  * @method getURLParams
@@ -689,10 +734,10 @@ p5.prototype.getURLPath = function() {
  * no display.
  *
  */
-p5.prototype.getURLParams = function() {
-  var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
-  var m;
-  var v = {};
+p5.prototype.getURLParams = () => {
+  const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+  let m;
+  const v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
@@ -702,4 +747,4 @@ p5.prototype.getURLParams = function() {
   return v;
 };
 
-module.exports = p5;
+export default p5;

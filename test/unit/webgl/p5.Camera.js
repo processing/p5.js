@@ -216,6 +216,62 @@ suite('p5.Camera', function() {
     });
   });
 
+  suite('Rotation with angleMode(DEGREES)', function() {
+    setup(function() {
+      myp5.push();
+      myp5.angleMode(myp5.DEGREES);
+    });
+
+    teardown(function() {
+      myp5.pop();
+    });
+
+    test('Pan() with positive parameter sets correct matrix w/o changing\
+     eyeXYZ or upXYZ', function() {
+      var orig = getVals(myCam);
+
+      //prettier-ignore
+      var expectedMatrix = new Float32Array([
+        0.5403022766113281, -0, 0.8414710164070129, 0,
+        0, 1, 0, 0,
+        -0.8414710164070129, 0, 0.5403022766113281, 0,
+        72.87352752685547, 0, -46.79154968261719, 1
+        ]);
+
+      myCam.pan(1 * 180 / Math.PI);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+
+      assert.strictEqual(myCam.upX, orig.ux, 'up X pos changed');
+      assert.strictEqual(myCam.upY, orig.uy, 'up Y pos changed');
+      assert.strictEqual(myCam.upZ, orig.uz, 'up Z pos changed');
+    });
+
+    test('Tilt() with positive parameter sets correct Matrix w/o \
+    changing eyeXYZ', function() {
+      var orig = getVals(myCam);
+
+      //prettier-ignore
+      var expectedMatrix = new Float32Array(
+        [1, 0, 0, 0,
+          0, 0.07073719799518585, -0.9974949955940247, 0,
+          -0, 0.9974949955940247, 0.07073719799518585, 0,
+          0, -86.3855972290039, -6.126020908355713, 1]);
+
+      myCam.tilt(1.5 * 180 / Math.PI);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+
+      assert.strictEqual(myCam.eyeX, orig.ex, 'eye X pos changed');
+      assert.strictEqual(myCam.eyeY, orig.ey, 'eye Y pos changed');
+      assert.strictEqual(myCam.eyeZ, orig.ez, 'eye Z pos changed');
+    });
+  });
+
   suite('Position / Orientation', function() {
     suite('Camera()', function() {
       test('Camera() with positive parameters sets eye, center, and \
@@ -588,6 +644,12 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam3, myp5._renderer._curCamera);
       myp5.setCamera(myCam);
       assert.deepEqual(myCam, myp5._renderer._curCamera);
+    });
+    test("Camera's Renderer is correctly set after setAttributes", function() {
+      var myCam2 = myp5.createCamera();
+      assert.deepEqual(myCam2, myp5._renderer._curCamera);
+      myp5.setAttributes('antialias', true);
+      assert.deepEqual(myCam2._renderer, myp5._renderer);
     });
   });
 });

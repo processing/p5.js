@@ -44,7 +44,7 @@ function preload() {
   strings = loadStrings('test.txt', successStrings);
   xml = loadXML('test.xml', successXML);
   myTable = loadTable('mammals.csv', 'csv', 'header', successTable);
-  myFont = loadFont('AvenirNextLTPro-Demi.otf', successFont);
+  myFont = loadFont('inconsolata.otf', successFont);
 
   // try with no callbacks
   myJson2 = loadJSON('test.json');
@@ -52,7 +52,7 @@ function preload() {
   strings2 = loadStrings('test.txt');
   xml2 = loadXML('test.xml');
   myTable2 = loadTable('mammals.csv', 'csv', 'header');
-  myFont2 = loadFont('AvenirNextLTPro-Demi.otf');
+  myFont2 = loadFont('inconsolata.otf');
 }
 
 function setup() {
