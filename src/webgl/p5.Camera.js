@@ -176,6 +176,20 @@ p5.prototype.ortho = function(...args) {
 };
 
 /**
+ * Sets a perspective matrix as defined by the parameters.
+ *
+ * A frustum is a geometric form: a pyramid with its top
+ * cut off. With the viewer's eye at the imaginary top of
+ * the pyramid, the six planes of the frustum act as clipping
+ * planes when rendering a 3D view. Thus, any form inside the
+ * clipping planes is rendered and visible; anything outside
+ * those planes is not visible.
+ *
+ * Setting the frustum has the effect of changing the perspective
+ * with which the scene is rendered. This can be achieved more
+ * simply in many cases by using
+ * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
+ *
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -190,14 +204,15 @@ p5.prototype.ortho = function(...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   frustum(-width / 2, width / 2, -height / 2, height / 2, -50, 20);
+ *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
  * }
  * function draw() {
  *   background(200);
  *   orbitControl();
  *   normalMaterial();
  *
- *   rotateY(-PI / 4);
+ *   rotateY(-0.2);
+ *   rotateX(-0.3);
  *   push();
  *   translate(-15, 0, sin(frameCount / 30) * 25);
  *   box(30);
