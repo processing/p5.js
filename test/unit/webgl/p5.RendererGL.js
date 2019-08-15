@@ -64,17 +64,32 @@ suite('p5.RendererGL', function() {
     test('push/pop and directionalLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
-      var dirColors = myp5._renderer.directionalLightColors.slice();
+      var dirDiffuseColors = myp5._renderer.directionalLightDiffuseColors.slice();
+      var dirSpecularColors = myp5._renderer.directionalLightSpecularColors.slice();
       var dirLightDirections = myp5._renderer.directionalLightDirections.slice();
       myp5.push();
       myp5.directionalLight(0, 0, 255, 0, 10, 5);
-      assert.notEqual(dirColors, myp5._renderer.directionalLightColors);
+      assert.notEqual(
+        dirDiffuseColors,
+        myp5._renderer.directionalLightDiffuseColors
+      );
+      assert.notEqual(
+        dirSpecularColors,
+        myp5._renderer.directionalLightSpecularColors
+      );
       assert.notEqual(
         dirLightDirections,
         myp5._renderer.directionalLightDirections
       );
       myp5.pop();
-      assert.deepEqual(dirColors, myp5._renderer.directionalLightColors);
+      assert.deepEqual(
+        dirDiffuseColors,
+        myp5._renderer.directionalLightDiffuseColors
+      );
+      assert.deepEqual(
+        dirSpecularColors,
+        myp5._renderer.directionalLightSpecularColors
+      );
       assert.deepEqual(
         dirLightDirections,
         myp5._renderer.directionalLightDirections
@@ -98,30 +113,81 @@ suite('p5.RendererGL', function() {
     test('push/pop and pointLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.pointLight(255, 0, 0, 0, 0, 0);
-      var pointColors = myp5._renderer.pointLightColors.slice();
+      var pointDiffuseColors = myp5._renderer.pointLightDiffuseColors.slice();
+      var pointSpecularColors = myp5._renderer.pointLightSpecularColors.slice();
       var pointLocs = myp5._renderer.pointLightPositions.slice();
       myp5.push();
       myp5.pointLight(0, 0, 255, 0, 10, 5);
-      assert.notEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.notEqual(
+        pointDiffuseColors,
+        myp5._renderer.pointLightDiffuseColors
+      );
+      assert.notEqual(
+        pointSpecularColors,
+        myp5._renderer.pointLightSpecularColors
+      );
       assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
       myp5.pop();
-      assert.deepEqual(pointColors, myp5._renderer.pointLightColors);
+      assert.deepEqual(
+        pointDiffuseColors,
+        myp5._renderer.pointLightDiffuseColors
+      );
+      assert.deepEqual(
+        pointSpecularColors,
+        myp5._renderer.pointLightSpecularColors
+      );
       assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
       done();
     });
 
-    test('push/pop and pointLight() works', function(done) {
+    test('push/pop and specularColor() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      myp5.pointLight(255, 0, 0, 0, 0, 0);
-      var pointColors = myp5._renderer.pointLightColors.slice();
-      var pointLocs = myp5._renderer.pointLightPositions.slice();
+      myp5.specularColor(255, 0, 0);
+      var specularColors = myp5._renderer.specularColors.slice();
       myp5.push();
-      myp5.pointLight(0, 0, 255, 0, 10, 5);
-      assert.notEqual(pointColors, myp5._renderer.pointLightColors);
-      assert.notEqual(pointLocs, myp5._renderer.pointLightPositions);
+      myp5.specularColor(0, 0, 255);
+      assert.notEqual(specularColors, myp5._renderer.specularColors);
       myp5.pop();
-      assert.deepEqual(pointColors, myp5._renderer.pointLightColors);
-      assert.deepEqual(pointLocs, myp5._renderer.pointLightPositions);
+      assert.deepEqual(specularColors, myp5._renderer.specularColors);
+      done();
+    });
+
+    test('push/pop and spotLight() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
+      let spotLightDiffuseColors = myp5._renderer.spotLightDiffuseColors.slice();
+      let spotLightSpecularColors = myp5._renderer.spotLightSpecularColors.slice();
+      let spotLightPositions = myp5._renderer.spotLightPositions.slice();
+      let spotLightDirections = myp5._renderer.spotLightDirections.slice();
+      let spotLightAngle = myp5._renderer.spotLightAngle.slice();
+      let spotLightConc = myp5._renderer.spotLightConc.slice();
+      myp5.push();
+      myp5.spotLight(255, 0, 0, 2, 2, 3, 1, 0, 0, Math.PI / 3, 8);
+      assert.notEqual(
+        spotLightDiffuseColors,
+        myp5._renderer.spotLightDiffuseColors
+      );
+      assert.notEqual(
+        spotLightSpecularColors,
+        myp5._renderer.spotLightSpecularColors
+      );
+      assert.notEqual(spotLightPositions, myp5._renderer.spotLightPositions);
+      assert.notEqual(spotLightDirections, myp5._renderer.spotLightDirections);
+      assert.notEqual(spotLightAngle, myp5._renderer.spotLightAngle);
+      assert.notEqual(spotLightConc, myp5._renderer.spotLightConc);
+      myp5.pop();
+      assert.deepEqual(
+        spotLightDiffuseColors,
+        myp5._renderer.spotLightDiffuseColors
+      );
+      assert.deepEqual(
+        spotLightSpecularColors,
+        myp5._renderer.spotLightSpecularColors
+      );
+      assert.deepEqual(spotLightPositions, myp5._renderer.spotLightPositions);
+      assert.deepEqual(spotLightDirections, myp5._renderer.spotLightDirections);
+      assert.deepEqual(spotLightAngle, myp5._renderer.spotLightAngle);
+      assert.deepEqual(spotLightConc, myp5._renderer.spotLightConc);
       done();
     });
 

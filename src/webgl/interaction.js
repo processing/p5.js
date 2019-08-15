@@ -22,6 +22,7 @@ import * as constants from '../core/constants';
  * @for p5
  * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
+ * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
  * @chainable
  * @example
  * <div>
@@ -45,7 +46,7 @@ import * as constants from '../core/constants';
 
 // implementation based on three.js 'orbitControls':
 // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
-p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
+p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
@@ -64,6 +65,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   }
   if (typeof sensitivityY === 'undefined') {
     sensitivityY = sensitivityX;
+  }
+  if (typeof sensitivityZ === 'undefined') {
+    sensitivityZ = 0.5;
   }
 
   // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
@@ -90,9 +94,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
     // zoom according to direction of mouseWheelDeltaY rather than value
     if (this._mouseWheelDeltaY > 0) {
-      this._renderer._curCamera._orbit(0, 0, 0.5 * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
     } else {
-      this._renderer._curCamera._orbit(0, 0, -0.5 * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
     }
   }
 

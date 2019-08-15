@@ -26,10 +26,6 @@
     "tasks/**/*.js": "eslint",
     "bench/**/*.js": "eslint",
     "test/**/*.js": "eslint",
-    "lib/addons/p5.dom.js": [
-      "eslint",
-      "node ./utils/sample-linter.js"
-    ],
     "src/**/*.js": [
       "eslint",
       "node ./utils/sample-linter.js"
@@ -106,9 +102,7 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/addons/p5.sound.js",
-    "lib/addons/p5.sound.min.js",
-    "lib/addons/p5.dom.js",
-    "lib/addons/p5.dom.min.js"
+    "lib/addons/p5.sound.min.js"
   ],
   "description": "[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {

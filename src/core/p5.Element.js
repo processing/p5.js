@@ -8,13 +8,9 @@ import p5 from './main';
 
 /**
  * Base class for all elements added to a sketch, including canvas,
- * graphics buffers, and other HTML elements. Methods in blue are
- * included in the core functionality, methods in brown are added
- * with the <a href="http://p5js.org/reference/#/libraries/p5.dom">p5.dom
- * library</a>.
- * It is not called directly, but <a href="#/p5.Element">p5.Element</a>
+ * graphics buffers, and other HTML elements. It is not called directly, but <a href="#/p5.Element">p5.Element</a>
  * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
- * or in the p5.dom library, <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
+ * <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
  *
  * @class p5.Element
  * @param {String} elt DOM node that is wrapped
@@ -55,11 +51,6 @@ p5.Element = function(elt, pInst) {
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
- *
- * All above examples except for the first one require the inclusion of
- * the p5.dom library in your index.html. See the
- * <a href='http://p5js.org/libraries/#using-a-library'>using a library</a>
- * section for information on how to include this library.
  *
  * @method parent
  * @param  {String|p5.Element|Object} parent the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
