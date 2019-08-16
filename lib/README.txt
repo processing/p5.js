@@ -19,11 +19,12 @@ You have downloaded the complete p5.js library, yay!
 
 This file stores the complete p5.js library.
 It is easy to read by humans, so feel free to open it and explore its contents.
+It also has a friendly error system, which helps new programmers with common user errors.
 
 ## p5.min.js
 
 This file is a minified version of the p5.js file. It is a lighter version, with the same functionalities, but smaller file size.
-This minified version is harder to read for humans
+This minified version is harder to read for humans, and does not include the friendly error system.
 
 ## addons
 
