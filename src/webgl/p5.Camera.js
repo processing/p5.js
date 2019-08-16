@@ -182,12 +182,11 @@ p5.prototype.ortho = function(...args) {
  * cut off. With the viewer's eye at the imaginary top of
  * the pyramid, the six planes of the frustum act as clipping
  * planes when rendering a 3D view. Thus, any form inside the
- * clipping planes is rendered and visible; anything outside
+ * clipping planes is visible; anything outside
  * those planes is not visible.
  *
- * Setting the frustum has the effect of changing the perspective
- * with which the scene is rendered. This can be achieved more
- * simply in many cases by using
+ * Setting the frustum changes the perspective of the scene being rendered.
+ * This can be achieved more simply in many cases by using
  * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
  *
  * @method frustum
