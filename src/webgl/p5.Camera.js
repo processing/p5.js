@@ -208,7 +208,8 @@ p5.prototype.ortho = function(...args) {
  * function draw() {
  *   background(200);
  *   orbitControl();
- *   normalMaterial();
+ *   stroke(0, 0, 255);
+ *   noFill();
  *
  *   rotateY(-0.2);
  *   rotateX(-0.3);
