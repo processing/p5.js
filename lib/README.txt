@@ -51,6 +51,13 @@ The sketch.js is a template for the p5.js sketch, with the functions setup() and
 
 This README file :)
 
+# What next?
+
+If you need more information for getting started, please refer to our website
+https://p5js.org/get-started/
+In order to be able to see your website running p5.js, you need to set a local server, and the info is here: nk to the local-server
+https://github.com/processing/p5.js/wiki/Local-server
+
 # License
 
 The p5.js library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, version 2.1.
