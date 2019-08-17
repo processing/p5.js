@@ -492,4 +492,14 @@ p5.prototype.lightFalloff = function(
   return this;
 };
 
+/**
+ * @method noLights
+ */
+p5.prototype.noLights = function() {
+  this._assert3d('noLights');
+  p5._validateParameters('noLights', arguments);
+
+  return this;
+};
+
 export default p5;
