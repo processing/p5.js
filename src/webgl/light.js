@@ -837,7 +837,30 @@ p5.prototype.spotLight = function(
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');
-  p5._validateParameters('noLights', arguments);
+  // p5._validateParameters('noLights', arguments);
+
+  this._renderer.ambientLightColors.length = 0;
+  this._renderer.specularColors = [1, 1, 1];
+
+  this._renderer.directionalLightDirections.length = 0;
+  this._renderer.directionalLightDiffuseColors.length = 0;
+  this._renderer.directionalLightSpecularColors.length = 0;
+
+  this._renderer.pointLightPositions.length = 0;
+  this._renderer.pointLightDiffuseColors.length = 0;
+  this._renderer.pointLightSpecularColors.length = 0;
+
+  this._renderer.spotLightPositions.length = 0;
+  this._renderer.spotLightDirections.length = 0;
+  this._renderer.spotLightDiffuseColors.length = 0;
+  this._renderer.spotLightSpecularColors.length = 0;
+  this._renderer.spotLightAngle.length = 0;
+  this._renderer.spotLightConc.length = 0;
+
+  this._renderer.constantAttenuation = 1;
+  this._renderer.linearAttenuation = 0;
+  this._renderer.quadraticAttenuation = 0;
+  this._renderer._useShininess = 1;
 
   return this;
 };
