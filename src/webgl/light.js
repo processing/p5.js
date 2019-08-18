@@ -833,7 +833,10 @@ p5.prototype.spotLight = function(
 };
 
 /**
+ * This function will remove all the lights from the sketch for the
+ * subsequent materials rendered. It affects all the subsequent methods.
  * @method noLights
+ * @chainable
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');
