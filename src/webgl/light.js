@@ -837,6 +837,30 @@ p5.prototype.spotLight = function(
  * subsequent materials rendered. It affects all the subsequent methods.
  * @method noLights
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   ambientLight(150, 0, 0);
+ *   translate(-25, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ *   noLights();
+ *   ambientLight(0, 150, 0);
+ *   translate(50, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Something
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');
