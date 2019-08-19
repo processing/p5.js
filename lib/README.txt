@@ -55,8 +55,14 @@ This README file :)
 
 If you need more information for getting started, please refer to our website
 https://p5js.org/get-started/
-In order to be able to see your website running p5.js, you need to set a local server, and the info is here: nk to the local-server
+
+In order to be able to run your website, you need to set a local server, there is a tutorial in our website
+
 https://github.com/processing/p5.js/wiki/Local-server
+
+p5.js is a community, and p5.js is built by contributions. If you want to learn more about us, visit
+https://p5js.org/community/
+
 
 # License
 
