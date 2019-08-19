@@ -191,6 +191,21 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('push/pop and noLights() works', function(done) {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.ambientLight(0, 0, 200);
+      var ambColors = myp5._renderer.ambientLightColors.slice();
+      myp5.push();
+      myp5.ambientLight(0, 200, 0);
+      var ambPopColors = myp5._renderer.ambientLightColors.slice();
+      myp5.noLights();
+      assert.notEqual(ambColors, myp5._renderer.ambientLightColors);
+      assert.notEqual(ambPopColors, myp5._renderer.ambientLightColors);
+      myp5.pop();
+      assert.deepEqual(ambColors, myp5._renderer.ambientLightColors);
+      done();
+    });
+
     test('push/pop and texture() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       var tex1 = myp5.createGraphics(1, 1);
