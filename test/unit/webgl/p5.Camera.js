@@ -562,6 +562,39 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
       });
     });
+    suite('frustum()', function() {
+      test('frustum() sets renderer uPMatrix', function() {
+        myCam.frustum(-10, 10, -20, 20, -100, 100);
+
+        assert.deepEqual(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
+      });
+      test('frustum() sets projection matrix correctly', function() {
+        //prettier-ignore
+        var expectedMatrix = new Float32Array(
+                      [ -2,  0,  0,  0,
+                         0, -2,  0,  0,
+                         0,  0, -0, -1,
+                         0,  0,  2,  0]);
+
+        myCam.frustum(-1, 1, -1, 1, -2, 2);
+
+        assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
+      });
+
+      test('frustum() with no parameters specified (sets default)', function() {
+        // prettier-ignore
+        var expectedMatrix = new Float32Array([
+          0, 0,  0,  0,
+          0, 0,  0,  0, 
+          0, 0, -1, -1, 
+          0, 0, -0,  0
+        ]);
+
+        myCam.frustum();
+
+        assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
+      });
+    });
   });
 
   suite('Helper Functions', function() {
