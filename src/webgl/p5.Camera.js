@@ -203,11 +203,13 @@ p5.prototype.ortho = function(...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
  *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
  * }
  * function draw() {
  *   background(200);
  *   orbitControl();
+ *   strokeWeight(10);
  *   stroke(0, 0, 255);
  *   noFill();
  *
