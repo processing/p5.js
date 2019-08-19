@@ -1,7 +1,7 @@
 /**
  * file contains few JS library keywords and their examples.
  */
-/**
+/*
  * @Decleration  Let
  * Declares a block scope local variable, optionally initializing it to a value.
  *
@@ -44,21 +44,12 @@
  * <code>
  * // define MY_FAV as a constant and give it the value 7
  * const MY_FAV = 7;
- *
- * // this will throw an error - Uncaught TypeError: Assignment to constant variable.
- * MY_FAV = 20;
- *
- * // MY_FAV is 7
  * console.log('my favorite number is: ' + MY_FAV);
- *
- * // trying to redeclare a constant throws an error -  Uncaught SyntaxError: Identifier 'MY_FAV' has already been declared
- * const MY_FAV = 20;
  * </code>
  * </div>
- *
  */
 
-/**
+/*
  * @ControlStatement  if..else
  *
  * syntax:
@@ -86,7 +77,7 @@
  * </div>
  */
 
-/**
+/*
  * @Decleration function
  *
  * Declares a function with the specified parameters.
@@ -111,7 +102,7 @@
  *
  */
 
-/**
+/*
  *
  * @Decleration return
  *
@@ -133,7 +124,7 @@
  *
  */
 
-/**
+/*
  *
  * @Decleration class
  *
@@ -159,7 +150,7 @@
  *
  */
 
-/**
+/*
  * @Iteration do..while
  *
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
@@ -188,7 +179,7 @@
  *
  */
 
-/**
+/*
  *
  * @Iteration for
  *
@@ -218,7 +209,7 @@
  *
  */
 
-/**
+/*
  * @Iteration  for...in
  *
  * Iterates over the enumerable properties of an object, in arbitrary order.
@@ -250,7 +241,7 @@
  *
  */
 
-/**
+/*
  * @Iteration for...of
  *
  * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
@@ -279,7 +270,7 @@
  *
  */
 
-/**
+/*
  * @method parseInt
  *
  * The parseInt() function parses a string argument and
@@ -301,7 +292,7 @@
  *
  */
 
-/**
+/*
  * @method JSON.stringify
  *
  * The JSON.stringify() method converts a JavaScript object or value to a JSON string,
