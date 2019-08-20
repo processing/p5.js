@@ -542,7 +542,7 @@ p5.prototype.lightFalloff = function(
  * </div>
  *
  * @alt
- * Something
+ * Spot light on a sphere which changes position with mouse
  */
 /**
  * @method spotLight
@@ -860,7 +860,7 @@ p5.prototype.spotLight = function(
  * </div>
  *
  * @alt
- * Something
+ * Two spheres showing different colors
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');
