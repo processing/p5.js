@@ -9,6 +9,7 @@ function draw() {
   translate(-200, 0, 0);
   ambientMaterial(250);
   sphere(50, 64);
+
   noLights();
   ambientLight(0, 150, 0);
   translate(400, 0, 0);

@@ -846,10 +846,12 @@ p5.prototype.spotLight = function(
  * function draw() {
  *   background(0);
  *   noStroke();
+ *
  *   ambientLight(150, 0, 0);
  *   translate(-25, 0, 0);
  *   ambientMaterial(250);
  *   sphere(20);
+ *
  *   noLights();
  *   ambientLight(0, 150, 0);
  *   translate(50, 0, 0);
