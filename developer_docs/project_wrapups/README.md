@@ -5,7 +5,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 
 
 ### Google Summer of Code 2019
-* [title](url) by [name](url), 2019
+* [Improve p5.js unit tests](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/urvashi_gsoc_2019.md) by [Urvashi](https://github.com/ihsavru), 2019
 
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018
@@ -13,7 +13,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 * [Making p5.js Accessible](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) by Luis Morales-Navarro and Mathura Govindarajan, 2018
 * [Introducing the 2018 Processing Foundation Fellows](https://medium.com/processing-foundation/introducing-the-2018-processing-foundation-fellows-a16ae4e87f80)
 
-### Google Summer of Code 2018 
+### Google Summer of Code 2018
 
 * [A Platform for Algorithmic Composition on p5.js-sound](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/junshern_gsoc_2018.md) by Chan Jun Shern, 2018
 * [New JavaScript console in p5.js web editor](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/liang_gsoc_2018.md) by Liang Tang, 2018
@@ -41,4 +41,3 @@ https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/j
 * [Maps, Maps, Maps!](https://medium.com/processing-foundation/maps-maps-maps-f0914218c87b) by Cristobal Valenzuela, 2017
 * [Friendly Error System for p5.js](https://medium.com/processing-foundation/2017-marks-the-processing-foundations-sixth-year-participating-in-google-summer-of-code-d365f62fc463) by A. Mira Chung, 2017
 * [Processing Foundation: Our Summer of Code Has Begun!](https://medium.com/processing-foundation/our-summer-of-code-has-begun-dffc1bbddb7c)
-
