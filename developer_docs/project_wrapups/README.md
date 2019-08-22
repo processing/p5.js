@@ -5,7 +5,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 
 
 ### Google Summer of Code 2019
-* [Search Bar for Sketches in the p5.js Web Editor](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/rachellim_gsoc_2019.md) by Rachel Lim, 2019
+* [Search Bar for Sketches in the p5.js Web Editor](https://github.com/raclim/p5.js/blob/rachellim/developer_docs/project_wrapups/rachellim_gsoc_2019.md) by Rachel Lim, 2019
 
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018
