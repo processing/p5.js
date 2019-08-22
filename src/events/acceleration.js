@@ -592,11 +592,13 @@ p5.prototype._ondeviceorientation = function(e) {
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function(e) {
-  this._updatePAccelerations();
-  this._setProperty('accelerationX', e.acceleration.x * 2);
-  this._setProperty('accelerationY', e.acceleration.y * 2);
-  this._setProperty('accelerationZ', e.acceleration.z * 2);
-  this._handleMotion();
+  if (e.acceleration) {
+    this._updatePAccelerations();
+    this._setProperty('accelerationX', e.acceleration.x * 2);
+    this._setProperty('accelerationY', e.acceleration.y * 2);
+    this._setProperty('accelerationZ', e.acceleration.z * 2);
+    this._handleMotion();
+  }
 };
 p5.prototype._handleMotion = function() {
   if (window.orientation === 90 || window.orientation === -90) {
