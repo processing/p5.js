@@ -12,7 +12,7 @@ During the course of Summer of Code, I submitted 7 pull requests which were rela
 - [specularColor()](https://github.com/processing/p5.js/pull/3843)
 - [spotLight()](https://github.com/processing/p5.js/pull/3913)
 - [frustum()](https://github.com/processing/p5.js/pull/3927)
-- [noLights()](https://github.com/processing/p5.js/pull/3955) (open)
+- [noLights()](https://github.com/processing/p5.js/pull/3955)
 
 Apart from implementing these functions, I also added unit tests, manual tests, documentation, and inline example for each of these functions. While documentation and inline example for each function can be found [here](https://p5js.org/reference/), [unit tests](https://github.com/processing/p5.js/tree/master/test/unit) and [manual tests](https://github.com/processing/p5.js/tree/master/test/manual-test-examples) are present in the codebase and are evaluated every time the library is built.
 
@@ -31,10 +31,14 @@ This function attempts to divide the diffuse color and specular color for the ma
 This function implements a new kind of light for p5.js which was not present before. This light emits from a point in a specified direction, with the light having a spread, calculated from a given angle, and a concentration value, which concentrates the light towards the center. Angle and concentration were set to default to PI/3 and 100 respectively. The function was implemented in light.js and six new uniforms were added. One of the challenges I faced was to parse the input, not only due to several parameters, but the format of color, location, and direction of light can be provided as p5.Color and p5.Vector objects.
 
 ### [frustum()](https://github.com/processing/p5.js/pull/3927)
-This function helps you to set the asymmetric custom camera. Earlier, the artists could use perspective() to set the camera, but the new camera would always be symmetric. This function can help you to set asymmetric cameras. Implemented in p5.Camera.js, this function is extended as a prototype of p5.Camera object.
+This function helps you to change the camera perspective. Earlier, the artists could use perspective() to set the camera, but the new camera would always be symmetric. This function can help you to set asymmetric cameras. Implemented in p5.Camera.js, this function is extended as a prototype of p5.Camera object.
 
 ### [noLights()](https://github.com/processing/p5.js/pull/3955)
 This function removes all the lighting from the sketch which were called before this method. It will reset the lighting from the sketch for the subsequent materials. Calling the lighting methods will re-enable the lighting. It affects `ambientLight()`, `specularColor()`, `directionalLight()`, `pointLight()`, `spotLight()`, `lightFalloff()`, and `shininess()`. It was implemented in light.js.
+
+### Future
+- Currently, the library can only make WebGL geometries of a single material. We can expand the shaders so that geometries can be made up of multiple materials and their property. This suggestion is filed as a [issue](https://github.com/processing/p5.js/issues/3806) in the repository.
+- p5 Object can be simplified to make it easier for contributors can go through. [For example, all the lighting variables can be bundled inside of a single property which is easier to interpret](https://github.com/processing/p5.js/pull/3843#pullrequestreview-270874570).
 
 ### Acknowledgement
 The success and outcome of this project required a lot of guidance and assistance from my mentor, [Adam Ferriss]((https://github.com/aferriss)) and I am extremely privileged to have got this all along with the completion of my project. All that I have done is only due to such supervision and assistance and I would not forget to thank him. Also, kudos to all the members of the Processing Foundation and my fellow contributors for making this summer enjoyable and contributing to open source a pleasure. Also, a big thanks to Google for this wonderful program.
