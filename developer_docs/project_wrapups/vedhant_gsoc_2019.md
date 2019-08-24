@@ -51,12 +51,16 @@ Users use this function to create a custom ray which is to be used for raycastin
 *   [intersectsPlane()](https://github.com/stalgiag/p5.xr/pull/50) \
 Checks whether a ray intersects a plane and returns the point of intersection. The plane will be the same as calling plane() at the place of this function call but with infinite dimensions.
 
+![dragging](https://vedhant.github.io/gsoc_wpr/grid.gif)
+
 
 ### **sticky() and noSticky()**
 
-The need for this feature came up when I was wondering how to render a circle permanently in the center of the screen to act as a reticle for gaze tracking. The reticle had to be in front of the viewer at all times. So, I made this feature so that any code between sticky() and noSticky() is rendered in front of the viewer at all times.
+The need for this feature came up when I was wondering how to render a circle permanently in the center of the screen to act as a reticle for gaze tracking. The reticle had to be in front of the viewer at all times. So, I made this feature so that any code between [sticky()](https://github.com/stalgiag/p5.xr/pull/52) and noSticky() is rendered in front of the viewer at all times.
 
 This feature can become immensely useful. Reticle for gaze tracking is one example. User has full control on how the reticle reacts when hovered/clicked upon an object, such as changes in color and size. This can also be very useful when the user wants to drag an object in the 3D scene.
+
+![gaze-tracking](https://vedhant.github.io/gsoc_wpr/reticle.gif)
 
 
 ## **Summary**
