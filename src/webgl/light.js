@@ -542,7 +542,7 @@ p5.prototype.lightFalloff = function(
  * </div>
  *
  * @alt
- * Something
+ * Spot light on a sphere which changes position with mouse
  */
 /**
  * @method spotLight
@@ -828,6 +828,70 @@ p5.prototype.spotLight = function(
   this._renderer.spotLightConc.push(concentration);
 
   this._renderer._enableLighting = true;
+
+  return this;
+};
+
+/**
+ * This function will remove all the lights from the sketch for the
+ * subsequent materials rendered. It affects all the subsequent methods.
+ * Calls to lighting methods made after noLights() will re-enable lights
+ * in the sketch.
+ * @method noLights
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *
+ *   ambientLight(150, 0, 0);
+ *   translate(-25, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ *
+ *   noLights();
+ *   ambientLight(0, 150, 0);
+ *   translate(50, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Two spheres showing different colors
+ */
+p5.prototype.noLights = function() {
+  this._assert3d('noLights');
+  p5._validateParameters('noLights', arguments);
+
+  this._renderer.ambientLightColors.length = 0;
+  this._renderer.specularColors = [1, 1, 1];
+
+  this._renderer.directionalLightDirections.length = 0;
+  this._renderer.directionalLightDiffuseColors.length = 0;
+  this._renderer.directionalLightSpecularColors.length = 0;
+
+  this._renderer.pointLightPositions.length = 0;
+  this._renderer.pointLightDiffuseColors.length = 0;
+  this._renderer.pointLightSpecularColors.length = 0;
+
+  this._renderer.spotLightPositions.length = 0;
+  this._renderer.spotLightDirections.length = 0;
+  this._renderer.spotLightDiffuseColors.length = 0;
+  this._renderer.spotLightSpecularColors.length = 0;
+  this._renderer.spotLightAngle.length = 0;
+  this._renderer.spotLightConc.length = 0;
+
+  this._renderer.constantAttenuation = 1;
+  this._renderer.linearAttenuation = 0;
+  this._renderer.quadraticAttenuation = 0;
+  this._renderer._useShininess = 1;
 
   return this;
 };

@@ -520,10 +520,10 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   const ctx = this.drawingContext;
   const doFill = this._doFill,
     doStroke = this._doStroke;
-  const x = args[0],
-    y = args[1],
-    w = args[2],
-    h = args[3];
+  const x = parseFloat(args[0]),
+    y = parseFloat(args[1]),
+    w = parseFloat(args[2]),
+    h = parseFloat(args[3]);
   if (doFill && !doStroke) {
     if (this._getFill() === styleEmpty) {
       return this;
