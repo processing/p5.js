@@ -17,7 +17,9 @@ header p {
 #gl-info {
   font-family: Arial, Helvetica, sans-serif;
   position: absolute;
+  top:0;
   right: 0;
   background:rgba(255, 255, 255, 0.5);
   padding:5px;
+  font-size: 10px;
 }
