@@ -270,8 +270,8 @@ p5.Renderer2D._copyHelper = (
   } else {
     dstImage.drawingContext.drawImage(
       srcImage.canvas,
-      s * sx,
-      s * sy,
+      s * (sx + sxMod),
+      s * (sy + syMod),
       s * sw,
       s * sh,
       dx,
