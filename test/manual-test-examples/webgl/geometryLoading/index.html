@@ -14,11 +14,15 @@
 <body>
   <div id="gl-info">
     <p>
-      You should see a rotating flower drawn with curves.<br><br>
-      <em>Tests: bezierVertex(), curveVertex(), vertex(), quadraticVertex(), ellipse(), push(), pop()</em>
+      3 spinning models, left and right are both teapots, middle is a irregular box and sphere<br>
+      All models have normal material applied.
     </p>
     <p>
-      Average FPS should be above 40 on a modern laptop/desktop
+      <em>TESTS (<em>left->right</em>): loadModel(ASCII STL), loadModel(BINARY STL), loadModel(OBJ)<br>
+        model(), push(), pop(), translate(), rotateXY&Z(), normalMaterial(), noStroke()</em>
+    </p>
+    <p>
+      FPS should average higher than 40 FPS on modern laptop/desktop, after loading
     </p>
   </div>
 </body>
