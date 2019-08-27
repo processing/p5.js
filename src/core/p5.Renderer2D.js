@@ -250,12 +250,16 @@ p5.Renderer2D._copyHelper = (
 ) => {
   srcImage.loadPixels();
   const s = srcImage.canvas.width / srcImage.width;
+  const sxMod = srcImage._renderer.isP3D ? srcImage.width / 2 : 0;
+  const syMod = srcImage._renderer.isP3D ? srcImage.height / 2 : 0;
   if (dstImage.isP3D) {
+    // adjust coord system for 3D
+    // ie top-left = -width/2, -height/2
     p5.RendererGL.prototype.image.call(
       dstImage,
       srcImage,
-      sx,
-      sy,
+      sx + sxMod,
+      sy + syMod,
       sw,
       sh,
       dx,
