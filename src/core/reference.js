@@ -1,10 +1,16 @@
 /**
- * file contains few JS library keywords and their examples.
+ * @module Foundation
+ * @submodule Declaration
+ * @for p5
  */
-/*
- * @Decleration  Let
+
+
+/**
+
  * Declares a block scope local variable, optionally initializing it to a value.
  *
+ * @property let
+ * 
  * Syntax:
  * let var1 = value1, var2 = value2
  * @params var1, var2, …, varN
@@ -28,11 +34,11 @@
 
 /**
  *
- * @Decleration const
- *
  * Declares a read-only named constant.
  * Constants are block-scoped, much like variables defined using the 'let' statement.
  * The value of a constant can't be changed through reassignment, and it can't be redeclared.
+ * 
+ * @property const
  *
  * Syntax:
  * const name1 = value1, name2 = value2, ... nameN = valueN;
@@ -49,8 +55,17 @@
  * </div>
  */
 
-/*
- * @ControlStatement  if..else
+ /**
+ * @submodule Control Statement
+ */
+ 
+
+/**
+ * 
+ * The if statement executes a statement if a specified condition is truthy.
+ * If the condition is falsy, another statement can be executed
+ * 
+ * @property if-else
  *
  * syntax:
  * if(condition1)
@@ -77,11 +92,12 @@
  * </div>
  */
 
-/*
- * @Decleration function
- *
+/**
+ * 
  * Declares a function with the specified parameters.
  *
+ * @property function
+ * 
  * syntax:
  * function name(param,param,..., param){
  *    statements
@@ -102,11 +118,11 @@
  *
  */
 
-/*
- *
- * @Decleration return
+/**
  *
  * Specifies the value to be returned by a function.
+ * 
+ * @property return
  *
  * syntax:
  * return expression;
@@ -124,11 +140,12 @@
  *
  */
 
-/*
+/**
  *
- * @Decleration class
  *
  * The class declaration creates a new class with a given name using prototype-based inheritance.
+ * 
+ * @property class
  *
  * syntax:
  *  class name{
@@ -150,12 +167,13 @@
  *
  */
 
-/*
- * @Iteration do..while
+/**
  *
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
  *
+ * @property  do..while
+ * 
  * syntax:
  * do{
  *  statement
@@ -179,13 +197,12 @@
  *
  */
 
-/*
- *
- * @Iteration for
+/** 
  *
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
  *
+ * @property for
  *
  * syntax:
  * for (initialization; condition; final-expression)
@@ -209,11 +226,12 @@
  *
  */
 
-/*
- * @Iteration  for...in
+/**
  *
  * Iterates over the enumerable properties of an object, in arbitrary order.
  * For each distinct property, statements can be executed.
+ * 
+ * @property for..in
  *
  * syntax:
  * for (variable in object)
@@ -241,12 +259,13 @@
  *
  */
 
-/*
- * @Iteration for...of
+/**
  *
  * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
  * invoking a custom iteration hook with statements to be executed for the value of each distinct property.
  *
+ * @property for..of
+ * 
  * syntax:
  * for (variable of iterable) {
  *  statement
@@ -270,12 +289,12 @@
  *
  */
 
-/*
- * @method parseInt
- *
+/**
  * The parseInt() function parses a string argument and
  * returns an integer of the specified radix (the base in mathematical numeral systems).
  *
+ * @method parseInt
+ * 
  * syntax:
  * parseInt(string, radix);
  *
@@ -292,10 +311,11 @@
  *
  */
 
-/*
- * @method JSON.stringify
+/**
  *
- * The JSON.stringify() method converts a JavaScript object or value to a JSON string,
+ * The JSON.stringify() method converts a JavaScript object or value to a JSON string.
+ * 
+ * @method JSON.stringify
  *
  * syntax:
  * JSON.stringify(value, replacer, space)
