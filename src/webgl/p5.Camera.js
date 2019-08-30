@@ -361,6 +361,7 @@ p5.Camera = function(renderer) {
  * @for p5.Camera
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+  const isCustom = arguments.length > 0;
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
     // this avoids issue where setting angleMode(DEGREES) before calling
@@ -431,7 +432,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
     );
   }
 
-  this.cameraType = 'custom';
+  this.cameraType = isCustom ? 'custom' : 'default';
 };
 
 /**
