@@ -290,7 +290,8 @@ module.exports = grunt => {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.pre-min.js'
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
+          'lib/modules/p5Custom.min.js': 'lib/modules/p5Custom.pre-min.js'
         }
       }
     },
