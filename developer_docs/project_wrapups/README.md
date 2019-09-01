@@ -11,6 +11,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 * [Stabilizing and improving p5.xr](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/vedhant_gsoc_2019.md) by [Vedhant Agarwal](https://github.com/vedhant), 2019
 * [AudioWorklet Support in p5.js-sound](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/orenshoham_gsoc_2019.md) by Oren Shoham, 2019
 * [Code Slang](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/xu_gsoc_2019.md) by Jenna Xu, 2019
+* [p5.touchgui](https://github.com/processing/p5.js/blob/master/developer_docs/project_wrapups/L05_GSOC_2019.md) by [Carlos L05 Garcia](https://github.com/L05), 2019
 
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018
