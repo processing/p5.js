@@ -397,8 +397,8 @@ tags.forEach(function(tag) {
  *
  * @method createImg
  * @param  {String} src src path or url for image
- * @param  {String} [alt] alternate text to be used if image does not load
  * @param  {String} [crossOrigin] <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if no value or undefined is passed, CORS is not used
+ * @param  {String} alt alternate text to be used if image does not load
  * @param  {Function} [successCallback] callback to be called once image data is loaded
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
@@ -406,20 +406,12 @@ tags.forEach(function(tag) {
  * createImg('https://p5js.org/assets/img/asterisk-01.png');
  * </code></div>
  */
-/**
- * @method createImg
- * @param  {String} src
- * @param  {Function} successCallback
- * @return {p5.Element}
- */
 p5.prototype.createImg = function() {
   p5._validateParameters('createImg', arguments);
   var elt = document.createElement('img');
   var args = arguments;
   var self;
-  if (args.length > 1 && typeof args[1] === 'string') {
-    elt.alt = args[1];
-  }
+  elt.alt = args[1];
   if (args.length > 2 && typeof args[2] === 'string') {
     elt.crossOrigin = args[2];
   }
