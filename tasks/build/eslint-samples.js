@@ -1,5 +1,6 @@
 'use strict';
-const chalk = require('chalk');
+import { magenta } from 'chalk';
+import { eslintFiles } from '../../utils/sample-linter.js';
 
 module.exports = grunt => {
   grunt.registerMultiTask(
@@ -16,14 +17,11 @@ module.exports = grunt => {
       });
 
       if (this.filesSrc.length === 0) {
-        grunt.log.writeln(
-          chalk.magenta('Could not find any files to validate')
-        );
+        grunt.log.writeln(magenta('Could not find any files to validate'));
         return true;
       }
 
-      const linter = require('../../utils/sample-linter.js');
-      const result = linter.eslintFiles(opts, this.filesSrc);
+      const result = eslintFiles(opts, this.filesSrc);
       const report = result.report;
       const output = result.output;
 
