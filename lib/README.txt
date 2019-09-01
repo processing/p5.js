@@ -1,6 +1,6 @@
 # Welcome to p5.js
 
-You have downloaded the complete p5.js library, yay!
+You have downloaded the complete p5.js library ZIP file, yay!
 
 # Contents of the p5 folder
 
@@ -17,52 +17,49 @@ You have downloaded the complete p5.js library, yay!
 
 ## p5.js
 
-This file stores the complete p5.js library.
-It is easy to read by humans, so feel free to open it and explore its contents.
-It also has a friendly error system, which helps new programmers with common user errors.
+This file stores the complete p5.js library. It is easy to read by humans, so feel free to open it and explore its contents. It also has a friendly error system, which helps new programmers with common user errors.
 
 ## p5.min.js
 
-This file is a minified version of the p5.js file. It is a lighter version, with the same functionalities, but smaller file size.
-This minified version is harder to read for humans, and does not include the friendly error system.
+This file is a minified version of the p5.js file. It is a lighter version, with the same functionalities, but smaller file size. This minified version is harder to read for humans, and does not include the friendly error system.
 
-## addons
+## addons folder
 
 The addons folder includes additional p5.js related libraries, in both original versions and minified versions.
 
-### p5.sound.js , p5.sound.min.js
+### p5.sound.js, p5.sound.min.js
 
-p5.sound extends p5 with Web Audio functionality including audio input, playback, analysis and synthesis.
+p5.sound extends p5.js with Web Audio functionality including audio input, playback, analysis, and synthesis.
 
 ## empty-example folder
 
-This is an empty exampe of a website, including the file for the website, index.html, the p5.js library, other related p5.js libraries, and a template starting point for your p5.js sketch, called sketch.js.
+This is an empty example of a website. The folder includes the file for the website, index.html, the p5.js library, other related p5.js libraries, and a template starting point for your p5.js sketch, called sketch.js.
 
 ### index.html
 
-index.html is a template for an HTML file.
-This index.html first imports the libraries included in the folder (p5.js, p5.sound.js), and then load and executes the file sketch.js, where you can write your own code.
+index.html is a template for an HTML file. This index.html first imports the libraries included in the folder (p5.js, p5.sound.js) then loads and executes the file sketch.js which is where you can write your own code.
 
 ### sketch.js
 
 The sketch.js is a template for the p5.js sketch, with the functions setup() and draw() that you can complete.
 
-## README.md
+## README.txt
 
-This README file :)
+This README file formatted with Markdown :)
 
-# What next?
+# What's next?
 
-If you need more information for getting started, please refer to our website
-https://p5js.org/get-started/
+If you need more information to help get you started, please refer to our website:  
+https://p5js.org/get-started/ and https://p5js.org/learn/
 
-In order to be able to run your website, you need to set a local server, there is a tutorial in our website
+An online reference to the p5.js library is available here:  
+https://p5js.org/reference/
 
+In order to run your website (including the empty-example), you need to enable a local server, please see this tutorial in our wiki:  
 https://github.com/processing/p5.js/wiki/Local-server
 
-p5.js is a community, and p5.js is built by contributions. If you want to learn more about us, visit
+p5.js is a community and p5.js is built by contributions. If you want to learn more about us, visit:  
 https://p5js.org/community/
-
 
 # License
 
