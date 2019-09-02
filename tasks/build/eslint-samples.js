@@ -1,6 +1,5 @@
 'use strict';
 import { magenta } from 'chalk';
-import sampleLinter from '../../utils/sample-linter.js';
 
 module.exports = grunt => {
   grunt.registerMultiTask(
@@ -21,6 +20,10 @@ module.exports = grunt => {
         return true;
       }
 
+      // need to use require here because we want this to only
+      // get loaded after the data file has been created by a
+      // prior grunt task
+      const sampleLinter = require('../../utils/sample-linter.js');
       const result = sampleLinter.eslintFiles(opts, this.filesSrc);
       const report = result.report;
       const output = result.output;
