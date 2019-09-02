@@ -397,14 +397,23 @@ tags.forEach(function(tag) {
  *
  * @method createImg
  * @param  {String} src src path or url for image
- * @param  {String} [crossOrigin] <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if no value or undefined is passed, CORS is not used
- * @param  {String} alt alternate text to be used if image does not load
- * @param  {Function} [successCallback] callback to be called once image data is loaded
+ * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div class='norender'><code>
- * createImg('https://p5js.org/assets/img/asterisk-01.png');
+ * createImg(
+ *   'https://p5js.org/assets/img/asterisk-01.png',
+ *   'the p5 magenta asterisk'
+ * );
  * </code></div>
+ */
+/**
+ * @method createImg
+ * @param  {String} src
+ * @param  {String} alt
+ * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if an empty string(`""`) is passed, CORS is not used
+ * @param  {Function} [successCallback] callback to be called once image data is loaded
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  */
 p5.prototype.createImg = function() {
   p5._validateParameters('createImg', arguments);
