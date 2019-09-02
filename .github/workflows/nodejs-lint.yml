@@ -9,10 +9,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js
+    - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
-        node-version: latest
+        node-version: 12.x
     - name: npm install and lint
       run: |
         npm install
