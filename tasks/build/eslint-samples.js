@@ -1,6 +1,6 @@
 'use strict';
 import { magenta } from 'chalk';
-import { eslintFiles } from '../../utils/sample-linter.js';
+import sampleLinter from '../../utils/sample-linter.js';
 
 module.exports = grunt => {
   grunt.registerMultiTask(
@@ -21,7 +21,7 @@ module.exports = grunt => {
         return true;
       }
 
-      const result = eslintFiles(opts, this.filesSrc);
+      const result = sampleLinter.eslintFiles(opts, this.filesSrc);
       const report = result.report;
       const output = result.output;
 
