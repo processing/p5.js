@@ -997,7 +997,7 @@ p5.prototype.createInput = function(value, type) {
  * function handleFile(file) {
  *   print(file);
  *   if (file.type === 'image') {
- *     img = createImg(file.data, 'alt text');
+ *     img = createImg(file.data, '');
  *     img.hide();
  *   } else {
  *     img = null;
@@ -2140,7 +2140,7 @@ p5.Element.prototype.remove = function() {
  * }
  *
  * function gotFile(file) {
- *   img = createImg(file.data, 'a user-uploaded file').hide();
+ *   img = createImg(file.data, '').hide();
  * }
  * </code></div>
  *
