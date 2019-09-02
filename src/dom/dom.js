@@ -2006,9 +2006,14 @@ p5.Element.prototype.hide = function() {
  * <div class='norender'><code>
  * let div = createDiv('this is a div');
  * div.size(100, 100);
- * let img = createImg('assets/laDefense.jpg', 'a test image', '', () => {
- *   img.size(10, AUTO);
- * });
+ * let img = createImg(
+ *   'assets/rockies.jpg',
+ *   'A tall mountain with a small forest and field in front of it on a sunny day',
+ *   '',
+ *   () => {
+ *     img.size(10, AUTO);
+ *   }
+ * );
  * </code></div>
  */
 /**
