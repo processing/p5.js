@@ -397,46 +397,41 @@ tags.forEach(function(tag) {
  *
  * @method createImg
  * @param  {String} src src path or url for image
- * @param  {String} [alt] alternate text to be used if image does not load
- * @param  {Function} [successCallback] callback to be called once image data is loaded
+ * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (`""`) if that an image is not intended to be viewed.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div class='norender'><code>
- * createImg('http://p5js.org/img/asterisk-01.png');
+ * createImg(
+ *   'https://p5js.org/assets/img/asterisk-01.png',
+ *   'the p5 magenta asterisk'
+ * );
  * </code></div>
  */
 /**
  * @method createImg
  * @param  {String} src
- * @param  {Function} successCallback
- * @return {Object|p5.Element}
+ * @param  {String} alt
+ * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if an empty string(`""`) is passed, CORS is not used
+ * @param  {Function} [successCallback] callback to be called once image data is loaded
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  */
 p5.prototype.createImg = function() {
   p5._validateParameters('createImg', arguments);
   var elt = document.createElement('img');
-  elt.crossOrigin = 'Anonymous';
   var args = arguments;
   var self;
-  var setAttrs = function() {
+  elt.alt = args[1];
+  if (args.length > 2 && typeof args[2] === 'string') {
+    elt.crossOrigin = args[2];
+  }
+  elt.addEventListener('load', function() {
     self.width = elt.offsetWidth || elt.width;
     self.height = elt.offsetHeight || elt.height;
-    if (args.length > 1 && typeof args[1] === 'function') {
-      self.fn = args[1];
-      self.fn();
-    } else if (args.length > 1 && typeof args[2] === 'function') {
-      self.fn = args[2];
-      self.fn();
-    }
-  };
+    var last = args[args.length - 1];
+    if (typeof last === 'function') last();
+  });
   elt.src = args[0];
-  if (args.length > 1 && typeof args[1] === 'string') {
-    elt.alt = args[1];
-  }
-  elt.onload = function() {
-    setAttrs();
-  };
-  self = addElement(elt, this);
-  return self;
+  return (self = addElement(elt, this));
 };
 
 /**
@@ -1002,7 +997,7 @@ p5.prototype.createInput = function(value, type) {
  * function handleFile(file) {
  *   print(file);
  *   if (file.type === 'image') {
- *     img = createImg(file.data);
+ *     img = createImg(file.data, '');
  *     img.hide();
  *   } else {
  *     img = null;
@@ -2011,9 +2006,14 @@ p5.Element.prototype.hide = function() {
  * <div class='norender'><code>
  * let div = createDiv('this is a div');
  * div.size(100, 100);
- * let img = createImg('assets/laDefense.jpg', () => {
- *   img.size(10, AUTO);
- * });
+ * let img = createImg(
+ *   'assets/rockies.jpg',
+ *   'A tall mountain with a small forest and field in front of it on a sunny day',
+ *   '',
+ *   () => {
+ *     img.size(10, AUTO);
+ *   }
+ * );
  * </code></div>
  */
 /**
@@ -2145,7 +2145,7 @@ p5.Element.prototype.remove = function() {
  * }
  *
  * function gotFile(file) {
- *   img = createImg(file.data).hide();
+ *   img = createImg(file.data, '').hide();
  * }
  * </code></div>
  *
