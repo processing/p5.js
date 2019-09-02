@@ -988,7 +988,7 @@ p5.prototype.createInput = function(value, type) {
  * function handleFile(file) {
  *   print(file);
  *   if (file.type === 'image') {
- *     img = createImg(file.data);
+ *     img = createImg(file.data, 'alt text');
  *     img.hide();
  *   } else {
  *     img = null;
@@ -1997,7 +1997,7 @@ p5.Element.prototype.hide = function() {
  * <div class='norender'><code>
  * let div = createDiv('this is a div');
  * div.size(100, 100);
- * let img = createImg('assets/laDefense.jpg', () => {
+ * let img = createImg('assets/laDefense.jpg', 'a test image', '', () => {
  *   img.size(10, AUTO);
  * });
  * </code></div>
@@ -2131,7 +2131,7 @@ p5.Element.prototype.remove = function() {
  * }
  *
  * function gotFile(file) {
- *   img = createImg(file.data).hide();
+ *   img = createImg(file.data, 'a user-uploaded file').hide();
  * }
  * </code></div>
  *
