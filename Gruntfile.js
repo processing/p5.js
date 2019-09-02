@@ -492,8 +492,6 @@ module.exports = grunt => {
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
-    'lint-no-fix',
-    //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect:server',
     'mochaChrome',
@@ -522,6 +520,6 @@ module.exports = grunt => {
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('default', ['lint-no-fix', 'test']);
   grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
 };
