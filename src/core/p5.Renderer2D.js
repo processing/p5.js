@@ -171,6 +171,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
     console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
   } else if (
     mode === constants.BLEND ||
+    mode === constants.REMOVE ||
     mode === constants.DARKEST ||
     mode === constants.LIGHTEST ||
     mode === constants.DIFFERENCE ||

@@ -746,4 +746,47 @@ p5.prototype.stroke = function(...args) {
   return this;
 };
 
+/**
+ * Sets the canvas to erase
+ *
+ * @method erase
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * erase();
+ * rect(20, 20, 60, 60);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 60x60 TODO!
+ */
+p5.prototype.erase = function() {
+  this._renderer.blendMode(constants.REMOVE);
+  return this;
+};
+
+/**
+ * Ends erasing in the canvas
+ *
+ * @method noErase
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * noErase();
+ * rect(20, 20, 60, 60);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 60x60 TODO!
+ */
+
+p5.prototype.noErase = function() {
+  this.blendMode(constants.BLEND);
+  return this;
+};
+
 export default p5;
