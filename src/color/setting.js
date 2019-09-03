@@ -763,7 +763,8 @@ p5.prototype.stroke = function(...args) {
  * 60x60 TODO!
  */
 p5.prototype.erase = function() {
-  this._renderer.blendMode(constants.REMOVE);
+  this._renderer._isErasing = true;
+  this.drawingContext.globalCompositeOperation = constants.REMOVE;
   return this;
 };
 
@@ -785,7 +786,8 @@ p5.prototype.erase = function() {
  */
 
 p5.prototype.noErase = function() {
-  this.blendMode(constants.BLEND);
+  this._renderer._isErasing = false;
+  this._renderer.blendMode(this._renderer._cachedBlendMode);
   return this;
 };
 
