@@ -65,6 +65,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
 
+  // erasing
+  this._isErasing = false;
+
   // lights
   this._enableLighting = false;
 
@@ -90,6 +93,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.curFillColor = [1, 1, 1, 1];
   this.curStrokeColor = [0, 0, 0, 1];
   this.curBlendMode = constants.BLEND;
+  this._cachedBlendMode = constants.BLEND;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;
@@ -637,7 +641,8 @@ p5.RendererGL.prototype.blendMode = function(mode) {
     mode === constants.SCREEN ||
     mode === constants.EXCLUSION ||
     mode === constants.REPLACE ||
-    mode === constants.MULTIPLY
+    mode === constants.MULTIPLY ||
+    mode === constants.REMOVE
   )
     this.curBlendMode = mode;
   else if (

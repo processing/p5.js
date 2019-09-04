@@ -764,7 +764,14 @@ p5.prototype.stroke = function(...args) {
  */
 p5.prototype.erase = function() {
   this._renderer._isErasing = true;
-  this.drawingContext.globalCompositeOperation = constants.REMOVE;
+  if (this._renderer.isP3D) {
+    this._renderer._cachedBlendMode = this._renderer.curBlendMode;
+    this._renderer.blendMode(constants.REMOVE);
+  } else {
+    const tempBlendMode = this._renderer._cachedBlendMode;
+    this._renderer.blendMode(constants.REMOVE);
+    this._renderer._cachedBlendMode = tempBlendMode;
+  }
   return this;
 };
 

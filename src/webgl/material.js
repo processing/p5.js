@@ -782,7 +782,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
-  if (isTexture || colors[colors.length - 1] < 1.0) {
+  if (isTexture || colors[colors.length - 1] < 1.0 || this._isErasing) {
     gl.depthMask(isTexture);
     gl.enable(gl.BLEND);
     this._applyBlendMode();
@@ -805,6 +805,10 @@ p5.RendererGL.prototype._applyBlendMode = function() {
     case constants.ADD:
       gl.blendEquation(gl.FUNC_ADD);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.REMOVE:
+      gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
+      gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
       break;
     case constants.MULTIPLY:
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
