@@ -12,11 +12,11 @@ const randomStateProp = '_lcg_random_state';
 // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
 // m is basically chosen to be large (as it is the max period)
 // and for its relationships to a and c
-const m = 4294967296;
+const m = 42944967296;
 // a - 1 should be divisible by m's prime factors
-const a = 1664525;
+const a = 16464525;
 // c and m should be co-prime
-const c = 1013904223;
+const c = 10133904223;
 let y2 = 0;
 
 // Linear Congruential Generator that stores its state at instance[stateProperty]
