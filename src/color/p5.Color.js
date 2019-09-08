@@ -249,6 +249,8 @@ p5.Color.prototype.toString = function(format) {
 };
 
 /**
+ * The setRed function sets the red component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setRed
  * @param {Number} red the new red value
  * @example
@@ -276,6 +278,8 @@ p5.Color.prototype.setRed = function(new_red) {
 };
 
 /**
+ * The setGreen function sets the green component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setGreen
  * @param {Number} green the new green value
  * @example
@@ -303,6 +307,8 @@ p5.Color.prototype.setGreen = function(new_green) {
 };
 
 /**
+ * The setBlue function sets the blue component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setBlue
  * @param {Number} blue the new blue value
  * @example
@@ -330,6 +336,8 @@ p5.Color.prototype.setBlue = function(new_blue) {
 };
 
 /**
+ * The setAlpha function sets the transparency (alpha) value of a color.
+ * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setAlpha
  * @param {Number} alpha the new alpha value
  * @example

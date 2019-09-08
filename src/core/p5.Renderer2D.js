@@ -520,10 +520,10 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   const ctx = this.drawingContext;
   const doFill = this._doFill,
     doStroke = this._doStroke;
-  const x = args[0],
-    y = args[1],
-    w = args[2],
-    h = args[3];
+  const x = parseFloat(args[0]),
+    y = parseFloat(args[1]),
+    w = parseFloat(args[2]),
+    h = parseFloat(args[3]);
   if (doFill && !doStroke) {
     if (this._getFill() === styleEmpty) {
       return this;
@@ -669,32 +669,35 @@ p5.Renderer2D.prototype.rect = function(args) {
       bl = br;
     }
 
-    const hw = w / 2;
-    const hh = h / 2;
+    // corner rounding must always be positive
+    const absW = Math.abs(w);
+    const absH = Math.abs(h);
+    const hw = absW / 2;
+    const hh = absH / 2;
 
     // Clip radii
-    if (w < 2 * tl) {
+    if (absW < 2 * tl) {
       tl = hw;
     }
-    if (h < 2 * tl) {
+    if (absH < 2 * tl) {
       tl = hh;
     }
-    if (w < 2 * tr) {
+    if (absW < 2 * tr) {
       tr = hw;
     }
-    if (h < 2 * tr) {
+    if (absH < 2 * tr) {
       tr = hh;
     }
-    if (w < 2 * br) {
+    if (absW < 2 * br) {
       br = hw;
     }
-    if (h < 2 * br) {
+    if (absH < 2 * br) {
       br = hh;
     }
-    if (w < 2 * bl) {
+    if (absW < 2 * bl) {
       bl = hw;
     }
-    if (h < 2 * bl) {
+    if (absH < 2 * bl) {
       bl = hh;
     }
 

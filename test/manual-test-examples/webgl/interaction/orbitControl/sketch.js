@@ -9,7 +9,7 @@ function draw() {
   background(250);
   var radius = width;
 
-  orbitControl();
+  orbitControl(1, 1, 0.1);
 
   normalMaterial();
 

@@ -1,12 +1,12 @@
-var { expect } = require('chai');
-var constants = require('../../src/core/constants.js');
+import { expect } from 'chai';
+import * as constants from '../../src/core/constants.js';
 import helpers from '../../src/core/helpers.js';
 
-var a = 100;
-var b = 200;
-var c = 50;
-var d = 150;
-var result;
+const a = 100;
+const b = 200;
+const c = 50;
+const d = 150;
+let result;
 
 suite('helpers/modeAdjust', function() {
   test('should set mode to corner', function() {

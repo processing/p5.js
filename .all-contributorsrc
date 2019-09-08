@@ -1200,10 +1200,10 @@
       "contributions": []
     },
     {
-      "login": "max-devjs",
-      "name": "max_devjs",
+      "login": "maxdevjs",
+      "name": "maxdevjs",
       "avatar_url": "https://avatars2.githubusercontent.com/u/22229196?v=4",
-      "profile": "http://twitter.com/max_devjs",
+      "profile": "http://twitter.com/maxdevjs",
       "contributions": []
     },
     {
@@ -1523,6 +1523,26 @@
         "bug",
         "doc",
         "example"
+      ]
+    },
+    {
+      "login":"singhvisha",
+      "name":"Vishal Singh",
+      "avatar_url":"https://avatars0.githubusercontent.com/u/38842688?s=460&v=4",
+      "profile":"https://github.com/singhvisha",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "coreygo",
+      "name": "Corey Gouker",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/649879?v=4",
+      "profile": "https://www.coreygo.com",
+      "contributions": [
+        "code",
+        "doc",
+        "bug"
       ]
     }
   ],

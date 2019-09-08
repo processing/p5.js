@@ -26,13 +26,9 @@
     "tasks/**/*.js": "eslint",
     "bench/**/*.js": "eslint",
     "test/**/*.js": "eslint",
-    "lib/addons/p5.dom.js": [
-      "eslint",
-      "node ./utils/sample-linter.js"
-    ],
     "src/**/*.js": [
       "eslint",
-      "node ./utils/sample-linter.js"
+      "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
   "version": "0.9.0",
@@ -94,6 +90,7 @@
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.18.1",
+    "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4",
     "word-wrap": "^1.2.3"
@@ -105,9 +102,7 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/addons/p5.sound.js",
-    "lib/addons/p5.sound.min.js",
-    "lib/addons/p5.dom.js",
-    "lib/addons/p5.dom.min.js"
+    "lib/addons/p5.sound.min.js"
   ],
   "description": "[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {

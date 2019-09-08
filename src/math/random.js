@@ -125,6 +125,7 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  */
 p5.prototype.random = function(min, max) {
+  p5._validateParameters('random', arguments);
   let rand;
 
   if (this[randomStateProp] != null) {

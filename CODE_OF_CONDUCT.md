@@ -33,7 +33,7 @@ In the future:
   * Offensive comments related to gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, or background
   * Threats of violence
   * Deliberate intimidation
-  * Sexually explicit or violent material
+  * Sexually explicit or violent material that is not contextualized and preceded by a considerate warning 
   * Unwelcome sexual attention
   * Stalking or following
   * Or any other kinds of harassment

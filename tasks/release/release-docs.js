@@ -40,7 +40,7 @@ module.exports = function(grunt) {
             exec(
               `(cp ${src}/data.json ${src}/data.min.json ${dest}) &&
                (cp -r ${src}/assets ${dest}) &&
-               (cp lib/p5.min.js lib/addons/p5.dom.min.js lib/addons/p5.sound.min.js p5-website/src/assets/js/)`,
+               (cp lib/p5.min.js lib/addons/p5.sound.min.js p5-website/src/assets/js/)`,
               (err, stdout, stderr) => {
                 if (err) {
                   reject(err);
