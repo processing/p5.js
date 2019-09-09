@@ -101,6 +101,7 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform mat4 uModelViewMatrix;` |x          |x              |x           |x            |x           |
 |`uniform mat4 uProjectionMatrix;`|x          |x              |x           |x            |x           |
 |`uniform vec4 uViewPort;`        |x          |               |            |             |            |
+|`uniform vec4 uPerspective;`     |x          |               |            |             |            |
 
 
 #### Geometry Attributes and Uniforms
