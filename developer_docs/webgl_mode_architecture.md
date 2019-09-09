@@ -86,7 +86,7 @@ Provides flat shading of objects, based on the current fill color.
 
 #### Light Shader (for lighting AND textures)
 Accounts for:
-* Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, and `specularColor()`
+* Lighting parameters set by `ambientLight()`, `directionalLight()`, `pointLight()`, `spotLight()` and `specularColor()`
 * Material parameters set by `ambientMaterial()`, `emissiveMaterial()` and `specularMaterial()`
 * Texture parameters, set by `texture()`
 
@@ -101,6 +101,7 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform mat4 uModelViewMatrix;` |x          |x              |x           |x            |x           |
 |`uniform mat4 uProjectionMatrix;`|x          |x              |x           |x            |x           |
 |`uniform vec4 uViewPort;`        |x          |               |            |             |            |
+|`uniform vec4 uPerspective;`     |x          |               |            |             |            |
 
 
 #### Geometry Attributes and Uniforms
@@ -126,6 +127,7 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform int uAmbientLightCount;`              |           |x              |            |             |            |
 |`uniform int uDirectionalLightCount;`          |           |x              |            |             |            |
 |`uniform int uPointLightCount;`                |           |x              |            |             |            |
+|`uniform int uSpotLightCount;`                 |           |x              |            |             |            |
 |`uniform vec3 uAmbientColor[8];`               |           |x              |            |             |            |
 |`uniform vec3 uLightingDirection[8];`          |           |x              |            |             |            |
 |`uniform vec3 uDirectionalDiffuseColors[8];`   |           |x              |            |             |            |
@@ -133,6 +135,12 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform vec3 uPointLightLocation[8];`         |           |x              |            |             |            |
 |`uniform vec3 uPointLightDiffuseColors[8];`    |           |x              |            |             |            |
 |`uniform vec3 uPointLightSpecularColors[8];`   |           |x              |            |             |            |
+|`uniform float uSpotLightAngle[8];`            |           |x              |            |             |            |
+|`uniform float uSpotLightConc[8];`             |           |x              |            |             |            |
+|`uniform vec3 uSpotLightDiffuseColors[8];`     |           |x              |            |             |            |
+|`uniform vec3 uSpotLightSpecularColors[8];`    |           |x              |            |             |            |
+|`uniform vec3 uSpotLightLocation[8];`          |           |x              |            |             |            |
+|`uniform vec3 uSpotLightDirection[8];`         |           |x              |            |             |            |
 |`uniform bool uSpecular;`                      |           |x              |            |             |            |
 |`uniform bool uEmissive;`                      |           |x              |            |             |            |
 |`uniform int  uShininess;`                     |           |x              |            |             |            |
@@ -140,7 +148,7 @@ The normal shader is set when `normalMaterial()` is in use. It uses the surfaceâ
 |`uniform float uConstantAttenuation;`          |           |x              |            |             |            |
 |`uniform float uLinearAttenuation;`            |           |x              |            |             |            |
 |`uniform float uQuadraticAttenuation;`         |           |x              |            |             |            |
-    
+
 #### Texture Parameters
 
 |Parameter                             |Line Shader|TexLight Shader|Color Shader|Normal Shader|Point Shader|

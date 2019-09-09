@@ -108,8 +108,8 @@ suite('Rendering', function() {
   // prettier-ignore
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
-    'camera', 'perspective', 'ortho', 'orbitControl',
-    'ambientLight', 'directionalLight', 'pointLight', 'lights', 'specularColor',
+    'camera', 'perspective', 'ortho', 'frustum', 'orbitControl',
+    'ambientLight', 'directionalLight', 'pointLight', 'lights', 'specularColor', 'spotLight',
     'model',
     'createShader', 'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
