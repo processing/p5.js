@@ -222,12 +222,12 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * Draw a sphere with given radius.
  *
  * DetailX and detailY determines the number of subdivisions in the x-dimension
- * and the y-dimension of a sphere. More subdivisions make the sphere seem 
- * smoother. The recommended maximum values are both 24. Using a value greater 
- * than 24 may cause a warning or slow down the browser.  
+ * and the y-dimension of a sphere. More subdivisions make the sphere seem
+ * smoother. The recommended maximum values are both 24. Using a value greater
+ * than 24 may cause a warning or slow down the browser.
  * @method sphere
  * @param  {Number} [radius]          radius of circle
- * @param  {Integer} [detailX]        optional number of subdivisions in x-dimension                               
+ * @param  {Integer} [detailX]        optional number of subdivisions in x-dimension
  * @param  {Integer} [detailY]        optional number of subdivisions in y-dimension
  *
  * @chainable
@@ -253,15 +253,15 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * // slide to see how detailX works
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *	 detailX = createSlider(3, 24, 3);
- *	 detailX.position(10, height+5);
- *	 detailX.style('width', '80px');
+ *   detailX = createSlider(3, 24, 3);
+ *   detailX.position(10, height + 5);
+ *   detailX.style('width', '80px');
  * }
  *
  * function draw() {
- *   background(205,105,94);
- *	 rotateY(millis() / 1000);
- *   sphere(40,detailX.value(),16);
+ *   background(205, 105, 94);
+ *   rotateY(millis() / 1000);
+ *   sphere(40, detailX.value(), 16);
  * }
  * </code>
  * </div>
@@ -273,15 +273,15 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * // slide to see how detailY works
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *	 detailY = createSlider(3, 16, 3);
- *	 detailY.position(10, height+5);
- *	 detailY.style('width', '80px');
+ *   detailY = createSlider(3, 16, 3);
+ *   detailY.position(10, height + 5);
+ *   detailY.style('width', '80px');
  * }
  *
  * function draw() {
- *   background(205,105,94);
- *	 rotateY(millis() / 1000);
- *   sphere(40,16,detailY.value());
+ *   background(205, 105, 94);
+ *   rotateY(millis() / 1000);
+ *   sphere(40, 16, detailY.value());
  * }
  * </code>
  * </div>
@@ -425,8 +425,8 @@ const _truncatedCone = function(
 /**
  * Draw a cylinder with given radius and height
  *
- * DetailX and detailY determines the number of subdivisions in the x-dimension 
- * and the y-dimension of a cylinder. More subdivisions make the cylinder seem smoother. 
+ * DetailX and detailY determines the number of subdivisions in the x-dimension
+ * and the y-dimension of a cylinder. More subdivisions make the cylinder seem smoother.
  * The recommended maximum value for detailX is 24. Using a value greater than 24
  * may cause a warning or slow down the browser.
  *
@@ -465,9 +465,9 @@ const _truncatedCone = function(
  * let detailX;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *	 detailX = createSlider(3, 24, 3);
- *	 detailX.position(10, height+5);
- *	 detailX.style('width', '80px');
+ *   detailX = createSlider(3, 24, 3);
+ *   detailX.position(10, height + 5);
+ *   detailX.style('width', '80px');
  * }
  *
  * function draw() {
@@ -485,9 +485,9 @@ const _truncatedCone = function(
  * let detailY;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *	 detailY = createSlider(1, 16, 1);
- *	 detailY.position(10, height+5);
- *	 detailY.style('width', '80px');
+ *   detailY = createSlider(1, 16, 1);
+ *   detailY.position(10, height + 5);
+ *   detailY.style('width', '80px');
  * }
  *
  * function draw() {
@@ -560,9 +560,9 @@ p5.prototype.cylinder = function(
 /**
  * Draw a cone with given radius and height
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and 
- * the y-dimension of a cone. More subdivisions make the cone seem smoother. The 
- * recommended maximum value for detailX is 24. Using a value greater than 24 
+ * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * the y-dimension of a cone. More subdivisions make the cone seem smoother. The
+ * recommended maximum value for detailX is 24. Using a value greater than 24
  * may cause a warning or slow down the browser.
  * @method cone
  * @param  {Number}  [radius]  radius of the bottom surface
@@ -601,14 +601,14 @@ p5.prototype.cylinder = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   detailX = createSlider(3, 16, 3);
- *   detailX.position(10, height+5);
- *	 detailX.style('width', '80px');
+ *   detailX.position(10, height + 5);
+ *   detailX.style('width', '80px');
  * }
  *
  * function draw() {
  *   background(205, 102, 94);
  *   rotateY(millis() / 1000);
- *   cone(30, 65, detailX.value(),16);
+ *   cone(30, 65, detailX.value(), 16);
  * }
  * </code>
  * </div>
@@ -621,8 +621,8 @@ p5.prototype.cylinder = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   detailY = createSlider(3, 16, 3);
- *   detailY.position(10, height+5);
- *	 detailY.style('width', '80px');
+ *   detailY.position(10, height + 5);
+ *   detailY.style('width', '80px');
  * }
  *
  * function draw() {
@@ -675,8 +675,8 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
 /**
  * Draw an ellipsoid with given radius
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and 
- * the y-dimension of a cone. More subdivisions make the ellipsoid appear to be smoother. 
+ * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * the y-dimension of a cone. More subdivisions make the ellipsoid appear to be smoother.
  * Avoid detail number above 150, it may crash the browser.
  * @method ellipsoid
  * @param  {Number} [radiusx]         x-radius of ellipsoid
@@ -701,7 +701,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * }
  *
  * function draw() {
- *   background(205,105,94);
+ *   background(205, 105, 94);
  *   ellipsoid(30, 40, 40);
  * }
  * </code>
@@ -713,16 +713,16 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * // slide to see how detailX works
  * let detailX;
  * function setup() {
- *  createCanvas(100, 100, WEBGL);
- *	detailX = createSlider(2, 24, 12);
- *	detailX.position(10, height+5);
- *	detailX.style('width', '80px');
+ *   createCanvas(100, 100, WEBGL);
+ *   detailX = createSlider(2, 24, 12);
+ *   detailX.position(10, height + 5);
+ *   detailX.style('width', '80px');
  * }
  *
  * function draw() {
- *  background(205,105,94);
- *	rotateY(millis() / 1000);
- *  ellipsoid(30, 40, 40, detailX.value(),8);
+ *   background(205, 105, 94);
+ *   rotateY(millis() / 1000);
+ *   ellipsoid(30, 40, 40, detailX.value(), 8);
  * }
  * </code>
  * </div>
@@ -733,16 +733,16 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * // slide to see how detailY works
  * let detailY;
  * function setup() {
- *  createCanvas(100, 100, WEBGL);
- *	detailY = createSlider(2, 24, 6);
- *	detailY.position(10, height+5);
- *	detailY.style('width', '80px');
+ *   createCanvas(100, 100, WEBGL);
+ *   detailY = createSlider(2, 24, 6);
+ *   detailY.position(10, height + 5);
+ *   detailY.style('width', '80px');
  * }
  *
  * function draw() {
- *  background(205,105,94);
- *	rotateY(millis() / 1000);
- *  ellipsoid(30, 40, 40, 12, detailY.value());
+ *   background(205, 105, 9);
+ *   rotateY(millis() / 1000);
+ *   ellipsoid(30, 40, 40, 12, detailY.value());
  * }
  * </code>
  * </div>
@@ -811,10 +811,10 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 /**
  * Draw a torus with given radius and tube radius
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and 
- * the y-dimension of a torus. More subdivisions make the torus appear to be smoother. 
- * The default and maximum values for detailX and detailY are 24 and 16, respectively. 
- * Setting them to relatively small values like 4 and 6 allows you to create new 
+ * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * the y-dimension of a torus. More subdivisions make the torus appear to be smoother.
+ * The default and maximum values for detailX and detailY are 24 and 16, respectively.
+ * Setting them to relatively small values like 4 and 6 allows you to create new
  * shapes other than a torus.
  * @method torus
  * @param  {Number} [radius]      radius of the whole ring
@@ -852,8 +852,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   detailX = createSlider(3, 24, 3);
- *   detailX.position(10, height+5);
- *	 detailX.style('width', '80px');
+ *   detailX.position(10, height + 5);
+ *   detailX.style('width', '80px');
  * }
  *
  * function draw() {
@@ -872,8 +872,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   detailY = createSlider(3, 16, 3);
- *   detailY.position(10, height+5);
- *	 detailY.style('width', '80px');
+ *   detailY.position(10, height + 5);
+ *   detailY.style('width', '80px');
  * }
  *
  * function draw() {

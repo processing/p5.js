@@ -14,13 +14,13 @@ import p5 from '../core/main';
  * Sets the camera position for a 3D sketch. Parameters for this function define
  * the position for the camera, the center of the sketch (where the camera is
  * pointing), and an up direction (the orientation of the camera).
- * 
- * This function simulates the movements of the camera, allowing objects to be 
+ *
+ * This function simulates the movements of the camera, allowing objects to be
  * viewed from various angles. Remember, it does not move the objects themselves
  * but the camera instead. For example when centerX value is positive, the camera
  * is rotating to the right side of the sketch, so the object would seem like
  * moving to the left.
- *  
+ *
  * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a> to view the position of your camera.
  *
  * When called with no arguments, this function creates a default camera
@@ -65,27 +65,27 @@ import p5 from '../core/main';
  * let centerX;
  * let centerY;
  * let centerZ;
- * 
- * function setup(){
+ * let h = 20;
+ *
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
- * //create sliders
- *   for (var i = 0; i < 6; i++){
- *     if(i==2){
+ *   //create sliders
+ *   for (var i = 0; i < 6; i++) {
+ *     if (i === 2) {
  *       sliderGroup[i] = createSlider(10, 400, 200);
+ *     } else {
+ *       sliderGroup[i] = createSlider(-400, 400, 0);
  *     }
- *     else{
- *	     sliderGroup[i] = createSlider(-400, 400, 0);
- * 	   }
- *     h = map(i,0,6,5,85);
- *     sliderGroup[i].position(10, height+h);
-       sliderGroup[i].style('width', '80px');
+ *     h = map(i, 0, 6, 5, 85);
+ *     sliderGroup[i].position(10, height + h);
+ *     sliderGroup[i].style('width', '80px');
  *   }
  * }
- * 
+ *
  * function draw() {
  *   background(60);
  *   // assigning sliders' value to each parameters
- *   X = sliderGroup[0].value(); 
+ *   X = sliderGroup[0].value();
  *   Y = sliderGroup[1].value();
  *   Z = sliderGroup[2].value();
  *   centerX = sliderGroup[3].value();
