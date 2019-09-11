@@ -2930,7 +2930,7 @@ p5.MediaElement.prototype.set = function(x, y, imgOrCol) {
 };
 p5.MediaElement.prototype.copy = function() {
   this._ensureCanvas();
-  p5.Renderer2D.prototype.copy.apply(this, arguments);
+  p5.prototype.copy.apply(this, arguments);
 };
 p5.MediaElement.prototype.mask = function() {
   this.loadPixels();
