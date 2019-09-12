@@ -90,10 +90,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.spotLightConc = [];
 
   this.drawMode = constants.FILL;
-  this.curFillColor = [1, 1, 1, 1];
-  this.curStrokeColor = [0, 0, 0, 1];
-  this.curBlendMode = constants.BLEND;
-  this._cachedBlendMode = constants.BLEND;
+
+  this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
+
+  this.curBlendMode = this._cachedBlendMode = constants.BLEND;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;

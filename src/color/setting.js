@@ -762,12 +762,35 @@ p5.prototype.stroke = function(...args) {
  * @alt
  * 60x60 TODO!
  */
-p5.prototype.erase = function() {
+p5.prototype.erase = function(opacityFill, opacityStroke) {
   this._renderer._isErasing = true;
+
+  opacityFill = typeof opacityFill == 'undefined' ? 255 : opacityFill;
+  opacityStroke = typeof opacityStroke == 'undefined' ? 255 : opacityStroke;
+
   if (this._renderer.isP3D) {
     this._renderer._cachedBlendMode = this._renderer.curBlendMode;
     this._renderer.blendMode(constants.REMOVE);
+
+    this._renderer._cachedFillStyle = this._renderer.curFillColor.splice(0, 4);
+    this._renderer.curFillColor = [1, 1, 1, opacityFill / 255];
+
+    this._renderer._cachedStrokeStyle = this._renderer.curStrokeColor.splice(
+      0,
+      4
+    );
+    this._renderer.curStrokeColor = [1, 1, 1, opacityStroke / 255];
   } else {
+    // cache the fill style
+    this._renderer._cachedFillStyle = this.drawingContext.fillStyle;
+    const newFill = this.color(255, opacityFill).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    //cache the stroke style
+    this._renderer._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    const newStroke = this.color(255, opacityFill).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
     const tempBlendMode = this._renderer._cachedBlendMode;
     this._renderer.blendMode(constants.REMOVE);
     this._renderer._cachedBlendMode = tempBlendMode;
@@ -794,6 +817,19 @@ p5.prototype.erase = function() {
 
 p5.prototype.noErase = function() {
   this._renderer._isErasing = false;
+
+  // restore previous stroke and fill
+  if (this._renderer.isP3D) {
+    this._renderer.curFillColor = this._renderer._cachedFillStyle.splice(0, 4);
+    this._renderer.curStrokeColor = this._renderer._cachedStrokeStyle.splice(
+      0,
+      4
+    );
+  } else {
+    this.drawingContext.fillStyle = this._renderer._cachedFillStyle;
+    this.drawingContext.strokeStyle = this._renderer._cachedStrokeStyle;
+  }
+
   this._renderer.blendMode(this._renderer._cachedBlendMode);
   return this;
 };
