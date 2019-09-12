@@ -48,5 +48,5 @@ If you believe someone is violating the code of conduct, we ask that you report 
 
 Sometimes, participants violating the Code of Conduct are unaware that their behavior is harmful, and an open conversation clears things up to move forward. However, if a participant continues with the behavior, the p5.js team may take any action they deem appropriate, up to and including expulsion from all p5.js spaces and identification of the participant as a harasser to other p5.js members or the general public.
 
-## Sharing
+---
 This statement is licensed under a [Creative Commons license](https://creativecommons.org/licenses/by-sa/4.0/). Please feel free to share and remix with attribution.
