@@ -1,7 +1,7 @@
 /**
  * This module defines the p5.Shader class
  * @module Lights, Camera
- * @submodule Shaders
+ * @submodule Material
  * @for p5
  * @requires core
  */

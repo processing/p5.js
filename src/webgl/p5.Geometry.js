@@ -1,3 +1,12 @@
+/**
+ * @module Lights, Camera
+ * @submodule Material
+ * @for p5
+ * @requires core
+ * @requires p5.Geometry
+ */
+
+
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import p5 from '../core/main';
