@@ -105,7 +105,10 @@ p5.prototype._normalizeArcAngles = (
  * The arc is always drawn clockwise from wherever start falls to wherever stop falls on the ellipse.
  * Adding or subtracting TWO_PI to either angle does not change where they fall.
  * If both start and stop fall at the same place, a full ellipse will be drawn. Be aware that the the
- * y-axis increases in the downward direction therefore the values of PI is counter clockwise.
+ * y-axis increases in the downward direction, therefore angles are measured clockwise from the positive
+ * x-direction ("3 o'clock").
+
+
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse
  * @param  {Number} y      y-coordinate of the arc's ellipse
