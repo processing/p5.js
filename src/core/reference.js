@@ -5,18 +5,16 @@
  */
 
 /**
- * Declares a block scope local variable,optionally initializing it to a value.
+ * Declares a block scope local variable, optionally initializing it to a value.
  * @property let
+ *
  * @example
  * <div>
  * <code>
- * let x = 1;
- * var flag = true;
- * if (flag) {
- *   let x = 2; //different variable
- *   console.log(x); //2
- * }
- * console.log(x); //1
+ * let x = 2;
+ * console.log(x); // prints 2 to the console
+ * x = 1;
+ * console.log(x); // prints 1 to the console
  * </code>
  * </div>
  */
@@ -26,6 +24,7 @@
  * Constants are block-scoped, much like variables defined using the 'let' statement.
  * The value of a constant can't be changed through reassignment, and it can't be redeclared.
  * @property const
+ *
  * @example
  * <div>
  * <code>
@@ -44,6 +43,7 @@
  * The 'if' statement executes a statement if a specified condition is truthy.
  * If the condition is falsy, another statement can be executed
  * @property if-else
+ *
  * @example
  * <div>
  * <code>
@@ -64,7 +64,7 @@
 /**
  * Declares a function with the specified parameters.
  * @property function
- * @param arguments: The name of an argument to be passed to the function. Maximum number of arguments varies in different engines.
+ *
  * @example
  * <div>
  * <code>
@@ -79,13 +79,14 @@
 /**
  * Specifies the value to be returned by a function.
  * @property return
+ *
  * @example
  * <div>
  * <code>
- * function square(x) {
+ * function calSquare(x) {
  *   return x * x;
  * }
- * square(4); //return 16
+ * calSquare(4); //return 16
  * </code>
  * </div>
  */
@@ -97,18 +98,19 @@
 /**
  * The class declaration creates a new class with a given name using prototype-based inheritance.
  * @property class
+ *
  * @example
  * <div>
  * <code>
- * class Polygon {
+ * class S1 {
  *   constructor(height, width) {
  *     this.name = 'Polygon';
  *     this.height = height;
  *     this.width = width;
  *   }
  * }
- * var polygon = new Polygon(4, 5); //creating new instance of Polygon Class.
- * console.log(polygon.name);
+ * var poly = new S1(4, 5); //creating new instance of Polygon Class.
+ * console.log(poly.name);
  * </code>
  * </div>
  */
@@ -121,6 +123,7 @@
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
  * @property for
+ *
  * @example
  * <div>
  * <code>
@@ -137,6 +140,7 @@
  * The condition is evaluated after executing the statement, resulting in the specified statement
  * executing at least once.
  * @property  do..while
+ *
  * @example
  * <div>
  * <code>
@@ -146,7 +150,7 @@
  *   i += 1;
  *   result += i + ' ';
  * } while (i > 0 && i < 5);
- * console.log(result);
+ * console.log(result); //'1 2 3 4 5 '
  * <code>
  * </div>
  */
@@ -155,17 +159,17 @@
  * Iterates over the enumerable properties of an object, in arbitrary order.
  * For each distinct property, statements can be executed.
  * @property for..in
+ *
  * @example
  * <div>
  * <code>
- * var obj = { a: 1, b: 2, c: 3 };
- * for (const prop in obj) {
- *   console.log(`obj.${prop} = ${obj[prop]}`);
+ * var person = { fname: 'John', lname: 'Doe', age: 25 };
+ * var text = '';
+ * var x;
+ * for (x in person) {
+ *   text += person[x] + '';
  * }
- * // Output:
- * // "obj.a = 1"
- * // "obj.b = 2"
- * // "obj.c = 3"
+ * console.log(text); //'John Doe 25 '
  * </code>
  * </div>
  */
@@ -174,16 +178,14 @@
  * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
  * invoking a custom iteration hook with statements to be executed for the value of each distinct property.
  * @property for..of
+ *
  * @example
  * <div>
  * <code>
- * let iterable = 'boo';
- * for (let value of iterable) {
+ * let word = 'boo';
+ * for (let value of word) {
  *   console.log(value);
  * }
- * // "b"
- * // "o"
- * // "o"
  * </code>
  * </div>
  */
@@ -196,8 +198,7 @@
  * The parseInt() function parses a string argument and
  * returns an integer of the specified radix (the base in mathematical numeral systems).
  * @method parseInt
- * @param {string} string :The value to parse
- * @param {Integer} radix :An integer between 2 and 36 that represents the radix (the base in mathematical numeral systems) of the string.
+ *
  * @example
  * <div>
  * <code>
@@ -210,7 +211,8 @@
 /**
  * The JSON.stringify() method converts a JavaScript object or value to a JSON string.
  * @method JSON.stringify
- * @param
+ * @param {Object} object :Javascript object that you would like to convert to JSON
+ *
  * @example
  * <div>
  * <code>
