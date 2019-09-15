@@ -15,6 +15,14 @@ import p5 from '../core/main';
  * the position for the camera, the center of the sketch (where the camera is
  * pointing), and an up direction (the orientation of the camera).
  *
+ * This function simulates the movements of the camera, allowing objects to be
+ * viewed from various angles. Remember, it does not move the objects themselves
+ * but the camera instead. For example when centerX value is positive, the camera
+ * is rotating to the right side of the sketch, so the object would seem like
+ * moving to the left.
+ *
+ * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a> to view the position of your camera.
+ *
  * When called with no arguments, this function creates a default camera
  * equivalent to
  * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
@@ -45,6 +53,51 @@ import p5 from '../core/main';
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * //move slider to see changes!
+ * //sliders control the first 6 parameters of camera()
+ * let sliderGroup = [];
+ * let X;
+ * let Y;
+ * let Z;
+ * let centerX;
+ * let centerY;
+ * let centerZ;
+ * let h = 20;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   //create sliders
+ *   for (var i = 0; i < 6; i++) {
+ *     if (i === 2) {
+ *       sliderGroup[i] = createSlider(10, 400, 200);
+ *     } else {
+ *       sliderGroup[i] = createSlider(-400, 400, 0);
+ *     }
+ *     h = map(i, 0, 6, 5, 85);
+ *     sliderGroup[i].position(10, height + h);
+ *     sliderGroup[i].style('width', '80px');
+ *   }
+ * }
+ *
+ * function draw() {
+ *   background(60);
+ *   // assigning sliders' value to each parameters
+ *   X = sliderGroup[0].value();
+ *   Y = sliderGroup[1].value();
+ *   Z = sliderGroup[2].value();
+ *   centerX = sliderGroup[3].value();
+ *   centerY = sliderGroup[4].value();
+ *   centerZ = sliderGroup[5].value();
+ *   camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
+ *   stroke(255);
+ *   fill(255, 102, 94);
+ *   box(85);
+ * }
+ * </code>
+ * </div>
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
  *
@@ -81,7 +134,6 @@ p5.prototype.camera = function(...args) {
  * <div>
  * <code>
  * //drag the mouse to look around!
- * //you will see there's a vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   perspective(PI / 3.0, width / height, 0.1, 500);
@@ -361,6 +413,7 @@ p5.Camera = function(renderer) {
  * @for p5.Camera
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+  this.cameraType = arguments.length > 0 ? 'custom' : 'default';
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
     // this avoids issue where setting angleMode(DEGREES) before calling
@@ -430,8 +483,6 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
       this.projMatrix.mat4[15]
     );
   }
-
-  this.cameraType = 'custom';
 };
 
 /**

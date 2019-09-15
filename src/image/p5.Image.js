@@ -603,32 +603,7 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dh
  */
 p5.Image.prototype.copy = function(...args) {
-  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (args.length === 9) {
-    srcImage = args[0];
-    sx = args[1];
-    sy = args[2];
-    sw = args[3];
-    sh = args[4];
-    dx = args[5];
-    dy = args[6];
-    dw = args[7];
-    dh = args[8];
-  } else if (args.length === 8) {
-    srcImage = this;
-    sx = args[0];
-    sy = args[1];
-    sw = args[2];
-    sh = args[3];
-    dx = args[4];
-    dy = args[5];
-    dw = args[6];
-    dh = args[7];
-  } else {
-    throw new Error('Signature not supported');
-  }
-  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
-  this._pixelsDirty = true;
+  p5.prototype.copy.apply(this, args);
 };
 
 /**

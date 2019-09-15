@@ -228,7 +228,7 @@ suite('pixels', function() {
       assert.throw(function() {
         let img = myp5.createImage(50, 50);
         img.copy(0, 0, 10, 10, 0, 10, 10);
-      }, 'Signature not supported');
+      });
     });
   });
 });

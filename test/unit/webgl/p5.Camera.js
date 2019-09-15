@@ -528,6 +528,11 @@ suite('p5.Camera', function() {
         myCam.ortho();
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
       });
+
+      test('ortho() with sets cameraType to custom', function() {
+        myCam.ortho();
+        assert.deepEqual(myCam.cameraType, 'custom');
+      });
     });
     suite('perspective()', function() {
       test('perspective() sets renderer uPMatrix', function() {
@@ -561,6 +566,11 @@ suite('p5.Camera', function() {
 
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
       });
+
+      test('perspective() with no parameters sets cameraType to default', function() {
+        myCam.perspective();
+        assert.deepEqual(myCam.cameraType, 'default');
+      });
     });
     suite('frustum()', function() {
       test('frustum() sets renderer uPMatrix', function() {
@@ -593,6 +603,11 @@ suite('p5.Camera', function() {
         myCam.frustum();
 
         assert.deepEqual(myCam.projMatrix.mat4, expectedMatrix);
+      });
+
+      test('frustum() sets cameraType to custom', function() {
+        myCam.frustum(-1, 1, -1, 1, -2, 2);
+        assert.deepEqual(myCam.cameraType, 'custom');
       });
     });
   });

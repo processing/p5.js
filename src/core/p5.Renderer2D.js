@@ -241,75 +241,16 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
 };
 
 p5.Renderer2D.prototype.blend = function(...args) {
+  const currBlend = this.drawingContext.globalCompositeOperation;
   const blendMode = args[args.length - 1];
 
   const copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
 
   this.drawingContext.globalCompositeOperation = blendMode;
-  if (this._pInst) {
-    this._pInst.copy(...copyArgs);
-  } else {
-    this.copy(...copyArgs);
-  }
-  // reset to prior blend mode
-  this.drawingContext.globalCompositeOperation = this._cachedBlendMode;
-};
 
-p5.Renderer2D.prototype.copy = function(...args) {
-  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (args.length === 9) {
-    srcImage = args[0];
-    sx = args[1];
-    sy = args[2];
-    sw = args[3];
-    sh = args[4];
-    dx = args[5];
-    dy = args[6];
-    dw = args[7];
-    dh = args[8];
-  } else if (args.length === 8) {
-    srcImage = this._pInst;
-    sx = args[0];
-    sy = args[1];
-    sw = args[2];
-    sh = args[3];
-    dx = args[4];
-    dy = args[5];
-    dw = args[6];
-    dh = args[7];
-  } else {
-    throw new Error('Signature not supported');
-  }
-  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  p5.prototype.copy.apply(this, copyArgs);
 
-  this._pixelsState._pixelsDirty = true;
-};
-
-p5.Renderer2D._copyHelper = (
-  dstImage,
-  srcImage,
-  sx,
-  sy,
-  sw,
-  sh,
-  dx,
-  dy,
-  dw,
-  dh
-) => {
-  srcImage.loadPixels();
-  const s = srcImage.canvas.width / srcImage.width;
-  dstImage.drawingContext.drawImage(
-    srcImage.canvas,
-    s * sx,
-    s * sy,
-    s * sw,
-    s * sh,
-    dx,
-    dy,
-    dw,
-    dh
-  );
+  this.drawingContext.globalCompositeOperation = currBlend;
 };
 
 // p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;

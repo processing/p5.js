@@ -12,6 +12,9 @@ import './p5.Geometry';
 /**
  * Load a 3d model from an OBJ or STL file.
  * <br><br>
+ * <a href="#/p5/loadModel">loadModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
+ * This allows the model to load fully before the rest of your code is run.
+ * <br><br>
  * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
  * sense of scale. This means that models exported from different programs might
  * be very different sizes. If your model isn't displaying, try calling
