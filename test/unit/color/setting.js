@@ -1,18 +1,166 @@
 suite('color/Setting', function() {
-  // p5 instance
-  var myp5;
-
+  let myp5; // sketch without WEBGL Mode
+  let my3D; // skecth with WEBGL mode
   setup(function(done) {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
-        done();
       };
     });
+    new p5(function(p) {
+      p.setup = function() {
+        p.createCanvas(100, 100, p.WEBGL);
+        my3D = p;
+      };
+    });
+    done();
   });
 
   teardown(function() {
     myp5.remove();
+    my3D.remove();
+  });
+
+  suite('p5.prototype.erase', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.erase);
+    });
+
+    test('should set renderer to erasing state', function() {
+      myp5.erase();
+      assert.isTrue(myp5._renderer._isErasing);
+    });
+
+    test('should cache renderer fill', function() {
+      myp5.fill(255, 0, 0);
+      const fillStyle = myp5.drawingContext.fillStyle;
+      myp5.erase();
+      assert.deepEqual(myp5._renderer._cachedFillStyle, fillStyle);
+    });
+
+    test('should cache renderer stroke', function() {
+      myp5.stroke(255, 0, 0);
+      const strokeStyle = myp5.drawingContext.strokeStyle;
+      myp5.erase();
+      assert.deepEqual(myp5._renderer._cachedStrokeStyle, strokeStyle);
+    });
+
+    test('should cache renderer blend', function() {
+      myp5.blendMode(myp5.SCREEN);
+      myp5.erase();
+      assert.deepEqual(myp5._renderer._cachedBlendMode, myp5.SCREEN);
+    });
+
+    test('should set fill strength', function() {
+      myp5.erase(125);
+      assert.equal(
+        myp5.color(myp5.drawingContext.fillStyle).array,
+        myp5.color(255, 125).array
+      );
+    });
+
+    test('should set stroke strength', function() {
+      myp5.erase(255, 50);
+      assert.equal(
+        myp5.color(myp5.drawingContext.strokeStyle).array,
+        myp5.color(255, 50).array
+      );
+    });
+  });
+
+  suite('p5.RendererGL.prototype.erase', function() {
+    test('should set renderer to erasing state', function() {
+      my3D.erase();
+      assert.isTrue(my3D._renderer._isErasing);
+    });
+
+    test('should cache renderer fill', function() {
+      my3D.fill(255, 0, 0);
+      const curFillColor = my3D._renderer.curFillColor;
+      my3D.erase();
+      assert.deepEqual(my3D._renderer._cachedFillStyle, curFillColor);
+    });
+
+    test('should cache renderer stroke', function() {
+      my3D.stroke(255, 0, 0);
+      const strokeStyle = my3D._renderer.curStrokeColor;
+      my3D.erase();
+      assert.deepEqual(my3D._renderer._cachedStrokeStyle, strokeStyle);
+    });
+
+    test('should cache renderer blend', function() {
+      my3D.blendMode(my3D.SCREEN);
+      my3D.erase();
+      assert.deepEqual(my3D._renderer._cachedBlendMode, my3D.SCREEN);
+    });
+
+    test('should set fill strength', function() {
+      my3D.erase(125);
+      assert.deepEqual(my3D._renderer.curFillColor, [1, 1, 1, 125 / 255]);
+    });
+
+    test('should set stroke strength', function() {
+      my3D.erase(255, 50);
+      assert.deepEqual(my3D._renderer.curStrokeColor, [1, 1, 1, 50 / 255]);
+    });
+
+    test('should set default values when no arguments', function() {
+      my3D.erase();
+      assert.deepEqual(my3D._renderer.curFillColor, [1, 1, 1, 1]);
+      assert.deepEqual(my3D._renderer.curStrokeColor, [1, 1, 1, 1]);
+    });
+  });
+
+  suite('p5.prototype.noErase', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.noErase);
+    });
+
+    test('should turn off renderer erasing state', function() {
+      myp5.erase();
+      myp5.noErase();
+      assert.isFalse(myp5._renderer._isErasing);
+    });
+
+    test('should restore cached renderer fill', function() {
+      myp5.fill(255, 0, 0);
+      const fillStyle = myp5.drawingContext.fillStyle;
+      myp5.erase();
+      myp5.noErase();
+      assert.deepEqual(myp5.drawingContext.fillStyle, fillStyle);
+    });
+
+    test('should restore cached renderer stroke', function() {
+      myp5.stroke(255, 0, 0);
+      const strokeStyle = myp5.drawingContext.strokeStyle;
+      myp5.erase();
+      myp5.noErase();
+      assert.deepEqual(myp5.drawingContext.strokeStyle, strokeStyle);
+    });
+  });
+
+  suite('p5.RendererGL.prototype.noErase', function() {
+    test('should turn off renderer erasing state', function() {
+      my3D.erase();
+      my3D.noErase();
+      assert.isFalse(my3D._renderer._isErasing);
+    });
+
+    test('should restore cached renderer fill', function() {
+      my3D.fill(255, 0, 0);
+      const fillStyle = my3D._renderer.curFillColor.slice();
+      my3D.erase();
+      my3D.noErase();
+      assert.deepEqual([1, 0, 0, 1], fillStyle);
+    });
+
+    test('should restore cached renderer stroke', function() {
+      my3D.stroke(255, 0, 0);
+      const strokeStyle = my3D._renderer.curStrokeColor.slice();
+      my3D.erase();
+      my3D.noErase();
+      assert.deepEqual([1, 0, 0, 1], strokeStyle);
+    });
   });
 
   suite('p5.prototype.colorMode', function() {

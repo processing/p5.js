@@ -664,7 +664,7 @@ p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
     this._cachedBlendMode = this.curBlendMode;
     this.blendMode(constants.REMOVE);
 
-    this._cachedFillStyle[0] = this.curFillColor.slice();
+    this._cachedFillStyle = this.curFillColor.slice();
     this.curFillColor = [1, 1, 1, opacityFill / 255];
 
     this._cachedStrokeStyle = this.curStrokeColor.slice();
