@@ -762,10 +762,7 @@ p5.prototype.stroke = function(...args) {
  * @alt
  * 60x60 TODO!
  */
-p5.prototype.erase = function(opacityFill, opacityStroke) {
-  opacityFill = typeof opacityFill == 'undefined' ? 255 : opacityFill;
-  opacityStroke = typeof opacityStroke == 'undefined' ? 255 : opacityStroke;
-
+p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
 
   return this;
