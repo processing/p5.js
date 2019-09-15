@@ -91,6 +91,37 @@ p5.Renderer2D.prototype.stroke = function(...args) {
   this._setStroke(color.toString());
 };
 
+p5.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {
+  if (!this._isErasing) {
+    // cache the fill style
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+    const newFill = this._pInst.color(255, opacityFill).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    //cache the stroke style
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    const newStroke = this._pInst.color(255, opacityStroke).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
+    //cache blendMode
+    const tempBlendMode = this._cachedBlendMode;
+    this.blendMode(constants.REMOVE);
+    this._cachedBlendMode = tempBlendMode;
+
+    this._isErasing = true;
+  }
+};
+
+p5.Renderer2D.prototype.noErase = function() {
+  if (this._isErasing) {
+    this.drawingContext.fillStyle = this._cachedFillStyle;
+    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+
+    this.blendMode(this._cachedBlendMode);
+    this._isErasing = false;
+  }
+};
+
 //////////////////////////////////////////////
 // IMAGE | Loading & Displaying
 //////////////////////////////////////////////
@@ -222,37 +253,6 @@ p5.Renderer2D.prototype.blend = function(...args) {
   }
   // reset to prior blend mode
   this.drawingContext.globalCompositeOperation = this._cachedBlendMode;
-};
-
-p5.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {
-  if (!this._isErasing) {
-    // cache the fill style
-    this._cachedFillStyle = this.drawingContext.fillStyle;
-    const newFill = this._pInst.color(255, opacityFill).toString();
-    this.drawingContext.fillStyle = newFill;
-
-    //cache the stroke style
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
-    const newStroke = this._pInst.color(255, opacityStroke).toString();
-    this.drawingContext.strokeStyle = newStroke;
-
-    //cache blendMode
-    const tempBlendMode = this._cachedBlendMode;
-    this.blendMode(constants.REMOVE);
-    this._cachedBlendMode = tempBlendMode;
-
-    this._isErasing = true;
-  }
-};
-
-p5.Renderer2D.prototype.noErase = function() {
-  if (this._isErasing) {
-    this.drawingContext.fillStyle = this._cachedFillStyle;
-    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
-
-    this.blendMode(this._cachedBlendMode);
-    this._isErasing = false;
-  }
 };
 
 p5.Renderer2D.prototype.copy = function(...args) {
