@@ -1,6 +1,6 @@
 suite('color/Setting', function() {
   let myp5; // sketch without WEBGL Mode
-  let my3D; // skecth with WEBGL mode
+  let my3D; // sketch with WEBGL mode
   setup(function(done) {
     new p5(function(p) {
       p.setup = function() {
