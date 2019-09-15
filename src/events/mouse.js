@@ -213,7 +213,7 @@ p5.prototype.pmouseY = 0;
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
- *   const body = document.getElementsByTagName('body')[0];
+ *   let body = document.getElementsByTagName('body')[0];
  *   myCanvas.parent(body);
  * }
  *
@@ -252,7 +252,7 @@ p5.prototype.winMouseX = 0;
  * function setup() {
  *   //use a variable to store a pointer to the canvas
  *   myCanvas = createCanvas(100, 100);
- *   const body = document.getElementsByTagName('body')[0];
+ *   let body = document.getElementsByTagName('body')[0];
  *   myCanvas.parent(body);
  * }
  *

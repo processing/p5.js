@@ -19,7 +19,7 @@ import p5 from '../core/main';
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   const myArray = ['Mango', 'Apple', 'Papaya'];
+ *   let myArray = ['Mango', 'Apple', 'Papaya'];
  *   print(myArray); // ['Mango', 'Apple', 'Papaya']
  *
  *   append(myArray, 'Peach');

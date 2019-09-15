@@ -64,8 +64,8 @@ p5.prototype.join = function(list, separator) {
  * @example
  * <div>
  * <code>
- * const string = 'Hello p5js*!';
- * const regexp = 'p5js\\*';
+ * let string = 'Hello p5js*!';
+ * let regexp = 'p5js\\*';
  * let m = match(string, regexp);
  * text(m, 5, 50);
  * </code>
@@ -106,8 +106,8 @@ p5.prototype.match = function(str, reg) {
  * @example
  * <div class="norender">
  * <code>
- * const string = 'Hello p5js*! Hello world!';
- * const regexp = 'Hello';
+ * let string = 'Hello p5js*! Hello world!';
+ * let regexp = 'Hello';
  * matchAll(string, regexp);
  * </code>
  * </div>
@@ -467,7 +467,7 @@ function addNfs(num) {
  * @example
  * <div>
  * <code>
- * const names = 'Pat,Xio,Alex';
+ * let names = 'Pat,Xio,Alex';
  * let splitString = split(names, ',');
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
@@ -502,7 +502,7 @@ p5.prototype.split = function(str, delim) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   const myStr = 'Mango, Banana, Lime';
+ *   let myStr = 'Mango, Banana, Lime';
  *   let myStrArr = splitTokens(myStr, ',');
  *
  *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]

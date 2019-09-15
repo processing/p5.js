@@ -364,7 +364,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *   fill(255);
  * }
  *
- * const lights = [
+ * let lights = [
  *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
  *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
  *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },

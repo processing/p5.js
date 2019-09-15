@@ -132,7 +132,7 @@ p5.prototype.loadShader = function(
  *   varying +
  *   'uniform vec2 p;' +
  *   'uniform float r;' +
- *   'const int I = 500;' +
+ *   'let int I = 500;' +
  *   'void main() {' +
  *   '  vec2 c = p + vPos * r, z = c;' +
  *   '  float n = 0.0;' +
