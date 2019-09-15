@@ -173,7 +173,7 @@ Constructors are defined with `@class`. Each constructor should have the tag `@c
 
 ## Adding example code
 
-Optionally, you can add examples with `@example`. Example code can be placed between `<code></code>` tags with comments included. Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background. Please see examples in other src files to make sure it is formatted correctly.
+Optionally, you can add examples with `@example`. Example code can be placed between `<code></code>` tags with comments included. Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background.  Define all variables with `let` in examples, as the lowest barrier for beginners learning JS. Please see examples in other src files to make sure it is formatted correctly.
 
 ```
 @example
@@ -213,7 +213,7 @@ If you do not want the example to be run as part of the build tests (for example
 @example
 <div class='norender notest'><code>
 function setup() {
-  const c = createCanvas(100, 100);
+  let c = createCanvas(100, 100);
   saveCanvas(c, 'myCanvas', 'jpg');
 }
 </code></div>
@@ -235,18 +235,18 @@ let xoff = 0.0;
 function draw() {
   background(204);
   xoff = xoff + 0.01;
-  const n = noise(xoff) * width;
+  let n = noise(xoff) * width;
   line(n, 0, n, height);
 }
 </code>
 </div>
 <div>
 <code>
-const noiseScale=0.02;
+let noiseScale=0.02;
 function draw() {
   background(0);
   for (let x=0; x < width; x++) {
-    const noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+    let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
     stroke(noiseVal*255);
     line(x, mouseY+noiseVal*80, x, height);
   }
