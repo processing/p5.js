@@ -59,11 +59,11 @@ module.exports = function(grunt) {
             eventHandler1.emit.bind(eventHandler1)
           );
 
-          await new Promise(async resolve => {
+          await new Promise(async (resolve, reject) => {
             eventHandler1.on('mocha:end', async results => {
               const { stats, coverage } = results;
               if (stats.failures) {
-                throw new Error(stats);
+                reject(stats);
               }
               await saveCoverage(coverage);
               resolve(stats);
