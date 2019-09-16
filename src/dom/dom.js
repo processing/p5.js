@@ -41,13 +41,13 @@ import p5 from '../core/main';
  * </code></div>
  * <div><code class='norender'>
  * // these are all valid calls to select()
- * var a = select('#moo');
- * var b = select('#blah', '#myContainer');
- * var c, e;
+ * let a = select('#moo');
+ * let b = select('#blah', '#myContainer');
+ * let c, e;
  * if (b) {
  *   c = select('#foo', b);
  * }
- * var d = document.getElementById('beep');
+ * let d = document.getElementById('beep');
  * if (d) {
  *   e = select('p', d);
  * }
@@ -103,23 +103,23 @@ p5.prototype.select = function(e, p) {
  *   createButton('btn');
  *   createButton('2nd btn');
  *   createButton('3rd btn');
- *   var buttons = selectAll('button');
+ *   let buttons = selectAll('button');
  *
- *   for (var i = 0; i < buttons.length; i++) {
+ *   for (let i = 0; i < buttons.length; i++) {
  *     buttons[i].size(100, 100);
  *   }
  * }
  * </code></div>
  * <div class='norender'><code>
  * // these are all valid calls to selectAll()
- * var a = selectAll('.moo');
+ * let a = selectAll('.moo');
  * a = selectAll('div');
  * a = selectAll('button', '#myContainer');
  *
- * var d = select('#container');
+ * let d = select('#container');
  * a = selectAll('p', d);
  *
- * var f = document.getElementById('beep');
+ * let f = document.getElementById('beep');
  * a = select('.blah', f);
  *
  * a; // unused
@@ -236,7 +236,7 @@ p5.prototype.removeElements = function(e) {
  * @chainable
  * @example
  * <div><code>
- * var sel;
+ * let sel;
  *
  * function setup() {
  *   textAlign(CENTER);
@@ -250,15 +250,15 @@ p5.prototype.removeElements = function(e) {
  * }
  *
  * function mySelectEvent() {
- *   var item = sel.value();
+ *   let item = sel.value();
  *   background(200);
  *   text("it's a " + item + '!', 50, 50);
  * }
  * </code></div>
  *
  * <div><code>
- * var checkbox;
- * var cnv;
+ * let checkbox;
+ * let cnv;
  *
  * function setup() {
  *   checkbox = createCheckbox(' fill');
@@ -308,7 +308,7 @@ p5.Element.prototype.changed = function(fxn) {
  * <div class='norender'><code>
  * // Open your console to see the output
  * function setup() {
- *   var inp = createInput('');
+ *   let inp = createInput('');
  *   inp.input(myInputEvent);
  * }
  *
@@ -475,7 +475,7 @@ p5.prototype.createA = function(href, html, target) {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * var slider;
+ * let slider;
  * function setup() {
  *   slider = createSlider(0, 255, 100);
  *   slider.position(10, 10);
@@ -483,13 +483,13 @@ p5.prototype.createA = function(href, html, target) {
  * }
  *
  * function draw() {
- *   var val = slider.value();
+ *   let val = slider.value();
  *   background(val);
  * }
  * </code></div>
  *
  * <div><code>
- * var slider;
+ * let slider;
  * function setup() {
  *   colorMode(HSB);
  *   slider = createSlider(0, 360, 60, 40);
@@ -498,7 +498,7 @@ p5.prototype.createA = function(href, html, target) {
  * }
  *
  * function draw() {
- *   var val = slider.value();
+ *   let val = slider.value();
  *   background(val, 100, 100, 1);
  * }
  * </code></div>
@@ -531,7 +531,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div class='norender'><code>
- * var button;
+ * let button;
  * function setup() {
  *   createCanvas(100, 100);
  *   background(0);
@@ -541,7 +541,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
  * }
  *
  * function changeBG() {
- *   var val = random(255);
+ *   let val = random(255);
  *   background(val);
  * }
  * </code></div>
@@ -564,7 +564,7 @@ p5.prototype.createButton = function(label, value) {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div class='norender'><code>
- * var checkbox;
+ * let checkbox;
  *
  * function setup() {
  *   checkbox = createCheckbox('label', false);
@@ -630,7 +630,7 @@ p5.prototype.createCheckbox = function() {
  * @return {p5.Element}
  * @example
  * <div><code>
- * var sel;
+ * let sel;
  *
  * function setup() {
  *   textAlign(CENTER);
@@ -644,7 +644,7 @@ p5.prototype.createCheckbox = function() {
  * }
  *
  * function mySelectEvent() {
- *   var item = sel.value();
+ *   let item = sel.value();
  *   background(200);
  *   text('It is a ' + item + '!', 50, 50);
  * }
@@ -737,7 +737,7 @@ p5.prototype.createSelect = function() {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * var radio;
+ * let radio;
  *
  * function setup() {
  *   radio = createRadio();
@@ -750,13 +750,13 @@ p5.prototype.createSelect = function() {
  * }
  *
  * function draw() {
- *   var val = radio.value();
+ *   let val = radio.value();
  *   background(val);
  *   text(val, width / 2, height / 2);
  * }
  * </code></div>
  * <div><code>
- * var radio;
+ * let radio;
  *
  * function setup() {
  *   radio = createRadio();
@@ -769,7 +769,7 @@ p5.prototype.createSelect = function() {
  *
  * function draw() {
  *   background(200);
- *   var val = radio.value();
+ *   let val = radio.value();
  *   if (val) {
  *     text('item cost is $' + val, width / 2, height / 2);
  *   }
@@ -876,7 +876,7 @@ p5.prototype.createRadio = function(existing_radios) {
  * @example
  * <div>
  * <code>
- * var inp1, inp2;
+ * let inp1, inp2;
  * function setup() {
  *   createCanvas(100, 100);
  *   background('grey');
@@ -889,7 +889,7 @@ p5.prototype.createRadio = function(existing_radios) {
  *
  * function setMidShade() {
  *   // Finding a shade between the two
- *   var commonShade = lerpColor(inp1.color(), inp2.color(), 0.5);
+ *   let commonShade = lerpColor(inp1.color(), inp2.color(), 0.5);
  *   fill(commonShade);
  *   rect(20, 20, 60, 60);
  * }
@@ -952,7 +952,7 @@ p5.prototype.createColorPicker = function(value) {
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   var inp = createInput('');
+ *   let inp = createInput('');
  *   inp.input(myInputEvent);
  * }
  *
@@ -1107,7 +1107,7 @@ function createMedia(pInst, type, src, callback) {
  * @return {p5.MediaElement}   pointer to video <a href="#/p5.Element">p5.Element</a>
  * @example
  * <div><code>
- * var vid;
+ * let vid;
  * function setup() {
  *   noCanvas();
  *
@@ -1155,7 +1155,7 @@ p5.prototype.createVideo = function(src, callback) {
  * @return {p5.MediaElement}   pointer to audio <a href="#/p5.Element">p5.Element</a>
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  * function setup() {
  *   ele = createAudio('assets/beat.mp3');
  *
@@ -1241,7 +1241,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
  * @example
  * <div class='norender notest'><code>
- * var capture;
+ * let capture;
  *
  * function setup() {
  *   createCanvas(480, 480);
@@ -1257,7 +1257,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * <div class='norender notest'><code>
  * function setup() {
  *   createCanvas(480, 120);
- *   var constraints = {
+ *   let constraints = {
  *     video: {
  *       mandatory: {
  *         minWidth: 1280,
@@ -1273,7 +1273,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  * </code></div>
  * <code><div class='norender notest'>
- * var capture;
+ * let capture;
  *
  * function setup() {
  *   createCanvas(640, 480);
@@ -1282,7 +1282,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * function draw() {
  *   background(0);
  *   if (capture.loadedmetadata) {
- *     var c = capture.get(0, 0, 100, 100);
+ *     let c = capture.get(0, 0, 100, 100);
  *     image(c, 0, 0);
  *   }
  * }
@@ -1389,7 +1389,7 @@ p5.prototype.createElement = function(tag, content) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var div = createDiv('div');
+ * let div = createDiv('div');
  * div.addClass('myClass');
  * </code></div>
  */
@@ -1417,7 +1417,7 @@ p5.Element.prototype.addClass = function(c) {
  * // and removed when mouse is pressed. This could link up
  * // with a CSS style rule to toggle style properties.
  *
- * var div;
+ * let div;
  *
  * function setup() {
  *   div = createDiv('div');
@@ -1444,7 +1444,7 @@ p5.Element.prototype.removeClass = function(c) {
  * @param c {String} class name of class to check
  * @example
  * <div class='norender'><code>
- * var div;
+ * let div;
  *
  * function setup() {
  *   div = createDiv('div');
@@ -1473,7 +1473,7 @@ p5.Element.prototype.hasClass = function(c) {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var div;
+ * let div;
  *
  * function setup() {
  *   div = createDiv('div');
@@ -1507,21 +1507,21 @@ p5.Element.prototype.toggleClass = function(c) {
  * @returns {Node[]} an array of child nodes
  * @example
  * <div class='norender'><code>
- * var div0 = createDiv('this is the parent');
- * var div1 = createDiv('this is the child');
+ * let div0 = createDiv('this is the parent');
+ * let div1 = createDiv('this is the child');
  * div0.child(div1); // use p5.Element
  * </code></div>
  * <div class='norender'><code>
- * var div0 = createDiv('this is the parent');
- * var div1 = createDiv('this is the child');
+ * let div0 = createDiv('this is the parent');
+ * let div1 = createDiv('this is the child');
  * div1.id('apples');
  * div0.child('apples'); // use id
  * </code></div>
  * <div class='norender notest'><code>
  * // this example assumes there is a div already on the page
  * // with id "myChildDiv"
- * var div0 = createDiv('this is the parent');
- * var elt = document.getElementById('myChildDiv');
+ * let div0 = createDiv('this is the parent');
+ * let elt = document.getElementById('myChildDiv');
  * div0.child(elt); // use element from page
  * </code></div>
  */
@@ -1560,7 +1560,7 @@ p5.Element.prototype.child = function(c) {
  * @example
  * <div><code>
  * function setup() {
- *   var div = createDiv('').size(10, 10);
+ *   let div = createDiv('').size(10, 10);
  *   div.style('background-color', 'orange');
  *   div.center();
  * }
@@ -1614,11 +1614,11 @@ p5.Element.prototype.center = function(align) {
  * @returns {String} the inner HTML of the element
  * @example
  * <div class='norender'><code>
- * var div = createDiv('').size(100, 100);
+ * let div = createDiv('').size(100, 100);
  * div.html('hi');
  * </code></div>
  * <div class='norender'><code>
- * var div = createDiv('Hello ').size(100, 100);
+ * let div = createDiv('Hello ').size(100, 100);
  * div.html('World', true);
  * </code></div>
  */
@@ -1652,7 +1652,7 @@ p5.Element.prototype.html = function() {
  * @example
  * <div><code class='norender'>
  * function setup() {
- *   var cnv = createCanvas(100, 100);
+ *   let cnv = createCanvas(100, 100);
  *   // positions canvas 50px to the right and 100px
  *   // below upper left corner of the window
  *   cnv.position(50, 100);
@@ -1746,18 +1746,18 @@ p5.Element.prototype._rotate = function() {
  * @returns {String} value of property
  * @example
  * <div><code class='norender'>
- * var myDiv = createDiv('I like pandas.');
+ * let myDiv = createDiv('I like pandas.');
  * myDiv.style('font-size', '18px');
  * myDiv.style('color', '#ff0000');
  * </code></div>
  * <div><code class='norender'>
- * var col = color(25, 23, 200, 50);
- * var button = createButton('button');
+ * let col = color(25, 23, 200, 50);
+ * let button = createButton('button');
  * button.style('background-color', col);
  * button.position(10, 10);
  * </code></div>
  * <div><code class='norender'>
- * var myDiv;
+ * let myDiv;
  * function setup() {
  *   background(200);
  *   myDiv = createDiv('I like gray.');
@@ -1834,7 +1834,7 @@ p5.Element.prototype.style = function(prop, val) {
  *
  * @example
  * <div class='norender'><code>
- * var myDiv = createDiv('I like pandas.');
+ * let myDiv = createDiv('I like pandas.');
  * myDiv.attribute('align', 'center');
  * </code></div>
  */
@@ -1877,8 +1877,8 @@ p5.Element.prototype.attribute = function(attr, value) {
  *
  * @example
  * <div><code>
- * var button;
- * var checkbox;
+ * let button;
+ * let checkbox;
  *
  * function setup() {
  *   checkbox = createCheckbox('enable', true);
@@ -1921,7 +1921,7 @@ p5.Element.prototype.removeAttribute = function(attr) {
  * @example
  * <div class='norender'><code>
  * // gets the value
- * var inp;
+ * let inp;
  * function setup() {
  *   inp = createInput('');
  * }
@@ -1932,7 +1932,7 @@ p5.Element.prototype.removeAttribute = function(attr) {
  * </code></div>
  * <div class='norender'><code>
  * // sets the value
- * var inp;
+ * let inp;
  * function setup() {
  *   inp = createInput('myValue');
  * }
@@ -1966,7 +1966,7 @@ p5.Element.prototype.value = function() {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var div = createDiv('div');
+ * let div = createDiv('div');
  * div.style('display', 'none');
  * div.show(); // turns display to block
  * </code></div>
@@ -1983,7 +1983,7 @@ p5.Element.prototype.show = function() {
  * @chainable
  * @example
  * <div class='norender'><code>
- * var div = createDiv('this is a div');
+ * let div = createDiv('this is a div');
  * div.hide();
  * </code></div>
  */
@@ -2078,7 +2078,7 @@ p5.Element.prototype.size = function(w, h) {
  * @method remove
  * @example
  * <div class='norender'><code>
- * var myDiv = createDiv('this is some text');
+ * let myDiv = createDiv('this is some text');
  * myDiv.remove();
  * </code></div>
  */
@@ -2113,7 +2113,7 @@ p5.Element.prototype.remove = function() {
  * @example
  * <div><code>
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
  *   text('drop file', width / 2, height / 2);
@@ -2128,10 +2128,10 @@ p5.Element.prototype.remove = function() {
  * </code></div>
  *
  * <div><code>
- * var img;
+ * let img;
  *
  * function setup() {
- *   var c = createCanvas(100, 100);
+ *   let c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
  *   text('drop image', width / 2, height / 2);
@@ -2234,7 +2234,7 @@ p5.MediaElement = function(elt, pInst) {
    * @return {String} src
    * @example
    * <div><code>
-   * var ele;
+   * let ele;
    *
    * function setup() {
    *   background(250);
@@ -2299,7 +2299,7 @@ p5.MediaElement.prototype = Object.create(p5.Element.prototype);
  * @chainable
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  *
  * function setup() {
  *   //p5.MediaElement objects are usually created
@@ -2366,11 +2366,11 @@ p5.MediaElement.prototype.play = function() {
  *
  * //We will store the p5.MediaElement
  * //object in here
- * var ele;
+ * let ele;
  *
  * //while our audio is playing,
  * //this will be set to true
- * var sampleIsPlaying = false;
+ * let sampleIsPlaying = false;
  *
  * function setup() {
  *   //Here we create a p5.MediaElement object
@@ -2430,11 +2430,11 @@ p5.MediaElement.prototype.stop = function() {
  *
  * //We will store the p5.MediaElement
  * //object in here
- * var ele;
+ * let ele;
  *
  * //while our audio is playing,
  * //this will be set to true
- * var sampleIsPlaying = false;
+ * let sampleIsPlaying = false;
  *
  * function setup() {
  *   //Here we create a p5.MediaElement object
@@ -2492,11 +2492,11 @@ p5.MediaElement.prototype.pause = function() {
  *
  * //We will store the p5.MediaElement
  * //object in here
- * var ele;
+ * let ele;
  *
  * //while our audio is playing,
  * //this will be set to true
- * var sampleIsLooping = false;
+ * let sampleIsLooping = false;
  *
  * function setup() {
  *   //Here we create a p5.MediaElement object
@@ -2549,10 +2549,10 @@ p5.MediaElement.prototype.loop = function() {
  *
  * //We will store the p5.MediaElement
  * //object in here
- * var ele;
+ * let ele;
  * //while our audio is playing,
  * //this will be set to true
- * var sampleIsPlaying = false;
+ * let sampleIsPlaying = false;
  *
  * function setup() {
  *   //Here we create a p5.MediaElement object
@@ -2608,7 +2608,7 @@ p5.MediaElement.prototype.autoplay = function(val) {
  *
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  * function setup() {
  *   // p5.MediaElement objects are usually created
  *   // by calling the createAudio(), createVideo(),
@@ -2631,8 +2631,8 @@ p5.MediaElement.prototype.autoplay = function(val) {
  * }
  * </code></div>
  * <div><code>
- * var audio;
- * var counter = 0;
+ * let audio;
+ * let counter = 0;
  *
  * function loaded() {
  *   audio.play();
@@ -2703,8 +2703,8 @@ p5.MediaElement.prototype.volume = function(val) {
  *
  * //We will store the p5.MediaElement
  * //object in here
- * var ele;
- * var button;
+ * let ele;
+ * let button;
  *
  * function setup() {
  *   createCanvas(710, 400);
@@ -2782,8 +2782,8 @@ p5.MediaElement.prototype.speed = function(val) {
  *
  * @example
  * <div><code>
- * var ele;
- * var beginning = true;
+ * let ele;
+ * let beginning = true;
  * function setup() {
  *   //p5.MediaElement objects are usually created
  *   //by calling the createAudio(), createVideo(),
@@ -2840,7 +2840,7 @@ p5.MediaElement.prototype.time = function(val) {
  *
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  * function setup() {
  *   //p5.MediaElement objects are usually created
  *   //by calling the createAudio(), createVideo(),
@@ -2979,7 +2979,7 @@ p5.MediaElement.prototype.setModified = function(value) {
  * @example
  * <div><code>
  * function setup() {
- *   var audioEl = createAudio('assets/beat.mp3');
+ *   let audioEl = createAudio('assets/beat.mp3');
  *   audioEl.showControls();
  *   audioEl.onended(sayDone);
  * }
@@ -3068,7 +3068,7 @@ p5.MediaElement.prototype.disconnect = function() {
  * @method  showControls
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  * function setup() {
  *   //p5.MediaElement objects are usually created
  *   //by calling the createAudio(), createVideo(),
@@ -3098,7 +3098,7 @@ p5.MediaElement.prototype.showControls = function() {
  * @method hideControls
  * @example
  * <div><code>
- * var ele;
+ * let ele;
  * function setup() {
  *   //p5.MediaElement objects are usually created
  *   //by calling the createAudio(), createVideo(),
@@ -3167,7 +3167,7 @@ var Cue = function(callback, time, id, val) {
  * function setup() {
  *   noCanvas();
  *
- *   var audioEl = createAudio('assets/beat.mp3');
+ *   let audioEl = createAudio('assets/beat.mp3');
  *   audioEl.showControls();
  *
  *   // schedule three calls to changeBackground
@@ -3204,7 +3204,7 @@ p5.MediaElement.prototype.addCue = function(time, callback, val) {
  * @param  {Number} id ID of the cue, as returned by addCue
  * @example
  * <div><code>
- * var audioEl, id1, id2;
+ * let audioEl, id1, id2;
  * function setup() {
  *   background(255, 255, 255);
  *   audioEl = createAudio('assets/beat.mp3');
@@ -3246,7 +3246,7 @@ p5.MediaElement.prototype.removeCue = function(id) {
  * @param  {Number} id ID of the cue, as returned by addCue
  * @example
  * <div><code>
- * var audioEl;
+ * let audioEl;
  * function setup() {
  *   background(255, 255, 255);
  *   audioEl = createAudio('assets/beat.mp3');
