@@ -1544,6 +1544,13 @@
         "doc",
         "bug"
       ]
+    },
+    {
+      "login": "LisaMabley",
+      "name": "Lisa Mabley",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6124489?v=4",
+      "profile": "https://www.lisamabley.codes",
+      "contributions": ["doc", "example"]
     }
   ],
   "repoType": "github"
