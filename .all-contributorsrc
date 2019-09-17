@@ -1551,6 +1551,13 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/6124489?v=4",
       "profile": "https://www.lisamabley.codes",
       "contributions": ["doc", "example"]
+    },
+    {
+      "login": "aferriss",
+      "name": "Adam Ferriss",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/3698659?v=4",
+      "profile": "https://www.amf.fyi",
+      "contributions": ["code", "doc", "bug", "example"]
     }
   ],
   "repoType": "github"
