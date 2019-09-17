@@ -136,29 +136,9 @@
  */
 
 /**
- * It Creates a loop that executes a specified statement until the test condition evaluates to false.
- * The condition is evaluated after executing the statement, resulting in the specified statement
- * executing at least once.
- * @property  do..while
- *
- * @example
- * <div>
- * <code>
- * var result = '';
- * var i = 0;
- * do {
- *   i += 1;
- *   result += i + ' ';
- * } while (i > 0 && i < 5);
- * console.log(result); //'1 2 3 4 5 '
- * <code>
- * </div>
- */
-
-/**
  * Iterates over the enumerable properties of an object, in arbitrary order.
  * For each distinct property, statements can be executed.
- * @property for..in
+ * @property for-in
  *
  * @example
  * <div>
@@ -177,7 +157,7 @@
 /**
  * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
  * invoking a custom iteration hook with statements to be executed for the value of each distinct property.
- * @property for..of
+ * @property for-of
  *
  * @example
  * <div>
@@ -210,7 +190,8 @@
 
 /**
  * The JSON.stringify() method converts a JavaScript object or value to a JSON string.
- * @method JSON.stringify
+ * @method stringify
+ * @for JSON
  * @param {Object} object :Javascript object that you would like to convert to JSON
  *
  * @example
