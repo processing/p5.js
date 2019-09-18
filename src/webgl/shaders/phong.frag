@@ -1,4 +1,5 @@
-// include lighting.glgl
+// include lighting.glsl
+precision highp float;
 
 uniform vec4 uMaterialColor;
 uniform sampler2D uSampler;
