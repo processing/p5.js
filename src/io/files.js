@@ -216,8 +216,7 @@ p5.prototype.loadJSON = function(...args) {
 
  * function setup() {
  *   background(200);
- *   let ind = floor(random(result.length));
- *   text(result[ind], 10, 10, 80, 80);
+ *   text(random(result), 10, 10, 80, 80);
  * }
  * </code></div>
  *
@@ -231,8 +230,7 @@ p5.prototype.loadJSON = function(...args) {
  *
  * function pickString(result) {
  *   background(200);
- *   let ind = floor(random(result.length));
- *   text(result[ind], 10, 10, 80, 80);
+ *   text(random(result), 10, 10, 80, 80);
  * }
  * </code></div>
  *
