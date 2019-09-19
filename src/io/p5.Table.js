@@ -65,8 +65,8 @@ p5.Table = function(rows) {
    *
    * function setup() {
    *   //print the column names
-   *   for (var c = 0; c < table.getColumnCount(); c++) {
-   *     print('column '' + c + '' is named '' + table.columns[c]);
+   *   for (let c = 0; c < table.getColumnCount(); c++) {
+   *     print('column ' + c + ' is named ' + table.columns[c]);
    *   }
    * }
    * </code>
