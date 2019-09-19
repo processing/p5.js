@@ -41,12 +41,43 @@ import p5 from '../core/main';
  */
 p5.Table = function(rows) {
   /**
-   *  @property columns {String[]}
+   * An array containing the names of the columns in the table, if the "header" the table is
+   * loaded with the "header" parameter.
+   * @property columns {String[]}
+   * @example
+   * <div class="norender">
+   * <code>
+   * // Given the CSV file "mammals.csv"
+   * // in the project's "assets" folder:
+   * //
+   * // id,species,name
+   * // 0,Capra hircus,Goat
+   * // 1,Panthera pardus,Leopard
+   * // 2,Equus zebra,Zebra
+   *
+   * let table;
+   *
+   * function preload() {
+   *   //my table is comma separated value "csv"
+   *   //and has a header specifying the columns labels
+   *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+   * }
+   *
+   * function setup() {
+   *   //print the column names
+   *   for (var c = 0; c < table.getColumnCount(); c++) {
+   *     print('column '' + c + '' is named '' + table.columns[c]);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   this.columns = [];
 
   /**
-   *  @property rows {p5.TableRow[]}
+   * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
+   * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
+   * @property rows {p5.TableRow[]}
    */
   this.rows = [];
 };
