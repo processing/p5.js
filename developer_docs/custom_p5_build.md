@@ -13,7 +13,7 @@ Currently, the usage is through invoking a Grunt task manually from the command 
 ```sh
 git clone https://github.com/processing/p5.js.git
 cd p5.js
-npm install
+npm ci
 npm run grunt
 npm run grunt combineModules:module_x:module_y
 ```
@@ -27,7 +27,7 @@ The recommended steps to reduce bundle size as much as possible are:
 ```sh
 git clone https://github.com/processing/p5.js.git
 cd p5.js
-npm install
+npm ci
 npm run grunt
 npm run grunt combineModules:min:module_x:module_y uglify
 ```
