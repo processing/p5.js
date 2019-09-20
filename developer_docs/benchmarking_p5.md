@@ -11,7 +11,7 @@ Our benchmarking system consists of 3 main components:
 ## Basic instructions:
 ### Install the new dependancies
 
-    npm install
+    npm ci
 
 ### Do a build, the benchmarks expect a local build of p5.js and p5.min.js
 

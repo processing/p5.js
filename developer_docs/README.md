@@ -68,7 +68,7 @@ Unit tests are small pieces of code which are created as complements to the prim
 In order to run unit tests, you'll need to have previously installed the project's dependencies.
 
 ```
-$ npm install
+$ npm ci
 ```
 
 This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
@@ -106,7 +106,7 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
    ```
    $ cd p5.js
-   $ npm install
+   $ npm ci
    ```
 
 5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
