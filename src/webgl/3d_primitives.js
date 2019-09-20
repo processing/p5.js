@@ -1706,6 +1706,10 @@ p5.RendererGL.prototype.image = function(
   dWidth,
   dHeight
 ) {
+  if (this._isErasing) {
+    this.blendMode(this._cachedBlendMode);
+  }
+
   this._pInst.push();
 
   this._pInst.texture(img);
@@ -1739,6 +1743,10 @@ p5.RendererGL.prototype.image = function(
   this.endShape(constants.CLOSE);
 
   this._pInst.pop();
+
+  if (this._isErasing) {
+    this.blendMode(constants.REMOVE);
+  }
 };
 
 export default p5;

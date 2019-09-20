@@ -437,6 +437,12 @@ export const UP_ARROW = 38;
  */
 export const BLEND = 'source-over';
 /**
+ * @property {String} REMOVE
+ * @final
+ * @default destination-out
+ */
+export const REMOVE = 'destination-out';
+/**
  * @property {String} ADD
  * @final
  * @default lighter

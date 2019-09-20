@@ -23,6 +23,7 @@ p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
   this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+  this._cachedBlendMode = constants.BLEND;
   this._setFill(constants._DEFAULT_FILL);
   this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
@@ -53,9 +54,18 @@ p5.Renderer2D.prototype.background = function(...args) {
     const color = this._pInst.color(...args);
     const newFill = color.toString();
     this._setFill(newFill);
+
+    if (this._isErasing) {
+      this.blendMode(this._cachedBlendMode);
+    }
+
     this.drawingContext.fillRect(0, 0, this.width, this.height);
     // reset fill
     this._setFill(curFill);
+
+    if (this._isErasing) {
+      this._pInst.erase();
+    }
   }
   this.drawingContext.restore();
 
@@ -79,6 +89,37 @@ p5.Renderer2D.prototype.fill = function(...args) {
 p5.Renderer2D.prototype.stroke = function(...args) {
   const color = this._pInst.color(...args);
   this._setStroke(color.toString());
+};
+
+p5.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {
+  if (!this._isErasing) {
+    // cache the fill style
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+    const newFill = this._pInst.color(255, opacityFill).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    //cache the stroke style
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    const newStroke = this._pInst.color(255, opacityStroke).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
+    //cache blendMode
+    const tempBlendMode = this._cachedBlendMode;
+    this.blendMode(constants.REMOVE);
+    this._cachedBlendMode = tempBlendMode;
+
+    this._isErasing = true;
+  }
+};
+
+p5.Renderer2D.prototype.noErase = function() {
+  if (this._isErasing) {
+    this.drawingContext.fillStyle = this._cachedFillStyle;
+    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+
+    this.blendMode(this._cachedBlendMode);
+    this._isErasing = false;
+  }
 };
 
 //////////////////////////////////////////////
@@ -117,6 +158,9 @@ p5.Renderer2D.prototype.image = function(
     if (img.width && img.width > 0) {
       s = cnv.width / img.width;
     }
+    if (this._isErasing) {
+      this.blendMode(this._cachedBlendMode);
+    }
     this.drawingContext.drawImage(
       cnv,
       s * sx,
@@ -128,6 +172,9 @@ p5.Renderer2D.prototype.image = function(
       dWidth,
       dHeight
     );
+    if (this._isErasing) {
+      this._pInst.erase();
+    }
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
       throw e;
@@ -171,6 +218,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
     console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
   } else if (
     mode === constants.BLEND ||
+    mode === constants.REMOVE ||
     mode === constants.DARKEST ||
     mode === constants.LIGHTEST ||
     mode === constants.DIFFERENCE ||
@@ -185,6 +233,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
     mode === constants.BURN ||
     mode === constants.ADD
   ) {
+    this._cachedBlendMode = mode;
     this.drawingContext.globalCompositeOperation = mode;
   } else {
     throw new Error(`Mode ${mode} not recognized.`);

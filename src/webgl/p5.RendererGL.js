@@ -65,6 +65,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
 
+  // erasing
+  this._isErasing = false;
+
   // lights
   this._enableLighting = false;
 
@@ -87,9 +90,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.spotLightConc = [];
 
   this.drawMode = constants.FILL;
-  this.curFillColor = [1, 1, 1, 1];
-  this.curStrokeColor = [0, 0, 0, 1];
-  this.curBlendMode = constants.BLEND;
+
+  this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
+
+  this.curBlendMode = this._cachedBlendMode = constants.BLEND;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
 
   this._useSpecularMaterial = false;
@@ -637,7 +642,8 @@ p5.RendererGL.prototype.blendMode = function(mode) {
     mode === constants.SCREEN ||
     mode === constants.EXCLUSION ||
     mode === constants.REPLACE ||
-    mode === constants.MULTIPLY
+    mode === constants.MULTIPLY ||
+    mode === constants.REMOVE
   )
     this.curBlendMode = mode;
   else if (
@@ -650,6 +656,31 @@ p5.RendererGL.prototype.blendMode = function(mode) {
     console.warn(
       'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
     );
+  }
+};
+
+p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
+  if (!this._isErasing) {
+    this._cachedBlendMode = this.curBlendMode;
+    this.blendMode(constants.REMOVE);
+
+    this._cachedFillStyle = this.curFillColor.slice();
+    this.curFillColor = [1, 1, 1, opacityFill / 255];
+
+    this._cachedStrokeStyle = this.curStrokeColor.slice();
+    this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+
+    this._isErasing = true;
+  }
+};
+
+p5.RendererGL.prototype.noErase = function() {
+  if (this._isErasing) {
+    this.curFillColor = this._cachedFillStyle.slice();
+    this.curStrokeColor = this._cachedStrokeStyle.slice();
+
+    this.blendMode(this._cachedBlendMode);
+    this._isErasing = false;
   }
 };
 

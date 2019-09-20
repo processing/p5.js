@@ -746,4 +746,115 @@ p5.prototype.stroke = function(...args) {
   return this;
 };
 
+/**
+ * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from the canvas.
+ * Erased areas will reveal the web page underneath the canvas.
+ * Erasing can be canceled with <a href="#/p5/noErase">noErase()</a>.
+ * <br><br>
+ * Drawing done with <a href="#/p5/image">image()</a>
+ * and <a href="#/p5/background">background()</a> will not be affected by <a href="#/p5/erase">erase()</a>
+ * <br><br>
+ *
+ * @method erase
+ * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ * @param  {Number}   [strengthStroke]    A number (0-255) for the strength of erasing for a shape's stroke.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ *
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(100, 100, 250);
+ * fill(250, 100, 100);
+ * rect(20, 20, 60, 60);
+ * erase();
+ * ellipse(25, 30, 30);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * background(150, 250, 150);
+ * fill(100, 100, 250);
+ * rect(20, 20, 60, 60);
+ * strokeWeight(5);
+ * erase(150, 255);
+ * triangle(50, 10, 70, 50, 90, 10);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   smooth();
+ *   createCanvas(100, 100, WEBGL);
+ *   // Make a &lt;p&gt; element and put it behind the canvas
+ *   let p = createP('I am a dom element');
+ *   p.center();
+ *   p.style('font-size', '20px');
+ *   p.style('text-align', 'center');
+ *   p.style('z-index', '-9999');
+ * }
+ *
+ * function draw() {
+ *   background(250, 250, 150);
+ *   fill(15, 195, 185);
+ *   noStroke();
+ *   sphere(30);
+ *   erase();
+ *   rotateY(frameCount * 0.02);
+ *   translate(0, 0, 40);
+ *   torus(15, 5);
+ *   noErase();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
+ * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
+ * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
+ */
+p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
+  this._renderer.erase(opacityFill, opacityStroke);
+
+  return this;
+};
+
+/**
+ * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
+ * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+ * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they were
+ * prior to calling <a href="#/p5/erase">erase()</a>.
+ *
+ * @method noErase
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(235, 145, 15);
+ * noStroke();
+ * fill(30, 45, 220);
+ * rect(30, 10, 10, 80);
+ * erase();
+ * ellipse(50, 50, 60);
+ * noErase();
+ * rect(70, 10, 10, 80);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
+ */
+
+p5.prototype.noErase = function() {
+  this._renderer.noErase();
+  return this;
+};
+
 export default p5;
