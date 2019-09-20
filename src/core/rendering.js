@@ -250,6 +250,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * colors.</li>
  * <li><code>REPLACE</code> - the pixels entirely replace the others and
  * don't utilize alpha (transparency) values.</li>
+ * <li><code>REMOVE</code> - removes pixels from B with the alpha strength of A.</li>
  * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
  * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
  * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
@@ -272,7 +273,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * @param  {Constant} mode blend mode to set for canvas.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
- *                SOFT_LIGHT, DODGE, BURN, ADD, or SUBTRACT
+ *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
  * @example
  * <div>
  * <code>
