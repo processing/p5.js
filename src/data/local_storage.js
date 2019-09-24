@@ -72,7 +72,7 @@ p5.prototype.storeItem = (key, value) => {
       if (value instanceof p5.Color) {
         type = 'p5.Color';
       } else if (value instanceof p5.Vector) {
-        type = 'p5.Color';
+        type = 'p5.Vector';
       }
       value = JSON.stringify(value);
       break;
