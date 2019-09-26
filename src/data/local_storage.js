@@ -73,6 +73,8 @@ p5.prototype.storeItem = (key, value) => {
         type = 'p5.Color';
       } else if (value instanceof p5.Vector) {
         type = 'p5.Vector';
+        let coord = [value.x, value.y, value.z];
+        value = coord;
       }
       value = JSON.stringify(value);
       break;
@@ -153,7 +155,7 @@ p5.prototype.getItem = function(key) {
         break;
       case 'p5.Vector':
         value = JSON.parse(value);
-        value = this.createVector(value.x, value.y, value.z);
+        value = this.createVector(...value);
         break;
       case 'string':
       default:
