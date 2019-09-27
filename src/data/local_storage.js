@@ -73,7 +73,7 @@ p5.prototype.storeItem = (key, value) => {
         type = 'p5.Color';
       } else if (value instanceof p5.Vector) {
         type = 'p5.Vector';
-        let coord = [value.x, value.y, value.z];
+        const coord = [value.x, value.y, value.z];
         value = coord;
       }
       value = JSON.stringify(value);
