@@ -1124,6 +1124,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * Calculates and returns the angle (in radians) between two vectors.
  * @method angleBetween
  * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {boolean}      boolean value if we want the absolute angle between the vectors or not
  * @return {Number}       the angle between (in radians)
  * @example
  * <div class="norender">
@@ -1181,18 +1182,28 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * </code>
  * </div>
  */
-p5.Vector.prototype.angleBetween = function angleBetween(v) {
+
+p5.Vector.prototype.angleBetween = function angleBetween(v, a = true) {
   const dotmagmag = this.dot(v) / (this.mag() * v.mag());
   // Mathematically speaking: the dotmagmag variable will be between -1 and 1
   // inclusive. Practically though it could be slightly outside this range due
   // to floating-point rounding issues. This can make Math.acos return NaN.
   //
   // Solution: we'll clamp the value to the -1,1 range
-  const angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-  if (this.p5) return this.p5._fromRadians(angle);
+  let angle;
+  // a is a boolean which indicates if we want the absolute angle or not
+  angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+  if (a === false) {
+    // Works properly for 2D vectors
+    // For 3D vectors there is no sense of direction as such
+    angle = angle * Math.sign(this.cross(v).z || 1);
+    // let fullAngle = v1.angleBetween(v2) * Math.sign(v1.cross(v2).z || 1);
+  }
+  if (this.p5) {
+    angle = this.p5._fromRadians(angle);
+  }
   return angle;
 };
-
 /**
  * Linear interpolate the vector to another vector
  *
