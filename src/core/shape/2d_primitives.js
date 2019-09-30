@@ -358,7 +358,8 @@ p5.prototype.line = function(...args) {
  * Draws a point, a coordinate in space at the dimension of one pixel.
  * The first parameter is the horizontal value for the point, the second
  * value is the vertical value for the point. The color of the point is
- * determined by the current stroke.
+ * changed with the <a href="#/p5/stroke">stroke()</a> function. The size of the point
+ * is changed with the <a href="#/p5/strokeWeight">strokeWeight()</a> function.
  *
  * @method point
  * @param  {Number} x the x-coordinate
@@ -375,8 +376,20 @@ p5.prototype.line = function(...args) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * stroke('purple'); // Change the color
+ * strokeWeight(10); // Make the points 10 pixels in size
+ * point(30, 20);
+ * point(85, 20);
+ * point(85, 75);
+ * point(30, 75);
+ * </code>
+ * </div>
+ *
  * @alt
- *4 points centered in the middle-right of the canvas.
+ * 4 points centered in the middle-right of the canvas.
+ * 4 large purple points centered in the middle-right of the canvas.
  *
  */
 p5.prototype.point = function(...args) {
