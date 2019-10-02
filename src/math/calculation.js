@@ -182,6 +182,96 @@ p5.prototype.dist = (...args) => {
 };
 
 /**
+ * Calculates the square of the distance between two points, in either two or three dimensions. Faster if the real distance is not required in the case of comparing distances, etc.
+ *
+ * @method distSq
+ * @param  {Number} x1 x-coordinate of the first point
+ * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} x2 x-coordinate of the second point
+ * @param  {Number} y2 y-coordinate of the second point
+ * @return {Number}    distance between the two points
+ *
+ * @example
+ * <div><code>
+ * // Move your mouse inside the canvas to see the
+ * // distance to the nearest point!
+ * function draw() {
+ *   background(200);
+ *   fill(0);
+ *
+ *   let x0 = mouseX;
+ *   let y0 = mouseY;
+ *   let x1 = 10;
+ *   let y1 = 90;
+ *   let x2 = 10;
+ *   let y2 = 10;
+ *
+ *   // d1 is the square of the length of the line
+ *   // the distance from point 1 to point 0.
+ *   let d1 = int(dist(x1, y1, x0, y0));
+ *
+ *   // d2 is the square of the length of the line
+ *   // the distance from point 1 to point 0.
+ *   let d2 = int(dist(x2, y2, x0, y0));
+ *
+ *   // calculate the values of the closest point
+ *   let dMin, xMin, yMin;
+ *   if (d1 <= d2) {
+ *     dMin = d1;
+ *     xMin = x1;
+ *     yMin = y1;
+ *   } else {
+ *     dMin = d2;
+ *     xMin = x2;
+ *     yMin = y2;
+ *   }
+ *
+ *   // draw the dots and shortest line
+ *   line(xMin, yMin, x0, y0);
+ *   ellipse(x1, y1, 7, 7);
+ *   ellipse(x2, y2, 7, 7);
+ *   ellipse(x0, y0, 7, 7);
+ *
+ *   // Let's write dMin along the line we are drawing!
+ *   push();
+ *   translate((xMin + x0) / 2, (yMin + y0) / 2);
+ *   rotate(atan2(y0 - yMin, x0 - xMin));
+ *   text(nfc(dMin, 1), 0, -5);
+ *   pop();
+ *   // Fancy!
+ * }
+ * </code></div>
+ *
+ * @alt
+ * 3 ellipses. 1 ellipse moves with mouse X&Y and a line joins it withe closest ellipse. Square of the distance to the closest ellipse displayed.
+ */
+/**
+ * @method distSq
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate of the second point
+ * @return {Number}    square of the distance between the two points
+ */
+p5.prototype.distSq = (...args) => {
+  p5._validateParameters('distSq', args);
+  if (args.length === 4) {
+    //2D
+    let dx = args[2] - args[0];
+    let dy = args[3] - args[1];
+    return dx * dx + dy * dy;
+  } else if (args.length === 6) {
+    //3D
+    let dx = args[3] - args[0];
+    let dy = args[4] - args[1];
+    let dz = args[5] - args[2];
+    return dx * dx + dy * dy + dz * dz;
+  }
+};
+
+/**
  * Returns Euler's number e (2.71828...) raised to the power of the n
  * parameter. Maps to Math.exp().
  *
