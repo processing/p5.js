@@ -56,6 +56,14 @@
  */
 
 /**
+ * The if-else statement helps control the flow of your code.
+ * A condition is placed between the parenthesis following 'if'.
+ * When that condition evalues to < href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
+ * the code between the preceding curly braces is run.
+ * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
+ * the code between the curly braces that precedes 'else' is run instead.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else">the MDN entry</a>:
  * The 'if' statement executes a statement if a specified condition is truthy.
  * If the condition is falsy, another statement can be executed
  * @property if-else
