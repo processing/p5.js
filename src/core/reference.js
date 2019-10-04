@@ -235,6 +235,19 @@
  */
 
 /**
+ * <a href="#/p5/for">for</a> creates a loop that is useful for executing the code multiple times.
+ *
+ * A 'for loop' consists of three different expressions inside of a parenthesis, all of which are optional.
+ * These expressions are used to control the number of times the loop is run.
+ * The first expression is a statement that is used to set the initial state for the loop.
+ * The second expression is a condition that you would like to check before each loop. If this expression returns
+ * false then the loop will exit.
+ * The third expression is executed at the end of each loop.
+ *
+ * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
+ * and third expression.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for">the MDN entry</a>:
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
  * @property for
@@ -244,7 +257,6 @@
  * <code>
  * for (let i = 0; i < 9; i++) {
  *   console.log(i);
- *   // more statements
  * }
  * </code>
  * </div>
