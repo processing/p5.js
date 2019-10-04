@@ -1558,7 +1558,14 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/3698659?v=4",
       "profile": "https://www.amf.fyi",
       "contributions": ["code", "doc", "bug", "example"]
-    }
+    },
+    {
+      "login": "joshuaalm",
+      "name": "Joshua Marris",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6978629?s=460&v=4",
+      "profile": "https://joshuaalm.github.io",
+      "contributions": ["doc","code","talk","tutorial"]
+    },
   ],
   "repoType": "github"
 }
