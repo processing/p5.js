@@ -263,6 +263,7 @@
  */
 
 /**
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in">the MDN entry</a>:
  * Iterates over the enumerable properties of an object, in arbitrary order.
  * For each distinct property, statements can be executed.
  * @property for-in
