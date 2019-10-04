@@ -5,7 +5,15 @@
  */
 
 /**
+ * Creates and names a new variable. A variable is a container for a value.
+ * Variables that are declared with <a href="#/p5/let">"let`</a> will have block-scope.
+ * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block"
+ * block</a> that it is created within.
+ *
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let">the MDN entry</a>:
  * Declares a block scope local variable, optionally initializing it to a value.
+ *
  * @property let
  *
  * @example
