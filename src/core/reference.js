@@ -9,7 +9,7 @@
  * @property let
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * let x = 2;
  * console.log(x); // prints 2 to the console
@@ -26,7 +26,7 @@
  * @property const
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * //define MY_FAV as a constant and give it the value 7
  * const MY_FAV = 7;
@@ -45,7 +45,7 @@
  * @property if-else
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * let a = 4;
  * if (a > 0) {
@@ -66,7 +66,7 @@
  * @property function
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * function calRectArea(width, height) {
  *   return width * height;
@@ -81,7 +81,7 @@
  * @property return
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * function calSquare(x) {
  *   return x * x;
@@ -100,7 +100,7 @@
  * @property class
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * class S1 {
  *   constructor(height, width) {
@@ -125,7 +125,7 @@
  * @property for
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * for (let i = 0; i < 9; i++) {
  *   console.log(i);
@@ -141,7 +141,7 @@
  * @property for-in
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * const person = { fname: 'John', lname: 'Doe', age: 25 };
  * let text = '';
@@ -160,7 +160,7 @@
  * @property for-of
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * const word = 'boo';
  * for (let value of word) {
@@ -180,7 +180,7 @@
  * @method parseInt
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * parseInt('F', 16);
  * parseInt(21, 8);
@@ -195,7 +195,7 @@
  * @param {Object} object :Javascript object that you would like to convert to JSON
  *
  * @example
- * <div>
+ * <div class='norender'>
  * <code>
  * JSON.stringify('foo'); // '"foo"'
  * JSON.stringify([1, 'false', false]); //'[1,"false",false]'
