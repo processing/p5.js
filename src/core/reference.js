@@ -109,7 +109,7 @@
  *     this.width = width;
  *   }
  * }
- * var poly = new S1(4, 5); //creating new instance of Polygon Class.
+ * const poly = new S1(4, 5); //creating new instance of Polygon Class.
  * console.log(poly.name);
  * </code>
  * </div>
@@ -127,7 +127,7 @@
  * @example
  * <div>
  * <code>
- * for (var i = 0; i < 9; i++) {
+ * for (let i = 0; i < 9; i++) {
  *   console.log(i);
  *   // more statements
  * }
@@ -143,9 +143,9 @@
  * @example
  * <div>
  * <code>
- * var person = { fname: 'John', lname: 'Doe', age: 25 };
- * var text = '';
- * var x;
+ * const person = { fname: 'John', lname: 'Doe', age: 25 };
+ * let text = '';
+ * let x;
  * for (x in person) {
  *   text += person[x] + '';
  * }
@@ -162,7 +162,7 @@
  * @example
  * <div>
  * <code>
- * let word = 'boo';
+ * const word = 'boo';
  * for (let value of word) {
  *   console.log(value);
  * }
