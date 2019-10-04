@@ -7,7 +7,7 @@
 /**
  * Creates and names a new variable. A variable is a container for a value.
  * Variables that are declared with <a href="#/p5/let">let</a> will have block-scope.
- * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block"
+ * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within.
  *
  *
@@ -30,7 +30,7 @@
 /**
  * Creates and names a new constant variable. A variable is a container for a value.
  * Variables that are declared with <a href="#/p5/const">const</a> will have block-scope.
- * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block"
+ * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within.
  * <a href="#/p5/let">const</a> is different from <a href="#/p5/let">let</a> in that
  * variables declared with <a href="#/p5/let">const</a> cannot be reassigned or redeclared.
@@ -58,7 +58,7 @@
 /**
  * The if-else statement helps control the flow of your code.
  * A condition is placed between the parenthesis following 'if'.
- * When that condition evalues to < href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
+ * When that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
  * the code between the preceding curly braces is run.
  * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
  * the code between the curly braces that precedes 'else' is run instead.
@@ -71,7 +71,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * let a = 4;
+ * const a = 4;
  * if (a > 0) {
  *   console.log('positive');
  * } else {
@@ -87,8 +87,8 @@
 
 /**
  * Creates and names a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions">function</a>.
- * A function is a set of statements that perform a task.
- * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters
+ * A <a href="#/p5/function">function</a> is a set of statements that perform a task.
+ * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters</a>
  * are variables that are scoped to the function, that can be assigned a value when calling the function.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function">the MDN entry</a>:
@@ -128,7 +128,7 @@
  */
 
 /**
- * <a href="#/p5/boolean">boolean</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A <a href="#/p5/boolean">boolean</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
  * A boolean can only be `true` or `false`.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type">the MDN entry</a>:
@@ -146,7 +146,7 @@
  */
 
 /**
- * <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
  * A string is a series of text characters. In Javascript, a string value must be surrounded by either single-quotation marks(') or double-quotation marks(").
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Glossary/string">the MDN entry</a>:
@@ -164,7 +164,7 @@
  */
 
 /**
- * <a href="#/p5/number">number</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A <a href="#/p5/number">number</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
  * A number can be a whole number or a decimal number.
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">The MDN entry for number</a>
@@ -183,7 +183,7 @@
 /**
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Basics">MDN's object basics</a>:
- * An object is a collection of related data and/or functionality (which usually consists of several variables and functions —
+ * An <a href="#/p5/object">object</a> is a collection of related data and/or functionality (which usually consists of several variables and functions —
  * which are called properties and methods when they are inside objects.)
  * @property object
  *
@@ -208,7 +208,7 @@
  */
 
 /**
- * A <a href="#/p5/class">class</a> is template for the creation of <a href="#/p5/objects">objects</a>.
+ * Creates and names a <a href="#/p5/class">class</a> which is a template for the creation of <a href="#/p5/objects">objects</a>.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
  * The class declaration creates a new Class with a given name using prototype-based inheritance.
@@ -264,7 +264,7 @@
 
 /**
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in">the MDN entry</a>:
- * Iterates over the enumerable properties of an object, in arbitrary order.
+ * Iterates over the enumerable properties of an <a href="#/p5/object">object</a>, in arbitrary order.
  * For each distinct property, statements can be executed.
  * @property for-in
  *
@@ -305,7 +305,7 @@
 
 /**
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt">the MDN entry</a>:
- * The parseInt() function parses a string argument and
+ * The <a href="#/p5/parseInt">parseInt()</a> function parses a string argument and
  * returns an integer of the specified radix (the base in mathematical numeral systems).
  * @method parseInt
  *
@@ -320,7 +320,7 @@
 
 /**
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
- * The JSON.stringify() method converts a JavaScript object or value to a JSON string.
+ * The JSON.stringify() method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
  * @method stringify
  * @for JSON
  * @param {Object} object :Javascript object that you would like to convert to JSON
