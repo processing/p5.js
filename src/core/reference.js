@@ -319,6 +319,7 @@
  */
 
 /**
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
  * The JSON.stringify() method converts a JavaScript object or value to a JSON string.
  * @method stringify
  * @for JSON
@@ -327,9 +328,10 @@
  * @example
  * <div class='norender'>
  * <code>
- * JSON.stringify('foo'); // '"foo"'
- * JSON.stringify([1, 'false', false]); //'[1,"false",false]'
- * JSON.stringify([NaN, null, Infinity]); //'[null,null,null]'
+ * const myObject = { x: 5, y: 6 };
+ * const myObjectAsString = JSON.stringify(myObject);
+ * console.log(myObjectAsString); // prints "{"x":5,"y":6}" to the console
+ * console.log(typeof myObjectAsString); // prints 'string' to the console
  * </code>
  * </div>
  */
