@@ -86,16 +86,22 @@
  */
 
 /**
+ * Creates and names a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions">function</a>.
+ * A function is a set of statements that perform a task.
+ * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters
+ * are variables that are scoped to the function, that can be assigned a value when calling the function.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function">the MDN entry</a>:
  * Declares a function with the specified parameters.
  * @property function
  *
  * @example
  * <div class='norender'>
  * <code>
- * function calRectArea(width, height) {
+ * function calculateRectArea(width, height) {
  *   return width * height;
  * }
- * calRectArea(4, 5); //calling the function
+ * calculateRectArea(4, 5); // calling the function
  * </code>
  * </div>
  */
@@ -107,10 +113,10 @@
  * @example
  * <div class='norender'>
  * <code>
- * function calSquare(x) {
+ * function calculateSquare(x) {
  *   return x * x;
  * }
- * calSquare(4); //return 16
+ * calculateSquare(4); //return 16
  * </code>
  * </div>
  */
