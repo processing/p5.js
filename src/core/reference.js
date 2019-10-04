@@ -108,6 +108,8 @@
 
 /**
  * Specifies the value to be returned by a function.
+ * For more info checkout <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return">
+ * the MDN entry for return</a>.
  * @property return
  *
  * @example
@@ -116,7 +118,7 @@
  * function calculateSquare(x) {
  *   return x * x;
  * }
- * calculateSquare(4); //return 16
+ * calculateSquare(4); // returns 16
  * </code>
  * </div>
  */
