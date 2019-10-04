@@ -124,25 +124,108 @@
  */
 
 /**
- * @submodule Class
+ * @submodule Types
  */
 
 /**
- * The class declaration creates a new class with a given name using prototype-based inheritance.
+ * <a href="#/p5/boolean">boolean</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A boolean can only be `true` or `false`.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type">the MDN entry</a>:
+ * Boolean represents a logical entity and can have two values: true, and false.
+ *
+ * @property boolean
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * const myBoolean = false;
+ * console.log(typeof myBoolean); // prints 'boolean' to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A string is a series of text characters. In Javascript, a string value must be surrounded by either single-quotation marks(') or double-quotation marks(").
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Glossary/string">the MDN entry</a>:
+ * A string is a sequence of characters used to represent text.
+ *
+ * @property string
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * const mood = 'chill';
+ * console.log(typeof mood); // prints 'string' to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * <a href="#/p5/number">number</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
+ * A number can be a whole number or a decimal number.
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Glossary/number">The MDN entry for number</a>
+ *
+ * @property number
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * const num = 46.5;
+ * console.log(typeof num); // prints 'number' to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Basics">MDN's object basics</a>:
+ * An object is a collection of related data and/or functionality (which usually consists of several variables and functions —
+ * which are called properties and methods when they are inside objects.)
+ * @property object
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * const author = {
+ *   name: 'Ursula K Le Guin',
+ *   books: [
+ *     'The Left Hand of Darkness',
+ *     'The Dispossessed',
+ *     'A Wizard of Earthsea'
+ *   ]
+ * };
+ * console.log(author.name); // prints 'Ursula K Le Guin' to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * @submodule Classes
+ */
+
+/**
+ * A <a href="#/p5/class">class</a> is template for the creation of <a href="#/p5/objects">objects</a>.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
+ * The class declaration creates a new Class with a given name using prototype-based inheritance.
  * @property class
  *
  * @example
  * <div class='norender'>
  * <code>
- * class S1 {
- *   constructor(height, width) {
- *     this.name = 'Polygon';
+ * class Polygon {
+ *   constructor(name, height, width) {
+ *     this.name = name;
  *     this.height = height;
  *     this.width = width;
  *   }
  * }
- * const poly = new S1(4, 5); //creating new instance of Polygon Class.
- * console.log(poly.name);
+ * const square = new Polygon('square', 1, 1); // creating new instance of Polygon Class.
+ * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
  */
