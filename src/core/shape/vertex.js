@@ -6,18 +6,16 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../main');
-var constants = require('../constants');
-var shapeKind = null;
-var vertices = [];
-var contourVertices = [];
-var isBezier = false;
-var isCurve = false;
-var isQuadratic = false;
-var isContour = false;
-var isFirstContour = true;
+import p5 from '../main';
+import * as constants from '../constants';
+let shapeKind = null;
+let vertices = [];
+let contourVertices = [];
+let isBezier = false;
+let isCurve = false;
+let isQuadratic = false;
+let isContour = false;
+let isFirstContour = true;
 
 /**
  * Use the <a href="#/p5/beginContour">beginContour()</a> and <a href="#/p5/endContour">endContour()</a> functions to create negative
@@ -245,7 +243,7 @@ p5.prototype.beginContour = function() {
 p5.prototype.beginShape = function(kind) {
   p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.beginShape.apply(this._renderer, arguments);
+    this._renderer.beginShape(...arguments);
   } else {
     if (
       kind === constants.POINTS ||
@@ -368,10 +366,10 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
  */
-p5.prototype.bezierVertex = function() {
-  p5._validateParameters('bezierVertex', arguments);
+p5.prototype.bezierVertex = function(...args) {
+  p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.bezierVertex.apply(this._renderer, arguments);
+    this._renderer.bezierVertex(...args);
   } else {
     if (vertices.length === 0) {
       p5._friendlyError(
@@ -380,9 +378,9 @@ p5.prototype.bezierVertex = function() {
       );
     } else {
       isBezier = true;
-      var vert = [];
-      for (var i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      const vert = [];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {
@@ -494,13 +492,13 @@ p5.prototype.bezierVertex = function() {
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
  *
  */
-p5.prototype.curveVertex = function() {
-  p5._validateParameters('curveVertex', arguments);
+p5.prototype.curveVertex = function(...args) {
+  p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.curveVertex.apply(this._renderer, arguments);
+    this._renderer.curveVertex(...args);
   } else {
     isCurve = true;
-    this.vertex(arguments[0], arguments[1]);
+    this.vertex(args[0], args[1]);
   }
   return this;
 };
@@ -548,7 +546,7 @@ p5.prototype.curveVertex = function() {
  *
  */
 p5.prototype.endContour = function() {
-  var vert = contourVertices[0].slice(); // copy all data
+  const vert = contourVertices[0].slice(); // copy all data
   vert.isVert = contourVertices[0].isVert;
   vert.moveTo = false;
   contourVertices.push(vert);
@@ -559,7 +557,7 @@ p5.prototype.endContour = function() {
     isFirstContour = false;
   }
 
-  for (var i = 0; i < contourVertices.length; i++) {
+  for (let i = 0; i < contourVertices.length; i++) {
     vertices.push(contourVertices[i]);
   }
   return this;
@@ -567,7 +565,7 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endshape()</a> is called, all of image data
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
  * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
  * buffer. The constant CLOSE as the value for the MODE parameter to close
  * the shape (to connect the beginning and the end).
@@ -617,7 +615,7 @@ p5.prototype.endShape = function(mode) {
       return this;
     }
 
-    var closeShape = mode === constants.CLOSE;
+    const closeShape = mode === constants.CLOSE;
 
     // if the shape is closed, the first element is also the last element
     if (closeShape && !isContour) {
@@ -770,19 +768,19 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * backwards s-shaped black line with the same s-shaped line in postive z-axis.
  */
-p5.prototype.quadraticVertex = function() {
-  p5._validateParameters('quadraticVertex', arguments);
+p5.prototype.quadraticVertex = function(...args) {
+  p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.quadraticVertex.apply(this._renderer, arguments);
+    this._renderer.quadraticVertex(...args);
   } else {
     //if we're drawing a contour, put the points into an
     // array for inside drawing
     if (this._contourInited) {
-      var pt = {};
-      pt.x = arguments[0];
-      pt.y = arguments[1];
-      pt.x3 = arguments[2];
-      pt.y3 = arguments[3];
+      const pt = {};
+      pt.x = args[0];
+      pt.y = args[1];
+      pt.x3 = args[2];
+      pt.y3 = args[3];
       pt.type = constants.QUADRATIC;
       this._contourVertices.push(pt);
 
@@ -790,9 +788,9 @@ p5.prototype.quadraticVertex = function() {
     }
     if (vertices.length > 0) {
       isQuadratic = true;
-      var vert = [];
-      for (var i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      const vert = [];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {
@@ -833,9 +831,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 4 black points in a square shape in middle-right of canvas.
- *
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -850,9 +845,6 @@ p5.prototype.quadraticVertex = function() {
  * endShape();
  * </code>
  * </div>
- *
- * @alt
- * 4 points making a diamond shape
  *
  * <div>
  * <code>
@@ -873,9 +865,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making a star
- *
  * <div>
  * <code>
  * strokeWeight(3);
@@ -893,8 +882,62 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * // Click to change the number of sides.
+ * // In WebGL mode, custom shapes will only
+ * // display hollow fill sections when
+ * // all calls to vertex() use the same z-value.
+ *
+ * let sides = 3;
+ * let angle, px, py;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   fill(237, 34, 93);
+ *   strokeWeight(3);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   ngon(sides, 0, 0, 80);
+ * }
+ *
+ * function mouseClicked() {
+ *   if (sides > 6) {
+ *     sides = 3;
+ *   } else {
+ *     sides++;
+ *   }
+ * }
+ *
+ * function ngon(n, x, y, d) {
+ *   beginShape();
+ *   for (let i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 2;
+ *     py = y - cos(angle) * d / 2;
+ *     vertex(px, py, 0);
+ *   }
+ *   for (let i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 4;
+ *     py = y - cos(angle) * d / 4;
+ *     vertex(px, py, 0);
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
  * @alt
- * 8 points making 4 lines
+ * 4 black points in a square shape in middle-right of canvas.
+ * 4 points making a diamond shape.
+ * 8 points making a star.
+ * 8 points making 4 lines.
+ * A rotating 3D shape with a hollow section in the middle.
  *
  */
 /**
@@ -908,9 +951,9 @@ p5.prototype.quadraticVertex = function() {
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
-    this._renderer.vertex.apply(this._renderer, arguments);
+    this._renderer.vertex(...arguments);
   } else {
-    var vert = [];
+    const vert = [];
     vert.isVert = true;
     vert[0] = x;
     vert[1] = y;
@@ -935,4 +978,4 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

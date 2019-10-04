@@ -1,13 +1,11 @@
 /**
  * @module Math
- * @submodule Math
+ * @submodule Vector
  * @for p5
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> (the datatype for storing vectors). This provides a
@@ -47,4 +45,4 @@ p5.prototype.createVector = function(x, y, z) {
   }
 };
 
-module.exports = p5;
+export default p5;

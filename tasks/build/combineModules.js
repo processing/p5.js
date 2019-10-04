@@ -1,9 +1,10 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var browserify = require('browserify');
-var derequire = require('derequire');
+const fs = require('fs');
+const path = require('path');
+const browserify = require('browserify');
+const derequire = require('derequire');
+const { format } = require('prettier');
 
 module.exports = function(grunt) {
   grunt.registerTask(
@@ -11,61 +12,73 @@ module.exports = function(grunt) {
     'Compile and combine certain modules with Browserify',
     function(args) {
       // Reading and writing files is asynchronous
-      var done = this.async();
+      const done = this.async();
 
       // Module sources are space separated names in a single string (enter within quotes)
-      var module_src,
-        temp = [];
-      for (var i in arguments) {
-        temp.push(arguments[i]);
+      const temp = [];
+      for (const arg of arguments) {
+        if (arg !== 'min') {
+          temp.push(arg);
+        }
       }
-      module_src = temp.join(', ');
+      const module_src = temp.join(', ');
 
       // Render the banner for the top of the file. Includes the Module name.
-      var bannerTemplate =
-        '/*! Custom p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> \nContains the following modules : ' +
-        module_src +
-        '*/';
-      var banner = grunt.template.process(bannerTemplate);
+      const bannerTemplate = `/*! Custom p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %>
+        Contains the following modules : ${module_src}*/`;
+      const banner = grunt.template.process(bannerTemplate);
 
       // Make a list of sources from app.js in that sequence only
-      var sources = [];
-      var dump = fs.readFileSync('./src/app.js', 'utf8');
-      var regexp = /\('.+'/g;
-      var match;
+      const sources = [];
+      const dump = fs.readFileSync('./src/app.js', 'utf8');
+      const regexp = /import\s.*('.+')/g; // Used for ES6 import syntax
+      // const regexp = /\('.+'/g; // Used for require syntax
+      let match;
       while ((match = regexp.exec(dump)) != null) {
-        var text = match[0];
+        let text = match[1]; // Used for ES6 import syntax
+        // let text = match[0]; // Used for require syntax
         text = text.substring(text.indexOf('./') + 2, text.length - 1);
         sources.push(text);
       }
 
       // Populate the source file path array with concerned files' path
-      var srcDirPath = './src';
-      var srcFilePath = [];
+      const srcDirPath = './src';
+      const srcFilePath = [];
       for (var j = 0; j < sources.length; j++) {
         var source = sources[j];
         var base = source.substring(0, source.lastIndexOf('/'));
         if (base === 'core' || module_src.search(base) !== -1) {
           // Push the resolved paths directly
-          var filePath = source.search('.js') !== -1 ? source : source + '.js';
+          const filePath =
+            source.search('.js') !== -1 ? source : source + '.js';
           var fullPath = path.resolve(srcDirPath, filePath);
           srcFilePath.push(fullPath);
         }
       }
 
       console.log(srcFilePath);
+      // Check whether combineModules is minified
+      const isMin = args === 'min';
+      const filename = isMin ? 'p5Custom.pre-min.js' : 'p5Custom.js';
+
       // Target file path
-      var libFilePath = path.resolve('lib/modules/p5Custom.js');
+      const libFilePath = path.resolve('lib/modules/' + filename);
 
       // Invoke Browserify programatically to bundle the code
-      var bundle = browserify(srcFilePath, {
+      let browseified = browserify(srcFilePath, {
         standalone: 'p5'
-      })
-        .transform('brfs')
-        .bundle();
+      });
+
+      if (isMin) {
+        browseified = browseified.exclude('../../docs/reference/data.json');
+      }
+
+      const babelifyOpts = { plugins: ['static-fs'] };
+
+      const bundle = browseified.transform('babelify', babelifyOpts).bundle();
 
       // Start the generated output with the banner comment,
-      var code = banner + '\n';
+      let code = banner + '\n';
 
       // Then read the bundle into memory so we can run it through derequire
       bundle
@@ -73,7 +86,23 @@ module.exports = function(grunt) {
           code += data;
         })
         .on('end', function() {
-          grunt.file.write(libFilePath, derequire(code));
+          // "code" is complete: create the distributable UMD build by running
+          // the bundle through derequire
+          // (Derequire changes the bundle's internal "require" function to
+          // something that will not interfere with this module being used
+          // within a separate browserify bundle.)
+          code = derequire(code);
+
+          // and prettify the code
+          if (!isMin) {
+            code = format(code, {
+              singleQuote: true,
+              printWidth: 80 + 12
+            });
+          }
+
+          // finally, write it to disk
+          grunt.file.write(libFilePath, code);
 
           // Print a success message
           grunt.log.writeln(

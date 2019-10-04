@@ -6,10 +6,8 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /*
  * all DEGREES/RADIANS conversion should be done in the p5 instance
@@ -264,9 +262,7 @@ p5.prototype.tan = function(angle) {
  * </div>
  *
  */
-p5.prototype.degrees = function(angle) {
-  return angle * constants.RAD_TO_DEG;
-};
+p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
 
 /**
  * Converts a degree measurement to its corresponding value in radians.
@@ -289,9 +285,7 @@ p5.prototype.degrees = function(angle) {
  * </code>
  * </div>
  */
-p5.prototype.radians = function(angle) {
-  return angle * constants.DEG_TO_RAD;
-};
+p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 
 /**
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
@@ -374,4 +368,4 @@ p5.prototype._fromRadians = function(angle) {
   return angle;
 };
 
-module.exports = p5;
+export default p5;

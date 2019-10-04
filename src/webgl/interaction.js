@@ -5,10 +5,8 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /**
  * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking
@@ -24,6 +22,7 @@ var constants = require('../core/constants');
  * @for p5
  * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
+ * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
  * @chainable
  * @example
  * <div>
@@ -47,25 +46,28 @@ var constants = require('../core/constants');
 
 // implementation based on three.js 'orbitControls':
 // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
-p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
+p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
   // If the mouse is not in bounds of the canvas, disable all behaviors:
-  var mouseInCanvas =
+  const mouseInCanvas =
     this.mouseX < this.width &&
     this.mouseX > 0 &&
     this.mouseY < this.height &&
     this.mouseY > 0;
   if (!mouseInCanvas) return;
 
-  var cam = this._renderer._curCamera;
+  const cam = this._renderer._curCamera;
 
   if (typeof sensitivityX === 'undefined') {
     sensitivityX = 1;
   }
   if (typeof sensitivityY === 'undefined') {
     sensitivityY = sensitivityX;
+  }
+  if (typeof sensitivityZ === 'undefined') {
+    sensitivityZ = 0.5;
   }
 
   // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
@@ -75,62 +77,59 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
   // disable context menu for canvas element and add 'contextMenuDisabled'
   // flag to p5 instance
   if (this.contextMenuDisabled !== true) {
-    this.canvas.oncontextmenu = function() {
-      return false;
-    };
+    this.canvas.oncontextmenu = () => false;
     this._setProperty('contextMenuDisabled', true);
   }
 
   // disable default scrolling behavior on the canvas element and add
   // 'wheelDefaultDisabled' flag to p5 instance
   if (this.wheelDefaultDisabled !== true) {
-    this.canvas.onwheel = function() {
-      return false;
-    };
+    this.canvas.onwheel = () => false;
     this._setProperty('wheelDefaultDisabled', true);
   }
 
-  var scaleFactor = this.height < this.width ? this.height : this.width;
+  const scaleFactor = this.height < this.width ? this.height : this.width;
 
   // ZOOM if there is a change in mouseWheelDelta
   if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
     // zoom according to direction of mouseWheelDeltaY rather than value
     if (this._mouseWheelDeltaY > 0) {
-      this._renderer._curCamera._orbit(0, 0, 0.5 * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
     } else {
-      this._renderer._curCamera._orbit(0, 0, -0.5 * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
     }
   }
 
   if (this.mouseIsPressed) {
     // ORBIT BEHAVIOR
     if (this.mouseButton === this.LEFT) {
-      var deltaTheta =
+      const deltaTheta =
         -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
-      var deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+      const deltaPhi =
+        sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
       this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
     } else if (this.mouseButton === this.RIGHT) {
       // PANNING BEHAVIOR along X/Z camera axes and restricted to X/Z plane
       // in world space
-      var local = cam._getLocalAxes();
+      const local = cam._getLocalAxes();
 
       // normalize portions along X/Z axes
-      var xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
+      const xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
       if (xmag !== 0) {
         local.x[0] /= xmag;
         local.x[2] /= xmag;
       }
 
       // normalize portions along X/Z axes
-      var ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
+      const ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
       if (ymag !== 0) {
         local.y[0] /= ymag;
         local.y[2] /= ymag;
       }
 
       // move along those vectors by amount controlled by mouseX, pmouseY
-      var dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
-      var dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
+      const dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
+      const dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
 
       // restrict movement to XZ plane in world space
       cam.setPosition(
@@ -313,12 +312,12 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY) {
  * @param {Number} [axesZOff]
  */
 
-p5.prototype.debugMode = function() {
+p5.prototype.debugMode = function(...args) {
   this._assert3d('debugMode');
-  p5._validateParameters('debugMode', arguments);
+  p5._validateParameters('debugMode', args);
 
   // start by removing existing 'post' registered debug methods
-  for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+  for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {
     // test for equality...
     if (
       this._registeredMethods.post[i].toString() === this._grid().toString() ||
@@ -329,50 +328,24 @@ p5.prototype.debugMode = function() {
   }
 
   // then add new debugMode functions according to the argument list
-  if (arguments[0] === constants.GRID) {
+  if (args[0] === constants.GRID) {
     this.registerMethod(
       'post',
-      this._grid.call(
-        this,
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5]
-      )
+      this._grid.call(this, args[1], args[2], args[3], args[4], args[5])
     );
-  } else if (arguments[0] === constants.AXES) {
+  } else if (args[0] === constants.AXES) {
     this.registerMethod(
       'post',
-      this._axesIcon.call(
-        this,
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4]
-      )
+      this._axesIcon.call(this, args[1], args[2], args[3], args[4])
     );
   } else {
     this.registerMethod(
       'post',
-      this._grid.call(
-        this,
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4]
-      )
+      this._grid.call(this, args[0], args[1], args[2], args[3], args[4])
     );
     this.registerMethod(
       'post',
-      this._axesIcon.call(
-        this,
-        arguments[5],
-        arguments[6],
-        arguments[7],
-        arguments[8]
-      )
+      this._axesIcon.call(this, args[5], args[6], args[7], args[8])
     );
   }
 };
@@ -411,7 +384,7 @@ p5.prototype.noDebugMode = function() {
   this._assert3d('noDebugMode');
 
   // start by removing existing 'post' registered debug methods
-  for (var i = this._registeredMethods.post.length - 1; i >= 0; i--) {
+  for (let i = this._registeredMethods.post.length - 1; i >= 0; i--) {
     // test for equality...
     if (
       this._registeredMethods.post[i].toString() === this._grid().toString() ||
@@ -450,8 +423,8 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     zOff = 0;
   }
 
-  var spacing = size / numDivs;
-  var halfSize = size / 2;
+  const spacing = size / numDivs;
+  const halfSize = size / 2;
 
   return function() {
     this.push();
@@ -480,7 +453,7 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     );
 
     // Lines along X axis
-    for (var q = 0; q <= numDivs; q++) {
+    for (let q = 0; q <= numDivs; q++) {
       this.beginShape(this.LINES);
       this.vertex(-halfSize + xOff, yOff, q * spacing - halfSize + zOff);
       this.vertex(+halfSize + xOff, yOff, q * spacing - halfSize + zOff);
@@ -488,7 +461,7 @@ p5.prototype._grid = function(size, numDivs, xOff, yOff, zOff) {
     }
 
     // Lines along Z axis
-    for (var i = 0; i <= numDivs; i++) {
+    for (let i = 0; i <= numDivs; i++) {
       this.beginShape(this.LINES);
       this.vertex(i * spacing - halfSize + xOff, yOff, -halfSize + zOff);
       this.vertex(i * spacing - halfSize + xOff, yOff, +halfSize + zOff);
@@ -566,4 +539,4 @@ p5.prototype._axesIcon = function(size, xOff, yOff, zOff) {
   };
 };
 
-module.exports = p5;
+export default p5;

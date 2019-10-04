@@ -4,15 +4,13 @@
  * @for p5
  */
 
-'use strict';
-
-var p5 = require('./main');
-var constants = require('./constants');
-require('./p5.Graphics');
-require('./p5.Renderer2D');
-require('../webgl/p5.RendererGL');
-var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
-var defaultClass = 'p5Canvas';
+import p5 from './main';
+import * as constants from './constants';
+import './p5.Graphics';
+import './p5.Renderer2D';
+import '../webgl/p5.RendererGL';
+let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
+const defaultClass = 'p5Canvas';
 
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
@@ -53,18 +51,16 @@ var defaultClass = 'p5Canvas';
 p5.prototype.createCanvas = function(w, h, renderer) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
-  var r = renderer || constants.P2D;
-  var c;
+  const r = renderer || constants.P2D;
+  let c;
 
   if (r === constants.WEBGL) {
     c = document.getElementById(defaultId);
     if (c) {
       //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
-      var thisRenderer = this._renderer;
-      this._elements = this._elements.filter(function(e) {
-        return e !== thisRenderer;
-      });
+      const thisRenderer = this._renderer;
+      this._elements = this._elements.filter(e => e !== thisRenderer);
     }
     c = document.createElement('canvas');
     c.id = defaultId;
@@ -72,11 +68,11 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   } else {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
-      var i = 0;
-      while (document.getElementById('defaultCanvas' + i)) {
+      let i = 0;
+      while (document.getElementById(`defaultCanvas${i}`)) {
         i++;
       }
-      defaultId = 'defaultCanvas' + i;
+      defaultId = `defaultCanvas${i}`;
       c.id = defaultId;
       c.classList.add(defaultClass);
     } else {
@@ -147,9 +143,9 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
   if (this._renderer) {
     // save canvas properties
-    var props = {};
-    for (var key in this.drawingContext) {
-      var val = this.drawingContext[key];
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
       }
@@ -158,7 +154,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     this.width = w;
     this.height = h;
     // reset canvas properties
-    for (var savedKey in props) {
+    for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
       } catch (err) {
@@ -239,7 +235,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * with the ones of pixels already in the display window (B):
  * <ul>
  * <li><code>BLEND</code> - linear interpolation of colours: C =
- * A\*factor + B. This is the default blending mode.</li>
+ * A\*factor + B. <b>This is the default blending mode.</b></li>
  * <li><code>ADD</code> - sum of A and B</li>
  * <li><code>DARKEST</code> - only the darkest colour succeeds: C =
  * min(A\*factor, B).</li>
@@ -254,24 +250,30 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * colors.</li>
  * <li><code>REPLACE</code> - the pixels entirely replace the others and
  * don't utilize alpha (transparency) values.</li>
+ * <li><code>REMOVE</code> - removes pixels from B with the alpha strength of A.</li>
  * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
- * </code>. Multiplies dark values, and screens light values.</li>
+ * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
  * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
- * gray, <code>MULTIPLY</code> when lower.</li>
+ * gray, <code>MULTIPLY</code> when lower. <em>(2D)</em></li>
  * <li><code>SOFT_LIGHT</code> - mix of <code>DARKEST</code> and
- * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh.
+ * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. <em>(2D)</em>
  * </li>
  * <li><code>DODGE</code> - lightens light tones and increases contrast,
- * ignores darks.</li>
+ * ignores darks. <em>(2D)</em></li>
  * <li><code>BURN</code> - darker areas are applied, increasing contrast,
- * ignores lights.</li>
+ * ignores lights. <em>(2D)</em></li>
+ * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
  * </ul>
+ * <br><br>
+ * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
+ * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
+ *
  *
  * @method blendMode
  * @param  {Constant} mode blend mode to set for canvas.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
- *                SOFT_LIGHT, DODGE, BURN, ADD or NORMAL
+ *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
  * @example
  * <div>
  * <code>
@@ -300,27 +302,14 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  */
 p5.prototype.blendMode = function(mode) {
   p5._validateParameters('blendMode', arguments);
-  if (
-    mode === constants.BLEND ||
-    mode === constants.DARKEST ||
-    mode === constants.LIGHTEST ||
-    mode === constants.DIFFERENCE ||
-    mode === constants.MULTIPLY ||
-    mode === constants.EXCLUSION ||
-    mode === constants.SCREEN ||
-    mode === constants.REPLACE ||
-    mode === constants.OVERLAY ||
-    mode === constants.HARD_LIGHT ||
-    mode === constants.SOFT_LIGHT ||
-    mode === constants.DODGE ||
-    mode === constants.BURN ||
-    mode === constants.ADD ||
-    mode === constants.NORMAL
-  ) {
-    this._renderer.blendMode(mode);
-  } else {
-    throw new Error('Mode ' + mode + ' not recognized.');
+  if (mode === constants.NORMAL) {
+    // Warning added 3/26/19, can be deleted in future (1.0 release?)
+    console.warn(
+      'NORMAL has been deprecated for use in blendMode. defaulting to BLEND instead.'
+    );
+    mode = constants.BLEND;
   }
+  this._renderer.blendMode(mode);
 };
 
-module.exports = p5;
+export default p5;

@@ -5,13 +5,13 @@ There are several ways to contribute to documentation:
 ## ✏️ Contribute to the reference  
 Read through the [reference](http://p5js.org/reference/), and look for typos, broken examples, confusing documentation. If it's a straightforward fix, go ahead and work on it! If it's a more involved question that requires discussion, create an [issue](https://github.com/processing/p5.js/issues/new).
 * Here are instructions for [getting setup for the first time with the p5.js repo](https://github.com/processing/p5.js/tree/master/developer_docs).
-* The reference is built from the inline documentation in the source code (found in the src/ folder).
+* The reference is built from the inline documentation in the source code (found in the `src/` folder).
 * Here is information on [how to update or add inline documentation and examples](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md).
 * If you find errors with the [spanish documentation](http://p5js.org/es), there are instructions to update this [here](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure).
 
 ## ✨ Make examples  
 While the examples in the reference are meant to be very simplistic snippets of code, it is also useful to have longer, more complex examples.
-* Currently we are working on porting the examples from the [processing examples page](https://processing.org/examples/) to the [p5.js examples page](http://p5js.org/examples). If you would like to help with this, please see the instructions [here](https://github.com/processing/p5.js-website/wiki/Adding-examples).
+* Currently we are working on porting the examples from the [processing examples page](https://processing.org/examples/) to the [p5.js examples page](http://p5js.org/examples). If you would like to help with this, please see the instructions [here](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md).
 * Alternatively, you can create your own set of examples and publish them independently anywhere you like. If you share them online tag [@p5xjs](https://twitter.com/p5xjs) or email [hello@p5js.org](mailto:hello@p5js.org) to let us know, and we will share far and wide! This [guide to embedding p5.js](https://github.com/processing/p5.js/wiki/Embedding-p5.js) may be useful for posting your examples online.
 * If you find bugs in p5.js along the way, please log them in the [issues](https://github.com/processing/p5.js/issues).
 

@@ -6,10 +6,8 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../main');
-var constants = require('../constants');
+import p5 from '../main';
+import * as constants from '../constants';
 
 /**
  * Modifies the location from which ellipses are drawn by changing the way
@@ -106,7 +104,12 @@ p5.prototype.ellipseMode = function(m) {
  *
  */
 p5.prototype.noSmooth = function() {
-  this._renderer.noSmooth();
+  this.setAttributes('antialias', false);
+  if (!this._renderer.isP3D) {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = false;
+    }
+  }
   return this;
 };
 
@@ -206,7 +209,12 @@ p5.prototype.rectMode = function(m) {
  *
  */
 p5.prototype.smooth = function() {
-  this._renderer.smooth();
+  this.setAttributes('antialias', true);
+  if (!this._renderer.isP3D) {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = true;
+    }
+  }
   return this;
 };
 
@@ -343,4 +351,4 @@ p5.prototype.strokeWeight = function(w) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

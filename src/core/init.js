@@ -1,6 +1,4 @@
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * _globalInit
@@ -14,7 +12,7 @@ var p5 = require('../core/main');
  * @private
  * @return {Undefined}
  */
-var _globalInit = function() {
+const _globalInit = () => {
   if (!window.mocha) {
     // If there is a setup or draw function on the window
     // then instantiate p5 in "global" mode

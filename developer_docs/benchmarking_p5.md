@@ -4,14 +4,14 @@ We have a grunt task that runs performance benchmarks in multiple real browsers 
 
 Our benchmarking system consists of 3 main components:
 
-1. [Benchmark.js](https://benchmarkjs.com/) - the engine that runs the benchmarks and the framework for defining benchmarks.
+1. [Benchmark.js](https://benchmarkjs.com/) - The engine that runs the benchmarks and the framework for defining benchmarks.
 2. [karma-benchmark](https://www.npmjs.com/package/karma-benchmark) - The karma plugin for launching and running the benchmarks in multiple real browsers.
-3. [grunt-karma](https://www.npmjs.com/package/grunt-karma) - The grunt plugin that allows us to define different karma configuations per grunt command.  This allows us to run single benchmarks or groups of benchmarks.
+3. [grunt-karma](https://www.npmjs.com/package/grunt-karma) - The grunt plugin that allows us to define different karma configurations per grunt command.  This allows us to run single benchmarks or groups of benchmarks.
  
 ## Basic instructions:
 ### Install the new dependancies
 
-    npm install
+    npm ci
 
 ### Do a build, the benchmarks expect a local build of p5.js and p5.min.js
 
@@ -51,19 +51,15 @@ Here is an example benchmark that compares p5 random() to Math.random() with Fri
 ```JavaScript
 p5.disableFriendlyErrors = true;
 
-var p5Inst = new p5();
+const p5Inst = new p5();
 
 /**
  *  Instance random() vs Math.random()
  */
 suite('Friendly Errors: OFF, Instance random() vs Math.random()', function () {
-  benchmark('Instance random()', function () {
-    return p5Inst.random();
-  });
+  benchmark('Instance random()', () => p5Inst.random());
 
-  benchmark('Math.random()', function () {
-    return Math.random();
-  });
+  benchmark('Math.random()', () => Math.random());
 });
 
 
@@ -71,13 +67,9 @@ suite('Friendly Errors: OFF, Instance random() vs Math.random()', function () {
  *  Window random() vs Math.random()
  */
 suite('Friendly Errors: OFF, Window random() vs Math.random()', function () {
-  benchmark('window random()', function () {
-    return random();
-  });
+  benchmark('window random()', () => random());
 
-  benchmark('Math.random()', function () {
-    return Math.random();
-  });
+  benchmark('Math.random()', () => Math.random());
 });
 ```
 Then you would need to add your new benchmark to `grunt-karma.js`

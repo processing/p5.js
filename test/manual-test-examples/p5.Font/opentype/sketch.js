@@ -2,7 +2,7 @@ var font;
 var snapDistance = 71;
 
 function preload() {
-  font = loadFont('AvenirNextLTPro-Demi.otf');
+  font = loadFont('inconsolata.otf');
 }
 
 function setup() {

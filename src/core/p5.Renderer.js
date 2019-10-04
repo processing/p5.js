@@ -4,10 +4,8 @@
  * @for p5
  */
 
-'use strict';
-
-var p5 = require('./main');
-var constants = require('../core/constants');
+import p5 from './main';
+import * as constants from '../core/constants';
 
 /**
  * Main graphics and rendering context, as well as the base API
@@ -24,6 +22,7 @@ var constants = require('../core/constants');
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
   this.canvas = elt;
+  this._pixelsState = pInst;
   if (isMainCanvas) {
     this._isMainCanvas = true;
     // for pixel method sharing with pimage
@@ -101,12 +100,45 @@ p5.Renderer.prototype.resize = function(w, h) {
   this.height = h;
   this.elt.width = w * this._pInst._pixelDensity;
   this.elt.height = h * this._pInst._pixelDensity;
-  this.elt.style.width = w + 'px';
-  this.elt.style.height = h + 'px';
+  this.elt.style.width = `${w}px`;
+  this.elt.style.height = `${h}px`;
   if (this._isMainCanvas) {
     this._pInst._setProperty('width', this.width);
     this._pInst._setProperty('height', this.height);
   }
+};
+
+p5.Renderer.prototype.get = function(x, y, w, h) {
+  const pixelsState = this._pixelsState;
+  const pd = pixelsState._pixelDensity;
+  const canvas = this.canvas;
+
+  if (typeof x === 'undefined' && typeof y === 'undefined') {
+    // get()
+    x = y = 0;
+    w = pixelsState.width;
+    h = pixelsState.height;
+  } else {
+    x *= pd;
+    y *= pd;
+
+    if (typeof w === 'undefined' && typeof h === 'undefined') {
+      // get(x,y)
+      if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+        return [0, 0, 0, 0];
+      }
+
+      return this._getPixel(x, y);
+    }
+    // get(x,y,w,h)
+  }
+
+  const region = new p5.Image(w, h);
+  region.canvas
+    .getContext('2d')
+    .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
+
+  return region;
 };
 
 p5.Renderer.prototype.textLeading = function(l) {
@@ -177,17 +209,17 @@ p5.Renderer.prototype.textAlign = function(h, v) {
 };
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  var p = this._pInst,
-    cars,
-    n,
-    ii,
-    jj,
-    line,
-    testLine,
-    testWidth,
-    words,
-    totalHeight,
-    finalMaxHeight = Number.MAX_VALUE;
+  const p = this._pInst;
+  let cars;
+  let n;
+  let ii;
+  let jj;
+  let line;
+  let testLine;
+  let testWidth;
+  let words;
+  let totalHeight;
+  let finalMaxHeight = Number.MAX_VALUE;
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -208,10 +240,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+        testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth) {
-          line = words[n] + ' ';
+          line = `${words[n]} `;
           totalHeight += p.textLeading();
         } else {
           line = testLine;
@@ -233,7 +265,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         break;
     }
 
-    var baselineHacked = false;
+    let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
       switch (this._textBaseline) {
         case constants.BOTTOM:
@@ -256,11 +288,11 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
+        testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth && line.length > 0) {
           this._renderText(p, line, x, y, finalMaxHeight);
-          line = words[n] + ' ';
+          line = `${words[n]} `;
           y += p.textLeading();
         } else {
           line = testLine;
@@ -277,8 +309,9 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   } else {
     // Offset to account for vertically centering multiple lines of text - no
     // need to adjust anything for vertical align top or baseline
-    var offset = 0,
-      vAlign = p.textAlign().vertical;
+    let offset = 0;
+
+    const vAlign = p.textAlign().vertical;
     if (vAlign === constants.CENTER) {
       offset = (cars.length - 1) * p.textLeading() / 2;
     } else if (vAlign === constants.BOTTOM) {
@@ -301,8 +334,7 @@ p5.Renderer.prototype._applyDefaults = function() {
 /**
  * Helper fxn to check font type (system or otf)
  */
-p5.Renderer.prototype._isOpenType = function(f) {
-  f = f || this._textFont;
+p5.Renderer.prototype._isOpenType = function(f = this._textFont) {
   return typeof f === 'object' && f.font && f.font.supported;
 };
 
@@ -314,17 +346,17 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   }
 
   // Adapted from http://stackoverflow.com/a/25355178
-  var text = document.createElement('span');
+  const text = document.createElement('span');
   text.style.fontFamily = this._textFont;
-  text.style.fontSize = this._textSize + 'px';
+  text.style.fontSize = `${this._textSize}px`;
   text.innerHTML = 'ABCjgq|';
 
-  var block = document.createElement('div');
+  const block = document.createElement('div');
   block.style.display = 'inline-block';
   block.style.width = '1px';
   block.style.height = '0px';
 
-  var container = document.createElement('div');
+  const container = document.createElement('div');
   container.appendChild(text);
   container.appendChild(block);
 
@@ -333,15 +365,15 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   document.body.appendChild(container);
 
   block.style.verticalAlign = 'baseline';
-  var blockOffset = calculateOffset(block);
-  var textOffset = calculateOffset(text);
-  var ascent = blockOffset[1] - textOffset[1];
+  let blockOffset = calculateOffset(block);
+  let textOffset = calculateOffset(text);
+  const ascent = blockOffset[1] - textOffset[1];
 
   block.style.verticalAlign = 'bottom';
   blockOffset = calculateOffset(block);
   textOffset = calculateOffset(text);
-  var height = blockOffset[1] - textOffset[1];
-  var descent = height - ascent;
+  const height = blockOffset[1] - textOffset[1];
+  const descent = height - ascent;
 
   document.body.removeChild(container);
 
@@ -356,7 +388,7 @@ p5.Renderer.prototype._updateTextMetrics = function() {
  * Adapted from http://stackoverflow.com/a/25355178
  */
 function calculateOffset(object) {
-  var currentLeft = 0,
+  let currentLeft = 0,
     currentTop = 0;
   if (object.offsetParent) {
     do {
@@ -370,4 +402,4 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 
-module.exports = p5.Renderer;
+export default p5.Renderer;

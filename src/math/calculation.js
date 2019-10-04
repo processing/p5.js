@@ -5,9 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
@@ -119,7 +117,7 @@ p5.prototype.constrain = function(n, low, high) {
 };
 
 /**
- * Calculates the distance between two points.
+ * Calculates the distance between two points, in either two or three dimensions.
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
@@ -172,18 +170,14 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} z2 z-coordinate of the second point
  * @return {Number}    distance between the two points
  */
-p5.prototype.dist = function() {
-  p5._validateParameters('dist', arguments);
-  if (arguments.length === 4) {
+p5.prototype.dist = (...args) => {
+  p5._validateParameters('dist', args);
+  if (args.length === 4) {
     //2D
-    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
-  } else if (arguments.length === 6) {
+    return hypot(args[2] - args[0], args[3] - args[1]);
+  } else if (args.length === 6) {
     //3D
-    return hypot(
-      arguments[3] - arguments[0],
-      arguments[4] - arguments[1],
-      arguments[5] - arguments[2]
-    );
+    return hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
   }
 };
 
@@ -464,7 +458,7 @@ p5.prototype.mag = function(x, y) {
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
-  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+  const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -516,12 +510,12 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = function() {
-  p5._validateParameters('max', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.max.apply(null, arguments[0]);
+p5.prototype.max = (...args) => {
+  p5._validateParameters('max', args);
+  if (args[0] instanceof Array) {
+    return Math.max.apply(null, args[0]);
   } else {
-    return Math.max.apply(null, arguments);
+    return Math.max.apply(null, args);
   }
 };
 
@@ -566,12 +560,12 @@ p5.prototype.max = function() {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = function() {
-  p5._validateParameters('min', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.min.apply(null, arguments[0]);
+p5.prototype.min = (...args) => {
+  p5._validateParameters('min', args);
+  if (args[0] instanceof Array) {
+    return Math.min.apply(null, args[0]);
   } else {
-    return Math.min.apply(null, arguments);
+    return Math.min.apply(null, args);
   }
 };
 
@@ -579,8 +573,7 @@ p5.prototype.min = function() {
  * Normalizes a number from another range into a value between 0 and 1.
  * Identical to map(value, low, high, 0, 1).
  * Numbers outside of the range are not clamped to 0 and 1, because
- * out-of-range values are often intentional and useful. (See the second
- * example above.)
+ * out-of-range values are often intentional and useful. (See the example above.)
  *
  * @method norm
  * @param  {Number} value incoming value to be normalized
@@ -596,6 +589,7 @@ p5.prototype.min = function() {
  *   let upperBound = width; //100;
  *   let normalized = norm(currentNum, lowerBound, upperBound);
  *   let lineY = 70;
+ *   stroke(3);
  *   line(0, lineY, width, lineY);
  *   //Draw an ellipse mapped to the non-normalized value.
  *   noStroke();
@@ -632,7 +626,8 @@ p5.prototype.norm = function(n, start, stop) {
  * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
  * way of multiplying numbers by themselves (or their reciprocals) in large
  * quantities. For example, pow(3, 5) is equivalent to the expression
- * 3*3*3*3*3 and pow(3, -5) is equivalent to 1 / 3*3*3*3*3. Maps to
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
  * Math.pow().
  *
  * @method pow
@@ -744,9 +739,7 @@ p5.prototype.round = Math.round;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.sq = function(n) {
-  return n * n;
-};
+p5.prototype.sq = n => n * n;
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -805,11 +798,11 @@ function hypot(x, y, z) {
 
   // Otherwise use the V8 implementation
   // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
-  var length = arguments.length;
-  var args = [];
-  var max = 0;
-  for (var i = 0; i < length; i++) {
-    var n = arguments[i];
+  const length = arguments.length;
+  const args = [];
+  let max = 0;
+  for (let i = 0; i < length; i++) {
+    let n = arguments[i];
     n = +n;
     if (n === Infinity || n === -Infinity) {
       return Infinity;
@@ -824,16 +817,16 @@ function hypot(x, y, z) {
   if (max === 0) {
     max = 1;
   }
-  var sum = 0;
-  var compensation = 0;
-  for (var j = 0; j < length; j++) {
-    var m = args[j] / max;
-    var summand = m * m - compensation;
-    var preliminary = sum + summand;
+  let sum = 0;
+  let compensation = 0;
+  for (let j = 0; j < length; j++) {
+    const m = args[j] / max;
+    const summand = m * m - compensation;
+    const preliminary = sum + summand;
     compensation = preliminary - sum - summand;
     sum = preliminary;
   }
   return Math.sqrt(sum) * max;
 }
 
-module.exports = p5;
+export default p5;

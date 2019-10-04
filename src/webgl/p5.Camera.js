@@ -4,9 +4,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 ////////////////////////////////////////////////////////////////////////////////
 // p5.Prototype Methods
@@ -16,6 +14,14 @@ var p5 = require('../core/main');
  * Sets the camera position for a 3D sketch. Parameters for this function define
  * the position for the camera, the center of the sketch (where the camera is
  * pointing), and an up direction (the orientation of the camera).
+ *
+ * This function simulates the movements of the camera, allowing objects to be
+ * viewed from various angles. Remember, it does not move the objects themselves
+ * but the camera instead. For example when centerX value is positive, the camera
+ * is rotating to the right side of the sketch, so the object would seem like
+ * moving to the left.
+ *
+ * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a> to view the position of your camera.
  *
  * When called with no arguments, this function creates a default camera
  * equivalent to
@@ -47,14 +53,59 @@ var p5 = require('../core/main');
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * //move slider to see changes!
+ * //sliders control the first 6 parameters of camera()
+ * let sliderGroup = [];
+ * let X;
+ * let Y;
+ * let Z;
+ * let centerX;
+ * let centerY;
+ * let centerZ;
+ * let h = 20;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   //create sliders
+ *   for (var i = 0; i < 6; i++) {
+ *     if (i === 2) {
+ *       sliderGroup[i] = createSlider(10, 400, 200);
+ *     } else {
+ *       sliderGroup[i] = createSlider(-400, 400, 0);
+ *     }
+ *     h = map(i, 0, 6, 5, 85);
+ *     sliderGroup[i].position(10, height + h);
+ *     sliderGroup[i].style('width', '80px');
+ *   }
+ * }
+ *
+ * function draw() {
+ *   background(60);
+ *   // assigning sliders' value to each parameters
+ *   X = sliderGroup[0].value();
+ *   Y = sliderGroup[1].value();
+ *   Z = sliderGroup[2].value();
+ *   centerX = sliderGroup[3].value();
+ *   centerY = sliderGroup[4].value();
+ *   centerZ = sliderGroup[5].value();
+ *   camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
+ *   stroke(255);
+ *   fill(255, 102, 94);
+ *   box(85);
+ * }
+ * </code>
+ * </div>
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
  *
  */
-p5.prototype.camera = function() {
+p5.prototype.camera = function(...args) {
   this._assert3d('camera');
-  p5._validateParameters('camera', arguments);
-  this._renderer._curCamera.camera.apply(this._renderer._curCamera, arguments);
+  p5._validateParameters('camera', args);
+  this._renderer._curCamera.camera(...args);
   return this;
 };
 
@@ -83,7 +134,6 @@ p5.prototype.camera = function() {
  * <div>
  * <code>
  * //drag the mouse to look around!
- * //you will see there's a vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   perspective(PI / 3.0, width / height, 0.1, 500);
@@ -113,13 +163,10 @@ p5.prototype.camera = function() {
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  *
  */
-p5.prototype.perspective = function() {
+p5.prototype.perspective = function(...args) {
   this._assert3d('perspective');
-  p5._validateParameters('perspective', arguments);
-  this._renderer._curCamera.perspective.apply(
-    this._renderer._curCamera,
-    arguments
-  );
+  p5._validateParameters('perspective', args);
+  this._renderer._curCamera.perspective(...args);
   return this;
 };
 
@@ -173,10 +220,73 @@ p5.prototype.perspective = function() {
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  *
  */
-p5.prototype.ortho = function() {
+p5.prototype.ortho = function(...args) {
   this._assert3d('ortho');
-  p5._validateParameters('ortho', arguments);
-  this._renderer._curCamera.ortho.apply(this._renderer._curCamera, arguments);
+  p5._validateParameters('ortho', args);
+  this._renderer._curCamera.ortho(...args);
+  return this;
+};
+
+/**
+ * Sets a perspective matrix as defined by the parameters.
+ *
+ * A frustum is a geometric form: a pyramid with its top
+ * cut off. With the viewer's eye at the imaginary top of
+ * the pyramid, the six planes of the frustum act as clipping
+ * planes when rendering a 3D view. Thus, any form inside the
+ * clipping planes is visible; anything outside
+ * those planes is not visible.
+ *
+ * Setting the frustum changes the perspective of the scene being rendered.
+ * This can be achieved more simply in many cases by using
+ * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
+ *
+ * @method frustum
+ * @for p5
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+ * }
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   strokeWeight(10);
+ *   stroke(0, 0, 255);
+ *   noFill();
+ *
+ *   rotateY(-0.2);
+ *   rotateX(-0.3);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 25);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ *
+ */
+p5.prototype.frustum = function(...args) {
+  this._assert3d('frustum');
+  p5._validateParameters('frustum', args);
+  this._renderer._curCamera.frustum(...args);
   return this;
 };
 
@@ -194,7 +304,7 @@ p5.prototype.ortho = function() {
  */
 p5.prototype.createCamera = function() {
   this._assert3d('createCamera');
-  var _cam = new p5.Camera(this._renderer);
+  const _cam = new p5.Camera(this._renderer);
 
   // compute default camera settings, then set a default camera
   _cam._computeCameraDefaultSettings();
@@ -303,6 +413,7 @@ p5.Camera = function(renderer) {
  * @for p5.Camera
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+  this.cameraType = arguments.length > 0 ? 'custom' : 'default';
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
     // this avoids issue where setting angleMode(DEGREES) before calling
@@ -337,15 +448,14 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
     );
   }
 
-  this.cameraFOV = this._renderer._pInst._toRadians(fovy);
   this.aspectRatio = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
 
   this.projMatrix = p5.Matrix.identity();
 
-  var f = 1.0 / Math.tan(this.cameraFOV / 2);
-  var nf = 1.0 / (this.cameraNear - this.cameraFar);
+  const f = 1.0 / Math.tan(this.cameraFOV / 2);
+  const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
   // prettier-ignore
   this.projMatrix.set(f / aspect,  0,                     0,  0,
@@ -373,8 +483,6 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
       this.projMatrix.mat4[15]
     );
   }
-
-  this.cameraType = 'custom';
 };
 
 /**
@@ -392,17 +500,17 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (far === undefined)
     far = Math.max(this._renderer.width, this._renderer.height);
 
-  var w = right - left;
-  var h = top - bottom;
-  var d = far - near;
+  const w = right - left;
+  const h = top - bottom;
+  const d = far - near;
 
-  var x = +2.0 / w;
-  var y = +2.0 / h;
-  var z = -2.0 / d;
+  const x = +2.0 / w;
+  const y = +2.0 / h;
+  const z = -2.0 / d;
 
-  var tx = -(right + left) / w;
-  var ty = -(top + bottom) / h;
-  var tz = -(far + near) / d;
+  const tx = -(right + left) / w;
+  const ty = -(top + bottom) / h;
+  const tz = -(far + near) / d;
 
   this.projMatrix = p5.Matrix.identity();
 
@@ -411,6 +519,63 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
                         0, -y,  0,  0,
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
+
+  if (this._isActive()) {
+    this._renderer.uPMatrix.set(
+      this.projMatrix.mat4[0],
+      this.projMatrix.mat4[1],
+      this.projMatrix.mat4[2],
+      this.projMatrix.mat4[3],
+      this.projMatrix.mat4[4],
+      this.projMatrix.mat4[5],
+      this.projMatrix.mat4[6],
+      this.projMatrix.mat4[7],
+      this.projMatrix.mat4[8],
+      this.projMatrix.mat4[9],
+      this.projMatrix.mat4[10],
+      this.projMatrix.mat4[11],
+      this.projMatrix.mat4[12],
+      this.projMatrix.mat4[13],
+      this.projMatrix.mat4[14],
+      this.projMatrix.mat4[15]
+    );
+  }
+
+  this.cameraType = 'custom';
+};
+
+/**
+ * @method frustum
+ * @for p5.Camera
+ */
+p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
+  if (left === undefined) left = -this._renderer.width / 2;
+  if (right === undefined) right = +this._renderer.width / 2;
+  if (bottom === undefined) bottom = -this._renderer.height / 2;
+  if (top === undefined) top = +this._renderer.height / 2;
+  if (near === undefined) near = 0;
+  if (far === undefined)
+    far = Math.max(this._renderer.width, this._renderer.height);
+
+  const w = right - left;
+  const h = top - bottom;
+  const d = far - near;
+
+  const x = +(2.0 * near) / w;
+  const y = +(2.0 * near) / h;
+  const z = -(2.0 * far * near) / d;
+
+  const tx = (right + left) / w;
+  const ty = (top + bottom) / h;
+  const tz = -(far + near) / d;
+
+  this.projMatrix = p5.Matrix.identity();
+
+  // prettier-ignore
+  this.projMatrix.set(  x,  0,  0,  0,
+                        0,  y,  0,  0,
+                       tx, ty, tz, -1,
+                        0,  0,  z,  0);
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(
@@ -447,24 +612,24 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * @private
  */
 p5.Camera.prototype._rotateView = function(a, x, y, z) {
-  var centerX = this.centerX;
-  var centerY = this.centerY;
-  var centerZ = this.centerZ;
+  let centerX = this.centerX;
+  let centerY = this.centerY;
+  let centerZ = this.centerZ;
 
   // move center by eye position such that rotation happens around eye position
   centerX -= this.eyeX;
   centerY -= this.eyeY;
   centerZ -= this.eyeZ;
 
-  var rotation = p5.Matrix.identity(this._renderer._pInst);
-  rotation.rotate(a, x, y, z);
+  const rotation = p5.Matrix.identity(this._renderer._pInst);
+  rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
   // prettier-ignore
-  var rotatedCenter = [
+  const rotatedCenter = [
     centerX * rotation.mat4[0]+ centerY * rotation.mat4[4]+ centerZ * rotation.mat4[8],
     centerX * rotation.mat4[1]+ centerY * rotation.mat4[5]+ centerZ * rotation.mat4[9],
     centerX * rotation.mat4[2]+ centerY * rotation.mat4[6]+ centerZ * rotation.mat4[10]
-  ]
+  ];
 
   // add eye position back into center
   rotatedCenter[0] += this.eyeX;
@@ -539,7 +704,7 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  *
  */
 p5.Camera.prototype.pan = function(amount) {
-  var local = this._getLocalAxes();
+  const local = this._getLocalAxes();
   this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
 };
 
@@ -597,7 +762,7 @@ p5.Camera.prototype.pan = function(amount) {
  * camera view tilts up and down across a series of rotating 3D boxes.
  */
 p5.Camera.prototype.tilt = function(amount) {
-  var local = this._getLocalAxes();
+  const local = this._getLocalAxes();
   this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
 };
 
@@ -709,7 +874,7 @@ p5.Camera.prototype.camera = function(
   this.upY = upY;
   this.upZ = upZ;
 
-  var local = this._getLocalAxes();
+  const local = this._getLocalAxes();
 
   // the camera affects the model view matrix, insofar as it
   // inverse translates the world to the eye position of the camera
@@ -720,9 +885,9 @@ p5.Camera.prototype.camera = function(
                         local.x[2], local.y[2], local.z[2], 0,
                                  0,          0,          0, 1);
 
-  var tx = -eyeX;
-  var ty = -eyeY;
-  var tz = -eyeZ;
+  const tx = -eyeX;
+  const ty = -eyeY;
+  const tz = -eyeZ;
 
   this.cameraMatrix.translate([tx, ty, tz]);
 
@@ -800,13 +965,13 @@ p5.Camera.prototype.camera = function(
  * orientation throughout the move
  */
 p5.Camera.prototype.move = function(x, y, z) {
-  var local = this._getLocalAxes();
+  const local = this._getLocalAxes();
 
   // scale local axes by movement amounts
   // based on http://learnwebgl.brown37.net/07_cameras/camera_linear_motion.html
-  var dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
-  var dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
-  var dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
+  const dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
+  const dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
+  const dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
 
   this.camera(
     this.eyeX + dx[0] + dy[0] + dz[0],
@@ -866,9 +1031,9 @@ p5.Camera.prototype.move = function(x, y, z) {
  * camera position changes as the user presses keys, altering view of a 3D box
  */
 p5.Camera.prototype.setPosition = function(x, y, z) {
-  var diffX = x - this.eyeX;
-  var diffY = y - this.eyeY;
-  var diffZ = z - this.eyeZ;
+  const diffX = x - this.eyeX;
+  const diffY = y - this.eyeY;
+  const diffZ = z - this.eyeZ;
 
   this.camera(
     x,
@@ -945,7 +1110,7 @@ p5.Camera.prototype._resize = function() {
  * @private
  */
 p5.Camera.prototype.copy = function() {
-  var _cam = new p5.Camera(this._renderer);
+  const _cam = new p5.Camera(this._renderer);
   _cam.cameraFOV = this.cameraFOV;
   _cam.aspectRatio = this.aspectRatio;
   _cam.eyeX = this.eyeX;
@@ -973,12 +1138,12 @@ p5.Camera.prototype.copy = function() {
  */
 p5.Camera.prototype._getLocalAxes = function() {
   // calculate camera local Z vector
-  var z0 = this.eyeX - this.centerX;
-  var z1 = this.eyeY - this.centerY;
-  var z2 = this.eyeZ - this.centerZ;
+  let z0 = this.eyeX - this.centerX;
+  let z1 = this.eyeY - this.centerY;
+  let z2 = this.eyeZ - this.centerZ;
 
   // normalize camera local Z vector
-  var eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+  const eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
   if (eyeDist !== 0) {
     z0 /= eyeDist;
     z1 /= eyeDist;
@@ -986,14 +1151,14 @@ p5.Camera.prototype._getLocalAxes = function() {
   }
 
   // calculate camera Y vector
-  var y0 = this.upX;
-  var y1 = this.upY;
-  var y2 = this.upZ;
+  let y0 = this.upX;
+  let y1 = this.upY;
+  let y2 = this.upZ;
 
   // compute camera local X vector as up vector (local Y) cross local Z
-  var x0 = y1 * z2 - y2 * z1;
-  var x1 = -y0 * z2 + y2 * z0;
-  var x2 = y0 * z1 - y1 * z0;
+  let x0 = y1 * z2 - y2 * z1;
+  let x1 = -y0 * z2 + y2 * z0;
+  let x2 = y0 * z1 - y1 * z0;
 
   // recompute y = z cross x
   y0 = z1 * x2 - z2 * x1;
@@ -1002,14 +1167,14 @@ p5.Camera.prototype._getLocalAxes = function() {
 
   // cross product gives area of parallelogram, which is < 1.0 for
   // non-perpendicular unit-length vectors; so normalize x, y here:
-  var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+  const xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
   if (xmag !== 0) {
     x0 /= xmag;
     x1 /= xmag;
     x2 /= xmag;
   }
 
-  var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+  const ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
   if (ymag !== 0) {
     y0 /= ymag;
     y1 /= ymag;
@@ -1032,15 +1197,15 @@ p5.Camera.prototype._getLocalAxes = function() {
  * @param {Number} dRadius change in radius
  */
 p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
-  var diffX = this.eyeX - this.centerX;
-  var diffY = this.eyeY - this.centerY;
-  var diffZ = this.eyeZ - this.centerZ;
+  const diffX = this.eyeX - this.centerX;
+  const diffY = this.eyeY - this.centerY;
+  const diffZ = this.eyeZ - this.centerZ;
 
   // get spherical coorinates for current camera position about origin
-  var camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+  let camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
-  var camTheta = Math.atan2(diffX, diffZ); // equatorial angle
-  var camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
+  let camTheta = Math.atan2(diffX, diffZ); // equatorial angle
+  let camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
   // add change
   camTheta += dTheta;
@@ -1060,9 +1225,9 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   }
 
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
-  var _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
-  var _y = Math.cos(camPhi) * camRadius;
-  var _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+  const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
+  const _y = Math.cos(camPhi) * camRadius;
+  const _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
 
   this.camera(
     _x + this.centerX,
@@ -1181,4 +1346,4 @@ p5.prototype.setCamera = function(cam) {
   );
 };
 
-module.exports = p5.Camera;
+export default p5.Camera;

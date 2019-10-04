@@ -23,16 +23,17 @@ uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform vec4 uViewport;
-
-// using a scale <1 moves the lines towards the camera
-// in order to prevent popping effects due to half of
-// the line disappearing behind the geometry faces.
-vec3 scale = vec3(0.9995);
+uniform int uPerspective;
 
 attribute vec4 aPosition;
 attribute vec4 aDirection;
   
 void main() {
+  // using a scale <1 moves the lines towards the camera
+  // in order to prevent popping effects due to half of
+  // the line disappearing behind the geometry faces.
+  vec3 scale = vec3(0.9995);
+
   vec4 posp = uModelViewMatrix * aPosition;
   vec4 posq = uModelViewMatrix * (aPosition + vec4(aDirection.xyz, 0));
 
@@ -76,18 +77,21 @@ void main() {
   float thickness = aDirection.w * uStrokeWeight;
   vec2 offset = normal * thickness / 2.0;
 
-  // Perspective ---
-  // convert from world to clip by multiplying with projection scaling factor
-  // to get the right thickness (see https://github.com/processing/processing/issues/5182)
-  // invert Y, projections in Processing invert Y
-  vec2 perspScale = (uProjectionMatrix * vec4(1, -1, 0, 0)).xy;
+  vec2 curPerspScale;
 
-  // No Perspective ---
-  // multiply by W (to cancel out division by W later in the pipeline) and
-  // convert from screen to clip (derived from clip to screen above)
-  vec2 noPerspScale = p.w / (0.5 * uViewport.zw);
+  if(uPerspective == 1) {
+    // Perspective ---
+    // convert from world to clip by multiplying with projection scaling factor
+    // to get the right thickness (see https://github.com/processing/processing/issues/5182)
+    // invert Y, projections in Processing invert Y
+    curPerspScale = (uProjectionMatrix * vec4(1, -1, 0, 0)).xy;
+  } else {
+    // No Perspective ---
+    // multiply by W (to cancel out division by W later in the pipeline) and
+    // convert from screen to clip (derived from clip to screen above)
+    curPerspScale = p.w / (0.5 * uViewport.zw);
+  }
 
-  //gl_Position.xy = p.xy + offset.xy * mix(noPerspScale, perspScale, float(perspective > 0));
-  gl_Position.xy = p.xy + offset.xy * perspScale;
+  gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
 }

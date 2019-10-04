@@ -8,16 +8,30 @@
  * call.
  */
 
-'use strict';
+import p5 from './main';
 
-var p5 = require('./main');
-
-p5.prototype.pushStyle = function() {
+p5.prototype.pushStyle = () => {
   throw new Error('pushStyle() not used, see push()');
 };
 
-p5.prototype.popStyle = function() {
+p5.prototype.popStyle = () => {
   throw new Error('popStyle() not used, see pop()');
 };
 
-module.exports = p5;
+p5.prototype.popMatrix = () => {
+  throw new Error('popMatrix() not used, see pop()');
+};
+
+p5.prototype.printMatrix = () => {
+  throw new Error(
+    'printMatrix() is not implemented in p5.js, ' +
+      'refer to [https://simonsarris.com/a-transformation-class-for-canvas-to-keep-track-of-the-transformation-matrix/] ' +
+      'to add your own implementation.'
+  );
+};
+
+p5.prototype.pushMatrix = () => {
+  throw new Error('pushMatrix() not used, see push()');
+};
+
+export default p5;

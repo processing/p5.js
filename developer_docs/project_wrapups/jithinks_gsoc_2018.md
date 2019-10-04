@@ -118,9 +118,9 @@ For feature enhancements, bug reports and contributions, email me to jithunni.ks
 
 I'm extremely thankful to Processing Foundation for having the faith in me and giving me an opportunity to start the project. There have been several situations where I have been stuck. I express my gratitude to my mentor [Saber Khan](https://github.com/saberkhaniscool), other members of Proessing Foundation [Cassie Tarakajian](https://github.com/catarak), [Lauren McCarthy](https://github.com/lmccart), [Daniel Shiffman](https://github.com/shiffman), [Casey Reas](https://github.com/REAS) for getting back to me and providing me with intelligent advices and suggestions when I contacted them.
 
-I've started this project and doing it with my friend [Anupam Asok](https://github.com/Anu-Asok). I'm so greatful to him for being with me in the development of this project.
+I've started this project and doing it with my friend [Anupam Asok](https://github.com/Anu-Asok). I'm so grateful to him for being with me in the development of this project.
 
-I'm so greatful to [Andrew Mead](https://github.com/andrewjmead) and his course in udemy Full Stack Web Development using Meteor https://www.udemy.com/meteor-react/ for it has helped me greatly and Andrew has responded to each and every queries of mine.
+I'm so grateful to [Andrew Mead](https://github.com/andrewjmead) and his course in udemy Full Stack Web Development using Meteor https://www.udemy.com/meteor-react/ for it has helped me greatly and Andrew has responded to each and every queries of mine.
 
 
 

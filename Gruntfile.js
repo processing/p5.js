@@ -59,8 +59,14 @@
  *  all-contributors generate - Generates new contributors list for README
  */
 
+// these requires allow us to use es6 features such as
+// `import`/`export` and `async`/`await` in the Grunt tasks
+// we load from other files (`tasks/`)
+require('regenerator-runtime/runtime');
+require('@babel/register');
+
 function getYuidocOptions() {
-  var BASE_YUIDOC_OPTIONS = {
+  const BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
     description: '<%= pkg.description %>',
     version: '<%= pkg.version %>',
@@ -76,7 +82,7 @@ function getYuidocOptions() {
 
   // note dev is no longer used, prod is used to build both testing and production ready docs
 
-  var o = {
+  const o = {
     prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
     dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
   };
@@ -87,22 +93,22 @@ function getYuidocOptions() {
   return o;
 }
 
-module.exports = function(grunt) {
+module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
-  var quietReport = process.env.TRAVIS || grunt.option('quiet');
-  var reporter = quietReport ? 'spec' : 'Nyan';
+  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
-  var karmaTasks = require('./grunt-karma.js');
+  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
-  var keepalive = false;
+  let keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
   }
 
-  var mochaConfig = {
+  const mochaConfig = {
     yui: {
       options: {
         urls: ['http://localhost:9001/test/test-reference.html'],
@@ -136,8 +142,7 @@ module.exports = function(grunt) {
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
-        format: 'unix',
-        configFile: '.eslintrc.json'
+        format: 'unix'
       },
       build: {
         src: [
@@ -164,25 +169,10 @@ module.exports = function(grunt) {
             ecmaVersion: 5
           }
         },
-        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+        src: ['src/**/*.js']
       },
       test: {
-        src: [
-          'bench/**/*.js',
-          'test/test-docs-preprocessor/**/*.js',
-          'test/node/**/*.js',
-          'test/reporter/**/*.js',
-          'test/unit/**/*.js'
-        ]
-      },
-      examples: {
-        options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
-          }
-        },
-        src: ['test/manual-test-examples/**/*.js']
+        src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
       }
     },
 
@@ -191,11 +181,10 @@ module.exports = function(grunt) {
         parserOptions: {
           ecmaVersion: 6
         },
-        configFile: '.eslintrc.json',
         format: 'unix'
       },
       source: {
-        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+        src: ['src/**/*.js']
       },
       fix: {
         options: {
@@ -210,7 +199,12 @@ module.exports = function(grunt) {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
+        files: [
+          'src/**/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert',
+          'src/**/*.glsl'
+        ],
         tasks: ['browserify'],
         options: {
           livereload: true
@@ -240,7 +234,8 @@ module.exports = function(grunt) {
           'src/**/*.js',
           'lib/addons/*.js',
           'src/**/*.frag',
-          'src/**/*.vert'
+          'src/**/*.vert',
+          'src/**/*.glsl'
         ],
         tasks: [
           'browserify',
@@ -261,7 +256,9 @@ module.exports = function(grunt) {
       test: {
         src: ['test/node/**/*.js'],
         options: {
-          reporter: reporter
+          reporter: reporter,
+          require: '@babel/register',
+          ui: 'tdd'
         }
       }
     },
@@ -270,6 +267,14 @@ module.exports = function(grunt) {
     mocha: mochaConfig,
 
     mochaChrome: mochaConfig,
+
+    nyc: {
+      report: {
+        options: {
+          reporter: ['text-summary', 'html']
+        }
+      }
+    },
 
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
@@ -286,7 +291,7 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'lib/p5.min.js': 'lib/p5.pre-min.js',
-          'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
+          'lib/modules/p5Custom.min.js': 'lib/modules/p5Custom.pre-min.js'
         }
       }
     },
@@ -329,7 +334,7 @@ module.exports = function(grunt) {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -356,7 +361,7 @@ module.exports = function(grunt) {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -383,7 +388,7 @@ module.exports = function(grunt) {
             middlewares.unshift(
               require('connect-modrewrite')([
                 '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -469,15 +474,20 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-simple-nyc');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'browserify:test'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
     'eslint:source',
     'eslint:test',
-    //'eslint:examples',
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
@@ -487,9 +497,16 @@ module.exports = function(grunt) {
     'build',
     'connect:server',
     'mochaChrome',
-    'mochaTest'
+    'mochaTest',
+    'nyc:report'
   ]);
-  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mochaChrome']);
+  grunt.registerTask('test:nobuild', [
+    'eslint:test',
+    'connect:server',
+    'mochaChrome',
+    'mochaTest',
+    'nyc:report'
+  ]);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
   grunt.registerTask('yui:test', [
     'yuidoc:prod',

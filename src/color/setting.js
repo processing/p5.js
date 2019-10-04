@@ -6,15 +6,13 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-require('./p5.Color');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import './p5.Color';
 
 /**
  * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
- * p5.js canvas. The default background is light gray. This function is
+ * p5.js canvas. The default background is transparent. This function is
  * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
  * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
  * the first frame of animation or if the background need only be set once.
@@ -159,7 +157,7 @@ require('./p5.Color');
 
 /**
  * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue
  *                                 and alpha components of the color
  * @chainable
  */
@@ -173,20 +171,17 @@ require('./p5.Color');
  * @chainable
  */
 
-p5.prototype.background = function() {
-  if (arguments[0] instanceof p5.Image) {
-    this.image(arguments[0], 0, 0, this.width, this.height);
-  } else {
-    this._renderer.background.apply(this._renderer, arguments);
-  }
+p5.prototype.background = function(...args) {
+  this._renderer.background(...args);
   return this;
 };
 
 /**
- * Clears the pixels within a buffer. This function only works on p5.Canvas
- * objects created with the <a href="#/p5/createCanvas">createCanvas()</a> function; it won't work with the
- * main display window. Unlike the main graphics context, pixels in
- * additional graphics areas created with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
+ * Clears the pixels within a buffer. This function only clears the canvas.
+ * It will not clear objects created by createX() methods such as
+ * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
+ * Unlike the main graphics context, pixels in additional graphics areas created
+ * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
@@ -294,7 +289,7 @@ p5.prototype.clear = function() {
  *Green to red gradient from bottom L to top R. shading originates from top left.
  *Rainbow gradient from left to right. Brightness increasing to white at top.
  *unknown image.
- *50x50 ellipse at middle L & 40x40 ellipse at center. Transluscent pink outlines.
+ *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
  *
  */
 /**
@@ -304,7 +299,7 @@ p5.prototype.clear = function() {
  *                              current color mode
  * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lighntess
+ * @param {Number} max3     range for the blue or brightness/lightness
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
  * @chainable
@@ -320,7 +315,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
     this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._colorMaxes[mode];
+    const maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
       maxes[0] = max1; // Red
       maxes[1] = max1; // Green
@@ -343,7 +338,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 
 /**
  * Sets the color used to fill shapes. For example, if you run
- * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
+ * fill(204, 102, 0), all shapes drawn after the fill command will be filled with the color orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space is RGB, with each value
  * in the range from 0 to 255). The alpha range by default is also 0 to 255.
@@ -462,7 +457,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * 60x60 light green rect with black outline in center of canvas.
  * 60x60 soft green rect with black outline in center of canvas.
  * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fushcia rect with black outline in center of canvas.
+ * 60x60 dark fuchsia rect with black outline in center of canvas.
  * 60x60 blue rect with black outline in center of canvas.
  */
 
@@ -491,10 +486,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * @param  {p5.Color}      color   the fill color
  * @chainable
  */
-p5.prototype.fill = function() {
+p5.prototype.fill = function(...args) {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
-  this._renderer.fill.apply(this._renderer, arguments);
+  this._renderer.fill(...args);
   return this;
 };
 
@@ -714,7 +709,7 @@ p5.prototype.noStroke = function() {
  * 60x60 white rect at center. Bright green outline.
  * 60x60 white rect at center. Soft green outline.
  * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fushcia outline.
+ * 60x60 white rect at center. Dark fuchsia outline.
  * 60x60 white rect at center. Blue outline.
  */
 
@@ -744,11 +739,122 @@ p5.prototype.noStroke = function() {
  * @chainable
  */
 
-p5.prototype.stroke = function() {
+p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
-  this._renderer.stroke.apply(this._renderer, arguments);
+  this._renderer.stroke(...args);
   return this;
 };
 
-module.exports = p5;
+/**
+ * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from the canvas.
+ * Erased areas will reveal the web page underneath the canvas.
+ * Erasing can be canceled with <a href="#/p5/noErase">noErase()</a>.
+ * <br><br>
+ * Drawing done with <a href="#/p5/image">image()</a>
+ * and <a href="#/p5/background">background()</a> will not be affected by <a href="#/p5/erase">erase()</a>
+ * <br><br>
+ *
+ * @method erase
+ * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ * @param  {Number}   [strengthStroke]    A number (0-255) for the strength of erasing for a shape's stroke.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ *
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(100, 100, 250);
+ * fill(250, 100, 100);
+ * rect(20, 20, 60, 60);
+ * erase();
+ * ellipse(25, 30, 30);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * background(150, 250, 150);
+ * fill(100, 100, 250);
+ * rect(20, 20, 60, 60);
+ * strokeWeight(5);
+ * erase(150, 255);
+ * triangle(50, 10, 70, 50, 90, 10);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   smooth();
+ *   createCanvas(100, 100, WEBGL);
+ *   // Make a &lt;p&gt; element and put it behind the canvas
+ *   let p = createP('I am a dom element');
+ *   p.center();
+ *   p.style('font-size', '20px');
+ *   p.style('text-align', 'center');
+ *   p.style('z-index', '-9999');
+ * }
+ *
+ * function draw() {
+ *   background(250, 250, 150);
+ *   fill(15, 195, 185);
+ *   noStroke();
+ *   sphere(30);
+ *   erase();
+ *   rotateY(frameCount * 0.02);
+ *   translate(0, 0, 40);
+ *   torus(15, 5);
+ *   noErase();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
+ * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
+ * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
+ */
+p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
+  this._renderer.erase(opacityFill, opacityStroke);
+
+  return this;
+};
+
+/**
+ * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
+ * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+ * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they were
+ * prior to calling <a href="#/p5/erase">erase()</a>.
+ *
+ * @method noErase
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(235, 145, 15);
+ * noStroke();
+ * fill(30, 45, 220);
+ * rect(30, 10, 10, 80);
+ * erase();
+ * ellipse(50, 50, 60);
+ * noErase();
+ * rect(70, 10, 10, 80);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
+ */
+
+p5.prototype.noErase = function() {
+  this._renderer.noErase();
+  return this;
+};
+
+export default p5;
