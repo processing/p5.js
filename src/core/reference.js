@@ -283,6 +283,7 @@
  */
 
 /**
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of">the MDN entry</a>:
  * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
  * invoking a custom iteration hook with statements to be executed for the value of each distinct property.
  * @property for-of
@@ -291,7 +292,7 @@
  * <div class='norender'>
  * <code>
  * const word = 'boo';
- * for (let value of word) {
+ * for (const value of word) {
  *   console.log(value);
  * }
  * </code>
