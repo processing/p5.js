@@ -304,6 +304,7 @@
  */
 
 /**
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt">the MDN entry</a>:
  * The parseInt() function parses a string argument and
  * returns an integer of the specified radix (the base in mathematical numeral systems).
  * @method parseInt
