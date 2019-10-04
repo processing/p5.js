@@ -6,7 +6,7 @@
 
 /**
  * Creates and names a new variable. A variable is a container for a value.
- * Variables that are declared with <a href="#/p5/let">"let`</a> will have block-scope.
+ * Variables that are declared with <a href="#/p5/let">let</a> will have block-scope.
  * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block"
  * block</a> that it is created within.
  *
@@ -28,6 +28,14 @@
  */
 
 /**
+ * Creates and names a new constant variable. A variable is a container for a value.
+ * Variables that are declared with <a href="#/p5/const">const</a> will have block-scope.
+ * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block"
+ * block</a> that it is created within.
+ * <a href="#/p5/let">const</a> is different from <a href="#/p5/let">let</a> in that
+ * variables declared with <a href="#/p5/let">const</a> cannot be reassigned or redeclared.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">the MDN entry</a>:
  * Declares a read-only named constant.
  * Constants are block-scoped, much like variables defined using the 'let' statement.
  * The value of a constant can't be changed through reassignment, and it can't be redeclared.
@@ -36,9 +44,9 @@
  * @example
  * <div class='norender'>
  * <code>
- * //define MY_FAV as a constant and give it the value 7
- * const MY_FAV = 7;
- * console.log('my favorite number is: ' + MY_FAV);
+ * // define myFavNumber as a constant and give it the value 7
+ * const myFavNumber = 7;
+ * console.log('my favorite number is: ' + myFavNumber);
  * </code>
  * </div>
  */
