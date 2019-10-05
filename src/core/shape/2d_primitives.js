@@ -392,11 +392,27 @@ p5.prototype.line = function(...args) {
  * 4 large purple points centered in the middle-right of the canvas.
  *
  */
+/**
+ * @method point
+ * @param {p5.Vector} coordinate_vector the coordinate vector
+ * @chainable
+ */
 p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.point(...args);
+    if (args.length === 1) {
+      if (args[0] instanceof p5.Vector) {
+        this._renderer.point.call(
+          this._renderer,
+          args[0].x,
+          args[0].y,
+          args[0].z
+        );
+      }
+    } else {
+      this._renderer.point(...args);
+    }
   }
 
   return this;
