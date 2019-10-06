@@ -28,12 +28,13 @@
  */
 
 /**
- * Creates and names a new constant variable. A variable is a container for a value.
- * Variables that are declared with <a href="#/p5/const">const</a> will have block-scope.
- * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
- * block</a> that it is created within.
- * <a href="#/p5/const">const</a> is different from <a href="#/p5/let">let</a> in that
- * variables declared with <a href="#/p5/const">const</a> cannot be reassigned or redeclared.
+ * Creates and names a new constant. Like a variable created with <a href="#/p5/let">let</a>, a constant
+ * that is created with <a href="#/p5/const">const</a> is a container for a value,
+ * however constants cannot be changed once they are declared.
+ * Constants have block-scope. This means that the constant only exists within
+ * the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
+ * block</a> that it is created within. A constant cannot be redeclared within a scope in which it
+ * already exists.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">the MDN entry</a>:
  * Declares a read-only named constant.
