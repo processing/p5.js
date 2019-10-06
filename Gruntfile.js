@@ -484,10 +484,16 @@ module.exports = grunt => {
     'browserify:test'
   ]);
   grunt.registerTask('lint-no-fix', [
-    'yui', // required for eslint-samples
+    'lint-no-fix:source',
+    'lint-no-fix:samples'
+  ]);
+  grunt.registerTask('lint-no-fix:source', [
     'eslint:build',
     'eslint:source',
-    'eslint:test',
+    'eslint:test'
+  ]);
+  grunt.registerTask('lint-no-fix:samples', [
+    'yui', // required for eslint-samples
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
