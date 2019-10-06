@@ -13,9 +13,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: npm install and lint examples
-      run: |
-        npm install
-        npm run lint:samples
+    - name: get node modules
+      run: npm ci
       env:
         CI: true
+    - name: lint examples
+      run: npm run lint:samples
