@@ -71,7 +71,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const a = 4;
+ * let a = 4;
  * if (a > 0) {
  *   console.log('positive');
  * } else {
@@ -139,7 +139,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const myBoolean = false;
+ * let myBoolean = false;
  * console.log(typeof myBoolean); // prints 'boolean' to the console
  * </code>
  * </div>
@@ -157,7 +157,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const mood = 'chill';
+ * let mood = 'chill';
  * console.log(typeof mood); // prints 'string' to the console
  * </code>
  * </div>
@@ -174,7 +174,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const num = 46.5;
+ * let num = 46.5;
  * console.log(typeof num); // prints 'number' to the console
  * </code>
  * </div>
@@ -190,7 +190,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const author = {
+ * let author = {
  *   name: 'Ursula K Le Guin',
  *   books: [
  *     'The Left Hand of Darkness',
@@ -224,7 +224,7 @@
  *     this.width = width;
  *   }
  * }
- * const square = new Polygon('square', 1, 1); // creating new instance of Polygon Class.
+ * let square = new Polygon('square', 1, 1); // creating new instance of Polygon Class.
  * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
@@ -271,7 +271,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * const person = { fname: 'John', lname: 'Doe', age: 25 };
+ * let person = { fname: 'John', lname: 'Doe', age: 25 };
  * let text = '';
  * let x;
  * for (x in person) {
@@ -291,8 +291,8 @@
  * @example
  * <div class='norender'>
  * <code>
- * const word = 'boo';
- * for (const value of word) {
+ * let word = 'boo';
+ * for (let value of word) {
  *   console.log(value);
  * }
  * </code>
@@ -328,8 +328,8 @@
  * @example
  * <div class='norender'>
  * <code>
- * const myObject = { x: 5, y: 6 };
- * const myObjectAsString = JSON.stringify(myObject);
+ * let myObject = { x: 5, y: 6 };
+ * let myObjectAsString = JSON.stringify(myObject);
  * console.log(myObjectAsString); // prints "{"x":5,"y":6}" to the console
  * console.log(typeof myObjectAsString); // prints 'string' to the console
  * </code>
