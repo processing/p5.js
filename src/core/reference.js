@@ -267,21 +267,6 @@
  */
 
 /**
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt">the MDN entry</a>:
- * The <a href="#/p5/parseInt">parseInt()</a> function parses a string argument and
- * returns an integer of the specified radix (the base in mathematical numeral systems).
- * @method parseInt
- *
- * @example
- * <div class='norender'>
- * <code>
- * parseInt('F', 16);
- * parseInt(21, 8);
- * </code>
- * </div>
- */
-
-/**
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
  * The JSON.stringify() method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
  * @method stringify
