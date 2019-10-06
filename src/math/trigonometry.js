@@ -213,7 +213,7 @@ p5.prototype.sin = function(angle) {
 
 /**
  * Calculates the tangent of an angle. This function takes into account
- * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+ * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range of all real numbers.
  *
  * @method tan
  * @param  {Number} angle the angle
