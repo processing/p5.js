@@ -263,43 +263,6 @@
  */
 
 /**
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in">the MDN entry</a>:
- * Iterates over the enumerable properties of an <a href="#/p5/object">object</a>, in arbitrary order.
- * For each distinct property, statements can be executed.
- * @property for-in
- *
- * @example
- * <div class='norender'>
- * <code>
- * let person = { fname: 'John', lname: 'Doe', age: 25 };
- * let text = '';
- * let x;
- * for (x in person) {
- *   text += person[x] + '';
- * }
- * console.log(text); //'John Doe 25 '
- * </code>
- * </div>
- */
-
-/**
- * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of">the MDN entry</a>:
- * Iterates over iterable objects (including arrays, array-like objects, iterators and generators),
- * invoking a custom iteration hook with statements to be executed for the value of each distinct property.
- * @property for-of
- *
- * @example
- * <div class='norender'>
- * <code>
- * let word = 'boo';
- * for (let value of word) {
- *   console.log(value);
- * }
- * </code>
- * </div>
- */
-
-/**
  * @submodule JS Method
  */
 
