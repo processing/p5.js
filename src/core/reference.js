@@ -32,8 +32,8 @@
  * Variables that are declared with <a href="#/p5/const">const</a> will have block-scope.
  * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within.
- * <a href="#/p5/let">const</a> is different from <a href="#/p5/let">let</a> in that
- * variables declared with <a href="#/p5/let">const</a> cannot be reassigned or redeclared.
+ * <a href="#/p5/const">const</a> is different from <a href="#/p5/let">let</a> in that
+ * variables declared with <a href="#/p5/const">const</a> cannot be reassigned or redeclared.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">the MDN entry</a>:
  * Declares a read-only named constant.
@@ -56,7 +56,7 @@
  */
 
 /**
- * The if-else statement helps control the flow of your code.
+ * The <a href="#/p5/if-else">if-else</a> statement helps control the flow of your code.
  * A condition is placed between the parenthesis following 'if'.
  * When that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
  * the code between the preceding curly braces is run.
