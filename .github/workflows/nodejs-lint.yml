@@ -13,9 +13,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: get node modules
+    - name: Get node modules
       run: npm ci
       env:
         CI: true
-    - name: lint source code
+    - name: Lint source code
       run: npm run lint:source

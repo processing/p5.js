@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: get node modules
+    - name: Get node modules
       run: npm ci
       env:
         CI: true
