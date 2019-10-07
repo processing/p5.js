@@ -99,10 +99,11 @@
  * @example
  * <div class='norender'>
  * <code>
- * function calculateRectArea(width, height) {
- *   return width * height;
+ * let myName = 'Hridi';
+ * function sayHello(name) {
+ *   console.log('Hello ' + name + '!');
  * }
- * calculateRectArea(4, 5); // calling the function
+ * sayHello(myName); // calling the function, prints "Hello Hridi!" to console.
  * </code>
  * </div>
  */
