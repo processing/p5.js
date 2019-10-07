@@ -284,3 +284,30 @@
  * </code>
  * </div>
  */
+
+/**
+ * Prints a message to your browser's web console. When using p5, you can use <a href="#/p5/print">print</a>
+ * and <a href="#/p5/console/log">console.log</a> interchangeably.
+ *
+ * The console is opened differently depending on which browser you are using.
+ * Here are links on how to open the console in <a href="https://developer.mozilla.org/en-US/docs/Tools/Web_Console/Opening_the_Web_Console">Firefox</a>
+ * , <a href="https://developers.google.com/web/tools/chrome-devtools/open">Chrome</a>, <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide/console">Edge</a>,
+ * and <a href="https://support.apple.com/en-ca/guide/safari/sfri20948/mac">Safari</a>. With the <a href="https://editor.p5js.org/">online p5 editor</a> the
+ * console is embedded directly in the page underneath the code editor.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/API/Console/log">the MDN entry</a>:
+ * The Console method log() outputs a message to the web console. The message may be a single <a href="#/p5/string">string</a> (with optional substitution values),
+ * or it may be any one or more JavaScript <a href="#/p5/object">objects</a>.
+ * @method log
+ * @for console
+ * @param {String|Expression|Object} message :Message that you would like to print to the console
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let myNum = 5;
+ * console.log(myNum); // prints 5 to the console
+ * console.log(myNum + 12); // prints 17 to the console
+ * </code>
+ * </div>
+ */
