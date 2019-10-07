@@ -396,20 +396,33 @@ p5.prototype.line = function(...args) {
  * @method point
  * @param {p5.Vector} coordinate_vector the coordinate vector
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * let a = createVector(10, 10);
+ * point(a);
+ * let b = createVector(10, 20);
+ * point(b);
+ * point(createVector(20, 10));
+ * point(createVector(20, 20));
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Vertices of a square of length 10 pixels towards the top-right of the canvas.
+ *
  */
 p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    if (args.length === 1) {
-      if (args[0] instanceof p5.Vector) {
-        this._renderer.point.call(
-          this._renderer,
-          args[0].x,
-          args[0].y,
-          args[0].z
-        );
-      }
+    if (args.length === 1 && args[0] instanceof p5.Vector) {
+      this._renderer.point.call(
+        this._renderer,
+        args[0].x,
+        args[0].y,
+        args[0].z
+      );
     } else {
       this._renderer.point(...args);
     }
