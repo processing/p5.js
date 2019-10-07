@@ -236,7 +236,7 @@
  */
 
 /**
- * <a href="#/p5/for">for</a> creates a loop that is useful for executing the code multiple times.
+ * <a href="#/p5/for">for</a> creates a loop that is useful for executing one section of code multiple times.
  *
  * A 'for loop' consists of three different expressions inside of a parenthesis, all of which are optional.
  * These expressions are used to control the number of times the loop is run.
@@ -248,6 +248,12 @@
  * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
  * and third expression.
  *
+ * As with any loop, it is important to ensure that the loop can 'exit', or that
+ * the test condition will eventually evaluate to false. The test condition with a <a href="#/p5/for">for</a> loop
+ * is the second expression detailed above. Ensuring that this expression can eventually
+ * become false ensures that your loop doesn't attempt to run an infinite amount of times,
+ * which can crash your browser.
+ *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for">the MDN entry</a>:
  * Creates a loop that executes a specified statement until the test condition evaluates to false.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
@@ -258,6 +264,40 @@
  * <code>
  * for (let i = 0; i < 9; i++) {
  *   console.log(i);
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * <a href="#/p5/while">while</a> creates a loop that is useful for executing one section of code multiple times.
+ *
+ * With a 'while loop', the code inside of the loop body (in between the curly braces) is run repeatedly until the test condition
+ * (inside of the parenthesis) evaluates to false. Unlike a <a href="#/p5/for">for</a> loop, the condition is tested before executing the code body with <a href="#/p5/while">while</a>,
+ * so if the condition is initially false the loop body, or statement will never execute.
+ *
+ * As with any loop, it is important to ensure that the loop can 'exit', or that
+ * the test condition will eventually evaluate to false. This is to keep your loop from trying to run an infinite amount of times,
+ * which can crash your browser.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while">the MDN entry</a>:
+ * The while statement creates a loop that executes a specified statement as long as the test condition evaluates to true.
+ * The condition is evaluated before executing the statement.
+ * @property while
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // This example logs the lines below to the console
+ * // 4
+ * // 3
+ * // 2
+ * // 1
+ * // 0
+ * let num = 5;
+ * while (num > 0) {
+ *   num = num - 1;
+ *   console.log(num);
  * }
  * </code>
  * </div>
