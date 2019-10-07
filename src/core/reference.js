@@ -218,14 +218,14 @@
  * @example
  * <div class='norender'>
  * <code>
- * class Polygon {
+ * class Rectangle {
  *   constructor(name, height, width) {
  *     this.name = name;
  *     this.height = height;
  *     this.width = width;
  *   }
  * }
- * let square = new Polygon('square', 1, 1); // creating new instance of Polygon Class.
+ * let square = new Rectangle('square', 1, 1); // creating new instance of Polygon Class.
  * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
