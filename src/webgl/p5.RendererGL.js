@@ -632,6 +632,12 @@ p5.RendererGL.prototype.strokeCap = cap => {
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
+p5.RendererGL.prototype.strokeJoin = join => {
+  // @TODO : to be implemented
+  // https://processing.org/reference/strokeJoin_.html
+  console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
+};
+
 p5.RendererGL.prototype.blendMode = function(mode) {
   if (
     mode === constants.DARKEST ||

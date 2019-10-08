@@ -11,7 +11,8 @@ import * as constants from '../constants';
 
 /**
  * Modifies the location from which ellipses are drawn by changing the way
- * in which parameters given to <a href="#/p5/ellipse">ellipse()</a> are interpreted.
+ * in which parameters given to <a href="#/p5/ellipse">ellipse()</a>,
+ * <a href="#/p5/circle">circle()</a> and <a href="#/p5/arc">arc()</a> are interpreted.
  * <br><br>
  * The default mode is ellipseMode(CENTER), which interprets the first two
  * parameters of <a href="#/p5/ellipse">ellipse()</a> as the shape's center point, while the third and
