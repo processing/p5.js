@@ -120,11 +120,14 @@ suite('p5.Vector', function() {
     test('should not trip on rounding issues in 2D space', function() {
       var v1 = myp5.createVector(-11, -20);
       var v2 = myp5.createVector(-5.5, -10);
-      expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(0, 0.00001);
+      var res = v1.angleBetween(v2);
+      //expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(0, 0.00001);
+      expect(res).to.be.closeTo(0, 0.00001);
 
       var v3 = myp5.createVector(-11, -20);
       var v4 = myp5.createVector(5.5, 10);
       expect(Math.abs(v3.angleBetween(v4))).to.be.closeTo(180, 0.00001);
+      expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
     });
 
     test('should not trip on rounding issues in 3D space', function() {
@@ -140,7 +143,7 @@ suite('p5.Vector', function() {
       var v2 = myp5.createVector(2, 3, 4);
 
       expect(Math.abs(v1.angleBetween(v2))).to.be.NaN; // jshint ignore:line
-      expect(Math.abs(v2.angleBetween(v1))).to.be.NaN; // jshint ignore:line
+      expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
     });
   });
 
@@ -856,7 +859,7 @@ suite('p5.Vector', function() {
     setup(function() {
       v1 = new p5.Vector(1, 0, 0);
       v2 = new p5.Vector(2, 2, 0);
-      res = Math.abs(v1.angleBetween(v2));
+      res = v1.angleBetween(v2);
     });
 
     test('should be a Number', function() {
@@ -867,8 +870,9 @@ suite('p5.Vector', function() {
       test('should be 45 deg difference', function() {
         v1 = new p5.Vector(1, 0, 0);
         v2 = new p5.Vector(2, 2, 0);
-        res = Math.abs(v1.angleBetween(v2));
+        res = v1.angleBetween(v2);
         expect(res).to.be.closeTo(Math.PI / 4, 0.01);
+        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
       });
     });
 
@@ -885,8 +889,14 @@ suite('p5.Vector', function() {
       test('should be 135 deg difference', function() {
         v1 = new p5.Vector(2, 0, 0);
         v2 = new p5.Vector(-2, -2, 0);
-        res = Math.abs(v1.angleBetween(v2));
-        expect(res).to.be.closeTo(Math.PI / 2 + Math.PI / 4, 0.01);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          -1 * (Math.PI / 2 + Math.PI / 4),
+          0.01
+        );
+        expect(v2.angleBetween(v1)).to.be.closeTo(
+          Math.PI / 2 + Math.PI / 4,
+          0.01
+        );
       });
 
       test('should be commutative', function() {
