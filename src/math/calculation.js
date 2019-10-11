@@ -829,4 +829,58 @@ function hypot(x, y, z) {
   return Math.sqrt(sum) * max;
 }
 
+/**
+ * Calculates the fractional part of a number.
+ *
+ * @method fract
+ * @param {Number} num Number whose fractional part needs to be found out
+ * @returns {Number} fractional part of x, i.e, {x}
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(windowWidth, windowHeight);
+ *   fill(0);
+ *   let nums = [
+ *     Infinity,
+ *     1e-10,
+ *     1.4215e-10,
+ *     14213.214e-10,
+ *     142144.42142241241212521e10,
+ *     133232e10,
+ *     1.2412,
+ *     '241.12421'
+ *   ];
+ *   let spacing = 150;
+ *   for (let i = 0; i < nums.length; i++) {
+ *     text(String(nums[i]), i * spacing, 50);
+ *     text(String(fract(nums[i])), i * spacing, 100);
+ *   }
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
+ */
+p5.prototype.fract = function(num) {
+  p5._validateParameters('fract', arguments);
+  var sign = 0;
+  if (num === undefined) return undefined;
+  if (num < 0) {
+    num = -num;
+    sign = 1;
+  }
+  if (num === Infinity) return num;
+  else if (
+    String(num).includes('e') &&
+    String(num)[String(num).indexOf('e') + 1] === '-'
+  )
+    return Math.abs(sign - num);
+  else if (String(num).includes('.'))
+    return Math.abs(
+      sign - Number('0' + String(num).slice(String(num).indexOf('.')))
+    );
+  else return 0;
+};
+
 export default p5;
