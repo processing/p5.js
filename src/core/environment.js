@@ -599,7 +599,6 @@ p5.prototype.pixelDensity = function(val) {
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
-      this._pixelsDirty = true;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas

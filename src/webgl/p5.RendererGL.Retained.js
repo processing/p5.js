@@ -240,7 +240,6 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
-  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -255,7 +254,6 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
     // drawing vertices
     gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
   }
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
@@ -276,7 +274,6 @@ p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
   gl.drawArrays(gl.Points, 0, vertices.length);
 
   pointShader.unbindShader();
-  this._pixelsState._pixelsDirty = true;
 };
 
 export default p5.RendererGL;
