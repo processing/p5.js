@@ -53,6 +53,136 @@
  */
 
 /**
+ * @submodule Comparison Operators
+ */
+
+/**
+ * The equality operator <a href="#/p5/==">==</a>
+ * checks to see if two values are equal.
+ *
+ * Unlike, the strict equality operator, <a href="#/p5/===">===</a>, if
+ * the values being compared are not already the same type they will be
+ * converted to the same type before comparison.
+ *
+ * A comparison expression always evaluates to a <a href="#/p5/boolean">boolean</a>.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">the MDN entry</a>:
+ * The equality operator converts the operands if they are not of the same type, then applies strict comparison.
+ * If both operands are objects, then JavaScript compares internal references which are equal when operands refer
+ * to the same object in memory.
+ *
+ * @property ==
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(1 == 1) // prints true to the console
+ * console.log(1 == '1'); // prints true to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * The strict equality operator <a href="#/p5/===">===</a>
+ * checks to see if two values are equal and of the same type.
+ *
+ * Unlike, the equality operator, <a href="#/p5/==">==</a>,
+ * regardless of whether they are different types
+ * the values being compared are not converted before comparison.
+ *
+ * A comparison expression always evaluates to a <a href="#/p5/boolean">boolean</a>.
+ *
+ * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">the MDN entry</a>:
+ * The non-identity operator returns true if the operands are not equal and/or not of the same type.
+ *
+ * @property ===
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(1 == 1) // prints true to the console
+ * console.log(1 == '1'); // prints false to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * The greater than operator <a href="#/p5/>">></a>
+ * evaluates to true if the left value is greater than
+ * the right value.
+ *
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
+ *
+ * @property >
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(100 > 1) // prints true to the console
+ * console.log(1 > 100); // prints false to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * The greater than or equal to operator <a href="#/p5/>=">>=</a>
+ * evaluates to true if the left value is greater than or equal to
+ * the right value.
+ *
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
+ *
+ * @property >=
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(100 >= 100) // prints true to the console
+ * console.log(101 >= 100); // prints true to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * The less than operator <a href="#/p5/<"><</a>
+ * evaluates to true if the left value is less than
+ * the right value.
+ *
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
+ *
+ * @property <
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(1 < 100) // prints true to the console
+ * console.log(100 < 99); // prints false to the console
+ * </code>
+ * </div>
+ */
+
+/**
+ * The less than or equal to operator <a href="#/p5/<="><=</a>
+ * evaluates to true if the left value is less than or equal to
+ * the right value.
+ *
+ *
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
+ *
+ * @property <=
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * console.log(100 <= 100) // prints true to the console
+ * console.log(99 <= 100); // prints true to the console
+ * </code>
+ * </div>
+ */
+
+/**
  * @submodule Control Statement
  */
 
