@@ -1587,6 +1587,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "CrypticGuy",
+      "name": "Vasu Goel",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/13849789?v=4",
+      "profile": "https://github.com/CrypticGuy",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
