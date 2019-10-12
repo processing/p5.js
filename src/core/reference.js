@@ -76,8 +76,8 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(1 == 1) // prints true to the console
- * console.log(1 == '1'); // prints true to the console
+ * console.log(1 == 1); // prints true to the console
+ * console.log('1' == 1); // prints true to the console
  * </code>
  * </div>
  */
@@ -100,8 +100,8 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(1 == 1) // prints true to the console
- * console.log(1 == '1'); // prints false to the console
+ * console.log(1 === 1); // prints true to the console
+ * console.log(1 === '1'); // prints false to the console
  * </code>
  * </div>
  */
@@ -119,7 +119,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(100 > 1) // prints true to the console
+ * console.log(100 > 1); // prints true to the console
  * console.log(1 > 100); // prints false to the console
  * </code>
  * </div>
@@ -138,7 +138,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(100 >= 100) // prints true to the console
+ * console.log(100 >= 100); // prints true to the console
  * console.log(101 >= 100); // prints true to the console
  * </code>
  * </div>
@@ -157,7 +157,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(1 < 100) // prints true to the console
+ * console.log(1 < 100); // prints true to the console
  * console.log(100 < 99); // prints false to the console
  * </code>
  * </div>
@@ -176,7 +176,7 @@
  * @example
  * <div class='norender'>
  * <code>
- * console.log(100 <= 100) // prints true to the console
+ * console.log(100 <= 100); // prints true to the console
  * console.log(99 <= 100); // prints true to the console
  * </code>
  * </div>
