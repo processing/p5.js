@@ -333,8 +333,6 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       0,
       this.immediateMode.vertices.length
     );
-
-    this._pixelsState._pixelsDirty = true;
   }
   // todo / optimizations? leave bound until another shader is set?
   shader.unbindShader();
@@ -372,8 +370,6 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
 
   this._applyColorBlend(this.curStrokeColor);
   gl.drawArrays(gl.TRIANGLES, 0, this.immediateMode.lineVertices.length);
-
-  this._pixelsState._pixelsDirty = true;
 
   shader.unbindShader();
 };

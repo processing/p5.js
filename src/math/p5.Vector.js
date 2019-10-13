@@ -1181,6 +1181,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * </code>
  * </div>
  */
+
 p5.Vector.prototype.angleBetween = function angleBetween(v) {
   const dotmagmag = this.dot(v) / (this.mag() * v.mag());
   // Mathematically speaking: the dotmagmag variable will be between -1 and 1
@@ -1188,11 +1189,14 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   // to floating-point rounding issues. This can make Math.acos return NaN.
   //
   // Solution: we'll clamp the value to the -1,1 range
-  const angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-  if (this.p5) return this.p5._fromRadians(angle);
+  let angle;
+  angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+  angle = angle * Math.sign(this.cross(v).z || 1);
+  if (this.p5) {
+    angle = this.p5._fromRadians(angle);
+  }
   return angle;
 };
-
 /**
  * Linear interpolate the vector to another vector
  *

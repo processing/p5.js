@@ -387,16 +387,43 @@ p5.prototype.line = function(...args) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * let a = createVector(10, 10);
+ * point(a);
+ * let b = createVector(10, 20);
+ * point(b);
+ * point(createVector(20, 10));
+ * point(createVector(20, 20));
+ * </code>
+ * </div>
+ *
  * @alt
  * 4 points centered in the middle-right of the canvas.
  * 4 large purple points centered in the middle-right of the canvas.
+ * Vertices of a square of length 10 pixels towards the top-left of the canvas.
+ *
+ */
+/**
+ * @method point
+ * @param {p5.Vector} coordinate_vector the coordinate vector
+ * @chainable
  *
  */
 p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
 
   if (this._renderer._doStroke) {
-    this._renderer.point(...args);
+    if (args.length === 1 && args[0] instanceof p5.Vector) {
+      this._renderer.point.call(
+        this._renderer,
+        args[0].x,
+        args[0].y,
+        args[0].z
+      );
+    } else {
+      this._renderer.point(...args);
+    }
   }
 
   return this;

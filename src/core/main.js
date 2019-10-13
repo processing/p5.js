@@ -576,8 +576,6 @@ class p5 {
       hsl: [360, 100, 100, 1]
     };
 
-    this._pixelsDirty = true;
-
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
 

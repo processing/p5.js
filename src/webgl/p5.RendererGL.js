@@ -540,7 +540,6 @@ p5.RendererGL.prototype.background = function(...args) {
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
-  this._pixelsState._pixelsDirty = true;
 };
 
 //////////////////////////////////////////////
@@ -630,6 +629,12 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 p5.RendererGL.prototype.strokeCap = cap => {
   // @TODO : to be implemented
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+};
+
+p5.RendererGL.prototype.strokeJoin = join => {
+  // @TODO : to be implemented
+  // https://processing.org/reference/strokeJoin_.html
+  console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
 };
 
 p5.RendererGL.prototype.blendMode = function(mode) {
@@ -733,21 +738,15 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.RendererGL.prototype._getPixel = function(x, y) {
-  const pixelsState = this._pixelsState;
   let imageData, index;
-  if (pixelsState._pixelsDirty) {
-    imageData = new Uint8Array(4);
-    // prettier-ignore
-    this.drawingContext.readPixels(
+  imageData = new Uint8Array(4);
+  // prettier-ignore
+  this.drawingContext.readPixels(
       x, y, 1, 1,
       this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
       imageData
     );
-    index = 0;
-  } else {
-    imageData = pixelsState.pixels;
-    index = (Math.floor(x) + Math.floor(y) * this.canvas.width) * 4;
-  }
+  index = 0;
   return [
     imageData[index + 0],
     imageData[index + 1],
@@ -768,8 +767,6 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
 
 p5.RendererGL.prototype.loadPixels = function() {
   const pixelsState = this._pixelsState;
-  if (!pixelsState._pixelsDirty) return;
-  pixelsState._pixelsDirty = false;
 
   //@todo_FES
   if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
@@ -825,7 +822,6 @@ p5.RendererGL.prototype.resize = function(w, h) {
 
   //resize pixels buffer
   const pixelsState = this._pixelsState;
-  pixelsState._pixelsDirty = true;
   if (typeof pixelsState.pixels !== 'undefined') {
     pixelsState._setProperty(
       'pixels',
@@ -852,7 +848,6 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _a = args[3] || 0;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {

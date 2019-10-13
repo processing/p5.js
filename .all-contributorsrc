@@ -1526,10 +1526,10 @@
       ]
     },
     {
-      "login":"singhvisha",
-      "name":"Vishal Singh",
-      "avatar_url":"https://avatars0.githubusercontent.com/u/38842688?s=460&v=4",
-      "profile":"https://github.com/singhvisha",
+      "login": "singhvisha",
+      "name": "Vishal Singh",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/38842688?s=460&v=4",
+      "profile": "https://github.com/singhvisha",
       "contributions": [
         "doc"
       ]
@@ -1550,15 +1550,56 @@
       "name": "Lisa Mabley",
       "avatar_url": "https://avatars3.githubusercontent.com/u/6124489?v=4",
       "profile": "https://www.lisamabley.codes",
-      "contributions": ["doc", "example"]
+      "contributions": [
+        "doc",
+        "example"
+      ]
     },
     {
       "login": "aferriss",
       "name": "Adam Ferriss",
       "avatar_url": "https://avatars3.githubusercontent.com/u/3698659?v=4",
       "profile": "https://www.amf.fyi",
-      "contributions": ["code", "doc", "bug", "example"]
+      "contributions": [
+        "code",
+        "doc",
+        "bug",
+        "example"
+      ]
+    },
+    {
+      "login": "joshuaalm",
+      "name": "Joshua Marris",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6978629?s=460&v=4",
+      "profile": "https://joshuaalm.github.io",
+      "contributions": [
+        "doc",
+        "code",
+        "talk",
+        "tutorial"
+      ]
+    },
+    {
+      "login": "thumbsupep",
+      "name": "Erica Pramer",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5598732?v=4",
+      "profile": "https://github.com/thumbsupep",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "CrypticGuy",
+      "name": "Vasu Goel",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/13849789?v=4",
+      "profile": "https://github.com/CrypticGuy",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
-  "repoType": "github"
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "contributorsPerLine": 7
 }
