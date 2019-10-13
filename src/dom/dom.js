@@ -2224,8 +2224,6 @@ p5.MediaElement = function(elt, pInst) {
   this._pixelsState = this;
   this._pixelDensity = 1;
   this._modified = false;
-  this._pixelsDirty = true;
-  this._pixelsTime = -1; // the time at which we last updated 'pixels'
 
   /**
    * Path to the media element source.
@@ -2877,25 +2875,16 @@ p5.MediaElement.prototype._ensureCanvas = function() {
       this.canvas.height = this.elt.height;
       this.width = this.canvas.width;
       this.height = this.canvas.height;
-      this._pixelsDirty = true;
     }
 
-    var currentTime = this.elt.currentTime;
-    if (this._pixelsDirty || this._pixelsTime !== currentTime) {
-      // only update the pixels array if it's dirty, or
-      // if the video time has changed.
-      this._pixelsTime = currentTime;
-      this._pixelsDirty = true;
-
-      this.drawingContext.drawImage(
-        this.elt,
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
-      this.setModified(true);
-    }
+    this.drawingContext.drawImage(
+      this.elt,
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+    this.setModified(true);
   }
 };
 p5.MediaElement.prototype.loadPixels = function() {

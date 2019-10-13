@@ -255,8 +255,6 @@ p5.prototype.copy = function(...args) {
   }
 
   p5.prototype._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
-
-  this._pixelsDirty = true;
 };
 
 p5.prototype._copyHelper = (
