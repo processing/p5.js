@@ -417,6 +417,7 @@
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
  * The JSON.stringify() method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
  * @method stringify
+ * @static
  * @for JSON
  * @param {Object} object :Javascript object that you would like to convert to JSON
  *
@@ -445,6 +446,7 @@
  * The Console method log() outputs a message to the web console. The message may be a single <a href="#/p5/string">string</a> (with optional substitution values),
  * or it may be any one or more JavaScript <a href="#/p5/object">objects</a>.
  * @method log
+ * @static
  * @for console
  * @param {String|Expression|Object} message :Message that you would like to print to the console
  *
