@@ -144,8 +144,12 @@ p5.prototype.loop = function() {
  * <a href="#/p5/textFont">textFont()</a>,
  * <a href="#/p5/textSize">textSize()</a>,
  * <a href="#/p5/textLeading">textLeading()</a>,
+ * <a href="#/p5/applyMatrix">applyMatrix()</a>,
+ * <a href="#/p5/resetMatrix">resetMatrix()</a>,
  * <a href="#/p5/rotate">rotate()</a>,
  * <a href="#/p5/scale">scale()</a>,
+ * <a href="#/p5/shearX">shearX()</a>,
+ * <a href="#/p5/shearY">shearY()</a>,
  * <a href="#/p5/translate">translate()</a>.
  * <br><br>
  * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
@@ -229,8 +233,12 @@ p5.prototype.push = function() {
  * <a href="#/p5/textFont">textFont()</a>,
  * <a href="#/p5/textSize">textSize()</a>,
  * <a href="#/p5/textLeading">textLeading()</a>,
+ * <a href="#/p5/applyMatrix">applyMatrix()</a>,
+ * <a href="#/p5/resetMatrix">resetMatrix()</a>,
  * <a href="#/p5/rotate">rotate()</a>,
  * <a href="#/p5/scale">scale()</a>,
+ * <a href="#/p5/shearX">shearX()</a>,
+ * <a href="#/p5/shearY">shearY()</a>,
  * <a href="#/p5/translate">translate()</a>.
  * <br><br>
  * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
