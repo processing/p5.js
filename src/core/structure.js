@@ -129,6 +129,8 @@ p5.prototype.loop = function() {
  * <a href="#/p5/push">push()</a> stores information related to the current transformation state
  * and style settings controlled by the following functions:
  * <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/noFill">noFill()</a>,
+ * <a href="#/p5/noStroke">noStroke()</a>,
  * <a href="#/p5/stroke">stroke()</a>,
  * <a href="#/p5/tint">tint()</a>,
  * <a href="#/p5/strokeWeight">strokeWeight()</a>,
@@ -142,9 +144,9 @@ p5.prototype.loop = function() {
  * <a href="#/p5/textFont">textFont()</a>,
  * <a href="#/p5/textSize">textSize()</a>,
  * <a href="#/p5/textLeading">textLeading()</a>,
- * <a href="#/p5/translate">translate()</a>,
+ * <a href="#/p5/rotate">rotate()</a>,
  * <a href="#/p5/scale">scale()</a>,
- * <a href="#/p5/rotate">rotate()</a>.
+ * <a href="#/p5/translate">translate()</a>.
  * <br><br>
  * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
  * <a href="#/p5/pointLight">pointLight()</a>, <a href="#/p5/texture">texture()</a>, <a href="#/p5/specularMaterial">specularMaterial()</a>, <a href="#/p5/shininess">shininess()</a>, <a href="#/p5/normalMaterial">normalMaterial()</a>
@@ -212,6 +214,8 @@ p5.prototype.push = function() {
  * <a href="#/p5/push">push()</a> stores information related to the current transformation state
  * and style settings controlled by the following functions:
  * <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/noFill">noFill()</a>,
+ * <a href="#/p5/noStroke">noStroke()</a>,
  * <a href="#/p5/stroke">stroke()</a>,
  * <a href="#/p5/tint">tint()</a>,
  * <a href="#/p5/strokeWeight">strokeWeight()</a>,
@@ -225,9 +229,9 @@ p5.prototype.push = function() {
  * <a href="#/p5/textFont">textFont()</a>,
  * <a href="#/p5/textSize">textSize()</a>,
  * <a href="#/p5/textLeading">textLeading()</a>,
- * <a href="#/p5/translate">translate()</a>,
+ * <a href="#/p5/rotate">rotate()</a>,
  * <a href="#/p5/scale">scale()</a>,
- * <a href="#/p5/rotate">rotate()</a>.
+ * <a href="#/p5/translate">translate()</a>.
  * <br><br>
  * In WEBGL mode additional style settings are stored. These are controlled by the following functions: <a href="#/p5/setCamera">setCamera()</a>, <a href="#/p5/ambientLight">ambientLight()</a>, <a href="#/p5/directionalLight">directionalLight()</a>,
  * <a href="#/p5/pointLight">pointLight()</a>, <a href="#/p5/texture">texture()</a>, <a href="#/p5/specularMaterial">specularMaterial()</a>, <a href="#/p5/shininess">shininess()</a>, <a href="#/p5/normalMaterial">normalMaterial()</a>
