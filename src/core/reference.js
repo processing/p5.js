@@ -6,6 +6,7 @@
 
 /**
  * Creates and names a new variable. A variable is a container for a value.
+ *
  * Variables that are declared with <a href="#/p5/let">let</a> will have block-scope.
  * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within.
@@ -31,6 +32,7 @@
  * Creates and names a new constant. Like a variable created with <a href="#/p5/let">let</a>, a constant
  * that is created with <a href="#/p5/const">const</a> is a container for a value,
  * however constants cannot be changed once they are declared.
+ *
  * Constants have block-scope. This means that the constant only exists within
  * the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within. A constant cannot be redeclared within a scope in which it
@@ -163,8 +165,9 @@
 
 /**
  * The <a href="#/p5/if-else">if-else</a> statement helps control the flow of your code.
- * A condition is placed between the parenthesis following 'if'.
- * When that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
+ *
+ * A condition is placed between the parenthesis following 'if',
+ * when that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
  * the code between the following curly braces is run.
  * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
  * the code between the curly braces that follow 'else' is run instead.
@@ -194,6 +197,7 @@
 /**
  * Creates and names a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions">function</a>.
  * A <a href="#/p5/function">function</a> is a set of statements that perform a task.
+ *
  * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters</a>
  * are variables that are scoped to the function, that can be assigned a value when calling the function.
  *
@@ -378,9 +382,9 @@
 /**
  * <a href="#/p5/while">while</a> creates a loop that is useful for executing one section of code multiple times.
  *
- * With a 'while loop', the code inside of the loop body (in between the curly braces) is run repeatedly until the test condition
+ * With a 'while loop', the code inside of the loop body (between the curly braces) is run repeatedly until the test condition
  * (inside of the parenthesis) evaluates to false. Unlike a <a href="#/p5/for">for</a> loop, the condition is tested before executing the code body with <a href="#/p5/while">while</a>,
- * so if the condition is initially false the loop body, or statement will never execute.
+ * so if the condition is initially false the loop body, or statement, will never execute.
  *
  * As with any loop, it is important to ensure that the loop can 'exit', or that
  * the test condition will eventually evaluate to false. This is to keep your loop from trying to run an infinite amount of times,
