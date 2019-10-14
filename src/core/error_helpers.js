@@ -11,7 +11,7 @@
  * helpForMisusedAtTopLevelCode is called by this file on window load to check for use
  * of p5.js functions outside of setup() or draw()
  * Items 1-3 above are called by functions in the p5 library located in other files.
- * 
+ *
  * _friendlyFileLoadError is called by the loadX() methods.
  * _friendlyError can be called by any function to offer a helpful error message.
  *
