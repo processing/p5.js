@@ -339,8 +339,6 @@ function addElement(elt, pInst, media) {
 
 /**
  * Creates a &lt;div&gt;&lt;/div&gt; element in the DOM with given inner HTML.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createDiv
  * @param  {String} [html] inner HTML for element created
@@ -354,8 +352,6 @@ function addElement(elt, pInst, media) {
 /**
  * Creates a &lt;p&gt;&lt;/p&gt; element in the DOM with given inner HTML. Used
  * for paragraph length text.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createP
  * @param  {String} [html] inner HTML for element created
@@ -368,8 +364,6 @@ function addElement(elt, pInst, media) {
 
 /**
  * Creates a &lt;span&gt;&lt;/span&gt; element in the DOM with given inner HTML.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createSpan
  * @param  {String} [html] inner HTML for element created
@@ -392,8 +386,6 @@ tags.forEach(function(tag) {
 /**
  * Creates an &lt;img&gt; element in the DOM with given src and
  * alternate text.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createImg
  * @param  {String} src src path or url for image
@@ -436,8 +428,6 @@ p5.prototype.createImg = function() {
 
 /**
  * Creates an &lt;a&gt;&lt;/a&gt; element in the DOM for including a hyperlink.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createA
  * @param  {String} href       url of page to link to
@@ -464,8 +454,6 @@ p5.prototype.createA = function(href, html, target) {
 /**
  * Creates a slider &lt;input&gt;&lt;/input&gt; element in the DOM.
  * Use .size() to set the display length of the slider.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createSlider
  * @param  {Number} min minimum value of the slider
@@ -522,8 +510,6 @@ p5.prototype.createSlider = function(min, max, value, step) {
  * Creates a &lt;button&gt;&lt;/button&gt; element in the DOM.
  * Use .size() to set the display size of the button.
  * Use .mousePressed() to specify behavior on press.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createButton
  * @param  {String} label label displayed on the button
@@ -942,8 +928,6 @@ p5.prototype.createColorPicker = function(value) {
 /**
  * Creates an &lt;input&gt;&lt;/input&gt; element in the DOM for text input.
  * Use .<a href="#/p5.Element/size">size()</a> to set the display length of the box.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createInput
  * @param {String} [value] default value of the input box
@@ -1087,8 +1071,7 @@ function createMedia(pInst, type, src, callback) {
 /**
  * Creates an HTML5 &lt;video&gt; element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
- * and drawn into canvas using video(). Appends to the container
- * node if one is specified, otherwise appends to body. The first parameter
+ * and drawn into canvas using video(). The first parameter
  * can be either a single string path to a video file, or an array of string
  * paths to different formats of the same video. This is useful for ensuring
  * that your video can play across different browsers, as each supports
@@ -1135,12 +1118,11 @@ p5.prototype.createVideo = function(src, callback) {
 
 /**
  * Creates a hidden HTML5 &lt;audio&gt; element in the DOM for simple audio
- * playback. Appends to the container node if one is specified,
- * otherwise appends to body. The first parameter
- * can be either a single string path to a audio file, or an array of string
- * paths to different formats of the same audio. This is useful for ensuring
- * that your audio can play across different browsers, as each supports
- * different formats. See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
+ * playback. The first parameter can be either a single string path to a
+ * audio file, or an array of string paths to different formats of the same
+ * audio. This is useful for ensuring that your audio can play across
+ * different browsers, as each supports different formats.
+ * See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
  * page for further information about supported formats</a>.
  *
  * @method createAudio
@@ -1355,8 +1337,6 @@ p5.prototype.createCapture = function() {
 
 /**
  * Creates element with given tag in the DOM with given content.
- * Appends to the container node if one is specified, otherwise
- * appends to body.
  *
  * @method createElement
  * @param  {String} tag tag for the new element
