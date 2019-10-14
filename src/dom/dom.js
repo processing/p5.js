@@ -1118,10 +1118,10 @@ p5.prototype.createVideo = function(src, callback) {
 
 /**
  * Creates a hidden HTML5 &lt;audio&gt; element in the DOM for simple audio
- * playback. The first parameter can be either a single string path to a 
+ * playback. The first parameter can be either a single string path to a
  * audio file, or an array of string paths to different formats of the same
- * audio. This is useful for ensuring that your audio can play across 
- * different browsers, as each supports different formats. 
+ * audio. This is useful for ensuring that your audio can play across
+ * different browsers, as each supports different formats.
  * See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
  * page for further information about supported formats</a>.
  *
