@@ -632,6 +632,12 @@ p5.RendererGL.prototype.strokeCap = cap => {
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
+p5.RendererGL.prototype.filter = filterType => {
+  // filter can be achieved in WEBGL mode using custom shader.
+  // https://github.com/aferriss/p5jsShaderExamples
+  console.error('filter() is not supported in WEBGL mode');
+};
+
 p5.RendererGL.prototype.blendMode = function(mode) {
   if (
     mode === constants.DARKEST ||
