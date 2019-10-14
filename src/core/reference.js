@@ -1,6 +1,5 @@
 /**
  * @module Foundation
- * @submodule Declaration
  * @for p5
  */
 
@@ -52,10 +51,6 @@
  * console.log('my favorite number is: ' + myFavNumber);
  * </code>
  * </div>
- */
-
-/**
- * @submodule Comparison Operators
  */
 
 /**
@@ -160,10 +155,6 @@
  */
 
 /**
- * @submodule Control Statement
- */
-
-/**
  * The <a href="#/p5/if-else">if-else</a> statement helps control the flow of your code.
  *
  * A condition is placed between the parenthesis following 'if',
@@ -188,10 +179,6 @@
  * }
  * </code>
  * </div>
- */
-
-/**
- * @submodule Function
  */
 
 /**
@@ -232,10 +219,6 @@
  * calculateSquare(4); // returns 16
  * </code>
  * </div>
- */
-
-/**
- * @submodule Types
  */
 
 /**
@@ -315,10 +298,6 @@
  */
 
 /**
- * @submodule Classes
- */
-
-/**
  * Creates and names a <a href="#/p5/class">class</a> which is a template for the creation of <a href="#/p5/objects">objects</a>.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
@@ -339,10 +318,6 @@
  * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
- */
-
-/**
- * @submodule Iterative Statement
  */
 
 /**
@@ -411,10 +386,6 @@
  * }
  * </code>
  * </div>
- */
-
-/**
- * @submodule JS Method
  */
 
 /**
