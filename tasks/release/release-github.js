@@ -79,7 +79,7 @@ module.exports = function(grunt) {
             }
             console.log(`Uploaded ${arr[0]}`);
             count++;
-            if (count === 7) {
+            if (count === 5) {
               done();
               console.log('Released on GitHub!\n All done!');
             }

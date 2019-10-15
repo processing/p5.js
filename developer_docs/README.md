@@ -30,7 +30,7 @@ Aside from the code itself, you may also need to supply some combination of the 
 
 ## Examples
 
-The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/wiki/Adding-examples), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
+The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
 p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](https://github.com/processing/p5.js/blob/master/developer_docs/es6-adoption.md).

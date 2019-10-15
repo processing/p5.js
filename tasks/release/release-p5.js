@@ -11,10 +11,9 @@ module.exports = function(grunt) {
   const opts = {
     releaseIt: {
       options: {
-        'non-interactive': true,
+        'non-interactive': false,
         'dry-run': false,
         pkgFiles: ['package.json'],
-        increment: '',
         buildCommand: 'grunt yui && grunt build',
         changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
         src: {
@@ -67,16 +66,16 @@ module.exports = function(grunt) {
       // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
       grunt.task.run('release-it');
 
-      // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
       grunt.task.run('release-bower');
 
-      // 4. Push the docs out to the website
+      // // 4. Push the docs out to the website
       grunt.task.run('release-docs');
 
-      // 5. Zip the lib folder
+      // // 5. Zip the lib folder
       grunt.task.run('compress');
 
-      // 6. Draft a Release for GitHub
+      // // 6. Draft a Release for GitHub
       grunt.task.run('release-github');
     }
   );

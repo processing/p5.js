@@ -145,7 +145,6 @@ p5.Image = function(width, height) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelsState = this;
   this._pixelDensity = 1;
-  this._pixelsDirty = true;
   //Object for working with GIFs, defaults to null
   this.gifProperties = null;
   //For WebGL Texturing only: used to determine whether to reupload texture to GPU
@@ -242,7 +241,6 @@ p5.Image.prototype._animateGif = function(pInst) {
       const ind = props.displayIndex % props.numFrames;
       this.drawingContext.putImageData(props.frames[ind], 0, 0);
       props.displayIndex = ind;
-      this._pixelsDirty = true;
       this.setModified(true);
     }
   }
@@ -547,7 +545,6 @@ p5.Image.prototype.resize = function(width, height) {
   }
 
   this.setModified(true);
-  this._pixelsDirty = true;
 };
 
 /**

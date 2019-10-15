@@ -1,8 +1,46 @@
 /**
  * @for p5
  * @requires core
+ *
+ * This is the main file for the Friendly Error System (FES). Here is a
+ * brief outline of the functions called in this system.
+ *
+ * The FES may be invoked by a call to either (1) _validateParameters,
+ * (2) _friendlyFileLoadError, (3) _friendlyError, or (4) helpForMisusedAtTopLevelCode.
+ *
+ * helpForMisusedAtTopLevelCode is called by this file on window load to check for use
+ * of p5.js functions outside of setup() or draw()
+ * Items 1-3 above are called by functions in the p5 library located in other files.
+ *
+ * _friendlyFileLoadError is called by the loadX() methods.
+ * _friendlyError can be called by any function to offer a helpful error message.
+ *
+ * _validateParameters is called by functions in the p5.js API to help users ensure
+ * ther are calling p5 function with the right parameter types. The property
+ * disableFriendlyErrors = false can be set from a p5.js sketch to turn off parameter
+ * checking. The call sequence from _validateParameters looks something like this:
+ *
+ * _validateParameters
+ *   lookupParamDoc
+ *   scoreOverload
+ *     testParamTypes
+ *     testParamType
+ *   getOverloadErrors
+ *   _friendlyParamError
+ *     ValidationError
+ *     report
+ *       friendlyWelcome
+ *
+ * The call sequences to _friendlyFileLoadError and _friendlyError are like this:
+ * _friendlyFileLoadError
+ *   report
+ *
+ * _friendlyError
+ *   report
+ *
+ * report() is the main function that prints directly to console with the output
+ * of the error helper message. Note: friendlyWelcome() also prints to console directly.
  */
-
 import p5 from './main';
 import * as constants from './constants';
 
