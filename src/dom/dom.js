@@ -1612,7 +1612,7 @@ p5.Element.prototype.html = function() {
   if (arguments.length === 0) {
     return this.elt.innerHTML;
   } else if (arguments[1]) {
-    this.elt.innerHTML += arguments[0];
+    this.elt.insertAdjacentHTML('beforeend', arguments[0]);
     return this;
   } else {
     this.elt.innerHTML = arguments[0];
