@@ -841,21 +841,20 @@ function hypot(x, y, z) {
  * function setup() {
  *   createCanvas(windowWidth, windowHeight);
  *   fill(0);
- *   let nums = [
- *     Infinity,
- *     1e-10,
- *     1.4215e-10,
- *     14213.214e-10,
- *     142144.42142241241212521e10,
- *     133232e10,
- *     1.2412,
- *     '241.12421'
- *   ];
- *   let spacing = 150;
- *   for (let i = 0; i < nums.length; i++) {
- *     text(String(nums[i]), i * spacing, 50);
- *     text(String(fract(nums[i])), i * spacing, 100);
- *   }
+ *   text(String(Infinity), 0, 50);
+ *   text(String(fract(Infinity)), 0, 100);
+ *   text(String(1e-10), 150, 50);
+ *   text(String(fract(1e-10)), 150, 100);
+ *   text(String(1.4215e-10), 300, 50);
+ *   text(String(fract(1.4215e-10)), 300, 100);
+ *   text(String(14213.214e-10), 450, 50);
+ *   text(String(fract(14213.214e-10)), 450, 100);
+ *   text(String(133232e10), 600, 50);
+ *   text(String(fract(133232e10)), 600, 100);
+ *   text(String(1.2412), 750, 50);
+ *   text(String(fract(1.2412)), 750, 100);
+ *   text(String('241.12421'), 900, 50);
+ *   text(String(fract('241.12421')), 900, 100);
  * }
  * </code>
  * </div>
@@ -864,22 +863,17 @@ function hypot(x, y, z) {
  */
 p5.prototype.fract = function(num) {
   p5._validateParameters('fract', arguments);
-  var sign = 0;
-  if (num === undefined) return undefined;
-  if (num < 0) {
+  let sign = 0;
+  if (num === undefined || Math.abs(num) === Infinity) return num;
+  else if (num < 0) {
     num = -num;
     sign = 1;
   }
-  if (num === Infinity) return num;
-  else if (
-    String(num).includes('e') &&
-    String(num)[String(num).indexOf('e') + 1] === '-'
-  )
-    return Math.abs(sign - num);
-  else if (String(num).includes('.'))
-    return Math.abs(
-      sign - Number('0' + String(num).slice(String(num).indexOf('.')))
-    );
+  if (String(num).includes('.') && !String(num).includes('e')){
+    let toFract = String(num);
+    toFract = Number('0' + toFract.slice(toFract.indexOf('.')))
+    return Math.abs(sign-toFract);
+  } else if (num<1) return Math.abs(sign-num);
   else return 0;
 };
 
