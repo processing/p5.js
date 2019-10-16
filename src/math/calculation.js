@@ -869,11 +869,11 @@ p5.prototype.fract = function(num) {
     num = -num;
     sign = 1;
   }
-  if (String(num).includes('.') && !String(num).includes('e')){
+  if (String(num).includes('.') && !String(num).includes('e')) {
     let toFract = String(num);
-    toFract = Number('0' + toFract.slice(toFract.indexOf('.')))
-    return Math.abs(sign-toFract);
-  } else if (num<1) return Math.abs(sign-num);
+    toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
+    return Math.abs(sign - toFract);
+  } else if (num < 1) return Math.abs(sign - num);
   else return 0;
 };
 
