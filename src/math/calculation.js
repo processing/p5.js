@@ -841,20 +841,10 @@ function hypot(x, y, z) {
  * function setup() {
  *   createCanvas(windowWidth, windowHeight);
  *   fill(0);
- *   text(String(Infinity), 0, 50);
- *   text(String(fract(Infinity)), 0, 100);
- *   text(String(1e-10), 150, 50);
- *   text(String(fract(1e-10)), 150, 100);
- *   text(String(1.4215e-10), 300, 50);
- *   text(String(fract(1.4215e-10)), 300, 100);
- *   text(String(14213.214e-10), 450, 50);
- *   text(String(fract(14213.214e-10)), 450, 100);
- *   text(String(133232e10), 600, 50);
- *   text(String(fract(133232e10)), 600, 100);
- *   text(String(1.2412), 750, 50);
- *   text(String(fract(1.2412)), 750, 100);
- *   text(String('241.12421'), 900, 50);
- *   text(String(fract('241.12421')), 900, 100);
+ *   text(7345.73472742, 0, 50);
+ *   text(fract(7345.73472742), 0, 100);
+ *   text(1.4215e-15, 150, 50);
+ *   text(fract(1.4215e-15), 150, 100);
  * }
  * </code>
  * </div>
@@ -864,8 +854,9 @@ function hypot(x, y, z) {
 p5.prototype.fract = function(num) {
   p5._validateParameters('fract', arguments);
   let sign = 0;
-  if (num === undefined || Math.abs(num) === Infinity) return num;
-  else if (num < 0) {
+  if (num === undefined || Math.abs(num) === Infinity) {
+    return num;
+  } else if (num < 0) {
     num = -num;
     sign = 1;
   }
@@ -873,8 +864,11 @@ p5.prototype.fract = function(num) {
     let toFract = String(num);
     toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
     return Math.abs(sign - toFract);
-  } else if (num < 1) return Math.abs(sign - num);
-  else return 0;
+  } else if (num < 1) {
+    return Math.abs(sign - num);
+  } else {
+    return 0;
+  }
 };
 
 export default p5;
