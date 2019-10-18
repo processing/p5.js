@@ -351,6 +351,12 @@ p5.prototype._copyHelper = (
  *
  * DILATE
  * Increases the light areas. No parameter is used.
+ * <br><br>
+ *
+ * filter() does not in work WEBGL mode.It can be achieved using custom
+ * shaders.<a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>Shader Example</a> containing explaination and examples
+ * related shader.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
