@@ -854,7 +854,8 @@ function hypot(x, y, z) {
 p5.prototype.fract = function(num) {
   p5._validateParameters('fract', arguments);
   let sign = 0;
-  if (num === undefined || Math.abs(num) === Infinity) {
+  num = Number(num);
+  if (isNaN(num) || Math.abs(num) === Infinity) {
     return num;
   } else if (num < 0) {
     num = -num;
