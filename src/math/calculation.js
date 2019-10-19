@@ -851,10 +851,10 @@ function hypot(x, y, z) {
  * @alt
  * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
  */
-p5.prototype.fract = function(num) {
+p5.prototype.fract = function(toConvert) {
   p5._validateParameters('fract', arguments);
   let sign = 0;
-  num = Number(num);
+  let num = Number(toConvert);
   if (isNaN(num) || Math.abs(num) === Infinity) {
     return num;
   } else if (num < 0) {
