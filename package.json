@@ -140,5 +140,7 @@
     "not dead"
   ],
   "author": "",
-  "dependencies": {}
+  "dependencies": {
+    "docsify": "^4.9.4"
+  }
 }
