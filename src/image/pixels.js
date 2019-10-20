@@ -353,10 +353,12 @@ p5.prototype._copyHelper = (
  * Increases the light areas. No parameter is used.
  * <br><br>
  *
- * filter() does not work in WEBGL mode.It can be achieved using custom
- * shaders.<a href="https://github.com/aferriss/p5jsShaderExamples"
- * target='_blank'>Shader Example</a> containing explaination and examples
- * related shader.
+ * filter() does not work in WEBGL mode.
+ * A similar effect can be achieved in WEBGL mode using custom
+ * shaders. Adam Ferriss has written
+ * a <a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>selection of shader examples</a> that contains many
+ * of the effects present in the filter examples.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
