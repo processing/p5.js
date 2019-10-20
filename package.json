@@ -44,6 +44,7 @@
     "chai": "^3.5.0",
     "connect-modrewrite": "^0.10.1",
     "derequire": "^2.0.0",
+    "docsify": "^4.9.4",
     "es6-promise": "^4.2.6",
     "eslint": "^5.14.1",
     "eslint-config-prettier": "2.7.0",
@@ -140,7 +141,5 @@
     "not dead"
   ],
   "author": "",
-  "dependencies": {
-    "docsify": "^4.9.4"
-  }
+  "dependencies": {}
 }
