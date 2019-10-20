@@ -637,6 +637,13 @@ p5.RendererGL.prototype.strokeJoin = join => {
   console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
 };
 
+p5.RendererGL.prototype.filter = filterType => {
+  // filter can be achieved using custom shaders.
+  // https://github.com/aferriss/p5jsShaderExamples
+  // https://itp-xstory.github.io/p5js-shaders/#/
+  console.error('filter() does not work in WEBGL mode');
+};
+
 p5.RendererGL.prototype.blendMode = function(mode) {
   if (
     mode === constants.DARKEST ||
