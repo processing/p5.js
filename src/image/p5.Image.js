@@ -155,7 +155,7 @@ p5.Image = function(width, height) {
    * factor for pixelDensity) of the display window x4,
    * representing the R, G, B, A values in order for each pixel, moving from
    * left to right across each row, then down each column. Retina and other
-   * high denisty displays may have more pixels (by a factor of
+   * high density displays may have more pixels (by a factor of
    * pixelDensity^2).
    * For example, if the image is 100x100 pixels, there will be 40,000. With
    * pixelDensity = 2, there will be 160,000. The first four values
