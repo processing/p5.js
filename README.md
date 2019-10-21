@@ -324,6 +324,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/thumbsupep"><img src="https://avatars3.githubusercontent.com/u/5598732?v=4" width="100px;" alt="Erica Pramer"/><br /><sub><b>Erica Pramer</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=thumbsupep" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/CrypticGuy"><img src="https://avatars3.githubusercontent.com/u/13849789?v=4" width="100px;" alt="Vasu Goel"/><br /><sub><b>Vasu Goel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=CrypticGuy" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=CrypticGuy" title="Tests">⚠️</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/you"><img src="https://avatars3.githubusercontent.com/u/41335?v=4" width="100px;" alt="you"/><br /><sub><b>you</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=you" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
