@@ -829,4 +829,47 @@ function hypot(x, y, z) {
   return Math.sqrt(sum) * max;
 }
 
+/**
+ * Calculates the fractional part of a number.
+ *
+ * @method fract
+ * @param {Number} num Number whose fractional part needs to be found out
+ * @returns {Number} fractional part of x, i.e, {x}
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(windowWidth, windowHeight);
+ *   fill(0);
+ *   text(7345.73472742, 0, 50);
+ *   text(fract(7345.73472742), 0, 100);
+ *   text(1.4215e-15, 150, 50);
+ *   text(fract(1.4215e-15), 150, 100);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
+ */
+p5.prototype.fract = function(toConvert) {
+  p5._validateParameters('fract', arguments);
+  let sign = 0;
+  let num = Number(toConvert);
+  if (isNaN(num) || Math.abs(num) === Infinity) {
+    return num;
+  } else if (num < 0) {
+    num = -num;
+    sign = 1;
+  }
+  if (String(num).includes('.') && !String(num).includes('e')) {
+    let toFract = String(num);
+    toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
+    return Math.abs(sign - toFract);
+  } else if (num < 1) {
+    return Math.abs(sign - num);
+  } else {
+    return 0;
+  }
+};
+
 export default p5;
