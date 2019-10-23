@@ -74,7 +74,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
   fetch(path, req).then(response => {
     // GIF section
-    if (response.headers.get('content-type').includes('image/gif')) {
+    const contentType = response.headers.get('content-type');
+    if (contentType === null) {
+      console.warn(
+        'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
+      );
+    }
+    if (contentType && contentType.includes('image/gif')) {
       response.arrayBuffer().then(
         arrayBuffer => {
           if (arrayBuffer) {
