@@ -9,6 +9,7 @@ labels:
   - help wanted
   - good first issue
   - hacktoberfest
+Moreover
 
 # If you would like to add your own template for the issue, add an .md file to your .github folder
 # template: .github/first-timers-issue-template.md 
