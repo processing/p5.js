@@ -6,7 +6,7 @@
 newIssueWelcomeComment: >
   Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, be sure to follow the issue template if you haven't already.
 
-# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+# Configuration for new-hdhxjzpr-welcome - https://github.com/behaviorbot/new-pr-welcome
 
 # Comment to be posted to on PRs from first time contributors in your repository
 newPRWelcomeComment: >
