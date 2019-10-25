@@ -412,7 +412,9 @@ p5.prototype.createImg = function() {
   var elt = document.createElement('img');
   var args = arguments;
   var self;
-  elt.alt = args[1];
+  if (args.length > 1 && typeof args[1] === 'string') {
+    elt.alt = args[1];
+  }
   if (args.length > 2 && typeof args[2] === 'string') {
     elt.crossOrigin = args[2];
   }
@@ -420,8 +422,8 @@ p5.prototype.createImg = function() {
     self.width = elt.offsetWidth || elt.width;
     self.height = elt.offsetHeight || elt.height;
     var last = args[args.length - 1];
-    if (typeof last === 'function') last();
-  });
+    if (typeof last === 'function') last((self = addElement(elt, this)));
+  }.bind(this));
   elt.src = args[0];
   return (self = addElement(elt, this));
 };
