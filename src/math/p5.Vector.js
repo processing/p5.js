@@ -1296,9 +1296,9 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(4, -6, 0); // incoming vector, this example vector is heading to the right and downward
- * let n = createVector(0, 1, 0); // surface normal to a plane (this example normal points directly upwards)
- * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, 6, 0]
+ * let v = createVector(4, 6); // incoming vector, this example vector is heading to the right and downward
+ * let n = createVector(0, -1); // surface normal to a plane (this example normal points directly upwards)
+ * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, -6]
  * </code>
  * </div>
  *
