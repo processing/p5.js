@@ -1287,9 +1287,8 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
- * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D. The static version of
- * this method creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
- * See the examples for more context.
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D. 
+ * This method acts on the vector directly.
  *
  * @method reflect
  * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
@@ -1300,16 +1299,6 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * let v = createVector(4, -6, 0); // incoming vector, this example vector is heading to the right and downward
  * let n = createVector(0, 1, 0); // surface normal to a plane (this example normal points directly upwards)
  * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, 6, 0]
- * </code>
- * </div>
- *
- * <div class="norender">
- * <code>
- * // Static method
- * let v1 = createVector(4, -6, 0); // incoming vector, this example vector is heading to the right and downward
- * let n = createVector(0, 1, 0); // surface normal to a plane (this example normal points directly upwards)
- * let v2 = p5.Vector.reflect(v1, n); // v2's components are [4, 6, 0]
- * print(v2);
  * </code>
  * </div>
  *
