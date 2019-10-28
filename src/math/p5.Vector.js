@@ -1287,6 +1287,72 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D. The static version of
+ * this method creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
+ * See the examples for more context.
+ *
+ * @method reflect
+ * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @chainable
+ * @example
+ * <div class="norender">
+ * <code>
+ * let v = createVector(4, -6, 0); // incoming vector, this example vector is heading to the right and downward
+ * let n = createVector(0, 1, 0); // surface normal to a plane (this example normal points directly upwards)
+ * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, 6, 0]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // Static method
+ * let v1 = createVector(4, -6, 0); // incoming vector, this example vector is heading to the right and downward
+ * let n = createVector(0, 1, 0); // surface normal to a plane (this example normal points directly upwards)
+ * let v2 = p5.Vector.reflect(v1, n); // v2's components are [4, 6, 0]
+ * print(v2);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   let v0 = createVector(0, 100);
+ *   let v1 = createVector(50, -50);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   let num = map(mouseX, 0, width, 10, 0.5, true);
+ *   let v2 = p5.Vector.div(v1, num);
+ *   drawArrow(v0, v2, 'blue');
+ *
+ *   noStroke();
+ *   text('divided by ' + num.toFixed(2), 10, 90);
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
+  surfaceNormal.normalize();
+  return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
+};
+
+/**
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
  * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
