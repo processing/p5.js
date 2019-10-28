@@ -2569,6 +2569,20 @@ p5.MediaElement.prototype.noLoop = function() {
 };
 
 /**
+ * Sets up logic to check that autoplay succeeded.
+ *
+ * @method setupAutoplayFailDetection
+ * @private
+ */
+p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
+  const timeout = setTimeout(() => p5._friendlyAutoplayError(this.src), 500);
+  this.elt.addEventListener('play', () => clearTimeout(timeout), {
+    passive: true,
+    once: true
+  });
+};
+
+/**
  * Set HTML5 media element to autoplay or not.
  *
  * @method autoplay
@@ -2576,7 +2590,22 @@ p5.MediaElement.prototype.noLoop = function() {
  * @chainable
  */
 p5.MediaElement.prototype.autoplay = function(val) {
+  const oldVal = this.elt.getAttribute('autoplay');
   this.elt.setAttribute('autoplay', val);
+  // if we turned on autoplay
+  if (val && !oldVal) {
+    // if media is ready to play, schedule check now
+    if (this.elt.readyState === 4) {
+      this._setupAutoplayFailDetection();
+    } else {
+      // otherwise, schedule check whenever it is ready
+      this.elt.addEventListener('canplay', this._setupAutoplayFailDetection, {
+        passive: true,
+        once: true
+      });
+    }
+  }
+
   return this;
 };
 
