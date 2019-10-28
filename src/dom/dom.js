@@ -2594,12 +2594,14 @@ p5.MediaElement.prototype.autoplay = function(val) {
   this.elt.setAttribute('autoplay', val);
   // if we turned on autoplay
   if (val && !oldVal) {
+    // bind method to this scope
+    const setupAutoplayFailDetection = () => this._setupAutoplayFailDetection();
     // if media is ready to play, schedule check now
     if (this.elt.readyState === 4) {
-      this._setupAutoplayFailDetection();
+      setupAutoplayFailDetection();
     } else {
       // otherwise, schedule check whenever it is ready
-      this.elt.addEventListener('canplay', this._setupAutoplayFailDetection, {
+      this.elt.addEventListener('canplay', setupAutoplayFailDetection, {
         passive: true,
         once: true
       });
