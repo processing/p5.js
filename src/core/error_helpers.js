@@ -137,7 +137,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
-  const errorCases = {
+  // mapping used by `_friendlyFileLoadError`
+  const fileLoadErrorCases = {
     '0': {
       fileType: 'image',
       method: 'loadImage',
@@ -191,7 +192,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {String} filePath
    */
   p5._friendlyFileLoadError = (errorType, filePath) => {
-    const errorInfo = errorCases[errorType];
+    const errorInfo = fileLoadErrorCases[errorType];
     let message;
     if (errorType === 7 || errorType === 8) {
       message = errorInfo.message;
