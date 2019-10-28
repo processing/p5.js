@@ -2322,10 +2322,18 @@ p5.MediaElement.prototype.play = function() {
   }
   if (promise && promise.catch) {
     promise.catch(function(e) {
-      console.log(
-        'WARN: Element play method raised an error asynchronously',
-        e
-      );
+      // if it's an autoplay failure error
+      if (e.name === 'NotAllowedError') {
+        p5._friendlyError(
+          `The media that tried to play (with "${
+            this.src
+          }") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
+          'play'
+        );
+      } else {
+        // any other kind of error
+        console.error('Media play method encountered an unexpected error', e);
+      }
     });
   }
   return this;
