@@ -218,6 +218,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
     report(message, method);
   };
 
+  /**
+   * This is called internally if there is a error with autoplay.
+   *
+   * @method _friendlyAutoplayError
+   * @private
+   */
+  p5._friendlyAutoplayError = src => {
+    report(
+      `The media that tried to play (with "${src}") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
+      'autoplay'
+    );
+  };
+
   const docCache = {};
   const builtinTypes = [
     'null',
