@@ -5,7 +5,6 @@ experiments/*
 lib_old/*
 lib/p5.*
 lib/modules
-lib/addons/p5.dom.min.js
 docs/reference/*
 !*.gitkeep
 examples/3d/
