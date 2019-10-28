@@ -9,7 +9,7 @@ There are a lot of different ways to write and use JavaScript, so we leave this 
 ## Code
 
 ### You can extend p5 core functionality by adding methods to p5.prototype.
-For example, the following code in p5.dom.js extends p5 to add a `createImg()` method that adds an [HTMLImageElement](https://developer.Mozilla.org/en-US/docs/Web/API/HTMLImageElement) to the DOM. 
+For example, the following code in dom.js extends p5 to add a `createImg()` method that adds an [HTMLImageElement](https://developer.Mozilla.org/en-US/docs/Web/API/HTMLImageElement) to the DOM. 
 
   ```js
   p5.prototype.createImg = function (src) {
@@ -23,7 +23,7 @@ For example, the following code in p5.dom.js extends p5 to add a `createImg()` m
   When the DOM library is included in a project, `createImg()` can be called just like `createCanvas()` or `background()`.
 
 ### Use private functions for internal helpers.
-Functions not intended to be called by users. In the example above `addElement()` is an internal function in [p5.dom.js](https://GitHub.com/processing/p5.js/blob/master/lib/addons/p5.dom.js). It isn't publicly bound to `p5.prototype` though.
+Functions not intended to be called by users. In the example above `addElement()` is an internal function in [dom.js](https://GitHub.com/processing/p5.js/blob/master/src/dom/dom.js). It isn't publicly bound to `p5.prototype` though.
 
 ### You can extend p5.js classes as well, by adding methods to their prototypes.
 In the example below, `p5.Element.prototype` is extended with the `html()` method, that sets the inner html of the element.
@@ -110,7 +110,7 @@ Your library may not extend p5 or p5 classes at all, but instead just offer extr
 
 * **Classes are typically capitalized, and methods and properties begin with lowercase.** Classes in p5 are prefixed with p5. We would like to keep this namespace for p5 core classes only, so when you create your own, **do not include the p5. prefix for class names**. You are welcome to create your own prefix, or just give them non-prefixed names.
 
-* **p5.js library filenames are also prefixed with p5, but the next word is lowercase**, to distinguish them from classes. For example, p5.dom.js and p5.sound.js. You are encouraged to follow this format for naming your file.
+* **p5.js library filenames are also prefixed with p5, but the next word is lowercase**, to distinguish them from classes. For example, p5.sound.js. You are encouraged to follow this format for naming your file.
 
 
 ## Packaging
