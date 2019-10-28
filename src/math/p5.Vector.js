@@ -1307,16 +1307,16 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * function draw() {
  *   background(240);
  *
- *   let v0 = createVector(0, 100);
- *   let v1 = createVector(50, -50);
+ *   let v0 = createVector(0, 0);
+ *   let v1 = createVector(mouseX, mouseY);
  *   drawArrow(v0, v1, 'red');
  *
- *   let num = map(mouseX, 0, width, 10, 0.5, true);
- *   let v2 = p5.Vector.div(v1, num);
- *   drawArrow(v0, v2, 'blue');
+ *   let n = createVector(0, -30);
+ *   drawArrow(v1, n, 'blue');
  *
- *   noStroke();
- *   text('divided by ' + num.toFixed(2), 10, 90);
+ *   let r = v1.copy();
+ *   r.reflect(n);
+ *   drawArrow(v1, r, 'purple');
  * }
  *
  * // draw an arrow for a vector at a given base position
