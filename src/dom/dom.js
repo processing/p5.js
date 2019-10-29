@@ -2322,10 +2322,13 @@ p5.MediaElement.prototype.play = function() {
   }
   if (promise && promise.catch) {
     promise.catch(function(e) {
-      console.log(
-        'WARN: Element play method raised an error asynchronously',
-        e
-      );
+      // if it's an autoplay failure error
+      if (e.name === 'NotAllowedError') {
+        p5._friendlyAutoplayError(this.src);
+      } else {
+        // any other kind of error
+        console.error('Media play method encountered an unexpected error', e);
+      }
     });
   }
   return this;
@@ -2566,6 +2569,20 @@ p5.MediaElement.prototype.noLoop = function() {
 };
 
 /**
+ * Sets up logic to check that autoplay succeeded.
+ *
+ * @method setupAutoplayFailDetection
+ * @private
+ */
+p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
+  const timeout = setTimeout(() => p5._friendlyAutoplayError(this.src), 500);
+  this.elt.addEventListener('play', () => clearTimeout(timeout), {
+    passive: true,
+    once: true
+  });
+};
+
+/**
  * Set HTML5 media element to autoplay or not.
  *
  * @method autoplay
@@ -2573,7 +2590,24 @@ p5.MediaElement.prototype.noLoop = function() {
  * @chainable
  */
 p5.MediaElement.prototype.autoplay = function(val) {
+  const oldVal = this.elt.getAttribute('autoplay');
   this.elt.setAttribute('autoplay', val);
+  // if we turned on autoplay
+  if (val && !oldVal) {
+    // bind method to this scope
+    const setupAutoplayFailDetection = () => this._setupAutoplayFailDetection();
+    // if media is ready to play, schedule check now
+    if (this.elt.readyState === 4) {
+      setupAutoplayFailDetection();
+    } else {
+      // otherwise, schedule check whenever it is ready
+      this.elt.addEventListener('canplay', setupAutoplayFailDetection, {
+        passive: true,
+        once: true
+      });
+    }
+  }
+
   return this;
 };
 

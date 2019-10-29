@@ -137,7 +137,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
-  const errorCases = {
+  // mapping used by `_friendlyFileLoadError`
+  const fileLoadErrorCases = {
     '0': {
       fileType: 'image',
       method: 'loadImage',
@@ -191,7 +192,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {String} filePath
    */
   p5._friendlyFileLoadError = (errorType, filePath) => {
-    const errorInfo = errorCases[errorType];
+    const errorInfo = fileLoadErrorCases[errorType];
     let message;
     if (errorType === 7 || errorType === 8) {
       message = errorInfo.message;
@@ -215,6 +216,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
    */
   p5._friendlyError = (message, method) => {
     report(message, method);
+  };
+
+  /**
+   * This is called internally if there is a error with autoplay.
+   *
+   * @method _friendlyAutoplayError
+   * @private
+   */
+  p5._friendlyAutoplayError = src => {
+    report(
+      `The media that tried to play (with "${src}") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
+      'autoplay'
+    );
   };
 
   const docCache = {};
