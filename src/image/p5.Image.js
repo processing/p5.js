@@ -605,7 +605,7 @@ p5.Image.prototype.copy = function(...args) {
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
+ * image and using its alpha channel as an alpha channel for
  * this image.
  *
  * @method mask
@@ -635,7 +635,7 @@ p5.Image.prototype.copy = function(...args) {
 // TODO: - Accept an array of alpha values.
 //       - Use other channels of an image. p5 uses the
 //       blue channel (which feels kind of arbitrary). Note: at the
-//       moment this method does not match native processings original
+//       moment this method does not match native processing's original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
