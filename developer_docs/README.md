@@ -59,7 +59,16 @@ Some syntax errors can be automatically fixed:
 $ npm run lint:fix
 ```
 
-Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting.
+Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting. In general, we err on the side of flexibility when it comes to code style, in order to lower the barriers to participation and contribution.
+
+Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) files for the full list.
+* ES6 code syntax is used
+* Use single quotes (rather than double quotes)
+* Indentation is done with two spaces
+* All variables defined in the code should be used at least once, or removed completely
+* Do not compare x == true or x == false. Use (x) or (!x) instead. x == true, is certainly different from if (x)! Compare objects to null, numbers to 0 or strings to "", if there is chance for confusion.
+* Comment your code whenever there is ambiguity or complexity in the function you are writing
+* See the [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) as a useful guide for more styling tips
 
 ## Unit Tests
 
