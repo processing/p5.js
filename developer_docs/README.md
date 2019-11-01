@@ -45,7 +45,7 @@ The developer tooling included with the p5.js codebase is intentionally very str
 
 ## Code Syntax
 
-p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as you type them, which will probably help you along as you are coding and saves you the hassle of a failed Git commit.
+p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as you type them, which will probably help you along as you are coding and saves you the hassle of a failed Git commit. In general, we err on the side of flexibility when it comes to code style, in order to lower the barriers to participation and contribution.
 
 To detect errors, run the following command in your terminal (do not type the `$` prompt):
 
@@ -59,7 +59,7 @@ Some syntax errors can be automatically fixed:
 $ npm run lint:fix
 ```
 
-Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting. In general, we err on the side of flexibility when it comes to code style, in order to lower the barriers to participation and contribution.
+Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting.
 
 Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) files for the full list.
 * ES6 code syntax is used
