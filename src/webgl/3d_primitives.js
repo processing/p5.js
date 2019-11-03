@@ -1744,6 +1744,8 @@ p5.RendererGL.prototype.image = function(
 
   this._pInst.pop();
 
+  this._pInst.noLights();
+
   if (this._isErasing) {
     this.blendMode(constants.REMOVE);
   }
