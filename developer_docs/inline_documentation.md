@@ -9,7 +9,12 @@ __[List of examples needed](https://github.com/processing/p5.js/issues/1954) (yo
 ## Specify element type and description
 
 There are 4 kinds of elements: `@class`, `@method`, `@property`, `@event`.
-You must specify one of these for the element to appear in the docs, with the name of the element after it. The description should appear on top and should not be formatted with spaces, tabs, etc.
+You must specify one of these for the element to appear in the docs, with the name of the element after it. The description should appear on top. A few formatting tips:
+* You can use markdown syntax to format the description text. 
+* Any function, variable, or constant name should be `monospaced` by using single quotes on either side.
+* Double line breaks are recognized as new paragraphs. You do not need to insert `<br><br>` tags.
+* When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/master/src/image/loading_displaying.js#L21).
+* Here is [yuidoc's reference](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) for more syntax information.
 
 ```
    /**
