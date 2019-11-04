@@ -327,6 +327,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/tokinifubara"><img src="https://avatars2.githubusercontent.com/u/10986281?v=4" width="100px;" alt="Tokini Irene Fubara"/><br /><sub><b>Tokini Irene Fubara</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tokinifubara" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/dhruvs009"><img src="https://avatars1.githubusercontent.com/u/39025961?v=4" width="100px;" alt="Dhruv Sahnan"/><br /><sub><b>Dhruv Sahnan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dhruvs009" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=dhruvs009" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/michasng"><img src="https://avatars1.githubusercontent.com/u/45470575?v=4" width="100px;" alt="michasng"/><br /><sub><b>michasng</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=michasng" title="Documentation">📖</a></td>
   </tr>
 </table>
 
