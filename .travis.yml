@@ -1,8 +1,0 @@
-language: node_js
-node_js:
-  - '10'
-install: for i in {1..3}; do travis_wait 5 npm install && npm install codecov -g && break; rm -rf node_modules; done
-script:
-  - npm run grunt
-  - npx nyc report --reporter=json
-after_success: bash <(curl -s https://codecov.io/bash)
