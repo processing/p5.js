@@ -94,7 +94,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
-  this.curBlendMode = this._cachedBlendMode = constants.BLEND;
+  this.curBlendMode = constants.BLEND;
+  this._cachedBlendMode = undefined;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
   this._isBlending = false;
 

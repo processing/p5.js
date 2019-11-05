@@ -130,8 +130,8 @@ p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
         gl.deleteBuffer(buffer);
         buffers[def.dst] = null;
       }
-      // disable the vertex
-      gl.disableVertexAttribArray(attr.index);
+      // no need to disable
+      // gl.disableVertexAttribArray(attr.index);
     }
   }
 };

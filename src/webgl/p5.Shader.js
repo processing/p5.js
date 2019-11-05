@@ -531,8 +531,11 @@ p5.Shader.prototype.enableAttrib = function(
     const loc = attr.location;
     if (loc !== -1) {
       const gl = this._renderer.GL;
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(
+      if (!attr.enabled) {
+        gl.enableVertexAttribArray(loc);
+        attr.enabled = true;
+      }
+      this._renderer.GL.vertexAttribPointer(
         loc,
         size,
         type || gl.FLOAT,
