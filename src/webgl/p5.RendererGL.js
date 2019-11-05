@@ -170,6 +170,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.fontInfos = {};
 
   this._cachedBackground = undefined;
+  this._curShader = undefined;
 
   return this;
 };

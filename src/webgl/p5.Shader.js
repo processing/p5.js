@@ -283,7 +283,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
  */
 p5.Shader.prototype.useProgram = function() {
   const gl = this._renderer.GL;
-  gl.useProgram(this._glProgram);
+  if (this._renderer._curShader !== this) {
+    gl.useProgram(this._glProgram);
+    this._renderer._curShader = this;
+  }
   return this;
 };
 
