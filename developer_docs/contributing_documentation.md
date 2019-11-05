@@ -4,9 +4,9 @@ There are several ways to contribute to documentation:
 
 ## ✏️ Contribute to the reference  
 Read through the [reference](http://p5js.org/reference/), and look for typos, broken examples, confusing documentation. If it's a straightforward fix, go ahead and work on it! If it's a more involved question that requires discussion, create an [issue](https://github.com/processing/p5.js/issues/new).
-* Here are instructions for [getting setup for the first time with the p5.js repo](https://github.com/processing/p5.js/tree/master/developer_docs).
+* Here are instructions for [getting setup for the first time with the p5.js repo](./README.md).
 * The reference is built from the inline documentation in the source code (found in the `src/` folder).
-* Here is information on [how to update or add inline documentation and examples](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md).
+* Here is information on [how to update or add inline documentation and examples](./inline_documentation.md).
 * If you find errors with the [spanish documentation](http://p5js.org/es), there are instructions to update this [here](https://github.com/processing/p5.js-website#internationalization-i18n-and-structure).
 
 ## ✨ Make examples  
@@ -23,7 +23,7 @@ While the examples in the reference are meant to be very simplistic snippets of 
 
 ## 👉 Getting started
 * Read the [p5.js community statement](http://p5js.org/community/)
-* Optional: Check out the [developer docs](https://github.com/processing/p5.js/tree/master/developer_docs) to get an overview of the repository and learn how to build the code (if relevant for you).
+* Optional: Check out the [developer docs](./README.md) to get an overview of the repository and learn how to build the code (if relevant for you).
 * All discussion happens on github issues, so there's no slack/gitter/etc channel you need to join.
 * Add your name to the [contributors list](https://github.com/processing/p5.js#contributors) in the readme.md file! Instructions [here](https://github.com/processing/p5.js/issues/2309).
 * And of course, if you're more of a bug fixer kind of person, feel free to jump into any of the [issues](https://github.com/processing/p5.js/issues)!
