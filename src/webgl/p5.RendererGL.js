@@ -536,20 +536,19 @@ p5.RendererGL.prototype._update = function() {
  */
 p5.RendererGL.prototype.background = function(...args) {
   const _col = this._pInst.color(...args);
-  if (this._cachedBackground) {
-    if (!this._arraysEqual(_col._array, this._cachedBackground)) {
-      const _r = _col.levels[0] / 255;
-      const _g = _col.levels[1] / 255;
-      const _b = _col.levels[2] / 255;
-      const _a = _col.levels[3] / 255;
-      this.GL.clearColor(_r, _g, _b, _a);
-      this.GL.depthMask(true);
-      this._cachedBackground = _col._array.slice(0);
-    }
-  } else {
+  const needsUpdate =
+    this._cachedBackground === undefined ||
+    !this._arraysEqual(_col._array, this._cachedBackground);
+  if (needsUpdate) {
+    const _r = _col.levels[0] / 255;
+    const _g = _col.levels[1] / 255;
+    const _b = _col.levels[2] / 255;
+    const _a = _col.levels[3] / 255;
+    this.GL.clearColor(_r, _g, _b, _a);
+    this.GL.depthMask(true);
     this._cachedBackground = _col._array.slice(0);
   }
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
 };
 
 //////////////////////////////////////////////
