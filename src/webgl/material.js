@@ -782,14 +782,19 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
-  if (isTexture || colors[colors.length - 1] < 1.0 || this._isErasing) {
-    gl.depthMask(isTexture);
-    gl.enable(gl.BLEND);
-    this._applyBlendMode();
-  } else {
-    gl.depthMask(true);
-    gl.disable(gl.BLEND);
+  const doBlend =
+    isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
+  if (doBlend !== this._isBlending) {
+    if (doBlend) {
+      gl.depthMask(isTexture);
+      gl.enable(gl.BLEND);
+    } else {
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+    }
+    this._isBlending = doBlend;
   }
+  this._applyBlendMode();
   return colors;
 };
 
@@ -799,6 +804,9 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function() {
+  if (this._cachedBlendMode === this._curBlendMode) {
+    return;
+  }
   const gl = this.GL;
   switch (this.curBlendMode) {
     case constants.BLEND:
@@ -861,6 +869,7 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       );
       break;
   }
+  this._cachedBlendMode = this.curBlendMode;
 };
 
 export default p5;

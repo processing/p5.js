@@ -96,6 +96,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.curBlendMode = this._cachedBlendMode = constants.BLEND;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+  this._isBlending = false;
 
   this._useSpecularMaterial = false;
   this._useEmissiveMaterial = false;
