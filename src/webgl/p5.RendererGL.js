@@ -1304,8 +1304,9 @@ p5.RendererGL.prototype._bindBuffer = function(
 //// UTILITY FUNCTIONS
 //////////////////////////////
 p5.RendererGL.prototype._arraysEqual = function(a, b) {
-  if (a.length !== b.length) return false;
-  for (var i = 0; i < a.length; i++) {
+  const aLength = a.length;
+  if (aLength !== b.length) return false;
+  for (let i = 0; i < aLength; i++) {
     if (a[i] !== b[i]) return false;
   }
   return true;
