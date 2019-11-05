@@ -804,7 +804,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function() {
-  if (this._cachedBlendMode === this._curBlendMode) {
+  if (this._cachedBlendMode === this.curBlendMode) {
     return;
   }
   const gl = this.GL;
