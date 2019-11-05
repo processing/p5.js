@@ -169,6 +169,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.fontInfos = {};
 
+  this._cachedBackground = undefined;
+
   return this;
 };
 
@@ -533,12 +535,19 @@ p5.RendererGL.prototype._update = function() {
  */
 p5.RendererGL.prototype.background = function(...args) {
   const _col = this._pInst.color(...args);
-  const _r = _col.levels[0] / 255;
-  const _g = _col.levels[1] / 255;
-  const _b = _col.levels[2] / 255;
-  const _a = _col.levels[3] / 255;
-  this.GL.clearColor(_r, _g, _b, _a);
-  this.GL.depthMask(true);
+  if (this._cachedBackground) {
+    if (!this._arraysEqual(_col._array, this._cachedBackground)) {
+      const _r = _col.levels[0] / 255;
+      const _g = _col.levels[1] / 255;
+      const _b = _col.levels[2] / 255;
+      const _a = _col.levels[3] / 255;
+      this.GL.clearColor(_r, _g, _b, _a);
+      this.GL.depthMask(true);
+      this._cachedBackground = _col._array.slice(0);
+    }
+  } else {
+    this._cachedBackground = _col._array.slice(0);
+  }
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
@@ -1293,6 +1302,23 @@ p5.RendererGL.prototype._bindBuffer = function(
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
+p5.RendererGL.prototype._arraysEqual = function(a, b) {
+  if (a.length !== b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
+p5.RendererGL.prototype._isTypedArray = function(arr) {
+  let res = false;
+  res = arr instanceof Float32Array;
+  res = arr instanceof Float64Array;
+  res = arr instanceof Int16Array;
+  res = arr instanceof Uint16Array;
+  res = arr instanceof Uint32Array;
+  return res;
+};
 /**
  * turn a two dimensional array into one dimensional array
  * @private
