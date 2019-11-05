@@ -201,7 +201,6 @@ p5.Shader.prototype.compile = () => {
 p5.Shader.prototype.bindShader = function() {
   this.init();
   if (!this._bound) {
-    // NEED TO MINIMIZE CALLS TO useProgram();
     this.useProgram();
     this._bound = true;
 
@@ -544,10 +543,6 @@ p5.Shader.prototype.enableAttrib = function(
     }
   }
   return this;
-};
-
-p5.Shader.prototype._isArray = function(uniform) {
-  return uniform;
 };
 
 export default p5.Shader;
