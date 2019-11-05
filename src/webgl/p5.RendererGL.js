@@ -63,6 +63,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._setAttributeDefaults(pInst);
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
+
+  // This redundant property is useful in reminding you that you are
+  // interacting with WebGLRenderingContext, still worth considering future removal
   this.GL = this.drawingContext;
 
   // erasing
