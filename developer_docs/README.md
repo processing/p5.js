@@ -12,7 +12,7 @@ Hello! Thanks for your interest in contributing to p5.js! You can get started wi
 
 # How To Contribute
 
-Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). Issue [labels](https://github.com/processing/p5.js/blob/master/developer_docs/issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you'd like to start working on an existing issue, comment on the issue that you plan to work on it so other contributors know it's being handled and can offer help. Once you have completed your work on this issue, [submit a pull request (PR)](https://github.com/processing/p5.js/blob/master/developer_docs/preparing_a_pull_request.md) against the p5.js master branch. In the description field of the PR, include "resolves #XXXX" tagging the issue you are fixing. If the PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".
+Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). Issue [labels](./issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner). If you'd like to start working on an existing issue, comment on the issue that you plan to work on it so other contributors know it's being handled and can offer help. Once you have completed your work on this issue, [submit a pull request (PR)](./preparing_a_pull_request.md) against the p5.js master branch. In the description field of the PR, include "resolves #XXXX" tagging the issue you are fixing. If the PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".
 
 If you discover a bug or have an idea for a new feature you'd like to add, begin by submitting an issue. Please do not simply submit a pull request containing the fix or new feature without making an issue first, we will probably not be able to accept it. Once you have gotten some feedback on the issue and a go ahead to address it, you can follow the process above to contribute the fix or feature.
 
@@ -24,16 +24,16 @@ We recognize all types of contributions. This project follows the [all-contribut
 
 Aside from the code itself, you may also need to supply some combination of the following.
 
-- [inline documentation](https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/)
-- [unit tests](https://github.com/processing/p5.js/tree/master/developer_docs#unit-tests), small pieces of code which are separate from the library and are used to verify its behavior
-- [benchmarks](https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md) to test performance
+- [inline documentation](./inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://usejsdoc.org) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/)
+- [unit tests](./unit_testing.md), small pieces of code which are separate from the library and are used to verify its behavior
+- [benchmarks](./benchmarking_p5.md) to test performance
 
 ## Examples
 
 The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
-p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](https://github.com/processing/p5.js/blob/master/developer_docs/es6-adoption.md).
+p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
 
 ## Other Ideas
 
