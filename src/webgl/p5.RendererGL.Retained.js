@@ -2,37 +2,7 @@
 //in WEBGL.
 import p5 from '../core/main';
 import './p5.RendererGL';
-
-// a render buffer definition
-function BufferDef(size, src, dst, attr, map) {
-  this.size = size; // the number of FLOATs in each vertex
-  this.src = src; // the name of the model's source array
-  this.dst = dst; // the name of the geometry's buffer
-  this.attr = attr; // the name of the vertex attribute
-  this.map = map; // optional, a transformation function to apply to src
-}
-
-const _flatten = p5.RendererGL.prototype._flatten;
-const _vToNArray = p5.RendererGL.prototype._vToNArray;
-
-const strokeBuffers = [
-  new BufferDef(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', _flatten),
-  new BufferDef(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', _flatten)
-];
-
-const fillBuffers = [
-  new BufferDef(3, 'vertices', 'vertexBuffer', 'aPosition', _vToNArray),
-  new BufferDef(3, 'vertexNormals', 'normalBuffer', 'aNormal', _vToNArray),
-  new BufferDef(4, 'vertexColors', 'colorBuffer', 'aMaterialColor'),
-  new BufferDef(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor'),
-  //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-  new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
-];
-
-p5.RendererGL._textBuffers = [
-  new BufferDef(3, 'vertices', 'vertexBuffer', 'aPosition', _vToNArray),
-  new BufferDef(2, 'uvs', 'uvBuffer', 'aTexCoord', _flatten)
-];
+import './p5.RenderBuffer';
 
 let hashCount = 0;
 /**
@@ -82,6 +52,7 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   }
 
   // free all the buffers
+<<<<<<< HEAD
   freeBuffers(strokeBuffers);
   freeBuffers(fillBuffers);
 };
@@ -134,6 +105,10 @@ p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
       // gl.disableVertexAttribArray(attr.index);
     }
   }
+=======
+  freeBuffers(this.retainedMode.buffers.stroke);
+  freeBuffers(this.retainedMode.buffers.fill);
+>>>>>>> Unify attribute management and geometry between immediate and retained
 };
 
 /**
@@ -182,12 +157,14 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   const gl = this.GL;
-  const buffers = this.gHash[gId];
+  const geometry = this.gHash[gId];
 
-  if (this._doStroke && buffers.lineVertexCount > 0) {
+  if (this._doStroke && geometry.lineVertexCount > 0) {
     const strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);
-    this._prepareBuffers(buffers, strokeShader, strokeBuffers);
+    for (const buff of this.retainedMode.buffers.stroke) {
+      buff._prepareBuffer(geometry, strokeShader);
+    }
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();
@@ -196,10 +173,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if (this._doFill) {
     const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
-    this._prepareBuffers(buffers, fillShader, fillBuffers);
-    if (buffers.indexBuffer) {
+    for (const buff of this.retainedMode.buffers.fill) {
+      buff._prepareBuffer(geometry, fillShader);
+    }
+    if (geometry.indexBuffer) {
       //vertex index buffer
-      this._bindBuffer(buffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+      this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
     }
     this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);

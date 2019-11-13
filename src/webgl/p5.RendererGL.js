@@ -147,6 +147,30 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.isImmediateDrawing = false;
   this.immediateMode = {};
 
+  this.retainedMode = {
+    buffers: {
+      // prettier-ignore
+      stroke: [
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+      ],
+      // prettier-ignore
+      fill: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      // prettier-ignore
+      text: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ]
+    }
+  };
+
   this.pointSize = 5.0; //default point size
   this.curStrokeWeight = 1;
 
@@ -1030,15 +1054,12 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  * for use with begin/endShape and immediate vertex mode.
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
-  if (this._useNormalMaterial) {
-    console.log(
-      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
-        ' created with beginShape(). Falling back to standard fill material.'
-    );
-    return this._getImmediateModeShader();
-  }
-
   const fill = this.userFillShader;
+  if (this._useNormalMaterial) {
+    if (!fill || !fill.isNormalShader()) {
+      return this._getNormalShader();
+    }
+  }
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();
