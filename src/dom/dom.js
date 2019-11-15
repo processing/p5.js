@@ -1320,9 +1320,10 @@ p5.prototype.createCapture = function() {
   // set width and height onload metadata
   elt.addEventListener('loadedmetadata', function() {
     elt.play();
+
     if (elt.width) {
-      c.width = elt.videoWidth = elt.width;
-      c.height = elt.videoHeight = elt.height;
+      c.width = elt.width;
+      c.height = elt.height;
     } else {
       c.width = c.elt.width = elt.videoWidth;
       c.height = c.elt.height = elt.videoHeight;
