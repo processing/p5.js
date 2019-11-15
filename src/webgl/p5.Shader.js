@@ -171,11 +171,19 @@ p5.Shader.prototype._loadUniforms = function() {
     }
     uniform.name = uniformName;
     uniform.type = uniformInfo.type;
+    uniform._cachedData = undefined;
     if (uniform.type === gl.SAMPLER_2D) {
       uniform.samplerIndex = samplerIndex;
       samplerIndex++;
       this.samplers.push(uniform);
     }
+    uniform.isArray =
+      uniform.type === gl.FLOAT_MAT3 ||
+      uniform.type === gl.FLOAT_MAT4 ||
+      uniform.type === gl.INT_VEC2 ||
+      uniform.type === gl.INT_VEC3 ||
+      uniform.type === gl.INT_VEC4;
+
     this.uniforms[uniformName] = uniform;
   }
   this._loadedUniforms = true;
@@ -274,7 +282,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
  */
 p5.Shader.prototype.useProgram = function() {
   const gl = this._renderer.GL;
-  gl.useProgram(this._glProgram);
+  if (this._renderer._curShader !== this) {
+    gl.useProgram(this._glProgram);
+    this._renderer._curShader = this;
+  }
   return this;
 };
 
@@ -341,16 +352,29 @@ p5.Shader.prototype.useProgram = function() {
  * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
-  //@todo update all current gl.uniformXX calls
-
   const uniform = this.uniforms[uniformName];
   if (!uniform) {
     return;
   }
+  const gl = this._renderer.GL;
+
+  if (uniform.isArray) {
+    if (
+      uniform._cachedData &&
+      this._renderer._arraysEqual(uniform._cachedData, data)
+    ) {
+      return;
+    } else {
+      uniform._cachedData = data.slice(0);
+    }
+  } else if (uniform._cachedData && uniform._cachedData === data) {
+    return;
+  } else {
+    uniform._cachedData = data;
+  }
 
   const location = uniform.location;
 
-  const gl = this._renderer.GL;
   this.useProgram();
 
   switch (uniform.type) {
@@ -507,8 +531,11 @@ p5.Shader.prototype.enableAttrib = function(
     const loc = attr.location;
     if (loc !== -1) {
       const gl = this._renderer.GL;
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(
+      if (!attr.enabled) {
+        gl.enableVertexAttribArray(loc);
+        attr.enabled = true;
+      }
+      this._renderer.GL.vertexAttribPointer(
         loc,
         size,
         type || gl.FLOAT,

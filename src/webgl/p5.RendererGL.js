@@ -63,6 +63,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._setAttributeDefaults(pInst);
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
+
+  // This redundant property is useful in reminding you that you are
+  // interacting with WebGLRenderingContext, still worth considering future removal
   this.GL = this.drawingContext;
 
   // erasing
@@ -94,8 +97,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
-  this.curBlendMode = this._cachedBlendMode = constants.BLEND;
+  this.curBlendMode = constants.BLEND;
+  this._cachedBlendMode = undefined;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+  this._isBlending = false;
 
   this._useSpecularMaterial = false;
   this._useEmissiveMaterial = false;
@@ -168,6 +173,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._tessy = this._initTessy();
 
   this.fontInfos = {};
+
+  this._cachedBackground = undefined;
+  this._curShader = undefined;
 
   return this;
 };
@@ -533,13 +541,19 @@ p5.RendererGL.prototype._update = function() {
  */
 p5.RendererGL.prototype.background = function(...args) {
   const _col = this._pInst.color(...args);
-  const _r = _col.levels[0] / 255;
-  const _g = _col.levels[1] / 255;
-  const _b = _col.levels[2] / 255;
-  const _a = _col.levels[3] / 255;
-  this.GL.clearColor(_r, _g, _b, _a);
-  this.GL.depthMask(true);
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
+  const needsUpdate =
+    this._cachedBackground === undefined ||
+    !this._arraysEqual(_col._array, this._cachedBackground);
+  if (needsUpdate) {
+    const _r = _col.levels[0] / 255;
+    const _g = _col.levels[1] / 255;
+    const _b = _col.levels[2] / 255;
+    const _a = _col.levels[3] / 255;
+    this.GL.clearColor(_r, _g, _b, _a);
+    this.GL.depthMask(true);
+    this._cachedBackground = _col._array.slice(0);
+  }
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
 };
 
 //////////////////////////////////////////////
@@ -1293,6 +1307,24 @@ p5.RendererGL.prototype._bindBuffer = function(
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
+p5.RendererGL.prototype._arraysEqual = function(a, b) {
+  const aLength = a.length;
+  if (aLength !== b.length) return false;
+  for (let i = 0; i < aLength; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
+p5.RendererGL.prototype._isTypedArray = function(arr) {
+  let res = false;
+  res = arr instanceof Float32Array;
+  res = arr instanceof Float64Array;
+  res = arr instanceof Int16Array;
+  res = arr instanceof Uint16Array;
+  res = arr instanceof Uint32Array;
+  return res;
+};
 /**
  * turn a two dimensional array into one dimensional array
  * @private
