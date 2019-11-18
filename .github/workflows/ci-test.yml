@@ -21,7 +21,6 @@ jobs:
         env:
           CI: true
       - name: report test coverage
-        run:
-          - npm run coverage && bash <(curl -s https://codecov.io/bash) -f coverage/coverage.json
+        run: npm run coverage && bash <(curl -s https://codecov.io/bash) -f coverage/coverage.json
         env:
           CI: true
