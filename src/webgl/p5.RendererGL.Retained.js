@@ -52,63 +52,8 @@ p5.RendererGL.prototype._freeBuffers = function(gId) {
   }
 
   // free all the buffers
-<<<<<<< HEAD
-  freeBuffers(strokeBuffers);
-  freeBuffers(fillBuffers);
-};
-
-p5.RendererGL.prototype._prepareBuffers = function(buffers, shader, defs) {
-  const model = buffers.model;
-  const attributes = shader.attributes;
-  const gl = this.GL;
-
-  // loop through each of the buffer definitions
-  for (const def of defs) {
-    const attr = attributes[def.attr];
-    if (!attr) continue;
-
-    let buffer = buffers[def.dst];
-
-    // check if the model has the appropriate source array
-    const src = model[def.src];
-    if (src) {
-      // check if we need to create the GL buffer
-      const createBuffer = !buffer;
-      if (createBuffer) {
-        // create and remember the buffer
-        buffers[def.dst] = buffer = gl.createBuffer();
-      }
-      // bind the buffer
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-      // check if we need to fill the buffer with data
-      if (createBuffer || model.dirtyFlags[def.src] !== false) {
-        const map = def.map;
-        // get the values from the model, possibly transformed
-        const values = map ? map(src) : src;
-
-        // fill the buffer with the values
-        this._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
-
-        // mark the model's source array as clean
-        model.dirtyFlags[def.src] = false;
-      }
-      // enable the attribute
-      shader.enableAttrib(attr, def.size);
-    } else {
-      if (buffer) {
-        // remove the unused buffer
-        gl.deleteBuffer(buffer);
-        buffers[def.dst] = null;
-      }
-      // no need to disable
-      // gl.disableVertexAttribArray(attr.index);
-    }
-  }
-=======
   freeBuffers(this.retainedMode.buffers.stroke);
   freeBuffers(this.retainedMode.buffers.fill);
->>>>>>> Unify attribute management and geometry between immediate and retained
 };
 
 /**
