@@ -404,7 +404,7 @@ tags.forEach(function(tag) {
  * @param  {String} src
  * @param  {String} alt
  * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if an empty string(`""`) is passed, CORS is not used
- * @param  {Function} [successCallback] callback to be called once image data is loaded
+ * @param  {Function} [successCallback] callback to be called once image data is loaded with the <a href="#/p5.Element">p5.Element</a> as argument
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  */
 p5.prototype.createImg = function() {
@@ -412,18 +412,21 @@ p5.prototype.createImg = function() {
   var elt = document.createElement('img');
   var args = arguments;
   var self;
-  elt.alt = args[1];
+  if (args.length > 1 && typeof args[1] === 'string') {
+    elt.alt = args[1];
+  }
   if (args.length > 2 && typeof args[2] === 'string') {
     elt.crossOrigin = args[2];
   }
+  elt.src = args[0];
+  self = addElement(elt, this);
   elt.addEventListener('load', function() {
     self.width = elt.offsetWidth || elt.width;
     self.height = elt.offsetHeight || elt.height;
     var last = args[args.length - 1];
-    if (typeof last === 'function') last();
+    if (typeof last === 'function') last(self);
   });
-  elt.src = args[0];
-  return (self = addElement(elt, this));
+  return self;
 };
 
 /**
