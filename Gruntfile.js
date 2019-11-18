@@ -95,7 +95,7 @@ function getYuidocOptions() {
 
 module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
-  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const quietReport = process.env.GITHUB_ACTIONS || grunt.option('quiet');
   const reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
@@ -406,7 +406,7 @@ module.exports = grunt => {
         options: {
           urls: ['http://127.0.0.1:9001/test/test.html'],
           tunnelTimeout: 5,
-          build: process.env.TRAVIS_JOB_ID,
+          build: process.env.GITHUB_ACTION,
           concurrency: 3,
           browsers: [
             { browserName: 'chrome' },
