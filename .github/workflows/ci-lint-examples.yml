@@ -1,6 +1,6 @@
 name: Linting Examples
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint:
