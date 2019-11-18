@@ -271,7 +271,7 @@ module.exports = grunt => {
     nyc: {
       report: {
         options: {
-          reporter: ['text-summary', 'html']
+          reporter: ['text-summary', 'html', 'json']
         }
       }
     },

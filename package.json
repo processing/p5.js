@@ -15,8 +15,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
-    "precommit": "lint-staged",
-    "coverage": "nyc report --reporter=json"
+    "precommit": "lint-staged"
   },
   "lint-staged": {
     "ignore": ["test/js/**/*.js"],
