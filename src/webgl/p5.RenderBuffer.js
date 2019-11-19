@@ -22,16 +22,12 @@ p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
   // loop through each of the buffer definitions
   const attr = attributes[this.attr];
   if (!attr) {
-    // console.log('NOT: ' + this.src);
     return;
   }
 
   // check if the model has the appropriate source array
   let buffer = geometry[this.dst];
   const src = model[this.src];
-  // console.log(src);
-  // console.log(geometry);
-  // console.log(this._glBuffer);
   if (src) {
     // check if we need to create the GL buffer
     const createBuffer = !buffer;

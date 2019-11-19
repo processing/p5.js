@@ -141,9 +141,9 @@ p5.RendererGL.prototype.endShape = function(
     return;
   }
   this._processVertices(...arguments);
-  this._drawImmediateStroke();
-  if (this.immediateMode.geometry.vertices.length > 0) {
+  if (this.immediateMode.geometry.vertices.length > 1) {
     this._drawImmediateFill();
+    this._drawImmediateStroke();
   }
   this.isBezier = false;
   this.isQuadratic = false;
@@ -261,7 +261,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
         break;
     }
   }
-
+  this._applyColorBlend(this.curFillColor);
   gl.drawArrays(
     this.immediateMode.shapeMode,
     0,
@@ -277,6 +277,7 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
+  this._applyColorBlend(this.curStrokeColor);
   gl.drawArrays(
     gl.TRIANGLES,
     0,
@@ -286,12 +287,13 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
 };
 
 p5.RendererGL.prototype._calculateNormals = function(shader, geometry) {
-  // Rework, currently doesn't work when vertices don't make proper "faces"
-  return;
-  // if (shader.attributes['aNormal']) {
-  //   geometry.computeFaces();
-  //   geometry.computeNormals();
-  // }
+  if (geometry.vertices % 3 !== 0) {
+    return;
+  }
+  if (shader.attributes['aNormal']) {
+    geometry.computeFaces();
+    geometry.computeNormals();
+  }
 };
 
 export default p5.RendererGL;
