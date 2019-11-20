@@ -168,6 +168,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // Geometry and Material hashes stored here
   this.immediateMode = {
     geometry: new p5.Geometry(),
+    shapeMode: constants.TRIANGLE_FAN,
     _bezierVertex: [],
     _quadraticVertex: [],
     _curveVertex: [],

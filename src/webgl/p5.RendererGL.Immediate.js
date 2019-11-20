@@ -31,7 +31,7 @@ import './p5.RenderBuffer';
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
-    mode !== undefined ? mode : constants.LINE_STRIP;
+    mode !== undefined ? mode : constants.TRIANGLE_FAN;
   this.immediateMode.geometry.reset();
   return this;
 };
@@ -123,6 +123,7 @@ p5.RendererGL.prototype.endShape = function(
     return this;
   }
   this._processVertices(...arguments);
+
   if (this.immediateMode.geometry.vertices.length > 1) {
     this._drawImmediateFill();
     this._drawImmediateStroke();
@@ -227,20 +228,11 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
 
-  if (this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE) {
-    switch (this.immediateMode.shapeMode) {
-      case constants.LINE_STRIP:
-      case constants.LINES:
-        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-        break;
-    }
-  } else {
-    switch (this.immediateMode.shapeMode) {
-      case constants.LINE_STRIP:
-      case constants.LINES:
-        this.immediateMode.shapeMode = constants.LINE_LOOP;
-        break;
-    }
+  if (
+    this.immediateMode.shapeMode === constants.LINE_STRIP ||
+    this.immediateMode.shapeMode === constants.LINES
+  ) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
   }
 
   this._applyColorBlend(this.curFillColor);
