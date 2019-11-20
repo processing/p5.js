@@ -1384,7 +1384,7 @@ p5.RendererGL.prototype.curve = function(
  */
 p5.RendererGL.prototype.line = function(...args) {
   if (args.length === 6) {
-    this.beginShape();
+    this.beginShape(constants.LINES);
     this.vertex(args[0], args[1], args[2]);
     this.vertex(args[3], args[4], args[5]);
     this.endShape();

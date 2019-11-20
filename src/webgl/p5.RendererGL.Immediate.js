@@ -18,6 +18,20 @@ import './p5.RenderBuffer';
 const _flatten = p5.RendererGL.prototype._flatten;
 const _vToNArray = p5.RendererGL.prototype._vToNArray;
 
+/**
+ * Begin shape drawing.  This is a helpful way of generating
+ * custom shapes quickly.  However in WEBGL mode, application
+ * performance will likely drop as a result of too many calls to
+ * <a href="#/p5/beginShape">beginShape()</a> / <a href="#/p5/endShape">endShape()</a>.  As a high performance alternative,
+ * please use p5.js geometry primitives.
+ * @private
+ * @method beginShape
+ * @param  {Number} mode webgl primitives mode.  beginShape supports the
+ *                       following modes:
+ *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
+ *                       TRIANGLE_STRIP,and TRIANGLE_FAN.
+ * @chainable
+ */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.LINE_STRIP;
@@ -50,18 +64,19 @@ p5.RendererGL.prototype.beginShape = function(mode) {
   } else {
     this.immediateMode.geometry.reset();
   }
+  return this;
 };
 
-p5.RendererGL.prototype._prepareBuffersImm = function(
-  geometry,
-  shader,
-  buffers
-) {
-  for (const buff of buffers) {
-    buff._prepareBuffer(geometry, shader);
-  }
-};
-
+/**
+ * adds a vertex to be drawn in a custom Shape.
+ * @private
+ * @method vertex
+ * @param  {Number} x x-coordinate of vertex
+ * @param  {Number} y y-coordinate of vertex
+ * @param  {Number} z z-coordinate of vertex
+ * @chainable
+ * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
+ */
 p5.RendererGL.prototype.vertex = function(x, y) {
   let z, u, v;
 
@@ -81,11 +96,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     u = arguments[3];
     v = arguments[4];
   }
-  // if (this.immediateMode._testIfCoplanar == null) {
-  //   this.immediateMode._testIfCoplanar = z;
-  // } else if (this.immediateMode._testIfCoplanar !== z) {
-  //   this.immediateMode._isCoplanar = false;
-  // }
+  if (this.immediateMode._testIfCoplanar == null) {
+    this.immediateMode._testIfCoplanar = z;
+  } else if (this.immediateMode._testIfCoplanar !== z) {
+    this.immediateMode._isCoplanar = false;
+  }
   const vert = new p5.Vector(x, y, z);
   // this.immediateMode.vertices.push(vert);
   this.immediateMode.geometry.vertices.push(vert);
@@ -125,6 +140,10 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   return this;
 };
 
+/**
+ * End shape drawing and render vertices to screen.
+ * @chainable
+ */
 p5.RendererGL.prototype.endShape = function(
   mode,
   isCurve,
@@ -142,8 +161,8 @@ p5.RendererGL.prototype.endShape = function(
   }
   this._processVertices(...arguments);
   if (this.immediateMode.geometry.vertices.length > 1) {
-    this._drawImmediateFill();
     this._drawImmediateStroke();
+    this._drawImmediateFill();
   }
   this.isBezier = false;
   this.isQuadratic = false;
@@ -167,34 +186,19 @@ p5.RendererGL.prototype._processVertices = function(mode) {
     );
     this.immediateMode.geometry._edgesToVertices();
   }
+  // For hollow shapes, must be default line_strip and
+  // must be coplanar
+  const convexShape =
+    this.immediateMode.shapeMode === constants.LINE_STRIP &&
+    this.drawMode === constants.FILL &&
+    this.immediateMode._isCoplanar;
+  // We tesselate when drawing curves or convex shapes
+  const shouldTess =
+    (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
+    this.immediateMode.shapeMode !== constants.LINES;
 
-  if (this._doFill && this.immediateMode.shapeMode !== constants.LINES) {
-    if (
-      this.isBezier ||
-      this.isQuadratic ||
-      this.isCurve ||
-      (this.immediateMode.shapeMode === constants.LINE_STRIP &&
-        this.drawMode === constants.FILL &&
-        this.immediateMode._isCoplanar === true)
-    ) {
-      this.immediateMode.shapeMode = constants.TRIANGLES;
-      const contours = [
-        new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
-      ];
-      const polyTriangles = this._triangulate(contours);
-      this.immediateMode.geometry.vertices = [];
-      for (
-        let j = 0, polyTriLength = polyTriangles.length;
-        j < polyTriLength;
-        j = j + 3
-      ) {
-        this.vertex(
-          polyTriangles[j],
-          polyTriangles[j + 1],
-          polyTriangles[j + 2]
-        );
-      }
-    }
+  if (shouldTess) {
+    this._tesselateShape();
   }
 };
 
@@ -235,6 +239,22 @@ p5.RendererGL.prototype._calculateEdges = function(
     res.push([verts.length - 1, 0]);
   }
   return res;
+};
+
+p5.RendererGL.prototype._tesselateShape = function() {
+  this.immediateMode.shapeMode = constants.TRIANGLES;
+  const contours = [
+    new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
+  ];
+  const polyTriangles = this._triangulate(contours);
+  this.immediateMode.geometry.vertices = [];
+  for (
+    let j = 0, polyTriLength = polyTriangles.length;
+    j < polyTriLength;
+    j = j + 3
+  ) {
+    this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+  }
 };
 
 p5.RendererGL.prototype._drawImmediateFill = function() {
@@ -291,8 +311,7 @@ p5.RendererGL.prototype._calculateNormals = function(shader, geometry) {
     return;
   }
   if (shader.attributes['aNormal']) {
-    geometry.computeFaces();
-    geometry.computeNormals();
+    geometry.computeFaces().computerNormals();
   }
 };
 

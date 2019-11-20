@@ -144,7 +144,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   //Imediate Mode
   //default drawing is done in Retained Mode
-  this.isImmediateDrawing = false;
   this.immediateMode = {};
 
   this.retainedMode = {
@@ -1054,12 +1053,15 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  * for use with begin/endShape and immediate vertex mode.
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
-  const fill = this.userFillShader;
   if (this._useNormalMaterial) {
-    if (!fill || !fill.isNormalShader()) {
-      return this._getNormalShader();
-    }
+    console.log(
+      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
+        ' created with beginShape(). Falling back to standard fill material.'
+    );
+    return this._getImmediateModeShader();
   }
+
+  const fill = this.userFillShader;
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();
