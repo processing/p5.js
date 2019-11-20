@@ -27,7 +27,7 @@ function draw() {
 }
 
 function ngon(n, x, y, d) {
-  beginShape();
+  beginShape(TESS);
   for (let i = 0; i < n + 1; i++) {
     angle = TWO_PI / n * i;
     px = x + sin(angle) * d / 2;

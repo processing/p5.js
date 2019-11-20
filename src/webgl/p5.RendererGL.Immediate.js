@@ -29,7 +29,7 @@ const _vToNArray = p5.RendererGL.prototype._vToNArray;
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
- *                       TRIANGLE_STRIP,and TRIANGLE_FAN.
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
  * @chainable
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
@@ -59,8 +59,6 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode._bezierVertex = [];
     this.immediateMode._quadraticVertex = [];
     this.immediateMode._curveVertex = [];
-    this.immediateMode._isCoplanar = true;
-    this.immediateMode._testIfCoplanar = null;
   } else {
     this.immediateMode.geometry.reset();
   }
@@ -96,13 +94,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     u = arguments[3];
     v = arguments[4];
   }
-  if (this.immediateMode._testIfCoplanar == null) {
-    this.immediateMode._testIfCoplanar = z;
-  } else if (this.immediateMode._testIfCoplanar !== z) {
-    this.immediateMode._isCoplanar = false;
-  }
   const vert = new p5.Vector(x, y, z);
-  // this.immediateMode.vertices.push(vert);
   this.immediateMode.geometry.vertices.push(vert);
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
@@ -186,12 +178,8 @@ p5.RendererGL.prototype._processVertices = function(mode) {
     );
     this.immediateMode.geometry._edgesToVertices();
   }
-  // For hollow shapes, must be default line_strip and
-  // must be coplanar
-  const convexShape =
-    this.immediateMode.shapeMode === constants.LINE_STRIP &&
-    this.drawMode === constants.FILL &&
-    this.immediateMode._isCoplanar;
+  // For hollow shapes, user must set mode to TESS
+  const convexShape = this.immediateMode.shapeMode === constants.TESS;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
     (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&

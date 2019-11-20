@@ -282,6 +282,12 @@ export const QUADS = 'quads';
  */
 export const QUAD_STRIP = 'quad_strip';
 /**
+ * @property {String} TESS
+ * @final
+ * @default tess
+ */
+export const TESS = 'tess';
+/**
  * @property {String} CLOSE
  * @final
  */
