@@ -133,8 +133,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultColorShader = undefined;
   this._defaultPointShader = undefined;
 
-  this._pointVertexBuffer = this.GL.createBuffer();
-
   this.userFillShader = undefined;
   this.userStrokeShader = undefined;
   this.userPointShader = undefined;
@@ -186,7 +184,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
       stroke: [
       new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
       new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
-      ]
+      ],
+      point: this.GL.createBuffer()
     }
   };
 

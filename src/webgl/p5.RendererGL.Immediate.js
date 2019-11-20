@@ -118,7 +118,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
       this.immediateMode.geometry.vertices,
-      this._pointVertexBuffer
+      this.immediateMode.buffers.point
     );
     return this;
   }
@@ -219,8 +219,10 @@ p5.RendererGL.prototype._tesselateShape = function() {
 p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
   const shader = this._getImmediateFillShader();
+
   this._calculateNormals(shader, this.immediateMode.geometry);
   this._setFillUniforms(shader);
+
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
@@ -240,12 +242,14 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
         break;
     }
   }
+
   this._applyColorBlend(this.curFillColor);
   gl.drawArrays(
     this.immediateMode.shapeMode,
     0,
     this.immediateMode.geometry.vertices.length
   );
+
   shader.unbindShader();
 };
 

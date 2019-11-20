@@ -992,7 +992,7 @@ p5.RendererGL.prototype.point = function(x, y, z) {
 
   const _vertex = [];
   _vertex.push(new p5.Vector(x, y, z));
-  this._drawPoints(_vertex, this._pointVertexBuffer);
+  this._drawPoints(_vertex, this.immediateMode.buffers.point);
 
   return this;
 };
