@@ -157,12 +157,12 @@ p5.RendererGL.prototype.endShape = function(
       this.immediateMode.geometry.vertices,
       this._pointVertexBuffer
     );
-    return;
+    return this;
   }
   this._processVertices(...arguments);
   if (this.immediateMode.geometry.vertices.length > 1) {
-    this._drawImmediateStroke();
     this._drawImmediateFill();
+    this._drawImmediateStroke();
   }
   this.isBezier = false;
   this.isQuadratic = false;

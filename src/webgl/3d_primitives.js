@@ -1389,7 +1389,7 @@ p5.RendererGL.prototype.line = function(...args) {
     this.vertex(args[3], args[4], args[5]);
     this.endShape();
   } else if (args.length === 4) {
-    this.beginShape();
+    this.beginShape(constants.LINES);
     this.vertex(args[0], args[1], 0);
     this.vertex(args[2], args[3], 0);
     this.endShape();

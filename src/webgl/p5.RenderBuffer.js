@@ -28,7 +28,7 @@ p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
   // check if the model has the appropriate source array
   let buffer = geometry[this.dst];
   const src = model[this.src];
-  if (src) {
+  if (src.length > 0) {
     // check if we need to create the GL buffer
     const createBuffer = !buffer;
     if (createBuffer) {
@@ -43,7 +43,6 @@ p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
       const map = this.map;
       // get the values from the model, possibly transformed
       const values = map ? map(src) : src;
-
       // fill the buffer with the values
       this._renderer._bindBuffer(buffer, gl.ARRAY_BUFFER, values);
 
@@ -52,14 +51,6 @@ p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
     }
     // enable the attribute
     shader.enableAttrib(attr, this.size);
-  } else {
-    if (buffer) {
-      // remove the unused buffer
-      gl.deleteBuffer(buffer);
-      geometry[this.dst] = null;
-    }
-    // disable the vertex
-    gl.disableVertexAttribArray(attr.index);
   }
 };
 
