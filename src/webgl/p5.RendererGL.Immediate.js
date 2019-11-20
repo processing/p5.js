@@ -262,12 +262,9 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
 };
 
 p5.RendererGL.prototype._calculateNormals = function(shader, geometry) {
-  if (geometry.vertices % 3 !== 0) {
-    return;
-  }
-  if (shader.attributes['aNormal']) {
-    geometry.computeFaces().computerNormals();
-  }
+  geometry.vertices.forEach(() => {
+    geometry.vertexNormals.push(new p5.Vector(0, 0, 1));
+  });
 };
 
 export default p5.RendererGL;
