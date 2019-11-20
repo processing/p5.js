@@ -678,7 +678,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
   this._applyColorBlend(this.curFillColor);
 
-  let g = this.gHash['glyph'];
+  let g = this.retainedMode.geometry['glyph'];
   if (!g) {
     // create the geometry for rendering a quad
     const geom = (this._textGeom = new p5.Geometry(1, 1, function() {

@@ -15,9 +15,6 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import './p5.RenderBuffer';
 
-const _flatten = p5.RendererGL.prototype._flatten;
-const _vToNArray = p5.RendererGL.prototype._vToNArray;
-
 /**
  * Begin shape drawing.  This is a helpful way of generating
  * custom shapes quickly.  However in WEBGL mode, application
@@ -35,33 +32,7 @@ const _vToNArray = p5.RendererGL.prototype._vToNArray;
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
     mode !== undefined ? mode : constants.LINE_STRIP;
-  //if we haven't yet initialized our
-  //immediateMode vertices & buffers, create them now!
-  if (this.immediateMode.geometry === undefined) {
-    this.immediateMode.geometry = new p5.Geometry();
-    if (this.immediateMode.buffers === undefined) {
-      this.immediateMode.buffers = {
-        // prettier-ignore
-        fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, _vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, _vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, _flatten)
-          ],
-        // prettier-ignore
-        stroke: [
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, _flatten),
-          new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, _flatten)
-          ]
-      };
-    }
-    this.immediateMode._bezierVertex = [];
-    this.immediateMode._quadraticVertex = [];
-    this.immediateMode._curveVertex = [];
-  } else {
-    this.immediateMode.geometry.reset();
-  }
+  this.immediateMode.geometry.reset();
   return this;
 };
 

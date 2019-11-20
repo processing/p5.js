@@ -16,25 +16,25 @@ let hashCount = 0;
 p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this._freeBuffers(gId);
 
-  //@TODO remove this limit on hashes in gHash
+  //@TODO remove this limit on hashes in retainedMode.geometry
   hashCount++;
   if (hashCount > 1000) {
-    const key = Object.keys(this.gHash)[0];
-    delete this.gHash[key];
+    const key = Object.keys(this.retainedMode.geometry)[0];
+    delete this.retainedMode.geometry[key];
     hashCount--;
   }
 
-  //create a new entry in our gHash
-  return (this.gHash[gId] = {});
+  //create a new entry in our retainedMode.geometry
+  return (this.retainedMode.geometry[gId] = {});
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-  const buffers = this.gHash[gId];
+  const buffers = this.retainedMode.geometry[gId];
   if (!buffers) {
     return;
   }
 
-  delete this.gHash[gId];
+  delete this.retainedMode.geometry[gId];
   hashCount--;
 
   const gl = this.GL;
@@ -102,7 +102,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   const gl = this.GL;
-  const geometry = this.gHash[gId];
+  const geometry = this.retainedMode.geometry[gId];
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
     const strokeShader = this._getRetainedStrokeShader();
@@ -163,12 +163,16 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
 };
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
-  this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
+  this.GL.drawArrays(
+    drawMode,
+    0,
+    this.retainedMode.geometry[gId].lineVertexCount
+  );
   return this;
 };
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  const buffers = this.gHash[gId];
+  const buffers = this.retainedMode.geometry[gId];
   const gl = this.GL;
   // render the fill
   if (buffers.indexBuffer) {
