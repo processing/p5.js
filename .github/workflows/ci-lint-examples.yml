@@ -16,9 +16,9 @@ jobs:
     - uses: actions/cache@v1
       with:
         path: node_modules
-        key: ${{ runner.os }}-node-linting-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-node-linting-examples-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-linting-
+          ${{ runner.os }}-node-linting-examples-
     - name: Get node modules
       run: npm i
       env:
