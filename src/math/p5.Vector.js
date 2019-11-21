@@ -570,7 +570,7 @@ p5.Vector.prototype.div = function div(n) {
 
 /**
  * Calculates the magnitude (length) of the vector and returns the result as
- * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
+ * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
  *
  * @method mag
  * @return {Number} magnitude of the vector
@@ -618,7 +618,7 @@ p5.Vector.prototype.mag = function mag() {
 
 /**
  * Calculates the squared magnitude of the vector and returns the result
- * as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)
+ * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
  * Faster if the real length is not required in the
  * case of comparing vectors, etc.
  *
