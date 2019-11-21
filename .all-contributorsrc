@@ -1616,6 +1616,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "jjkaufman",
+      "name": "Jon Kaufman",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1706950?s=460&v=4",
+      "profile": "https://github.com/jjkaufman",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
