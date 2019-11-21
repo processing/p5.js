@@ -24,7 +24,7 @@ A summary is printed out after running the tests, and you can view the detailed 
 
 To run a single test or group of tests, append `.only` on a `suite` or `test` in your `.js` file and run the tests using the above command.
 
-**Be careful you don't commit `.only` though!** (We always want Travis CI to run _all_ the unit tests.)
+**Be careful you don't commit `.only` though!** (We always want our CI to run _all_ the unit tests.)
 
 #### An Example
 
@@ -66,7 +66,7 @@ The setup for Node.js tests is all done in `test/mocha.opts`
 
 ### Continuous Integration Testing
 
-When you open a pull request in the p5.js repo, it will automatically run the tests [on Travis CI](https://travis-ci.org/processing/p5.js/pull_requests) too. Travis CI helps us double check that the tests pass for each pull request, with no extra work from individual contributors. It also automatically uploads the coverage reports to [Codecov](https://codecov.io/github/processing/p5.js).
+When you open a pull request in the p5.js repo, it will automatically [run the tests](https://github.com/processing/p5.js/actions). This helps us double check that the tests pass for each pull request, with no extra work from individual contributors. It also automatically uploads the coverage reports to [Codecov](https://codecov.io/github/processing/p5.js).
 
 ## Adding Unit Tests
 
@@ -81,6 +81,7 @@ If you have to add a test file for a module to `test/unit`, then you'll also nee
 Pick a unit, it can be a method or a variable to test. Lets use `p5.prototype.isKeyPressed` as an example. Before beginning to write tests, we need to understand the expected behaviour of this method.
 **Expected behaviour:** The boolean system variable should be true if any key is pressed and false if no keys are pressed.
 Now you can think of various tests against this expected behaviour. Possible test cases could be:
+
 - the variable is a boolean
 - it should be true if a key is pressed
 - it should be true if any key is pressed - alphabet keys, number keys, special keys etc
@@ -89,6 +90,7 @@ Now you can think of various tests against this expected behaviour. Possible tes
 - if you can think of more, go ahead and add tests for them!
 
 We can create a test suite for `p5.prototype.isKeyPressed` and start creating tests for it. We will use mocha for structuring our unit tests.
+
 ```
 suite('p5.prototype.keyIsPressed', function() {
   test('keyIsPressed is a boolean', function() {
@@ -104,6 +106,7 @@ suite('p5.prototype.keyIsPressed', function() {
   });
 });
 ```
+
 We have structured out tests but we haven't written the tests yet. We will be using chai's assert for that.
 Consider the following:
 
@@ -112,5 +115,6 @@ test('keyIsPressed is a boolean', function() {
   assert.isBoolean(myp5.keyIsPressed); //Asserts that value is a boolean.
 });
 ```
+
 Similarly we can use `assert.strictEqual(myp5.keyIsPressed, true)` to assert if the value is true. You can read more about chai's assert [here](https://www.chaijs.com/api/assert/)
 Now that you have written the tests, run them and see if the method behaves as expected. If not, create an issue for the same and if you want, you can even work on fixing it!
