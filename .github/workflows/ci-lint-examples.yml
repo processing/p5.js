@@ -13,8 +13,14 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
+    - uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-linting-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-linting-
     - name: Get node modules
-      run: npm ci
+      run: npm i
       env:
         CI: true
     - name: Lint examples
