@@ -1712,6 +1712,9 @@ p5.RendererGL.prototype.image = function(
 
   this._pInst.push();
 
+  this._pInst.noLights();
+  this._enableLighting = false;
+
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
@@ -1743,8 +1746,6 @@ p5.RendererGL.prototype.image = function(
   this.endShape(constants.CLOSE);
 
   this._pInst.pop();
-
-  this._pInst.noLights();
 
   if (this._isErasing) {
     this.blendMode(constants.REMOVE);
