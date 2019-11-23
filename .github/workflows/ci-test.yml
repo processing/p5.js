@@ -19,7 +19,7 @@ jobs:
          restore-keys: |
            ${{ runner.os }}-node-
       - name: Get node modules
-        run: npm i
+        run: npm ci
         env:
           CI: true
       - name: build and test
