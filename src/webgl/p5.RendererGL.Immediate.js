@@ -137,6 +137,15 @@ p5.RendererGL.prototype.endShape = function(
   return this;
 };
 
+/**
+ * Called from endShape(). This function calculates the stroke vertices for custom shapes and
+ * tesselates shapes when applicable.
+ * @private
+ * @param  {Number} mode webgl primitives mode.  beginShape supports the
+ *                       following modes:
+ *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+ */
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
@@ -162,6 +171,12 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   }
 };
 
+/**
+ * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
+ * tesselates shapes when applicable.
+ * @private
+ * @returns  {Array[Number]} indices for custom shape vertices indicating edges.
+ */
 p5.RendererGL.prototype._calculateEdges = function(
   shapeMode,
   verts,
@@ -201,6 +216,10 @@ p5.RendererGL.prototype._calculateEdges = function(
   return res;
 };
 
+/**
+ * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
+ * @private
+ */
 p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [
@@ -217,17 +236,24 @@ p5.RendererGL.prototype._tesselateShape = function() {
   }
 };
 
+/**
+ * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+ * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
+ * @private
+ */
 p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
   const shader = this._getImmediateFillShader();
 
-  this._calculateNormals(shader, this.immediateMode.geometry);
+  this._calculateNormals(this.immediateMode.geometry);
   this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
 
+  // LINE_STRIP and LINES are not used for rendering, instead
+  // they only indicate a way to modify vertices during the _processVertices() step
   if (
     this.immediateMode.shapeMode === constants.LINE_STRIP ||
     this.immediateMode.shapeMode === constants.LINES
@@ -245,6 +271,11 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
   shader.unbindShader();
 };
 
+/**
+ * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+ * enabling all appropriate buffers, applying color blend, and drawing the stroke geometry.
+ * @private
+ */
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
   const shader = this._getImmediateStrokeShader();
@@ -261,7 +292,13 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   shader.unbindShader();
 };
 
-p5.RendererGL.prototype._calculateNormals = function(shader, geometry) {
+/**
+ * Called from _drawImmediateFill(). Currently adds default normals which
+ * only work for flat shapes.
+ * @parem
+ * @private
+ */
+p5.RendererGL.prototype._calculateNormals = function(geometry) {
   geometry.vertices.forEach(() => {
     geometry.vertexNormals.push(new p5.Vector(0, 0, 1));
   });

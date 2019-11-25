@@ -9,6 +9,13 @@ p5.RenderBuffer = function(size, src, dst, attr, renderer, map) {
   this.map = map; // optional, a transformation function to apply to src
 };
 
+/**
+ * Enables and binds the buffers used by shader when the appropriate data exists in geometry.
+ * Must always be done prior to drawing geometry in WebGL.
+ * @param {p5.Geometry} geometry Geometry that is going to be drawn
+ * @param {p5.Shader} shader Active shader
+ * @private
+ */
 p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
   const attributes = shader.attributes;
   const gl = this._renderer.GL;
