@@ -1625,6 +1625,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "gruselhaus",
+      "name": "Nico Finkernagel",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/33380107?v=4",
+      "profile": "https://gruselhaus.com",
+      "contributions": [
+        "infra",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
