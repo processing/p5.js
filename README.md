@@ -327,6 +327,8 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/tokinifubara"><img src="https://avatars2.githubusercontent.com/u/10986281?v=4" width="100px;" alt="Tokini Irene Fubara"/><br /><sub><b>Tokini Irene Fubara</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tokinifubara" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/dhruvs009"><img src="https://avatars1.githubusercontent.com/u/39025961?v=4" width="100px;" alt="Dhruv Sahnan"/><br /><sub><b>Dhruv Sahnan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=dhruvs009" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=dhruvs009" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/jjkaufman"><img src="https://avatars0.githubusercontent.com/u/1706950?s=460&v=4" width="100px;" alt="Jon Kaufman"/><br /><sub><b>Jon Kaufman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jjkaufman" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://gruselhaus.com"><img src="https://avatars2.githubusercontent.com/u/33380107?v=4" width="100px;" alt="Nico Finkernagel"/><br /><sub><b>Nico Finkernagel</b></sub></a><br /><a href="#infra-gruselhaus" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#review-gruselhaus" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 
