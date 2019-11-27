@@ -678,7 +678,7 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
   this._applyColorBlend(this.curFillColor);
 
-  let g = this.gHash['glyph'];
+  let g = this.retainedMode.geometry['glyph'];
   if (!g) {
     // create the geometry for rendering a quad
     const geom = (this._textGeom = new p5.Geometry(1, 1, function() {
@@ -694,7 +694,9 @@ p5.RendererGL.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   // bind the shader buffers
-  this._prepareBuffers(g, sh, p5.RendererGL._textBuffers);
+  for (const buff of this.retainedMode.buffers.text) {
+    buff._prepareBuffer(g, sh);
+  }
   this._bindBuffer(g.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
   // this will have to do for now...

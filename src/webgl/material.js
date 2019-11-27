@@ -784,6 +784,7 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   const isTexture = this.drawMode === constants.TEXTURE;
   const doBlend =
     isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
+
   if (doBlend !== this._isBlending) {
     if (doBlend) {
       gl.depthMask(isTexture);

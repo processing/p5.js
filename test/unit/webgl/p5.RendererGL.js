@@ -445,7 +445,7 @@ suite('p5.RendererGL', function() {
       myp5.stroke(255);
       myp5.triangle(0, 0, 1, 0, 0, 1);
 
-      var buffers = renderer.gHash['tri'];
+      var buffers = renderer.retainedMode.geometry['tri'];
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);

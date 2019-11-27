@@ -127,25 +127,68 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._curCamera._computeCameraDefaultSettings();
   this._curCamera._setDefaultCamera();
 
-  //Geometry & Material hashes
-  this.gHash = {};
-
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
   this._defaultPointShader = undefined;
 
-  this._pointVertexBuffer = this.GL.createBuffer();
-
   this.userFillShader = undefined;
   this.userStrokeShader = undefined;
   this.userPointShader = undefined;
 
-  //Imediate Mode
-  //default drawing is done in Retained Mode
-  this.isImmediateDrawing = false;
-  this.immediateMode = {};
+  // Default drawing is done in Retained Mode
+  // Geometry and Material hashes stored here
+  this.retainedMode = {
+    geometry: {},
+    buffers: {
+      // prettier-ignore
+      stroke: [
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+      ],
+      // prettier-ignore
+      fill: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      // prettier-ignore
+      text: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ]
+    }
+  };
+
+  // Imediate Mode
+  // Geometry and Material hashes stored here
+  this.immediateMode = {
+    geometry: new p5.Geometry(),
+    shapeMode: constants.TRIANGLE_FAN,
+    _bezierVertex: [],
+    _quadraticVertex: [],
+    _curveVertex: [],
+    buffers: {
+      // prettier-ignore
+      fill: [
+      new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+      new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+      new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+      new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+      new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      // prettier-ignore
+      stroke: [
+      new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+      new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+      ],
+      point: this.GL.createBuffer()
+    }
+  };
 
   this.pointSize = 5.0; //default point size
   this.curStrokeWeight = 1;
@@ -461,8 +504,8 @@ p5.prototype.setAttributes = function(key, value) {
   }
 
   if (!this._setupDone) {
-    for (const x in this._renderer.gHash) {
-      if (this._renderer.gHash.hasOwnProperty(x)) {
+    for (const x in this._renderer.retainedMode.geometry) {
+      if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
         console.error(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
             'before calling the other drawing methods in setup()'
@@ -820,7 +863,7 @@ p5.RendererGL.prototype.loadPixels = function() {
 //////////////////////////////////////////////
 
 p5.RendererGL.prototype.geometryInHash = function(gId) {
-  return this.gHash[gId] !== undefined;
+  return this.retainedMode.geometry[gId] !== undefined;
 };
 
 /**
@@ -1030,15 +1073,12 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  * for use with begin/endShape and immediate vertex mode.
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
-  if (this._useNormalMaterial) {
-    console.log(
-      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
-        ' created with beginShape(). Falling back to standard fill material.'
-    );
-    return this._getImmediateModeShader();
-  }
-
   const fill = this.userFillShader;
+  if (this._useNormalMaterial) {
+    if (!fill || !fill.isNormalShader()) {
+      return this._getNormalShader();
+    }
+  }
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();

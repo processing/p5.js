@@ -73,7 +73,7 @@ p5.prototype.beginContour = function() {
  * specified, the shape can be any irregular polygon.
  * <br><br>
  * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
- * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the
+ * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and TESS (WebGL only). After calling the
  * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
  * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
  * current stroke color and filled with the fill color.
@@ -84,7 +84,7 @@ p5.prototype.beginContour = function() {
  *
  * @method beginShape
  * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
- *                                TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+ *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS
  * @chainable
  * @example
  * <div>
@@ -915,7 +915,7 @@ p5.prototype.quadraticVertex = function(...args) {
  * }
  *
  * function ngon(n, x, y, d) {
- *   beginShape();
+ *   beginShape(TESS);
  *   for (let i = 0; i < n + 1; i++) {
  *     angle = TWO_PI / n * i;
  *     px = x + sin(angle) * d / 2;
