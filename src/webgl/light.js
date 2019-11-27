@@ -870,6 +870,8 @@ p5.prototype.noLights = function() {
   this._assert3d('noLights');
   p5._validateParameters('noLights', arguments);
 
+  this._renderer._enableLighting = false;
+
   this._renderer.ambientLightColors.length = 0;
   this._renderer.specularColors = [1, 1, 1];
 
