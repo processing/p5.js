@@ -1,5 +1,5 @@
-precision mediump float;
-precision mediump int;
+precision highp float;
+precision highp int;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
