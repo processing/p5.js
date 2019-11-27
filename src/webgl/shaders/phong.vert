@@ -1,11 +1,11 @@
-precision mediump float;
-precision mediump int;
+precision highp float;
+precision highp int;
 
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTexCoord;
 
-uniform vec3 uAmbientColor[8];
+uniform vec3 uAmbientColor[5];
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -30,7 +30,7 @@ void main(void) {
 
   // TODO: this should be a uniform
   vAmbientColor = vec3(0.0);
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 5; i++) {
     if (i < uAmbientLightCount) {
       vAmbientColor += uAmbientColor[i];
     }
