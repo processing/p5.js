@@ -560,6 +560,8 @@ p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
+
+    // duplicate width for height if only one value given
     if (arguments.length === 3) {
       arguments[3] = arguments[2];
     }
