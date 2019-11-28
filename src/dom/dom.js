@@ -2058,7 +2058,7 @@ p5.Element.prototype.size = function(w, h) {
 };
 
 /**
- * Removes the element and deregisters all listeners.
+ * Removes the element, stops all media streams, and deregisters all listeners.
  * @method remove
  * @example
  * <div class='norender'><code>
@@ -2071,12 +2071,9 @@ p5.Element.prototype.remove = function() {
   // used as input/output for audios/videos.
   if (this instanceof p5.MediaElement) {
     const tracks = this.elt.srcObject.getTracks();
-
     tracks.forEach(function(track) {
       track.stop();
     });
-
-    this.elt.srcObject = null;
   }
 
   // deregister events
