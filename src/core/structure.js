@@ -401,4 +401,54 @@ p5.prototype.redraw = function(n) {
   }
 };
 
+/**
+ * The `p5()` constructor enables you to activate "instance mode" instead of normal
+ * "global mode". This is an advanced topic. A short description and example is
+ * included below. Please see
+ * <a target="blank" href="https://www.youtube.com/watch?v=Su792jEauZg&feature=youtu.be">
+ * Dan Shiffman's Coding Train video tutorial</a> or this
+ * <a target="blank" href="https://github.com/processing/p5.js/wiki/p5.js-overview#instantiation--namespace">tutorial page</a>
+ * for more info.
+ *
+ * By default, all p5.js functions are in the global namespace (i.e. bound to the window
+ * object), meaning you can call them simply `ellipse()`, `fill()`, etc. However, this
+ * might be inconvenient if you are mixing with other JS libraries (synchronously or
+ * asynchronously) or writing long programs of your own. p5.js currently supports a
+ * way around this problem called "instance mode". In instance mode, all p5 functions
+ * are bound up in a single variable instead of polluting your global namespace.
+ *
+ * Optionally, you can specify a default container for the canvas and any other elements
+ * to append to with a second argument. You can give the ID of an element in your html,
+ * or an html node itself.
+ *
+ * Note that creating instances like this also allows you to have more than one p5 sketch on
+ * a single web page, as they will each be wrapped up with their own set up variables. Of
+ * course, you could also use iframes to have multiple sketches in global mode.
+ *
+ * @method p5
+ * @param {Object} sketch a function containing a p5.js sketch
+ * @param {String|Object} node ID or pointer to HTML DOM node to contain sketch in
+ * @example
+ * <div class='norender'><code>
+ * const s = p => {
+ *   let x = 100;
+ *   let y = 100;
+ *
+ *   p.setup = function() {
+ *     p.createCanvas(700, 410);
+ *   };
+ *
+ *   p.draw = function() {
+ *     p.background(0);
+ *     p.fill(255);
+ *     p.rect(x, y, 50, 50);
+ *   };
+ * };
+ *
+ * new p5(s); // invoke p5
+ * </code></div>
+ *
+ * @alt
+ * white rectangle on black background
+ */
 export default p5;
