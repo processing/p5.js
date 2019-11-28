@@ -2066,14 +2066,13 @@ p5.Element.prototype.remove = function() {
   // stop all audios/videos and detach all devices like microphone/camera etc
   // used as input/output for audios/videos.
   if (this instanceof p5.MediaElement) {
-    var stream = this.elt.srcObject;
-    var tracks = stream.getTracks();
+    const tracks = this.elt.srcObject.getTracks();
 
     tracks.forEach(function(track) {
       track.stop();
     });
 
-    stream = null;
+    this.elt.srcObject = null;
   }
 
   // deregister events
