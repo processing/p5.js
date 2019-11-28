@@ -512,7 +512,7 @@ p5.prototype.quad = function(...args) {
  * @param  {Number} x  x-coordinate of the rectangle.
  * @param  {Number} y  y-coordinate of the rectangle.
  * @param  {Number} w  width of the rectangle.
- * @param  {Number} h  height of the rectangle.
+ * @param  {Number} [h]  height of the rectangle.
  * @param  {Number} [tl] optional radius of top-left corner.
  * @param  {Number} [tr] optional radius of top-right corner.
  * @param  {Number} [br] optional radius of bottom-right corner.
