@@ -87,11 +87,6 @@ suite('Error Helpers', function() {
         'got unwanted exception'
       );
     });
-    test('rect(): missing param #3', function() {
-      assert.validationError(function() {
-        p5._validateParameters('rect', [1, 1, 10.5]);
-      });
-    });
     test('rect(): wrong param type at #0', function() {
       assert.validationError(function() {
         p5._validateParameters('rect', ['a', 1, 10.5, 10, 0, Math.PI]);
