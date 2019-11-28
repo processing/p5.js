@@ -694,7 +694,12 @@ p5.prototype.pow = Math.pow;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.round = Math.round;
+p5.prototype.round = (n, decimals) => {
+  if (!decimals) {
+    return Math.round(n);
+  }
+  return Number(Math.round(n + 'e' + decimals) + 'e-' + decimals);
+};
 
 /**
  * Squares a number (multiplies a number by itself). The result is always a
