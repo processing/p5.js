@@ -7,7 +7,7 @@ Help is needed translating these Developer Docs to Spanish (and other languages)
 
 - `src /` contiene todo el código fuente de la biblioteca, que está organizado por temas en módulos separados. Esto es en lo que trabajará si está cambiando p5.js.
 - `lib /` contiene la versión final de p5.js destinada a que los usuarios carguen en sus bocetos y proyectos, incluidos en formularios comprimidos y no comprimidos. Esta es la salida cuando [Grunt](https://gruntjs.com/) compila los módulos de código fuente en un solo archivo.
-- `developer_docs /` contiene varios documentos de Markdown que probablemente sean útiles para los desarrolladores de p5.js, en particular porque explican prácticas y principios.
+- `contributor_docs /` contiene varios documentos de Markdown que probablemente sean útiles para los desarrolladores de p5.js, en particular porque explican prácticas y principios.
 - `docs /` en realidad no contiene documentos! Más bien, contiene el código utilizado para * generar * el [manual de referencia en línea](https://p5js.org/reference/).
 - `tests /` contiene pruebas unitarias que aseguran que la biblioteca continúe funcionando correctamente a medida que se realizan los cambios.
 - `task /` contiene scripts que realizan tareas automatizadas relacionadas con la compilación, implementación y lanzamiento de nuevas versiones de p5.js.

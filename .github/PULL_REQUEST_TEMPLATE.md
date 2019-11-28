@@ -22,6 +22,6 @@ Resolves #[Add issue number here]
 - [ ] [Unit tests] are included / updated
 - [ ] [Benchmarks] are included / updated
 
-[Inline documentation]: https://github.com/processing/p5.js/blob/master/developer_docs/inline_documentation.md
-[Unit tests]: https://github.com/processing/p5.js/tree/master/developer_docs#unit-tests
-[Benchmarks]: https://github.com/processing/p5.js/blob/master/developer_docs/benchmarking_p5.md
+[Inline documentation]: https://github.com/processing/p5.js/blob/master/contributor_docs/inline_documentation.md
+[Unit tests]: https://github.com/processing/p5.js/tree/master/contributor_docs#unit-tests
+[Benchmarks]: https://github.com/processing/p5.js/blob/master/contributor_docs/benchmarking_p5.md

@@ -4,7 +4,7 @@ Hello! Thanks for your interest in contributing to p5.js! You can get started wi
 
 - `src/` contains all the source code for the library, which is topically organized into separated modules. This is what you'll work on if you are changing p5.js.
 - `lib/` contains the final version of p5.js intended for users to load in their sketches and projects, included in both compressed and uncompressed forms. This is the output when the source code modules are compiled to a single file by [Grunt](https://gruntjs.com/).
-- `developer_docs/` contains various Markdown documents that are likely to be useful to developers of p5.js, in particular because they explain practices and principles.
+- `contributor_docs/` contains various Markdown documents that are likely to be useful to developers of p5.js, in particular because they explain practices and principles.
 - `docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/).
 - `tests/` contains unit tests which ensure the library continues to function correctly as changes are made.
 - `tasks/` contains scripts which perform automated tasks related to the build, deployment, and release of new versions of p5.js.
