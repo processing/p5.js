@@ -420,6 +420,11 @@ suite('Calculation', function() {
       result = myp5.round(2.8);
       assert.equal(result, 3);
     });
+
+    test('should round two decimal places', function() {
+      result = myp5.round(12.31833, 2);
+      assert.equal(result, 12.32);
+    });
   });
 
   suite('p5.prototype.sqrt', function() {

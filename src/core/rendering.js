@@ -312,4 +312,28 @@ p5.prototype.blendMode = function(mode) {
   this._renderer.blendMode(mode);
 };
 
+/**
+ * @property drawingContext
+ * The p5.js API provides a lot of functionality for creating graphics, but there is
+ * some native HTML5 Canvas functionality that is not exposed by p5. You can still call
+ * it directly using the variable `drawingContext`, as in the example shown. This is
+ * the equivalent of calling `canvas.getContext('2d');` or `canvas.getContext('webgl');`.
+ * See this
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">
+ * reference for the native canvas API</a> for possible drawing functions you can call.
+ * @example
+ * <div><code>
+ * function setup() {
+ *   drawingContext.shadowOffsetX = 5;
+ *   drawingContext.shadowOffsetY = -5;
+ *   drawingContext.shadowBlur = 10;
+ *   drawingContext.shadowColor = 'black';
+ *   background(200);
+ *   ellipse(width / 2, height / 2, 50, 50);
+ * }
+ * </code></div>
+ * @alt
+ * white ellipse with shadow blur effect around edges
+ */
+
 export default p5;
