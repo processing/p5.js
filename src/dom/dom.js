@@ -2063,6 +2063,17 @@ p5.Element.prototype.size = function(w, h) {
  * </code></div>
  */
 p5.Element.prototype.remove = function() {
+  if (this instanceof p5.MediaElement) {
+    var stream = this.elt.srcObject;
+    var tracks = stream.getTracks();
+
+    tracks.forEach(function(track) {
+      track.stop();
+    });
+
+    stream = null;
+  }
+
   // deregister events
   for (var ev in this._events) {
     this.elt.removeEventListener(ev, this._events[ev]);
