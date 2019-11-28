@@ -560,6 +560,10 @@ p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
+    if (arguments.length === 3) {
+      arguments[3] = arguments[2];
+    }
+
     const vals = canvas.modeAdjust(
       arguments[0],
       arguments[1],
@@ -567,6 +571,7 @@ p5.prototype.rect = function() {
       arguments[3],
       this._renderer._rectMode
     );
+
     const args = [vals.x, vals.y, vals.w, vals.h];
     // append the additional arguments (either cornder radii, or
     // segment details) to the argument list
