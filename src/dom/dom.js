@@ -2063,8 +2063,8 @@ p5.Element.prototype.size = function(w, h) {
  * </code></div>
  */
 p5.Element.prototype.remove = function() {
-  // stops all audios/videos and detach all devices like microphone/camera
-  // used as input/output for audio/video.
+  // stop all audios/videos and detach all devices like microphone/camera etc
+  // used as input/output for audios/videos.
   if (this instanceof p5.MediaElement) {
     var stream = this.elt.srcObject;
     var tracks = stream.getTracks();
