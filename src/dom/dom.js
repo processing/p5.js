@@ -2076,8 +2076,14 @@ p5.Element.prototype.remove = function() {
     });
   }
 
+  // delete the reference in this._pInst._elements
+  const index = this._pInst._elements.indexOf(this);
+  if (index !== -1) {
+    this._pInst._elements.splice(index, 1);
+  }
+
   // deregister events
-  for (var ev in this._events) {
+  for (let ev in this._events) {
     this.elt.removeEventListener(ev, this._events[ev]);
   }
   if (this.elt && this.elt.parentNode) {
