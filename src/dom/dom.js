@@ -2076,6 +2076,7 @@ p5.Element.prototype.remove = function() {
     });
   }
 
+  // delete the reference in this._pInst._elements
   const index = this._pInst._elements.indexOf(this);
   if (index !== -1) {
     this._pInst._elements.splice(index, 1);
