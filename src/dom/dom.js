@@ -2077,7 +2077,6 @@ p5.Element.prototype.remove = function() {
   }
 
   const index = this._pInst._elements.indexOf(this);
-  
   if (index !== -1) {
     this._pInst._elements.splice(index, 1);
   }
