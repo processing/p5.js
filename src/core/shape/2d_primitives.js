@@ -243,7 +243,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
-  return this._renderEllipse.apply(arguments);
+  return this._renderEllipse.apply(this, arguments);
 };
 
 /**
@@ -274,7 +274,7 @@ p5.prototype.circle = function() {
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this._renderEllipse.apply(args);
+  return this._renderEllipse.apply(this, args);
 };
 
 // internal method for drawing ellipses (without parameter validation)
@@ -563,8 +563,7 @@ p5.prototype.quad = function(...args) {
  */
 p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
-
-  return this._renderRect.apply(arguments);
+  return this._renderRect.apply(this, arguments);
 };
 
 /**
@@ -619,7 +618,7 @@ p5.prototype.rect = function() {
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);
-  return this._renderRect.apply(arguments);
+  return this._renderRect.apply(this, arguments);
 };
 
 // internal method to have renderer draw a rectangle
