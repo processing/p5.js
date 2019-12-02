@@ -2089,7 +2089,6 @@ p5.Element.prototype.remove = function() {
   if (this.elt && this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
   }
-  delete this;
 };
 
 /**
