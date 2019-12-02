@@ -565,30 +565,7 @@ p5.prototype.quad = function(...args) {
 p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
 
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    // duplicate width for height if only one value given
-    if (arguments.length === 3) {
-      arguments[3] = arguments[2];
-    }
-
-    const vals = canvas.modeAdjust(
-      arguments[0],
-      arguments[1],
-      arguments[2],
-      arguments[3],
-      this._renderer._rectMode
-    );
-
-    const args = [vals.x, vals.y, vals.w, vals.h];
-    // append the additional arguments (either cornder radii, or
-    // segment details) to the argument list
-    for (let i = 4; i < arguments.length; i++) {
-      args[i] = arguments[i];
-    }
-    this._renderer.rect(args);
-  }
-
-  return this;
+  return this._renderRect(...arguments);
 };
 
 /**
@@ -642,7 +619,36 @@ p5.prototype.rect = function() {
  * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
-  return this.rect(x, y, s, s, tl, tr, br, bl);
+  p5._validateParameters('square', arguments);
+  return this._renderRect(x, y, s, s, tl, tr, br, bl);
+};
+
+// internal method to have renderer draw a rectangle
+p5.prototype._renderRect = function() {
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    // duplicate width for height if only one value given
+    if (arguments.length === 3) {
+      arguments[3] = arguments[2];
+    }
+
+    const vals = canvas.modeAdjust(
+      arguments[0],
+      arguments[1],
+      arguments[2],
+      arguments[3],
+      this._renderer._rectMode
+    );
+
+    const args = [vals.x, vals.y, vals.w, vals.h];
+    // append the additional arguments (either cornder radii, or
+    // segment details) to the argument list
+    for (let i = 4; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    this._renderer.rect(args);
+  }
+
+  return this;
 };
 
 /**
