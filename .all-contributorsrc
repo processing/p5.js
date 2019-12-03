@@ -1663,7 +1663,16 @@
       "contributions": [
         "code"
       ]
-    }
+    },
+    {
+      "login": "rdslade",
+      "name": "Ryan Slade",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4694139?v=4",
+      "profile": "rdslade.github.io",
+      "contributions": [
+        "code"
+      ]
+    } 
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
