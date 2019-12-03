@@ -371,7 +371,7 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   h *= pd;
 
   if (this.gifProperties) {
-    this.gifProperties.frames[this.gifProperties.displayIndex] =
+    this.gifProperties.frames[this.gifProperties.displayIndex].image =
       pixelsState.imageData;
   }
 
