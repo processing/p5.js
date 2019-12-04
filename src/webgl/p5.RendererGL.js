@@ -230,11 +230,13 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 //////////////////////////////////////////////
 
 p5.RendererGL.prototype._setAttributeDefaults = pInst => {
+  // See issue #3850, safer to enable AA in Safari
+  const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
     alpha: true,
     depth: true,
     stencil: true,
-    antialias: false,
+    antialias: applyAA,
     premultipliedAlpha: false,
     preserveDrawingBuffer: true,
     perPixelLighting: false
@@ -350,7 +352,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * of at least 8 bits
  * <br><br>
  * antialias - indicates whether or not to perform anti-aliasing
- * default is false
+ * default is false (true in Safari)
  * <br><br>
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
