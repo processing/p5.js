@@ -19,3 +19,23 @@ Se você descobrir um bug ou tiver uma idéia para uma nova funcionalidade que g
 Você pode rastrear as issues que podem incluir a reprodução de relatórios de bugs ou a solicitação de informações vitais, como números de versão ou instruções de reprodução. Se você deseja iniciar issues de triagem, uma maneira fácil de começar é se [inscrever no p5.js. no CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
 Reconhecemos todos os tipos de contribuições. Este projeto segue a especificação de [all-contributors](https://github.com/kentcdodds/all-contributors). Adicione-se ao readme seguindo as [instruções aqui](https://github.com/processing/p5.js/issues/2309)!
+
+## Acompanhamentos
+
+Além do código em si, também pode ser necessário fornecer alguma combinação do seguinte.
+
+- [documentação embutida](./inline_documentation.md) na forma de comentários de código, que explicam o código para outros desenvolvedores e usuários. Muitos desses comentários devem estar em conformidade com a sintaxe [JSDoc](https://usejsdoc.org) e serão publicados no site p5.js como parte do [manual de referência on-line](https://p5js.org/reference/ )
+- [testes de unidade](./unit_testing.md), pequenos pedaços de código que são separados da biblioteca e são usados para verificar seu comportamento
+- [benchmarks](./benchmarking_p5.md) para testar o desempenho
+
+## Exemplos
+
+O site p5.js. inclui [exemplos integrados](http://p5js.org/examples/). Você pode [adicionar mais](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) e há uma issue que lista alguns [exemplos desejados](https://github.com/processing/p5.js/issues/1954).
+
+## ES6
+
+O p5.js foi recentemente migrado para o [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Para ver como essa transição poderia afetar sua contribuição, visite a [adoção do ES6](./es6-adoption.md).
+
+## Outras Ideas
+
+Se você deseja contribuir de outras maneiras que não são abordadas aqui, escreva para [hello@p5js.org](mailto:hello@p5js.org) e nos informe o que você está pensando! Além de trabalhar nessa base de código, sempre podemos usar ajuda em documentação, tutoriais, workshops, materiais educacionais, branding e design. Entre em contato e podemos conversar sobre como você pode participar.
