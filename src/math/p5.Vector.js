@@ -1287,6 +1287,61 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
+ * This method acts on the vector directly
+ *
+ * @method reflect
+ * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @chainable
+ * @example
+ * <div class="norender">
+ * <code>
+ * let v = createVector(4, 6); // incoming vector, this example vector is heading to the right and downward
+ * let n = createVector(0, -1); // surface normal to a plane (this example normal points directly upwards)
+ * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, -6]
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   let v0 = createVector(0, 0);
+ *   let v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   let n = createVector(0, -30);
+ *   drawArrow(v1, n, 'blue');
+ *
+ *   let r = v1.copy();
+ *   r.reflect(n);
+ *   drawArrow(v1, r, 'purple');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
+  surfaceNormal.normalize();
+  return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
+};
+
+/**
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
  * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
