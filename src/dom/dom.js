@@ -863,15 +863,28 @@ p5.prototype.createRadio = function(existing_radios) {
  * @param {String|p5.Color} [value] default color of element
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div>
- * <code>
+ * <div><code>
+ * let colorPicker;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   colorPicker = createColorPicker('#ed225d');
+ *   colorPicker.position(0, height + 5);
+ * }
+ *
+ * function draw() {
+ *   background(colorPicker.color());
+ * }
+ * </code></div>
+ * <div><code>
  * let inp1, inp2;
  * function setup() {
  *   createCanvas(100, 100);
  *   background('grey');
  *   inp1 = createColorPicker('#ff0000');
- *   inp2 = createColorPicker(color('yellow'));
+ *   inp1.position(0, height + 5);
  *   inp1.input(setShade1);
+ *   inp2 = createColorPicker(color('yellow'));
+ *   inp2.position(0, height + 30);
  *   inp2.input(setShade2);
  *   setMidShade();
  * }
@@ -891,8 +904,7 @@ p5.prototype.createRadio = function(existing_radios) {
  *   setMidShade();
  *   console.log('You are choosing shade 2 to be : ', this.value());
  * }
- * </code>
- * </div>
+ * </code></div>
  */
 p5.prototype.createColorPicker = function(value) {
   p5._validateParameters('createColorPicker', arguments);
