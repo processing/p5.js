@@ -202,10 +202,8 @@ p5.prototype.saveGif = (pImg, filename) => {
   } else if (loopLimit === null) {
     loopLimit = 0;
   }
-  const gifFormatDelay = props.delay / 10;
   const opts = {
-    loop: loopLimit,
-    delay: gifFormatDelay
+    loop: loopLimit
   };
 
   const buffer = new Uint8Array(
@@ -216,7 +214,7 @@ p5.prototype.saveGif = (pImg, filename) => {
   //loop over frames and build pixel -> palette index for each
   for (let i = 0; i < props.numFrames; i++) {
     const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
-    const data = props.frames[i].data;
+    const data = props.frames[i].image.data;
     const dataLength = data.length;
     for (let j = 0, k = 0; j < dataLength; j += 4, k++) {
       const r = data[j + 0];
@@ -238,6 +236,7 @@ p5.prototype.saveGif = (pImg, filename) => {
     }
     palette.length = powof2;
     opts.palette = new Uint32Array(palette);
+    opts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
     gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
   }
   gifWriter.end();

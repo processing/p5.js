@@ -227,21 +227,21 @@ p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
   if (props.playing) {
     props.timeDisplayed += pInst.deltaTime;
-  }
-
-  if (props.timeDisplayed >= props.delay) {
-    //GIF is bound to 'realtime' so can skip frames
-    const skips = Math.floor(props.timeDisplayed / props.delay);
-    props.timeDisplayed = 0;
-    props.displayIndex += skips;
-    props.loopCount = Math.floor(props.displayIndex / props.numFrames);
-    if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
-      props.playing = false;
-    } else {
-      const ind = props.displayIndex % props.numFrames;
-      this.drawingContext.putImageData(props.frames[ind], 0, 0);
-      props.displayIndex = ind;
-      this.setModified(true);
+    const curDelay = props.frames[props.displayIndex].delay;
+    if (props.timeDisplayed >= curDelay) {
+      //GIF is bound to 'realtime' so can skip frames
+      const skips = Math.floor(props.timeDisplayed / curDelay);
+      props.timeDisplayed = 0;
+      props.displayIndex += skips;
+      props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+      if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+        props.playing = false;
+      } else {
+        const ind = props.displayIndex % props.numFrames;
+        this.drawingContext.putImageData(props.frames[ind].image, 0, 0);
+        props.displayIndex = ind;
+        this.setModified(true);
+      }
     }
   }
 };
@@ -515,8 +515,8 @@ p5.Image.prototype.resize = function(width, height) {
         width,
         height
       );
-      nearestNeighbor(props.frames[i], resizedImageData);
-      props.frames[i] = resizedImageData;
+      nearestNeighbor(props.frames[i].image, resizedImageData);
+      props.frames[i].image = resizedImageData;
     }
   }
 
@@ -903,7 +903,7 @@ p5.Image.prototype.reset = function() {
     props.timeDisplayed = 0;
     props.loopCount = 0;
     props.displayIndex = 0;
-    this.drawingContext.putImageData(props.frames[0], 0, 0);
+    this.drawingContext.putImageData(props.frames[0].image, 0, 0);
   }
 };
 
@@ -975,7 +975,7 @@ p5.Image.prototype.setFrame = function(index) {
     if (index < props.numFrames && index >= 0) {
       props.timeDisplayed = 0;
       props.displayIndex = index;
-      this.drawingContext.putImageData(props.frames[index], 0, 0);
+      this.drawingContext.putImageData(props.frames[index].image, 0, 0);
     } else {
       console.log(
         'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
@@ -1096,10 +1096,13 @@ p5.Image.prototype.pause = function() {
 };
 
 /**
- * Changes the delay between frames in an animated GIF
+ * Changes the delay between frames in an animated GIF. There is an optional second parameter that
+ * indicates an index for a specific frame that should have its delay modified. If no index is given, all frames
+ * will have the new delay.
  *
  * @method delay
  * @param {Number}    d the amount in milliseconds to delay between switching frames
+ * @param {Number}    [index] the index of the frame that should have the new delay value {optional}
  * @example
  * <div><code>
  * let gifFast, gifSlow;
@@ -1130,9 +1133,17 @@ p5.Image.prototype.pause = function() {
  * the animation is much slower
  *
  */
-p5.Image.prototype.delay = function(d) {
+p5.Image.prototype.delay = function(d, index) {
   if (this.gifProperties) {
-    this.gifProperties.delay = d;
+    const props = this.gifProperties;
+    if (index < props.numFrames && index >= 0) {
+      props.frames[index].delay = d;
+    } else {
+      // change all frames
+      for (const frame of props.frames) {
+        frame.delay = d;
+      }
+    }
   }
 };
 
