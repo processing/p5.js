@@ -163,12 +163,6 @@ function _createGif(
   const frames = [];
   const numFrames = gifReader.numFrames();
   let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
-  // I didn't realize this at first but some GIFs encode with frame
-  // Reworking delay to be frame level will make it less powerful
-  // to modify for users. For now this works with 99% of GIFs that
-  // I can find and for those that it doesn't there is just a retiming
-  // of the frames, which would be minor for all but the strangest GIFs
-  let averageDelay = 0;
   if (numFrames > 1) {
     const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
@@ -184,12 +178,11 @@ function _createGif(
     };
     for (let j = 0; j < numFrames; j++) {
       const frameInfo = gifReader.frameInfo(j);
-      averageDelay += frameInfo.delay;
       // Some GIFs are encoded so that they expect the previous frame
       // to be under the current frame. This can occur at a sub-frame level
       // There are possible disposal codes but I didn't encounter any
       if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
-        pImg.drawingContext.putImageData(frames[j - 1], 0, 0);
+        pImg.drawingContext.putImageData(frames[j - 1].image, 0, 0);
       } else {
         pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
         framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
@@ -197,9 +190,10 @@ function _createGif(
       loadGIFFrameIntoImage(j, gifReader);
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
-      frames.push(
-        pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height)
-      );
+      frames.push({
+        image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
+        delay: frameInfo.delay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+      });
     }
 
     //Uses Netscape block encoding
@@ -216,12 +210,8 @@ function _createGif(
       loopLimit = null;
     }
 
-    // See note about this at variable creation above
-    averageDelay /= numFrames;
-
     pImg.gifProperties = {
       displayIndex: 0,
-      delay: averageDelay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
       loopLimit,
       loopCount: 0,
       frames,

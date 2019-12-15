@@ -922,4 +922,69 @@ suite('p5.Vector', function() {
       expect(v.array()).to.eql([1, 23, 4]);
     });
   });
+
+  suite('reflect', function() {
+    setup(function() {
+      incoming_x = 1;
+      incoming_y = 1;
+      incoming_z = 1;
+      original_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+
+      x_normal = myp5.createVector(3, 0, 0);
+      y_normal = myp5.createVector(0, 3, 0);
+      z_normal = myp5.createVector(0, 0, 3);
+
+      x_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
+
+      y_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
+
+      z_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
+    });
+
+    test('should return a p5.Vector', function() {
+      expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+    });
+
+    test('should update this', function() {
+      assert.equal(x_bounce_incoming, x_bounce_outgoing);
+      assert.equal(y_bounce_incoming, y_bounce_outgoing);
+      assert.equal(z_bounce_incoming, z_bounce_outgoing);
+    });
+
+    test('x-normal should flip incoming x component and maintain y,z components', function() {
+      expect(x_bounce_outgoing.x).to.be.closeTo(-1, 0.01);
+      expect(x_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+      expect(x_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+    });
+    test('y-normal should flip incoming y component and maintain x,z components', function() {
+      expect(y_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+      expect(y_bounce_outgoing.y).to.be.closeTo(-1, 0.01);
+      expect(y_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+    });
+    test('z-normal should flip incoming z component and maintain x,y components', function() {
+      expect(z_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+      expect(z_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+      expect(z_bounce_outgoing.z).to.be.closeTo(-1, 0.01);
+    });
+
+    test('angle of incidence should match angle of reflection', function() {
+      expect(Math.abs(x_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(x_normal.angleBetween(x_bounce_outgoing.mult(-1))),
+        0.01
+      );
+      expect(Math.abs(y_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(y_normal.angleBetween(y_bounce_outgoing.mult(-1))),
+        0.01
+      );
+      expect(Math.abs(z_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
+        0.01
+      );
+    });
+  });
 });

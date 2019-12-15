@@ -241,7 +241,6 @@ suite('loading animated gif images', function() {
           test('gifProperties should be correct after preload', function done() {
             assert.isTrue(gifImage instanceof p5.Image);
             var nyanCatGifProperties = {
-              delay: 100,
               displayIndex: 0,
               loopCount: 0,
               loopLimit: null,
@@ -262,8 +261,9 @@ suite('loading animated gif images', function() {
             );
             for (var i = 0; i < gifImage.gifProperties.numFrames; i++) {
               assert.isTrue(
-                gifImage.gifProperties.frames[i] instanceof ImageData
+                gifImage.gifProperties.frames[i].image instanceof ImageData
               );
+              assert.isTrue(gifImage.gifProperties.frames[i].delay === 100);
             }
           });
           test('should be able to modify gifProperties state', function() {

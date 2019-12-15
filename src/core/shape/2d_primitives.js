@@ -243,29 +243,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
-
-  // if the current stroke and fill settings wouldn't result in something
-  // visible, exit immediately
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return this;
-  }
-
-  // p5 supports negative width and heights for rects
-  if (w < 0) {
-    w = Math.abs(w);
-  }
-
-  if (typeof h === 'undefined') {
-    // Duplicate 3rd argument if only 3 given.
-    h = w;
-  } else if (h < 0) {
-    h = Math.abs(h);
-  }
-
-  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-  this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
-
-  return this;
+  return this._renderEllipse.apply(this, arguments);
 };
 
 /**
@@ -292,10 +270,37 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * white circle with black outline in mid of canvas that is 55x55.
  */
 p5.prototype.circle = function() {
+  p5._validateParameters('circle', arguments);
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this.ellipse(...args);
+  return this._renderEllipse.apply(this, args);
+};
+
+// internal method for drawing ellipses (without parameter validation)
+p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
+  // if the current stroke and fill settings wouldn't result in something
+  // visible, exit immediately
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
+    return this;
+  }
+
+  // p5 supports negative width and heights for rects
+  if (w < 0) {
+    w = Math.abs(w);
+  }
+
+  if (typeof h === 'undefined') {
+    // Duplicate 3rd argument if only 3 given.
+    h = w;
+  } else if (h < 0) {
+    h = Math.abs(h);
+  }
+
+  const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+  this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
+
+  return this;
 };
 
 /**
@@ -558,31 +563,7 @@ p5.prototype.quad = function(...args) {
  */
 p5.prototype.rect = function() {
   p5._validateParameters('rect', arguments);
-
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    // duplicate width for height if only one value given
-    if (arguments.length === 3) {
-      arguments[3] = arguments[2];
-    }
-
-    const vals = canvas.modeAdjust(
-      arguments[0],
-      arguments[1],
-      arguments[2],
-      arguments[3],
-      this._renderer._rectMode
-    );
-
-    const args = [vals.x, vals.y, vals.w, vals.h];
-    // append the additional arguments (either cornder radii, or
-    // segment details) to the argument list
-    for (let i = 4; i < arguments.length; i++) {
-      args[i] = arguments[i];
-    }
-    this._renderer.rect(args);
-  }
-
-  return this;
+  return this._renderRect.apply(this, arguments);
 };
 
 /**
@@ -636,7 +617,36 @@ p5.prototype.rect = function() {
  * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
-  return this.rect(x, y, s, s, tl, tr, br, bl);
+  p5._validateParameters('square', arguments);
+  return this._renderRect.apply(this, arguments);
+};
+
+// internal method to have renderer draw a rectangle
+p5.prototype._renderRect = function() {
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    // duplicate width for height if only one value given
+    if (arguments.length === 3) {
+      arguments[3] = arguments[2];
+    }
+
+    const vals = canvas.modeAdjust(
+      arguments[0],
+      arguments[1],
+      arguments[2],
+      arguments[3],
+      this._renderer._rectMode
+    );
+
+    const args = [vals.x, vals.y, vals.w, vals.h];
+    // append the additional arguments (either cornder radii, or
+    // segment details) to the argument list
+    for (let i = 4; i < arguments.length; i++) {
+      args[i] = arguments[i];
+    }
+    this._renderer.rect(args);
+  }
+
+  return this;
 };
 
 /**
