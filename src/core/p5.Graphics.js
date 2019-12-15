@@ -15,6 +15,7 @@ import * as constants from './constants';
  * extensive, but mirror the normal drawing API for p5.
  *
  * @class p5.Graphics
+ * @constructor
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height

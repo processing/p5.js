@@ -27,6 +27,7 @@ import p5 from '../core/main';
  * equivalent to
  * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
  * @method camera
+ * @constructor
  * @for p5
  * @param  {Number} [x]        camera position value on x axis
  * @param  {Number} [y]        camera position value on y axis

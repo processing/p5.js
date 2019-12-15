@@ -13,6 +13,7 @@ import * as constants from '../core/constants';
 /**
  * Base class for font handling
  * @class p5.Font
+ * @constructor
  * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Font = function(p) {

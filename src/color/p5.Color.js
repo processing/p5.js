@@ -26,6 +26,7 @@ import color_conversion from './color_conversion';
  * conversion that has already been performed.
  *
  * @class p5.Color
+ * @constructor
  */
 p5.Color = function(pInst, vals) {
   // Record color mode and maxes at time of construction.

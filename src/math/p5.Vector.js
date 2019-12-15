@@ -27,6 +27,7 @@ import * as constants from '../core/constants';
  * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
  *
  * @class p5.Vector
+ * @constructor
  * @param {Number} [x] x component of the vector
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector
