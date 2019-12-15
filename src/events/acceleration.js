@@ -16,7 +16,8 @@ import p5 from '../core/main';
  * @property {Constant} deviceOrientation
  * @readOnly
  */
-p5.prototype.deviceOrientation = undefined;
+p5.prototype.deviceOrientation =
+  window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
 
 /**
  * The system variable accelerationX always contains the acceleration of the
