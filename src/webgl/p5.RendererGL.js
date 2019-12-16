@@ -239,7 +239,7 @@ p5.RendererGL.prototype._setAttributeDefaults = pInst => {
     antialias: applyAA,
     premultipliedAlpha: false,
     preserveDrawingBuffer: true,
-    perPixelLighting: false
+    perPixelLighting: true
   };
   if (pInst._glAttributes === null) {
     pInst._glAttributes = defaults;
@@ -364,8 +364,8 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * default is true
  * <br><br>
  * perPixelLighting - if true, per-pixel lighting will be used in the
- * lighting shader.
- * default is false
+ * lighting shader otherwise per-vertex lighting is used.
+ * default is true.
  * <br><br>
  * @method setAttributes
  * @for p5
@@ -415,7 +415,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * <div>
  * <code>
- * // press the mouse button to enable perPixelLighting
+ * // press the mouse button to disable perPixelLighting
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
@@ -454,12 +454,12 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * }
  *
  * function mousePressed() {
- *   setAttributes('perPixelLighting', true);
+ *   setAttributes('perPixelLighting', false);
  *   noStroke();
  *   fill(255);
  * }
  * function mouseReleased() {
- *   setAttributes('perPixelLighting', false);
+ *   setAttributes('perPixelLighting', true);
  *   noStroke();
  *   fill(255);
  * }

@@ -519,7 +519,6 @@ p5.prototype.lightFalloff = function(
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   setAttributes('perPixelLighting', true);
  * }
  * function draw() {
  *   background(0);
