@@ -191,7 +191,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {Number} errorType
    * @param  {String} filePath
    */
-  p5._friendlyFileLoadError = (errorType, filePath) => {
+  p5._friendlyFileLoadError = function(errorType, filePath) {
     const errorInfo = fileLoadErrorCases[errorType];
     let message;
     if (errorType === 7 || errorType === 8) {
@@ -214,7 +214,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {Number} message message to be printed
    * @param  {String} method name of method
    */
-  p5._friendlyError = (message, method) => {
+  p5._friendlyError = function(message, method) {
     report(message, method);
   };
 
@@ -224,7 +224,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method _friendlyAutoplayError
    * @private
    */
-  p5._friendlyAutoplayError = src => {
+  p5._friendlyAutoplayError = function(src) {
     report(
       `The media that tried to play (with "${src}") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
       'autoplay'
@@ -552,7 +552,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   })('ValidationError');
 
   // function for generating console.log() msg
-  p5._friendlyParamError = (errorObj, func) => {
+  p5._friendlyParamError = function(errorObj, func) {
     let message;
 
     function formatType() {

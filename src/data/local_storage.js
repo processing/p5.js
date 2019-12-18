@@ -58,7 +58,7 @@ import p5 from '../core/main';
  * If you reload the page, the last letter typed is still displaying.
  *
  */
-p5.prototype.storeItem = (key, value) => {
+p5.prototype.storeItem = function(key, value) {
   if (typeof value === 'undefined') {
     console.log('You cannot store undefined variables using storeItem()');
   }
@@ -189,7 +189,7 @@ p5.prototype.getItem = function(key) {
  * }
  * </code></div>
  */
-p5.prototype.clearStorage = () => {
+p5.prototype.clearStorage = function() {
   localStorage.clear();
 };
 
@@ -213,7 +213,7 @@ p5.prototype.clearStorage = () => {
  * }
  * </code></div>
  */
-p5.prototype.removeItem = key => {
+p5.prototype.removeItem = function(key) {
   if (typeof key !== 'string') {
     console.log(
       `The argument that you passed to removeItem() - ${key} is not a string.`
