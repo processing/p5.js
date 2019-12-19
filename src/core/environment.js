@@ -40,7 +40,7 @@ const _windowPrint = window.print;
  * @alt
  * default grey canvas
  */
-p5.prototype.print = (...args) => {
+p5.prototype.print = function(...args) {
   if (!args.length) {
     _windowPrint();
   } else {
@@ -733,7 +733,7 @@ p5.prototype.getURLPath = () =>
  * no display.
  *
  */
-p5.prototype.getURLParams = () => {
+p5.prototype.getURLParams = function() {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   let m;
   const v = {};

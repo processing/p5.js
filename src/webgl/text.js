@@ -5,7 +5,7 @@ import './p5.RendererGL.Retained';
 
 // Text/Typography
 // @TODO:
-p5.RendererGL.prototype._applyTextProperties = () => {
+p5.RendererGL.prototype._applyTextProperties = function() {
   //@TODO finish implementation
   //console.error('text commands not yet implemented in webgl');
 };
