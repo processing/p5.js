@@ -5,29 +5,17 @@ MUST HAVES BEFOREHAND :
 * High Bandwidth : Lots of things to download and pull and push (~190 MB)
 * An environment variable named GITHUB_TOKEN with the value of your Access Token : Make one by going to your Settings->Personal Access Tokens-> New Token. Once you have it, in your shell, run "export GITHUB_TOKEN=<your token here>".
 */
+const release = require('release-it');
 
 module.exports = function(grunt) {
   // Options for this custom task
   const opts = {
     releaseIt: {
       options: {
-        'non-interactive': false,
+        'non-interactive': true,
         'dry-run': false,
-        pkgFiles: ['package.json'],
-        buildCommand: 'grunt yui && grunt build',
-        changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
-        src: {
-          commitMessage: 'Release v%s',
-          tagName: '%s',
-          tagAnnotation: 'Release v%s',
-          pushRepo: 'origin master'
-        },
-        dist: {
-          repo: false,
-          baseDir: false
-        },
-        npm: {
-          publish: true
+        hooks: {
+          'before:init': ['grunt yui && grunt build']
         }
       }
     },
@@ -41,13 +29,30 @@ module.exports = function(grunt) {
     }
   };
 
+  // Wrapper around release-it, adapted from 'grunt-release-it'
+  grunt.registerTask('release-it', function(increment) {
+    const done = this.async();
+
+    const options = this.options();
+
+    options.increment = increment || options.increment;
+    options.verbose = grunt.option('verbose') === true || options.verbose;
+    options.debug = grunt.option('debug') === true || options.debug;
+    options.force = grunt.option('force') === true || options.force;
+    options['dry-run'] =
+      grunt.option('no-write') === true || options['dry-run'];
+
+    release(options)
+      .catch(grunt.fail.warn)
+      .finally(done);
+  });
+
   // Register the Release Task
   grunt.registerTask(
     'release-p5',
     'Drafts and Publishes a fresh release of p5.js',
     function(args) {
       // 0. Setup Config
-
       // Default increment is patch (x.y.z+1)
       opts.releaseIt.options.increment = args;
       // Uncomment to set dry run as true for testing
@@ -66,16 +71,16 @@ module.exports = function(grunt) {
       // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
       grunt.task.run('release-it');
 
-      // // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
       grunt.task.run('release-bower');
 
-      // // 4. Push the docs out to the website
+      // 4. Push the docs out to the website
       grunt.task.run('release-docs');
 
-      // // 5. Zip the lib folder
+      // 5. Zip the lib folder
       grunt.task.run('compress');
 
-      // // 6. Draft a Release for GitHub
+      // 6. Draft a Release for GitHub
       grunt.task.run('release-github');
     }
   );

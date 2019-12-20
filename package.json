@@ -68,7 +68,6 @@
     "grunt-minjson": "^0.4.0",
     "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
-    "grunt-release-it": "^1.0.1",
     "grunt-simple-nyc": "^3.0.1",
     "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
@@ -92,6 +91,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.18.1",
     "regenerator-runtime": "^0.13.3",
+    "release-it": "^12.4.3",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4",
     "word-wrap": "^1.2.3"

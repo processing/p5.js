@@ -453,7 +453,6 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
