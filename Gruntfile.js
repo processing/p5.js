@@ -401,23 +401,6 @@ module.exports = grunt => {
         }
       }
     },
-    'saucelabs-mocha': {
-      all: {
-        options: {
-          urls: ['http://127.0.0.1:9001/test/test.html'],
-          tunnelTimeout: 5,
-          build: process.env.GITHUB_ACTION,
-          concurrency: 3,
-          browsers: [
-            { browserName: 'chrome' },
-            { browserName: 'firefox', platform: 'Linux', version: '42.0' },
-            { browserName: 'safari' }
-          ],
-          testname: 'p5.js mocha tests',
-          tags: ['master']
-        }
-      }
-    },
     minjson: {
       compile: {
         files: {
@@ -471,7 +454,6 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
-  grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
@@ -527,5 +509,4 @@ module.exports = grunt => {
   ]);
   grunt.registerTask('yui:build', ['yui']);
   grunt.registerTask('default', ['lint-no-fix', 'test']);
-  grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
 };

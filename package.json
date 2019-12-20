@@ -18,7 +18,9 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "ignore": ["test/js/**/*.js"],
+    "ignore": [
+      "test/js/**/*.js"
+    ],
     "Gruntfile.js": "eslint",
     "grunt-karma.js": "eslint",
     "docs/preprocessor.js": "eslint",
@@ -67,8 +69,7 @@
     "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
     "grunt-release-it": "^1.0.1",
-    "grunt-saucelabs": "^9.0.1",
-    "grunt-simple-nyc": "^2.0.0",
+    "grunt-simple-nyc": "^3.0.1",
     "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
     "karma": "^4.3.0",
@@ -114,7 +115,9 @@
     "test": "test"
   },
   "babel": {
-    "presets": ["@babel/preset-env"],
+    "presets": [
+      "@babel/preset-env"
+    ],
     "generatorOpts": {
       "retainLines": true
     },
@@ -124,14 +127,19 @@
           [
             "istanbul",
             {
-              "include": ["src/**/*.js"]
+              "include": [
+                "src/**/*.js"
+              ]
             }
           ]
         ]
       }
     }
   },
-  "browserslist": ["last 2 versions", "not dead"],
+  "browserslist": [
+    "last 2 versions",
+    "not dead"
+  ],
   "author": "",
   "dependencies": {}
 }
