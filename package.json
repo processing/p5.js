@@ -42,6 +42,7 @@
     "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-static-fs": "^1.2.1",
     "babelify": "^10.0.0",
+    "benchmark": "^2.1.4",
     "browserify": "^16.5.0",
     "chai": "^3.5.0",
     "connect-modrewrite": "^0.10.1",
