@@ -4,7 +4,11 @@ MUST HAVES BEFOREHAND :
 * Logged in NPM CLI : Check if you are logged in by "npm whoami"
 * High Bandwidth : Lots of things to download and pull and push (~190 MB)
 * An environment variable named GITHUB_TOKEN with the value of your Access Token : Make one by going to your Settings->Personal Access Tokens-> New Token. Once you have it, in your shell, run "export GITHUB_TOKEN=<your token here>".
+*
+* Run with 'grunt release-p5:[increment]' where '[increment]' can be 'patch',
+* 'minor', or 'major', corresponding to semver.
 */
+
 const release = require('release-it');
 
 module.exports = function(grunt) {
