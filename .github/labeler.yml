@@ -1,5 +1,5 @@
 # Number of labels to fetch (optional). Defaults to 20
-numLabels: 40
+numLabels: 0
 # These labels will not be used even if the issue contains them
 excludeLabels:
   - can't reproduce
