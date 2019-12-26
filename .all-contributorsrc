@@ -1680,7 +1680,14 @@
       "contributions": [
         "code"
       ]
-    } 
+    },
+    {
+      login": "mann27",
+      "name": "Mann Shah",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/33790390?v=4",
+      "profile": "https://github.com/mann27",
+      "contributions": []
+    }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
