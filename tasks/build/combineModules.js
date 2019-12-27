@@ -7,6 +7,7 @@ const derequire = require('derequire');
 const { format } = require('prettier');
 
 module.exports = function(grunt) {
+  const tempFilePath = path.resolve('./src/customApp.js');
   grunt.registerTask(
     'combineModules',
     'Compile and combine certain modules with Browserify',
@@ -14,53 +15,35 @@ module.exports = function(grunt) {
       // Reading and writing files is asynchronous
       const done = this.async();
 
-      // Module sources are space separated names in a single string (enter within quotes)
-      const temp = [];
+      // Modules is an array of p5 modules to be bundled.
+      const modules = ['core'];
       for (const arg of arguments) {
         if (arg !== 'min') {
-          temp.push(arg);
+          modules.push(arg);
         }
       }
-      const module_src = temp.join(', ');
+      const modulesList = modules.join(', ');
 
       // Render the banner for the top of the file. Includes the Module name.
       const bannerTemplate = `/*! Custom p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %>
-        Contains the following modules : ${module_src}*/`;
+        Contains the following modules : ${modulesList}*/`;
       const banner = grunt.template.process(bannerTemplate);
 
-      // Make a list of sources from app.js in that sequence only
+      // Make a list of sources from app.js which match our criteria
+      const dump = fs.readFileSync('./src/app.js', 'utf8').split('\n');
       const sources = [];
-      const dump = fs.readFileSync('./src/app.js', 'utf8');
-      const regexp = /import\s.*('.+')/g; // Used for ES6 import syntax
-      // const regexp = /\('.+'/g; // Used for require syntax
-      let match;
-      while ((match = regexp.exec(dump)) != null) {
-        let text = match[1]; // Used for ES6 import syntax
-        // let text = match[0]; // Used for require syntax
-        text = text.substring(text.indexOf('./') + 2, text.length - 1);
-        sources.push(text);
-      }
-
-      // Populate the source file path array with concerned files' path
-      var srcFilePath = [];
-      const imp = 'import ';
-      for (var j = 0; j < sources.length; j++) {
-        var source = sources[j];
-        var base = source.substring(0, source.lastIndexOf('/'));
-        if (base === 'core' || module_src.search(base) !== -1) {
-          var fullPath;
-          if (source === 'core/main') {
-            fullPath = imp + 'p5 from ' + "'./" + source + "';";
-          } else {
-            fullPath = imp + "'./" + source + "';";
-          }
-          srcFilePath.push(fullPath);
+      const regexp = new RegExp('./(' + modules.join('/|') + ')', 'g');
+      dump.forEach(source => {
+        let match;
+        while ((match = regexp.exec(source)) !== null) {
+          sources.push(match.input);
         }
-      }
+      });
+      sources.push('module.exports = p5;');
 
-      srcFilePath = srcFilePath.join('\n');
-      srcFilePath += '\nmodule.exports = p5;';
-      fs.writeFileSync('./src/app2.js', srcFilePath, 'utf8');
+      // Create a temp file with this data and feed it to browserify
+      fs.writeFileSync(tempFilePath, sources.join('\n'), 'utf8');
+
       // Check whether combineModules is minified
       const isMin = args === 'min';
       const filename = isMin ? 'p5Custom.pre-min.js' : 'p5Custom.js';
@@ -69,7 +52,7 @@ module.exports = function(grunt) {
       const libFilePath = path.resolve('lib/modules/' + filename);
 
       // Invoke Browserify programatically to bundle the code
-      let browseified = browserify(require.resolve('../../src/app2.js'), {
+      let browseified = browserify(tempFilePath, {
         standalone: 'p5'
       });
 
@@ -105,8 +88,9 @@ module.exports = function(grunt) {
             });
           }
 
-          // finally, write it to disk
+          // finally, write it to disk and remove the temp file
           grunt.file.write(libFilePath, code);
+          grunt.file.delete(tempFilePath);
 
           // Print a success message
           grunt.log.writeln(
