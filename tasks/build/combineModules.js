@@ -42,21 +42,25 @@ module.exports = function(grunt) {
       }
 
       // Populate the source file path array with concerned files' path
-      const srcDirPath = './src';
-      const srcFilePath = [];
+      var srcFilePath = [];
+      const imp = 'import ';
       for (var j = 0; j < sources.length; j++) {
         var source = sources[j];
         var base = source.substring(0, source.lastIndexOf('/'));
         if (base === 'core' || module_src.search(base) !== -1) {
-          // Push the resolved paths directly
-          const filePath =
-            source.search('.js') !== -1 ? source : source + '.js';
-          var fullPath = path.resolve(srcDirPath, filePath);
+          var fullPath;
+          if (source === 'core/main') {
+            fullPath = imp + 'p5 from ' + "'./" + source + "';";
+          } else {
+            fullPath = imp + "'./" + source + "';";
+          }
           srcFilePath.push(fullPath);
         }
       }
 
-      console.log(srcFilePath);
+      srcFilePath = srcFilePath.join('\n');
+      srcFilePath += '\nmodule.exports = p5;';
+      fs.writeFileSync('./src/app2.js', srcFilePath, 'utf8');
       // Check whether combineModules is minified
       const isMin = args === 'min';
       const filename = isMin ? 'p5Custom.pre-min.js' : 'p5Custom.js';
@@ -65,7 +69,7 @@ module.exports = function(grunt) {
       const libFilePath = path.resolve('lib/modules/' + filename);
 
       // Invoke Browserify programatically to bundle the code
-      let browseified = browserify(srcFilePath, {
+      let browseified = browserify(require.resolve('../../src/app2.js'), {
         standalone: 'p5'
       });
 
