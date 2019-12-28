@@ -4,14 +4,10 @@
  */
 module.exports = function(config) {
   config.set({
-
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-    frameworks: [
-      'benchmark',
-      'detectBrowsers'
-    ],
+    frameworks: ['benchmark', 'detectBrowsers'],
 
     plugins: [
       'karma-chrome-launcher',
@@ -25,18 +21,18 @@ module.exports = function(config) {
     ],
 
     detectBrowsers: {
-      usePhantomJS: false,  // don't use because it's no longer maintained
+      usePhantomJS: false, // don't use because it's no longer maintained
 
       // post processing of browsers list
       postDetection: function(availableBrowser) {
         var browsers = [];
 
         // Filter out nightly and dev builds
-        if (availableBrowser.indexOf('Chrome') >-1 )  browsers.push('Chrome');
-        if (availableBrowser.indexOf('Firefox') >-1 ) browsers.push('Firefox');
-        if (availableBrowser.indexOf('Safari') >-1 )  browsers.push('Safari');
-        if (availableBrowser.indexOf('Edge') >-1 )    browsers.push('Edge');
-        if (availableBrowser.indexOf('IE') >-1 )      browsers.push('IE');
+        if (availableBrowser.indexOf('Chrome') > -1) browsers.push('Chrome');
+        if (availableBrowser.indexOf('Firefox') > -1) browsers.push('Firefox');
+        if (availableBrowser.indexOf('Safari') > -1) browsers.push('Safari');
+        if (availableBrowser.indexOf('Edge') > -1) browsers.push('Edge');
+        if (availableBrowser.indexOf('IE') > -1) browsers.push('IE');
 
         return browsers;
       }
@@ -45,16 +41,11 @@ module.exports = function(config) {
     // Default list of files / patterns to load in the browser
     // This can be overriden in grunt-karma.js when using grunt to run karma
     // These files will only be used when running karma directly with: karma start
-    files: [
-      'lib/p5.js',
-      'bench/**/*.bench.js'
-    ],
+    files: ['lib/p5.js', 'bench/**/*.bench.js'],
 
     // test results reporter to use
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [
-      'benchmark'
-    ],
+    reporters: ['benchmark'],
 
     // web server port
     port: 9876,
@@ -82,5 +73,5 @@ module.exports = function(config) {
     browserDisconnectTimeout: 10000,
     browserDisconnectTolerance: 3,
     browserNoActivityTimeout: 60000
-  })
+  });
 };

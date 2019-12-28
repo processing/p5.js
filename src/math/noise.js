@@ -100,7 +100,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *
  */
 
-p5.prototype.noise = (x, y = 0, z = 0) => {
+p5.prototype.noise = function(x, y = 0, z = 0) {
   if (perlin == null) {
     perlin = new Array(PERLIN_SIZE + 1);
     for (let i = 0; i < PERLIN_SIZE + 1; i++) {
@@ -234,7 +234,7 @@ p5.prototype.noise = (x, y = 0, z = 0) => {
  * 2 vertical grey smokey patterns affected my mouse x-position and noise.
  *
  */
-p5.prototype.noiseDetail = (lod, falloff) => {
+p5.prototype.noiseDetail = function(lod, falloff) {
   if (lod > 0) {
     perlin_octaves = lod;
   }
@@ -272,7 +272,7 @@ p5.prototype.noiseDetail = (lod, falloff) => {
  * vertical grey lines drawing in pattern affected by noise.
  *
  */
-p5.prototype.noiseSeed = seed => {
+p5.prototype.noiseSeed = function(seed) {
   // Linear Congruential Generator
   // Variant of a Lehman Generator
   const lcg = (() => {

@@ -1,0 +1,11 @@
+# Number of labels to fetch (optional). Defaults to 20
+numLabels: 0
+# These labels will not be used even if the issue contains them
+excludeLabels:
+  - can't reproduce
+  - known issue
+  - more info needed
+  - will not fix
+  - severity:critical
+  - severity:major
+  - severity:minor

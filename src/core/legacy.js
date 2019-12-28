@@ -10,19 +10,19 @@
 
 import p5 from './main';
 
-p5.prototype.pushStyle = () => {
+p5.prototype.pushStyle = function() {
   throw new Error('pushStyle() not used, see push()');
 };
 
-p5.prototype.popStyle = () => {
+p5.prototype.popStyle = function() {
   throw new Error('popStyle() not used, see pop()');
 };
 
-p5.prototype.popMatrix = () => {
+p5.prototype.popMatrix = function() {
   throw new Error('popMatrix() not used, see pop()');
 };
 
-p5.prototype.printMatrix = () => {
+p5.prototype.printMatrix = function() {
   throw new Error(
     'printMatrix() is not implemented in p5.js, ' +
       'refer to [https://simonsarris.com/a-transformation-class-for-canvas-to-keep-track-of-the-transformation-matrix/] ' +
@@ -30,7 +30,7 @@ p5.prototype.printMatrix = () => {
   );
 };
 
-p5.prototype.pushMatrix = () => {
+p5.prototype.pushMatrix = function() {
   throw new Error('pushMatrix() not used, see push()');
 };
 

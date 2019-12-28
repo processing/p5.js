@@ -229,7 +229,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
-p5.RendererGL.prototype._setAttributeDefaults = pInst => {
+p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
@@ -239,7 +239,7 @@ p5.RendererGL.prototype._setAttributeDefaults = pInst => {
     antialias: applyAA,
     premultipliedAlpha: false,
     preserveDrawingBuffer: true,
-    perPixelLighting: false
+    perPixelLighting: true
   };
   if (pInst._glAttributes === null) {
     pInst._glAttributes = defaults;
@@ -364,8 +364,8 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * default is true
  * <br><br>
  * perPixelLighting - if true, per-pixel lighting will be used in the
- * lighting shader.
- * default is false
+ * lighting shader otherwise per-vertex lighting is used.
+ * default is true.
  * <br><br>
  * @method setAttributes
  * @for p5
@@ -415,7 +415,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * <div>
  * <code>
- * // press the mouse button to enable perPixelLighting
+ * // press the mouse button to disable perPixelLighting
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
@@ -454,12 +454,12 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * }
  *
  * function mousePressed() {
- *   setAttributes('perPixelLighting', true);
+ *   setAttributes('perPixelLighting', false);
  *   noStroke();
  *   fill(255);
  * }
  * function mouseReleased() {
- *   setAttributes('perPixelLighting', false);
+ *   setAttributes('perPixelLighting', true);
  *   noStroke();
  *   fill(255);
  * }
@@ -685,18 +685,18 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   this.curStrokeColor = color._array;
 };
 
-p5.RendererGL.prototype.strokeCap = cap => {
+p5.RendererGL.prototype.strokeCap = function(cap) {
   // @TODO : to be implemented
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
 };
 
-p5.RendererGL.prototype.strokeJoin = join => {
+p5.RendererGL.prototype.strokeJoin = function(join) {
   // @TODO : to be implemented
   // https://processing.org/reference/strokeJoin_.html
   console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
 };
 
-p5.RendererGL.prototype.filter = filterType => {
+p5.RendererGL.prototype.filter = function(filterType) {
   // filter can be achieved using custom shaders.
   // https://github.com/aferriss/p5jsShaderExamples
   // https://itp-xstory.github.io/p5js-shaders/#/
@@ -1374,7 +1374,7 @@ p5.RendererGL.prototype._isTypedArray = function(arr) {
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._flatten = arr => {
+p5.RendererGL.prototype._flatten = function(arr) {
   //when empty, return empty
   if (arr.length === 0) {
     return [];
@@ -1412,7 +1412,7 @@ p5.RendererGL.prototype._flatten = arr => {
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._vToNArray = arr => {
+p5.RendererGL.prototype._vToNArray = function(arr) {
   const ret = [];
 
   for (const item of arr) {
@@ -1498,7 +1498,7 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 };
 
 // function to calculate BezierVertex Coefficients
-p5.RendererGL.prototype._bezierCoefficients = t => {
+p5.RendererGL.prototype._bezierCoefficients = function(t) {
   const t2 = t * t;
   const t3 = t2 * t;
   const mt = 1 - t;
@@ -1508,7 +1508,7 @@ p5.RendererGL.prototype._bezierCoefficients = t => {
 };
 
 // function to calculate QuadraticVertex Coefficients
-p5.RendererGL.prototype._quadraticCoefficients = t => {
+p5.RendererGL.prototype._quadraticCoefficients = function(t) {
   const t2 = t * t;
   const mt = 1 - t;
   const mt2 = mt * mt;

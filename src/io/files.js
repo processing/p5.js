@@ -1035,7 +1035,7 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpDo = (...args) => {
+p5.prototype.httpDo = function(...args) {
   let type;
   let callback;
   let errorCallback;
@@ -1783,7 +1783,7 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  @param  {String} [extension]
  *  @private
  */
-p5.prototype.writeFile = (dataToDownload, filename, extension) => {
+p5.prototype.writeFile = function(dataToDownload, filename, extension) {
   let type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
     type = 'text/plain';
@@ -1807,7 +1807,7 @@ p5.prototype.writeFile = (dataToDownload, filename, extension) => {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.downloadFile = (data, fName, extension) => {
+p5.prototype.downloadFile = function(data, fName, extension) {
   const fx = _checkFileExtension(fName, extension);
   const filename = fx[0];
 
@@ -1880,7 +1880,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @return  {Boolean} [description]
  *  @private
  */
-p5.prototype._isSafari = () => {
+p5.prototype._isSafari = function() {
   const x = Object.prototype.toString.call(window.HTMLElement);
   return x.indexOf('Constructor') > 0;
 };

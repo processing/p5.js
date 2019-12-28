@@ -192,7 +192,7 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.saveGif = (pImg, filename) => {
+p5.prototype.saveGif = function(pImg, filename) {
   const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
