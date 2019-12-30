@@ -35,6 +35,4 @@ auto-labeler:
   #    - 'exclude' patterns will ignore this label if any of these patterns match
   labels:
     'area:webgl':
-      include:
-        - '\bWWebGL\b'
-      exclude: []
+     - '\bWWebGL\b'
