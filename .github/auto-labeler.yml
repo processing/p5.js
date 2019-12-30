@@ -17,7 +17,7 @@ comments:
 #    - 'include' patterns will associate a label if any of these patterns match
 #    - 'exclude' patterns will ignore this label if any of these patterns match
 labels:
-  'area:webgl':
+  'safari':
     include:
       - '\bWWebGL\b'
       - 'WWebGL'
