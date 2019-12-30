@@ -1,0 +1,20 @@
+# enable auto-labeler on issues, prs, or both.
+enable:
+  issues: true
+  prs: false
+
+# comments object allows you to specify a different message for issues and prs
+comments:
+
+# Labels is an object where:
+# - keys are labels
+# - values are objects of { include: [ pattern ], exclude: [ pattern ] }
+#    - pattern must be a valid regex, and is applied globally to
+#      title + description of issues and/or prs (see enabled config above)
+#    - 'include' patterns will associate a label if any of these patterns match
+#    - 'exclude' patterns will ignore this label if any of these patterns match
+labels:
+  'area:webgl':
+    include:
+      - '[x] WebGL'
+    exclude: []
