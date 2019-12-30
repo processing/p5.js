@@ -15,3 +15,26 @@ newPRWelcomeComment: >
 # Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
 
 # Comment to be posted to on pull requests merged by a first time user
+
+
+auto-labeler:
+  # enable auto-labeler on issues, prs, or both.
+  enable:
+    issues: true
+
+  # comments object allows you to specify a different message for issues and prs
+  comments:
+    issues: |
+      test labeler message
+  # Labels is an object where:
+  # - keys are labels
+  # - values are objects of { include: [ pattern ], exclude: [ pattern ] }
+  #    - pattern must be a valid regex, and is applied globally to
+  #      title + description of issues and/or prs (see enabled config above)
+  #    - 'include' patterns will associate a label if any of these patterns match
+  #    - 'exclude' patterns will ignore this label if any of these patterns match
+  labels:
+    'area:webgl':
+      include:
+        - '\bWWebGL\b'
+      exclude: []
