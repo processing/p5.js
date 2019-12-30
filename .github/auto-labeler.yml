@@ -19,5 +19,5 @@ comments:
 labels:
   'area:webgl':
     include:
-      - '\b[x] WebGL\b'
+      - '\bWWebGL\b'
     exclude: []
