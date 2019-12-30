@@ -20,4 +20,5 @@ labels:
   'area:webgl':
     include:
       - '\bWWebGL\b'
+      - 'WWebGL'
     exclude: []
