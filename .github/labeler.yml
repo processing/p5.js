@@ -1,7 +1,8 @@
 # Number of labels to fetch (optional). Defaults to 20
-numLabels: 0
+numLabels: 20
 # These labels will not be used even if the issue contains them
 excludeLabels:
+  - bug
   - can't reproduce
   - known issue
   - more info needed
