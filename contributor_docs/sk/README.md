@@ -1,6 +1,6 @@
-Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby akými môžeš prispieť nájdeš [tu] (https://p5js.org/community/#contribute). Tento priečinok obsahuje niekoľko rôznych dokumentov určených pre vývojárov p5.js.
+Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby akými môžeš prispieť nájdeš [tu](https://p5js.org/community/#contribute). Tento priečinok obsahuje niekoľko rôznych dokumentov určených pre vývojárov p5.js.
 
-# Štruktúra priečinkov projektu
+# Štruktúra Priečinkov Projektu
 
 - `src/` obsahuje všetky zdrojové kódy knižnice, ktoré sú organizované do modulov na základe tém. Práve tu budeš pracovať ak budeš vyvýjať p5.js.
 - `lib/` obsahuje finálnu verziu p5.js určenú pre koncových používateľov. Táto verzia bude načítavaná do ich skečov a projektov (vrátane kompresnej formy). Toto je výstupom kompilácie zdrojových kódov do jedného súboru [Grunt](https://gruntjs.com/).
@@ -8,36 +8,36 @@ Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby ak�
 - `docs/` neobsahuje samotnú dokumentáciu! Obsahuje však zdrojový kód, ktorý *generuje* [online verziu referenčnej príručky](https://p5js.org/reference/).
 - `tests/` obsahuje unit testy, ktoré zaručujú, že knižnica bude fungovať správne aj po vykonaní zmien.
 - `tasks/` obsahuje skripty, ktoré vykonávajú automatizované úlohy spojené s budovaním, nasadením a vydaním novej verzie p5.js.
-- `patches/` môže z času na čas obsahovať [Git patches](https://git-scm.com/docs/git-format-patch). Vo väčšine prípadov však môžete ignorovať tento priečinok.
+- `patches/` môže z času na čas obsahovať [Git patches](https://git-scm.com/docs/git-format-patch). Vo väčšine prípadov však môžeš ignorovať tento priečinok.
 
-# Ako prispieť
+# Ako Prispieť
 
 Známe chyby a zamýšľané nové funkcie sú zaznamenané pomocou [GitHub issues](https://github.com/processing/p5.js/issues). Problémoé [štítky](./issue_labels.md) sa používajú na kategorizovanie problémov, ako napríklad tie, ktoré sú [vhodné pre začiatočníkov](https://github.com/processing/p5.js/labels/level%3Abeginner). Ak by si chcel začať pracovať na existujúcom probléme, pridaj komentár k problému a tým pádom upozornil ostatných o svojom úmysle prispieť. Zároveň ti môže byť poskytnutá pomoc. Ak si dokončil svoju prácu na konkrétnom probléme, [predlož pull request (PR)](./preparing_a_pull_request.md) proti master vetve repozitára p5.js. Do políčka s popisom PR uveď vetu "resolves #XXXX", pričom namiesto #XXXX zadaj problém, ktorý si vyriešil. Ak PR adresuje problém, ale nevyriešil ho úplne (teda problém ostáva nevyriešený po prijatí tvojich zmien), napíš "addresses #XXXX".
 
-Ak si objavil chybu alebo si vymyslel nejakú novú funkionalitu, ktorú by si rád pridal, začni s predložením problému. Nepredkladaj jednoducho pull request obsahujúci kód, ktorý rieši chyby alebo prináša novú funkcionalitu bez toho, aby si najskôr predložil problém, pretože nebudeme schopný tvoj kód akceptovať. Akonáhle obdržíš spätnú väzbu na svoj problém a povolenie na jeho riešenie, môžeš začať s procesom prispievania.
+Ak si objavil chybu alebo ťa napadla nejaká nová funkionalita, ktorú by si rád pridal, začni s predložením problému. Nepredkladaj jednoducho pull request obsahujúci kód, ktorý rieši chyby alebo prináša novú funkcionalitu bez toho, aby si najskôr predložil problém, pretože nebudeme schopný tvoj kód akceptovať. Akonáhle obdržíš spätnú väzbu na svoj problém a povolenie na jeho riešenie, môžeš začať s procesom prispievania.
 
-You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to p5.js on CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+Môžes triediť problémy ktoré môžu obsahovať reprodukcie chýb alebo otázky ohľadom dôležitých informácií ako napríklad otázky ohľadom čísla verzie alebo informácie ohľadom reprodukcie chyby. Ak by si chcel začať triediť problémy, tak jednou z možností je [prihlásiť sa na odber p5.js na CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/master/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)!
+Rozpoznávame všetky druhy príspevkov. Tento projekt sa riadi podľa [all-contributors](https://github.com/kentcdodds/all-contributors) špecifikácie. Pridaj sa ako prispievateľ do [readme](https://github.com/processing/p5.js/blob/master/README.md#contributors) podľa [týchto inštrukcií](https://github.com/processing/p5.js/issues/2309)!
 
-## Accompaniments
+## Doprovody a Dodatky
 
-Aside from the code itself, you may also need to supply some combination of the following.
+Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 
-- [inline documentation](./inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://jsdoc.app) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/)
-- [unit tests](./unit_testing.md), small pieces of code which are separate from the library and are used to verify its behavior
-- [benchmarks](./benchmarking_p5.md) to test performance
+- [inline dokumentácia](./inline_documentation.md) vo forme komentárov kódu, ktoré vysvetľujú kód vývojárom a používateľom. Mnohé z týchto komentárom musia podliehať syntaxi [JSDoc](https://jsdoc.app) a budú publikované na stránke p5.js ako súčasť [online referenčnej príručky](https://p5js.org/reference/)
+- [unit testy](./unit_testing.md), malé časti kódu, ktoré sú oddelené od knižnice a použite na overenie správnosti správanie
+- [benchmarky](./benchmarking_p5.md) na testovanie výkonu
 
-## Examples
+## Príklady
 
-The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
+Stránka p5.js obsahujé [integrované príklady](http://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
-p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
+p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](./es6-adoption.md).
 
-## Other Ideas
+## Iné Nápady
 
-If you'd like to contribute in other ways which are not covered here, feel free to write to [hello@p5js.org](mailto:hello@p5js.org) and let us know what you're thinking! Aside from working on this codebase, we can always use help with things like documentation, tutorials, workshops, educational materials, branding, and design. Get in touch and we can talk about ways you might participate.
+Ak by si chcel prispieť nejakým iným spôsobom, ktorý nie je týmto dokumentom pokrytý, napíš nám na adresu [hello@p5js.org](mailto:hello@p5js.org) a daj nám vedieť čo máš na mysli! Mimo práce na zdrojovom kóde vždy oceníme pomoc s vecami ako dokumentácia, návody, workshopy, učebný materiál, branding dizajn. Spoj sa nami a možeme sa porozprávať o spôsoboch ako by si mohol prispieť.
 
 # Gotchas
 
