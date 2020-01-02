@@ -150,7 +150,7 @@ Vnorené komentáre v p5.js sa budujú do verejnej [referenčnej príručky](htt
 $ npm run docs:dev
 ```
 
-# Repositories
+# Repositáre
 
 Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
