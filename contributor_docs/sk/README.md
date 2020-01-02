@@ -152,16 +152,16 @@ $ npm run docs:dev
 
 # Repositories
 
-The overarching p5.js project includes repositories other than this one.
+Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
-- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
-- [website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren McCarthy](https://github.com/lmccart).
-- [sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
-- [web editor](https://github.com/processing/p5.js-web-editor): This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
+- [p5.js](https://github.com/processing/p5.js): Tento repozitár obsahuje zdrojový kód knižnice p5.js. [Používateľská referečná príručka p5.js](https://p5js.org/reference/) je generovaná z [JSDoc](http://usejsdoc.org/) komentárov zahrnutých v tomto zdrojovom kóde. Spravuje ho [Lauren McCarthy](https://github.com/lmccart).
+- [website](https://github.com/processing/p5.js-website) Tento repozitár obsahuje väčšinu kódu [stránky p5.js](http://p5js.org) s výnimkou referenčnej príručky. Spravuje ho [Lauren McCarthy](https://github.com/lmccart).
+- [sound](https://github.com/processing/p5.js-sound) Tento repozitár obsahuje knižnicu p5.sound.js. Spravuje ho [Jason Sigal](https://github.com/therewasaguy).
+- [web editor](https://github.com/processing/p5.js-web-editor): Tento repozitár obsahuje zdrojový kód pre [p5.js web editor](https://editor.p5js.org). Spravuje ho [Cassie Tarakajian](https://github.com/catarak). Všimni si však, že [p5.js editor](https://github.com/processing/p5.js-editor) je už zastaraný.
 
-# Miscellaneous
+# Iné
 
-- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
-- The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
-- The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.
+- [Náhľad Dovnútra p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
+- p5.js [Docker image](https://github.com/toolness/p5.js-docker) môže byť namontovaný do [Docker](https://www.docker.com/) a použitý na vývoj p5.js bez potreby manuálnej inštalácie požiadaviek ako [Node](https://nodejs.org/) alebo iných, takých, ktoré ovlyvňujú hosťovský operačný systém (s výnimkou inštalácie Docker-a).
+- Budovací proces knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
 
