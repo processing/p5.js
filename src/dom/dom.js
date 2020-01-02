@@ -713,6 +713,18 @@ p5.prototype.createSelect = function() {
       }
     }
   };
+
+  self.disable = function(value) {
+    if (value !== undefined && typeof value === 'string') {
+      for (let i = 0; i < this.elt.length; i++) {
+        if (this.elt[i].value === value) {
+          this.elt[i].disabled = true;
+        }
+      }
+      return this;
+    }
+  };
+
   return self;
 };
 
