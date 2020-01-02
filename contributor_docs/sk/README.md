@@ -80,7 +80,7 @@ $ npm ci
 Tento príkaz nainštaluje *všetky* závislosti p5.js; stručne, najdôležitejšie závislosti špecifické pre unit testy zahrňuje:
 
 - [Mocha](https://mochajs.org/), mocný testovací rámec, ktorý vykonáva jednotlivé testy špecifické pre p5.js.
-- [mocha-chrome](https://github.com/shellscape/mocha-chrome), doplnok pre mocha, ktorý spúšťa testy v "bezhlavovom" móde prehliadača Google Chrome.
+- [mocha-chrome](https://github.com/shellscape/mocha-chrome), doplnok pre mocha, ktorý spúšťa testy v "bezhlavom" móde prehliadača Google Chrome.
 
 Ak sú závislosti nainštalované, použi Grunt pre spustenie unit testov.
 
@@ -96,59 +96,60 @@ $ npm run dev
 
 S bežiacim servrom by si mal byť schopný otvoriť `test/test.html` v prehliadači.
 
-A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. When writing unit tests, use the [Chai.js reference](http://www.chaijs.com/api/assert/) as a guide for phrasing your assertion messages so that any errors caught by your tests in the future will be consistent and consequently easier for other developers to understand.
+Kompletný návod k unit testovaniu je nad rámec rozsahu p5.js dokumentácie, ale v skratke by sa dalo povedať, že akákoľvek závažná zmena alebo nová funkcionalita implementovaná v zdrojom kóde nachádzajúcom sa v priečinku `src/` by mala byť sprevádzaná kódom v testovacích súboroch v priečinku `test/`, ktoré môžu byť vykonané rámcom Mocha za účelom overenia konzistentnosti správania vo všetkých budúcich verziách knižnice. Keď píšeš unit testy, použi [referenčnú príručku Chai.js](http://www.chaijs.com/api/assert/) ako návod k frázovaniu správ tvojich tvrdení tak, aby chyby odchytené testami v budúcnosti boli konzistentné a teda zrozumiteľnejšie pre iných vývojárov.
 
-# Development Process
+# Vývojový Proces
 
-1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
-2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
-3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer.
+1. Nainštaluj [node.js](http://nodejs.org/), ktorý automaticky nainštaluje balíčkového manažéra [npm](https://www.npmjs.org).
+2. [Rozvetvi](https://help.github.com/articles/fork-a-repo) [repozitár p5.js](https://github.com/processing/p5.js) do svojho GitHub účtu.
+3. [Vyklonuj](https://help.github.com/articles/cloning-a-repository/) svoj novo-rozvetvený repozitár z GitHub-u do svoj lokálneho počítača.
 
    ```
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
-4. Navigate into the project folder and install all its necessary dependencies with npm.
+4. Prejdi do priečniku projektu a nainštaluj všetky nevyhnutné závislosti s npm.
 
    ```
    $ cd p5.js
    $ npm ci
    ```
 
-5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
+5. [Grunt](https://gruntjs.com/) by mal byť teraz nainštalovaný a môžeš ho teda použiť na vybudovanie knižnice zo zdrojového kódu.
 
    ```
    $ npm run grunt
    ```
 
-   If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
+   Ak kontinuálne upravuješ súbory v knižnici, zváž príkaz `npm run dev`, aby sa knižnica automaticky vybudovala kedykoľvek zmeníš ktorýkoľvek zo zdrojových súborov bez toho, aby si musel manuálne zadať príkaz.
 
-6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
+6. Vykonaj nejaké zmeny v lokálnom kóde a [odovzdaj](https://help.github.com/articles/github-glossary/#commit) ich s Git-om.
 
    ```
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
 
-7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
+7. Spusť príkaz `npm run grunt` ešte raz aby si sa uistil, že kód neobsahuje syntaktické chyby, zlyhané testy, alebo iné problémy.
 
-8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
+8. [Vypropaguj](https://help.github.com/articles/github-glossary/#push) svoje nové zmeny do svojho rozvetveného repozitára na GitHub-e.
 
    ```
    $ git push
    ```
 
-9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
+9. Ak je všetko pripravené, odovzdaj svoje zmeny vo forme [pull request](https://help.github.com/articles/creating-a-pull-request).
 
-This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
+Tento proces je tiež pokrytý [vo videu od The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
 
-# Building Documentation
+# Budovanie Dokumentácie
 
-Inline comments in p5.js are built into the public-facing [reference manual](https://p5js.org/reference/). You can also view this locally:
+Vnorené komentáre v p5.js sa budujú do verejnej [referenčnej príručky](https://p5js.org/reference/). Túto príručku si vieš pozrieť aj lokálne:
 
 ```
 $ npm run docs:dev
 ```
+
 # Repositories
 
 The overarching p5.js project includes repositories other than this one.
