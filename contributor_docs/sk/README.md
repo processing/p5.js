@@ -56,45 +56,45 @@ Niektoré syntaktické chyby je však možné opraviť automaticky pomocou prík
 ```
 $ npm run lint:fix
 ```
-Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky] (https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
+Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky](https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
 
-Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) files for the full list.
-* ES6 code syntax is used
-* Use single quotes (rather than double quotes)
-* Indentation is done with two spaces
-* All variables defined in the code should be used at least once, or removed completely
-* Do not compare x == true or x == false. Use (x) or (!x) instead. x == true, is certainly different from if (x)! Compare objects to null, numbers to 0 or strings to "", if there is chance for confusion.
-* Comment your code whenever there is ambiguity or complexity in the function you are writing
-* See the [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) as a useful guide for more styling tips
+Toto je krátky sumár k pravidlám štýlu kódu. Prosím ber na vedomie, že tento zoznam môže byť nekompletný a preto je najlepšie sa okazovať na [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) a [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) súbory pre kompletný zoznam pravidiel.
+* Používa sa ES6 syntax kódu.
+* Používaj apostrof (radšej než úvodzovky).
+* Na odsadenie použi dve medzery.
+* Všetky premenné definované v kóde by mali byť použité aspoň raz alebo úplne odstránené.
+* Neporovnávaj x == true alebo x == false. Použi namiesto toho (x) alebo (!x). x == true, sa vyhodnotí inak ako (x)! Objekty porovnávaj s null, čísla porovnávaj s 0 alebo znaky s "", aby sa predošlo nedorozumeniam.
+* V prípade, že tvoj kód obstahuje nejasností alebo komplexitu, pridaj komentáre.
+* Pozri si [prakitká Mozilla JS](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) pre užitočné rady a návody ohľadom štylistických tipov.
 
-## Unit Tests
+## Unit Testy
 
-Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
+Unit testy sú malé časti kódu, ktoré sú vytvorené ako doplnok k hlavnej logike a vykonávajú validáciu. Ak vyvýjaš významnú novú vlastnosť alebo funkcionalitu pre p5.js, mal by si zahrnúť v rámci príspevku aj testy. Neodovzdávaj pull requests v ktorých testy neprechádzajú, pretože to znamená, že niečo nefunguje.
 
-In order to run unit tests, you'll need to have previously installed the project's dependencies.
+Aby bolo možné spustiť unit testy, budeš musieť nainštalovať závislosti projektu.
 
 ```
 $ npm ci
 ```
 
-This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
+Tento príkaz nainštaluje *všetky* závislosti p5.js; stručne, najdôležitejšie závislosti špecifické pre unit testy zahrňuje:
 
-- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js
-- [mocha-chrome](https://github.com/shellscape/mocha-chrome), a mocha plugin that runs mocha tests using headless Google Chrome
+- [Mocha](https://mochajs.org/), mocný testovací rámec, ktorý vykonáva jednotlivé testy špecifické pre p5.js.
+- [mocha-chrome](https://github.com/shellscape/mocha-chrome), doplnok pre mocha, ktorý spúšťa testy v "bezhlavovom" móde prehliadača Google Chrome.
 
-Once the dependencies are installed, use Grunt to run the unit tests.
+Ak sú závislosti nainštalované, použi Grunt pre spustenie unit testov.
 
 ```
 $ grunt
 ```
 
-Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
+Niekedy je užitočné spustiť testy v priamo v prehliadači miesto príkazového riadku. Aby si tak urobil, najprv naštartuj [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
 
 ```
 $ npm run dev
 ```
 
-With the server running, you should be able to open `test/test.html` in a browser.
+S bežiacim servrom by si mal byť schopný otvoriť `test/test.html` v prehliadači.
 
 A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. When writing unit tests, use the [Chai.js reference](http://www.chaijs.com/api/assert/) as a guide for phrasing your assertion messages so that any errors caught by your tests in the future will be consistent and consequently easier for other developers to understand.
 
