@@ -18,7 +18,9 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "ignore": ["test/js/**/*.js"],
+    "ignore": [
+      "test/js/**/*.js"
+    ],
     "Gruntfile.js": "eslint",
     "grunt-karma.js": "eslint",
     "docs/preprocessor.js": "eslint",
@@ -114,7 +116,9 @@
     "test": "test"
   },
   "babel": {
-    "presets": ["@babel/preset-env"],
+    "presets": [
+      "@babel/preset-env"
+    ],
     "generatorOpts": {
       "retainLines": true
     },
@@ -124,14 +128,19 @@
           [
             "istanbul",
             {
-              "include": ["src/**/*.js"]
+              "include": [
+                "src/**/*.js"
+              ]
             }
           ]
         ]
       }
     }
   },
-  "browserslist": ["last 2 versions", "not dead"],
+  "browserslist": [
+    "last 2 versions",
+    "not dead"
+  ],
   "author": "",
   "dependencies": {}
 }
