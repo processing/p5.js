@@ -1682,10 +1682,17 @@
       ]
     },
     {
-      login": "mann27",
+      "login": "mann27",
       "name": "Mann Shah",
       "avatar_url": "https://avatars2.githubusercontent.com/u/33790390?v=4",
       "profile": "https://github.com/mann27",
+      "contributions": []
+    },
+    {
+      "login": "nthe",
+      "name": "Juraj Onuska",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6535424?s=460&v=4",
+      "profile": "https://github.com/nthe",
       "contributions": []
     }
   ],
