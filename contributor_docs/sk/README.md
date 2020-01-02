@@ -41,25 +41,22 @@ Ak by si chcel prispieť nejakým iným spôsobom, ktorý nie je týmto dokument
 
 # Gotchas
 
-The developer tooling included with the p5.js codebase is intentionally very strict about some things. This is a good thing! It makes everything consistent, and it will encourage you to be disciplined. This means you may try to change something only to have your commit rejected by the project, but don't get discouraged; even seasoned p5.js developers get caught by this stuff all the time. Typically the problem will be in one of two areas.
+Vývojárske nástroje zahrnuté v kóde p5.js sú zámerne veľmi striktné ohľadom niektorých vecí. A to je dobre! Pomáha udržiavať veci konzistentné a povzbudí ťa aby si bol disciplinovaný. To znamená, že je možné že tvoj príspevok bude zamietnutý projektom, avšak nenechaj sa odradiť; stáva sa bežne aj skúseným vývojárom p5.js. Zvyčajne býva problém v jednom z dvoch miest.
 
-## Code Syntax
+## Syntax Kódu
 
-p5.js requires clean and stylistically consistent code syntax, which it enforces with [Prettier](https://prettier.io/) and [ESlint](https://eslint.org/). The rules are checked before you commit, but you can also install an [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) for your code editor to highlight errors as soon as you type them, which will probably help you along as you are coding and saves you the hassle of a failed Git commit. In general, we err on the side of flexibility when it comes to code style, in order to lower the barriers to participation and contribution.
-
-To detect errors, run the following command in your terminal (do not type the `$` prompt):
+p5.js požaduje čistý a štylisticky konzistentnú syntax kódu, ktorá je presadzovaná pomocou [Prettier](https://prettier.io/) a [ESlint](https://eslint.org/). Pravidlá sa kontrolujú pred odovzdaním kódu, avšak môžes si nainštalovať [ESlint plugin](https://eslint.org/docs/user-guide/integrations#editors) do svojho editora kódu, aby ti zvýraznil chyby hneď ako ich píšeš, čo ti pravdepodobne pomože predčasne predísť problémom s odovzdaním kódu s Gitom. Vo všeobecnosti sa mýlime na strane flexibility, pokiaľ ide o štýl kódovania, aby sme znížili prekážky účasti a príspevku. Pre odhalenie chýb vykonaj nasledujúci príkaz vo svojom oblúbenom príkazovom riadku (nepíš znak `$`):
 
 ```
 $ npm run lint
 ```
 
-Some syntax errors can be automatically fixed:
+Niektoré syntaktické chyby je však možné opraviť automaticky pomocou príkazu:
 
 ```
 $ npm run lint:fix
 ```
-
-Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting.
+Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky] (https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
 
 Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) files for the full list.
 * ES6 code syntax is used
