@@ -66,6 +66,108 @@ suite('DOM', function() {
     });
   });
 
+  suite('p5.prototype.createSelect', function() {
+    var myp5;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+    });
+
+    var elt;
+
+    teardown(function() {
+      if (elt && elt.parentNode) {
+        elt.parentNode.removeChild(elt);
+        elt = null;
+      }
+    });
+
+    test('should create dropdown element', function() {
+      let opt;
+      let dropdown;
+      elt = document.createElement('select');
+      opt = document.createElement('option');
+      opt.value = 'milk';
+      opt.text = 'milk';
+      elt.appendChild(opt);
+      document.body.appendChild(elt);
+      dropdown = myp5.createSelect();
+      dropdown.option('milk');
+      assert.deepEqual(JSON.stringify(dropdown.elt), JSON.stringify(elt));
+    });
+
+    test('should mark option default when called with selected() method', function() {
+      let dropdown;
+      let options = ['milk', 'oil', 'bread'];
+      elt = document.createElement('select');
+      for (let i = 0; i < options.length; i++) {
+        let opt;
+        if (options[i] === 'oil') {
+          opt = new Option(options[i], options[i]);
+          opt.setAttribute('selected', 'selected');
+        } else {
+          opt = new Option(options[i], options[i]);
+        }
+        elt.appendChild(opt);
+      }
+
+      dropdown = myp5.createSelect();
+      dropdown.option('milk');
+      dropdown.option('oil');
+      dropdown.option('bread');
+      dropdown.selected('oil');
+      assert.strictEqual(
+        dropdown.elt[dropdown.elt.selectedIndex].text,
+        elt[elt.selectedIndex].text
+      );
+    });
+
+    test('should disable an option when disable() method invoked with option name', function() {
+      let dropdown;
+      let options = ['milk', 'oil', 'bread'];
+      elt = document.createElement('select');
+      for (let i = 0; i < options.length; i++) {
+        let opt;
+        if (options[i] === 'oil') {
+          opt = new Option(options[i], options[i]);
+          opt.setAttribute('disabled', true);
+        } else {
+          opt = new Option(options[i], options[i]);
+        }
+        elt.appendChild(opt);
+      }
+      let disabledIndex;
+      dropdown = myp5.createSelect();
+      dropdown.option('milk');
+      dropdown.option('oil');
+      dropdown.option('bread');
+      dropdown.disable('oil');
+      for (let j = 0; j < dropdown.elt.length; j++) {
+        if (dropdown.elt[j].disabled) {
+          disabledIndex = j;
+        }
+      }
+      assert.strictEqual(dropdown.elt[disabledIndex].text, 'oil');
+    });
+
+    test('should disable dropdown if disbale invoked with no parameter', function() {
+      let dropdown = myp5.createSelect();
+      dropdown.option('milk');
+      dropdown.option('oil');
+      dropdown.disable();
+      assert.strictEqual(dropdown.elt.disabled, true);
+    });
+  });
+
   suite('p5.prototype.createButton', function() {
     testSketchWithPromise('mousePressed works', function(
       sketch,

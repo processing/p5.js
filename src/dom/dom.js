@@ -618,6 +618,7 @@ p5.prototype.createCheckbox = function() {
  * The .value() method will return the currently selected option.
  * The .selected() method will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
  * The .selected() method can be used to make given option selected by default when the page first loads.
+ * The .disable() method marks given option as disabled and marks whole of dropdown element as disabled when invoked with no parameter.
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
  * @return {p5.Element}
@@ -643,6 +644,22 @@ p5.prototype.createCheckbox = function() {
  *   text('It is a ' + item + '!', 50, 50);
  * }
  * </code></div>
+ *
+ * <div><code>
+ * let sel;
+ *
+ * function setup() {
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('oil');
+ *   sel.option('milk');
+ *   sel.option('bread');
+ *   sel.disable('milk');
+ * }
+ * </code></div>
+ *
  */
 /**
  * @method createSelect
@@ -718,6 +735,21 @@ p5.prototype.createSelect = function() {
       }
     }
   };
+
+  self.disable = function(value) {
+    if (value !== undefined && typeof value === 'string') {
+      for (let i = 0; i < this.elt.length; i++) {
+        if (this.elt[i].value === value) {
+          this.elt[i].disabled = true;
+        }
+      }
+      return this;
+    } else if (arguments.length === 0) {
+      this.elt.disabled = true;
+      return this;
+    }
+  };
+
   return self;
 };
 
