@@ -158,6 +158,14 @@ suite('DOM', function() {
       }
       assert.strictEqual(dropdown.elt[disabledIndex].text, 'oil');
     });
+
+    test('should disable dropdown if disbale invoked with no parameter', function() {
+      let dropdown = myp5.createSelect();
+      dropdown.option('milk');
+      dropdown.option('oil');
+      dropdown.disable();
+      assert.strictEqual(dropdown.elt.disabled, true);
+    });
   });
 
   suite('p5.prototype.createButton', function() {

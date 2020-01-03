@@ -722,6 +722,9 @@ p5.prototype.createSelect = function() {
         }
       }
       return this;
+    } else if (arguments.length === 0) {
+      this.elt.disabled = true;
+      return this;
     }
   };
 
