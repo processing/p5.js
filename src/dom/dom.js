@@ -613,7 +613,8 @@ p5.prototype.createCheckbox = function() {
 
 /**
  * Creates a dropdown menu &lt;select&gt;&lt;/select&gt; element in the DOM.
- * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box
+ * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
+ * The .disable() method marks given option as disabled and marks whole of dropdown element as disabled when invoked with no parameter.
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
  * @return {p5.Element}
@@ -638,6 +639,22 @@ p5.prototype.createCheckbox = function() {
  *   text('It is a ' + item + '!', 50, 50);
  * }
  * </code></div>
+ *
+ * <div><code>
+ * let sel;
+ *
+ * function setup() {
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('oil');
+ *   sel.option('milk');
+ *   sel.option('bread');
+ *   sel.disable('milk');
+ * }
+ * </code></div>
+ *
  */
 /**
  * @method createSelect
