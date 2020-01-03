@@ -177,6 +177,19 @@ var renderCode = function(sel) {
           'touchStarted', 'touchMoved', 'touchEnded',
           'keyPressed', 'keyReleased', 'keyTyped'];
         var _found = [];
+        // p.preload is an empty function created by the p5.sound library in
+        // order to use the p5.js preload system to load AudioWorklet modules
+        // before a sketch runs, even if that sketch doesn't have its own
+        // preload function.
+        // However, this causes an error in the eval code below because the
+        // _found array will always contain "preload", even if the sketch in
+        // question doesn't have a preload function. To get around this, we
+        // delete p.preload before eval-ing the sketch and add it back
+        // afterwards if the sketch doesn't contain its own preload function.
+        // For more info, see: https://github.com/processing/p5.js-sound/blob/master/src/audioWorklet/index.js#L22
+        if (p.preload) {
+          delete p.preload;
+        }
         with (p) {
           // Builds a function to detect declared functions via
           // them being hoisted past the return statement. Does
@@ -204,7 +217,7 @@ var renderCode = function(sel) {
           ].join('\n'));
         }
         // If we haven't found any functions we'll assume it's
-        // just a setup body.
+        // just a setup body with an empty preload.
         if (!_found.length) {
           p.setup = function() {
             p.createCanvas(100, 100);
@@ -221,10 +234,12 @@ var renderCode = function(sel) {
           _found.forEach(function(name) {
             p[name] = eval(name);
           });
+          // Ensure p.preload exists even if sketch doesn't have the function.
+          p.preload = p.preload || function() {};
           p.setup = p.setup || function() {
             p.createCanvas(100, 100);
             p.background(200);
-          }
+          };
         }
       };
     }
