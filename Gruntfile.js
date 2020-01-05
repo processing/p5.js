@@ -388,6 +388,20 @@ module.exports = grunt => {
           './docs/reference/data.min.json': './docs/reference/data.json'
         }
       }
+    },
+    i18next: {
+      dev: {
+        sort: true,
+        src: 'src/**/*.js',
+        dest: 'assets',
+        options: {
+          lngs: ['en'],
+          resource: {
+            loadPath: 'i18n/{{lng}}/{{ns}}.json',
+            savePath: 'i18n/{{lng}}/{{ns}}.json'
+          }
+        }
+      }
     }
   };
 
@@ -436,6 +450,7 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
+  grunt.loadNpmTasks('i18next-scanner');
 
   // Create the multitasks.
   grunt.registerTask('build', [
