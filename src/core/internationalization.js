@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 let translator = () => {
   console.log('Translations are still loading...');
@@ -6,7 +7,7 @@ let translator = () => {
 };
 
 i18next
-  .use(i18nextBrowserLanguageDetector)
+  .use(LanguageDetector)
   .init({
     fallbackLng: 'en',
     nestingPrefix: '$tr(',
