@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import resources from '../../translations/index';
 
 let translator = () => {
   console.log('Translations are still loading...');
@@ -11,7 +12,9 @@ i18next
   .init({
     fallbackLng: 'en',
     nestingPrefix: '$tr(',
-    nestingSuffix: ')'
+    nestingSuffix: ')',
+    defaultNS: 'translation',
+    resources
   })
   .then(t => (translator = t))
   .catch(e => `Translations didn't load (${e})`);
