@@ -7,9 +7,9 @@ Helping with organization can be a great way to contribute. If a bug report is m
 # Guidelines for Organization
 
 ## Issues
-- **All bug reports must include sample code**
+- **All bug reports should include sample code**
   - This can be in the form of code posted in the body of the issue, or it can be a link to an online example of the code preferably in [the online editor](editor.p5js.org)
-- **All issues must have at least 2 labels**
+- **All issues should have at least 2 labels**
   - This makes it much easier to navigate the issues.
   - Try adding a label for the area (webgl, core, image, etc)
 - **Issue assignment is first-come, first-serve**
@@ -17,7 +17,7 @@ Helping with organization can be a great way to contribute. If a bug report is m
   - Do not request to be assigned to an issue if it is unclear whether the bug is reproducible or the feature request/enhancement has been agreed upon.
 
 ## Pull Requests
-- **All pull requests must be associated with an issue**
+- **All pull requests should be associated with an issue**
   - If you want to fix a bug or add a feature, start by opening an issue so the community can discuss it.
   - If a pull request is opened without an associated issue, comment and ask the contributor to open a pull request.
 
