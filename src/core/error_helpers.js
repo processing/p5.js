@@ -139,38 +139,55 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // mapping used by `_friendlyFileLoadError`
-  const fileLoadErrorCases = num => {
+  const fileLoadErrorCases = (num, filePath) => {
     switch (num) {
       case 0:
         return {
-          message: translator('fileLoadError.image'),
+          message: translator('fileLoadError.image', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadImage'
         };
       case 1:
-        return { message: translator('fileLoadError.xml'), method: 'loadXML' };
+        return {
+          message: translator('fileLoadError.xml', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
+          method: 'loadXML'
+        };
       case 2:
         return {
-          message: translator('fileLoadError.table'),
+          message: translator('fileLoadError.table', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadTable'
         };
       case 3:
         return {
-          message: translator('fileLoadError.strings'),
+          message: translator('fileLoadError.strings', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadStrings'
         };
       case 4:
         return {
-          message: translator('fileLoadError.font'),
+          message: translator('fileLoadError.font', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadFont'
         };
       case 5:
         return {
-          message: translator('fileLoadError.json'),
+          message: translator('fileLoadError.json', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadJSON'
         };
       case 6:
         return {
-          message: translator('fileLoadError.bytes'),
+          message: translator('fileLoadError.bytes', {
+            suggestion: translator('fileLoadError.suggestion', { filePath })
+          }),
           method: 'loadBytes'
         };
       case 7:
@@ -192,7 +209,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {String} filePath
    */
   p5._friendlyFileLoadError = function(errorType, filePath) {
-    const { message, method } = fileLoadErrorCases(errorType);
+    const { message, method } = fileLoadErrorCases(errorType, filePath);
     report(message, method, 3);
   };
 
