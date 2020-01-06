@@ -13,6 +13,4 @@ i18next
   })
   .catch(e => `Translations failed to load (${e})`);
 
-export default () => {
-  return i18next.t.apply(arguments);
-};
+export default i18next.t;
