@@ -393,7 +393,7 @@ module.exports = grunt => {
       dev: {
         sort: true,
         src: 'src/**/*.js',
-        dest: 'internationalization',
+        dest: 'assets',
         options: {
           lngs: ['en'],
           resource: {
