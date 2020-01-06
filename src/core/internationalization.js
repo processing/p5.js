@@ -1,6 +1,9 @@
 import i18next from 'i18next';
 
-let translator;
+let translator = () => {
+  console.log('Translations are still loading...');
+  return '';
+};
 
 i18next
   .use(i18nextBrowserLanguageDetector)
