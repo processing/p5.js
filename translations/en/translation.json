@@ -1,13 +1,14 @@
 {
   "fileLoadError": {
-    "bytes": "",
-    "font": "",
+    "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
+    "font": "It looks like there was a problem loading your font. {{suggestion}}",
     "gif": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
-    "image": "It looks like there was a problem loading your image. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
-    "json": "",
-    "large": "In case your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those.",
-    "strings": "",
-    "table": "It looks like there was a problem loading your table file. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
-    "xml": "It looks like there was a problem loading your XML file. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server."
+    "image": "It looks like there was a problem loading your image. {{suggestion}}",
+    "json": "It looks like there was a problem loading your JSON file. {{suggestion}}",
+    "large": "If your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those.",
+    "strings": "It looks like there was a problem loading your text file. {{suggestion}}",
+    "table": "It looks like there was a problem loading your table file. {{suggestion}}",
+    "xml": "It looks like there was a problem loading your XML file. {{suggestion}}",
+    "suggestion": "Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server."
   }
 }
