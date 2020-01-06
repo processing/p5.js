@@ -1,11 +1,13 @@
 {
-  "fileLoadErrorCase0": "",
-  "fileLoadErrorCase1": "",
-  "fileLoadErrorCase2": "",
-  "fileLoadErrorCase3": "",
-  "fileLoadErrorCase4": "",
-  "fileLoadErrorCase5": "",
-  "fileLoadErrorCase6": "",
-  "fileLoadErrorCase7": "",
-  "fileLoadErrorCase8": ""
+  "fileLoadError": {
+    "bytes": "",
+    "font": "",
+    "gif": "",
+    "image": "",
+    "json": "",
+    "large": "",
+    "strings": "",
+    "table": "",
+    "xml": ""
+  },
 }
