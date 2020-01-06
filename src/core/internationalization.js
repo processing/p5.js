@@ -8,7 +8,9 @@ let translator = () => {
 i18next
   .use(i18nextBrowserLanguageDetector)
   .init({
-    fallbackLng: 'en'
+    fallbackLng: 'en',
+    nestingPrefix: '$tr(',
+    nestingSuffix: ')'
   })
   .then(t => (translator = t))
   .catch(e => `Translations didn't load (${e})`);
