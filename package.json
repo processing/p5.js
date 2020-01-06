@@ -104,6 +104,21 @@
     "presets": [
       "@babel/preset-env"
     ],
+    "plugins": [
+      [
+        "i18next-extract",
+        {
+          "locales": [
+            "en",
+            "es"
+          ],
+          "outputPath": "translations/{{locale}}/{{ns}}.json",
+          "tFunctionNames": [
+            "translator"
+          ]
+        }
+      ]
+    ],
     "generatorOpts": {
       "retainLines": true
     },
