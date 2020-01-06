@@ -68,6 +68,7 @@
     "grunt-simple-nyc": "^3.0.1",
     "husky": "^0.14.3",
     "i18next": "^19.0.2",
+    "i18next-browser-languagedetector": "^4.0.1",
     "libtess": "^1.2.2",
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
