@@ -43,6 +43,7 @@
  */
 import p5 from './main';
 import * as constants from './constants';
+import translator from './internationalization';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
@@ -138,48 +139,47 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // mapping used by `_friendlyFileLoadError`
-  const fileLoadErrorCases = {
-    '0': {
-      fileType: 'image',
-      method: 'loadImage',
-      message: ' hosting the image online,'
-    },
-    '1': {
-      fileType: 'XML file',
-      method: 'loadXML'
-    },
-    '2': {
-      fileType: 'table file',
-      method: 'loadTable'
-    },
-    '3': {
-      fileType: 'text file',
-      method: 'loadStrings'
-    },
-    '4': {
-      fileType: 'font',
-      method: 'loadFont',
-      message: ' hosting the font online,'
-    },
-    '5': {
-      fileType: 'json',
-      method: 'loadJSON'
-    },
-    '6': {
-      fileType: 'file',
-      method: 'loadBytes'
-    },
-    '7': {
-      method: 'loadX',
-      message:
-        "In case your large file isn't fetched successfully," +
-        'we recommend splitting the file into smaller segments and fetching those.'
-    },
-    '8': {
-      method: 'loadImage',
-      message:
-        'There was some trouble loading your GIF. Make sure that your' +
-        ' GIF is using 87a or 89a encoding.'
+  const fileLoadErrorCases = num => {
+    switch (num) {
+      case 0:
+        return {
+          message: translator('fileLoadErrorCase0'),
+          method: 'loadImage'
+        };
+      case 1:
+        return { message: translator('fileLoadErrorCase1'), method: 'loadXML' };
+      case 2:
+        return {
+          message: translator('fileLoadErrorCase2'),
+          method: 'loadTable'
+        };
+      case 3:
+        return {
+          message: translator('fileLoadErrorCase3'),
+          method: 'loadStrings'
+        };
+      case 4:
+        return {
+          message: translator('fileLoadErrorCase4'),
+          method: 'loadFont'
+        };
+      case 5:
+        return {
+          message: translator('fileLoadErrorCase5'),
+          method: 'loadJSON'
+        };
+      case 6:
+        return {
+          message: translator('fileLoadErrorCase6'),
+          method: 'loadBytes'
+        };
+      case 7:
+        return { message: translator('fileLoadErrorCase7'), method: 'loadX' };
+      case 8:
+        return {
+          message: translator('fileLoadErrorCase8'),
+          method: 'loadImage'
+        };
     }
   };
 
@@ -192,17 +192,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {String} filePath
    */
   p5._friendlyFileLoadError = function(errorType, filePath) {
-    const errorInfo = fileLoadErrorCases[errorType];
-    let message;
-    if (errorType === 7 || errorType === 8) {
-      message = errorInfo.message;
-    } else {
-      message = `It looks like there was a problem loading your ${
-        errorInfo.fileType
-      }. Try checking if the file path [${filePath}] is correct,${errorInfo.message ||
-        ''} or running a local server.`;
-    }
-    report(message, errorInfo.method, 3);
+    const { message, method } = fileLoadErrorCases(errorType);
+    report(message, method, 3);
   };
 
   /**
