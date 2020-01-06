@@ -23,8 +23,9 @@ Helping with organization can be a great way to contribute. If a bug report is m
 
 # Guidelines for Decision-Making
 
-p5 aspires to make its decision-making process as transparent and horizontal as possible. To do this, p5 uses an informal consensus-seeking model for decision-making. This means that we prefer to reach community consensus on any and all decisions. If this fails, then a vote will take place instead
-Core maintainers have the ability to veto proposals. This will happen when a proposal doesn't align with the mission or community guidelines.
+p5 aspires to make its decision-making process as transparent and horizontal as possible. To do this, p5 uses an informal consensus-seeking model for decision-making. This means that we prefer to reach community consensus on any and all decisions. If this fails, then a vote will take place instead.
+
+Core maintainers have the ability to veto proposals. This can happen when a proposal doesn't align with the mission/community guidelines, or  when a proposal presents a significant maintenance or implementation challenge that the project is not able to tackle at that time.
 
 To propose a change, open an issue. If it is a large change or a change that necessitates significant design consideration, add a 'discussion' label to the issue. Interested community members will chime in with their thoughts. After a significant period has passed (30 days unless urgent), maintainers will try to discern whether there is significant interest and whether consensus has been reached about the best approach. At this point, maintainers will either request a vote, close the issue, or open up the issue for pull requests. Pull requests submitted before a discussion has concluded will be ignored.
 
