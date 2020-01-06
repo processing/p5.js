@@ -143,41 +143,41 @@ if (typeof IS_MINIFIED !== 'undefined') {
     switch (num) {
       case 0:
         return {
-          message: translator('fileLoadErrorCase0'),
+          message: translator('fileLoadError.image'),
           method: 'loadImage'
         };
       case 1:
-        return { message: translator('fileLoadErrorCase1'), method: 'loadXML' };
+        return { message: translator('fileLoadError.xml'), method: 'loadXML' };
       case 2:
         return {
-          message: translator('fileLoadErrorCase2'),
+          message: translator('fileLoadError.table'),
           method: 'loadTable'
         };
       case 3:
         return {
-          message: translator('fileLoadErrorCase3'),
+          message: translator('fileLoadError.strings'),
           method: 'loadStrings'
         };
       case 4:
         return {
-          message: translator('fileLoadErrorCase4'),
+          message: translator('fileLoadError.font'),
           method: 'loadFont'
         };
       case 5:
         return {
-          message: translator('fileLoadErrorCase5'),
+          message: translator('fileLoadError.json'),
           method: 'loadJSON'
         };
       case 6:
         return {
-          message: translator('fileLoadErrorCase6'),
+          message: translator('fileLoadError.bytes'),
           method: 'loadBytes'
         };
       case 7:
-        return { message: translator('fileLoadErrorCase7'), method: 'loadX' };
+        return { message: translator('fileLoadError.large'), method: 'loadX' };
       case 8:
         return {
-          message: translator('fileLoadErrorCase8'),
+          message: translator('fileLoadError.gif'),
           method: 'loadImage'
         };
     }

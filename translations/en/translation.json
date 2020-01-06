@@ -1,11 +1,9 @@
 {
-  "fileLoadErrorCase0": "",
-  "fileLoadErrorCase1": "",
-  "fileLoadErrorCase2": "",
-  "fileLoadErrorCase3": "",
-  "fileLoadErrorCase4": "",
-  "fileLoadErrorCase5": "",
-  "fileLoadErrorCase6": "",
-  "fileLoadErrorCase7": "",
-  "fileLoadErrorCase8": ""
+  "fileLoadError": {
+    "image": "It looks like there was a problem loading your image. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
+    "gif": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
+    "xml": "It looks like there was a problem loading your XML file. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
+    "table": "It looks like there was a problem loading your table file. Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
+    "large": "In case your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those."
+  }
 }
