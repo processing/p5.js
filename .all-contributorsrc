@@ -35,7 +35,6 @@
       "profile": "https://github.com/rubayet170746",
       "contributions": []
     },
-    
     {
       "login": "evhan55",
       "name": "Evelyn Eastmond",
@@ -1012,7 +1011,9 @@
       "name": "Antonio Jesús Sánchez Padial",
       "avatar_url": "https://avatars1.githubusercontent.com/u/710282?v=4",
       "profile": "http://spadial.com",
-      "contributions": ["code"]
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "usernamenumber",
@@ -1694,6 +1695,15 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/6535424?s=460&v=4",
       "profile": "https://github.com/nthe",
       "contributions": []
+    },
+    {
+      "login": "AnuragGupta93",
+      "name": "ANURAG GUPTA",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/35900375?v=4",
+      "profile": "https://github.com/AnuragGupta93",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
