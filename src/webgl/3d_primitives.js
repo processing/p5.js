@@ -81,7 +81,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     planeGeom.computeFaces().computeNormals();
     if (detailX <= 1 && detailY <= 1) {
       planeGeom._makeTriangleEdges()._edgesToVertices();
-    } else {
+    } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on plane objects with more' +
           ' than 1 detailX or 1 detailY'
