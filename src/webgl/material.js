@@ -580,7 +580,6 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  *                         (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
- * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -607,7 +606,7 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
-p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
+p5.prototype.ambientMaterial = function(v1, v2, v3) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
 
@@ -683,7 +682,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *                       (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
- * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -711,7 +709,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3, a) {
+p5.prototype.specularMaterial = function(v1, v2, v3) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
 
