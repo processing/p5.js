@@ -169,6 +169,8 @@ p5.prototype.specularColor = function(v1, v2, v3) {
 
 /**
  * Creates a directional light with a color and a direction
+ * <br/>
+ * Maximum limit of directional possible: 5
  * @method directionalLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -271,6 +273,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 
 /**
  * Creates a point light with a color and a light position
+ * <br/>
+ * Maximum limit of pointLight possible: 5
  * @method pointLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -498,6 +502,8 @@ p5.prototype.lightFalloff = function(
  * of the cone of the spotlight, and concentration is used to focus the
  * light towards the center. Both angle and concentration are optional, but if
  * you want to provide concentration, you will also have to specify the angle.
+ * <br/>
+ * Maximum limit of pointLight possible: 5
  *
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
