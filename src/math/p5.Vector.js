@@ -326,6 +326,38 @@ p5.Vector.prototype.add = function add(x, y, z) {
   return this;
 };
 
+p5.Vector.prototype.rem = function rem(x, y, z) {
+  if (x instanceof p5.Vector) {
+    if (isFinite(x.x) && isFinite(x.y) && isFinite(x.z)) {
+      var xComponent = parseFloat(x.x);
+      var yComponent = parseFloat(x.y);
+      var zComponent = parseFloat(x.z);
+      if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
+        return this;
+      }
+      if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
+        this.y = this.y % yComponent;
+        this.z = this.z % zComponent;
+        return this;
+      }
+      if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
+        this.x = this.x % xComponent;
+        this.z = this.z % zComponent;
+        return this;
+      }
+      if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
+        this.x = this.x % xComponent;
+        this.y = this.y % yComponent;
+        return this;
+      }
+      this.x = this.x % xComponent;
+      this.y = this.y % yComponent;
+      this.z = this.z % zComponent;
+      return this;
+    }
+  }
+};
+
 /**
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method

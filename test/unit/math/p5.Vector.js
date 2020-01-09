@@ -274,6 +274,26 @@ suite('p5.Vector', function() {
       });
     });
   });
+  suite('rem()', function() {
+    setup(function() {
+      v = myp5.createVector(3, 4, 5);
+    });
+    suite('with p5.Vector', function() {
+      test('should return remainder of vector components', function() {
+        v.rem(new p5.Vector(2, 3, 4));
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should return correct output if x component is zero', () => {
+        v.rem(new p5.Vector(0, 3, 4));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+    });
+  });
 
   suite('sub()', function() {
     setup(function() {
