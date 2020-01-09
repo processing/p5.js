@@ -1587,6 +1587,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *  @param  {String[]} list   string array to be written
  *  @param  {String} filename filename for output
  *  @param  {String} [extension] the filename's extension
+ *  @param  {Boolean} [isCRLF] if true, change line-break to CRLF
  *  @example
  * <div><code>
  * let words = 'apple bear cat dog';
@@ -1618,16 +1619,12 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  * no image displayed
  *
  */
-p5.prototype.saveStrings = function(list, filename, extension) {
+p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
   const ext = extension || 'txt';
   const pWriter = this.createWriter(filename, ext);
   for (let i = 0; i < list.length; i++) {
-    if (i < list.length - 1) {
-      pWriter.print(list[i]);
-    } else {
-      pWriter.print(list[i]);
-    }
+    isCRLF ? pWriter.write(list[i] + '\r\n') : pWriter.write(list[i] + '\n');
   }
   pWriter.close();
   pWriter.clear();
