@@ -51,6 +51,25 @@
  * console.log('my favorite number is: ' + myFavNumber);
  * </code>
  * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * const bigCats = ['lion', 'tiger', 'panther'];
+ * bigCats.push('leopard');
+ * console.log(bigCats);
+ * // bigCats = ['cat']; // throws error as re-assigning not allowed for const
+ * </code>
+ * </div>
+ *
+ * <div class='norender'>
+ * <code>
+ * const wordFrequency = {};
+ * wordFrequency['hello'] = 2;
+ * wordFrequency['bye'] = 1;
+ * console.log(wordFrequency);
+ * // wordFrequency = { 'a': 2, 'b': 3}; // throws error here
+ * </code>
+ * </div>
  */
 
 /**
