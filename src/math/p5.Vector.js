@@ -327,33 +327,61 @@ p5.Vector.prototype.add = function add(x, y, z) {
 };
 
 p5.Vector.prototype.rem = function rem(x, y, z) {
+  const calculateRemainder = (xComponent, yComponent, zComponent) => {
+    if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
+      return this;
+    }
+    if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
+      this.y = this.y % yComponent;
+      this.z = this.z % zComponent;
+      return this;
+    }
+    if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
+      this.x = this.x % xComponent;
+      this.z = this.z % zComponent;
+      return this;
+    }
+    if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
+      this.x = this.x % xComponent;
+      this.y = this.y % yComponent;
+      return this;
+    }
+    this.x = this.x % xComponent;
+    this.y = this.y % yComponent;
+    this.z = this.z % zComponent;
+    return this;
+  };
+
   if (x instanceof p5.Vector) {
     if (isFinite(x.x) && isFinite(x.y) && isFinite(x.z)) {
       var xComponent = parseFloat(x.x);
       var yComponent = parseFloat(x.y);
       var zComponent = parseFloat(x.z);
-      if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
+      calculateRemainder(xComponent, yComponent, zComponent);
+    }
+  }
+
+  if (x instanceof Array) {
+    if (x.every(element => Number.isFinite(element))) {
+      if (x.length === 2) {
+        if (x[0] === 0 && x[1] === 0) {
+          return this;
+        }
+        if (x[0] === 0 && x[1] !== 0) {
+          this.y = this.y % x[1];
+          return this;
+        }
+        if (x[0] !== 0 && x[1] === 0) {
+          this.x = this.x % x[0];
+          return this;
+        }
+        this.x = this.x % x[0];
+        this.y = this.y % x[1];
         return this;
       }
-      if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
-        this.y = this.y % yComponent;
-        this.z = this.z % zComponent;
-        return this;
+      if (x.length === 3) {
+        calculateRemainder(x[0], x[1], x[2]);
       }
-      if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
-        this.x = this.x % xComponent;
-        this.z = this.z % zComponent;
-        return this;
-      }
-      if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
-        this.x = this.x % xComponent;
-        this.y = this.y % yComponent;
-        return this;
-      }
-      this.x = this.x % xComponent;
-      this.y = this.y % yComponent;
-      this.z = this.z % zComponent;
-      return this;
     }
   }
 };

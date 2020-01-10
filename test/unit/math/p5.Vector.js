@@ -274,6 +274,7 @@ suite('p5.Vector', function() {
       });
     });
   });
+
   suite('rem()', function() {
     setup(function() {
       v = myp5.createVector(3, 4, 5);
@@ -291,6 +292,28 @@ suite('p5.Vector', function() {
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(1);
         expect(v.z).to.eql(1);
+      });
+    });
+
+    suite('with Arrays', function() {
+      test('should return remainder of vector components for 3D vector', function() {
+        v.rem([2, 3, 0]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(5);
+      });
+      test('should return remainder of vector components for 2D vector', function() {
+        v.rem([2, 3]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(5);
+      });
+
+      test('should return same vector if any vector component is non-finite number', () => {
+        v.rem([2, 3, Infinity]);
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
       });
     });
   });
