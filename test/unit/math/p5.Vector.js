@@ -279,6 +279,28 @@ suite('p5.Vector', function() {
     setup(function() {
       v = myp5.createVector(3, 4, 5);
     });
+
+    test('should give correct output if passed only one numeric value', function() {
+      v.rem(2);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(0);
+      expect(v.z).to.eql(1);
+    });
+
+    test('should give correct output if passed two numeric value', function() {
+      v.rem(2, 3);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(5);
+    });
+
+    test('should give correct output if passed three numeric value', function() {
+      v.rem(2, 3, 4);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
+    });
+
     suite('with p5.Vector', function() {
       test('should return remainder of vector components', function() {
         v.rem(new p5.Vector(2, 3, 4));
@@ -292,6 +314,19 @@ suite('p5.Vector', function() {
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(1);
         expect(v.z).to.eql(1);
+      });
+    });
+
+    suite('with negative vectors', function() {
+      let v;
+      setup(function() {
+        v = new p5.Vector(-15, -5, -2);
+      });
+      test('should return correct output', () => {
+        v.rem(new p5.Vector(2, 3, 3));
+        expect(v.x).to.eql(-1);
+        expect(v.y).to.eql(-2);
+        expect(v.z).to.eql(-2);
       });
     });
 
