@@ -326,6 +326,30 @@ p5.Vector.prototype.add = function add(x, y, z) {
   return this;
 };
 
+/**
+ * Gives remainder of a vector when it is divided by another vector.
+ * See examples for more context.
+ *
+ * @method rem
+ * @param {Number} x the x component of vector that divides
+ * @param {Number} y the y component of vector that divides
+ * @param {Number} z the z component of vector that divides
+ * @chainable
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let v = createVector(3, 4, 5);
+ * v.rem(2, 3, 4);
+ * // v's components are set to [1, 1, 1]
+ * console.log(v.toString());
+ * </code>
+ * </div>
+ */
+/**
+ * @method rem
+ * @param {p5.Vector | Number[]}  value  the vector that gives remainder
+ * @chainable
+ */
 p5.Vector.prototype.rem = function rem(x, y, z) {
   const calculateRemainder3D = (xComponent, yComponent, zComponent) => {
     if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
