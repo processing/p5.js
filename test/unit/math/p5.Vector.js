@@ -358,6 +358,26 @@ suite('p5.Vector', function() {
         expect(v.z).to.eql(5);
       });
     });
+
+    suite('p5.Vector.rem(v1,v2)', function() {
+      var v1, v2, res;
+      setup(function() {
+        v1 = new p5.Vector(2, 3, 4);
+        v2 = new p5.Vector(1, 2, 3);
+        res = p5.Vector.rem(v1, v2);
+      });
+
+      test('should return neither v1 nor v2', function() {
+        expect(res).to.not.eql(v1);
+        expect(res).to.not.eql(v2);
+      });
+
+      test('should be v1 % v2', function() {
+        expect(res.x).to.eql(v1.x % v2.x);
+        expect(res.y).to.eql(v1.y % v2.y);
+        expect(res.z).to.eql(v1.z % v2.z);
+      });
+    });
   });
 
   suite('sub()', function() {

@@ -331,9 +331,9 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * See examples for more context.
  *
  * @method rem
- * @param {Number} x the x component of vector that divides
- * @param {Number} y the y component of vector that divides
- * @param {Number} z the z component of vector that divides
+ * @param {Number} x the x component of divisor vector
+ * @param {Number} y the y component of divisor vector
+ * @param {Number} z the z component of divisor vector
  * @chainable
  * @example
  * <div class='norender'>
@@ -341,13 +341,23 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * let v = createVector(3, 4, 5);
  * v.rem(2, 3, 4);
  * // v's components are set to [1, 1, 1]
- * console.log(v.toString());
+ * </code>
+ * </div>
+ * <div class="norender">
+ * <code>
+ * // Static method
+ * let v1 = createVector(3, 4, 5);
+ * let v2 = createVector(2, 3, 4);
+ *
+ * let v3 = p5.Vector.rem(v1, v2);
+ * // v3 has components [1, 1, 1]
+ * print(v3);
  * </code>
  * </div>
  */
 /**
  * @method rem
- * @param {p5.Vector | Number[]}  value  the vector that gives remainder
+ * @param {p5.Vector | Number[]}  value  divisor vector
  * @chainable
  */
 p5.Vector.prototype.rem = function rem(x, y, z) {
@@ -1758,6 +1768,32 @@ p5.Vector.add = function add(v1, v2, target) {
     target.set(v1);
   }
   target.add(v2);
+  return target;
+};
+
+// Returns a vector remainder when it is divided by another vector
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} target the vector to receive the result
+ */
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} v2
+ * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ *
+ */
+p5.Vector.rem = function rem(v1, v2, target) {
+  if (!target) {
+    target = v1.copy();
+  } else {
+    target.set(v1);
+  }
+  target.rem(v2);
   return target;
 };
 
