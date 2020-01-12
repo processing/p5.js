@@ -280,6 +280,13 @@ suite('p5.Vector', function() {
       v = myp5.createVector(3, 4, 5);
     });
 
+    test('should give same vector if nothing passed as parameter', function() {
+      v.rem();
+      expect(v.x).to.eql(3);
+      expect(v.y).to.eql(4);
+      expect(v.z).to.eql(5);
+    });
+
     test('should give correct output if passed only one numeric value', function() {
       v.rem(2);
       expect(v.x).to.eql(1);

@@ -389,6 +389,12 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
     }
   }
 
+  if (arguments.length === 0) {
+    if (arguments[0] === undefined) {
+      return this;
+    }
+  }
+
   if (arguments.length === 1) {
     if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
       this.x = this.x % arguments[0];
