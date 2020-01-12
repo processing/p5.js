@@ -223,7 +223,7 @@
  * </div>
  * <div class='norender'>
  * <code>
- * let square = number => number ** 2;
+ * let square = number => number * number;
  * console.log(square(5));
  * </code>
  * </div>
