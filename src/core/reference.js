@@ -221,6 +221,12 @@
  * sayHello(myName); // calling the function, prints "Hello Hridi!" to console.
  * </code>
  * </div>
+ * <div class='norender'>
+ * <code>
+ * let square = number => number ** 2;
+ * console.log(square(5));
+ * </code>
+ * </div>
  */
 
 /**
