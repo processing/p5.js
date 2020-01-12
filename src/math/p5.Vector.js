@@ -404,7 +404,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
   };
 
   if (x instanceof p5.Vector) {
-    if (isFinite(x.x) && isFinite(x.y) && isFinite(x.z)) {
+    if (Number.isFinite(x.x) && Number.isFinite(x.y) && Number.isFinite(x.z)) {
       var xComponent = parseFloat(x.x);
       var yComponent = parseFloat(x.y);
       var zComponent = parseFloat(x.z);
