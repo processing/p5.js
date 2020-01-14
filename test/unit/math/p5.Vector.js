@@ -360,7 +360,7 @@ suite('p5.Vector', function() {
     });
 
     suite('p5.Vector.rem(v1,v2)', function() {
-      var v1, v2, res;
+      let v1, v2, res;
       setup(function() {
         v1 = new p5.Vector(2, 3, 4);
         v2 = new p5.Vector(1, 2, 3);

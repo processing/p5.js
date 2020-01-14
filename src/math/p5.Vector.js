@@ -326,6 +326,45 @@ p5.Vector.prototype.add = function add(x, y, z) {
   return this;
 };
 
+/// HELPERS FOR REMAINDER METHOD
+const calculateRemainder2D = function(xComponent, yComponent) {
+  if (xComponent === 0 && yComponent === 0) {
+    return this;
+  } else if (xComponent === 0) {
+    this.y = this.y % x[1];
+    return this;
+  } else if (yComponent === 0) {
+    this.x = this.x % x[0];
+    return this;
+  } else {
+    this.x = this.x % xComponent;
+    this.y = this.y % yComponent;
+    return this;
+  }
+};
+
+const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
+  if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
+    return this;
+  } else if (xComponent === 0) {
+    this.y = this.y % yComponent;
+    this.z = this.z % zComponent;
+    return this;
+  } else if (yComponent === 0) {
+    this.x = this.x % xComponent;
+    this.z = this.z % zComponent;
+    return this;
+  } else if (zComponent === 0) {
+    this.x = this.x % xComponent;
+    this.y = this.y % yComponent;
+    return this;
+  } else {
+    this.x = this.x % xComponent;
+    this.y = this.y % yComponent;
+    this.z = this.z % zComponent;
+    return this;
+  }
+};
 /**
  * Gives remainder of a vector when it is divided by another vector.
  * See examples for more context.
@@ -361,97 +400,46 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * @chainable
  */
 p5.Vector.prototype.rem = function rem(x, y, z) {
-  const calculateRemainder3D = (xComponent, yComponent, zComponent) => {
-    if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
-      return this;
-    }
-    if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
-      this.y = this.y % yComponent;
-      this.z = this.z % zComponent;
-      return this;
-    }
-    if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
-      this.x = this.x % xComponent;
-      this.z = this.z % zComponent;
-      return this;
-    }
-    if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
-      this.x = this.x % xComponent;
-      this.y = this.y % yComponent;
-      return this;
-    }
-    this.x = this.x % xComponent;
-    this.y = this.y % yComponent;
-    this.z = this.z % zComponent;
-    return this;
-  };
-
-  const calculateRemainder2D = (xComponent, yComponent) => {
-    if (xComponent === 0 && yComponent === 0) {
-      return this;
-    }
-    if (xComponent === 0 && yComponent !== 0) {
-      this.y = this.y % x[1];
-      return this;
-    }
-    if (xComponent !== 0 && yComponent === 0) {
-      this.x = this.x % x[0];
-      return this;
-    }
-    this.x = this.x % xComponent;
-    this.y = this.y % yComponent;
-    return this;
-  };
-
   if (x instanceof p5.Vector) {
     if (Number.isFinite(x.x) && Number.isFinite(x.y) && Number.isFinite(x.z)) {
-      var xComponent = parseFloat(x.x);
-      var yComponent = parseFloat(x.y);
-      var zComponent = parseFloat(x.z);
-      calculateRemainder3D(xComponent, yComponent, zComponent);
+      const xComponent = parseFloat(x.x);
+      const yComponent = parseFloat(x.y);
+      const zComponent = parseFloat(x.z);
+      calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
     }
-  }
-
-  if (x instanceof Array) {
+  } else if (x instanceof Array) {
     if (x.every(element => Number.isFinite(element))) {
       if (x.length === 2) {
-        calculateRemainder2D(x[0], x[1]);
+        calculateRemainder2D.call(this, x[0], x[1]);
       }
       if (x.length === 3) {
-        calculateRemainder3D(x[0], x[1], x[2]);
+        calculateRemainder3D.call(this, x[0], x[1], x[2]);
       }
     }
-  }
-
-  if (arguments.length === 0) {
-    if (arguments[0] === undefined) {
-      return this;
-    }
-  }
-
-  if (arguments.length === 1) {
+  } else if (arguments.length === 1) {
     if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
       this.x = this.x % arguments[0];
       this.y = this.y % arguments[0];
       this.z = this.z % arguments[0];
       return this;
     }
-  }
-
-  if (arguments.length === 2) {
+  } else if (arguments.length === 2) {
     const vectorComponents = [...arguments];
     if (vectorComponents.every(element => Number.isFinite(element))) {
       if (vectorComponents.length === 2) {
-        calculateRemainder2D(vectorComponents[0], vectorComponents[1]);
+        calculateRemainder2D.call(
+          this,
+          vectorComponents[0],
+          vectorComponents[1]
+        );
       }
     }
-  }
-
-  if (arguments.length === 3) {
+  } else if (arguments.length === 3) {
     const vectorComponents = [...arguments];
     if (vectorComponents.every(element => Number.isFinite(element))) {
       if (vectorComponents.length === 3) {
-        calculateRemainder3D(
+        calculateRemainder3D.call(
+          this,
           vectorComponents[0],
           vectorComponents[1],
           vectorComponents[2]
@@ -1777,7 +1765,6 @@ p5.Vector.add = function add(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
  * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} target the vector to receive the result
  */
 /**
  * @method rem
@@ -1787,14 +1774,12 @@ p5.Vector.add = function add(v1, v2, target) {
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  *
  */
-p5.Vector.rem = function rem(v1, v2, target) {
-  if (!target) {
-    target = v1.copy();
-  } else {
-    target.set(v1);
+p5.Vector.rem = function rem(v1, v2) {
+  if (v1 instanceof p5.Vector && v2 instanceof p5.Vector) {
+    let target = v1.copy();
+    target.rem(v2);
+    return target;
   }
-  target.rem(v2);
-  return target;
 };
 
 /*
