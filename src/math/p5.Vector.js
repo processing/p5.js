@@ -346,17 +346,26 @@ const calculateRemainder2D = function(xComponent, yComponent) {
 const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
   if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
     return this;
-  } else if (xComponent === 0) {
+  } else if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
     this.y = this.y % yComponent;
     this.z = this.z % zComponent;
     return this;
-  } else if (yComponent === 0) {
+  } else if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
     this.x = this.x % xComponent;
     this.z = this.z % zComponent;
     return this;
-  } else if (zComponent === 0) {
+  } else if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
     this.x = this.x % xComponent;
     this.y = this.y % yComponent;
+    return this;
+  } else if (xComponent === 0 && yComponent === 0 && zComponent !== 0) {
+    this.z = this.z % zComponent;
+    return this;
+  } else if (xComponent === 0 && yComponent !== 0 && zComponent === 0) {
+    this.y = this.y % yComponent;
+    return this;
+  } else if (xComponent !== 0 && yComponent === 0 && zComponent === 0) {
+    this.x = this.x % xComponent;
     return this;
   } else {
     this.x = this.x % xComponent;

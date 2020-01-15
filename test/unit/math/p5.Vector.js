@@ -309,10 +309,10 @@ suite('p5.Vector', function() {
     });
 
     suite('with p5.Vector', function() {
-      test('should return remainder of vector components', function() {
-        v.rem(new p5.Vector(2, 3, 4));
-        expect(v.x).to.eql(1);
-        expect(v.y).to.eql(1);
+      test('should return correct output if only one component is non-zero', function() {
+        v.rem(new p5.Vector(0, 0, 4));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
         expect(v.z).to.eql(1);
       });
 
@@ -321,6 +321,20 @@ suite('p5.Vector', function() {
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(1);
         expect(v.z).to.eql(1);
+      });
+
+      test('should return correct output if all components are non-zero', () => {
+        v.rem(new p5.Vector(2, 3, 4));
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should return same vector if all components are zero', () => {
+        v.rem(new p5.Vector(0, 0, 0));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
       });
     });
 
