@@ -365,6 +365,13 @@ suite('p5.Vector', function() {
         expect(v.z).to.eql(5);
       });
 
+      test('should return correct output if x,y components are zero for 2D vector', () => {
+        v.rem([0, 0]);
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
+      });
+
       test('should return same vector if any vector component is non-finite number', () => {
         v.rem([2, 3, Infinity]);
         expect(v.x).to.eql(3);

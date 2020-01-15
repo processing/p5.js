@@ -328,51 +328,26 @@ p5.Vector.prototype.add = function add(x, y, z) {
 
 /// HELPERS FOR REMAINDER METHOD
 const calculateRemainder2D = function(xComponent, yComponent) {
-  if (xComponent === 0 && yComponent === 0) {
-    return this;
-  } else if (xComponent === 0) {
-    this.y = this.y % x[1];
-    return this;
-  } else if (yComponent === 0) {
-    this.x = this.x % x[0];
-    return this;
-  } else {
+  if (xComponent !== 0) {
     this.x = this.x % xComponent;
-    this.y = this.y % yComponent;
-    return this;
   }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  return this;
 };
 
 const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
-  if (xComponent === 0 && yComponent === 0 && zComponent === 0) {
-    return this;
-  } else if (xComponent === 0 && yComponent !== 0 && zComponent !== 0) {
-    this.y = this.y % yComponent;
-    this.z = this.z % zComponent;
-    return this;
-  } else if (xComponent !== 0 && yComponent === 0 && zComponent !== 0) {
+  if (xComponent !== 0) {
     this.x = this.x % xComponent;
-    this.z = this.z % zComponent;
-    return this;
-  } else if (xComponent !== 0 && yComponent !== 0 && zComponent === 0) {
-    this.x = this.x % xComponent;
-    this.y = this.y % yComponent;
-    return this;
-  } else if (xComponent === 0 && yComponent === 0 && zComponent !== 0) {
-    this.z = this.z % zComponent;
-    return this;
-  } else if (xComponent === 0 && yComponent !== 0 && zComponent === 0) {
-    this.y = this.y % yComponent;
-    return this;
-  } else if (xComponent !== 0 && yComponent === 0 && zComponent === 0) {
-    this.x = this.x % xComponent;
-    return this;
-  } else {
-    this.x = this.x % xComponent;
-    this.y = this.y % yComponent;
-    this.z = this.z % zComponent;
-    return this;
   }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  if (zComponent !== 0) {
+    this.z = this.z % zComponent;
+  }
+  return this;
 };
 /**
  * Gives remainder of a vector when it is divided by another vector.
