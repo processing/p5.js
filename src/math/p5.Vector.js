@@ -326,6 +326,113 @@ p5.Vector.prototype.add = function add(x, y, z) {
   return this;
 };
 
+/// HELPERS FOR REMAINDER METHOD
+const calculateRemainder2D = function(xComponent, yComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  return this;
+};
+
+const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  if (zComponent !== 0) {
+    this.z = this.z % zComponent;
+  }
+  return this;
+};
+/**
+ * Gives remainder of a vector when it is divided by another vector.
+ * See examples for more context.
+ *
+ * @method rem
+ * @param {Number} x the x component of divisor vector
+ * @param {Number} y the y component of divisor vector
+ * @param {Number} z the z component of divisor vector
+ * @chainable
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let v = createVector(3, 4, 5);
+ * v.rem(2, 3, 4);
+ * // v's components are set to [1, 1, 1]
+ * </code>
+ * </div>
+ * <div class="norender">
+ * <code>
+ * // Static method
+ * let v1 = createVector(3, 4, 5);
+ * let v2 = createVector(2, 3, 4);
+ *
+ * let v3 = p5.Vector.rem(v1, v2);
+ * // v3 has components [1, 1, 1]
+ * print(v3);
+ * </code>
+ * </div>
+ */
+/**
+ * @method rem
+ * @param {p5.Vector | Number[]}  value  divisor vector
+ * @chainable
+ */
+p5.Vector.prototype.rem = function rem(x, y, z) {
+  if (x instanceof p5.Vector) {
+    if (Number.isFinite(x.x) && Number.isFinite(x.y) && Number.isFinite(x.z)) {
+      const xComponent = parseFloat(x.x);
+      const yComponent = parseFloat(x.y);
+      const zComponent = parseFloat(x.z);
+      calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
+    }
+  } else if (x instanceof Array) {
+    if (x.every(element => Number.isFinite(element))) {
+      if (x.length === 2) {
+        calculateRemainder2D.call(this, x[0], x[1]);
+      }
+      if (x.length === 3) {
+        calculateRemainder3D.call(this, x[0], x[1], x[2]);
+      }
+    }
+  } else if (arguments.length === 1) {
+    if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
+      this.x = this.x % arguments[0];
+      this.y = this.y % arguments[0];
+      this.z = this.z % arguments[0];
+      return this;
+    }
+  } else if (arguments.length === 2) {
+    const vectorComponents = [...arguments];
+    if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.length === 2) {
+        calculateRemainder2D.call(
+          this,
+          vectorComponents[0],
+          vectorComponents[1]
+        );
+      }
+    }
+  } else if (arguments.length === 3) {
+    const vectorComponents = [...arguments];
+    if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.length === 3) {
+        calculateRemainder3D.call(
+          this,
+          vectorComponents[0],
+          vectorComponents[1],
+          vectorComponents[2]
+        );
+      }
+    }
+  }
+};
+
 /**
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method
@@ -1634,6 +1741,29 @@ p5.Vector.add = function add(v1, v2, target) {
   }
   target.add(v2);
   return target;
+};
+
+// Returns a vector remainder when it is divided by another vector
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
+ */
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} v2
+ * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ *
+ */
+p5.Vector.rem = function rem(v1, v2) {
+  if (v1 instanceof p5.Vector && v2 instanceof p5.Vector) {
+    let target = v1.copy();
+    target.rem(v2);
+    return target;
+  }
 };
 
 /*
