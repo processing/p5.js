@@ -222,4 +222,45 @@ suite('DOM', function() {
       };
     });
   });
+
+  suite('p5.prototype.createSlider', function() {
+    var myp5;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+    });
+
+    var elt;
+
+    teardown(function() {
+      if (elt && elt.parentNode) {
+        elt.parentNode.removeChild(elt);
+        elt = null;
+      }
+    });
+
+    test('should be instance of p5.Element', () => {
+      expect(myp5.createSlider(5, 10) instanceof p5.Element).to.eql(true);
+    });
+
+    test('should create a slider', function() {
+      let slider = myp5.createSlider(5, 10, 8, 1);
+      elt = document.createElement('input');
+      elt.type = 'range';
+      elt.min = 5;
+      elt.max = 10;
+      elt.step = 1;
+      elt.value = 8;
+      expect(JSON.stringify(slider.elt)).to.eql(JSON.stringify(elt));
+    });
+  });
 });
