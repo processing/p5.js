@@ -263,4 +263,64 @@ suite('DOM', function() {
       expect(JSON.stringify(slider.elt)).to.eql(JSON.stringify(elt));
     });
   });
+
+  suite('p5.prototype.createA', function() {
+    var myp5;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+    });
+
+    var elt;
+
+    teardown(function() {
+      if (elt && elt.parentNode) {
+        elt.parentNode.removeChild(elt);
+        elt = null;
+      }
+    });
+
+    test('should be instance of p5.Element', () => {
+      expect(
+        myp5.createA('http://p5js.org/', 'this is a link') instanceof p5.Element
+      ).to.eql(true);
+    });
+
+    test('should create anchor tag', function() {
+      let anchor = myp5.createA('http://p5js.org/', 'p5');
+      elt = document.createElement('a');
+      elt.href = 'http://p5js.org/';
+      elt.innerHTML = 'p5';
+      expect(JSON.stringify(anchor.elt)).to.eql(JSON.stringify(elt));
+    });
+
+    testSketchWithPromise('anchor tag is hovered', function(
+      sketch,
+      resolve,
+      reject
+    ) {
+      sketch.setup = function() {
+        var elem = sketch.createA('http://p5js.org/', 'this is a link');
+        elem.mouseMoved();
+        resolve(elem.elt.dispatchEvent(new Event('mouseover')));
+      };
+    })
+      .then(status => {
+        if (status) {
+          return 'Done';
+        }
+      })
+      .catch(err => {
+        return err.message();
+      });
+  });
 });
