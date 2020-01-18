@@ -5,11 +5,11 @@
  In the description field of this PR, include "resolves #XXXX" tagging the issue you are fixing. If this PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".-->
 Resolves #[Add issue number here]
 
- Changes: 
+ Changes:
 <!-- Add here what changes were made in this pull request and if possible provide links showcasing the changes. -->
 
 
- Screenshots of the change: 
+ Screenshots of the change:
 <!-- If applicable, add screenshots depicting the changes. -->
 
 #### PR Checklist
@@ -20,8 +20,6 @@ Resolves #[Add issue number here]
 - [ ] `npm run lint` passes
 - [ ] [Inline documentation] is included / updated
 - [ ] [Unit tests] are included / updated
-- [ ] [Benchmarks] are included / updated
 
 [Inline documentation]: https://github.com/processing/p5.js/blob/master/contributor_docs/inline_documentation.md
 [Unit tests]: https://github.com/processing/p5.js/tree/master/contributor_docs#unit-tests
-[Benchmarks]: https://github.com/processing/p5.js/blob/master/contributor_docs/benchmarking_p5.md

@@ -26,7 +26,6 @@ Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 
 - [inline dokumentácia](./inline_documentation.md) vo forme komentárov kódu, ktoré vysvetľujú kód vývojárom a používateľom. Mnohé z týchto komentárom musia podliehať syntaxi [JSDoc](https://jsdoc.app) a budú publikované na stránke p5.js ako súčasť [online referenčnej príručky](https://p5js.org/reference/)
 - [unit testy](./unit_testing.md), malé časti kódu, ktoré sú oddelené od knižnice a použite na overenie správnosti správanie
-- [benchmarky](./benchmarking_p5.md) na testovanie výkonu
 
 ## Príklady
 

@@ -26,7 +26,6 @@ Além do código em si, também pode ser necessário fornecer alguma combinaçã
 
 - [documentação embutida](./inline_documentation.md) na forma de comentários de código, que explicam o código para outros desenvolvedores e usuários. Muitos desses comentários devem estar em conformidade com a sintaxe [JSDoc](https://usejsdoc.org) e serão publicados no site p5.js como parte do [manual de referência on-line](https://p5js.org/reference/ )
 - [testes de unidade](./unit_testing.md), pequenos pedaços de código que são separados da biblioteca e são usados para verificar seu comportamento
-- [benchmarks](./benchmarking_p5.md) para testar o desempenho
 
 ## Exemplos
 
