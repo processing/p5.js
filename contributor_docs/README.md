@@ -26,7 +26,6 @@ Aside from the code itself, you may also need to supply some combination of the 
 
 - [inline documentation](./inline_documentation.md) in the form of code comments, which explain the code both to other developers and to users. Many of these comments must conform to [JSDoc](https://jsdoc.app) syntax and will be published on the p5.js website as part of the [online reference manual](https://p5js.org/reference/)
 - [unit tests](./unit_testing.md), small pieces of code which are separate from the library and are used to verify its behavior
-- [benchmarks](./benchmarking_p5.md) to test performance
 
 ## Examples
 

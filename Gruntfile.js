@@ -42,17 +42,6 @@
  *                      docs, and does not perform linting, minification,
  *                      or run tests. It's faster than watch:main.
  *
- *  grunt karma       - This runs the performance benchmarks in
- *                      multiple real browsers on the developers local machine.
- *                      It will automatically detect which browsers are
- *                      installed from the following list (Chrome, Firefox,
- *                      Safari, Edge, IE) and run the benchmarks in all installed
- *                      browsers and report the results. Running "grunt karma"
- *                      will execute ALL the benchmarks. If you want to run a
- *                      specific benchmark you can by specifying the target e.g.
- *                      "grunt karma:random-dev". The available targets are
- *                      defined in grunt-karma.js.
- *
  *  Contributors list can be updated using all-contributors-cli:
  *  https://www.npmjs.com/package/all-contributors-cli
  *
@@ -97,9 +86,6 @@ module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
   const quietReport = process.env.GITHUB_ACTIONS || grunt.option('quiet');
   const reporter = quietReport ? 'spec' : 'Nyan';
-
-  // Load karma tasks from an external file to keep this file clean
-  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
@@ -147,7 +133,6 @@ module.exports = grunt => {
       build: {
         src: [
           'Gruntfile.js',
-          'grunt-karma.js',
           'docs/preprocessor.js',
           'utils/**/*.js',
           'tasks/**/*.js'
@@ -172,7 +157,7 @@ module.exports = grunt => {
         src: ['src/**/*.js']
       },
       test: {
-        src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
+        src: ['test/**/*.js', '!test/js/*.js']
       }
     },
 
@@ -312,10 +297,6 @@ module.exports = grunt => {
       }
     },
 
-    // This runs benchmarks in multiple real browsers for developing
-    // performance optimizations
-    karma: karmaTasks,
-
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
@@ -453,7 +434,6 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
 
