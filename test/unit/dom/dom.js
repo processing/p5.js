@@ -222,4 +222,16 @@ suite('DOM', function() {
       };
     });
   });
+
+  suite('p5.Element.prototype.position', function() {
+    let paragraph = myp5.createP('out of box');
+    paragraph.position(20, 20, 'static');
+
+    elt = document.createElement('p');
+    elt.appendChild(document.createTextNode('out of box'));
+    elt.style.position = 'static';
+    elt.style.left = '20px';
+    elt.style.top = '20px';
+    expect(JSON.stringify(paragraph.elt)).to.eql(JSON.stringify(elt));
+  });
 });
