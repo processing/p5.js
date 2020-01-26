@@ -61,10 +61,10 @@ p5.prototype.acos = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * let a = PI + PI / 3;
+ * let a = PI / 3.0;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "1.0471976 : 0.86602545 : 1.0471976"
+ * // Prints: "1.0471975 : 0.86602540 : 1.0471975"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
  * </div>
@@ -74,7 +74,7 @@ p5.prototype.acos = function(ratio) {
  * let a = PI + PI / 3.0;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "4.1887903 : -0.86602545 : -1.0471976"
+ * // Prints: "4.1887902 : -0.86602540 : -1.0471975"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
  * </div>
@@ -96,10 +96,10 @@ p5.prototype.asin = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * let a = PI + PI / 3;
+ * let a = PI / 3.0;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "1.0471976 : 1.7320509 : 1.0471976"
+ * // Prints: "1.0471975 : 1.7320508 : 1.0471975"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
  * </div>
@@ -109,7 +109,7 @@ p5.prototype.asin = function(ratio) {
  * let a = PI + PI / 3.0;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "4.1887903 : 1.7320513 : 1.0471977"
+ * // Prints: "4.1887902 : 1.7320508 : 1.0471975"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
  * </div>
