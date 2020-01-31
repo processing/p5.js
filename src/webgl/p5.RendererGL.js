@@ -591,7 +591,6 @@ p5.RendererGL.prototype.background = function(...args) {
   const _a = _col.levels[3] / 255;
   this.GL.clearColor(_r, _g, _b, _a);
 
-  this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT);
 };
 
