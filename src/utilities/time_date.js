@@ -75,11 +75,11 @@ p5.prototype.minute = function() {
 
 /**
  * Returns the number of milliseconds (thousandths of a second) since
- * starting the sketch. This information is often used for timing events and
- * animation sequences.
+ * starting the sketch (when `setup()` is called). This information is often
+ * used for timing events and animation sequences.
  *
  * @method millis
- * @return {Number} the number of milliseconds since starting the program
+ * @return {Number} the number of milliseconds since starting the sketch
  * @example
  * <div>
  * <code>
@@ -89,7 +89,7 @@ p5.prototype.minute = function() {
  * </div>
  *
  * @alt
- * number of milliseconds since program has started displayed
+ * number of milliseconds since sketch has started displayed
  *
  */
 p5.prototype.millis = function() {
