@@ -201,6 +201,7 @@ class p5 {
       resize: null,
       blur: null
     };
+    this._millisStart = -1;
 
     // States used in the custom random generators
     this._lcg_random_state = null;
@@ -329,6 +330,9 @@ class p5 {
           }
         }
       }
+
+      // Record the time when sketch starts
+      this._millisStart = window.performance.now();
 
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
