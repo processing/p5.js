@@ -1247,70 +1247,53 @@ p5.PrintWriter = function(filename, extension) {
    * @method write
    * @param {Array} data all data to be written by the PrintWriter
    * @example
-   * <div>
+   * <div class="norender notest">
    * <code>
-   * function setup() {
-   *    createCanvas(100, 100);
-   *    background(234, 40, 95);
-   *    button = createButton('SAVE FILE');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 40);
-   *    button.size(60, 20);
-   *    button.mousePressed(createFile);
-   * }
-
-   * function createFile() {
-   *    // creates a file called 'newFile.txt'
-   *    let writer = createWriter('newFile.txt');
-   *    // write 'Hello world!'' to the file
-   *    writer.write(['Hello world!']);
-   *    // close the PrintWriter and save the file
-   *    writer.close();
-   * }
+   * // creates a file called 'newFile.txt'
+   * let writer = createWriter('newFile.txt');
+   * // write 'Hello world!'' to the file
+   * writer.write(['Hello world!']);
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender notest'>
+   * <code>
+   * // creates a file called 'newFile2.txt'
+   * let writer = createWriter('newFile2.txt');
+   * // write 'apples,bananas,123' to the file
+   * writer.write(['apples', 'bananas', 123]);
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender notest'>
+   * <code>
+   * // creates a file called 'newFile3.txt'
+   * let writer = createWriter('newFile3.txt');
+   * // write 'My name is: Teddy' to the file
+   * writer.write('My name is:');
+   * writer.write(' Teddy');
+   * // close the PrintWriter and save the file
+   * writer.close();
    * </code>
    * </div>
    * <div>
    * <code>
    * function setup() {
-   *    createCanvas(100, 100);
-   *    background(25, 162, 209);
-   *    button = createButton('SAVE FILE');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 40);
-   *    button.size(60, 20);
-   *    button.mousePressed(createFile);
+   *   createCanvas(100, 100);
+   *   button = createButton('SAVE FILE');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
    * }
-
+   *
    * function createFile() {
-   *    // creates a file called 'newFile2.txt'
-   *    let writer = createWriter('newFile2.txt');
-   *    // write 'apples,bananas,123' to the file
-   *    writer.write(['apples', 'bananas', 123]);
-   *    // close the PrintWriter and save the file
-   *    writer.close();
-   * }
-   * </code>
-   * </div>
-   * <div>
-   * <code>
-   * function setup() {
-   *    createCanvas(100, 100);
-   *    background(234, 40, 95);
-   *    button = createButton('SAVE FILE');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 40);
-   *    button.size(60, 20);
-   *    button.mousePressed(createFile);
-   * }
-
-   * function createFile() {
-   *    // creates a file called 'newFile3.txt'
-   *    let writer = createWriter('newFile3.txt');
-   *    // write 'My name is: Teddy' to the file
-   *    writer.write('My name is:');
-   *    writer.write(' Teddy');
-   *    // close the PrintWriter and save the file
-   *    writer.close();
+   *   // creates a file called 'newFile.txt'
+   *   let writer = createWriter('newFile.txt');
+   *   // write 'Hello world!'' to the file
+   *   writer.write(['Hello world!']);
+   *   // close the PrintWriter and save the file
+   *   writer.close();
    * }
    * </code>
    * </div>
@@ -1323,49 +1306,35 @@ p5.PrintWriter = function(filename, extension) {
    * @method print
    * @param {Array} data all data to be printed by the PrintWriter
    * @example
-   * <div>
+   * <div class='norender notest'>
    * <code>
-   * function setup() {
-   *    createCanvas(100, 100);
-   *    background(234, 40, 95);
-   *    button = createButton('SAVE FILE');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 40);
-   *    button.size(60, 20);
-   *    button.mousePressed(createFile);
-   * }
-   * function createFile() {
-   *    // creates a file called 'newFile.txt'
-   *    let writer = createWriter('newFile.txt');
-   *    // creates a file containing
-   *    //  My name is:
-   *    //  Teddy
-   *    writer.print('My name is:');
-   *    writer.print('Teddy');
-   *    // close the PrintWriter and save the file
-   *    writer.close();
-   * }
+   * // creates a file called 'newFile.txt'
+   * let writer = createWriter('newFile.txt');
+   * // creates a file containing
+   * //  My name is:
+   * //  Teddy
+   * writer.print('My name is:');
+   * writer.print('Teddy');
+   * // close the PrintWriter and save the file
+   * writer.close();
    * </code>
    * </div>
-   * <div>
+   * <div class='norender notest'>
    * <code>
    * let writer;
+   *
    * function setup() {
-   *    createCanvas(100, 100);
-   *    background(25, 162, 209);
-   *    fill(255);
-   *    text("Press Enter", 10, 20);
-   *    text("to save file with", 10, 40);
-   *    text("mouseX and Y", 10, 60);
+   *   createCanvas(400, 400);
+   *   // create a PrintWriter
+   *   writer = createWriter('newFile.txt');
    * }
-   * function keyPressed() {
-   *    if (keyCode === ENTER) {
-   *      // create a PrintWriter
-   *      writer = createWriter('newFile.txt');
-   *      // print all mouseX and mouseY coordinates to the stream
-   *      writer.print([mouseX, mouseY]);
-   *      writer.close();
-   *    }
+   *
+   * function draw() {
+   *   writer.print([mouseX, mouseY]);
+   * }
+   *
+   * function mouseClicked() {
+   *   writer.close();
    * }
    * </code>
    * </div>
@@ -1377,26 +1346,28 @@ p5.PrintWriter = function(filename, extension) {
    * Clears the data already written to the PrintWriter object
    * @method clear
    * @example
+   * <div class ="norender notest"><code>
+   * // create writer object
+   * let writer = createWriter('newFile.txt');
+   * writer.write(['clear me']);
+   * // clear writer object here
+   * writer.clear();
+   * // close writer
+   * writer.close();
+   * </code></div>
    * <div>
    * <code>
    * function setup() {
-   *    createCanvas(100, 100);
-   *    background(234, 40, 95);
-   *    button = createButton('CLEAR ME');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 40);
-   *    button.size(60, 20);
-   *    button.mousePressed(createFile);
+   *   button = createButton('CLEAR ME');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
    * }
+   *
    * function createFile() {
-   *    // create writer object
-   *    let writer = createWriter('newFile.txt');
-   *    writer.write(['clear me']);
-   *    // clear writer object here
-   *    writer.clear();
-   *    // close writer
-   *    writer.close();
-   *    // file will be empty
+   *   let writer = createWriter('newFile.txt');
+   *   writer.write(['clear me']);
+   *   writer.clear();
+   *   writer.close();
    * }
    * </code>
    * </div>
@@ -1417,30 +1388,14 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
-   *
-   * <div>
+   * <div class='norender notest'>
    * <code>
-   * let writer;
-   * let c; // color
-   * function setup() {
-   *    createCanvas(100, 100);
-   *    background(234, 40, 95);
-   *    button = createButton('GET COLOR');
-   *    button.style('font-size', '8px');
-   *    button.position(21, 35);
-   *    button.size(60, 25);
-   *    button.mousePressed(createFile);
-   * }
-   * function createFile() {
-   *    // create writer object
-   *    let writer = createWriter('newFile.txt');
-   *    // get color at mouseX and Y, which will be the background color
-   *    c = get(mouseX, mouseY);
-   *    // write color into file
-   *    writer.write(c[0] + ", " + c[1] + ", " + c[2]);
-   *    // close writer
-   *    writer.close();
-   * }
+   * // create a file called 'newFile2.txt'
+   * let writer = createWriter('newFile2.txt');
+   * // write some data to the file
+   * writer.write([100, 101, 102]);
+   * // close the PrintWriter and save the file
+   * writer.close();
    * </code>
    * </div>
    */

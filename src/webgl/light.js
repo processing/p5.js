@@ -8,7 +8,7 @@
 import p5 from '../core/main';
 
 /**
- * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas. 
+ * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas.
  * It has no particular source.
  * @method ambientLight
  * @param  {Number}        v1      red or hue value relative to
@@ -23,45 +23,28 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
+ * createCanvas(100, 100, WEBGL);
+ * ambientLight(0);
+ * ambientMaterial(250);
+ * sphere(40);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *   background(0);
- *   ambientLight(150);
- *   ambientMaterial(250);
- *   noStroke();
- *   sphere(40);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * let angle = 0;
- * let light;
- * function setup() {
- *    createCanvas(100, 100, WEBGL);
- *    slider = createSlider(0, 255, 255);
- *    slider.position(width/2 - 40, height+5);
- *    slider.style('width', '80px');
- * }
- * function draw() {
- *    background(51);
- *    light = slider.value();
- *    ambientLight(light); // white light
- *    ambientMaterial(255, 102, 94); // magenta material
- *    rotateX(angle);
- *    rotateY(angle);
- *    rotateZ(angle);
- *    stroke(255);
- *    box(30);
- *    angle += 0.01;
+ *   background(51);
+ *   ambientLight(100); // white light
+ *   ambientMaterial(255, 102, 94); // magenta material
+ *   box(30);
  * }
  * </code>
  * </div>
  * @alt
  * evenly distributed light across a sphere
+ * evenly distributed light across a rotating sphere
  *
  */
 

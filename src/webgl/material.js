@@ -282,7 +282,7 @@ p5.prototype.resetShader = function() {
 
 /**
  * Normal material for geometry is a material that is not affected by light.
- * It is not reflective and is a placeholder material often used for debugging. 
+ * It is not reflective and is a placeholder material often used for debugging.
  * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
  * You can view all possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
@@ -299,37 +299,6 @@ p5.prototype.resetShader = function() {
  *   background(200);
  *   normalMaterial();
  *   sphere(40);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- *
- * // In the example below, you can see that the canvas contains an ambient light and a point light.
- * // None of these have any effect on the Normal Material.
- *
- * let angle = 0;
- * function setup() {
- *    createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *    background(51);
- *    let locX = mouseX - width / 2;
- *    let locY = mouseY - height / 2;
- *
- *    // Lights:
- *    ambientLight(50);
- *    pointLight(250, 250, 250, locX, locY, 50);
- *
- *    // Object:
- *    rotateY(angle);
- *    rotateZ(angle);
- *    noStroke();
- *    normalMaterial();
- *    box(40);
- *
- *    angle += 0.01;
  * }
  * </code>
  * </div>
@@ -605,9 +574,8 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 
 /**
  * Ambient material for geometry with a given color. Ambient material defines the color the object reflects under any lighting.
- * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light. 
- * You can view all possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
+ * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
  * @method  ambientMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                         (depending on the current color mode),
@@ -615,118 +583,54 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * @param  {Number} [v3] blue or brightness value
  * @chainable
  * @example
- *
  * <div>
  * <code>
- * 
- * // ambientLight is both red and blue (magenta), 
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   ambientLight(200);
+ *   ambientMaterial(70, 130, 230);
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * // ambientLight is both red and blue (magenta),
  * // so object only reflects it's red and blue components
- * let angle = 0;
- * let light1;
  * function setup() {
- *    createCanvas(100, 100, WEBGL);
- *    slider1 = createSlider(0, 255, 255);
- *    slider1.position(width/2 - 40, height+5);
- *    slider1.style('width', '80px');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *    background(70);
- *    light1 = slider1.value();
- *    ambientLight(light1); // white light
- *    ambientMaterial(255, 0, 255); // pink material
- *    rotateX(angle);
- *    rotateY(angle);
- *    rotateZ(angle);
- *    box(30);
- *    angle += 0.01;
+ *   background(70);
+ *   ambientLight(100); // white light
+ *   ambientMaterial(255, 0, 255); // pink material
+ *   box(30);
  * }
  * </code>
  * </div>
- *
- *
  * <div>
  * <code>
- * 
- * // ambientLight is red, so object only 
- * // reflects it's red component;
- * let angle = 0;
- * let light2;
+ * // ambientLight is green. Since object does not contain
+ * // green, it does not reflect any light
  * function setup() {
- *    createCanvas(100, 100, WEBGL);
- *    slider2 = createSlider(0, 255, 255);
- *    slider2.position(width/2 - 40, height+5);
- *    slider2.style('width', '80px');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *    background(70);
- *    light2 = slider2.value();
- *    ambientLight(light2, 0, 0); // red light
- *    ambientMaterial(255, 0, 255); // pink material
- *    rotateX(angle);
- *    rotateY(angle);
- *    rotateZ(angle);
- *    box(30);
- *    angle += 0.01;
- * }
- * </code>
- * </div>
- *
- *
- * <div>
- * <code>
- * // ambientLight is blue, so object only
- * // reflects it's blue component;
- * let angle = 0;
- * let light3;
- * function setup() {
- *    createCanvas(100, 100, WEBGL);
- *    slider3 = createSlider(0, 255, 255);
- *    slider3.position(width/2 - 40, height+5);
- *    slider3.style('width', '80px');
- * }
- * function draw() {
- *    background(70);
- *    light3 = slider3.value();
- *    ambientLight(0, 0, light3); // blue light
- *    ambientMaterial(255, 0, 255); // pink material
- *    rotateX(angle);
- *    rotateY(angle);
- *    rotateZ(angle);
- *    box(30);
- *    angle += 0.01;
- * }
- * </code>
- * </div>
- *
- *
- * <div>
- * <code>
- * // ambientLight is green. Since object 
- * // does not contain green, it does not reflect any light.
- * let angle = 0;
- * let light4;
- * function setup() {
- *    createCanvas(100, 100, WEBGL);
- *    slider4 = createSlider(0, 255, 255);
- *    slider4.position(width/2 - 40, height+5);
- *    slider4.style('width', '80px');
- * }
- * function draw() {
- *    background(70);
- *    light4 = slider4.value();
- *    ambientLight(0, light4, 0); // green light
- *    ambientMaterial(255, 0, 255); // pink material
- *    rotateX(angle);
- *    rotateY(angle);
- *    rotateZ(angle);
- *    box(30);
- *    angle += 0.01;
+ *   background(70);
+ *   ambientLight(0, 255, 0); // green light
+ *   ambientMaterial(255, 0, 255); // pink material
+ *   box(30);
  * }
  * </code>
  * </div>
  * @alt
  * radiating light source from top right of canvas
- *
+ * box reflecting only red and blue light
+ * box reflecting no light
  */
 /**
  * @method  ambientMaterial
@@ -804,9 +708,8 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * Specular material for geometry with a given color. Specular material is a shiny reflective material.
  * Like ambient material it also defines the color the object reflects under ambient lighting.
  * For example, if the specular material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
- * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer. 
- * You can view all possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer.
+ * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
  * @method specularMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                       (depending on the current color mode),
@@ -821,66 +724,15 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   noStroke();
- *   ambientLight(100);
- *   pointLight(255, 255, 233, locX, locY, 50);
- *   rotateZ(frameCount * 0.01);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
+ *   ambientLight(50);
+ *   pointLight(250, 250, 250, 100, 100, 30);
  *   specularMaterial(250);
- *   torus(20, 10, 64, 64);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   noStroke();
- *   // Blue ambient light (change this to 255 to see difference):
- *   ambientLight(0, 0, 255); 
- *   pointLight(100, 100, 100, locX, locY, 50);
- *   rotateZ(frameCount * 0.01);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   specularMaterial(255, 0, 255); // magenta
- *   torus(20, 10, 64, 64);
- * }
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Specular material is black (has no color),
- * // but still refelcts green light
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   let locX = mouseX - width / 2;
- *   let locY = mouseY - height / 2;
- *   noStroke();
- *   pointLight(0, 255, 0, locX, locY, 50); // green point light
- *   rotateZ(frameCount * 0.01);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   specularMaterial(0, 0, 0); // black specular material
- *   torus(20, 10, 64, 64);
+ *   sphere(40);
  * }
  * </code>
  * </div>
  * @alt
  * diffused radiating light source from top right of canvas
- *
  */
 /**
  * @method specularMaterial
