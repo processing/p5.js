@@ -3,9 +3,11 @@
  * @submodule Acceleration
  * @for p5
  * @requires core
+ * @requires constants
  */
 
 import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /**
  * The system variable deviceOrientation always contains the orientation of
@@ -627,6 +629,11 @@ p5.prototype.setShakeThreshold = function(val) {
 
 p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
+  if (this._angleMode === constants.radians) {
+    e.beta = e.beta * (_PI / 180.0);
+    e.gamma = e.gamma * (_PI / 180.0);
+    e.alpha = e.alpha * (_PI / 180.0);
+  }
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);
