@@ -1,4 +1,5 @@
 import p5 from '../core/main';
+import { initialize as initTranslator } from './internationalization';
 
 /**
  * _globalInit
@@ -28,11 +29,17 @@ const _globalInit = () => {
 
 // TODO: ???
 
-// if the page is ready, initialize p5 immediately
-if (document.readyState === 'complete') {
-  _globalInit();
-  // if the page is still loading, add an event listener
-  // and initialize p5 as soon as it finishes loading
-} else {
-  window.addEventListener('load', _globalInit, false);
-}
+// make a promise that resolves when the document is ready
+const waitForDocumentReady = () =>
+  new Promise((resolve, reject) => {
+    // if the page is ready, initialize p5 immediately
+    if (document.readyState === 'complete') {
+      resolve();
+      // if the page is still loading, add an event listener
+      // and initialize p5 as soon as it finishes loading
+    } else {
+      window.addEventListener('load', resolve, false);
+    }
+  });
+
+Promise.all([waitForDocumentReady(), initTranslator()]).then(_globalInit);
