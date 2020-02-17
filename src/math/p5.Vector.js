@@ -524,7 +524,8 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 };
 
 /**
- * Multiply the vector by a scalar. The static version of this method
+ * Multiplies the vector by a scalar, multiplies the x, y, and z components from a vector, or multiplies
+ * the x, y, and z components of two independent vectors. The static version of this method
  * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
  * directly. See the examples for more context.
  *
@@ -537,6 +538,23 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * let v = createVector(1, 2, 3);
  * v.mult(2);
  * // v's components are set to [2, 4, 6]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * let v1 = createVector(2, 3, 4);
+ * v0.mult(v1); // v0's components are set to [2, 6, 12]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * let v1 = createVector(2, 3, 4);
+ * const result = p5.Vector.mult(v0, v1);
+ * print(result); // result's components are set to [2, 6, 12]
  * </code>
  * </div>
  *
@@ -584,22 +602,31 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * </code>
  * </div>
  */
-p5.Vector.prototype.mult = function mult(n) {
-  if (!(typeof n === 'number' && isFinite(n))) {
-    console.warn(
-      'p5.Vector.prototype.mult:',
-      'n is undefined or not a finite number'
-    );
+p5.Vector.prototype.mult = function mult(x, y, z) {
+  if (x instanceof p5.Vector) {
+    this.x *= x.x || 0;
+    this.y *= x.y || 0;
+    this.z *= x.z || 0;
     return this;
   }
-  this.x *= n;
-  this.y *= n;
-  this.z *= n;
+  if (x instanceof Array) {
+    this.x *= x[0] || 0;
+    this.y *= x[1] || 0;
+    this.z *= x[2] || 0;
+    return this;
+  }
+  const _x = x || 1;
+  const _y = y || x;
+  const _z = z || x;
+  this.x *= _x;
+  this.y *= _y;
+  this.z *= _z;
   return this;
 };
 
 /**
- * Divide the vector by a scalar. The static version of this method creates a
+ * Divides the vector by a scalar, divides a vector by the x, y, and z arguments, or divides the x, y, and
+ * z components of two vectors against each other. The static version of this method creates a
  * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
  * See the examples for more context.
  *
@@ -611,6 +638,23 @@ p5.Vector.prototype.mult = function mult(n) {
  * <code>
  * let v = createVector(6, 4, 2);
  * v.div(2); //v's components are set to [3, 2, 1]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * let v1 = createVector(3, 2, 4);
+ * v0.div(v1); // v0's components are set to [3, 2, 0.5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * let v1 = createVector(3, 2, 4);
+ * let result = p5.Vector.div(v0, v1);
+ * print(result); // result's components are set to [3, 2, 0.5]
  * </code>
  * </div>
  *
@@ -658,24 +702,39 @@ p5.Vector.prototype.mult = function mult(n) {
  * </code>
  * </div>
  */
-p5.Vector.prototype.div = function div(n) {
-  if (!(typeof n === 'number' && isFinite(n))) {
-    console.warn(
-      'p5.Vector.prototype.div:',
-      'n is undefined or not a finite number'
-    );
+p5.Vector.prototype.div = function div(x, y, z) {
+  if (x instanceof p5.Vector) {
+    if (x.x === 0 || x.y === 0 || x.z === 0) {
+      console.warn('p5.Vector.prototype.div:', 'divide by 0');
+      return this;
+    }
+    this.x /= x.x || 1;
+    this.y /= x.y || 1;
+    this.z /= x.z || 1;
     return this;
   }
-  if (n === 0) {
+  if (x instanceof Array) {
+    if (x[0] === 0 || x[1] === 0 || x[2] === 0) {
+      console.warn('p5.Vector.prototype.div:', 'divide by 0');
+      return this;
+    }
+    this.x /= x[0] || 1;
+    this.y /= x[1] || 1;
+    this.z /= x[2] || 1;
+    return this;
+  }
+  if (x === 0 || y === 0 || z === 0) {
     console.warn('p5.Vector.prototype.div:', 'divide by 0');
     return this;
   }
-  this.x /= n;
-  this.y /= n;
-  this.z /= n;
+  const _x = x || 1;
+  const _y = y || x;
+  const _z = z || x;
+  this.x /= _x;
+  this.y /= _y;
+  this.z /= _z;
   return this;
 };
-
 /**
  * Calculates the magnitude (length) of the vector and returns the result as
  * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)

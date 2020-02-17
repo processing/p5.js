@@ -522,6 +522,36 @@ suite('p5.Vector', function() {
         expect(res.z).to.eql(12);
       });
     });
+
+    suite('v0.mult(v1)', function() {
+      var v0, v1;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        v0.mult(v1);
+      });
+
+      test('should do component wise multiplication', function() {
+        expect(v0.x).to.eql(2);
+        expect(v0.y).to.eql(6);
+        expect(v0.z).to.eql(12);
+      });
+    });
+
+    suite('p5.Vector.mult(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        res = p5.Vector.mult(v0, v1);
+      });
+
+      test('should return new vector from component wise multiplication', function() {
+        expect(res.x).to.eql(2);
+        expect(res.y).to.eql(6);
+        expect(res.z).to.eql(12);
+      });
+    });
   });
 
   suite('div()', function() {
@@ -582,6 +612,36 @@ suite('p5.Vector', function() {
         expect(res.x).to.eql(0.25);
         expect(res.y).to.eql(0.25);
         expect(res.z).to.eql(0.25);
+      });
+    });
+
+    suite('v0.div(v1)', function() {
+      var v0, v1;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        v0.div(v1);
+      });
+
+      test('should do component wise division', function() {
+        expect(v0.x).to.eql(1);
+        expect(v0.y).to.eql(3);
+        expect(v0.z).to.eql(3);
+      });
+    });
+
+    suite('p5.Vector.div(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        res = p5.Vector.mult(v0, v1);
+      });
+
+      test('should return new vector from component wise division', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(3);
+        expect(res.z).to.eql(3);
       });
     });
   });
