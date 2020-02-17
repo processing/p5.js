@@ -1694,15 +1694,27 @@ p5.Element.prototype.html = function() {
  */
 /**
  * @method position
- * @param  {Number} [x] x-position relative to upper left of window
- * @param  {Number} [y] y-position relative to upper left of window
+ * @param  {Number} [x] x-position relative to upper left of window (optional)
+ * @param  {Number} [y] y-position relative to upper left of window (optional)
+ * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
 p5.Element.prototype.position = function() {
   if (arguments.length === 0) {
     return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
   } else {
-    this.elt.style.position = 'absolute';
+    let positionType = '';
+    if (
+      arguments[2] === 'static' ||
+      arguments[2] === 'fixed' ||
+      arguments[2] === 'relative' ||
+      arguments[2] === 'sticky' ||
+      arguments[2] === 'initial' ||
+      arguments[2] === 'inherit'
+    ) {
+      positionType = arguments[2];
+    }
+    this.elt.style.position = positionType || 'absolute';
     this.elt.style.left = arguments[0] + 'px';
     this.elt.style.top = arguments[1] + 'px';
     this.x = arguments[0];
