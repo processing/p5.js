@@ -8,8 +8,8 @@
 import p5 from '../core/main';
 
 /**
- * Creates an ambient light with a color
- *
+ * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas.
+ * It has no particular source.
  * @method ambientLight
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range
@@ -23,21 +23,28 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
+ * createCanvas(100, 100, WEBGL);
+ * ambientLight(0);
+ * ambientMaterial(250);
+ * sphere(40);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *   background(0);
- *   ambientLight(150);
- *   ambientMaterial(250);
- *   noStroke();
- *   sphere(40);
+ *   background(51);
+ *   ambientLight(100); // white light
+ *   ambientMaterial(255, 102, 94); // magenta material
+ *   box(30);
  * }
  * </code>
  * </div>
- *
  * @alt
  * evenly distributed light across a sphere
+ * evenly distributed light across a rotating sphere
  *
  */
 

@@ -1278,6 +1278,25 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   button = createButton('SAVE FILE');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
+   * }
+   *
+   * function createFile() {
+   *   // creates a file called 'newFile.txt'
+   *   let writer = createWriter('newFile.txt');
+   *   // write 'Hello world!'' to the file
+   *   writer.write(['Hello world!']);
+   *   // close the PrintWriter and save the file
+   *   writer.close();
+   * }
+   * </code>
+   * </div>
    */
   this.write = function(data) {
     this.content += data;
@@ -1311,12 +1330,10 @@ p5.PrintWriter = function(filename, extension) {
    * }
    *
    * function draw() {
-   *   // print all mouseX and mouseY coordinates to the stream
    *   writer.print([mouseX, mouseY]);
    * }
    *
    * function mouseClicked() {
-   *   // close the PrintWriter and save the file
    *   writer.close();
    * }
    * </code>
@@ -1338,6 +1355,22 @@ p5.PrintWriter = function(filename, extension) {
    * // close writer
    * writer.close();
    * </code></div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   button = createButton('CLEAR ME');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
+   * }
+   *
+   * function createFile() {
+   *   let writer = createWriter('newFile.txt');
+   *   writer.write(['clear me']);
+   *   writer.clear();
+   *   writer.close();
+   * }
+   * </code>
+   * </div>
    *
    */
   this.clear = function() {

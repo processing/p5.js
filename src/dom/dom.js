@@ -1675,10 +1675,13 @@ p5.Element.prototype.html = function() {
 
 /**
  *
- * Sets the position of the element relative to (0, 0) of the
- * window. Essentially, sets position:absolute and left and top
- * properties of style. If no arguments given returns the x and y position
- * of the element in an object.
+ * Sets the position of the element. If no position type argument is given, the
+ * position will be relative to (0, 0) of the window.
+ * Essentially, this sets position:absolute and left and top
+ * properties of style. If an optional third argument specifying position type is given,
+ * the x and y coordinates will be interpreted based on the <a target="_blank"
+ * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
+ * If no arguments given, the function returns the x and y position of the element.
  *
  * @method position
  * @returns {Object} the x and y position of the element in an object
@@ -1691,18 +1694,38 @@ p5.Element.prototype.html = function() {
  *   cnv.position(50, 100);
  * }
  * </code></div>
+ * <div><code class='norender'>
+ * function setup() {
+ *   let cnv = createCanvas(100, 100);
+ *   // positions canvas 50px to the right and 100px
+ *   // below upper left corner of the window
+ *   cnv.position(0, 0, 'fixed');
+ * }
+ * </code></div>
  */
 /**
  * @method position
- * @param  {Number} [x] x-position relative to upper left of window
- * @param  {Number} [y] y-position relative to upper left of window
+ * @param  {Number} [x] x-position relative to upper left of window (optional)
+ * @param  {Number} [y] y-position relative to upper left of window (optional)
+ * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
 p5.Element.prototype.position = function() {
   if (arguments.length === 0) {
     return { x: this.elt.offsetLeft, y: this.elt.offsetTop };
   } else {
-    this.elt.style.position = 'absolute';
+    let positionType = 'absolute';
+    if (
+      arguments[2] === 'static' ||
+      arguments[2] === 'fixed' ||
+      arguments[2] === 'relative' ||
+      arguments[2] === 'sticky' ||
+      arguments[2] === 'initial' ||
+      arguments[2] === 'inherit'
+    ) {
+      positionType = arguments[2];
+    }
+    this.elt.style.position = positionType;
     this.elt.style.left = arguments[0] + 'px';
     this.elt.style.top = arguments[1] + 'px';
     this.x = arguments[0];
