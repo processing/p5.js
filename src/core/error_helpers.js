@@ -125,15 +125,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // Type to color
       color = typeColors[color];
     }
-    if (func === 'loadX') {
-      console.log(`> p5.js says: ${message}`);
-    } else if (func.substring(0, 4) === 'load') {
-      console.log(
-        `> p5.js says: ${message}[https://github.com/processing/p5.js/wiki/Local-server]`
-      );
+    if (func.substring(0, 4) === 'load') {
+      console.log(translator('fes.pre', { message }));
     } else {
       console.log(
-        `> p5.js says: ${message} [http://p5js.org/reference/#p5/${func}]`
+        translator('fes.pre', {
+          message: `${message} (http://p5js.org/reference/#p5/${func})`
+        })
       );
     }
   };
