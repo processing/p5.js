@@ -1,4 +1,7 @@
 {
+  "fes": {
+    "pre": "p5.js says: {{message}}"
+  },
   "fileLoadError": {
     "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
     "font": "It looks like there was a problem loading your font. {{suggestion}}",
@@ -7,7 +10,7 @@
     "json": "It looks like there was a problem loading your JSON file. {{suggestion}}",
     "large": "If your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those.",
     "strings": "It looks like there was a problem loading your text file. {{suggestion}}",
-    "suggestion": "Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.",
+    "suggestion": "Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server. (More info at https://github.com/processing/p5.js/wiki/Local-server)",
     "table": "It looks like there was a problem loading your table file. {{suggestion}}",
     "xml": "It looks like there was a problem loading your XML file. {{suggestion}}"
   }
