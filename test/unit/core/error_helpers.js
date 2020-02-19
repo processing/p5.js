@@ -14,6 +14,18 @@ suite('Error Helpers', function() {
     myp5.remove();
   });
 
+  suite('friendly error logger', function() {
+    test('basic', function() {
+      assert.doesNotThrow(
+        function() {
+          p5._friendlyError('basic');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+  });
+
   // unit tests for validateParameters
   suite('validateParameters: Numbers + optional Constant', function() {
     test('arc(): no friendly-err-msg', function() {
