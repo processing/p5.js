@@ -43,7 +43,7 @@
  */
 import p5 from './main';
 import * as constants from './constants';
-import translator from './internationalization';
+import { translator } from './internationalization';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
