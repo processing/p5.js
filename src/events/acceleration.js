@@ -134,7 +134,9 @@ p5.prototype._updatePAccelerations = function() {
 
 /**
  * The system variable rotationX always contains the rotation of the
- * device along the x axis. Value is represented as 0 to +/-180 degrees.
+ * device along the x axis. If the sketch <a href="#/p5/angleMode">
+ * angleMode()</a> is set to DEGREES, the value will be -180 to 180. If
+ * it is set to RADIANS, the value will be -PI to PI.
  * <br><br>
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
