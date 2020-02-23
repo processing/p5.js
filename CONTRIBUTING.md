@@ -6,5 +6,5 @@ Please make sure you are posting to the correct repository. See this [section](h
 
 Please be sure to review our [community statement and code of conduct](https://github.com/processing/p5.js/blob/master/CODE_OF_CONDUCT.md). These things are very important to us.
 
-Check out the [developer docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing code, bug fixes, and documentation.
+Check out the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing code, bug fixes, and documentation.
 
