@@ -43,7 +43,7 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-Once added, a steward's username will remain in the [stewards section of the readme]() until they request to be removed. If a steward is unresponsive for an extended period of time, we may ping them to ask about their status. And you can always take a break as a steward and come back!
+Once added, a steward's username will remain in the [stewards section of the readme](https://github.com/processing/p5.js#stewards) until they request to be removed. If a steward is unresponsive for an extended period of time, we may ping them to ask about their status. And you can always take a break as a steward and come back!
 
 
 
