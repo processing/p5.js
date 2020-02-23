@@ -2,7 +2,7 @@
 
 # [p5.js](http://p5js.org)
 
-Hello! p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
+Welcome! 👋 p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 
 Using the original metaphor of a software sketchbook, p5.js has a full set of drawing functionality. However, you're not limited to your drawing canvas, you can think of your whole browser page as your sketch! For this, p5.js has addon libraries that make it easy to interact with other HTML5 objects, including text, input, video, webcam, and sound.
 
@@ -45,15 +45,29 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
-Developers, check out the [developer docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing code, bug fixes, and documentation.
+Developers, check out the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing code, bug fixes, and documentation.
+
+
+
+## Stewards
+
+Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md).
+
+Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
+
+* @lmccart project lead
+* more to come...
+
+
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+
 <table>
   <tr>
     <td align="center"><a href="http://lauren-mccarthy.com"><img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;" alt=""/><br /><sub><b>Lauren McCarthy</b></sub></a><br /></td>
