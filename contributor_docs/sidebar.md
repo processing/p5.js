@@ -8,6 +8,7 @@
   - [Discussions](discussions.md)
   - [Design Principles](design_principles.md)
   - [Roadmap](roadmap.md)
+  - [How Contributions are Organized](organization.md)
 - __CONTRIBUTING CODE__
   - [Creating Libraries](creating_libraries.md)
   - [Opening a Pull Request](preparing_a_pull_request.md)
