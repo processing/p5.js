@@ -720,9 +720,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 // For more details, see https://github.com/processing/p5.js/issues/1121.
 let misusedAtTopLevelCode = null;
 const FAQ_URL =
-  'https://github.com/processing/p5.js/wiki/p5.js-overview' +
-  '#why-cant-i-assign-variables-using-p5-functions-and-' +
-  'variables-before-setup';
+  'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
 
 const defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
