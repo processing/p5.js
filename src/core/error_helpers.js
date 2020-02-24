@@ -91,15 +91,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
     //const astrixTxtColor = '#ED225D';
     //const welcomeBgColor = '#ED225D';
     //const welcomeTextColor = 'white';
+    const welcomeMessage = translator('fes.pre', {
+      message: translator('fes.welcome')
+    });
     console.log(
       '    _ \n' +
         ' /\\| |/\\ \n' +
         " \\ ` ' /  \n" +
         ' / , . \\  \n' +
         ' \\/|_|\\/ ' +
-        '\n\n> p5.js says: Welcome! ' +
-        'This is your friendly debugger. ' +
-        'To turn me off switch to using “p5.min.js”.'
+        '\n\n' +
+        welcomeMessage
     );
   };
 
@@ -798,12 +800,14 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
     if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
+      const symbolName =
+        symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
       log(
-        `Did you just try to use p5.js's ${symbol.name}${
-          symbol.type === 'function' ? '() ' : ' '
-        }${
-          symbol.type
-        }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+        translator('fes.misusedTopLevel', {
+          symbolName,
+          symbolType: symbol.type,
+          link: FAQ_URL
+        })
       );
       return true;
     }
