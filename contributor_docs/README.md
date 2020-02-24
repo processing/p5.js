@@ -20,7 +20,7 @@ The overarching p5.js project includes some repositories other than this one:
 
 
 
-# Repository file structure
+# Repository File Structure
 
 There are a lot of files here! Here's a brief overview. It can be confusing, but you don't need to understand every file in the repository to get started. We recommend beginning in one area (for example, fixing some inline documentation), and working your way outwards to exploring more. Luisa Pereira's [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) also gives a video tour of the tools and files used in the p5.js workflow.
 
@@ -45,7 +45,7 @@ We realize the documentation is the most important part of this project. Poor do
 
 
 
-# GitHub issue flow
+# GitHub Issue Flow
 
 * Known bugs and intended new features are tracked using [GitHub issues](https://github.com/processing/p5.js/issues). Issue [labels](./issue_labels.md) are used to sort issues into categories, such as those which are [suitable for beginners](https://github.com/processing/p5.js/labels/level%3Abeginner).
 
