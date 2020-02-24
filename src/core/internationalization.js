@@ -8,9 +8,12 @@ import resources from '../../translations';
  * (within supported languages) according to the
  * user's browser's language settings.
  *
- * (We'll set this to a real value in the init function below!)
+ * @param {String} key a key that corresponds to a message in our translation files
+ * @param {Object} values values for use in the message under the given `key`
+ * @returns {String} message (with values inserted) in the user's browser language
  */
 export let translator;
+// (We'll set this to a real value in the init function below!)
 
 /**
  * Set up our translation function, with loaded languages
