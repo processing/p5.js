@@ -138,53 +138,57 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // mapping used by `_friendlyFileLoadError`
   const fileLoadErrorCases = (num, filePath) => {
+    const suggestion = translator('fileLoadError.suggestion', {
+      filePath,
+      link: 'https://github.com/processing/p5.js/wiki/Local-server'
+    });
     switch (num) {
       case 0:
         return {
           message: translator('fileLoadError.image', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadImage'
         };
       case 1:
         return {
           message: translator('fileLoadError.xml', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadXML'
         };
       case 2:
         return {
           message: translator('fileLoadError.table', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadTable'
         };
       case 3:
         return {
           message: translator('fileLoadError.strings', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadStrings'
         };
       case 4:
         return {
           message: translator('fileLoadError.font', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadFont'
         };
       case 5:
         return {
           message: translator('fileLoadError.json', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadJSON'
         };
       case 6:
         return {
           message: translator('fileLoadError.bytes', {
-            suggestion: translator('fileLoadError.suggestion', { filePath })
+            suggestion
           }),
           method: 'loadBytes'
         };
