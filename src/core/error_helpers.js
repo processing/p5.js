@@ -235,13 +235,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    */
   p5._friendlyAutoplayError = function(src) {
-    report(
-      translator('fes.autoplay', {
-        src,
-        link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
-      }),
-      'autoplay'
-    );
+    const message = translator('fes.autoplay', {
+      src,
+      link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+    });
+    console.log(translator('fes.pre', { message }));
   };
 
   const docCache = {};

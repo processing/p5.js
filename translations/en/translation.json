@@ -1,7 +1,7 @@
 {
   "fes": {
     "pre": "p5.js says: {{message}}",
-    "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out {{link}} for more information about why."
+    "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out {{link}} for more information about why.",
   },
   "fileLoadError": {
     "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
