@@ -1,6 +1,7 @@
 {
   "fes": {
-    "pre": "p5.js dice: {{message}}"
+    "pre": "p5.js dice: {{message}}",
+    "autoplay": ""
   },
   "fileLoadError": {
     "bytes": "",

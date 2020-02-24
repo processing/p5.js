@@ -232,7 +232,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
    */
   p5._friendlyAutoplayError = function(src) {
     report(
-      `The media that tried to play (with "${src}") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
+      translator('fes.autoplay', {
+        src,
+        link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+      }),
       'autoplay'
     );
   };
