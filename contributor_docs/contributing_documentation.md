@@ -26,7 +26,7 @@ While the examples in the reference are meant to be very simplistic snippets of 
 
 ## 👉 Getting started
 * Read the [p5.js community statement](http://p5js.org/community/)
-* Optional: Check out the [developer docs](./README.md) to get an overview of the repository and learn how to build the code (if relevant for you).
+* Optional: Check out the [contributor docs](./README.md) to get an overview of the repository and learn how to build the code (if relevant for you).
 * All discussion happens on github issues, so there's no slack/gitter/etc channel you need to join.
 * Add your name to the [contributors list](https://github.com/processing/p5.js#contributors) in the readme.md file! Instructions [here](https://github.com/processing/p5.js/issues/2309).
 * And of course, if you're more of a bug fixer kind of person, feel free to jump into any of the [issues](https://github.com/processing/p5.js/issues)!

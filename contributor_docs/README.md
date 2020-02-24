@@ -31,8 +31,6 @@ Aside from the code itself, you may also need to supply some combination of the 
 
 The p5.js site includes [integrated examples](http://p5js.org/examples/). You can [add more](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md), and there is an issue which lists some [desired examples](https://github.com/processing/p5.js/issues/1954).
 
-## ES6
-p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
 
 ## Other Ideas
 
@@ -165,3 +163,4 @@ The overarching p5.js project includes repositories other than this one.
 - [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
 - The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
 - The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.
+- p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
