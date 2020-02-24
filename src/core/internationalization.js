@@ -13,7 +13,10 @@ import resources from '../../translations';
  * @returns {String} message (with values inserted) in the user's browser language
  * @private
  */
-export let translator;
+export let translator = () => {
+  console.debug('p5.js translator called before translations were loaded');
+  return '';
+};
 // (We'll set this to a real value in the init function below!)
 
 /**
