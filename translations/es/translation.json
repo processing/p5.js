@@ -1,8 +1,8 @@
 {
   "fes": {
-    "pre": "p5.js dice: {{message}}",
     "autoplay": "",
     "misusedTopLevel": "",
+    "pre": "*️⃣ p5.js dice: {{message}}",
     "welcome": ""
   },
   "fileLoadError": {

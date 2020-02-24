@@ -1,8 +1,8 @@
 {
   "fes": {
-    "pre": "p5.js says: {{message}}",
     "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out {{link}} for more information about why.",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
+    "pre": "*️⃣ p5.js says: {{message}}",
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js."
   },
   "fileLoadError": {
