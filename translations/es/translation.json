@@ -1,6 +1,6 @@
 {
   "fes": {
-    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para más información, visite {{link}}.",
+    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
     "fileLoadError": {
       "bytes": "",
       "font": "",
