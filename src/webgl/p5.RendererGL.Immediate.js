@@ -126,8 +126,12 @@ p5.RendererGL.prototype.endShape = function(
 
   if (this.immediateMode.geometry.vertices.length > 1) {
     this._drawImmediateFill();
+  }
+
+  if (this.immediateMode.geometry.lineVertices.length > 1) {
     this._drawImmediateStroke();
   }
+
   this.isBezier = false;
   this.isQuadratic = false;
   this.isCurve = false;
