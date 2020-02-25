@@ -31,6 +31,12 @@ export const initialize = () =>
         nestingPrefix: '$tr(',
         nestingSuffix: ')',
         defaultNS: 'translation',
+        interpolation: {
+          escapeValue: false
+        },
+        detection: {
+          checkWhitelist: false
+        },
         resources
       })
       .then(
