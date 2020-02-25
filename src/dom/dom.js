@@ -3436,7 +3436,7 @@ p5.File = function(file, pInst) {
   this.size = file.size;
 
   /**
-   * URL string containing image data.
+   * URL string containing image data or the text contents of the file.
    *
    * @property data
    */
@@ -3456,7 +3456,7 @@ p5.File._createLoader = function(theFile, callback) {
 p5.File._load = function(f, callback) {
   // Text or data?
   // This should likely be improved
-  if (/^text\//.test(f.type)) {
+  if (/^text\/|json/.test(f.type)) {
     p5.File._createLoader(f, callback).readAsText(f);
   } else if (!/^(video|audio)\//.test(f.type)) {
     p5.File._createLoader(f, callback).readAsDataURL(f);
