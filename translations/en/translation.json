@@ -14,7 +14,7 @@
       "xml": "It looks like there was a problem loading your XML file. {{suggestion}}"
     },
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
-    "pre": "*️⃣ p5.js says: {{message}}",
+    "pre": "🌸 p5.js says: {{message}}",
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js."
   }
 }
