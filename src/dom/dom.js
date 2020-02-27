@@ -3436,7 +3436,8 @@ p5.File = function(file, pInst) {
   this.size = file.size;
 
   /**
-   * URL string containing image data or the text contents of the file.
+   * URL string containing either image data, the text contents of the file or
+   * a parsed object if file is JSON and p5.XML if XML
    *
    * @property data
    */
@@ -3447,7 +3448,17 @@ p5.File._createLoader = function(theFile, callback) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var p5file = new p5.File(theFile);
-    p5file.data = e.target.result;
+    if (p5file.file.type === 'application/json') {
+      // Parse JSON and store the result in data
+      p5file.data = JSON.parse(e.target.result);
+    } else if (p5file.file.type === 'text/xml') {
+      // Parse XML, wrap it in p5.XML and store the result in data
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(e.target.result, 'text/xml');
+      p5file.data = new p5.XML(xml.documentElement);
+    } else {
+      p5file.data = e.target.result;
+    }
     callback(p5file);
   };
   return reader;
