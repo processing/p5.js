@@ -1,0 +1,20 @@
+{
+  "fes": {
+    "autoplay": "",
+    "fileLoadError": {
+      "bytes": "",
+      "font": "",
+      "gif": "",
+      "image": "",
+      "json": "",
+      "large": "",
+      "strings": "",
+      "suggestion": "",
+      "table": "",
+      "xml": ""
+    },
+    "misusedTopLevel": "",
+    "pre": "🌸 p5.js dice: {{message}}",
+    "welcome": ""
+  }
+}

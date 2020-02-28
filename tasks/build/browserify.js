@@ -36,7 +36,9 @@ module.exports = function(grunt) {
       });
 
       if (isMin) {
-        browseified = browseified.exclude('../../docs/reference/data.json');
+        browseified = browseified
+          .exclude('../../docs/reference/data.json')
+          .ignore('../../translations/index.js');
       }
 
       const babelifyOpts = { plugins: ['static-fs'] };
