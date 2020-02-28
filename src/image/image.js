@@ -206,9 +206,7 @@ p5.prototype.saveGif = function(pImg, filename) {
     loop: loopLimit
   };
 
-  const buffer = new Uint8Array(
-    pImg.width * pImg.height * props.numFrames * gifFormatDelay
-  );
+  const buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
   const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
   const palette = [];
   //loop over frames and build pixel -> palette index for each
