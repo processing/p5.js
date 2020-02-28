@@ -82,6 +82,8 @@ The easiest way to do this is to add your language code (like "de" for German, "
 
 This will generate you a fresh translations file in `translations/{LANGUAGE_CODE}/`! Now you can begin populating it with your fresh translations! 🥖
 
+You'll also need to add an entry for it in `translations/index.js`. You can follow the pattern used in that file for `en` and `es`.
+
 ### Further Reading
 
 See the [i18next translation function documentation](https://www.i18next.com/translation-function/essentials). Everything documented above is just a subset of their functionality.
