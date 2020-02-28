@@ -63,7 +63,7 @@ We realize the documentation is the most important part of this project. Poor do
 
 # Development Process
 
-We node the development process can be a little tricky at first. You're not alone, it's confusing for everyone at the beginning. The steps below walk you through the setup process. If you have questions, you can ask on the [forum](https://discourse.processing.org/c/p5js) or post an [issue](https://github.com/processing/p5.js/issues) that describes the place you are stuck, and we'll do our best to help.
+We know the development process can be a little tricky at first. You're not alone, it's confusing for everyone at the beginning. The steps below walk you through the setup process. If you have questions, you can ask on the [forum](https://discourse.processing.org/c/p5js) or post an [issue](https://github.com/processing/p5.js/issues) that describes the place you are stuck, and we'll do our best to help.
 
 This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
 
@@ -187,7 +187,7 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
 # Miscellaneous
 
-- There are a other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
+- There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
 - [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
 -  [This video from The Coding Train](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: gives an overview of getting started with technical contribution to p5.js.
 - The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
