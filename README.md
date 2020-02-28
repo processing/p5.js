@@ -54,7 +54,7 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* @lmccart project lead
+* [@lmccart](https://github.com/lmccart) project lead
 * more to come...
 
 ## Contributors
