@@ -801,8 +801,8 @@ p5.prototype.shininess = function(shine) {
 
 /**
  * @private blends colors according to color components.
- * If alpha value is less than 1, we need to enable blending
- * on our gl context.  Otherwise opaque objects need to a depthMask.
+ * If alpha value is less than 1, or non-standard blendMode
+ * we need to enable blending on our gl context.
  * @param  {Number[]} color [description]
  * @return {Number[]]}  Normalized numbers array
  */
@@ -814,13 +814,16 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
     isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
 
   if (doBlend !== this._isBlending) {
-    if (doBlend) {
-      gl.depthMask(isTexture);
+    if (
+      doBlend ||
+      (this.curBlendMode !== constants.BLEND &&
+        this.curBlendMode !== constants.ADD)
+    ) {
       gl.enable(gl.BLEND);
     } else {
-      gl.depthMask(true);
       gl.disable(gl.BLEND);
     }
+    gl.depthMask(true);
     this._isBlending = doBlend;
   }
   this._applyBlendMode();
