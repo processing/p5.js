@@ -2,6 +2,7 @@
 
 This folder contains the core functionality of p5.js, including the init and main files, environment, constants, the friendly error system, and the graphics pipeline (with the exception of 3D/WebGL). [Here is a diagram](
 https://sketchboard.me/zBOkvPuQisyA#/) that outlines how the main graphics-related classes inherit from and extend one another. There is still more to be done to document this pipeline more clearly.
+
 ![class diagram, interactive version viewable in above link](../../contributor_docs/images/p5-graphics-diagram.png)
 
 ## [init.js](./init.js)
