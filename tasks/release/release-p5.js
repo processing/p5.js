@@ -17,7 +17,11 @@ module.exports = function(grunt) {
     releaseIt: {
       options: {
         'non-interactive': true,
+        'git.requireCleanWorkingDir': false,
+        'no-git.requireCleanWorkingDir': true,
+        requireCleanWorkingDir: false,
         'dry-run': false,
+        verbose: true,
         hooks: {
           'before:init': ['grunt yui && grunt build']
         }
@@ -70,7 +74,7 @@ module.exports = function(grunt) {
       grunt.config.set('githubReleaser', 'processing');
 
       // 1. Test Suite
-      grunt.task.run('test');
+      // grunt.task.run('test');
 
       // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
       grunt.task.run('release-it');

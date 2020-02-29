@@ -78,7 +78,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.20.0",
     "regenerator-runtime": "^0.13.3",
-    "release-it": "^12.4.3",
+    "release-it": "^12.6.2",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4"
   },
