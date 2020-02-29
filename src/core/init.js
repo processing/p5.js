@@ -44,6 +44,6 @@ const waitForDocumentReady = () =>
 
 // only load translations if we're using the full, un-minified library
 const waitingForTranslator =
-  typeof IS_MINIFIED === undefined ? initTranslator() : Promise.resolve();
+  typeof IS_MINIFIED === 'undefined' ? initTranslator() : Promise.resolve();
 
 Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
