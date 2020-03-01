@@ -257,7 +257,9 @@ p5.prototype.saveGif = function(pImg, filename) {
     .split(',')
     .map(a => parseInt(a));
 
-  framesUsingGlobalPalette.concat(paletteFreqsAndFrames[globalPalette].frames);
+  framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+    paletteFreqsAndFrames[globalPalette].frames
+  );
 
   const globalPaletteSet = new Set(globalPalette);
 
@@ -277,7 +279,7 @@ p5.prototype.saveGif = function(pImg, filename) {
       }
 
       // All frames using this palette now use the global palette
-      framesUsingGlobalPalette.concat(
+      framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
         paletteFreqsAndFrames[palettesSortedByFreq[i]].frames
       );
     }
@@ -317,8 +319,7 @@ p5.prototype.saveGif = function(pImg, filename) {
   // transparent pixels take this color. This helps in later in compression.
   for (let i = 0; i < props.numFrames; i++) {
     const localPaletteRequired = !framesUsingGlobalPalette.has(i);
-
-    const palette = [];
+    const palette = localPaletteRequired ? [] : globalPalette;
     const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
 
     // Lookup table mapping color to its indices
