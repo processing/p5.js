@@ -240,7 +240,8 @@ p5.Vector.prototype.copy = function copy() {
  * Adds x, y, and z components to a vector, adds one vector to another, or
  * adds two independent vectors together. The version of the method that adds
  * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
- * acts directly on the vector. See the examples for more context.
+ * acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method add
  * @param  {Number} x   the x component of the vector to be added
@@ -252,6 +253,16 @@ p5.Vector.prototype.copy = function copy() {
  * <code>
  * let v = createVector(1, 2, 3);
  * v.add(4, 5, 6);
+ * // v's components are set to [5, 7, 9]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v = createVector(1, 2, 3);
+ * // Provide arguments as an array
+ * let arr = [4, 5, 6];
+ * v.add(arr);
  * // v's components are set to [5, 7, 9]
  * </code>
  * </div>
@@ -437,7 +448,8 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method
  * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
- * other acts directly on the vector. See the examples for more context.
+ * other acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method sub
  * @param  {Number} x   the x component of the vector to subtract
@@ -449,6 +461,16 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
  * <code>
  * let v = createVector(4, 5, 6);
  * v.sub(1, 1, 1);
+ * // v's components are set to [3, 4, 5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v = createVector(4, 5, 6);
+ * // Provide arguments as an array
+ * let arr = [1, 1, 1];
+ * v.sub(arr);
  * // v's components are set to [3, 4, 5]
  * </code>
  * </div>
@@ -525,9 +547,13 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 
 /**
  * Multiplies the vector by a scalar, multiplies the x, y, and z components from a vector, or multiplies
- * the x, y, and z components of two independent vectors. The static version of this method
+ * the x, y, and z components of two independent vectors. When multiplying a vector by a scalar, the x, y,
+ * and z components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
+ * the x, y, z components of both vectors are multiplied by each other
+ * (for example, with two vectors a and b: a.x * b.x, a.y * b.y, a.z * b.z). The static version of this method
  * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
- * directly. See the examples for more context.
+ * directly. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method mult
  * @param  {Number}    n the number to multiply with the vector
@@ -546,6 +572,15 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * let v0 = createVector(1, 2, 3);
  * let v1 = createVector(2, 3, 4);
  * v0.mult(v1); // v0's components are set to [2, 6, 12]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * // Provide arguments as an array
+ * let arr = [2, 3, 4];
+ * v0.mult(arr); // v0's components are set to [2, 6, 12]
  * </code>
  * </div>
  *
@@ -626,8 +661,13 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
 
 /**
  * Divides the vector by a scalar, divides a vector by the x, y, and z arguments, or divides the x, y, and
- * z components of two vectors against each other. The static version of this method creates a
+ * z components of two vectors against each other. When dividing a vector by a scalar, the x, y,
+ * and z components of the vector are all divided by the scalar. When dividing a vector by a vector,
+ * the x, y, z components of the source vector are treated as the dividend, and the x, y, z components
+ * of the argument is treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
+ * The static version of this method creates a
  * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
+ * Additionally, you may provide arguments to this function as an array.
  * See the examples for more context.
  *
  * @method div
@@ -646,6 +686,15 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * let v0 = createVector(9, 4, 2);
  * let v1 = createVector(3, 2, 4);
  * v0.div(v1); // v0's components are set to [3, 2, 0.5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * // Provide arguments as an array
+ * let arr = [3, 2, 4];
+ * v0.div(arr); // v0's components are set to [3, 2, 0.5]
  * </code>
  * </div>
  *
