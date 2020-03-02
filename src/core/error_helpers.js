@@ -43,6 +43,7 @@
  */
 import p5 from './main';
 import * as constants from './constants';
+import { translator } from './internationalization';
 
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
@@ -90,15 +91,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
     //const astrixTxtColor = '#ED225D';
     //const welcomeBgColor = '#ED225D';
     //const welcomeTextColor = 'white';
+    const welcomeMessage = translator('fes.pre', {
+      message: translator('fes.welcome')
+    });
     console.log(
       '    _ \n' +
         ' /\\| |/\\ \n' +
         " \\ ` ' /  \n" +
         ' / , . \\  \n' +
         ' \\/|_|\\/ ' +
-        '\n\n> p5.js says: Welcome! ' +
-        'This is your friendly debugger. ' +
-        'To turn me off switch to using “p5.min.js”.'
+        '\n\n' +
+        welcomeMessage
     );
   };
 
@@ -124,62 +127,83 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // Type to color
       color = typeColors[color];
     }
-    if (func === 'loadX') {
-      console.log(`> p5.js says: ${message}`);
-    } else if (func.substring(0, 4) === 'load') {
-      console.log(
-        `> p5.js says: ${message}[https://github.com/processing/p5.js/wiki/Local-server]`
-      );
+    if (func.substring(0, 4) === 'load') {
+      console.log(translator('fes.pre', { message }));
     } else {
       console.log(
-        `> p5.js says: ${message} [http://p5js.org/reference/#p5/${func}]`
+        translator('fes.pre', {
+          message: `${message} (http://p5js.org/reference/#p5/${func})`
+        })
       );
     }
   };
 
   // mapping used by `_friendlyFileLoadError`
-  const fileLoadErrorCases = {
-    '0': {
-      fileType: 'image',
-      method: 'loadImage',
-      message: ' hosting the image online,'
-    },
-    '1': {
-      fileType: 'XML file',
-      method: 'loadXML'
-    },
-    '2': {
-      fileType: 'table file',
-      method: 'loadTable'
-    },
-    '3': {
-      fileType: 'text file',
-      method: 'loadStrings'
-    },
-    '4': {
-      fileType: 'font',
-      method: 'loadFont',
-      message: ' hosting the font online,'
-    },
-    '5': {
-      fileType: 'json',
-      method: 'loadJSON'
-    },
-    '6': {
-      fileType: 'file',
-      method: 'loadBytes'
-    },
-    '7': {
-      method: 'loadX',
-      message:
-        "In case your large file isn't fetched successfully," +
-        'we recommend splitting the file into smaller segments and fetching those.'
-    },
-    '8': {
-      method: 'loadImage',
-      message:
-        'There was some trouble loading your GIF. Make sure that your' +
-        ' GIF is using 87a or 89a encoding.'
+  const fileLoadErrorCases = (num, filePath) => {
+    const suggestion = translator('fes.fileLoadError.suggestion', {
+      filePath,
+      link: 'https://github.com/processing/p5.js/wiki/Local-server'
+    });
+    switch (num) {
+      case 0:
+        return {
+          message: translator('fes.fileLoadError.image', {
+            suggestion
+          }),
+          method: 'loadImage'
+        };
+      case 1:
+        return {
+          message: translator('fes.fileLoadError.xml', {
+            suggestion
+          }),
+          method: 'loadXML'
+        };
+      case 2:
+        return {
+          message: translator('fes.fileLoadError.table', {
+            suggestion
+          }),
+          method: 'loadTable'
+        };
+      case 3:
+        return {
+          message: translator('fes.fileLoadError.strings', {
+            suggestion
+          }),
+          method: 'loadStrings'
+        };
+      case 4:
+        return {
+          message: translator('fes.fileLoadError.font', {
+            suggestion
+          }),
+          method: 'loadFont'
+        };
+      case 5:
+        return {
+          message: translator('fes.fileLoadError.json', {
+            suggestion
+          }),
+          method: 'loadJSON'
+        };
+      case 6:
+        return {
+          message: translator('fes.fileLoadError.bytes', {
+            suggestion
+          }),
+          method: 'loadBytes'
+        };
+      case 7:
+        return {
+          message: translator('fes.fileLoadError.large'),
+          method: 'loadX'
+        };
+      case 8:
+        return {
+          message: translator('fes.fileLoadError.gif'),
+          method: 'loadImage'
+        };
     }
   };
 
@@ -192,17 +216,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {String} filePath
    */
   p5._friendlyFileLoadError = function(errorType, filePath) {
-    const errorInfo = fileLoadErrorCases[errorType];
-    let message;
-    if (errorType === 7 || errorType === 8) {
-      message = errorInfo.message;
-    } else {
-      message = `It looks like there was a problem loading your ${
-        errorInfo.fileType
-      }. Try checking if the file path [${filePath}] is correct,${errorInfo.message ||
-        ''} or running a local server.`;
-    }
-    report(message, errorInfo.method, 3);
+    const { message, method } = fileLoadErrorCases(errorType, filePath);
+    report(message, method, 3);
   };
 
   /**
@@ -225,10 +240,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    */
   p5._friendlyAutoplayError = function(src) {
-    report(
-      `The media that tried to play (with "${src}") wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out https://developer.mozilla.org/en-US/docs/Web/Media/Autoplay_guide for more information about why.`,
-      'autoplay'
-    );
+    const message = translator('fes.autoplay', {
+      src,
+      link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+    });
+    console.log(translator('fes.pre', { message }));
   };
 
   const docCache = {};
@@ -707,9 +723,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 // For more details, see https://github.com/processing/p5.js/issues/1121.
 let misusedAtTopLevelCode = null;
 const FAQ_URL =
-  'https://github.com/processing/p5.js/wiki/p5.js-overview' +
-  '#why-cant-i-assign-variables-using-p5-functions-and-' +
-  'variables-before-setup';
+  'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
 
 const defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
@@ -789,12 +803,14 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
     if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
+      const symbolName =
+        symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
       log(
-        `Did you just try to use p5.js's ${symbol.name}${
-          symbol.type === 'function' ? '() ' : ' '
-        }${
-          symbol.type
-        }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+        translator('fes.misusedTopLevel', {
+          symbolName,
+          symbolType: symbol.type,
+          link: FAQ_URL
+        })
       );
       return true;
     }

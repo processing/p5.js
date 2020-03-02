@@ -1,0 +1,20 @@
+{
+  "fes": {
+    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
+    "fileLoadError": {
+      "bytes": "",
+      "font": "",
+      "gif": "",
+      "image": "",
+      "json": "",
+      "large": "",
+      "strings": "",
+      "suggestion": "",
+      "table": "",
+      "xml": ""
+    },
+    "misusedTopLevel": "",
+    "pre": "🌸 p5.js dice: {{message}}",
+    "welcome": ""
+  }
+}

@@ -31,12 +31,13 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "0.10.2",
+  "version": "1.0.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "@babel/register": "^7.7.7",
     "all-contributors-cli": "^5.11.0",
+    "babel-plugin-i18next-extract": "^0.5.0",
     "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-static-fs": "^1.2.1",
     "babelify": "^10.0.0",
@@ -65,6 +66,8 @@
     "grunt-newer": "^1.1.0",
     "grunt-simple-nyc": "^3.0.1",
     "husky": "^0.14.3",
+    "i18next": "^19.0.2",
+    "i18next-browser-languagedetector": "^4.0.1",
     "libtess": "^1.2.2",
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
@@ -75,7 +78,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^1.20.0",
     "regenerator-runtime": "^0.13.3",
-    "release-it": "^12.4.3",
+    "release-it": "^12.6.2",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4"
   },
@@ -100,6 +103,21 @@
   "babel": {
     "presets": [
       "@babel/preset-env"
+    ],
+    "plugins": [
+      [
+        "i18next-extract",
+        {
+          "locales": [
+            "en",
+            "es"
+          ],
+          "outputPath": "translations/{{locale}}/{{ns}}.json",
+          "tFunctionNames": [
+            "translator"
+          ]
+        }
+      ]
     ],
     "generatorOpts": {
       "retainLines": true

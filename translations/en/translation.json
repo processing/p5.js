@@ -1,0 +1,20 @@
+{
+  "fes": {
+    "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out {{link}} for more information about why.",
+    "fileLoadError": {
+      "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
+      "font": "It looks like there was a problem loading your font. {{suggestion}}",
+      "gif": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
+      "image": "It looks like there was a problem loading your image. {{suggestion}}",
+      "json": "It looks like there was a problem loading your JSON file. {{suggestion}}",
+      "large": "If your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those.",
+      "strings": "It looks like there was a problem loading your text file. {{suggestion}}",
+      "suggestion": "Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server. (More info at {{link}})",
+      "table": "It looks like there was a problem loading your table file. {{suggestion}}",
+      "xml": "It looks like there was a problem loading your XML file. {{suggestion}}"
+    },
+    "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
+    "pre": "🌸 p5.js says: {{message}}",
+    "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js."
+  }
+}

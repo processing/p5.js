@@ -18,6 +18,10 @@ module.exports = function(grunt) {
       options: {
         'non-interactive': true,
         'dry-run': false,
+        git: {
+          requireCleanWorkingDir: false
+        },
+        verbose: true,
         hooks: {
           'before:init': ['grunt yui && grunt build']
         }
