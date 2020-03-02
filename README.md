@@ -1,6 +1,6 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
-# [p5.js](http://p5js.org)
+# [p5.js](https://p5js.org)
 
  Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼 
 
@@ -16,7 +16,7 @@ The [p5js.org](https://p5js.org) website contains an extensive overview of the p
 
 We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, and background. We acknowledge that not everyone has the time, financial means, or capacity to actively participate, but we recognize and encourage involvement of all kinds. We facilitate and foster access and empowerment. We are all learners.
 
-p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started! You can also check out the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
+p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
 
 Learn more about [our community](https://p5js.org/community/) and read our community statement. You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
 
@@ -24,7 +24,7 @@ Learn more about [our community](https://p5js.org/community/) and read our commu
 
 Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
 
-To get the complete p5.js library on your own computer, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more information about our build process.
+To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more information about our build process.
 
 ## Issues
 
@@ -38,14 +38,14 @@ If you have found a bug in the p5.js library, you can file it here under the [�
 
 ## Learning
 
-Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
+Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
 
-* [Get Started](http://p5js.org/get-started): Create and run your first sketch!
+* [Get Started](https://p5js.org/get-started): Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview): An overview of the main features and functionality of p5.js
-* [Reference](http://p5js.org/reference): The functionality supported by p5.js
-* [Learn](//p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
-* [Forum](http://forum.processing.org/two/categories/p5-js): Ask and answers questions about how to make things with p5.js here
-* [Libraries](http://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
+* [Reference](https://p5js.org/reference): The functionality supported by p5.js
+* [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
+* [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
+* [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/Tutorials/): A huge trove of tutorials created by Dan Shiffman and friends
 
 ## Stewards
