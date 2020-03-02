@@ -639,23 +639,80 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  */
 p5.Vector.prototype.mult = function mult(x, y, z) {
   if (x instanceof p5.Vector) {
-    this.x *= x.x || 0;
-    this.y *= x.y || 0;
-    this.z *= x.z || 0;
+    // new p5.Vector will check that values are valid upon construction but it's possible
+    // that someone could change the value of a component after creation, which is why we still
+    // perform this check
+    if (
+      Number.isFinite(x.x) &&
+      Number.isFinite(x.y) &&
+      Number.isFinite(x.z) &&
+      typeof x.x === 'number' &&
+      typeof x.y === 'number' &&
+      typeof x.z === 'number'
+    ) {
+      this.x *= x.x;
+      this.y *= x.y;
+      this.z *= x.z;
+    } else {
+      console.warn(
+        'p5.Vector.prototype.mult:',
+        'x contains components that are either undefined or not finite numbers'
+      );
+    }
     return this;
   }
   if (x instanceof Array) {
-    this.x *= x[0] || 0;
-    this.y *= x[1] || 0;
-    this.z *= x[2] || 0;
+    if (
+      x.every(element => Number.isFinite(element)) &&
+      x.every(element => typeof element === 'number')
+    ) {
+      if (x.length === 1) {
+        this.x *= x[0];
+        this.y *= x[0];
+        this.z *= x[0];
+      } else if (x.length === 2) {
+        this.x *= x[0];
+        this.y *= x[1];
+      } else if (x.length === 3) {
+        this.x *= x[0];
+        this.y *= x[1];
+        this.z *= x[2];
+      }
+    } else {
+      console.warn(
+        'p5.Vector.prototype.mult:',
+        'x contains elements that are either undefined or not finite numbers'
+      );
+    }
     return this;
   }
-  const _x = x || 1;
-  const _y = y || x;
-  const _z = z || x;
-  this.x *= _x;
-  this.y *= _y;
-  this.z *= _z;
+
+  const vectorComponents = [...arguments];
+  if (
+    vectorComponents.every(element => Number.isFinite(element)) &&
+    vectorComponents.every(element => typeof element === 'number')
+  ) {
+    if (arguments.length === 1) {
+      this.x *= x;
+      this.y *= x;
+      this.z *= x;
+    }
+    if (arguments.length === 2) {
+      this.x *= x;
+      this.y *= y;
+    }
+    if (arguments.length === 3) {
+      this.x *= x;
+      this.y *= y;
+      this.z *= z;
+    }
+  } else {
+    console.warn(
+      'p5.Vector.prototype.mult:',
+      'x, y, or z arguments are either undefined or not a finite number'
+    );
+  }
+
   return this;
 };
 
@@ -753,35 +810,90 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  */
 p5.Vector.prototype.div = function div(x, y, z) {
   if (x instanceof p5.Vector) {
-    if (x.x === 0 || x.y === 0 || x.z === 0) {
-      console.warn('p5.Vector.prototype.div:', 'divide by 0');
+    // new p5.Vector will check that values are valid upon construction but it's possible
+    // that someone could change the value of a component after creation, which is why we still
+    // perform this check
+    if (
+      Number.isFinite(x.x) &&
+      Number.isFinite(x.y) &&
+      Number.isFinite(x.z) &&
+      typeof x.x === 'number' &&
+      typeof x.y === 'number' &&
+      typeof x.z === 'number'
+    ) {
+      if (x.x === 0 || x.y === 0 || x.z === 0) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        return this;
+      }
+      this.x /= x.x;
+      this.y /= x.y;
+      this.z /= x.z;
       return this;
+    } else {
+      console.warn(
+        'p5.Vector.prototype.div:',
+        'x contains components that are either undefined or not finite numbers'
+      );
     }
-    this.x /= x.x || 1;
-    this.y /= x.y || 1;
-    this.z /= x.z || 1;
-    return this;
   }
   if (x instanceof Array) {
-    if (x[0] === 0 || x[1] === 0 || x[2] === 0) {
-      console.warn('p5.Vector.prototype.div:', 'divide by 0');
-      return this;
+    if (
+      x.every(element => Number.isFinite(element)) &&
+      x.every(element => typeof element === 'number')
+    ) {
+      if (x.some(element => element === 0)) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        return this;
+      }
+
+      if (x.length === 1) {
+        this.x /= x[0];
+        this.y /= x[0];
+        this.z /= x[0];
+      } else if (x.length === 2) {
+        this.x /= x[0];
+        this.y /= x[1];
+      } else if (x.length === 3) {
+        this.x /= x[0];
+        this.y /= x[1];
+        this.z /= x[2];
+      }
+    } else {
+      console.warn(
+        'p5.Vector.prototype.div:',
+        'x contains components that are either undefined or not finite numbers'
+      );
     }
-    this.x /= x[0] || 1;
-    this.y /= x[1] || 1;
-    this.z /= x[2] || 1;
+
     return this;
   }
-  if (x === 0 || y === 0 || z === 0) {
-    console.warn('p5.Vector.prototype.div:', 'divide by 0');
-    return this;
+
+  const vectorComponents = [...arguments];
+  if (
+    vectorComponents.every(element => Number.isFinite(element)) &&
+    vectorComponents.every(element => typeof element === 'number')
+  ) {
+    if (arguments.length === 1) {
+      this.x /= x;
+      this.y /= x;
+      this.z /= x;
+    }
+    if (arguments.length === 2) {
+      this.x /= x;
+      this.y /= y;
+    }
+    if (arguments.length === 3) {
+      this.x /= x;
+      this.y /= y;
+      this.z /= z;
+    }
+  } else {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'x, y, or z arguments are either undefined or not a finite number'
+    );
   }
-  const _x = x || 1;
-  const _y = y || x;
-  const _z = z || x;
-  this.x /= _x;
-  this.y /= _y;
-  this.z /= _z;
+
   return this;
 };
 /**
