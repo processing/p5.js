@@ -402,7 +402,6 @@ function parseBinarySTL(model, buffer) {
         b = defaultB;
       }
     }
-    
     const newNormal = new p5.Vector(normalX, normalY, normalZ);
 
     for (let i = 1; i <= 3; i++) {
@@ -421,8 +420,6 @@ function parseBinarySTL(model, buffer) {
         colors.push(r, g, b);
       }
     }
-
-
 
     model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
     model.uvs.push([0, 0], [0, 0], [0, 0]);
