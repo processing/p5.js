@@ -402,26 +402,27 @@ function parseBinarySTL(model, buffer) {
         b = defaultB;
       }
     }
+    
+    const newNormal = new p5.Vector(normalX, normalY, normalZ);
 
     for (let i = 1; i <= 3; i++) {
       const vertexstart = start + i * 12;
 
       const newVertex = new p5.Vector(
         reader.getFloat32(vertexstart, true),
-        reader.getFloat32(vertexstart + 8, true),
-        reader.getFloat32(vertexstart + 4, true)
+        reader.getFloat32(vertexstart + 4, true),
+        reader.getFloat32(vertexstart + 8, true)
       );
 
       model.vertices.push(newVertex);
+      model.vertexNormals.push(newNormal);
 
       if (hasColors) {
         colors.push(r, g, b);
       }
     }
 
-    const newNormal = new p5.Vector(normalX, normalY, normalZ);
 
-    model.vertexNormals.push(newNormal, newNormal, newNormal);
 
     model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
     model.uvs.push([0, 0], [0, 0], [0, 0]);
