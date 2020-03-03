@@ -1426,44 +1426,65 @@ p5.PrintWriter = function(filename, extension) {
 // filename, [extension] [canvas] --> saveImage
 
 /**
- *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
- *  the client's computer. <b>Note that it is not recommended to call <a href="#/p5/save">save()</a>
- *  within draw if it's looping, as the <a href="#/p5/save">save()</a> function will open a new save
- *  dialog every frame.</b></p>
- *  <p>The default behavior is to save the canvas as an image. You can
- *  optionally specify a filename.
- *  For example:</p>
- * <pre class='language-javascript'><code>
- * save();
- * save('myCanvas.jpg'); // save a specific canvas with a filename
- * </code></pre>
+ *  Saves a given element(image, text, json, csv, wav, or html) to the client's
+ *  computer. The first parameter can be a pointer to element we want to save.
+ *  The element can be one of <a href="#/p5.Element">p5.Element</a>,an Array of
+ *  Strings, an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table
+ *  </a>, a <a href="#/p5.Image">p5.Image</a>, or a p5.SoundFile (requires
+ *  p5.sound). The second parameter is a filename (including extension).The
+ *  third parameter is for options specific to this type of object. This method
+ *  will save a file that fits the given parameters.
+ *  If it is called without specifying an element, by default it will save the
+ *  whole canvas as an image file. You can optionally specify a filename as
+ *  the first parameter in such a case.
+ *  **Note that it is not recommended to
+ *  call this method within draw, as it will open a new save dialog on every
+ *  render.**
  *
- *  <p>Alternately, the first parameter can be a pointer to a canvas
- *  <a href="#/p5.Element">p5.Element</a>, an Array of Strings,
- *  an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table</a>, a <a href="#/p5.Image">p5.Image</a>, or a
- *  p5.SoundFile (requires p5.sound). The second parameter is a filename
- *  (including extension). The third parameter is for options specific
- *  to this type of object. This method will save a file that fits the
- *  given parameters. For example:</p>
+ * @method save
+ * @param  {Object|String} [objectOrFilename]  If filename is provided, will
+ *                                             save canvas as an image with
+ *                                             either png or jpg extension
+ *                                             depending on the filename.
+ *                                             If object is provided, will
+ *                                             save depending on the object
+ *                                             and filename (see examples
+ *                                             above).
+ * @param  {String} [filename] If an object is provided as the first
+ *                               parameter, then the second parameter
+ *                               indicates the filename,
+ *                               and should include an appropriate
+ *                               file extension (see examples above).
+ * @param  {Boolean|String} [options]  Additional options depend on
+ *                            filetype. For example, when saving JSON,
+ *                            <code>true</code> indicates that the
+ *                            output will be optimized for filesize,
+ *                            rather than readability.
  *
- * <pre class='language-javascript'><code>
- * // Saves canvas as an image
- * save('myCanvas.jpg');
- *
- * // Saves pImage as a png image
- * let img = createImage(10, 10);
- * save(img, 'my.png');
- *
- * // Saves canvas as an image
- * let cnv = createCanvas(100, 100);
+ * @example
+ * <div class="norender"><code>
+ * // Saves the canvas as an image
+ * cnv = createCanvas(300, 300);
  * save(cnv, 'myCanvas.jpg');
  *
+ * // Saves the canvas as an image by default
+ * save('myCanvas.jpg');
+ * </code></div>
+ *
+ *  <div class="norender"><code>
+ * // Saves p5.Image as an image
+ * img = createImage(10, 10);
+ * save(img, 'myImage.png');
+ * </code></div>
+ *
+ * <div class="norender"><code>
  * // Saves p5.Renderer object as an image
- * let gb = createGraphics(100, 100);
- * save(gb, 'myGraphics.jpg');
+ * obj = createGraphics(100, 100);
+ * save(obj, 'myObject.png');
+ * </code></div>
  *
+ * <div class="norender"><code>
  * let myTable = new p5.Table();
- *
  * // Saves table as html file
  * save(myTable, 'myTable.html');
  *
@@ -1472,7 +1493,9 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Tab Separated Values
  * save(myTable, 'myTable.tsv');
+ * </code></div>
  *
+ * <div class="norender"><code>
  * let myJSON = { a: 1, b: true };
  *
  * // Saves pretty JSON
@@ -1480,32 +1503,23 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Optimizes JSON filesize
  * save(myJSON, 'my.json', true);
+ * </code></div>
  *
- * // Saves array of strings to a text file with line breaks after each item
+ * <div class="norender"><code>
+ * // Saves array of strings to text file with line breaks after each item
  * let arrayOfStrings = ['a', 'b'];
  * save(arrayOfStrings, 'my.txt');
- * </code></pre>
+ * </code></div>
  *
- *  @method save
- *  @param  {Object|String} [objectOrFilename]  If filename is provided, will
- *                                             save canvas as an image with
- *                                             either png or jpg extension
- *                                             depending on the filename.
- *                                             If object is provided, will
- *                                             save depending on the object
- *                                             and filename (see examples
- *                                             above).
- *  @param  {String} [filename] If an object is provided as the first
- *                               parameter, then the second parameter
- *                               indicates the filename,
- *                               and should include an appropriate
- *                               file extension (see examples above).
- *  @param  {Boolean|String} [options]  Additional options depend on
- *                            filetype. For example, when saving JSON,
- *                            <code>true</code> indicates that the
- *                            output will be optimized for filesize,
- *                            rather than readability.
+ * @alt
+ * An example for saving a canvas as an image.
+ * An example for saving a p5.Image element as an image.
+ * An example for saving a p5.Renderer element.
+ * An example showing how to save a table in formats of HTML, CSV and TSV.
+ * An example for saving JSON to a txt file with some extra arguments.
+ * An example for saving an array of strings to text file with line breaks.
  */
+
 p5.prototype.save = function(object, _filename, _options) {
   // parse the arguments and figure out which things we are saving
   const args = arguments;
