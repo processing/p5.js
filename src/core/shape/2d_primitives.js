@@ -618,17 +618,17 @@ p5.prototype.rect = function() {
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);
-  return this._renderRect.apply(this, arguments);
+  // duplicate width for height in case of square
+  return this._renderRect.call(this, x, y, s, s, tl, tr, br, bl);
 };
 
 // internal method to have renderer draw a rectangle
 p5.prototype._renderRect = function() {
   if (this._renderer._doStroke || this._renderer._doFill) {
-    // duplicate width for height if only one value given
+    // duplicate width for height in case only 3 arguments is provided
     if (arguments.length === 3) {
       arguments[3] = arguments[2];
     }
-
     const vals = canvas.modeAdjust(
       arguments[0],
       arguments[1],
