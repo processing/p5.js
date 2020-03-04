@@ -619,7 +619,7 @@ p5.prototype.rect = function() {
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);
   // duplicate width for height in case of square
-  return this._renderRect.apply(this, [x, y, s, s, tl, tr, br, bl]);
+  return this._renderRect.call(this, x, y, s, s, tl, tr, br, bl);
 };
 
 // internal method to have renderer draw a rectangle
