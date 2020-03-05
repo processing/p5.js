@@ -210,15 +210,16 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
 /**
  * Draws an ellipse (oval) to the screen. An ellipse with equal width and
- * height is a circle. By default, the first two parameters set the location,
- * and the third and fourth parameters set the shape's width and height. If
- * no height is specified, the value of width is used for both the width and
- * height. If a negative height or width is specified, the absolute value is taken.
- * The origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+ * height is a circle. By default, the first two parameters set the location of
+ * the center of the ellipse, and the third and fourth parameters set the
+ * shape's width and height. If no height is specified, the value of width is
+ * used for both the width and height. If a negative height or width is specified,
+ * the absolute value is taken. The origin may be changed with the <a
+ * href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
- * @param  {Number} x x-coordinate of the ellipse.
- * @param  {Number} y y-coordinate of the ellipse.
+ * @param  {Number} x x-coordinate of the center of ellipse.
+ * @param  {Number} y y-coordinate of the center of ellipse.
  * @param  {Number} w width of the ellipse.
  * @param  {Number} [h] height of the ellipse.
  * @chainable
@@ -304,12 +305,12 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
 };
 
 /**
- * Draws a line (a direct path between two points) to the screen. The version
- * of <a href="#/p5/line">line()</a> with four parameters draws the line in 2D. To color a line, use
- * the <a href="#/p5/stroke">stroke()</a> function. A line cannot be filled, therefore the <a href="#/p5/fill">fill()</a>
- * function will not affect the color of a line. 2D lines are drawn with a
- * width of one pixel by default, but this can be changed with the
- * <a href="#/p5/strokeWeight">strokeWeight()</a> function.
+ * Draws a line (a direct path between two points) to the screen. If called with
+ * only 4 parameters, it will draw a line in 2D with a default width of 1 pixel.
+ * This width can be modified by using the <a href="#/p5/strokeWeight">
+ * strokeWeight()</a> function. A line cannot be filled, therefore the <a
+ * href="#/p5/fill">fill()</a> function will not affect the color of a line. So to
+ * color a line, use the <a href="#/p5/stroke">stroke()</a> function.
  *
  * @method line
  * @param  {Number} x1 the x-coordinate of the first point
@@ -335,8 +336,8 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * </div>
  *
  * @alt
- *line 78 pixels long running from mid-top to bottom-right of canvas.
- *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+ * An example showing a line 78 pixels long running from mid-top to bottom-right of canvas.
+ * An example showing 3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
 /**
