@@ -2074,23 +2074,7 @@ p5.Vector.sub = function sub(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector}  the resulting new <a href="#/p5.Vector">p5.Vector</a>
- */
-
-/**
- * @method mult
- * @static
- * @param  {p5.Vector} v
- * @param  {Number}  n
  * @param  {p5.Vector} [target] If undefined a new vector will be created
- */
-
-/**
- * @method mult
- * @static
- * @param  {p5.Vector} v0 The vector to be multiplied
- * @param  {p5.Vector} v1 The vector to multiply the original vector with
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
 /**
@@ -2099,14 +2083,6 @@ p5.Vector.sub = function sub(v1, v2, target) {
  * @param  {p5.Vector} v0
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} [target]
- */
-
-/**
- * @method mult
- * @static
- * @param  {p5.Vector} v0
- * @param  {Number[]} arr
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
 /**
@@ -2144,23 +2120,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
- */
-
-/**
- * @method div
- * @static
- * @param  {p5.Vector} v
- * @param  {Number}  n
  * @param  {p5.Vector} [target] If undefined a new vector will be created
- */
-
-/**
- * @method div
- * @static
- * @param  {p5.Vector} v0 The vector to be divided
- * @param  {p5.Vector} v1 The vector to divide by
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
 /**
@@ -2169,14 +2129,6 @@ p5.Vector.mult = function mult(v, n, target) {
  * @param  {p5.Vector} v0
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} [target]
- */
-
-/**
- * @method div
- * @static
- * @param  {p5.Vector} v0
- * @param  {Number[]} arr
- * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
 
 /**
