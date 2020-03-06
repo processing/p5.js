@@ -2673,12 +2673,44 @@ p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
 };
 
 /**
- * Set HTML5 media element to autoplay or not.
+ * Set HTML5 media element to autoplay or not. If no argument is specified, by
+ * default it will autoplay.
  *
  * @method autoplay
- * @param {Boolean} autoplay whether the element should autoplay
+ * @param {Boolean} shouldAutoplay whether the element should autoplay
  * @chainable
+ * @example
+ * <div><code>
+ * let videoElement;
+ * function setup() {
+ *   videoElement = createVideo(['assets/small.mp4']);
+ *   // The media will play as soon as it is loaded.
+ *   videoElement.autoplay();
+ *   videoElement.volume(0);
+ *   videoElement.size(256);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * let videoElement;
+ * function setup() {
+ *   videoElement = createVideo(['assets/small.mp4']);
+ *   // The media will not play untill some explicitly triggered.
+ *   videoElement.autoplay(false);
+ *   videoElement.size(256);
+ * }
+ *
+ * function mouseClicked() {
+ *   videoElement.play();
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example of a video element which autoplays after it is loaded.
+ * An example of a video element which waits for a trigger for playing.
+ *
  */
+
 p5.MediaElement.prototype.autoplay = function(val) {
   const oldVal = this.elt.getAttribute('autoplay');
   this.elt.setAttribute('autoplay', val);
@@ -2858,6 +2890,7 @@ p5.MediaElement.prototype.volume = function(val) {
  * }
  * </code></div>
  */
+
 /**
  * @method speed
  * @param {Number} speed  speed multiplier for element playback
@@ -3436,7 +3469,8 @@ p5.File = function(file, pInst) {
   this.size = file.size;
 
   /**
-   * URL string containing image data.
+   * URL string containing either image data, the text contents of the file or
+   * a parsed object if file is JSON and p5.XML if XML
    *
    * @property data
    */
@@ -3447,7 +3481,17 @@ p5.File._createLoader = function(theFile, callback) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var p5file = new p5.File(theFile);
-    p5file.data = e.target.result;
+    if (p5file.file.type === 'application/json') {
+      // Parse JSON and store the result in data
+      p5file.data = JSON.parse(e.target.result);
+    } else if (p5file.file.type === 'text/xml') {
+      // Parse XML, wrap it in p5.XML and store the result in data
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(e.target.result, 'text/xml');
+      p5file.data = new p5.XML(xml.documentElement);
+    } else {
+      p5file.data = e.target.result;
+    }
     callback(p5file);
   };
   return reader;
@@ -3456,7 +3500,7 @@ p5.File._createLoader = function(theFile, callback) {
 p5.File._load = function(f, callback) {
   // Text or data?
   // This should likely be improved
-  if (/^text\//.test(f.type)) {
+  if (/^text\//.test(f.type) || f.type === 'application/json') {
     p5.File._createLoader(f, callback).readAsText(f);
   } else if (!/^(video|audio)\//.test(f.type)) {
     p5.File._createLoader(f, callback).readAsDataURL(f);

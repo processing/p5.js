@@ -404,7 +404,7 @@ p5.prototype.hue = function(c) {
  * but necessary because otherwise numbers outside the range will produce
  * strange and unexpected colors.
  * <br><br>
- * The way that colours are interpolated depends on the current color mode.
+ * The way that colors are interpolated depends on the current color mode.
  *
  * @method lerpColor
  * @param  {p5.Color} c1  interpolate from this color
