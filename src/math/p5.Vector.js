@@ -556,7 +556,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * See the examples for more context.
  *
  * @method mult
- * @param  {Number}    n the number to multiply with the vector
+ * @param  {Number} n The number to multiply with the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -637,6 +637,27 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * </code>
  * </div>
  */
+
+/**
+ * @method mult
+ * @param  {Number} x The number to multiply with the x component of the vector
+ * @param  {Number} y The number to multiply with the y component of the vector
+ * @param  {Number} [z] The number to multiply with the z component of the vector
+ * @chainable
+ */
+
+/**
+ * @method mult
+ * @param  {Number[]} arr The array to multiply with the components of the vector
+ * @chainable
+ */
+
+/**
+ * @method mult
+ * @param  {p5.Vector} v The vector to multiply with the components of the original vector
+ * @chainable
+ */
+
 p5.Vector.prototype.mult = function mult(x, y, z) {
   if (x instanceof p5.Vector) {
     // new p5.Vector will check that values are valid upon construction but it's possible
@@ -728,7 +749,7 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * See the examples for more context.
  *
  * @method div
- * @param  {number}    n the number to divide the vector by
+ * @param  {number}    n The number to divide the vector by
  * @chainable
  * @example
  * <div class="norender">
@@ -807,6 +828,26 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * }
  * </code>
  * </div>
+ */
+
+/**
+ * @method div
+ * @param  {Number} x The number to divide with the x component of the vector
+ * @param  {Number} y The number to divide with the y component of the vector
+ * @param  {Number} [z] The number to divide with the z component of the vector
+ * @chainable
+ */
+
+/**
+ * @method div
+ * @param  {Number[]} arr The array to divide the components of the vector by
+ * @chainable
+ */
+
+/**
+ * @method div
+ * @param  {p5.Vector} v The vector to divide the components of the original vector by
+ * @chainable
  */
 p5.Vector.prototype.div = function div(x, y, z) {
   if (x instanceof p5.Vector) {
@@ -2018,19 +2059,62 @@ p5.Vector.sub = function sub(v1, v2, target) {
 /**
  * Multiplies a vector by a scalar and returns a new vector.
  */
+
 /**
  * @method mult
  * @static
- * @param  {p5.Vector} v the vector to multiply
- * @param  {Number}  n
- * @param  {p5.Vector} target if undefined a new vector will be created
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
+
 /**
  * @method mult
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
  * @return {p5.Vector}  the resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number}  n
+ * @param  {p5.Vector} [target] If undefined a new vector will be created
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0 The vector to be multiplied
+ * @param  {p5.Vector} v1 The vector to multiply the original vector with
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} [target]
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @param  {p5.Vector} [target]
  */
 p5.Vector.mult = function mult(v, n, target) {
   if (!target) {
@@ -2045,19 +2129,62 @@ p5.Vector.mult = function mult(v, n, target) {
 /**
  * Divides a vector by a scalar and returns a new vector.
  */
+
 /**
  * @method div
  * @static
- * @param  {p5.Vector} v the vector to divide
- * @param  {Number}  n
- * @param  {p5.Vector} target if undefined a new vector will be created
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
+
 /**
  * @method div
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector} the resulting new <a href="#/p5.Vector">p5.Vector</a>
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number}  n
+ * @param  {p5.Vector} [target] If undefined a new vector will be created
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0 The vector to be divided
+ * @param  {p5.Vector} v1 The vector to divide by
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} [target]
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @param  {p5.Vector} [target]
  */
 p5.Vector.div = function div(v, n, target) {
   if (!target) {
