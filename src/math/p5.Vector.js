@@ -828,13 +828,13 @@ p5.Vector.prototype.div = function div(x, y, z) {
       this.x /= x.x;
       this.y /= x.y;
       this.z /= x.z;
-      return this;
     } else {
       console.warn(
         'p5.Vector.prototype.div:',
         'x contains components that are either undefined or not finite numbers'
       );
     }
+    return this;
   }
   if (x instanceof Array) {
     if (
