@@ -835,7 +835,8 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  * let v1 = createVector(1, 2, 3);
  * let v2 = createVector(1, 2, 3);
  *
- * v1.cross(v2); // v's components are [0, 0, 0]
+ * let v = v1.cross(v2); // v's components are [0, 0, 0]
+ * print(v);
  * </code>
  * </div>
  *
