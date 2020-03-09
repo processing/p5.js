@@ -2683,21 +2683,28 @@ p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
  * <div><code>
  * let videoElement;
  * function setup() {
- *   videoElement = createVideo(['assets/small.mp4']);
+ *   noCanvas();
+ *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
+ * }
+ * function onVideoLoad() {
  *   // The media will play as soon as it is loaded.
  *   videoElement.autoplay();
  *   videoElement.volume(0);
- *   videoElement.size(256);
+ *   videoElement.size(100, 100);
  * }
  * </code></div>
  *
  * <div><code>
  * let videoElement;
  * function setup() {
- *   videoElement = createVideo(['assets/small.mp4']);
+ *   noCanvas();
+ *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
+ * }
+ * function onVideoLoad() {
  *   // The media will not play untill some explicitly triggered.
  *   videoElement.autoplay(false);
- *   videoElement.size(256);
+ *   videoElement.volume(0);
+ *   videoElement.size(100, 100);
  * }
  *
  * function mouseClicked() {
