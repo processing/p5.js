@@ -18,7 +18,7 @@ suite('Error Helpers', function() {
     test('basic', function() {
       assert.doesNotThrow(
         function() {
-          p5._friendlyError('basic');
+          p5._friendlyError('basic', 'basic');
         },
         Error,
         'got unwanted exception'
