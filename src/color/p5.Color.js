@@ -51,6 +51,7 @@ p5.Color = function(pInst, vals) {
 /**
  * This function returns the color formatted as a string. This can be useful
  * for debugging, or for using p5.js with other libraries.
+ *
  * @method toString
  * @param {String} [format] How the color string will be formatted.
  * Leaving this empty formats the string as rgba(r, g, b, a).
@@ -59,28 +60,24 @@ p5.Color = function(pInst, vals) {
  * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
  * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
  * @return {String} the formatted string
+ *
  * @example
  * <div>
  * <code>
+ * createCanvas(200, 100);
  * let myColor;
- * function setup() {
- *   createCanvas(200, 200);
- *   stroke(255);
- *   myColor = color(100, 100, 250);
- *   fill(myColor);
- * }
- *
- * function draw() {
- *   rotate(HALF_PI);
- *   text(myColor.toString(), 0, -5);
- *   text(myColor.toString('#rrggbb'), 0, -30);
- *   text(myColor.toString('rgba%'), 0, -55);
- * }
+ * stroke(255);
+ * myColor = color(100, 100, 250);
+ * fill(myColor);
+ * rotate(HALF_PI);
+ * text(myColor.toString(), 0, -5);
+ * text(myColor.toString('#rrggbb'), 0, -30);
+ * text(myColor.toString('rgba%'), 0, -55);
  * </code>
  * </div>
  *
  * @alt
- * canvas with text representation of color
+ * A canvas with 3 text representation of thier color.
  */
 p5.Color.prototype.toString = function(format) {
   const a = this.levels;
@@ -286,12 +283,7 @@ p5.Color.prototype.setRed = function(new_red) {
  * @example
  * <div>
  * <code>
- * let backgroundColor;
- *
- * function setup() {
- *   backgroundColor = color(100, 50, 150);
- * }
- *
+ * let backgroundColor = color(100, 50, 150);
  * function draw() {
  *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
@@ -315,12 +307,7 @@ p5.Color.prototype.setGreen = function(new_green) {
  * @example
  * <div>
  * <code>
- * let backgroundColor;
- *
- * function setup() {
- *   backgroundColor = color(100, 50, 150);
- * }
- *
+ * let backgroundColor = color(100, 50, 150);
  * function draw() {
  *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
@@ -344,31 +331,19 @@ p5.Color.prototype.setBlue = function(new_blue) {
  * @example
  * <div>
  * <code>
- * let squareColor;
- *
- * function setup() {
- *   ellipseMode(CORNERS);
- *   strokeWeight(4);
- *   squareColor = color(100, 50, 150);
- * }
- *
  * function draw() {
- *   background(255);
- *
- *   noFill();
- *   stroke(0);
- *   ellipse(10, 10, width - 10, height - 10);
- *
+ *   clear();
+ *   background(200);
+ *   squareColor = color(100, 50, 100);
  *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
  *   fill(squareColor);
- *   noStroke();
  *   rect(13, 13, width - 26, height - 26);
  * }
  * </code>
  * </div>
  *
  * @alt
- * circle behind a square with gradually changing opacity
+ * a square with gradually changing opacity on a gray background
  **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
