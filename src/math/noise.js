@@ -35,7 +35,7 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
  * Returns the Perlin noise value at specified coordinates. Perlin noise is
- * a random sequence generator producing a more natural ordered, harmonic
+ * a random sequence generator producing a more naturally ordered, harmonic
  * succession of numbers compared to the standard <b>random()</b> function.
  * It was invented by Ken Perlin in the 1980s and been used since in
  * graphical applications to produce procedural textures, natural motion,

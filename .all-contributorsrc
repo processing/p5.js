@@ -1728,6 +1728,17 @@
         "doc",
         "example"
       ]
+    },
+    {
+      "login": "akshay-99",
+      "name": "Akshay Padte",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/38867671?v=4",
+      "profile": "https://github.com/akshay-99",
+      "contributions": [
+        "code",
+        "bug",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
