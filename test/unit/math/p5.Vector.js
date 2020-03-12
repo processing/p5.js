@@ -617,9 +617,9 @@ suite('p5.Vector', function() {
 
       test('should not change x, y, z if n is 0', function() {
         v.div(0);
-        expect(v.x).to.eql(1);
-        expect(v.y).to.eql(1);
-        expect(v.z).to.eql(1);
+        expect(v.x).to.eql(v.x);
+        expect(v.y).to.eql(v.y);
+        expect(v.z).to.eql(v.x);
       });
     });
 
@@ -680,7 +680,7 @@ suite('p5.Vector', function() {
       setup(function() {
         v0 = new p5.Vector(2, 6, 9);
         v1 = new p5.Vector(2, 2, 3);
-        res = p5.Vector.mult(v0, v1);
+        res = p5.Vector.div(v0, v1);
       });
 
       test('should return new vector from component wise division', function() {
@@ -695,7 +695,7 @@ suite('p5.Vector', function() {
       setup(function() {
         v0 = new p5.Vector(2, 6, 9);
         arr = [2, 2, 3];
-        res = p5.Vector.mult(v0, arr);
+        res = p5.Vector.div(v0, arr);
       });
 
       test('should return new vector from component wise division with an array', function() {
