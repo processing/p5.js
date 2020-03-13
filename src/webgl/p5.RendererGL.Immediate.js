@@ -123,13 +123,15 @@ p5.RendererGL.prototype.endShape = function(
     return this;
   }
   this._processVertices(...arguments);
-
-  if (this.immediateMode.geometry.vertices.length > 1) {
-    this._drawImmediateFill();
+  if (this._doFill) {
+    if (this.immediateMode.geometry.vertices.length > 1) {
+      this._drawImmediateFill();
+    }
   }
-
-  if (this.immediateMode.geometry.lineVertices.length > 1) {
-    this._drawImmediateStroke();
+  if (this._doStroke) {
+    if (this.immediateMode.geometry.lineVertices.length > 1) {
+      this._drawImmediateStroke();
+    }
   }
 
   this.isBezier = false;
