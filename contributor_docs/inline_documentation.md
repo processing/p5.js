@@ -73,7 +73,7 @@ If the parameter is optional, add square brackets around the name:
 @param {type} [name] Description here.
 ```
 
-If the parameter takes one or more values defined in `constants.js`,
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/master/src/core/constants.js) ,
 then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, eg:
 
 ```
@@ -178,7 +178,7 @@ Constructors are defined with `@class`. Each constructor should have the tag `@c
 
 ## Adding example code
 
-Optionally, you can add examples with `@example`. Example code can be placed between `<code></code>` tags with comments included. Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background.  Define all variables with `let` in examples, as the lowest barrier for beginners learning JS. Please see examples in other src files to make sure it is formatted correctly.
+Optionally, you can add examples with `@example`. Example code should be placed between `<code></code>` tags with comments included. Unless otherwise specified with a `setup()` function, each `<code>` block is automatically run on a canvas of 100x100 pixels with a gray background. Define all variables with `let` in examples, as the lowest barrier for beginners learning JS. Please see examples in other src files to make sure it is formatted correctly. If your example creates other html elements apart from the canvas, they will be rendered with a width of 100 pixels.
 
 ```
 @example
@@ -193,18 +193,22 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
 </div>
 ```
 
-You can have multiple examples for one function, just make sure each has it's own `<div>` wrapping. 
+You can have multiple examples for one function, just make sure you have only
+one @example followed by each example having it's own `<div>` wrapping seperated
+by a line break. 
+
 ```
 @example
 <div>
 <code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);</code>
 </div>
+
 <div>
 <code>arc(50, 50, 80, 80, 0, PI, OPEN);</code>
 </div>
 ```
 
-If you do not want the example to render with canvas (ie you just want the code to show up), include the class "norender" in the div:
+If you do not want the example to execute your code (ie you just want the code to show up), include the class "norender" in the div:
 ```
 @example
 <div class="norender">
@@ -226,12 +230,8 @@ function setup() {
 
 If you need to link to external asset files, put them in [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/master/docs/yuidoc-p5-theme/assets) and then link to them with "assets/filename.ext" in the code. See the [tint example](http://p5js.org/reference/#/p5/tint).
 
-On some code editors copy-pasting examples in the inline documentation may be awkward and require a lot of adjustments (tabs, asterisks, spaces). You can use this simple tool to beautify the code (and re-indent it to 2 spaces) and make it ready for a copy-paste: 
-[p5examplesFormatter](http://molleindustria.org/p5examplesFormatter/)
-| [download as zip](http://molleindustria.org/p5examplesFormatter/p5examplesFormatter.zip)
-
 ### Adding alt-text
-Finally, if you add an example, please add [alt-text](https://moz.com/learn/seo/alt-text) so visually impaired users can understand what the example is showing on the screen. This can be added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), add a line break to separate the descriptions for multiple examples.
+Finally, for every example you add, please add [alt-text](https://moz.com/learn/seo/alt-text) so visually impaired users can understand what the example is showing on the screen. This can be added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), add a line break to separate the descriptions for multiple examples.
 ```
 @example
 <div>
@@ -245,6 +245,7 @@ function draw() {
 }
 </code>
 </div>
+
 <div>
 <code>
 let noiseScale=0.02;
@@ -263,6 +264,10 @@ function draw() {
 vertical line moves left to right with updating noise values.
 horizontal wave pattern effected by mouse x-position & updating noise values.
 ```
+
+## Template for methods
+Here is an example for a well documentated method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/master/contributor_docs/method.example.js). You can replace the text with your method's variables and remove the remaining ones.
+![Image showing inline documentation example for methods](https://github.com/processing/p5.js/tree/master/contributor_docs/images/method-template-example.png)
 
 
 ## Generating documentation
