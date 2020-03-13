@@ -914,6 +914,11 @@ p5.Vector.prototype.div = function div(x, y, z) {
     vectorComponents.every(element => Number.isFinite(element)) &&
     vectorComponents.every(element => typeof element === 'number')
   ) {
+    if (vectorComponents.some(element => element === 0)) {
+      console.warn('p5.Vector.prototype.div:', 'divide by 0');
+      return this;
+    }
+
     if (arguments.length === 1) {
       this.x /= x;
       this.y /= x;
