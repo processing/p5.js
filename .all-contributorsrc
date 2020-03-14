@@ -1720,11 +1720,35 @@
       "contributions": []
     },
     {
+      "login": "fenilgandhi",
+      "name": "Fenil Gandhi",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9128903?v=4",
+      "profile": "http://fenilgandhi.tech",
+      "contributions": [
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "akshay-99",
+      "name": "Akshay Padte",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/38867671?v=4",
+      "profile": "https://github.com/akshay-99",
+      "contributions": [
+        "code",
+        "bug",
+        "test"
+      ]
+    },
+    {
       "login": "DivyamAhuja",
-      "name": "Divyam Ahuja",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/39771050?s=460&v=4",
+      "name": "Shirou",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/39771050?v=4",
       "profile": "https://github.com/DivyamAhuja",
-      "contributions": []
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",

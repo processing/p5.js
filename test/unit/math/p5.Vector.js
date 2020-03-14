@@ -505,6 +505,36 @@ suite('p5.Vector', function() {
       });
     });
 
+    suite('v0.mult(v1)', function() {
+      var v0, v1;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        v0.mult(v1);
+      });
+
+      test('should do component wise multiplication', function() {
+        expect(v0.x).to.eql(2);
+        expect(v0.y).to.eql(6);
+        expect(v0.z).to.eql(12);
+      });
+    });
+
+    suite('v0.mult(arr)', function() {
+      var v0, arr;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        arr = [2, 3, 4];
+        v0.mult(arr);
+      });
+
+      test('should do component wise multiplication from an array', function() {
+        expect(v0.x).to.eql(2);
+        expect(v0.y).to.eql(6);
+        expect(v0.z).to.eql(12);
+      });
+    });
+
     suite('p5.Vector.mult(v, n)', function() {
       var v, res;
       setup(function() {
@@ -519,6 +549,36 @@ suite('p5.Vector', function() {
       test('should multiply the scalar', function() {
         expect(res.x).to.eql(4);
         expect(res.y).to.eql(8);
+        expect(res.z).to.eql(12);
+      });
+    });
+
+    suite('p5.Vector.mult(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        res = p5.Vector.mult(v0, v1);
+      });
+
+      test('should return new vector from component wise multiplication', function() {
+        expect(res.x).to.eql(2);
+        expect(res.y).to.eql(6);
+        expect(res.z).to.eql(12);
+      });
+    });
+
+    suite('p5.Vector.mult(v, arr', function() {
+      var v0, arr, res;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        arr = [2, 3, 4];
+        res = p5.Vector.mult(v0, arr);
+      });
+
+      test('should return new vector from component wise multiplication with an array', function() {
+        expect(res.x).to.eql(2);
+        expect(res.y).to.eql(6);
         expect(res.z).to.eql(12);
       });
     });
@@ -582,6 +642,84 @@ suite('p5.Vector', function() {
         expect(res.x).to.eql(0.25);
         expect(res.y).to.eql(0.25);
         expect(res.z).to.eql(0.25);
+      });
+    });
+
+    suite('v0.div(v1)', function() {
+      var v0, v1, v2, v3;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        v2 = new p5.Vector(1, 1, 1);
+        v3 = new p5.Vector(0, 0, 0);
+
+        v0.div(v1);
+      });
+
+      test('should do component wise division', function() {
+        expect(v0.x).to.eql(1);
+        expect(v0.y).to.eql(3);
+        expect(v0.z).to.eql(3);
+      });
+
+      test('should not change x, y, z if v3 contains 0', function() {
+        v2.div(v3);
+        expect(v2.x).to.eql(1);
+        expect(v2.y).to.eql(1);
+        expect(v2.z).to.eql(1);
+      });
+    });
+
+    suite('v0.div(arr)', function() {
+      var v0, v1, arr;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(1, 1, 1);
+        arr = [2, 2, 3];
+        v0.div(arr);
+      });
+
+      test('should do component wise division with an array', function() {
+        expect(v0.x).to.eql(1);
+        expect(v0.y).to.eql(3);
+        expect(v0.z).to.eql(3);
+      });
+
+      test('should not change x, y, z if array contains 0', function() {
+        v1.div([0, 0, 0]);
+        expect(v1.x).to.eql(1);
+        expect(v1.y).to.eql(1);
+        expect(v1.z).to.eql(1);
+      });
+    });
+
+    suite('p5.Vector.div(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        res = p5.Vector.div(v0, v1);
+      });
+
+      test('should return new vector from component wise division', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(3);
+        expect(res.z).to.eql(3);
+      });
+    });
+
+    suite('p5.Vector.div(v, arr', function() {
+      var v0, arr, res;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        arr = [2, 2, 3];
+        res = p5.Vector.div(v0, arr);
+      });
+
+      test('should return new vector from component wise division with an array', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(3);
+        expect(res.z).to.eql(3);
       });
     });
   });

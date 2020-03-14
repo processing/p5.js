@@ -805,13 +805,21 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
     if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
       const symbolName =
         symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
-      log(
-        translator('fes.misusedTopLevel', {
-          symbolName,
-          symbolType: symbol.type,
-          link: FAQ_URL
-        })
-      );
+      if (typeof IS_MINIFIED !== 'undefined') {
+        log(
+          `Did you just try to use p5.js's ${symbolName} ${
+            symbol.type
+          }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+        );
+      } else {
+        log(
+          translator('fes.misusedTopLevel', {
+            symbolName,
+            symbolType: symbol.type,
+            link: FAQ_URL
+          })
+        );
+      }
       return true;
     }
   });

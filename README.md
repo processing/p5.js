@@ -64,7 +64,6 @@ We recognize all types of contributions. This project follows the [all-contribut
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
-
 <table>
   <tr>
     <td align="center"><a href="http://lauren-mccarthy.com"><img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;" alt=""/><br /><sub><b>Lauren McCarthy</b></sub></a><br /></td>
@@ -351,6 +350,13 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/mann27"><img src="https://avatars2.githubusercontent.com/u/33790390?v=4" width="100px;" alt=""/><br /><sub><b>Mann Shah</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/nthe"><img src="https://avatars1.githubusercontent.com/u/6535424?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Juraj Onuska</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/AnuragGupta93"><img src="https://avatars1.githubusercontent.com/u/35900375?v=4" width="100px;" alt=""/><br /><sub><b>ANURAG GUPTA</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AnuragGupta93" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://zoyron.github.io/"><img src="https://avatars3.githubusercontent.com/u/24233321?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Sagar Arora</b></sub></a><br /></td>
+    <td align="center"><a href="https://iamrajiv.github.io/"><img src="https://avatars0.githubusercontent.com/u/42106787?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Rajiv Ranjan Singh</b></sub></a><br /></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://fenilgandhi.tech"><img src="https://avatars0.githubusercontent.com/u/9128903?v=4" width="100px;" alt=""/><br /><sub><b>Fenil Gandhi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fenilgandhi" title="Documentation">📖</a> <a href="#example-fenilgandhi" title="Examples">💡</a></td>
+    <td align="center"><a href="https://github.com/akshay-99"><img src="https://avatars0.githubusercontent.com/u/38867671?v=4" width="100px;" alt=""/><br /><sub><b>Akshay Padte</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akshay-99" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aakshay-99" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=akshay-99" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/DivyamAhuja"><img src="https://avatars0.githubusercontent.com/u/39771050?v=4" width="100px;" alt=""/><br /><sub><b>Shirou</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=DivyamAhuja" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ADivyamAhuja" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
