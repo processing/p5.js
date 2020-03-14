@@ -224,14 +224,40 @@ suite('DOM', function() {
   });
 
   suite('p5.Element.prototype.position', function() {
-    let paragraph = myp5.createP('out of box');
-    paragraph.position(20, 20, 'static');
+    var myp5;
 
-    elt = document.createElement('p', 'out of box');
-    elt.style.position = 'static';
-    elt.style.left = '20px';
-    elt.style.top = '20px';
-    expect(JSON.stringify(paragraph.elt)).to.eql(JSON.stringify(elt));
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+    });
+
+    var elt;
+
+    teardown(function() {
+      if (elt && elt.parentNode) {
+        elt.parentNode.removeChild(elt);
+        elt = null;
+      }
+    });
+
+    test('should match properties with dummy element', function() {
+      let paragraph = myp5.createP('out of box');
+      paragraph.position(20, 20, 'static');
+
+      elt = document.createElement('p', 'out of box');
+      elt.style.position = 'static';
+      elt.style.left = '20px';
+      elt.style.top = '20px';
+      expect(JSON.stringify(paragraph.elt)).to.eql(JSON.stringify(elt));
+    });
   });
 
   suite('p5.prototype.createSlider', function() {
