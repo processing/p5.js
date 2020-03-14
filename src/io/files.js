@@ -900,7 +900,7 @@ p5.prototype.httpGet = function() {
  *
  *
  * <div><code>
- * let url = 'https://invalidURL'; // A bad URL that will cause errors
+ * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
  * let postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
  *
  * function setup() {
