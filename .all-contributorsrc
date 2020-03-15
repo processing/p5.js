@@ -1749,6 +1749,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login" : "sk1122",
+      "name" : "Satyam Kulkarni",
+      "avatar_url" : "https://avatars3.githubusercontent.com/u/40713709?s=460&u=265922d69b5a462e414f4706e938bb94f027a342&v=4",
+      "profile": "https://github.com/sk1122",
+      "contributions": [
+        "documentation"
+      ]
     }
   ],
   "repoType": "github",
