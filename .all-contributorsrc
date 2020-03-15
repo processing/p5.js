@@ -1749,6 +1749,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "pcgamer1",
+      "name": "Sarthak Saxena",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/30899040?v=4",
+      "profile": "https://github.com/pcgamer1",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
