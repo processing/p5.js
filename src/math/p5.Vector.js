@@ -1989,7 +1989,7 @@ p5.Vector.random3D = function random3D() {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} [target] the vector to receive the result
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  *
  */
@@ -2042,7 +2042,7 @@ p5.Vector.rem = function rem(v1, v2) {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
- * @param  {p5.Vector} [target] if undefined a new vector will be created
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
@@ -2080,7 +2080,7 @@ p5.Vector.sub = function sub(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] If undefined a new vector will be created
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  */
 
 /**
@@ -2132,7 +2132,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] If undefined a new vector will be created
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  */
 
 /**
@@ -2220,7 +2220,7 @@ p5.Vector.dist = function dist(v1, v2) {
  * @param {p5.Vector} v1
  * @param {p5.Vector} v2
  * @param {Number} amt
- * @param {p5.Vector} [target] if undefined a new vector will be created
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector}      the lerped value
  */
 p5.Vector.lerp = function lerp(v1, v2, amt, target) {
