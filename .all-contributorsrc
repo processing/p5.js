@@ -1767,6 +1767,17 @@
       "contributions": [
         "documentation"
       ]
+    },
+    {
+      "login": "nickmcintyre",
+      "name": "Nick McIntyre",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3719176?s=460&u=aa8165c80ab91fb1d85537f199d9871b5cb2e5e0&v=4",
+      "profile": "https://github.com/nickmcintyre",
+      "contributions": [
+        "plugin",
+        "bug",
+        "tutorial"
+      ]
     }
   ],
   "repoType": "github",
