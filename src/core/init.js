@@ -18,9 +18,10 @@ const _globalInit = () => {
   // If that property is already a part of the global object,
   // this code has already run before, likely due to a duplicate import
   if (typeof window._setupDone !== 'undefined') {
-    throw new Error(
+    console.warn(
       'p5.js seems to have been imported multiple times. Please remove the duplicate import'
     );
+    return;
   }
 
   if (!window.mocha) {
