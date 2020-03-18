@@ -98,17 +98,19 @@ p5.prototype._normalizeArcAngles = (
 };
 
 /**
- * Draw an arc to the screen. If called with only x, y, w, h, start, and
- * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
- * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
- * origin may be changed with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.<br><br>
- * The arc is always drawn clockwise from wherever start falls to wherever stop falls on the ellipse.
- * Adding or subtracting TWO_PI to either angle does not change where they fall.
- * If both start and stop fall at the same place, a full ellipse will be drawn. Be aware that the the
- * y-axis increases in the downward direction, therefore angles are measured clockwise from the positive
+ * Draw an arc to the screen. If called with only x, y, w, h, start and stop,
+ * the arc will be drawn and filled as an open pie segment. If a mode parameter
+ * is provided, the arc will be filled like an open semi-circle (OPEN), a closed
+ * semi-circle (CHORD), or as a closed pie segment (PIE). The origin may be changed
+ * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
+ *
+ * The arc is always drawn clockwise from wherever start falls to wherever stop
+ * falls on the ellipse.Adding or subtracting TWO_PI to either angle does not
+ * change where they fall. If both start and stop fall at the same place, a full
+ * ellipse will be drawn. Be aware that the y-axis increases in the downward
+ * direction, therefore angles are measured clockwise from the positive
  * x-direction ("3 o'clock").
-
-
+ *
  * @method arc
  * @param  {Number} x      x-coordinate of the arc's ellipse
  * @param  {Number} y      y-coordinate of the arc's ellipse
@@ -121,8 +123,8 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
  *                         perimeter of the arc. Default value is 25.
- *
  * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -209,13 +211,14 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 };
 
 /**
- * Draws an ellipse (oval) to the screen. An ellipse with equal width and
- * height is a circle. By default, the first two parameters set the location of
- * the center of the ellipse, and the third and fourth parameters set the
- * shape's width and height. If no height is specified, the value of width is
- * used for both the width and height. If a negative height or width is specified,
- * the absolute value is taken. The origin may be changed with the <a
- * href="#/p5/ellipseMode">ellipseMode()</a> function.
+ * Draws an ellipse (oval) to the screen. By default, the first two parameters
+ * set the location of the center of the ellipse, and the third and fourth
+ * parameters set the shape's width and height. If no height is specified, the
+ * value of width is used for both the width and height. If a negative height or
+ * width is specified, the absolute value is taken.
+ *
+ * An ellipse with equal width and height is a circle.The origin may be changed
+ * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
  * @param  {Number} x x-coordinate of the center of ellipse.
@@ -231,9 +234,9 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * </div>
  *
  * @alt
- *white ellipse with black outline in middle-right of canvas that is 55x55.
- *
+ *white ellipse with black outline in middle-right of canvas that is 55x55
  */
+
 /**
  * @method ellipse
  * @param  {Number} x
@@ -248,11 +251,13 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 };
 
 /**
- * Draws a circle to the screen. A circle is a simple closed shape.
- * It is the set of all points in a plane that are at a given distance from a given point, the centre.
- * This function is a special case of the ellipse() function, where the width and height of the ellipse are the same.
- * Height and width of the ellipse correspond to the diameter of the circle.
- * By default, the first two parameters set the location of the centre of the circle, the third sets the diameter of the circle.
+ * Draws a circle to the screen. A circle is a simple closed shape.It is the set
+ * of all points in a plane that are at a given distance from a given point,
+ * the centre.This function is a special case of the ellipse() function, where
+ * the width and height of the ellipse are the same. Height and width of the
+ * ellipse correspond to the diameter of the circle. By default, the first two
+ * parameters set the location of the centre of the circle, the third sets the
+ * diameter of the circle.
  *
  * @method circle
  * @param  {Number} x  x-coordinate of the centre of the circle.
@@ -338,8 +343,8 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * @alt
  * An example showing a line 78 pixels long running from mid-top to bottom-right of canvas.
  * An example showing 3 lines of various stroke sizes. Form top, bottom and right sides of a square.
- *
  */
+
 /**
  * @method line
  * @param  {Number} x1
@@ -363,9 +368,9 @@ p5.prototype.line = function(...args) {
 /**
  * Draws a point, a coordinate in space at the dimension of one pixel.
  * The first parameter is the horizontal value for the point, the second
- * value is the vertical value for the point. The color of the point is
+ * param is the vertical value for the point. The color of the point is
  * changed with the <a href="#/p5/stroke">stroke()</a> function. The size of the point
- * is changed with the <a href="#/p5/strokeWeight">strokeWeight()</a> function.
+ * can be changed with the <a href="#/p5/strokeWeight">strokeWeight()</a> function.
  *
  * @method point
  * @param  {Number} x the x-coordinate
@@ -384,10 +389,10 @@ p5.prototype.line = function(...args) {
  *
  * <div>
  * <code>
- * stroke('purple'); // Change the color
- * strokeWeight(10); // Make the points 10 pixels in size
  * point(30, 20);
  * point(85, 20);
+ * stroke('purple'); // Change the color
+ * strokeWeight(10); // Make the points 10 pixels in size
  * point(85, 75);
  * point(30, 75);
  * </code>
@@ -406,10 +411,10 @@ p5.prototype.line = function(...args) {
  *
  * @alt
  * 4 points centered in the middle-right of the canvas.
- * 4 large purple points centered in the middle-right of the canvas.
+ * 2 large points and 2 large purple points centered in the middle-right of the canvas.
  * Vertices of a square of length 10 pixels towards the top-left of the canvas.
- *
  */
+
 /**
  * @method point
  * @param {p5.Vector} coordinate_vector the coordinate vector
@@ -436,13 +441,12 @@ p5.prototype.point = function(...args) {
 };
 
 /**
- * Draw a quad. A quad is a quadrilateral, a four sided polygon. It is
+ * Draws a quad on the canvas. A quad is a quadrilateral, a four sided polygon. It is
  * similar to a rectangle, but the angles between its edges are not
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
  * z-arguments only work when quad() is used in WEBGL mode.
- *
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -503,12 +507,12 @@ p5.prototype.quad = function(...args) {
 };
 
 /**
- * Draws a rectangle to the screen. A rectangle is a four-sided shape with
+ * Draws a rectangle on the canvas. A rectangle is a four-sided closed shape with
  * every angle at ninety degrees. By default, the first two parameters set
  * the location of the upper-left corner, the third sets the width, and the
- * fourth sets the height. The way these parameters are interpreted, however,
- * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
- * <br><br>
+ * fourth sets the height. The way these parameters are interpreted, may be
+ * changed with the <a href="#/p5/rectMode">rectMode()</a> function.
+ *
  * The fifth, sixth, seventh and eighth parameters, if specified,
  * determine corner radius for the top-left, top-right, lower-right and
  * lower-left corners, respectively. An omitted corner radius parameter is set
@@ -552,6 +556,7 @@ p5.prototype.quad = function(...args) {
  * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
  * 55x55 white rect with black outline and rounded edges of different radii.
  */
+
 /**
  * @method rect
  * @param  {Number} x
@@ -568,13 +573,14 @@ p5.prototype.rect = function() {
 };
 
 /**
- * Draws a square to the screen. A square is a four-sided shape with
- * every angle at ninety degrees, and equal side size.
- * This function is a special case of the rect() function, where the width and height are the same, and the parameter is called "s" for side size.
- * By default, the first two parameters set the location of the upper-left corner, the third sets the side size of the square.
- * The way these parameters are interpreted, however,
- * may be changed with the <a href="#/p5/rectMode">rectMode()</a> function.
- * <br><br>
+ * Draws a square to the screen. A square is a four-sided shape with every angle
+ * at ninety degrees, and equal side size. This function is a special case of the
+ * rect() function, where the width and height are the same, and the parameter
+ * is called "s" for side size. By default, the first two parameters set the
+ * location of the upper-left corner, the third sets the side size of the square.
+ * The way these parameters are interpreted, may be changed with the <a
+ * href="#/p5/rectMode">rectMode()</a> function.
+ *
  * The fourth, fifth, sixth and seventh parameters, if specified,
  * determine corner radius for the top-left, top-right, lower-right and
  * lower-left corners, respectively. An omitted corner radius parameter is set
@@ -651,9 +657,10 @@ p5.prototype._renderRect = function() {
 };
 
 /**
- * A triangle is a plane created by connecting three points. The first two
- * arguments specify the first point, the middle two arguments specify the
- * second point, and the last two arguments specify the third point.
+ * Draws a trangle to the canvas. A triangle is a plane created by connecting
+ * three points. The first two arguments specify the first point, the middle two
+ * arguments specify the second point, and the last two arguments specify the
+ * third point.
  *
  * @method triangle
  * @param  {Number} x1 x-coordinate of the first point
@@ -672,7 +679,6 @@ p5.prototype._renderRect = function() {
  *
  *@alt
  * white triangle with black outline in mid-right of canvas.
- *
  */
 p5.prototype.triangle = function(...args) {
   p5._validateParameters('triangle', args);
