@@ -27,8 +27,6 @@ const _globalInit = () => {
   }
 };
 
-// TODO: ???
-
 // make a promise that resolves when the document is ready
 const waitForDocumentReady = () =>
   new Promise((resolve, reject) => {

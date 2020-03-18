@@ -17,7 +17,8 @@ import * as constants from './constants';
  * a p5 sketch.  It expects an incoming sketch closure and it can also
  * take an optional node parameter for attaching the generated p5 canvas
  * to a node.  The sketch closure takes the newly created p5 instance as
- * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>, <a href="#/p5/setup">setup()</a>, and/or
+ * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>,
+ * <a href="#/p5/setup">setup()</a>, and/or
  * <a href="#/p5/draw">draw()</a> properties on it for running a sketch.
  *
  * A p5 sketch can run in "global" or "instance" mode:
@@ -46,7 +47,7 @@ class p5 {
      * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
      * loading is preferred, the load methods can instead be called in <a href="#/p5/setup">setup()</a>
      * or anywhere else with the use of a callback parameter.
-     * <br><br>
+     *
      * By default the text "loading..." will be displayed. To make your own
      * loading page, include an HTML element with id "p5_loading" in your
      * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.

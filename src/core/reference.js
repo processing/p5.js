@@ -7,9 +7,9 @@
  * Creates and names a new variable. A variable is a container for a value.
  *
  * Variables that are declared with <a href="#/p5/let">let</a> will have block-scope.
- * This means that the variable only exists within the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
+ * This means that the variable only exists within the
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
  * block</a> that it is created within.
- *
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let">the MDN entry</a>:
  * Declares a block scope local variable, optionally initializing it to a value.
@@ -25,12 +25,20 @@
  * console.log(x); // prints 1 to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
- * Creates and names a new constant. Like a variable created with <a href="#/p5/let">let</a>, a constant
- * that is created with <a href="#/p5/const">const</a> is a container for a value,
- * however constants cannot be changed once they are declared.
+ * Creates and names a new constant. Like a variable created with <a href="#/p5/let">let</a>,
+ * a constant that is created with <a href="#/p5/const">const</a> is a container for a value,
+ * however constants cannot be reassigned once they are declared. Although it is
+ * noteworthy that for non-primitive data types like objects & arrays, their
+ * elements can still be changeable. So if a variable is assigned an array, you
+ * can still add or remove elements from the array but cannot reassign another
+ * array to it. Also unlike `let`, you cannot declare variables without value
+ * using const.
  *
  * Constants have block-scope. This means that the constant only exists within
  * the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
@@ -70,6 +78,9 @@
  * // wordFrequency = { 'a': 2, 'b': 3}; // throws error here
  * </code>
  * </div>
+ *
+ * @alt
+ * These examples do not render anything
  */
 
 /**
@@ -95,6 +106,9 @@
  * console.log(1 === '1'); // prints false to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -102,8 +116,8 @@
  * evaluates to true if the left value is greater than
  * the right value.
  *
- *
- * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">
+ * There is more info on comparison operators on MDN.</a>
  *
  * @property >
  *
@@ -114,13 +128,15 @@
  * console.log(1 > 100); // prints false to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
  * The greater than or equal to operator <a href="#/p5/>=">>=</a>
  * evaluates to true if the left value is greater than or equal to
  * the right value.
- *
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
  *
@@ -133,13 +149,15 @@
  * console.log(101 >= 100); // prints true to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
  * The less than operator <a href="#/p5/<"><</a>
  * evaluates to true if the left value is less than
  * the right value.
- *
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
  *
@@ -152,13 +170,15 @@
  * console.log(100 < 99); // prints false to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
  * The less than or equal to operator <a href="#/p5/<="><=</a>
  * evaluates to true if the left value is less than or equal to
  * the right value.
- *
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
  *
@@ -171,6 +191,9 @@
  * console.log(99 <= 100); // prints true to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -180,7 +203,8 @@
  * when that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
  * the code between the following curly braces is run.
  * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
- * the code between the curly braces that follow 'else' is run instead.
+ * the code between the curly braces of 'else' block is run instead. Writing an
+ * else block is optional.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else">the MDN entry</a>:
  * The 'if' statement executes a statement if a specified condition is truthy.
@@ -198,6 +222,9 @@
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -205,10 +232,13 @@
  * A <a href="#/p5/function">function</a> is a set of statements that perform a task.
  *
  * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters</a>
- * are variables that are scoped to the function, that can be assigned a value when calling the function.
+ * are variables that are scoped to the function, that can be assigned a value
+ * when calling the function.Multiple parameters can be given by seperating them
+ * with commmas.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function">the MDN entry</a>:
  * Declares a function with the specified parameters.
+ *
  * @property function
  *
  * @example
@@ -221,12 +251,16 @@
  * sayHello(myName); // calling the function, prints "Hello Hridi!" to console.
  * </code>
  * </div>
+ *
  * <div class='norender'>
  * <code>
  * let square = number => number * number;
  * console.log(square(5));
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -241,9 +275,13 @@
  * function calculateSquare(x) {
  *   return x * x;
  * }
- * calculateSquare(4); // returns 16
+ * const result = calculateSquare(4); // returns 16
+ * console.log(result); // prints '16' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -262,11 +300,15 @@
  * console.log(typeof myBoolean); // prints 'boolean' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
  * A <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
- * A string is a series of text characters. In Javascript, a string value must be surrounded by either single-quotation marks(') or double-quotation marks(").
+ * A string is a series of text characters. In Javascript, a string value must
+ * be surrounded by either single-quotation marks(') or double-quotation marks(").
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Glossary/string">the MDN entry</a>:
  * A string is a sequence of characters used to represent text.
@@ -280,6 +322,9 @@
  * console.log(typeof mood); // prints 'string' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -297,13 +342,18 @@
  * console.log(typeof num); // prints 'number' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Basics">MDN's object basics</a>:
- * An <a href="#/p5/object">object</a> is a collection of related data and/or functionality (which usually consists of several variables and functions —
+ * An <a href="#/p5/object">object</a> is a collection of related data and/or
+ * functionality (which usually consists of several variables and functions —
  * which are called properties and methods when they are inside objects.)
+ *
  * @property object
  *
  * @example
@@ -320,13 +370,19 @@
  * console.log(author.name); // prints 'Ursula K Le Guin' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
- * Creates and names a <a href="#/p5/class">class</a> which is a template for the creation of <a href="#/p5/objects">objects</a>.
+ * Creates and names a <a href="#/p5/class">class</a> which is a template for
+ * the creation of <a href="#/p5/objects">objects</a>.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
- * The class declaration creates a new Class with a given name using prototype-based inheritance.
+ * The class declaration creates a new Class with a given name using
+ * prototype-based inheritance.
+ *
  * @property class
  *
  * @example
@@ -343,17 +399,23 @@
  * console.log(square.width); // prints '1' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
- * <a href="#/p5/for">for</a> creates a loop that is useful for executing one section of code multiple times.
+ * <a href="#/p5/for">for</a> creates a loop that is useful for executing one
+ * section of code multiple times.
  *
- * A 'for loop' consists of three different expressions inside of a parenthesis, all of which are optional.
- * These expressions are used to control the number of times the loop is run.
- * The first expression is a statement that is used to set the initial state for the loop.
- * The second expression is a condition that you would like to check before each loop. If this expression returns
- * false then the loop will exit.
- * The third expression is executed at the end of each loop.
+ * A 'for loop' consists of three different expressions inside of a parenthesis,
+ * all of which are optional.These expressions are used to control the number of
+ * times the loop is run.The first expression is a statement that is used to set
+ * the initial state for the loop.The second expression is a condition that you
+ * would like to check before each loop. If this expression returns false then
+ * the loop will exit.The third expression is executed at the end of each loop.
+ * These expression are seperated by ; (semi-colon).In case of an empty expression,
+ * only a semi-colon is written.
  *
  * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
  * and third expression.
@@ -377,22 +439,30 @@
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
- * <a href="#/p5/while">while</a> creates a loop that is useful for executing one section of code multiple times.
+ * <a href="#/p5/while">while</a> creates a loop that is useful for executing
+ * one section of code multiple times.
  *
- * With a 'while loop', the code inside of the loop body (between the curly braces) is run repeatedly until the test condition
- * (inside of the parenthesis) evaluates to false. Unlike a <a href="#/p5/for">for</a> loop, the condition is tested before executing the code body with <a href="#/p5/while">while</a>,
- * so if the condition is initially false the loop body, or statement, will never execute.
+ * With a 'while loop', the code inside of the loop body (between the curly
+ * braces) is run repeatedly until the test condition (inside of the parenthesis)
+ * evaluates to false. The condition is tested before executing the code body
+ * with <a href="#/p5/while">while</a>, so if the condition is initially false
+ * the loop body, or statement, will never execute.
  *
  * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. This is to keep your loop from trying to run an infinite amount of times,
- * which can crash your browser.
+ * the test condition will eventually evaluate to false. This is to keep your loop
+ * from trying to run an infinite amount of times, which can crash your browser.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while">the MDN entry</a>:
- * The while statement creates a loop that executes a specified statement as long as the test condition evaluates to true.
- * The condition is evaluated before executing the statement.
+ * The while statement creates a loop that executes a specified statement as long
+ * as the test condition evaluates to true.The condition is evaluated before
+ * executing the statement.
+ *
  * @property while
  *
  * @example
@@ -411,6 +481,9 @@
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -430,6 +503,9 @@
  * console.log(typeof myObjectAsString); // prints 'string' to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
 
 /**
@@ -439,11 +515,13 @@
  * The console is opened differently depending on which browser you are using.
  * Here are links on how to open the console in <a href="https://developer.mozilla.org/en-US/docs/Tools/Web_Console/Opening_the_Web_Console">Firefox</a>
  * , <a href="https://developers.google.com/web/tools/chrome-devtools/open">Chrome</a>, <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide/console">Edge</a>,
- * and <a href="https://support.apple.com/en-ca/guide/safari/sfri20948/mac">Safari</a>. With the <a href="https://editor.p5js.org/">online p5 editor</a> the
- * console is embedded directly in the page underneath the code editor.
+ * and <a href="https://support.apple.com/en-ca/guide/safari/sfri20948/mac">Safari</a>.
+ * With the <a href="https://editor.p5js.org/">online p5 editor</a> the console
+ * is embedded directly in the page underneath the code editor.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/API/Console/log">the MDN entry</a>:
- * The Console method log() outputs a message to the web console. The message may be a single <a href="#/p5/string">string</a> (with optional substitution values),
+ * The Console method log() outputs a message to the web console. The message may
+ * be a single <a href="#/p5/string">string</a> (with optional substitution values),
  * or it may be any one or more JavaScript <a href="#/p5/object">objects</a>.
  * @method log
  * @static
@@ -458,4 +536,7 @@
  * console.log(myNum + 12); // prints 17 to the console
  * </code>
  * </div>
+ *
+ * @alt
+ * This example does not render anything
  */
