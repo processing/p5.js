@@ -1741,6 +1741,7 @@
       ]
     },
     {
+    
       "login": "sk1122",
       "name": "Satyam Kulkarni",
       "avatar_url": "https://avatars3.githubusercontent.com/u/40713709?v=4",
@@ -1748,6 +1749,46 @@
       "contributions": [
         "docs"
       ]
+    },
+    {
+      "login": "DivyamAhuja",
+      "name": "Shirou",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/39771050?v=4",
+      "profile": "https://github.com/DivyamAhuja",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "pcgamer1",
+      "name": "Sarthak Saxena",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/30899040?v=4",
+      "profile": "https://github.com/pcgamer1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login" : "sk1122",
+      "name" : "Satyam Kulkarni",
+      "avatar_url" : "https://avatars3.githubusercontent.com/u/40713709?s=460&u=265922d69b5a462e414f4706e938bb94f027a342&v=4",
+      "profile": "https://github.com/sk1122",
+      "contributions": [
+        "documentation"
+      ]
+    },
+    {
+      "login": "nickmcintyre",
+      "name": "Nick McIntyre",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3719176?s=460&u=aa8165c80ab91fb1d85537f199d9871b5cb2e5e0&v=4",
+      "profile": "https://github.com/nickmcintyre",
+      "contributions": [
+        "plugin",
+        "bug",
+        "tutorial"
+      ]
+    }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",

@@ -15,14 +15,15 @@ const defaultClass = 'p5Canvas';
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
- * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a sketch will result in very
- * unpredictable behavior. If you want more than one drawing canvas
- * you could use <a href="#/p5/createGraphics">createGraphics</a> (hidden by default but it can be shown).
- * <br><br>
- * The system variables width and height are set by the parameters passed
- * to this function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the window will be
- * given a default size of 100x100 pixels.
- * <br><br>
+ * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a
+ * sketch will result in very unpredictable behavior. If you want more than
+ * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics</a>
+ * (hidden by default but it can be shown).
+ *
+ * The system variables width and height are set by the parameters passed to this
+ * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
+ * window will be given a default size of 100x100 pixels.
+ *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
@@ -47,7 +48,6 @@ const defaultClass = 'p5Canvas';
  * Black line extending from top-left of canvas to bottom right.
  *
  */
-
 p5.prototype.createCanvas = function(w, h, renderer) {
   p5._validateParameters('createCanvas', arguments);
   //optional: renderer, otherwise defaults to p2d
@@ -168,8 +168,7 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
 };
 
 /**
- * Removes the default canvas for a p5 sketch that doesn't
- * require a canvas
+ * Removes the default canvas for a p5 sketch that doesn't require a canvas
  * @method noCanvas
  * @example
  * <div>
@@ -199,7 +198,7 @@ p5.prototype.noCanvas = function() {
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] either P2D or WEBGL
- * undefined defaults to p2d
+ *                               undefined defaults to p2d
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
@@ -209,6 +208,7 @@ p5.prototype.noCanvas = function() {
  *   createCanvas(100, 100);
  *   pg = createGraphics(100, 100);
  * }
+ *
  * function draw() {
  *   background(200);
  *   pg.background(100);
@@ -285,6 +285,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * line(75, 25, 25, 75);
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * blendMode(MULTIPLY);
@@ -295,6 +296,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * line(75, 25, 25, 75);
  * </code>
  * </div>
+ *
  * @alt
  * translucent image thick red & blue diagonal rounded lines intersecting center
  * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
@@ -321,8 +323,10 @@ p5.prototype.blendMode = function(mode) {
  * See this
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">
  * reference for the native canvas API</a> for possible drawing functions you can call.
+ *
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * function setup() {
  *   drawingContext.shadowOffsetX = 5;
  *   drawingContext.shadowOffsetY = -5;
@@ -331,9 +335,12 @@ p5.prototype.blendMode = function(mode) {
  *   background(200);
  *   ellipse(width / 2, height / 2, 50, 50);
  * }
- * </code></div>
+ * </code>
+ * </div>
+ *
  * @alt
  * white ellipse with shadow blur effect around edges
+ *
  */
 
 export default p5;

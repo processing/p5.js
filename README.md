@@ -356,6 +356,8 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="http://fenilgandhi.tech"><img src="https://avatars0.githubusercontent.com/u/9128903?v=4" width="100px;" alt=""/><br /><sub><b>Fenil Gandhi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fenilgandhi" title="Documentation">📖</a> <a href="#example-fenilgandhi" title="Examples">💡</a></td>
     <td align="center"><a href="https://github.com/akshay-99"><img src="https://avatars0.githubusercontent.com/u/38867671?v=4" width="100px;" alt=""/><br /><sub><b>Akshay Padte</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akshay-99" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aakshay-99" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=akshay-99" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/DivyamAhuja"><img src="https://avatars0.githubusercontent.com/u/39771050?v=4" width="100px;" alt=""/><br /><sub><b>Shirou</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=DivyamAhuja" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3ADivyamAhuja" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/pcgamer1"><img src="https://avatars2.githubusercontent.com/u/30899040?v=4" width="100px;" alt=""/><br /><sub><b>Sarthak Saxena</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=pcgamer1" title="Code">💻</a></td>
   </tr>
 </table>
 

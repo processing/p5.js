@@ -79,6 +79,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *   pg.fill(0);
  *   frameRate(5);
  * }
+ *
  * function draw() {
  *   image(pg, width / 2, 0);
  *   pg.background(255);

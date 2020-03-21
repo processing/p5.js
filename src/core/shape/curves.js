@@ -15,9 +15,11 @@ import '../error_helpers';
  * anchor point, which become the first and last points on the curve. The
  * middle parameters specify the two control points which define the shape
  * of the curve. Approximately speaking, control points "pull" the curve
- * towards them.<br /><br />Bezier curves were developed by French
- * automotive engineer Pierre Bezier, and are commonly used in computer
- * graphics to define gently sloping curves. See also <a href="#/p5/curve">curve()</a>.
+ * towards them.
+ *
+ * Bezier curves were developed by French automotive engineer Pierre Bezier,
+ * and are commonly used in computer graphics to define gently sloping curves.
+ * See also <a href="#/p5/curve">curve()</a>.
  *
  * @method bezier
  * @param  {Number} x1 x-coordinate for the first anchor point
@@ -52,15 +54,9 @@ import '../error_helpers';
  *
  * @alt
  * stretched black s-shape in center with orange lines extending from end points.
- * stretched black s-shape with 10 5x5 white ellipses along the shape.
- * stretched black s-shape with 7 5x5 ellipses and orange lines along the shape.
- * stretched black s-shape with 17 small orange lines extending from under shape.
- * horseshoe shape with orange ends facing left and black curved center.
- * horseshoe shape with orange ends facing left and black curved center.
- * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
- * horizontal line that hooks downward on the right and 13 5x5 ellipses along it.
- * right curving line mid-right of canvas with 7 short lines radiating from it.
+ * a white colored curve on black background from the upper-right corner to the lower right corner.
  */
+
 /**
  * @method bezier
  * @param  {Number} x1
@@ -92,11 +88,9 @@ p5.prototype.bezier = function(...args) {
 };
 
 /**
- * Sets the resolution at which Beziers display.
+ * Sets the resolution at which Bezier's curve is displayed. The default value is 20.
  *
- * The default value is 20.
- *
- * This function is only useful when using the WEBGL renderer
+ * Note, This function is only useful when using the WEBGL renderer
  * as the default canvas renderer does not use this information.
  *
  * @method bezierDetail
@@ -108,13 +102,11 @@ p5.prototype.bezier = function(...args) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noFill();
- *
  *   bezierDetail(5);
  * }
  *
  * function draw() {
  *   background(200);
- *
  *   // prettier-ignore
  *   bezier(-40, -40, 0,
  *           90, -40, 0,
@@ -135,10 +127,11 @@ p5.prototype.bezierDetail = function(d) {
 };
 
 /**
- * Evaluates the Bezier at position t for points a, b, c, d.
- * The parameters a and d are the first and last points
- * on the curve, and b and c are the control points.
- * The final parameter t varies between 0 and 1.
+ * Given the x or y co-ordinate values of control and anchor points of a bezier
+ * curve, it evaluates the x or y coordinate of the bezier at position t. The
+ * parameters a and d are the x or y coordinates of first and last points on the
+ * curve while b and c are of the control points.The final parameter t is the
+ * position of the resultant point which is given between 0 and 1.
  * This can be done once with the x coordinates and a second time
  * with the y coordinates to get the location of a bezier curve at t.
  *
@@ -168,14 +161,13 @@ p5.prototype.bezierDetail = function(d) {
  *   let t = i / steps;
  *   let x = bezierPoint(x1, x2, x3, x4, t);
  *   let y = bezierPoint(y1, y2, y3, y4, t);
- *   ellipse(x, y, 5, 5);
+ *   circle(x, y, 5);
  * }
  * </code>
  * </div>
  *
  * @alt
- * stretched black s-shape with 17 small orange lines extending from under shape.
- *
+ * 10 points plotted on a given bezier at equal distances.
  */
 p5.prototype.bezierPoint = function(a, b, c, d, t) {
   p5._validateParameters('bezierPoint', arguments);
@@ -251,8 +243,8 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * </div>
  *
  * @alt
- * s-shaped line with 17 short orange lines extending from underside of shape
- *
+ * s-shaped line with 6 short orange lines showing the tangents at those points.
+ * s-shaped line with 6 short orange lines showing lines coming out the underside of the bezier.
  */
 p5.prototype.bezierTangent = function(a, b, c, d, t) {
   p5._validateParameters('bezierTangent', arguments);
@@ -300,13 +292,14 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * curve(73, 24, 73, 61, 15, 65, 15, 65);
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * // Define the curve points as JavaScript objects
- * let p1 = { x: 5, y: 26 },
-  p2 = { x: 73, y: 24 };
- * let p3 = { x: 73, y: 61 },
-  p4 = { x: 15, y: 65 };
+ * let p1 = { x: 5, y: 26 };
+ * let p2 = { x: 73, y: 24 };
+ * let p3 = { x: 73, y: 61 };
+ * let p4 = { x: 15, y: 65 };
  * noFill();
  * stroke(255, 102, 0);
  * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
@@ -316,6 +309,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y);
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * noFill();
@@ -333,6 +327,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * horseshoe shape with orange ends facing left and black curved center.
  * curving black and orange lines.
  */
+
 /**
  * @method curve
  * @param  {Number} x1
@@ -360,9 +355,8 @@ p5.prototype.curve = function(...args) {
 };
 
 /**
- * Sets the resolution at which curves display.
- *
- * The default value is 20 while the minimum value is 3.
+ * Sets the resolution at which curves display. The default value is 20 while
+ * the minimum value is 3.
  *
  * This function is only useful when using the WEBGL renderer
  * as the default canvas renderer does not use this
@@ -402,13 +396,13 @@ p5.prototype.curveDetail = function(d) {
 };
 
 /**
- * Modifies the quality of forms created with <a href="#/p5/curve">curve()</a> and <a href="#/p5/curveVertex">curveVertex()</a>.
- * The parameter tightness determines how the curve fits to the vertex
- * points. The value 0.0 is the default value for tightness (this value
- * defines the curves to be Catmull-Rom splines) and the value 1.0 connects
- * all the points with straight lines. Values within the range -5.0 and 5.0
- * will deform the curves but will leave them recognizable and as values
- * increase in magnitude, they will continue to deform.
+ * Modifies the quality of forms created with <a href="#/p5/curve">curve()</a>
+ * and <a href="#/p5/curveVertex">curveVertex()</a>.The parameter tightness
+ * determines how the curve fits to the vertex points. The value 0.0 is the
+ * default value for tightness (this value defines the curves to be Catmull-Rom
+ * splines) and the value 1.0 connects all the points with straight lines.
+ * Values within the range -5.0 and 5.0 will deform the curves but will leave
+ * them recognizable and as values increase in magnitude, they will continue to deform.
  *
  * @method curveTightness
  * @param {Number} amount amount of deformation from the original vertices
@@ -417,7 +411,6 @@ p5.prototype.curveDetail = function(d) {
  * <div>
  * <code>
  * // Move the mouse left and right to see the curve change
- *
  * function setup() {
  *   createCanvas(100, 100);
  *   noFill();
@@ -530,7 +523,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * </div>
  *
  * @alt
- *right curving line mid-right of canvas with 7 short lines radiating from it.
+ * right curving line mid-right of canvas with 7 short lines radiating from it.
  */
 p5.prototype.curveTangent = function(a, b, c, d, t) {
   p5._validateParameters('curveTangent', arguments);
