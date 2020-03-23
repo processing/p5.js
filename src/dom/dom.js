@@ -614,11 +614,13 @@ p5.prototype.createCheckbox = function() {
 /**
  * Creates a dropdown menu &lt;select&gt;&lt;/select&gt; element in the DOM.
  * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
- * The .option() method can be used to set options for the select after it is created.
- * The .value() method will return the currently selected option.
- * The .selected() method will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
- * The .selected() method can be used to make given option selected by default when the page first loads.
- * The .disable() method marks given option as disabled and marks whole of dropdown element as disabled when invoked with no parameter.
+ * - `.option(name, [value])` can be used to set options for the select after it is created.
+ * - `.value()` will return the currently selected option.
+ * - `.selected()` will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
+ * - `.selected(value)` can be used to make given option selected by default when the page first loads.
+ * - `.disable()` marks whole of dropdown element as disabled.
+ * - `.disable(value)` marks given option as disabled
+ *
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
  * @return {p5.Element}
@@ -669,22 +671,32 @@ p5.prototype.createCheckbox = function() {
 
 p5.prototype.createSelect = function() {
   p5._validateParameters('createSelect', arguments);
-  var elt, self;
-  var arg = arguments[0];
-  if (typeof arg === 'object' && arg.elt.nodeName === 'SELECT') {
+  let self;
+  let arg = arguments[0];
+  if (arg instanceof p5.Element && arg.elt instanceof HTMLSelectElement) {
+    // If given argument is p5.Element of select type
     self = arg;
-    elt = this.elt = arg.elt;
+    this.elt = arg.elt;
+  } else if (arg instanceof HTMLSelectElement) {
+    self = addElement(arg, this);
+    this.elt = arg;
   } else {
-    elt = document.createElement('select');
+    const elt = document.createElement('select');
     if (arg && typeof arg === 'boolean') {
       elt.setAttribute('multiple', 'true');
     }
     self = addElement(elt, this);
+    this.elt = elt;
   }
   self.option = function(name, value) {
-    var index;
+    let index;
+
+    // if no name is passed, return
+    if (name === undefined) {
+      return;
+    }
     //see if there is already an option with this name
-    for (var i = 0; i < this.elt.length; i++) {
+    for (let i = 0; i < this.elt.length; i += 1) {
       if (this.elt[i].innerHTML === name) {
         index = i;
         break;
@@ -696,38 +708,33 @@ p5.prototype.createSelect = function() {
       if (value === false) {
         this.elt.remove(index);
       } else {
-        //otherwise if the name and value are the same then change both
-        if (this.elt[index].innerHTML === this.elt[index].value) {
-          this.elt[index].innerHTML = this.elt[index].value = value;
-          //otherwise just change the value
-        } else {
-          this.elt[index].value = value;
-        }
+        // Update the option at index with the value
+        this.elt[index].value = value;
       }
     } else {
-      //if it doesn't exist make it
-      var opt = document.createElement('option');
+      //if it doesn't exist create it
+      const opt = document.createElement('option');
       opt.innerHTML = name;
-      if (arguments.length > 1) opt.value = value;
-      else opt.value = name;
-      elt.appendChild(opt);
+      opt.value = value === undefined ? name : value;
+      this.elt.appendChild(opt);
       this._pInst._elements.push(opt);
     }
   };
+
   self.selected = function(value) {
-    var arr = [],
-      i;
-    if (arguments.length > 0) {
-      for (i = 0; i < this.elt.length; i++) {
-        if (value.toString() === this.elt[i].value) {
+    // Update selected status of option
+    if (value !== undefined) {
+      for (let i = 0; i < this.elt.length; i += 1) {
+        if (this.elt[i].value.toString() === value.toString()) {
           this.elt.selectedIndex = i;
         }
       }
       return this;
     } else {
       if (this.elt.getAttribute('multiple')) {
-        for (i = 0; i < this.elt.selectedOptions.length; i++) {
-          arr.push(this.elt.selectedOptions[i].value);
+        let arr = [];
+        for (const selectedOption of this.elt.selectedOptions) {
+          arr.push(selectedOption.value);
         }
         return arr;
       } else {
@@ -737,17 +744,17 @@ p5.prototype.createSelect = function() {
   };
 
   self.disable = function(value) {
-    if (value !== undefined && typeof value === 'string') {
+    if (typeof value === 'string') {
       for (let i = 0; i < this.elt.length; i++) {
-        if (this.elt[i].value === value) {
+        if (this.elt[i].value.toString() === value) {
           this.elt[i].disabled = true;
+          this.elt[i].selected = false;
         }
       }
-      return this;
-    } else if (arguments.length === 0) {
+    } else {
       this.elt.disabled = true;
-      return this;
     }
+    return this;
   };
 
   return self;

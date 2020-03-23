@@ -67,7 +67,8 @@ suite('DOM', function() {
   });
 
   suite('p5.prototype.createSelect', function() {
-    var myp5;
+    let myp5;
+    let testElement;
 
     setup(function(done) {
       new p5(function(p) {
@@ -80,91 +81,119 @@ suite('DOM', function() {
 
     teardown(function() {
       myp5.remove();
-    });
-
-    var elt;
-
-    teardown(function() {
-      if (elt && elt.parentNode) {
-        elt.parentNode.removeChild(elt);
-        elt = null;
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
       }
     });
 
-    test('should create dropdown element', function() {
-      let opt;
-      let dropdown;
-      elt = document.createElement('select');
-      opt = document.createElement('option');
-      opt.value = 'milk';
-      opt.text = 'milk';
-      elt.appendChild(opt);
-      document.body.appendChild(elt);
-      dropdown = myp5.createSelect();
-      dropdown.option('milk');
-      assert.deepEqual(JSON.stringify(dropdown.elt), JSON.stringify(elt));
+    const createHTMLSelect = options => {
+      const selectElement = document.createElement('select');
+      for (const optionName of options) {
+        const option = document.createElement('option');
+        option.setAttribute('label', optionName);
+        option.setAttribute('value', optionName);
+        selectElement.add(option);
+      }
+      return selectElement;
+    };
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createSelect);
     });
 
-    test('should mark option default when called with selected() method', function() {
-      let dropdown;
-      let options = ['milk', 'oil', 'bread'];
-      elt = document.createElement('select');
+    test('should return p5.Element of select HTML Element', function() {
+      testElement = myp5.createSelect();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLSelectElement);
+    });
+
+    test('should return p5.Element when select element is passed', function() {
+      selectElement = createHTMLSelect(['option1', 'option2']);
+      testElement = myp5.createSelect(selectElement);
+      assert.deepEqual(testElement.elt, selectElement);
+    });
+
+    test('calling option(newName) should add a new option', function() {
+      const testOptions = ['John', 'Bethany', 'Dwayne'];
+      testElement = myp5.createSelect();
+      for (const optionName of testOptions) testElement.option(optionName);
+
+      const htmlOptions = [];
+      for (const optionName of testElement.elt.options) {
+        assert.deepEqual(optionName.label, optionName.value);
+        htmlOptions.push(optionName.label);
+      }
+      assert.deepEqual(htmlOptions, testOptions);
+    });
+
+    test('calling option(name, newValue) should update value of option', function() {
+      const optionName = 'john';
+      const testValues = [1, 'abc', true];
+      testElement = myp5.createSelect();
+      testElement.option(optionName, 0);
+
+      for (const newValue of testValues) {
+        testElement.option(optionName, newValue);
+        const htmlValue = testElement.elt.options[0].value;
+        assert(htmlValue, newValue);
+      }
+    });
+
+    test('calling value() should return current selected option', function() {
+      testElement = myp5.createSelect();
+      testElement.option('Sunday');
+      testElement.option('Monday');
+      testElement.elt.options[1].selected = true;
+      assert(testElement.value(), 'Monday');
+    });
+
+    test('calling selected() should return all selected options', function() {
+      testElement = myp5.createSelect(true);
+      options = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      for (const optionName of options) testElement.option(optionName);
+
+      // Select multiple options
+      const selectedOptions = options.slice(0, 3);
+      for (let i = 0; i < selectedOptions.length; i++) {
+        testElement.elt.options[i].selected = true;
+        assert.deepEqual(
+          testElement.selected(),
+          selectedOptions.slice(0, i + 1)
+        );
+      }
+    });
+
+    test('calling selected(value) should updated selectedIndex', function() {
+      testElement = myp5.createSelect(true);
+      options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
+      for (const optionName of options) testElement.option(optionName);
+
+      // Select multiple options and check if the values get updated
       for (let i = 0; i < options.length; i++) {
-        let opt;
-        if (options[i] === 'oil') {
-          opt = new Option(options[i], options[i]);
-          opt.setAttribute('selected', 'selected');
-        } else {
-          opt = new Option(options[i], options[i]);
-        }
-        elt.appendChild(opt);
+        testElement.selected(options[i]);
+        const selectedIndexValue =
+          testElement.elt.options[testElement.elt.selectedIndex].value;
+        assert.deepEqual(selectedIndexValue, options[i]);
       }
+    });
 
-      dropdown = myp5.createSelect();
-      dropdown.option('milk');
-      dropdown.option('oil');
-      dropdown.option('bread');
-      dropdown.selected('oil');
-      assert.strictEqual(
-        dropdown.elt[dropdown.elt.selectedIndex].text,
-        elt[elt.selectedIndex].text
-      );
+    test('calling disable() should disable the whole dropdown', function() {
+      testElement = myp5.createSelect(true);
+      testElement.disable();
+
+      assert.isTrue(testElement.elt.disabled);
     });
 
     test('should disable an option when disable() method invoked with option name', function() {
-      let dropdown;
-      let options = ['milk', 'oil', 'bread'];
-      elt = document.createElement('select');
-      for (let i = 0; i < options.length; i++) {
-        let opt;
-        if (options[i] === 'oil') {
-          opt = new Option(options[i], options[i]);
-          opt.setAttribute('disabled', true);
-        } else {
-          opt = new Option(options[i], options[i]);
-        }
-        elt.appendChild(opt);
-      }
-      let disabledIndex;
-      dropdown = myp5.createSelect();
-      dropdown.option('milk');
-      dropdown.option('oil');
-      dropdown.option('bread');
-      dropdown.disable('oil');
-      for (let j = 0; j < dropdown.elt.length; j++) {
-        if (dropdown.elt[j].disabled) {
-          disabledIndex = j;
-        }
-      }
-      assert.strictEqual(dropdown.elt[disabledIndex].text, 'oil');
-    });
+      testElement = myp5.createSelect(true);
+      options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
+      for (const optionName of options) testElement.option(optionName);
 
-    test('should disable dropdown if disbale invoked with no parameter', function() {
-      let dropdown = myp5.createSelect();
-      dropdown.option('milk');
-      dropdown.option('oil');
-      dropdown.disable();
-      assert.strictEqual(dropdown.elt.disabled, true);
+      const disabledIndex = 2;
+      testElement.disable(options[disabledIndex]);
+      assert.isTrue(testElement.elt.options[disabledIndex].disabled);
+      assert.isFalse(testElement.elt.options[disabledIndex].selected);
     });
   });
 
