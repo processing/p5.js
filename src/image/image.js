@@ -309,6 +309,7 @@ p5.prototype.saveGif = function(pImg, filename) {
     palette: new Uint32Array(globalPalette)
   };
   const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  let previousFrame = {};
 
   // Pass 2
   // Determine if the frame needs a local palette
@@ -367,19 +368,12 @@ p5.prototype.saveGif = function(pImg, filename) {
           }
         }
         frameOpts.transparent = transparentIndex;
+        // If this frame has any transparency, do not dispose the previous frame
+        previousFrame.frameOpts.disposal = 1;
       }
     }
     frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
-    if (!localPaletteRequired) {
-      gifWriter.addFrame(
-        0,
-        0,
-        pImg.width,
-        pImg.height,
-        pixelPaletteIndex,
-        frameOpts
-      );
-    } else {
+    if (localPaletteRequired) {
       // force palette to be power of 2
       let powof2 = 1;
       while (powof2 < palette.length) {
@@ -387,16 +381,36 @@ p5.prototype.saveGif = function(pImg, filename) {
       }
       palette.length = powof2;
       frameOpts.palette = new Uint32Array(palette);
+    }
+    if (i > 0) {
+      // add the frame that came before the current one
       gifWriter.addFrame(
         0,
         0,
         pImg.width,
         pImg.height,
-        pixelPaletteIndex,
-        frameOpts
+        previousFrame.pixelPaletteIndex,
+        previousFrame.frameOpts
       );
     }
+    // previous frame object should now have details of this frame
+    previousFrame = {
+      pixelPaletteIndex,
+      frameOpts
+    };
   }
+
+  previousFrame.frameOpts.disposal = 1;
+  // add the last frame
+  gifWriter.addFrame(
+    0,
+    0,
+    pImg.width,
+    pImg.height,
+    previousFrame.pixelPaletteIndex,
+    previousFrame.frameOpts
+  );
+
   const extension = 'gif';
   const blob = new Blob([buffer.slice(0, gifWriter.end())], {
     type: 'image/gif'
