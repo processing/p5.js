@@ -13,7 +13,21 @@ p5.js에 기여하는데에 관심을 가져주셔서 감사합니다! 우리 �
 p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 - [p5.js](https://github.com/processing/p5.js): 본 저장소에는 p5.js 라이브러리의 소스 코드가 보관되어 있습니다. [유저들이 보게 되는 p5.js의 레퍼런스 매뉴얼](https://p5js.org/reference/) 또한 이 소스 코드에 포함되어 있는 [JSDoc](http://usejsdoc.org/) 각주에서 생성됩니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
-- [p5.js-website](https://github.com/processing/p5.js-website): 본 저장소에는 레퍼런스 매뉴얼을 제외한 [p5.js 웹사이트](http://p5js.org)의 코드가 전부 보관되어 있습니다. 본 저장소는 [로렌 리 맥카시](https://github.com/lmccart)가 관리합니다.
+- [p5.js-website](https://github.com/processing/p5.js-website): 본 저장소에는 레퍼런스 매뉴얼을 제외한 [p5.js 웹사이트](http://p5js.org)의 코드가 전부 보관되어 있습니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
 - [p5.js-sound](https://github.com/processing/p5.js-sound): 본 저장소에는 p5.sound.js 라이브러리가 보관되어 있습니다. 본 저장소는 [제이슨 시갈(Jason Sigal)](https://github.com/therewasaguy)이 관리합니다.
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor): 본 저장소에는 [p5.js 웹 에디터](https://editor.p5js.org)의 소스 코드가 보관되어 있습니다. 본 저장소는 [캐시 타라케지언(Cassie Tarakajian)](https://github.com/catarak)이 관리합니다. 예전의 [p5.js 에디터](https://github.com/processing/p5.js-editor)는 이제 더 이상 사용되지 않다는 점을 참고하십시오.
 - [p5.accessibility](https://github.com/processing/p5.accessibility): 맹인 및 시각 장애인들이 조금 더 쉽게 p5 캔버스를 사용할 수 있도록 하는 라이브러리입니다.
+
+
+
+# 저장소 파일 구조
+
+본 프로젝트엔 많은 파일들이 있습니다! 여기에 그 간략한 개요가 있습니다. 헷갈릴 수도 있지만, 기여하기 위해서 저장소의 모든 파일을 이해할 필요까지는 없습니다. 우리는 한 영역(주석을 고치는 것이 한 예가 될 수 있겠습니다)에서 시작해서 차근차근 다른 영역으로 나아가는 걸 권장합니다. 루이사 페레이라(Luisa Pereira)의 강의 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에 p5.js 작업 흐름에 사용되는 도구와 파일들에 대한 소개를 동영상으로 확인하실 수 있습니다.
+
+- `contributor_docs/`에는 컨트리뷰터들을 위한 관례와 원칙을 설명하는 문서가 들어 있습니다.
+- `docs/`에는 사실 문서들이 없습니다! 대신, [온라인 레퍼런스 매뉴얼](https://p5js.org/reference)을 생성하기 위한 코드가 담겨 있습니다.
+- `lib/`에는 비어 있는 예시 파일과 [p5.js-sound 저장소](https://github.com/processing/p5.js-sound)에서 풀 리퀘스트를 통해 정기적으로 업데이트 되는 p5.sound 애드온이 담겨 있습니다. 또한 이곳은 빌드 된 p5.js 라이브러리가 [Grunt](https://gruntjs.com/)를 이용해 하나의 파일로 컴파일 된 후에 위치하게 되는 곳이기도 합니다. 풀 리퀘스트를 할 때 깃허브 저장소로 따로 파일을 이동시킬 필요가 없는 것입니다.
+- `src/` 에는 라이브러리를 위한 모든 소스 코드가 담겨 있는데, 이들은 분리된 모듈의 형태로 주제별로 정리되어 있습니다. 만약 p5.js를 수정하고자 한다면 여기 있는 소스 코드에 작업을 하면 됩니다. 대부분의 폴더 안에는 각각의 리드미 파일(readme.md)이 있으니 이를 참고해 작업 해주시기 바랍니다.
+- `tasks/`에는 새로운 버전의 p5.js를 빌드, 배포, 릴리스 하는데에 관련된 자동화 된 작업들을 수행하는 스크립트들이 담겨 있습니다.
+- `tests/`는 내용 수정이 있어도 라이브러리가 제대로 작동하도록 보장해주는 유닛 테스트들을 담고 있습니다.
+- `utils/`는 저장소에 유용할 수도 있는 추가적인 파일들을 담고 있는데, 일반적으로 본 디렉토리는 무시해도 괜찮습니다.
