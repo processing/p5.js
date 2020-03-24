@@ -6,3 +6,14 @@ p5.js에 기여하는데에 관심을 가져주셔서 감사합니다! 우리 �
 
 이 프로젝트는 [올-컨트리뷰터스(all-contributors)](https://github.com/kentcdodds/all-contributors) 사양을 따릅니다. [안내 사항](https://github.com/processing/p5.js/issues/2309)을 따라 [리드미(readme)](https://github.com/processing/p5.js/blob/master/README.md#contributors)에 본인을 추가하세요! 혹은 [깃허브 이슈](https://github.com/processing/p5.js/issues)에 여러분의 컨트리뷰션을 댓글로 달아주시면 저희가 추가해드리겠습니다.
 
+
+
+# 코드 보관 위치
+
+p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
+
+- [p5.js](https://github.com/processing/p5.js): 본 저장소에는 p5.js 라이브러리의 소스 코드가 보관되어 있습니다. [유저들이 보게 되는 p5.js의 레퍼런스 매뉴얼](https://p5js.org/reference/) 또한 이 소스 코드에 포함되어 있는 [JSDoc](http://usejsdoc.org/) 각주에서 생성됩니다. 본 저장소는 [로렌 리 맥카시(Lauren Lee McCarthy)](https://github.com/lmccart)가 관리합니다.
+- [p5.js-website](https://github.com/processing/p5.js-website): 본 저장소에는 레퍼런스 매뉴얼을 제외한 [p5.js 웹사이트](http://p5js.org)의 코드가 전부 보관되어 있습니다. 본 저장소는 [로렌 리 맥카시](https://github.com/lmccart)가 관리합니다.
+- [p5.js-sound](https://github.com/processing/p5.js-sound): 본 저장소에는 p5.sound.js 라이브러리가 보관되어 있습니다. 본 저장소는 [제이슨 시갈(Jason Sigal)](https://github.com/therewasaguy)이 관리합니다.
+- [p5.js-web-editor](https://github.com/processing/p5.js-web-editor): 본 저장소에는 [p5.js 웹 에디터](https://editor.p5js.org)의 소스 코드가 보관되어 있습니다. 본 저장소는 [캐시 타라케지언(Cassie Tarakajian)](https://github.com/catarak)이 관리합니다. 예전의 [p5.js 에디터](https://github.com/processing/p5.js-editor)는 이제 더 이상 사용되지 않다는 점을 참고하십시오.
+- [p5.accessibility](https://github.com/processing/p5.accessibility): 맹인 및 시각 장애인들이 조금 더 쉽게 p5 캔버스를 사용할 수 있도록 하는 라이브러리입니다.
