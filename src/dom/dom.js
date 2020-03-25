@@ -216,11 +216,10 @@ p5.prototype._wrapElement = function(elt) {
  */
 p5.prototype.removeElements = function(e) {
   p5._validateParameters('removeElements', arguments);
-  for (var i = 0; i < this._elements.length; i++) {
-    if (!(this._elements[i].elt instanceof HTMLCanvasElement)) {
-      this._elements[i].remove();
-    }
-  }
+  // el.remove splices from this._elements, so don't mix iteration with it
+  const isNotCanvasElement = el => !(el.elt instanceof HTMLCanvasElement);
+  const removeableElements = this._elements.filter(isNotCanvasElement);
+  removeableElements.map(el => el.remove());
 };
 
 /**
