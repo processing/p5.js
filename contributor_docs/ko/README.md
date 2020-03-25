@@ -22,7 +22,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 # 저장소 파일 구조
 
-본 프로젝트엔 많은 파일들이 있습니다! 여기에 그 간략한 개요가 있습니다. 헷갈릴 수도 있지만, 기여하기 위해서 저장소의 모든 파일을 이해할 필요까지는 없습니다. 우리는 한 영역(주석을 고치는 것이 한 예가 될 수 있겠습니다)에서 시작해서 차근차근 다른 영역으로 나아가는 걸 권장합니다. 루이사 페레이라(Luisa Pereira)의 강의 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에 p5.js 작업 흐름에 사용되는 도구와 파일들에 대한 소개를 동영상으로 확인하실 수 있습니다.
+본 프로젝트엔 많은 파일들이 있습니다! 여기에 그 간략한 개요가 있습니다. 헷갈릴 수도 있지만, 기여하기 위해서 저장소의 모든 파일을 이해할 필요까지는 없습니다. 우리는 한 영역(인라인 도큐멘테이션을 고치는 것이 한 예가 될 수 있겠습니다)에서 시작해서 차근차근 다른 영역으로 나아가는 걸 권장합니다. 루이사 페레이라(Luisa Pereira)의 강의 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에 p5.js 작업 흐름에 사용되는 도구와 파일들에 대한 소개를 동영상으로 확인하실 수 있습니다.
 
 - `contributor_docs/`에는 컨트리뷰터들을 위한 관례와 원칙을 설명하는 문서가 들어 있습니다.
 - `docs/`에는 사실 문서들이 없습니다! 대신, [온라인 레퍼런스 매뉴얼](https://p5js.org/reference)을 생성하기 위한 코드가 담겨 있습니다.
@@ -31,3 +31,14 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 - `tasks/`에는 새로운 버전의 p5.js를 빌드, 배포, 릴리스 하는데에 관련된 자동화 된 작업들을 수행하는 스크립트들이 담겨 있습니다.
 - `tests/`는 내용 수정이 있어도 라이브러리가 제대로 작동하도록 보장해주는 유닛 테스트들을 담고 있습니다.
 - `utils/`는 저장소에 유용할 수도 있는 추가적인 파일들을 담고 있는데, 일반적으로 본 디렉토리는 무시해도 괜찮습니다.
+
+
+
+# 문서화
+
+문서화는 본 프로젝트의 가장 중요한 부분입니다. 낮은 품질의 문서화는 새로운 이용자와 컨트리뷰터들의 진입 장벽을 높여 프로젝트 참여도를 저하시킵니다. [contributing_documentation.md](./contributing_documentation.md) 페이지는 문서화를 시작하는 데에 깊이 있는 개요를 제시합니다. p5.js를 위한 문서화는 아래와 같은 곳들에서 주로 찾아볼 수 있습니다:
+
+- [p5js.org/reference](https://p5js.org/reference/)는 소스 코드의 [인라인 도큐멘테이션](./inline_documentation.md)으로부터 생성됩니다. 이는 텍스트 설명, 파라미터, 코드 스니펫 예시 등을 포함합니다. 우리는 코드와 인라인 도큐멘테이션을 긴밀히 연결시키고, 문서화에 기여하는 게 코드에 기여하는 것 만큼이나 중요하다는 생각을 강화하기 위해 인라인 도큐멘테이션을 활용하는 것입니다. 라이브러리가 빌드 되면 라이브러리와 코드가 작동하는 방식 사이에 문제가 없음을 확실히 하기 위해 인라인 도큐멘테이션과 예시를 확인합니다. 이에 기여하기 위해선 [inline_documentation.md](./inline_documentation.md) 페이지를 살펴보는 걸로 시작하시기 바랍니다.
+- [p5js.org/examples](http://p5js.org/examples)페이지는 p5.js를 학습하는 데에 유용할 수 있는 길이가 긴 예시들을 담고 있습니다. 컨트리뷰션을 위해서는 [adding_examples.md](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) 페이지를 살펴보시기 바랍니다.
+- [p5js.org/tutorials](https://p5js.org/tutorials)페이지는 p5.js와 프로그래밍의 개념을 배울 수 있도록 도와주는 튜토리얼들을 담고 있습니다. 기여하기 위해서는 [p5.js 웹사이트의 튜토리얼에 대한 튜토리얼](https://p5js.org/learn/tutorial-guide.html)을 살펴보시기 바랍니다!
+- p5.js 웹사이트는 현재 몇 가지 다른 언어들을 지원하고 있음을 확인하실 수 있습니다. 이는 국제화(혹은 줄여서 i18n)라고 불립니다. 이에 대한 문서는 [i18n_contribution](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) 페이지에서 더 자세히 보실 수 있습니다.
