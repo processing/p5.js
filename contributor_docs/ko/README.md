@@ -182,3 +182,14 @@ $ npm run dev
 서버가 돌아가면, 브라우저에서 `test/test.html`을 열 수 있을 겁니다.
 
 유닛 테스팅에 대한 완전한 설명은 p5.js 문서의 범위를 벗어나는 것이지만, 간략하게만 말하자면 src/ 디렉토리에 있는 소스 코드에 가해진 중대한 수정 사항이나, 새로 구현된 기능은 Mocha가 실행할 수 있는 테스트 파일이 test/ 디렉토리에 동반되어야 하는데, 이는 향후 나올 모든 버전의 라이브러리에서도 일관성 있게 작동할 것임을 검증하기 위함입니다. 유닛 테스트를 작성할 때, [Chai.js 레퍼런스](http://www.chaijs.com/api/assert/)를 참고해 어서션(assertion) 메세지를 구성함으로써 미래에 테스트로 잡아낼 수 있는 오류들이 일관성 있고, 결과적으로 다른 개발자들이 이해하기 쉽게 만들어주시기를 바랍니다.
+
+
+
+# 기타
+
+- [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) 폴더에는 살펴볼만한 다른 파일들도 있습니다. 이들은 본 프로젝트의 기술적인 혹은 비기술적인 각 영역과 관계된 것들입니다.
+- p5.js 개발 작업 흐름에서 사용되는 도구와 파일들에 대한 영상 설명은 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에서 보실 수 있습니다.
+- [코딩 트레인의 이 동영상](https://youtu.be/Rr3vLyP1Ods)🚋🌈에서는 p5.js에 기술적 기여를 시작하는 것에 대한 개요를 제공합니다.
+- p5.js [도커(Docker) 이미지](https://github.com/toolness/p5.js-docker)는 [도커](https://www.docker.com/)에 마운트 될 수 있는데, 이는 [Node](https://nodejs.org/) 같은 필수 요소들을 수동으로 설치할 필요 없이, 그리고 도커 설치를 제외하고는 어떤 방식으로든지 호스트 운영 체제에 영향을 주지 않고도 p5.js를 개발하는데에 사용될 수 있습니다.
+- p5.js 라이브러리의 빌드 과정은 [json 데이터 파일](https://p5js.org/reference/data.json)을 생성하는데, 이는 p5.js의 공개 API를 담고 있으며, 이는 에디터에서 p5.js 메서드를 자동으로 완성하는 등의 자동화된 툴링에 사용될 수 있습니다. 이 파일은 p5.js 웹사이트에서 호스트 되지만, 저장소의 일부로 포함되어 있지는 않습니다.
+- p5.js는 최근에 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015)로 마이그레이션 됐습니다. 이 변화가 여러분의 기여에 어떤 영향을 미칠지를 보기 위해선 [ES6 채택](./es6-adoption.md)을 방문해주십시오.
