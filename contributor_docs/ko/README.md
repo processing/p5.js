@@ -59,3 +59,56 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 * [organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md) 파일은 이슈들이 어떻게 체계화 될 수 있는지, 그리고 그에 대한 의사결정 과정은 어떻게 이루어지는지에 대한 대략적인 개요를 담고 있습니다. 이에 관심이 있다면 얼마든지 기여해주시기 바랍니다.
 
+
+
+# 개발 과정
+
+개발 프로세스라는 게 처음에는 약간 까다로울 수 있습니다. 그렇게 느끼는 건 여러분 뿐만이 아니라, 처음엔 모두가 혼란을 겪곤 합니다. 밑을 보시면 셋업 과정을 차례 차례 확인하실 수 있습니다. 만약 질문이 있다면 [포럼](https://discourse.processing.org/c/p5js)에 물어보거나 막힌 부분을 설명하는 [이슈](https://github.com/processing/p5.js/issues)를 제출하면 저희가 할 수 있는 최대한의 도움을 드리도록 하겠습니다.
+
+아래 절차는 [코딩 트레인(The Coding Train)의 비디오 강의](https://youtu.be/Rr3vLyP1Ods)에서도 다루고 있습니다.🚋🌈
+
+
+
+1. [node.js](http://nodejs.org/)를 설치하세요. node.js를 설치하면 자동적으로 [npm](https://www.npmjs.org) 패키지 매니저도 설치됩니다.
+
+2. 본인의 깃허브 계정에 [p5.js 저장소](https://github.com/processing/p5.js)를 [포크](https://help.github.com/articles/fork-a-repo) 하십시오.
+
+3. 포크 된 깃허브 저장소를 로컬 컴퓨터에 [클론](https://help.github.com/articles/cloning-a-repository/) 하십시오.
+
+   ```
+   $ git clone https://github.com/YOUR_USERNAME/p5.js.git
+   ```
+
+4. 프로젝트 폴더로 들어가 npm에 필요한 모든 디펜던시를 설치하십시오.
+
+   ```
+   $ cd p5.js
+   $ npm ci
+   ```
+
+5. 이제 [Grunt](https://gruntjs.com/)가 설치되었을텐데, 소스 코드로부터 라이브러리를 빌드하기 위해 이를 이용할 수 있습니다.
+
+   ```
+   $ npm run grunt
+   ```
+
+만약 라이브러리의 파일을 계속해서 변경해야 한다면, 사전에 수동으로 일일이 명령어를 입력하지 않아도 소스 파일 변경 사항을 자동적으로 다시 빌드해줄 수 있도록 `npm run dev`를 실행 하는 게 나을 것입니다.
+
+6. 로컬에서 코드 베이스를 변경하고, 깃(Git)으로 [커밋](https://help.github.com/articles/github-glossary/#commit) 하십시오.
+
+   ```
+   $ git add -u
+   $ git commit -m "YOUR COMMIT MESSAGE"
+   ```
+
+7. 문법 오류가 없음을 확인하고, 고장 및 다른 문제들에 대한 테스트를 하기 위해 `npm run grunt`를 다시 한 번 실행하십시오.
+
+8. 변경 사항을 여러분의 깃허브 포크에 [푸시](https://help.github.com/articles/github-glossary/#push) 하십시오.
+
+   ```
+   $ git push
+   ```
+   
+9. 모든 게 준비되었다면, 변경 사항을 [풀 리퀘스트](https://help.github.com/articles/creating-a-pull-request)로 제출하십시오.
+
+
