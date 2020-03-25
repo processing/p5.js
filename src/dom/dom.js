@@ -347,6 +347,11 @@ function addElement(elt, pInst, media) {
  * createDiv('this is some text');
  * </code></div>
  */
+p5.prototype.createDiv = function(html = '') {
+  let elt = document.createElement('div');
+  elt.innerHTML = html;
+  return addElement(elt, this);
+};
 
 /**
  * Creates a &lt;p&gt;&lt;/p&gt; element in the DOM with given inner HTML. Used
@@ -360,6 +365,11 @@ function addElement(elt, pInst, media) {
  * createP('this is some text');
  * </code></div>
  */
+p5.prototype.createP = function(html = '') {
+  let elt = document.createElement('p');
+  elt.innerHTML = html;
+  return addElement(elt, this);
+};
 
 /**
  * Creates a &lt;span&gt;&lt;/span&gt; element in the DOM with given inner HTML.
@@ -372,15 +382,11 @@ function addElement(elt, pInst, media) {
  * createSpan('this is some text');
  * </code></div>
  */
-var tags = ['div', 'p', 'span'];
-tags.forEach(function(tag) {
-  var method = 'create' + tag.charAt(0).toUpperCase() + tag.slice(1);
-  p5.prototype[method] = function(html) {
-    var elt = document.createElement(tag);
-    elt.innerHTML = typeof html === 'undefined' ? '' : html;
-    return addElement(elt, this);
-  };
-});
+p5.prototype.createSpan = function(html = '') {
+  let elt = document.createElement('span');
+  elt.innerHTML = html;
+  return addElement(elt, this);
+};
 
 /**
  * Creates an &lt;img&gt; element in the DOM with given src and
