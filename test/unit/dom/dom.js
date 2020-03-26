@@ -369,4 +369,47 @@ suite('DOM', function() {
       expect(JSON.stringify(anchor.elt)).to.eql(JSON.stringify(elt));
     });
   });
+
+  suite('p5.prototype.removeElements', function() {
+    let myp5;
+    let myp5Container;
+
+    setup(function(done) {
+      myp5Container = document.createElement('div');
+      document.body.appendChild(myp5Container);
+      new p5(function(p) {
+        p.setup = function() {
+          // configure p5 to not add a canvas by default.
+          p.noCanvas();
+          myp5 = p;
+          done();
+        };
+      }, myp5Container);
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (myp5Container && myp5Container.parentNode) {
+        myp5Container.parentNode.removeChild(myp5Container);
+      }
+      myp5Container = null;
+    });
+
+    test('should remove all elements created by p5 except Canvas', function() {
+      // creates 6 elements one of which is a canvas, then calls
+      // removeElements and tests if only canvas is left.
+      const tags = ['a', 'button', 'canvas', 'div', 'p', 'video'];
+      for (const tag of tags) {
+        myp5.createElement(tag);
+      }
+      // Check if all elements are created.
+      assert.deepEqual(myp5Container.childElementCount, tags.length);
+
+      // Call removeElements and check if only canvas is remaining
+      myp5.removeElements();
+      assert.deepEqual(myp5Container.childElementCount, 1);
+      const remainingElement = myp5Container.children[0];
+      assert.instanceOf(remainingElement, HTMLCanvasElement);
+    });
+  });
 });
