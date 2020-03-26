@@ -55,7 +55,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 * 만약 버그를 발견했거나 새롭게 더하고 싶은 기능에 대한 아이디어가 있다면, 이슈를 먼저 제출해주시기 바랍니다. 이슈를 제출하지 않고 수정 사항이나 새로운 기능을 풀 리퀘스트를 제출해버리는 경우, 이를 수락하기 어려울 가능성이 높습니다. 이슈에 대한 피드백을 받고 해당 이슈를 다뤄도 괜찮다는 걸 확인했다면, 위의 절차를 따라서 버그를 고치거나 새로운 기능을 추가하는 컨트리뷰션을 시작할 수 있습니다.
 
-* 버그 리포트를 복사하거나 버전 번호 혹은 복사 안내서와 같은 주요 정보들을 요청하는 등 이슈들을 선별하는 작업할 수도 있습니다. 이를 시작하기에 가장 용이한 방법 중 하나는 [코드 트리아지(CodeTriage)에서 p5.js를 구독](https://www.codetriage.com/processing/p5.js)하는 겁니다. [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+* 버그 리포트를 재현하거나 버전 번호 혹은 재현 안내서와 같은 주요 정보들을 요청하는 등 이슈들을 선별하는 작업할 수도 있습니다. 이를 시작하기에 가장 용이한 방법 중 하나는 [코드 트리아지(CodeTriage)에서 p5.js를 구독](https://www.codetriage.com/processing/p5.js)하는 겁니다. [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
 * [organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md) 파일은 이슈들이 어떻게 체계화 될 수 있는지, 그리고 그에 대한 의사결정 과정은 어떻게 이루어지는지에 대한 대략적인 개요를 담고 있습니다. 이에 관심이 있다면 얼마든지 기여해주시기 바랍니다.
 
