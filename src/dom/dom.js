@@ -994,8 +994,9 @@ p5.prototype.createColorPicker = function(value) {
  * Use .<a href="#/p5.Element/size">size()</a> to set the display length of the box.
  *
  * @method createInput
- * @param {String} [value] default value of the input box
- * @param {String} [type] type of text, ie text, password etc. Defaults to text
+ * @param {String} value default value of the input box
+ * @param {String} [type] type of text, ie text, password etc. Defaults to text.
+ *   Needs a value to be specified first.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div class='norender'><code>
@@ -1009,11 +1010,16 @@ p5.prototype.createColorPicker = function(value) {
  * }
  * </code></div>
  */
-p5.prototype.createInput = function(value, type) {
+/**
+ * @method createInput
+ * @param {String} [value]
+ * @return {p5.Element}
+ */
+p5.prototype.createInput = function(value = '', type = 'text') {
   p5._validateParameters('createInput', arguments);
-  var elt = document.createElement('input');
-  elt.type = type ? type : 'text';
-  if (value) elt.value = value;
+  let elt = document.createElement('input');
+  elt.setAttribute('value', value);
+  elt.setAttribute('type', type);
   return addElement(elt, this);
 };
 
