@@ -66,6 +66,8 @@ suite('DOM', function() {
     });
   });
 
+  // Tests for selectAll
+
   suite('p5.prototype.removeElements', function() {
     let myp5;
     let myp5Container;
@@ -108,6 +110,10 @@ suite('DOM', function() {
       assert.instanceOf(remainingElement, HTMLCanvasElement);
     });
   });
+
+  // Tests for prototype.changed
+
+  // Tests for prototype.input
 
   suite('p5.prototype.createDiv', function() {
     let myp5;
@@ -378,6 +384,8 @@ suite('DOM', function() {
     });
   });
 
+  // Tests for createCheckBox
+
   suite('p5.prototype.createSelect', function() {
     let myp5;
     let testElement;
@@ -509,6 +517,228 @@ suite('DOM', function() {
     });
   });
 
+  suite('p5.prototype.createRadio', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
+      }
+    });
+
+    // Helper functions
+    const createRadioElement = (options = []) => {
+      const radioEl = document.createElement('div');
+      for (const option of options) {
+        const optionEl = document.createElement('input');
+        optionEl.setAttribute('type', 'radio');
+        optionEl.setAttribute('value', option);
+        radioEl.appendChild(optionEl);
+      }
+      return radioEl;
+    };
+
+    const getChildren = radioEl =>
+      Array.from(radioEl.children).filter(el => el instanceof HTMLInputElement);
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createRadio);
+    });
+
+    test('should return p5.Element of radio type', function() {
+      testElement = myp5.createRadio();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLDivElement);
+    });
+
+    test('should return p5.Element from existing radio Element', function() {
+      const options = ['Saturday', 'Sunday'];
+      const radioElement = createRadioElement(options);
+      testElement = myp5.createRadio(radioElement);
+
+      assert.deepEqual(testElement.elt, radioElement);
+      for (const radioEl of getChildren(radioElement)) {
+        const optionEl = testElement.option(radioEl.value);
+        assert.deepEqual(optionEl, radioEl);
+      }
+    });
+
+    test('calling option(value) should return existing radio element', function() {
+      const options = ['Saturday', 'Sunday'];
+      const radioElement = createRadioElement(options);
+      testElement = myp5.createRadio(radioElement);
+      for (const radioInput of getChildren(radioElement)) {
+        const optionEl = testElement.option(radioInput.value);
+        assert.deepEqual(radioInput, optionEl);
+      }
+      assert.deepEqual(getChildren(testElement.elt).length, options.length);
+    });
+
+    test('calling option(newValue) should create a new radio input', function() {
+      const testName = 'defaultRadio';
+      const options = ['Saturday', 'Sunday'];
+      testElement = myp5.createRadio(testName);
+      let count = 0;
+      for (const option of options) {
+        const optionEl = testElement.option(option);
+        assert.instanceOf(optionEl, HTMLInputElement);
+        assert.deepEqual(optionEl.type, 'radio');
+        assert.deepEqual(optionEl.value, option);
+        assert.deepEqual(optionEl.name, testName);
+        // Double , one for input and one for label
+        count += 2;
+
+        assert.deepEqual(testElement.elt.childElementCount, count);
+      }
+    });
+
+    test('calling option(value, label) should set label of option', function() {
+      const testName = 'defaultRadio';
+      const options = ['Saturday', 'Sunday'];
+      testElement = myp5.createRadio(testName);
+      for (const option of options) {
+        const optionLabel = `${option}-label`;
+        const optionEl = testElement.option(option, optionLabel);
+        assert.deepEqual(optionEl.value, option);
+        assert.deepEqual(optionEl.name, testName);
+        const labelEl = optionEl.nextElementSibling;
+        assert.deepEqual(labelEl.innerHTML, optionLabel);
+      }
+    });
+
+    test('should use given name for all options', function() {
+      const testName = 'defaultRadio';
+      const options = ['Saturday', 'Sunday'];
+      const radioElement = createRadioElement(options);
+      testElement = myp5.createRadio(radioElement, testName);
+
+      for (const option of options) {
+        const optionEl = testElement.option(option);
+        assert.deepEqual(optionEl.name, testName);
+      }
+    });
+
+    test('calling remove(value) should remove option', function() {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      const radioElement = createRadioElement(options);
+      testElement = myp5.createRadio(radioElement);
+
+      // Remove element
+      const testValue = 'Friday';
+      options.splice(options.indexOf(testValue), 1);
+      testElement.remove(testValue);
+      // Verify remaining options
+      const remainingOptions = Array.from(testElement.elt.children).map(
+        el => el.value
+      );
+      assert.deepEqual(options, remainingOptions);
+    });
+
+    test('calling value() should return selected value', function() {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      const selectedValue = options[1];
+      testElement = myp5.createRadio();
+      for (const option of options) testElement.option(option);
+      testElement.selected(selectedValue);
+      assert.deepEqual(testElement.value(), selectedValue);
+    });
+
+    test('calling selected(value) should select a value and return it', function() {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      testElement = myp5.createRadio();
+      for (const option of options) testElement.option(option);
+
+      for (const option of options) {
+        testElement.selected(option);
+        const selectedInput = testElement.option(option);
+        assert.deepEqual(selectedInput.checked, true);
+      }
+    });
+
+    test('calling selected() should return the currently selected option', function() {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      testElement = myp5.createRadio();
+      for (const option of options) testElement.option(option);
+
+      const testOption = getChildren(testElement.elt)[1];
+      testOption.setAttribute('checked', true);
+      const selectedOption = testElement.selected();
+      assert.deepEqual(selectedOption, testOption);
+      assert.isTrue(selectedOption.checked);
+    });
+
+    test('calling disable() should disable all the radio inputs', function() {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      testElement = myp5.createRadio();
+      for (const option of options) testElement.option(option);
+
+      testElement.disable();
+      for (const option of options) {
+        assert.isTrue(testElement.option(option).disabled);
+      }
+    });
+  });
+
+  suite('p5.prototype.createInput', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createInput);
+    });
+
+    test('should return p5.Element of input type', function() {
+      testElement = myp5.createInput();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+    });
+
+    test('should set given value as input', function() {
+      const testValues = ['123', '', 'Hello world'];
+      for (const value of testValues) {
+        testElement = myp5.createInput(value);
+        assert.deepEqual(testElement.elt.value, value);
+      }
+    });
+
+    test('should create input of given type and value', function() {
+      const testType = 'password';
+      const testValue = '1234056789';
+      testElement = myp5.createInput(testValue, testType);
+      assert.deepEqual(testElement.elt.type, testType);
+      assert.deepEqual(testElement.elt.value, testValue);
+    });
+  });
+
   suite('p5.prototype.createColorPicker', function() {
     let myp5;
     let testElement;
@@ -566,54 +796,6 @@ suite('DOM', function() {
       const testColor = myp5.color('aqua');
       testElement = myp5.createColorPicker(testColor);
       assert.deepEqual(testElement.value(), testColor.toString('#rrggbb'));
-    });
-  });
-
-  suite('p5.prototype.createInput', function() {
-    let myp5;
-    let testElement;
-
-    setup(function(done) {
-      new p5(function(p) {
-        p.setup = function() {
-          myp5 = p;
-          done();
-        };
-      });
-    });
-
-    teardown(function() {
-      myp5.remove();
-      if (testElement && testElement.parentNode) {
-        testElement.parentNode.removeChild(testElement);
-      }
-      testElement = null;
-    });
-
-    test('should be a function', function() {
-      assert.isFunction(myp5.createInput);
-    });
-
-    test('should return p5.Element of input type', function() {
-      testElement = myp5.createInput();
-      assert.instanceOf(testElement, p5.Element);
-      assert.instanceOf(testElement.elt, HTMLInputElement);
-    });
-
-    test('should set given value as input', function() {
-      const testValues = ['123', '', 'Hello world'];
-      for (const value of testValues) {
-        testElement = myp5.createInput(value);
-        assert.deepEqual(testElement.elt.value, value);
-      }
-    });
-
-    test('should create input of given type and value', function() {
-      const testType = 'password';
-      const testValue = '1234056789';
-      testElement = myp5.createInput(testValue, testType);
-      assert.deepEqual(testElement.elt.type, testType);
-      assert.deepEqual(testElement.elt.value, testValue);
     });
   });
 
