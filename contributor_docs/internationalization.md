@@ -6,7 +6,7 @@ p5.js uses internationalization in a bunch of areas (our contributor docs, [the 
 
 ## Tooling
 
-We've integrated [i18next](https://i18next.com) into the codebase. Currently we only use it in the un-minified build of p5.js. `p5.min.js` only includes the outer layer of our internationalization code and does not use it.
+We've integrated [i18next](https://www.i18next.com) into the codebase. Currently we only use it in the un-minified build of p5.js. `p5.min.js` only includes the outer layer of our internationalization code and does not use it.
 
 ### Setup
 
