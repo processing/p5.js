@@ -1092,46 +1092,51 @@ p5.prototype.createFileInput = function(callback, multiple) {
 
 /** VIDEO STUFF **/
 
+// Helps perform similar tasks for media element methods.
 function createMedia(pInst, type, src, callback) {
-  var elt = document.createElement(type);
+  const elt = document.createElement(type);
 
-  // allow src to be empty
+  // Create source elements from given sources
   src = src || '';
   if (typeof src === 'string') {
     src = [src];
   }
-  for (var i = 0; i < src.length; i++) {
-    var source = document.createElement('source');
-    source.src = src[i];
-    elt.appendChild(source);
+  for (const mediaSource of src) {
+    const sourceEl = document.createElement('source');
+    sourceEl.setAttribute('src', mediaSource);
+    elt.appendChild(sourceEl);
   }
-  if (typeof callback !== 'undefined') {
-    var callbackHandler = function() {
+
+  // If callback is provided, attach to element
+  if (typeof callback === 'function') {
+    const callbackHandler = () => {
       callback();
       elt.removeEventListener('canplaythrough', callbackHandler);
     };
     elt.addEventListener('canplaythrough', callbackHandler);
   }
 
-  var c = addElement(elt, pInst, true);
-  c.loadedmetadata = false;
+  const mediaEl = addElement(elt, pInst, true);
+  mediaEl.loadedmetadata = false;
+
   // set width and height onload metadata
-  elt.addEventListener('loadedmetadata', function() {
-    c.width = elt.videoWidth;
-    c.height = elt.videoHeight;
-    //c.elt.playbackRate = s;
+  elt.addEventListener('loadedmetadata', () => {
+    mediaEl.width = elt.videoWidth;
+    mediaEl.height = elt.videoHeight;
+
     // set elt width and height if not set
-    if (c.elt.width === 0) c.elt.width = elt.videoWidth;
-    if (c.elt.height === 0) c.elt.height = elt.videoHeight;
-    if (c.presetPlaybackRate) {
-      c.elt.playbackRate = c.presetPlaybackRate;
-      delete c.presetPlaybackRate;
+    if (mediaEl.elt.width === 0) mediaEl.elt.width = elt.videoWidth;
+    if (mediaEl.elt.height === 0) mediaEl.elt.height = elt.videoHeight;
+    if (mediaEl.presetPlaybackRate) {
+      mediaEl.elt.playbackRate = mediaEl.presetPlaybackRate;
+      delete mediaEl.presetPlaybackRate;
     }
-    c.loadedmetadata = true;
+    mediaEl.loadedmetadata = true;
   });
 
-  return c;
+  return mediaEl;
 }
+
 /**
  * Creates an HTML5 &lt;video&gt; element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
