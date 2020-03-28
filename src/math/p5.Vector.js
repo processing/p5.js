@@ -2000,7 +2000,7 @@ p5.Vector.add = function add(v1, v2, target) {
     if (arguments.length === 3) {
       p5._friendlyError(
         'The target parameter is undefined, it should be of type p5.Vector',
-        ''
+        'p5.Vector.add'
       );
     }
   } else {
@@ -2052,7 +2052,7 @@ p5.Vector.sub = function sub(v1, v2, target) {
     if (arguments.length === 3) {
       p5._friendlyError(
         'The target parameter is undefined, it should be of type p5.Vector',
-        ''
+        'p5.Vector.sub'
       );
     }
   } else {
@@ -2104,7 +2104,7 @@ p5.Vector.mult = function mult(v, n, target) {
     if (arguments.length === 3) {
       p5._friendlyError(
         'The target parameter is undefined, it should be of type p5.Vector',
-        ''
+        'p5.Vector.mult'
       );
     }
   } else {
@@ -2157,7 +2157,7 @@ p5.Vector.div = function div(v, n, target) {
     if (arguments.length === 3) {
       p5._friendlyError(
         'The target parameter is undefined, it should be of type p5.Vector',
-        ''
+        'p5.Vector.div'
       );
     }
   } else {
@@ -2229,7 +2229,7 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
     if (arguments.length === 4) {
       p5._friendlyError(
         'The target parameter is undefined, it should be of type p5.Vector',
-        ''
+        'p5.Vector.lerp'
       );
     }
   } else {
