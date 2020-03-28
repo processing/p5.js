@@ -1788,6 +1788,16 @@
         "bug",
         "tutorial"
       ]
+    },
+    {
+      "login": "ameybhavsar24",
+      "name": "Amey Bhavsar",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/28699912?s=400&u=c039ff6ac7be37e3a9a8a434ffdac81b35c6d2ae&v=4",
+      "profile": "https://github.com/ameybhavsar24",
+      "contributions": [
+        "bug",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
