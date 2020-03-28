@@ -597,20 +597,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
         const argType =
           arg instanceof Array
             ? 'array'
-            : arg === null
-            ? 'null'
-            : arg.name || typeof arg;
+            : arg === null ? 'null' : arg.name || typeof arg;
         message = `${func}() was expecting ${formatType()} for parameter #${
           errorObj.position
         } (zero-based index), received ${argType} instead`;
         break;
       }
       case 'TOO_FEW_ARGUMENTS': {
-        message = `${func}() was expecting at least ${errorObj.minParams} arguments, but received only ${errorObj.argCount}`;
+        message = `${func}() was expecting at least ${
+          errorObj.minParams
+        } arguments, but received only ${errorObj.argCount}`;
         break;
       }
       case 'TOO_MANY_ARGUMENTS': {
-        message = `${func}() was expecting no more than ${errorObj.maxParams} arguments, but received ${errorObj.argCount}`;
+        message = `${func}() was expecting no more than ${
+          errorObj.maxParams
+        } arguments, but received ${errorObj.argCount}`;
         break;
       }
     }
@@ -812,7 +814,9 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
         symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
       if (typeof IS_MINIFIED !== 'undefined') {
         log(
-          `Did you just try to use p5.js's ${symbolName} ${symbol.type}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+          `Did you just try to use p5.js's ${symbolName} ${
+            symbol.type
+          }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
         );
       } else {
         log(
