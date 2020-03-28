@@ -1022,8 +1022,8 @@ p5.prototype.createInput = function(value, type) {
  * This allows users to select local files for use in a sketch.
  *
  * @method createFileInput
- * @param  {Function} [callback] callback function for when a file loaded
- * @param  {String} [multiple] optional to allow multiple files selected
+ * @param  {Function} callback callback function for when a file is loaded
+ * @param  {Boolean} [multiple] optional, to allow multiple files to be selected
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created DOM element
  * @example
  * <div><code>
@@ -1053,41 +1053,28 @@ p5.prototype.createInput = function(value, type) {
  * }
  * </code></div>
  */
-p5.prototype.createFileInput = function(callback, multiple) {
+p5.prototype.createFileInput = function(callback, multiple = false) {
   p5._validateParameters('createFileInput', arguments);
-  // Function to handle when a file is selected
-  // We're simplifying life and assuming that we always
-  // want to load every selected file
-  function handleFileSelect(evt) {
-    // These are the files
-    var files = evt.target.files;
-    // Load each one and trigger a callback
-    for (var i = 0; i < files.length; i++) {
-      var f = files[i];
-      p5.File._load(f, callback);
-    }
-  }
-  // Is the file stuff supported?
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // Yup, we're ok and make an input file selector
-    var elt = document.createElement('input');
-    elt.type = 'file';
 
-    // If we get a second argument that evaluates to true
-    // then we are looking for multiple files
-    if (multiple) {
-      // Anything gets the job done
-      elt.multiple = 'multiple';
+  const handleFileSelect = function(event) {
+    for (const file of event.target.files) {
+      p5.File._load(file, callback);
     }
+  };
 
-    // Now let's handle when a file was selected
-    elt.addEventListener('change', handleFileSelect, false);
-    return addElement(elt, this);
-  } else {
+  // If File API's are not supported, throw Error
+  if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
     console.log(
       'The File APIs are not fully supported in this browser. Cannot create element.'
     );
+    return;
   }
+
+  const fileInput = document.createElement('input');
+  fileInput.setAttribute('type', 'file');
+  if (multiple) fileInput.setAttribute('multiple', true);
+  fileInput.addEventListener('change', handleFileSelect, false);
+  return addElement(fileInput, this);
 };
 
 /** VIDEO STUFF **/
