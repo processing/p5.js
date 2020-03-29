@@ -1268,20 +1268,23 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 }
 
 /**
- * <p>Creates a new HTML5 &lt;video&gt; element that contains the audio/video
- * feed from a webcam. The element is separate from the canvas and is
- * displayed by default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>. The feed
- * can be drawn onto the canvas using <a href="#/p5/image">image()</a>. The loadedmetadata property can
- * be used to detect when the element has fully loaded (see second example).</p>
- * <p>More specific properties of the feed can be passing in a Constraints object.
- * See the
- * <a href='http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints'> W3C
- * spec</a> for possible properties. Note that not all of these are supported
- * by all browsers.</p>
- * <p>Security note: A new browser security specification requires that getUserMedia,
- * which is behind <a href="#/p5/createCapture">createCapture()</a>, only works when you're running the code locally,
- * or on HTTPS. Learn more <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
- * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.</p>
+ * Creates a new HTML5 &lt;video&gt; element that contains the audio/video feed
+ * from a webcam. The element is separate from the canvas and is displayed by
+ * default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>.
+ * The feed can be drawn onto the canvas using <a href="#/p5/image">image()</a>.
+ * The loadedmetadata property can be used to detect when the element has fully
+ * loaded (see second example).
+ *
+ * More specific properties of the feed can be passing in a Constraints object.
+ * See the <a href='http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints'>
+ * W3C spec</a> for possible properties. Note that not all of these are supported
+ * by all browsers.
+ *
+ * <em>Security note</em>: A new browser security specification requires that
+ * getUserMedia, which is behind <a href="#/p5/createCapture">createCapture()</a>,
+ * only works when you're running the code locally, or on HTTPS. Learn more
+ * <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
+ * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.
  *
  * @method createCapture
  * @param  {String|Constant|Object}   type type of capture, either VIDEO or
@@ -1291,7 +1294,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *                                   stream has loaded
  * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
  * @example
- * <div class='norender notest'><code>
+ * <div class='norender notest'>
+ * <code>
  * let capture;
  *
  * function setup() {
@@ -1304,8 +1308,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *   image(capture, 0, 0, width, width * capture.height / capture.width);
  *   filter(INVERT);
  * }
- * </code></div>
- * <div class='norender notest'><code>
+ * </code>
+ * </div>
+ *
+ * <div class='norender notest'>
+ * <code>
  * function setup() {
  *   createCanvas(480, 120);
  *   let constraints = {
@@ -1322,8 +1329,10 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *     console.log(stream);
  *   });
  * }
- * </code></div>
- * <code><div class='norender notest'>
+ * </code>
+ * </div>
+ * <div class='norender notest'>
+ * <code>
  * let capture;
  *
  * function setup() {
@@ -1337,72 +1346,62 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *     image(c, 0, 0);
  *   }
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.createCapture = function() {
   p5._validateParameters('createCapture', arguments);
-  var useVideo = true;
-  var useAudio = true;
-  var constraints;
-  var cb;
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] === p5.prototype.VIDEO) {
-      useAudio = false;
-    } else if (arguments[i] === p5.prototype.AUDIO) {
-      useVideo = false;
-    } else if (typeof arguments[i] === 'object') {
-      constraints = arguments[i];
-    } else if (typeof arguments[i] === 'function') {
-      cb = arguments[i];
-    }
+
+  // return if getUserMedia is not supported by browser
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+    throw new DOMException('getUserMedia not supported in this browser');
   }
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    var elt = document.createElement('video');
-    // required to work in iOS 11 & up:
-    elt.setAttribute('playsinline', '');
 
-    if (!constraints) {
-      constraints = { video: useVideo, audio: useAudio };
-    }
+  let useVideo = true;
+  let useAudio = true;
+  let constraints;
+  let callback;
+  for (const arg of arguments) {
+    if (arg === p5.prototype.VIDEO) useAudio = false;
+    else if (arg === p5.prototype.AUDIO) useVideo = false;
+    else if (typeof arg === 'object') constraints = arg;
+    else if (typeof arg === 'function') callback = arg;
+  }
+  if (!constraints) constraints = { video: useVideo, audio: useAudio };
 
-    navigator.mediaDevices.getUserMedia(constraints).then(
-      function(stream) {
-        try {
-          if ('srcObject' in elt) {
-            elt.srcObject = stream;
-          } else {
-            elt.src = window.URL.createObjectURL(stream);
-          }
-        } catch (err) {
-          elt.src = stream;
-        }
-      },
-      function(e) {
-        console.log(e);
+  const domElement = document.createElement('video');
+  // required to work in iOS 11 & up:
+  domElement.setAttribute('playsinline', '');
+
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+    try {
+      if ('srcObject' in domElement) {
+        domElement.srcObject = stream;
+      } else {
+        domElement.src = window.URL.createObjectURL(stream);
       }
-    );
-  } else {
-    throw 'getUserMedia not supported in this browser';
-  }
-  var c = addElement(elt, this, true);
-  c.loadedmetadata = false;
-  // set width and height onload metadata
-  elt.addEventListener('loadedmetadata', function() {
-    elt.play();
+    } catch (err) {
+      domElement.src = stream;
+    }
+  }, console.log);
 
-    if (elt.width) {
-      c.width = elt.width;
-      c.height = elt.height;
+  const videoEl = addElement(domElement, this, true);
+  videoEl.loadedmetadata = false;
+  // set width and height onload metadata
+  domElement.addEventListener('loadedmetadata', function() {
+    domElement.play();
+    if (domElement.width) {
+      videoEl.width = domElement.width;
+      videoEl.height = domElement.height;
     } else {
-      c.width = c.elt.width = elt.videoWidth;
-      c.height = c.elt.height = elt.videoHeight;
+      videoEl.width = videoEl.elt.width = domElement.videoWidth;
+      videoEl.height = videoEl.elt.height = domElement.videoHeight;
     }
-    c.loadedmetadata = true;
-    if (cb) {
-      cb(elt.srcObject);
-    }
+    videoEl.loadedmetadata = true;
+
+    if (callback) callback(domElement.srcObject);
   });
-  return c;
+  return videoEl;
 };
 
 /**

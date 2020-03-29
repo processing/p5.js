@@ -370,6 +370,79 @@ suite('DOM', function() {
     });
   });
 
+  suite('p5.prototype.createCapture', function() {
+    // to run these tests, getUserMedia is required to be supported
+    if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+      throw Error(
+        'Cannot run tests as getUserMedia not supported in this browser'
+      );
+    }
+
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+      myp5.remove();
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createCapture);
+    });
+
+    test('should return p5.Element of video type', function() {
+      testElement = myp5.createCapture(myp5.VIDEO);
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLVideoElement);
+    });
+
+    test('should throw error if getUserMedia is not supported', function() {
+      // Remove getUserMedia method and test
+      const backup = navigator.mediaDevices.getUserMedia;
+      navigator.mediaDevices.getUserMedia = undefined;
+      try {
+        testElement = myp5.createCapture(myp5.VIDEO);
+        assert.fail();
+      } catch (error) {
+        assert.instanceOf(error, DOMException);
+      }
+
+      // Restore backup, very important.
+      navigator.mediaDevices.getUserMedia = backup;
+    });
+
+    testSketchWithPromise(
+      'triggers the callback after loading metadata',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createCapture(myp5.VIDEO, resolve);
+          const mockedEvent = new Event('loadedmetadata');
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+
+    // Required for ios 11 devices
+    test('should have playsinline attribute to empty string on DOM element', function() {
+      testElement = myp5.createCapture(myp5.VIDEO);
+      console.log(testElement.elt);
+      // Weird check, setter accepts : playinline, getter accepts playInline
+      assert.isTrue(testElement.elt.playsInline);
+    });
+  });
+
   suite('p5.prototype.removeElements', function() {
     let myp5;
     let myp5Container;
