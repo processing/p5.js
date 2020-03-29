@@ -10,6 +10,27 @@ import './shim';
 // Core needs the PVariables object
 import * as constants from './constants';
 
+// container object to hold references to parent nodes
+const containers = (function() {
+  let _containers = [];
+  return {
+    add(container) {
+      if (!_containers.includes(container)) {
+        _containers.push(container);
+      }
+    },
+    remove(container) {
+      _containers = _containers.filter(c => c !== container);
+    },
+    contains(container) {
+      return _containers.includes(container);
+    },
+    get() {
+      return _containers;
+    }
+  };
+})();
+
 /**
  * This is the p5 instance constructor.
  *
@@ -229,6 +250,9 @@ class p5 {
       this._events.devicemotion = null;
     }
 
+    // add the node to our global containers
+    node && containers.add(node);
+
     this._start = () => {
       // Find node if id given
       if (this._userNode) {
@@ -342,14 +366,22 @@ class p5 {
       }
 
       // unhide any hidden canvases that were created
-      const canvases = document.getElementsByTagName('canvas');
-
-      for (const k of canvases) {
-        if (k.dataset.hidden === 'true') {
-          k.style.visibility = '';
-          delete k.dataset.hidden;
+      const canvases = Array.from(document.getElementsByTagName('canvas'));
+      // also check our containers
+      const shadowCanvases = containers
+        .get()
+        .reduce(
+          (acc, container) =>
+            acc.concat(Array.from(container.querySelectorAll('canvas'))),
+          []
+        );
+      const allCanvases = canvases.concat(shadowCanvases);
+      allCanvases.forEach(canvas => {
+        if (canvas.dataset.hidden === 'true') {
+          canvas.style.visibility = '';
+          delete canvas.dataset.hidden;
         }
-      }
+      });
 
       this._lastFrameTime = window.performance.now();
       this._setupDone = true;
@@ -456,6 +488,8 @@ class p5 {
         for (const e of this._elements) {
           if (e.elt && e.elt.parentNode) {
             e.elt.parentNode.removeChild(e.elt);
+            // remove from containers as well
+            containers.remove(e.elt.parentNode);
           }
           for (const elt_ev in e._events) {
             e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
