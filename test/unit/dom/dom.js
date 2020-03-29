@@ -330,6 +330,99 @@ suite('DOM', function() {
     });
   });
 
+  suite('p5.prototype.createFileInput', function() {
+    if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+      throw Error(
+        'File API not supported in test environment. Cannot run tests'
+      );
+    }
+
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+      myp5.remove();
+    });
+
+    const emptyCallback = () => {};
+    const createDummyFile = filename => {
+      return new File(['testFileBlob'], filename, {
+        type: 'text/plain'
+      });
+    };
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createFileInput);
+    });
+
+    test('should return input of file input', function() {
+      testElement = myp5.createFileInput(emptyCallback);
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+      assert.deepEqual(testElement.elt.type, 'file');
+    });
+
+    testSketchWithPromise(
+      'should trigger callback on input change event',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createFileInput(resolve);
+          const testFile = createDummyFile('file');
+          testElement.files = testFile;
+
+          const mockedEvent = new Event('change');
+          const mockedDataTransfer = new DataTransfer();
+          mockedDataTransfer.items.add(testFile);
+          testElement.elt.files = mockedDataTransfer.files;
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+
+    test('should accept multiple files if specified', function() {
+      testElement = myp5.createFileInput(emptyCallback, true);
+      assert.isTrue(testElement.elt.multiple);
+    });
+
+    testSketchWithPromise(
+      'should trigger callback for each file if multiple files are given',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          let totalTriggers = 0;
+          let filesCount = 7;
+
+          const handleFiles = event => {
+            totalTriggers += 1;
+            if (totalTriggers === filesCount) resolve();
+          };
+
+          const mockedEvent = new Event('change');
+          const mockedDataTransfer = new DataTransfer();
+          for (let i = 0; i < filesCount; i += 1) {
+            mockedDataTransfer.items.add(createDummyFile(i.toString()));
+          }
+
+          testElement = myp5.createFileInput(handleFiles, true);
+          testElement.elt.files = mockedDataTransfer.files;
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+  });
+
   suite('p5.prototype.createA', function() {
     var myp5;
 
