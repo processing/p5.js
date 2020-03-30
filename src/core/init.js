@@ -14,6 +14,16 @@ import { initialize as initTranslator } from './internationalization';
  * @return {Undefined}
  */
 const _globalInit = () => {
+  // Could have been any property defined within the p5 constructor.
+  // If that property is already a part of the global object,
+  // this code has already run before, likely due to a duplicate import
+  if (typeof window._setupDone !== 'undefined') {
+    console.warn(
+      'p5.js seems to have been imported multiple times. Please remove the duplicate import'
+    );
+    return;
+  }
+
   if (!window.mocha) {
     // If there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
