@@ -766,12 +766,21 @@ p5.prototype.createSelect = function() {
 };
 
 /**
- * Creates a radio button &lt;input&gt;&lt;/input&gt; element in the DOM.
- * The .option() method can be used to set options for the radio after it is
- * created. The .value() method will return the currently selected option.
+ * Creates a radio button element in the DOM.It also helps existing radio buttons
+ * assign methods of <a href="#/p5.Element/">p5.Element</a>.
+ * - `.option(value, [label])` can be used to create a new option for the
+ *   element. If an option with a value already exists, it will be returned.
+ *   Optionally, a label can be provided as second argument for the option.
+ * - `.remove(value)` can be used to remove an option for the element.
+ * - `.value()` method will return the currently selected value.
+ * - `.selected()` method will return the currently selected input element.
+ * - `.selected(value)` method will select the option and return it.
+ * - `.disable(Boolean)` method will enable/disable the whole radio button element.
  *
  * @method createRadio
- * @param  {String} [divId] the id and name of the created div and input field respectively
+ * @param  {Object} containerElement An container HTML Element either a div
+ * or span inside which all existing radio inputs will be considered as options.
+ * @param {string} [name] A name parameter for each Input Element.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -814,92 +823,123 @@ p5.prototype.createSelect = function() {
  * }
  * </code></div>
  */
-p5.prototype.createRadio = function(existing_radios) {
-  p5._validateParameters('createRadio', arguments);
-  // do some prep by counting number of radios on page
-  var radios = document.querySelectorAll('input[type=radio]');
-  var count = 0;
-  if (radios.length > 1) {
-    var length = radios.length;
-    var prev = radios[0].name;
-    var current = radios[1].name;
-    count = 1;
-    for (var i = 1; i < length; i++) {
-      current = radios[i].name;
-      if (prev !== current) {
-        count++;
-      }
-      prev = current;
-    }
-  } else if (radios.length === 1) {
-    count = 1;
-  }
-  // see if we got an existing set of radios from callee
-  var elt, self;
-  if (typeof existing_radios === 'object') {
-    // use existing elements
-    self = existing_radios;
-    elt = this.elt = existing_radios.elt;
+/**
+ * @method createRadio
+ * @param {String} name
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+ */
+/**
+ * @method createRadio
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+ */
+p5.prototype.createRadio = function() {
+  // Creates a div, adds each option as an individual input inside it.
+  // If already given with a containerEl, will search for all input[radio]
+  // it, create a p5.Element out of it, add options to it and return the p5.Element.
+
+  let radioElement;
+  let name;
+  const arg0 = arguments[0];
+  // If existing radio Element is provided as argument 0
+  if (arg0 instanceof HTMLDivElement || arg0 instanceof HTMLSpanElement) {
+    radioElement = arg0;
+    if (typeof arguments[1] === 'string') name = arguments[1];
   } else {
-    // create a set of radio buttons
-    elt = document.createElement('div');
-    self = addElement(elt, this);
+    if (typeof arg0 === 'string') name = arg0;
+    radioElement = document.createElement('div');
   }
+  this.elt = radioElement;
+  let self = addElement(radioElement, this);
+  self._name = name || 'radioOption';
+
   // setup member functions
-  self._getInputChildrenArray = function() {
-    return Array.prototype.slice.call(this.elt.children).filter(function(c) {
-      return c.tagName === 'INPUT';
-    });
+  const isRadioInput = el =>
+    el instanceof HTMLInputElement && el.type === 'radio';
+  const isNextLabel = el => el.nextElementSibling instanceof HTMLLabelElement;
+
+  self._getOptionsArray = function() {
+    return Array.from(this.elt.children).filter(isRadioInput);
   };
 
-  var times = -1;
-  self.option = function(name, value) {
-    var opt = document.createElement('input');
-    opt.type = 'radio';
-    opt.innerHTML = name;
-    if (value) opt.value = value;
-    else opt.value = name;
-    opt.setAttribute('name', 'defaultradio' + count);
-    elt.appendChild(opt);
-    if (name) {
-      times++;
-      var label = document.createElement('label');
-      opt.setAttribute('id', 'defaultradio' + count + '-' + times);
-      label.htmlFor = 'defaultradio' + count + '-' + times;
-      label.appendChild(document.createTextNode(name));
-      elt.appendChild(label);
+  self.option = function(value, label) {
+    // return an option with this value, create if not exists.
+    let optionEl;
+    for (const option of self._getOptionsArray()) {
+      if (option.value === value) {
+        optionEl = option;
+        break;
+      }
     }
-    return opt;
+
+    // Create a new option, add it to radioElement and return it.
+    if (optionEl === undefined) {
+      optionEl = document.createElement('input');
+      optionEl.setAttribute('type', 'radio');
+      optionEl.setAttribute('value', value);
+      this.elt.appendChild(optionEl);
+    }
+
+    // Check if label element exists, else create it
+    let labelElement;
+    if (!isNextLabel(optionEl)) {
+      labelElement = document.createElement('label');
+      optionEl.insertAdjacentElement('afterend', labelElement);
+    } else {
+      labelElement = optionEl.nextElementSibling;
+    }
+
+    labelElement.innerHTML = label === undefined ? value : label;
+    optionEl.setAttribute('name', self._name);
+    return optionEl;
   };
+
+  self.remove = function(value) {
+    for (const optionEl of self._getOptionsArray()) {
+      if (optionEl.value === value) {
+        if (isNextLabel(optionEl)) optionEl.nextElementSibling.remove();
+        optionEl.remove();
+        return;
+      }
+    }
+  };
+
+  self.value = function() {
+    let result = '';
+    for (const option of self._getOptionsArray()) {
+      if (option.checked) {
+        result = option.value;
+        break;
+      }
+    }
+    return result;
+  };
+
   self.selected = function(value) {
-    var i;
-    var inputChildren = self._getInputChildrenArray();
-    if (value) {
-      for (i = 0; i < inputChildren.length; i++) {
-        if (inputChildren[i].value === value) inputChildren[i].checked = true;
+    let result = null;
+    if (value === undefined) {
+      for (const option of self._getOptionsArray()) {
+        if (option.checked) {
+          result = option;
+          break;
+        }
       }
-      return this;
     } else {
-      for (i = 0; i < inputChildren.length; i++) {
-        if (inputChildren[i].checked === true) return inputChildren[i].value;
+      for (const option of self._getOptionsArray()) {
+        if (option.value === value) {
+          option.setAttribute('checked', true);
+          result = option;
+        }
       }
     }
+    return result;
   };
-  self.value = function(value) {
-    var i;
-    var inputChildren = self._getInputChildrenArray();
-    if (value) {
-      for (i = 0; i < inputChildren.length; i++) {
-        if (inputChildren[i].value === value) inputChildren[i].checked = true;
-      }
-      return this;
-    } else {
-      for (i = 0; i < inputChildren.length; i++) {
-        if (inputChildren[i].checked === true) return inputChildren[i].value;
-      }
-      return '';
+
+  self.disable = function(shouldDisable = true) {
+    for (const radioInput of self._getOptionsArray()) {
+      radioInput.setAttribute('disabled', shouldDisable);
     }
   };
+
   return self;
 };
 
