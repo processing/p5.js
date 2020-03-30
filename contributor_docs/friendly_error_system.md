@@ -83,7 +83,7 @@ p5.newObject = function(parameter) {
 
 ## Disable the FES
 
-By default, FES is enabled for p5.js, and disabled in p5.min.js to prevent FES functions slowing down the process. The error checking system can significantly slow down your code (up to ~10x in some cases). See the [friendly error performance test](https://github.com/processing/p5.js-website/blob/master/dist/assets/learn/performance/code/friendly-error-system/).
+By default, FES is enabled for p5.js, and disabled in p5.min.js to prevent FES functions slowing down the process. The error checking system can significantly slow down your code (up to ~10x in some cases). See the [friendly error performance test](https://github.com/processing/p5.js-website/tree/master/src/assets/learn/performance/code/friendly-error-system/).
 
 You can disable this with one line of code at the top of your sketch:
 
