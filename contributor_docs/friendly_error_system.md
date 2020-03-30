@@ -118,7 +118,7 @@ line(0, 0, 100, 100, x3, Math.PI);
 * re-introduce color coding for the Web Editor.
 * More unit testings.
 * More intuitive and narrowed down output messages.
-* Having a Spanish translation available.
+* Completing the spanish translation for `validateParameters()` as well.
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
 * Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. 
