@@ -18,7 +18,7 @@ We are a community of, and in solidarity with, people from every gender identity
 
 p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://github.com/processing/p5.js/blob/master/contributor_docs/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
 
-Learn more about [our community](https://p5js.org/community/) and read our community statement. You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
+Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/master/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
 
 ## Get Started
 
