@@ -135,7 +135,9 @@ p5.Renderer2D.prototype.image = function(
 ) {
   let cnv;
   if (img.gifProperties) {
-    img._animateGif(this._pInst);
+    img._animateGif(
+      this._pInst instanceof p5.Graphics ? this._pInst._pInst : this._pInst
+    );
   }
 
   try {
