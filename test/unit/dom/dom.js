@@ -330,6 +330,99 @@ suite('DOM', function() {
     });
   });
 
+  suite('p5.prototype.createFileInput', function() {
+    if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+      throw Error(
+        'File API not supported in test environment. Cannot run tests'
+      );
+    }
+
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+      myp5.remove();
+    });
+
+    const emptyCallback = () => {};
+    const createDummyFile = filename => {
+      return new File(['testFileBlob'], filename, {
+        type: 'text/plain'
+      });
+    };
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createFileInput);
+    });
+
+    test('should return input of file input', function() {
+      testElement = myp5.createFileInput(emptyCallback);
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+      assert.deepEqual(testElement.elt.type, 'file');
+    });
+
+    testSketchWithPromise(
+      'should trigger callback on input change event',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createFileInput(resolve);
+          const testFile = createDummyFile('file');
+          testElement.files = testFile;
+
+          const mockedEvent = new Event('change');
+          const mockedDataTransfer = new DataTransfer();
+          mockedDataTransfer.items.add(testFile);
+          testElement.elt.files = mockedDataTransfer.files;
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+
+    test('should accept multiple files if specified', function() {
+      testElement = myp5.createFileInput(emptyCallback, true);
+      assert.isTrue(testElement.elt.multiple);
+    });
+
+    testSketchWithPromise(
+      'should trigger callback for each file if multiple files are given',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          let totalTriggers = 0;
+          let filesCount = 7;
+
+          const handleFiles = event => {
+            totalTriggers += 1;
+            if (totalTriggers === filesCount) resolve();
+          };
+
+          const mockedEvent = new Event('change');
+          const mockedDataTransfer = new DataTransfer();
+          for (let i = 0; i < filesCount; i += 1) {
+            mockedDataTransfer.items.add(createDummyFile(i.toString()));
+          }
+
+          testElement = myp5.createFileInput(handleFiles, true);
+          testElement.elt.files = mockedDataTransfer.files;
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+  });
+
   suite('p5.prototype.createA', function() {
     var myp5;
 
@@ -367,6 +460,79 @@ suite('DOM', function() {
       elt.href = 'http://p5js.org/';
       elt.innerHTML = 'p5';
       expect(JSON.stringify(anchor.elt)).to.eql(JSON.stringify(elt));
+    });
+  });
+
+  suite('p5.prototype.createCapture', function() {
+    // to run these tests, getUserMedia is required to be supported
+    if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+      throw Error(
+        'Cannot run tests as getUserMedia not supported in this browser'
+      );
+    }
+
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+      myp5.remove();
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createCapture);
+    });
+
+    test('should return p5.Element of video type', function() {
+      testElement = myp5.createCapture(myp5.VIDEO);
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLVideoElement);
+    });
+
+    test('should throw error if getUserMedia is not supported', function() {
+      // Remove getUserMedia method and test
+      const backup = navigator.mediaDevices.getUserMedia;
+      navigator.mediaDevices.getUserMedia = undefined;
+      try {
+        testElement = myp5.createCapture(myp5.VIDEO);
+        assert.fail();
+      } catch (error) {
+        assert.instanceOf(error, DOMException);
+      }
+
+      // Restore backup, very important.
+      navigator.mediaDevices.getUserMedia = backup;
+    });
+
+    testSketchWithPromise(
+      'triggers the callback after loading metadata',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createCapture(myp5.VIDEO, resolve);
+          const mockedEvent = new Event('loadedmetadata');
+          testElement.elt.dispatchEvent(mockedEvent);
+        };
+      }
+    );
+
+    // Required for ios 11 devices
+    test('should have playsinline attribute to empty string on DOM element', function() {
+      testElement = myp5.createCapture(myp5.VIDEO);
+      console.log(testElement.elt);
+      // Weird check, setter accepts : playinline, getter accepts playInline
+      assert.isTrue(testElement.elt.playsInline);
     });
   });
 
@@ -410,6 +576,424 @@ suite('DOM', function() {
       assert.deepEqual(myp5Container.childElementCount, 1);
       const remainingElement = myp5Container.children[0];
       assert.instanceOf(remainingElement, HTMLCanvasElement);
+    });
+  });
+
+  suite('p5.prototype.createDiv', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createDiv);
+    });
+
+    test('should return a p5.Element of div type', function() {
+      testElement = myp5.createDiv();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLDivElement);
+    });
+
+    test('should set given param as innerHTML of div', function() {
+      const testHTML = '<p>Hello</p>';
+      testElement = myp5.createDiv(testHTML);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML);
+    });
+  });
+
+  suite('p5.prototype.createP', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createP);
+    });
+
+    test('should return a p5.Element of p type', function() {
+      testElement = myp5.createP();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLParagraphElement);
+    });
+
+    test('should set given param as innerHTML of p', function() {
+      const testHTML = '<b>Hello</b>';
+      testElement = myp5.createP(testHTML);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML);
+    });
+  });
+
+  suite('p5.prototype.createSpan', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createSpan);
+    });
+
+    test('should return a p5.Element of span type', function() {
+      testElement = myp5.createSpan();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLSpanElement);
+    });
+
+    test('should set given param as innerHTML of span', function() {
+      const testHTML = '<em>Hello</em>';
+      testElement = myp5.createSpan(testHTML);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML);
+    });
+  });
+
+  suite('p5.prototype.createImg', function() {
+    let myp5;
+    let testElement;
+    const imagePath = 'unit/assets/cat.jpg';
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createImg);
+    });
+
+    test('should return p5.Element of image type', function() {
+      testElement = myp5.createImg(imagePath, '');
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLImageElement);
+    });
+
+    test('should set src of image from params', function() {
+      testElement = myp5.createImg(imagePath, '');
+      assert.isTrue(testElement.elt.src.endsWith(imagePath));
+    });
+
+    test('should set alt from params if given', function() {
+      const alternativeText = 'Picture of a cat';
+      testElement = myp5.createImg(imagePath, alternativeText);
+      assert.deepEqual(testElement.elt.alt, alternativeText);
+    });
+
+    test('should set crossOrigin from params if given', function() {
+      const crossOrigin = 'anonymous';
+      testElement = myp5.createImg(imagePath, '', crossOrigin);
+      assert.deepEqual(testElement.elt.crossOrigin, crossOrigin);
+    });
+
+    testSketchWithPromise(
+      'should trigger callback when image is loaded',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = sketch.createImg(imagePath, '', '', resolve);
+          testElement.elt.dispatchEvent(new Event('load'));
+        };
+      }
+    );
+  });
+
+  suite('p5.prototype.createColorPicker', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createColorPicker);
+    });
+
+    test('should return p5.Element of input[color] type', function() {
+      testElement = myp5.createColorPicker();
+
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+      assert.deepEqual(testElement.elt.type, 'color');
+    });
+
+    test('should accept a p5.Color as param', function() {
+      const testColor = myp5.color('red');
+      testElement = myp5.createColorPicker(testColor);
+
+      assert.deepEqual(testElement.elt.value, testColor.toString('#rrggbb'));
+    });
+
+    test('should accept a string as param', function() {
+      const testColorString = '#f00f00';
+      testElement = myp5.createColorPicker(testColorString);
+      assert.deepEqual(testElement.elt.value, testColorString);
+    });
+
+    test('calling color() should return the current color as p5.color', function() {
+      const testColorString = 'red';
+      const testColor = myp5.color(testColorString);
+      testElement = myp5.createColorPicker(testColorString);
+      assert.deepEqual(testElement.color(), testColor);
+    });
+
+    test('calling value() should return hex string of color', function() {
+      const testColor = myp5.color('aqua');
+      testElement = myp5.createColorPicker(testColor);
+      assert.deepEqual(testElement.value(), testColor.toString('#rrggbb'));
+    });
+  });
+
+  suite('p5.prototype.createVideo', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
+      }
+    });
+
+    const mediaSources = [
+      '/test/unit/assets/nyan_cat.gif',
+      '/test/unit/assets/target.gif'
+    ];
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createVideo);
+    });
+
+    test('should return p5.Element of HTMLVideoElement', function() {
+      testElement = myp5.createVideo('');
+      assert.instanceOf(testElement, p5.MediaElement);
+      assert.instanceOf(testElement.elt, HTMLVideoElement);
+    });
+
+    test('should accept a singular media source', function() {
+      const mediaSource = mediaSources[0];
+      testElement = myp5.createVideo(mediaSource);
+      const sourceEl = testElement.elt.children[0];
+
+      assert.deepEqual(testElement.elt.childElementCount, 1);
+      assert.instanceOf(sourceEl, HTMLSourceElement);
+      assert.isTrue(sourceEl.src.endsWith(mediaSource));
+    });
+
+    test('should accept multiple media sources', function() {
+      testElement = myp5.createVideo(mediaSources);
+
+      assert.deepEqual(testElement.elt.childElementCount, mediaSources.length);
+      for (let index = 0; index < mediaSources.length; index += 1) {
+        const sourceEl = testElement.elt.children[index];
+        assert.instanceOf(sourceEl, HTMLSourceElement);
+        assert.isTrue(sourceEl.src.endsWith(mediaSources[index]));
+      }
+    });
+
+    testSketchWithPromise(
+      'should trigger callback on canplaythrough event',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createVideo(mediaSources, resolve);
+          testElement.elt.dispatchEvent(new Event('canplaythrough'));
+        };
+      }
+    );
+  });
+
+  suite('p5.prototype.createAudio', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
+      }
+    });
+
+    const mediaSources = [
+      '/test/unit/assets/beat.mp3',
+      '/test/unit/assets/beat.mp3'
+    ];
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createAudio);
+    });
+
+    test('should return p5.Element of HTMLAudioElement', function() {
+      testElement = myp5.createAudio('');
+      assert.instanceOf(testElement, p5.MediaElement);
+      assert.instanceOf(testElement.elt, HTMLAudioElement);
+    });
+
+    test('should accept a singular media source', function() {
+      const mediaSource = mediaSources[0];
+      testElement = myp5.createAudio(mediaSource);
+      const sourceEl = testElement.elt.children[0];
+
+      assert.deepEqual(testElement.elt.childElementCount, 1);
+      assert.instanceOf(sourceEl, HTMLSourceElement);
+      assert.isTrue(sourceEl.src.endsWith(mediaSource));
+    });
+
+    test('should accept multiple media sources', function() {
+      testElement = myp5.createAudio(mediaSources);
+
+      assert.deepEqual(testElement.elt.childElementCount, mediaSources.length);
+      for (let index = 0; index < mediaSources.length; index += 1) {
+        const sourceEl = testElement.elt.children[index];
+        assert.instanceOf(sourceEl, HTMLSourceElement);
+        assert.isTrue(sourceEl.src.endsWith(mediaSources[index]));
+      }
+    });
+
+    testSketchWithPromise(
+      'should trigger callback on canplaythrough event',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          testElement = myp5.createAudio(mediaSources, resolve);
+          testElement.elt.dispatchEvent(new Event('canplaythrough'));
+        };
+      }
+    );
+  });
+
+  suite('p5.prototype.createElement', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
+      }
+    });
+
+    const testData = {
+      div: HTMLDivElement,
+      p: HTMLParagraphElement,
+      button: HTMLButtonElement,
+      input: HTMLInputElement,
+      video: HTMLVideoElement
+    };
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createElement);
+    });
+
+    test('should return a p5.Element of appropriate type', function() {
+      for (const [tag, domElName] of Object.entries(testData)) {
+        testElement = myp5.createElement(tag);
+        assert.instanceOf(testElement, p5.Element);
+        assert.instanceOf(testElement.elt, domElName);
+      }
+    });
+
+    test('should set given content as innerHTML', function() {
+      const testContent = 'Lorem ipsum';
+      testElement = myp5.createElement('div', testContent);
+      assert.deepEqual(testElement.elt.innerHTML, testContent);
     });
   });
 });

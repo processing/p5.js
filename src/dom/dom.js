@@ -1022,8 +1022,8 @@ p5.prototype.createInput = function(value, type) {
  * This allows users to select local files for use in a sketch.
  *
  * @method createFileInput
- * @param  {Function} [callback] callback function for when a file loaded
- * @param  {String} [multiple] optional to allow multiple files selected
+ * @param  {Function} callback callback function for when a file is loaded
+ * @param  {Boolean} [multiple] optional, to allow multiple files to be selected
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created DOM element
  * @example
  * <div><code>
@@ -1053,85 +1053,77 @@ p5.prototype.createInput = function(value, type) {
  * }
  * </code></div>
  */
-p5.prototype.createFileInput = function(callback, multiple) {
+p5.prototype.createFileInput = function(callback, multiple = false) {
   p5._validateParameters('createFileInput', arguments);
-  // Function to handle when a file is selected
-  // We're simplifying life and assuming that we always
-  // want to load every selected file
-  function handleFileSelect(evt) {
-    // These are the files
-    var files = evt.target.files;
-    // Load each one and trigger a callback
-    for (var i = 0; i < files.length; i++) {
-      var f = files[i];
-      p5.File._load(f, callback);
-    }
-  }
-  // Is the file stuff supported?
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-    // Yup, we're ok and make an input file selector
-    var elt = document.createElement('input');
-    elt.type = 'file';
 
-    // If we get a second argument that evaluates to true
-    // then we are looking for multiple files
-    if (multiple) {
-      // Anything gets the job done
-      elt.multiple = 'multiple';
+  const handleFileSelect = function(event) {
+    for (const file of event.target.files) {
+      p5.File._load(file, callback);
     }
+  };
 
-    // Now let's handle when a file was selected
-    elt.addEventListener('change', handleFileSelect, false);
-    return addElement(elt, this);
-  } else {
+  // If File API's are not supported, throw Error
+  if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
     console.log(
       'The File APIs are not fully supported in this browser. Cannot create element.'
     );
+    return;
   }
+
+  const fileInput = document.createElement('input');
+  fileInput.setAttribute('type', 'file');
+  if (multiple) fileInput.setAttribute('multiple', true);
+  fileInput.addEventListener('change', handleFileSelect, false);
+  return addElement(fileInput, this);
 };
 
 /** VIDEO STUFF **/
 
+// Helps perform similar tasks for media element methods.
 function createMedia(pInst, type, src, callback) {
-  var elt = document.createElement(type);
+  const elt = document.createElement(type);
 
-  // allow src to be empty
+  // Create source elements from given sources
   src = src || '';
   if (typeof src === 'string') {
     src = [src];
   }
-  for (var i = 0; i < src.length; i++) {
-    var source = document.createElement('source');
-    source.src = src[i];
-    elt.appendChild(source);
+  for (const mediaSource of src) {
+    const sourceEl = document.createElement('source');
+    sourceEl.setAttribute('src', mediaSource);
+    elt.appendChild(sourceEl);
   }
-  if (typeof callback !== 'undefined') {
-    var callbackHandler = function() {
+
+  // If callback is provided, attach to element
+  if (typeof callback === 'function') {
+    const callbackHandler = () => {
       callback();
       elt.removeEventListener('canplaythrough', callbackHandler);
     };
     elt.addEventListener('canplaythrough', callbackHandler);
   }
 
-  var c = addElement(elt, pInst, true);
-  c.loadedmetadata = false;
+  const mediaEl = addElement(elt, pInst, true);
+  mediaEl.loadedmetadata = false;
+
   // set width and height onload metadata
-  elt.addEventListener('loadedmetadata', function() {
-    c.width = elt.videoWidth;
-    c.height = elt.videoHeight;
-    //c.elt.playbackRate = s;
+  elt.addEventListener('loadedmetadata', () => {
+    mediaEl.width = elt.videoWidth;
+    mediaEl.height = elt.videoHeight;
+
     // set elt width and height if not set
-    if (c.elt.width === 0) c.elt.width = elt.videoWidth;
-    if (c.elt.height === 0) c.elt.height = elt.videoHeight;
-    if (c.presetPlaybackRate) {
-      c.elt.playbackRate = c.presetPlaybackRate;
-      delete c.presetPlaybackRate;
+    if (mediaEl.elt.width === 0) mediaEl.elt.width = elt.videoWidth;
+    if (mediaEl.elt.height === 0) mediaEl.elt.height = elt.videoHeight;
+    if (mediaEl.presetPlaybackRate) {
+      mediaEl.elt.playbackRate = mediaEl.presetPlaybackRate;
+      delete mediaEl.presetPlaybackRate;
     }
-    c.loadedmetadata = true;
+    mediaEl.loadedmetadata = true;
   });
 
-  return c;
+  return mediaEl;
 }
+
 /**
  * Creates an HTML5 &lt;video&gt; element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
@@ -1263,20 +1255,23 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 }
 
 /**
- * <p>Creates a new HTML5 &lt;video&gt; element that contains the audio/video
- * feed from a webcam. The element is separate from the canvas and is
- * displayed by default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>. The feed
- * can be drawn onto the canvas using <a href="#/p5/image">image()</a>. The loadedmetadata property can
- * be used to detect when the element has fully loaded (see second example).</p>
- * <p>More specific properties of the feed can be passing in a Constraints object.
- * See the
- * <a href='http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints'> W3C
- * spec</a> for possible properties. Note that not all of these are supported
- * by all browsers.</p>
- * <p>Security note: A new browser security specification requires that getUserMedia,
- * which is behind <a href="#/p5/createCapture">createCapture()</a>, only works when you're running the code locally,
- * or on HTTPS. Learn more <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
- * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.</p>
+ * Creates a new HTML5 &lt;video&gt; element that contains the audio/video feed
+ * from a webcam. The element is separate from the canvas and is displayed by
+ * default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>.
+ * The feed can be drawn onto the canvas using <a href="#/p5/image">image()</a>.
+ * The loadedmetadata property can be used to detect when the element has fully
+ * loaded (see second example).
+ *
+ * More specific properties of the feed can be passing in a Constraints object.
+ * See the <a href='http://w3c.github.io/mediacapture-main/getusermedia.html#media-track-constraints'>
+ * W3C spec</a> for possible properties. Note that not all of these are supported
+ * by all browsers.
+ *
+ * <em>Security note</em>: A new browser security specification requires that
+ * getUserMedia, which is behind <a href="#/p5/createCapture">createCapture()</a>,
+ * only works when you're running the code locally, or on HTTPS. Learn more
+ * <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
+ * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.
  *
  * @method createCapture
  * @param  {String|Constant|Object}   type type of capture, either VIDEO or
@@ -1286,7 +1281,8 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *                                   stream has loaded
  * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
  * @example
- * <div class='norender notest'><code>
+ * <div class='norender notest'>
+ * <code>
  * let capture;
  *
  * function setup() {
@@ -1299,8 +1295,11 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *   image(capture, 0, 0, width, width * capture.height / capture.width);
  *   filter(INVERT);
  * }
- * </code></div>
- * <div class='norender notest'><code>
+ * </code>
+ * </div>
+ *
+ * <div class='norender notest'>
+ * <code>
  * function setup() {
  *   createCanvas(480, 120);
  *   let constraints = {
@@ -1317,8 +1316,10 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *     console.log(stream);
  *   });
  * }
- * </code></div>
- * <code><div class='norender notest'>
+ * </code>
+ * </div>
+ * <div class='norender notest'>
+ * <code>
  * let capture;
  *
  * function setup() {
@@ -1332,72 +1333,62 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *     image(c, 0, 0);
  *   }
  * }
- * </code></div>
+ * </code>
+ * </div>
  */
 p5.prototype.createCapture = function() {
   p5._validateParameters('createCapture', arguments);
-  var useVideo = true;
-  var useAudio = true;
-  var constraints;
-  var cb;
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] === p5.prototype.VIDEO) {
-      useAudio = false;
-    } else if (arguments[i] === p5.prototype.AUDIO) {
-      useVideo = false;
-    } else if (typeof arguments[i] === 'object') {
-      constraints = arguments[i];
-    } else if (typeof arguments[i] === 'function') {
-      cb = arguments[i];
-    }
+
+  // return if getUserMedia is not supported by browser
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
+    throw new DOMException('getUserMedia not supported in this browser');
   }
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    var elt = document.createElement('video');
-    // required to work in iOS 11 & up:
-    elt.setAttribute('playsinline', '');
 
-    if (!constraints) {
-      constraints = { video: useVideo, audio: useAudio };
-    }
+  let useVideo = true;
+  let useAudio = true;
+  let constraints;
+  let callback;
+  for (const arg of arguments) {
+    if (arg === p5.prototype.VIDEO) useAudio = false;
+    else if (arg === p5.prototype.AUDIO) useVideo = false;
+    else if (typeof arg === 'object') constraints = arg;
+    else if (typeof arg === 'function') callback = arg;
+  }
+  if (!constraints) constraints = { video: useVideo, audio: useAudio };
 
-    navigator.mediaDevices.getUserMedia(constraints).then(
-      function(stream) {
-        try {
-          if ('srcObject' in elt) {
-            elt.srcObject = stream;
-          } else {
-            elt.src = window.URL.createObjectURL(stream);
-          }
-        } catch (err) {
-          elt.src = stream;
-        }
-      },
-      function(e) {
-        console.log(e);
+  const domElement = document.createElement('video');
+  // required to work in iOS 11 & up:
+  domElement.setAttribute('playsinline', '');
+
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+    try {
+      if ('srcObject' in domElement) {
+        domElement.srcObject = stream;
+      } else {
+        domElement.src = window.URL.createObjectURL(stream);
       }
-    );
-  } else {
-    throw 'getUserMedia not supported in this browser';
-  }
-  var c = addElement(elt, this, true);
-  c.loadedmetadata = false;
-  // set width and height onload metadata
-  elt.addEventListener('loadedmetadata', function() {
-    elt.play();
+    } catch (err) {
+      domElement.src = stream;
+    }
+  }, console.log);
 
-    if (elt.width) {
-      c.width = elt.width;
-      c.height = elt.height;
+  const videoEl = addElement(domElement, this, true);
+  videoEl.loadedmetadata = false;
+  // set width and height onload metadata
+  domElement.addEventListener('loadedmetadata', function() {
+    domElement.play();
+    if (domElement.width) {
+      videoEl.width = domElement.width;
+      videoEl.height = domElement.height;
     } else {
-      c.width = c.elt.width = elt.videoWidth;
-      c.height = c.elt.height = elt.videoHeight;
+      videoEl.width = videoEl.elt.width = domElement.videoWidth;
+      videoEl.height = videoEl.elt.height = domElement.videoHeight;
     }
-    c.loadedmetadata = true;
-    if (cb) {
-      cb(elt.srcObject);
-    }
+    videoEl.loadedmetadata = true;
+
+    if (callback) callback(domElement.srcObject);
   });
-  return c;
+  return videoEl;
 };
 
 /**
