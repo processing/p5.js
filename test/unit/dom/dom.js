@@ -1,72 +1,191 @@
 /* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
-    var myp5;
+    /**
+     * Uses p5 in instance-mode inside a custom container.
+     * All elements are attached inside the container for testing
+     * And cleaned up on teardown.
+     */
+    let myp5;
+    let myp5Container;
 
     setup(function(done) {
+      myp5Container = document.createElement('div');
+      document.body.appendChild(myp5Container);
       new p5(function(p) {
         p.setup = function() {
           myp5 = p;
           done();
         };
-      });
+      }, myp5Container);
     });
 
     teardown(function() {
       myp5.remove();
-    });
-
-    var elt;
-
-    teardown(function() {
-      if (elt && elt.parentNode) {
-        elt.parentNode.removeChild(elt);
-        elt = null;
+      if (myp5Container && myp5Container.parentNode) {
+        myp5Container.parentNode.removeChild(myp5Container);
       }
+      p5Container = null;
     });
 
-    test('should find elements by ID', function() {
-      elt = document.createElement('div');
-      elt.setAttribute('id', 'blarg');
-      document.body.appendChild(elt);
+    test('should return only one p5.element if match is found', function() {
+      // Adding 2 buttons to container
+      myp5.createCheckbox('Text 1');
+      myp5.createCheckbox('Text 2');
+      const result = myp5.select('input');
 
-      assert.strictEqual(myp5.select('#blarg').elt, elt);
+      assert.instanceOf(result, p5.Element);
     });
 
-    test('should return null when elements by ID are not found', function() {
-      assert.isNull(myp5.select('#blarg'));
+    const generateButton = (name, className = null) => {
+      const button = myp5.createButton(name);
+      if (className) {
+        button.class(className);
+      }
+      return button;
+    };
+
+    test('should find element by class name', function() {
+      // Creates 2 buttons with same class and test if it selects only one.
+      const testClassName = 'test-button';
+      const testButton = generateButton('Button 1', testClassName);
+      generateButton('Button 2', testClassName);
+
+      const result = myp5.select(`.${testClassName}`);
+      assert.deepEqual(result.elt, testButton.elt);
     });
 
-    test('should find elements by class', function() {
-      elt = document.createElement('div');
-      elt.setAttribute('class', 'blarg');
-      document.body.appendChild(elt);
+    test('should find element by class name from given container', function() {
+      // Creates 2 buttons with same class in a container and test if it selects only one.
+      const testClassName = 'test-button';
+      generateButton('Button 1', testClassName);
+      const testButton = generateButton('Button 2', testClassName);
+      const testContainer = myp5.createDiv();
+      testButton.parent(testContainer);
 
-      assert.strictEqual(myp5.select('.blarg').elt, elt);
+      const result = myp5.select(`.${testClassName}`, testContainer);
+      assert.deepEqual(testButton.elt, result.elt);
     });
 
-    test('should return null when elements by class are not found', function() {
-      assert.isNull(myp5.select('.blarg'));
+    test('should return null when no matches are found by class name', function() {
+      // Gives unused className and tests if it returns null
+      const testClassName = 'test-button';
+      generateButton('Test Button', testClassName);
+      const result = myp5.select('.classNameWithTypo');
+      assert.isNull(result);
     });
 
-    test('should find elements by tag name', function() {
-      elt = document.createElement('aside');
-      document.body.appendChild(elt);
-
-      assert.strictEqual(myp5.select('aside').elt, elt);
+    test('should find element by tag name', function() {
+      // Creates 2 similar elements and tests if it selects only one.
+      const testButton = generateButton('Button 1');
+      generateButton('Button 2');
+      const result = myp5.select(`button`);
+      assert.deepEqual(result.elt, testButton.elt);
     });
 
-    test('should return null when elements by tag name are not found', function() {
-      assert.isNull(myp5.select('aside'));
+    test('should find element by tag name from given container', function() {
+      // Creates 2 elements inside and outside of a container and tests if it
+      // selects inside the container
+      generateButton('Button 1');
+      const testButton = generateButton('Button 2');
+      const testDiv = myp5.createDiv();
+      testButton.parent(testDiv);
+
+      const result = myp5.select(`button`, testDiv);
+      assert.deepEqual(result.elt, testButton.elt);
     });
 
-    test('should create an empty node when no html is provided', function() {
-      const elem = myp5.createDiv();
-      assert.strictEqual(elem.elt.innerHTML, '');
+    test('should return null when no matches are found by tag name', function() {
+      generateButton('Test Button');
+      const result = myp5.select('video', myp5Container);
+      assert.isNull(result);
     });
   });
 
-  // Tests for selectAll
+  suite('p5.prototype.selectAll', function() {
+    let myp5;
+    let myp5Container;
+
+    setup(function(done) {
+      myp5Container = document.createElement('div');
+      document.body.appendChild(myp5Container);
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          let mydiv = document.createElement('div');
+          mydiv.setAttribute('id', 'main');
+          let childbutton = document.createElement('button');
+          childbutton.setAttribute('class', 'p5button');
+          mydiv.append(childbutton);
+          let otherbutton = document.createElement('button');
+          otherbutton.setAttribute('class', 'p5button');
+          myp5Container.append(mydiv, otherbutton);
+          done();
+        };
+      }, myp5Container);
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (myp5Container && myp5Container.parentNode) {
+        myp5Container.parentNode.removeChild(myp5Container);
+      }
+      myp5Container = null;
+    });
+
+    test('should return an array', function() {
+      const elements = myp5.selectAll('button');
+      assert.isArray(elements);
+    });
+
+    test('should return empty array when no matching classes are found', function() {
+      const elements = myp5.selectAll('.randomElements');
+      assert.isArray(elements);
+      assert.lengthOf(elements, 0);
+    });
+
+    const matchResults = (p5Results, domResults) => {
+      assert.lengthOf(p5Results, domResults.length);
+      for (let i = 0; i < p5Results.length; i += 1) {
+        assert.deepEqual(p5Results[i].elt, domResults[i]);
+      }
+    };
+
+    test('should find all elements with matching class name', function() {
+      const testClassName = 'p5button';
+      const p5Results = myp5.selectAll(`.${testClassName}`);
+      const domResults = myp5Container.getElementsByClassName(testClassName);
+      matchResults(p5Results, domResults);
+    });
+
+    test('should find all elements with matching class name in given container', function() {
+      const testClassName = 'p5button';
+      const parentContainerId = 'main';
+      const p5Results = myp5.selectAll(
+        `.${testClassName}`,
+        `#${parentContainerId}`
+      );
+      const containerElement = document.getElementById(parentContainerId);
+      const domResults = containerElement.getElementsByClassName(testClassName);
+      matchResults(p5Results, domResults);
+    });
+
+    test('should find all elements with matching tag name', function() {
+      const testTagName = 'button';
+      const p5Results = myp5.selectAll(testTagName);
+      const domResults = myp5Container.getElementsByTagName(testTagName);
+      matchResults(p5Results, domResults);
+    });
+
+    test('should find all elements with matching tag name in given container', function() {
+      const testTagName = 'button';
+      const parentContainerId = 'main';
+      const p5Results = myp5.selectAll(testTagName, `#${parentContainerId}`);
+      const containerElement = document.getElementById(parentContainerId);
+      const domResults = containerElement.getElementsByTagName(testTagName);
+      matchResults(p5Results, domResults);
+    });
+  });
 
   suite('p5.prototype.removeElements', function() {
     let myp5;
@@ -111,9 +230,59 @@ suite('DOM', function() {
     });
   });
 
-  // Tests for prototype.changed
+  suite('p5.Element.prototype.changed', function() {
+    testSketchWithPromise(
+      'should trigger callback when element changes',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          const testElement = sketch.createSlider(0, 100, 50, 10);
+          testElement.changed(resolve);
+          testElement.elt.dispatchEvent(new Event('change'));
+        };
+      }
+    );
 
-  // Tests for prototype.input
+    testSketchWithPromise(
+      'should not trigger callback after changed(false) is called',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          const testElement = sketch.createSlider(0, 100, 50, 10);
+          // if callback is called, there is some error. so reject
+          testElement.changed(reject);
+          testElement.changed(false);
+          testElement.elt.dispatchEvent(new Event('change'));
+          resolve();
+        };
+      }
+    );
+  });
+
+  suite('p5.Element.prototype.input', function() {
+    testSketchWithPromise(
+      'should trigger callback when input is provided',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          const testElement = sketch.createElement('input');
+          testElement.input(resolve);
+          testElement.elt.dispatchEvent(new Event('input'));
+        };
+      }
+    );
+
+    testSketchWithPromise(
+      'should not trigger callback after input(false) is called',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          const testElement = sketch.createElement('input');
+          // if callback is called, there is some error. so reject
+          testElement.input(reject);
+          testElement.input(false);
+          testElement.elt.dispatchEvent(new Event('input'));
+          resolve();
+        };
+      }
+    );
+  });
 
   suite('p5.prototype.createDiv', function() {
     let myp5;
@@ -290,7 +459,8 @@ suite('DOM', function() {
   });
 
   suite('p5.prototype.createA', function() {
-    var myp5;
+    let myp5;
+    let testElement;
 
     setup(function(done) {
       new p5(function(p) {
@@ -303,34 +473,37 @@ suite('DOM', function() {
 
     teardown(function() {
       myp5.remove();
-    });
-
-    var elt;
-
-    teardown(function() {
-      if (elt && elt.parentNode) {
-        elt.parentNode.removeChild(elt);
-        elt = null;
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+        testElement = null;
       }
     });
 
-    test('should be instance of p5.Element', () => {
-      expect(
-        myp5.createA('http://p5js.org/', 'this is a link') instanceof p5.Element
-      ).to.eql(true);
+    test('should return a p5.Element of anchor type', () => {
+      testElement = myp5.createA('', '');
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLAnchorElement);
     });
 
-    test('should create anchor tag', function() {
-      let anchor = myp5.createA('http://p5js.org/', 'p5');
-      elt = document.createElement('a');
-      elt.href = 'http://p5js.org/';
-      elt.innerHTML = 'p5';
-      expect(JSON.stringify(anchor.elt)).to.eql(JSON.stringify(elt));
+    test('creates anchor with given link & text', function() {
+      const testUrl = 'http://p5js.org/';
+      const testText = 'p5js website';
+      testElement = myp5.createA(testUrl, testText);
+
+      assert.deepEqual(testElement.elt.href, testUrl);
+      assert.deepEqual(testElement.elt.text, testText);
+    });
+
+    test('creates anchor with given target', function() {
+      const testTarget = 'blank';
+      testElement = myp5.createA('http://p5js.org', 'p5js website', testTarget);
+      assert.deepEqual(testElement.elt.target, testTarget);
     });
   });
 
   suite('p5.prototype.createSlider', function() {
-    var myp5;
+    let myp5;
+    let testElement;
 
     setup(function(done) {
       new p5(function(p) {
@@ -343,45 +516,72 @@ suite('DOM', function() {
 
     teardown(function() {
       myp5.remove();
-    });
-
-    var elt;
-
-    teardown(function() {
-      if (elt && elt.parentNode) {
-        elt.parentNode.removeChild(elt);
-        elt = null;
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
       }
+      testElement = null;
     });
 
-    test('should be instance of p5.Element', () => {
-      expect(myp5.createSlider(5, 10) instanceof p5.Element).to.eql(true);
+    test('should return a p5.Element of slider type', () => {
+      testElement = myp5.createSlider(0, 100, 0, 1);
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+      assert.deepEqual(testElement.elt.type, 'range');
     });
 
-    test('should create a slider', function() {
-      let slider = myp5.createSlider(5, 10, 8, 1);
-      elt = document.createElement('input');
-      elt.type = 'range';
-      elt.min = 5;
-      elt.max = 10;
-      elt.step = 1;
-      elt.value = 8;
-      expect(JSON.stringify(slider.elt)).to.eql(JSON.stringify(elt));
+    test('should set min and max values', function() {
+      let testElement = myp5.createSlider(20, 80);
+      assert.deepEqual(testElement.elt.min, '20');
+      assert.deepEqual(testElement.elt.max, '80');
+    });
+
+    test('should set slider position', function() {
+      let testElement = myp5.createSlider(20, 80, 50);
+      assert.deepEqual(testElement.elt.value, '50');
+    });
+
+    test('should set step value', function() {
+      testElement = myp5.createSlider(20, 80, 10, 5);
+      assert.deepEqual(testElement.elt.step, '5');
     });
   });
 
   suite('p5.prototype.createButton', function() {
-    testSketchWithPromise('mousePressed works', function(
-      sketch,
-      resolve,
-      reject
-    ) {
-      sketch.setup = function() {
-        var elem = sketch.createButton('test');
-        elem.mousePressed(resolve);
-        elem.elt.dispatchEvent(new Event('mousedown'));
-      };
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
     });
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should return a p5.Element of button type', function() {
+      testElement = myp5.createButton('testButton', 'testButton');
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLButtonElement);
+    });
+
+    testSketchWithPromise(
+      'should trigger callback when mouse is pressed',
+      function(sketch, resolve, reject) {
+        sketch.setup = function() {
+          const testElement = sketch.createButton('test');
+          testElement.mousePressed(resolve);
+          testElement.elt.dispatchEvent(new Event('mousedown'));
+        };
+      }
+    );
   });
 
   // Tests for createCheckBox
@@ -691,54 +891,6 @@ suite('DOM', function() {
     });
   });
 
-  suite('p5.prototype.createInput', function() {
-    let myp5;
-    let testElement;
-
-    setup(function(done) {
-      new p5(function(p) {
-        p.setup = function() {
-          myp5 = p;
-          done();
-        };
-      });
-    });
-
-    teardown(function() {
-      myp5.remove();
-      if (testElement && testElement.parentNode) {
-        testElement.parentNode.removeChild(testElement);
-      }
-      testElement = null;
-    });
-
-    test('should be a function', function() {
-      assert.isFunction(myp5.createInput);
-    });
-
-    test('should return p5.Element of input type', function() {
-      testElement = myp5.createInput();
-      assert.instanceOf(testElement, p5.Element);
-      assert.instanceOf(testElement.elt, HTMLInputElement);
-    });
-
-    test('should set given value as input', function() {
-      const testValues = ['123', '', 'Hello world'];
-      for (const value of testValues) {
-        testElement = myp5.createInput(value);
-        assert.deepEqual(testElement.elt.value, value);
-      }
-    });
-
-    test('should create input of given type and value', function() {
-      const testType = 'password';
-      const testValue = '1234056789';
-      testElement = myp5.createInput(testValue, testType);
-      assert.deepEqual(testElement.elt.type, testType);
-      assert.deepEqual(testElement.elt.value, testValue);
-    });
-  });
-
   suite('p5.prototype.createColorPicker', function() {
     let myp5;
     let testElement;
@@ -796,6 +948,54 @@ suite('DOM', function() {
       const testColor = myp5.color('aqua');
       testElement = myp5.createColorPicker(testColor);
       assert.deepEqual(testElement.value(), testColor.toString('#rrggbb'));
+    });
+  });
+
+  suite('p5.prototype.createInput', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createInput);
+    });
+
+    test('should return p5.Element of input type', function() {
+      testElement = myp5.createInput();
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(testElement.elt, HTMLInputElement);
+    });
+
+    test('should set given value as input', function() {
+      const testValues = ['123', '', 'Hello world'];
+      for (const value of testValues) {
+        testElement = myp5.createInput(value);
+        assert.deepEqual(testElement.elt.value, value);
+      }
+    });
+
+    test('should create input of given type and value', function() {
+      const testType = 'password';
+      const testValue = '1234056789';
+      testElement = myp5.createInput(testValue, testType);
+      assert.deepEqual(testElement.elt.type, testType);
+      assert.deepEqual(testElement.elt.value, testValue);
     });
   });
 
@@ -1164,7 +1364,8 @@ suite('DOM', function() {
   // p5.Element.prototype.html
 
   suite('p5.Element.prototype.position', function() {
-    var myp5;
+    let myp5;
+    let testElement;
 
     setup(function(done) {
       new p5(function(p) {
@@ -1177,26 +1378,38 @@ suite('DOM', function() {
 
     teardown(function() {
       myp5.remove();
-    });
-
-    var elt;
-
-    teardown(function() {
-      if (elt && elt.parentNode) {
-        elt.parentNode.removeChild(elt);
-        elt = null;
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
       }
+      testElement = null;
     });
 
-    test('should match properties with dummy element', function() {
-      let paragraph = myp5.createP('out of box');
-      paragraph.position(20, 20, 'static');
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('a');
+      assert.isFunction(testElement.position);
+    });
 
-      elt = document.createElement('p', 'out of box');
-      elt.style.position = 'static';
-      elt.style.left = '20px';
-      elt.style.top = '20px';
-      expect(JSON.stringify(paragraph.elt)).to.eql(JSON.stringify(elt));
+    test('should return current position if no args are given', function() {
+      testElement = myp5.createButton('testButton');
+      const position = testElement.position();
+      assert.deepEqual(position.x, testElement.elt.offsetLeft);
+      assert.deepEqual(position.y, testElement.elt.offsetTop);
+    });
+
+    test('should set default position as absolute', function() {
+      testElement = myp5.createButton('testButton');
+      testElement.position(20, 70);
+      assert.deepEqual(testElement.elt.style.position, 'absolute');
+    });
+
+    test('should set given params as properties', function() {
+      let testElement = myp5.createButton('testButton');
+      testElement.position(20, 80, 'static');
+
+      assert.deepEqual(testElement.elt.style.position, 'static');
+      assert.deepEqual(testElement.elt.style.left, '20px');
+      assert.deepEqual(testElement.elt.style.top, '80px');
     });
   });
 
@@ -1226,38 +1439,32 @@ suite('DOM', function() {
       resolve,
       reject
     ) {
-      var myElt;
-      var myFileFnCounter = 0;
-      var myEventFnCounter = 0;
+      let testElement;
+      let fileFnCounter = 0;
+      let eventFnCounter = 0;
       sketch.setup = function() {
-        myFileFnCounter = 0;
-        myEventFnCounter = 0;
-        myElt = sketch.createDiv('drop stuff');
-        function hasFinished() {
-          if (myFileFnCounter > 1 && myEventFnCounter === 1) {
-            resolve();
-          }
-        }
-        var myFileFn = function() {
-          myFileFnCounter++;
+        testElement = sketch.createDiv('Drop files inside');
+
+        // Setup test functions and constants
+        const file1 = new File(['foo'], 'foo.txt', { type: 'text/plain' });
+        const file2 = new File(['foo'], 'foo.txt', { type: 'text/plain' });
+        const hasFinished = () => {
+          if (fileFnCounter > 1 && eventFnCounter === 1) resolve();
+        };
+        const testFileFn = () => {
+          fileFnCounter += 1;
           hasFinished();
         };
-        var myEventFn = function() {
-          myEventFnCounter++;
+        const testEventFn = () => {
+          eventFnCounter += 1;
           hasFinished();
         };
-        myElt.drop(myFileFn, myEventFn);
-        assert.isFunction(myElt._events.drop);
-        //Mock A File Drop Event.
-        var file1 = new File(['foo'], 'foo.txt', {
-          type: 'text/plain'
-        });
-        var file2 = new File(['foo'], 'foo.txt', {
-          type: 'text/plain'
-        });
-        var myMockedEvent = new Event('drop');
-        myMockedEvent.dataTransfer = { files: [file1, file2] };
-        myElt.elt.dispatchEvent(myMockedEvent);
+        testElement.drop(testFileFn, testEventFn);
+
+        // Fire a mock drop and test the method
+        const mockedEvent = new Event('drop');
+        mockedEvent.dataTransfer = { files: [file1, file2] };
+        testElement.elt.dispatchEvent(mockedEvent);
       };
     });
   });
