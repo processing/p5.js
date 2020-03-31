@@ -54,6 +54,12 @@ p5.Graphics = function(w, h, renderer, pInst) {
   }
   pInst._elements.push(this);
 
+  Object.defineProperty(this, 'deltaTime', {
+    get: function() {
+      return this._pInst.deltaTime;
+    }
+  });
+
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this;
