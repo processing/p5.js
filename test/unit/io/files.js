@@ -470,5 +470,149 @@ suite('Files', function() {
       assert.ok(myp5.saveStrings);
       assert.typeOf(myp5.saveStrings, 'function');
     });
+
+    test('no friendly-err-msg I', function() {
+      assert.doesNotThrow(
+        function() {
+          let strings = ['some', 'words'];
+          myp5.saveStrings(strings, 'myfile');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+    test('no friendly-err-msg II', function() {
+      assert.doesNotThrow(
+        function() {
+          let strings = ['some', 'words'];
+          myp5.saveStrings(strings, 'myfile', 'txt');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+
+    test('no friendly-err-msg III', function() {
+      assert.doesNotThrow(
+        function() {
+          let strings = ['some', 'words'];
+          myp5.saveStrings(strings, 'myfile', 'txt', true);
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+
+    test('missing param #1', function() {
+      assert.validationError(function() {
+        let strings = ['some', 'words'];
+        myp5.saveStrings(strings);
+      });
+    });
+
+    test('wrong param type at #0', function() {
+      assert.validationError(function() {
+        let strings = 'some words';
+        myp5.saveStrings(strings);
+      });
+    });
+
+    testWithDownload(
+      'should download a file with expected contents',
+      async function(blobContainer) {
+        let strings = ['some', 'words'];
+
+        myp5.saveStrings(strings, 'myfile');
+
+        let myBlob = blobContainer.blob;
+        let text = await myBlob.text();
+        // Each element on a separate line with a trailing line-break
+        assert.strictEqual(text, strings.join('\n') + '\n');
+      },
+      true
+    );
+
+    testWithDownload(
+      'should download a file with expected contents with CRLF',
+      async function(blobContainer) {
+        let strings = ['some', 'words'];
+
+        myp5.saveStrings(strings, 'myfile', 'txt', true);
+        let myBlob = blobContainer.blob;
+        let text = await myBlob.text();
+        // Each element on a separate line with a trailing CRLF
+        assert.strictEqual(text, strings.join('\r\n') + '\r\n');
+      },
+      true
+    );
+  });
+
+  // saveJSON()
+  suite('p5.prototype.saveJSON', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.saveJSON);
+      assert.typeOf(myp5.saveJSON, 'function');
+    });
+
+    test('no friendly-err-msg I', function() {
+      assert.doesNotThrow(
+        function() {
+          let myObj = { hi: 'hello' };
+          myp5.saveJSON(myObj, 'myfile');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+    test('no friendly-err-msg II', function() {
+      assert.doesNotThrow(
+        function() {
+          let myObj = [{ hi: 'hello' }];
+          myp5.saveJSON(myObj, 'myfile');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+
+    test('no friendly-err-msg III', function() {
+      assert.doesNotThrow(
+        function() {
+          let myObj = { hi: 'hello' };
+          myp5.saveJSON(myObj, 'myfile', true);
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+
+    test('missing param #1', function() {
+      assert.validationError(function() {
+        let myObj = { hi: 'hello' };
+        myp5.saveJSON(myObj);
+      });
+    });
+
+    test('wrong param type at #0', function() {
+      assert.validationError(function() {
+        let myObj = 'some words';
+        myp5.saveJSON(myObj);
+      });
+    });
+
+    testWithDownload(
+      'should download a file with expected contents',
+      async function(blobContainer) {
+        let myObj = { hi: 'hello' };
+
+        myp5.saveJSON(myObj, 'myfile');
+        let myBlob = blobContainer.blob;
+        let text = await myBlob.text();
+        let json = JSON.parse(text);
+        // Each element on a separate line with a trailing line-break
+        assert.deepEqual(myObj, json);
+      },
+      true // asyncFn = true
+    );
   });
 });
