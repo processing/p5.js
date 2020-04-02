@@ -71,6 +71,11 @@ function testWithDownload(name, fn, asyncFn = false) {
   return test(name, test_fn);
 }
 
+// Tests should run only for the unminified script
+function testUnMinified(name, test_fn) {
+  return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
+}
+
 function parallelSketches(sketch_fns) {
   var setupPromises = [];
   var resultPromises = [];

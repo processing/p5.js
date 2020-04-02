@@ -615,4 +615,44 @@ suite('Files', function() {
       true // asyncFn = true
     );
   });
+
+  // writeFile
+  suite('p5.prototype.writeFile', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.writeFile);
+      assert.typeOf(myp5.writeFile, 'function');
+    });
+    testWithDownload(
+      'should download a file with expected contents (text)',
+      async function(blobContainer) {
+        let myArray = ['hello', 'hi'];
+
+        myp5.writeFile(myArray, 'myfile');
+        let myBlob = blobContainer.blob;
+        let text = await myBlob.text();
+        assert.strictEqual(text, myArray.join(''));
+      },
+      true // asyncFn = true
+    );
+  });
+
+  // downloadFile
+  suite('p5.prototype.downloadFile', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.writeFile);
+      assert.typeOf(myp5.writeFile, 'function');
+    });
+    testWithDownload(
+      'should download a file with expected contents',
+      async function(blobContainer) {
+        let myArray = ['hello', 'hi'];
+        let inBlob = new Blob(myArray);
+        myp5.downloadFile(inBlob, 'myfile');
+        let myBlob = blobContainer.blob;
+        let text = await myBlob.text();
+        assert.strictEqual(text, myArray.join(''));
+      },
+      true // asyncFn = true
+    );
+  });
 });
