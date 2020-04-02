@@ -1,3 +1,11 @@
+/**
+ * @module Lights, Camera
+ * @submodule Material
+ * @for p5
+ * @requires core
+ * @requires p5.Geometry
+ */
+
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import p5 from '../core/main';
@@ -37,9 +45,9 @@ p5.Geometry = function(detailX, detailY, callback) {
   // a 2D array containing edge connectivity pattern for create line vertices
   //based on faces for most objects;
   this.edges = [];
+  this.vertexColors = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
-
   this.dirtyFlags = {};
 
   if (callback instanceof Function) {

@@ -1,0 +1,23 @@
+<!-- docs/_sidebar.md -->
+
+- [__CONTRIBUTORS INTRO__](README.md)
+- __CONTRIBUTING DOCS__
+  - [Contributing Documentation](contributing_documentation.md)
+  - [Issue Labels](issue_labels.md)
+- __CONTRIBUTING THOUGHTS__
+  - [Discussions](discussions.md)
+  - [Design Principles](design_principles.md)
+  - [Roadmap](roadmap.md)
+  - [How Contributions are Organized](organization.md)
+- __CONTRIBUTING CODE__
+  - [Creating Libraries](creating_libraries.md)
+  - [Opening a Pull Request](preparing_a_pull_request.md)
+  - [Inline Documentation](inline_documentation.md)
+  - [Benchmarking](benchmarking_p5.md)
+  - [Unit Testing](unit_testing.md)
+  - [Friendly-Error System](friendly_error_system.md)
+  - [Release Process](release_process.md)
+- __RELATED INFO__
+  - [WebGL Architecture](webgl_mode_architecture.md)
+  - [Supported Browsers](supported_browsers.md)
+  - [Custom Builds](custom_p5_build.md)

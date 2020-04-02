@@ -22,7 +22,7 @@ import p5 from '../core/main';
  * @method storeItem
  * @for p5
  * @param {String} key
- * @param {String|Number|Object|Boolean|p5.Color} value
+ * @param {String|Number|Object|Boolean|p5.Color|p5.Vector} value
  *
  * @example
  * <div><code>
@@ -58,7 +58,7 @@ import p5 from '../core/main';
  * If you reload the page, the last letter typed is still displaying.
  *
  */
-p5.prototype.storeItem = (key, value) => {
+p5.prototype.storeItem = function(key, value) {
   if (typeof value === 'undefined') {
     console.log('You cannot store undefined variables using storeItem()');
   }
@@ -71,6 +71,10 @@ p5.prototype.storeItem = (key, value) => {
     case 'object':
       if (value instanceof p5.Color) {
         type = 'p5.Color';
+      } else if (value instanceof p5.Vector) {
+        type = 'p5.Vector';
+        const coord = [value.x, value.y, value.z];
+        value = coord;
       }
       value = JSON.stringify(value);
       break;
@@ -92,7 +96,7 @@ p5.prototype.storeItem = (key, value) => {
  * @method getItem
  * @for p5
  * @param {String} key name that you wish to use to store in local storage
- * @return {Number|Object|String|Boolean|p5.Color} Value of stored item
+ * @return {Number|Object|String|Boolean|p5.Color|p5.Vector} Value of stored item
  *
  * @example
  * <div><code>
@@ -149,6 +153,10 @@ p5.prototype.getItem = function(key) {
         value = JSON.parse(value);
         value = this.color(...value.levels);
         break;
+      case 'p5.Vector':
+        value = JSON.parse(value);
+        value = this.createVector(...value);
+        break;
       case 'string':
       default:
         break;
@@ -181,7 +189,7 @@ p5.prototype.getItem = function(key) {
  * }
  * </code></div>
  */
-p5.prototype.clearStorage = () => {
+p5.prototype.clearStorage = function() {
   localStorage.clear();
 };
 
@@ -205,7 +213,7 @@ p5.prototype.clearStorage = () => {
  * }
  * </code></div>
  */
-p5.prototype.removeItem = key => {
+p5.prototype.removeItem = function(key) {
   if (typeof key !== 'string') {
     console.log(
       `The argument that you passed to removeItem() - ${key} is not a string.`

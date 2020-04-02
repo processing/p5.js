@@ -1,6 +1,6 @@
 /**
  * @module IO
- * @submodule XML
+ * @submodule Input
  * @requires core
  */
 

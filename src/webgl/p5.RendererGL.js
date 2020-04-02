@@ -63,7 +63,13 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._setAttributeDefaults(pInst);
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
+
+  // This redundant property is useful in reminding you that you are
+  // interacting with WebGLRenderingContext, still worth considering future removal
   this.GL = this.drawingContext;
+
+  // erasing
+  this._isErasing = false;
 
   // lights
   this._enableLighting = false;
@@ -87,10 +93,14 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.spotLightConc = [];
 
   this.drawMode = constants.FILL;
-  this.curFillColor = [1, 1, 1, 1];
-  this.curStrokeColor = [0, 0, 0, 1];
+
+  this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
+
   this.curBlendMode = constants.BLEND;
+  this._cachedBlendMode = undefined;
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+  this._isBlending = false;
 
   this._useSpecularMaterial = false;
   this._useEmissiveMaterial = false;
@@ -117,25 +127,68 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._curCamera._computeCameraDefaultSettings();
   this._curCamera._setDefaultCamera();
 
-  //Geometry & Material hashes
-  this.gHash = {};
-
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
   this._defaultPointShader = undefined;
 
-  this._pointVertexBuffer = this.GL.createBuffer();
-
   this.userFillShader = undefined;
   this.userStrokeShader = undefined;
   this.userPointShader = undefined;
 
-  //Imediate Mode
-  //default drawing is done in Retained Mode
-  this.isImmediateDrawing = false;
-  this.immediateMode = {};
+  // Default drawing is done in Retained Mode
+  // Geometry and Material hashes stored here
+  this.retainedMode = {
+    geometry: {},
+    buffers: {
+      // prettier-ignore
+      stroke: [
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+      ],
+      // prettier-ignore
+      fill: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      // prettier-ignore
+      text: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ]
+    }
+  };
+
+  // Imediate Mode
+  // Geometry and Material hashes stored here
+  this.immediateMode = {
+    geometry: new p5.Geometry(),
+    shapeMode: constants.TRIANGLE_FAN,
+    _bezierVertex: [],
+    _quadraticVertex: [],
+    _curveVertex: [],
+    buffers: {
+      // prettier-ignore
+      fill: [
+      new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+      new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+      new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+      new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+      new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      // prettier-ignore
+      stroke: [
+      new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+      new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+      ],
+      point: this.GL.createBuffer()
+    }
+  };
 
   this.pointSize = 5.0; //default point size
   this.curStrokeWeight = 1;
@@ -164,6 +217,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.fontInfos = {};
 
+  this._curShader = undefined;
+
   return this;
 };
 
@@ -173,15 +228,17 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
-p5.RendererGL.prototype._setAttributeDefaults = pInst => {
+p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
+  // See issue #3850, safer to enable AA in Safari
+  const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
     alpha: true,
     depth: true,
     stencil: true,
-    antialias: false,
+    antialias: applyAA,
     premultipliedAlpha: false,
     preserveDrawingBuffer: true,
-    perPixelLighting: false
+    perPixelLighting: true
   };
   if (pInst._glAttributes === null) {
     pInst._glAttributes = defaults;
@@ -294,7 +351,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * of at least 8 bits
  * <br><br>
  * antialias - indicates whether or not to perform anti-aliasing
- * default is false
+ * default is false (true in Safari)
  * <br><br>
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
@@ -306,8 +363,8 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * default is true
  * <br><br>
  * perPixelLighting - if true, per-pixel lighting will be used in the
- * lighting shader.
- * default is false
+ * lighting shader otherwise per-vertex lighting is used.
+ * default is true.
  * <br><br>
  * @method setAttributes
  * @for p5
@@ -357,14 +414,14 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * <div>
  * <code>
- * // press the mouse button to enable perPixelLighting
+ * // press the mouse button to disable perPixelLighting
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
  *   fill(255);
  * }
  *
- * const lights = [
+ * let lights = [
  *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
  *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
  *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
@@ -396,12 +453,12 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * }
  *
  * function mousePressed() {
- *   setAttributes('perPixelLighting', true);
+ *   setAttributes('perPixelLighting', false);
  *   noStroke();
  *   fill(255);
  * }
  * function mouseReleased() {
- *   setAttributes('perPixelLighting', false);
+ *   setAttributes('perPixelLighting', true);
  *   noStroke();
  *   fill(255);
  * }
@@ -448,8 +505,8 @@ p5.prototype.setAttributes = function(key, value) {
   }
 
   if (!this._setupDone) {
-    for (const x in this._renderer.gHash) {
-      if (this._renderer.gHash.hasOwnProperty(x)) {
+    for (const x in this._renderer.retainedMode.geometry) {
+      if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
         console.error(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
             'before calling the other drawing methods in setup()'
@@ -533,9 +590,8 @@ p5.RendererGL.prototype.background = function(...args) {
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
   this.GL.clearColor(_r, _g, _b, _a);
-  this.GL.depthMask(true);
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
-  this._pixelsState._pixelsDirty = true;
+
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
 };
 
 //////////////////////////////////////////////
@@ -622,9 +678,22 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   this.curStrokeColor = color._array;
 };
 
-p5.RendererGL.prototype.strokeCap = cap => {
+p5.RendererGL.prototype.strokeCap = function(cap) {
   // @TODO : to be implemented
   console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+};
+
+p5.RendererGL.prototype.strokeJoin = function(join) {
+  // @TODO : to be implemented
+  // https://processing.org/reference/strokeJoin_.html
+  console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
+};
+
+p5.RendererGL.prototype.filter = function(filterType) {
+  // filter can be achieved using custom shaders.
+  // https://github.com/aferriss/p5jsShaderExamples
+  // https://itp-xstory.github.io/p5js-shaders/#/
+  console.error('filter() does not work in WEBGL mode');
 };
 
 p5.RendererGL.prototype.blendMode = function(mode) {
@@ -637,7 +706,8 @@ p5.RendererGL.prototype.blendMode = function(mode) {
     mode === constants.SCREEN ||
     mode === constants.EXCLUSION ||
     mode === constants.REPLACE ||
-    mode === constants.MULTIPLY
+    mode === constants.MULTIPLY ||
+    mode === constants.REMOVE
   )
     this.curBlendMode = mode;
   else if (
@@ -650,6 +720,31 @@ p5.RendererGL.prototype.blendMode = function(mode) {
     console.warn(
       'BURN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, and DODGE only work for blendMode in 2D mode.'
     );
+  }
+};
+
+p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
+  if (!this._isErasing) {
+    this._cachedBlendMode = this.curBlendMode;
+    this.blendMode(constants.REMOVE);
+
+    this._cachedFillStyle = this.curFillColor.slice();
+    this.curFillColor = [1, 1, 1, opacityFill / 255];
+
+    this._cachedStrokeStyle = this.curStrokeColor.slice();
+    this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
+
+    this._isErasing = true;
+  }
+};
+
+p5.RendererGL.prototype.noErase = function() {
+  if (this._isErasing) {
+    this.curFillColor = this._cachedFillStyle.slice();
+    this.curStrokeColor = this._cachedStrokeStyle.slice();
+
+    this.blendMode(this._cachedBlendMode);
+    this._isErasing = false;
   }
 };
 
@@ -702,21 +797,15 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.RendererGL.prototype._getPixel = function(x, y) {
-  const pixelsState = this._pixelsState;
   let imageData, index;
-  if (pixelsState._pixelsDirty) {
-    imageData = new Uint8Array(4);
-    // prettier-ignore
-    this.drawingContext.readPixels(
+  imageData = new Uint8Array(4);
+  // prettier-ignore
+  this.drawingContext.readPixels(
       x, y, 1, 1,
       this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
       imageData
     );
-    index = 0;
-  } else {
-    imageData = pixelsState.pixels;
-    index = (Math.floor(x) + Math.floor(y) * this.canvas.width) * 4;
-  }
+  index = 0;
   return [
     imageData[index + 0],
     imageData[index + 1],
@@ -737,8 +826,6 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
 
 p5.RendererGL.prototype.loadPixels = function() {
   const pixelsState = this._pixelsState;
-  if (!pixelsState._pixelsDirty) return;
-  pixelsState._pixelsDirty = false;
 
   //@todo_FES
   if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
@@ -771,7 +858,7 @@ p5.RendererGL.prototype.loadPixels = function() {
 //////////////////////////////////////////////
 
 p5.RendererGL.prototype.geometryInHash = function(gId) {
-  return this.gHash[gId] !== undefined;
+  return this.retainedMode.geometry[gId] !== undefined;
 };
 
 /**
@@ -794,7 +881,6 @@ p5.RendererGL.prototype.resize = function(w, h) {
 
   //resize pixels buffer
   const pixelsState = this._pixelsState;
-  pixelsState._pixelsDirty = true;
   if (typeof pixelsState.pixels !== 'undefined') {
     pixelsState._setProperty(
       'pixels',
@@ -821,7 +907,6 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _a = args[3] || 0;
   this.GL.clearColor(_r, _g, _b, _a);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
@@ -983,15 +1068,12 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  * for use with begin/endShape and immediate vertex mode.
  */
 p5.RendererGL.prototype._getImmediateFillShader = function() {
-  if (this._useNormalMaterial) {
-    console.log(
-      'Sorry, normalMaterial() does not currently work with custom WebGL geometry' +
-        ' created with beginShape(). Falling back to standard fill material.'
-    );
-    return this._getImmediateModeShader();
-  }
-
   const fill = this.userFillShader;
+  if (this._useNormalMaterial) {
+    if (!fill || !fill.isNormalShader()) {
+      return this._getNormalShader();
+    }
+  }
   if (this._enableLighting) {
     if (!fill || !fill.isLightShader()) {
       return this._getLightShader();
@@ -1260,6 +1342,24 @@ p5.RendererGL.prototype._bindBuffer = function(
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
+p5.RendererGL.prototype._arraysEqual = function(a, b) {
+  const aLength = a.length;
+  if (aLength !== b.length) return false;
+  for (let i = 0; i < aLength; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
+p5.RendererGL.prototype._isTypedArray = function(arr) {
+  let res = false;
+  res = arr instanceof Float32Array;
+  res = arr instanceof Float64Array;
+  res = arr instanceof Int16Array;
+  res = arr instanceof Uint16Array;
+  res = arr instanceof Uint32Array;
+  return res;
+};
 /**
  * turn a two dimensional array into one dimensional array
  * @private
@@ -1267,7 +1367,7 @@ p5.RendererGL.prototype._bindBuffer = function(
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._flatten = arr => {
+p5.RendererGL.prototype._flatten = function(arr) {
   //when empty, return empty
   if (arr.length === 0) {
     return [];
@@ -1305,7 +1405,7 @@ p5.RendererGL.prototype._flatten = arr => {
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._vToNArray = arr => {
+p5.RendererGL.prototype._vToNArray = function(arr) {
   const ret = [];
 
   for (const item of arr) {
@@ -1391,7 +1491,7 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 };
 
 // function to calculate BezierVertex Coefficients
-p5.RendererGL.prototype._bezierCoefficients = t => {
+p5.RendererGL.prototype._bezierCoefficients = function(t) {
   const t2 = t * t;
   const t3 = t2 * t;
   const mt = 1 - t;
@@ -1401,7 +1501,7 @@ p5.RendererGL.prototype._bezierCoefficients = t => {
 };
 
 // function to calculate QuadraticVertex Coefficients
-p5.RendererGL.prototype._quadraticCoefficients = t => {
+p5.RendererGL.prototype._quadraticCoefficients = function(t) {
   const t2 = t * t;
   const mt = 1 - t;
   const mt2 = mt * mt;

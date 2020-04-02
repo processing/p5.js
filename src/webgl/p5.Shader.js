@@ -1,7 +1,7 @@
 /**
  * This module defines the p5.Shader class
  * @module Lights, Camera
- * @submodule Shaders
+ * @submodule Material
  * @for p5
  * @requires core
  */
@@ -11,6 +11,7 @@ import p5 from '../core/main';
 /**
  * Shader class for WEBGL Mode
  * @class p5.Shader
+ * @constructor
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Shader
  * @param {String} vertSrc source code for the vertex shader (as a string)
@@ -171,17 +172,28 @@ p5.Shader.prototype._loadUniforms = function() {
     }
     uniform.name = uniformName;
     uniform.type = uniformInfo.type;
+    uniform._cachedData = undefined;
     if (uniform.type === gl.SAMPLER_2D) {
       uniform.samplerIndex = samplerIndex;
       samplerIndex++;
       this.samplers.push(uniform);
     }
+    uniform.isArray =
+      uniform.type === gl.FLOAT_MAT3 ||
+      uniform.type === gl.FLOAT_MAT4 ||
+      uniform.type === gl.FLOAT_VEC2 ||
+      uniform.type === gl.FLOAT_VEC3 ||
+      uniform.type === gl.FLOAT_VEC4 ||
+      uniform.type === gl.INT_VEC2 ||
+      uniform.type === gl.INT_VEC3 ||
+      uniform.type === gl.INT_VEC4;
+
     this.uniforms[uniformName] = uniform;
   }
   this._loadedUniforms = true;
 };
 
-p5.Shader.prototype.compile = () => {
+p5.Shader.prototype.compile = function() {
   // TODO
 };
 
@@ -243,13 +255,22 @@ p5.Shader.prototype.updateTextures = function() {
   }
 };
 
-p5.Shader.prototype.unbindTextures = () => {
+p5.Shader.prototype.unbindTextures = function() {
   // TODO: migrate stuff from material.js here
   // - OR - have material.js define this function
 };
 
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
+  if (this.isStrokeShader()) {
+    if (this._renderer._curCamera.cameraType === 'default') {
+      // strokes scale up as they approach camera, default
+      this.setUniform('uPerspective', 1);
+    } else {
+      // strokes have uniform scale regardless of distance from camera
+      this.setUniform('uPerspective', 0);
+    }
+  }
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
@@ -265,7 +286,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
  */
 p5.Shader.prototype.useProgram = function() {
   const gl = this._renderer.GL;
-  gl.useProgram(this._glProgram);
+  if (this._renderer._curShader !== this) {
+    gl.useProgram(this._glProgram);
+    this._renderer._curShader = this;
+  }
   return this;
 };
 
@@ -332,16 +356,29 @@ p5.Shader.prototype.useProgram = function() {
  * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
-  //@todo update all current gl.uniformXX calls
-
   const uniform = this.uniforms[uniformName];
   if (!uniform) {
     return;
   }
+  const gl = this._renderer.GL;
+
+  if (uniform.isArray) {
+    if (
+      uniform._cachedData &&
+      this._renderer._arraysEqual(uniform._cachedData, data)
+    ) {
+      return;
+    } else {
+      uniform._cachedData = data.slice(0);
+    }
+  } else if (uniform._cachedData && uniform._cachedData === data) {
+    return;
+  } else {
+    uniform._cachedData = data;
+  }
 
   const location = uniform.location;
 
-  const gl = this._renderer.GL;
   this.useProgram();
 
   switch (uniform.type) {
@@ -452,6 +489,10 @@ p5.Shader.prototype.isLightShader = function() {
   );
 };
 
+p5.Shader.prototype.isNormalShader = function() {
+  return this.attributes.aNormal !== undefined;
+};
+
 p5.Shader.prototype.isTextureShader = function() {
   return this.samplerIndex > 0;
 };
@@ -498,8 +539,11 @@ p5.Shader.prototype.enableAttrib = function(
     const loc = attr.location;
     if (loc !== -1) {
       const gl = this._renderer.GL;
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(
+      if (!attr.enabled) {
+        gl.enableVertexAttribArray(loc);
+        attr.enabled = true;
+      }
+      this._renderer.GL.vertexAttribPointer(
         loc,
         size,
         type || gl.FLOAT,

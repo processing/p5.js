@@ -2,7 +2,7 @@
  * This module defines the <a href="#/p5.Font">p5.Font</a> class and functions for
  * drawing text to the display canvas.
  * @module Typography
- * @submodule Font
+ * @submodule Loading & Displaying
  * @requires core
  * @requires constants
  */
@@ -13,6 +13,7 @@ import * as constants from '../core/constants';
 /**
  * Base class for font handling
  * @class p5.Font
+ * @constructor
  * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Font = function(p) {

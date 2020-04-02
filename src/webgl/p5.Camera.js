@@ -15,10 +15,20 @@ import p5 from '../core/main';
  * the position for the camera, the center of the sketch (where the camera is
  * pointing), and an up direction (the orientation of the camera).
  *
+ * This function simulates the movements of the camera, allowing objects to be
+ * viewed from various angles. Remember, it does not move the objects themselves
+ * but the camera instead. For example when centerX value is positive, the camera
+ * is rotating to the right side of the sketch, so the object would seem like
+ * moving to the left.
+ *
+ * See this <a href = "https://www.openprocessing.org/sketch/740258">example</a>
+ * to view the position of your camera.
+ *
  * When called with no arguments, this function creates a default camera
  * equivalent to
  * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
  * @method camera
+ * @constructor
  * @for p5
  * @param  {Number} [x]        camera position value on x axis
  * @param  {Number} [y]        camera position value on y axis
@@ -45,8 +55,55 @@ import p5 from '../core/main';
  * </code>
  * </div>
  *
+ * @example
+ * <div>
+ * <code>
+ * //move slider to see changes!
+ * //sliders control the first 6 parameters of camera()
+ * let sliderGroup = [];
+ * let X;
+ * let Y;
+ * let Z;
+ * let centerX;
+ * let centerY;
+ * let centerZ;
+ * let h = 20;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   //create sliders
+ *   for (var i = 0; i < 6; i++) {
+ *     if (i === 2) {
+ *       sliderGroup[i] = createSlider(10, 400, 200);
+ *     } else {
+ *       sliderGroup[i] = createSlider(-400, 400, 0);
+ *     }
+ *     h = map(i, 0, 6, 5, 85);
+ *     sliderGroup[i].position(10, height + h);
+ *     sliderGroup[i].style('width', '80px');
+ *   }
+ * }
+ *
+ * function draw() {
+ *   background(60);
+ *   // assigning sliders' value to each parameters
+ *   X = sliderGroup[0].value();
+ *   Y = sliderGroup[1].value();
+ *   Z = sliderGroup[2].value();
+ *   centerX = sliderGroup[3].value();
+ *   centerY = sliderGroup[4].value();
+ *   centerZ = sliderGroup[5].value();
+ *   camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
+ *   stroke(255);
+ *   fill(255, 102, 94);
+ *   box(85);
+ * }
+ * </code>
+ * </div>
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
+ * An interactive example of a red cube with 3 sliders for moving it across x, y,
+ * z axis and 3 sliders for shifting it's center.
  *
  */
 p5.prototype.camera = function(...args) {
@@ -81,7 +138,6 @@ p5.prototype.camera = function(...args) {
  * <div>
  * <code>
  * //drag the mouse to look around!
- * //you will see there's a vanishing point
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   perspective(PI / 3.0, width / height, 0.1, 500);
@@ -175,6 +231,69 @@ p5.prototype.ortho = function(...args) {
   return this;
 };
 
+/**
+ * Sets a perspective matrix as defined by the parameters.
+ *
+ * A frustum is a geometric form: a pyramid with its top
+ * cut off. With the viewer's eye at the imaginary top of
+ * the pyramid, the six planes of the frustum act as clipping
+ * planes when rendering a 3D view. Thus, any form inside the
+ * clipping planes is visible; anything outside
+ * those planes is not visible.
+ *
+ * Setting the frustum changes the perspective of the scene being rendered.
+ * This can be achieved more simply in many cases by using
+ * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
+ *
+ * @method frustum
+ * @for p5
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+ * }
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   strokeWeight(10);
+ *   stroke(0, 0, 255);
+ *   noFill();
+ *
+ *   rotateY(-0.2);
+ *   rotateX(-0.3);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 25);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
+ *
+ */
+p5.prototype.frustum = function(...args) {
+  this._assert3d('frustum');
+  p5._validateParameters('frustum', args);
+  this._renderer._curCamera.frustum(...args);
+  return this;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // p5.Camera
 ////////////////////////////////////////////////////////////////////////////////
@@ -186,6 +305,26 @@ p5.prototype.ortho = function(...args) {
  * @method createCamera
  * @return {p5.Camera} The newly created camera object.
  * @for p5
+ * @example
+ * <div><code>
+ * // Creates a camera object and animates it around a box.
+ * let camera;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(0);
+ *   camera = createCamera();
+ *   setCamera(camera);
+ * }
+ *
+ * function draw() {
+ *   camera.lookAt(0, 0, 0);
+ *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
+ *   box(20);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example that creates a camera and moves it around the box.
  */
 p5.prototype.createCamera = function() {
   this._assert3d('createCamera');
@@ -298,6 +437,7 @@ p5.Camera = function(renderer) {
  * @for p5.Camera
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
+  this.cameraType = arguments.length > 0 ? 'custom' : 'default';
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
     // this avoids issue where setting angleMode(DEGREES) before calling
@@ -367,8 +507,6 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
       this.projMatrix.mat4[15]
     );
   }
-
-  this.cameraType = 'custom';
 };
 
 /**
@@ -405,6 +543,63 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
                         0, -y,  0,  0,
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
+
+  if (this._isActive()) {
+    this._renderer.uPMatrix.set(
+      this.projMatrix.mat4[0],
+      this.projMatrix.mat4[1],
+      this.projMatrix.mat4[2],
+      this.projMatrix.mat4[3],
+      this.projMatrix.mat4[4],
+      this.projMatrix.mat4[5],
+      this.projMatrix.mat4[6],
+      this.projMatrix.mat4[7],
+      this.projMatrix.mat4[8],
+      this.projMatrix.mat4[9],
+      this.projMatrix.mat4[10],
+      this.projMatrix.mat4[11],
+      this.projMatrix.mat4[12],
+      this.projMatrix.mat4[13],
+      this.projMatrix.mat4[14],
+      this.projMatrix.mat4[15]
+    );
+  }
+
+  this.cameraType = 'custom';
+};
+
+/**
+ * @method frustum
+ * @for p5.Camera
+ */
+p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
+  if (left === undefined) left = -this._renderer.width / 2;
+  if (right === undefined) right = +this._renderer.width / 2;
+  if (bottom === undefined) bottom = -this._renderer.height / 2;
+  if (top === undefined) top = +this._renderer.height / 2;
+  if (near === undefined) near = 0;
+  if (far === undefined)
+    far = Math.max(this._renderer.width, this._renderer.height);
+
+  const w = right - left;
+  const h = top - bottom;
+  const d = far - near;
+
+  const x = +(2.0 * near) / w;
+  const y = +(2.0 * near) / h;
+  const z = -(2.0 * far * near) / d;
+
+  const tx = (right + left) / w;
+  const ty = (top + bottom) / h;
+  const tz = -(far + near) / d;
+
+  this.projMatrix = p5.Matrix.identity();
+
+  // prettier-ignore
+  this.projMatrix.set(  x,  0,  0,  0,
+                        0,  y,  0,  0,
+                       tx, ty, tz, -1,
+                        0,  0,  z,  0);
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(

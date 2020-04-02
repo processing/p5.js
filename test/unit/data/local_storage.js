@@ -5,6 +5,7 @@ suite('local storage', function() {
   var myNumber = 46;
   var myString = 'coolio';
   var myColor;
+  var myVector;
 
   var hardCodedTypeID = 'p5TypeID';
 
@@ -13,11 +14,13 @@ suite('local storage', function() {
       p.setup = function() {
         myp5 = p;
         myColor = myp5.color(40, 100, 70);
+        myVector = myp5.createVector(10, 20, 30);
         myp5.storeItem('myBoolean', myBoolean);
         myp5.storeItem('myObject', myObject);
         myp5.storeItem('myNumber', myNumber);
         myp5.storeItem('myString', myString);
         myp5.storeItem('myColor', myColor);
+        myp5.storeItem('myVector', myVector);
         done();
       };
     });
@@ -66,6 +69,9 @@ suite('local storage', function() {
     test('p5 Color should retrieve as p5 Color', function() {
       assert.isTrue(myp5.getItem('myColor') instanceof p5.Color);
     });
+    test('p5 Vector should retrieve as p5 Vector', function() {
+      assert.isTrue(myp5.getItem('myVector') instanceof p5.Vector);
+    });
   });
 
   var checkRemoval = function(key) {
@@ -93,6 +99,10 @@ suite('local storage', function() {
 
     test('color should be removable', function() {
       checkRemoval('myColor');
+    });
+
+    test('vector should be removable', function() {
+      checkRemoval('myVector');
     });
   });
 });

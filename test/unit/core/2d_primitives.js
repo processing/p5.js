@@ -192,7 +192,7 @@ suite('2D Primitives', function() {
     test('no friendly-err-msg, format I', function() {
       assert.doesNotThrow(
         function() {
-          myp5.rect(0, 0, 100, 100);
+          myp5.rect(0, 0, 100);
         },
         Error,
         'got unwanted exception'
@@ -206,11 +206,6 @@ suite('2D Primitives', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    test('missing param #3', function() {
-      assert.validationError(function() {
-        myp5.rect(0, 0, Math.PI);
-      });
     });
     test('missing param #4', function() {
       // this err case escapes

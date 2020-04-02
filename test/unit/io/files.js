@@ -463,4 +463,12 @@ suite('Files', function() {
       });
     });
   });
+
+  // saveStrings()
+  suite('p5.prototype.saveStrings', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.saveStrings);
+      assert.typeOf(myp5.saveStrings, 'function');
+    });
+  });
 });

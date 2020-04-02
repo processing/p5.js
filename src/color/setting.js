@@ -11,26 +11,28 @@ import * as constants from '../core/constants';
 import './p5.Color';
 
 /**
- * The <a href="#/p5/background">background()</a> function sets the color used for the background of the
- * p5.js canvas. The default background is transparent. This function is
- * typically used within <a href="#/p5/draw">draw()</a> to clear the display window at the beginning
- * of each frame, but it can be used inside <a href="#/p5/setup">setup()</a> to set the background on
- * the first frame of animation or if the background need only be set once.
- * <br><br>
- * The color is either specified in terms of the RGB, HSB, or HSL color
- * depending on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space is RGB, with
- * each value in the range from 0 to 255). The alpha range by default is also 0 to 255.
- * <br><br>
+ * The <a href="#/p5/background">background()</a> function sets the color used
+ * for the background of the p5.js canvas. The default background is transparent.
+ * This function is typically used within <a href="#/p5/draw">draw()</a> to clear
+ * the display window at the beginning of each frame, but it can be used inside
+ * <a href="#/p5/setup">setup()</a> to set the background on the first frame of
+ * animation or if the background need only be set once.
+ *
+ * The color is either specified in terms of the RGB, HSB, or HSL color depending
+ * on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space
+ * is RGB, with each value in the range from 0 to 255). The alpha range by default
+ * is also 0 to 255.<br><br>
+ *
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
- * <br><br>
+ *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the background color.
- * <br><br>
+ *
  * A <a href="#/p5.Image">p5.Image</a> can also be provided to set the background image.
  *
  * @method background
- * @param {p5.Color} color     any value created by the <a href="#/p5/color">color()</a> function
+ * @param {p5.Color} color  any value created by the <a href="#/p5/color">color()</a> function
  * @chainable
  *
  * @example
@@ -170,7 +172,6 @@ import './p5.Color';
  * @param  {Number}  [a]
  * @chainable
  */
-
 p5.prototype.background = function(...args) {
   this._renderer.background(...args);
   return this;
@@ -191,22 +192,18 @@ p5.prototype.background = function(...args) {
  * <div>
  * <code>
  * // Clear the screen on mouse press.
- * function setup() {
- *   createCanvas(100, 100);
- * }
- *
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
  * }
- *
  * function mousePressed() {
  *   clear();
+ *   background(128);
  * }
  * </code>
  * </div>
  *
  * @alt
- * 20x20 white ellipses are continually drawn at mouse x and y coordinates.
+ * small white ellipses are continually drawn at mouse's x and y coordinates.
  *
  */
 
@@ -216,16 +213,16 @@ p5.prototype.clear = function() {
 };
 
 /**
- * <a href="#/p5/colorMode">colorMode()</a> changes the way p5.js interprets color data. By default, the
- * parameters for <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>, and <a href="#/p5/color">color()</a> are defined by
- * values between 0 and 255 using the RGB color model. This is equivalent to
- * setting colorMode(RGB, 255). Setting colorMode(HSB) lets you use the HSB
- * system instead. By default, this is colorMode(HSB, 360, 100, 100, 1). You
- * can also use HSL.
- * <br><br>
+ * <a href="#/p5/colorMode">colorMode()</a> changes the way p5.js interprets
+ * color data. By default, the parameters for <a href="#/p5/fill">fill()</a>,
+ * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
+ * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
+ * using the RGB color model. This is equivalent to setting colorMode(RGB, 255).
+ * Setting colorMode(HSB) lets you use the HSB system instead. By default, this
+ * is colorMode(HSB, 360, 100, 100, 1). You can also use HSL.
+ *
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
- *
  *
  * @method colorMode
  * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
@@ -265,7 +262,6 @@ p5.prototype.clear = function() {
  * <code>
  * colorMode(RGB, 255);
  * let c = color(127, 255, 0);
- *
  * colorMode(RGB, 1);
  * let myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
@@ -277,7 +273,6 @@ p5.prototype.clear = function() {
  * noFill();
  * colorMode(RGB, 255, 255, 255, 1);
  * background(255);
- *
  * strokeWeight(4);
  * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
@@ -290,8 +285,8 @@ p5.prototype.clear = function() {
  *Rainbow gradient from left to right. Brightness increasing to white at top.
  *unknown image.
  *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
- *
  */
+
 /**
  * @method colorMode
  * @param {Constant} mode
@@ -337,16 +332,17 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 };
 
 /**
- * Sets the color used to fill shapes. For example, if you run
- * fill(204, 102, 0), all shapes drawn after the fill command will be filled with the color orange. This
- * color is either specified in terms of the RGB or HSB color depending on
- * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space is RGB, with each value
- * in the range from 0 to 255). The alpha range by default is also 0 to 255.
- * <br><br>
+ * Sets the color used to fill shapes. For example, if you run fill(204, 102, 0),
+ * all shapes drawn after the fill command will be filled with the color orange.
+ * This color is either specified in terms of the RGB or HSB color depending on
+ * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space
+ * is RGB, with each value in the range from 0 to 255). The alpha range by default
+ * is also 0 to 255.
+ *
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
- * <br><br>
+ *
  * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the fill color.
  *
  * @method fill
@@ -447,6 +443,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * rect(20, 20, 60, 60);
  * </code>
  * </div>
+ *
  * @alt
  * 60x60 dark charcoal grey rect with black outline in center of canvas.
  * 60x60 yellow rect with black outline in center of canvas.
@@ -577,14 +574,15 @@ p5.prototype.noStroke = function() {
 /**
  * Sets the color used to draw lines and borders around shapes. This color
  * is either specified in terms of the RGB or HSB color depending on the
- * current <a href="#/p5/colorMode">colorMode()</a> (the default color space is RGB, with each value in
- * the range from 0 to 255). The alpha range by default is also 0 to 255.
- * <br><br>
+ * current <a href="#/p5/colorMode">colorMode()</a> (the default color space
+ * is RGB, with each value in the range from 0 to 255). The alpha range by
+ * default is also 0 to 255.
+ *
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
  * strings and all named color strings are supported. In this case, an alpha
  * number value as a second argument is not supported, the RGBA form should be
  * used.
- * <br><br>
+ *
  * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the stroke color.
  *
  *
@@ -743,6 +741,116 @@ p5.prototype.stroke = function(...args) {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
   this._renderer.stroke(...args);
+  return this;
+};
+
+/**
+ * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
+ * the canvas.Erased areas will reveal the web page underneath the canvas.Erasing
+ * can be canceled with <a href="#/p5/noErase">noErase()</a>.
+ *
+ * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
+ * background()</a> will not be affected by <a href="#/p5/erase">erase()</a>
+ *
+ * @method erase
+ * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ * @param  {Number}   [strengthStroke]    A number (0-255) for the strength of erasing for a shape's stroke.
+ *                                        This will default to 255 when no argument is given, which
+ *                                        is full strength.
+ *
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(100, 100, 250);
+ * fill(250, 100, 100);
+ * rect(20, 20, 60, 60);
+ * erase();
+ * ellipse(25, 30, 30);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * background(150, 250, 150);
+ * fill(100, 100, 250);
+ * rect(20, 20, 60, 60);
+ * strokeWeight(5);
+ * erase(150, 255);
+ * triangle(50, 10, 70, 50, 90, 10);
+ * noErase();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function setup() {
+ *   smooth();
+ *   createCanvas(100, 100, WEBGL);
+ *   // Make a &lt;p&gt; element and put it behind the canvas
+ *   let p = createP('I am a dom element');
+ *   p.center();
+ *   p.style('font-size', '20px');
+ *   p.style('text-align', 'center');
+ *   p.style('z-index', '-9999');
+ * }
+ *
+ * function draw() {
+ *   background(250, 250, 150);
+ *   fill(15, 195, 185);
+ *   noStroke();
+ *   sphere(30);
+ *   erase();
+ *   rotateY(frameCount * 0.02);
+ *   translate(0, 0, 40);
+ *   torus(15, 5);
+ *   noErase();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
+ * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
+ * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
+ */
+p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
+  this._renderer.erase(opacityFill, opacityStroke);
+
+  return this;
+};
+
+/**
+ * Ends erasing that was started with <a href="#/p5/erase">erase()</a>.
+ * The <a href="#/p5/fill">fill()</a>, <a href="#/p5/stroke">stroke()</a>, and
+ * <a href="#/p5/blendMode">blendMode()</a> settings will return to what they were
+ * prior to calling <a href="#/p5/erase">erase()</a>.
+ *
+ * @method noErase
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * background(235, 145, 15);
+ * noStroke();
+ * fill(30, 45, 220);
+ * rect(30, 10, 10, 80);
+ * erase();
+ * ellipse(50, 50, 60);
+ * noErase();
+ * rect(70, 10, 10, 80);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
+ */
+
+p5.prototype.noErase = function() {
+  this._renderer.noErase();
   return this;
 };
 

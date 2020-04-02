@@ -1,29 +1,30 @@
-precision mediump float;
+precision highp float;
+precision highp int;
 
 uniform mat4 uViewMatrix;
 
 uniform bool uUseLighting;
 
 uniform int uAmbientLightCount;
-uniform vec3 uAmbientColor[8];
+uniform vec3 uAmbientColor[5];
 
 uniform int uDirectionalLightCount;
-uniform vec3 uLightingDirection[8];
-uniform vec3 uDirectionalDiffuseColors[8];
-uniform vec3 uDirectionalSpecularColors[8];
+uniform vec3 uLightingDirection[5];
+uniform vec3 uDirectionalDiffuseColors[5];
+uniform vec3 uDirectionalSpecularColors[5];
 
 uniform int uPointLightCount;
-uniform vec3 uPointLightLocation[8];
-uniform vec3 uPointLightDiffuseColors[8];	
-uniform vec3 uPointLightSpecularColors[8];
+uniform vec3 uPointLightLocation[5];
+uniform vec3 uPointLightDiffuseColors[5];	
+uniform vec3 uPointLightSpecularColors[5];
 
 uniform int uSpotLightCount;
-uniform float uSpotLightAngle[8];
-uniform float uSpotLightConc[8];
-uniform vec3 uSpotLightDiffuseColors[8];
-uniform vec3 uSpotLightSpecularColors[8];
-uniform vec3 uSpotLightLocation[8];
-uniform vec3 uSpotLightDirection[8];
+uniform float uSpotLightAngle[5];
+uniform float uSpotLightConc[5];
+uniform vec3 uSpotLightDiffuseColors[5];
+uniform vec3 uSpotLightSpecularColors[5];
+uniform vec3 uSpotLightLocation[5];
+uniform vec3 uSpotLightDirection[5];
 
 uniform bool uSpecular;
 uniform float uShininess;
@@ -84,7 +85,7 @@ void totalLight(
 
   vec3 viewDirection = normalize(-modelPosition);
 
-  for (int j = 0; j < 8; j++) {
+  for (int j = 0; j < 5; j++) {
     if (j < uDirectionalLightCount) {
       vec3 lightVector = (uViewMatrix * vec4(uLightingDirection[j], 0.0)).xyz;
       vec3 lightColor = uDirectionalDiffuseColors[j];

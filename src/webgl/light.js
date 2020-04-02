@@ -8,8 +8,8 @@
 import p5 from '../core/main';
 
 /**
- * Creates an ambient light with a color
- *
+ * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas.
+ * It has no particular source.
  * @method ambientLight
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range
@@ -23,21 +23,28 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
+ * createCanvas(100, 100, WEBGL);
+ * ambientLight(0);
+ * ambientMaterial(250);
+ * sphere(40);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *   background(0);
- *   ambientLight(150);
- *   ambientMaterial(250);
- *   noStroke();
- *   sphere(40);
+ *   background(51);
+ *   ambientLight(100); // white light
+ *   ambientMaterial(255, 102, 94); // magenta material
+ *   box(30);
  * }
  * </code>
  * </div>
- *
  * @alt
  * evenly distributed light across a sphere
+ * evenly distributed light across a rotating sphere
  *
  */
 
@@ -169,6 +176,8 @@ p5.prototype.specularColor = function(v1, v2, v3) {
 
 /**
  * Creates a directional light with a color and a direction
+ *
+ * A maximum of 5 directionalLight can be active at one time
  * @method directionalLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -271,6 +280,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 
 /**
  * Creates a point light with a color and a light position
+ *
+ * A maximum of 5 pointLight can be active at one time
  * @method pointLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -499,6 +510,7 @@ p5.prototype.lightFalloff = function(
  * light towards the center. Both angle and concentration are optional, but if
  * you want to provide concentration, you will also have to specify the angle.
  *
+ * A maximum of 5 spotLight can be active at one time
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -519,7 +531,6 @@ p5.prototype.lightFalloff = function(
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   setAttributes('perPixelLighting', true);
  * }
  * function draw() {
  *   background(0);
@@ -542,7 +553,7 @@ p5.prototype.lightFalloff = function(
  * </div>
  *
  * @alt
- * Something
+ * Spot light on a sphere which changes position with mouse
  */
 /**
  * @method spotLight
@@ -828,6 +839,72 @@ p5.prototype.spotLight = function(
   this._renderer.spotLightConc.push(concentration);
 
   this._renderer._enableLighting = true;
+
+  return this;
+};
+
+/**
+ * This function will remove all the lights from the sketch for the
+ * subsequent materials rendered. It affects all the subsequent methods.
+ * Calls to lighting methods made after noLights() will re-enable lights
+ * in the sketch.
+ * @method noLights
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *
+ *   ambientLight(150, 0, 0);
+ *   translate(-25, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ *
+ *   noLights();
+ *   ambientLight(0, 150, 0);
+ *   translate(50, 0, 0);
+ *   ambientMaterial(250);
+ *   sphere(20);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Two spheres showing different colors
+ */
+p5.prototype.noLights = function() {
+  this._assert3d('noLights');
+  p5._validateParameters('noLights', arguments);
+
+  this._renderer._enableLighting = false;
+
+  this._renderer.ambientLightColors.length = 0;
+  this._renderer.specularColors = [1, 1, 1];
+
+  this._renderer.directionalLightDirections.length = 0;
+  this._renderer.directionalLightDiffuseColors.length = 0;
+  this._renderer.directionalLightSpecularColors.length = 0;
+
+  this._renderer.pointLightPositions.length = 0;
+  this._renderer.pointLightDiffuseColors.length = 0;
+  this._renderer.pointLightSpecularColors.length = 0;
+
+  this._renderer.spotLightPositions.length = 0;
+  this._renderer.spotLightDirections.length = 0;
+  this._renderer.spotLightDiffuseColors.length = 0;
+  this._renderer.spotLightSpecularColors.length = 0;
+  this._renderer.spotLightAngle.length = 0;
+  this._renderer.spotLightConc.length = 0;
+
+  this._renderer.constantAttenuation = 1;
+  this._renderer.linearAttenuation = 0;
+  this._renderer.quadraticAttenuation = 0;
+  this._renderer._useShininess = 1;
 
   return this;
 };

@@ -19,7 +19,7 @@ p5.ColorConversion = {};
 /**
  * Convert an HSBA array to HSLA.
  */
-p5.ColorConversion._hsbaToHSLA = hsba => {
+p5.ColorConversion._hsbaToHSLA = function(hsba) {
   const hue = hsba[0];
   let sat = hsba[1];
   const val = hsba[2];
@@ -45,7 +45,7 @@ p5.ColorConversion._hsbaToHSLA = hsba => {
 /**
  * Convert an HSBA array to RGBA.
  */
-p5.ColorConversion._hsbaToRGBA = hsba => {
+p5.ColorConversion._hsbaToRGBA = function(hsba) {
   const hue = hsba[0] * 6; // We will split hue into 6 sectors.
   const sat = hsba[1];
   const val = hsba[2];
@@ -100,7 +100,7 @@ p5.ColorConversion._hsbaToRGBA = hsba => {
 /**
  * Convert an HSLA array to HSBA.
  */
-p5.ColorConversion._hslaToHSBA = hsla => {
+p5.ColorConversion._hslaToHSBA = function(hsla) {
   const hue = hsla[0];
   let sat = hsla[1];
   const li = hsla[2];
@@ -128,7 +128,7 @@ p5.ColorConversion._hslaToHSBA = hsla => {
  * components, and pick a convenient third one ('zest') so that we don't need
  * to calculate formal HSBA saturation.
  */
-p5.ColorConversion._hslaToRGBA = hsla => {
+p5.ColorConversion._hslaToRGBA = function(hsla) {
   const hue = hsla[0] * 6; // We will split hue into 6 sectors.
   const sat = hsla[1];
   const li = hsla[2];
@@ -187,7 +187,7 @@ p5.ColorConversion._hslaToRGBA = hsla => {
 /**
  * Convert an RGBA array to HSBA.
  */
-p5.ColorConversion._rgbaToHSBA = rgba => {
+p5.ColorConversion._rgbaToHSBA = function(rgba) {
   const red = rgba[0];
   const green = rgba[1];
   const blue = rgba[2];
@@ -226,7 +226,7 @@ p5.ColorConversion._rgbaToHSBA = rgba => {
 /**
  * Convert an RGBA array to HSLA.
  */
-p5.ColorConversion._rgbaToHSLA = rgba => {
+p5.ColorConversion._rgbaToHSLA = function(rgba) {
   const red = rgba[0];
   const green = rgba[1];
   const blue = rgba[2];

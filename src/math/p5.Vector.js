@@ -1,6 +1,6 @@
 /**
  * @module Math
- * @submodule Math
+ * @submodule Vector
  * @requires constants
  */
 
@@ -27,6 +27,7 @@ import * as constants from '../core/constants';
  * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
  *
  * @class p5.Vector
+ * @constructor
  * @param {Number} [x] x component of the vector
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector
@@ -239,7 +240,8 @@ p5.Vector.prototype.copy = function copy() {
  * Adds x, y, and z components to a vector, adds one vector to another, or
  * adds two independent vectors together. The version of the method that adds
  * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
- * acts directly on the vector. See the examples for more context.
+ * acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method add
  * @param  {Number} x   the x component of the vector to be added
@@ -251,6 +253,16 @@ p5.Vector.prototype.copy = function copy() {
  * <code>
  * let v = createVector(1, 2, 3);
  * v.add(4, 5, 6);
+ * // v's components are set to [5, 7, 9]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v = createVector(1, 2, 3);
+ * // Provide arguments as an array
+ * let arr = [4, 5, 6];
+ * v.add(arr);
  * // v's components are set to [5, 7, 9]
  * </code>
  * </div>
@@ -325,11 +337,119 @@ p5.Vector.prototype.add = function add(x, y, z) {
   return this;
 };
 
+/// HELPERS FOR REMAINDER METHOD
+const calculateRemainder2D = function(xComponent, yComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  return this;
+};
+
+const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
+  if (xComponent !== 0) {
+    this.x = this.x % xComponent;
+  }
+  if (yComponent !== 0) {
+    this.y = this.y % yComponent;
+  }
+  if (zComponent !== 0) {
+    this.z = this.z % zComponent;
+  }
+  return this;
+};
+/**
+ * Gives remainder of a vector when it is divided by another vector.
+ * See examples for more context.
+ *
+ * @method rem
+ * @param {Number} x the x component of divisor vector
+ * @param {Number} y the y component of divisor vector
+ * @param {Number} z the z component of divisor vector
+ * @chainable
+ * @example
+ * <div class='norender'>
+ * <code>
+ * let v = createVector(3, 4, 5);
+ * v.rem(2, 3, 4);
+ * // v's components are set to [1, 1, 1]
+ * </code>
+ * </div>
+ * <div class="norender">
+ * <code>
+ * // Static method
+ * let v1 = createVector(3, 4, 5);
+ * let v2 = createVector(2, 3, 4);
+ *
+ * let v3 = p5.Vector.rem(v1, v2);
+ * // v3 has components [1, 1, 1]
+ * print(v3);
+ * </code>
+ * </div>
+ */
+/**
+ * @method rem
+ * @param {p5.Vector | Number[]}  value  divisor vector
+ * @chainable
+ */
+p5.Vector.prototype.rem = function rem(x, y, z) {
+  if (x instanceof p5.Vector) {
+    if (Number.isFinite(x.x) && Number.isFinite(x.y) && Number.isFinite(x.z)) {
+      const xComponent = parseFloat(x.x);
+      const yComponent = parseFloat(x.y);
+      const zComponent = parseFloat(x.z);
+      calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
+    }
+  } else if (x instanceof Array) {
+    if (x.every(element => Number.isFinite(element))) {
+      if (x.length === 2) {
+        calculateRemainder2D.call(this, x[0], x[1]);
+      }
+      if (x.length === 3) {
+        calculateRemainder3D.call(this, x[0], x[1], x[2]);
+      }
+    }
+  } else if (arguments.length === 1) {
+    if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
+      this.x = this.x % arguments[0];
+      this.y = this.y % arguments[0];
+      this.z = this.z % arguments[0];
+      return this;
+    }
+  } else if (arguments.length === 2) {
+    const vectorComponents = [...arguments];
+    if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.length === 2) {
+        calculateRemainder2D.call(
+          this,
+          vectorComponents[0],
+          vectorComponents[1]
+        );
+      }
+    }
+  } else if (arguments.length === 3) {
+    const vectorComponents = [...arguments];
+    if (vectorComponents.every(element => Number.isFinite(element))) {
+      if (vectorComponents.length === 3) {
+        calculateRemainder3D.call(
+          this,
+          vectorComponents[0],
+          vectorComponents[1],
+          vectorComponents[2]
+        );
+      }
+    }
+  }
+};
+
 /**
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method
  * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
- * other acts directly on the vector. See the examples for more context.
+ * other acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method sub
  * @param  {Number} x   the x component of the vector to subtract
@@ -341,6 +461,16 @@ p5.Vector.prototype.add = function add(x, y, z) {
  * <code>
  * let v = createVector(4, 5, 6);
  * v.sub(1, 1, 1);
+ * // v's components are set to [3, 4, 5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v = createVector(4, 5, 6);
+ * // Provide arguments as an array
+ * let arr = [1, 1, 1];
+ * v.sub(arr);
  * // v's components are set to [3, 4, 5]
  * </code>
  * </div>
@@ -416,12 +546,17 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 };
 
 /**
- * Multiply the vector by a scalar. The static version of this method
+ * Multiplies the vector by a scalar, multiplies the x, y, and z components from a vector, or multiplies
+ * the x, y, and z components of two independent vectors. When multiplying a vector by a scalar, the x, y,
+ * and z components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
+ * the x, y, z components of both vectors are multiplied by each other
+ * (for example, with two vectors a and b: a.x * b.x, a.y * b.y, a.z * b.z). The static version of this method
  * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
- * directly. See the examples for more context.
+ * directly. Additionally, you may provide arguments to this function as an array.
+ * See the examples for more context.
  *
  * @method mult
- * @param  {Number}    n the number to multiply with the vector
+ * @param  {Number} n The number to multiply with the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -429,6 +564,32 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * let v = createVector(1, 2, 3);
  * v.mult(2);
  * // v's components are set to [2, 4, 6]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * let v1 = createVector(2, 3, 4);
+ * v0.mult(v1); // v0's components are set to [2, 6, 12]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * // Provide arguments as an array
+ * let arr = [2, 3, 4];
+ * v0.mult(arr); // v0's components are set to [2, 6, 12]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(1, 2, 3);
+ * let v1 = createVector(2, 3, 4);
+ * const result = p5.Vector.mult(v0, v1);
+ * print(result); // result's components are set to [2, 6, 12]
  * </code>
  * </div>
  *
@@ -476,33 +637,151 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * </code>
  * </div>
  */
-p5.Vector.prototype.mult = function mult(n) {
-  if (!(typeof n === 'number' && isFinite(n))) {
-    console.warn(
-      'p5.Vector.prototype.mult:',
-      'n is undefined or not a finite number'
-    );
+
+/**
+ * @method mult
+ * @param  {Number} x The number to multiply with the x component of the vector
+ * @param  {Number} y The number to multiply with the y component of the vector
+ * @param  {Number} [z] The number to multiply with the z component of the vector
+ * @chainable
+ */
+
+/**
+ * @method mult
+ * @param  {Number[]} arr The array to multiply with the components of the vector
+ * @chainable
+ */
+
+/**
+ * @method mult
+ * @param  {p5.Vector} v The vector to multiply with the components of the original vector
+ * @chainable
+ */
+
+p5.Vector.prototype.mult = function mult(x, y, z) {
+  if (x instanceof p5.Vector) {
+    // new p5.Vector will check that values are valid upon construction but it's possible
+    // that someone could change the value of a component after creation, which is why we still
+    // perform this check
+    if (
+      Number.isFinite(x.x) &&
+      Number.isFinite(x.y) &&
+      Number.isFinite(x.z) &&
+      typeof x.x === 'number' &&
+      typeof x.y === 'number' &&
+      typeof x.z === 'number'
+    ) {
+      this.x *= x.x;
+      this.y *= x.y;
+      this.z *= x.z;
+    } else {
+      console.warn(
+        'p5.Vector.prototype.mult:',
+        'x contains components that are either undefined or not finite numbers'
+      );
+    }
     return this;
   }
-  this.x *= n;
-  this.y *= n;
-  this.z *= n;
+  if (x instanceof Array) {
+    if (
+      x.every(element => Number.isFinite(element)) &&
+      x.every(element => typeof element === 'number')
+    ) {
+      if (x.length === 1) {
+        this.x *= x[0];
+        this.y *= x[0];
+        this.z *= x[0];
+      } else if (x.length === 2) {
+        this.x *= x[0];
+        this.y *= x[1];
+      } else if (x.length === 3) {
+        this.x *= x[0];
+        this.y *= x[1];
+        this.z *= x[2];
+      }
+    } else {
+      console.warn(
+        'p5.Vector.prototype.mult:',
+        'x contains elements that are either undefined or not finite numbers'
+      );
+    }
+    return this;
+  }
+
+  const vectorComponents = [...arguments];
+  if (
+    vectorComponents.every(element => Number.isFinite(element)) &&
+    vectorComponents.every(element => typeof element === 'number')
+  ) {
+    if (arguments.length === 1) {
+      this.x *= x;
+      this.y *= x;
+      this.z *= x;
+    }
+    if (arguments.length === 2) {
+      this.x *= x;
+      this.y *= y;
+    }
+    if (arguments.length === 3) {
+      this.x *= x;
+      this.y *= y;
+      this.z *= z;
+    }
+  } else {
+    console.warn(
+      'p5.Vector.prototype.mult:',
+      'x, y, or z arguments are either undefined or not a finite number'
+    );
+  }
+
   return this;
 };
 
 /**
- * Divide the vector by a scalar. The static version of this method creates a
+ * Divides the vector by a scalar, divides a vector by the x, y, and z arguments, or divides the x, y, and
+ * z components of two vectors against each other. When dividing a vector by a scalar, the x, y,
+ * and z components of the vector are all divided by the scalar. When dividing a vector by a vector,
+ * the x, y, z components of the source vector are treated as the dividend, and the x, y, z components
+ * of the argument is treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
+ * The static version of this method creates a
  * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
+ * Additionally, you may provide arguments to this function as an array.
  * See the examples for more context.
  *
  * @method div
- * @param  {number}    n the number to divide the vector by
+ * @param  {number}    n The number to divide the vector by
  * @chainable
  * @example
  * <div class="norender">
  * <code>
  * let v = createVector(6, 4, 2);
  * v.div(2); //v's components are set to [3, 2, 1]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * let v1 = createVector(3, 2, 4);
+ * v0.div(v1); // v0's components are set to [3, 2, 0.5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * // Provide arguments as an array
+ * let arr = [3, 2, 4];
+ * v0.div(arr); // v0's components are set to [3, 2, 0.5]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * let v0 = createVector(9, 4, 2);
+ * let v1 = createVector(3, 2, 4);
+ * let result = p5.Vector.div(v0, v1);
+ * print(result); // result's components are set to [3, 2, 0.5]
  * </code>
  * </div>
  *
@@ -550,27 +829,122 @@ p5.Vector.prototype.mult = function mult(n) {
  * </code>
  * </div>
  */
-p5.Vector.prototype.div = function div(n) {
-  if (!(typeof n === 'number' && isFinite(n))) {
-    console.warn(
-      'p5.Vector.prototype.div:',
-      'n is undefined or not a finite number'
-    );
-    return this;
-  }
-  if (n === 0) {
-    console.warn('p5.Vector.prototype.div:', 'divide by 0');
-    return this;
-  }
-  this.x /= n;
-  this.y /= n;
-  this.z /= n;
-  return this;
-};
 
 /**
+ * @method div
+ * @param  {Number} x The number to divide with the x component of the vector
+ * @param  {Number} y The number to divide with the y component of the vector
+ * @param  {Number} [z] The number to divide with the z component of the vector
+ * @chainable
+ */
+
+/**
+ * @method div
+ * @param  {Number[]} arr The array to divide the components of the vector by
+ * @chainable
+ */
+
+/**
+ * @method div
+ * @param  {p5.Vector} v The vector to divide the components of the original vector by
+ * @chainable
+ */
+p5.Vector.prototype.div = function div(x, y, z) {
+  if (x instanceof p5.Vector) {
+    // new p5.Vector will check that values are valid upon construction but it's possible
+    // that someone could change the value of a component after creation, which is why we still
+    // perform this check
+    if (
+      Number.isFinite(x.x) &&
+      Number.isFinite(x.y) &&
+      Number.isFinite(x.z) &&
+      typeof x.x === 'number' &&
+      typeof x.y === 'number' &&
+      typeof x.z === 'number'
+    ) {
+      if (x.x === 0 || x.y === 0 || x.z === 0) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        return this;
+      }
+      this.x /= x.x;
+      this.y /= x.y;
+      this.z /= x.z;
+    } else {
+      console.warn(
+        'p5.Vector.prototype.div:',
+        'x contains components that are either undefined or not finite numbers'
+      );
+    }
+    return this;
+  }
+  if (x instanceof Array) {
+    if (
+      x.every(element => Number.isFinite(element)) &&
+      x.every(element => typeof element === 'number')
+    ) {
+      if (x.some(element => element === 0)) {
+        console.warn('p5.Vector.prototype.div:', 'divide by 0');
+        return this;
+      }
+
+      if (x.length === 1) {
+        this.x /= x[0];
+        this.y /= x[0];
+        this.z /= x[0];
+      } else if (x.length === 2) {
+        this.x /= x[0];
+        this.y /= x[1];
+      } else if (x.length === 3) {
+        this.x /= x[0];
+        this.y /= x[1];
+        this.z /= x[2];
+      }
+    } else {
+      console.warn(
+        'p5.Vector.prototype.div:',
+        'x contains components that are either undefined or not finite numbers'
+      );
+    }
+
+    return this;
+  }
+
+  const vectorComponents = [...arguments];
+  if (
+    vectorComponents.every(element => Number.isFinite(element)) &&
+    vectorComponents.every(element => typeof element === 'number')
+  ) {
+    if (vectorComponents.some(element => element === 0)) {
+      console.warn('p5.Vector.prototype.div:', 'divide by 0');
+      return this;
+    }
+
+    if (arguments.length === 1) {
+      this.x /= x;
+      this.y /= x;
+      this.z /= x;
+    }
+    if (arguments.length === 2) {
+      this.x /= x;
+      this.y /= y;
+    }
+    if (arguments.length === 3) {
+      this.x /= x;
+      this.y /= y;
+      this.z /= z;
+    }
+  } else {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'x, y, or z arguments are either undefined or not a finite number'
+    );
+  }
+
+  return this;
+};
+/**
  * Calculates the magnitude (length) of the vector and returns the result as
- * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
+ * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
  *
  * @method mag
  * @return {Number} magnitude of the vector
@@ -618,7 +992,7 @@ p5.Vector.prototype.mag = function mag() {
 
 /**
  * Calculates the squared magnitude of the vector and returns the result
- * as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)
+ * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
  * Faster if the real length is not required in the
  * case of comparing vectors, etc.
  *
@@ -727,7 +1101,8 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  * let v1 = createVector(1, 2, 3);
  * let v2 = createVector(1, 2, 3);
  *
- * v1.cross(v2); // v's components are [0, 0, 0]
+ * let v = v1.cross(v2); // v's components are [0, 0, 0]
+ * print(v);
  * </code>
  * </div>
  *
@@ -1181,6 +1556,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * </code>
  * </div>
  */
+
 p5.Vector.prototype.angleBetween = function angleBetween(v) {
   const dotmagmag = this.dot(v) / (this.mag() * v.mag());
   // Mathematically speaking: the dotmagmag variable will be between -1 and 1
@@ -1188,11 +1564,14 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   // to floating-point rounding issues. This can make Math.acos return NaN.
   //
   // Solution: we'll clamp the value to the -1,1 range
-  const angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
-  if (this.p5) return this.p5._fromRadians(angle);
+  let angle;
+  angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
+  angle = angle * Math.sign(this.cross(v).z || 1);
+  if (this.p5) {
+    angle = this.p5._fromRadians(angle);
+  }
   return angle;
 };
-
 /**
  * Linear interpolate the vector to another vector
  *
@@ -1280,6 +1659,61 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
   this.y += (y - this.y) * amt || 0;
   this.z += (z - this.z) * amt || 0;
   return this;
+};
+
+/**
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
+ * This method acts on the vector directly
+ *
+ * @method reflect
+ * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @chainable
+ * @example
+ * <div class="norender">
+ * <code>
+ * let v = createVector(4, 6); // incoming vector, this example vector is heading to the right and downward
+ * let n = createVector(0, -1); // surface normal to a plane (this example normal points directly upwards)
+ * v.reflect(n); // v is reflected about the surface normal n.  v's components are now set to [4, -6]
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(240);
+ *
+ *   let v0 = createVector(0, 0);
+ *   let v1 = createVector(mouseX, mouseY);
+ *   drawArrow(v0, v1, 'red');
+ *
+ *   let n = createVector(0, -30);
+ *   drawArrow(v1, n, 'blue');
+ *
+ *   let r = v1.copy();
+ *   r.reflect(n);
+ *   drawArrow(v1, r, 'purple');
+ * }
+ *
+ * // draw an arrow for a vector at a given base position
+ * function drawArrow(base, vec, myColor) {
+ *   push();
+ *   stroke(myColor);
+ *   strokeWeight(3);
+ *   fill(myColor);
+ *   translate(base.x, base.y);
+ *   line(0, 0, vec.x, vec.y);
+ *   rotate(vec.heading());
+ *   let arrowSize = 7;
+ *   translate(vec.mag() - arrowSize, 0);
+ *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
+  surfaceNormal.normalize();
+  return this.sub(surfaceNormal.mult(2 * this.dot(surfaceNormal)));
 };
 
 /**
@@ -1453,7 +1887,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  * </code>
  * </div>
  */
-p5.Vector.fromAngles = (theta, phi, length) => {
+p5.Vector.fromAngles = function(theta, phi, length) {
   if (typeof length === 'undefined') {
     length = 1;
   }
@@ -1555,13 +1989,7 @@ p5.Vector.random3D = function random3D() {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} target the vector to receive the result
- */
-/**
- * @method add
- * @static
- * @param  {p5.Vector} v1
- * @param  {p5.Vector} v2
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  *
  */
@@ -1569,11 +1997,40 @@ p5.Vector.random3D = function random3D() {
 p5.Vector.add = function add(v1, v2, target) {
   if (!target) {
     target = v1.copy();
+    if (arguments.length === 3) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        ''
+      );
+    }
   } else {
     target.set(v1);
   }
   target.add(v2);
   return target;
+};
+
+// Returns a vector remainder when it is divided by another vector
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
+ */
+/**
+ * @method rem
+ * @static
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} v2
+ * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ *
+ */
+p5.Vector.rem = function rem(v1, v2) {
+  if (v1 instanceof p5.Vector && v2 instanceof p5.Vector) {
+    let target = v1.copy();
+    target.rem(v2);
+    return target;
+  }
 };
 
 /*
@@ -1585,19 +2042,19 @@ p5.Vector.add = function add(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
- * @param  {p5.Vector} target if undefined a new vector will be created
- */
-/**
- * @method sub
- * @static
- * @param  {p5.Vector} v1
- * @param  {p5.Vector} v2
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
 p5.Vector.sub = function sub(v1, v2, target) {
   if (!target) {
     target = v1.copy();
+    if (arguments.length === 3) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        ''
+      );
+    }
   } else {
     target.set(v1);
   }
@@ -1608,23 +2065,48 @@ p5.Vector.sub = function sub(v1, v2, target) {
 /**
  * Multiplies a vector by a scalar and returns a new vector.
  */
+
 /**
  * @method mult
  * @static
- * @param  {p5.Vector} v the vector to multiply
- * @param  {Number}  n
- * @param  {p5.Vector} target if undefined a new vector will be created
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
+
 /**
  * @method mult
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector}  the resulting new <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} [target]
+ */
+
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @param  {p5.Vector} [target]
  */
 p5.Vector.mult = function mult(v, n, target) {
   if (!target) {
     target = v.copy();
+    if (arguments.length === 3) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        ''
+      );
+    }
   } else {
     target.set(v);
   }
@@ -1635,23 +2117,49 @@ p5.Vector.mult = function mult(v, n, target) {
 /**
  * Divides a vector by a scalar and returns a new vector.
  */
+
 /**
  * @method div
  * @static
- * @param  {p5.Vector} v the vector to divide
- * @param  {Number}  n
- * @param  {p5.Vector} target if undefined a new vector will be created
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @return {p5.Vector} The resulting new <a href="#/p5.Vector">p5.Vector</a>
  */
+
 /**
  * @method div
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @return {p5.Vector} the resulting new <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} [target]
+ */
+
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v0
+ * @param  {Number[]} arr
+ * @param  {p5.Vector} [target]
  */
 p5.Vector.div = function div(v, n, target) {
   if (!target) {
     target = v.copy();
+
+    if (arguments.length === 3) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        ''
+      );
+    }
   } else {
     target.set(v);
   }
@@ -1712,19 +2220,18 @@ p5.Vector.dist = function dist(v1, v2) {
  * @param {p5.Vector} v1
  * @param {p5.Vector} v2
  * @param {Number} amt
- * @param {p5.Vector} target if undefined a new vector will be created
- */
-/**
- * @method lerp
- * @static
- * @param {p5.Vector} v1
- * @param {p5.Vector} v2
- * @param {Number} amt
- * @return {Number}      the lerped value
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector}      the lerped value
  */
 p5.Vector.lerp = function lerp(v1, v2, amt, target) {
   if (!target) {
     target = v1.copy();
+    if (arguments.length === 4) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        ''
+      );
+    }
   } else {
     target.set(v1);
   }

@@ -15,6 +15,7 @@ import * as constants from './constants';
  * extensive, but mirror the normal drawing API for p5.
  *
  * @class p5.Graphics
+ * @constructor
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height
@@ -53,6 +54,12 @@ p5.Graphics = function(w, h, renderer, pInst) {
   }
   pInst._elements.push(this);
 
+  Object.defineProperty(this, 'deltaTime', {
+    get: function() {
+      return this._pInst.deltaTime;
+    }
+  });
+
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
   return this;
@@ -78,6 +85,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *   pg.fill(0);
  *   frameRate(5);
  * }
+ *
  * function draw() {
  *   image(pg, width / 2, 0);
  *   pg.background(255);

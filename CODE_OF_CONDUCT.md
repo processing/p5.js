@@ -33,7 +33,7 @@ In the future:
   * Offensive comments related to gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, or background
   * Threats of violence
   * Deliberate intimidation
-  * Sexually explicit or violent material
+  * Sexually explicit or violent material that is not contextualized and preceded by a considerate warning 
   * Unwelcome sexual attention
   * Stalking or following
   * Or any other kinds of harassment
@@ -47,3 +47,6 @@ In the future:
 If you believe someone is violating the code of conduct, we ask that you report it by emailing [hello@p5js.org](mailto:hello@p5js.org). Please include your name and a description of the incident, and we will get back to you ASAP.
 
 Sometimes, participants violating the Code of Conduct are unaware that their behavior is harmful, and an open conversation clears things up to move forward. However, if a participant continues with the behavior, the p5.js team may take any action they deem appropriate, up to and including expulsion from all p5.js spaces and identification of the participant as a harasser to other p5.js members or the general public.
+
+---
+This statement is licensed under a [Creative Commons license](https://creativecommons.org/licenses/by-sa/4.0/). Please feel free to share and remix with attribution.

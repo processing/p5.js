@@ -81,6 +81,7 @@ import Filters from './filters';
  *
  *
  * @class p5.Image
+ * @constructor
  * @param {Number} width
  * @param {Number} height
  */
@@ -145,7 +146,6 @@ p5.Image = function(width, height) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelsState = this;
   this._pixelDensity = 1;
-  this._pixelsDirty = true;
   //Object for working with GIFs, defaults to null
   this.gifProperties = null;
   //For WebGL Texturing only: used to determine whether to reupload texture to GPU
@@ -156,7 +156,7 @@ p5.Image = function(width, height) {
    * factor for pixelDensity) of the display window x4,
    * representing the R, G, B, A values in order for each pixel, moving from
    * left to right across each row, then down each column. Retina and other
-   * high denisty displays may have more pixels (by a factor of
+   * high density displays may have more pixels (by a factor of
    * pixelDensity^2).
    * For example, if the image is 100x100 pixels, there will be 40,000. With
    * pixelDensity = 2, there will be 160,000. The first four values
@@ -228,22 +228,21 @@ p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
   if (props.playing) {
     props.timeDisplayed += pInst.deltaTime;
-  }
-
-  if (props.timeDisplayed >= props.delay) {
-    //GIF is bound to 'realtime' so can skip frames
-    const skips = Math.floor(props.timeDisplayed / props.delay);
-    props.timeDisplayed = 0;
-    props.displayIndex += skips;
-    props.loopCount = Math.floor(props.displayIndex / props.numFrames);
-    if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
-      props.playing = false;
-    } else {
-      const ind = props.displayIndex % props.numFrames;
-      this.drawingContext.putImageData(props.frames[ind], 0, 0);
-      props.displayIndex = ind;
-      this._pixelsDirty = true;
-      this.setModified(true);
+    const curDelay = props.frames[props.displayIndex].delay;
+    if (props.timeDisplayed >= curDelay) {
+      //GIF is bound to 'realtime' so can skip frames
+      const skips = Math.floor(props.timeDisplayed / curDelay);
+      props.timeDisplayed = 0;
+      props.displayIndex += skips;
+      props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+      if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+        props.playing = false;
+      } else {
+        const ind = props.displayIndex % props.numFrames;
+        this.drawingContext.putImageData(props.frames[ind].image, 0, 0);
+        props.displayIndex = ind;
+        this.setModified(true);
+      }
     }
   }
 };
@@ -517,8 +516,8 @@ p5.Image.prototype.resize = function(width, height) {
         width,
         height
       );
-      nearestNeighbor(props.frames[i], resizedImageData);
-      props.frames[i] = resizedImageData;
+      nearestNeighbor(props.frames[i].image, resizedImageData);
+      props.frames[i].image = resizedImageData;
     }
   }
 
@@ -547,7 +546,6 @@ p5.Image.prototype.resize = function(width, height) {
   }
 
   this.setModified(true);
-  this._pixelsDirty = true;
 };
 
 /**
@@ -603,37 +601,12 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dh
  */
 p5.Image.prototype.copy = function(...args) {
-  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (args.length === 9) {
-    srcImage = args[0];
-    sx = args[1];
-    sy = args[2];
-    sw = args[3];
-    sh = args[4];
-    dx = args[5];
-    dy = args[6];
-    dw = args[7];
-    dh = args[8];
-  } else if (args.length === 8) {
-    srcImage = this;
-    sx = args[0];
-    sy = args[1];
-    sw = args[2];
-    sh = args[3];
-    dx = args[4];
-    dy = args[5];
-    dw = args[6];
-    dh = args[7];
-  } else {
-    throw new Error('Signature not supported');
-  }
-  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
-  this._pixelsDirty = true;
+  p5.prototype.copy.apply(this, args);
 };
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
+ * image and using its alpha channel as an alpha channel for
  * this image.
  *
  * @method mask
@@ -663,7 +636,7 @@ p5.Image.prototype.copy = function(...args) {
 // TODO: - Accept an array of alpha values.
 //       - Use other channels of an image. p5 uses the
 //       blue channel (which feels kind of arbitrary). Note: at the
-//       moment this method does not match native processings original
+//       moment this method does not match native processing's original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
@@ -931,7 +904,7 @@ p5.Image.prototype.reset = function() {
     props.timeDisplayed = 0;
     props.loopCount = 0;
     props.displayIndex = 0;
-    this.drawingContext.putImageData(props.frames[0], 0, 0);
+    this.drawingContext.putImageData(props.frames[0].image, 0, 0);
   }
 };
 
@@ -1003,7 +976,7 @@ p5.Image.prototype.setFrame = function(index) {
     if (index < props.numFrames && index >= 0) {
       props.timeDisplayed = 0;
       props.displayIndex = index;
-      this.drawingContext.putImageData(props.frames[index], 0, 0);
+      this.drawingContext.putImageData(props.frames[index].image, 0, 0);
     } else {
       console.log(
         'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
@@ -1124,10 +1097,13 @@ p5.Image.prototype.pause = function() {
 };
 
 /**
- * Changes the delay between frames in an animated GIF
+ * Changes the delay between frames in an animated GIF. There is an optional second parameter that
+ * indicates an index for a specific frame that should have its delay modified. If no index is given, all frames
+ * will have the new delay.
  *
  * @method delay
  * @param {Number}    d the amount in milliseconds to delay between switching frames
+ * @param {Number}    [index] the index of the frame that should have the new delay value {optional}
  * @example
  * <div><code>
  * let gifFast, gifSlow;
@@ -1158,9 +1134,17 @@ p5.Image.prototype.pause = function() {
  * the animation is much slower
  *
  */
-p5.Image.prototype.delay = function(d) {
+p5.Image.prototype.delay = function(d, index) {
   if (this.gifProperties) {
-    this.gifProperties.delay = d;
+    const props = this.gifProperties;
+    if (index < props.numFrames && index >= 0) {
+      props.frames[index].delay = d;
+    } else {
+      // change all frames
+      for (const frame of props.frames) {
+        frame.delay = d;
+      }
+    }
   }
 };
 

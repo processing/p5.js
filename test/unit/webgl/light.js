@@ -43,6 +43,29 @@ suite('light', function() {
         0
       ]);
     });
+    test('noLights works', function() {
+      myp5.ambientLight(200, 0, 0);
+      myp5.pointLight(255, 0, 0, 0, 0, 0);
+      myp5.directionalLight(255, 0, 0, 0, 0, 0);
+      myp5.specularColor(255, 0, 0);
+      myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
+      myp5.shininess(50);
+
+      myp5.noLights();
+      assert.deepEqual([], myp5._renderer.ambientLightColors);
+      assert.deepEqual([], myp5._renderer.pointLightDiffuseColors);
+      assert.deepEqual([], myp5._renderer.pointLightSpecularColors);
+      assert.deepEqual([], myp5._renderer.pointLightPositions);
+      assert.deepEqual([], myp5._renderer.directionalLightDiffuseColors);
+      assert.deepEqual([], myp5._renderer.directionalLightSpecularColors);
+      assert.deepEqual([], myp5._renderer.directionalLightDirections);
+      assert.deepEqual([1, 1, 1], myp5._renderer.specularColors);
+      assert.deepEqual([], myp5._renderer.spotLightDiffuseColors);
+      assert.deepEqual([], myp5._renderer.spotLightSpecularColors);
+      assert.deepEqual([], myp5._renderer.spotLightPositions);
+      assert.deepEqual([], myp5._renderer.spotLightDirections);
+      assert.deepEqual(1, myp5._renderer._useShininess);
+    });
   });
 
   suite('spotlight inputs', function() {

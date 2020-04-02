@@ -18,11 +18,11 @@ p5.prototype._targetFrameRate = 60;
 const _windowPrint = window.print;
 
 /**
- * The <a href="#/p5/print">print()</a> function writes to the console area of your browser.
- * This function is often helpful for looking at the data a program is
- * producing. This function creates a new line of text for each call to
- * the function. Individual elements can be
- * separated with quotes ("") and joined with the addition operator (+).
+ * The <a href="#/p5/print">print()</a> function writes to the console area of
+ * your browser. This function is often helpful for looking at the data a program
+ * is producing. This function creates a new line of text for each call to
+ * the function. Individual elements can be separated with quotes ("") and joined
+ * with the addition operator (+).
  *
  * Note that calling print() without any arguments invokes the window.print()
  * function which opens the browser's print dialog. To print a blank line
@@ -37,10 +37,11 @@ const _windowPrint = window.print;
  * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
+ *
  * @alt
  * default grey canvas
  */
-p5.prototype.print = (...args) => {
+p5.prototype.print = function(...args) {
   if (!args.length) {
     _windowPrint();
   } else {
@@ -49,14 +50,15 @@ p5.prototype.print = (...args) => {
 };
 
 /**
- * The system variable <a href="#/p5/frameCount">frameCount</a> contains the number of frames that have
- * been displayed since the program started. Inside <a href="#/p5/setup">setup()</a> the value is 0,
- * after the first iteration of draw it is 1, etc.
+ * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
+ * number of frames that have been displayed since the program started. Inside
+ * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
+ * of draw it is 1, etc.
  *
  * @property {Integer} frameCount
  * @readOnly
  * @example
- *   <div><code>
+ * <div><code>
  * function setup() {
  *   frameRate(30);
  *   textSize(30);
@@ -67,7 +69,7 @@ p5.prototype.print = (...args) => {
  *   background(200);
  *   text(frameCount, width / 2, height / 2);
  * }
-</code></div>
+ * </code></div>
  *
  * @alt
  * numbers rapidly counting upward with frame count set to 30.
@@ -79,7 +81,7 @@ p5.prototype.frameCount = 0;
  * The system variable <a href="#/p5/deltaTime">deltaTime</a> contains the time
  * difference between the beginning of the previous frame and the beginning
  * of the current frame in milliseconds.
- * <br><br>
+ *
  * This variable is useful for creating time sensitive animation or physics
  * calculation that should stay constant regardless of frame rate.
  *
@@ -231,19 +233,19 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
- * recommended. The default frame rate is based on the frame rate of the display
- * (here also called "refresh rate"), which is set to 60 frames per second on most
- * computers. A frame rate of 24 frames per second (usual for movies) or above
- * will be enough for smooth animations
- * This is the same as setFrameRate(val).
- * <br><br>
- * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate. The
- * draw function must run at least once before it will return a value. This
- * is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
- * <br><br>
- * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not of the type numbers
- * or are non positive also returns current framerate.
+ * frame rate will not be achieved. Setting the frame rate within 
+ * <a href="#/p5/setup">setup()</a> is recommended. The default frame rate is
+ * based on the frame rate of the display (here also called "refresh rate"), 
+ * which is set to 60 frames per second on most computers. A frame rate of 24
+ * frames per second (usual for movies) or above will be enough for smooth 
+ * animations. This is the same as setFrameRate(val).
+ * 
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
+ * the current framerate. The draw function must run at least once before it will
+ * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
+ *
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
+ * of the type numbers or are non positive also returns current framerate.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -304,6 +306,7 @@ p5.prototype.frameRate = function(fps) {
     return this;
   }
 };
+
 /**
  * Returns the current framerate.
  *
@@ -369,7 +372,7 @@ p5.prototype.noCursor = function() {
  * </code></div>
  *
  * @alt
- * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ * This example does not render anything.
  *
  */
 p5.prototype.displayWidth = screen.width;
@@ -388,7 +391,7 @@ p5.prototype.displayWidth = screen.width;
  * </code></div>
  *
  * @alt
- * no display.
+ * This example does not render anything.
  *
  */
 p5.prototype.displayHeight = screen.height;
@@ -405,7 +408,7 @@ p5.prototype.displayHeight = screen.height;
  * </code></div>
  *
  * @alt
- * no display.
+ * This example does not render anything.
  *
  */
 p5.prototype.windowWidth = getWindowWidth();
@@ -419,16 +422,17 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
- *@alt
- * no display.
+ *
+ * @alt
+ * This example does not render anything.
  *
  */
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
- * The <a href="#/p5/windowResized">windowResized()</a> function is called once every time the browser window
- * is resized. This is a good place to resize the canvas or do any other
- * adjustments to accommodate the new window size.
+ * The <a href="#/p5/windowResized">windowResized()</a> function is called once
+ * every time the browser window is resized. This is a good place to resize the
+ * canvas or do any other adjustments to accommodate the new window size.
  *
  * @method windowResized
  * @example
@@ -446,7 +450,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * }
  * </code></div>
  * @alt
- * no display.
+ * This example does not render anything.
  */
 p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
@@ -531,7 +535,7 @@ p5.prototype.height = 0;
  * </div>
  *
  * @alt
- * no display.
+ * This example does not render anything.
  *
  */
 p5.prototype.fullscreen = function(val) {
@@ -574,6 +578,7 @@ p5.prototype.fullscreen = function(val) {
  * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * function setup() {
@@ -599,7 +604,6 @@ p5.prototype.pixelDensity = function(val) {
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
-      this._pixelsDirty = true;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
@@ -708,7 +712,7 @@ p5.prototype.getURL = () => location.href;
  * </code></div>
  *
  * @alt
- *no display
+ * This example does not render anything.
  *
  */
 p5.prototype.getURLPath = () =>
@@ -730,11 +734,12 @@ p5.prototype.getURLPath = () =>
  * }
  * </code>
  * </div>
+ *
  * @alt
- * no display.
+ * This example does not render anything.
  *
  */
-p5.prototype.getURLParams = () => {
+p5.prototype.getURLParams = function() {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   let m;
   const v = {};

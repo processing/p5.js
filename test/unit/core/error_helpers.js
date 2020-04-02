@@ -14,6 +14,18 @@ suite('Error Helpers', function() {
     myp5.remove();
   });
 
+  suite('friendly error logger', function() {
+    test('basic', function() {
+      assert.doesNotThrow(
+        function() {
+          p5._friendlyError('basic', 'basic');
+        },
+        Error,
+        'got unwanted exception'
+      );
+    });
+  });
+
   // unit tests for validateParameters
   suite('validateParameters: Numbers + optional Constant', function() {
     test('arc(): no friendly-err-msg', function() {
@@ -86,11 +98,6 @@ suite('Error Helpers', function() {
         Error,
         'got unwanted exception'
       );
-    });
-    test('rect(): missing param #3', function() {
-      assert.validationError(function() {
-        p5._validateParameters('rect', [1, 1, 10.5]);
-      });
     });
     test('rect(): wrong param type at #0', function() {
       assert.validationError(function() {

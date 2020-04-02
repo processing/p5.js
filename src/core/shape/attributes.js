@@ -10,27 +10,28 @@ import p5 from '../main';
 import * as constants from '../constants';
 
 /**
- * Modifies the location from which ellipses are drawn by changing the way
- * in which parameters given to <a href="#/p5/ellipse">ellipse()</a> are interpreted.
- * <br><br>
- * The default mode is ellipseMode(CENTER), which interprets the first two
- * parameters of <a href="#/p5/ellipse">ellipse()</a> as the shape's center point, while the third and
- * fourth parameters are its width and height.
- * <br><br>
- * ellipseMode(RADIUS) also uses the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
- * the shape's center point, but uses the third and fourth parameters to
+ * Modifies the location from which ellipses are drawn by changing the way in
+ * which parameters given to <a href="#/p5/ellipse">ellipse()</a>,
+ * <a href="#/p5/circle">circle()</a> and <a href="#/p5/arc">arc()</a> are interpreted.
+ *
+ * The default mode is CENTER, in which the first two parameters are interpreted
+ * as the shape's center point's x and y coordinates respectively, while the third
+ * and fourth parameters are its width and height.
+ *
+ * ellipseMode(RADIUS) also uses the first two parameters as the shape's center
+ * point's x and y coordinates, but uses the third and fourth parameters to
  * specify half of the shapes's width and height.
- * <br><br>
- * ellipseMode(CORNER) interprets the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
- * the upper-left corner of the shape, while the third and fourth parameters
- * are its width and height.
- * <br><br>
- * ellipseMode(CORNERS) interprets the first two parameters of <a href="#/p5/ellipse">ellipse()</a> as
- * the location of one corner of the ellipse's bounding box, and the third
- * and fourth parameters as the location of the opposite corner.
- * <br><br>
- * The parameter must be written in ALL CAPS because Javascript is a
- * case-sensitive language.
+ *
+ * ellipseMode(CORNER) interprets the first two parameters as the upper-left
+ * corner of the shape, while the third and fourth parameters are its width
+ * and height.
+ *
+ * ellipseMode(CORNERS) interprets the first two parameters as the location of
+ * one corner of the ellipse's bounding box, and the third and fourth parameters
+ * as the location of the opposite corner.
+ *
+ * The parameter to this method must be written in ALL CAPS because they are
+ * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method ellipseMode
  * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
@@ -38,31 +39,31 @@ import * as constants from '../constants';
  * @example
  * <div>
  * <code>
- * ellipseMode(RADIUS); // Set ellipseMode to RADIUS
- * fill(255); // Set fill to white
- * ellipse(50, 50, 30, 30); // Draw white ellipse using RADIUS mode
- *
- * ellipseMode(CENTER); // Set ellipseMode to CENTER
- * fill(100); // Set fill to gray
- * ellipse(50, 50, 30, 30); // Draw gray ellipse using CENTER mode
+ * // Example showing RADIUS and CENTER ellipsemode with 2 overlaying ellipses
+ * ellipseMode(RADIUS);
+ * fill(255);
+ * ellipse(50, 50, 30, 30); // Outer white ellipse
+ * ellipseMode(CENTER);
+ * fill(100);
+ * ellipse(50, 50, 30, 30); // Inner gray ellipse
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * ellipseMode(CORNER); // Set ellipseMode is CORNER
- * fill(255); // Set fill to white
- * ellipse(25, 25, 50, 50); // Draw white ellipse using CORNER mode
- *
- * ellipseMode(CORNERS); // Set ellipseMode to CORNERS
- * fill(100); // Set fill to gray
- * ellipse(25, 25, 50, 50); // Draw gray ellipse using CORNERS mode
+ * // Example showing CORNER and CORNERS ellipseMode with 2 overlaying ellipses
+ * ellipseMode(CORNER);
+ * fill(255);
+ * ellipse(25, 25, 50, 50); // Outer white ellipse
+ * ellipseMode(CORNERS);
+ * fill(100);
+ * ellipse(25, 25, 50, 50); // Inner gray ellipse
  * </code>
  * </div>
  *
  * @alt
  * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
- * 60x60 white ellipse @center and 30x30 grey ellipse top-right, black outlines.
+ * 60x60 white ellipse and 30x30 grey ellipse top-right with black outlines.
  *
  */
 p5.prototype.ellipseMode = function(m) {
@@ -116,25 +117,26 @@ p5.prototype.noSmooth = function() {
 /**
  * Modifies the location from which rectangles are drawn by changing the way
  * in which parameters given to <a href="#/p5/rect">rect()</a> are interpreted.
- * <br><br>
- * The default mode is rectMode(CORNER), which interprets the first two
- * parameters of <a href="#/p5/rect">rect()</a> as the upper-left corner of the shape, while the
- * third and fourth parameters are its width and height.
- * <br><br>
- * rectMode(CORNERS) interprets the first two parameters of <a href="#/p5/rect">rect()</a> as the
- * location of one corner, and the third and fourth parameters as the
- * location of the opposite corner.
- * <br><br>
- * rectMode(CENTER) interprets the first two parameters of <a href="#/p5/rect">rect()</a> as the
- * shape's center point, while the third and fourth parameters are its
+ *
+ * The default mode is CORNER, which interprets the first two parameters as the
+ * upper-left corner of the shape, while the third and fourth parameters are its
  * width and height.
- * <br><br>
- * rectMode(RADIUS) also uses the first two parameters of <a href="#/p5/rect">rect()</a> as the
- * shape's center point, but uses the third and fourth parameters to specify
- * half of the shapes's width and height.
- * <br><br>
- * The parameter must be written in ALL CAPS because Javascript is a
- * case-sensitive language.
+ *
+ * rectMode(CORNERS) interprets the first two parameters as the location of
+ * one of the corner, and the third and fourth parameters as the location of
+ * the diagonally opposite corner. Note, the rectangle is drawn between the
+ * coordinates, so it is not neccesary that the first corner be the upper left
+ * corner.
+ *
+ * rectMode(CENTER) interprets the first two parameters as the shape's center
+ * point, while the third and fourth parameters are its width and height.
+ *
+ * rectMode(RADIUS) also uses the first two parameters as the shape's center
+ * point, but uses the third and fourth parameters to specify half of the shapes's
+ * width and height respectively.
+ *
+ * The parameter to this method must be written in ALL CAPS because they are
+ * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method rectMode
  * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
@@ -142,25 +144,25 @@ p5.prototype.noSmooth = function() {
  * @example
  * <div>
  * <code>
- * rectMode(CORNER); // Default rectMode is CORNER
- * fill(255); // Set fill to white
- * rect(25, 25, 50, 50); // Draw white rect using CORNER mode
+ * rectMode(CORNER);
+ * fill(255);
+ * rect(25, 25, 50, 50); // Draw white rectangle using CORNER mode
  *
- * rectMode(CORNERS); // Set rectMode to CORNERS
- * fill(100); // Set fill to gray
- * rect(25, 25, 50, 50); // Draw gray rect using CORNERS mode
+ * rectMode(CORNERS);
+ * fill(100);
+ * rect(25, 25, 50, 50); // Draw gray rectanle using CORNERS mode
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * rectMode(RADIUS); // Set rectMode to RADIUS
- * fill(255); // Set fill to white
- * rect(50, 50, 30, 30); // Draw white rect using RADIUS mode
+ * rectMode(RADIUS);
+ * fill(255);
+ * rect(50, 50, 30, 30); // Draw white rectangle using RADIUS mode
  *
- * rectMode(CENTER); // Set rectMode to CENTER
- * fill(100); // Set fill to gray
- * rect(50, 50, 30, 30); // Draw gray rect using CENTER mode
+ * rectMode(CENTER);
+ * fill(100);
+ * rect(50, 50, 30, 30); // Draw gray rectangle using CENTER mode
  * </code>
  * </div>
  *
@@ -219,16 +221,20 @@ p5.prototype.smooth = function() {
 };
 
 /**
- * Sets the style for rendering line endings. These ends are either squared,
- * extended, or rounded, each of which specified with the corresponding
- * parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
+ * Sets the style for rendering line endings. These ends are either rounded,
+ * squared or extended, each of which specified with the corresponding
+ * parameters: ROUND, SQUARE and PROJECT. The default cap is ROUND.
+ *
+ * The parameter to this method must be written in ALL CAPS because they are
+ * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method strokeCap
- * @param  {Constant} cap either SQUARE, PROJECT, or ROUND
+ * @param  {Constant} cap either ROUND, SQUARE or PROJECT
  * @chainable
  * @example
  * <div>
  * <code>
+ * // Example of different strokeCaps
  * strokeWeight(12.0);
  * strokeCap(ROUND);
  * line(20, 30, 80, 30);
@@ -241,7 +247,6 @@ p5.prototype.smooth = function() {
  *
  * @alt
  * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
- *
  */
 p5.prototype.strokeCap = function(cap) {
   p5._validateParameters('strokeCap', arguments);
@@ -257,9 +262,12 @@ p5.prototype.strokeCap = function(cap) {
 
 /**
  * Sets the style of the joints which connect line segments. These joints
- * are either mitered, beveled, or rounded and specified with the
- * corresponding parameters MITER, BEVEL, and ROUND. The default joint is
+ * are either mitered, beveled or rounded and specified with the
+ * corresponding parameters MITER, BEVEL and ROUND. The default joint is
  * MITER.
+ *
+ * The parameter to this method must be written in ALL CAPS because they are
+ * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method strokeJoin
  * @param  {Constant} join either MITER, BEVEL, ROUND
@@ -267,6 +275,7 @@ p5.prototype.strokeCap = function(cap) {
  * @example
  * <div>
  * <code>
+ * // Example of MITER type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(MITER);
@@ -280,6 +289,7 @@ p5.prototype.strokeCap = function(cap) {
  *
  * <div>
  * <code>
+ * // Example of BEVEL type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(BEVEL);
@@ -293,6 +303,7 @@ p5.prototype.strokeCap = function(cap) {
  *
  * <div>
  * <code>
+ * // Example of ROUND type of joints
  * noFill();
  * strokeWeight(10.0);
  * strokeJoin(ROUND);
@@ -323,15 +334,16 @@ p5.prototype.strokeJoin = function(join) {
 };
 
 /**
- * Sets the width of the stroke used for lines, points, and the border
- * around shapes. All widths are set in units of pixels.
+ * Sets the width of the stroke used for lines, points and the border around
+ * shapes. All widths are set in units of pixels.
  *
  * @method strokeWeight
- * @param  {Number} weight the weight (in pixels) of the stroke
+ * @param  {Number} weight the weight of the stroke (in pixels)
  * @chainable
  * @example
  * <div>
  * <code>
+ * // Example of different stroke weights
  * strokeWeight(1); // Default
  * line(20, 20, 80, 20);
  * strokeWeight(4); // Thicker

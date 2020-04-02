@@ -228,7 +228,83 @@ p5.prototype.blend = function(...args) {
  */
 p5.prototype.copy = function(...args) {
   p5._validateParameters('copy', args);
-  p5.Renderer2D.prototype.copy.apply(this._renderer, args);
+
+  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  if (args.length === 9) {
+    srcImage = args[0];
+    sx = args[1];
+    sy = args[2];
+    sw = args[3];
+    sh = args[4];
+    dx = args[5];
+    dy = args[6];
+    dw = args[7];
+    dh = args[8];
+  } else if (args.length === 8) {
+    srcImage = this;
+    sx = args[0];
+    sy = args[1];
+    sw = args[2];
+    sh = args[3];
+    dx = args[4];
+    dy = args[5];
+    dw = args[6];
+    dh = args[7];
+  } else {
+    throw new Error('Signature not supported');
+  }
+
+  p5.prototype._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+};
+
+p5.prototype._copyHelper = (
+  dstImage,
+  srcImage,
+  sx,
+  sy,
+  sw,
+  sh,
+  dx,
+  dy,
+  dw,
+  dh
+) => {
+  srcImage.loadPixels();
+  const s = srcImage.canvas.width / srcImage.width;
+  // adjust coord system for 3D when renderer
+  // ie top-left = -width/2, -height/2
+  let sxMod = 0;
+  let syMod = 0;
+  if (srcImage._renderer && srcImage._renderer.isP3D) {
+    sxMod = srcImage.width / 2;
+    syMod = srcImage.height / 2;
+  }
+  if (dstImage._renderer && dstImage._renderer.isP3D) {
+    p5.RendererGL.prototype.image.call(
+      dstImage._renderer,
+      srcImage,
+      sx + sxMod,
+      sy + syMod,
+      sw,
+      sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  } else {
+    dstImage.drawingContext.drawImage(
+      srcImage.canvas,
+      s * (sx + sxMod),
+      s * (sy + syMod),
+      s * sw,
+      s * sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  }
 };
 
 /**
@@ -275,6 +351,14 @@ p5.prototype.copy = function(...args) {
  *
  * DILATE
  * Increases the light areas. No parameter is used.
+ * <br><br>
+ *
+ * filter() does not work in WEBGL mode.
+ * A similar effect can be achieved in WEBGL mode using custom
+ * shaders. Adam Ferriss has written
+ * a <a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>selection of shader examples</a> that contains many
+ * of the effects present in the filter examples.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,

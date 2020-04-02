@@ -282,6 +282,12 @@ export const QUADS = 'quads';
  */
 export const QUAD_STRIP = 'quad_strip';
 /**
+ * @property {String} TESS
+ * @final
+ * @default tess
+ */
+export const TESS = 'tess';
+/**
  * @property {String} CLOSE
  * @final
  */
@@ -436,6 +442,12 @@ export const UP_ARROW = 38;
  * @default source-over
  */
 export const BLEND = 'source-over';
+/**
+ * @property {String} REMOVE
+ * @final
+ * @default destination-out
+ */
+export const REMOVE = 'destination-out';
 /**
  * @property {String} ADD
  * @final

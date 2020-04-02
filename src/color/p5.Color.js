@@ -12,12 +12,12 @@ import * as constants from '../core/constants';
 import color_conversion from './color_conversion';
 
 /**
- * Each color stores the color mode and level maxes that applied at the
+ * Each color stores the color mode and level maxes that was applied at the
  * time of its construction. These are used to interpret the input arguments
  * (at construction and later for that instance of color) and to format the
  * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
  *
- * Internally we store an array representing the ideal RGBA values in floating
+ * Internally, we store an array representing the ideal RGBA values in floating
  * point form, normalized from 0 to 1. From this we calculate the closest
  * screen color (RGBA levels from 0 to 255) and expose this to the renderer.
  *
@@ -26,6 +26,7 @@ import color_conversion from './color_conversion';
  * conversion that has already been performed.
  *
  * @class p5.Color
+ * @constructor
  */
 p5.Color = function(pInst, vals) {
   // Record color mode and maxes at time of construction.
@@ -50,6 +51,7 @@ p5.Color = function(pInst, vals) {
 /**
  * This function returns the color formatted as a string. This can be useful
  * for debugging, or for using p5.js with other libraries.
+ *
  * @method toString
  * @param {String} [format] How the color string will be formatted.
  * Leaving this empty formats the string as rgba(r, g, b, a).
@@ -58,28 +60,24 @@ p5.Color = function(pInst, vals) {
  * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
  * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
  * @return {String} the formatted string
+ *
  * @example
  * <div>
  * <code>
+ * createCanvas(200, 100);
  * let myColor;
- * function setup() {
- *   createCanvas(200, 200);
- *   stroke(255);
- *   myColor = color(100, 100, 250);
- *   fill(myColor);
- * }
- *
- * function draw() {
- *   rotate(HALF_PI);
- *   text(myColor.toString(), 0, -5);
- *   text(myColor.toString('#rrggbb'), 0, -30);
- *   text(myColor.toString('rgba%'), 0, -55);
- * }
+ * stroke(255);
+ * myColor = color(100, 100, 250);
+ * fill(myColor);
+ * rotate(HALF_PI);
+ * text(myColor.toString(), 0, -5);
+ * text(myColor.toString('#rrggbb'), 0, -30);
+ * text(myColor.toString('rgba%'), 0, -55);
  * </code>
  * </div>
  *
  * @alt
- * canvas with text representation of color
+ * A canvas with 3 text representation of thier color.
  */
 p5.Color.prototype.toString = function(format) {
   const a = this.levels;
@@ -285,12 +283,7 @@ p5.Color.prototype.setRed = function(new_red) {
  * @example
  * <div>
  * <code>
- * let backgroundColor;
- *
- * function setup() {
- *   backgroundColor = color(100, 50, 150);
- * }
- *
+ * let backgroundColor = color(100, 50, 150);
  * function draw() {
  *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
@@ -314,12 +307,7 @@ p5.Color.prototype.setGreen = function(new_green) {
  * @example
  * <div>
  * <code>
- * let backgroundColor;
- *
- * function setup() {
- *   backgroundColor = color(100, 50, 150);
- * }
- *
+ * let backgroundColor = color(100, 50, 150);
  * function draw() {
  *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
@@ -343,31 +331,19 @@ p5.Color.prototype.setBlue = function(new_blue) {
  * @example
  * <div>
  * <code>
- * let squareColor;
- *
- * function setup() {
- *   ellipseMode(CORNERS);
- *   strokeWeight(4);
- *   squareColor = color(100, 50, 150);
- * }
- *
  * function draw() {
- *   background(255);
- *
- *   noFill();
- *   stroke(0);
- *   ellipse(10, 10, width - 10, height - 10);
- *
+ *   clear();
+ *   background(200);
+ *   squareColor = color(100, 50, 100);
  *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
  *   fill(squareColor);
- *   noStroke();
  *   rect(13, 13, width - 26, height - 26);
  * }
  * </code>
  * </div>
  *
  * @alt
- * circle behind a square with gradually changing opacity
+ * a square with gradually changing opacity on a gray background
  **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];

@@ -6,6 +6,7 @@
  */
 
 import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /**
  * The system variable deviceOrientation always contains the orientation of
@@ -16,7 +17,8 @@ import p5 from '../core/main';
  * @property {Constant} deviceOrientation
  * @readOnly
  */
-p5.prototype.deviceOrientation = undefined;
+p5.prototype.deviceOrientation =
+  window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
 
 /**
  * The system variable accelerationX always contains the acceleration of the
@@ -132,7 +134,9 @@ p5.prototype._updatePAccelerations = function() {
 
 /**
  * The system variable rotationX always contains the rotation of the
- * device along the x axis. Value is represented as 0 to +/-180 degrees.
+ * device along the x axis. If the sketch <a href="#/p5/angleMode">
+ * angleMode()</a> is set to DEGREES, the value will be -180 to 180. If
+ * it is set to RADIANS, the value will be -PI to PI.
  * <br><br>
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
@@ -163,7 +167,9 @@ p5.prototype.rotationX = 0;
 
 /**
  * The system variable rotationY always contains the rotation of the
- * device along the y axis. Value is represented as 0 to +/-90 degrees.
+ * device along the y axis. If the sketch <a href="#/p5/angleMode">
+ * angleMode()</a> is set to DEGREES, the value will be -90 to 90. If
+ * it is set to RADIANS, the value will be -PI/2 to PI/2.
  * <br><br>
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
@@ -194,7 +200,9 @@ p5.prototype.rotationY = 0;
 
 /**
  * The system variable rotationZ always contains the rotation of the
- * device along the z axis. Value is represented as 0 to 359 degrees.
+ * device along the z axis. If the sketch <a href="#/p5/angleMode">
+ * angleMode()</a> is set to DEGREES, the value will be 0 to 360. If
+ * it is set to RADIANS, the value will be 0 to 2*PI.
  * <br><br>
  * Unlike rotationX and rotationY, this variable is available for devices
  * with a built-in compass only.
@@ -230,8 +238,10 @@ p5.prototype.rotationZ = 0;
 
 /**
  * The system variable pRotationX always contains the rotation of the
- * device along the x axis in the frame previous to the current frame. Value
- * is represented as 0 to +/-180 degrees.
+ * device along the x axis in the frame previous to the current frame.
+ * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+ * the value will be -180 to 180. If it is set to RADIANS, the value will
+ * be -PI to PI.
  * <br><br>
  * pRotationX can also be used with rotationX to determine the rotate
  * direction of the device along the X-axis.
@@ -275,8 +285,10 @@ p5.prototype.pRotationX = 0;
 
 /**
  * The system variable pRotationY always contains the rotation of the
- * device along the y axis in the frame previous to the current frame. Value
- * is represented as 0 to +/-90 degrees.
+ * device along the y axis in the frame previous to the current frame.
+ * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+ * the value will be -90 to 90. If it is set to RADIANS, the value will
+ * be -PI/2 to PI/2.
  * <br><br>
  * pRotationY can also be used with rotationY to determine the rotate
  * direction of the device along the Y-axis.
@@ -319,8 +331,10 @@ p5.prototype.pRotationY = 0;
 
 /**
  * The system variable pRotationZ always contains the rotation of the
- * device along the z axis in the frame previous to the current frame. Value
- * is represented as 0 to 359 degrees.
+ * device along the z axis in the frame previous to the current frame.
+ * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
+ * the value will be 0 to 360. If it is set to RADIANS, the value will
+ * be 0 to 2*PI.
  * <br><br>
  * pRotationZ can also be used with rotationZ to determine the rotate
  * direction of the device along the Z-axis.
@@ -626,6 +640,11 @@ p5.prototype.setShakeThreshold = function(val) {
 
 p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
+  if (this._angleMode === constants.radians) {
+    e.beta = e.beta * (_PI / 180.0);
+    e.gamma = e.gamma * (_PI / 180.0);
+    e.alpha = e.alpha * (_PI / 180.0);
+  }
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);

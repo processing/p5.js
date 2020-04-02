@@ -170,7 +170,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} z2 z-coordinate of the second point
  * @return {Number}    distance between the two points
  */
-p5.prototype.dist = (...args) => {
+p5.prototype.dist = function(...args) {
   p5._validateParameters('dist', args);
   if (args.length === 4) {
     //2D
@@ -510,7 +510,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = (...args) => {
+p5.prototype.max = function(...args) {
   p5._validateParameters('max', args);
   if (args[0] instanceof Array) {
     return Math.max.apply(null, args[0]);
@@ -560,7 +560,7 @@ p5.prototype.max = (...args) => {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = (...args) => {
+p5.prototype.min = function(...args) {
   p5._validateParameters('min', args);
   if (args[0] instanceof Array) {
     return Math.min.apply(null, args[0]);
@@ -626,7 +626,8 @@ p5.prototype.norm = function(n, start, stop) {
  * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
  * way of multiplying numbers by themselves (or their reciprocals) in large
  * quantities. For example, pow(3, 5) is equivalent to the expression
- * 3*3*3*3*3 and pow(3, -5) is equivalent to 1 / 3*3*3*3*3. Maps to
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
  * Math.pow().
  *
  * @method pow
@@ -662,8 +663,17 @@ p5.prototype.pow = Math.pow;
  *
  * @method round
  * @param  {Number} n number to round
+ * @param  {Number} [decimals] number of decimal places to round to, default is 0
  * @return {Integer}  rounded number
  * @example
+ * <div><code>
+ * let x = round(3.7);
+ * text(x, width / 2, height / 2);
+ * </code></div>
+ * <div><code>
+ * let x = round(12.782383, 2);
+ * text(x, width / 2, height / 2);
+ * </code></div>
  * <div><code>
  * function draw() {
  *   background(200);
@@ -690,10 +700,17 @@ p5.prototype.pow = Math.pow;
  * </code></div>
  *
  * @alt
+ * "3" written in middle of canvas
+ * "12.78" written in middle of canvas
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.round = Math.round;
+p5.prototype.round = function(n, decimals) {
+  if (!decimals) {
+    return Math.round(n);
+  }
+  return Number(Math.round(n + 'e' + decimals) + 'e-' + decimals);
+};
 
 /**
  * Squares a number (multiplies a number by itself). The result is always a
@@ -827,5 +844,48 @@ function hypot(x, y, z) {
   }
   return Math.sqrt(sum) * max;
 }
+
+/**
+ * Calculates the fractional part of a number.
+ *
+ * @method fract
+ * @param {Number} num Number whose fractional part needs to be found out
+ * @returns {Number} fractional part of x, i.e, {x}
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(windowWidth, windowHeight);
+ *   fill(0);
+ *   text(7345.73472742, 0, 50);
+ *   text(fract(7345.73472742), 0, 100);
+ *   text(1.4215e-15, 150, 50);
+ *   text(fract(1.4215e-15), 150, 100);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
+ */
+p5.prototype.fract = function(toConvert) {
+  p5._validateParameters('fract', arguments);
+  let sign = 0;
+  let num = Number(toConvert);
+  if (isNaN(num) || Math.abs(num) === Infinity) {
+    return num;
+  } else if (num < 0) {
+    num = -num;
+    sign = 1;
+  }
+  if (String(num).includes('.') && !String(num).includes('e')) {
+    let toFract = String(num);
+    toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
+    return Math.abs(sign - toFract);
+  } else if (num < 1) {
+    return Math.abs(sign - num);
+  } else {
+    return 0;
+  }
+};
 
 export default p5;

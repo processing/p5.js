@@ -120,10 +120,13 @@ suite('p5.Vector', function() {
     test('should not trip on rounding issues in 2D space', function() {
       var v1 = myp5.createVector(-11, -20);
       var v2 = myp5.createVector(-5.5, -10);
-      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+      var res = v1.angleBetween(v2);
+      //expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(0, 0.00001);
+      expect(res).to.be.closeTo(0, 0.00001);
 
       var v3 = myp5.createVector(-11, -20);
       var v4 = myp5.createVector(5.5, 10);
+      expect(Math.abs(v3.angleBetween(v4))).to.be.closeTo(180, 0.00001);
       expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
     });
 
@@ -131,7 +134,7 @@ suite('p5.Vector', function() {
       var v1 = myp5.createVector(1, 1.1, 1.2);
       var v2 = myp5.createVector(2, 2.2, 2.4);
 
-      var angle = v1.angleBetween(v2);
+      var angle = Math.abs(v1.angleBetween(v2));
       expect(angle).to.be.closeTo(0, 0.00001);
     });
 
@@ -139,7 +142,7 @@ suite('p5.Vector', function() {
       var v1 = myp5.createVector(0, 0, 0);
       var v2 = myp5.createVector(2, 3, 4);
 
-      expect(v1.angleBetween(v2)).to.be.NaN; // jshint ignore:line
+      expect(Math.abs(v1.angleBetween(v2))).to.be.NaN; // jshint ignore:line
       expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
     });
   });
@@ -272,6 +275,132 @@ suite('p5.Vector', function() {
     });
   });
 
+  suite('rem()', function() {
+    setup(function() {
+      v = myp5.createVector(3, 4, 5);
+    });
+
+    test('should give same vector if nothing passed as parameter', function() {
+      v.rem();
+      expect(v.x).to.eql(3);
+      expect(v.y).to.eql(4);
+      expect(v.z).to.eql(5);
+    });
+
+    test('should give correct output if passed only one numeric value', function() {
+      v.rem(2);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(0);
+      expect(v.z).to.eql(1);
+    });
+
+    test('should give correct output if passed two numeric value', function() {
+      v.rem(2, 3);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(5);
+    });
+
+    test('should give correct output if passed three numeric value', function() {
+      v.rem(2, 3, 4);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
+    });
+
+    suite('with p5.Vector', function() {
+      test('should return correct output if only one component is non-zero', function() {
+        v.rem(new p5.Vector(0, 0, 4));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should return correct output if x component is zero', () => {
+        v.rem(new p5.Vector(0, 3, 4));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should return correct output if all components are non-zero', () => {
+        v.rem(new p5.Vector(2, 3, 4));
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should return same vector if all components are zero', () => {
+        v.rem(new p5.Vector(0, 0, 0));
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
+      });
+    });
+
+    suite('with negative vectors', function() {
+      let v;
+      setup(function() {
+        v = new p5.Vector(-15, -5, -2);
+      });
+      test('should return correct output', () => {
+        v.rem(new p5.Vector(2, 3, 3));
+        expect(v.x).to.eql(-1);
+        expect(v.y).to.eql(-2);
+        expect(v.z).to.eql(-2);
+      });
+    });
+
+    suite('with Arrays', function() {
+      test('should return remainder of vector components for 3D vector', function() {
+        v.rem([2, 3, 0]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(5);
+      });
+      test('should return remainder of vector components for 2D vector', function() {
+        v.rem([2, 3]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(5);
+      });
+
+      test('should return correct output if x,y components are zero for 2D vector', () => {
+        v.rem([0, 0]);
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
+      });
+
+      test('should return same vector if any vector component is non-finite number', () => {
+        v.rem([2, 3, Infinity]);
+        expect(v.x).to.eql(3);
+        expect(v.y).to.eql(4);
+        expect(v.z).to.eql(5);
+      });
+    });
+
+    suite('p5.Vector.rem(v1,v2)', function() {
+      let v1, v2, res;
+      setup(function() {
+        v1 = new p5.Vector(2, 3, 4);
+        v2 = new p5.Vector(1, 2, 3);
+        res = p5.Vector.rem(v1, v2);
+      });
+
+      test('should return neither v1 nor v2', function() {
+        expect(res).to.not.eql(v1);
+        expect(res).to.not.eql(v2);
+      });
+
+      test('should be v1 % v2', function() {
+        expect(res.x).to.eql(v1.x % v2.x);
+        expect(res.y).to.eql(v1.y % v2.y);
+        expect(res.z).to.eql(v1.z % v2.z);
+      });
+    });
+  });
+
   suite('sub()', function() {
     setup(function() {
       v.x = 0;
@@ -376,6 +505,36 @@ suite('p5.Vector', function() {
       });
     });
 
+    suite('v0.mult(v1)', function() {
+      var v0, v1;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        v0.mult(v1);
+      });
+
+      test('should do component wise multiplication', function() {
+        expect(v0.x).to.eql(2);
+        expect(v0.y).to.eql(6);
+        expect(v0.z).to.eql(12);
+      });
+    });
+
+    suite('v0.mult(arr)', function() {
+      var v0, arr;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        arr = [2, 3, 4];
+        v0.mult(arr);
+      });
+
+      test('should do component wise multiplication from an array', function() {
+        expect(v0.x).to.eql(2);
+        expect(v0.y).to.eql(6);
+        expect(v0.z).to.eql(12);
+      });
+    });
+
     suite('p5.Vector.mult(v, n)', function() {
       var v, res;
       setup(function() {
@@ -390,6 +549,36 @@ suite('p5.Vector', function() {
       test('should multiply the scalar', function() {
         expect(res.x).to.eql(4);
         expect(res.y).to.eql(8);
+        expect(res.z).to.eql(12);
+      });
+    });
+
+    suite('p5.Vector.mult(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        v1 = new p5.Vector(2, 3, 4);
+        res = p5.Vector.mult(v0, v1);
+      });
+
+      test('should return new vector from component wise multiplication', function() {
+        expect(res.x).to.eql(2);
+        expect(res.y).to.eql(6);
+        expect(res.z).to.eql(12);
+      });
+    });
+
+    suite('p5.Vector.mult(v, arr', function() {
+      var v0, arr, res;
+      setup(function() {
+        v0 = new p5.Vector(1, 2, 3);
+        arr = [2, 3, 4];
+        res = p5.Vector.mult(v0, arr);
+      });
+
+      test('should return new vector from component wise multiplication with an array', function() {
+        expect(res.x).to.eql(2);
+        expect(res.y).to.eql(6);
         expect(res.z).to.eql(12);
       });
     });
@@ -453,6 +642,84 @@ suite('p5.Vector', function() {
         expect(res.x).to.eql(0.25);
         expect(res.y).to.eql(0.25);
         expect(res.z).to.eql(0.25);
+      });
+    });
+
+    suite('v0.div(v1)', function() {
+      var v0, v1, v2, v3;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        v2 = new p5.Vector(1, 1, 1);
+        v3 = new p5.Vector(0, 0, 0);
+
+        v0.div(v1);
+      });
+
+      test('should do component wise division', function() {
+        expect(v0.x).to.eql(1);
+        expect(v0.y).to.eql(3);
+        expect(v0.z).to.eql(3);
+      });
+
+      test('should not change x, y, z if v3 contains 0', function() {
+        v2.div(v3);
+        expect(v2.x).to.eql(1);
+        expect(v2.y).to.eql(1);
+        expect(v2.z).to.eql(1);
+      });
+    });
+
+    suite('v0.div(arr)', function() {
+      var v0, v1, arr;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(1, 1, 1);
+        arr = [2, 2, 3];
+        v0.div(arr);
+      });
+
+      test('should do component wise division with an array', function() {
+        expect(v0.x).to.eql(1);
+        expect(v0.y).to.eql(3);
+        expect(v0.z).to.eql(3);
+      });
+
+      test('should not change x, y, z if array contains 0', function() {
+        v1.div([0, 0, 0]);
+        expect(v1.x).to.eql(1);
+        expect(v1.y).to.eql(1);
+        expect(v1.z).to.eql(1);
+      });
+    });
+
+    suite('p5.Vector.div(v, v', function() {
+      var v0, v1, res;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        v1 = new p5.Vector(2, 2, 3);
+        res = p5.Vector.div(v0, v1);
+      });
+
+      test('should return new vector from component wise division', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(3);
+        expect(res.z).to.eql(3);
+      });
+    });
+
+    suite('p5.Vector.div(v, arr', function() {
+      var v0, arr, res;
+      setup(function() {
+        v0 = new p5.Vector(2, 6, 9);
+        arr = [2, 2, 3];
+        res = p5.Vector.div(v0, arr);
+      });
+
+      test('should return new vector from component wise division with an array', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(3);
+        expect(res.z).to.eql(3);
       });
     });
   });
@@ -869,6 +1136,7 @@ suite('p5.Vector', function() {
         v2 = new p5.Vector(2, 2, 0);
         res = v1.angleBetween(v2);
         expect(res).to.be.closeTo(Math.PI / 4, 0.01);
+        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
       });
     });
 
@@ -876,7 +1144,7 @@ suite('p5.Vector', function() {
       test('should be 180 deg difference', function() {
         v1 = new p5.Vector(2, 0, 0);
         v2 = new p5.Vector(-2, 0, 0);
-        res = v1.angleBetween(v2);
+        res = Math.abs(v1.angleBetween(v2));
         expect(res).to.be.closeTo(Math.PI, 0.01);
       });
     });
@@ -885,14 +1153,23 @@ suite('p5.Vector', function() {
       test('should be 135 deg difference', function() {
         v1 = new p5.Vector(2, 0, 0);
         v2 = new p5.Vector(-2, -2, 0);
-        res = v1.angleBetween(v2);
-        expect(res).to.be.closeTo(Math.PI / 2 + Math.PI / 4, 0.01);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          -1 * (Math.PI / 2 + Math.PI / 4),
+          0.01
+        );
+        expect(v2.angleBetween(v1)).to.be.closeTo(
+          Math.PI / 2 + Math.PI / 4,
+          0.01
+        );
       });
 
       test('should be commutative', function() {
         v1 = new p5.Vector(2, 0, 0);
         v2 = new p5.Vector(-2, -2, 0);
-        expect(v1.angleBetween(v2)).to.be.closeTo(v2.angleBetween(v1), 0.01);
+        expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(
+          Math.abs(v2.angleBetween(v1)),
+          0.01
+        );
       });
     });
   });
@@ -907,6 +1184,71 @@ suite('p5.Vector', function() {
       v.y = 23;
       v.z = 4;
       expect(v.array()).to.eql([1, 23, 4]);
+    });
+  });
+
+  suite('reflect', function() {
+    setup(function() {
+      incoming_x = 1;
+      incoming_y = 1;
+      incoming_z = 1;
+      original_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+
+      x_normal = myp5.createVector(3, 0, 0);
+      y_normal = myp5.createVector(0, 3, 0);
+      z_normal = myp5.createVector(0, 0, 3);
+
+      x_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
+
+      y_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
+
+      z_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
+      z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
+    });
+
+    test('should return a p5.Vector', function() {
+      expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+    });
+
+    test('should update this', function() {
+      assert.equal(x_bounce_incoming, x_bounce_outgoing);
+      assert.equal(y_bounce_incoming, y_bounce_outgoing);
+      assert.equal(z_bounce_incoming, z_bounce_outgoing);
+    });
+
+    test('x-normal should flip incoming x component and maintain y,z components', function() {
+      expect(x_bounce_outgoing.x).to.be.closeTo(-1, 0.01);
+      expect(x_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+      expect(x_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+    });
+    test('y-normal should flip incoming y component and maintain x,z components', function() {
+      expect(y_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+      expect(y_bounce_outgoing.y).to.be.closeTo(-1, 0.01);
+      expect(y_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+    });
+    test('z-normal should flip incoming z component and maintain x,y components', function() {
+      expect(z_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+      expect(z_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+      expect(z_bounce_outgoing.z).to.be.closeTo(-1, 0.01);
+    });
+
+    test('angle of incidence should match angle of reflection', function() {
+      expect(Math.abs(x_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(x_normal.angleBetween(x_bounce_outgoing.mult(-1))),
+        0.01
+      );
+      expect(Math.abs(y_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(y_normal.angleBetween(y_bounce_outgoing.mult(-1))),
+        0.01
+      );
+      expect(Math.abs(z_normal.angleBetween(original_incoming))).to.be.closeTo(
+        Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
+        0.01
+      );
     });
   });
 });

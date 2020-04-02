@@ -23,6 +23,7 @@ p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
   this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+  this._cachedBlendMode = constants.BLEND;
   this._setFill(constants._DEFAULT_FILL);
   this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
@@ -53,13 +54,20 @@ p5.Renderer2D.prototype.background = function(...args) {
     const color = this._pInst.color(...args);
     const newFill = color.toString();
     this._setFill(newFill);
+
+    if (this._isErasing) {
+      this.blendMode(this._cachedBlendMode);
+    }
+
     this.drawingContext.fillRect(0, 0, this.width, this.height);
     // reset fill
     this._setFill(curFill);
+
+    if (this._isErasing) {
+      this._pInst.erase();
+    }
   }
   this.drawingContext.restore();
-
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.clear = function() {
@@ -67,8 +75,6 @@ p5.Renderer2D.prototype.clear = function() {
   this.resetMatrix();
   this.drawingContext.clearRect(0, 0, this.width, this.height);
   this.drawingContext.restore();
-
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.fill = function(...args) {
@@ -79,6 +85,37 @@ p5.Renderer2D.prototype.fill = function(...args) {
 p5.Renderer2D.prototype.stroke = function(...args) {
   const color = this._pInst.color(...args);
   this._setStroke(color.toString());
+};
+
+p5.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {
+  if (!this._isErasing) {
+    // cache the fill style
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+    const newFill = this._pInst.color(255, opacityFill).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    //cache the stroke style
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    const newStroke = this._pInst.color(255, opacityStroke).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
+    //cache blendMode
+    const tempBlendMode = this._cachedBlendMode;
+    this.blendMode(constants.REMOVE);
+    this._cachedBlendMode = tempBlendMode;
+
+    this._isErasing = true;
+  }
+};
+
+p5.Renderer2D.prototype.noErase = function() {
+  if (this._isErasing) {
+    this.drawingContext.fillStyle = this._cachedFillStyle;
+    this.drawingContext.strokeStyle = this._cachedStrokeStyle;
+
+    this.blendMode(this._cachedBlendMode);
+    this._isErasing = false;
+  }
 };
 
 //////////////////////////////////////////////
@@ -117,6 +154,9 @@ p5.Renderer2D.prototype.image = function(
     if (img.width && img.width > 0) {
       s = cnv.width / img.width;
     }
+    if (this._isErasing) {
+      this.blendMode(this._cachedBlendMode);
+    }
     this.drawingContext.drawImage(
       cnv,
       s * sx,
@@ -128,13 +168,14 @@ p5.Renderer2D.prototype.image = function(
       dWidth,
       dHeight
     );
+    if (this._isErasing) {
+      this._pInst.erase();
+    }
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
       throw e;
     }
   }
-
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
@@ -171,6 +212,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
     console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
   } else if (
     mode === constants.BLEND ||
+    mode === constants.REMOVE ||
     mode === constants.DARKEST ||
     mode === constants.LIGHTEST ||
     mode === constants.DIFFERENCE ||
@@ -185,6 +227,7 @@ p5.Renderer2D.prototype.blendMode = function(mode) {
     mode === constants.BURN ||
     mode === constants.ADD
   ) {
+    this._cachedBlendMode = mode;
     this.drawingContext.globalCompositeOperation = mode;
   } else {
     throw new Error(`Mode ${mode} not recognized.`);
@@ -198,69 +241,10 @@ p5.Renderer2D.prototype.blend = function(...args) {
   const copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
 
   this.drawingContext.globalCompositeOperation = blendMode;
-  if (this._pInst) {
-    this._pInst.copy(...copyArgs);
-  } else {
-    this.copy(...copyArgs);
-  }
+
+  p5.prototype.copy.apply(this, copyArgs);
+
   this.drawingContext.globalCompositeOperation = currBlend;
-};
-
-p5.Renderer2D.prototype.copy = function(...args) {
-  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (args.length === 9) {
-    srcImage = args[0];
-    sx = args[1];
-    sy = args[2];
-    sw = args[3];
-    sh = args[4];
-    dx = args[5];
-    dy = args[6];
-    dw = args[7];
-    dh = args[8];
-  } else if (args.length === 8) {
-    srcImage = this._pInst;
-    sx = args[0];
-    sy = args[1];
-    sw = args[2];
-    sh = args[3];
-    dx = args[4];
-    dy = args[5];
-    dw = args[6];
-    dh = args[7];
-  } else {
-    throw new Error('Signature not supported');
-  }
-  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
-
-  this._pixelsState._pixelsDirty = true;
-};
-
-p5.Renderer2D._copyHelper = (
-  dstImage,
-  srcImage,
-  sx,
-  sy,
-  sw,
-  sh,
-  dx,
-  dy,
-  dw,
-  dh
-) => {
-  srcImage.loadPixels();
-  const s = srcImage.canvas.width / srcImage.width;
-  dstImage.drawingContext.drawImage(
-    srcImage.canvas,
-    s * sx,
-    s * sy,
-    s * sw,
-    s * sh,
-    dx,
-    dy,
-    dw,
-    dh
-  );
 };
 
 // p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;
@@ -268,15 +252,9 @@ p5.Renderer2D._copyHelper = (
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.Renderer2D.prototype._getPixel = function(x, y) {
-  const pixelsState = this._pixelsState;
   let imageData, index;
-  if (pixelsState._pixelsDirty) {
-    imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
-    index = 0;
-  } else {
-    imageData = pixelsState.pixels;
-    index = (Math.floor(x) + Math.floor(y) * this.canvas.width) * 4;
-  }
+  imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+  index = 0;
   return [
     imageData[index + 0],
     imageData[index + 1],
@@ -287,8 +265,6 @@ p5.Renderer2D.prototype._getPixel = function(x, y) {
 
 p5.Renderer2D.prototype.loadPixels = function() {
   const pixelsState = this._pixelsState; // if called by p5.Image
-  if (!pixelsState._pixelsDirty) return;
-  pixelsState._pixelsDirty = false;
 
   const pd = pixelsState._pixelDensity;
   const w = this.width * pd;
@@ -314,7 +290,6 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
     );
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.drawingContext.restore();
-    pixelsState._pixelsDirty = true;
   } else {
     let r = 0,
       g = 0,
@@ -326,7 +301,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
         pixelsState._pixelDensity *
         (this.width * pixelsState._pixelDensity) +
         x * pixelsState._pixelDensity);
-    if (!pixelsState.imageData || pixelsState._pixelsDirty) {
+    if (!pixelsState.imageData) {
       pixelsState.loadPixels.call(pixelsState);
     }
     if (typeof imgOrCol === 'number') {
@@ -396,15 +371,11 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   h *= pd;
 
   if (this.gifProperties) {
-    this.gifProperties.frames[this.gifProperties.displayIndex] =
+    this.gifProperties.frames[this.gifProperties.displayIndex].image =
       pixelsState.imageData;
   }
 
   this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
-
-  if (x !== 0 || y !== 0 || w !== this.width || h !== this.height) {
-    pixelsState._pixelsDirty = true;
-  }
 };
 
 //////////////////////////////////////////////
@@ -489,7 +460,6 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
     }
     ctx.closePath();
     ctx.fill();
-    this._pixelsState._pixelsDirty = true;
   }
 
   // Stroke curves
@@ -511,7 +481,6 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
       ctx.closePath();
     }
     ctx.stroke();
-    this._pixelsState._pixelsDirty = true;
   }
   return this;
 };
@@ -520,10 +489,10 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   const ctx = this.drawingContext;
   const doFill = this._doFill,
     doStroke = this._doStroke;
-  const x = args[0],
-    y = args[1],
-    w = args[2],
-    h = args[3];
+  const x = parseFloat(args[0]),
+    y = parseFloat(args[1]),
+    w = parseFloat(args[2]),
+    h = parseFloat(args[3]);
   if (doFill && !doStroke) {
     if (this._getFill() === styleEmpty) {
       return this;
@@ -554,11 +523,9 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   ctx.closePath();
   if (doFill) {
     ctx.fill();
-    this._pixelsState._pixelsDirty = true;
   }
   if (doStroke) {
     ctx.stroke();
-    this._pixelsState._pixelsDirty = true;
   }
 };
 
@@ -573,7 +540,6 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
   ctx.stroke();
-  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -598,7 +564,6 @@ p5.Renderer2D.prototype.point = function(x, y) {
     ctx.fillRect(x, y, 1, 1);
   }
   this._setFill(f);
-  this._pixelsState._pixelsDirty = true;
 };
 
 p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -626,7 +591,6 @@ p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
   if (doStroke) {
     ctx.stroke();
   }
-  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -716,7 +680,6 @@ p5.Renderer2D.prototype.rect = function(args) {
   if (this._doStroke) {
     ctx.stroke();
   }
-  this._pixelsState._pixelsDirty = true;
   return this;
 };
 
@@ -746,11 +709,9 @@ p5.Renderer2D.prototype.triangle = function(args) {
   ctx.closePath();
   if (doFill) {
     ctx.fill();
-    this._pixelsState._pixelsDirty = true;
   }
   if (doStroke) {
     ctx.stroke();
-    this._pixelsState._pixelsDirty = true;
   }
 };
 
@@ -1010,7 +971,6 @@ p5.Renderer2D.prototype.endShape = function(
     vertices.pop();
   }
 
-  this._pixelsState._pixelsDirty = true;
   return this;
 };
 //////////////////////////////////////////////
@@ -1112,8 +1072,6 @@ p5.Renderer2D.prototype._doFillStrokeClose = function(closeShape) {
   if (this._doStroke) {
     this.drawingContext.stroke();
   }
-
-  this._pixelsState._pixelsDirty = true;
 };
 
 //////////////////////////////////////////////
@@ -1210,8 +1168,6 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
   }
 
   p.pop();
-
-  this._pixelsState._pixelsDirty = true;
   return p;
 };
 

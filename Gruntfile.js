@@ -42,17 +42,6 @@
  *                      docs, and does not perform linting, minification,
  *                      or run tests. It's faster than watch:main.
  *
- *  grunt karma       - This runs the performance benchmarks in
- *                      multiple real browsers on the developers local machine.
- *                      It will automatically detect which browsers are
- *                      installed from the following list (Chrome, Firefox,
- *                      Safari, Edge, IE) and run the benchmarks in all installed
- *                      browsers and report the results. Running "grunt karma"
- *                      will execute ALL the benchmarks. If you want to run a
- *                      specific benchmark you can by specifying the target e.g.
- *                      "grunt karma:random-dev". The available targets are
- *                      defined in grunt-karma.js.
- *
  *  Contributors list can be updated using all-contributors-cli:
  *  https://www.npmjs.com/package/all-contributors-cli
  *
@@ -95,11 +84,8 @@ function getYuidocOptions() {
 
 module.exports = grunt => {
   // Specify what reporter we'd like to use for Mocha
-  const quietReport = process.env.TRAVIS || grunt.option('quiet');
+  const quietReport = process.env.GITHUB_ACTIONS || grunt.option('quiet');
   const reporter = quietReport ? 'spec' : 'Nyan';
-
-  // Load karma tasks from an external file to keep this file clean
-  const karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
@@ -147,7 +133,6 @@ module.exports = grunt => {
       build: {
         src: [
           'Gruntfile.js',
-          'grunt-karma.js',
           'docs/preprocessor.js',
           'utils/**/*.js',
           'tasks/**/*.js'
@@ -172,7 +157,7 @@ module.exports = grunt => {
         src: ['src/**/*.js']
       },
       test: {
-        src: ['bench/**/*.js', 'test/**/*.js', '!test/js/*.js']
+        src: ['test/**/*.js', '!test/js/*.js']
       }
     },
 
@@ -271,7 +256,7 @@ module.exports = grunt => {
     nyc: {
       report: {
         options: {
-          reporter: ['text-summary', 'html']
+          reporter: ['text-summary', 'html', 'json']
         }
       }
     },
@@ -290,7 +275,8 @@ module.exports = grunt => {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.pre-min.js'
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
+          'lib/modules/p5Custom.min.js': 'lib/modules/p5Custom.pre-min.js'
         }
       }
     },
@@ -310,10 +296,6 @@ module.exports = grunt => {
         ]
       }
     },
-
-    // This runs benchmarks in multiple real browsers for developing
-    // performance optimizations
-    karma: karmaTasks,
 
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
@@ -400,23 +382,6 @@ module.exports = grunt => {
         }
       }
     },
-    'saucelabs-mocha': {
-      all: {
-        options: {
-          urls: ['http://127.0.0.1:9001/test/test.html'],
-          tunnelTimeout: 5,
-          build: process.env.TRAVIS_JOB_ID,
-          concurrency: 3,
-          browsers: [
-            { browserName: 'chrome' },
-            { browserName: 'firefox', platform: 'Linux', version: '42.0' },
-            { browserName: 'safari' }
-          ],
-          testname: 'p5.js mocha tests',
-          tags: ['master']
-        }
-      }
-    },
     minjson: {
       compile: {
         files: {
@@ -469,9 +434,6 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-release-it');
-  grunt.loadNpmTasks('grunt-saucelabs');
-  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
 
@@ -483,16 +445,20 @@ module.exports = grunt => {
     'browserify:test'
   ]);
   grunt.registerTask('lint-no-fix', [
-    'yui', // required for eslint-samples
+    'lint-no-fix:source',
+    'lint-no-fix:samples'
+  ]);
+  grunt.registerTask('lint-no-fix:source', [
     'eslint:build',
     'eslint:source',
-    'eslint:test',
+    'eslint:test'
+  ]);
+  grunt.registerTask('lint-no-fix:samples', [
+    'yui', // required for eslint-samples
     'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
-    'lint-no-fix',
-    //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect:server',
     'mochaChrome',
@@ -521,6 +487,5 @@ module.exports = grunt => {
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
-  grunt.registerTask('default', ['test']);
-  grunt.registerTask('saucetest', ['connect:server', 'saucelabs-mocha']);
+  grunt.registerTask('default', ['lint-no-fix', 'test']);
 };

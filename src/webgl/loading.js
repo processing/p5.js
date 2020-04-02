@@ -12,6 +12,9 @@ import './p5.Geometry';
 /**
  * Load a 3d model from an OBJ or STL file.
  * <br><br>
+ * <a href="#/p5/loadModel">loadModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
+ * This allows the model to load fully before the rest of your code is run.
+ * <br><br>
  * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
  * sense of scale. This means that models exported from different programs might
  * be very different sizes. If your model isn't displaying, try calling
@@ -399,26 +402,24 @@ function parseBinarySTL(model, buffer) {
         b = defaultB;
       }
     }
+    const newNormal = new p5.Vector(normalX, normalY, normalZ);
 
     for (let i = 1; i <= 3; i++) {
       const vertexstart = start + i * 12;
 
       const newVertex = new p5.Vector(
         reader.getFloat32(vertexstart, true),
-        reader.getFloat32(vertexstart + 8, true),
-        reader.getFloat32(vertexstart + 4, true)
+        reader.getFloat32(vertexstart + 4, true),
+        reader.getFloat32(vertexstart + 8, true)
       );
 
       model.vertices.push(newVertex);
+      model.vertexNormals.push(newNormal);
 
       if (hasColors) {
         colors.push(r, g, b);
       }
     }
-
-    const newNormal = new p5.Vector(normalX, normalY, normalZ);
-
-    model.vertexNormals.push(newNormal, newNormal, newNormal);
 
     model.faces.push([3 * face, 3 * face + 1, 3 * face + 2]);
     model.uvs.push([0, 0], [0, 0], [0, 0]);

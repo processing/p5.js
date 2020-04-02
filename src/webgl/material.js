@@ -281,8 +281,10 @@ p5.prototype.resetShader = function() {
 };
 
 /**
- * Normal material for geometry. You can view all
- * possible materials in this
+ * Normal material for geometry is a material that is not affected by light.
+ * It is not reflective and is a placeholder material often used for debugging.
+ * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
+ * You can view all possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method normalMaterial
  * @chainable
@@ -300,7 +302,6 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
- *
  * @alt
  * Red, green and blue gradient.
  *
@@ -572,15 +573,14 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 };
 
 /**
- * Ambient material for geometry with a given color. You can view all
- * possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * Ambient material for geometry with a given color. Ambient material defines the color the object reflects under any lighting.
+ * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
+ * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
  * @method  ambientMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                         (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
- * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -597,17 +597,47 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * }
  * </code>
  * </div>
- *
+ * <div>
+ * <code>
+ * // ambientLight is both red and blue (magenta),
+ * // so object only reflects it's red and blue components
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(70);
+ *   ambientLight(100); // white light
+ *   ambientMaterial(255, 0, 255); // pink material
+ *   box(30);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * // ambientLight is green. Since object does not contain
+ * // green, it does not reflect any light
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(70);
+ *   ambientLight(0, 255, 0); // green light
+ *   ambientMaterial(255, 0, 255); // pink material
+ *   box(30);
+ * }
+ * </code>
+ * </div>
  * @alt
  * radiating light source from top right of canvas
- *
+ * box reflecting only red and blue light
+ * box reflecting no light
  */
 /**
  * @method  ambientMaterial
  * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
-p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
+p5.prototype.ambientMaterial = function(v1, v2, v3) {
   this._assert3d('ambientMaterial');
   p5._validateParameters('ambientMaterial', arguments);
 
@@ -675,15 +705,16 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Specular material for geometry with a given color. You can view all
- * possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * Specular material for geometry with a given color. Specular material is a shiny reflective material.
+ * Like ambient material it also defines the color the object reflects under ambient lighting.
+ * For example, if the specular material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
+ * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer.
+ * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
  * @method specularMaterial
  * @param  {Number} v1  gray value, red or hue value
  *                       (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
- * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -693,7 +724,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * }
  * function draw() {
  *   background(0);
- *   noStroke();
  *   ambientLight(50);
  *   pointLight(250, 250, 250, 100, 100, 30);
  *   specularMaterial(250);
@@ -701,17 +731,15 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * }
  * </code>
  * </div>
- *
  * @alt
  * diffused radiating light source from top right of canvas
- *
  */
 /**
  * @method specularMaterial
  * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3, a) {
+p5.prototype.specularMaterial = function(v1, v2, v3) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
 
@@ -773,8 +801,8 @@ p5.prototype.shininess = function(shine) {
 
 /**
  * @private blends colors according to color components.
- * If alpha value is less than 1, we need to enable blending
- * on our gl context.  Otherwise opaque objects need to a depthMask.
+ * If alpha value is less than 1, or non-standard blendMode
+ * we need to enable blending on our gl context.
  * @param  {Number[]} color [description]
  * @return {Number[]]}  Normalized numbers array
  */
@@ -782,14 +810,23 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
   const gl = this.GL;
 
   const isTexture = this.drawMode === constants.TEXTURE;
-  if (isTexture || colors[colors.length - 1] < 1.0) {
-    gl.depthMask(isTexture);
-    gl.enable(gl.BLEND);
-    this._applyBlendMode();
-  } else {
+  const doBlend =
+    isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
+
+  if (doBlend !== this._isBlending) {
+    if (
+      doBlend ||
+      (this.curBlendMode !== constants.BLEND &&
+        this.curBlendMode !== constants.ADD)
+    ) {
+      gl.enable(gl.BLEND);
+    } else {
+      gl.disable(gl.BLEND);
+    }
     gl.depthMask(true);
-    gl.disable(gl.BLEND);
+    this._isBlending = doBlend;
   }
+  this._applyBlendMode();
   return colors;
 };
 
@@ -799,12 +836,19 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
  * @return {Number[]]}  Normalized numbers array
  */
 p5.RendererGL.prototype._applyBlendMode = function() {
+  if (this._cachedBlendMode === this.curBlendMode) {
+    return;
+  }
   const gl = this.GL;
   switch (this.curBlendMode) {
     case constants.BLEND:
     case constants.ADD:
       gl.blendEquation(gl.FUNC_ADD);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.REMOVE:
+      gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
+      gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
       break;
     case constants.MULTIPLY:
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
@@ -857,6 +901,7 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       );
       break;
   }
+  this._cachedBlendMode = this.curBlendMode;
 };
 
 export default p5;

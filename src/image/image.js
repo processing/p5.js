@@ -192,7 +192,7 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.saveGif = (pImg, filename) => {
+p5.prototype.saveGif = function(pImg, filename) {
   const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
@@ -202,47 +202,219 @@ p5.prototype.saveGif = (pImg, filename) => {
   } else if (loopLimit === null) {
     loopLimit = 0;
   }
-  const gifFormatDelay = props.delay / 10;
-  const opts = {
-    loop: loopLimit,
-    delay: gifFormatDelay
-  };
+  const buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
 
-  const buffer = new Uint8Array(
-    pImg.width * pImg.height * props.numFrames * gifFormatDelay
-  );
-  const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
-  const palette = [];
-  //loop over frames and build pixel -> palette index for each
+  const allFramesPixelColors = [];
+
+  // Used to determine the occurrence of unique palettes and the frames
+  // which use them
+  const paletteFreqsAndFrames = {};
+
+  // Pass 1:
+  //loop over frames and get the frequency of each palette
   for (let i = 0; i < props.numFrames; i++) {
-    const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
-    const data = props.frames[i].data;
+    const paletteSet = new Set();
+    const data = props.frames[i].image.data;
     const dataLength = data.length;
+    // The color for each pixel in this frame ( for easier lookup later )
+    const pixelColors = new Uint32Array(pImg.width * pImg.height);
     for (let j = 0, k = 0; j < dataLength; j += 4, k++) {
       const r = data[j + 0];
       const g = data[j + 1];
       const b = data[j + 2];
       const color = (r << 16) | (g << 8) | (b << 0);
-      const index = palette.indexOf(color);
-      if (index === -1) {
-        pixelPaletteIndex[k] = palette.length;
-        palette.push(color);
+      paletteSet.add(color);
+
+      // What color does this pixel have in this frame ?
+      pixelColors[k] = color;
+    }
+
+    // A way to put use the entire palette as an object key
+    const paletteStr = [...paletteSet].sort().toString();
+    if (paletteFreqsAndFrames[paletteStr] === undefined) {
+      paletteFreqsAndFrames[paletteStr] = { freq: 1, frames: [i] };
+    } else {
+      paletteFreqsAndFrames[paletteStr].freq += 1;
+      paletteFreqsAndFrames[paletteStr].frames.push(i);
+    }
+
+    allFramesPixelColors.push(pixelColors);
+  }
+
+  let framesUsingGlobalPalette = [];
+
+  // Now to build the global palette
+  // Sort all the unique palettes in descending order of their occurence
+  const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
+    a,
+    b
+  ) {
+    return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+  });
+
+  // The initial global palette is the one with the most occurence
+  const globalPalette = palettesSortedByFreq[0]
+    .split(',')
+    .map(a => parseInt(a));
+
+  framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+    paletteFreqsAndFrames[globalPalette].frames
+  );
+
+  const globalPaletteSet = new Set(globalPalette);
+
+  // Build a more complete global palette
+  // Iterate over the remaining palettes in the order of
+  // their occurence and see if the colors in this palette which are
+  // not in the global palette can be added there, while keeping the length
+  // of the global palette <= 256
+  for (let i = 1; i < palettesSortedByFreq.length; i++) {
+    const palette = palettesSortedByFreq[i].split(',').map(a => parseInt(a));
+
+    const difference = palette.filter(x => !globalPaletteSet.has(x));
+    if (globalPalette.length + difference.length <= 256) {
+      for (let j = 0; j < difference.length; j++) {
+        globalPalette.push(difference[j]);
+        globalPaletteSet.add(difference[j]);
+      }
+
+      // All frames using this palette now use the global palette
+      framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+        paletteFreqsAndFrames[palettesSortedByFreq[i]].frames
+      );
+    }
+  }
+
+  framesUsingGlobalPalette = new Set(framesUsingGlobalPalette);
+
+  // Build a lookup table of the index of each color in the global palette
+  // Maps a color to its index
+  const globalIndicesLookup = {};
+  for (let i = 0; i < globalPalette.length; i++) {
+    if (!globalIndicesLookup[globalPalette[i]]) {
+      globalIndicesLookup[globalPalette[i]] = i;
+    }
+  }
+
+  // force palette to be power of 2
+  let powof2 = 1;
+  while (powof2 < globalPalette.length) {
+    powof2 <<= 1;
+  }
+  globalPalette.length = powof2;
+
+  // global opts
+  const opts = {
+    loop: loopLimit,
+    palette: new Uint32Array(globalPalette)
+  };
+  const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  let previousFrame = {};
+
+  // Pass 2
+  // Determine if the frame needs a local palette
+  // Also apply transparency optimization. This function will often blow up
+  // the size of a GIF if not for transparency. If a pixel in one frame has
+  // the same color in the previous frame, that pixel can be marked as
+  // transparent. We decide one particular color as transparent and make all
+  // transparent pixels take this color. This helps in later in compression.
+  for (let i = 0; i < props.numFrames; i++) {
+    const localPaletteRequired = !framesUsingGlobalPalette.has(i);
+    const palette = localPaletteRequired ? [] : globalPalette;
+    const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+
+    // Lookup table mapping color to its indices
+    const colorIndicesLookup = {};
+
+    // All the colors that cannot be marked transparent in this frame
+    const cannotBeTransparent = new Set();
+
+    for (let k = 0; k < allFramesPixelColors[i].length; k++) {
+      const color = allFramesPixelColors[i][k];
+      if (localPaletteRequired) {
+        if (colorIndicesLookup[color] === undefined) {
+          colorIndicesLookup[color] = palette.length;
+          palette.push(color);
+        }
+        pixelPaletteIndex[k] = colorIndicesLookup[color];
       } else {
-        pixelPaletteIndex[k] = index;
+        pixelPaletteIndex[k] = globalIndicesLookup[color];
+      }
+
+      if (i > 0) {
+        // If even one pixel of this color has changed in this frame
+        // from the previous frame, we cannot mark it as transparent
+        if (allFramesPixelColors[i - 1][k] !== color) {
+          cannotBeTransparent.add(color);
+        }
       }
     }
-    // force palette to be power of 2
-    let powof2 = 1;
-    while (powof2 < palette.length) {
-      powof2 <<= 1;
+
+    const frameOpts = {};
+
+    // Transparency optimization
+    const canBeTransparent = palette.filter(a => !cannotBeTransparent.has(a));
+    if (canBeTransparent.length > 0) {
+      // Select a color to mark as transparent
+      const transparent = canBeTransparent[0];
+      const transparentIndex = localPaletteRequired
+        ? colorIndicesLookup[transparent]
+        : globalIndicesLookup[transparent];
+      if (i > 0) {
+        for (let k = 0; k < allFramesPixelColors[i].length; k++) {
+          // If this pixel in this frame has the same color in previous frame
+          if (allFramesPixelColors[i - 1][k] === allFramesPixelColors[i][k]) {
+            pixelPaletteIndex[k] = transparentIndex;
+          }
+        }
+        frameOpts.transparent = transparentIndex;
+        // If this frame has any transparency, do not dispose the previous frame
+        previousFrame.frameOpts.disposal = 1;
+      }
     }
-    palette.length = powof2;
-    opts.palette = new Uint32Array(palette);
-    gifWriter.addFrame(0, 0, pImg.width, pImg.height, pixelPaletteIndex, opts);
+    frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
+    if (localPaletteRequired) {
+      // force palette to be power of 2
+      let powof2 = 1;
+      while (powof2 < palette.length) {
+        powof2 <<= 1;
+      }
+      palette.length = powof2;
+      frameOpts.palette = new Uint32Array(palette);
+    }
+    if (i > 0) {
+      // add the frame that came before the current one
+      gifWriter.addFrame(
+        0,
+        0,
+        pImg.width,
+        pImg.height,
+        previousFrame.pixelPaletteIndex,
+        previousFrame.frameOpts
+      );
+    }
+    // previous frame object should now have details of this frame
+    previousFrame = {
+      pixelPaletteIndex,
+      frameOpts
+    };
   }
-  gifWriter.end();
+
+  previousFrame.frameOpts.disposal = 1;
+  // add the last frame
+  gifWriter.addFrame(
+    0,
+    0,
+    pImg.width,
+    pImg.height,
+    previousFrame.pixelPaletteIndex,
+    previousFrame.frameOpts
+  );
+
   const extension = 'gif';
-  const blob = new Blob([buffer], { type: 'image/gif' });
+  const blob = new Blob([buffer.slice(0, gifWriter.end())], {
+    type: 'image/gif'
+  });
   p5.prototype.downloadFile(blob, filename, extension);
 };
 

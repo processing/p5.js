@@ -19,7 +19,7 @@ import p5 from '../core/main';
  * @example
  * <div class='norender'><code>
  * function setup() {
- *   const myArray = ['Mango', 'Apple', 'Papaya'];
+ *   let myArray = ['Mango', 'Apple', 'Papaya'];
  *   print(myArray); // ['Mango', 'Apple', 'Papaya']
  *
  *   append(myArray, 'Peach');
@@ -27,7 +27,7 @@ import p5 from '../core/main';
  * }
  * </code></div>
  */
-p5.prototype.append = (array, value) => {
+p5.prototype.append = function(array, value) {
   array.push(value);
   return array;
 };
@@ -77,7 +77,7 @@ p5.prototype.append = (array, value) => {
  * @param {Array}  dst
  * @param {Integer} [length]
  */
-p5.prototype.arrayCopy = (src, srcPosition, dst, dstPosition, length) => {
+p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
   // the index to begin splicing from dst array
   let start;
   let end;
@@ -177,7 +177,7 @@ p5.prototype.reverse = list => list.reverse();
  * }
  * </code></div>
  */
-p5.prototype.shorten = list => {
+p5.prototype.shorten = function(list) {
   list.pop();
   return list;
 };
@@ -206,7 +206,7 @@ p5.prototype.shorten = list => {
  * }
  * </code></div>
  */
-p5.prototype.shuffle = (arr, bool) => {
+p5.prototype.shuffle = function(arr, bool) {
   const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
   arr = bool || isView ? arr : arr.slice();
 
@@ -259,7 +259,7 @@ p5.prototype.shuffle = (arr, bool) => {
  * }
  * </code></div>
  */
-p5.prototype.sort = (list, count) => {
+p5.prototype.sort = function(list, count) {
   let arr = count ? list.slice(0, Math.min(count, list.length)) : list;
   const rest = count ? list.slice(Math.min(count, list.length)) : [];
   if (typeof arr[0] === 'string') {
@@ -298,7 +298,7 @@ p5.prototype.sort = (list, count) => {
  * }
  * </code></div>
  */
-p5.prototype.splice = (list, value, index) => {
+p5.prototype.splice = function(list, value, index) {
   // note that splice returns spliced elements and not an array
   Array.prototype.splice.apply(list, [index, 0].concat(value));
 
@@ -333,7 +333,7 @@ p5.prototype.splice = (list, value, index) => {
  * }
  * </code></div>
  */
-p5.prototype.subset = (list, start, count) => {
+p5.prototype.subset = function(list, start, count) {
   if (typeof count !== 'undefined') {
     return list.slice(start, start + count);
   } else {
