@@ -5,7 +5,7 @@
 
 
 ## Requirements
-* Operating System: macOS, Linux or Unix. _(For Windows see at the end of this document)_
+* Git, node.js (v10+) and NPM installed on your system
 * Logged in NPM CLI : Check if you are logged in by `npm whoami`
 * High Bandwidth : Lots of things to download/pull/push (\~190 MB total I presume)
 
@@ -42,6 +42,3 @@ In the case where you have push access to the repositories:
 
 In the case where you don't have push access to the repositories:
 * TODO: Testing in this case is not fully supported yet.
-
-## Note for Windows users
-The release process contains many shell commands that may not run or work expectedly on Windows environment. It is recommended to have linux/unix environment running, however you can use [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) which works on Windows 10 Anniversary update onwards (only 64-bit). If you are on Lower version of Windows you can use [Cygwin](https://www.cygwin.com/) or use [Virtual Box](https://www.virtualbox.org/) (or any other preferred virtualization tool) to run Linux.
