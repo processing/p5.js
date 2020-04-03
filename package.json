@@ -15,7 +15,6 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
-    "precommit": "lint-staged",
     "release": "np",
     "postrelease": "grunt release-p5"
   },
@@ -146,5 +145,10 @@
     "not dead"
   ],
   "author": "",
-  "dependencies": {}
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }
