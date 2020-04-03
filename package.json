@@ -1,6 +1,6 @@
 {
-  "name": "@limzykenneth/p5",
-  "repository": "limzykenneth/p5.js",
+  "name": "p5",
+  "repository": "processing/p5.js",
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
@@ -33,7 +33,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.0.4",
+  "version": "1.0.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
@@ -74,7 +74,7 @@
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
     "mocha": "^6.2.2",
-    "np": "^5.2.1",
+    "np": "^6.2.0",
     "omggif": "^1.0.10",
     "open": "^7.0.3",
     "opentype.js": "^0.9.0",
