@@ -8,19 +8,59 @@ module.exports = function(grunt) {
     'release-docs',
     'Publishes the new docs of p5.js on the website',
     function() {
+      const opts = {
+        clean: {
+          website: {
+            src: ['bower-repo/']
+          }
+        },
+        copy: {
+          main: {
+            files: [
+              {
+                expand: true,
+                src: [
+                  'docs/reference/data.json',
+                  'docs/reference/data.min.json'
+                ],
+                dest: 'p5-website/src/templates/pages/reference/'
+              },
+              {
+                expand: true,
+                src: 'docs/reference/assets/**/*',
+                dest: 'p5-website/src/templates/pages/reference/'
+              },
+              {
+                expand: true,
+                src: ['lib/p5.min.js', 'lib/addons/p5.sound.min.js'],
+                dest: 'p5-website/src/assets/js/'
+              }
+            ]
+          }
+        }
+      };
+
       // Async Task
       const done = this.async();
+
       // Keep the version handy
       const version = require('../../package.json').version;
+
       // Keep the release-party ready
       const releaseParty = grunt.config.get('docsReleaser');
+
+      grunt.config.set('clean', opts.clean);
+      grunt.config.set('copy', opts.copy);
+
+      // Clean the Bower repo local folder
+      grunt.task.run('clean:website');
+
       // Avoiding Callback Hell and using Promises
       new Promise((resolve, reject) => {
         // Clone the website locally
         console.log('Cloning the website ...');
         exec(
-          `rm -rf p5-website/ && \
-          git clone -q https://github.com/${releaseParty}/p5.js-website.git \
+          `git clone -q https://github.com/${releaseParty}/p5.js-website.git \
           p5-website`,
           (err, stdout, stderr) => {
             if (err) {
@@ -33,25 +73,9 @@ module.exports = function(grunt) {
       })
         .then(function() {
           // Copy the new docs over
-          const src = 'docs/reference';
-          const dest = 'p5-website/src/templates/pages/reference/';
           console.log('Copying new docs ...');
-          return new Promise(function(resolve, reject) {
-            exec(
-              `(cp ${src}/data.json ${src}/data.min.json ${dest}) &&
-               (cp -r ${src}/assets ${dest}) &&
-               (cp lib/p5.min.js lib/addons/p5.sound.min.js p5-website/src/assets/js/)`,
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                console.log(stdout);
-                resolve();
-              }
-            );
-          });
-        })
-        .then(() => {
+          grunt.task.run('copy');
+
           // Add, Commit, Push
           console.log('Pushing to GitHub ...');
           return new Promise(function(resolve, reject) {

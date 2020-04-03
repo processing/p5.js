@@ -4,23 +4,48 @@
 const exec = require('child_process').exec;
 
 module.exports = function(grunt) {
+  const opts = {
+    clean: {
+      bower: {
+        src: ['bower-repo/']
+      }
+    },
+    copy: {
+      main: {
+        expand: true,
+        src: ['lib/*.js', 'lib/addons/*'],
+        dest: 'bower-repo/lib/',
+        flatten: true
+      }
+    }
+  };
+
   grunt.registerTask(
     'release-bower',
     'Publishes the new release of p5.js on Bower',
     function() {
       // Async Task
       const done = this.async();
+
       // Keep the version handy
       const version = require('../../package.json').version;
+
       // Keep the release-party ready
       const releaseParty = grunt.config.get('bowerReleaser');
+
+      grunt.config.set('clean', opts.clean);
+      grunt.config.set('copy', opts.copy);
+
+      // Clean the Bower repo local folder
+      grunt.task.run('clean:bower');
+
       // Avoiding Callback Hell and using Promises
       new Promise((resolve, reject) => {
         // Clone the repo. NEEDS TO BE QUIET. Took 3 hours to realise this.
         // Otherwise the stdout screws up
         console.log('Cloning the Release repo ...');
         exec(
-          `rm -rf bower-repo/ && git clone -q \
+          `git clone -q \
           https://github.com/${releaseParty}/p5.js-release.git \
           bower-repo`,
           (err, stdout, stderr) => {
@@ -36,25 +61,9 @@ module.exports = function(grunt) {
       })
         .then(function(resolve, reject) {
           // Copy the lib to bower-repo.
-          // NOTE : Uses 'cp' of UNIX. Make sure it is unaliased in your .bashrc,
-          // otherwise it may prompt always for overwrite (not desirable)
           console.log('Copying new files ...');
-          return new Promise((resolve, reject) => {
-            exec(
-              'cp -R lib/*.js lib/addons bower-repo/lib',
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                if (stderr) {
-                  reject(stderr);
-                }
-                resolve();
-              }
-            );
-          });
-        })
-        .then((resolve, reject) => {
+          grunt.task.run('copy');
+
           // Git add, commit, push
           console.log('Pushing out changes ...');
           return new Promise(function(resolve, reject) {
