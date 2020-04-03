@@ -62,10 +62,10 @@ module.exports = function(grunt) {
       open('release/');
 
       // 2. Push the new lib files to the dist repo (to be referred as bower-repo here)
-      grunt.task.run('release-bower');
+      // grunt.task.run('release-bower');
 
       // 3. Push the docs out to the website
-      grunt.task.run('release-docs');
+      // grunt.task.run('release-docs');
     }
   );
 };
