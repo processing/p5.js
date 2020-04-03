@@ -1,5 +1,5 @@
 {
-  "name": "p5",
+  "name": "@limzykenneth/p5",
   "repository": "processing/p5.js",
   "scripts": {
     "grunt": "grunt",
