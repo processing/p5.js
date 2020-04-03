@@ -9,24 +9,9 @@ MUST HAVES BEFOREHAND :
 * 'minor', or 'major', corresponding to semver.
 */
 
-const release = require('release-it');
-
 module.exports = function(grunt) {
   // Options for this custom task
   const opts = {
-    releaseIt: {
-      options: {
-        'non-interactive': true,
-        'dry-run': false,
-        git: {
-          requireCleanWorkingDir: false
-        },
-        verbose: true,
-        hooks: {
-          'before:init': ['grunt yui && grunt build']
-        }
-      }
-    },
     compress: {
       main: {
         options: {
@@ -37,59 +22,36 @@ module.exports = function(grunt) {
     }
   };
 
-  // Wrapper around release-it, adapted from 'grunt-release-it'
-  grunt.registerTask('release-it', function(increment) {
-    const done = this.async();
-
-    const options = this.options();
-
-    options.increment = increment || options.increment;
-    options.verbose = grunt.option('verbose') === true || options.verbose;
-    options.debug = grunt.option('debug') === true || options.debug;
-    options.force = grunt.option('force') === true || options.force;
-    options['dry-run'] =
-      grunt.option('no-write') === true || options['dry-run'];
-
-    release(options)
-      .catch(grunt.fail.warn)
-      .finally(done);
-  });
-
   // Register the Release Task
   grunt.registerTask(
     'release-p5',
     'Drafts and Publishes a fresh release of p5.js',
     function(args) {
       // 0. Setup Config
-      // Default increment is patch (x.y.z+1)
-      opts.releaseIt.options.increment = args;
-      // Uncomment to set dry run as true for testing
-      // opts.releaseIt.options['dry-run'] = true;
-      grunt.config.set('release-it', opts.releaseIt);
       grunt.config.set('compress', opts.compress);
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.
       grunt.config.set('bowerReleaser', 'lmccart');
       grunt.config.set('docsReleaser', 'processing');
-      grunt.config.set('githubReleaser', 'processing');
 
       // 1. Test Suite
-      grunt.task.run('test');
+      // HANDLED BY NP
 
       // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
-      grunt.task.run('release-it');
+      // HANDLED BY NP
 
-      // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
-      grunt.task.run('release-bower');
-
-      // 4. Push the docs out to the website
-      grunt.task.run('release-docs');
-
-      // 5. Zip the lib folder
+      // 3. Zip the lib folder
+      // COULD BE POST BUILD STEP
       grunt.task.run('compress');
 
+      // 4. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // grunt.task.run('release-bower');
+
+      // 5. Push the docs out to the website
+      // grunt.task.run('release-docs');
+
       // 6. Draft a Release for GitHub
-      grunt.task.run('release-github');
+      // HANDLED BY NP, excluding assets upload
     }
   );
 };
