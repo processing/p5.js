@@ -18,7 +18,13 @@ module.exports = function(grunt) {
       release: {
         src: ['release/']
       },
-      reference: grunt.config.get('clean').reference
+      reference: grunt.config.get('clean').reference,
+      bower: {
+        src: ['bower-repo/']
+      },
+      website: {
+        src: ['p5-website/']
+      }
     },
     compress: {
       main: {
@@ -29,7 +35,7 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      main: {
+      release: {
         expand: true,
         src: [
           'lib/p5.js',
@@ -39,6 +45,42 @@ module.exports = function(grunt) {
         ],
         dest: 'release/',
         flatten: true
+      },
+      bower: {
+        files: [
+          {
+            expand: true,
+            src: ['lib/p5.js', 'lib/p5.min.js'],
+            dest: 'bower-repo/lib/'
+          },
+          {
+            expand: true,
+            src: 'lib/addons/*',
+            dest: 'bower-repo/lib/addons/'
+          }
+        ]
+      },
+      docs: {
+        files: [
+          {
+            expand: true,
+            src: ['docs/reference/data.json', 'docs/reference/data.min.json'],
+            dest: 'p5-website/src/templates/pages/reference/',
+            flatten: true
+          },
+          {
+            expand: true,
+            cwd: 'docs/reference/assets/',
+            src: '**',
+            dest: 'p5-website/src/templates/pages/reference/assets'
+          },
+          {
+            expand: true,
+            src: ['lib/p5.min.js', 'lib/addons/p5.sound.min.js'],
+            dest: 'p5-website/src/assets/js/',
+            flatten: true
+          }
+        ]
       }
     }
   };
@@ -52,16 +94,16 @@ module.exports = function(grunt) {
       grunt.config.set('clean', opts.clean);
       grunt.config.set('compress', opts.compress);
       grunt.config.set('copy', opts.copy);
+
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.
       grunt.config.set('bowerReleaser', 'lmccart');
       grunt.config.set('docsReleaser', 'processing');
 
       // 1. Zip the lib folder
-      // COULD BE POST BUILD STEP
-      grunt.task.run('clean:release');
+      grunt.task.run('clean');
       grunt.task.run('compress');
-      grunt.task.run('copy');
+      grunt.task.run('copy:release');
 
       // Open the folder of files to be uploaded for the release on github
       open('release/');
