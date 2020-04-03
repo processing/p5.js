@@ -72,6 +72,7 @@
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
     "mocha": "^6.2.2",
+    "np": "^6.2.0",
     "omggif": "^1.0.10",
     "opentype.js": "^0.9.0",
     "prettier": "^1.7.4",
