@@ -52,13 +52,7 @@ module.exports = function(grunt) {
       grunt.config.set('bowerReleaser', 'lmccart');
       grunt.config.set('docsReleaser', 'processing');
 
-      // 1. Test Suite
-      // HANDLED BY NP
-
-      // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
-      // HANDLED BY NP
-
-      // 3. Zip the lib folder
+      // 1. Zip the lib folder
       // COULD BE POST BUILD STEP
       grunt.task.run('clean');
       grunt.task.run('compress');
@@ -67,14 +61,11 @@ module.exports = function(grunt) {
       // Open the folder of files to be uploaded for the release on github
       open('release/');
 
-      // 4. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // 2. Push the new lib files to the dist repo (to be referred as bower-repo here)
       grunt.task.run('release-bower');
 
-      // 5. Push the docs out to the website
+      // 3. Push the docs out to the website
       grunt.task.run('release-docs');
-
-      // 6. Draft a Release for GitHub
-      // HANDLED BY NP, excluding assets upload
     }
   );
 };
