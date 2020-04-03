@@ -76,6 +76,7 @@
     "mocha": "^6.2.2",
     "np": "^6.2.0",
     "omggif": "^1.0.10",
+    "open": "^7.0.3",
     "opentype.js": "^0.9.0",
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",

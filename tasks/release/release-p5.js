@@ -9,15 +9,31 @@ MUST HAVES BEFOREHAND :
 * 'minor', or 'major', corresponding to semver.
 */
 
+const open = require('open');
+
 module.exports = function(grunt) {
   // Options for this custom task
   const opts = {
+    clean: ['release/'],
     compress: {
       main: {
         options: {
-          archive: 'p5.zip'
+          archive: 'release/p5.zip'
         },
         files: [{ cwd: 'lib/', src: ['**/*'], expand: true }]
+      }
+    },
+    copy: {
+      main: {
+        expand: true,
+        src: [
+          'lib/p5.js',
+          'lib/p5.min.js',
+          'lib/addons/p5.sound.js',
+          'lib/addons/p5.sound.min.js'
+        ],
+        dest: 'release/',
+        flatten: true
       }
     }
   };
@@ -28,7 +44,9 @@ module.exports = function(grunt) {
     'Drafts and Publishes a fresh release of p5.js',
     function(args) {
       // 0. Setup Config
+      grunt.config.set('clean', opts.clean);
       grunt.config.set('compress', opts.compress);
+      grunt.config.set('copy', opts.copy);
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.
       grunt.config.set('bowerReleaser', 'lmccart');
@@ -42,13 +60,18 @@ module.exports = function(grunt) {
 
       // 3. Zip the lib folder
       // COULD BE POST BUILD STEP
+      grunt.task.run('clean');
       grunt.task.run('compress');
+      grunt.task.run('copy');
+
+      // Open the folder of files to be uploaded for the release on github
+      open('release/');
 
       // 4. Push the new lib files to the dist repo (to be referred as bower-repo here)
-      // grunt.task.run('release-bower');
+      grunt.task.run('release-bower');
 
       // 5. Push the docs out to the website
-      // grunt.task.run('release-docs');
+      grunt.task.run('release-docs');
 
       // 6. Draft a Release for GitHub
       // HANDLED BY NP, excluding assets upload
