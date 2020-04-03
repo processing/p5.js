@@ -14,7 +14,12 @@ const open = require('open');
 module.exports = function(grunt) {
   // Options for this custom task
   const opts = {
-    clean: ['release/'],
+    clean: {
+      release: {
+        src: ['release/']
+      },
+      reference: grunt.config.get('clean').reference
+    },
     compress: {
       main: {
         options: {
@@ -54,7 +59,7 @@ module.exports = function(grunt) {
 
       // 1. Zip the lib folder
       // COULD BE POST BUILD STEP
-      grunt.task.run('clean');
+      grunt.task.run('clean:release');
       grunt.task.run('compress');
       grunt.task.run('copy');
 
@@ -65,6 +70,7 @@ module.exports = function(grunt) {
       grunt.task.run('release-bower');
 
       // 3. Push the docs out to the website
+      grunt.task.run('yui');
       grunt.task.run('release-docs');
     }
   );
