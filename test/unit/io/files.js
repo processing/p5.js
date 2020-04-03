@@ -503,14 +503,14 @@ suite('Files', function() {
       );
     });
 
-    test('missing param #1', function() {
+    testUnMinified('missing param #1', function() {
       assert.validationError(function() {
         let strings = ['some', 'words'];
         myp5.saveStrings(strings);
       });
     });
 
-    test('wrong param type at #0', function() {
+    testUnMinified('wrong param type at #0', function() {
       assert.validationError(function() {
         let strings = 'some words';
         myp5.saveStrings(strings);
@@ -586,14 +586,14 @@ suite('Files', function() {
       );
     });
 
-    test('missing param #1', function() {
+    testUnMinified('missing param #1', function() {
       assert.validationError(function() {
         let myObj = { hi: 'hello' };
         myp5.saveJSON(myObj);
       });
     });
 
-    test('wrong param type at #0', function() {
+    testUnMinified('wrong param type at #0', function() {
       assert.validationError(function() {
         let myObj = 'some words';
         myp5.saveJSON(myObj);
@@ -616,7 +616,7 @@ suite('Files', function() {
     );
   });
 
-  // writeFile
+  // writeFile()
   suite('p5.prototype.writeFile', function() {
     test('should be a function', function() {
       assert.ok(myp5.writeFile);
@@ -636,7 +636,7 @@ suite('Files', function() {
     );
   });
 
-  // downloadFile
+  // downloadFile()
   suite('p5.prototype.downloadFile', function() {
     test('should be a function', function() {
       assert.ok(myp5.writeFile);
@@ -654,5 +654,186 @@ suite('Files', function() {
       },
       true // asyncFn = true
     );
+  });
+
+  // save()
+  suite('p5.prototype.save', function() {
+    suite('saving images', function() {
+      let waitForBlob = async function(blc) {
+        let sleep = function(ms) {
+          return new Promise(r => setTimeout(r, ms));
+        };
+        while (!blc.blob) {
+          await sleep(5);
+        }
+      };
+      setup(function(done) {
+        myp5.createCanvas(20, 20);
+        myp5.background(255, 0, 0);
+        done();
+      });
+
+      test('should be a function', function() {
+        assert.ok(myp5.save);
+        assert.typeOf(myp5.save, 'function');
+      });
+
+      testWithDownload(
+        'should download a png file',
+        async function(blobContainer) {
+          myp5.save();
+          await waitForBlob(blobContainer);
+          let myBlob = blobContainer.blob;
+          assert.strictEqual(myBlob.type, 'image/png');
+
+          blobContainer.blob = null;
+          let gb = myp5.createGraphics(100, 100);
+          myp5.save(gb);
+          await waitForBlob(blobContainer);
+          myBlob = blobContainer.blob;
+          assert.strictEqual(myBlob.type, 'image/png');
+        },
+        true
+      );
+
+      testWithDownload(
+        'should download a jpg file',
+        async function(blobContainer) {
+          myp5.save('filename.jpg');
+          await waitForBlob(blobContainer);
+          let myBlob = blobContainer.blob;
+          assert.strictEqual(myBlob.type, 'image/jpeg');
+
+          blobContainer.blob = null;
+          let gb = myp5.createGraphics(100, 100);
+          myp5.save(gb, 'filename.jpg');
+          await waitForBlob(blobContainer);
+          myBlob = blobContainer.blob;
+          assert.strictEqual(myBlob.type, 'image/jpeg');
+        },
+        true
+      );
+    });
+
+    suite('saving strings and json', function() {
+      testWithDownload(
+        'should download a text file',
+        async function(blobContainer) {
+          let myStrings = ['aaa', 'bbb'];
+          myp5.save(myStrings, 'filename');
+          let myBlob = blobContainer.blob;
+          let text = await myBlob.text();
+          assert.strictEqual(text, myStrings.join('\n') + '\n');
+        },
+        true
+      );
+
+      testWithDownload(
+        'should download a json file',
+        async function(blobContainer) {
+          let myObj = { hi: 'hello' };
+          myp5.save(myObj, 'filename.json');
+          let myBlob = blobContainer.blob;
+          let text = await myBlob.text();
+          let outObj = JSON.parse(text);
+          assert.deepEqual(outObj, myObj);
+        },
+        true
+      );
+    });
+
+    suite('saving tables', function() {
+      let validFile = 'unit/assets/csv.csv';
+      let myTable;
+      setup(function loadMyTable(done) {
+        myp5.loadTable(validFile, 'csv', 'header', function(table) {
+          myTable = table;
+          done();
+        });
+      });
+      testWithDownload(
+        'should download a csv file',
+        async function(blobContainer) {
+          myp5.save(myTable, 'filename.csv');
+          let myBlob = blobContainer.blob;
+          let text = await myBlob.text();
+          let myTableStr = myTable.columns.join(',') + '\n';
+          for (let i = 0; i < myTable.rows.length; i++) {
+            myTableStr += myTable.rows[i].arr.join(',') + '\n';
+          }
+          assert.strictEqual(text, myTableStr);
+
+          myp5.save(myTable, 'filename', 'csv');
+          myBlob = blobContainer.blob;
+          text = await myBlob.text();
+          assert.strictEqual(text, myTableStr);
+        },
+        true
+      );
+      testWithDownload(
+        'should download a tsv file',
+        async function(blobContainer) {
+          myp5.save(myTable, 'filename.tsv');
+          let myBlob = blobContainer.blob;
+          let text = await myBlob.text();
+          let myTableStr = myTable.columns.join('\t') + '\n';
+          for (let i = 0; i < myTable.rows.length; i++) {
+            myTableStr += myTable.rows[i].arr.join('\t') + '\n';
+          }
+          assert.strictEqual(text, myTableStr);
+
+          myp5.save(myTable, 'filename', 'tsv');
+          myBlob = blobContainer.blob;
+          text = await myBlob.text();
+          assert.strictEqual(text, myTableStr);
+        },
+        true
+      );
+
+      testWithDownload(
+        'should download an html file',
+        async function(blobContainer) {
+          myp5.save(myTable, 'filename.html');
+          let myBlob = blobContainer.blob;
+          let text = await myBlob.text();
+          let domparser = new DOMParser();
+          let htmldom = domparser.parseFromString(text, 'text/html');
+          let trs = htmldom.querySelectorAll('tr');
+          for (let i = 0; i < trs.length; i++) {
+            let tds = trs[i].querySelectorAll('td');
+            for (let j = 0; j < tds.length; j++) {
+              let tdText = tds[j].innerHTML.trim().replace(/\n/g, '');
+              let tbText;
+              if (i === 0) {
+                tbText = myTable.columns[j].trim().replace(/\n/g, '');
+              } else {
+                tbText = myTable.rows[i - 1].arr[j].trim().replace(/\n/g, '');
+              }
+              assert.strictEqual(tdText, tbText);
+            }
+          }
+
+          myp5.save(myTable, 'filename', 'html');
+          myBlob = blobContainer.blob;
+          text = await myBlob.text();
+          htmldom = domparser.parseFromString(text, 'text/html');
+          trs = htmldom.querySelectorAll('tr');
+          for (let i = 0; i < trs.length; i++) {
+            let tds = trs[i].querySelectorAll('td');
+            for (let j = 0; j < tds.length; j++) {
+              let tdText = tds[j].innerHTML.trim().replace(/\n/g, '');
+              let tbText;
+              if (i === 0) {
+                tbText = myTable.columns[j].trim().replace(/\n/g, '');
+              } else {
+                tbText = myTable.rows[i - 1].arr[j].trim().replace(/\n/g, '');
+              }
+              assert.strictEqual(tdText, tbText);
+            }
+          }
+        },
+        true
+      );
+    });
   });
 });

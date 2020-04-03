@@ -36,11 +36,6 @@ suite('saveTable', function() {
     assert.typeOf(myp5.saveTable, 'function');
   });
 
-  test('should be a function', function() {
-    assert.ok(myp5.saveTable);
-    assert.typeOf(myp5.saveTable, 'function');
-  });
-
   test('no friendly-err-msg I', function() {
     assert.doesNotThrow(
       function() {
