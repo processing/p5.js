@@ -2,6 +2,7 @@
 // for Bower and release of reference on the website.
 
 const open = require('open');
+const spawn = require('child_process').spawnSync;
 
 module.exports = function(grunt) {
   // Register the Release Task
@@ -9,6 +10,15 @@ module.exports = function(grunt) {
     'release-p5',
     'Drafts and Publishes a fresh release of p5.js',
     function(args) {
+      spawn(
+        'npx np',
+        grunt.option('preview') ? ['--any-branch', '--preview'] : [],
+        {
+          stdio: 'inherit',
+          shell: true
+        }
+      );
+
       // 0. Setup Config
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.

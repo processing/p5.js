@@ -23,7 +23,12 @@ module.exports = function(grunt) {
         // Copy the new docs over
         console.log('Copying new docs ...');
         grunt.task.run('copy:docs');
-        grunt.task.run('docs-push');
+
+        if (!grunt.option('preview')) {
+          grunt.task.run('docs-push');
+        } else {
+          console.log('Preview: skipping push to website repository');
+        }
 
         done();
       } catch (err) {

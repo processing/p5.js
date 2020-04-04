@@ -24,7 +24,12 @@ module.exports = function(grunt) {
         // Copy the lib to bower-repo.
         console.log('Copying new files ...');
         grunt.task.run('copy:bower');
-        grunt.task.run('bower-push');
+
+        if (!grunt.option('preview')) {
+          grunt.task.run('bower-push');
+        } else {
+          console.log('Preview: skipping push to Bower repository');
+        }
 
         done();
       } catch (err) {
