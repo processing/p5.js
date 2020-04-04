@@ -22,8 +22,14 @@ module.exports = function(grunt) {
       // 0. Setup Config
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.
-      grunt.config.set('bowerReleaser', 'lmccart');
-      grunt.config.set('docsReleaser', 'processing');
+      grunt.config.set(
+        'bowerReleaser',
+        grunt.option('bowerReleaser') || 'lmccart'
+      );
+      grunt.config.set(
+        'docsReleaser',
+        grunt.option('docsReleaser') || 'processing'
+      );
 
       // 1. Zip the lib folder
       grunt.task.run('clean');

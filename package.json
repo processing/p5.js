@@ -1,5 +1,5 @@
 {
-  "name": "@limzykenneth/p5",
+  "name": "p5",
   "repository": "processing/p5.js",
   "scripts": {
     "grunt": "grunt",
@@ -15,8 +15,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
-    "release": "np",
-    "postrelease": "grunt release-p5"
+    "release": "grunt release-p5"
   },
   "lint-staged": {
     "ignore": [
