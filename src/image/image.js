@@ -12,13 +12,6 @@
 import p5 from '../core/main';
 import omggif from 'omggif';
 
-// This is not global, but ESLint is not aware that
-// this module is implicitly enclosed with Browserify: this overrides the
-// redefined-global error and permits using the name "frames" for the array
-// of saved animation frames.
-
-/* global frames:true */ let frames = []; // eslint-disable-line no-unused-vars
-
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
@@ -472,8 +465,9 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 
   const makeFrame = p5.prototype._makeFrame;
   const cnv = this._curElement.elt;
+  let frames = [];
   const frameFactory = setInterval(() => {
-    makeFrame(fName + count, ext, cnv);
+    frames.push(makeFrame(fName + count, ext, cnv));
     count++;
   }, 1000 / fps);
 
@@ -525,7 +519,7 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   thisFrame.imageData = imageData;
   thisFrame.filename = filename;
   thisFrame.ext = extension;
-  frames.push(thisFrame);
+  return thisFrame;
 };
 
 export default p5;
