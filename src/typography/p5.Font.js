@@ -95,41 +95,62 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   }
 
   if (!result) {
-    let minX;
-    let minY;
-    let maxX;
-    let maxY;
-    let pos;
-    const xCoords = [];
-    const yCoords = [];
-    const scale = this._scale(fontSize);
+    var minX = [];
+    var minY;
+    var maxX = [];
+    var maxY;
+    var pos;
+    var xCoords = [];
+    xCoords[0] = [];
+    var yCoords = [];
+    var scale = this._scale(fontSize);
+    var lineCount = 0;
+    var lineHeight = p._renderer.textLeading();
 
-    this.font.forEachGlyph(
-      str,
-      x,
-      y,
-      fontSize,
-      opts,
-      (glyph, gX, gY, gFontSize) => {
-        const gm = glyph.getMetrics();
-        xCoords.push(gX + gm.xMin * scale);
-        xCoords.push(gX + gm.xMax * scale);
-        yCoords.push(gY + -gm.yMin * scale);
-        yCoords.push(gY + -gm.yMax * scale);
+    this.font.forEachGlyph(str, x, y, fontSize, opts, function(
+      glyph,
+      gX,
+      gY,
+      gFontSize
+    ) {
+      var gm = glyph.getMetrics();
+      if (glyph.index === 0 || glyph.index === 10) {
+        lineCount += 1;
+        xCoords[lineCount] = [];
+      } else {
+        xCoords[lineCount].push(gX + gm.xMin * scale);
+        xCoords[lineCount].push(gX + gm.xMax * scale);
+        yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
+        yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
       }
-    );
+    });
 
-    minX = Math.min.apply(null, xCoords);
+    if (xCoords[lineCount].length > 0) {
+      minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
+      maxX[lineCount] = Math.max.apply(null, xCoords[lineCount]);
+    }
+
+    var finalMaxX = 0;
+    for (var i = 0; i <= lineCount; i++) {
+      minX[i] = Math.min.apply(null, xCoords[i]);
+      maxX[i] = Math.max.apply(null, xCoords[i]);
+
+      var lineLength = maxX[i] - minX[i];
+      if (lineLength > finalMaxX) {
+        finalMaxX = lineLength;
+      }
+    }
+
+    var finalMinX = Math.min.apply(null, minX);
     minY = Math.min.apply(null, yCoords);
-    maxX = Math.max.apply(null, xCoords);
     maxY = Math.max.apply(null, yCoords);
 
     result = {
-      x: minX,
+      x: finalMinX,
       y: minY,
       h: maxY - minY,
-      w: maxX - minX,
-      advance: minX - x
+      w: finalMaxX,
+      advance: finalMinX - x
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
