@@ -136,7 +136,6 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
     for (var i = 0; i <= lineCount; i++) {
       minX[i] = Math.min.apply(null, xCoords[i]);
       maxX[i] = Math.max.apply(null, xCoords[i]);
-
       var lineLength = maxX[i] - minX[i];
       if (lineLength > finalMaxX) {
         finalMaxX = lineLength;
