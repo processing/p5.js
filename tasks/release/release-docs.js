@@ -1,82 +1,59 @@
 /* Grunt Task to Release the DOcs on website repo */
 
-// Using native exec instead of Grunt spawn so as to utilise Promises
-const exec = require('child_process').exec;
+const git = require('simple-git/promise');
 
 module.exports = function(grunt) {
   grunt.registerTask(
     'release-docs',
     'Publishes the new docs of p5.js on the website',
-    function() {
+    async function() {
       // Async Task
       const done = this.async();
-      // Keep the version handy
-      const version = require('../../package.json').version;
+
       // Keep the release-party ready
       const releaseParty = grunt.config.get('docsReleaser');
-      // Avoiding Callback Hell and using Promises
-      new Promise((resolve, reject) => {
-        // Clone the website locally
-        console.log('Cloning the website ...');
-        exec(
-          `rm -rf p5-website/ && \
-          git clone -q https://github.com/${releaseParty}/p5.js-website.git \
-          p5-website`,
-          (err, stdout, stderr) => {
-            if (err) {
-              reject(err);
-            }
-            console.log(stdout);
-            resolve();
-          }
+
+      try {
+        // Avoiding Callback Hell and using async/await
+        await git().clone(
+          `https://github.com/${releaseParty}/p5.js-website.git`,
+          'p5-website'
         );
-      })
-        .then(function() {
-          // Copy the new docs over
-          const src = 'docs/reference';
-          const dest = 'p5-website/src/templates/pages/reference/';
-          console.log('Copying new docs ...');
-          return new Promise(function(resolve, reject) {
-            exec(
-              `(cp ${src}/data.json ${src}/data.min.json ${dest}) &&
-               (cp -r ${src}/assets ${dest}) &&
-               (cp lib/p5.min.js lib/addons/p5.sound.min.js p5-website/src/assets/js/)`,
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                console.log(stdout);
-                resolve();
-              }
-            );
-          });
-        })
-        .then(() => {
-          // Add, Commit, Push
-          console.log('Pushing to GitHub ...');
-          return new Promise(function(resolve, reject) {
-            exec(
-              `git add --all && \
-              git commit -am "Updated Reference for version ${version}" && \
-              git push`,
-              { cwd: './p5-website' },
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                console.log(stdout);
-                resolve();
-              }
-            );
-          });
-        })
-        .then(() => {
-          console.log('Released Docs on Website!');
-          done();
-        })
-        .catch(function(err) {
-          throw new Error(err);
-        });
+
+        // Copy the new docs over
+        console.log('Copying new docs ...');
+        grunt.task.run('copy:docs');
+
+        if (!grunt.option('preview')) {
+          grunt.task.run('docs-push');
+        } else {
+          console.log('Preview: skipping push to website repository');
+        }
+
+        done();
+      } catch (err) {
+        console.log('Failed to release docs!');
+        throw new Error(err);
+      }
     }
   );
+
+  grunt.registerTask('docs-push', async function() {
+    const done = this.async();
+    const version = require('../../package.json').version;
+
+    try {
+      // Add, Commit, Push
+      console.log('Pushing to GitHub ...');
+      await git('p5-website').add('.');
+      await git('p5-website').commit(version);
+      await git('p5-website').push('origin', 'master');
+
+      console.log('Released Docs on Website!');
+      done();
+    } catch (err) {
+      console.log('Failed to release docs!');
+      throw new Error(err);
+    }
+  });
 };

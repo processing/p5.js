@@ -15,7 +15,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
-    "precommit": "lint-staged"
+    "release": "grunt release-p5"
   },
   "lint-staged": {
     "ignore": [
@@ -65,14 +65,16 @@
     "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
     "grunt-simple-nyc": "^3.0.1",
-    "husky": "^0.14.3",
+    "husky": "^4.2.3",
     "i18next": "^19.0.2",
     "i18next-browser-languagedetector": "^4.0.1",
     "libtess": "^1.2.2",
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
     "mocha": "^6.2.2",
+    "np": "^6.2.0",
     "omggif": "^1.0.10",
+    "open": "^7.0.3",
     "opentype.js": "^0.9.0",
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
@@ -80,6 +82,7 @@
     "regenerator-runtime": "^0.13.3",
     "release-it": "^12.6.2",
     "request": "^2.88.0",
+    "simple-git": "^1.132.0",
     "whatwg-fetch": "^2.0.4"
   },
   "license": "LGPL-2.1",
@@ -142,5 +145,10 @@
     "not dead"
   ],
   "author": "",
-  "dependencies": {}
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
 }
