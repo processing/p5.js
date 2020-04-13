@@ -30,7 +30,7 @@ p5.Font = function(p) {
 
 /**
  * Returns a tight bounding box for the given text string using this
- * font (currently only supports single lines)
+ * font
  *
  * @method textBounds
  * @param  {String} line     a line of text
@@ -95,35 +95,37 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   }
 
   if (!result) {
-    var minX = [];
-    var minY;
-    var maxX = [];
-    var maxY;
-    var pos;
-    var xCoords = [];
+    let minX = [];
+    let minY;
+    let maxX = [];
+    let maxY;
+    let pos;
+    const xCoords = [];
     xCoords[0] = [];
-    var yCoords = [];
-    var scale = this._scale(fontSize);
-    var lineCount = 0;
-    var lineHeight = p._renderer.textLeading();
+    const yCoords = [];
+    const scale = this._scale(fontSize);
+    const lineHeight = p._renderer.textLeading();
+    let lineCount = 0;
 
-    this.font.forEachGlyph(str, x, y, fontSize, opts, function(
-      glyph,
-      gX,
-      gY,
-      gFontSize
-    ) {
-      var gm = glyph.getMetrics();
-      if (glyph.index === 0 || glyph.index === 10) {
-        lineCount += 1;
-        xCoords[lineCount] = [];
-      } else {
-        xCoords[lineCount].push(gX + gm.xMin * scale);
-        xCoords[lineCount].push(gX + gm.xMax * scale);
-        yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
-        yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+    this.font.forEachGlyph(
+      str,
+      x,
+      y,
+      fontSize,
+      opts,
+      (glyph, gX, gY, gFontSize) => {
+        const gm = glyph.getMetrics();
+        if (glyph.index === 0 || glyph.index === 10) {
+          lineCount += 1;
+          xCoords[lineCount] = [];
+        } else {
+          xCoords[lineCount].push(gX + gm.xMin * scale);
+          xCoords[lineCount].push(gX + gm.xMax * scale);
+          yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
+          yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+        }
       }
-    });
+    );
 
     if (xCoords[lineCount].length > 0) {
       minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
