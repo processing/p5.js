@@ -9,5 +9,5 @@
 - [p5.js](https://github.com/processing/p5.js)：包括了p5.js源代码。[面向用户的p5.js参考手册](https://p5js.org/reference/)也是由包含在此源代码中的[JSDoc](http://usejsdoc.org/)生成的。它归[Lauren Lee McCarthy](https://github.com/lmccart)所有。
 - [p5.js-website](https://github.com/processing/p5.js-website)：此源代码包含了[p5.js website](http://p5js.org)的大多数代码（除参考手册外）。它归[Lauren Lee McCarthy](https://github.com/lmccart)所有。
 - [p5.js-sound](https://github.com/processing/p5.js-sound)：包括了p5.sound.js库。归[Jason Sigal](https://github.com/therewasaguy)所有。
-- [p5.js-web-editor](https://github.com/processing/p5.js-web-editor) This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
-- [p5.accessibility](https://github.com/processing/p5.accessibility) A library that makes the p5 canvas more accessible to people who are blind and visually impaired.
+- [p5.js-web-editor](https://github.com/processing/p5.js-web-editor)：包含了[p5.js web editor](https://editor.p5js.org)的源代码。 归[Cassie Tarakajian](https://github.com/catarak)所有。请注意，旧版[p5.js editor](https://github.com/processing/p5.js-editor)已不再支持。
+- [p5.accessibility](https://github.com/processing/p5.accessibility)：使p5.js更适合盲人和视障人士使用的库。
