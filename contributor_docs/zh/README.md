@@ -38,11 +38,61 @@
 
 * [organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md)文件提供了有关如何组织问题以及决策过程的高级概述。 如果您有兴趣，欢迎您参与。
 
-# Documentation
+# 文档
 
-We realize the documentation is the most important part of this project. Poor documentation is one of the main barriers to access for new users and contributors, making the project less inclusive. The [contributing_documentation.md](./contributing_documentation.md) page gives an in-depth overview of getting started with documentation. The documentation for p5.js can be found in a few main places:
+我们意识到文档是这个项目中最重要的部分。不好的文档是接受新用户与贡献者的最重要的屏障，让项目不具有包容性。[contributing_documentation.md](./contributing_documentation.md) 页面为开始修改文档给出了一个深入的导览。p5.js的文档可以在以下几个地方找到：
 
-- The [p5js.org/reference](https://p5js.org/reference/) is generated from [inline documentation](./inline_documentation.md) in the source code itself. This includes the text descriptions and parameters as well as the accompanying code snippet examples. We place all this inline to keep the code and documentation closely linked, and to reinforce the idea that contributing to documentation is as important (if not more) than contributing to the code. When the library gets built, it checks the inline documentation and examples to ensure they match up with the way the code behaves. To contribute, you can start by looking at the [inline_documentation.md](./inline_documentation.md) page.
-- The [p5js.org/examples](http://p5js.org/examples) page contains longer examples that can be useful for learning p5.js. To contribute, you can start by looking at the [adding_examples.md](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) page.
-- The [p5js.org/learn](https://p5js.org/learn) page contains tutorials to help you learn concepts of p5.js and programming. To contribute, you can start by looking at the [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html).
-- You'll notice the p5.js website currently supports a few different languages. This is called internationalization (or i18n for short). You can read more about this documentation on the [i18n_contribution](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) page.
+- [p5js.org/reference](https://p5js.org/reference/) ：由[inline documentation](./inline_documentation.md) 的源代码生成。它包括了文本描述和参数以及随附的代码片段示例。 我们将所有这些内联放置在内部，以使代码和文档保持紧密的联系，并强化这样的思想，即对文档的贡献与对代码的贡献同等重要（如果不更多）。 构建库后，它将检查内联文档和示例，以确保它们与代码的行为方式匹配。 要做出贡献，您可以先查看[inline_documentation.md](./inline_documentation.md) 页面。
+- [p5js.org/examples](http://p5js.org/examples) 页面包含更长的示例，这些示例对于学习p5.js可能有用。 要做出贡献，您可以先查看[adding_examples.md](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md)。
+- [p5js.org/learn](https://p5js.org/learn) 页面包含可帮助您学习p5.js和编程概念的教程。 要做出贡献，您可以先查看 [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html)。
+- 您会注意到p5.js网站目前支持几种不同的语言。 这称为国际化。您可以在[i18n_contribution](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md)了解更多。
+
+# Development Process
+
+We know the development process can be a little tricky at first. You're not alone, it's confusing for everyone at the beginning. The steps below walk you through the setup process. If you have questions, you can ask on the [forum](https://discourse.processing.org/c/p5js) or post an [issue](https://github.com/processing/p5.js/issues) that describes the place you are stuck, and we'll do our best to help.
+
+This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
+
+
+
+1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
+
+2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
+
+3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer.
+
+   ```
+   $ git clone https://github.com/YOUR_USERNAME/p5.js.git
+   ```
+
+4. Navigate into the project folder and install all its necessary dependencies with npm.
+
+   ```
+   $ cd p5.js
+   $ npm ci
+   ```
+
+5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
+
+   ```
+   $ npm run grunt
+   ```
+
+   If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
+
+6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
+
+   ```
+   $ git add -u
+   $ git commit -m "YOUR COMMIT MESSAGE"
+   ```
+
+7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
+
+8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
+
+   ```
+   $ git push
+   ```
+
+9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
