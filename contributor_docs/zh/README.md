@@ -11,3 +11,15 @@
 - [p5.js-sound](https://github.com/processing/p5.js-sound)：包括了p5.sound.js库。归[Jason Sigal](https://github.com/therewasaguy)所有。
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor)：包含了[p5.js web editor](https://editor.p5js.org)的源代码。 归[Cassie Tarakajian](https://github.com/catarak)所有。请注意，旧版[p5.js editor](https://github.com/processing/p5.js-editor)已不再支持。
 - [p5.accessibility](https://github.com/processing/p5.accessibility)：使p5.js更适合盲人和视障人士使用的库。
+
+# 文件结构
+
+这个repo有很多文件，所以这里提供了文件总览。有些文件可能很难懂——不过在你开始之前，你不需要每一个都看懂。我们建议你先从一个特定领域入手（例如说，修复某些内联文档），并努力地探索更多领域。Luisa Pereira的[Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)也给出了p5.js工具与文件的视频总览。
+
+- `contributor_docs/` 包含了贡献者所需遵循的原则；
+- `docs/` 并不包含文档！它包含了 _*生成*_ [线上参考手册](https://p5js.org/reference/)的代码；
+- `lib/` 包含一个空示例和the p5.sound扩展功能，并且会周期性地通过[p5.js-sound repository](https://github.com/processing/p5.js-sound)更新。这里也是当用[Grunt](https://gruntjs.com/)把p5.js编译到单个文件后p5.js的位置。发出Pull request时，无需将其检入GitHub存储库。
+- `src/` 包含该库的所有源代码，这些源代码通常组织成多个单独的模块。 如果要更改p5.js，这就是您要进行的工作。 大多数文件夹内部都有自己的readme.md文件，以帮助您找到解决方法。
+- `tasks/` 包含执行与新版本p5.js的构建，部署和发行有关的自动化任务的脚本。
+- `tests/` 包含单元测试，这些单元测试可确保库随着更改而继续正常运行。
+- `utils/` 可能包含对存储库有用的其他文件，但是通常您可以忽略此目录。
