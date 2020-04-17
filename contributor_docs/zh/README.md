@@ -47,52 +47,48 @@
 - [p5js.org/learn](https://p5js.org/learn) 页面包含可帮助您学习p5.js和编程概念的教程。 要做出贡献，您可以先查看 [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html)。
 - 您会注意到p5.js网站目前支持几种不同的语言。 这称为国际化。您可以在[i18n_contribution](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md)了解更多。
 
-# Development Process
+# 开发过程
 
-We know the development process can be a little tricky at first. You're not alone, it's confusing for everyone at the beginning. The steps below walk you through the setup process. If you have questions, you can ask on the [forum](https://discourse.processing.org/c/p5js) or post an [issue](https://github.com/processing/p5.js/issues) that describes the place you are stuck, and we'll do our best to help.
+我们知道开发过程会很难——不只是你一个人，所有人一开始都会这么觉得。你可以遵循下面的步骤来设置；如果遇到了问题，你可以在[论坛](https://discourse.processing.org/c/p5js)上讨论或发布一个关于你的问题的[issue](https://github.com/processing/p5.js/issues)，我们会尽力帮助你的。
 
-This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
+1. 下载[node.js](http://nodejs.org/)（同时下载[npm](https://www.npmjs.org)软件包管理器）
 
+2. 将[p5.js repository](https://github.com/processing/p5.js)[Fork](https://help.github.com/articles/fork-a-repo)到你的GitHub账号
 
-
-1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
-
-2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
-
-3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer.
+3. [复制](https://help.github.com/articles/cloning-a-repository/)你对于此repo的新fork到本地：
 
    ```
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
-4. Navigate into the project folder and install all its necessary dependencies with npm.
+4. 导航到项目文件夹，并使用npm安装其所有必需的依赖项。
 
    ```
    $ cd p5.js
    $ npm ci
    ```
 
-5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
+5. [Grunt](https://gruntjs.com/)需要被安装，您可以使用它从源代码构建库。
 
    ```
    $ npm run grunt
    ```
 
-   If you're continuously changing files in the library, you may want to run `npm run dev` to automatically rebuild the library for you whenever any of its source files change without you having to first type the command manually.
+   如果您要不断更改库中的文件，则可能需要运行`npm run dev`以便在源文件发生任何更改时自动为您重建库，而无需先手动键入命令。
 
-6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
+6. 做一些codebase的本地更改然后用Git[commit](https://help.github.com/articles/github-glossary/#commit)它们。
 
    ```
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
 
-7. Run `npm run grunt` again to make sure there are no syntax errors, test failures, or other problems.
+7.再次运行 `npm run grunt`确保没有语法错误，测试失败或其他问题。
 
-8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
+8. [Push](https://help.github.com/articles/github-glossary/#push)您对GitHub上的fork的新更改。
 
    ```
    $ git push
    ```
 
-9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
+9. 一切准备就绪后，以[pull request](https://help.github.com/articles/creating-a-pull-request)发布。
