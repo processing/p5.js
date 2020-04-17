@@ -83,7 +83,7 @@
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
 
-7.再次运行 `npm run grunt`确保没有语法错误，测试失败或其他问题。
+7. 再次运行 `npm run grunt`确保没有语法错误，测试失败或其他问题。
 
 8. [Push](https://help.github.com/articles/github-glossary/#push)您对GitHub上的fork的新更改。
 
