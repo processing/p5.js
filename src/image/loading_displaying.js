@@ -25,6 +25,9 @@ import '../core/error_helpers';
  * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
+ * <br><br>
+ * You can also pass in the string of a base64 encoded image as an alternative to the file path.
+ * Remember to add "data:image/png;base64," in front of the string.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
@@ -62,17 +65,17 @@ import '../core/error_helpers';
  * image of the underside of a white umbrella and grided ceililng above
  *
  */
-p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+p5.prototype.loadImage = function (path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
   const pImg = new p5.Image(1, 1, this);
   const self = this;
 
   const req = new Request(path, {
     method: 'GET',
-    mode: 'cors'
+    mode: 'cors',
   });
 
-  fetch(path, req).then(response => {
+  fetch(path, req).then((response) => {
     // GIF section
     const contentType = response.headers.get('content-type');
     if (contentType === null) {
@@ -82,7 +85,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     }
     if (contentType && contentType.includes('image/gif')) {
       response.arrayBuffer().then(
-        arrayBuffer => {
+        (arrayBuffer) => {
           if (arrayBuffer) {
             const byteArray = new Uint8Array(arrayBuffer);
             _createGif(
@@ -90,13 +93,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
               pImg,
               successCallback,
               failureCallback,
-              (pImg => {
+              ((pImg) => {
                 self._decrementPreload();
               }).bind(self)
             );
           }
         },
-        e => {
+        (e) => {
           if (typeof failureCallback === 'function') {
             failureCallback(e);
           } else {
@@ -121,7 +124,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         self._decrementPreload();
       };
 
-      img.onerror = e => {
+      img.onerror = (e) => {
         p5._friendlyFileLoadError(0, img.src);
         if (typeof failureCallback === 'function') {
           failureCallback(e);
@@ -192,7 +195,7 @@ function _createGif(
       pImg.drawingContext.putImageData(imageData, 0, 0);
       frames.push({
         image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-        delay: frameInfo.delay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+        delay: frameInfo.delay * 10, //GIF stores delay in one-hundredth of a second, shift to ms
       });
     }
 
@@ -217,7 +220,7 @@ function _createGif(
       frames,
       numFrames,
       playing: true,
-      timeDisplayed: 0
+      timeDisplayed: 0,
     };
   }
 
@@ -351,7 +354,7 @@ function _sAssign(sVal, iVal) {
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
  */
-p5.prototype.image = function(
+p5.prototype.image = function (
   img,
   dx,
   dy,
@@ -509,7 +512,7 @@ p5.prototype.image = function(
  * @method tint
  * @param  {p5.Color}      color   the tint color
  */
-p5.prototype.tint = function(...args) {
+p5.prototype.tint = function (...args) {
   p5._validateParameters('tint', args);
   const c = this.color(...args);
   this._renderer._tint = c.levels;
@@ -540,7 +543,7 @@ p5.prototype.tint = function(...args) {
  * 2 side by side images of bricks, left image with blue tint
  *
  */
-p5.prototype.noTint = function() {
+p5.prototype.noTint = function () {
   this._renderer._tint = null;
 };
 
@@ -553,7 +556,7 @@ p5.prototype.noTint = function() {
  * @return {canvas} The resulting tinted canvas
  *
  */
-p5.prototype._getTintedImageCanvas = function(img) {
+p5.prototype._getTintedImageCanvas = function (img) {
   if (!img.canvas) {
     return img;
   }
@@ -571,10 +574,10 @@ p5.prototype._getTintedImageCanvas = function(img) {
     const b = pixels[i + 2];
     const a = pixels[i + 3];
 
-    newPixels[i] = r * this._renderer._tint[0] / 255;
-    newPixels[i + 1] = g * this._renderer._tint[1] / 255;
-    newPixels[i + 2] = b * this._renderer._tint[2] / 255;
-    newPixels[i + 3] = a * this._renderer._tint[3] / 255;
+    newPixels[i] = (r * this._renderer._tint[0]) / 255;
+    newPixels[i + 1] = (g * this._renderer._tint[1]) / 255;
+    newPixels[i + 2] = (b * this._renderer._tint[2]) / 255;
+    newPixels[i + 3] = (a * this._renderer._tint[3]) / 255;
   }
 
   tmpCtx.putImageData(id, 0, 0);
@@ -646,7 +649,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * large square image of bricks
  *
  */
-p5.prototype.imageMode = function(m) {
+p5.prototype.imageMode = function (m) {
   p5._validateParameters('imageMode', arguments);
   if (
     m === constants.CORNER ||
