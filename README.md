@@ -366,6 +366,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/mjaything"><img src="https://avatars1.githubusercontent.com/u/13192500?v=4" width="100px;" alt=""/><br /><sub><b>Minjun Kim</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amjaything" title="Bug reports">🐛</a> <a href="#translation-mjaything" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/fisherdiede"><img src="https://avatars2.githubusercontent.com/u/11671032?s=400&u=212a5392a3a1d3c68a5c41527529fed19cb72e23&v=4" width="100px;" alt=""/><br /><sub><b>Fisher Diede</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fisherdiede" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/karinaxlpz"><img src="https://avatars2.githubusercontent.com/u/64159159?v=4" width="100px;" alt=""/><br /><sub><b>karinaxlpz</b></sub></a><br /><a href="#translation-karinaxlpz" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/SamuelAl"><img src="https://avatars3.githubusercontent.com/u/33717014?v=4" width="100px;" alt=""/><br /><sub><b>Samuel Alarco Cantos</b></sub></a><br /><a href="#translation-SamuelAl" title="Translation">🌍</a></td>
   </tr>
 </table>
 
