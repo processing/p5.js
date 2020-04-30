@@ -2,7 +2,7 @@
 
 # [p5.js](https://p5js.org)
 
- Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼 
+ Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
 p5.js is a JavaScript library for creative coding, with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else! p5.js is free and open-source because we believe software, and the tools to learn it, should be accessible to everyone.
 
@@ -366,6 +366,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/mjaything"><img src="https://avatars1.githubusercontent.com/u/13192500?v=4" width="100px;" alt=""/><br /><sub><b>Minjun Kim</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amjaything" title="Bug reports">🐛</a> <a href="#translation-mjaything" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/fisherdiede"><img src="https://avatars2.githubusercontent.com/u/11671032?s=400&u=212a5392a3a1d3c68a5c41527529fed19cb72e23&v=4" width="100px;" alt=""/><br /><sub><b>Fisher Diede</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fisherdiede" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/karinaxlpz"><img src="https://avatars2.githubusercontent.com/u/64159159?v=4" width="100px;" alt=""/><br /><sub><b>karinaxlpz</b></sub></a><br /><a href="#translation-karinaxlpz" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/banditelol"><img src="https://avatars2.githubusercontent.com/u/5263688?s=460&v=4" width="100px;" alt=""/><br /><sub><b>Aditya Rachman Putra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=banditelol" title="Documentation">📖</a></td>
   </tr>
 </table>
 
