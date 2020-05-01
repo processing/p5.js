@@ -368,6 +368,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/karinaxlpz"><img src="https://avatars2.githubusercontent.com/u/64159159?v=4" width="100px;" alt=""/><br /><sub><b>karinaxlpz</b></sub></a><br /><a href="#translation-karinaxlpz" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/SamuelAl"><img src="https://avatars3.githubusercontent.com/u/33717014?v=4" width="100px;" alt=""/><br /><sub><b>Samuel Alarco Cantos</b></sub></a><br /><a href="#translation-SamuelAl" title="Translation">🌍</a></td>
     <td align="center"><a href="http://divyanshuraj.co"><img src="https://avatars1.githubusercontent.com/u/43696525?v=4" width="100px;" alt=""/><br /><sub><b>DIVYANSHU RAJ</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=endurance21" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/sm7515"><img src="https://avatars1.githubusercontent.com/u/36653440?v=4" width="100px;" alt=""/><br /><sub><b>sm7515</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sm7515" title="Documentation">📖</a></td>
   </tr>
 </table>
 
