@@ -25,6 +25,9 @@ import '../core/error_helpers';
  * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
+
+ * You can also pass in a string of a base64 encoded image as an alternative to the file path.
+ * Remember to add "data:image/png;base64," in front of the string.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
