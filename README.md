@@ -373,6 +373,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/shaharyar-shamshi"><img src="https://avatars3.githubusercontent.com/u/17377195?v=4" width="100px;" alt=""/><br /><sub><b>shaharyarshamshi</b></sub></a><br /><a href="#translation-shaharyar-shamshi" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://ayushj.me"><img src="https://avatars3.githubusercontent.com/u/33171576?v=4" width="100px;" alt=""/><br /><sub><b>Ayush Jain</b></sub></a><br /><a href="#translation-ayushjainrksh" title="Translation">🌍</a></td>
   </tr>
 </table>
 
