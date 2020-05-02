@@ -371,6 +371,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/sm7515"><img src="https://avatars1.githubusercontent.com/u/36653440?v=4" width="100px;" alt=""/><br /><sub><b>sm7515</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sm7515" title="Documentation">📖</a></td>
     <td align="center"><a href="http://adityarp.com"><img src="https://avatars3.githubusercontent.com/u/5263688?v=4" width="100px;" alt=""/><br /><sub><b>Aditya Rachman Putra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=banditelol" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://ayushj.me"><img src="https://avatars3.githubusercontent.com/u/33171576?v=4" width="100px;" alt=""/><br /><sub><b>Ayush Jain</b></sub></a><br /><a href="#translation-ayushjainrksh" title="Translation">🌍</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
