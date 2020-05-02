@@ -1371,7 +1371,10 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector in radians(only 2D vectors)
+ * Calculate the angle of rotation for this vector(only 2D vectors).
+ * p5.Vectors created using <a src="#/p5/createVector">createVector()</a>
+ * will take the current <a = src="#/p5/angleMode">angleMode</a> into consideration, and give the angle
+ * in radians or degree accordingly.
  *
  * @method heading
  * @return {Number} the angle of rotation
