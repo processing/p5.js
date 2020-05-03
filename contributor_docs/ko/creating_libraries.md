@@ -15,7 +15,7 @@ p5.js 라이브러리는 p5.js의 핵심 기능을 확장하거나 추가하는 
   ```js
   p5.prototype.createImg = function (src) {
     const elt = document.createElement('img');
-    //const elt = new Image; // much shorter alt. to the 1 above.
+    //const elt = new Image; // 위에 1행보다 더 짧게 대체 할 수 있습니다.
 
     elt.src = src;
     return addElement(elt, this);
@@ -32,7 +32,7 @@ p5.js 라이브러리는 p5.js의 핵심 기능을 확장하거나 추가하는 
   ```js
   p5.Element.prototype.html = function (html) {
     this.elt.innerHTML = html;
-    //this.elt.textContent = html; // much safer alt. to innerHTML.
+    //this.elt.textContent = html; //innerHTML보다 훨씬 더 안전한 대안 입니다.
   };
   ```
 
@@ -47,32 +47,33 @@ p5.js 라이브러리는 p5.js의 핵심 기능을 확장하거나 추가하는 
 
 ### _callback_ 및 **preload()** 에 대한 비동기 함수의 예제.
 ```js
-// Example of async function for use in preload() or with callback.
+// preload() 또는 콜백과 함께 사용하기 위한 비동기 함수의 예제
 p5.prototype.getData = function (callback) {
 
-  // Create an object which will clone data from async function and return it.
-  // We will need to update that object below, not overwrite/reassign it.
-  // It is crucial for the preload() to keep the original pointer/reference.
-  // Declaring variables with const assures they won't be reassigned by mistake.
+  // 비동기 함수에서 데이터를 복제하고 반환할 객체를 만듭니다.
+  // 덮어쓰거나 재할당하지 않고, 아래 객체를 업데이트해야 합니다.
+  // preload()가 원래 포인터/레퍼런스를 유지하는 것이 중요합니다.
+  // const로 변수를 선언하면 실수로 재할당하는 경우를 방지해 줍니다.
   const ret = {};
 
-  // Some async function you are working with.
+  // 여러분이 작업할 비동기 함수의 일부입니다.
   loadDataFromSpace(function (data) {
 
-    // Loop through the properties in data.
+    // 데이터의 프로퍼티들을 반복합니다.
     for (let prop in data) {
-      // Set the ret's properties to be the data's properties (cloning).
-      // That is, update empty ret object with properties from received data.
-      // You CANNOT overwrite/reassign ret with another object though.
-      // Rather its content needs to be updated with the data.
+      // ret의 프로퍼티들을 데이터의 프로퍼티들로 설정(복제)합니다.
+      // 즉, 전달받은 데이터의 프로퍼티들로 빈 ret 객체를 업데이트합니다.
+      // 하지만 다른 객체로 ret을 덮어쓰거나 재할당할 수는 없습니다.
+      // 오히려 콘텐츠를 데이터로 업데이트해야 합니다.
       ret[prop] = data[prop];
     }
-    // Check whether callback is indeed a function.
+
+    // 콜백이 함수인지 아닌지 확인합니다.
     if (typeof callback == 'function') {
-      callback(data); // do the callback.
+      callback(data); // 콜백 실행
     }
   });
-  // Return the object which has been filled with the data above.
+  // 위의 데이터로 채워진 객체를 반환합니다.
   return ret;
 };
 ```
@@ -81,7 +82,7 @@ p5.prototype.getData = function (callback) {
 
   ```js
   p5.prototype.doRemoveStuff = function () { 
-    // library cleanup stuff
+    // 제거하는 기능을 위한 라이브러리
   };
   p5.prototype.registerMethod('remove', p5.prototype.doRemoveStuff);
   ```
