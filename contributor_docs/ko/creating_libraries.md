@@ -38,7 +38,7 @@ p5.js 라이브러리는 p5.js의 핵심 기능을 확장하거나 추가하는 
 
 ### preload()에서 호출 될 수 있도록 p5에 메소드 이름을 등록하려면 registerPreloadMethod()를 이용하세요.
 
-일반적으로 사운드, 이미지 또는 기타 외부 파일 로딩과 같은 일부 비동기 기능에는 동기 및 비동기 옵션이 모두 제공됩니다. 예를 들어, `loadStrings(path, [callback])` 은 두번째 매개변수로 옵셔널하게 콜백 함수를 허용합니다.이 함수는 loadStrings 함수가 완료된 후 호출됩니다. 그러나 사용자는 콜백함수없이 `preload()`에서 loadStrings를 호출 할 수 있으며 p5.js는 `preload()`의 모든 작업이 완료 될 때까지 기다렸다가 `setup()`으로 이동합니다. 메소드를 등록하고 싶다면, 등록하고자 하는 메소드명과 함께 `registerPreloadMethod()`를 호출하고, 프로토타입 객체를 ~~(기본값은 p5.prototype)~~ 포함하여 메소드에 전달합니다.
+일반적으로 소리, 이미지 또는 기타 외부 파일 로딩과 같은 일부 비동기 기능에는 동기 및 비동기 옵션이 모두 제공됩니다. 예를 들어, `loadStrings(path, [callback])` 은 두번째 매개변수로 선택적으로 콜백 함수를 허용합니다.이 함수는 loadStrings 함수가 완료된 후 호출됩니다. 그러나 사용자는 콜백함수 없이 `preload()`에서 loadStrings를 호출 할 수 있으며 p5.js는 `preload()`의 모든 작업이 완료 될 때까지 기다렸다가 `setup()`으로 이동합니다. 메소드를 등록하고 싶다면, 등록하고자 하는 메소드명과 함께 `registerPreloadMethod()`를 호출하고, 프로토타입 객체를 ~~(기본값은 p5.prototype)~~ 포함하여 메소드에 전달합니다.
 아래 예제는 "soundfile.js"(p5.sound 라이브러리)에 `loadSound()`를 등록하는 행 하나를 보여줍니다.
 
   ```js
@@ -88,10 +88,10 @@ p5.prototype.getData = function (callback) {
 
 등록 할 수있는 메소드 이름은 다음과 같습니다. 함수를 등록하기 전에 먼저 함수를 정의해야 할 수 있습니다.
 
-  * **pre** — `draw()` 시작시 호출 됩니다. 드로잉에 영향을 줄 수 있습니다.
-  * **post** — `draw()` 끝에 호출 됩니다.
+  * **pre** — `draw()` 시작 시 호출됩니다. 드로잉에 영향을 줄 수 있습니다.
+  * **post** — `draw()` 끝에 호출됩니다.
   * **remove** — `remove()`가 호출되면 호출됩니다.
-  * **init** — 스케치가 처음 초기화 될때 스케치 초기화 함수(`p5` 생성자로 전달 된 것)가 실행되기 전에 호출됩니다. 전역 모드 설정 전에 호출되기 때문에 여러분의 라이브러리는 스케치에 무엇이든 추가 할 수 있으며 전역 모드가 활성화되어 있으면 자동으로 `window `에 복사됩니다.
+  * **init** — 스케치가 처음 초기화 될 때 스케치 초기화 함수(`p5` 생성자로 전달 된 것)가 실행되기 전에 호출됩니다. 전역 모드 설정 전에 호출되기 때문에 여러분의 라이브러리는 스케치에 무엇이든 추가 할 수 있으며 전역 모드가 활성화되어 있으면 자동으로 `window `에 복사됩니다.
 
 이 목록을 대략적으로 정리하면 다음과 같습니다.
 https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
@@ -102,7 +102,7 @@ https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
 
 ## 작명
 
-* **p5 함수 또는 프로퍼티들을 덮어 쓰지 않아야 합니다..** p5.prototype을 확장 할 때는 기존 프로퍼티 또는 함수명을 사용하지 않도록 주의해야 합니다. [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) 를 사용하여 이름을 확인 해 볼 수 있습니다.
+* **p5 함수 또는 프로퍼티들을 덮어 쓰지 않아야 합니다..** p5.prototype을 확장 할 때는 기존 프로퍼티 또는 함수명을 사용하지 않도록 주의해야 합니다. [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) 를 사용하여 이름을 확인해 볼 수 있습니다.
 예를 들면, 여러분의 라이브러리 파일 맨 위에서 다음 행을 추가하면 이미 `rect()` 메소드가 존재하기 때문에 true 를 출력할 것입니다.
 
   ```js
@@ -111,7 +111,7 @@ https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
 
 * **위와 유사하게 p5 클래스 함수 또는 프로퍼티들을 덮어 쓰지 않아야합니다.** p5.Image, p5.Vector, p5.Element 등을 확장하는 경우 위와 동일한 프로토콜을 따라야 합니다.
 
-* **p5.js는 전역 모드와 인스턴스 모드, 이렇게 두가지 모드가 있습니다.** 전역 모드에서 모든 p5 속성과 메서드는 window 객체에 바인딩되므로 사용자는 접두사없이 `background()` 와 같은 메서드를 호출 할 수 있습니다. 그러나 기본 자바스크립트 기능을 덮어 쓰지 않도록 주의해야 합니다. 콘솔에 또는 빠르게 Google 검색으로 기존 JS 이름들이 존재하는지 테스트 해 볼 수 있습니다.
+* **p5.js는 전역 모드와 인스턴스 모드, 이렇게 두 가지 모드가 있습니다.** 전역 모드에서 모든 p5 속성과 메서드는 window 객체에 바인딩되므로 사용자는 접두사 없이 `background()` 와 같은 메서드를 호출 할 수 있습니다. 그러나 기본 자바스크립트 기능을 덮어 쓰지 않도록 주의해야 합니다. 콘솔에 또는 빠르게 Google 검색으로 기존 JS 이름들이 존재하는지 테스트 해 볼 수 있습니다.
 
 * **일반적으로 클래스는 대문자로 표시되며 메서드와 프로퍼티들은 소문자로 시작합니다.** p5의 클래스들은 앞에 p5가 붙습니다. 저희는 이 네임스페이스를 p5 코어 클래스에만 붙이려고 합니다. 따라서 직접 만들 때 **클래스명에 접두사로 p5를 포함하지 않아야 합니다.** 고유한 접두사나 접두사가 없는 이름으로 생성해 주세요.
 
@@ -128,4 +128,4 @@ https://GitHub.com/processing/processing/wiki/Library-Basics#library-methods
 * **예제가 좋습니다!** 사람들에게 라이브러리가 할 수 있는 일을 보여주세요. 모두 자바스크립트이므로 사람들은 라이브러리를 다운로드하기 전 온라인에서 실행 되는 것을 볼 수 있습니다. 예제들을 호스팅하기 쉬운 
 [jsfiddle](http://jsfiddle.net/) 및 [codepen](http://codepen.io)이라는 두가지 좋은 옵션이 있습니다.
 
-* **알려주세요!** 라이브러리를 배포 할 준비가 되면 [hello@p5js.org](mailto:hello@p5js.org)로 링크와 몇가지 정보와 함께 보내주세요. [라이브러리 페이지](http://p5js.org/libraries/)에 추가 할 것입니다.
+* **알려주세요!** 라이브러리를 배포 할 준비가 되면 [hello@p5js.org](mailto:hello@p5js.org)로 링크와 몇 가지 정보와 함께 보내주세요. [라이브러리 페이지](http://p5js.org/libraries/)에 추가 할 것입니다.

@@ -8,7 +8,7 @@ p5.js의 새롭고 멋진 이 [기능](https://github.com/processing/p5.js/pull/
 
 ## 사용법
 
-현재, 사용법은 커맨드라인에서 Grunt 태스크 명령어를 수동으로 실행하는 것입니다.
+사용법은 커맨드라인에서 Grunt 태스크 명령어를 수동으로 실행하는 것입니다.
 
 ```sh
 git clone https://github.com/processing/p5.js.git
@@ -20,7 +20,7 @@ npm run grunt combineModules:module_x:module_y
 
 여기서 `module_n`은 여러분이 선택하고 싶은 모듈의 이름을 가리킵니다. 여러개의 모듈은 위와 같이 전달되어야 하며, 이 모듈들이 제대로 동작하려면 `/src` 디렉토리에 있는 폴더와 동일한 이름이어야 합니다. `core`가 기본적으로 포함되어 있지만, `core/shape`는 line() 및 기타 핵심 기능들과 같은 shape 모듈들이 포함되어 있어야 합니다.
 
-위의 사용 예제는 `uglify` 태스크를 이용하여 출력물을 압축하지 않기 때문에 완전한 `p5.min.js`보다 더 큰 `p5Custom.js`를 만들어 낼것입니다.
+위의 사용 예제는 `uglify` 태스크를 이용하여 출력물을 압축하지 않기 때문에 완전한 `p5.min.js`보다 더 큰 `p5Custom.js`를 만들어 낼 것입니다.
 
 번들 크기를 최대한 줄이기 위해 권장하는 단계는 다음과 같습니다:
 
