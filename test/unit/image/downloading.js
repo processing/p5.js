@@ -223,3 +223,100 @@ suite('p5.prototype.saveCanvas', function() {
     true
   );
 });
+
+suite('p5.prototype.saveFrames', function() {
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        p.createCanvas(10, 10);
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
+  test('should be a function', function() {
+    assert.ok(myp5.saveFrames);
+    assert.typeOf(myp5.saveFrames, 'function');
+  });
+
+  test('no friendly-err-msg I', function() {
+    assert.doesNotThrow(
+      function() {
+        myp5.saveFrames('out', 'png', 0.1, 25);
+      },
+      Error,
+      'got unwanted exception'
+    );
+  });
+  test('no friendly-err-msg II', function(done) {
+    assert.doesNotThrow(
+      function() {
+        myp5.saveFrames('out', 'png', 0.1, 25, () => {
+          done();
+        });
+      },
+      Error,
+      'got unwanted exception'
+    );
+  });
+
+  testUnMinified('missing param #2 #3', function() {
+    assert.validationError(function() {
+      myp5.saveFrames('out', 'png');
+    });
+  });
+  testUnMinified('wrong param type #0', function() {
+    assert.validationError(function() {
+      myp5.saveFrames(0, 'png', 0.1, 25);
+    });
+  });
+  testUnMinified('wrong param type #1', function() {
+    assert.validationError(function() {
+      myp5.saveFrames('out', 1, 0.1, 25);
+    });
+  });
+  testUnMinified('wrong param type #2', function() {
+    assert.validationError(function() {
+      myp5.saveFrames('out', 'png', 'a', 25);
+    });
+  });
+  testUnMinified('wrong param type #3', function() {
+    assert.validationError(function() {
+      myp5.saveFrames('out', 'png', 0.1, 'b');
+    });
+  });
+  testUnMinified('wrong param type #4', function() {
+    assert.validationError(function() {
+      myp5.saveFrames('out', 'png', 0.1, 25, 5);
+    });
+  });
+
+  test('should get frames in callback (png)', function(done) {
+    myp5.saveFrames('aaa', 'png', 0.5, 25, function cb1(arr) {
+      assert.typeOf(arr, 'array', 'we got an array');
+      for (let i = 0; i < arr.length; i++) {
+        assert.ok(arr[i].imageData);
+        assert.strictEqual(arr[i].ext, 'png');
+        assert.strictEqual(arr[i].filename, `aaa${i}`);
+      }
+      done();
+    });
+  });
+
+  test('should get frames in callback (jpg)', function(done) {
+    myp5.saveFrames('bbb', 'jpg', 0.5, 25, function cb2(arr2) {
+      assert.typeOf(arr2, 'array', 'we got an array');
+      for (let i = 0; i < arr2.length; i++) {
+        assert.ok(arr2[i].imageData);
+        assert.strictEqual(arr2[i].ext, 'jpg');
+        assert.strictEqual(arr2[i].filename, `bbb${i}`);
+      }
+      done();
+    });
+  });
+});
