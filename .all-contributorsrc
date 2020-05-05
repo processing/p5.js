@@ -1870,6 +1870,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "Rizz0S",
+      "name": "Summer Rizzo",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/39225869?v=4",
+      "profile": "http://dev.to/rizz0s",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
