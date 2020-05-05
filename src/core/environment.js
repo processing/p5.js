@@ -187,7 +187,7 @@ p5.prototype.focused = document.hasFocus();
  *   } else if (mouseX > 50 && mouseY < 50) {
  *     cursor('progress');
  *   } else if (mouseX > 50 && mouseY > 50) {
- *     cursor('https://s3.amazonaws.com/mupublicdata/cursor.cur');
+ *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16');
  *   } else {
  *     cursor('grab');
  *   }
