@@ -26,6 +26,7 @@ var spec = {
     'loadXML',
     'loadJSON',
     'loadTable',
+    'saveTable',
     'loadImage',
     'loadModel',
     'loadShader'

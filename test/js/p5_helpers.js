@@ -24,6 +24,58 @@ function testSketchWithPromise(name, sketch_fn) {
   return test(name, test_fn);
 }
 
+function testWithDownload(name, fn, asyncFn = false) {
+  var test_fn = function(done) {
+    // description of this is also on
+    // https://github.com/processing/p5.js/pull/4418/
+
+    let blobContainer = {};
+
+    // create a backup of createObjectURL
+    let couBackup = window.URL.createObjectURL;
+
+    // file-saver uses createObjectURL as an intermediate step. If we
+    // modify the definition a just a little bit we can capture whenever
+    // it is called and also peek in the data that was passed to it
+    window.URL.createObjectURL = blob => {
+      blobContainer.blob = blob;
+      return couBackup(blob);
+    };
+
+    let error;
+    if (asyncFn) {
+      fn(blobContainer)
+        .then(() => {
+          window.URL.createObjectURL = couBackup;
+        })
+        .catch(err => {
+          error = err;
+        })
+        .finally(() => {
+          // restore createObjectURL to the original one
+          window.URL.createObjectURL = couBackup;
+          error ? done(error) : done();
+        });
+    } else {
+      try {
+        fn(blobContainer);
+      } catch (err) {
+        error = err;
+      }
+      // restore createObjectURL to the original one
+      window.URL.createObjectURL = couBackup;
+      error ? done(error) : done();
+    }
+  };
+
+  return test(name, test_fn);
+}
+
+// Tests should run only for the unminified script
+function testUnMinified(name, test_fn) {
+  return !window.IS_TESTING_MINIFIED_VERSION ? test(name, test_fn) : null;
+}
+
 function parallelSketches(sketch_fns) {
   var setupPromises = [];
   var resultPromises = [];
