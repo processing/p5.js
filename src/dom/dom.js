@@ -1173,7 +1173,7 @@ function createMedia(pInst, type, src, callback) {
 /**
  * Creates an HTML5 &lt;video&gt; element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
- * and drawn into canvas using video(). The first parameter
+ * and drawn into canvas using <a href="#/p5/image">image()</a>. The first parameter
  * can be either a single string path to a video file, or an array of string
  * paths to different formats of the same video. This is useful for ensuring
  * that your video can play across different browsers, as each supports
