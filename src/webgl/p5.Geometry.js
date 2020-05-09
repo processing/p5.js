@@ -70,6 +70,7 @@ p5.Geometry.prototype.reset = function() {
 };
 
 /**
+ * computes faces for geometry objects based on the vertices.
  * @method computeFaces
  * @chainable
  */
