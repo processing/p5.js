@@ -46,7 +46,7 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 * [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/Tutorials/): A huge trove of tutorials created by Dan Shiffman and friends
+* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
 
 ## Stewards
 
