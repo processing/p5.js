@@ -47,6 +47,4 @@ lib/p5.js와 lib/p5.min.js라면 쉽게 고칠 수 있습니다. grunt로 프로
 
 여기 [github에서 풀 리퀘스트를 생성하는 것에 대한 안내서](https://help.github.com/articles/creating-a-pull-request/)가 있습니다. 원하는 이름으로 브랜치명을 지정할 수 있습니다. p5.js의 "master" 브랜치를 대상으로 풀 리퀘스트를 요청합니다.
 
-Once you have submitted your pull request, it will be reviewed and merged as soon as others are available to do so. Changes will show up with the next release of the p5.js library.
-
-풀 리퀘스트를 제출하면, 다른 분들이 가능할 때 즉시 검토되고, 머지 될 것입니다. 변경사항은 p5.js 라이브러리 다음 릴리즈와 함께 나갈 것입니다.
+풀 리퀘스트를 제출하면, 다른 분들이 가능할 때 즉시 검토되고, 머지 될 것입니다. 변경사항은 p5.js 라이브러리의 다음 릴리와 함께 나갈 것입니다.
