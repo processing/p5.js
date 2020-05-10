@@ -100,4 +100,38 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 9. 一切准备就绪后，使用 [pull request](https://help.github.com/articles/creating-a-pull-request) 发布。
 
 # Gotchas
-*待续*
+
+p5.js代码库附带的开发人员工具在某些方面特意非常严格。 这是一件好事！ 它使所有内容保持一致，并要求您受到纪律监管。 这意味着您可以尝试更改某些东西——可能您的提交会被项目拒绝，但不要灰心。 即使是经验丰富的p5.js开发人员也总是被这些东西所吸引。 通常，问题将出在以下两个方面之一：代码语法或单元测试。
+
+## Code Syntax
+
+p5.js需要纯净且在风格上一致的代码语法，它使用称为[Prettier](https://prettier.io/)和[ESlint](https://eslint.org/)的工具强制执行。 提交前会检查某些样式规则，但是您也可以为代码编辑器安装[ESlint插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入后立即突出显示错误 他们。 总的来说，在代码风格方面我们会选择灵活性，以减少参与和贡献的区别。
+
+要检查错误，在命令行输入以下（不要键入＄提示符）：
+
+```
+$ npm run lint
+```
+
+一些语法错误可以自动修复：
+
+```
+$ npm run lint:fix
+```
+
+坚持使用已建立的项目样式通常是更可取的，但是[偶尔](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=)可能会使用替代语法 使您的代码更易于理解。 对于这些情况，Prettier [提供了一个解决方式](https://prettier.io/docs/en/ignore.html)，`// prettier-ignore`注释，您可以使用它来进行细化的异常。 如果可以的话，尽量避免使用它，因为由棉绒布强制实施的大多数样式首选项都有充分的理由。
+
+ 这是代码样式规则的快速摘要。 请注意，此列表可能不完整，最好参考[.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc)和[.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc)文件以获取完整列表。
+* ES6 code syntax is used
+
+* Use single quotes (rather than double quotes)
+
+* Indentation is done with two spaces
+
+* All variables defined in the code should be used at least once, or removed completely
+
+* Do not compare x == true or x == false. Use (x) or (!x) instead. x == true, is certainly different from if (x)! Compare objects to null, numbers to 0 or strings to "", if there is chance for confusion.
+
+* Comment your code whenever there is ambiguity or complexity in the function you are writing
+
+* See the [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) as a useful guide for more styling tips
