@@ -122,16 +122,58 @@ $ npm run lint:fix
 坚持使用已建立的项目样式通常是更可取的，但是[偶尔](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=)可能会使用替代语法 使您的代码更易于理解。 对于这些情况，Prettier [提供了一个解决方式](https://prettier.io/docs/en/ignore.html)，`// prettier-ignore`注释，您可以使用它来进行细化的异常。 如果可以的话，尽量避免使用它，因为由棉绒布强制实施的大多数样式首选项都有充分的理由。
 
  这是代码样式规则的快速摘要。 请注意，此列表可能不完整，最好参考[.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc)和[.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc)文件以获取完整列表。
-* ES6 code syntax is used
+ * 使用ES6语法
 
-* Use single quotes (rather than double quotes)
+* 优先使用单引号
 
-* Indentation is done with two spaces
+* 缩进使用两个空格
 
-* All variables defined in the code should be used at least once, or removed completely
+* 所有变量至少要使用一次，否则彻底删除
 
-* Do not compare x == true or x == false. Use (x) or (!x) instead. x == true, is certainly different from if (x)! Compare objects to null, numbers to 0 or strings to "", if there is chance for confusion.
+* 不要使用 `x == true` 或 `x == false`，请使用 `(x)` 或 `(x)!`。如果可能导致误解，请将object与null、string与""，number与0对比。
 
-* Comment your code whenever there is ambiguity or complexity in the function you are writing
+* 在复杂或模棱两可的地方使用注释
 
-* See the [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) as a useful guide for more styling tips
+* 参见[Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices)，一个有用的代码格式参考。
+
+## Unit Tests
+
+Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. The [unit_testing.md](./unit_testing.md) page gives more information about working with unit tests. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
+
+In order to run unit tests, you'll need to make sure you have installed the project's dependencies.
+
+```
+$ npm ci
+```
+
+This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
+
+- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js
+- [mocha-chrome](https://github.com/shellscape/mocha-chrome), a mocha plugin that runs mocha tests using headless Google Chrome
+
+Once the dependencies are installed, use Grunt to run the unit tests.
+
+```
+$ grunt
+```
+
+Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
+
+```
+$ npm run dev
+```
+
+With the server running, you should be able to open `test/test.html` in a browser.
+
+A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. When writing unit tests, use the [Chai.js reference](http://www.chaijs.com/api/assert/) as a guide for phrasing your assertion messages so that any errors caught by your tests in the future will be consistent and consequently easier for other developers to understand.
+
+
+
+# Miscellaneous
+
+- There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
+- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
+-  [This video from The Coding Train](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: gives an overview of getting started with technical contribution to p5.js.
+- The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
+- The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.
+- p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
