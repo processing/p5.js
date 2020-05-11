@@ -192,7 +192,7 @@ p5.RendererGL.prototype._calculateEdges = function(
   let i = 0;
   switch (shapeMode) {
     case constants.TRIANGLE_STRIP:
-      for (i = 0; i < verts - 2; i++) {
+      for (i = 0; i < verts.length - 2; i++) {
         res.push([i, i + 1]);
         res.push([i, i + 2]);
       }
