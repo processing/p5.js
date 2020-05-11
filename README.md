@@ -375,6 +375,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/shaharyar-shamshi"><img src="https://avatars3.githubusercontent.com/u/17377195?v=4" width="100px;" alt=""/><br /><sub><b>shaharyarshamshi</b></sub></a><br /><a href="#translation-shaharyar-shamshi" title="Translation">🌍</a></td>
     <td align="center"><a href="https://ayushj.me"><img src="https://avatars3.githubusercontent.com/u/33171576?v=4" width="100px;" alt=""/><br /><sub><b>Ayush Jain</b></sub></a><br /><a href="#translation-ayushjainrksh" title="Translation">🌍</a></td>
     <td align="center"><a href="http://dev.to/rizz0s"><img src="https://avatars1.githubusercontent.com/u/39225869?v=4" width="100px;" alt=""/><br /><sub><b>Summer Rizzo</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Rizz0S" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Aierie"><img src="https://avatars3.githubusercontent.com/u/39579264?v=4" width="100px;" alt=""/><br /><sub><b>Aierie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aierie" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3AAierie" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
