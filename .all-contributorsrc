@@ -1879,6 +1879,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Aierie",
+      "name": "Aierie",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/39579264?v=4",
+      "profile": "https://github.com/Aierie",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
