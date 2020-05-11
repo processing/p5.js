@@ -1889,6 +1889,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "matvs",
+      "name": "Mateusz Swiatkowski",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6883643?v=4",
+      "profile": "https://github.com/matvs",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
