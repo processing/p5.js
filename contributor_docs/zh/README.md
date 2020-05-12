@@ -136,44 +136,40 @@ $ npm run lint:fix
 
 * 参见[Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices)，一个有用的代码格式参考。
 
-## Unit Tests
+## 单元测试
 
-Unit tests are small pieces of code which are created as complements to the primary logic and perform validation. The [unit_testing.md](./unit_testing.md) page gives more information about working with unit tests. If you are developing a major new feature for p5.js, you should probably include tests. Do not submit pull requests in which the tests do not pass, because that means something is broken.
+单元测试是一小段代码，它们是对主逻辑的补充，并执行验证。 [unit_testing.md](../ unit_testing.md)页面提供了有关使用单元测试的更多信息。 如果您正在开发p5.js的主要新功能，则可能应该包含测试。 不要提交没有通过测试的pull request，因为这意味着某些东西已损坏。
 
-In order to run unit tests, you'll need to make sure you have installed the project's dependencies.
+为了运行单元测试，您需要确保已安装项目的依赖项。
 
 ```
 $ npm ci
 ```
 
-This will install *all* the dependencies for p5.js; briefly, the most important dependencies specific to unit testing include:
+这将安装*所有* p5.js的依赖项； 简要地说，特定于单元测试的最重要依赖项包括：
 
-- [Mocha](https://mochajs.org/), a powerful testing framework that executes individual test files which are specific to p5.js
-- [mocha-chrome](https://github.com/shellscape/mocha-chrome), a mocha plugin that runs mocha tests using headless Google Chrome
+-[Mocha](https://mochajs.org/)，一个功能强大的测试框架，可以执行特定于p5.js的各个测试文件
+-[mocha-chrome](https://github.com/shellscape/mocha-chrome)，一个可使用无头Google Chrome浏览器运行mocha测试的mocha插件
 
-Once the dependencies are installed, use Grunt to run the unit tests.
+一旦安装了依赖项，请使用Grunt运行单元测试。
 
 ```
 $ grunt
 ```
-
-Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
+有时在浏览器而不是命令行中运行测试很有用。 为此，请首先启动[connect](https://github.com/gruntjs/grunt-contrib-connect)服务器：
 
 ```
 $ npm run dev
 ```
+在服务器运行的情况下，您应该能够在浏览器中打开`test / test.html`。
 
-With the server running, you should be able to open `test/test.html` in a browser.
+完整的单元测试指南超出了p5.js文档的范围，但是简短的版本是`src /`目录中包含的源代码中实现的任何重大更改或新功能也应随附有 Mocha可以执行`test /`目录，以验证该库的所有将来版本中的一致行为。 在编写单元测试时，请使用[Chai.js参考](http://www.chaijs.com/api/assert/)作为分阶段声明消息的指南，以便将来在测试中捕获的任何错误都可以 一致，因此其他开发人员更容易理解。
 
-A complete guide to unit testing is beyond the scope of the p5.js documentation, but the short version is that any major changes or new features implemented in the source code contained in the `src/` directory should also be accompanied by test files in the `test/` directory that can be executed by Mocha to verify consistent behavior in all future versions of the library. When writing unit tests, use the [Chai.js reference](http://www.chaijs.com/api/assert/) as a guide for phrasing your assertion messages so that any errors caught by your tests in the future will be consistent and consequently easier for other developers to understand.
+# 其他
 
-
-
-# Miscellaneous
-
-- There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
-- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
--  [This video from The Coding Train](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: gives an overview of getting started with technical contribution to p5.js.
-- The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
-- The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.
-- p5.js has recently migrated to [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). To see how this transition could effect your contribution please visit [ES6 adoption](./es6-adoption.md).
+-您可以浏览[contributor_docs /](https://github.com/processing/p5.js/tree/master/contributor_docs)文件夹中的其他文件。它们涉及为该项目的特定领域提供技术和非技术方面的贡献。
+-[深入p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)是p5.js开发工作流程中使用的工具和文件的视频教程。
+-[来自The Coding Train的视频](https://youtu.be/Rr3vLyP1Ods)：train :: rainbow：概述了对p5.js的技术贡献入门。
+-p5.js [Docker映像](https://github.com/toolness/p5.js-docker)可以安装在[Docker](https://www.docker.com/)中，并用于开发p5 .js，无需手动安装诸如[Node](https://nodejs.org/)之类的要求，也无需以其他方式影响主机操作系统（除了Docker的安装）。
+-p5.js库的构建过程会生成一个[json数据文件](https://p5js.org/reference/data.json)，其中包含p5.js的公共API，可用于自动化工具中，例如至于在编辑器中自动完成p5.js方法。该文件托管在p5.js网站上，但不包含在存储库中。
+-p5.js最近已迁移到[ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请访问[ES6 adoption]（./ es6-adoption.md）。
