@@ -167,9 +167,9 @@ $ npm run dev
 
 # 其他
 
--您可以浏览[contributor_docs /](https://github.com/processing/p5.js/tree/master/contributor_docs)文件夹中的其他文件。它们涉及为该项目的特定领域提供技术和非技术方面的贡献。
--[深入p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)是p5.js开发工作流程中使用的工具和文件的视频教程。
--[来自The Coding Train的视频](https://youtu.be/Rr3vLyP1Ods)：train :: rainbow：概述了对p5.js的技术贡献入门。
--p5.js [Docker映像](https://github.com/toolness/p5.js-docker)可以安装在[Docker](https://www.docker.com/)中，并用于开发p5 .js，无需手动安装诸如[Node](https://nodejs.org/)之类的要求，也无需以其他方式影响主机操作系统（除了Docker的安装）。
--p5.js库的构建过程会生成一个[json数据文件](https://p5js.org/reference/data.json)，其中包含p5.js的公共API，可用于自动化工具中，例如至于在编辑器中自动完成p5.js方法。该文件托管在p5.js网站上，但不包含在存储库中。
--p5.js最近已迁移到[ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请访问[ES6 adoption]（./ es6-adoption.md）。
+- 您可以浏览[contributor_docs /](https://github.com/processing/p5.js/tree/master/contributor_docs)文件夹中的其他文件。它们涉及为该项目的特定领域提供技术和非技术方面的贡献。
+- [深入p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)是p5.js开发工作流程中使用的工具和文件的视频教程。
+- [来自The Coding Train的视频](https://youtu.be/Rr3vLyP1Ods)：train :: rainbow：概述了对p5.js的技术贡献入门。
+- p5.js [Docker映像](https://github.com/toolness/p5.js-docker)可以安装在[Docker](https://www.docker.com/)中，并用于开发p5 .js，无需手动安装诸如[Node](https://nodejs.org/)之类的要求，也无需以其他方式影响主机操作系统（除了Docker的安装）。
+- p5.js库的构建过程会生成一个[json数据文件](https://p5js.org/reference/data.json)，其中包含p5.js的公共API，可用于自动化工具中，例如至于在编辑器中自动完成p5.js方法。该文件托管在p5.js网站上，但不包含在存储库中。
+- p5.js最近已迁移到[ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请访问[ES6 adoption]（../ es6-adoption.md）。
