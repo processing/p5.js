@@ -10,7 +10,7 @@ import p5 from './main';
 /**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
  * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a>
- * begins to run continuously again. If using <a href="#/p5/noLoop">noLoop()</a> 
+ * begins to run continuously again. If using <a href="#/p5/noLoop">noLoop()</a>
  * in <a href="#/p5/setup">setup()</a>, it should be the last line inside the block.
  *
  * When <a href="#/p5/noLoop">noLoop()</a> is used, it's not possible to manipulate
@@ -22,11 +22,13 @@ import p5 from './main';
  * properly. This means that when <a href="#/p5/noLoop">noLoop()</a> has been
  * called, no drawing can happen, and functions like <a href="#/p5/saveFrame">saveFrame()</a>
  * or <a href="#/p5/loadPixels">loadPixels()</a> may not be used.
- * 
+ *
  * Note that if the sketch is resized, <a href="#/p5/redraw">redraw()</a> will
  * be called to update the sketch, even after <a href="#/p5/noLoop">noLoop()</a>
  * has been specified. Otherwise, the sketch would enter an odd state until
  * <a href="#/p5/loop">loop()</a> was called.
+ *
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
  *
  * @method noLoop
  * @example
@@ -87,6 +89,8 @@ p5.prototype.noLoop = function() {
  *
  * Avoid calling loop() from inside setup().
  *
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+ *
  * @method loop
  * @example
  * <div>
@@ -127,6 +131,64 @@ p5.prototype.loop = function() {
       this._draw();
     }
   }
+};
+
+/**
+ * By default, p5.js loops through <a href="#/p5/draw">draw()</a> continuously,
+ * executing the code within it. If the sketch is stopped with
+ * <a href="#/p5/noLoop">noLoop()</a> or resumed with <a href="#/p5/loop">loop()</a>,
+ * isLooping() returns the current state for use within custom event handlers.
+ *
+ * @method isLooping
+ * @example
+ * <div>
+ * <code>
+ * let checkbox, button, colBG, colFill;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   button = createButton('Colorize if loop()');
+ *   button.position(0, 120);
+ *   button.mousePressed(changeBG);
+ *
+ *   checkbox = createCheckbox('loop()', true);
+ *   checkbox.changed(checkLoop);
+ *
+ *   colBG = color(0);
+ *   colFill = color(255);
+ * }
+ *
+ * function changeBG() {
+ *   if (isLooping()) {
+ *     colBG = color(random(255), random(255), random(255));
+ *     colFill = color(random(255), random(255), random(255));
+ *   }
+ * }
+ *
+ * function checkLoop() {
+ *   if (this.checked()) {
+ *     loop();
+ *   } else {
+ *     noLoop();
+ *   }
+ * }
+ *
+ * function draw() {
+ *   background(colBG);
+ *   fill(colFill);
+ *   ellipse(frameCount % width, height / 2, 50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Ellipse moves slowly from left. Checkbox toggles loop()/noLoop().
+ * Button colorizes sketch if isLooping().
+ *
+ */
+p5.prototype.isLooping = function() {
+  return this._loop;
 };
 
 /**
