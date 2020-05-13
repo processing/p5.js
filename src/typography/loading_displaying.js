@@ -31,8 +31,9 @@ import '../core/error_helpers';
  * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
  * @example
  *
- * <p>Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees that the load
- * operation will have completed before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * <p>Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees
+ * that the load operation will have completed before <a href="#/p5/setup">setup()</a>
+ * and <a href="#/p5/draw">draw()</a> are called.</p>
  *
  * <div><code>
  * let myFont;
@@ -48,8 +49,8 @@ import '../core/error_helpers';
  * }
  * </code></div>
  *
- * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
- * object:
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a
+ * callback function to handle the object:
  *
  * <div><code>
  * function setup() {
@@ -63,8 +64,8 @@ import '../core/error_helpers';
  * }
  * </code></div>
  *
- * <p>You can also use the font filename string (without the file extension) to style other HTML
- * elements.</p>
+ * <p>You can also use the font filename string (without the file extension) to
+ * style other HTML elements.</p>
  *
  * <div><code>
  * function preload() {
@@ -139,23 +140,26 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * Draws text to the screen. Displays the information specified in the first
  * parameter on the screen in the position specified by the additional
  * parameters. A default font will be used unless a font is set with the
- * <a href="#/p5/textFont">textFont()</a> function and a default size will be used unless a font is set
- * with <a href="#/p5/textSize">textSize()</a>. Change the color of the text with the <a href="#/p5/fill">fill()</a> function.
- * Change the outline of the text with the <a href="#/p5/stroke">stroke()</a> and <a href="#/p5/strokeWeight">strokeWeight()</a>
- * functions.
+ * <a href="#/p5/textFont">textFont()</a> function and a default size will be
+ * used unless a font is set with <a href="#/p5/textSize">textSize()</a>. Change
+ * the color of the text with the <a href="#/p5/fill">fill()</a> function. Change
+ * the outline of the text with the <a href="#/p5/stroke">stroke()</a> and
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> functions.
  * <br><br>
- * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a> function, which gives the
- * option to draw to the left, right, and center of the coordinates.
+ * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a>
+ * function, which gives the option to draw to the left, right, and center of the
+ * coordinates.
  * <br><br>
  * The x2 and y2 parameters define a rectangular area to display within and
  * may only be used with string data. When these parameters are specified,
- * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a> setting. Text that
- * does not fit completely within the rectangle specified will not be drawn
- * to the screen. If x2 and y2 are not specified, the baseline alignment is the
- * default, which means that the text will be drawn upwards from x and y.
+ * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a>
+ * setting. Text that does not fit completely within the rectangle specified will
+ * not be drawn to the screen. If x2 and y2 are not specified, the baseline
+ * alignment is the default, which means that the text will be drawn upwards
+ * from x and y.
  * <br><br>
- * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font using the
- * <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
+ * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
+ * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
  * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
  *
  * @method text
@@ -210,9 +214,9 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * </div>
  *
  * @alt
- *'word' displayed 3 times going from black, blue to translucent blue
- * The quick brown fox jumped over the lazy dog.
- * the text 'p5.js' spinning in 3d
+ * 'word' displayed 3 times going from black, blue to translucent blue
+ * The text 'The quick brown fox jumped over the lazy dog' displayed.
+ * The text 'p5.js' spinning in 3d
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
@@ -265,13 +269,14 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * </div>
  *
  * @alt
- *words Font Style Normal displayed normally, Italic in italic and bold in bold
+ * word 'Georgia' displayed in font Georgia and 'Helvetica' in font Helvetica
+ * words Font Style Normal displayed normally, Italic in italic and bold in bold
  */
 /**
  * @method textFont
- * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>, or a String
- * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
- * that is generally available across all systems)
+ * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>,
+ * or a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>
+ * (a font that is generally available across all systems)
  * @param {Number} [size] the font size to use
  * @chainable
  */
