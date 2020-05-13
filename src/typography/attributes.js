@@ -67,7 +67,8 @@ import p5 from '../core/main';
  *
  * @alt
  *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
- * The names of the four vertical alignments rendered each showing that alignment's placement relative to a horizontal line.
+ * The names of the four vertical alignments rendered each showing that alignment's
+ * placement relative to a horizontal line.
  *
  */
 /**
