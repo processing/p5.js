@@ -94,13 +94,13 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * let lines = 'L1\nL2\nL3'; // "\n" is a "new line" character
  * textSize(12);
  *
- * textLeading(10); // Set leading to 10
+ * textLeading(10);
  * text(lines, 10, 25);
  *
- * textLeading(20); // Set leading to 20
+ * textLeading(20);
  * text(lines, 40, 25);
  *
- * textLeading(30); // Set leading to 30
+ * textLeading(30);
  * text(lines, 70, 25);
  * </code>
  * </div>
@@ -191,7 +191,7 @@ p5.prototype.textStyle = function(theStyle) {
  *
  * @method textWidth
  * @param {String} theText the String of characters to measure
- * @return {Number}
+ * @return {Number} the calculated width
  * @example
  * <div>
  * <code>
