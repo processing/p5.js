@@ -378,6 +378,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/Aierie"><img src="https://avatars3.githubusercontent.com/u/39579264?v=4" width="100px;" alt=""/><br /><sub><b>Aierie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aierie" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3AAierie" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/matvs"><img src="https://avatars3.githubusercontent.com/u/6883643?v=4" width="100px;" alt=""/><br /><sub><b>Mateusz Swiatkowski</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=matvs" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amatvs" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/SketchySketch"><img src="https://avatars0.githubusercontent.com/u/41220208?v=4" width="100px;" alt=""/><br /><sub><b>XingZiLong</b></sub></a><br /><a href="#translation-SketchySketch" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/oruburos"><img src="https://avatars2.githubusercontent.com/u/718254?v=4" width="100px;" alt=""/><br /><sub><b>ov</b></sub></a><br /><a href="#translation-oruburos" title="Translation">🌍</a></td>
   </tr>
 </table>
 
