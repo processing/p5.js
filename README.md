@@ -380,6 +380,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/SketchySketch"><img src="https://avatars0.githubusercontent.com/u/41220208?v=4" width="100px;" alt=""/><br /><sub><b>XingZiLong</b></sub></a><br /><a href="#translation-SketchySketch" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/oruburos"><img src="https://avatars2.githubusercontent.com/u/718254?v=4" width="100px;" alt=""/><br /><sub><b>ov</b></sub></a><br /><a href="#translation-oruburos" title="Translation">🌍</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/kyle1james"><img src="https://avatars3.githubusercontent.com/u/13423696?v=4" width="100px;" alt=""/><br /><sub><b>Kyle James</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kyle1james" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
