@@ -1917,6 +1917,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "kyle1james",
+      "name": "Kyle James",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/13423696?v=4",
+      "profile": "https://github.com/kyle1james",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
