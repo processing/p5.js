@@ -725,26 +725,23 @@ p5.RendererGL.prototype.blendMode = function(mode) {
 
 p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
   if (!this._isErasing) {
-    this._cachedBlendMode = this.curBlendMode;
-    this.blendMode(constants.REMOVE);
+    this._applyBlendMode(constants.REMOVE);
+    this._isErasing = true;
 
     this._cachedFillStyle = this.curFillColor.slice();
     this.curFillColor = [1, 1, 1, opacityFill / 255];
 
     this._cachedStrokeStyle = this.curStrokeColor.slice();
     this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
-
-    this._isErasing = true;
   }
 };
 
 p5.RendererGL.prototype.noErase = function() {
   if (this._isErasing) {
+    this._isErasing = false;
     this.curFillColor = this._cachedFillStyle.slice();
     this.curStrokeColor = this._cachedStrokeStyle.slice();
-
     this.blendMode(this._cachedBlendMode);
-    this._isErasing = false;
   }
 };
 
