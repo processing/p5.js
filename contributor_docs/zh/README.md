@@ -99,5 +99,79 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 9. 一切准备就绪后，使用 [pull request](https://help.github.com/articles/creating-a-pull-request) 发布。
 
-# Gotchas
-*待续*
+# 注意事项
+
+p5.js 代码库附带的开发人员工具在某些方面特意非常严格。这是一件好事！它使所有内容保持一致，并勉励您在编写代码时保持一致性。这意味着您可能尝试更改某些东西——但您的提交可能会被项目拒绝，但不要灰心，即使是经验丰富的 p5.js 开发人员也方会犯同样的错误。通常，问题将出在以下两个方面之一：代码语法或单元测试。
+
+## 代码语法
+
+p5.js 要求整齐且在风格上一致的代码语法，它使用称为 [Prettier](https://prettier.io/) 和 [ESlint](https://eslint.org/) 的工具帮助检查代码。提交前这些工具会检查某些样式规则，但是您也可以为代码编辑器安装 [ESlint 插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入代码后立即显示错误。总的来说，在代码风格方面我们会趋向选择灵活性，以减少参与和贡献的阻碍。
+
+要检查错误，在命令行输入以下指令（不要键入 `$` 提示符）：
+
+```
+$ npm run lint
+```
+
+一些语法错误可以自动修复：
+
+```
+$ npm run lint:fix
+```
+
+坚持使用已建立的项目样式通常是更可取的，但是[偶尔](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=)可能使用不同的语法会使您的代码更易于理解。 这些情况下，Prettier [提供了一个解决方式](https://prettier.io/docs/en/ignore.html)，`// prettier-ignore`注释，您可以使用它来指定个别例外代码。不过如果可以的话，尽量避免使用它，因为 linter 实施的大多数代码格式都有好的理由。
+
+ 这是代码样式规则的快速摘要。请注意，此列表可能不完整，最好参考 [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) 和 [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) 文件以获取完整列表。
+ * 使用 ES6 语法
+
+* 优先使用单引号
+
+* 缩排使用两个空格
+
+* 所有变量至少要使用一次，否则彻底删除
+
+* 不要使用 `x == true` 或 `x == false`，请使用 `(x)` 或 `(x)!`。如果可能导致误解，请将物件与 `null` 对比、字符串与 `""` 对比、数字与 `0` 对比。
+
+* 在复杂或模棱两可的地方使用注释
+
+* 参考 [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) 以了解一些有用的代码格式技巧。
+
+## 单元测试
+
+单元测试是一小段代码，它们是对主逻辑的补充，并执行验证。[unit_testing.md](../unit_testing.md)页面提供了有关使用单元测试的更多信息。如果您正在开发 p5.js 的主要新功能，尽可能应该包含测试。不要提交没有通过测试的 pull request，因为这意味着某些代码中有错误。
+
+以运行单元测试，您需要确保已安装项目的依赖项。
+
+```
+$ npm ci
+```
+
+这将安装*所有* p5.js 的依赖项； 简要地说，特定于单元测试的最重要依赖项包括：
+
+-[Mocha](https://mochajs.org/)，一个功能强大的测试框架，可以执行特定于 p5.js 的各个测试文件
+-[mocha-chrome](https://github.com/shellscape/mocha-chrome)，一个可使用无头 Google Chrome 浏览器运行 mocha 测试的 mocha 插件
+
+一旦安装了依赖项，请使用Grunt运行单元测试。
+
+```
+$ grunt
+```
+
+在浏览器而不是命令行中运行测试有时很有用。 为此，请首先启动 [connect](https://github.com/gruntjs/grunt-contrib-connect) 服务器：
+
+```
+$ npm run dev
+```
+
+在服务器运行的情况下，您应该能够在浏览器中打开 `test/test.html`。
+
+完整的单元测试指南超出了 p5.js 文档的范围，但是简短的版本是 `src/` 目录中包含的源代码中若有任何重大更改或新功能，它应随附有在 `test/` 目录中的测试记录，以验证该库的所有将来版本中的行为一致。在编写单元测试时，请使用 [Chai.js 参考文献](http://www.chaijs.com/api/assert/)作为分阶段声明消息的指南，以便将来在测试中捕获的任何错误都会是一致地，并使其他开发人员更容易理解问题在哪里。
+
+# 其他
+
+- 您可以浏览 [contributor_docs /](https://github.com/processing/p5.js/tree/master/contributor_docs) 文件夹中的其他文件。它们涉及贡献于此项目的技术和非技术方面的特定领域。
+- [深入p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) 是 p5.js 开发工作流程中使用的工具和文件的视频教程。
+- [来自 The Coding Train 的视频](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: 概述了对 p5.js 的技术贡献入门。
+- p5.js [Docker 映像](https://github.com/toolness/p5.js-docker)可以安装在 [Docker](https://www.docker.com/) 中，并用于开发p5 .js，无需手动安装诸如 [Node](https://nodejs.org/) 之类的要求，也无需以其他方式影响主机操作系统（除了安装 Docker 外）。
+- p5.js 库的构建过程会生成一个 [json 数据文件](https://p5js.org/reference/data.json)，其中包含了 p5.js 的公共 API，可用于自动化工具中，例如在编辑器中自动完成 p5.js 语法。该文件托管在 p5.js 网站上，但不包含在代码库中。
+- p5.js 的语言最近已改版到 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请参考 [ES6 adoption](../es6-adoption.md) 。
