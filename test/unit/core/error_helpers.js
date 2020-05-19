@@ -5,6 +5,7 @@ suite('Error Helpers', function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
+        p5._clearValidateParamsCache();
         done();
       };
     });
