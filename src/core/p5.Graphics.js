@@ -21,13 +21,21 @@ import * as constants from './constants';
  * @param {Number} h            height
  * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
  * @param {p5} [pInst]          pointer to p5 instance
+ * @param {Object} canvas       existing html canvas element
  */
-p5.Graphics = function(w, h, renderer, pInst) {
+p5.Graphics = function(w, h, renderer, pInst, canvas) {
   const r = renderer || constants.P2D;
 
-  this.canvas = document.createElement('canvas');
+  if(canvas){
+    this.canvas = canvas;
+  }else {
+    this.canvas = document.createElement('canvas');
+  }
+
   const node = pInst._userNode || document.body;
-  node.appendChild(this.canvas);
+  if(!canvas) {
+    node.appendChild(this.canvas);
+  }
 
   p5.Element.call(this, this.canvas, pInst);
 

@@ -199,6 +199,7 @@ p5.prototype.noCanvas = function() {
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] either P2D or WEBGL
  *                               undefined defaults to p2d
+ @param  {Object} canvas existing html canvas element
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
@@ -224,9 +225,9 @@ p5.prototype.noCanvas = function() {
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
  *
  */
-p5.prototype.createGraphics = function(w, h, renderer) {
+p5.prototype.createGraphics = function(w, h, renderer, canvas) {
   p5._validateParameters('createGraphics', arguments);
-  return new p5.Graphics(w, h, renderer, this);
+  return new p5.Graphics(w, h, renderer, this, canvas);
 };
 
 /**
