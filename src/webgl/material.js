@@ -901,7 +901,9 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       );
       break;
   }
-  this._cachedBlendMode = this.curBlendMode;
+  if (!this._isErasing) {
+    this._cachedBlendMode = this.curBlendMode;
+  }
 };
 
 export default p5;
