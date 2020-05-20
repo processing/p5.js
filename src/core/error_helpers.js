@@ -94,12 +94,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // for e.g.: background(color) , where color is a p5.Color object
   const p5Types = [];
   const p5TypesNames = [];
-  for (let key of Object.keys(p5)) {
-    if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
-      p5Types.push(p5[key]);
-      p5TypesNames.push(key);
+  const funcSpecificp5Types = {};
+  const funcSpecificp5Names = {};
+  window.addEventListener('load', () => {
+    // Make a list of all p5 classes to be used for argument validation
+    // This must be done only when everything has loaded otherwise we get
+    // an empty array
+    for (let key of Object.keys(p5)) {
+      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+        p5Types.push(p5[key]);
+        p5TypesNames.push(key);
+      }
     }
-  }
+  });
 
   const friendlyWelcome = () => {
     // p5.js brand - magenta: #ED225D
@@ -288,12 +295,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // into the argument tree. It stores the types of arguments that each
   // function has seen so far. It is used to query if a sequence of
   // arguments seen in validate parameters was seen before.
-  // Lets consider the following segment of code runs repeatedly, perhaps in
-  // a loop or in draw()
+  // Lets consider that the following segment of code runs repeatedly, perhaps
+  // in a loop or in draw()
   //   color(10, 10, 10);
   //   color(10, 10);
   //   color('r', 'g', 'b');
-  // After the first of the segment, the argument tree looks like
+  // After the first of run the code segment, the argument tree looks like
   // - color
   //     - number
   //        - number
@@ -313,39 +320,58 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // These two functions would be called repeatedly over and over again,
   // so they need to be as optimized for performance as possible
 
-  const addType = (value, obj) => {
-    // check if the value is a p5 constant and if it is, we would want the
-    // value itself to be stored in the tree instead of the type
-    if (constantsReverseMap[value]) {
-      obj = obj[value] || (obj[value] = {});
-    } else {
-      let type = typeof value;
-      if (basicTypes[type]) {
-        obj = obj[type] || (obj[type] = {});
-      } else if (value === null) {
-        // typeof null -> "object". don't want that
-        obj = obj['null'] || (obj['null'] = {});
+  const addType = (value, obj, func) => {
+    let type = typeof value;
+    if (basicTypes[type]) {
+      if (constantsReverseMap[value]) {
+        // check if the value is a p5 constant and if it is, we would want the
+        // value itself to be stored in the tree instead of the type
+        obj = obj[value] || (obj[value] = {});
       } else {
-        if (value.constructor && value.constructor.name) {
-          obj =
-            obj[value.constructor.name] || (obj[value.constructor.name] = {});
+        obj = obj[type] || (obj[type] = {});
+      }
+    } else if (value === null) {
+      // typeof null -> "object". don't want that
+      obj = obj['null'] || (obj['null'] = {});
+    } else {
+      // objects which are instances of p5 classes have nameless constructors.
+      // native objects have a constructor named "Object". This check
+      // differentiates between the two so that we dont waste time finding the
+      // p5 class if we just have a native object
+      if (value.constructor && value.constructor.name) {
+        obj = obj[value.constructor.name] || (obj[value.constructor.name] = {});
+        return obj;
+      }
+
+      let p5T = funcSpecificp5Types[func];
+      let p5TN = funcSpecificp5Names[func];
+      if (p5T === undefined) {
+        p5T = funcSpecificp5Types[func] = [];
+        p5TN = funcSpecificp5Names[func] = [];
+      }
+      for (let i = 0, len = p5T.length; i < len; ++i) {
+        // search on the classes we have already seen
+        if (value instanceof p5T[i]) {
+          obj = obj[p5TN[i]] || (obj[p5TN[i]] = {});
           return obj;
         }
-        let flag = true;
-        for (let i = 0, len = p5Types.length; i < len; ++i) {
-          if (value instanceof p5Types[i]) {
-            // if  the value is  p5 class
-            // for e.g p5.Vector, p5.Color etc
-            obj = obj[p5TypesKeys[i]] || (obj[p5TypesKeys[i]] = {});
-            flag = false;
-            break;
-          }
-        }
-        if (flag) {
-          obj = obj[type] || (obj[type] = {});
+      }
+
+      for (let i = 0, len = p5Types.length; i < len; ++i) {
+        // if the above search didn't work, search on all p5 classes
+        if (value instanceof p5Types[i]) {
+          obj = obj[p5TypesNames[i]] || (obj[p5TypesNames[i]] = {});
+          // if found, add to known classes for this function
+          p5T.push(p5Types[i]);
+          p5TN.push(p5TypesNames[i]);
+          return obj;
         }
       }
+
+      // nothing worked, put the type as is
+      obj = obj[type] || (obj[type] = {});
     }
+
     return obj;
   };
   const buildArgTypeCache = (func, arr) => {
@@ -353,8 +379,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     let obj = argumentTree[func];
     if (obj === undefined) {
       // if it doesn't, create an empty tree
-      argumentTree[func] = {};
-      obj = argumentTree[func];
+      obj = argumentTree[func] = {};
     }
 
     for (let i = 0, len = arr.length; i < len; ++i) {
@@ -366,10 +391,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // (number, number, number) and (number, [number, number])
         obj = obj['as'] || (obj['as'] = {});
         for (let j = 0, lenA = value.length; j < lenA; ++j) {
-          obj = addType(value[j], obj);
+          obj = addType(value[j], obj, func);
         }
       } else {
-        obj = addType(value, obj);
+        obj = addType(value, obj, func);
       }
     }
     return obj;
