@@ -313,7 +313,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   //                - seen: true
   // seen: true signifies that this argument was also seen as the last
   // argument in a call. Now in the second run of the sketch, it would traverse
-  // the existing tree and see get seen: true, i.e this sequence was seen
+  // the existing tree and see seen: true, i.e this sequence was seen
   // before and so scoring can be skipped. This also prevents logging multiple
   // validation messages for the same thing.
 
@@ -769,6 +769,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     for (let key of Object.keys(argumentTree)) {
       delete argumentTree[key];
     }
+  };
+
+  // allowing access to argumentTree for testing
+  p5._getValidateParamsArgTree = function getValidateParamsArgTree() {
+    return argumentTree;
   };
 
   /**
