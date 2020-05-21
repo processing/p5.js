@@ -57,11 +57,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const dataDoc = require('../../docs/parameterData.json');
   const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
-  const constantsReverseMap = {};
-  for (let key in constants) {
-    constantsReverseMap[constants[key]] = key;
-  }
-
   // -- Borrowed from jQuery 1.11.3 --
   const class2type = {};
   const toString = class2type.toString;
@@ -89,24 +84,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // -- End borrow --
-
-  // for when p5 classes are specified as arguments of functions
-  // for e.g.: background(color) , where color is a p5.Color object
-  const p5Types = [];
-  const p5TypesNames = [];
-  const funcSpecificp5Types = {};
-  const funcSpecificp5Names = {};
-  window.addEventListener('load', () => {
-    // Make a list of all p5 classes to be used for argument validation
-    // This must be done only when everything has loaded otherwise we get
-    // an empty array
-    for (let key of Object.keys(p5)) {
-      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
-        p5Types.push(p5[key]);
-        p5TypesNames.push(key);
-      }
-    }
-  });
 
   const friendlyWelcome = () => {
     // p5.js brand - magenta: #ED225D
@@ -290,6 +267,36 @@ if (typeof IS_MINIFIED !== 'undefined') {
     undefined: true
   };
 
+  // reverse map of all constants
+  const constantsReverseMap = {};
+  for (let key in constants) {
+    constantsReverseMap[constants[key]] = key;
+  }
+
+  // mapping names of p5 types to their constructor function
+  // p5Constructors:
+  //    - Color: f()
+  //    - Graphics: f()
+  //    - Vector: f()
+  // and so on
+  const p5Constructors = {};
+
+  // For speedup over many runs. funcSpecificConstructors[func] only has the
+  // constructors for types which were seen earlier as args of "func"
+  const funcSpecificConstructors = {};
+  window.addEventListener('load', () => {
+    // Make a list of all p5 classes to be used for argument validation
+    // This must be done only when everything has loaded otherwise we get
+    // an empty array
+    for (let key of Object.keys(p5)) {
+      // Get a list of all constructors in p5. They are functions whose names
+      // start with a capital letter
+      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+        p5Constructors[key] = p5[key];
+      }
+    }
+  });
+
   const argumentTree = {};
   // The following two functions are responsible for querying and inserting
   // into the argument tree. It stores the types of arguments that each
@@ -343,31 +350,38 @@ if (typeof IS_MINIFIED !== 'undefined') {
         return obj;
       }
 
-      let p5T = funcSpecificp5Types[func];
-      let p5TN = funcSpecificp5Names[func];
-      if (p5T === undefined) {
-        p5T = funcSpecificp5Types[func] = [];
-        p5TN = funcSpecificp5Names[func] = [];
+      // constructors for types defined in p5 do not have a name property.
+      // e.constructor.name gives "". Code in this segment is a workaround for it
+
+      // p5C will only have the name: constructor mapping for types
+      // which were already seen as args of "func"
+      let p5C = funcSpecificConstructors[func];
+      // p5C would contain much fewer items than p5Constructors. if we find our
+      // answer in p5C, we don't have to scan through p5Constructors
+
+      if (p5C === undefined) {
+        // if there isn't an entry yet for func
+        // make an entry of empty object
+        p5C = funcSpecificConstructors[func] = {};
       }
-      for (let i = 0, len = p5T.length; i < len; ++i) {
-        // search on the classes we have already seen
-        if (value instanceof p5T[i]) {
-          obj = obj[p5TN[i]] || (obj[p5TN[i]] = {});
+
+      for (let key in p5C) {
+        // search on the constructors we have already seen (smaller search space)
+        if (value instanceof p5C[key]) {
+          obj = obj[key] || (obj[key] = {});
           return obj;
         }
       }
 
-      for (let i = 0, len = p5Types.length; i < len; ++i) {
-        // if the above search didn't work, search on all p5 classes
-        if (value instanceof p5Types[i]) {
-          obj = obj[p5TypesNames[i]] || (obj[p5TypesNames[i]] = {});
-          // if found, add to known classes for this function
-          p5T.push(p5Types[i]);
-          p5TN.push(p5TypesNames[i]);
+      for (let key in p5Constructors) {
+        // if the above search didn't work, search on all p5 constructors
+        if (value instanceof p5Constructors[key]) {
+          obj = obj[key] || (obj[key] = {});
+          // if found, add to known constructors for this function
+          p5C[key] = p5Constructors[key];
           return obj;
         }
       }
-
       // nothing worked, put the type as is
       obj = obj[type] || (obj[type] = {});
     }
