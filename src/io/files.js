@@ -421,6 +421,13 @@ p5.prototype.loadTable = function(path) {
           sep = ',';
           separatorSet = true;
         }
+      } else if (arguments[i] === 'ssv') {
+        if (separatorSet) {
+          throw new Error('Cannot set multiple separator types.');
+        } else {
+          sep = ';';
+          separatorSet = true;
+        }
       } else if (arguments[i] === 'tsv') {
         if (separatorSet) {
           throw new Error('Cannot set multiple separator types.');
