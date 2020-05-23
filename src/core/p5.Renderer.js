@@ -253,6 +253,9 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           currentLineLength += 1;
         }
       }
+      if (ii < cars.length - 1) {
+        totalHeight += p.textLeading();
+      }
     }
 
     if (this._rectMode === constants.CENTER) {
