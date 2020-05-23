@@ -302,6 +302,7 @@ p5.prototype.loadStrings = function(...args) {
  * <p>Possible options include:
  * <ul>
  * <li>csv - parse the table as comma-separated values</li>
+ * <li>ssv - parse the table as semicolon-separated values</li>
  * <li>tsv - parse the table as tab-separated values</li>
  * <li>header - this table has a header (title) row</li>
  * </ul>
@@ -327,7 +328,7 @@ p5.prototype.loadStrings = function(...args) {
  * This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
- * @param  {String}         options  "header" "csv" "tsv"
+ * @param  {String}         options  "header" "csv" "ssv" "tsv"
  * @param  {function}       [callback] function to be executed after
  *                                     <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
  *                                     <a href="#/p5.Table">Table</a> object is passed in as the
@@ -419,6 +420,13 @@ p5.prototype.loadTable = function(path) {
           throw new Error('Cannot set multiple separator types.');
         } else {
           sep = ',';
+          separatorSet = true;
+        }
+      } else if (arguments[i] === 'ssv') {
+        if (separatorSet) {
+          throw new Error('Cannot set multiple separator types.');
+        } else {
+          sep = ';';
           separatorSet = true;
         }
       } else if (arguments[i] === 'tsv') {
