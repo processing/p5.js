@@ -214,7 +214,7 @@ p5.prototype.shuffle = function(arr, bool) {
     tmp,
     idx = arr.length;
   while (idx > 1) {
-    rnd = (Math.random() * idx) | 0;
+    rnd = (this.random(0, 1) * idx) | 0;
 
     tmp = arr[--idx];
     arr[idx] = arr[rnd];
