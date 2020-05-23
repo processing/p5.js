@@ -294,7 +294,6 @@ Filters.posterize = function(canvas, level) {
  * reduces the bright areas in an image
  * @private
  * @param  {Canvas} canvas
- *
  */
 Filters.dilate = function(canvas) {
   const pixels = Filters._toPixels(canvas);
@@ -382,7 +381,6 @@ Filters.dilate = function(canvas) {
  * increases the bright areas in an image
  * @private
  * @param  {Canvas} canvas
- *
  */
 Filters.erode = function(canvas) {
   const pixels = Filters._toPixels(canvas);

@@ -60,7 +60,6 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
  * work best for most applications, but this will differ depending on use.
  *
- *
  * @method noise
  * @param  {Number} x   x-coordinate in noise space
  * @param  {Number} [y] y-coordinate in noise space
@@ -97,7 +96,6 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  * @alt
  * vertical line moves left to right with updating noise values.
  * horizontal wave pattern effected by mouse x-position & updating noise values.
- *
  */
 
 p5.prototype.noise = function(x, y = 0, z = 0) {
@@ -184,7 +182,7 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  * several octaves. Lower octaves contribute more to the output signal and
  * as such define the overall intensity of the noise, whereas higher octaves
  * create finer grained details in the noise sequence.
- * <br><br>
+ *
  * By default, noise is computed over 4 octaves with each octave contributing
  * exactly half than its predecessor, starting at 50% strength for the 1st
  * octave. This falloff amount can be changed by adding an additional function
@@ -192,7 +190,7 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  * 75% impact (25% less) of the previous lower octave. Any value between
  * 0.0 and 1.0 is valid, however note that values greater than 0.5 might
  * result in greater than 1.0 values returned by <b>noise()</b>.
- * <br><br>
+ *
  * By changing these parameters, the signal created by the <b>noise()</b>
  * function can be adapted to fit very specific needs and characteristics.
  *
@@ -232,7 +230,6 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  *
  * @alt
  * 2 vertical grey smokey patterns affected my mouse x-position and noise.
- *
  */
 p5.prototype.noiseDetail = function(lod, falloff) {
   if (lod > 0) {
@@ -270,7 +267,6 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  *
  * @alt
  * vertical grey lines drawing in pattern affected by noise.
- *
  */
 p5.prototype.noiseSeed = function(seed) {
   // Linear Congruential Generator

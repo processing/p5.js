@@ -204,7 +204,6 @@ p5.prototype.background = function(...args) {
  *
  * @alt
  * small white ellipses are continually drawn at mouse's x and y coordinates.
- *
  */
 
 p5.prototype.clear = function() {
@@ -584,7 +583,6 @@ p5.prototype.noStroke = function() {
  * used.
  *
  * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the stroke color.
- *
  *
  * @method stroke
  * @param  {Number}        v1      red or hue value relative to

@@ -13,7 +13,7 @@ import * as constants from '../core/constants';
  * that has both magnitude and direction. The datatype, however, stores
  * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
  * and direction can be accessed via the methods <a href="#/p5.Vector/mag">mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
- * <br><br>
+ *
  * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
  * position, velocity, or acceleration. For example, if you consider a rectangle
  * moving across the screen, at any given instant it has a position (a vector
@@ -21,7 +21,7 @@ import * as constants from '../core/constants';
  * the object's position changes per time unit, expressed as a vector), and
  * acceleration (the rate at which the object's velocity changes per time
  * unit, expressed as a vector).
- * <br><br>
+ *
  * Since vectors represent groupings of values, we cannot simply use
  * traditional addition/multiplication/etc. Instead, we'll need to do some
  * "vector" math, which is made easy by the methods inside the <a href="#/p5.Vector">p5.Vector</a> class.
@@ -46,7 +46,6 @@ import * as constants from '../core/constants';
  *
  * @alt
  * 2 white ellipses. One center-left the other bottom right and off canvas
- *
  */
 p5.Vector = function Vector() {
   let x, y, z;
@@ -1049,7 +1048,6 @@ p5.Vector.prototype.magSq = function magSq() {
  * that computes the dot product of two independent vectors is a static
  * method. See the examples for more context.
  *
- *
  * @method dot
  * @param  {Number} x   x component of the vector
  * @param  {Number} [y] y component of the vector
@@ -1994,7 +1992,6 @@ p5.Vector.random3D = function random3D() {
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
- *
  */
 
 p5.Vector.add = function add(v1, v2, target) {
@@ -2026,7 +2023,6 @@ p5.Vector.add = function add(v1, v2, target) {
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} v2
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
- *
  */
 p5.Vector.rem = function rem(v1, v2) {
   if (v1 instanceof p5.Vector && v2 instanceof p5.Vector) {

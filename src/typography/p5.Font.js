@@ -41,7 +41,6 @@ p5.Font = function(p) {
  *                            opentype fonts contains alignment and baseline options.
  *                            Default is 'LEFT' and 'alphabetic'
  *
- *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *
  * @example
@@ -71,7 +70,6 @@ p5.Font = function(p) {
  *
  * @alt
  *words Lorem ipsum dol go off canvas and contained by white bounding box
- *
  */
 p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   // Check cache for existing bounds. Take into consideration the text alignment
@@ -231,7 +229,6 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
  * }
  * </code>
  * </div>
- *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
   let xoff = 0;

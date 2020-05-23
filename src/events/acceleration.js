@@ -137,7 +137,7 @@ p5.prototype._updatePAccelerations = function() {
  * device along the x axis. If the sketch <a href="#/p5/angleMode">
  * angleMode()</a> is set to DEGREES, the value will be -180 to 180. If
  * it is set to RADIANS, the value will be -PI to PI.
- * <br><br>
+ *
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
@@ -170,7 +170,7 @@ p5.prototype.rotationX = 0;
  * device along the y axis. If the sketch <a href="#/p5/angleMode">
  * angleMode()</a> is set to DEGREES, the value will be -90 to 90. If
  * it is set to RADIANS, the value will be -PI/2 to PI/2.
- * <br><br>
+ *
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
@@ -203,10 +203,10 @@ p5.prototype.rotationY = 0;
  * device along the z axis. If the sketch <a href="#/p5/angleMode">
  * angleMode()</a> is set to DEGREES, the value will be 0 to 360. If
  * it is set to RADIANS, the value will be 0 to 2*PI.
- * <br><br>
+ *
  * Unlike rotationX and rotationY, this variable is available for devices
  * with a built-in compass only.
- * <br><br>
+ *
  * Note: The order the rotations are called is important, ie. if used
  * together, it must be called in the order Z-X-Y or there might be
  * unexpected behaviour.
@@ -242,7 +242,7 @@ p5.prototype.rotationZ = 0;
  * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
  * the value will be -180 to 180. If it is set to RADIANS, the value will
  * be -PI to PI.
- * <br><br>
+ *
  * pRotationX can also be used with rotationX to determine the rotate
  * direction of the device along the X-axis.
  * @example
@@ -277,7 +277,6 @@ p5.prototype.rotationZ = 0;
  * @alt
  * no image to display.
  *
- *
  * @property {Number} pRotationX
  * @readOnly
  */
@@ -289,7 +288,7 @@ p5.prototype.pRotationX = 0;
  * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
  * the value will be -90 to 90. If it is set to RADIANS, the value will
  * be -PI/2 to PI/2.
- * <br><br>
+ *
  * pRotationY can also be used with rotationY to determine the rotate
  * direction of the device along the Y-axis.
  * @example
@@ -323,7 +322,6 @@ p5.prototype.pRotationX = 0;
  * @alt
  * no image to display.
  *
- *
  * @property {Number} pRotationY
  * @readOnly
  */
@@ -335,7 +333,7 @@ p5.prototype.pRotationY = 0;
  * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
  * the value will be 0 to 360. If it is set to RADIANS, the value will
  * be 0 to 2*PI.
- * <br><br>
+ *
  * pRotationZ can also be used with rotationZ to determine the rotate
  * direction of the device along the Z-axis.
  * @example
@@ -364,7 +362,6 @@ p5.prototype.pRotationY = 0;
  *
  * @alt
  * no image to display.
- *
  *
  * @property {Number} pRotationZ
  * @readOnly
@@ -544,13 +541,12 @@ p5.prototype.setShakeThreshold = function(val) {
  *
  * @alt
  * 50x50 black rect in center of canvas. turns white on mobile when device moves
- *
  */
 
 /**
  * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
  * more than 90 degrees continuously.
- * <br><br>
+ *
  * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the turnAxis
  * variable. The <a href="#/p5/deviceTurned">deviceTurned()</a> method can be locked to trigger on any axis:
  * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
@@ -603,7 +599,6 @@ p5.prototype.setShakeThreshold = function(val) {
  * @alt
  * 50x50 black rect in center of canvas. turns white on mobile when device turns
  * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
- *
  */
 
 /**
@@ -635,7 +630,6 @@ p5.prototype.setShakeThreshold = function(val) {
  *
  * @alt
  * 50x50 black rect in center of canvas. turns white on mobile when device shakes
- *
  */
 
 p5.prototype._ondeviceorientation = function(e) {

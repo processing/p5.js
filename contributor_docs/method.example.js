@@ -53,7 +53,6 @@ p5.prototype.methodName = function() {
  * be used inside setup() to set the background on the first frame of animation
  * or if the background need only be set once.
  *
- *
  * By default, the background is transparent.
  *
  * @method background

@@ -27,7 +27,6 @@ import p5 from '../core/main';
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.abs = Math.abs;
 
@@ -67,7 +66,6 @@ p5.prototype.abs = Math.abs;
  *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
- *
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -109,7 +107,6 @@ p5.prototype.ceil = Math.ceil;
  *
  * @alt
  * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
- *
  */
 p5.prototype.constrain = function(n, low, high) {
   p5._validateParameters('constrain', arguments);
@@ -227,7 +224,6 @@ p5.prototype.dist = function(...args) {
  *
  * @alt
  * ellipse moves along a curve with mouse x. e^n displayed.
- *
  */
 p5.prototype.exp = Math.exp;
 
@@ -266,7 +262,6 @@ p5.prototype.exp = Math.exp;
  *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
- *
  */
 p5.prototype.floor = Math.floor;
 
@@ -311,7 +306,6 @@ p5.prototype.floor = Math.floor;
  *
  * @alt
  * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
- *
  */
 p5.prototype.lerp = function(start, stop, amt) {
   p5._validateParameters('lerp', arguments);
@@ -370,7 +364,6 @@ p5.prototype.lerp = function(start, stop, amt) {
  *
  * @alt
  * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
- *
  */
 p5.prototype.log = Math.log;
 
@@ -406,7 +399,6 @@ p5.prototype.log = Math.log;
  *
  * @alt
  * 4 lines of different length radiate from top left of canvas.
- *
  */
 p5.prototype.mag = function(x, y) {
   p5._validateParameters('mag', arguments);
@@ -415,7 +407,7 @@ p5.prototype.mag = function(x, y) {
 
 /**
  * Re-maps a number from one range to another.
- * <br><br>
+ *
  * In the first example above, the number 25 is converted from a value in the
  * range of 0 to 100 into a value that ranges from the left edge of the
  * window (0) to the right edge (width).
@@ -454,7 +446,6 @@ p5.prototype.mag = function(x, y) {
  * @alt
  * 10 by 10 white ellipse with in mid left canvas
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
- *
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
@@ -503,7 +494,6 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  *
  * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
- *
  */
 /**
  * @method max
@@ -553,7 +543,6 @@ p5.prototype.max = function(...args) {
  *
  * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
- *
  */
 /**
  * @method min
@@ -615,7 +604,6 @@ p5.prototype.min = function(...args) {
  *
  * @alt
  * ellipse moves with mouse. 0 shown left & 100 right and updating values center
- *
  */
 p5.prototype.norm = function(n, start, stop) {
   p5._validateParameters('norm', arguments);
@@ -653,7 +641,6 @@ p5.prototype.norm = function(n, start, stop) {
  *
  * @alt
  * small to large ellipses radiating from top left of canvas
- *
  */
 p5.prototype.pow = Math.pow;
 
@@ -703,7 +690,6 @@ p5.prototype.pow = Math.pow;
  * "3" written in middle of canvas
  * "12.78" written in middle of canvas
  * horizontal center line squared values displayed on top and regular on bottom.
- *
  */
 p5.prototype.round = function(n, decimals) {
   if (!decimals) {
@@ -753,7 +739,6 @@ p5.prototype.round = function(n, decimals) {
  *
  * @alt
  * horizontal center line squared values displayed on top and regular on bottom.
- *
  */
 p5.prototype.sq = n => n * n;
 
@@ -799,7 +784,6 @@ p5.prototype.sq = n => n * n;
  *
  * @alt
  * horizontal center line squareroot values displayed on top and regular on bottom.
- *
  */
 p5.prototype.sqrt = Math.sqrt;
 

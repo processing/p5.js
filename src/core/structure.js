@@ -73,7 +73,6 @@ import p5 from './main';
  * @alt
  * 113 pixel long line extending from top-left to bottom right of canvas.
  * horizontal line moves slowly from left. Loops but stops on mouse press.
- *
  */
 p5.prototype.noLoop = function() {
   this._loop = false;
@@ -118,7 +117,6 @@ p5.prototype.noLoop = function() {
  *
  * @alt
  * horizontal line moves slowly from left. Loops but stops on mouse press.
- *
  */
 p5.prototype.loop = function() {
   if (!this._loop) {
@@ -217,7 +215,6 @@ p5.prototype.loop = function() {
  * @alt
  * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
- *
  */
 p5.prototype.push = function() {
   this._styles.push({
@@ -318,7 +315,6 @@ p5.prototype.push = function() {
  * @alt
  * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
- *
  */
 p5.prototype.pop = function() {
   const style = this._styles.pop();
@@ -396,7 +392,6 @@ p5.prototype.pop = function() {
  * @alt
  * black line on far left of canvas
  * black line on far left of canvas
- *
  */
 p5.prototype.redraw = function(n) {
   if (this._inUserDraw || !this._setupDone) {

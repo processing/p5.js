@@ -46,7 +46,6 @@ const defaultClass = 'p5Canvas';
  *
  * @alt
  * Black line extending from top-left of canvas to bottom right.
- *
  */
 p5.prototype.createCanvas = function(w, h, renderer) {
   p5._validateParameters('createCanvas', arguments);
@@ -137,7 +136,6 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  *
  * @alt
  * No image displayed.
- *
  */
 p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   p5._validateParameters('resizeCanvas', arguments);
@@ -181,7 +179,6 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.noCanvas = function() {
   if (this.canvas) {
@@ -222,7 +219,6 @@ p5.prototype.noCanvas = function() {
  *
  * @alt
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
- *
  */
 p5.prototype.createGraphics = function(w, h, renderer) {
   p5._validateParameters('createGraphics', arguments);
@@ -264,10 +260,9 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * ignores lights. <em>(2D)</em></li>
  * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
  * </ul>
- * <br><br>
+ *
  * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
  * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
- *
  *
  * @method blendMode
  * @param  {Constant} mode blend mode to set for canvas.
@@ -300,7 +295,6 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * @alt
  * translucent image thick red & blue diagonal rounded lines intersecting center
  * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
- *
  */
 p5.prototype.blendMode = function(mode) {
   p5._validateParameters('blendMode', arguments);
@@ -340,7 +334,6 @@ p5.prototype.blendMode = function(mode) {
  *
  * @alt
  * white ellipse with shadow blur effect around edges
- *
  */
 
 export default p5;

@@ -68,7 +68,6 @@ import p5 from '../core/main';
  * @alt
  * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
  * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
- *
  */
 /**
  * @method textAlign
@@ -210,7 +209,6 @@ p5.prototype.textStyle = function(theStyle) {
  *
  * @alt
  * Letter P and p5.js are displayed with vertical lines at end.
- *
  */
 p5.prototype.textWidth = function(...args) {
   args[0] += '';

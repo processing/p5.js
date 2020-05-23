@@ -118,7 +118,6 @@ p5.prototype.bezier = function(...args) {
  *
  * @alt
  * stretched black s-shape with a low level of bezier detail
- *
  */
 p5.prototype.bezierDetail = function(d) {
   p5._validateParameters('bezierDetail', arguments);
@@ -383,7 +382,6 @@ p5.prototype.curve = function(...args) {
  *
  * @alt
  * white arch shape with a low level of curve detail.
- *
  */
 p5.prototype.curveDetail = function(d) {
   p5._validateParameters('curveDetail', arguments);

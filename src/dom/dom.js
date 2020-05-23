@@ -1,13 +1,13 @@
 /**
- * <p>The web is much more than just canvas and the DOM functionality makes it easy to interact
+ * The web is much more than just canvas and the DOM functionality makes it easy to interact
  * with other HTML5 objects, including text, hyperlink, image, input, video,
- * audio, and webcam.</p>
- * <p>There is a set of creation methods, DOM manipulation methods, and
+ * audio, and webcam.
+ * There is a set of creation methods, DOM manipulation methods, and
  * an extended <a href="#/p5.Element">p5.Element</a> that supports a range of HTML elements. See the
  * <a href='https://github.com/processing/p5.js/wiki/Beyond-the-canvas'>
  * beyond the canvas tutorial</a> for a full overview of how this addon works.
  *
- * <p>See <a href='https://github.com/processing/p5.js/wiki/Beyond-the-canvas'>tutorial: beyond the canvas</a>
+ * See <a href='https://github.com/processing/p5.js/wiki/Beyond-the-canvas'>tutorial: beyond the canvas</a>
  * for more info on how to use this library.</a>
  *
  * @module DOM
@@ -53,7 +53,6 @@ import p5 from '../core/main';
  * }
  * [a, b, c, d, e]; // unused
  * </code></div>
- *
  */
 p5.prototype.select = function(e, p) {
   p5._validateParameters('select', arguments);
@@ -124,7 +123,6 @@ p5.prototype.select = function(e, p) {
  *
  * a; // unused
  * </code></div>
- *
  */
 p5.prototype.selectAll = function(e, p) {
   p5._validateParameters('selectAll', arguments);
@@ -212,7 +210,6 @@ p5.prototype._wrapElement = function(elt) {
  *   removeElements(); // this will remove the div and p, not canvas
  * }
  * </code></div>
- *
  */
 p5.prototype.removeElements = function(e) {
   p5._validateParameters('removeElements', arguments);
@@ -283,7 +280,6 @@ p5.prototype.removeElements = function(e) {
  *
  * @alt
  * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
- *
  */
 p5.Element.prototype.changed = function(fxn) {
   p5.Element._adjustListener('change', fxn, this);
@@ -318,7 +314,6 @@ p5.Element.prototype.changed = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.input = function(fxn) {
   p5.Element._adjustListener('input', fxn, this);
@@ -666,7 +661,6 @@ p5.prototype.createCheckbox = function() {
  *   sel.disable('milk');
  * }
  * </code></div>
- *
  */
 /**
  * @method createSelect
@@ -2700,7 +2694,6 @@ p5.MediaElement.prototype.loop = function() {
  *   }
  * }
  * </code></div>
- *
  */
 p5.MediaElement.prototype.noLoop = function() {
   this.elt.setAttribute('loop', false);
@@ -2764,7 +2757,6 @@ p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
  * @alt
  * An example of a video element which autoplays after it is loaded.
  * An example of a video element which waits for a trigger for playing.
- *
  */
 
 p5.MediaElement.prototype.autoplay = function(val) {
@@ -3324,7 +3316,6 @@ var Cue = function(callback, time, id, val) {
  *
  * Time will be passed as the first parameter to the callback function,
  * and param will be the second parameter.
- *
  *
  * @method  addCue
  * @param {Number}   time     Time in seconds, relative to this media

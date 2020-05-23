@@ -73,7 +73,6 @@ p5.prototype.print = function(...args) {
  *
  * @alt
  * numbers rapidly counting upward with frame count set to 30.
- *
  */
 p5.prototype.frameCount = 0;
 
@@ -124,7 +123,6 @@ p5.prototype.frameCount = 0;
  * @alt
  * red rect moves left to right, followed by blue rect moving at the same speed
  * with a lower frame rate. Loops.
- *
  */
 p5.prototype.deltaTime = 0;
 
@@ -156,7 +154,6 @@ p5.prototype.deltaTime = 0;
  *
  * @alt
  * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
- *
  */
 p5.prototype.focused = document.hasFocus();
 
@@ -197,7 +194,6 @@ p5.prototype.focused = document.hasFocus();
  * @alt
  * canvas is divided into four quadrants. cursor on first is a cross, second is a progress,
  * third is a custom cursor using path to the cursor and fourth is a grab.
- *
  */
 p5.prototype.cursor = function(type, x, y) {
   let cursor = 'auto';
@@ -288,7 +284,6 @@ p5.prototype.cursor = function(type, x, y) {
  *
  * @alt
  * blue rect moves left to right, followed by red rect moving faster. Loops.
- *
  */
 /**
  * @method frameRate
@@ -349,10 +344,8 @@ p5.prototype.setFrameRate = function(fps) {
  * }
  * </code></div>
  *
- *
  * @alt
  * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
- *
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
@@ -373,7 +366,6 @@ p5.prototype.noCursor = function() {
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.displayWidth = screen.width;
 
@@ -392,7 +384,6 @@ p5.prototype.displayWidth = screen.width;
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.displayHeight = screen.height;
 
@@ -409,7 +400,6 @@ p5.prototype.displayHeight = screen.height;
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.windowWidth = getWindowWidth();
 /**
@@ -425,7 +415,6 @@ p5.prototype.windowWidth = getWindowWidth();
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.windowHeight = getWindowHeight();
 
@@ -536,7 +525,6 @@ p5.prototype.height = 0;
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.fullscreen = function(val) {
   p5._validateParameters('fullscreen', arguments);
@@ -694,7 +682,6 @@ function exitFullscreen() {
  *
  * @alt
  * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
- *
  */
 p5.prototype.getURL = () => location.href;
 /**
@@ -713,7 +700,6 @@ p5.prototype.getURL = () => location.href;
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.getURLPath = () =>
   location.pathname.split('/').filter(v => v !== '');
@@ -737,7 +723,6 @@ p5.prototype.getURLPath = () =>
  *
  * @alt
  * This example does not render anything.
- *
  */
 p5.prototype.getURLParams = function() {
   const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;

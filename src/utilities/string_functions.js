@@ -32,7 +32,6 @@ import '../core/error_helpers';
  *
  * @alt
  * "hello world!" displayed middle left of canvas.
- *
  */
 p5.prototype.join = function(list, separator) {
   p5._validateParameters('join', arguments);
@@ -46,11 +45,11 @@ p5.prototype.join = function(list, separator) {
  * If no groups are specified in the regular expression, but the sequence
  * matches, an array of length 1 (with the matched text as the first element
  * of the array) will be returned.
- * <br><br>
+ *
  * To use the function, first check to see if the result is null. If the
  * result is null, then the sequence did not match at all. If the sequence
  * did match, an array is returned.
- * <br><br>
+ *
  * If there are groups (specified by sets of parentheses) in the regular
  * expression, then the contents of each will be returned in the array.
  * Element [0] of a regular expression match returns the entire matching
@@ -73,7 +72,6 @@ p5.prototype.join = function(list, separator) {
  *
  * @alt
  * "p5js*" displayed middle left of canvas.
- *
  */
 p5.prototype.match = function(str, reg) {
   p5._validateParameters('match', arguments);
@@ -87,11 +85,11 @@ p5.prototype.match = function(str, reg) {
  * will be returned. If no groups are specified in the regular expression,
  * but the sequence matches, a two dimensional array is still returned, but
  * the second dimension is only of length one.
- * <br><br>
+ *
  * To use the function, first check to see if the result is null. If the
  * result is null, then the sequence did not match at all. If the sequence
  * did match, a 2D array is returned.
- * <br><br>
+ *
  * If there are groups (specified by sets of parentheses) in the regular
  * expression, then the contents of each will be returned in the array.
  * Assuming a loop with counter variable i, element [i][0] of a regular
@@ -477,7 +475,6 @@ function addNfs(num) {
  *
  * @alt
  * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
- *
  */
 p5.prototype.split = function(str, delim) {
   p5._validateParameters('split', arguments);
@@ -488,7 +485,7 @@ p5.prototype.split = function(str, delim) {
  * The <a href="#/p5/splitTokens">splitTokens()</a> function splits a String at one or many character
  * delimiters or "tokens." The delim parameter specifies the character or
  * characters to be used as a boundary.
- * <br><br>
+ *
  * If no delim characters are specified, any whitespace character is used to
  * split. Whitespace characters include tab (\t), line feed (\n), carriage
  * return (\r), form feed (\f), and space.

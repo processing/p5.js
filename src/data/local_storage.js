@@ -15,7 +15,7 @@ import p5 from '../core/main';
  * The key can be the name of the variable but doesn't
  * have to be. To retrieve stored items
  * see <a href="#/p5/getItem">getItem</a>.
- * <br><br>
+ *
  * Sensitive data such as passwords or personal information
  * should not be stored in local storage.
  *
@@ -56,7 +56,6 @@ import p5 from '../core/main';
  * @alt
  * When you type the key name is displayed as black text on white background.
  * If you reload the page, the last letter typed is still displaying.
- *
  */
 p5.prototype.storeItem = function(key, value) {
   if (typeof value === 'undefined') {
@@ -129,7 +128,6 @@ p5.prototype.storeItem = function(key, value) {
  * If you click, the canvas changes to a random color.
  * If you reload the page, the canvas is still the color it
  * was when the page was previously loaded.
- *
  */
 p5.prototype.getItem = function(key) {
   let value = localStorage.getItem(key);

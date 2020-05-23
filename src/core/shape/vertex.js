@@ -57,7 +57,6 @@ let isFirstContour = true;
  *
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
- *
  */
 p5.prototype.beginContour = function() {
   contourVertices = [];
@@ -239,7 +238,6 @@ p5.prototype.beginContour = function() {
  * 2 white rectangle shapes in mid-right canvas. Both 20x55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
- *
  */
 p5.prototype.beginShape = function(kind) {
   p5._validateParameters('beginShape', arguments);
@@ -429,7 +427,6 @@ p5.prototype.bezierVertex = function(...args) {
  * </code>
  * </div>
  *
- *
  * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
  */
@@ -486,7 +483,6 @@ p5.prototype.bezierVertex = function(...args) {
  *
  * @alt
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
- *
  */
 p5.prototype.curveVertex = function(...args) {
   p5._validateParameters('curveVertex', args);
@@ -589,7 +585,6 @@ p5.prototype.endContour = function() {
  *
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
- *
  */
 p5.prototype.endShape = function(mode) {
   p5._validateParameters('endShape', arguments);
@@ -707,7 +702,6 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * arched-shaped black line with 4 pixel thick stroke weight.
  * backwards s-shaped black line with 4 pixel thick stroke weight.
- *
  */
 
 /**
@@ -933,7 +927,6 @@ p5.prototype.quadraticVertex = function(...args) {
  * 8 points making a star.
  * 8 points making 4 lines.
  * A rotating 3D shape with a hollow section in the middle.
- *
  */
 /**
  * @method vertex

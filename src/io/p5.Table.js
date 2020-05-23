@@ -8,19 +8,19 @@ import p5 from '../core/main';
 
 /**
  *  Table Options
- *  <p>Generic class for handling tabular data, typically from a
- *  CSV, TSV, or other sort of spreadsheet file.</p>
- *  <p>CSV files are
+ *  Generic class for handling tabular data, typically from a
+ *  CSV, TSV, or other sort of spreadsheet file.
+ *  CSV files are
  *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
  *  comma separated values</a>, often with the data in quotes. TSV
  *  files use tabs as separators, and usually don't bother with the
- *  quotes.</p>
- *  <p>File names should end with .csv if they're comma separated.</p>
- *  <p>A rough "spec" for CSV can be found
- *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
- *  <p>To load files, use the <a href="#/p5/loadTable">loadTable</a> method.</p>
- *  <p>To save tables to your computer, use the <a href="#/p5/save">save</a> method
- *   or the <a href="#/p5/saveTable">saveTable</a> method.</p>
+ *  quotes.
+ *  File names should end with .csv if they're comma separated.
+ *  A rough "spec" for CSV can be found
+ *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.
+ *  To load files, use the <a href="#/p5/loadTable">loadTable</a> method.
+ *  To save tables to your computer, use the <a href="#/p5/save">save</a> method
+ *   or the <a href="#/p5/saveTable">saveTable</a> method.
  *
  *  Possible options include:
  *  <ul>
@@ -131,7 +131,6 @@ p5.Table = function(rows) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
@@ -185,7 +184,6 @@ p5.Table.prototype.addRow = function(row) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
@@ -234,7 +232,6 @@ p5.Table.prototype.removeRow = function(id) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
@@ -283,7 +280,6 @@ p5.Table.prototype.getRow = function(r) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -332,7 +328,6 @@ p5.Table.prototype.getRows = function() {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
@@ -402,7 +397,6 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.findRows = function(value, column) {
   const ret = [];
@@ -463,7 +457,6 @@ p5.Table.prototype.findRows = function(value, column) {
  * }
  * </code>
  * </div>
- *
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
   if (typeof column === 'number') {
@@ -586,7 +579,6 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getColumn = function(value) {
   const ret = [];
@@ -637,7 +629,6 @@ p5.Table.prototype.getColumn = function(value) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -688,7 +679,6 @@ p5.Table.prototype.clearRows = function() {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.addColumn = function(title) {
   const t = title || null;
@@ -768,11 +758,11 @@ p5.Table.prototype.getRowCount = function() {
 };
 
 /**
- *  <p>Removes any of the specified characters (or "tokens").</p>
+ *  Removes any of the specified characters (or "tokens").
  *
- *  <p>If no column is specified, then the values in all columns and
+ *  If no column is specified, then the values in all columns and
  *  rows are processed. A specific column may be referenced by
- *  either its ID or title.</p>
+ *  either its ID or title.
  *
  *  @method  removeTokens
  *  @param  {String} chars  String listing characters to be removed
@@ -941,7 +931,6 @@ p5.Table.prototype.trim = function(column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.removeColumn = function(c) {
   let cString;
@@ -1012,7 +1001,6 @@ p5.Table.prototype.removeColumn = function(c) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -1150,7 +1138,6 @@ p5.Table.prototype.setString = function(row, column, value) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -1195,7 +1182,6 @@ p5.Table.prototype.get = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1247,7 +1233,6 @@ p5.Table.prototype.getNum = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 
 p5.Table.prototype.getString = function(row, column) {
@@ -1294,7 +1279,6 @@ p5.Table.prototype.getString = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getObject = function(headerColumn) {
   const tableObject = {};
@@ -1354,7 +1338,6 @@ p5.Table.prototype.getObject = function(headerColumn) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getArray = function() {
   const tableArray = [];

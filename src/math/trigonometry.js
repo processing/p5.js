@@ -78,7 +78,6 @@ p5.prototype.acos = function(ratio) {
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
  * </div>
- *
  */
 p5.prototype.asin = function(ratio) {
   return this._fromRadians(Math.asin(ratio));
@@ -113,7 +112,6 @@ p5.prototype.asin = function(ratio) {
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
  * </div>
- *
  */
 p5.prototype.atan = function(ratio) {
   return this._fromRadians(Math.atan(ratio));
@@ -124,7 +122,7 @@ p5.prototype.atan = function(ratio) {
  * origin as measured from the positive x-axis. Values are returned as a
  * float in the range from PI to -PI. The atan2<a href="#/p5/">()</a> function is most often used
  * for orienting geometry to the position of the cursor.
- * <br><br>
+ *
  * Note: The y-coordinate of the point is the first parameter, and the
  * x-coordinate is the second parameter, due the the structure of calculating
  * the tangent.
@@ -149,7 +147,6 @@ p5.prototype.atan = function(ratio) {
  *
  * @alt
  * 60 by 10 rect at center of canvas rotates with mouse movements
- *
  */
 p5.prototype.atan2 = function(y, x) {
   return this._fromRadians(Math.atan2(y, x));
@@ -177,7 +174,6 @@ p5.prototype.atan2 = function(y, x) {
  *
  * @alt
  * vertical black lines form wave patterns, extend-down on left and right side
- *
  */
 p5.prototype.cos = function(angle) {
   return Math.cos(this._toRadians(angle));
@@ -205,7 +201,6 @@ p5.prototype.cos = function(angle) {
  *
  * @alt
  * vertical black lines extend down and up from center to form wave pattern
- *
  */
 p5.prototype.sin = function(angle) {
   return Math.sin(this._toRadians(angle));
@@ -230,10 +225,8 @@ p5.prototype.sin = function(angle) {
  * }
  * </code>
  *
- *
  * @alt
  * vertical black lines end down and up from center to form spike pattern
- *
  */
 p5.prototype.tan = function(angle) {
   return Math.tan(this._toRadians(angle));
@@ -250,7 +243,6 @@ p5.prototype.tan = function(angle) {
  * @param  {Number} radians the radians value to convert to degrees
  * @return {Number}         the converted angle
  *
- *
  * @example
  * <div class= “norender">
  * <code>
@@ -260,7 +252,6 @@ p5.prototype.tan = function(angle) {
  * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
  * </div>
- *
  */
 p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
 
@@ -314,7 +305,6 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
  *
  * @alt
  * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
- *
  *
  */
 p5.prototype.angleMode = function(mode) {

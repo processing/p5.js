@@ -40,8 +40,8 @@ import '../core/error_helpers';
  * @return {Object|Array}             JSON data
  * @example
  *
- * <p>Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
  * // Examples use USGS Earthquake API:
@@ -70,9 +70,8 @@ import '../core/error_helpers';
  * }
  * </code></div>
  *
- *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  * <div><code>
  * function setup() {
  *   noLoop();
@@ -99,7 +98,6 @@ import '../core/error_helpers';
  * @alt
  * 50x50 ellipse that changes from black to white depending on the current humidity
  * 50x50 ellipse that changes from black to white depending on the current humidity
- *
  */
 /**
  * @method loadJSON
@@ -184,12 +182,12 @@ p5.prototype.loadJSON = function(...args) {
  * Reads the contents of a file and creates a String array of its individual
  * lines. If the name of the file is used as the parameter, as in the above
  * example, the file must be located in the sketch directory/folder.
- * <br><br>
+ *
  * Alternatively, the file maybe be loaded from anywhere on the local
  * computer using an absolute path (something that starts with / on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
- * <br><br>
+ *
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed.
  *
@@ -205,8 +203,8 @@ p5.prototype.loadJSON = function(...args) {
  * @return {String[]}            Array of Strings
  * @example
  *
- * <p>Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
  * let result;
@@ -220,8 +218,8 @@ p5.prototype.loadJSON = function(...args) {
  * }
  * </code></div>
  *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  *
  * <div><code>
  * function setup() {
@@ -237,7 +235,6 @@ p5.prototype.loadJSON = function(...args) {
  * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
- *
  */
 p5.prototype.loadStrings = function(...args) {
   p5._validateParameters('loadStrings', args);
@@ -302,7 +299,7 @@ p5.prototype.loadStrings = function(...args) {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
  * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
- * <p>Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
  * object:
  *
  * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
@@ -362,7 +359,6 @@ p5.prototype.loadStrings = function(...args) {
  * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
- *
  */
 p5.prototype.loadTable = function(path) {
   // p5._validateParameters('loadTable', arguments);
@@ -638,7 +634,6 @@ function makeObject(row, headers) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.loadXML = function(...args) {
   const ret = new p5.XML();
@@ -712,7 +707,6 @@ p5.prototype.loadXML = function(...args) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.loadBytes = function(file, callback, errorCallback) {
   const ret = {};
@@ -871,7 +865,6 @@ p5.prototype.httpGet = function() {
  * </code>
  * </div>
  *
- *
  * <div><code>
  * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
  * let postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
@@ -902,7 +895,6 @@ p5.prototype.httpGet = function() {
  *   );
  * }
  * </code></div>
- *
  */
 /**
  * @method httpPost
@@ -1582,7 +1574,6 @@ p5.prototype.save = function(object, _filename, _options) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.saveJSON = function(json, filename, opt) {
   p5._validateParameters('saveJSON', arguments);
@@ -1637,7 +1628,6 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
@@ -1701,7 +1691,6 @@ function escapeHelper(content) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.saveTable = function(table, filename, options) {
   p5._validateParameters('saveTable', arguments);
