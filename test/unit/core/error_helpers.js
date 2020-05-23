@@ -5,6 +5,7 @@ suite('Error Helpers', function() {
     new p5(function(p) {
       p.setup = function() {
         myp5 = p;
+        p5._clearValidateParamsCache();
         done();
       };
     });
@@ -121,6 +122,76 @@ suite('Error Helpers', function() {
       });
     }
   );
+
+  suite('validateParameters: argument tree', function() {
+    // should not throw a validation error for the same kind of wrong args
+    // more than once. This prevents repetetive validation logs for a
+    // function that is called in a loop or draw()
+    testUnMinified(
+      'no repeated validation error for the same wrong arguments',
+      function() {
+        assert.validationError(function() {
+          myp5.color();
+        });
+
+        assert.doesNotThrow(
+          function() {
+            myp5.color(); // Same type of wrong arguments as above
+          },
+          p5.ValidationError,
+          'got unwanted ValidationError'
+        );
+      }
+    );
+
+    testUnMinified(
+      'should throw validation errors for different wrong args',
+      function() {
+        assert.validationError(function() {
+          myp5.color();
+        });
+
+        assert.validationError(function() {
+          myp5.color(false);
+        });
+      }
+    );
+
+    testUnMinified('arg tree is built properly', function() {
+      let myArgTree = p5._getValidateParamsArgTree();
+      myp5.random();
+      myp5.random(50);
+      myp5.random([50, 70, 10]);
+      assert.strictEqual(
+        myArgTree.random.seen,
+        true,
+        'tree built correctly for random()'
+      );
+      assert.strictEqual(
+        myArgTree.random.number.seen,
+        true,
+        'tree built correctly for random(min: Number)'
+      );
+      assert.strictEqual(
+        myArgTree.random.as.number.number.number.seen,
+        true,
+        'tree built correctly for random(choices: Array)'
+      );
+
+      let c = myp5.color(10);
+      myp5.alpha(c);
+      assert.strictEqual(
+        myArgTree.color.number.seen,
+        true,
+        'tree built correctly for color(gray: Number)'
+      );
+      assert.strictEqual(
+        myArgTree.alpha.Color.seen,
+        true,
+        'tree built correctly for alpha(color: p5.Color)'
+      );
+    });
+  });
 
   suite('validateParameters: multi-format', function() {
     test('color(): no friendly-err-msg', function() {

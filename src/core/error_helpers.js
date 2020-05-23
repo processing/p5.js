@@ -50,11 +50,11 @@ import { translator } from './internationalization';
 const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = () => {};
+  p5._validateParameters = p5._friendlyFileLoadError = p5._friendlyError = p5._clearValidateParamsCache = () => {};
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
   // for parameter validation
-  const dataDoc = require('../../docs/reference/data.json');
+  const dataDoc = require('../../docs/parameterData.json');
   const arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
   // -- Borrowed from jQuery 1.11.3 --
@@ -248,7 +248,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   const docCache = {};
-  const builtinTypes = [
+  const builtinTypes = new Set([
     'null',
     'number',
     'string',
@@ -257,7 +257,162 @@ if (typeof IS_MINIFIED !== 'undefined') {
     'function',
     'any',
     'integer'
-  ];
+  ]);
+
+  const basicTypes = {
+    number: true,
+    boolean: true,
+    string: true,
+    function: true,
+    undefined: true
+  };
+
+  // reverse map of all constants
+  const constantsReverseMap = {};
+  for (let key in constants) {
+    constantsReverseMap[constants[key]] = key;
+  }
+
+  // mapping names of p5 types to their constructor function
+  // p5Constructors:
+  //    - Color: f()
+  //    - Graphics: f()
+  //    - Vector: f()
+  // and so on
+  const p5Constructors = {};
+
+  // For speedup over many runs. funcSpecificConstructors[func] only has the
+  // constructors for types which were seen earlier as args of "func"
+  const funcSpecificConstructors = {};
+  window.addEventListener('load', () => {
+    // Make a list of all p5 classes to be used for argument validation
+    // This must be done only when everything has loaded otherwise we get
+    // an empty array
+    for (let key of Object.keys(p5)) {
+      // Get a list of all constructors in p5. They are functions whose names
+      // start with a capital letter
+      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+        p5Constructors[key] = p5[key];
+      }
+    }
+  });
+
+  const argumentTree = {};
+  // The following two functions are responsible for querying and inserting
+  // into the argument tree. It stores the types of arguments that each
+  // function has seen so far. It is used to query if a sequence of
+  // arguments seen in validate parameters was seen before.
+  // Lets consider that the following segment of code runs repeatedly, perhaps
+  // in a loop or in draw()
+  //   color(10, 10, 10);
+  //   color(10, 10);
+  //   color('r', 'g', 'b');
+  // After the first of run the code segment, the argument tree looks like
+  // - color
+  //     - number
+  //        - number
+  //            - number
+  //                - seen: true
+  //            - seen: true
+  //     - string
+  //        - string
+  //            - string
+  //                - seen: true
+  // seen: true signifies that this argument was also seen as the last
+  // argument in a call. Now in the second run of the sketch, it would traverse
+  // the existing tree and see seen: true, i.e this sequence was seen
+  // before and so scoring can be skipped. This also prevents logging multiple
+  // validation messages for the same thing.
+
+  // These two functions would be called repeatedly over and over again,
+  // so they need to be as optimized for performance as possible
+
+  const addType = (value, obj, func) => {
+    let type = typeof value;
+    if (basicTypes[type]) {
+      if (constantsReverseMap[value]) {
+        // check if the value is a p5 constant and if it is, we would want the
+        // value itself to be stored in the tree instead of the type
+        obj = obj[value] || (obj[value] = {});
+      } else {
+        obj = obj[type] || (obj[type] = {});
+      }
+    } else if (value === null) {
+      // typeof null -> "object". don't want that
+      obj = obj['null'] || (obj['null'] = {});
+    } else {
+      // objects which are instances of p5 classes have nameless constructors.
+      // native objects have a constructor named "Object". This check
+      // differentiates between the two so that we dont waste time finding the
+      // p5 class if we just have a native object
+      if (value.constructor && value.constructor.name) {
+        obj = obj[value.constructor.name] || (obj[value.constructor.name] = {});
+        return obj;
+      }
+
+      // constructors for types defined in p5 do not have a name property.
+      // e.constructor.name gives "". Code in this segment is a workaround for it
+
+      // p5C will only have the name: constructor mapping for types
+      // which were already seen as args of "func"
+      let p5C = funcSpecificConstructors[func];
+      // p5C would contain much fewer items than p5Constructors. if we find our
+      // answer in p5C, we don't have to scan through p5Constructors
+
+      if (p5C === undefined) {
+        // if there isn't an entry yet for func
+        // make an entry of empty object
+        p5C = funcSpecificConstructors[func] = {};
+      }
+
+      for (let key in p5C) {
+        // search on the constructors we have already seen (smaller search space)
+        if (value instanceof p5C[key]) {
+          obj = obj[key] || (obj[key] = {});
+          return obj;
+        }
+      }
+
+      for (let key in p5Constructors) {
+        // if the above search didn't work, search on all p5 constructors
+        if (value instanceof p5Constructors[key]) {
+          obj = obj[key] || (obj[key] = {});
+          // if found, add to known constructors for this function
+          p5C[key] = p5Constructors[key];
+          return obj;
+        }
+      }
+      // nothing worked, put the type as is
+      obj = obj[type] || (obj[type] = {});
+    }
+
+    return obj;
+  };
+  const buildArgTypeCache = (func, arr) => {
+    // get the if an argument tree for current function already exists
+    let obj = argumentTree[func];
+    if (obj === undefined) {
+      // if it doesn't, create an empty tree
+      obj = argumentTree[func] = {};
+    }
+
+    for (let i = 0, len = arr.length; i < len; ++i) {
+      let value = arr[i];
+      if (value instanceof Array) {
+        // an array is passed as an argument, expand it and get the type of
+        // each of its element. We distinguish the start of an array with 'as'
+        // or arraystart. This would help distinguish between the arguments
+        // (number, number, number) and (number, [number, number])
+        obj = obj['as'] || (obj['as'] = {});
+        for (let j = 0, lenA = value.length; j < lenA; ++j) {
+          obj = addType(value[j], obj, func);
+        }
+      } else {
+        obj = addType(value, obj, func);
+      }
+    }
+    return obj;
+  };
 
   // validateParameters() helper functions:
   // lookupParamDoc() for querying data.json
@@ -268,15 +423,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const funcName = func.substr(ichDot + 1);
     const funcClass = func.substr(0, ichDot) || 'p5';
 
-    let queryResult;
-    const classitems = arrDoc.classitems;
-
-    for (const x of classitems) {
-      if (x.name === funcName && x.class === funcClass) {
-        queryResult = x;
-        break;
-      }
-    }
+    const classitems = arrDoc;
+    let queryResult = classitems[funcClass][funcName];
 
     // different JSON structure for funct with multi-format
     const overloads = [];
@@ -370,7 +518,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             lowerType = 'function';
           }
           // builtin
-          if (builtinTypes.includes(lowerType)) {
+          if (builtinTypes.has(lowerType)) {
             return { name: type, builtin: lowerType };
           }
 
@@ -627,6 +775,21 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
+  // if a function is called with some set of wrong arguments, and then called
+  // again with the same set of arguments, the messages due to the second call
+  // will be supressed. If two tests test on the same wrong arguments, the
+  // second test won't see the validationError. clearing argumentTree solves it
+  p5._clearValidateParamsCache = function clearValidateParamsCache() {
+    for (let key of Object.keys(argumentTree)) {
+      delete argumentTree[key];
+    }
+  };
+
+  // allowing access to argumentTree for testing
+  p5._getValidateParamsArgTree = function getValidateParamsArgTree() {
+    return argumentTree;
+  };
+
   /**
    * Validates parameters
    * param  {String}               func    the name of the function
@@ -649,6 +812,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
       return; // skip FES
     }
 
+    // query / build the argument type tree and check if this sequence
+    // has already been seen before.
+    let obj = buildArgTypeCache(func, args);
+    if (obj.seen) {
+      return;
+    }
+    // mark this sequence as seen
+    obj.seen = true;
     // lookup the docs in the 'data.json' file
     const docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
     const overloads = docs.overloads;
