@@ -292,51 +292,33 @@ p5.prototype.loadStrings = function(...args) {
 };
 
 /**
- * <p>Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
+ * Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
  * its values. If a file is specified, it must be located in the sketch's
  * "data" folder. The filename parameter can also be a URL to a file found
  * online. By default, the file is assumed to be comma-separated (in CSV
  * format). Table only looks for a header row if the 'header' option is
- * included.</p>
+ * included.
  *
- * <p>Possible options include:
- * <ul>
- * <li>csv - parse the table as comma-separated values</li>
- * <li>ssv - parse the table as semicolon-separated values</li>
- * <li>tsv - parse the table as tab-separated values</li>
- * <li>header - this table has a header (title) row</li>
- * </ul>
- * </p>
- *
- * <p>When passing in multiple options, pass them in as separate parameters,
- * seperated by commas. For example:
- * <br><br>
- * <code>
- * loadTable('my_csv_file.csv', 'csv', 'header');
- * </code>
- * </p>
- *
- * <p> All files loaded and saved use UTF-8 encoding.</p>
- *
- * <p>This method is asynchronous, meaning it may not finish before the next
+ * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
  * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  * <p>Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
- * object:</p>
- * </p>
+ * object:
  *
- * This method is suitable for fetching files up to size of 64MB.
+ * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
- * @param  {String}         filename   name of the file or URL to load
- * @param  {String}         options  "header" "csv" "ssv" "tsv"
- * @param  {function}       [callback] function to be executed after
- *                                     <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
- *                                     <a href="#/p5.Table">Table</a> object is passed in as the
- *                                     first argument.
- * @param  {function}  [errorCallback] function to be executed if
- *                                     there is an error, response is passed
- *                                     in as first argument
- * @return {Object}                    <a href="#/p5.Table">Table</a> object containing data
+ * @param  {String}         filename    name of the file or URL to load
+ * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
+ *                                      values "ssv", or tab-separated values "tsv"
+ * @param  {String}         [header]    "header" to indicate table has header row
+ * @param  {function}       [callback]  function to be executed after
+ *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
+ *                                      <a href="#/p5.Table">Table</a> object is passed in as the
+ *                                      first argument.
+ * @param  {function}  [errorCallback]  function to be executed if
+ *                                      there is an error, response is passed
+ *                                      in as first argument
+ * @return {Object}                     <a href="#/p5.Table">Table</a> object containing data
  *
  * @example
  * <div class='norender'>
@@ -382,24 +364,20 @@ p5.prototype.loadStrings = function(...args) {
  * randomly generated text from a file, for example "i have three feet"
  *
  */
-/**
- * @method loadTable
- * @param  {String}         filename
- * @param  {function}       [callback]
- * @param  {function}  [errorCallback]
- * @return {Object}
- */
 p5.prototype.loadTable = function(path) {
+  // p5._validateParameters('loadTable', arguments);
   let callback;
   let errorCallback;
   const options = [];
   let header = false;
   const ext = path.substring(path.lastIndexOf('.') + 1, path.length);
-  let sep = ',';
-  let separatorSet = false;
 
-  if (ext === 'tsv') {
-    //Only need to check extension is tsv because csv is default
+  let sep;
+  if (ext === 'csv') {
+    sep = ',';
+  } else if (ext === 'ssv') {
+    sep = ';';
+  } else if (ext === 'tsv') {
     sep = '\t';
   }
 
@@ -416,29 +394,16 @@ p5.prototype.loadTable = function(path) {
         header = true;
       }
       if (arguments[i] === 'csv') {
-        if (separatorSet) {
-          throw new Error('Cannot set multiple separator types.');
-        } else {
-          sep = ',';
-          separatorSet = true;
-        }
+        sep = ',';
       } else if (arguments[i] === 'ssv') {
-        if (separatorSet) {
-          throw new Error('Cannot set multiple separator types.');
-        } else {
-          sep = ';';
-          separatorSet = true;
-        }
+        sep = ';';
       } else if (arguments[i] === 'tsv') {
-        if (separatorSet) {
-          throw new Error('Cannot set multiple separator types.');
-        } else {
-          sep = '\t';
-          separatorSet = true;
-        }
+        sep = '\t';
       }
     }
   }
+
+  console.log('SEP IS ' + sep);
 
   const t = new p5.Table();
 
