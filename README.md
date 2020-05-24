@@ -383,6 +383,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/kyle1james"><img src="https://avatars3.githubusercontent.com/u/13423696?v=4" width="100px;" alt=""/><br /><sub><b>Kyle James</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kyle1james" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/AbhiGulati"><img src="https://avatars1.githubusercontent.com/u/8756983?v=4" width="100px;" alt=""/><br /><sub><b>Abhi Gulati</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AbhiGulati" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://jtp.io"><img src="https://avatars2.githubusercontent.com/u/591645?v=4" width="100px;" alt=""/><br /><sub><b>Jeremy Tuloup</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jtpio" title="Documentation">📖</a></td>
   </tr>
 </table>
 
