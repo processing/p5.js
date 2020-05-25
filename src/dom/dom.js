@@ -1871,7 +1871,7 @@ p5.Element.prototype._rotate = function() {
 /**
  * @method style
  * @param  {String} property
- * @param  {String|Number|p5.Color} value     value to assign to property
+ * @param  {String|p5.Color} value     value to assign to property
  * @return {String} current value of property, if no value is given as second argument
  * @chainable
  */
