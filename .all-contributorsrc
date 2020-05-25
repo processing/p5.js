@@ -1944,6 +1944,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "lm-n",
+      "name": "Luis Morales-Navarro",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/16418450?v=4",
+      "profile": "http://lm-n.com",
+      "contributions": [
+        "a11y"
+      ]
     }
   ],
   "repoType": "github",
