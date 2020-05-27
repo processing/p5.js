@@ -94,7 +94,8 @@ p5.prototype.select = function(e, p) {
  *
  * @method selectAll
  * @param  {String} name class or tag name of elements to search for
- * @param  {String} [container] id, <a href="#/p5.Element">p5.Element</a>, or HTML element to search within
+ * @param  {String|p5.Element|HTMLElement} [container] id, <a href="#/p5.Element">p5.Element</a>, or
+ *                                             HTML element to search within
  * @return {p5.Element[]} Array of <a href="#/p5.Element">p5.Element</a>s containing nodes found
  * @example
  * <div class='norender'><code>
