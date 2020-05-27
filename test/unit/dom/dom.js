@@ -1350,19 +1350,400 @@ suite('DOM', function() {
   });
 
   // p5.Element.prototype.addClass
+  suite('p5.Element.prototype.addClass', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.addClass);
+    });
+
+    test('should add provided string to class names', function() {
+      const testClassName = 'jumbotron';
+      testElement = myp5.createElement('div');
+      testElement.addClass(testClassName);
+      assert.deepEqual(testElement.elt.className, testClassName);
+    });
+
+    test('should not add class name, if already exists', function() {
+      const testClassName1 = 'jumbotron';
+      const testClassName2 = 'container-fluid';
+      const expectedClassName = testClassName1 + ' ' + testClassName2;
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(testClassName1);
+      testElement.addClass(testClassName2);
+
+      // Should not add the class name again
+      testElement.addClass(testClassName1);
+      assert.deepEqual(testElement.elt.className, expectedClassName);
+    });
+  });
 
   // p5.Element.prototype.removeClass
+  suite('p5.Element.prototype.removeClass', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.removeClass);
+    });
+
+    test('should remove provided string from class names', function() {
+      const defaultClassNames = 'col-md-9 col-sm-12';
+      const testClassName = 'jumbotron';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(defaultClassNames);
+      testElement.addClass(testClassName);
+
+      // Removing a class name
+      testElement.removeClass(testClassName);
+      assert.deepEqual(testElement.elt.className, defaultClassNames);
+    });
+
+    test('should not throw error if class name not exists', function() {
+      const testClassName1 = 'jumbotron';
+      const testClassName2 = 'container-fluid';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(testClassName1);
+
+      // Handling the curse of 'this'
+      testElement.removeClass = testElement.removeClass.bind(testElement);
+      assert.doesNotThrow(testElement.removeClass, testClassName2);
+      assert.deepEqual(testElement.elt.className, testClassName1);
+    });
+  });
 
   // p5.Element.prototype.hasClass
+  suite('p5.Element.prototype.hasClass', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.hasClass);
+    });
+
+    test('should return true for existing class name', function() {
+      const defaultClassNames = 'col-md-9 jumbotron';
+      const testClassName = 'jumbotron';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(defaultClassNames);
+
+      assert.isTrue(testElement.hasClass(testClassName));
+    });
+
+    test('should return false for non-existing class name', function() {
+      const defaultClassNames = 'col-md-9 jumbotron';
+      const testClassName = 'container-fluid';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(defaultClassNames);
+
+      assert.isFalse(testElement.hasClass(testClassName));
+    });
+  });
 
   // p5.Element.prototype.toggleClass
+  suite('p5.Element.prototype.toggleClass', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.toggleClass);
+    });
+
+    test('should remove an existing class name', function() {
+      const defaultClassName = 'container-fluid';
+      const testClassName = 'jumbotron';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(defaultClassName);
+      testElement.addClass(testClassName);
+
+      testElement.toggleClass(testClassName);
+      assert.deepEqual(testElement.elt.className, defaultClassName);
+    });
+
+    test('should add an non-existing class name', function() {
+      const defaultClassName = 'container-fluid';
+      const testClassName = 'jumbotron';
+
+      testElement = myp5.createElement('div');
+      testElement.addClass(defaultClassName);
+
+      testElement.toggleClass(testClassName);
+      assert.deepEqual(
+        testElement.elt.className,
+        defaultClassName + ' ' + testClassName
+      );
+    });
+  });
 
   // p5.Element.prototype.child
+  suite('p5.Element.prototype.child', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.child);
+    });
+
+    test('should return all child nodes by default', function() {
+      testElement = myp5.createElement('div');
+      const childElement = myp5.createElement('p');
+
+      // Add child element by using DOM API
+      testElement.elt.appendChild(childElement.elt);
+
+      const childNodes = testElement.child();
+      assert.deepEqual(childNodes.length, testElement.elt.childElementCount);
+      childNodes.forEach((childElement, index) => {
+        const domChild = testElement.elt.children[index];
+        assert.deepEqual(childElement, domChild);
+      });
+    });
+
+    test('should append p5 element as child', function() {
+      testElement = myp5.createElement('div');
+      const childElement = myp5.createElement('p');
+
+      testElement.child(childElement);
+      const childNodes = Array.from(testElement.elt.children);
+      assert.isTrue(childNodes.includes(childElement.elt));
+    });
+
+    test('should append dom element as child', function() {
+      testElement = myp5.createElement('div');
+      const childElement = myp5.createElement('p');
+
+      testElement.child(childElement.elt);
+      const childNodes = Array.from(testElement.elt.children);
+      assert.isTrue(childNodes.includes(childElement.elt));
+    });
+
+    test('should append element as child from a given id', function() {
+      testElement = myp5.createElement('div');
+      const childId = 'testChildElement';
+      const childElement = myp5.createElement('p');
+      childElement.id(childId);
+
+      testElement.child(childId);
+      const childNodes = Array.from(testElement.elt.children);
+      assert.isTrue(childNodes.includes(childElement.elt));
+    });
+  });
 
   // p5.Element.prototype.center
+  suite('p5.Element.prototype.center', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      testElement = myp5.createElement('div');
+      assert.isFunction(testElement.center);
+    });
+
+    // test('should center an element horizontally', function() {
+    //   // center doesn't work.
+    // });
+
+    // test('should center an element vertically', function() {
+    //   // center doesn't work.
+    // });
+
+    // test('should center an element horizontally and vertically', function() {
+    //   // center doesn't work.
+    // });
+  });
 
   // p5.Element.prototype.html
+  suite('p5.Element.prototype.html', function() {
+    let myp5;
+    let testElement;
 
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    test('should be a function', function() {
+      // Create any p5.Element
+      testElement = myp5.createElement('a');
+      assert.isFunction(testElement.position);
+    });
+
+    test('should return the inner HTML of element if no argument is given', function() {
+      testElement = myp5.createElement('div');
+      const testHTML = '<p>Hello World</p>';
+
+      testElement.elt.innerHTML = testHTML;
+      assert.deepEqual(testElement.html(), testHTML);
+    });
+
+    test('should replace the inner HTML of element', function() {
+      testElement = myp5.createElement('div');
+      const initialtestHTML = '<p>Hello World</p>';
+      const modifiedtestHTML = '<p>Hello World !!!</p>';
+
+      testElement.html(initialtestHTML);
+      assert.deepEqual(testElement.elt.innerHTML, initialtestHTML);
+
+      testElement.html(modifiedtestHTML);
+      assert.deepEqual(testElement.elt.innerHTML, modifiedtestHTML);
+    });
+
+    test('should append to the inner HTML if second param is true', function() {
+      testElement = myp5.createElement('div');
+      const testHTML1 = '<p>Hello World</p>';
+      const testHTML2 = '<p>Hello World !!!</p>';
+
+      testElement.html(testHTML1);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML1);
+
+      testElement.html(testHTML2, true);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML1 + testHTML2);
+    });
+
+    test('should replace the inner HTML if second param is false', function() {
+      testElement = myp5.createElement('div');
+      const testHTML1 = '<p>Hello World</p>';
+      const testHTML2 = '<p>Hello World !!!</p>';
+
+      testElement.html(testHTML1);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML1);
+
+      testElement.html(testHTML2, false);
+      assert.deepEqual(testElement.elt.innerHTML, testHTML2);
+    });
+  });
+
+  // p5.Element.prototype.position
   suite('p5.Element.prototype.position', function() {
     let myp5;
     let testElement;
