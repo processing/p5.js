@@ -117,10 +117,14 @@ p5.prototype.select = function(e, p) {
  * a = selectAll('button', '#myContainer');
  *
  * let d = select('#container');
- * a = selectAll('p', d);
+ * if (d) {
+ *   a = selectAll('p', d);
+ * }
  *
  * let f = document.getElementById('beep');
- * a = select('.blah', f);
+ * if (f) {
+ *   a = selectAll('.blah', f);
+ * }
  *
  * a; // unused
  * </code></div>
