@@ -6,7 +6,9 @@
  */
 
 import p5 from '../main';
-import '../error_helpers';
+import '../friendly_errors/fes_core';
+import '../friendly_errors/file_errors';
+import '../friendly_errors/validate_params';
 
 /**
  * Draws a cubic Bezier curve on the screen. These curves are defined by a

@@ -11,7 +11,9 @@ import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
 
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.

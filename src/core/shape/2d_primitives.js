@@ -9,7 +9,9 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import canvas from '../helpers';
-import '../error_helpers';
+import '../friendly_errors/fes_core';
+import '../friendly_errors/file_errors';
+import '../friendly_errors/validate_params';
 
 /**
  * This function does 3 things:
