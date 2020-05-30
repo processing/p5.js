@@ -524,18 +524,32 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
 
     if (message) {
-      if (p5._throwValidationErrors) {
-        throw new p5.ValidationError(message);
-      }
-
       try {
-        const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
-        const location = re.exec(new Error().stack)[1];
+        // const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
+        const myError = new Error();
+        let parsed = p5._getErrorStackParser().parse(myError);
+        if (
+          parsed[3] &&
+          parsed[3].functionName &&
+          parsed[3].functionName.includes('.') &&
+          p5.prototype[parsed[3].functionName.split('.').slice(-1)[0]]
+        ) {
+          return;
+        }
+        if (p5._throwValidationErrors) {
+          throw new p5.ValidationError(message);
+        }
+        const location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
+          parsed[3].columnNumber
+        }`;
         if (location) {
           message += ` at ${location}`;
         }
-      } catch (err) {}
-
+      } catch (err) {
+        if (err instanceof p5.ValidationError) {
+          throw err;
+        }
+      }
       p5._friendlyError(`${message}.`, func, 3);
     }
   };
