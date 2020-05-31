@@ -1962,6 +1962,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "cedarfall",
+      "name": "cedarfall",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/50991099?v=4",
+      "profile": "https://github.com/cedarfall",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
