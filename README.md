@@ -387,6 +387,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://lm-n.com"><img src="https://avatars0.githubusercontent.com/u/16418450?v=4" width="100px;" alt=""/><br /><sub><b>Luis Morales-Navarro</b></sub></a><br /><a href="#a11y-lm-n" title="Accessibility">️️️️♿️</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/yukie-nomiya/"><img src="https://avatars3.githubusercontent.com/u/49163604?v=4" width="100px;" alt=""/><br /><sub><b>Yuki</b></sub></a><br /><a href="#translation-yukienomiya" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/cedarfall"><img src="https://avatars2.githubusercontent.com/u/50991099?v=4" width="100px;" alt=""/><br /><sub><b>cedarfall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cedarfall" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://dribbble.com/isaacdurazo"><img src="https://avatars1.githubusercontent.com/u/1379244?v=4" width="100px;" alt=""/><br /><sub><b>Isaac Durazo </b></sub></a><br /><a href="#translation-isaacdurazo" title="Translation">🌍</a></td>
   </tr>
 </table>
 
