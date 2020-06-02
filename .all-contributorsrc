@@ -1971,6 +1971,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "isaacdurazo",
+      "name": "Isaac Durazo ",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1379244?v=4",
+      "profile": "https://dribbble.com/isaacdurazo",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
