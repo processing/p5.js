@@ -6,7 +6,9 @@
  */
 
 import p5 from '../core/main';
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 //return p5; //LM is this a mistake?
 

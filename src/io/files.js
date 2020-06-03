@@ -13,7 +13,9 @@ import 'whatwg-fetch';
 import 'es6-promise/auto';
 import fetchJsonp from 'fetch-jsonp';
 import fileSaver from 'file-saver';
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.

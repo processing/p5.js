@@ -9,7 +9,9 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import './p5.Color';
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Extracts the alpha value from a color or pixel array.

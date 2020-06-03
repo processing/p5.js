@@ -781,6 +781,7 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Constant} blendMode
  */
 p5.Image.prototype.blend = function(...args) {
+  p5._validateParameters('p5.Image.blend', arguments);
   p5.prototype.blend.apply(this, args);
   this.setModified(true);
 };

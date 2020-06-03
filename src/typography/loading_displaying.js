@@ -9,7 +9,9 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 import * as opentype from 'opentype.js';
 
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
