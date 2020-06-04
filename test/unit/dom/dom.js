@@ -1628,6 +1628,12 @@ suite('DOM', function() {
       const childNodes = Array.from(testElement.elt.children);
       assert.isTrue(childNodes.includes(childElement.elt));
     });
+
+    test('should not throw error if mathcing element is not found from a given id', function() {
+      testElement = myp5.createElement('div');
+      const randomChildId = 'testChildElement';
+      expect(() => testElement.child(randomChildId)).to.not.throw();
+    });
   });
 
   // p5.Element.prototype.center

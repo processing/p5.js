@@ -1612,19 +1612,22 @@ p5.Element.prototype.toggleClass = function(c) {
  *                         to add to the current element
  * @chainable
  */
-p5.Element.prototype.child = function(c) {
-  if (typeof c === 'undefined') {
+p5.Element.prototype.child = function(childNode) {
+  if (typeof childNode === 'undefined') {
     return this.elt.childNodes;
   }
-  if (typeof c === 'string') {
-    if (c[0] === '#') {
-      c = c.substring(1);
+  if (typeof childNode === 'string') {
+    if (childNode[0] === '#') {
+      childNode = childNode.substring(1);
     }
-    c = document.getElementById(c);
-  } else if (c instanceof p5.Element) {
-    c = c.elt;
+    childNode = document.getElementById(childNode);
+  } else if (childNode instanceof p5.Element) {
+    childNode = childNode.elt;
   }
-  this.elt.appendChild(c);
+
+  if (childNode instanceof HTMLElement) {
+    this.elt.appendChild(childNode);
+  }
   return this;
 };
 
