@@ -123,6 +123,96 @@ suite('Error Helpers', function() {
     }
   );
 
+  suite('validateParameters: a few edge cases', function() {
+    // testing for edge cases mentioned in
+    // https://github.com/processing/p5.js/issues/2740
+    testUnMinified('color: wrong type for optional parameter', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('color', [0, 0, 0, 'A']);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'WRONG_TYPE',
+        'ValidationError type is correct'
+      );
+    });
+
+    testUnMinified('color: superfluous parameter', function() {
+      assert.throws(function() {
+        p5._validateParameters('color', [[0, 0, 0], 0]);
+      }, p5.ValidationError);
+      // not performing a type check here as it could reasonably fit as
+      // either WRONG_TYPE or TOO_MANY_ARGUMENTS
+    });
+
+    testUnMinified('color: wrong element types', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('color', [['A', 'B', 'C']]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'WRONG_TYPE',
+        'ValidationError type is correct'
+      );
+    });
+
+    testUnMinified('rect: null, non-trailing, optional parameter', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('rect', [0, 0, 0, 0, null, 0, 0, 0]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'EMPTY_VAR',
+        'ValidationError type is correct'
+      );
+    });
+
+    testUnMinified('color: too many args + wrong types too', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('color', ['A', 'A', 0, 0, 0, 0, 0, 0, 0, 0]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'TOO_MANY_ARGUMENTS',
+        'ValidationError type is correct'
+      );
+    });
+  });
+
+  suite('validateParameters: trailing undefined arguments', function() {
+    // see https://github.com/processing/p5.js/issues/4571 for details
+
+    test('color: missing params #1 #2', function() {
+      // even though color can also be called with one argument, if 3 args
+      // are passed, it is likely that them being undefined is an accident
+      assert.validationError(function() {
+        p5._validateParameters('color', [12, undefined, undefined]);
+      });
+    });
+
+    test('random: missing params #0 #1 (both optional)', function() {
+      // even though the undefined params are optional, since they are passed
+      // to the function, it is more likely that the user wanted to call the
+      // function with 2 arguments.
+      assert.validationError(function() {
+        p5._validateParameters('random', [undefined, undefined]);
+      });
+    });
+
+    // compuslory argument trailing undefined
+    testUnMinified('circle: missing compulsory param #2', function() {
+      // should throw an EMPTY_VAR error instead of a TOO_FEW_ARGUMENTS error
+      let err = assert.throws(function() {
+        p5._validateParameters('circle', [5, 5, undefined]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'EMPTY_VAR',
+        'ValidationError type is correct'
+      );
+    });
+  });
+
   suite('validateParameters: argument tree', function() {
     // should not throw a validation error for the same kind of wrong args
     // more than once. This prevents repetetive validation logs for a

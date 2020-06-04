@@ -467,10 +467,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // tests when expecting validation errors
   p5.ValidationError = (name => {
     class err extends Error {
-      constructor(message, func) {
+      constructor(message, func, type) {
         super();
         this.message = message;
         this.func = func;
+        this.type = type;
         if ('captureStackTrace' in Error) Error.captureStackTrace(this, err);
         else this.stack = new Error().stack;
       }
@@ -537,7 +538,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           return;
         }
         if (p5._throwValidationErrors) {
-          throw new p5.ValidationError(message);
+          throw new p5.ValidationError(message, func, errorObj.type);
         }
         const location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
           parsed[3].columnNumber
@@ -603,8 +604,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
     const overloads = docs.overloads;
 
-    // ignore any trailing `undefined` arguments
     let argCount = args.length;
+
+    // the following line ignores trailing undefined arguments, commenting
+    // it to resolve https://github.com/processing/p5.js/issues/4571
     // '== null' checks for 'null' and typeof 'undefined'
     // while (argCount > 0 && args[argCount - 1] == null) argCount--;
 
