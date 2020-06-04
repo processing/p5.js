@@ -1980,6 +1980,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "ismailnamdar",
+      "name": "İsmail Namdar",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/31315754?v=4",
+      "profile": "https://github.com/ismailnamdar",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
