@@ -401,7 +401,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const format = formats[p];
       // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
-        // handle non-optional and non-trailing undefined args
+        // handle undefined args
         if (!format.optional || p < minParams || p < argCount) {
           score += 1;
         }
@@ -442,7 +442,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const format = formats[p];
       // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
-        // handle non-optional and non-trailing undefined args
+        // handle undefined args
         if (!format.optional || p < minParams || p < argCount) {
           errorArray.push({
             type: 'EMPTY_VAR',
@@ -606,7 +606,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // ignore any trailing `undefined` arguments
     let argCount = args.length;
     // '== null' checks for 'null' and typeof 'undefined'
-    while (argCount > 0 && args[argCount - 1] == null) argCount--;
+    // while (argCount > 0 && args[argCount - 1] == null) argCount--;
 
     // find the overload with the best score
     let minScore = 99999;
