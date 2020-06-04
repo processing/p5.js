@@ -111,14 +111,14 @@ p5.prototype.loadModel = function(path) {
     normalize = arguments[1];
     successCallback = arguments[2];
     failureCallback = arguments[3];
-    if (arguments[4] != null) {
+    if (typeof arguments[4] !== 'undefined') {
       fileType = arguments[4];
     }
   } else {
     normalize = false;
     successCallback = arguments[1];
     failureCallback = arguments[2];
-    if (arguments[3] != null) {
+    if (typeof arguments[3] !== 'undefined') {
       fileType = arguments[3];
     }
   }
