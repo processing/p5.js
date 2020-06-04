@@ -106,20 +106,23 @@ p5.prototype.loadModel = function(path) {
   let normalize;
   let successCallback;
   let failureCallback;
-  let fileType;
+  let fileType = path.slice(-4);
   if (typeof arguments[1] === 'boolean') {
     normalize = arguments[1];
     successCallback = arguments[2];
     failureCallback = arguments[3];
-    fileType = arguments[4];
+    if (arguments[4] != null) {
+      fileType = arguments[4];
+    }
   } else {
     normalize = false;
     successCallback = arguments[1];
     failureCallback = arguments[2];
-    fileType = arguments[3];
+    if (arguments[3] != null) {
+      fileType = arguments[3];
+    }
   }
 
-  fileType = fileType == null ? path.slice(-4) : fileType;
   const model = new p5.Geometry();
   model.gid = `${path}|${normalize}`;
   const self = this;
