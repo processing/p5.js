@@ -389,6 +389,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/cedarfall"><img src="https://avatars2.githubusercontent.com/u/50991099?v=4" width="100px;" alt=""/><br /><sub><b>cedarfall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cedarfall" title="Documentation">📖</a></td>
     <td align="center"><a href="https://dribbble.com/isaacdurazo"><img src="https://avatars1.githubusercontent.com/u/1379244?v=4" width="100px;" alt=""/><br /><sub><b>Isaac Durazo </b></sub></a><br /><a href="#translation-isaacdurazo" title="Translation">🌍</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
