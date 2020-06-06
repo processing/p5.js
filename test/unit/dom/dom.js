@@ -100,6 +100,39 @@ suite('DOM', function() {
       const result = myp5.select('video', myp5Container);
       assert.isNull(result);
     });
+
+    const generateDiv = (id = null, className = null) => {
+      const div = myp5.createDiv();
+      if (id) {
+        div.id(id);
+      }
+      if (className) {
+        div.class(className);
+      }
+      return div;
+    };
+
+    test('should select element in container using CSS selector with ID', function() {
+      const divID = 'divId';
+      const testDiv = generateDiv(divID);
+      const testButton = generateButton('Button 1');
+      generateButton('Button 2');
+      testButton.parent(testDiv);
+
+      const result = myp5.select(`#${divID} button`);
+      assert.deepEqual(result.elt, testButton.elt);
+    });
+
+    test('should select element in container using CSS selector with class name', function() {
+      const divClass = 'divClass';
+      const testDiv = generateDiv(null, divClass);
+      const testButton = generateButton('Button 1');
+      generateButton('Button 2');
+      testButton.parent(testDiv);
+
+      const result = myp5.select(`.${divClass} button`);
+      assert.deepEqual(result.elt, testButton.elt);
+    });
   });
 
   suite('p5.prototype.selectAll', function() {
@@ -181,6 +214,15 @@ suite('DOM', function() {
       const testTagName = 'button';
       const parentContainerId = 'main';
       const p5Results = myp5.selectAll(testTagName, `#${parentContainerId}`);
+      const containerElement = document.getElementById(parentContainerId);
+      const domResults = containerElement.getElementsByTagName(testTagName);
+      matchResults(p5Results, domResults);
+    });
+
+    test('should find all elements in container using CSS selector with id', function() {
+      const testTagName = 'button';
+      const parentContainerId = 'main';
+      const p5Results = myp5.selectAll(`#${parentContainerId} ${testTagName}`);
       const containerElement = document.getElementById(parentContainerId);
       const domResults = containerElement.getElementsByTagName(testTagName);
       matchResults(p5Results, domResults);
