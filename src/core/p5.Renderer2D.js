@@ -288,6 +288,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
       pixelsState._pixelDensity,
       pixelsState._pixelDensity
     );
+    this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.drawingContext.restore();
   } else {
