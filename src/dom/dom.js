@@ -56,8 +56,8 @@ import p5 from '../core/main';
  */
 p5.prototype.select = function(e, p) {
   p5._validateParameters('select', arguments);
-  var container = getContainer(p);
-  var res = container.querySelector(e);
+  const container = this._getContainer(p);
+  const res = container.querySelector(e);
   if (res) {
     return this._wrapElement(res);
   } else {
@@ -66,8 +66,8 @@ p5.prototype.select = function(e, p) {
 };
 
 /**
- * Searches the page for elements that match the given CSS selector string (can be a class, tag
- * name or combination of both) and returns them as <a href="#/p5.Element">p5.Element</a>s in
+ * Searches the page for elements that match the given CSS selector string (can be an ID a class,
+ * tag name or a combination) and returns them as <a href="#/p5.Element">p5.Element</a>s in
  * an array.
  * The DOM node itself can be accessed with .elt.
  * Returns an empty array if none found.
@@ -110,12 +110,12 @@ p5.prototype.select = function(e, p) {
  */
 p5.prototype.selectAll = function(e, p) {
   p5._validateParameters('selectAll', arguments);
-  var arr = [];
-  var container = getContainer(p);
-  var res = container.querySelectorAll(e);
+  const arr = [];
+  const container = this._getContainer(p);
+  const res = container.querySelectorAll(e);
   if (res) {
-    for (var j = 0; j < res.length; j++) {
-      var obj = this._wrapElement(res[j]);
+    for (let j = 0; j < res.length; j++) {
+      const obj = this._wrapElement(res[j]);
       arr.push(obj);
     }
   }
@@ -125,8 +125,8 @@ p5.prototype.selectAll = function(e, p) {
 /**
  * Helper function for select and selectAll
  */
-function getContainer(p) {
-  var container = document;
+p5.prototype._getContainer = function(p) {
+  let container = document;
   if (typeof p === 'string') {
     container = document.querySelector(p) || document;
   } else if (p instanceof p5.Element) {
@@ -135,7 +135,7 @@ function getContainer(p) {
     container = p;
   }
   return container;
-}
+};
 
 /**
  * Helper function for getElement and getElements.
