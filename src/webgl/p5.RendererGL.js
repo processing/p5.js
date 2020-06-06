@@ -66,6 +66,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // This redundant property is useful in reminding you that you are
   // interacting with WebGLRenderingContext, still worth considering future removal
   this.GL = this.drawingContext;
+  this._pInst._setProperty('drawingContext', this.drawingContext);
 
   // erasing
   this._isErasing = false;
