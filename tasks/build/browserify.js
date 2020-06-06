@@ -38,6 +38,7 @@ module.exports = function(grunt) {
       if (isMin) {
         browseified = browseified
           .exclude('../../docs/reference/data.json')
+          .exclude('../../../docs/parameterData.json')
           .ignore('../../translations/index.js');
       }
 
