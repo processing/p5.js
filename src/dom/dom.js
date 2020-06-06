@@ -19,64 +19,45 @@
 import p5 from '../core/main';
 
 /**
- * Searches the page for an element with the given ID, class, or tag name (using the '#' or '.'
- * prefixes to specify an ID or class respectively, and none for a tag) and returns it as
- * a <a href="#/p5.Element">p5.Element</a>. If a class or tag name is given with more than 1 element,
- * only the first element will be returned.
+ * Searches the page for the first element that matches the given CSS selector string (can be an
+ * ID, class, tag name or a combination) and returns it as a <a href="#/p5.Element">p5.Element</a>.
  * The DOM node itself can be accessed with .elt.
  * Returns null if none found. You can also specify a container to search within.
  *
  * @method select
- * @param  {String} name id, class, or tag name of element to search for
- * @param  {String|p5.Element|HTMLElement} [container] id, <a href="#/p5.Element">p5.Element</a>, or
+ * @param  {String} selectors CSS selector string of element to search for
+ * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
  *                                             HTML element to search within
  * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing node found
  * @example
- * <div ><code class='norender'>
+ * <div><code>
  * function setup() {
- *   createCanvas(100, 100);
- *   //translates canvas 50px down
- *   select('canvas').position(100, 100);
+ *   createCanvas(50, 50);
+ *   background(30);
+ *   // move canvas down and right
+ *   select('canvas').position(10, 30);
  * }
  * </code></div>
- * <div><code class='norender'>
- * // these are all valid calls to select()
- * let a = select('#moo');
- * let b = select('#blah', '#myContainer');
- * let c, e;
- * if (b) {
- *   c = select('#foo', b);
+ *
+ * <div class="norender"><code>
+ * // select using ID
+ * let a = select('#container');
+ * let b = select('#beep', '#container');
+ * let c;
+ * if (a) {
+ *   // select using class
+ *   c = select('.boop', a);
  * }
- * let d = document.getElementById('beep');
- * if (d) {
- *   e = select('p', d);
- * }
+ * // select using CSS selector string
+ * let d = select('#container #bleep');
+ * let e = select('#container p');
  * [a, b, c, d, e]; // unused
  * </code></div>
  */
 p5.prototype.select = function(e, p) {
   p5._validateParameters('select', arguments);
-  var res = null;
-  var container = getContainer(p);
-  if (e[0] === '.') {
-    e = e.slice(1);
-    res = container.getElementsByClassName(e);
-    if (res.length) {
-      res = res[0];
-    } else {
-      res = null;
-    }
-  } else if (e[0] === '#') {
-    e = e.slice(1);
-    res = container.getElementById(e);
-  } else {
-    res = container.getElementsByTagName(e);
-    if (res.length) {
-      res = res[0];
-    } else {
-      res = null;
-    }
-  }
+  const container = this._getContainer(p);
+  const res = container.querySelector(e);
   if (res) {
     return this._wrapElement(res);
   } else {
@@ -85,17 +66,17 @@ p5.prototype.select = function(e, p) {
 };
 
 /**
- * Searches the page for elements with the given class or tag name (using the '.' prefix
- * to specify a class and no prefix for a tag) and returns them as <a href="#/p5.Element">p5.Element</a>s
- * in an array.
+ * Searches the page for elements that match the given CSS selector string (can be an ID a class,
+ * tag name or a combination) and returns them as <a href="#/p5.Element">p5.Element</a>s in
+ * an array.
  * The DOM node itself can be accessed with .elt.
  * Returns an empty array if none found.
  * You can also specify a container to search within.
  *
  * @method selectAll
- * @param  {String} name class or tag name of elements to search for
- * @param  {String|p5.Element|HTMLElement} [container] id, <a href="#/p5.Element">p5.Element</a>, or
- *                                             HTML element to search within
+ * @param  {String} selectors CSS selector string of elements to search for
+ * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>
+ *                                             , or HTML element to search within
  * @return {p5.Element[]} Array of <a href="#/p5.Element">p5.Element</a>s containing nodes found
  * @example
  * <div class='norender'><code>
@@ -112,37 +93,29 @@ p5.prototype.select = function(e, p) {
  * </code></div>
  * <div class='norender'><code>
  * // these are all valid calls to selectAll()
- * let a = selectAll('.moo');
+ * let a = selectAll('.beep');
  * a = selectAll('div');
- * a = selectAll('button', '#myContainer');
+ * a = selectAll('button', '#container');
  *
- * let d = select('#container');
- * if (d) {
- *   a = selectAll('p', d);
- * }
+ * let b = select('#container');
+ * a = selectAll('p', b);
+ * a = selectAll('#container p');
  *
- * let f = document.getElementById('beep');
- * if (f) {
- *   a = selectAll('.blah', f);
- * }
+ * let c = document.getElementById('container');
+ * a = selectAll('.boop', c);
+ * a = selectAll('#container .boop');
  *
  * a; // unused
  * </code></div>
  */
 p5.prototype.selectAll = function(e, p) {
   p5._validateParameters('selectAll', arguments);
-  var arr = [];
-  var res;
-  var container = getContainer(p);
-  if (e[0] === '.') {
-    e = e.slice(1);
-    res = container.getElementsByClassName(e);
-  } else {
-    res = container.getElementsByTagName(e);
-  }
+  const arr = [];
+  const container = this._getContainer(p);
+  const res = container.querySelectorAll(e);
   if (res) {
-    for (var j = 0; j < res.length; j++) {
-      var obj = this._wrapElement(res[j]);
+    for (let j = 0; j < res.length; j++) {
+      const obj = this._wrapElement(res[j]);
       arr.push(obj);
     }
   }
@@ -152,18 +125,17 @@ p5.prototype.selectAll = function(e, p) {
 /**
  * Helper function for select and selectAll
  */
-function getContainer(p) {
-  var container = document;
-  if (typeof p === 'string' && p[0] === '#') {
-    p = p.slice(1);
-    container = document.getElementById(p) || document;
+p5.prototype._getContainer = function(p) {
+  let container = document;
+  if (typeof p === 'string') {
+    container = document.querySelector(p) || document;
   } else if (p instanceof p5.Element) {
     container = p.elt;
   } else if (p instanceof HTMLElement) {
     container = p;
   }
   return container;
-}
+};
 
 /**
  * Helper function for getElement and getElements.
