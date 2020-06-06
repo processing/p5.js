@@ -9,7 +9,9 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import './p5.Color';
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Extracts the alpha value from a color or pixel array.
@@ -315,7 +317,6 @@ p5.prototype.color = function() {
  *
  * @alt
  * blue rect on left and green on right, both with black outlines & 35x60.
- *
  */
 p5.prototype.green = function(c) {
   p5._validateParameters('green', arguments);
@@ -351,7 +352,6 @@ p5.prototype.green = function(c) {
  *
  * @alt
  * salmon pink rect on left and black on right, both 35x60.
- *
  */
 p5.prototype.hue = function(c) {
   p5._validateParameters('hue', arguments);
@@ -473,7 +473,6 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  *
  * @alt
  * light pastel green rect on left and dark grey rect on right, both 35x60.
- *
  */
 p5.prototype.lightness = function(c) {
   p5._validateParameters('lightness', arguments);
@@ -548,7 +547,6 @@ p5.prototype.red = function(c) {
  *
  * @alt
  *deep pink rect on left and grey rect on right, both 35x60.
- *
  */
 p5.prototype.saturation = function(c) {
   p5._validateParameters('saturation', arguments);

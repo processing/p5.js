@@ -775,7 +775,6 @@ const colorPatterns = {
  *
  * @alt
  * //todo
- *
  */
 p5.Color._parseInputs = function(r, g, b, a) {
   const numArgs = arguments.length;

@@ -29,7 +29,6 @@ import p5 from '../core/main';
  *
  * @alt
  * 50x50 white rect that turns black on keypress.
- *
  */
 p5.prototype.isKeyPressed = false;
 p5.prototype.keyIsPressed = false; // khan
@@ -59,7 +58,6 @@ p5.prototype.keyIsPressed = false; // khan
  *
  * @alt
  * canvas displays any key value that is pressed in pink font.
- *
  */
 p5.prototype.key = '';
 
@@ -107,16 +105,16 @@ p5.prototype.keyCode = 0;
 /**
  * The <a href="#/p5/keyPressed">keyPressed()</a> function is called once every time a key is pressed. The
  * keyCode for the key that was pressed is stored in the <a href="#/p5/keyCode">keyCode</a> variable.
- * <br><br>
+ *
  * For non-ASCII keys, use the keyCode variable. You can check if the keyCode
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
  * OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
- * <br><br>
+ *
  * For ASCII keys, the key that was pressed is stored in the key variable. However, it
  * does not distinguish between uppercase and lowercase. For this reason, it
  * is recommended to use <a href="#/p5/keyTyped">keyTyped()</a> to read the key variable, in which the
  * case of the variable will be distinguished.
- * <br><br>
+ *
  * Because of how operating systems handle key repeats, holding down a key
  * may cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
@@ -171,7 +169,6 @@ p5.prototype.keyCode = 0;
  * @alt
  * black rect center. turns white when key pressed and black when released
  * black rect center. turns white when left arrow pressed and black when right.
- *
  */
 p5.prototype._onkeydown = function(e) {
   if (this._downKeys[e.which]) {
@@ -220,7 +217,6 @@ p5.prototype._onkeydown = function(e) {
  *
  * @alt
  * black rect center. turns white when key pressed and black when pressed again
- *
  */
 p5.prototype._onkeyup = function(e) {
   const keyReleased = this.keyReleased || window.keyReleased;
@@ -248,7 +244,7 @@ p5.prototype._onkeyup = function(e) {
  * action keys such as Backspace, Delete, Ctrl, Shift, and Alt are ignored. If you are trying to detect
  * a keyCode for one of these keys, use the <a href="#/p5/keyPressed">keyPressed()</a> function instead.
  * The most recent key typed will be stored in the key variable.
- * <br><br>
+ *
  * Because of how operating systems handle key repeats, holding down a key
  * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
@@ -280,7 +276,6 @@ p5.prototype._onkeyup = function(e) {
  *
  * @alt
  * black rect center. turns white when 'a' key typed and black when 'b' pressed
- *
  */
 p5.prototype._onkeypress = function(e) {
   if (e.which === this._lastKeyCodeTyped) {
@@ -377,7 +372,6 @@ p5.prototype._onblur = function(e) {
  * @alt
  * 50x50 red ellipse moves left, right, up and down with arrow presses.
  * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
- *
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);

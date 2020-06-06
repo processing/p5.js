@@ -49,7 +49,6 @@ import p5 from '../core/main';
  *
  * @alt
  * no image displayed
- *
  */
 p5.XML = function(DOM) {
   if (!DOM) {

@@ -57,7 +57,6 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  *
  * @alt
  * many vertical lines drawn in white, black or grey.
- *
  */
 p5.prototype.randomSeed = function(seed) {
   this._lcgSetSeed(randomStateProp, seed);
@@ -116,7 +115,6 @@ p5.prototype.randomSeed = function(seed) {
  * 100 horizontal lines from center canvas to right. size+fill change each time
  * 100 horizontal lines from center of canvas. height & side change each render
  * word displayed at random. Either apple, bear, cat, or dog
- *
  */
 /**
  * @method random
@@ -160,7 +158,7 @@ p5.prototype.random = function(min, max) {
  * just a very low probability that values far from the mean will be
  * returned; and a higher probability that numbers near the mean will
  * be returned.
- * <br><br>
+ *
  * Takes either 0, 1 or 2 arguments.<br>
  * If no args, returns a mean of 0 and standard deviation of 1.<br>
  * If one arg, that arg is the mean (standard deviation is 1).<br>

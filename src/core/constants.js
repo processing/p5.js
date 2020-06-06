@@ -71,7 +71,6 @@ export const WAIT = 'wait';
  *
  * @alt
  * 80x80 white quarter-circle with curve toward bottom right of canvas.
- *
  */
 export const HALF_PI = _PI / 2;
 /**
@@ -90,7 +89,6 @@ export const HALF_PI = _PI / 2;
  *
  * @alt
  * white half-circle with curve toward bottom of canvas.
- *
  */
 export const PI = _PI;
 /**
@@ -109,7 +107,6 @@ export const PI = _PI;
  *
  * @alt
  * white eighth-circle rotated about 40 degrees with curve bottom right canvas.
- *
  */
 export const QUARTER_PI = _PI / 4;
 /**
@@ -128,7 +125,6 @@ export const QUARTER_PI = _PI / 4;
  *
  * @alt
  * 80x80 white ellipse shape in center of canvas.
- *
  */
 export const TAU = _PI * 2;
 /**
@@ -147,7 +143,6 @@ export const TAU = _PI * 2;
  *
  * @alt
  * 80x80 white ellipse shape in center of canvas.
- *
  */
 export const TWO_PI = _PI * 2;
 /**
@@ -342,6 +337,10 @@ export const MITER = 'miter';
  */
 export const RGB = 'rgb';
 /**
+ * HSB (hue, saturation, brightness) is a type of color model.
+ * You can learn more about it at
+ * <a href="https://learnui.design/blog/the-hsb-color-system-practicioners-primer.html">HSB</a>.
+ *
  * @property {String} HSB
  * @final
  */

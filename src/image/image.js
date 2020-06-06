@@ -16,7 +16,7 @@ import omggif from 'omggif';
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
  * width and height parameters.
- * <br><br>
+ *
  * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
@@ -24,7 +24,7 @@ import omggif from 'omggif';
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
  * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
- * <br><br>
+ *
  * Before accessing the pixels of an image, the data must loaded with the
  * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
  * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
@@ -85,7 +85,6 @@ import omggif from 'omggif';
  * 66x66 dark turquoise rect in center of canvas.
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
  * no image displayed
- *
  */
 p5.prototype.createImage = function(width, height) {
   p5._validateParameters('createImage', arguments);
@@ -452,7 +451,6 @@ p5.prototype.saveGif = function(pImg, filename) {
  *
  * @alt
  * canvas background goes from light to dark with mouse x.
- *
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   p5._validateParameters('saveFrames', arguments);

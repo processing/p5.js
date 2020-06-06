@@ -86,7 +86,6 @@ p5.prototype.createNumberDict = function(key, value) {
  *
  * @class p5.TypedDict
  * @constructor
- *
  */
 
 p5.TypedDict = function(key, value) {
@@ -115,7 +114,6 @@ p5.TypedDict = function(key, value) {
  *   print(myDictionary.size()); // logs 3 to the console
  * }
  * </code></div>
- *
  */
 p5.TypedDict.prototype.size = function() {
   return Object.keys(this.data).length;
@@ -137,7 +135,6 @@ p5.TypedDict.prototype.size = function() {
  *   print(myDictionary.hasKey('p5')); // logs true to console
  * }
  * </code></div>
- *
  */
 
 p5.TypedDict.prototype.hasKey = function(key) {
@@ -160,7 +157,6 @@ p5.TypedDict.prototype.hasKey = function(key) {
  *   print(myValue === 'js'); // logs true to console
  * }
  * </code></div>
- *
  */
 
 p5.TypedDict.prototype.get = function(key) {
@@ -188,7 +184,6 @@ p5.TypedDict.prototype.get = function(key) {
  *   myDictionary.print(); // logs "key: p5 - value: JS" to console
  * }
  * </code></div>
- *
  */
 
 p5.TypedDict.prototype.set = function(key, value) {
@@ -286,7 +281,6 @@ p5.TypedDict.prototype.clear = function() {
  *   // above logs "key: happy value: coding" to console
  * }
  * </code></div>
- *
  */
 
 p5.TypedDict.prototype.remove = function(key) {
@@ -403,7 +397,6 @@ p5.TypedDict.prototype._validate = value => true;
  *
  * @class p5.StringDict
  * @extends p5.TypedDict
- *
  */
 
 p5.StringDict = function(...args) {
@@ -421,7 +414,6 @@ p5.StringDict.prototype._validate = value => typeof value === 'string';
  * @class p5.NumberDict
  * @constructor
  * @extends p5.TypedDict
- *
  */
 
 p5.NumberDict = function(...args) {
@@ -454,7 +446,6 @@ p5.NumberDict.prototype._validate = value => typeof value === 'number';
  * }
  * </code></div>
  *
- *
  */
 
 p5.NumberDict.prototype.add = function(key, amount) {
@@ -482,7 +473,6 @@ p5.NumberDict.prototype.add = function(key, amount) {
  * }
  * </code></div>
  *
- *
  */
 
 p5.NumberDict.prototype.sub = function(key, amount) {
@@ -505,7 +495,6 @@ p5.NumberDict.prototype.sub = function(key, amount) {
  *   print(myDictionary.get(2)); // logs 8 to console.
  * }
  * </code></div>
- *
  *
  */
 
@@ -534,7 +523,6 @@ p5.NumberDict.prototype.mult = function(key, amount) {
  * }
  * </code></div>
  *
- *
  */
 
 p5.NumberDict.prototype.div = function(key, amount) {
@@ -549,7 +537,6 @@ p5.NumberDict.prototype.div = function(key, amount) {
  * private helper function for finding lowest or highest value
  * the argument 'flip' is used to flip the comparison arrow
  * from 'less than' to 'greater than'
- *
  */
 
 p5.NumberDict.prototype._valueTest = function(flip) {
@@ -584,7 +571,6 @@ p5.NumberDict.prototype._valueTest = function(flip) {
  *   print(lowestValue);
  * }
  * </code></div>
- *
  */
 
 p5.NumberDict.prototype.minValue = function() {
@@ -605,7 +591,6 @@ p5.NumberDict.prototype.minValue = function() {
  *   print(highestValue);
  * }
  * </code></div>
- *
  */
 
 p5.NumberDict.prototype.maxValue = function() {
@@ -616,7 +601,6 @@ p5.NumberDict.prototype.maxValue = function() {
  * private helper function for finding lowest or highest key
  * the argument 'flip' is used to flip the comparison arrow
  * from 'less than' to 'greater than'
- *
  */
 
 p5.NumberDict.prototype._keyTest = function(flip) {
@@ -649,7 +633,6 @@ p5.NumberDict.prototype._keyTest = function(flip) {
  *   print(lowestKey);
  * }
  * </code></div>
- *
  */
 
 p5.NumberDict.prototype.minKey = function() {
@@ -670,7 +653,6 @@ p5.NumberDict.prototype.minKey = function() {
  *   print(highestKey);
  * }
  * </code></div>
- *
  */
 
 p5.NumberDict.prototype.maxKey = function() {

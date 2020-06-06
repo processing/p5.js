@@ -6,7 +6,9 @@
  */
 
 import p5 from '../main';
-import '../error_helpers';
+import '../friendly_errors/fes_core';
+import '../friendly_errors/file_errors';
+import '../friendly_errors/validate_params';
 
 /**
  * Draws a cubic Bezier curve on the screen. These curves are defined by a
@@ -118,7 +120,6 @@ p5.prototype.bezier = function(...args) {
  *
  * @alt
  * stretched black s-shape with a low level of bezier detail
- *
  */
 p5.prototype.bezierDetail = function(d) {
   p5._validateParameters('bezierDetail', arguments);
@@ -383,7 +384,6 @@ p5.prototype.curve = function(...args) {
  *
  * @alt
  * white arch shape with a low level of curve detail.
- *
  */
 p5.prototype.curveDetail = function(d) {
   p5._validateParameters('curveDetail', arguments);

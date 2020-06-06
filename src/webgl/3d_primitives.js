@@ -740,7 +740,6 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * }
  * </code>
  * </div>
- *
  */
 p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
   this._assert3d('ellipsoid');

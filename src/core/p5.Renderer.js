@@ -216,6 +216,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   let jj;
   let line;
   let testLine;
+  let currentLineLength;
   let testWidth;
   let words;
   let totalHeight;
@@ -236,18 +237,24 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
   if (typeof maxWidth !== 'undefined') {
     totalHeight = 0;
+    currentLineLength = 1;
     for (ii = 0; ii < cars.length; ii++) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
         testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
+        if (testWidth > maxWidth && currentLineLength > 1) {
           line = `${words[n]} `;
           totalHeight += p.textLeading();
+          currentLineLength = 1;
         } else {
           line = testLine;
+          currentLineLength += 1;
         }
+      }
+      if (ii < cars.length - 1) {
+        totalHeight += p.textLeading();
       }
     }
 

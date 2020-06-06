@@ -45,7 +45,6 @@ import p5 from '../core/main';
  * @alt
  * evenly distributed light across a sphere
  * evenly distributed light across a rotating sphere
- *
  */
 
 /**
@@ -205,7 +204,6 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  *
  * @alt
  * light source on canvas changeable with mouse position
- *
  */
 
 /**
@@ -318,7 +316,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  *
  * @alt
  * spot light on canvas changes position with mouse
- *
  */
 
 /**
@@ -455,7 +452,6 @@ p5.prototype.lights = function() {
  *
  * @alt
  * Two spheres with different falloff values show different intensity of light
- *
  */
 p5.prototype.lightFalloff = function(
   constantAttenuation,

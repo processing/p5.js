@@ -104,7 +104,6 @@ import p5 from '../core/main';
  * White square repeatedly grows to fill canvas and then shrinks.
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
  * z axis and 3 sliders for shifting it's center.
- *
  */
 p5.prototype.camera = function(...args) {
   this._assert3d('camera');
@@ -165,7 +164,6 @@ p5.prototype.camera = function(...args) {
  *
  * @alt
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
- *
  */
 p5.prototype.perspective = function(...args) {
   this._assert3d('perspective');
@@ -222,7 +220,6 @@ p5.prototype.perspective = function(...args) {
  *
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
- *
  */
 p5.prototype.ortho = function(...args) {
   this._assert3d('ortho');
@@ -285,7 +282,6 @@ p5.prototype.ortho = function(...args) {
  *
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
- *
  */
 p5.prototype.frustum = function(...args) {
   this._assert3d('frustum');
@@ -354,7 +350,6 @@ p5.prototype.createCamera = function() {
  * to create multiple cameras, in which case the current camera
  * can be set through the <a href="#/p5/setCamera">setCamera()</a> method.
  *
- *
  * Note:
  * The methods below operate in two coordinate systems: the 'world' coordinate
  * system describe positions in terms of their relationship to the origin along
@@ -364,7 +359,6 @@ p5.prototype.createCamera = function() {
  * for instance, moves the camera along its own axes, whereas the
  * <a href="#/p5.Camera/setPosition">setPosition()</a>
  * method sets the camera's position in world-space.
- *
  *
  * @class p5.Camera
  * @param {rendererGL} rendererGL instance of WebGL renderer
@@ -414,7 +408,6 @@ p5.prototype.createCamera = function() {
  *
  * @alt
  * camera view pans left and right across a series of rotating 3D boxes.
- *
  */
 p5.Camera = function(renderer) {
   this._renderer = renderer;
@@ -725,7 +718,6 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  *
  * @alt
  * camera view pans left and right across a series of rotating 3D boxes.
- *
  */
 p5.Camera.prototype.pan = function(amount) {
   const local = this._getLocalAxes();

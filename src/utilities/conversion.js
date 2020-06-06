@@ -33,7 +33,6 @@ import p5 from '../core/main';
  *
  * @alt
  * 20 by 20 white ellipse in the center of the canvas
- *
  */
 p5.prototype.float = function(str) {
   if (str instanceof Array) {

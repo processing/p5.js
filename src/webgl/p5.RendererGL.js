@@ -56,7 +56,6 @@ const defaultShaders = {
  * @extends p5.Renderer
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
- *
  */
 p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
@@ -67,6 +66,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // This redundant property is useful in reminding you that you are
   // interacting with WebGLRenderingContext, still worth considering future removal
   this.GL = this.drawingContext;
+  this._pInst._setProperty('drawingContext', this.drawingContext);
 
   // erasing
   this._isErasing = false;
@@ -332,40 +332,40 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * Set attributes for the WebGL Drawing context.
  * This is a way of adjusting how the WebGL
  * renderer works to fine-tune the display and performance.
- * <br><br>
+ *
  * Note that this will reinitialize the drawing context
  * if called after the WebGL canvas is made.
- * <br><br>
+ *
  * If an object is passed as the parameter, all attributes
  * not declared in the object will be set to defaults.
- * <br><br>
+ *
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
  * default is true
- * <br><br>
+ *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
- * <br><br>
+ *
  * stencil - indicates whether the drawing buffer has a stencil buffer
  * of at least 8 bits
- * <br><br>
+ *
  * antialias - indicates whether or not to perform anti-aliasing
  * default is false (true in Safari)
- * <br><br>
+ *
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
  * default is false
- * <br><br>
+ *
  * preserveDrawingBuffer - if true the buffers will not be cleared and
  * and will preserve their values until cleared or overwritten by author
  * (note that p5 clears automatically on draw loop)
  * default is true
- * <br><br>
+ *
  * perPixelLighting - if true, per-pixel lighting will be used in the
  * lighting shader otherwise per-vertex lighting is used.
  * default is true.
- * <br><br>
+ *
  * @method setAttributes
  * @for p5
  * @param  {String}  key Name of attribute
@@ -628,7 +628,6 @@ p5.RendererGL.prototype.background = function(...args) {
  *
  * @alt
  * black canvas with purple cube spinning
- *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
@@ -668,7 +667,6 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
  *
  * @alt
  * black canvas with purple cube with pink outline spinning
- *
  */
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   //@todo allow transparency in stroking currently doesn't have
@@ -725,26 +723,23 @@ p5.RendererGL.prototype.blendMode = function(mode) {
 
 p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
   if (!this._isErasing) {
-    this._cachedBlendMode = this.curBlendMode;
-    this.blendMode(constants.REMOVE);
+    this._applyBlendMode(constants.REMOVE);
+    this._isErasing = true;
 
     this._cachedFillStyle = this.curFillColor.slice();
     this.curFillColor = [1, 1, 1, opacityFill / 255];
 
     this._cachedStrokeStyle = this.curStrokeColor.slice();
     this.curStrokeColor = [1, 1, 1, opacityStroke / 255];
-
-    this._isErasing = true;
   }
 };
 
 p5.RendererGL.prototype.noErase = function() {
   if (this._isErasing) {
+    this._isErasing = false;
     this.curFillColor = this._cachedFillStyle.slice();
     this.curStrokeColor = this._cachedStrokeStyle.slice();
-
     this.blendMode(this._cachedBlendMode);
-    this._isErasing = false;
   }
 };
 
@@ -786,7 +781,6 @@ p5.RendererGL.prototype.noErase = function() {
  * @alt
  * black canvas with two purple rotating spheres with pink
  * outlines the sphere on top has much heavier outlines,
- *
  */
 p5.RendererGL.prototype.strokeWeight = function(w) {
   if (this.curStrokeWeight !== w) {
@@ -821,7 +815,6 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
  *
  * @private
  * @method loadPixels
- *
  */
 
 p5.RendererGL.prototype.loadPixels = function() {

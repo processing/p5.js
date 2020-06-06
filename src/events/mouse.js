@@ -37,7 +37,6 @@ import * as constants from '../core/constants';
  * </div>
  * @alt
  * box moves left and right according to mouse movement then slowly back towards the center
- *
  */
 p5.prototype.movedX = 0;
 
@@ -68,7 +67,6 @@ p5.prototype.movedX = 0;
  * </div>
  * @alt
  * box moves up and down according to mouse movement then slowly back towards the center
- *
  */
 p5.prototype.movedY = 0;
 /*
@@ -102,7 +100,6 @@ p5.prototype._hasMouseInteracted = false;
  *
  * @alt
  * horizontal black line moves left and right with mouse x-position
- *
  */
 p5.prototype.mouseX = 0;
 
@@ -129,7 +126,6 @@ p5.prototype.mouseX = 0;
  *
  * @alt
  * vertical black line moves up and down with mouse y-position
- *
  */
 p5.prototype.mouseY = 0;
 
@@ -162,7 +158,6 @@ p5.prototype.mouseY = 0;
  *
  * @alt
  * line trail is created from cursor movements. faster movement make longer line.
- *
  */
 p5.prototype.pmouseX = 0;
 
@@ -194,7 +189,6 @@ p5.prototype.pmouseX = 0;
  *
  * @alt
  * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
- *
  */
 p5.prototype.pmouseY = 0;
 
@@ -233,7 +227,6 @@ p5.prototype.pmouseY = 0;
  *
  * @alt
  * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
- *
  */
 p5.prototype.winMouseX = 0;
 
@@ -272,7 +265,6 @@ p5.prototype.winMouseX = 0;
  *
  * @alt
  * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
- *
  */
 p5.prototype.winMouseY = 0;
 
@@ -313,7 +305,6 @@ p5.prototype.winMouseY = 0;
  *
  * @alt
  * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
- *
  */
 p5.prototype.pwinMouseX = 0;
 
@@ -325,7 +316,6 @@ p5.prototype.pwinMouseX = 0;
  *
  * @property {Number} pwinMouseY
  * @readOnly
- *
  *
  * @example
  * <div>
@@ -355,7 +345,6 @@ p5.prototype.pwinMouseX = 0;
  *
  * @alt
  * fuchsia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
- *
  */
 p5.prototype.pwinMouseY = 0;
 
@@ -394,7 +383,6 @@ p5.prototype.pwinMouseY = 0;
  *
  * @alt
  * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
- *
  */
 p5.prototype.mouseButton = 0;
 
@@ -425,7 +413,6 @@ p5.prototype.mouseButton = 0;
  *
  * @alt
  * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
- *
  */
 p5.prototype.mouseIsPressed = false;
 
@@ -543,7 +530,6 @@ p5.prototype._setMouseButton = function(e) {
  * @alt
  * black 50x50 rect becomes lighter with mouse movements until white then resets
  * no image displayed
- *
  */
 
 /**
@@ -599,7 +585,6 @@ p5.prototype._setMouseButton = function(e) {
  * @alt
  * black 50x50 rect turns lighter with mouse click and drag until white, resets
  * no image displayed
- *
  */
 p5.prototype._onmousemove = function(e) {
   const context = this._isGlobal ? window : this;
@@ -683,7 +668,6 @@ p5.prototype._onmousemove = function(e) {
  * @alt
  * black 50x50 rect turns white with mouse click/press.
  * no image displayed
- *
  */
 p5.prototype._onmousedown = function(e) {
   const context = this._isGlobal ? window : this;
@@ -716,7 +700,6 @@ p5.prototype._onmousedown = function(e) {
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
- *
  *
  * @method mouseReleased
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -765,7 +748,6 @@ p5.prototype._onmousedown = function(e) {
  * @alt
  * black 50x50 rect turns white with mouse click/press.
  * no image displayed
- *
  */
 p5.prototype._onmouseup = function(e) {
   const context = this._isGlobal ? window : this;
@@ -845,7 +827,6 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * @alt
  * black 50x50 rect turns white with mouse click/press.
  * no image displayed
- *
  */
 p5.prototype._onclick = function(e) {
   const context = this._isGlobal ? window : this;
@@ -982,7 +963,6 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *
  * @alt
  * black 50x50 rect moves up and down with vertical scroll. fuchsia background
- *
  */
 p5.prototype._onwheel = function(e) {
   const context = this._isGlobal ? window : this;
@@ -997,14 +977,14 @@ p5.prototype._onwheel = function(e) {
 };
 
 /**
- * <p>The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
+ * The function <a href="#/p5/requestPointerLock">requestPointerLock()</a>
  * locks the pointer to its current position and makes it invisible.
  * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
- * the last call of draw</p>
- * <p>Note that not all browsers support this feature</p>
- * <p>This enables you to create experiences that aren't limited by the mouse moving out of the screen
- * even if it is repeatedly moved into one direction. </p>
- * <p>For example a first person perspective experience</p>
+ * the last call of draw.
+ * Note that not all browsers support this feature.
+ * This enables you to create experiences that aren't limited by the mouse moving out of the screen
+ * even if it is repeatedly moved into one direction.
+ * For example, a first person perspective experience.
  *
  * @method requestPointerLock
  * @example
@@ -1028,7 +1008,6 @@ p5.prototype._onwheel = function(e) {
  *
  * @alt
  * 3D scene moves according to mouse mouse movement in a first person perspective
- *
  */
 p5.prototype.requestPointerLock = function() {
   // pointer lock object forking for cross browser
@@ -1044,7 +1023,7 @@ p5.prototype.requestPointerLock = function() {
 };
 
 /**
- * <p>The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
+ * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
  * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
  * for example to make ui elements usable etc
  *
@@ -1072,7 +1051,6 @@ p5.prototype.requestPointerLock = function() {
  *
  * @alt
  * cursor gets locked / unlocked on mouse-click
- *
  */
 p5.prototype.exitPointerLock = function() {
   document.exitPointerLock();

@@ -18,3 +18,5 @@ p5-website/
 coverage/
 lib/p5-test.js
 release/
+parameterData.json
+yarn.lock

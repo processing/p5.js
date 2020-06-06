@@ -11,10 +11,10 @@ import './p5.Geometry';
 
 /**
  * Load a 3d model from an OBJ or STL file.
- * <br><br>
+ *
  * <a href="#/p5/loadModel">loadModel()</a> should be placed inside of <a href="#/p5/preload">preload()</a>.
  * This allows the model to load fully before the rest of your code is run.
- * <br><br>
+ *
  * One of the limitations of the OBJ and STL format is that it doesn't have a built-in
  * sense of scale. This means that models exported from different programs might
  * be very different sizes. If your model isn't displaying, try calling
@@ -34,6 +34,8 @@ import './p5.Geometry';
  *                                     the 3D model object.
  * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the model fails to load.
+ * @param  {String} [fileType]          The file extension of the model
+ *                                      (<code>.stl</code>, <code>.obj</code>).
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  *
  * @example
@@ -96,6 +98,7 @@ import './p5.Geometry';
  * @param  {String} path
  * @param  {function(p5.Geometry)} [successCallback]
  * @param  {function(Event)} [failureCallback]
+ * @param  {String} [fileType]
  * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
  */
 p5.prototype.loadModel = function(path) {
@@ -103,22 +106,28 @@ p5.prototype.loadModel = function(path) {
   let normalize;
   let successCallback;
   let failureCallback;
+  let fileType = path.slice(-4);
   if (typeof arguments[1] === 'boolean') {
     normalize = arguments[1];
     successCallback = arguments[2];
     failureCallback = arguments[3];
+    if (typeof arguments[4] !== 'undefined') {
+      fileType = arguments[4];
+    }
   } else {
     normalize = false;
     successCallback = arguments[1];
     failureCallback = arguments[2];
+    if (typeof arguments[3] !== 'undefined') {
+      fileType = arguments[3];
+    }
   }
 
-  const fileType = path.slice(-4);
   const model = new p5.Geometry();
   model.gid = `${path}|${normalize}`;
   const self = this;
 
-  if (fileType === '.stl') {
+  if (fileType.match(/\.stl$/i)) {
     this.httpDo(
       path,
       'GET',
@@ -136,7 +145,7 @@ p5.prototype.loadModel = function(path) {
       },
       failureCallback
     );
-  } else if (fileType === '.obj') {
+  } else if (fileType.match(/\.obj$/i)) {
     this.loadStrings(
       path,
       strings => {
@@ -604,7 +613,6 @@ function parseASCIISTL(model, lines) {
  *
  * @alt
  * Vertically rotating 3-d octahedron.
- *
  */
 p5.prototype.model = function(model) {
   this._assert3d('model');

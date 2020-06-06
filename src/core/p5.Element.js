@@ -93,7 +93,6 @@ p5.Element = function(elt, pInst) {
 /**
  * @method parent
  * @return {p5.Element}
- *
  */
 p5.Element.prototype.parent = function(p) {
   if (typeof p === 'undefined') {
@@ -228,7 +227,6 @@ p5.Element.prototype.class = function(c) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mousePressed = function(fxn) {
   // Prepend the mouse property setters to the event-listener.
@@ -285,7 +283,6 @@ p5.Element.prototype.mousePressed = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.doubleClicked = function(fxn) {
   p5.Element._adjustListener('dblclick', fxn, this);
@@ -346,10 +343,8 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  * }
  * </code></div>
  *
- *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseWheel = function(fxn) {
   p5.Element._adjustListener('wheel', fxn, this);
@@ -397,10 +392,8 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  * }
  * </code></div>
  *
- *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseReleased = function(fxn) {
   p5.Element._adjustListener('mouseup', fxn, this);
@@ -452,7 +445,6 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseClicked = function(fxn) {
   p5.Element._adjustListener('click', fxn, this);
@@ -507,10 +499,8 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  * }
  * </code></div>
  *
- *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseMoved = function(fxn) {
   p5.Element._adjustListener('mousemove', fxn, this);
@@ -550,10 +540,8 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  * }
  * </code></div>
  *
- *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseOver = function(fxn) {
   p5.Element._adjustListener('mouseover', fxn, this);
@@ -595,7 +583,6 @@ p5.Element.prototype.mouseOver = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.mouseOut = function(fxn) {
   p5.Element._adjustListener('mouseout', fxn, this);
@@ -643,7 +630,6 @@ p5.Element.prototype.mouseOut = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.touchStarted = function(fxn) {
   p5.Element._adjustListener('touchstart', fxn, this);
@@ -683,7 +669,6 @@ p5.Element.prototype.touchStarted = function(fxn) {
  *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.touchMoved = function(fxn) {
   p5.Element._adjustListener('touchmove', fxn, this);
@@ -729,10 +714,8 @@ p5.Element.prototype.touchMoved = function(fxn) {
  * }
  * </code></div>
  *
- *
  * @alt
  * no display.
- *
  */
 p5.Element.prototype.touchEnded = function(fxn) {
   p5.Element._adjustListener('touchend', fxn, this);
@@ -843,7 +826,6 @@ p5.Element._detachListener = function(ev, ctx) {
 
 /**
  * Helper fxn for sharing pixel methods
- *
  */
 p5.Element.prototype._setProperty = function(prop, value) {
   this[prop] = value;

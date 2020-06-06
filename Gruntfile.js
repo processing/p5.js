@@ -29,8 +29,7 @@
  *
  *  And there are several secondary tasks:
  *
- *
- *  grunt watch       - This watches the source for changes and rebuilds on
+ * grunt watch       - This watches the source for changes and rebuilds on
  *                      every file change, running the linter and tests.
  *
  *  grunt watch:main  - This watches the source for changes and rebuilds on

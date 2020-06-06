@@ -14,12 +14,12 @@ import p5 from '../core/main';
  * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
  *
  * The horizAlign parameter is in reference to the x value
- * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter is
- * in reference to the y value.
+ * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter
+ * is in reference to the y value.
  *
  * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in <a href="#/p5/text">text()</a>. If you
- * write textAlign(RIGHT, TOP), you are aligning the right edge
+ * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
+ * If you write textAlign(RIGHT, TOP), you are aligning the right edge
  * of your text to the x value and the top of edge of the text
  * to the y value.
  *
@@ -66,9 +66,8 @@ import p5 from '../core/main';
  * </div>
  *
  * @alt
- *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
- * The names of the four vertical alignments rendered each showing that alignment's placement relative to a horizontal line.
- *
+ * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
+ * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
  */
 /**
  * @method textAlign
@@ -80,8 +79,8 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
 };
 
 /**
- * Sets/gets the spacing, in pixels, between lines of text. This
- * setting will be used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
+ * Sets/gets the spacing, in pixels, between lines of text. This setting will be
+ * used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
@@ -90,23 +89,22 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @example
  * <div>
  * <code>
- * // Text to display. The "\n" is a "new line" character
- * let lines = 'L1\nL2\nL3';
+ * let lines = 'L1\nL2\nL3'; // "\n" is a "new line" character
  * textSize(12);
  *
- * textLeading(10); // Set leading to 10
+ * textLeading(10);
  * text(lines, 10, 25);
  *
- * textLeading(20); // Set leading to 20
+ * textLeading(20);
  * text(lines, 40, 25);
  *
- * textLeading(30); // Set leading to 30
+ * textLeading(30);
  * text(lines, 70, 25);
  * </code>
  * </div>
  *
  * @alt
- *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
+ * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
  */
 /**
  * @method textLeading
@@ -138,7 +136,7 @@ p5.prototype.textLeading = function(theLeading) {
  * </div>
  *
  * @alt
- *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
+ * 'Font Size 12' displayed small, 'Font Size 14' medium & 'Font Size 16' large
  */
 /**
  * @method textSize
@@ -175,7 +173,7 @@ p5.prototype.textSize = function(theSize) {
  * </div>
  *
  * @alt
- *words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
+ * Words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
  */
 /**
  * @method textStyle
@@ -191,7 +189,7 @@ p5.prototype.textStyle = function(theStyle) {
  *
  * @method textWidth
  * @param {String} theText the String of characters to measure
- * @return {Number}
+ * @return {Number} the calculated width
  * @example
  * <div>
  * <code>
@@ -210,8 +208,7 @@ p5.prototype.textStyle = function(theStyle) {
  * </div>
  *
  * @alt
- *Letter P and p5.js are displayed with vertical lines at end. P is wide
- *
+ * Letter P and p5.js are displayed with vertical lines at end.
  */
 p5.prototype.textWidth = function(...args) {
   args[0] += '';

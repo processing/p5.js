@@ -288,6 +288,7 @@ p5.Renderer2D.prototype.set = function(x, y, imgOrCol) {
       pixelsState._pixelDensity,
       pixelsState._pixelDensity
     );
+    this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.drawingContext.restore();
   } else {
@@ -520,7 +521,6 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
   ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
   ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-  ctx.closePath();
   if (doFill) {
     ctx.fill();
   }

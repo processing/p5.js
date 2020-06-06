@@ -136,23 +136,6 @@ suite('loadTable', function() {
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
-  testSketchWithPromise('using csv and tsv returns an error', function(
-    sketch,
-    resolve,
-    reject
-  ) {
-    sketch.preload = function() {
-      try {
-        assert.throw(function() {
-          sketch.loadTable(validFile, 'csv', 'tsv');
-        }, 'Cannot set multiple separator types.');
-        resolve();
-      } catch (e) {
-        reject(e);
-      }
-    };
-  });
-
   test('using the header option works', async function() {
     const table = await promisedSketch(function(sketch, resolve, reject) {
       sketch.preload = function() {
@@ -164,10 +147,10 @@ suite('loadTable', function() {
     assert.strictEqual(table.getRow(0).getNum('age'), 31);
   });
 
-  test('allows the header and csv options together', async function() {
+  test('allows the csv and header options together', async function() {
     const table = await promisedSketch(function(sketch, resolve, reject) {
       sketch.preload = function() {
-        sketch.loadTable(validFile, 'header', 'csv', resolve, reject);
+        sketch.loadTable(validFile, 'csv', 'header', resolve, reject);
       };
     });
     assert.equal(table.getRowCount(), 3);

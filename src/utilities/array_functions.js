@@ -39,11 +39,11 @@ p5.prototype.append = function(array, value) {
  * elements to copy is determined by length. Note that copying values
  * overwrites existing values in the destination array. To append values
  * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
- * <br><br>
+ *
  * The simplified version with only two arguments, arrayCopy(src, dst),
  * copies an entire array to another of the same size. It is equivalent to
  * arrayCopy(src, 0, dst, 0, src.length).
- * <br><br>
+ *
  * Using this function is far more efficient for copying array data than
  * iterating through a for() loop and copying each element individually.
  *
@@ -214,7 +214,7 @@ p5.prototype.shuffle = function(arr, bool) {
     tmp,
     idx = arr.length;
   while (idx > 1) {
-    rnd = (Math.random() * idx) | 0;
+    rnd = (this.random(0, 1) * idx) | 0;
 
     tmp = arr[--idx];
     arr[idx] = arr[rnd];

@@ -142,7 +142,6 @@ import p5 from './main';
  * A rectangle shrinking to the center
  * A rectangle rotating clockwise about the center
  * A rectangle shearing
- *
  */
 p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
   this._renderer.applyMatrix(...arguments);
@@ -168,7 +167,6 @@ p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
  *
  * @alt
  * A rotated retangle in the center with another at the top left corner
- *
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -207,7 +205,6 @@ p5.prototype.resetMatrix = function() {
  *
  * @alt
  * white 52x52 rect with black outline at center rotated counter 45 degrees
- *
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
@@ -368,7 +365,6 @@ p5.prototype.rotateZ = function(angle) {
  * @alt
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
- *
  */
 /**
  * @method scale
@@ -431,7 +427,6 @@ p5.prototype.scale = function(x, y, z) {
  *
  * @alt
  * white irregular quadrilateral with black outline at top middle.
- *
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
@@ -471,7 +466,6 @@ p5.prototype.shearX = function(angle) {
  *
  * @alt
  * white irregular quadrilateral with black outline at middle bottom.
- *
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
@@ -532,7 +526,6 @@ p5.prototype.shearY = function(angle) {
  * white 55x55 rect with black outline at center right.
  * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
  * a 20x20 white rect moving in a circle around the canvas
- *
  */
 /**
  * @method translate

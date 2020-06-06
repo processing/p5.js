@@ -23,7 +23,6 @@ import p5 from '../core/main';
  *
  * @alt
  * Current day is displayed
- *
  */
 p5.prototype.day = function() {
   return new Date().getDate();
@@ -45,7 +44,6 @@ p5.prototype.day = function() {
  *
  * @alt
  * Current hour is displayed
- *
  */
 p5.prototype.hour = function() {
   return new Date().getHours();
@@ -67,7 +65,6 @@ p5.prototype.hour = function() {
  *
  * @alt
  * Current minute is displayed
- *
  */
 p5.prototype.minute = function() {
   return new Date().getMinutes();
@@ -90,7 +87,6 @@ p5.prototype.minute = function() {
  *
  * @alt
  * number of milliseconds since sketch has started displayed
- *
  */
 p5.prototype.millis = function() {
   if (this._millisStart === -1) {
@@ -117,7 +113,6 @@ p5.prototype.millis = function() {
  *
  * @alt
  * Current month is displayed
- *
  */
 p5.prototype.month = function() {
   //January is 0!
@@ -140,7 +135,6 @@ p5.prototype.month = function() {
  *
  * @alt
  * Current second is displayed
- *
  */
 p5.prototype.second = function() {
   return new Date().getSeconds();
@@ -162,7 +156,6 @@ p5.prototype.second = function() {
  *
  * @alt
  * Current year is displayed
- *
  */
 p5.prototype.year = function() {
   return new Date().getFullYear();

@@ -21,16 +21,16 @@ import Filters from './filters';
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
  * image.
- * <br><br>
+ *
  * p5 can display .gif, .jpg and .png images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
  * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
  * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
  * values for every pixel in the image.
- * <br><br>
+ *
  * The methods described below allow easy access to the image's pixels and
  * alpha channel and simplify the process of compositing.
- * <br><br>
+ *
  * Before using the <a href="#/p5.Image/pixels">pixels[]</a> array, be sure to use the <a href="#/p5.Image/loadPixels">loadPixels()</a> method on
  * the image to make sure that the pixel data is properly loaded.
  * @example
@@ -78,7 +78,6 @@ import Filters from './filters';
  *   image(img, 0, 0);
  * }
  * </code></div>
- *
  *
  * @class p5.Image
  * @constructor
@@ -177,7 +176,7 @@ p5.Image = function(width, height) {
    *   }
    * }
    * ```
-   * <br><br>
+   *
    * Before accessing this array, the data must loaded with the <a href="#/p5.Image/loadPixels">loadPixels()</a>
    * function. After the array data has been modified, the <a href="#/p5.Image/updatePixels">updatePixels()</a>
    * function must be run to update the changes.
@@ -222,7 +221,6 @@ p5.Image = function(width, height) {
 
 /**
  * Helper function for animating GIF-based images with time
- *
  */
 p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
@@ -249,7 +247,6 @@ p5.Image.prototype._animateGif = function(pInst) {
 
 /**
  * Helper fxn for sharing pixel methods
- *
  */
 p5.Image.prototype._setProperty = function(prop, value) {
   this[prop] = value;
@@ -285,7 +282,6 @@ p5.Image.prototype._setProperty = function(prop, value) {
  *
  * @alt
  * 2 images of rocky mountains vertically stacked
- *
  */
 p5.Image.prototype.loadPixels = function() {
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -295,7 +291,7 @@ p5.Image.prototype.loadPixels = function() {
 /**
  * Updates the backing canvas for this image with the contents of
  * the [pixels] array.
- * <br><br>
+ *
  * If this image is an animated GIF then the pixels will be updated
  * in the frame that is currently displayed.
  *
@@ -333,7 +329,6 @@ p5.Image.prototype.loadPixels = function() {
  *
  * @alt
  * 2 images of rocky mountains vertically stacked
- *
  */
 /**
  * @method updatePixels
@@ -379,7 +374,6 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  *
  * @alt
  * image of rocky mountains with 50x50 green rect in front
- *
  */
 /**
  * @method get
@@ -429,7 +423,6 @@ p5.Image.prototype._getPixel = p5.Renderer2D.prototype._getPixel;
  *
  * @alt
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
- *
  */
 p5.Image.prototype.set = function(x, y, imgOrCol) {
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
@@ -464,7 +457,6 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
  *
  * @alt
  * image of rocky mountains. zoomed in
- *
  */
 p5.Image.prototype.resize = function(width, height) {
   // Copy contents to a temporary canvas, resize the original
@@ -587,7 +579,6 @@ p5.Image.prototype.resize = function(width, height) {
  *
  * @alt
  * image of rocky mountains and smaller image on top of bricks at top left
- *
  */
 /**
  * @method copy
@@ -629,9 +620,7 @@ p5.Image.prototype.copy = function(...args) {
  * @alt
  * image of rocky mountains with white at right
  *
- *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
- *
  */
 // TODO: - Accept an array of alpha values.
 //       - Use other channels of an image. p5 uses the
@@ -696,7 +685,6 @@ p5.Image.prototype.mask = function(p5Image) {
  *
  * @alt
  * 2 images of rocky mountains left one in color, right in black and white
- *
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation], value);
@@ -726,7 +714,6 @@ p5.Image.prototype.filter = function(operation, value) {
  *            darken | lighten | color-dodge | color-burn | hard-light |
  *            soft-light | difference | exclusion | hue | saturation |
  *            color | luminosity
- *
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  * @example
@@ -780,7 +767,6 @@ p5.Image.prototype.filter = function(operation, value) {
  * image of rocky mountains. Brick images on left and right. Right overexposed
  * image of rockies. Brickwall images on left and right. Right mortar transparent
  * image of rockies. Brickwall images on left and right. Right translucent
- *
  */
 /**
  * @method blend
@@ -795,6 +781,7 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Constant} blendMode
  */
 p5.Image.prototype.blend = function(...args) {
+  p5._validateParameters('p5.Image.blend', arguments);
   p5.prototype.blend.apply(this, args);
   this.setModified(true);
 };
@@ -856,7 +843,6 @@ p5.Image.prototype.isModified = function() {
  *
  * @alt
  * image of rocky mountains.
- *
  */
 p5.Image.prototype.save = function(filename, extension) {
   if (this.gifProperties) {
@@ -894,7 +880,6 @@ p5.Image.prototype.save = function(filename, extension) {
  * @alt
  * Animated image of a cartoon face that winks once and then freezes
  * When you click it animates again, winks once and freezes
- *
  */
 p5.Image.prototype.reset = function() {
   if (this.gifProperties) {
@@ -931,7 +916,6 @@ p5.Image.prototype.reset = function() {
  * Animated image of a cartoon eye looking around and then
  * looking outwards, in the lower-left hand corner a number counts
  * up quickly to 124 and then starts back over at 0
- *
  */
 p5.Image.prototype.getCurrentFrame = function() {
   if (this.gifProperties) {
@@ -968,7 +952,6 @@ p5.Image.prototype.getCurrentFrame = function() {
  * @alt
  * A still image of a cartoon eye that looks around when you move your mouse
  * up and down over the canvas
- *
  */
 p5.Image.prototype.setFrame = function(index) {
   if (this.gifProperties) {
@@ -1013,7 +996,6 @@ p5.Image.prototype.setFrame = function(index) {
  * @alt
  * A still image of a cartoon eye that looks around when you move your mouse
  * up and down over the canvas
- *
  */
 p5.Image.prototype.numFrames = function() {
   if (this.gifProperties) {
@@ -1051,7 +1033,6 @@ p5.Image.prototype.numFrames = function() {
  * An animated GIF of a drawing of small child with
  * hair blowing in the wind, when you click the image
  * freezes when you release it animates again
- *
  */
 p5.Image.prototype.play = function() {
   if (this.gifProperties) {
@@ -1088,7 +1069,6 @@ p5.Image.prototype.play = function() {
  * An animated GIF of a drawing of small child with
  * hair blowing in the wind, when you click the image
  * freezes when you release it animates again
- *
  */
 p5.Image.prototype.pause = function() {
   if (this.gifProperties) {
@@ -1132,7 +1112,6 @@ p5.Image.prototype.pause = function() {
  * Two animated gifs of cartoon eyes looking around
  * The gif on the left animates quickly, on the right
  * the animation is much slower
- *
  */
 p5.Image.prototype.delay = function(d, index) {
   if (this.gifProperties) {

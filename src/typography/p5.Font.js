@@ -30,7 +30,7 @@ p5.Font = function(p) {
 
 /**
  * Returns a tight bounding box for the given text string using this
- * font (currently only supports single lines)
+ * font
  *
  * @method textBounds
  * @param  {String} line     a line of text
@@ -40,7 +40,6 @@ p5.Font = function(p) {
  * @param  {Object} [options] opentype options (optional)
  *                            opentype fonts contains alignment and baseline options.
  *                            Default is 'LEFT' and 'alphabetic'
- *
  *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *
@@ -71,7 +70,6 @@ p5.Font = function(p) {
  *
  * @alt
  *words Lorem ipsum dol go off canvas and contained by white bounding box
- *
  */
 p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   // Check cache for existing bounds. Take into consideration the text alignment
@@ -95,14 +93,17 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   }
 
   if (!result) {
-    let minX;
+    let minX = [];
     let minY;
-    let maxX;
+    let maxX = [];
     let maxY;
     let pos;
     const xCoords = [];
+    xCoords[0] = [];
     const yCoords = [];
     const scale = this._scale(fontSize);
+    const lineHeight = p._renderer.textLeading();
+    let lineCount = 0;
 
     this.font.forEachGlyph(
       str,
@@ -112,24 +113,43 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
       opts,
       (glyph, gX, gY, gFontSize) => {
         const gm = glyph.getMetrics();
-        xCoords.push(gX + gm.xMin * scale);
-        xCoords.push(gX + gm.xMax * scale);
-        yCoords.push(gY + -gm.yMin * scale);
-        yCoords.push(gY + -gm.yMax * scale);
+        if (glyph.index === 0 || glyph.index === 10) {
+          lineCount += 1;
+          xCoords[lineCount] = [];
+        } else {
+          xCoords[lineCount].push(gX + gm.xMin * scale);
+          xCoords[lineCount].push(gX + gm.xMax * scale);
+          yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
+          yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+        }
       }
     );
 
-    minX = Math.min.apply(null, xCoords);
+    if (xCoords[lineCount].length > 0) {
+      minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
+      maxX[lineCount] = Math.max.apply(null, xCoords[lineCount]);
+    }
+
+    var finalMaxX = 0;
+    for (var i = 0; i <= lineCount; i++) {
+      minX[i] = Math.min.apply(null, xCoords[i]);
+      maxX[i] = Math.max.apply(null, xCoords[i]);
+      var lineLength = maxX[i] - minX[i];
+      if (lineLength > finalMaxX) {
+        finalMaxX = lineLength;
+      }
+    }
+
+    var finalMinX = Math.min.apply(null, minX);
     minY = Math.min.apply(null, yCoords);
-    maxX = Math.max.apply(null, xCoords);
     maxY = Math.max.apply(null, yCoords);
 
     result = {
-      x: minX,
+      x: finalMinX,
       y: minY,
       h: maxY - minY,
-      w: maxX - minX,
-      advance: minX - x
+      w: finalMaxX,
+      advance: finalMinX - x
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
@@ -209,7 +229,6 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
  * }
  * </code>
  * </div>
- *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
   let xoff = 0;

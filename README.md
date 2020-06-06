@@ -46,7 +46,7 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 * [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/Tutorials/): A huge trove of tutorials created by Dan Shiffman and friends
+* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
 
 ## Stewards
 
@@ -375,6 +375,22 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/shaharyar-shamshi"><img src="https://avatars3.githubusercontent.com/u/17377195?v=4" width="100px;" alt=""/><br /><sub><b>shaharyarshamshi</b></sub></a><br /><a href="#translation-shaharyar-shamshi" title="Translation">🌍</a></td>
     <td align="center"><a href="https://ayushj.me"><img src="https://avatars3.githubusercontent.com/u/33171576?v=4" width="100px;" alt=""/><br /><sub><b>Ayush Jain</b></sub></a><br /><a href="#translation-ayushjainrksh" title="Translation">🌍</a></td>
     <td align="center"><a href="http://dev.to/rizz0s"><img src="https://avatars1.githubusercontent.com/u/39225869?v=4" width="100px;" alt=""/><br /><sub><b>Summer Rizzo</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Rizz0S" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Aierie"><img src="https://avatars3.githubusercontent.com/u/39579264?v=4" width="100px;" alt=""/><br /><sub><b>Aierie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aierie" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3AAierie" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/matvs"><img src="https://avatars3.githubusercontent.com/u/6883643?v=4" width="100px;" alt=""/><br /><sub><b>Mateusz Swiatkowski</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=matvs" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Amatvs" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/SketchySketch"><img src="https://avatars0.githubusercontent.com/u/41220208?v=4" width="100px;" alt=""/><br /><sub><b>XingZiLong</b></sub></a><br /><a href="#translation-SketchySketch" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/oruburos"><img src="https://avatars2.githubusercontent.com/u/718254?v=4" width="100px;" alt=""/><br /><sub><b>ov</b></sub></a><br /><a href="#translation-oruburos" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/kyle1james"><img src="https://avatars3.githubusercontent.com/u/13423696?v=4" width="100px;" alt=""/><br /><sub><b>Kyle James</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=kyle1james" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/AbhiGulati"><img src="https://avatars1.githubusercontent.com/u/8756983?v=4" width="100px;" alt=""/><br /><sub><b>Abhi Gulati</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=AbhiGulati" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://jtp.io"><img src="https://avatars2.githubusercontent.com/u/591645?v=4" width="100px;" alt=""/><br /><sub><b>Jeremy Tuloup</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jtpio" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://lm-n.com"><img src="https://avatars0.githubusercontent.com/u/16418450?v=4" width="100px;" alt=""/><br /><sub><b>Luis Morales-Navarro</b></sub></a><br /><a href="#a11y-lm-n" title="Accessibility">️️️️♿️</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/yukie-nomiya/"><img src="https://avatars3.githubusercontent.com/u/49163604?v=4" width="100px;" alt=""/><br /><sub><b>Yuki</b></sub></a><br /><a href="#translation-yukienomiya" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/cedarfall"><img src="https://avatars2.githubusercontent.com/u/50991099?v=4" width="100px;" alt=""/><br /><sub><b>cedarfall</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=cedarfall" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://dribbble.com/isaacdurazo"><img src="https://avatars1.githubusercontent.com/u/1379244?v=4" width="100px;" alt=""/><br /><sub><b>Isaac Durazo </b></sub></a><br /><a href="#translation-isaacdurazo" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
   </tr>
 </table>
 

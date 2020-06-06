@@ -304,7 +304,6 @@ p5.prototype.resetShader = function() {
  * </div>
  * @alt
  * Red, green and blue gradient.
- *
  */
 p5.prototype.normalMaterial = function(...args) {
   this._assert3d('normalMaterial');
@@ -401,7 +400,6 @@ p5.prototype.normalMaterial = function(...args) {
  * Rotating view of many images umbrella and grid roof on a 3d plane
  * black canvas
  * black canvas
- *
  */
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
@@ -487,7 +485,6 @@ p5.prototype.texture = function(tex) {
  *
  * @alt
  * the underside of a white umbrella and gridded ceiling above
- *
  */
 p5.prototype.textureMode = function(mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
@@ -560,7 +557,6 @@ p5.prototype.textureMode = function(mode) {
  *
  * @alt
  * an image of the rocky mountains repeated in mirrored tiles
- *
  */
 p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
@@ -901,7 +897,9 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       );
       break;
   }
-  this._cachedBlendMode = this.curBlendMode;
+  if (!this._isErasing) {
+    this._cachedBlendMode = this.curBlendMode;
+  }
 };
 
 export default p5;

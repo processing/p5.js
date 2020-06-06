@@ -16,7 +16,6 @@ import p5 from '../core/main';
  * @param  {Integer} [detailX] number of vertices on horizontal surface
  * @param  {Integer} [detailY] number of vertices on horizontal surface
  * @param {function} [callback] function to call upon object instantiation.
- *
  */
 p5.Geometry = function(detailX, detailY, callback) {
   //an array containing every vertex
@@ -70,6 +69,7 @@ p5.Geometry.prototype.reset = function() {
 };
 
 /**
+ * computes faces for geometry objects based on the vertices.
  * @method computeFaces
  * @chainable
  */

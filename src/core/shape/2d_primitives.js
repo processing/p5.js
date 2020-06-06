@@ -9,7 +9,9 @@
 import p5 from '../main';
 import * as constants from '../constants';
 import canvas from '../helpers';
-import '../error_helpers';
+import '../friendly_errors/fes_core';
+import '../friendly_errors/file_errors';
+import '../friendly_errors/validate_params';
 
 /**
  * This function does 3 things:
@@ -166,7 +168,6 @@ p5.prototype._normalizeArcAngles = (
  *white ellipse with black outline with top right missing.
  *white ellipse with top right missing with black outline around shape.
  *white ellipse with top right quarter missing with black outline around the shape.
- *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
@@ -419,7 +420,6 @@ p5.prototype.line = function(...args) {
  * @method point
  * @param {p5.Vector} coordinate_vector the coordinate vector
  * @chainable
- *
  */
 p5.prototype.point = function(...args) {
   p5._validateParameters('point', args);
@@ -467,7 +467,6 @@ p5.prototype.point = function(...args) {
  *
  * @alt
  *irregular white quadrilateral shape with black outline mid-right of canvas.
- *
  */
 /**
  * @method quad

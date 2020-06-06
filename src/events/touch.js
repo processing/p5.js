@@ -201,7 +201,6 @@ p5.prototype._ontouchstart = function(e) {
  * @alt
  * 50x50 black rect turns lighter with touch until white. resets
  * no image displayed
- *
  */
 p5.prototype._ontouchmove = function(e) {
   const context = this._isGlobal ? window : this;
@@ -275,7 +274,6 @@ p5.prototype._ontouchmove = function(e) {
  * @alt
  * 50x50 black rect turns white with touch.
  * no image displayed
- *
  */
 p5.prototype._ontouchend = function(e) {
   this._setProperty('mouseIsPressed', false);

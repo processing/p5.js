@@ -11,16 +11,18 @@ import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
 
-import '../core/error_helpers';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
- * <br><br>
+ *
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
  * anything with it, place the <a href="#/p5/loadImage">loadImage()</a> call in <a href="#/p5/preload">preload()</a>.
  * You may also supply a callback function to handle the image when it's ready.
- * <br><br>
+ *
  * The path to the image should be relative to the HTML file
  * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
@@ -63,7 +65,6 @@ import '../core/error_helpers';
  * @alt
  * image of the underside of a white umbrella and grided ceililng above
  * image of the underside of a white umbrella and grided ceililng above
- *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
@@ -151,7 +152,6 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
 /**
  * Helper function for loading GIF-based images
- *
  */
 function _createGif(
   arrayBuffer,
@@ -333,7 +333,6 @@ function _sAssign(sVal, iVal) {
  * @alt
  * image of the underside of a white umbrella and gridded ceiling above
  * image of the underside of a white umbrella and gridded ceiling above
- *
  */
 /**
  * @method image
@@ -421,16 +420,15 @@ p5.prototype.image = function(
 /**
  * Sets the fill value for displaying images. Images can be tinted to
  * specified colors or made transparent by including an alpha value.
- * <br><br>
+ *
  * To apply transparency to an image without affecting its color, use
  * white as the tint color and specify an alpha value. For instance,
  * tint(255, 128) will make an image 50% transparent (assuming the default
  * alpha range of 0-255, which can be changed with <a href="#/p5/colorMode">colorMode()</a>).
- * <br><br>
+ *
  * The value for the gray parameter must be less than or equal to the current
  * maximum value as specified by <a href="#/p5/colorMode">colorMode()</a>. The default maximum value is
  * 255.
- *
  *
  * @method tint
  * @param  {Number}        v1      red or hue value relative to
@@ -488,7 +486,6 @@ p5.prototype.image = function(
  * 2 side by side images of umbrella and ceiling, one image with blue tint
  * Images of umbrella and ceiling, one half of image with blue tint
  * 2 side by side images of umbrella and ceiling, one image translucent
- *
  */
 
 /**
@@ -541,7 +538,6 @@ p5.prototype.tint = function(...args) {
  *
  * @alt
  * 2 side by side images of bricks, left image with blue tint
- *
  */
 p5.prototype.noTint = function() {
   this._renderer._tint = null;
@@ -554,7 +550,6 @@ p5.prototype.noTint = function() {
  * @private
  * @param {p5.Image} The image to be tinted
  * @return {canvas} The resulting tinted canvas
- *
  */
 p5.prototype._getTintedImageCanvas = function(img) {
   if (!img.canvas) {
@@ -591,11 +586,11 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * third parameters of <a href="#/p5/image">image()</a> as the upper-left corner of the image. If
  * two additional parameters are specified, they are used to set the image's
  * width and height.
- * <br><br>
+ *
  * imageMode(CORNERS) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the location of one corner, and the fourth and fifth parameters as the
  * opposite corner.
- * <br><br>
+ *
  * imageMode(CENTER) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the image's center point. If two additional parameters are specified,
  * they are used to set the image's width and height.
@@ -647,7 +642,6 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * small square image of bricks
  * horizontal rectangle image of bricks
  * large square image of bricks
- *
  */
 p5.prototype.imageMode = function(m) {
   p5._validateParameters('imageMode', arguments);

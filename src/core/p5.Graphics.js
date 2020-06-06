@@ -111,7 +111,6 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * A white line on a black background stays still on the top-left half.
  * A black line animates from top to bottom on a white background on the right half.
  * When clicked, the black line starts back over at the top.
- *
  */
 p5.Graphics.prototype.reset = function() {
   this._renderer.resetMatrix();
@@ -173,7 +172,6 @@ p5.Graphics.prototype.reset = function() {
  * @alt
  * no image
  * a multi-colored circle moving back and forth over a scrolling background.
- *
  */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
