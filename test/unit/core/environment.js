@@ -162,4 +162,48 @@ suite('Environment', function() {
       assert.isNumber(myp5.displayDensity(), pd);
     });
   });
+
+  suite('p5.prototype.lazyLog', function() {
+    test('clear lazyLog cache', function() {
+      let a = 5;
+      let b = 10;
+      myp5.lazyLog(a, 'a');
+      myp5.lazyLog(b, 'b');
+      assert.strictEqual(myp5.lazyLog(), false);
+      assert.strictEqual(myp5.lazyLog(a, 'a'), true);
+    });
+
+    test('lazyLog new, changed, and unchanged variables', function() {
+      myp5.lazyLog();
+      let a = 5;
+      let b = 10;
+      assert.strictEqual(myp5.lazyLog(a, 'a'), true);
+      assert.strictEqual(myp5.lazyLog(b, 'b'), true);
+      a = a ^ b;
+      b = a ^ b;
+      a = a ^ b;
+      assert.strictEqual(myp5.lazyLog(a, 'a'), true);
+      assert.strictEqual(myp5.lazyLog(b, 'b'), true);
+      assert.strictEqual(myp5.lazyLog(a, 'a'), false);
+      assert.strictEqual(myp5.lazyLog(b, 'b'), false);
+    });
+
+    test('log periodically', function() {
+      myp5.lazyLog();
+      let a = 5;
+      let b = 10;
+      let logA = 0;
+      let logB = 0;
+      for (let i = 0; i < 25; i++) {
+        if (myp5.lazyLog(a, 'a', 20)) {
+          logA++;
+        }
+        if (myp5.lazyLog(b, 'b', 5)) {
+          logB++;
+        }
+      }
+      assert.equal(logA, 2);
+      assert.equal(logB, 5);
+    });
+  });
 });

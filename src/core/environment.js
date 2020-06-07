@@ -741,10 +741,13 @@ p5.prototype.getURLParams = function() {
  * Reduces the log load to get the better performance and
  * more informative logs from console, by ignoring repeated values or setting periods.
  * Instead of using console.log(a) to display the value of variable a,
- * now you may use lazyLog('a').
+ * now you may use lazyLog('a'). Calling the function without any parameters will
+ * clear the cache of logged variables.
  *
  * @method lazyLog
- * @param {String} variableName name of variable (in string) to log in console. Calling the function without any parameters will clear the cache of logged variables
+ * @param {Object} variable can be any JavaScript data type
+ * @param {String} variableName a tag to help cache different variables, can just be the same as the variable name
+ * @param {Number} [period] number of frames (calls of the function) not logging
  * @param {Boolean} [display] set to false if not displaying the name of variable in log
  * @return {Boolean} true if the variable changes or match the logging condition, otherwise false
  * @example
@@ -752,19 +755,15 @@ p5.prototype.getURLParams = function() {
  * <code>
  * // Log only once when the value stays unchanged
  * let x = 50;
- * ellipse(x, 50);
- * lazyLog('x');
+ * function draw() {
+ *   ellipse(x, 50, 50);
+ *   lazyLog(x, 'x');
+ * }
  * </code>
  * </div>
  *
  * @alt
  * Log only once when the value stays unchanged
- */
-/**
- * @method lazyLog
- * @param {String} variableName
- * @param {Number} idle number of frames (calls of the function) not logging
- * @param {Boolean} [display]
  */
 /**
  * @method lazyLog
@@ -791,21 +790,20 @@ p5.prototype.lazyLog = function(...args) {
     displayName = false;
     argsLength--;
   }
-  if (typeof args[0] === 'string') {
-    let val = eval(args[0]);
-    if (!(args[0] in this._lazyLogVars)) {
-      this._lazyLogVars[args[0]] = val;
-      this._lazyLogTimers[args[0]] = 0;
-      return _lazyLog(args[0], val, displayName);
+  if (typeof args[1] === 'string') {
+    if (!(args[1] in this._lazyLogVars)) {
+      this._lazyLogVars[args[1]] = args[0];
+      this._lazyLogTimers[args[1]] = 0;
+      return this._lazyLog(args[1], args[0], displayName);
     } else {
-      this._lazyLogTimers[args[0]]++;
+      this._lazyLogTimers[args[1]]++;
     }
     if (
-      (argsLength === 1 && val !== this._lazyLogVars[args[0]]) ||
-      (argsLength === 2 && this._lazyLogTimers[args[0]] % args[1] === 0)
+      (argsLength === 2 && args[0] !== this._lazyLogVars[args[1]]) ||
+      (argsLength === 3 && this._lazyLogTimers[args[1]] % args[2] === 0)
     ) {
-      this._lazyLogVars[args[0]] = val;
-      return _lazyLog(args[0], val, displayName);
+      this._lazyLogVars[args[1]] = args[0];
+      return this._lazyLog(args[1], args[0], displayName);
     }
   }
   return false;
