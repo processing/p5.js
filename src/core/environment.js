@@ -757,20 +757,8 @@ p5.prototype.getURLParams = function() {
  * </code>
  * </div>
  *
- * <div>
- * <code>
- * // Log every 1 second
- * let clock = 0;
- * function draw() {
- *   clock++;
- *   lazyLog('clock', getFrameRate(), true);
- * }
- * </code>
- * </div>
- *
  * @alt
  * Log only once when the value stays unchanged
- * Log every 1 second
  */
 /**
  * @method lazyLog
