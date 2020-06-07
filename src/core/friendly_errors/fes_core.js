@@ -126,9 +126,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (func.substring(0, 4) === 'load') {
       console.log(translator('fes.pre', { message }));
     } else {
+      const methodParts = func.split('.');
+      const referenceSection =
+        methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : 'p5';
+
+      const funcName =
+        methodParts.length === 1 ? func : methodParts.slice(2).join('/');
+
       console.log(
         translator('fes.pre', {
-          message: `${message} (http://p5js.org/reference/#p5/${func})`
+          message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
         })
       );
     }
