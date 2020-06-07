@@ -737,13 +737,11 @@ p5.prototype.getURLParams = function() {
   return v;
 };
 
-export default p5;
-
 /**
  * Reduces the log load to get the better performance and
- * more informative information from console, by ignoring repeated values or restricting
- * conditions for values. Instead of using console.log(a) to display the value of
- * variable a, now you may use lazyLog("a").
+ * more informative logs from console, by ignoring repeated values or setting periods.
+ * Instead of using console.log(a) to display the value of variable a,
+ * now you may use lazyLog('a').
  *
  * @method lazyLog
  * @param {String} variableName name of variable (in string) to log in console. Calling the function without any parameters will clear the cache of logged variables
@@ -824,3 +822,5 @@ p5.prototype.lazyLog = function(...args) {
   }
   return false;
 };
+
+export default p5;
