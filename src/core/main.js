@@ -211,6 +211,10 @@ class p5 {
     this._events.wheel = null;
     this._loadingScreenId = 'p5_loading';
 
+    // Objects used to cache lazyLog variables
+    this._lazyLogVars = {};
+    this._lazyLogTimers = {};
+
     // Allows methods to be registered on an instance that
     // are instance-specific.
     this._registeredMethods = {};

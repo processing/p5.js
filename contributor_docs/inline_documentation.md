@@ -52,7 +52,7 @@ You must specify one of these for the element to appear in the docs, with the na
    * as a float (this is simply the equation <em>sqrt(x*x + y*y + z*z)</em>.)
    *
    * @method mag
-   * @return {number} magnitude (length) of the vector
+   * @return {Number} magnitude (length) of the vector
    */
    PVector.prototype.mag = function () {
     return Math.sqrt(this.magSq());
@@ -267,6 +267,7 @@ horizontal wave pattern effected by mouse x-position & updating noise values.
 
 ## Template for methods
 Here is an example for a well documentated method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/master/contributor_docs/method.example.js). You can replace the text with your method's variables and remove the remaining ones.
+
 ![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/master/contributor_docs/images/method-template-example.png)
 
 

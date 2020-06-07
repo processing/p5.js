@@ -738,3 +738,89 @@ p5.prototype.getURLParams = function() {
 };
 
 export default p5;
+
+/**
+ * Reduces the log load to get the better performance and
+ * more informative information from console, by ignoring repeated values or restricting
+ * conditions for values. Instead of using console.log(a) to display the value of
+ * variable a, now you may use lazyLog("a").
+ *
+ * @method lazyLog
+ * @param {String} variableName name of variable (in string) to log in console. Calling the function without any parameters will clear the cache of logged variables
+ * @param {Boolean} [display] set to false if not displaying the name of variable in log
+ * @return {Boolean} true if the variable changes or match the logging condition, otherwise false
+ * @example
+ * <div>
+ * <code>
+ * // Log only once when the value stays unchanged
+ * let x = 50;
+ * ellipse(x, 50);
+ * lazyLog('x');
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Log every 1 second
+ * let clock = 0;
+ * function draw() {
+ *   clock++;
+ *   lazyLog('clock', getFrameRate(), true);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Log only once when the value stays unchanged
+ * Log every 1 second
+ */
+/**
+ * @method lazyLog
+ * @param {String} variableName
+ * @param {Number} idle number of frames (calls of the function) not logging
+ * @param {Boolean} [display]
+ */
+/**
+ * @method lazyLog
+ */
+p5.prototype._lazyLog = function(n, v, d) {
+  if (d) {
+    console.log(n, v);
+  } else {
+    console.log(v);
+  }
+  return true;
+};
+p5.prototype.lazyLog = function(...args) {
+  let argsLength = args.length;
+  let displayName = true;
+
+  if (!argsLength) {
+    // Clear the cached variables
+    this._lazyLogVars = {};
+    this._lazyLogTimers = {};
+    return false;
+  }
+  if (typeof args[argsLength - 1] === 'boolean' && !args[argsLength - 1]) {
+    displayName = false;
+    argsLength--;
+  }
+  if (typeof args[0] === 'string') {
+    let val = eval(args[0]);
+    if (!(args[0] in this._lazyLogVars)) {
+      this._lazyLogVars[args[0]] = val;
+      this._lazyLogTimers[args[0]] = 0;
+      return _lazyLog(args[0], val, displayName);
+    } else {
+      this._lazyLogTimers[args[0]]++;
+    }
+    if (
+      (argsLength === 1 && val !== this._lazyLogVars[args[0]]) ||
+      (argsLength === 2 && this._lazyLogTimers[args[0]] % args[1] === 0)
+    ) {
+      this._lazyLogVars[args[0]] = val;
+      return _lazyLog(args[0], val, displayName);
+    }
+  }
+  return false;
+};
