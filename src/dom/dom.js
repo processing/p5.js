@@ -97,15 +97,16 @@ p5.prototype.select = function(e, p) {
  * a = selectAll('div');
  * a = selectAll('button', '#container');
  *
- * let b = select('body');
- * a = selectAll('p', b);
+ * let b = createDiv();
+ * b.id('container');
+ * let c = select('#container');
+ * a = selectAll('p', c);
  * a = selectAll('#container p');
  *
- * let c = document.getElementById('container');
- * a = selectAll('.boop', c);
+ * let d = document.getElementById('container');
+ * a = selectAll('.boop', d);
  * a = selectAll('#container .boop');
- *
- * a; // unused
+ * console.log(a);
  * </code></div>
  */
 p5.prototype.selectAll = function(e, p) {
