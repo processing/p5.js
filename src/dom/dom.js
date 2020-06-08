@@ -97,7 +97,7 @@ p5.prototype.select = function(e, p) {
  * a = selectAll('div');
  * a = selectAll('button', '#container');
  *
- * let b = select('#container');
+ * let b = select('body');
  * a = selectAll('p', b);
  * a = selectAll('#container p');
  *
