@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/processing/p5.js)
+
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
 # [p5.js](https://p5js.org)
