@@ -178,14 +178,14 @@ suite('Environment', function() {
       let a = 5;
       let b = 10;
       assert.strictEqual(myp5.lazyLog(a, 'a'), true);
-      assert.strictEqual(myp5.lazyLog(b, 'b'), true);
+      assert.strictEqual(myp5.lazyLog(b, 'b', false), true);
       a = a ^ b;
       b = a ^ b;
       a = a ^ b;
       assert.strictEqual(myp5.lazyLog(a, 'a'), true);
-      assert.strictEqual(myp5.lazyLog(b, 'b'), true);
+      assert.strictEqual(myp5.lazyLog(b, 'b', false), true);
       assert.strictEqual(myp5.lazyLog(a, 'a'), false);
-      assert.strictEqual(myp5.lazyLog(b, 'b'), false);
+      assert.strictEqual(myp5.lazyLog(b, 'b', false), false);
     });
 
     test('log periodically', function() {

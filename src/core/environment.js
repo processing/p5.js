@@ -762,20 +762,22 @@ p5.prototype.getURLParams = function() {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * // Log frame rate
+ * function draw() {
+ *   lazyLog(int(getFrameRate()), 'fr');
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
- * Log only once when the value stays unchanged
+ * Log only once when the value stays unchanged.
+ * Log frame rate.
  */
 /**
  * @method lazyLog
  */
-p5.prototype._lazyLog = function(n, v, d) {
-  if (d) {
-    console.log(n, v);
-  } else {
-    console.log(v);
-  }
-  return true;
-};
 p5.prototype.lazyLog = function(...args) {
   let argsLength = args.length;
   let displayName = true;
@@ -794,7 +796,8 @@ p5.prototype.lazyLog = function(...args) {
     if (!(args[1] in this._lazyLogVars)) {
       this._lazyLogVars[args[1]] = args[0];
       this._lazyLogTimers[args[1]] = 0;
-      return this._lazyLog(args[1], args[0], displayName);
+      displayName ? console.log(args[1], args[0]) : console.log(args[0]);
+      return true;
     } else {
       this._lazyLogTimers[args[1]]++;
     }
@@ -803,7 +806,8 @@ p5.prototype.lazyLog = function(...args) {
       (argsLength === 3 && this._lazyLogTimers[args[1]] % args[2] === 0)
     ) {
       this._lazyLogVars[args[1]] = args[0];
-      return this._lazyLog(args[1], args[0], displayName);
+      displayName ? console.log(args[1], args[0]) : console.log(args[0]);
+      return true;
     }
   }
   return false;
