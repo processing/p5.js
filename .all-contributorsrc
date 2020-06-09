@@ -1990,6 +1990,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "skyperx",
+      "name": "skyperx",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/64559807?v=4",
+      "profile": "http://skyperx.github.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
