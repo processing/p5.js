@@ -391,6 +391,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://skyperx.github.io"><img src="https://avatars1.githubusercontent.com/u/64559807?v=4" width="100px;" alt=""/><br /><sub><b>skyperx</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyperx" title="Code">💻</a></td>
   </tr>
 </table>
 
