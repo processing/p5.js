@@ -1309,7 +1309,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  *
  * function draw() {
- *   image(capture, 0, 0, width, width * capture.height / capture.width);
+ *   image(capture, 0, 0, width, (width * capture.height) / capture.width);
  *   filter(INVERT);
  * }
  * </code>
@@ -1629,30 +1629,27 @@ p5.Element.prototype.center = function(align) {
   var pos = { x: this.elt.offsetLeft, y: this.elt.offsetTop };
 
   if (hidden) this.show();
-
+  if (parentHidden) this.parent().show();
   this.elt.style.display = 'block';
+
   this.position(0, 0);
-
-  if (parentHidden) this.parent().style.display = 'block';
-
   var wOffset = Math.abs(this.parent().offsetWidth - this.elt.offsetWidth);
   var hOffset = Math.abs(this.parent().offsetHeight - this.elt.offsetHeight);
-  var y = pos.y;
-  var x = pos.x;
 
   if (align === 'both' || align === undefined) {
-    this.position(wOffset / 2, hOffset / 2);
+    this.position(
+      wOffset / 2 + this.parent().offsetLeft,
+      hOffset / 2 + this.parent().offsetTop
+    );
   } else if (align === 'horizontal') {
-    this.position(wOffset / 2, y);
+    this.position(wOffset / 2 + this.parent().offsetLeft, pos.y);
   } else if (align === 'vertical') {
-    this.position(x, hOffset / 2);
+    this.position(pos.x, hOffset / 2 + this.parent().offsetTop);
   }
 
   this.style('display', style);
-
   if (hidden) this.hide();
-
-  if (parentHidden) this.parent().style.display = 'none';
+  if (parentHidden) this.parent().hide();
 
   return this;
 };
@@ -2110,9 +2107,9 @@ p5.Element.prototype.size = function(w, h) {
     var AUTO = p5.prototype.AUTO;
     if (aW !== AUTO || aH !== AUTO) {
       if (aW === AUTO) {
-        aW = h * this.width / this.height;
+        aW = (h * this.width) / this.height;
       } else if (aH === AUTO) {
-        aH = w * this.height / this.width;
+        aH = (w * this.height) / this.width;
       }
       // set diff for cnv vs normal div
       if (this.elt instanceof HTMLCanvasElement) {
