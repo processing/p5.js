@@ -36,6 +36,7 @@ export const initialize = () =>
         nestingPrefix: '$tr(',
         nestingSuffix: ')',
         defaultNS: 'translation',
+        returnEmptyString: false,
         interpolation: {
           escapeValue: false
         },
