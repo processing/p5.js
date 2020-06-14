@@ -4,6 +4,7 @@
  */
 import p5 from '../main';
 import * as constants from '../constants';
+import { translator } from '../internationalization';
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._clearValidateParamsCache = () => {};
@@ -484,6 +485,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // function for generating console.log() msg
   p5._friendlyParamError = function(errorObj, func) {
     let message;
+    let translationObj;
 
     function formatType() {
       const format = errorObj.format;
@@ -494,9 +496,20 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     switch (errorObj.type) {
       case 'EMPTY_VAR': {
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received an empty variable instead. If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]`;
+        translationObj = {
+          func,
+          formatType: formatType(),
+          // It needs to be this way for i18next-extract to work. The comment
+          // specifies the values that the context can take so that it can
+          // statically prepare the translation files with them.
+          /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+          position: translator('fes.positions.p', {
+            context: (errorObj.position + 1).toString(),
+            defaultValue: (errorObj.position + 1).toString()
+          }),
+          link: '[https://p5js.org/examples/data-variable-scope.html]'
+        };
+
         break;
       }
       case 'WRONG_TYPE': {
@@ -505,26 +518,41 @@ if (typeof IS_MINIFIED !== 'undefined') {
           arg instanceof Array
             ? 'array'
             : arg === null ? 'null' : arg.name || typeof arg;
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received ${argType} instead`;
+
+        translationObj = {
+          func,
+          formatType: formatType(),
+          argType,
+          /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+          position: translator('fes.positions.p', {
+            context: (errorObj.position + 1).toString(),
+            defaultValue: (errorObj.position + 1).toString()
+          })
+        };
+
         break;
       }
       case 'TOO_FEW_ARGUMENTS': {
-        message = `${func}() was expecting at least ${
-          errorObj.minParams
-        } arguments, but received only ${errorObj.argCount}`;
+        translationObj = {
+          func,
+          minParams: errorObj.minParams,
+          argCount: errorObj.argCount
+        };
+
         break;
       }
       case 'TOO_MANY_ARGUMENTS': {
-        message = `${func}() was expecting no more than ${
-          errorObj.maxParams
-        } arguments, but received ${errorObj.argCount}`;
+        translationObj = {
+          func,
+          maxParams: errorObj.maxParams,
+          argCount: errorObj.argCount
+        };
+
         break;
       }
     }
 
-    if (message) {
+    if (translationObj) {
       try {
         // const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
         const myError = new Error();
@@ -544,13 +572,18 @@ if (typeof IS_MINIFIED !== 'undefined') {
           parsed[3].columnNumber
         }`;
         if (location) {
-          message += ` at ${location}`;
+          translationObj.location = translator('fes.location', { location });
         }
       } catch (err) {
         if (err instanceof p5.ValidationError) {
           throw err;
         }
       }
+
+      translationObj.context = errorObj.type;
+      // i18next-extract-mark-context-next-line ["EMPTY_VAR", "TOO_MANY_ARGUMENTS", "TOO_FEW_ARGUMENTS", "WRONG_TYPE"]
+      message = translator('fes.friendlyParamError.type', translationObj);
+
       p5._friendlyError(`${message}.`, func, 3);
     }
   };

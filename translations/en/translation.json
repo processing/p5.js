@@ -13,7 +13,28 @@
       "table": "It looks like there was a problem loading your table file. {{suggestion}}",
       "xml": "It looks like there was a problem loading your XML file. {{suggestion}}"
     },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{func}}() was expecting {{formatType}} for the {{position}} parameter, received an empty variable instead. {{location}}\n\nIf not intentional, this is often a problem with scope: {{link}}",
+      "type_TOO_FEW_ARGUMENTS": "{{func}}() was expecting at least {{minParams}} arguments, but received only {{argCount}}. {{location}}",
+      "type_TOO_MANY_ARGUMENTS": "{{func}}() was expecting no more than {{maxParams}} arguments, but received {{argCount}}. {{location}}",
+      "type_WRONG_TYPE": "{{func}}() was expecting {{formatType}} for the {{position}} parameter, received {{argType}} instead. {{location}}"
+    },
+    "location": "(at {{location}})",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
+    "positions": {
+      "p_1": "first",
+      "p_10": "tenth",
+      "p_11": "eleventh",
+      "p_12": "twelfth",
+      "p_2": "second",
+      "p_3": "third",
+      "p_4": "fourth",
+      "p_5": "fifth",
+      "p_6": "sixth",
+      "p_7": "seventh",
+      "p_8": "eighth",
+      "p_9": "ninth"
+    },
     "pre": "🌸 p5.js says: {{message}}",
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js."
   }

@@ -1,6 +1,11 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import resources from '../../translations';
+
+let resources;
+// Do not include translations in the minified js
+if (typeof IS_MINIFIED === 'undefined') {
+  resources = require('../../translations').default;
+}
 
 /**
  * This is our translation function. Give it a key and
@@ -31,6 +36,7 @@ export const initialize = () =>
         nestingPrefix: '$tr(',
         nestingSuffix: ')',
         defaultNS: 'translation',
+        returnEmptyString: false,
         interpolation: {
           escapeValue: false
         },

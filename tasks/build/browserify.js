@@ -39,7 +39,9 @@ module.exports = function(grunt) {
         browseified = browseified
           .exclude('../../docs/reference/data.json')
           .exclude('../../../docs/parameterData.json')
-          .ignore('../../translations/index.js');
+          .exclude('../../translations')
+          .ignore('i18next')
+          .ignore('i18next-browser-languagedetector');
       }
 
       const babelifyOpts = { plugins: ['static-fs'] };
