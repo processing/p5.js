@@ -56,7 +56,7 @@ Lines        : 62.53% ( 6444/10306 )
 You can find more detailed coverage reports for p5.js on [Codecov](https://codecov.io/gh/processing/p5.js)
 
 ### Documentation
-I have documented about how to approach writing a unit test in the [developer docs for unit testing](https://github.com/processing/p5.js/blob/master/contributor_docs/unit_testing.md) which was created by my mentor [Evelyn](https://github.com/outofambit).
+I have documented about how to approach writing a unit test in the [developer docs for unit testing](https://github.com/processing/p5.js/blob/main/contributor_docs/unit_testing.md) which was created by my mentor [Evelyn](https://github.com/outofambit).
 
 ## Acknowledgements
 I am glad to be able to spend my summer contributing to p5.js. I would like to thank my mentor [Evelyn Masso](https://github.com/outofambit), for her support throughout the summer and for making sure that I had enough opportunities to grow during the project. I would also like to thank other members of the Processing Foundation for this opportunity and their help in making this project successful.

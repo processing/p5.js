@@ -14,7 +14,7 @@ used in the build process. I was really happy (and surprised) when my proposal g
 
 ### arc
 
-I started by going through [manual examples](https://github.com/processing/p5.js/tree/master/test/manual-test-examples/webgl), debugging them in browser and watching the code jump from 
+I started by going through [manual examples](https://github.com/processing/p5.js/tree/main/test/manual-test-examples/webgl), debugging them in browser and watching the code jump from 
 function to function. I have to admit though, it was a little daunting at first. My first task was to implement arc for WebGL mode and so I decided to go through already implemented ellipse 
 and debugging it in the chrome editor.
 
@@ -43,7 +43,7 @@ my code but a further researching revealed that we can't just fill curves with a
 triangulation libraries ([Earcut](https://github.com/mapbox/earcut), [Libtess](https://github.com/brendankenny/libtess.js/), [Tess2](https://github.com/diatomic/tess2)). Earcut was the most precise but wasn't giving correct results.
 After a quick discussion with Earcut's creator, it was decided that Earcut wasn't a good option for us.
 
-Tess2 wasn't really a good option either. It wasn't giving correct results and was too big in size. Libtess seemed to work really well and this was also because it was based on the same [GLU Tesselator implementation](https://github.com/processing/processing-android/tree/master/core/src/processing/opengl/tess) that was being used in Processing. The only problem with Libtess was that it was quite bigger than Earcut. We contacted [Lauren](https://github.com/lmccart) 
+Tess2 wasn't really a good option either. It wasn't giving correct results and was too big in size. Libtess seemed to work really well and this was also because it was based on the same [GLU Tesselator implementation](https://github.com/processing/processing-android/tree/main/core/src/processing/opengl/tess) that was being used in Processing. The only problem with Libtess was that it was quite bigger than Earcut. We contacted [Lauren](https://github.com/lmccart) 
 if it was okay with integrating this library for the triangulation part. She encouraged us by saying that we can add the library as a node module just as opentype was being used for 2D text in p5.js. After integrating libtess, 
 I decided to improve the code further for some performance gains. I was able to implement a look up table with the help of which, we wouldn't need to compute coefficients after rendering curve, the first time. This was a huge performance boost from the 
 previous trivial implementation. All that was left was to submit a [pull request](https://github.com/processing/p5.js/pull/3085) with an [example](https://github.com/processing/p5.js/tree/webgl-gsoc-2018/test/manual-test-examples/webgl/curves) showcasing what you can do with WebGL curves in p5.js. This closed issues [#2185](https://github.com/processing/p5.js/issues/2185), [#2186](https://github.com/processing/p5.js/issues/2186) and [#2187](https://github.com/processing/p5.js/issues/2187).

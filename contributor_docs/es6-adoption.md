@@ -26,7 +26,7 @@ It is worth noting that full compliance with ES6 standards demands the efforts o
 - [Official ES6 Language Specification](https://www.ecma-international.org/ecma-262/6.0/)
 - [ES6 Performance Comparison](http://incaseofstairs.com/six-speed/)
 - [ES6 Features: Overview & Comparison](http://es6-features.org/)
-- [You Don't Know JS: ES6 & Beyond (Book)](https://github.com/getify/You-Dont-Know-JS/tree/master/es6%20%26%20beyond)
+- [You Don't Know JS: ES6 & Beyond (Book)](https://github.com/getify/You-Dont-Know-JS/tree/main/es6%20%26%20beyond)
 - [Exploring ES6 (Book)](https://exploringjs.com/es6/)
 
 ### Performance

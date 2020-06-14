@@ -4,11 +4,11 @@
  *  the carrier's frequency.
  *
  *  The carrier oscillates at an audible frequency (i.e. 440 Hz)
- *  and connected to master output by default.
+ *  and connected to main output by default.
  *
  *  The modulator is typically set to a frequency that is lower
  *  than humans can hear (i.e. 1 Hz, or one cycle every second).
- *  The modulator is disconnected from master output, and is connected
+ *  The modulator is disconnected from main output, and is connected
  *  to the frequency of the carrier, like this: carrier.freq(modulator).
  *
  *  In this example...

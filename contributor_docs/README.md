@@ -4,7 +4,7 @@
 
 Thanks for your interest in contributing to p5.js! Our community values contributions of all forms and seeks to expand the meaning of the word "contributor" as far and wide as possible. It includes documentation, teaching, writing code, making art, writing, design, activism, organizing, curating, or anything else you might imagine. [Our community page](https://p5js.org/community/#contribute) gives an overview of some different ways to get involved and contribute. For technical contributions, read on to get started.
 
-This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/master/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)! Or comment in the [GitHub issues](https://github.com/processing/p5.js/issues) with your contribution and we'll add you.
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/main/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)! Or comment in the [GitHub issues](https://github.com/processing/p5.js/issues) with your contribution and we'll add you.
 
 
 
@@ -39,9 +39,9 @@ There are a lot of files here! Here's a brief overview. It can be confusing, but
 We realize the documentation is the most important part of this project. Poor documentation is one of the main barriers to access for new users and contributors, making the project less inclusive. The [contributing_documentation.md](./contributing_documentation.md) page gives an in-depth overview of getting started with documentation. The documentation for p5.js can be found in a few main places:
 
 - The [p5js.org/reference](https://p5js.org/reference/) is generated from [inline documentation](./inline_documentation.md) in the source code itself. This includes the text descriptions and parameters as well as the accompanying code snippet examples. We place all this inline to keep the code and documentation closely linked, and to reinforce the idea that contributing to documentation is as important (if not more) than contributing to the code. When the library gets built, it checks the inline documentation and examples to ensure they match up with the way the code behaves. To contribute, you can start by looking at the [inline_documentation.md](./inline_documentation.md) page.
-- The [p5js.org/examples](http://p5js.org/examples) page contains longer examples that can be useful for learning p5.js. To contribute, you can start by looking at the [adding_examples.md](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) page.
+- The [p5js.org/examples](http://p5js.org/examples) page contains longer examples that can be useful for learning p5.js. To contribute, you can start by looking at the [adding_examples.md](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) page.
 - The [p5js.org/learn](https://p5js.org/learn) page contains tutorials to help you learn concepts of p5.js and programming. To contribute, you can start by looking at the [p5.js guide to contributing to tutorials](https://p5js.org/learn/tutorial-guide.html).
-- You'll notice the p5.js website currently supports a few different languages. This is called internationalization (or i18n for short). You can read more about this documentation on the [i18n_contribution](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) page.
+- You'll notice the p5.js website currently supports a few different languages. This is called internationalization (or i18n for short). You can read more about this documentation on the [i18n_contribution](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) page.
 
 
 
@@ -51,13 +51,13 @@ We realize the documentation is the most important part of this project. Poor do
 
 * If you'd like to start working on an existing issue, comment on the issue that you plan to work on it so other contributors know it's being handled and can offer help.
 
-* Once you have completed your work on this issue, [submit a pull request (PR)](./preparing_a_pull_request.md) against the p5.js master branch. In the description field of the PR, include "resolves #XXXX" tagging the issue you are fixing. If the PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".
+* Once you have completed your work on this issue, [submit a pull request (PR)](./preparing_a_pull_request.md) against the p5.js main branch. In the description field of the PR, include "resolves #XXXX" tagging the issue you are fixing. If the PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".
 
 * If you discover a bug or have an idea for a new feature you'd like to add, begin by submitting an issue. Please do not simply submit a pull request containing the fix or new feature without making an issue first, we will probably not be able to accept it. Once you have gotten some feedback on the issue and a go ahead to address it, you can follow the process above to contribute the fix or feature.
 
 * You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to p5.js on CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-* The [organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md) file gives a high-level overview of how issues can be organized and the decision making processes around them. Please feel welcome to get involved with this if you are interested.
+* The [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md) file gives a high-level overview of how issues can be organized and the decision making processes around them. Please feel welcome to get involved with this if you are interested.
 
   
 
@@ -135,7 +135,7 @@ $ npm run lint:fix
 
 Sticking with the established project style is usually preferable, but [occasionally](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) using an alternate syntax might make your code easier to understand. For these cases, Prettier [offers an escape hatch](https://prettier.io/docs/en/ignore.html), the `// prettier-ignore` comment, which you can use to make granular exceptions. Try to avoid using this if you can, because there are good reasons for most of the style preferences enforced by the linting.
 
-Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) files for the full list.
+Here is a quick summary of code style rules. Please note that this list may be incomplete, and it's best to refer to the [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) and [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) files for the full list.
 * ES6 code syntax is used
 
 * Use single quotes (rather than double quotes)
@@ -187,7 +187,7 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 
 # Miscellaneous
 
-- There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/master/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
+- There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/main/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
 - [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
 -  [This video from The Coding Train](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: gives an overview of getting started with technical contribution to p5.js.
 - The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.

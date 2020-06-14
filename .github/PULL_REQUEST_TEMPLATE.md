@@ -21,5 +21,5 @@ Resolves #[Add issue number here]
 - [ ] [Inline documentation] is included / updated
 - [ ] [Unit tests] are included / updated
 
-[Inline documentation]: https://github.com/processing/p5.js/blob/master/contributor_docs/inline_documentation.md
-[Unit tests]: https://github.com/processing/p5.js/tree/master/contributor_docs#unit-tests
+[Inline documentation]: https://github.com/processing/p5.js/blob/main/contributor_docs/inline_documentation.md
+[Unit tests]: https://github.com/processing/p5.js/tree/main/contributor_docs#unit-tests

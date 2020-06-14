@@ -3,7 +3,7 @@ name: Linting Examples
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
       - '*'

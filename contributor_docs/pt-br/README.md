@@ -12,7 +12,7 @@ Olá! Obrigado pelo seu interesse em contribuir para o p5.js! Você pode começa
 
 # Como Contribuir
 
-Bugs conhecidos e novas funcionalidades pretendidos são rastreados usando as [issues do GitHub](https://github.com/processing/p5.js/issues). Os [rótulos das issues](./ issue_labels.md) são usados para classificar as issues em categorias, como aqueles que são [adequados para iniciantes](https://github.com/processing/p5.js/labels/level%3Abeginner). Se você deseja começar a trabalhar em uma issue existente, comente na issue que planeja trabalhar para que outros colaboradores saibam que ele está sendo tratado e possam oferecer ajuda. Depois de concluir seu trabalho sobre essa issue, [envie uma solicitação de pull request (PR)](./preparing_a_pull_request.md) na branch master do p5.js. No campo de descrição da PR, inclua "resolves #XXXX" identificando a issue que você está corrigindo. Se o PR resolver a issue, mas não a resolver completamente (por exemplo, a issue deve permanecer aberta após o merge do PR), escreva "addresses #XXXX".
+Bugs conhecidos e novas funcionalidades pretendidos são rastreados usando as [issues do GitHub](https://github.com/processing/p5.js/issues). Os [rótulos das issues](./ issue_labels.md) são usados para classificar as issues em categorias, como aqueles que são [adequados para iniciantes](https://github.com/processing/p5.js/labels/level%3Abeginner). Se você deseja começar a trabalhar em uma issue existente, comente na issue que planeja trabalhar para que outros colaboradores saibam que ele está sendo tratado e possam oferecer ajuda. Depois de concluir seu trabalho sobre essa issue, [envie uma solicitação de pull request (PR)](./preparing_a_pull_request.md) na branch main do p5.js. No campo de descrição da PR, inclua "resolves #XXXX" identificando a issue que você está corrigindo. Se o PR resolver a issue, mas não a resolver completamente (por exemplo, a issue deve permanecer aberta após o merge do PR), escreva "addresses #XXXX".
 
 Se você descobrir um bug ou tiver uma idéia para uma nova funcionalidade que gostaria de adicionar, comece submetendo uma issue. Por favor, não basta enviar simplesmente uma solicitação de pull request contendo a correção ou a nova funcionalidade sem antes fazer uma issue, provavelmente não seremos capazes de aceitá-lo. Depois de receber algum feedback sobre a issue e avançar para resolvê-la, você pode seguir o processo acima para contribuir com a correção ou a funcionalidade.
 
@@ -29,7 +29,7 @@ Além do código em si, também pode ser necessário fornecer alguma combinaçã
 
 ## Exemplos
 
-O site p5.js. inclui [exemplos integrados](http://p5js.org/examples/). Você pode [adicionar mais](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) e há uma issue que lista alguns [exemplos desejados](https://github.com/processing/p5.js/issues/1954).
+O site p5.js. inclui [exemplos integrados](http://p5js.org/examples/). Você pode [adicionar mais](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) e há uma issue que lista alguns [exemplos desejados](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
 

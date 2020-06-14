@@ -20,7 +20,7 @@ So far FES is able to detect and print messages for four kinds of errors:
 
 4. `helpForMisusedAtTopLevelCode()` is called on window load to check for use of p5.js functions outside of setup() or draw()
 
-Please also see inline notes in [src/core/error_helper.js](https://github.com/processing/p5.js/blob/master/src/core/error_helpers.js) for more technical information.
+Please also see inline notes in [src/core/error_helper.js](https://github.com/processing/p5.js/blob/main/src/core/error_helpers.js) for more technical information.
 
 ### `core/error_helpers/friendlyFileLoadError()`: 
 * This function generates and displays friendly error messages if a file fails to load correctly. It also checks if the size of a file might be too large to load and produces a warning. 
@@ -83,7 +83,7 @@ p5.newObject = function(parameter) {
 
 ## Disable the FES
 
-By default, FES is enabled for p5.js, and disabled in p5.min.js to prevent FES functions slowing down the process. The error checking system can significantly slow down your code (up to ~10x in some cases). See the [friendly error performance test](https://github.com/processing/p5.js-website/tree/master/src/assets/learn/performance/code/friendly-error-system/).
+By default, FES is enabled for p5.js, and disabled in p5.min.js to prevent FES functions slowing down the process. The error checking system can significantly slow down your code (up to ~10x in some cases). See the [friendly error performance test](https://github.com/processing/p5.js-website/tree/main/src/assets/learn/performance/code/friendly-error-system/).
 
 You can disable this with one line of code at the top of your sketch:
 

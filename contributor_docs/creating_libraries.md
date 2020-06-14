@@ -23,7 +23,7 @@ For example, the following code in dom.js extends p5 to add a `createImg()` meth
   When the DOM library is included in a project, `createImg()` can be called just like `createCanvas()` or `background()`.
 
 ### Use private functions for internal helpers.
-Functions not intended to be called by users. In the example above `addElement()` is an internal function in [dom.js](https://GitHub.com/processing/p5.js/blob/master/src/dom/dom.js). It isn't publicly bound to `p5.prototype` though.
+Functions not intended to be called by users. In the example above `addElement()` is an internal function in [dom.js](https://GitHub.com/processing/p5.js/blob/main/src/dom/dom.js). It isn't publicly bound to `p5.prototype` though.
 
 ### You can extend p5.js classes as well, by adding methods to their prototypes.
 In the example below, `p5.Element.prototype` is extended with the `html()` method, that sets the inner html of the element.

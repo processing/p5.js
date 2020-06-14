@@ -25,8 +25,8 @@ upstream p5.js 저장소를 트래킹하고 있는지 확인해주세요.
 ### 만일의 경우를 대비해, 변경사항을 새 브랜치로 복사하세요.
     git branch your-branch-name-backup 
 
-### master 브랜치로부터의 변경사항을 *적용한 후* 여러분이 작업한 변경 사항을 추가하세요
-    git rebase upstream/master 
+### main 브랜치로부터의 변경사항을 *적용한 후* 여러분이 작업한 변경 사항을 추가하세요
+    git rebase upstream/main 
 
 ### 충돌 해결하기
 충돌이 있을 수 있습니다!
@@ -45,6 +45,6 @@ lib/p5.js와 lib/p5.min.js라면 쉽게 고칠 수 있습니다. grunt로 프로
 
 ## 풀리퀘스트 생성하기
 
-여기 [github에서 풀 리퀘스트를 생성하는 것에 대한 안내서](https://help.github.com/articles/creating-a-pull-request/)가 있습니다. 원하는 이름으로 브랜치명을 지정할 수 있습니다. p5.js의 "master" 브랜치를 대상으로 풀 리퀘스트를 요청합니다.
+여기 [github에서 풀 리퀘스트를 생성하는 것에 대한 안내서](https://help.github.com/articles/creating-a-pull-request/)가 있습니다. 원하는 이름으로 브랜치명을 지정할 수 있습니다. p5.js의 "main" 브랜치를 대상으로 풀 리퀘스트를 요청합니다.
 
 풀 리퀘스트를 제출하면, 다른 분들이 가능할 때 즉시 검토되고, 머지 될 것입니다. 변경사항은 p5.js 라이브러리의 다음 릴리와 함께 나갈 것입니다.

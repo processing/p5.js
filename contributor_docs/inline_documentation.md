@@ -13,7 +13,7 @@ You must specify one of these for the element to appear in the docs, with the na
 * You can use markdown syntax to format the description text. 
 * Any function, variable, or constant name should be `monospaced` by using single quotes on either side.
 * Double line breaks are recognized as new paragraphs. You do not need to insert `<br><br>` tags.
-* When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/master/src/image/loading_displaying.js#L21).
+* When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21).
 * Here is [yuidoc's reference](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) for more syntax information.
 
 ```
@@ -73,7 +73,7 @@ If the parameter is optional, add square brackets around the name:
 @param {type} [name] Description here.
 ```
 
-If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/master/src/core/constants.js) ,
+If the parameter takes one or more values defined in [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) ,
 then the type should be specified as `{Constant}` and the valid values should be enumerated in the comment following the `either` keyword, eg:
 
 ```
@@ -228,7 +228,7 @@ function setup() {
 </code></div>
 ```
 
-If you need to link to external asset files, put them in [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/master/docs/yuidoc-p5-theme/assets) and then link to them with "assets/filename.ext" in the code. See the [tint example](http://p5js.org/reference/#/p5/tint).
+If you need to link to external asset files, put them in [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) and then link to them with "assets/filename.ext" in the code. See the [tint example](http://p5js.org/reference/#/p5/tint).
 
 ### Adding alt-text
 Finally, for every example you add, please add [alt-text](https://moz.com/learn/seo/alt-text) so visually impaired users can understand what the example is showing on the screen. This can be added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), add a line break to separate the descriptions for multiple examples.
@@ -266,8 +266,8 @@ horizontal wave pattern effected by mouse x-position & updating noise values.
 ```
 
 ## Template for methods
-Here is an example for a well documentated method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/master/contributor_docs/method.example.js). You can replace the text with your method's variables and remove the remaining ones.
-![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/master/contributor_docs/images/method-template-example.png)
+Here is an example for a well documentated method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/main/contributor_docs/method.example.js). You can replace the text with your method's variables and remove the remaining ones.
+![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/method-template-example.png)
 
 
 ## Generating documentation
@@ -279,4 +279,4 @@ The build reference can be found in docs/reference. To preview it locally, run `
 
 ## Spanish language version
 
-The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website/blob/master/contributor_docs/i18n_contribution.md) to update this material.
+The [Spanish version](http://p5js.org/es/reference) is created a little differently. Here are [instructions](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) to update this material.

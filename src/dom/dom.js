@@ -3150,7 +3150,7 @@ p5.MediaElement.prototype.onended = function(callback) {
 
 /**
  * Send the audio output of this element to a specified audioNode or
- * p5.sound object. If no element is provided, connects to p5's master
+ * p5.sound object. If no element is provided, connects to p5's main
  * output. That connection is established when this method is first called.
  * All connections are removed by the .disconnect() method.
  *
@@ -3161,16 +3161,16 @@ p5.MediaElement.prototype.onended = function(callback) {
  * or an object from the p5.sound library
  */
 p5.MediaElement.prototype.connect = function(obj) {
-  var audioContext, masterOutput;
+  var audioContext, mainOutput;
 
   // if p5.sound exists, same audio context
   if (typeof p5.prototype.getAudioContext === 'function') {
     audioContext = p5.prototype.getAudioContext();
-    masterOutput = p5.soundOut.input;
+    mainOutput = p5.soundOut.input;
   } else {
     try {
       audioContext = obj.context;
-      masterOutput = audioContext.destination;
+      mainOutput = audioContext.destination;
     } catch (e) {
       throw 'connect() is meant to be used with Web Audio API or p5.sound.js';
     }
@@ -3180,8 +3180,8 @@ p5.MediaElement.prototype.connect = function(obj) {
   if (!this.audioSourceNode) {
     this.audioSourceNode = audioContext.createMediaElementSource(this.elt);
 
-    // connect to master output when this method is first called
-    this.audioSourceNode.connect(masterOutput);
+    // connect to main output when this method is first called
+    this.audioSourceNode.connect(mainOutput);
   }
 
   // connect to object if provided
@@ -3192,13 +3192,13 @@ p5.MediaElement.prototype.connect = function(obj) {
       this.audioSourceNode.connect(obj);
     }
   } else {
-    // otherwise connect to master output of p5.sound / AudioContext
-    this.audioSourceNode.connect(masterOutput);
+    // otherwise connect to main output of p5.sound / AudioContext
+    this.audioSourceNode.connect(mainOutput);
   }
 };
 
 /**
- * Disconnect all Web Audio routing, including to master output.
+ * Disconnect all Web Audio routing, including to main output.
  * This is useful if you want to re-route the output through
  * audio effects, for example.
  *

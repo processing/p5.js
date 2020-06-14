@@ -1,5 +1,5 @@
 (function () {
-// https://github.com/umdjs/umd/blob/master/templates/returnExports.js
+// https://github.com/umdjs/umd/blob/main/templates/returnExports.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define('documented-method',[], factory);
@@ -82,7 +82,7 @@ define('text',['module'], function (module) {
         defaultHostName = hasLocation && location.hostname,
         defaultPort = hasLocation && (location.port || undefined),
         buildMap = {},
-        masterConfig = (module.config && module.config()) || {};
+        mainConfig = (module.config && module.config()) || {};
 
     text = {
         version: '2.0.10',
@@ -114,7 +114,7 @@ define('text',['module'], function (module) {
                 .replace(/[\u2029]/g, "\\u2029");
         },
 
-        createXhr: masterConfig.createXhr || function () {
+        createXhr: mainConfig.createXhr || function () {
             //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
             var xhr, i, progId;
             if (typeof XMLHttpRequest !== "undefined") {
@@ -208,7 +208,7 @@ define('text',['module'], function (module) {
 
         finishLoad: function (name, strip, content, onLoad) {
             content = strip ? text.strip(content) : content;
-            if (masterConfig.isBuild) {
+            if (mainConfig.isBuild) {
                 buildMap[name] = content;
             }
             onLoad(content);
@@ -229,13 +229,13 @@ define('text',['module'], function (module) {
                 return;
             }
 
-            masterConfig.isBuild = config.isBuild;
+            mainConfig.isBuild = config.isBuild;
 
             var parsed = text.parseName(name),
                 nonStripName = parsed.moduleName +
                     (parsed.ext ? '.' + parsed.ext : ''),
                 url = req.toUrl(nonStripName),
-                useXhr = (masterConfig.useXhr) ||
+                useXhr = (mainConfig.useXhr) ||
                          text.useXhr;
 
             // Do not load if it is an empty: url
@@ -302,7 +302,7 @@ define('text',['module'], function (module) {
         }
     };
 
-    if (masterConfig.env === 'node' || (!masterConfig.env &&
+    if (mainConfig.env === 'node' || (!mainConfig.env &&
             typeof process !== "undefined" &&
             process.versions &&
             !!process.versions.node &&
@@ -322,7 +322,7 @@ define('text',['module'], function (module) {
                 errback(e);
             }
         };
-    } else if (masterConfig.env === 'xhr' || (!masterConfig.env &&
+    } else if (mainConfig.env === 'xhr' || (!mainConfig.env &&
             text.createXhr())) {
         text.get = function (url, callback, errback, headers) {
             var xhr = text.createXhr(), header;
@@ -338,8 +338,8 @@ define('text',['module'], function (module) {
             }
 
             //Allow overrides specified in config
-            if (masterConfig.onXhr) {
-                masterConfig.onXhr(xhr, url);
+            if (mainConfig.onXhr) {
+                mainConfig.onXhr(xhr, url);
             }
 
             xhr.onreadystatechange = function (evt) {
@@ -357,14 +357,14 @@ define('text',['module'], function (module) {
                         callback(xhr.responseText);
                     }
 
-                    if (masterConfig.onXhrComplete) {
-                        masterConfig.onXhrComplete(xhr, url);
+                    if (mainConfig.onXhrComplete) {
+                        mainConfig.onXhrComplete(xhr, url);
                     }
                 }
             };
             xhr.send(null);
         };
-    } else if (masterConfig.env === 'rhino' || (!masterConfig.env &&
+    } else if (mainConfig.env === 'rhino' || (!mainConfig.env &&
             typeof Packages !== 'undefined' && typeof java !== 'undefined')) {
         //Why Java, why is this so awkward?
         text.get = function (url, callback) {
@@ -405,7 +405,7 @@ define('text',['module'], function (module) {
             }
             callback(content);
         };
-    } else if (masterConfig.env === 'xpconnect' || (!masterConfig.env &&
+    } else if (mainConfig.env === 'xpconnect' || (!mainConfig.env &&
             typeof Components !== 'undefined' && Components.classes &&
             Components.interfaces)) {
         //Avert your gaze!
@@ -2448,7 +2448,7 @@ define('text!tpl/item.html',[],function () { return '<h3><%=item.name%><% if (it
 define('text!tpl/class.html',[],function () { return '\n<% if (typeof constructor !== \'undefined\') { %>\n<div class="constructor">\n  <!--<h2>Constructor</h2>--> \n  <%=constructor%>\n</div>\n<% } %>\n\n<% var fields = _.filter(things, function(item) { return item.itemtype === \'property\' && item.access !== \'private\' }); %>\n<% if (fields.length > 0) { %>\n  <h4>Fields</h4>\n  <p>\n    <% _.each(fields, function(item) { %>\n      <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %> ><%=item.name%></a>: <%= item.description %>\n      <br>\n    <% }); %>\n  </p>\n<% } %>\n\n<% var methods = _.filter(things, function(item) { return item.itemtype === \'method\' && item.access !== \'private\' }); %>\n<% if (methods.length > 0) { %>\n  <h4>Methods</h4>\n  <p>\n    <table>\n    <% _.each(methods, function(item) { %>\n      <tr>\n      <td><a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %>><%=item.name%><% if (item.itemtype === \'method\') { %>()<%}%></a></td><td><%= item.description %></td>\n      </tr>\n    <% }); %>\n    </table>\n  </p>\n<% } %>\n';});
 
 
-define('text!tpl/itemEnd.html',[],function () { return '<p>\n\n<!--   <div class="meta">\n    <% if (item.class) { %>\n    <p>Class:\n    <strong><a href=\'#/<%=item.class%>\'><%=item.class%></a></strong></p>\n    <% } %>\n\n  </div> -->\n\n\n  <p class="ref-notice"> <span id="reference-contribute1">If you see any errors or have suggestions</span>, <a href="https://github.com/processing/p5.js/issues"><span id="reference-contribute2">please let us know</span></a>.<p>\n\n  <a style="border-bottom:none !important;" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target=_blank><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" style="width:88px"/></a>\n\n  <% if (item.file && item.line) { %>\n  <p style="font-size: 0.75em"><span id="reference-error1">Find any typos or bugs?</span> <code><%=item.name%><% if (item.isMethod) { %>()<% } %></code> <span id="reference-error2">is documented and defined in</span> <a href="https://github.com/processing/p5.js/blob/master/<%= item.file %>#L<%= item.line %>" target="_blank" ><code><%= item.file %></code></a>. <span id="reference-error3">Please feel free to</span> <a href="https://github.com/processing/p5.js/edit/master/<%= item.file %>#L<%= item.line %>" target="_blank" style="font-family: inherit"><span id="reference-error4">edit the file</span></a> <span id="reference-error5">and issue a pull request!</span></p>\n  <% } %>\n\n</p>\n';});
+define('text!tpl/itemEnd.html',[],function () { return '<p>\n\n<!--   <div class="meta">\n    <% if (item.class) { %>\n    <p>Class:\n    <strong><a href=\'#/<%=item.class%>\'><%=item.class%></a></strong></p>\n    <% } %>\n\n  </div> -->\n\n\n  <p class="ref-notice"> <span id="reference-contribute1">If you see any errors or have suggestions</span>, <a href="https://github.com/processing/p5.js/issues"><span id="reference-contribute2">please let us know</span></a>.<p>\n\n  <a style="border-bottom:none !important;" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target=_blank><img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" style="width:88px"/></a>\n\n  <% if (item.file && item.line) { %>\n  <p style="font-size: 0.75em"><span id="reference-error1">Find any typos or bugs?</span> <code><%=item.name%><% if (item.isMethod) { %>()<% } %></code> <span id="reference-error2">is documented and defined in</span> <a href="https://github.com/processing/p5.js/blob/main/<%= item.file %>#L<%= item.line %>" target="_blank" ><code><%= item.file %></code></a>. <span id="reference-error3">Please feel free to</span> <a href="https://github.com/processing/p5.js/edit/main/<%= item.file %>#L<%= item.line %>" target="_blank" style="font-family: inherit"><span id="reference-error4">edit the file</span></a> <span id="reference-error5">and issue a pull request!</span></p>\n  <% } %>\n\n</p>\n';});
 
 // Copyright (C) 2006 Google Inc.
 //

@@ -474,7 +474,7 @@ let blurMult;
 
 /*
  * Port of https://github.com/processing/processing/blob/
- * master/core/src/processing/core/PImage.java#L1250
+ * main/core/src/processing/core/PImage.java#L1250
  *
  * Optimized code for building the blur kernel.
  * further optimized blur code (approx. 15% for radius=20)
@@ -516,7 +516,7 @@ function buildBlurKernel(r) {
 }
 
 // Port of https://github.com/processing/processing/blob/
-// master/core/src/processing/core/PImage.java#L1433
+// main/core/src/processing/core/PImage.java#L1433
 function blurARGB(canvas, radius) {
   const pixels = Filters._toPixels(canvas);
   const width = canvas.width;

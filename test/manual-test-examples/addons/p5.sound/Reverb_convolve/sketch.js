@@ -30,7 +30,7 @@ function preload() {
 }
 
 function setup() {
-  // disconnect from master output...
+  // disconnect from main output...
   sound.disconnect();
   // ... and process with cVerb so that we only hear the reverb
   cVerb.process(sound);

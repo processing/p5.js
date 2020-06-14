@@ -1,7 +1,7 @@
 # A Platform for Algorithmic Composition on p5.js-sound
 #### by Chan Jun Shern ([@junshern](https://github.com/JunShern))
 
-![tutorial-homepage](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/home.png)
+![tutorial-homepage](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/main/screenshots/home.png)
 
 ## Summary
 
@@ -37,14 +37,14 @@ Note that most contributions for this project are on the [p5.js-sound repository
 - Add example for algorithmic composition using Markov chains [#309](https://github.com/processing/p5.js-sound/pull/309)
 - Add example for algorithmic composition using Genetic algorithms [#311](https://github.com/processing/p5.js-sound/pull/311)
 
-![genetic-music-example](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/sketch-fullscreen.PNG)
+![genetic-music-example](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/main/screenshots/sketch-fullscreen.PNG)
 
 ### Tutorial
 - Create an online tutorial which encapsulates new examples and best practices developed for algorithmic composition on p5.js-sound. The tutorial consists of narrative + interactive examples embedded within the page which users can interact with directly.
 - [Tutorial repository](https://github.com/JunShern/explorable-algcomp)
 - [Tutorial website](https://junshern.github.io/algorithmic-music-tutorial/)
 
-![tutorial-screenshot](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/master/screenshots/sketch1.PNG)
+![tutorial-screenshot](https://raw.githubusercontent.com/JunShern/algorithmic-music-tutorial/main/screenshots/sketch1.PNG)
 
 ## Conclusion
 All in all, it has been a highly satisfying summer. When we first started work, there were a lot of questions up in the air about the best way to go about implementing algorithmic music in p5.js-sound. Fortunately, we were able to build off the excellent work from past contributors (including work from previous GSoC participants!) to get all the functionality we needed. 

@@ -14,7 +14,7 @@ var currentBassNote = 47;
 function setup() {
   // prepare the osc and env used by playNote()
   env = new p5.Env(0.01, 0.8, 0.2, 0);
-  osc = new p5.TriOsc(); // connects to master output by default
+  osc = new p5.TriOsc(); // connects to main output by default
   osc.start(0);
   osc.connect();
   env.setInput(osc);

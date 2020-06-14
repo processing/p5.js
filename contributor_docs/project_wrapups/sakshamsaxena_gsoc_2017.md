@@ -8,14 +8,14 @@ There were 3 major tasks that were proposed to pursue this summer under Google S
 
 ### 1. [Adding Issue Templates](https://github.com/processing/p5.js/issues)
 
-Reporting Bugs or Feature Suggestions by the Community through Issues is also a significant contribution to the Project and it catalyses the growth of Project through them. Relevant responses and discussions in context to those, delivered in a short time, further engages the community into the Project. The GitHub Issue Template was [added](https://github.com/processing/p5.js/commits/master/ISSUE_TEMPLATE.md?author=sakshamsaxena) as my first contribution under GSoC on June 12, and till date it has been proven to be extremely helpful to both the reporter as well as responder, meanwhile aligning to it's original aim.
+Reporting Bugs or Feature Suggestions by the Community through Issues is also a significant contribution to the Project and it catalyses the growth of Project through them. Relevant responses and discussions in context to those, delivered in a short time, further engages the community into the Project. The GitHub Issue Template was [added](https://github.com/processing/p5.js/commits/main/ISSUE_TEMPLATE.md?author=sakshamsaxena) as my first contribution under GSoC on June 12, and till date it has been proven to be extremely helpful to both the reporter as well as responder, meanwhile aligning to it's original aim.
 
 Preview of the complete template : 
 ![Preview of the complete template](http://www.clipular.com/c/4631172675272704.png?k=gQwp7j5erUp9iZDrZvlEWY-27KY)
 
 Some helpful comments are added alongside to make the experience of reporting an issue significantly lucid to a complete beginner. You can see the same when you [open a new issue](https://github.com/processing/p5.js/issues/new).
 
-### 2. [Generating a custom (modular) build of p5.js](https://github.com/processing/p5.js/blob/master/contributor_docs/custom_p5_build.md)
+### 2. [Generating a custom (modular) build of p5.js](https://github.com/processing/p5.js/blob/main/contributor_docs/custom_p5_build.md)
 
 This task was inspired by [Issue #94](https://github.com/processing/p5.js/issues/94). The goal was to implement such a functionality which enables users to select the desired components/modules which they want to use, and only those components would be bundled then itself to generate a custom build of p5.js.
 
