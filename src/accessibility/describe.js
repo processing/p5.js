@@ -12,12 +12,12 @@ import p5 from '../core/main';
  * The second parameter is optional. If specified, it determines how the
  * description is displayed.
  *
- * <code>describe(str, LABEL)</code> displays the description to all users as a
+ * <code class="language-javascript">describe(str, LABEL)</code> displays the description to all users as a
  * <a href="https://en.wikipedia.org/wiki/Museum_label" target="_blank"> tombstone or exhibit label/caption</a>
- * by creating a <code>&lt;div id="label"&gt;</code> with the description right after the canvas.
+ * by creating a <code class="language-javascript">&lt;div&gt;</code> with the description right after the canvas.
  * You can style it as you wish in your CSS.
  *
- * <code>describe(str, FALLBACK)</code> makes the description accessible to screen-reader users only in
+ * <code class="language-javascript">describe(str, FALLBACK)</code> makes the description accessible to screen-reader users only in
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a>.
  * If a second parameter is not specified, by default, the description will only be available to screen-reader users.
@@ -105,12 +105,12 @@ p5.prototype.describe = function(t, d) {
  * The third parameter is optional.
  * If specified, it determines how the element description is displayed.
  *
- * <code>describeElement(name, str, LABEL)</code> displays the element description to all users as a
+ * <code class="language-javascript">describeElement(name, str, LABEL)</code> displays the element description to all users as a
  * <a href="https://en.wikipedia.org/wiki/Museum_label" target="_blank"> tombstone or exhibit label/caption</a>
- * by creating a <code>&lt;div id="label"&gt;</code> with the element description right after the canvas.
+ * by creating a <code class="language-javascript">&lt;div&gt;</code> with the element descriptions right after the canvas.
  * You can style it as you wish in your CSS.
  *
- * <code>describeElement(name, str, FALLBACK)</code> makes the element description accessible to screen-reader users only in
+ * <code class="language-javascript">describeElement(name, str, FALLBACK)</code> makes the element description accessible to screen-reader users only in
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a>.
  * If a second parameter is not specified, by default, the element description will only be available to screen-reader users.
