@@ -29,22 +29,32 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
- * function setup() {
- *   createCanvas(100, 100);
+ * describe('a red heart in the bottom right quadrant of the canvas', LABEL);
+ * background('pink');
+ * fill('red');
+ * noStroke();
+ * ellipse(66.6, 66.6, 20, 20);
+ * ellipse(83.2, 66.6, 20, 20);
+ * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ * </code>
+ *
+ * </div>
+ * <div>
+ * <code>
+ * let x = 0;
+ * function draw() {
+ *   if (x > 100) {
+ *     x = 0;
+ *   }
  *   background(220);
- *   fill(255);
- *   ellipse(25, height / 2, 35, 20);
- *   ellipse(75, height / 2, 35, 20);
- *   fill('orange');
- *   ellipse(25, height / 2, 15, 15);
- *   ellipse(75, height / 2, 15, 15);
- *   fill(0);
- *   ellipse(25, height / 2, 2.5, 2.5);
- *   ellipse(75, height / 2, 2.5, 2.5);
- *   describe('orange eyes over a gray background', LABEL);
+ *   fill(0, 255, 0);
+ *   ellipse(x, 50, 40, 40);
+ *   x = x + 0.1;
+ *   describe('a green circle at x pos ' + round(x) + ' moving to the right');
  * }
  * </code>
  * </div>
+
  *
  * @alt
  */
@@ -119,50 +129,27 @@ p5.prototype.describe = function(t, display) {
  * @example
  * <div>
  * <code>
- * function setup() {
- *   createCanvas(200, 100);
- *   describe('Two emojis over a pink background', LABEL);
- * }
- * function draw() {
- *   background('pink');
- *   fill('yellow');
- *   noStroke();
- *   describeElement(
- *     'Grinning face',
- *     'An emoji with open eyes and a broad open smile showing upper teeth.',
- *     LABEL
- *   );
- *   ellipse(50, 50, 70, 70);
- *   fill('#ad5240');
- *   arc(50, 55, 40, 40, radians(0), radians(180), PIE);
- *   fill(0);
- *   ellipse(40, 35, 15, 20);
- *   ellipse(60, 35, 15, 20);
- *   fill(255);
- *   arc(50, 55, 40, 20, radians(0), radians(180), PIE);
- *   ellipse(43, 35, 5, 5);
- *   ellipse(63, 35, 5, 5);
- *   describeElement(
- *     'Smiling face with heart-eyes',
- *     'A yellow face located to the right. It has an open smile, and red, cartoon-styled hearts for eyes. Often conveys enthusiastic feelings of love.',
- *     LABEL
- *   );
- *   fill('yellow');
- *   ellipse(150, 50, 70, 70);
- *   fill('#ad5240');
- *   arc(150, 55, 40, 40, radians(0), radians(180), PIE);
- *   fill('red');
- *   ellipse(143, 35, 10, 10);
- *   ellipse(137, 35, 10, 10);
- *   triangle(132, 35, 140, 45, 148, 35);
- *   ellipse(157, 35, 10, 10);
- *   ellipse(163, 35, 10, 10);
- *   triangle(168, 35, 160, 45, 152, 35);
- * }
+ * describe('A heart and a yellow circle over a pink background', LABEL);
+ * noStroke();
+ * background('pink');
+ * describeElement(
+ *   'Circle',
+ *   'a yellow circle in the top left quadrant of the canvas',
+ *   LABEL
+ * );
+ * fill('yellow');
+ * ellipse(25, 25, 40, 40);
+ * describeElement(
+ *   'Heart',
+ *   'a red heart in the bottom right quadrant of the canvas',
+ *   LABEL
+ * );
+ * fill('red');
+ * ellipse(66.6, 66.6, 20, 20);
+ * ellipse(83.2, 66.6, 20, 20);
+ * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
  * </code>
  * </div>
- *
- * @alt
  */
 
 p5.prototype.describeElement = function(name, t, display) {
