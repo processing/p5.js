@@ -696,3 +696,14 @@ export const GRID = 'grid';
  * @final
  */
 export const AXES = 'axes';
+
+/**
+ * @property {String} LABEL
+ * @final
+ */
+export const LABEL = 'label';
+/**
+ * @property {String} FALLBACK
+ * @final
+ */
+export const FALLBACK = 'fallback';
