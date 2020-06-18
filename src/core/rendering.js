@@ -90,7 +90,13 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     // user input node case
     this._userNode.appendChild(c);
   } else {
-    document.body.appendChild(c);
+    //create main element
+    if (document.getElementsByTagName('main').length === 0) {
+      let m = document.createElement('main');
+      document.body.appendChild(m);
+    }
+    //append canvas to main
+    document.getElementsByTagName('main')[0].appendChild(c);
   }
 
   // Init our graphics renderer
