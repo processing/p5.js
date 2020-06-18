@@ -1,3 +1,6 @@
+// polyfills for compatibility with older browsers
+import 'core-js';
+
 // core
 import p5 from './core/main';
 import './core/constants';
