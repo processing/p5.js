@@ -47,9 +47,11 @@ import { translator } from '../internationalization';
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
 const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
+let misusedAtTopLevelCode = null;
+let defineMisusedAtTopLevelCode = null;
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._friendlyError = () => {};
+  p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
 
@@ -168,6 +170,103 @@ if (typeof IS_MINIFIED !== 'undefined') {
     console.log(translator('fes.pre', { message }));
   };
 
+  // checks if the various functions such as setup, draw, preload have been
+  // defined with capitalization mistakes
+  const checkForUserDefinedFunctions = context => {
+    // if using instance mode, this function would be called with the current
+    // instance as context
+    context = context instanceof p5 ? context : window;
+    const fnNames = [
+      'setup',
+      'draw',
+      'preload',
+      'deviceMoved',
+      'deviceTurned',
+      'deviceShaken',
+      'doubleClicked',
+      'mousePressed',
+      'mouseReleased',
+      'mouseMoved',
+      'mouseDragged',
+      'mouseClicked',
+      'mouseWheel',
+      'touchStarted',
+      'touchMoved',
+      'touchEnded',
+      'keyPressed',
+      'keyReleased',
+      'keyTyped',
+      'windowResized'
+    ];
+    const fxns = {};
+    // build the lowercase -> actualName mapping
+    for (let name of fnNames) {
+      fxns[name.toLowerCase()] = name;
+    }
+    for (let prop in context) {
+      let lowercaseProp = prop.toLowerCase();
+      if (fxns.hasOwnProperty(lowercaseProp)) {
+        if (prop !== fxns[lowercaseProp] && !context[fxns[lowercaseProp]]) {
+          const msg = translator('fes.checkUserDefinedFns', {
+            name: prop,
+            actualName: fxns[lowercaseProp]
+          });
+          p5._friendlyError(msg, fxns[lowercaseProp]);
+        }
+      }
+    }
+  };
+
+  const fesErrorMonitor = e => {
+    if (!misusedAtTopLevelCode) {
+      defineMisusedAtTopLevelCode();
+    }
+
+    // This function receives an Error object in global mode and an
+    // ErrorEvent in instance mode
+    const error = e instanceof ErrorEvent ? e.error : e;
+    if (
+      error instanceof ReferenceError ||
+      (e instanceof ErrorEvent && error instanceof TypeError)
+    ) {
+      // In case of a missplelling or a capitalization mistake, the error
+      // would be of the type ReferenceError in global mode. For instance mode,
+      // the error should be a TypeError.
+
+      const errMsg = error.message.toLowerCase();
+      misusedAtTopLevelCode.some(symbol => {
+        const idx = errMsg.indexOf(symbol.name.toLowerCase());
+        if (idx !== -1) {
+          const word = error.message.slice(idx, idx + symbol.name.length);
+
+          // make sure that there indeed is a mistake (i.e the name used by the
+          // user and the actual name are different )
+          if (word !== symbol.name) {
+            const parsed = p5._getErrorStackParser().parse(error);
+            const location =
+              parsed[0] && parsed[0].fileName
+                ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
+                    parsed[0].columnNumber
+                  }`
+                : null;
+            const msg = translator('fes.misspelling', {
+              name: word,
+              actualName: symbol.name,
+              type: symbol.type,
+              location: location ? translator('fes.location', { location }) : ''
+            });
+            p5._friendlyError(msg, symbol.name);
+          }
+        }
+      });
+    }
+  };
+
+  p5._fesErrorMonitor = fesErrorMonitor;
+  p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
+
+  window.addEventListener('load', checkForUserDefinedFunctions);
+
   /**
    * Prints out all the colors in the color pallete with white text.
    * For color blindness testing.
@@ -199,11 +298,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
 // into setup/draw.
 //
 // For more details, see https://github.com/processing/p5.js/issues/1121.
-let misusedAtTopLevelCode = null;
+misusedAtTopLevelCode = null;
 const FAQ_URL =
   'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
 
-const defineMisusedAtTopLevelCode = () => {
+defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
 
   const getSymbols = obj =>

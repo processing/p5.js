@@ -535,6 +535,13 @@ class p5 {
       // Else, the user has passed in a sketch closure that may set
       // user-provided 'setup', 'draw', etc. properties on this instance of p5
       sketch(this);
+
+      // Run a check to see if the user has missplelled setup, draw, etc
+      p5._checkForUserDefinedFunctions(this);
+
+      // set up the fesErrorMonitor to catch and parse any errors while
+      // running the sketch.
+      window.addEventListener('error', p5._fesErrorMonitor, false);
     }
 
     // Bind events to window (not using container div bc key events don't work)

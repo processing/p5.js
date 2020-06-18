@@ -54,4 +54,14 @@ const waitForDocumentReady = () =>
 const waitingForTranslator =
   typeof IS_MINIFIED === 'undefined' ? initTranslator() : Promise.resolve();
 
-Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+Promise.all([waitForDocumentReady(), waitingForTranslator])
+  .then(_globalInit)
+  .catch(e => {
+    // set fesErrorMonitor to catch and process any errors in the fulfillment
+    // of the promise. ( .then(_globalInit) gives a Promise, so this would
+    // catch the errors in the initialization as well as inside the sketch )
+    p5._fesErrorMonitor ? p5._fesErrorMonitor(e) : null;
+
+    // Should also display the original error
+    throw e;
+  });
