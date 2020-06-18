@@ -37,8 +37,8 @@ import p5 from '../core/main';
  * ellipse(83.2, 66.6, 20, 20);
  * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
  * </code>
- *
  * </div>
+ *
  * <div>
  * <code>
  * let x = 0;
