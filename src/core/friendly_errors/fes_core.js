@@ -55,6 +55,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
 
+  const errorTable = require('./browser_errors').default;
+
   // -- Borrowed from jQuery 1.11.3 --
   const class2type = {};
   const toString = class2type.toString;
@@ -217,48 +219,54 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
-  const fesErrorMonitor = e => {
+  const detectMisspelling = (errSym, error) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
+    let errSymLower = errSym.toLowerCase();
+    misusedAtTopLevelCode.some(symbol => {
+      let lowercase = symbol.name.toLowerCase();
 
-    // This function receives an Error object in global mode and an
-    // ErrorEvent in instance mode
+      if (errSymLower === lowercase && errSym !== symbol.name) {
+        const parsed = p5._getErrorStackParser().parse(error);
+        const location =
+          parsed[0] && parsed[0].fileName
+            ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
+                parsed[0].columnNumber
+              }`
+            : null;
+        const msg = translator('fes.misspelling', {
+          name: errSym,
+          actualName: symbol.name,
+          type: symbol.type,
+          location: location ? translator('fes.location', { location }) : ''
+        });
+
+        p5._friendlyError(msg, symbol.name);
+        return true;
+      }
+    });
+  };
+
+  const fesErrorMonitor = e => {
+    // This function can receieve an Error object or an ErrorEvent
     const error = e instanceof ErrorEvent ? e.error : e;
-    if (
-      error instanceof ReferenceError ||
-      (e instanceof ErrorEvent && error instanceof TypeError)
-    ) {
-      // In case of a missplelling or a capitalization mistake, the error
-      // would be of the type ReferenceError in global mode. For instance mode,
-      // the error should be a TypeError.
 
-      const errMsg = error.message.toLowerCase();
-      misusedAtTopLevelCode.some(symbol => {
-        const idx = errMsg.indexOf(symbol.name.toLowerCase());
-        if (idx !== -1) {
-          const word = error.message.slice(idx, idx + symbol.name.length);
-
-          // make sure that there indeed is a mistake (i.e the name used by the
-          // user and the actual name are different )
-          if (word !== symbol.name) {
-            const parsed = p5._getErrorStackParser().parse(error);
-            const location =
-              parsed[0] && parsed[0].fileName
-                ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
-                    parsed[0].columnNumber
-                  }`
-                : null;
-            const msg = translator('fes.misspelling', {
-              name: word,
-              actualName: symbol.name,
-              type: symbol.type,
-              location: location ? translator('fes.location', { location }) : ''
-            });
-            p5._friendlyError(msg, symbol.name);
+    switch (error.name) {
+      case 'ReferenceError': {
+        const errList = errorTable.ReferenceError;
+        for (let obj of errList) {
+          let string = obj.msg;
+          // capture the primary symbol mentioned in the error
+          string = string.replace('{{}}', '([a-zA-Z0-9_]+)');
+          string = string.replace('{}', '(?:[a-zA-Z0-9_]+)');
+          let matched = error.message.match(string);
+          if (matched && matched[1]) {
+            detectMisspelling(matched[1], error);
           }
         }
-      });
+        break;
+      }
     }
   };
 
@@ -266,6 +274,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
 
   window.addEventListener('load', checkForUserDefinedFunctions);
+  window.addEventListener('error', p5._fesErrorMonitor, false);
 
   /**
    * Prints out all the colors in the color pallete with white text.
