@@ -29,7 +29,7 @@ import p5 from '../core/main';
  * @example
  * <div>
  * <code>
- * describe('a red heart in the bottom right quadrant of the canvas', LABEL);
+ * describe('pink square with red heart in the bottom right corner', LABEL);
  * background('pink');
  * fill('red');
  * noStroke();
@@ -50,7 +50,7 @@ import p5 from '../core/main';
  *   fill(0, 255, 0);
  *   ellipse(x, 50, 40, 40);
  *   x = x + 0.1;
- *   describe('a green circle at x pos ' + round(x) + ' moving to the right');
+ *   describe('green circle at x pos ' + round(x) + ' moving to the right');
  * }
  * </code>
  * </div>
@@ -123,21 +123,13 @@ p5.prototype.describe = function(t, d) {
  * @example
  * <div>
  * <code>
- * describe('A heart and a yellow circle over a pink background', LABEL);
+ * describe('Heart and yellow circle over pink background', LABEL);
  * noStroke();
  * background('pink');
- * describeElement(
- *   'Circle',
- *   'a yellow circle in the top left quadrant of the canvas',
- *   LABEL
- * );
+ * describeElement('Circle', 'yellow circle in the top left corner', LABEL);
  * fill('yellow');
  * ellipse(25, 25, 40, 40);
- * describeElement(
- *   'Heart',
- *   'a red heart in the bottom right quadrant of the canvas',
- *   LABEL
- * );
+ * describeElement('Heart', 'red heart in the bottom right corner', LABEL);
  * fill('red');
  * ellipse(66.6, 66.6, 20, 20);
  * ellipse(83.2, 66.6, 20, 20);
