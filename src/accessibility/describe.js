@@ -1,5 +1,6 @@
 /**
- * @module Accessibility
+ * @module Environment
+ * @submodule Environment
  * @for p5
  * @requires core
  */
@@ -17,7 +18,7 @@ import p5 from '../core/main';
  * by creating a <code class="language-javascript">&lt;div&gt;</code> with the description right after the canvas.
  * You can style it as you wish in your CSS.
  *
- * <code class="language-javascript">describe(str, FALLBACK)</code> makes the description accessible to screen-reader users only in
+ * <code class="language-javascript">describe(str, FALLBACK)</code> makes the description accessible to screen-reader users only, in
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a>.
  * If a second parameter is not specified, by default, the description will only be available to screen-reader users.
@@ -61,6 +62,7 @@ p5.prototype.describe = function(t, d) {
   const cnvId = this.canvas.id;
   //Creates a sub DOM inside of the canvas element and populates
   //it with description text.
+  t = this._descriptionText(t);
   if (document.getElementById(cnvId + '_Description') === null) {
     document.getElementById(cnvId).innerHTML =
       '<div id="' +
@@ -98,6 +100,19 @@ p5.prototype.describe = function(t, d) {
 };
 
 /**
+ * Helper function for describe() and describeElement().
+ */
+p5.prototype._descriptionText = function(t) {
+  if (t.endsWith('.') === false) {
+    t = t + '.';
+  }
+  if (/^[A-Z]/.test(t) === false) {
+    t = t[0].toUpperCase() + t.slice(1);
+  }
+  return t;
+};
+
+/**
  * <code>describeElement()</code> creates a screen-reader accessible description for
  * elements —shapes or groups of shapes that create meaning together— in the canvas sub DOM.
  * The first paramater should be the name of the element. The second parameter should be a
@@ -110,7 +125,7 @@ p5.prototype.describe = function(t, d) {
  * by creating a <code class="language-javascript">&lt;div&gt;</code> with the element descriptions right after the canvas.
  * You can style it as you wish in your CSS.
  *
- * <code class="language-javascript">describeElement(name, str, FALLBACK)</code> makes the element description accessible to screen-reader users only in
+ * <code class="language-javascript">describeElement(name, str, FALLBACK)</code> makes the element description accessible to screen-reader users only, in
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a>.
  * If a second parameter is not specified, by default, the element description will only be available to screen-reader users.
@@ -126,7 +141,7 @@ p5.prototype.describe = function(t, d) {
  * describe('Heart and yellow circle over pink background', LABEL);
  * noStroke();
  * background('pink');
- * describeElement('Circle', 'yellow circle in the top left corner', LABEL);
+ * describeElement('Circle', 'Yellow circle in the top left corner', LABEL);
  * fill('yellow');
  * ellipse(25, 25, 40, 40);
  * describeElement('Heart', 'red heart in the bottom right corner', LABEL);
@@ -141,6 +156,8 @@ p5.prototype.describe = function(t, d) {
 p5.prototype.describeElement = function(n, t, d) {
   p5._validateParameters('describeElement', arguments);
   const cnvId = this.canvas.id;
+  t = this._descriptionText(t);
+  n = this._elementName(n);
   //Creates a sub DOM inside of the canvas with a table, populates
   //a row header cell with the name of the elements and adds the description
   //of the element in adjecent cell.
@@ -210,6 +227,21 @@ p5.prototype.describeElement = function(n, t, d) {
         '<th scope="row">' + n + '</th><td>' + t + '</td>';
     }
   }
+};
+/**
+ * Helper function for describeElement().
+ */
+p5.prototype._elementName = function(n) {
+  let lm = n[n.length - 1];
+  if (lm === '.' || lm === ';' || lm === ',') {
+    n = n.replace(/.$/, ':');
+  } else if (n.endsWith(':') === false) {
+    n = n + ':';
+  }
+  if (/^[A-Z]/.test(n) === false) {
+    n = n[0].toUpperCase() + n.slice(1);
+  }
+  return n;
 };
 
 export default p5;
