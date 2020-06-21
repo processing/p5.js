@@ -8,6 +8,11 @@ const strings = {
       msg: '{{}} is not defined',
       type: 'NOTDEFINED',
       browser: 'all'
+    },
+    {
+      msg: "Can't find variable: {{}}",
+      type: 'NOTDEFINED',
+      browser: 'Safari'
     }
   ]
 };

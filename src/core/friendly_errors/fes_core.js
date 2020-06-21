@@ -345,11 +345,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
           string = string.replace('{}', '(?:[a-zA-Z0-9_]+)');
           let matched = error.message.match(string);
           if (matched && matched[1]) {
-            handleMisspelling(
-              matched[1],
-              error,
-              typeof log === 'function' ? log : undefined
-            );
+            switch (obj.type) {
+              case 'NOTDEFINED':
+                handleMisspelling(
+                  matched[1],
+                  error,
+                  typeof log === 'function' ? log : undefined
+                );
+                break;
+            }
           }
         }
         break;
