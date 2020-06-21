@@ -225,7 +225,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // instance as context
     const instanceMode = context instanceof p5;
     context = instanceMode ? context : window;
-
+    const log = p5._fesLogger;
     const fnNames = [
       'setup',
       'draw',
@@ -270,7 +270,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
           name: prop,
           actualName: fxns[lowercase]
         });
-        p5._friendlyError(msg, fxns[lowercase]);
+        if (log && typeof log === 'function') {
+          log(msg);
+        } else {
+          p5._friendlyError(msg, fxns[lowercase]);
+        }
       }
     }
   };
@@ -280,7 +284,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // misusedAtTopLevel here is for convenience as it was an array that was
   // already defined when spelling check was implemented. For this particular
   // use-case, it's a misnomer.
-  const detectMisspelling = (errSym, error) => {
+  const handleMisspelling = (errSym, error, log) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
@@ -318,7 +322,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
         location: location ? translator('fes.location', { location }) : ''
       });
 
-      p5._friendlyError(msg, symbol.name);
+      if (log) {
+        log(msg);
+      } else {
+        p5._friendlyError(msg, symbol.name);
+      }
     }
   };
 
@@ -326,7 +334,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (p5.disableFriendlyErrors) return;
     // This function can receieve an Error object or an ErrorEvent
     const error = e instanceof ErrorEvent ? e.error : e;
-
+    const log = p5._fesLogger;
     switch (error.name) {
       case 'ReferenceError': {
         const errList = errorTable.ReferenceError;
@@ -337,7 +345,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
           string = string.replace('{}', '(?:[a-zA-Z0-9_]+)');
           let matched = error.message.match(string);
           if (matched && matched[1]) {
-            detectMisspelling(matched[1], error);
+            handleMisspelling(
+              matched[1],
+              error,
+              typeof log === 'function' ? log : undefined
+            );
           }
         }
         break;
@@ -347,6 +359,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   p5._fesErrorMonitor = fesErrorMonitor;
   p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
+
+  // logger for testing purposes.
+  p5._fesLogger = null;
 
   window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);
