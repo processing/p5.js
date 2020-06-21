@@ -50,6 +50,10 @@ const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
 let misusedAtTopLevelCode = null;
 let defineMisusedAtTopLevelCode = null;
 
+// the threshold for the maximum allowed levenshtein distance
+// used in misspelling detection
+const EDIT_THRESH = 2;
+
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
 } else {
@@ -172,12 +176,56 @@ if (typeof IS_MINIFIED !== 'undefined') {
     console.log(translator('fes.pre', { message }));
   };
 
+  const editDistance = (w1, w2) => {
+    // An implementation of
+    // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
+    // to compute the Levenshtein distance
+    const l1 = w1.length,
+      l2 = w2.length;
+    if (l1 === 0) return w2;
+    if (l2 === 0) return w1;
+
+    let prev = [];
+    let cur = [];
+
+    for (let j = 0; j < l2 + 1; j++) {
+      cur[j] = j;
+    }
+
+    prev = cur;
+
+    for (let i = 1; i < l1 + 1; i++) {
+      cur = [];
+      for (let j = 0; j < l2 + 1; j++) {
+        if (j === 0) {
+          cur[j] = i;
+        } else {
+          let a1 = w1[i - 1],
+            a2 = w2[j - 1];
+          let temp = 999999;
+          let cost = a1.toLowerCase() === a2.toLowerCase() ? 0 : 1;
+          temp = temp > cost + prev[j - 1] ? cost + prev[j - 1] : temp;
+          temp = temp > 1 + cur[j - 1] ? 1 + cur[j - 1] : temp;
+          temp = temp > 1 + prev[j] ? 1 + prev[j] : temp;
+          cur[j] = temp;
+        }
+      }
+      prev = cur;
+    }
+
+    return cur[l2];
+  };
+
   // checks if the various functions such as setup, draw, preload have been
   // defined with capitalization mistakes
   const checkForUserDefinedFunctions = context => {
+    if (p5.disableFriendlyErrors) return;
+
     // if using instance mode, this function would be called with the current
     // instance as context
-    context = context instanceof p5 ? context : window;
+    const instanceMode = context instanceof p5;
+    context = instanceMode ? context : window;
+
     const fnNames = [
       'setup',
       'draw',
@@ -200,62 +248,89 @@ if (typeof IS_MINIFIED !== 'undefined') {
       'keyTyped',
       'windowResized'
     ];
+
     const fxns = {};
-    // build the lowercase -> actualName mapping
-    for (let name of fnNames) {
-      fxns[name.toLowerCase()] = name;
-    }
-    for (let prop in context) {
-      let lowercaseProp = prop.toLowerCase();
-      if (fxns.hasOwnProperty(lowercaseProp)) {
-        if (prop !== fxns[lowercaseProp] && !context[fxns[lowercaseProp]]) {
-          const msg = translator('fes.checkUserDefinedFns', {
-            name: prop,
-            actualName: fxns[lowercaseProp]
-          });
-          p5._friendlyError(msg, fxns[lowercaseProp]);
-        }
+    // lowercasename -> actualName mapping
+    fnNames.forEach(symbol => {
+      fxns[symbol.toLowerCase()] = symbol;
+    });
+
+    for (const prop of Object.keys(context)) {
+      const lowercase = prop.toLowerCase();
+
+      // check if the lowercase property name has an entry in fxns, if the
+      // actual name with correct capitalization doesnt exist in context,
+      // and if the user-defined symbol is of the type function
+      if (
+        fxns[lowercase] &&
+        !context[fxns[lowercase]] &&
+        typeof context[prop] === 'function'
+      ) {
+        const msg = translator('fes.checkUserDefinedFns', {
+          name: prop,
+          actualName: fxns[lowercase]
+        });
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
 
+  // compares the the symbol caught in the ReferenceErrror to everything
+  // in misusedAtTopLevel ( all public p5 properties ). The use of
+  // misusedAtTopLevel here is for convenience as it was an array that was
+  // already defined when spelling check was implemented. For this particular
+  // use-case, it's a misnomer.
   const detectMisspelling = (errSym, error) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
-    let errSymLower = errSym.toLowerCase();
-    misusedAtTopLevelCode.some(symbol => {
-      let lowercase = symbol.name.toLowerCase();
 
-      if (errSymLower === lowercase && errSym !== symbol.name) {
-        const parsed = p5._getErrorStackParser().parse(error);
-        const location =
-          parsed[0] && parsed[0].fileName
-            ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
-                parsed[0].columnNumber
-              }`
-            : null;
-        const msg = translator('fes.misspelling', {
-          name: errSym,
-          actualName: symbol.name,
-          type: symbol.type,
-          location: location ? translator('fes.location', { location }) : ''
-        });
-
-        p5._friendlyError(msg, symbol.name);
-        return true;
+    let min = 999999,
+      minIndex = 0;
+    // compute the levenshtein distance for the symbol against all known
+    // public p5 properties. Find the property with the minimum distance
+    misusedAtTopLevelCode.forEach((symbol, idx) => {
+      let dist = editDistance(errSym, symbol.name);
+      if (dist < min) {
+        min = dist;
+        minIndex = idx;
       }
     });
+
+    if (min > EDIT_THRESH) return;
+
+    let symbol = misusedAtTopLevelCode[minIndex];
+
+    // Show a message only if the caught symbol and the matched property name
+    // differ in their name ( either letter difference or difference of case )
+    if (errSym !== symbol.name) {
+      const parsed = p5._getErrorStackParser().parse(error);
+      const location =
+        parsed[0] && parsed[0].fileName
+          ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
+              parsed[0].columnNumber
+            }`
+          : null;
+      const msg = translator('fes.misspelling', {
+        name: errSym,
+        actualName: symbol.name,
+        type: symbol.type,
+        location: location ? translator('fes.location', { location }) : ''
+      });
+
+      p5._friendlyError(msg, symbol.name);
+    }
   };
 
   const fesErrorMonitor = e => {
+    if (p5.disableFriendlyErrors) return;
     // This function can receieve an Error object or an ErrorEvent
     const error = e instanceof ErrorEvent ? e.error : e;
 
     switch (error.name) {
       case 'ReferenceError': {
         const errList = errorTable.ReferenceError;
-        for (let obj of errList) {
+        for (const obj of errList) {
           let string = obj.msg;
           // capture the primary symbol mentioned in the error
           string = string.replace('{{}}', '([a-zA-Z0-9_]+)');
@@ -273,7 +348,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesErrorMonitor = fesErrorMonitor;
   p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
 
-  window.addEventListener('load', checkForUserDefinedFunctions);
+  window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);
 
   /**

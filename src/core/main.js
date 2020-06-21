@@ -536,7 +536,8 @@ class p5 {
       // user-provided 'setup', 'draw', etc. properties on this instance of p5
       sketch(this);
 
-      // Run a check to see if the user has missplelled setup, draw, etc
+      // Run a check to see if the user has misspelled 'setup', 'draw', etc
+      // detects capitalization mistakes only ( Setup, SETUP, MouseClicked, etc)
       p5._checkForUserDefinedFunctions(this);
     }
 
