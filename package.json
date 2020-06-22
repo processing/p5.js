@@ -86,7 +86,7 @@
     "whatwg-fetch": "^2.0.4"
   },
   "license": "LGPL-2.1",
-  "main": "./lib/p5.js",
+  "main": "./lib/p5.min.js",
   "files": [
     "license.txt",
     "lib/p5.min.js",
