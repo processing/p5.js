@@ -1,7 +1,9 @@
-// Browsers use error strings to build their error messages. These can be
-// different across different browsers. We can build a list of these strings
-// so that the FES is able to extract the required info from the errors given
-// by the browser
+// Different browsers may use different error strings for the same error.
+// Extracting info from them is much easier and cleaner if we have a predefined
+// lookup against which we try and match the errors obtained from the browser,
+// classify them into types and extract the required information. The contents
+// of this file serve as that lookup. The FES can use this to give a simplified
+// explanation for all kinds of errors.
 const strings = {
   ReferenceError: [
     {

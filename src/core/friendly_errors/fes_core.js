@@ -52,7 +52,7 @@ let defineMisusedAtTopLevelCode = null;
 
 // the threshold for the maximum allowed levenshtein distance
 // used in misspelling detection
-const EDIT_THRESH = 2;
+const EDIT_DIST_THRESHOLD = 2;
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
@@ -176,10 +176,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     console.log(translator('fes.pre', { message }));
   };
 
-  const editDistance = (w1, w2) => {
+  const computeEditDistance = (w1, w2) => {
     // An implementation of
-    // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm
-    // to compute the Levenshtein distance
+    // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm to
+    // compute the Levenshtein distance. It gives a measure of how dissimilar
+    // two strings are. If the "distance" between them is small enough, it is
+    // reasonable to think that one is the misspelled version of the other.
     const l1 = w1.length,
       l2 = w2.length;
     if (l1 === 0) return w2;
@@ -294,14 +296,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // compute the levenshtein distance for the symbol against all known
     // public p5 properties. Find the property with the minimum distance
     misusedAtTopLevelCode.forEach((symbol, idx) => {
-      let dist = editDistance(errSym, symbol.name);
+      let dist = computeEditDistance(errSym, symbol.name);
       if (dist < min) {
         min = dist;
         minIndex = idx;
       }
     });
 
-    if (min > EDIT_THRESH) return;
+    if (min > EDIT_DIST_THRESHOLD) return;
 
     let symbol = misusedAtTopLevelCode[minIndex];
 
@@ -332,8 +334,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   const fesErrorMonitor = e => {
     if (p5.disableFriendlyErrors) return;
-    // This function can receieve an Error object or an ErrorEvent
-    const error = e instanceof ErrorEvent ? e.error : e;
+    // Try to get the error object from e
+    let error;
+    if (e instanceof Error) {
+      error = e;
+    } else if (e instanceof ErrorEvent) {
+      error = e.error;
+    } else if (e instanceof PromiseRejectionEvent) {
+      error = e.reason;
+      if (!(error instanceof Error)) return;
+    }
+    if (!error) return;
     const log = p5._fesLogger;
     switch (error.name) {
       case 'ReferenceError': {
@@ -369,6 +380,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);
+  window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
 
   /**
    * Prints out all the colors in the color pallete with white text.
