@@ -1,6 +1,7 @@
 {
   "fes": {
     "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
+    "checkUserDefinedFns": "",
     "fileLoadError": {
       "bytes": "",
       "font": "",
@@ -20,6 +21,7 @@
       "type_WRONG_TYPE": ""
     },
     "location": "",
+    "misspelling": "",
     "misusedTopLevel": "",
     "positions": {
       "p_1": "",

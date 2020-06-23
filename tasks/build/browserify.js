@@ -40,6 +40,7 @@ module.exports = function(grunt) {
           .exclude('../../docs/reference/data.json')
           .exclude('../../../docs/parameterData.json')
           .exclude('../../translations')
+          .exclude('./browser_errors')
           .ignore('i18next')
           .ignore('i18next-browser-languagedetector');
       }

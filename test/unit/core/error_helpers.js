@@ -366,4 +366,117 @@ suite('Error Helpers', function() {
       );
     });
   });
+
+  suite('misspelling detection', function() {
+    let log = [];
+    const logger = function(err) {
+      log.push(err);
+    };
+    let help = function(err) {
+      p5._fesErrorMonitor(err);
+      assert.equal(log.length, 1);
+      return log[0];
+    };
+
+    setup(function() {
+      log = [];
+      p5._fesLogger = logger;
+    });
+
+    teardown(function() {
+      p5._fesLogger = null;
+    });
+
+    testUnMinified('detects capitalization mistakes', function() {
+      assert.match(
+        help(new ReferenceError('MouseX is not defined')),
+        /It seems that you may have accidently written MouseX instead of mouseX/
+      );
+    });
+
+    testUnMinified('detects spelling mistakes', function() {
+      assert.match(
+        help(new ReferenceError('colour is not defined')),
+        /It seems that you may have accidently written colour instead of color/
+      );
+    });
+
+    testUnMinified('detects spelling + captialization mistakes', function() {
+      assert.match(
+        help(new ReferenceError('RandomGossian is not defined')),
+        /It seems that you may have accidently written RandomGossian instead of randomGaussian/
+      );
+    });
+  });
+
+  suite('caps mistakes for user-defined functions (instance mode)', function() {
+    let myp5;
+    let log;
+    const logger = function(err) {
+      log.push(err);
+    };
+    setup(function(done) {
+      log = [];
+      p5._fesLogger = logger;
+      new p5(function(p) {
+        // intentional capitalization mistake
+        p.preLoad = function() {};
+        p.setup = function() {
+          myp5 = p;
+          p._fesLogger = logger;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      p5._fesLogger = null;
+      myp5.remove();
+    });
+
+    testUnMinified(
+      'detects capitatilization mistake in instance mode',
+      function() {
+        assert.strictEqual(log.length, 1, 'One message is displayed');
+        assert.match(
+          log[0],
+          /It seems that you may have accidently written preLoad instead of preload/
+        );
+      }
+    );
+  });
+
+  suite('caps mistakes for user-defined functions (global mode)', function() {
+    let log;
+    const logger = function(err) {
+      log.push(err);
+    };
+    testUnMinified(
+      'detects capitatilization mistake in global mode',
+      function() {
+        return new Promise(function(resolve) {
+          iframe = createP5Iframe(
+            [
+              P5_SCRIPT_TAG,
+              '<script>',
+              'p5._fesLogger = window.logger',
+              'function setup() { window.afterSetup();}',
+              'function DRAW() {}',
+              '</script>'
+            ].join('\n')
+          );
+          log = [];
+          iframe.elt.contentWindow.logger = logger;
+          iframe.elt.contentWindow.afterSetup = resolve;
+        }).then(function() {
+          //let log = iframe.elt.contentWindow.log;
+          assert.strictEqual(log.length, 1);
+          assert.match(
+            log[0],
+            /It seems that you may have accidently written DRAW instead of draw/
+          );
+        });
+      }
+    );
+  });
 });
