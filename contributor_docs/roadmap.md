@@ -25,7 +25,7 @@ With the exception of ES6 migration, the tasks here are not ordered by priority.
 * More complete unit tests
   * Clearer tutorial for doing this
 * Improve Friendly Error System documentation
-  * Add comments to https://github.com/processing/p5.js/blob/main/src/core/error_helpers.js to better document what’s happening in this process.
+  * Add comments to https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/fes_core.js to better document what’s happening in this process.
 
 ## Bug fixing
 * Mobile device support / upgrades
