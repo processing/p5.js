@@ -20,7 +20,7 @@ So far FES is able to detect and print messages for four kinds of errors:
 
 4. `helpForMisusedAtTopLevelCode()` is called on window load to check for use of p5.js functions outside of setup() or draw()
 
-Please also see inline notes in [src/core/error_helper.js](https://github.com/processing/p5.js/blob/main/src/core/error_helpers.js) for more technical information.
+Please also see inline notes in [src/core/friendly_errors/fes_core.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/fes_core.js) for more technical information.
 
 ### `core/error_helpers/friendlyFileLoadError()`: 
 * This function generates and displays friendly error messages if a file fails to load correctly. It also checks if the size of a file might be too large to load and produces a warning. 
