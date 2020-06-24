@@ -392,7 +392,11 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://skyperx.github.io"><img src="https://avatars1.githubusercontent.com/u/64559807?v=4" width="100px;" alt=""/><br /><sub><b>skyperx</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyperx" title="Code">💻</a></td>
-  </tr>
+  <td align="center"><a href="https://github.com/MedAmineFouzai">
+     <img src="https://avatars2.githubusercontent.com/u/54685665?s=460&u=9908c84f9110b535b9ba913c9854c9f79eb13775&v=4" width="100px;" alt=""/><br /><sub><b>MedAmineFouzai</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=MedAmineFouzai" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=MedAmineFouzai" title="Tests">⚠️</a></td>
+  
+  </tr> 
+  
 </table>
 
 <!-- markdownlint-enable -->
