@@ -748,7 +748,8 @@ p5.prototype.stroke = function(...args) {
  * can be canceled with <a href="#/p5/noErase">noErase()</a>.
  *
  * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
- * background()</a> will not be affected by <a href="#/p5/erase">erase()</a>
+ * background()</a> in between <a href="#/p5/erase">erase()</a> and
+ * <a href="#/p5/noErase">noErase()</a> will not erase the canvas but works as usual.
  *
  * @method erase
  * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.
