@@ -23,7 +23,7 @@ The `structure.js` module is best thought of as a collection of ways to make *mo
 
 The `constants.js` module provides various default values mostly related to math and web standards using clear semantic names to increase syntax clarity when they are used in other algorithms. These values are attached to the `p5` object prototype as properties by the constructor function so they can be more easily accessed by other parts of the p5.js library or by user code.
 
-## [fes_core.js](./friendly_errors/fes_core.js)
+## [friendly_errors/fes_core.js](./friendly_errors/fes_core.js)
 This is the main file for the Friendly Error System (FES). The Friendly Error System (FES) is a system designed to help new programmers with common user errors as they get started learning. It catches common beginning errors and provides clear language and links to help a user resolve the error. FES is only applied to functions that are ones a user might encounter when they are just starting.  You can learn more about the FES in the comment section at the top of this file, or in the [contributors_docs/friendly_error_system.md](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) file.
 
 ## [legacy.js](./legacy.js)
