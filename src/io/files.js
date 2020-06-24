@@ -1080,13 +1080,16 @@ p5.prototype.httpDo = function(...args) {
       }
     }
 
+    let headers =
+      method === 'GET'
+        ? new Headers()
+        : new Headers({ 'Content-Type': contentType });
+
     request = new Request(path, {
       method,
       mode: 'cors',
       body: data,
-      headers: new Headers({
-        'Content-Type': contentType
-      })
+      headers: headers
     });
   }
   // do some sort of smart type checking
