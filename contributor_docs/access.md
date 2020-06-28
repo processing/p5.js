@@ -1,0 +1,23 @@
+# Our Focus on Access
+
+At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). We want to invite more conversations about what access means and how we can continue to prioritize it.
+
+This is not the first conversation we've had about access and inclusion. We share similar intentions in our [Community Statement](../CODE_OF_CONDUCT.md), which was written at the [2015 Contributors Conference](https://p5js.org/community/contributors-conference-2015.html).
+
+## Kinds of access
+
+Increasing access is not a focus on expanding the raw number of people of the p5.js community, but making it available to and approachable for more people who are excluded from the p5.js community (intentionally or not) or who do not have access to similar tools. We want to focus on marginalized groups.
+
+### Examples
+
+These are examples of efforts we believe to increase access:
+
+- Translating more documentation and other materials into more languages
+- Improving out support for assistive devices (such as screenreaders)
+- Making p5.js error messages more helpful and supportive to developers
+
+There are other things we haven't thought of yet and we're excited to figure out what they are together. If you have an idea, please [share it as an issue](https://github.com/processing/p5.js/issues/new/choose).
+
+## Maintenance
+
+We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in or how closely they are related to our focus on access.
