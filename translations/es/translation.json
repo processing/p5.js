@@ -20,6 +20,11 @@
       "type_TOO_MANY_ARGUMENTS": "",
       "type_WRONG_TYPE": ""
     },
+    "globalErrors": {
+      "libraryError": "",
+      "stackSubseq": "",
+      "stackTop": ""
+    },
     "location": "",
     "misspelling": "",
     "misusedTopLevel": "",

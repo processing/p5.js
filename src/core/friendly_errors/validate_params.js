@@ -573,6 +573,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         }`;
         if (location) {
           translationObj.location = translator('fes.location', { location });
+          p5._fesLogCache[location] = true;
         }
       } catch (err) {
         if (err instanceof p5.ValidationError) {

@@ -89,6 +89,30 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // -- End borrow --
 
+  // entry points into user-defined code
+  const entryPoints = [
+    'setup',
+    'draw',
+    'preload',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized'
+  ];
+
   const friendlyWelcome = () => {
     // p5.js brand - magenta: #ED225D
     //const astrixBgColor = 'transparent';
@@ -228,28 +252,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const instanceMode = context instanceof p5;
     context = instanceMode ? context : window;
     const log = p5._fesLogger;
-    const fnNames = [
-      'setup',
-      'draw',
-      'preload',
-      'deviceMoved',
-      'deviceTurned',
-      'deviceShaken',
-      'doubleClicked',
-      'mousePressed',
-      'mouseReleased',
-      'mouseMoved',
-      'mouseDragged',
-      'mouseClicked',
-      'mouseWheel',
-      'touchStarted',
-      'touchMoved',
-      'touchEnded',
-      'keyPressed',
-      'keyReleased',
-      'keyTyped',
-      'windowResized'
-    ];
+    const fnNames = entryPoints;
 
     const fxns = {};
     // lowercasename -> actualName mapping
@@ -346,6 +349,104 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
     if (!error) return;
     const log = p5._fesLogger;
+
+    // Syntax Errors have no stacktrace attached to them, must be handled separately
+    // TODO
+    if (error.name === 'SyntaxError') return;
+
+    let stacktrace = p5._getErrorStackParser().parse(error);
+
+    if (!stacktrace) return;
+
+    for (let i = 0; i < stacktrace.length; i++) {
+      stacktrace[i].functionName = stacktrace[i].functionName || '';
+    }
+
+    if (stacktrace[0]) {
+      let errLoc = `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+        stacktrace[0].columnNumber
+      }`;
+      if (p5._fesLogCache[errLoc]) return;
+      p5._fesLogCache[errLoc] = true;
+    }
+    let isInternal = false;
+    let p5FileName;
+    for (let i = stacktrace.length - 1; i >= 0; i--) {
+      let splitted = stacktrace[i].functionName.split('.');
+      if (entryPoints.includes(splitted[splitted.length - 1])) {
+        stacktrace = stacktrace.slice(0, i + 1);
+        for (let j = 0; j < i; j++) {
+          // Due to the current build process, all p5 functions get
+          // _main.default in their names in the final build. This is the
+          // easiest way to check if a function is inside the p5 library
+          if (stacktrace[j].functionName.search('_main.default') !== -1) {
+            isInternal = true;
+            p5FileName = stacktrace[j].fileName;
+            break;
+          }
+        }
+        break;
+      }
+    }
+
+    if (isInternal) {
+      let userIndices = [];
+      let translationObj = {};
+      translationObj.error = error.message;
+
+      let simpleStack = stacktrace.filter((e, idx) => {
+        if (e.fileName !== p5FileName) {
+          userIndices.push(idx);
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      let firstUserFrame = stacktrace[userIndices[0]];
+      const func = stacktrace[userIndices[0] - 1].functionName
+        .split('.')
+        .slice(-1)[0];
+      translationObj.func = func;
+
+      const location = `${firstUserFrame.fileName}:${
+        firstUserFrame.lineNumber
+      }:${firstUserFrame.columnNumber}`;
+      translationObj.location = translator('fes.location', { location });
+
+      stacktrace = simpleStack;
+      p5._friendlyError(
+        translator('fes.globalErrors.libraryError', translationObj),
+        func
+      );
+    }
+
+    if (stacktrace.length > 1) {
+      let stacktraceMsg = '';
+      stacktrace.forEach((frame, idx) => {
+        const location = `${frame.fileName}:${frame.lineNumber}:${
+          frame.columnNumber
+        }`;
+        let frameMsg,
+          translationObj = {
+            func: frame.functionName,
+            line: frame.lineNumber,
+            location: location,
+            file: frame.fileName.split('/').slice(-1)
+          };
+        if (idx === 0) {
+          frameMsg = translator('fes.globalErrors.stackTop', translationObj);
+        } else {
+          frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
+        }
+        stacktraceMsg += frameMsg;
+      });
+      console.log(stacktraceMsg);
+    }
+
+    // If the error happened inside the library
+    if (isInternal) return;
+
     switch (error.name) {
       case 'ReferenceError': {
         const errList = errorTable.ReferenceError;
@@ -377,6 +478,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // logger for testing purposes.
   p5._fesLogger = null;
+  p5._fesLogCache = {};
 
   window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);

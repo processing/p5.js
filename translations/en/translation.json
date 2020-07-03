@@ -20,6 +20,11 @@
       "type_TOO_MANY_ARGUMENTS": "{{func}}() was expecting no more than {{maxParams}} arguments, but received {{argCount}}. {{location}}",
       "type_WRONG_TYPE": "{{func}}() was expecting {{formatType}} for the {{position}} parameter, received {{argType}} instead. {{location}}"
     },
+    "globalErrors": {
+      "libraryError": "An error with message \"{{error}}\" was thrown inside the p5js library when you called {{func}} {{location}}\nIf not stated otherwise, it is likely an issue with the arguments passed to {{func}}.",
+      "stackSubseq": "▶️ Called from line {{line}} in function {{func}} in {{file}} ({{location}})\n\n",
+      "stackTop": "▶️ Error at line {{line}} in function {{func}} in {{file}} ({{location}})\n\n"
+    },
     "location": "(at {{location}})",
     "misspelling": "It seems that you may have accidently written {{name}} instead of {{actualName}} {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
