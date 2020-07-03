@@ -8,7 +8,7 @@ This is not the first conversation we've had about access and inclusion. We shar
 
 ## Kinds of access
 
-Increasing access is not a focus on expanding the raw number of people of the p5.js community, but making it available to and approachable for more people who are excluded from the p5.js community (intentionally or not) or who do not have access to similar tools. We want to focus on marginalized groups.
+Increasing access is not a focus on expanding the raw number of people in the p5.js community. It is a focus on making p5.js available to and approachable for more people who are excluded from the p5.js community (intentionally or not) and people who are excluded from similar tools.
 
 ### Examples
 
