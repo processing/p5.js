@@ -4,6 +4,8 @@ At the [2019 Contributors Conference](https://p5js.org/community/contributors-co
 
 This is not the first conversation we've had about access and inclusion. We share similar intentions in our [Community Statement](../CODE_OF_CONDUCT.md), which was written at the [2015 Contributors Conference](https://p5js.org/community/contributors-conference-2015.html).
 
+**Please consider this a starting point.** We want to invite more conversations about what access means and how we can prioritize it.
+
 ## Kinds of access
 
 Increasing access is not a focus on expanding the raw number of people of the p5.js community, but making it available to and approachable for more people who are excluded from the p5.js community (intentionally or not) or who do not have access to similar tools. We want to focus on marginalized groups.
