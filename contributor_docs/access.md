@@ -1,6 +1,6 @@
 # Our Focus on Access
 
-At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). We want to invite more conversations about what access means and how we can continue to prioritize it.
+At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). This means we prioritize the needs of marginalized groups over the continued comfort of more privileged groups with p5.js.
 
 This is not the first conversation we've had about access and inclusion. We share similar intentions in our [Community Statement](../CODE_OF_CONDUCT.md), which was written at the [2015 Contributors Conference](https://p5js.org/community/contributors-conference-2015.html).
 
