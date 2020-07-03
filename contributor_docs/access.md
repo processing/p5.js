@@ -10,6 +10,15 @@ This is not the first conversation we've had about access and inclusion. We shar
 
 Increasing access is not a focus on expanding the raw number of people in the p5.js community. It is a focus on making p5.js available to and approachable for more people who are excluded from the p5.js community (intentionally or not) and people who are excluded from similar tools.
 
+Access here means making p5.js better for:
+
+- People who speak Spanish, Chinese, or other languages besides English
+- People who are Black, Indigenous, or people of Color
+- People who are lesbian, gay, bisexual, trans, or queer
+- People with marginalized genders
+- People who are disabled or sick
+- and other people who are systemically excluded
+
 ### Examples
 
 These are examples of efforts we believe to increase access:
