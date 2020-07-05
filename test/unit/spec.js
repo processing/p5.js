@@ -1,4 +1,5 @@
 var spec = {
+  accessibility: ['describe'],
   color: ['color_conversion', 'creating_reading', 'p5.Color', 'setting'],
   core: [
     '2d_primitives',
