@@ -10,7 +10,7 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 # Prioritizing access
 
-We are prioritizing work that expands access to p5.js! See [our access statement](./access.md) for more details.
+We are prioritizing work that expands access (inclusion and accessibility) to p5.js! See [our access statement](./access.md) for more details.
 
 
 

@@ -1,6 +1,6 @@
 # Our Focus on Access
 
-At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). This means we prioritize the needs of marginalized groups over the continued comfort of more privileged groups with p5.js.
+At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). This means considering the vectors of diversity (e.g. gender, social, economic, race, ethnicity, language, ability, etc.) that can impact access/participation; and taking action to acknowledge, dismantle, and prevent barriers. We prioritize the needs of historically marginalized groups over the continued comfort of more privileged groups with p5.js.
 
 This is not the first conversation we've had about access and inclusion. We share similar intentions in our [Community Statement](../CODE_OF_CONDUCT.md), which was written at the [2015 Contributors Conference](https://p5js.org/community/contributors-conference-2015.html).
 
@@ -8,15 +8,15 @@ This is not the first conversation we've had about access and inclusion. We shar
 
 ## Kinds of access
 
-Increasing access is not a focus on expanding the raw number of people in the p5.js community. It is a focus on making p5.js available to and approachable for more people who are excluded from the p5.js community (intentionally or not) and people who are excluded from similar tools.
+Increasing access is not a focus on expanding the raw number of people in the p5.js community. It is a focus on making p5.js available to and approachable for people who are excluded from the p5.js community (intentionally or not) and from similar tools and communities.
 
 Access here means making p5.js better for:
 
-- People who speak Spanish, Chinese, or other languages besides English
-- People who are Black, Indigenous, or people of Color
+- People who speak languages other than English
+- Black people, Indigenous peoples, and people of Color
 - People who are lesbian, gay, bisexual, trans, or queer
 - People with marginalized genders
-- People who are disabled or sick
+- People with disabilities or illness
 - and other people who are systemically excluded
 
 ### Examples
