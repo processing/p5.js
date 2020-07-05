@@ -25,6 +25,7 @@ These are examples of efforts we believe to increase access:
 
 - Translating more documentation and other materials into more languages
 - Improving our support for assistive technologies (such as screenreaders)
+- Following Web Content Accessibility Guidelines in our tools and working towards making it easier for users to follow them in their projects
 - Making p5.js error messages more helpful and supportive to developers
 
 There are other things we haven't thought of yet and we're excited to figure out what they are together. If you have an idea, please [share it as an issue](https://github.com/processing/p5.js/issues/new/choose).
