@@ -6,6 +6,13 @@
  */
 
 import p5 from '../core/main';
+const ds = '_Description';
+const dsc = '_dsc';
+const eDsc = '_eDsc';
+const lbd = '_Label';
+const dlb = '_dLbl';
+const elb = '_eLbl';
+const lbl = 'Lbl';
 
 /**
  * Creates a screen-reader accessible description for the canvas in the DOM.
@@ -61,48 +68,52 @@ import p5 from '../core/main';
  * </div>
  *
  */
+
 p5.prototype.describe = function(t, d) {
-  p5._validateParameters('describe', arguments);
   const cnvId = this.canvas.id;
+  p5._validateParameters('describe', arguments);
   //Creates a sub DOM inside of the canvas element and populates
   //it with description text.
   t = this._descriptionText(t);
-  if (document.getElementById(cnvId + '_Description') === null) {
+  if (document.getElementById(cnvId + ds) === null) {
     document.getElementById(cnvId).innerHTML =
       '<div id="' +
       cnvId +
-      '_Description" role="region" aria-label="Canvas Description"><p id="' +
+      ds +
+      '" role="region" aria-label="Canvas Description"><p id="' +
       cnvId +
-      '_dsc"></p></div>';
-  } else if (document.getElementById(cnvId + '_dsc') === null) {
+      dsc +
+      '"></p></div>';
+  } else if (document.getElementById(cnvId + dsc) === null) {
     document
-      .getElementById(cnvId + '_eDsc')
-      .insertAdjacentHTML('beforebegin', '<p id="' + cnvId + '_dsc"></p>');
+      .getElementById(cnvId + eDsc)
+      .insertAdjacentHTML('beforebegin', '<p id="' + cnvId + dsc + '"></p>');
   }
-  if (document.getElementById(cnvId + '_dsc').innerHTML !== t) {
-    document.getElementById(cnvId + '_dsc').innerHTML = t;
+  if (document.getElementById(cnvId + dsc).innerHTML !== t) {
+    document.getElementById(cnvId + dsc).innerHTML = t;
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //description text.
   if (d === this.LABEL) {
-    if (document.getElementById(cnvId + '_Label') === null) {
+    if (document.getElementById(cnvId + lbd) === null) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
           'afterend',
           '<div id="' +
             cnvId +
-            '_Label" class="p5Label"><p id=' +
+            lbd +
+            '" class="p5Label"><p id=' +
             cnvId +
             '_dLbl></p></div>'
         );
-    } else if (document.getElementById(cnvId + '_dLbl') === null) {
+    } else if (document.getElementById(cnvId + dlb) === null) {
       document
-        .getElementById(cnvId + '_eLbl')
-        .insertAdjacentHTML('beforebegin', '<p id=' + cnvId + '_dLbl></p>');
+        .getElementById(cnvId + elb)
+        .insertAdjacentHTML('beforebegin', '<p id=' + cnvId + dlb + '></p>');
     }
-    if (document.getElementById(cnvId + '_dLbl').innerHTML !== t) {
-      document.getElementById(cnvId + '_dLbl').innerHTML = t;
+    if (document.getElementById(cnvId + dlb).innerHTML !== t) {
+      document.getElementById(cnvId + dlb).innerHTML = t;
     }
   }
 };
@@ -173,74 +184,79 @@ p5.prototype.describeElement = function(n, t, d) {
   p5._validateParameters('describeElement', arguments);
   const cnvId = this.canvas.id;
   t = this._descriptionText(t);
-  n = this._elementName(n);
+  let nm = this._elementName(n);
   //Creates a sub DOM inside of the canvas with a table, populates
   //a row header cell with the name of the elements and adds the description
   //of the element in adjecent cell.
-  if (document.getElementById(cnvId + '_Description') === null) {
+  if (document.getElementById(cnvId + ds) === null) {
     document.getElementById(cnvId).innerHTML =
       '<div id="' +
       cnvId +
-      '_Description" role="region" aria-label="Canvas Description"><table id="' +
+      ds +
+      '" role="region" aria-label="Canvas Description"><table id="' +
       cnvId +
-      '_eDsc"><caption>Canvas elements and their descriptions</caption></table></div>';
-  } else if (document.getElementById(cnvId + '_eDsc') === null) {
+      eDsc +
+      '"><caption>Canvas elements and their descriptions</caption></table></div>';
+  } else if (document.getElementById(cnvId + eDsc) === null) {
     document
-      .getElementById(cnvId + '_dsc')
+      .getElementById(cnvId + dsc)
       .insertAdjacentHTML(
         'afterend',
         '<table id="' +
           cnvId +
-          '_eDsc"><caption>Canvas elements and their descriptions</caption></table>'
+          eDsc +
+          '"><caption>Canvas elements and their descriptions</caption></table>'
       );
   }
   if (document.getElementById(cnvId + n) === null) {
     let tr = document.createElement('tr');
     tr.id = cnvId + n;
-    document.getElementById(cnvId + '_eDsc').appendChild(tr);
+    document.getElementById(cnvId + eDsc).appendChild(tr);
   }
   if (
     document.getElementById(cnvId + n).innerHTML !==
-    '<th scope="row">' + n + '</th><td>' + t + '</td>'
+    '<th scope="row">' + nm + '</th><td>' + t + '</td>'
   ) {
     document.getElementById(cnvId + n).innerHTML =
-      '<th scope="row">' + n + '</th><td>' + t + '</td>';
+      '<th scope="row">' + nm + '</th><td>' + t + '</td>';
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //a table, a row header cell with the name of the elements,
   //and adds the description of the element in adjecent cell.
   if (d === this.LABEL) {
-    if (document.getElementById(cnvId + '_Label') === null) {
+    if (document.getElementById(cnvId + lbd) === null) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
           'afterend',
           '<div id="' +
             cnvId +
-            '_Label" class="p5Label"><table id="' +
+            lbd +
+            '" class="p5Label"><table id="' +
             cnvId +
-            '_eLbl"></table></div>'
+            elb +
+            '"></table></div>'
         );
-    } else if (document.getElementById(cnvId + '_eLbl') === null) {
+    } else if (document.getElementById(cnvId + elb) === null) {
       document
-        .getElementById(cnvId + '_dLbl')
+        .getElementById(cnvId + dlb)
         .insertAdjacentHTML(
           'afterend',
-          '<table id="' + cnvId + '_eLbl"></table>'
+          '<table id="' + cnvId + elb + '"></table>'
         );
     }
-    if (document.getElementById(cnvId + n + 'Lbl') === null) {
+    if (document.getElementById(cnvId + n + lbl) === null) {
       let tr = document.createElement('tr');
-      tr.id = cnvId + n + 'Lbl';
-      document.getElementById(cnvId + '_eLbl').appendChild(tr);
+      tr.id = cnvId + n + lbl;
+      document.getElementById(cnvId + elb).appendChild(tr);
     }
 
     if (
-      document.getElementById(cnvId + n + 'Lbl').innerHTML !==
-      '<th scope="row">' + n + '</th><td>' + t + '</td>'
+      document.getElementById(cnvId + n + lbl).innerHTML !==
+      '<th scope="row">' + nm + '</th><td>' + t + '</td>'
     ) {
-      document.getElementById(cnvId + n + 'Lbl').innerHTML =
-        '<th scope="row">' + n + '</th><td>' + t + '</td>';
+      document.getElementById(cnvId + n + lbl).innerHTML =
+        '<th scope="row">' + nm + '</th><td>' + t + '</td>';
     }
   }
 };
