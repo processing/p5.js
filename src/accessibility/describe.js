@@ -84,7 +84,7 @@ p5.prototype.describe = function(t, d) {
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //description text.
-  if (d === 'label') {
+  if (d === this.LABEL) {
     if (document.getElementById(cnvId + '_Label') === null) {
       document
         .getElementById(cnvId)
@@ -205,7 +205,7 @@ p5.prototype.describeElement = function(n, t, d) {
   //If display is LABEL creates a div adjacent to the canvas element with
   //a table, a row header cell with the name of the elements,
   //and adds the description of the element in adjecent cell.
-  if (d === 'label') {
+  if (d === this.LABEL) {
     if (document.getElementById(cnvId + '_Label') === null) {
       document
         .getElementById(cnvId)
