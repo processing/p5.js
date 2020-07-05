@@ -111,10 +111,14 @@ p5.prototype.describe = function(t, d) {
  * Helper function for describe() and describeElement().
  */
 p5.prototype._descriptionText = function(t) {
+  //if string does not end with '.'
   if (t.endsWith('.') === false) {
+    //add '.' to the end of string
     t = t + '.';
   }
+  //if first character of string is not capitalized
   if (/^[A-Z]/.test(t) === false) {
+    //capitalize first character of string
     t = t[0].toUpperCase() + t.slice(1);
   }
   return t;
@@ -245,12 +249,18 @@ p5.prototype.describeElement = function(n, t, d) {
  */
 p5.prototype._elementName = function(n) {
   let lm = n[n.length - 1];
+  //check if last character of string n is '.', ';', or ','
   if (lm === '.' || lm === ';' || lm === ',') {
+    //replace last character with ':'
     n = n.replace(/.$/, ':');
+    //if string n does not end with ':'
   } else if (n.endsWith(':') === false) {
+    //add ':'' at the end of string
     n = n + ':';
   }
+  //if first character of string is not capitalized
   if (/^[A-Z]/.test(n) === false) {
+    //capitalize first character
     n = n[0].toUpperCase() + n.slice(1);
   }
   return n;
