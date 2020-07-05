@@ -17,7 +17,7 @@ Access here means making p5.js better for:
 - People who are lesbian, gay, bisexual, trans, or queer
 - People with marginalized genders
 - People with disabilities or illness
-- and other people who are systemically excluded
+- and other people who are systemically excluded and historically underrepresented
 
 ### Examples
 
