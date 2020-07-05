@@ -38,9 +38,9 @@ import p5 from '../core/main';
  * background('pink');
  * fill('red');
  * noStroke();
- * ellipse(66.6, 66.6, 20, 20);
- * ellipse(83.2, 66.6, 20, 20);
- * triangle(91.2, 72.6, 75, 95, 58.6, 72.6);
+ * ellipse(67, 67, 20, 20);
+ * ellipse(83, 67, 20, 20);
+ * triangle(91, 73, 75, 95, 59, 73);
  * </code>
  * </div>
  *
