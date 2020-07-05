@@ -32,4 +32,4 @@ There are other things we haven't thought of yet and we're excited to figure out
 
 ## Maintenance
 
-We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in or how closely they are related to our focus on access.
+We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in because we believe consistency of the tool makes it more accessible for beginners.
