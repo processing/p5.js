@@ -13,7 +13,7 @@ Increasing access is not a focus on expanding the raw number of people in the p5
 Access here means making p5.js better for:
 
 - People who speak languages other than English
-- Black people, Indigenous peoples, and people of Color
+- Black people, Indigenous peoples, and People of Color
 - People who are lesbian, gay, bisexual, trans, or queer
 - People with marginalized genders
 - People with disabilities or illness
