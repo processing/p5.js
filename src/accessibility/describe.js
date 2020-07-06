@@ -75,6 +75,9 @@ p5.prototype.describe = function(t, d) {
   p5._validateParameters('describe', arguments);
   //Creates a sub DOM inside of the canvas element and populates
   //it with description text.
+  if (typeof t !== 'string') {
+    return;
+  }
   t = this._descriptionText(t);
   if (document.getElementById(cnvId + ds) === null) {
     document.getElementById(cnvId).innerHTML =
@@ -123,7 +126,11 @@ p5.prototype.describe = function(t, d) {
 /**
  * Helper function for describe() and describeElement().
  */
+
 p5.prototype._descriptionText = function(t) {
+  if (t === this.LABEL || t === this.FALLBACK) {
+    throw new Error('description should not be LABEL or FALLBACK');
+  }
   //if string does not end with '.'
   if (t.endsWith('.') === false) {
     //add '.' to the end of string
@@ -184,6 +191,9 @@ p5.prototype._descriptionText = function(t) {
 
 p5.prototype.describeElement = function(n, t, d) {
   p5._validateParameters('describeElement', arguments);
+  if (typeof t !== 'string' || typeof n !== 'string') {
+    return;
+  }
   const cnvId = this.canvas.id;
   t = this._descriptionText(t);
   let nm = this._elementName(n);
@@ -266,6 +276,9 @@ p5.prototype.describeElement = function(n, t, d) {
  * Helper function for describeElement().
  */
 p5.prototype._elementName = function(n) {
+  if (n === this.LABEL || n === this.FALLBACK) {
+    throw new Error('element name should not be LABEL or FALLBACK');
+  }
   let lm = n[n.length - 1];
   //check if last character of string n is '.', ';', or ','
   if (lm === '.' || lm === ';' || lm === ',') {
