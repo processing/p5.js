@@ -7,13 +7,13 @@
 
 import p5 from '../core/main';
 const ds = '_Description'; //Fallback container
-const dsc = '_dsc'; //Fallback description
-const eDsc = '_eDsc'; //Fallback Table
+const fds = '_fds'; //Fallback description
+const ft = '_ft'; //Fallback Table
 const fte = '_fte_'; //Fallback Table Element
-const lbd = '_Label'; //Label container
-const dlb = '_dLbl'; //Label description
-const elb = '_eLbl'; //Label Table
-const lbl = '_lte_'; //Lable Table Element
+const lb = '_Label'; //Label container
+const lds = '_lds'; //Label description
+const lt = '_lt'; //Label Table
+const lte = '_lte_'; //Lable Table Element
 
 /**
  * Creates a screen-reader accessible description for the canvas in the DOM.
@@ -83,38 +83,39 @@ p5.prototype.describe = function(t, d) {
       ds +
       '" role="region" aria-label="Canvas Description"><p id="' +
       cnvId +
-      dsc +
+      fds +
       '"></p></div>';
-  } else if (document.getElementById(cnvId + dsc) === null) {
+  } else if (document.getElementById(cnvId + fds) === null) {
     document
-      .getElementById(cnvId + eDsc)
-      .insertAdjacentHTML('beforebegin', '<p id="' + cnvId + dsc + '"></p>');
+      .getElementById(cnvId + ft)
+      .insertAdjacentHTML('beforebegin', '<p id="' + cnvId + fds + '"></p>');
   }
-  if (document.getElementById(cnvId + dsc).innerHTML !== t) {
-    document.getElementById(cnvId + dsc).innerHTML = t;
+  if (document.getElementById(cnvId + fds).innerHTML !== t) {
+    document.getElementById(cnvId + fds).innerHTML = t;
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //description text.
   if (d === this.LABEL) {
-    if (document.getElementById(cnvId + lbd) === null) {
+    if (document.getElementById(cnvId + lb) === null) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
           'afterend',
           '<div id="' +
             cnvId +
-            lbd +
+            lb +
             '" class="p5Label"><p id=' +
             cnvId +
-            '_dLbl></p></div>'
+            lds +
+            '></p></div>'
         );
-    } else if (document.getElementById(cnvId + dlb) === null) {
+    } else if (document.getElementById(cnvId + lds) === null) {
       document
-        .getElementById(cnvId + elb)
-        .insertAdjacentHTML('beforebegin', '<p id=' + cnvId + dlb + '></p>');
+        .getElementById(cnvId + lt)
+        .insertAdjacentHTML('beforebegin', '<p id=' + cnvId + lds + '></p>');
     }
-    if (document.getElementById(cnvId + dlb).innerHTML !== t) {
-      document.getElementById(cnvId + dlb).innerHTML = t;
+    if (document.getElementById(cnvId + lds).innerHTML !== t) {
+      document.getElementById(cnvId + lds).innerHTML = t;
     }
   }
 };
@@ -196,23 +197,23 @@ p5.prototype.describeElement = function(n, t, d) {
       ds +
       '" role="region" aria-label="Canvas Description"><table id="' +
       cnvId +
-      eDsc +
+      ft +
       '"><caption>Canvas elements and their descriptions</caption></table></div>';
-  } else if (document.getElementById(cnvId + eDsc) === null) {
+  } else if (document.getElementById(cnvId + ft) === null) {
     document
-      .getElementById(cnvId + dsc)
+      .getElementById(cnvId + fds)
       .insertAdjacentHTML(
         'afterend',
         '<table id="' +
           cnvId +
-          eDsc +
+          ft +
           '"><caption>Canvas elements and their descriptions</caption></table>'
       );
   }
   if (document.getElementById(cnvId + fte + n) === null) {
     let tr = document.createElement('tr');
     tr.id = cnvId + fte + n;
-    document.getElementById(cnvId + eDsc).appendChild(tr);
+    document.getElementById(cnvId + ft).appendChild(tr);
   }
   if (
     document.getElementById(cnvId + fte + n).innerHTML !==
@@ -225,38 +226,38 @@ p5.prototype.describeElement = function(n, t, d) {
   //a table, a row header cell with the name of the elements,
   //and adds the description of the element in adjecent cell.
   if (d === this.LABEL) {
-    if (document.getElementById(cnvId + lbd) === null) {
+    if (document.getElementById(cnvId + lb) === null) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
           'afterend',
           '<div id="' +
             cnvId +
-            lbd +
+            lb +
             '" class="p5Label"><table id="' +
             cnvId +
-            elb +
+            lt +
             '"></table></div>'
         );
-    } else if (document.getElementById(cnvId + elb) === null) {
+    } else if (document.getElementById(cnvId + lt) === null) {
       document
-        .getElementById(cnvId + dlb)
+        .getElementById(cnvId + lds)
         .insertAdjacentHTML(
           'afterend',
-          '<table id="' + cnvId + elb + '"></table>'
+          '<table id="' + cnvId + lt + '"></table>'
         );
     }
-    if (document.getElementById(cnvId + lbl + n) === null) {
+    if (document.getElementById(cnvId + lte + n) === null) {
       let tr = document.createElement('tr');
-      tr.id = cnvId + lbl + n;
-      document.getElementById(cnvId + elb).appendChild(tr);
+      tr.id = cnvId + lte + n;
+      document.getElementById(cnvId + lt).appendChild(tr);
     }
 
     if (
-      document.getElementById(cnvId + lbl + n).innerHTML !==
+      document.getElementById(cnvId + lte + n).innerHTML !==
       '<th scope="row">' + nm + '</th><td>' + t + '</td>'
     ) {
-      document.getElementById(cnvId + lbl + n).innerHTML =
+      document.getElementById(cnvId + lte + n).innerHTML =
         '<th scope="row">' + nm + '</th><td>' + t + '</td>';
     }
   }
