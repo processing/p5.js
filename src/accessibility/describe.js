@@ -16,7 +16,7 @@ const lt = '_lt'; //Label Table
 const lte = '_lte_'; //Lable Table Element
 
 /**
- * Creates a screen-reader accessible description for the canvas in the DOM.
+ * Creates a screen-reader accessible description for the canvas.
  * The first parameter should be a string with a description of the canvas.
  * The second parameter is optional. If specified, it determines how the
  * description is displayed.
@@ -147,7 +147,7 @@ p5.prototype._descriptionText = function(t) {
 /**
  * This function creates a screen-reader accessible
  * description for elements —shapes or groups of shapes that create
- * meaning together— in the canvas sub DOM. The first paramater should
+ * meaning together— in the canvas. The first paramater should
  * be the name of the element. The second parameter should be a string
  * with a description of the element. The third parameter is optional.
  * If specified, it determines how the element description is displayed.
