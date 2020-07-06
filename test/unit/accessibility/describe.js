@@ -40,24 +40,43 @@ suite('describe', function() {
     test('should create description as fallback', function() {
       myp5.describe(a);
       let actual = getInner(myID + '_fds');
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create description when called after describeElement()', function() {
       myp5.describeElement(b, c);
       myp5.describe(a);
       let actual = getInner(myID + '_fds');
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create Label adjacent to canvas', function() {
       myp5.describe(a, myp5.LABEL);
       let actual = getInner(myID + '_lds');
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create Label adjacent to canvas when label of element already exists', function() {
       myp5.describeElement(b, c, myp5.LABEL);
       myp5.describe(a, myp5.LABEL);
       let actual = getInner(myID + '_lds');
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
+    });
+    test('wrong param type at #0', function() {
+      assert.validationError(function() {
+        myp5.describe(1, myp5.LABEL);
+      });
+    });
+    test('no params', function() {
+      assert.validationError(function() {
+        myp5.describe();
+      });
+    });
+    test('err when LABEL at param #0', function() {
+      assert.throws(
+        function() {
+          myp5.describe(myp5.LABEL);
+        },
+        Error,
+        'description should not be LABEL or FALLBACK'
+      );
     });
   });
 
@@ -70,24 +89,52 @@ suite('describe', function() {
     test('should create element description as fallback', function() {
       myp5.describeElement(a, b);
       let actual = getInner(myID + '_fte_' + a);
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create element description when called after describe()', function() {
       myp5.describe(c);
       myp5.describeElement(a, b);
       let actual = getInner(myID + '_fte_' + a);
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create element label adjacent to canvas', function() {
       myp5.describeElement(a, b, myp5.LABEL);
       const actual = getInner(myID + '_lte_' + a);
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
     });
     test('should create element label adjacent to canvas when label of describe() already exists', function() {
       myp5.describe(c, myp5.LABEL);
       myp5.describeElement(a, b, myp5.LABEL);
       const actual = getInner(myID + '_lte_' + a);
-      assert.equal(actual, expected);
+      assert.deepEqual(actual, expected);
+    });
+    test('wrong param type at #0 and #1', function() {
+      assert.validationError(function() {
+        myp5.describeElement(1, 2);
+      });
+    });
+    test('no params', function() {
+      assert.validationError(function() {
+        myp5.describeElement();
+      });
+    });
+    test('err when LABEL at param #0', function() {
+      assert.throws(
+        function() {
+          myp5.describeElement(myp5.LABEL, b);
+        },
+        Error,
+        'element name should not be LABEL or FALLBACK'
+      );
+    });
+    test('err when LABEL at param #1', function() {
+      assert.throws(
+        function() {
+          myp5.describeElement(a, myp5.LABEL);
+        },
+        Error,
+        'description should not be LABEL or FALLBACK'
+      );
     });
   });
 });
