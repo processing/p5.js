@@ -69,24 +69,24 @@ suite('describe', function() {
     });
     test('should create element description as fallback', function() {
       myp5.describeElement(a, b);
-      let actual = getInner(myID + a);
+      let actual = getInner(myID + '_fte_' + a);
       assert.equal(actual, expected);
     });
     test('should create element description when called after describe()', function() {
       myp5.describe(c);
       myp5.describeElement(a, b);
-      let actual = getInner(myID + a);
+      let actual = getInner(myID + '_fte_' + a);
       assert.equal(actual, expected);
     });
     test('should create element label adjacent to canvas', function() {
       myp5.describeElement(a, b, myp5.LABEL);
-      const actual = getInner(myID + a + 'Lbl');
+      const actual = getInner(myID + '_lte_' + a);
       assert.equal(actual, expected);
     });
     test('should create element label adjacent to canvas when label of describe() already exists', function() {
       myp5.describe(c, myp5.LABEL);
       myp5.describeElement(a, b, myp5.LABEL);
-      const actual = getInner(myID + a + 'Lbl');
+      const actual = getInner(myID + '_lte_' + a);
       assert.equal(actual, expected);
     });
   });

@@ -6,13 +6,14 @@
  */
 
 import p5 from '../core/main';
-const ds = '_Description';
-const dsc = '_dsc';
-const eDsc = '_eDsc';
-const lbd = '_Label';
-const dlb = '_dLbl';
-const elb = '_eLbl';
-const lbl = 'Lbl';
+const ds = '_Description'; //Fallback container
+const dsc = '_dsc'; //Fallback description
+const eDsc = '_eDsc'; //Fallback Table
+const fte = '_fte_'; //Fallback Table Element
+const lbd = '_Label'; //Label container
+const dlb = '_dLbl'; //Label description
+const elb = '_eLbl'; //Label Table
+const lbl = '_lte_'; //Lable Table Element
 
 /**
  * Creates a screen-reader accessible description for the canvas in the DOM.
@@ -208,16 +209,16 @@ p5.prototype.describeElement = function(n, t, d) {
           '"><caption>Canvas elements and their descriptions</caption></table>'
       );
   }
-  if (document.getElementById(cnvId + n) === null) {
+  if (document.getElementById(cnvId + fte + n) === null) {
     let tr = document.createElement('tr');
-    tr.id = cnvId + n;
+    tr.id = cnvId + fte + n;
     document.getElementById(cnvId + eDsc).appendChild(tr);
   }
   if (
-    document.getElementById(cnvId + n).innerHTML !==
+    document.getElementById(cnvId + fte + n).innerHTML !==
     '<th scope="row">' + nm + '</th><td>' + t + '</td>'
   ) {
-    document.getElementById(cnvId + n).innerHTML =
+    document.getElementById(cnvId + fte + n).innerHTML =
       '<th scope="row">' + nm + '</th><td>' + t + '</td>';
   }
   //If display is LABEL creates a div adjacent to the canvas element with
@@ -245,17 +246,17 @@ p5.prototype.describeElement = function(n, t, d) {
           '<table id="' + cnvId + elb + '"></table>'
         );
     }
-    if (document.getElementById(cnvId + n + lbl) === null) {
+    if (document.getElementById(cnvId + lbl + n) === null) {
       let tr = document.createElement('tr');
-      tr.id = cnvId + n + lbl;
+      tr.id = cnvId + lbl + n;
       document.getElementById(cnvId + elb).appendChild(tr);
     }
 
     if (
-      document.getElementById(cnvId + n + lbl).innerHTML !==
+      document.getElementById(cnvId + lbl + n).innerHTML !==
       '<th scope="row">' + nm + '</th><td>' + t + '</td>'
     ) {
-      document.getElementById(cnvId + n + lbl).innerHTML =
+      document.getElementById(cnvId + lbl + n).innerHTML =
         '<th scope="row">' + nm + '</th><td>' + t + '</td>';
     }
   }
