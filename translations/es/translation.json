@@ -21,7 +21,6 @@
       "type_WRONG_TYPE": ""
     },
     "globalErrors": {
-      "libraryError": "",
       "reference": {
         "notDefined": ""
       },
@@ -36,6 +35,7 @@
         "notfuncObj": ""
       }
     },
+    "libraryError": "",
     "location": "",
     "misspelling": "",
     "misusedTopLevel": "",
@@ -54,6 +54,7 @@
       "p_9": ""
     },
     "pre": "🌸 p5.js dice: {{message}}",
-    "welcome": ""
+    "welcome": "",
+    "wrongPreload": ""
   }
 }

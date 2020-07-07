@@ -355,14 +355,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
       frame.functionName = frame.functionName || '';
     });
 
+    // isInternal - Did this error happen inside the library
     let isInternal = false;
-    let p5FileName, friendlyStack;
+    let p5FileName, friendlyStack, currentEntryPoint;
     for (let i = stacktrace.length - 1; i >= 0; i--) {
       let splitted = stacktrace[i].functionName.split('.');
       if (entryPoints.includes(splitted[splitted.length - 1])) {
         // remove everything below an entry point function (setup, draw, etc).
         // (it's usually the internal initialization calls)
         friendlyStack = stacktrace.slice(0, i + 1);
+        currentEntryPoint = splitted[splitted.length - 1];
         for (let j = 0; j < i; j++) {
           // Due to the current build process, all p5 functions have
           // _main.default in their names in the final build. This is the
@@ -391,21 +393,46 @@ if (typeof IS_MINIFIED !== 'undefined') {
         .split('.')
         .slice(-1)[0];
 
-      const location = `${friendlyStack[0].fileName}:${
-        friendlyStack[0].lineNumber
-      }:${friendlyStack[0].columnNumber}`;
+      let location;
+      if (
+        friendlyStack[0].fileName &&
+        friendlyStack[0].lineNumber &&
+        friendlyStack[0].columnNumber
+      ) {
+        location = `${friendlyStack[0].fileName}:${
+          friendlyStack[0].lineNumber
+        }:${friendlyStack[0].columnNumber}`;
+      }
 
       // If already been handled by another component of the FES
       if (p5._fesLogCache[location]) return [true, null];
-      // Library error
-      p5._friendlyError(
-        translator('fes.globalErrors.libraryError', {
-          func: func,
-          location: location,
-          error: error.message
-        }),
-        func
-      );
+      if (
+        currentEntryPoint === 'preload' &&
+        p5.prototype._preloadMethods[func] == null
+      ) {
+        p5._friendlyError(
+          translator('fes.wrongPreload', {
+            func: func,
+            location: location
+              ? translator('fes.location', {
+                  location
+                })
+              : '',
+            error: error.message
+          }),
+          'preload'
+        );
+      } else {
+        // Library error
+        p5._friendlyError(
+          translator('fes.libraryError', {
+            func: func,
+            location: location,
+            error: error.message
+          }),
+          func
+        );
+      }
     }
     return [isInternal, friendlyStack];
   };
@@ -477,6 +504,18 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     if (!matchedError) return;
 
+    let location;
+    if (
+      stacktrace &&
+      stacktrace[0].fileName &&
+      stacktrace[0].lineNumber &&
+      stacktrace[0].columnNumber
+    ) {
+      location = `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+        stacktrace[0].columnNumber
+      }`;
+    }
+
     switch (error.name) {
       case 'SyntaxError': {
         switch (matchedError.type) {
@@ -524,16 +563,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url1 = 'https://p5js.org/examples/data-variable-scope.html';
             let url2 =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
-            let location;
-            if (
-              stacktrace[0].fileName &&
-              stacktrace[0].lineNumber &&
-              stacktrace[0].columnNumber
-            ) {
-              location = `${stacktrace[0].fileName}:${
-                stacktrace[0].lineNumber
-              }:${stacktrace[0].columnNumber}`;
-            }
             p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
                 url1,
@@ -563,15 +592,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let location;
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
-            if (
-              stacktrace[0].fileName &&
-              stacktrace[0].lineNumber &&
-              stacktrace[0].columnNumber
-            ) {
-              location = `${stacktrace[0].fileName}:${
-                stacktrace[0].lineNumber
-              }:${stacktrace[0].columnNumber}`;
-            }
             let translationObj = {
               url,
               symbol: splitSym[splitSym.length - 1],
