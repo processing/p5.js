@@ -54,6 +54,9 @@ let defineMisusedAtTopLevelCode = null;
 // used in misspelling detection
 const EDIT_DIST_THRESHOLD = 2;
 
+// to enable or disable styling (color, font-size, etc. ) for fes messages
+const ENABLE_FES_STYLING = false;
+
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
 } else {
@@ -155,8 +158,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // Type to color
       color = typeColors[color];
     }
-    if (func.substring(0, 4) === 'load') {
-      console.log(translator('fes.pre', { message }));
+
+    let prefixedMsg;
+    let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
+    if (func == null || func.substring(0, 4) === 'load') {
+      prefixedMsg = translator('fes.pre', { message });
     } else {
       const methodParts = func.split('.');
       const referenceSection =
@@ -165,11 +171,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
-      console.log(
-        translator('fes.pre', {
-          message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
-        })
-      );
+      prefixedMsg = translator('fes.pre', {
+        message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
+      });
+    }
+    if (ENABLE_FES_STYLING) {
+      console.log('%c' + prefixedMsg, style.join(';'));
+    } else {
+      console.log(prefixedMsg);
     }
   };
   /**
@@ -306,7 +315,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       }
     });
 
-    if (min > EDIT_DIST_THRESHOLD) return;
+    if (min > Math.min(EDIT_DIST_THRESHOLD, errSym.length)) return false;
 
     let symbol = misusedAtTopLevelCode[minIndex];
 
@@ -441,36 +450,150 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (!error) return;
     const log = p5._fesLogger;
 
-    // Syntax Errors have no stacktrace attached to them, must be handled separately
-    // TODO
-    if (error.name === 'SyntaxError') return;
-
     let stacktrace = p5._getErrorStackParser().parse(error);
     let [isInternal, friendlyStack] = processStack(error, stacktrace);
-    if (isInternal || !friendlyStack) return;
-    printFriendlyStack(friendlyStack);
+    if (isInternal) {
+      if (friendlyStack) printFriendlyStack(friendlyStack);
+      return;
+    }
+
+    const errList = errorTable[error.name];
+    if (!errList) return; // this type of error can't be handled yet
+    let matchedError;
+    for (const obj of errList) {
+      let string = obj.msg;
+      // capture the primary symbol mentioned in the error
+      string = string.replace(new RegExp('{{}}', 'g'), '([a-zA-Z0-9_]+)');
+      string = string.replace(new RegExp('{{.}}', 'g'), '(.+)');
+      string = string.replace(new RegExp('{}', 'g'), '(?:[a-zA-Z0-9_]+)');
+      let matched = error.message.match(string);
+
+      if (matched) {
+        matchedError = Object.assign({}, obj);
+        matchedError.match = matched;
+        break;
+      }
+    }
+
+    if (!matchedError) return;
+
     switch (error.name) {
-      case 'ReferenceError': {
-        const errList = errorTable.ReferenceError;
-        for (const obj of errList) {
-          let string = obj.msg;
-          // capture the primary symbol mentioned in the error
-          string = string.replace('{{}}', '([a-zA-Z0-9_]+)');
-          string = string.replace('{}', '(?:[a-zA-Z0-9_]+)');
-          let matched = error.message.match(string);
-          if (matched && matched[1]) {
-            switch (obj.type) {
-              case 'NOTDEFINED':
-                handleMisspelling(
-                  matched[1],
-                  error,
-                  typeof log === 'function' ? log : undefined
-                );
-                break;
-            }
+      case 'SyntaxError': {
+        switch (matchedError.type) {
+          case 'INVALIDTOKEN': {
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.invalidToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'UNEXPECTEDTOKEN': {
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.unexpectedToken', {
+                url
+              })
+            );
+            break;
           }
         }
         break;
+      }
+      case 'ReferenceError': {
+        switch (matchedError.type) {
+          case 'NOTDEFINED': {
+            let errSym = matchedError.match[1];
+
+            if (
+              errSym &&
+              handleMisspelling(
+                errSym,
+                error,
+                typeof log === 'function' ? log : undefined
+              )
+            ) {
+              break;
+            }
+
+            // if the flow gets this far, this is likely not a misspelling
+            // of a p5 property/function
+            let url1 = 'https://p5js.org/examples/data-variable-scope.html';
+            let url2 =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
+            let location;
+            if (
+              stacktrace[0].fileName &&
+              stacktrace[0].lineNumber &&
+              stacktrace[0].columnNumber
+            ) {
+              location = `${stacktrace[0].fileName}:${
+                stacktrace[0].lineNumber
+              }:${stacktrace[0].columnNumber}`;
+            }
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.notDefined', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: location
+                  ? translator('fes.location', {
+                      location
+                    })
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+
+            break;
+          }
+        }
+        break;
+      }
+
+      case 'TypeError': {
+        switch (matchedError.type) {
+          case 'NOTFUNC': {
+            let errSym = matchedError.match[1];
+            let splitSym = errSym.split('.');
+            let location;
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+            if (
+              stacktrace[0].fileName &&
+              stacktrace[0].lineNumber &&
+              stacktrace[0].columnNumber
+            ) {
+              location = `${stacktrace[0].fileName}:${
+                stacktrace[0].lineNumber
+              }:${stacktrace[0].columnNumber}`;
+            }
+            let translationObj = {
+              url,
+              symbol: splitSym[splitSym.length - 1],
+              obj: splitSym.slice(0, splitSym.length - 1).join('.'),
+              location: location
+                ? translator('fes.location', {
+                    location
+                  })
+                : ''
+            };
+
+            if (splitSym.length > 1) {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfuncObj', translationObj)
+              );
+            } else {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfunc', translationObj)
+              );
+            }
+          }
+        }
       }
     }
   };

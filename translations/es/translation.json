@@ -22,8 +22,19 @@
     },
     "globalErrors": {
       "libraryError": "",
+      "reference": {
+        "notDefined": ""
+      },
       "stackSubseq": "",
-      "stackTop": ""
+      "stackTop": "",
+      "syntax": {
+        "invalidToken": "",
+        "unexpectedToken": ""
+      },
+      "type": {
+        "notfunc": "",
+        "notfuncObj": ""
+      }
     },
     "location": "",
     "misspelling": "",

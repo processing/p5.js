@@ -22,8 +22,19 @@
     },
     "globalErrors": {
       "libraryError": "An error with message \"{{error}}\" was thrown inside the p5js library when you called {{func}} {{location}}\nIf not stated otherwise, it is likely an issue with the arguments passed to {{func}}.",
+      "reference": {
+        "notDefined": "There's an error due to \"{{symbol}}\" not being defined in the current scope {{location}}.\n\nIf you had defined it in your code, check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
+      },
       "stackSubseq": "▶️ Called from line {{line}} in function {{func}} in {{file}} ({{location}})\n\n",
-      "stackTop": "▶️ Error at line {{line}} in function {{func}} in {{file}} ({{location}})\n\n"
+      "stackTop": "▶️ Error at line {{line}} in function {{func}} in {{file}} ({{location}})\n\n",
+      "syntax": {
+        "invalidToken": "There's a syntax error due to a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nUsually this can when copying code from some other place. For example \" is supported but “ isn't.\nFor more: {{url}}",
+        "unexpectedToken": "There's a syntax error due to a symbol that wasn't expected at it's place.\nUsually this is due to a typo. Check the line number in the error below for anything missing/extra.\nFor more: {{url}}"
+      },
+      "type": {
+        "notfunc": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nCheck the spelling, letter-casing (Javacript is case-sensitive) and its type.\nFor more: {{url}}",
+        "notfuncObj": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (Javacript is case-sensitive) and its type.\nFor more: {{url}}"
+      }
     },
     "location": "(at {{location}})",
     "misspelling": "It seems that you may have accidently written {{name}} instead of {{actualName}} {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
