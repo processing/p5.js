@@ -17,7 +17,8 @@ Access here means making p5.js better for:
 - People who are lesbian, gay, bisexual, trans, or queer
 - People with marginalized genders
 - People with disabilities or illness
-- People with little or no prior experience in open source and creative coding 
+- People who lack opportunities and/or resources to engage with creative coding due to class or income
+- People with little or no prior experience in open source and creative coding
 - and other people who are systemically excluded and historically underrepresented
 
 ### Examples
@@ -28,6 +29,7 @@ These are examples of efforts we believe to increase access:
 - Improving our support for assistive technologies (such as screenreaders)
 - Following Web Content Accessibility Guidelines in our tools and working towards making it easier for users to follow them in their projects
 - Making p5.js error messages more helpful and supportive to people using the tool
+- Mentoring and supporting learners of p5.js within communities that are historically excluded from and marginalized in creative coding and the digital arts
 
 There are other things we haven't thought of yet and we're excited to figure out what they are together. If you have an idea, please [share it as an issue](https://github.com/processing/p5.js/issues/new/choose).
 
