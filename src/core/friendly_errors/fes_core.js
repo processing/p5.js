@@ -323,17 +323,27 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // differ in their name ( either letter difference or difference of case )
     if (errSym !== symbol.name) {
       const parsed = p5._getErrorStackParser().parse(error);
-      const location =
-        parsed[0] && parsed[0].fileName
-          ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
-              parsed[0].columnNumber
-            }`
-          : null;
+      let locationObj;
+      if (
+        parsed &&
+        parsed[0] &&
+        parsed[0].fileName &&
+        parsed[0].lineNumber &&
+        parsed[0].columnNumber
+      ) {
+        locationObj = {
+          location: `${parsed[0].fileName}:${parsed[0].lineNumber}:${
+            parsed[0].columnNumber
+          }`,
+          file: parsed[0].fileName,
+          line: parsed[0].lineNumber
+        };
+      }
       const msg = translator('fes.misspelling', {
         name: errSym,
         actualName: symbol.name,
         type: symbol.type,
-        location: location ? translator('fes.location', { location }) : ''
+        location: locationObj ? translator('fes.location', locationObj) : ''
       });
 
       if (log) {
@@ -379,9 +389,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
       }
     }
 
+    // in some cases ( errors in promises, callbacks, etc), no entry-point
+    // function may be found in the stacktrace. In that case just use the
+    // entire stacktrace for friendlyStack
     if (!friendlyStack) friendlyStack = stacktrace;
 
     if (isInternal) {
+      // the frameIndex property is added before the filter, so frameIndex
+      // corresponds to the index of a frame in the original stacktrace.
+      // Then we filter out all frames which belong to the file that contains
+      // the p5 library
       friendlyStack = friendlyStack
         .map((frame, index) => {
           frame.frameIndex = index;
@@ -389,23 +406,33 @@ if (typeof IS_MINIFIED !== 'undefined') {
         })
         .filter(frame => frame.fileName !== p5FileName);
 
+      // get the function just above the topmost frame in the friendlyStack.
+      // i.e the name of the library function called from user's code
       const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
         .split('.')
         .slice(-1)[0];
 
-      let location;
+      // Try and get the location (line no.) from the top element of the stack
+      let locationObj;
       if (
         friendlyStack[0].fileName &&
         friendlyStack[0].lineNumber &&
         friendlyStack[0].columnNumber
       ) {
-        location = `${friendlyStack[0].fileName}:${
-          friendlyStack[0].lineNumber
-        }:${friendlyStack[0].columnNumber}`;
+        locationObj = {
+          location: `${friendlyStack[0].fileName}:${
+            friendlyStack[0].lineNumber
+          }:${friendlyStack[0].columnNumber}`,
+          file: friendlyStack[0].fileName.split('/').slice(-1),
+          line: friendlyStack[0].lineNumber
+        };
+
+        // if already handled by another part of the FES, don't handle again
+        if (p5._fesLogCache[locationObj.location]) return [true, null];
       }
 
-      // If already been handled by another component of the FES
-      if (p5._fesLogCache[location]) return [true, null];
+      // Check if the error is due to a non loadX method being used incorrectly
+      // in preload
       if (
         currentEntryPoint === 'preload' &&
         p5.prototype._preloadMethods[func] == null
@@ -413,10 +440,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
         p5._friendlyError(
           translator('fes.wrongPreload', {
             func: func,
-            location: location
-              ? translator('fes.location', {
-                  location
-                })
+            location: locationObj
+              ? translator('fes.location', locationObj)
               : '',
             error: error.message
           }),
@@ -427,7 +452,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
         p5._friendlyError(
           translator('fes.libraryError', {
             func: func,
-            location: location,
+            location: locationObj
+              ? translator('fes.location', locationObj)
+              : '',
             error: error.message
           }),
           func
@@ -437,6 +464,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return [isInternal, friendlyStack];
   };
 
+  // prints a friendly stacktrace which only includes user-written functions
+  // and is easier for newcomers to understand
   const printFriendlyStack = friendlyStack => {
     if (friendlyStack.length > 1) {
       let stacktraceMsg = '';
@@ -478,7 +507,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const log = p5._fesLogger;
 
     let stacktrace = p5._getErrorStackParser().parse(error);
+    // process the stacktrace from the browser and simplify it to give
+    // friendlyStack.
     let [isInternal, friendlyStack] = processStack(error, stacktrace);
+
+    // if this is an internal library error, the type of the error is not relevant,
+    // only the user code that lead to it is. Show the friendlyStack and return
     if (isInternal) {
       if (friendlyStack) printFriendlyStack(friendlyStack);
       return;
@@ -504,20 +538,28 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     if (!matchedError) return;
 
-    let location;
+    // Try and get the location from the top element of the stack
+    let locationObj;
     if (
       stacktrace &&
       stacktrace[0].fileName &&
       stacktrace[0].lineNumber &&
       stacktrace[0].columnNumber
     ) {
-      location = `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
-        stacktrace[0].columnNumber
-      }`;
+      locationObj = {
+        location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+          stacktrace[0].columnNumber
+        }`,
+        file: stacktrace[0].fileName.split('/').slice(-1),
+        line: friendlyStack[0].lineNumber
+      };
     }
 
     switch (error.name) {
       case 'SyntaxError': {
+        // We can't really do much with syntax errors other than try to use
+        // a simpler framing of the error message. The stack isn't available
+        // for syntax errors
         switch (matchedError.type) {
           case 'INVALIDTOKEN': {
             let url =
@@ -568,16 +610,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
                 url1,
                 url2,
                 symbol: errSym,
-                location: location
-                  ? translator('fes.location', {
-                      location
-                    })
+                location: locationObj
+                  ? translator('fes.location', locationObj)
                   : ''
               })
             );
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
-
             break;
           }
         }
@@ -589,20 +628,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'NOTFUNC': {
             let errSym = matchedError.match[1];
             let splitSym = errSym.split('.');
-            let location;
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+
+            // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
             let translationObj = {
               url,
               symbol: splitSym[splitSym.length - 1],
               obj: splitSym.slice(0, splitSym.length - 1).join('.'),
-              location: location
-                ? translator('fes.location', {
-                    location
-                  })
+              location: locationObj
+                ? translator('fes.location', locationObj)
                 : ''
             };
 
+            // There are two cases to handle here. When the function is called
+            // as a property of an object and when it's called independently.
+            // Both have different explanations.
             if (splitSym.length > 1) {
               p5._friendlyError(
                 translator('fes.globalErrors.type.notfuncObj', translationObj)
@@ -612,6 +653,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
           }
         }
       }

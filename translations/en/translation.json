@@ -36,7 +36,7 @@
       }
     },
     "libraryError": "An error with message \"{{error}}\" occured inside the p5js library when you called {{func}} {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
-    "location": "(at {{location}})",
+    "location": "(on line {{line}} in {{file}} [{{location}}])",
     "misspelling": "It seems that you may have accidently written {{name}} instead of {{actualName}} {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
     "positions": {
@@ -53,7 +53,7 @@
       "p_8": "eighth",
       "p_9": "ninth"
     },
-    "pre": "🌸 p5.js says: {{message}}",
+    "pre": "\n🌸 p5.js says: {{message}}",
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
     "wrongPreload": "An error with message \"{{error}}\" occured inside the p5js library when you called {{func}} {{location}}.\n\nIf not stated otherwise, it might be due to {{func}} being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
   }
