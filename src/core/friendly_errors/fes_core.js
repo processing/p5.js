@@ -148,6 +148,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @return console logs
    */
   const report = (message, func, color) => {
+    // if p5._fesLogger is set ( i.e we are running tests ), use that
+    // instead of console.log
+    const log =
+      p5._fesLogger == null ? console.log.bind(console) : p5._fesLogger;
+
     if (doFriendlyWelcome) {
       friendlyWelcome();
       doFriendlyWelcome = false;
@@ -176,9 +181,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
       });
     }
     if (ENABLE_FES_STYLING) {
-      console.log('%c' + prefixedMsg, style.join(';'));
+      log('%c' + prefixedMsg, style.join(';'));
     } else {
-      console.log(prefixedMsg);
+      log(prefixedMsg);
     }
   };
   /**
@@ -260,7 +265,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // instance as context
     const instanceMode = context instanceof p5;
     context = instanceMode ? context : window;
-    const log = p5._fesLogger;
     const fnNames = entryPoints;
 
     const fxns = {};
@@ -284,11 +288,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
           name: prop,
           actualName: fxns[lowercase]
         });
-        if (log && typeof log === 'function') {
-          log(msg);
-        } else {
-          p5._friendlyError(msg, fxns[lowercase]);
-        }
+
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
@@ -298,7 +299,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // misusedAtTopLevel here is for convenience as it was an array that was
   // already defined when spelling check was implemented. For this particular
   // use-case, it's a misnomer.
-  const handleMisspelling = (errSym, error, log) => {
+  const handleMisspelling = (errSym, error) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
@@ -346,12 +347,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
         location: locationObj ? translator('fes.location', locationObj) : ''
       });
 
-      if (log) {
-        log(msg);
-      } else {
-        p5._friendlyError(msg, symbol.name);
-      }
+      p5._friendlyError(msg, symbol.name);
+      return true;
     }
+    return false;
   };
 
   const processStack = (error, stacktrace) => {
@@ -405,6 +404,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
           return frame;
         })
         .filter(frame => frame.fileName !== p5FileName);
+
+      // a weird case, if for some reason we can't identify the function called
+      // from user's code
+      if (friendlyStack.length === 0) return [true, null];
 
       // get the function just above the topmost frame in the friendlyStack.
       // i.e the name of the library function called from user's code
@@ -467,6 +470,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // prints a friendly stacktrace which only includes user-written functions
   // and is easier for newcomers to understand
   const printFriendlyStack = friendlyStack => {
+    const log =
+      p5._fesLogger && typeof p5._fesLogger === 'function'
+        ? p5._fesLogger
+        : console.log.bind(console);
     if (friendlyStack.length > 1) {
       let stacktraceMsg = '';
       friendlyStack.forEach((frame, idx) => {
@@ -487,7 +494,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         }
         stacktraceMsg += frameMsg;
       });
-      console.log(stacktraceMsg);
+      log(stacktraceMsg);
     }
   };
 
@@ -504,7 +511,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
       if (!(error instanceof Error)) return;
     }
     if (!error) return;
-    const log = p5._fesLogger;
 
     let stacktrace = p5._getErrorStackParser().parse(error);
     // process the stacktrace from the browser and simplify it to give
@@ -589,14 +595,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'NOTDEFINED': {
             let errSym = matchedError.match[1];
 
-            if (
-              errSym &&
-              handleMisspelling(
-                errSym,
-                error,
-                typeof log === 'function' ? log : undefined
-              )
-            ) {
+            if (errSym && handleMisspelling(errSym, error)) {
               break;
             }
 
