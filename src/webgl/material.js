@@ -706,12 +706,25 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * For example, if the specular material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
  * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer.
  * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
+ *
  * @method specularMaterial
- * @param  {Number} v1  gray value, red or hue value
- *                       (depending on the current color mode),
- * @param  {Number} [v2] green or saturation value
- * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} gray number specifying value between white and black.
+ * @param  {Number} [alpha] alpha value relative to current color range
+ *                                 (default is 0-255)
  * @chainable
+ */
+
+/**
+ * @method specularMaterial
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -730,12 +743,13 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * @alt
  * diffused radiating light source from top right of canvas
  */
+
 /**
  * @method specularMaterial
  * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
-p5.prototype.specularMaterial = function(v1, v2, v3) {
+p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   this._assert3d('specularMaterial');
   p5._validateParameters('specularMaterial', arguments);
 
