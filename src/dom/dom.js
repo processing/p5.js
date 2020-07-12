@@ -990,11 +990,13 @@ p5.prototype.createColorPicker = function(value) {
   self = addElement(elt, this);
   // Method to return a p5.Color object for the given color.
   self.color = function() {
-    if (value.mode) {
-      p5.prototype._colorMode = value.mode;
-    }
-    if (value.maxes) {
-      p5.prototype._colorMaxes = value.maxes;
+    if (value) {
+      if (value.mode) {
+        p5.prototype._colorMode = value.mode;
+      }
+      if (value.maxes) {
+        p5.prototype._colorMaxes = value.maxes;
+      }
     }
     return p5.prototype.color(this.elt.value);
   };
