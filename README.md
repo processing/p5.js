@@ -393,6 +393,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://skyperx.github.io"><img src="https://avatars1.githubusercontent.com/u/64559807?v=4" width="100px;" alt=""/><br /><sub><b>skyperx</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyperx" title="Code">💻</a></td>
     <td align="center"><a href="http://josepharonson.com/"><img src="https://avatars0.githubusercontent.com/u/32691229?v=4" width="100px;" alt=""/><br /><sub><b>Joseph Aronson</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=joeyaronson" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Ajoeyaronson" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://haideralipunjabi.com"><img src="https://avatars1.githubusercontent.com/u/11888687?v=4" width="100px;" alt=""/><br /><sub><b>Haider Ali Punjabi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=haideralipunjabi" title="Code">💻</a></td>
   </tr>
 </table>
 
