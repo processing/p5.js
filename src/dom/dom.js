@@ -2665,6 +2665,7 @@ p5.MediaElement.prototype.loop = function() {
  *
  *     if (sampleIsPlaying) {
  *       ele.noLoop();
+ *       sampleIsPlaying = false;
  *       text('No more Loops!', width / 2, height / 2);
  *     } else {
  *       ele.loop();
@@ -2676,7 +2677,7 @@ p5.MediaElement.prototype.loop = function() {
  * </code></div>
  */
 p5.MediaElement.prototype.noLoop = function() {
-  this.elt.setAttribute('loop', false);
+  this.elt.removeAttribute('loop');
   return this;
 };
 
