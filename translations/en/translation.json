@@ -22,12 +22,12 @@
     },
     "globalErrors": {
       "reference": {
-        "notDefined": "There's an error due to \"{{symbol}}\" not being defined in the current scope {{location}}.\n\nIf you had defined it in your code, check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
+        "notDefined": "There's an error due to \"{{symbol}}\" not being defined in the current scope {{location}}.\n\nIf you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
       },
       "stackSubseq": "▶️ Called from line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
       "stackTop": "▶️ Error at line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
       "syntax": {
-        "invalidToken": "There's a syntax error due to a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nUsually this can when copying code from some other place. For example \" is supported but “ isn't.\nFor more: {{url}}",
+        "invalidToken": "There's a syntax error due to a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nFor more: {{url}}",
         "unexpectedToken": "There's a syntax error due to a symbol that wasn't expected at it's place.\nUsually this is due to a typo. Check the line number in the error below for anything missing/extra.\nFor more: {{url}}"
       },
       "type": {

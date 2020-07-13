@@ -547,11 +547,6 @@ suite('Global Error Handling', function() {
 
   testUnMinified('correctly identifies errors in preload', function() {
     return new Promise(function(resolve) {
-      // quite an unusual way to test, but the error listerner doesn't work
-      // under mocha. Also the stacktrace gets filled with mocha internal
-      // function calls. Using this method solves both of these problems.
-      // This method also allows us to test for SyntaxError without messing
-      // with flow of the other tests
       iframe = createP5Iframe(
         [
           P5_SCRIPT_TAG,
@@ -595,29 +590,6 @@ suite('Global Error Handling', function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /asdfg/);
       assert.match(log[0], /not being defined in the current scope/);
-    });
-  });
-
-  testUnMinified('correctly identifies errors in user code II', function() {
-    return new Promise(function(resolve) {
-      iframe = createP5Iframe(
-        [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
-          'function setup() {',
-          'let x = “not a string”', // SyntaxError: Invalid or unexpected token
-          '}',
-          '</script>'
-        ].join('\n')
-      );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
-    }).then(function() {
-      assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
-      assert.match(log[0], /JavaScript doesn't recognize/);
     });
   });
 
