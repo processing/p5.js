@@ -52,6 +52,7 @@ p5.Renderer2D.prototype.background = function(...args) {
     const curFill = this._getFill();
     // create background rect
     const color = this._pInst.color(...args);
+    this._pInst._accsBackground(color.levels);
     const newFill = color.toString();
     this._setFill(newFill);
 

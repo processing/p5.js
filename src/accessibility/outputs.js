@@ -66,10 +66,12 @@ p5.prototype._buildOutput = function() {
 p5.prototype._accsBackground = function(args) {
   if (txtOut === false) {
     return;
-  } else {
-    preIngredients = ingredients;
-    ingredients = {};
-    looks.background = args;
+  }
+  preIngredients = ingredients;
+  ingredients = {};
+  if (looks.backgroundRGBA !== args) {
+    looks.backgroundRGBA = args;
+    console.log(this._rgbColorName(args[0], args[1], args[2]));
   }
 };
 
