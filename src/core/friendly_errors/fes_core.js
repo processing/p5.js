@@ -54,6 +54,9 @@ let defineMisusedAtTopLevelCode = null;
 // used in misspelling detection
 const EDIT_DIST_THRESHOLD = 2;
 
+// to enable or disable styling (color, font-size, etc. ) for fes messages
+const ENABLE_FES_STYLING = false;
+
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
 } else {
@@ -89,6 +92,30 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // -- End borrow --
 
+  // entry points into user-defined code
+  const entryPoints = [
+    'setup',
+    'draw',
+    'preload',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized'
+  ];
+
   const friendlyWelcome = () => {
     // p5.js brand - magenta: #ED225D
     //const astrixBgColor = 'transparent';
@@ -121,6 +148,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @return console logs
    */
   const report = (message, func, color) => {
+    // if p5._fesLogger is set ( i.e we are running tests ), use that
+    // instead of console.log
+    const log =
+      p5._fesLogger == null ? console.log.bind(console) : p5._fesLogger;
+
     if (doFriendlyWelcome) {
       friendlyWelcome();
       doFriendlyWelcome = false;
@@ -131,8 +163,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // Type to color
       color = typeColors[color];
     }
-    if (func.substring(0, 4) === 'load') {
-      console.log(translator('fes.pre', { message }));
+
+    let prefixedMsg;
+    let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
+    if (func == null || func.substring(0, 4) === 'load') {
+      prefixedMsg = translator('fes.pre', { message });
     } else {
       const methodParts = func.split('.');
       const referenceSection =
@@ -141,11 +176,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
-      console.log(
-        translator('fes.pre', {
-          message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
-        })
-      );
+      prefixedMsg = translator('fes.pre', {
+        message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
+      });
+    }
+    if (ENABLE_FES_STYLING) {
+      log('%c' + prefixedMsg, style.join(';'));
+    } else {
+      log(prefixedMsg);
     }
   };
   /**
@@ -227,29 +265,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // instance as context
     const instanceMode = context instanceof p5;
     context = instanceMode ? context : window;
-    const log = p5._fesLogger;
-    const fnNames = [
-      'setup',
-      'draw',
-      'preload',
-      'deviceMoved',
-      'deviceTurned',
-      'deviceShaken',
-      'doubleClicked',
-      'mousePressed',
-      'mouseReleased',
-      'mouseMoved',
-      'mouseDragged',
-      'mouseClicked',
-      'mouseWheel',
-      'touchStarted',
-      'touchMoved',
-      'touchEnded',
-      'keyPressed',
-      'keyReleased',
-      'keyTyped',
-      'windowResized'
-    ];
+    const fnNames = entryPoints;
 
     const fxns = {};
     // lowercasename -> actualName mapping
@@ -272,11 +288,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
           name: prop,
           actualName: fxns[lowercase]
         });
-        if (log && typeof log === 'function') {
-          log(msg);
-        } else {
-          p5._friendlyError(msg, fxns[lowercase]);
-        }
+
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
@@ -286,7 +299,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // misusedAtTopLevel here is for convenience as it was an array that was
   // already defined when spelling check was implemented. For this particular
   // use-case, it's a misnomer.
-  const handleMisspelling = (errSym, error, log) => {
+  const handleMisspelling = (errSym, error) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
@@ -303,7 +316,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       }
     });
 
-    if (min > EDIT_DIST_THRESHOLD) return;
+    if (min > Math.min(EDIT_DIST_THRESHOLD, errSym.length)) return false;
 
     let symbol = misusedAtTopLevelCode[minIndex];
 
@@ -311,24 +324,177 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // differ in their name ( either letter difference or difference of case )
     if (errSym !== symbol.name) {
       const parsed = p5._getErrorStackParser().parse(error);
-      const location =
-        parsed[0] && parsed[0].fileName
-          ? `${parsed[0].fileName}:${parsed[0].lineNumber}:${
-              parsed[0].columnNumber
-            }`
-          : null;
+      let locationObj;
+      if (
+        parsed &&
+        parsed[0] &&
+        parsed[0].fileName &&
+        parsed[0].lineNumber &&
+        parsed[0].columnNumber
+      ) {
+        locationObj = {
+          location: `${parsed[0].fileName}:${parsed[0].lineNumber}:${
+            parsed[0].columnNumber
+          }`,
+          file: parsed[0].fileName,
+          line: parsed[0].lineNumber
+        };
+      }
       const msg = translator('fes.misspelling', {
         name: errSym,
         actualName: symbol.name,
         type: symbol.type,
-        location: location ? translator('fes.location', { location }) : ''
+        location: locationObj ? translator('fes.location', locationObj) : ''
       });
 
-      if (log) {
-        log(msg);
-      } else {
-        p5._friendlyError(msg, symbol.name);
+      p5._friendlyError(msg, symbol.name);
+      return true;
+    }
+    return false;
+  };
+
+  const processStack = (error, stacktrace) => {
+    // Responsible for removing internal library calls from the stacktrace
+    // and also for detectiong if the error happened inside the library
+
+    // cannot process a stacktrace that doesn't exist
+    if (!stacktrace) return [false, null];
+
+    stacktrace.forEach(frame => {
+      frame.functionName = frame.functionName || '';
+    });
+
+    // isInternal - Did this error happen inside the library
+    let isInternal = false;
+    let p5FileName, friendlyStack, currentEntryPoint;
+    for (let i = stacktrace.length - 1; i >= 0; i--) {
+      let splitted = stacktrace[i].functionName.split('.');
+      if (entryPoints.includes(splitted[splitted.length - 1])) {
+        // remove everything below an entry point function (setup, draw, etc).
+        // (it's usually the internal initialization calls)
+        friendlyStack = stacktrace.slice(0, i + 1);
+        currentEntryPoint = splitted[splitted.length - 1];
+        for (let j = 0; j < i; j++) {
+          // Due to the current build process, all p5 functions have
+          // _main.default in their names in the final build. This is the
+          // easiest way to check if a function is inside the p5 library
+          if (stacktrace[j].functionName.search('_main.default') !== -1) {
+            isInternal = true;
+            p5FileName = stacktrace[j].fileName;
+            break;
+          }
+        }
+        break;
       }
+    }
+
+    // in some cases ( errors in promises, callbacks, etc), no entry-point
+    // function may be found in the stacktrace. In that case just use the
+    // entire stacktrace for friendlyStack
+    if (!friendlyStack) friendlyStack = stacktrace;
+
+    if (isInternal) {
+      // the frameIndex property is added before the filter, so frameIndex
+      // corresponds to the index of a frame in the original stacktrace.
+      // Then we filter out all frames which belong to the file that contains
+      // the p5 library
+      friendlyStack = friendlyStack
+        .map((frame, index) => {
+          frame.frameIndex = index;
+          return frame;
+        })
+        .filter(frame => frame.fileName !== p5FileName);
+
+      // a weird case, if for some reason we can't identify the function called
+      // from user's code
+      if (friendlyStack.length === 0) return [true, null];
+
+      // get the function just above the topmost frame in the friendlyStack.
+      // i.e the name of the library function called from user's code
+      const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
+        .split('.')
+        .slice(-1)[0];
+
+      // Try and get the location (line no.) from the top element of the stack
+      let locationObj;
+      if (
+        friendlyStack[0].fileName &&
+        friendlyStack[0].lineNumber &&
+        friendlyStack[0].columnNumber
+      ) {
+        locationObj = {
+          location: `${friendlyStack[0].fileName}:${
+            friendlyStack[0].lineNumber
+          }:${friendlyStack[0].columnNumber}`,
+          file: friendlyStack[0].fileName.split('/').slice(-1),
+          line: friendlyStack[0].lineNumber
+        };
+
+        // if already handled by another part of the FES, don't handle again
+        if (p5._fesLogCache[locationObj.location]) return [true, null];
+      }
+
+      // Check if the error is due to a non loadX method being used incorrectly
+      // in preload
+      if (
+        currentEntryPoint === 'preload' &&
+        p5.prototype._preloadMethods[func] == null
+      ) {
+        p5._friendlyError(
+          translator('fes.wrongPreload', {
+            func: func,
+            location: locationObj
+              ? translator('fes.location', locationObj)
+              : '',
+            error: error.message
+          }),
+          'preload'
+        );
+      } else {
+        // Library error
+        p5._friendlyError(
+          translator('fes.libraryError', {
+            func: func,
+            location: locationObj
+              ? translator('fes.location', locationObj)
+              : '',
+            error: error.message
+          }),
+          func
+        );
+      }
+    }
+    return [isInternal, friendlyStack];
+  };
+
+  // prints a friendly stacktrace which only includes user-written functions
+  // and is easier for newcomers to understand
+  const printFriendlyStack = friendlyStack => {
+    const log =
+      p5._fesLogger && typeof p5._fesLogger === 'function'
+        ? p5._fesLogger
+        : console.log.bind(console);
+    if (friendlyStack.length > 1) {
+      let stacktraceMsg = '';
+      friendlyStack.forEach((frame, idx) => {
+        const location = `${frame.fileName}:${frame.lineNumber}:${
+          frame.columnNumber
+        }`;
+        let frameMsg,
+          translationObj = {
+            func: frame.functionName,
+            line: frame.lineNumber,
+            location: location,
+            file: frame.fileName.split('/').slice(-1)
+          };
+        if (idx === 0) {
+          frameMsg = translator('fes.globalErrors.stackTop', translationObj);
+        } else {
+          frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
+        }
+        stacktraceMsg += frameMsg;
+      });
+      log(stacktraceMsg);
     }
   };
 
@@ -345,29 +511,152 @@ if (typeof IS_MINIFIED !== 'undefined') {
       if (!(error instanceof Error)) return;
     }
     if (!error) return;
-    const log = p5._fesLogger;
+
+    let stacktrace = p5._getErrorStackParser().parse(error);
+    // process the stacktrace from the browser and simplify it to give
+    // friendlyStack.
+    let [isInternal, friendlyStack] = processStack(error, stacktrace);
+
+    // if this is an internal library error, the type of the error is not relevant,
+    // only the user code that lead to it is. Show the friendlyStack and return
+    if (isInternal) {
+      if (friendlyStack) printFriendlyStack(friendlyStack);
+      return;
+    }
+
+    const errList = errorTable[error.name];
+    if (!errList) return; // this type of error can't be handled yet
+    let matchedError;
+    for (const obj of errList) {
+      let string = obj.msg;
+      // capture the primary symbol mentioned in the error
+      string = string.replace(new RegExp('{{}}', 'g'), '([a-zA-Z0-9_]+)');
+      string = string.replace(new RegExp('{{.}}', 'g'), '(.+)');
+      string = string.replace(new RegExp('{}', 'g'), '(?:[a-zA-Z0-9_]+)');
+      let matched = error.message.match(string);
+
+      if (matched) {
+        matchedError = Object.assign({}, obj);
+        matchedError.match = matched;
+        break;
+      }
+    }
+
+    if (!matchedError) return;
+
+    // Try and get the location from the top element of the stack
+    let locationObj;
+    if (
+      stacktrace &&
+      stacktrace[0].fileName &&
+      stacktrace[0].lineNumber &&
+      stacktrace[0].columnNumber
+    ) {
+      locationObj = {
+        location: `${stacktrace[0].fileName}:${stacktrace[0].lineNumber}:${
+          stacktrace[0].columnNumber
+        }`,
+        file: stacktrace[0].fileName.split('/').slice(-1),
+        line: friendlyStack[0].lineNumber
+      };
+    }
+
     switch (error.name) {
-      case 'ReferenceError': {
-        const errList = errorTable.ReferenceError;
-        for (const obj of errList) {
-          let string = obj.msg;
-          // capture the primary symbol mentioned in the error
-          string = string.replace('{{}}', '([a-zA-Z0-9_]+)');
-          string = string.replace('{}', '(?:[a-zA-Z0-9_]+)');
-          let matched = error.message.match(string);
-          if (matched && matched[1]) {
-            switch (obj.type) {
-              case 'NOTDEFINED':
-                handleMisspelling(
-                  matched[1],
-                  error,
-                  typeof log === 'function' ? log : undefined
-                );
-                break;
-            }
+      case 'SyntaxError': {
+        // We can't really do much with syntax errors other than try to use
+        // a simpler framing of the error message. The stack isn't available
+        // for syntax errors
+        switch (matchedError.type) {
+          case 'INVALIDTOKEN': {
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.invalidToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'UNEXPECTEDTOKEN': {
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.unexpectedToken', {
+                url
+              })
+            );
+            break;
           }
         }
         break;
+      }
+      case 'ReferenceError': {
+        switch (matchedError.type) {
+          case 'NOTDEFINED': {
+            let errSym = matchedError.match[1];
+
+            if (errSym && handleMisspelling(errSym, error)) {
+              break;
+            }
+
+            // if the flow gets this far, this is likely not a misspelling
+            // of a p5 property/function
+            let url1 = 'https://p5js.org/examples/data-variable-scope.html';
+            let url2 =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.notDefined', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+        }
+        break;
+      }
+
+      case 'TypeError': {
+        switch (matchedError.type) {
+          case 'NOTFUNC': {
+            let errSym = matchedError.match[1];
+            let splitSym = errSym.split('.');
+            let url =
+              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_a_function#What_went_wrong';
+
+            // if errSym is aa.bb.cc , symbol would be cc and obj would aa.bb
+            let translationObj = {
+              url,
+              symbol: splitSym[splitSym.length - 1],
+              obj: splitSym.slice(0, splitSym.length - 1).join('.'),
+              location: locationObj
+                ? translator('fes.location', locationObj)
+                : ''
+            };
+
+            // There are two cases to handle here. When the function is called
+            // as a property of an object and when it's called independently.
+            // Both have different explanations.
+            if (splitSym.length > 1) {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfuncObj', translationObj)
+              );
+            } else {
+              p5._friendlyError(
+                translator('fes.globalErrors.type.notfunc', translationObj)
+              );
+            }
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+        }
       }
     }
   };
@@ -377,6 +666,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // logger for testing purposes.
   p5._fesLogger = null;
+  p5._fesLogCache = {};
 
   window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);

@@ -20,7 +20,23 @@
       "type_TOO_MANY_ARGUMENTS": "{{func}}() was expecting no more than {{maxParams}} arguments, but received {{argCount}}. {{location}}",
       "type_WRONG_TYPE": "{{func}}() was expecting {{formatType}} for the {{position}} parameter, received {{argType}} instead. {{location}}"
     },
-    "location": "(at {{location}})",
+    "globalErrors": {
+      "reference": {
+        "notDefined": "There's an error due to \"{{symbol}}\" not being defined in the current scope {{location}}.\n\nIf you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
+      },
+      "stackSubseq": "▶️ Called from line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
+      "stackTop": "▶️ Error at line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
+      "syntax": {
+        "invalidToken": "There's a syntax error due to a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nFor more: {{url}}",
+        "unexpectedToken": "There's a syntax error due to a symbol that wasn't expected at it's place.\nUsually this is due to a typo. Check the line number in the error below for anything missing/extra.\nFor more: {{url}}"
+      },
+      "type": {
+        "notfunc": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nCheck the spelling, letter-casing (Javacript is case-sensitive) and its type.\nFor more: {{url}}",
+        "notfuncObj": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (Javacript is case-sensitive) and its type.\nFor more: {{url}}"
+      }
+    },
+    "libraryError": "An error with message \"{{error}}\" occured inside the p5js library when {{func}} was called {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
+    "location": "(on line {{line}} in {{file}} [{{location}}])",
     "misspelling": "It seems that you may have accidently written {{name}} instead of {{actualName}} {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
     "positions": {
@@ -37,7 +53,8 @@
       "p_8": "eighth",
       "p_9": "ninth"
     },
-    "pre": "🌸 p5.js says: {{message}}",
-    "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js."
+    "pre": "\n🌸 p5.js says: {{message}}",
+    "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
+    "wrongPreload": "An error with message \"{{error}}\" occured inside the p5js library when \"{{func}}\" was called {{location}}.\n\nIf not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
   }
 }

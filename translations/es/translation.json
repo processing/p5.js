@@ -20,6 +20,22 @@
       "type_TOO_MANY_ARGUMENTS": "",
       "type_WRONG_TYPE": ""
     },
+    "globalErrors": {
+      "reference": {
+        "notDefined": ""
+      },
+      "stackSubseq": "",
+      "stackTop": "",
+      "syntax": {
+        "invalidToken": "",
+        "unexpectedToken": ""
+      },
+      "type": {
+        "notfunc": "",
+        "notfuncObj": ""
+      }
+    },
+    "libraryError": "",
     "location": "",
     "misspelling": "",
     "misusedTopLevel": "",
@@ -38,6 +54,7 @@
       "p_9": ""
     },
     "pre": "🌸 p5.js dice: {{message}}",
-    "welcome": ""
+    "welcome": "",
+    "wrongPreload": ""
   }
 }
