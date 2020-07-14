@@ -21,7 +21,7 @@ import './core/shape/2d_primitives';
 import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
-
+import './accessibility/outputs';
 // color
 import './color/color_conversion';
 import './color/creating_reading';

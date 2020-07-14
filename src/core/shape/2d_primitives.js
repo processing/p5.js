@@ -278,6 +278,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  */
 p5.prototype.circle = function() {
   p5._validateParameters('circle', arguments);
+  this._accsOutput('circle', arguments);
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
