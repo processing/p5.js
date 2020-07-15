@@ -6,6 +6,7 @@
  */
 
 import p5 from '../core/main';
+import color_conversion from '../color/color_conversion';
 
 let oghsv;
 
@@ -619,7 +620,7 @@ p5.prototype._calculateColor = function(hsv) {
   let colortext;
   if (hsv[0] !== 0) {
     hsv[0] = Math.round(hsv[0] * 100);
-    let hue = hsv[0].toString().split(``);
+    let hue = hsv[0].toString().split('');
     const last = hue.length - 1;
     hue[last] = parseInt(hue[last]);
     if (hue[last] < 2.5) {
@@ -682,39 +683,8 @@ p5.prototype._calculateColor = function(hsv) {
   return colortext;
 };
 
-p5.prototype._rgbToHsv = function(r, g, b) {
-  (r /= 255), (g /= 255), (b /= 255);
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b),
-    v = max,
-    d = max - min,
-    s = max === 0 ? 0 : d / max;
-  let h;
-  if (max === min) {
-    h = 0; // achromatic
-  } else {
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-  oghsv = [h, s, v];
-  return [h, s, v];
-};
-
-p5.prototype._rgbColorName = function(r, g, b) {
-  if (0 <= r && r <= 255 && 0 <= g && g <= 255 && 0 <= b && b <= 255) {
-    const colorname = this._calculateColor(this._rgbToHsv(r, g, b));
-    return colorname;
-  } else {
-    return `Requires a valid rgb value`;
-  }
+p5.prototype._rgbColorName = function(arg) {
+  let hsv = color_conversion._rgbaToHSBA(arg);
+  let colorname = this._calculateColor([hsv[0], hsv[1], hsv[2]]);
+  return colorname;
 };

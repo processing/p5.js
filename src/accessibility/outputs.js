@@ -71,7 +71,7 @@ p5.prototype._accsBackground = function(args) {
   ingredients = {};
   if (looks.backgroundRGBA !== args) {
     looks.backgroundRGBA = args;
-    console.log(this._rgbColorName(args[0], args[1], args[2]));
+    console.log(this._rgbColorName(args));
   }
 };
 
