@@ -81,6 +81,7 @@ p5.Renderer2D.prototype.clear = function() {
 p5.Renderer2D.prototype.fill = function(...args) {
   const color = this._pInst.color(...args);
   this._setFill(color.toString());
+  this._pInst._accscnvConfig(color.levels);
 };
 
 p5.Renderer2D.prototype.stroke = function(...args) {

@@ -206,6 +206,19 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
       mode,
       detail
     );
+
+    //accessible Outputs
+    if (this._addAccsOutput() === true) {
+      this._accsOutput('arc', [
+        vals.x,
+        vals.y,
+        vals.w,
+        vals.h,
+        angles.start,
+        angles.stop,
+        mode
+      ]);
+    }
   }
 
   return this;
@@ -278,7 +291,6 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  */
 p5.prototype.circle = function() {
   p5._validateParameters('circle', arguments);
-  this._accsOutput('circle', arguments);
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
@@ -307,6 +319,11 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
 
   const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
+
+  //accessible Outputs
+  if (this._addAccsOutput() === true) {
+    this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
+  }
 
   return this;
 };
@@ -651,6 +668,10 @@ p5.prototype._renderRect = function() {
       args[i] = arguments[i];
     }
     this._renderer.rect(args);
+
+    if (this._addAccsOutput() === true) {
+      this._accsOutput('rect', [vals.x, vals.y, vals.w, vals.h]);
+    }
   }
 
   return this;

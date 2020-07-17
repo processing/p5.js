@@ -15,25 +15,25 @@ const xcp = [
     h: 0,
     s: 0,
     b: 0.8275,
-    name: `gray`
+    name: 'gray'
   },
   {
     h: 0,
     s: 0,
     b: 0.8627,
-    name: `gray`
+    name: 'gray'
   },
   {
     h: 0,
     s: 0,
     b: 0.7529,
-    name: `gray`
+    name: 'gray'
   },
   {
     h: 0.0167,
     s: 0.1176,
     b: 1,
-    name: `light pink`
+    name: 'light pink'
   }
 ];
 
@@ -42,577 +42,577 @@ const colorLookUp = [
     h: 0,
     s: 0,
     b: 0,
-    name: `black`
+    name: 'black'
   },
   {
     h: 0,
     s: 0,
     b: 0.5,
-    name: `gray`
+    name: 'gray'
   },
   {
     h: 0,
     s: 0,
     b: 1,
-    name: `white`
+    name: 'white'
   },
   {
     h: 0,
     s: 0.5,
     b: 0.5,
-    name: `dark maroon`
+    name: 'dark maroon'
   },
   {
     h: 0,
     s: 0.5,
     b: 1,
-    name: `salmon pink`
+    name: 'salmon pink'
   },
   {
     h: 0,
     s: 1,
     b: 0,
-    name: `black`
+    name: 'black'
   },
   {
     h: 0,
     s: 1,
     b: 0.5,
-    name: `dark red`
+    name: 'dark red'
   },
   {
     h: 0,
     s: 1,
     b: 1,
-    name: `red`
+    name: 'red'
   },
   {
     h: 5,
     s: 0,
     b: 1,
-    name: `very light peach`
+    name: 'very light peach'
   },
   {
     h: 5,
     s: 0.5,
     b: 0.5,
-    name: `brown`
+    name: 'brown'
   },
   {
     h: 5,
     s: 0.5,
     b: 1,
-    name: `peach`
+    name: 'peach'
   },
   {
     h: 5,
     s: 1,
     b: 0.5,
-    name: `brick red`
+    name: 'brick red'
   },
   {
     h: 5,
     s: 1,
     b: 1,
-    name: `crimson`
+    name: 'crimson'
   },
   {
     h: 10,
     s: 0,
     b: 1,
-    name: `light peach`
+    name: 'light peach'
   },
   {
     h: 10,
     s: 0.5,
     b: 0.5,
-    name: `brown`
+    name: 'brown'
   },
   {
     h: 10,
     s: 0.5,
     b: 1,
-    name: `light orange`
+    name: 'light orange'
   },
   {
     h: 10,
     s: 1,
     b: 0.5,
-    name: `brown`
+    name: 'brown'
   },
   {
     h: 10,
     s: 1,
     b: 1,
-    name: `orange`
+    name: 'orange'
   },
   {
     h: 15,
     s: 0,
     b: 1,
-    name: `very light yellow`
+    name: 'very light yellow'
   },
   {
     h: 15,
     s: 0.5,
     b: 0.5,
-    name: `olive green`
+    name: 'olive green'
   },
   {
     h: 15,
     s: 0.5,
     b: 1,
-    name: `light yellow`
+    name: 'light yellow'
   },
   {
     h: 15,
     s: 1,
     b: 0,
-    name: `dark olive green`
+    name: 'dark olive green'
   },
   {
     h: 15,
     s: 1,
     b: 0.5,
-    name: `olive green`
+    name: 'olive green'
   },
   {
     h: 15,
     s: 1,
     b: 1,
-    name: `yellow`
+    name: 'yellow'
   },
   {
     h: 20,
     s: 0,
     b: 1,
-    name: `very light yellow`
+    name: 'very light yellow'
   },
   {
     h: 20,
     s: 0.5,
     b: 0.5,
-    name: `olive green`
+    name: 'olive green'
   },
   {
     h: 20,
     s: 0.5,
     b: 1,
-    name: `light yellow green`
+    name: 'light yellow green'
   },
   {
     h: 20,
     s: 1,
     b: 0,
-    name: `dark olive green`
+    name: 'dark olive green'
   },
   {
     h: 20,
     s: 1,
     b: 0.5,
-    name: `dark yellow green`
+    name: 'dark yellow green'
   },
   {
     h: 20,
     s: 1,
     b: 1,
-    name: `yellow green`
+    name: 'yellow green'
   },
   {
     h: 25,
     s: 0.5,
     b: 0.5,
-    name: `dark yellow green`
+    name: 'dark yellow green'
   },
   {
     h: 25,
     s: 0.5,
     b: 1,
-    name: `light green`
+    name: 'light green'
   },
   {
     h: 25,
     s: 1,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 25,
     s: 1,
     b: 1,
-    name: `green`
+    name: 'green'
   },
   {
     h: 30,
     s: 0.5,
     b: 1,
-    name: `light green`
+    name: 'light green'
   },
   {
     h: 30,
     s: 1,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 30,
     s: 1,
     b: 1,
-    name: `green`
+    name: 'green'
   },
   {
     h: 35,
     s: 0,
     b: 0.5,
-    name: `light green`
+    name: 'light green'
   },
   {
     h: 35,
     s: 0,
     b: 1,
-    name: `very light green`
+    name: 'very light green'
   },
   {
     h: 35,
     s: 0.5,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 35,
     s: 0.5,
     b: 1,
-    name: `light green`
+    name: 'light green'
   },
   {
     h: 35,
     s: 1,
     b: 0,
-    name: `very dark green`
+    name: 'very dark green'
   },
   {
     h: 35,
     s: 1,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 35,
     s: 1,
     b: 1,
-    name: `green`
+    name: 'green'
   },
   {
     h: 40,
     s: 0,
     b: 1,
-    name: `very light green`
+    name: 'very light green'
   },
   {
     h: 40,
     s: 0.5,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 40,
     s: 0.5,
     b: 1,
-    name: `light green`
+    name: 'light green'
   },
   {
     h: 40,
     s: 1,
     b: 0.5,
-    name: `dark green`
+    name: 'dark green'
   },
   {
     h: 40,
     s: 1,
     b: 1,
-    name: `green`
+    name: 'green'
   },
   {
     h: 45,
     s: 0.5,
     b: 1,
-    name: `light turquoise`
+    name: 'light turquoise'
   },
   {
     h: 45,
     s: 1,
     b: 0.5,
-    name: `dark turquoise`
+    name: 'dark turquoise'
   },
   {
     h: 45,
     s: 1,
     b: 1,
-    name: `turquoise`
+    name: 'turquoise'
   },
   {
     h: 50,
     s: 0,
     b: 1,
-    name: `light sky blue`
+    name: 'light sky blue'
   },
   {
     h: 50,
     s: 0.5,
     b: 0.5,
-    name: `dark cyan`
+    name: 'dark cyan'
   },
   {
     h: 50,
     s: 0.5,
     b: 1,
-    name: `light cyan`
+    name: 'light cyan'
   },
   {
     h: 50,
     s: 1,
     b: 0.5,
-    name: `dark cyan`
+    name: 'dark cyan'
   },
   {
     h: 50,
     s: 1,
     b: 1,
-    name: `cyan`
+    name: 'cyan'
   },
   {
     h: 55,
     s: 0,
     b: 1,
-    name: `light sky blue`
+    name: 'light sky blue'
   },
   {
     h: 55,
     s: 0.5,
     b: 1,
-    name: `light sky blue`
+    name: 'light sky blue'
   },
   {
     h: 55,
     s: 1,
     b: 0.5,
-    name: `dark blue`
+    name: 'dark blue'
   },
   {
     h: 55,
     s: 1,
     b: 1,
-    name: `sky blue`
+    name: 'sky blue'
   },
   {
     h: 60,
     s: 0,
     b: 0.5,
-    name: `gray`
+    name: 'gray'
   },
   {
     h: 60,
     s: 0,
     b: 1,
-    name: `very light blue`
+    name: 'very light blue'
   },
   {
     h: 60,
     s: 0.5,
     b: 0.5,
-    name: `blue`
+    name: 'blue'
   },
   {
     h: 60,
     s: 0.5,
     b: 1,
-    name: `light blue`
+    name: 'light blue'
   },
   {
     h: 60,
     s: 1,
     b: 0.5,
-    name: `navy blue`
+    name: 'navy blue'
   },
   {
     h: 60,
     s: 1,
     b: 1,
-    name: `blue`
+    name: 'blue'
   },
   {
     h: 65,
     s: 0,
     b: 1,
-    name: `lavender`
+    name: 'lavender'
   },
   {
     h: 65,
     s: 0.5,
     b: 0.5,
-    name: `navy blue`
+    name: 'navy blue'
   },
   {
     h: 65,
     s: 0.5,
     b: 1,
-    name: `light purple`
+    name: 'light purple'
   },
   {
     h: 65,
     s: 1,
     b: 0.5,
-    name: `dark navy blue`
+    name: 'dark navy blue'
   },
   {
     h: 65,
     s: 1,
     b: 1,
-    name: `blue`
+    name: 'blue'
   },
   {
     h: 70,
     s: 0,
     b: 1,
-    name: `lavender`
+    name: 'lavender'
   },
   {
     h: 70,
     s: 0.5,
     b: 0.5,
-    name: `navy blue`
+    name: 'navy blue'
   },
   {
     h: 70,
     s: 0.5,
     b: 1,
-    name: `lavender blue`
+    name: 'lavender blue'
   },
   {
     h: 70,
     s: 1,
     b: 0.5,
-    name: `dark navy blue`
+    name: 'dark navy blue'
   },
   {
     h: 70,
     s: 1,
     b: 1,
-    name: `blue`
+    name: 'blue'
   },
   {
     h: 75,
     s: 0.5,
     b: 1,
-    name: `lavender`
+    name: 'lavender'
   },
   {
     h: 75,
     s: 1,
     b: 0.5,
-    name: `dark purple`
+    name: 'dark purple'
   },
   {
     h: 75,
     s: 1,
     b: 1,
-    name: `purple`
+    name: 'purple'
   },
   {
     h: 80,
     s: 0.5,
     b: 1,
-    name: `pinkish purple`
+    name: 'pinkish purple'
   },
   {
     h: 80,
     s: 1,
     b: 0.5,
-    name: `dark purple`
+    name: 'dark purple'
   },
   {
     h: 80,
     s: 1,
     b: 1,
-    name: `purple`
+    name: 'purple'
   },
   {
     h: 85,
     s: 0,
     b: 1,
-    name: `light pink`
+    name: 'light pink'
   },
   {
     h: 85,
     s: 0.5,
     b: 0.5,
-    name: `purple`
+    name: 'purple'
   },
   {
     h: 85,
     s: 0.5,
     b: 1,
-    name: `light fuchsia`
+    name: 'light fuchsia'
   },
   {
     h: 85,
     s: 1,
     b: 0.5,
-    name: `dark fuchsia`
+    name: 'dark fuchsia'
   },
   {
     h: 85,
     s: 1,
     b: 1,
-    name: `fuchsia`
+    name: 'fuchsia'
   },
   {
     h: 90,
     s: 0.5,
     b: 0.5,
-    name: `dark fuchsia`
+    name: 'dark fuchsia'
   },
   {
     h: 90,
     s: 0.5,
     b: 1,
-    name: `hot pink`
+    name: 'hot pink'
   },
   {
     h: 90,
     s: 1,
     b: 0.5,
-    name: `dark fuchsia`
+    name: 'dark fuchsia'
   },
   {
     h: 90,
     s: 1,
     b: 1,
-    name: `fuchsia`
+    name: 'fuchsia'
   },
   {
     h: 95,
     s: 0,
     b: 1,
-    name: `pink`
+    name: 'pink'
   },
   {
     h: 95,
     s: 0.5,
     b: 1,
-    name: `light pink`
+    name: 'light pink'
   },
   {
     h: 95,
     s: 1,
     b: 0.5,
-    name: `dark magenta`
+    name: 'dark magenta'
   },
   {
     h: 95,
     s: 1,
     b: 1,
-    name: `magenta`
+    name: 'magenta'
   }
 ];
 
@@ -665,7 +665,7 @@ p5.prototype._calculateColor = function(hsv) {
         colortext = xcp[e].name;
         break;
       } else {
-        colortext = `white`;
+        colortext = 'white';
       }
     }
   } else {
