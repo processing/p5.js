@@ -63,6 +63,7 @@ p5.prototype._buildOutput = function() {
   }
   let el = 0;
   let elText = '';
+  //go through shapes and add them:
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
       el++;
@@ -79,6 +80,7 @@ p5.prototype._buildOutput = function() {
         '% of the canvas.</li>';
     }
   }
+  //create initial phrase
   let text =
     'Your output is a, ' +
     Math.round(this.width) +
@@ -125,6 +127,8 @@ p5.prototype._setDefaults = function() {
 p5.prototype._accsOutput = function(f, args) {
   if (f === 'ellipse' && args[2] === args[3]) {
     f = 'circle';
+  } else if (f === 'rect' && args[2] === args[3]) {
+    f = 'square';
   }
   let include = {};
   include.fill = cnvConfig.fill;
