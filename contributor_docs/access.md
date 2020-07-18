@@ -1,6 +1,6 @@
 # Our Focus on Access
 
-At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). This means considering the vectors of diversity (e.g. gender, social, economic, race, ethnicity, language, ability, etc.) that can impact access/participation; and taking action to acknowledge, dismantle, and prevent barriers. We prioritize the needs of historically marginalized groups over the continued comfort of more privileged groups with p5.js.
+At the [2019 Contributors Conference](https://p5js.org/community/contributors-conference-2019.html), we made a commitment to only add features to p5.js that increase access (meaning inclusion and/or accessibility). This means considering the vectors of diversity (e.g. gender, social, economic, race, ethnicity, language, disability, etc.) that can impact access/participation; and taking action to acknowledge, dismantle, and prevent barriers. We prioritize the needs of historically marginalized groups over the continued comfort of more privileged groups with p5.js.
 
 We will not accept feature requests that don't support our effort to increase access. You'll see this criteria reflected in our issue and pull request templates.
 
