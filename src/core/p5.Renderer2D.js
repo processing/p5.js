@@ -52,7 +52,12 @@ p5.Renderer2D.prototype.background = function(...args) {
     const curFill = this._getFill();
     // create background rect
     const color = this._pInst.color(...args);
-    this._pInst._accsBackground(color.levels);
+
+    //accessible Outputs
+    if (this._pInst._addAccsOutput() === true) {
+      this._pInst._accsBackground(color.levels);
+    }
+
     const newFill = color.toString();
     this._setFill(newFill);
 
@@ -81,12 +86,21 @@ p5.Renderer2D.prototype.clear = function() {
 p5.Renderer2D.prototype.fill = function(...args) {
   const color = this._pInst.color(...args);
   this._setFill(color.toString());
-  this._pInst._accscnvConfig(color.levels);
+
+  //accessible Outputs
+  if (this._pInst._addAccsOutput() === true) {
+    this._pInst._accscnvConfig('fill', color.levels);
+  }
 };
 
 p5.Renderer2D.prototype.stroke = function(...args) {
   const color = this._pInst.color(...args);
   this._setStroke(color.toString());
+
+  //accessible Outputs
+  if (this._pInst._addAccsOutput() === true) {
+    this._pInst._accscnvConfig('stroke', color.levels);
+  }
 };
 
 p5.Renderer2D.prototype.erase = function(opacityFill, opacityStroke) {

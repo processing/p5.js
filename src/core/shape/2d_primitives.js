@@ -381,6 +381,11 @@ p5.prototype.line = function(...args) {
     this._renderer.line(...args);
   }
 
+  //accessible Outputs
+  if (this._addAccsOutput() === true) {
+    this._accsOutput('line', args);
+  }
+
   return this;
 };
 
@@ -452,6 +457,10 @@ p5.prototype.point = function(...args) {
       );
     } else {
       this._renderer.point(...args);
+      //accessible Outputs
+      if (this._addAccsOutput() === true) {
+        this._accsOutput('point', args);
+      }
     }
   }
 
@@ -517,6 +526,10 @@ p5.prototype.quad = function(...args) {
         args[6], args[7], 0);
     } else {
       this._renderer.quad(...args);
+      //accessibile outputs
+      if (this._addAccsOutput() === true) {
+        this._accsOutput('quadrilateral', args);
+      }
     }
   }
 
@@ -669,8 +682,9 @@ p5.prototype._renderRect = function() {
     }
     this._renderer.rect(args);
 
+    //accessible outputs
     if (this._addAccsOutput() === true) {
-      this._accsOutput('rect', [vals.x, vals.y, vals.w, vals.h]);
+      this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
     }
   }
 

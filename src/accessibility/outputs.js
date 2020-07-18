@@ -70,7 +70,7 @@ p5.prototype._buildOutput = function() {
       elText =
         elText +
         '<li>' +
-        ingredients[x][y].fill +
+        ingredients[x][y].color +
         ' ' +
         x +
         ', at ' +
@@ -108,14 +108,22 @@ p5.prototype._accsBackground = function(args) {
   }
 };
 
-p5.prototype._accscnvConfig = function(args) {
+p5.prototype._accscnvConfig = function(f, args) {
   if (txtOut === false) {
     return;
   }
-  if (cnvConfig.fill !== args) {
-    cnvConfig.fillRGBA = args;
-    cnvConfig.fill = this._rgbColorName(args);
-    this._updateOutput();
+  if (f === 'fill') {
+    if (cnvConfig.fill !== args) {
+      cnvConfig.fillRGBA = args;
+      cnvConfig.fill = this._rgbColorName(args);
+      this._updateOutput();
+    }
+  } else if (f === 'stroke') {
+    if (cnvConfig.stroke !== args) {
+      cnvConfig.strokeRGBA = args;
+      cnvConfig.stroke = this._rgbColorName(args);
+      this._updateOutput();
+    }
   }
 };
 
@@ -127,11 +135,15 @@ p5.prototype._setDefaults = function() {
 p5.prototype._accsOutput = function(f, args) {
   if (f === 'ellipse' && args[2] === args[3]) {
     f = 'circle';
-  } else if (f === 'rect' && args[2] === args[3]) {
+  } else if (f === 'rectangle' && args[2] === args[3]) {
     f = 'square';
   }
   let include = {};
-  include.fill = cnvConfig.fill;
+  if (f === 'line' || f === 'point') {
+    include.color = cnvConfig.stroke;
+  } else {
+    include.color = cnvConfig.fill;
+  }
   include.pos = this._getPos(args);
   include.area = this._getArea(f, args);
   include.args = args;
@@ -212,7 +224,7 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
     objectArea = 0;
   } else if (objectType === 'point') {
     objectArea = 0;
-  } else if (objectType === 'quad') {
+  } else if (objectType === 'quadrilateral') {
     // ((x4+x1)*(y4-y1)+(x1+x2)*(y1-y2)+(x2+x3)*(y2-y3)+(x3+x4)*(y3-y4))/2
     objectArea =
       abs(
@@ -221,7 +233,7 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
           (shapeArgs[2] + shapeArgs[4]) * (shapeArgs[3] - shapeArgs[5]) +
           (shapeArgs[4] + shapeArgs[6]) * (shapeArgs[5] - shapeArgs[7])
       ) / 2;
-  } else if (objectType === 'rect' || objectType === 'square') {
+  } else if (objectType === 'rectangle' || objectType === 'square') {
     objectArea = shapeArgs[2] * shapeArgs[3];
   } else if (objectType === 'triangle') {
     objectArea =
