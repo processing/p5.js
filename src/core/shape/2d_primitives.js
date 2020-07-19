@@ -722,6 +722,11 @@ p5.prototype.triangle = function(...args) {
     this._renderer.triangle(args);
   }
 
+  //accessible outputs
+  if (this._addAccsOutput() === true) {
+    this._accsOutput('triangle', args);
+  }
+
   return this;
 };
 
