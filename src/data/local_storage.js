@@ -58,8 +58,19 @@ import p5 from '../core/main';
  * If you reload the page, the last letter typed is still displaying.
  */
 p5.prototype.storeItem = function(key, value) {
+  if (typeof key !== 'string') {
+    console.error(
+      `The argument that you passed to storeItem() - ${key} is not a string.`
+    );
+  }
+  if (key.endsWith('p5TypeID')) {
+    console.error(
+      `The argument that you passed to storeItem() - ${key} must not end with 'p5TypeID'.`
+    );
+  }
+
   if (typeof value === 'undefined') {
-    console.log('You cannot store undefined variables using storeItem()');
+    console.error('You cannot store undefined variables using storeItem().');
   }
   let type = typeof value;
   switch (type) {
@@ -133,7 +144,7 @@ p5.prototype.getItem = function(key) {
   let value = localStorage.getItem(key);
   const type = localStorage.getItem(`${key}p5TypeID`);
   if (typeof type === 'undefined') {
-    console.log(
+    console.error(
       `Unable to determine type of item stored under ${key}in local storage. Did you save the item with something other than setItem()?`
     );
   } else if (value !== null) {
@@ -213,7 +224,7 @@ p5.prototype.clearStorage = function() {
  */
 p5.prototype.removeItem = function(key) {
   if (typeof key !== 'string') {
-    console.log(
+    console.error(
       `The argument that you passed to removeItem() - ${key} is not a string.`
     );
   }
