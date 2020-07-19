@@ -61,26 +61,9 @@ p5.prototype._buildOutput = function() {
   if (ingredients === preIngredients) {
     return;
   }
-  let el = 0;
-  let elText = '';
-  //go through shapes and add them:
-  for (let x in ingredients) {
-    for (let y in ingredients[x]) {
-      el++;
-      elText =
-        elText +
-        '<li>' +
-        ingredients[x][y].color +
-        ' ' +
-        x +
-        ', at ' +
-        ingredients[x][y].pos +
-        ', covering ' +
-        ingredients[x][y].area +
-        '% of the canvas.</li>';
-    }
-  }
-  //create initial phrase
+  let elText = this._buildShapeList();
+
+  //create text Output
   let text =
     'Your output is a, ' +
     Math.round(this.width) +
@@ -89,11 +72,40 @@ p5.prototype._buildOutput = function() {
     ' pixels, ' +
     cnvConfig.background +
     ' canvas. Containing the following ' +
-    el +
+    elText.numShapes +
     ' objects:</p><ul>' +
-    elText +
+    elText.listShapes +
     '</ul>';
   return text;
+};
+
+p5.prototype._buildShapeList = function() {
+  let elText = '';
+  let el = 0;
+  for (let x in ingredients) {
+    for (let y in ingredients[x]) {
+      el++;
+      let line = '<li>' + ingredients[x][y].color + ' ' + x;
+      if (x === 'line') {
+        line =
+          line +
+          ', ' +
+          ingredients[x][y].pos +
+          ', ' +
+          ingredients[x][y].length +
+          ' pixels long.</li>';
+      } else {
+        line = line + ', at ' + ingredients[x][y].pos;
+        if (x !== 'point') {
+          line =
+            line + ', covering ' + ingredients[x][y].area + '% of the canvas';
+        }
+        line = line + '.</li>';
+      }
+      elText = elText + line;
+    }
+  }
+  return { numShapes: el, listShapes: elText };
 };
 
 p5.prototype._accsBackground = function(args) {
