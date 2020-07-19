@@ -37,8 +37,16 @@ p5.prototype._createOutput = function(type) {
       .getElementById(cnvId)
       .insertAdjacentHTML(
         'afterend',
-        '<div id="' + cnvId + type + '" class="accessibleOutput"></div>'
+        '<section id="' + cnvId + type + '" class="accessibleOutput"></section>'
       );
+    if (type === 'textOutput') {
+      let inner =
+        '<p id="' +
+        cnvId +
+        type +
+        'Summary" aria-label="text output summary" role="main"></p>';
+      document.getElementById(cnvId + type).innerHTML = inner;
+    }
     this._updateOutput(type);
   }
 };
@@ -53,7 +61,7 @@ p5.prototype._updateOutput = function(type) {
   }
   let inner = this._buildOutput();
   const cnvId = this.canvas.id;
-  document.getElementById(cnvId + type).innerHTML = inner;
+  document.getElementById(cnvId + type + 'Summary').innerHTML = inner;
 };
 
 //helper function that builds output content
