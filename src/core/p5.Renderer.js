@@ -10,7 +10,7 @@ import * as constants from '../core/constants';
 /**
  * Main graphics and rendering context, as well as the base API
  * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respecitvely.
+ * Renderer2D and Renderer3D classes, respectively.
  *
  * @class p5.Renderer
  * @constructor
