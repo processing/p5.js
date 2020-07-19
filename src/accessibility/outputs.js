@@ -139,13 +139,25 @@ p5.prototype._accsOutput = function(f, args) {
     f = 'square';
   }
   let include = {};
-  if (f === 'line' || f === 'point') {
+  if (f === 'line') {
     include.color = cnvConfig.stroke;
+    include.length = _getLineLength(args);
+    let p1 = this._getPos([args[0], [1]]);
+    let p2 = this._getPos([args[2], [3]]);
+    if (p1 === p2) {
+      include.pos = 'at ' + p1;
+    } else {
+      include.pos = 'from ' + p1 + ' to ' + p2;
+    }
   } else {
-    include.color = cnvConfig.fill;
+    if (f === 'point') {
+      include.color = cnvConfig.stroke;
+    } else {
+      include.color = cnvConfig.fill;
+      include.area = this._getArea(f, args);
+    }
+    include.pos = this._getPos(args);
   }
-  include.pos = this._getPos(args);
-  include.area = this._getArea(f, args);
   include.args = args;
   if (ingredients[f] === undefined) {
     ingredients[f] = [include];
@@ -190,6 +202,14 @@ p5.prototype._getPos = function(args) {
       return 'middle';
     }
   }
+};
+
+// return length of lines
+p5.prototype._getLineLength = function(args) {
+  const lineLength = Math.round(
+    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
+  );
+  return lineLength;
 };
 
 p5.prototype._getArea = function(objectType, shapeArgs) {
