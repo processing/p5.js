@@ -15,7 +15,7 @@ p5.prototype.textOutput = function() {
   txtOut = true;
   if (this.canvas !== undefined) {
     this._setDefaults();
-    this._createOutput('textOutput');
+    this._createOutput('txtOut');
   } else {
     throw new Error('textOutput() should be called after canvas is created');
   }
@@ -31,46 +31,60 @@ p5.prototype._addAccsOutput = function() {
 
 //helper function that creates div for accessible outputs
 p5.prototype._createOutput = function(type) {
-  const cnvId = this.canvas.id;
-  if (document.getElementById(cnvId + type) === null) {
+  let cnvId = this.canvas.id;
+  let cIdT = cnvId + type;
+  if (document.getElementById(cIdT) === null) {
     document
       .getElementById(cnvId)
       .insertAdjacentHTML(
         'afterend',
-        '<section id="' + cnvId + type + '" class="accessibleOutput"></section>'
+        '<section id="' + cIdT + '" class="accessibleOutput"></section>'
       );
-    if (type === 'textOutput') {
+
+    if (type === 'txtOut') {
       let inner =
-        '<p id="' +
-        cnvId +
-        type +
-        'Summary" aria-label="text output summary" role="main"></p>';
-      document.getElementById(cnvId + type).innerHTML = inner;
+        '<h1>Text Output</h1><div id="' +
+        cIdT +
+        'Summary" aria-label="text output summary"><p id="' +
+        cIdT +
+        'SumP"></p><ul id="' +
+        cIdT +
+        'lst"></ul></div><table id="' +
+        cIdT +
+        'SD" summary="text output shape details"></table>';
+      document.getElementById(cIdT).innerHTML = inner;
     }
-    this._updateOutput(type);
+    this._updateOutput();
   }
 };
 
 //helper function that updates accessible outputs
-p5.prototype._updateOutput = function(type) {
+p5.prototype._updateOutput = function() {
+  let cnvId = this.canvas.id;
   if (txtOut === false) {
     return;
+  } else if (txtOut === true) {
+    let cIdT = cnvId + 'txtOut';
+    let innerList = this._buildShapeList();
+    let innerSummary = this._buildTxtSummary(innerList.numShapes);
+    let innerShapeDetails = this._buildShapeDetails();
+    if (innerSummary !== document.getElementById(cIdT + 'SumP').innerHTML) {
+      document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
+    }
+    if (innerList !== document.getElementById(cIdT + 'lst').innerHTML) {
+      document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
+    }
+    if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
+      document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
+    }
   }
-  if (type === undefined) {
-    type = 'textOutput';
-  }
-  let inner = this._buildOutput();
-  const cnvId = this.canvas.id;
-  document.getElementById(cnvId + type + 'Summary').innerHTML = inner;
 };
 
 //helper function that builds output content
-p5.prototype._buildOutput = function() {
+p5.prototype._buildTxtSummary = function(numShapes) {
   if (ingredients === preIngredients) {
     return;
   }
-  let elText = this._buildShapeList();
-
   //create text Output
   let text =
     'Your output is a, ' +
@@ -80,11 +94,46 @@ p5.prototype._buildOutput = function() {
     ' pixels, ' +
     cnvConfig.background +
     ' canvas. Containing the following ' +
-    elText.numShapes +
-    ' objects:</p><ul>' +
-    elText.listShapes +
-    '</ul>';
+    numShapes +
+    ' objects:';
   return text;
+};
+
+p5.prototype._buildShapeDetails = function(cId) {
+  let shapeDetails = '';
+  let el = 0;
+  for (let x in ingredients) {
+    for (let y in ingredients[x]) {
+      el++;
+      let row =
+        '<tr id="' +
+        cId +
+        'shape' +
+        el +
+        '"><th>' +
+        ingredients[x][y].color +
+        ' ' +
+        x +
+        '</th>';
+      if (x === 'line') {
+        row =
+          row +
+          '<td>location = ' +
+          ingredients[x][y].pos +
+          '</td><td>length =' +
+          ingredients[x][y].length +
+          ' pixels</td></tr>';
+      } else {
+        row = row + '<td>location = at ' + ingredients[x][y].pos + '</td>';
+        if (x !== 'point') {
+          row = row + '<td> area = ' + ingredients[x][y].area + '%</td>';
+        }
+        row = row + '</tr>';
+      }
+      shapeDetails = shapeDetails + row;
+    }
+  }
+  return shapeDetails;
 };
 
 p5.prototype._buildShapeList = function() {
@@ -93,24 +142,24 @@ p5.prototype._buildShapeList = function() {
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
       el++;
-      let line = '<li>' + ingredients[x][y].color + ' ' + x;
+      let _line = '<li>' + ingredients[x][y].color + ' ' + x;
       if (x === 'line') {
-        line =
-          line +
+        _line =
+          _line +
           ', ' +
           ingredients[x][y].pos +
           ', ' +
           ingredients[x][y].length +
           ' pixels long.</li>';
       } else {
-        line = line + ', at ' + ingredients[x][y].pos;
+        _line = _line + ', at ' + ingredients[x][y].pos;
         if (x !== 'point') {
-          line =
-            line + ', covering ' + ingredients[x][y].area + '% of the canvas';
+          _line =
+            _line + ', covering ' + ingredients[x][y].area + '% of the canvas';
         }
-        line = line + '.</li>';
+        _line = _line + '.</li>';
       }
-      elText = elText + line;
+      elText = elText + _line;
     }
   }
   return { numShapes: el, listShapes: elText };
@@ -182,7 +231,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (ingredients[f] === undefined) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
-    for (var i = 0; i < ingredients[f].length; i++) {
+    for (let i = 0; i < ingredients[f].length; i++) {
       if (ingredients[f][i] !== include) {
         ingredients[f].push(include);
       }
