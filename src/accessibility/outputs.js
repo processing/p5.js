@@ -140,6 +140,7 @@ p5.prototype._accsOutput = function(f, args) {
     f = 'square';
   }
   let include = {};
+  let add = true;
   if (f === 'line') {
     include.color = cnvConfig.stroke;
     include.length = _getLineLength(args);
@@ -158,15 +159,19 @@ p5.prototype._accsOutput = function(f, args) {
       include.area = this._getArea(f, args);
     }
     include.pos = this._getPos(args);
+    include.loc = this._canvasLocator(args);
   }
   include.args = args;
   if (ingredients[f] === undefined) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
-    for (let i = 0; i < ingredients[f].length; i++) {
-      if (ingredients[f][i] !== include) {
-        ingredients[f].push(include);
+    for (var i = 0; i < ingredients[f].length; i++) {
+      if (ingredients[f][i] === include) {
+        add = false;
       }
+    }
+    if (add === true) {
+      ingredients[f].push(include);
     }
   }
   if (ingredients !== preIngredients) {
@@ -181,7 +186,7 @@ p5.prototype._getPos = function(args) {
   if (x < 0.4 * this.width) {
     if (y < 0.4 * this.height) {
       return 'top left';
-    } else if (yCoord > 0.6 * this.height) {
+    } else if (y > 0.6 * this.height) {
       return 'bottom left';
     } else {
       return 'mid left';
@@ -211,6 +216,25 @@ p5.prototype._getLineLength = function(args) {
     Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
   );
   return lineLength;
+};
+
+p5.prototype._canvasLocator = function(args) {
+  const noRows = 10;
+  const noCols = 10;
+  let locX, locY;
+
+  locX = Math.floor(args[0] / this.width * noRows);
+  locY = Math.floor(args[1] / this.height * noCols);
+  if (locX === noRows) {
+    locX = locX - 1;
+  }
+  if (locY === noCols) {
+    locY = locY - 1;
+  }
+  return {
+    locX,
+    locY
+  };
 };
 
 p5.prototype._getArea = function(objectType, shapeArgs) {

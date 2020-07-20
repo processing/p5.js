@@ -15,18 +15,60 @@ p5.prototype._updateTableOutput = function(cnvId, ing, bkgr) {
   let cIdT = cnvId + 'tbOut';
   let innerSDs = this._buildTableSDs(cIdT);
   let innerSummary = this._buildTbSummary(innerSDs.numShapes);
+  let innerMap = this._buildTbMap();
   if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
+  }
+  if (innerMap !== document.getElementById(cIdT + 'OD').innerHTML) {
+    document.getElementById(cIdT + 'OD').innerHTML = innerMap;
   }
   if (innerSDs !== document.getElementById(cIdT + 'SD').innerHTML) {
     document.getElementById(cIdT + 'SD').innerHTML = innerSDs.details;
   }
 };
 
+p5.prototype._buildTbMap = function() {
+  let table = '';
+  let cells = Array.apply(null, Array(10)).map(function() {});
+  for (let r in cells) {
+    cells[r] = Array.apply(null, Array(10)).map(function() {});
+  }
+  for (let x in ingredients) {
+    for (let y in ingredients[x]) {
+      if (
+        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] ===
+        undefined
+      ) {
+        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
+          ingredients[x][y].color + ' ' + x;
+      } else {
+        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
+          cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] +
+          ', ' +
+          ingredients[x][y].color +
+          ' ' +
+          x;
+      }
+    }
+  }
+  for (let r in cells) {
+    let row = '<tr>';
+    for (let c in cells[r]) {
+      row = row + '<td>';
+      if (cells[r][c] !== undefined) {
+        row = row + cells[r][c];
+      }
+      row = row + '</td>';
+    }
+    table = table + row;
+  }
+  return table;
+};
+
 p5.prototype._buildTbSummary = function(numShapes) {
   let text =
     background +
-    'canvas, ' +
+    ' canvas, ' +
     Math.round(this.width) +
     ' by ' +
     Math.round(this.height) +
