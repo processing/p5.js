@@ -11,7 +11,7 @@ let background;
 
 p5.prototype._createTableOutput = function(cIdT) {
   let inner =
-    '<h1>Table Output</h1><p id="' +
+    'Table Output<p id="' +
     cIdT +
     'Summary" aria-label="table output summary"><table id="' +
     cIdT +

@@ -11,7 +11,7 @@ let background;
 
 p5.prototype._createTextOutput = function(cIdT) {
   let inner =
-    '<h1>Text Output</h1><div id="' +
+    'Text Output<div id="' +
     cIdT +
     'Summary" aria-label="text output summary"><p id="' +
     cIdT +
