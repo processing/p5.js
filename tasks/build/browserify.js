@@ -19,6 +19,8 @@ module.exports = function(grunt) {
     function(param) {
       const isMin = param === 'min';
       const isTest = param === 'test';
+      const isDev = param === 'dev';
+
       const filename = isMin
         ? 'p5.pre-min.js'
         : isTest ? 'p5-test.js' : 'p5.js';
@@ -32,9 +34,14 @@ module.exports = function(grunt) {
       // Render the banner for the top of the file
       const banner = grunt.template.process(bannerTemplate);
 
+      let globalsVars = {};
+      if (isDev) {
+        globalsVars['P5_DEV_BUILD'] = () => true;
+      }
       // Invoke Browserify programatically to bundle the code
       let browseified = browserify(srcFilePath, {
-        standalone: 'p5'
+        standalone: 'p5',
+        insertGlobalVars: globalsVars
       });
 
       if (isMin) {
@@ -48,6 +55,10 @@ module.exports = function(grunt) {
           .exclude('./browser_errors')
           .ignore('i18next')
           .ignore('i18next-browser-languagedetector');
+      }
+
+      if (!isDev) {
+        browseified = browseified.exclude('../../translations/dev');
       }
 
       const babelifyOpts = { plugins: ['static-fs'] };

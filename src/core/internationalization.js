@@ -1,19 +1,43 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-// let resources;
-// // Do not include translations in the minified js
 let fallbackResources, languages;
 if (typeof IS_MINIFIED === 'undefined') {
-  fallbackResources = require('../../translations').default;
-  languages = require('../../translations').languages;
+  // internationalization is only for the unminified build
+
+  const translationsModule = require('../../translations');
+  fallbackResources = translationsModule.default;
+  languages = translationsModule.languages;
+
+  if (typeof P5_DEV_BUILD !== 'undefined') {
+    // When the library is built in development mode ( using npm run dev )
+    // we want to use the current translation files on the disk, which may have
+    // been updated but not yet pushed to the CDN.
+    let completeResources = require('../../translations/dev');
+    for (const language of Object.keys(completeResources)) {
+      // In es_translation, language is es and namespace is translation
+      // In es_MX_translation, language is es-MX and namespace is translation
+      const parts = language.split('_');
+      const lng = parts.slice(0, parts.length - 1).join('-');
+      const ns = parts[parts.length - 1];
+
+      fallbackResources[lng] = fallbackResources[lng] || {};
+      fallbackResources[lng][ns] = completeResources[language];
+    }
+  }
 }
 
+/**
+ * This is our i18next "backend" plugin. It tries to fetch languages
+ * from a CDN.
+ */
 class FetchResources {
   constructor(services, options) {
     this.init(services, options);
   }
 
+  // run fetch with a timeout. Automatically rejects on timeout
+  // default timeout = 2000 ms
   fetchWithTimeout(url, options, timeout = 2000) {
     return Promise.race([
       fetch(url, options),
@@ -30,18 +54,25 @@ class FetchResources {
 
   read(language, namespace, callback) {
     const loadPath = this.options.loadPath;
-    const url = this.services.interpolator.interpolate(loadPath, {
-      lng: language,
-      ns: namespace
-    });
 
-    // if the default language of the user is the same as our inbuilt fallback,
-    // there's no need to fetch resources.
     if (language === this.options.fallback) {
+      // if the default language of the user is the same as our inbuilt fallback,
+      // there's no need to fetch resources from the cdn. This won't actually
+      // need to run when we use "partialBundledLanguages" in the init
+      // function.
       callback(null, fallbackResources[language][namespace]);
     } else if (languages.includes(language)) {
+      // The user's language is included in the list of languages
+      // that we so far added translations for.
+
+      const url = this.services.interpolator.interpolate(loadPath, {
+        lng: language,
+        ns: namespace
+      });
       this.loadUrl(url, callback);
     } else {
+      // We don't have translations for this language. i18next will use
+      // the default language instead.
       callback('Not found', false);
     }
   }
@@ -51,12 +82,15 @@ class FetchResources {
       .then(
         response => {
           const ok = response.ok;
+
           if (!ok) {
+            // caught in the catch() below
             throw new Error(`failed loading ${url}`);
           }
           return response.json();
         },
         () => {
+          // caught in the catch() below
           throw new Error(`failed loading ${url}`);
         }
       )
@@ -83,8 +117,8 @@ export let translator = (key, values) => {
   console.debug('p5.js translator called before translations were loaded');
 
   // Certain FES functionality may trigger before translations are downloaded.
-  // Due to the "partialBundledLanguages" option during initialization, we can
-  // still use our fallback language
+  // Using "partialBundledLanguages" option during initialization, we can
+  // still use our fallback language to display messages
   i18next.t(key, values); /* i18next-extract-disable-line */
 };
 // (We'll set this to a real value in the init function below!)
@@ -111,7 +145,7 @@ export const initialize = () => {
       backend: {
         fallback: 'en',
         loadPath:
-          'https://cdn.jsdelivr.net/npm/@akshay-99/p5-test/translations/{{lng}}/{{ns}}.json'
+          'https://cdn.jsdelivr.net/npm/p5/translations/{{lng}}/{{ns}}.json'
       },
       partialBundledLanguages: true,
       resources: fallbackResources
