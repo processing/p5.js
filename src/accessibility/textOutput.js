@@ -27,7 +27,7 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'txtOut';
-  let innerList = this._buildShapeList();
+  let innerList = this._buildShapeList(cIdT);
   let innerSummary = this._buildTxtSummary(innerList.numShapes);
   let innerShapeDetails = this._buildShapeDetails(cIdT);
   if (innerSummary !== document.getElementById(cIdT + 'SumP').innerHTML) {
@@ -92,13 +92,22 @@ p5.prototype._buildShapeDetails = function(cId) {
   return shapeDetails;
 };
 
-p5.prototype._buildShapeList = function() {
+p5.prototype._buildShapeList = function(cId) {
   let elText = '';
   let el = 0;
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
       el++;
-      let _line = '<li>' + ingredients[x][y].color + ' ' + x;
+      let _line =
+        '<li><a href="#' +
+        cId +
+        'shape' +
+        el +
+        '">' +
+        ingredients[x][y].color +
+        ' ' +
+        x +
+        '</a>';
       if (x === 'line') {
         _line =
           _line +
