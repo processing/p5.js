@@ -94,7 +94,8 @@
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/addons/p5.sound.js",
-    "lib/addons/p5.sound.min.js"
+    "lib/addons/p5.sound.min.js",
+    "translations/**"
   ],
   "description": "[![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {
