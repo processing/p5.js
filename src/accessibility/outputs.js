@@ -7,7 +7,7 @@
 
 //table output name must change
 //color names could improve
-//pos formulas should be updated to middle point of shape
+//pos and loc formulas should be updated to middle point of shape
 
 import p5 from '../core/main';
 let ingredients = {};
@@ -32,10 +32,11 @@ p5.prototype.tableOutput = function() {
     this._setDefaults();
     this._createOutput('tbOut');
   } else {
-    throw new Error('textOutput() should be called after canvas is created');
+    throw new Error('tableOutput() should be called after canvas is created');
   }
 };
 
+//helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
   if (txtOut === true || tbOut === true) {
     return true;
@@ -44,7 +45,7 @@ p5.prototype._addAccsOutput = function() {
   }
 };
 
-//helper function that creates div for accessible outputs
+//helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type) {
   let cnvId = this.canvas.id;
   let cIdT = cnvId + type;
@@ -56,27 +57,11 @@ p5.prototype._createOutput = function(type) {
         '<section id="' + cIdT + '" class="accessibleOutput"></section>'
       );
     if (type === 'txtOut') {
-      let inner =
-        '<h1>Text Output</h1><div id="' +
-        cIdT +
-        'Summary" aria-label="text output summary"><p id="' +
-        cIdT +
-        'SumP"></p><ul id="' +
-        cIdT +
-        'lst"></ul></div><table id="' +
-        cIdT +
-        'SD" summary="text output shape details"></table>';
+      let inner = this._createTextOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
     if (type === 'tbOut') {
-      let inner =
-        '<h1>Table Output</h1><p id="' +
-        cIdT +
-        'Summary" aria-label="table output summary"><table id="' +
-        cIdT +
-        'OD" summary="table output content"></table><ul id="' +
-        cIdT +
-        'SD" aria-label="table output shape details"></ul>';
+      let inner = this._createTableOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
     this._updateOutput();
@@ -97,30 +82,27 @@ p5.prototype._updateOutput = function() {
   }
 };
 
+//helper function that resets all ingredients when background is called
+//and saves background color name
 p5.prototype._accsBackground = function(args) {
-  if (txtOut === false) {
-    return;
-  }
   preIngredients = ingredients;
   ingredients = {};
   if (cnvConfig.backgroundRGBA !== args) {
-    cnvConfig.backgroundRGBA = args;
+    //cnvConfig.backgroundRGBA = args;
     cnvConfig.background = this._rgbColorName(args);
   }
 };
 
+//helper function that gets fill and stroke of shapes
 p5.prototype._accscnvConfig = function(f, args) {
-  if (txtOut === false) {
-    return;
-  }
   if (f === 'fill') {
-    if (cnvConfig.fill !== args) {
+    if (cnvConfig.fillRGBA !== args) {
       cnvConfig.fillRGBA = args;
       cnvConfig.fill = this._rgbColorName(args);
       this._updateOutput();
     }
   } else if (f === 'stroke') {
-    if (cnvConfig.stroke !== args) {
+    if (cnvConfig.strokeRGBA !== args) {
       cnvConfig.strokeRGBA = args;
       cnvConfig.stroke = this._rgbColorName(args);
       this._updateOutput();
@@ -128,11 +110,15 @@ p5.prototype._accscnvConfig = function(f, args) {
   }
 };
 
+//helper function that sets defaul colors for background
+//fill and stroke.
 p5.prototype._setDefaults = function() {
   cnvConfig.background = 'white';
   cnvConfig.fill = 'white';
+  cnvConfig.stroke = 'black';
 };
 
+//builds ingredients list for building outputs
 p5.prototype._accsOutput = function(f, args) {
   if (f === 'ellipse' && args[2] === args[3]) {
     f = 'circle';
@@ -179,6 +165,7 @@ p5.prototype._accsOutput = function(f, args) {
   }
 };
 
+//gets position of shape in the canvas
 p5.prototype._getPos = function(args) {
   let x = Math.round(args[0]);
   let y = Math.round(args[1]);
@@ -218,6 +205,7 @@ p5.prototype._getLineLength = function(args) {
   return lineLength;
 };
 
+//locates shape in a 10*10 grid
 p5.prototype._canvasLocator = function(args) {
   const noRows = 10;
   const noCols = 10;
@@ -237,6 +225,7 @@ p5.prototype._canvasLocator = function(args) {
   };
 };
 
+//Calculates area of shape
 p5.prototype._getArea = function(objectType, shapeArgs) {
   let objectArea = 0;
   if (objectType === 'arc') {

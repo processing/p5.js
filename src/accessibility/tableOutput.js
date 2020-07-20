@@ -9,13 +9,25 @@ import p5 from '../core/main';
 let ingredients = {};
 let background;
 
+p5.prototype._createTableOutput = function(cIdT) {
+  let inner =
+    '<h1>Table Output</h1><p id="' +
+    cIdT +
+    'Summary" aria-label="table output summary"><table id="' +
+    cIdT +
+    'OD" summary="table output content"></table><ul id="' +
+    cIdT +
+    'SD" aria-label="table output shape details"></ul>';
+  return inner;
+};
+
 p5.prototype._updateTableOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'tbOut';
   let innerSDs = this._buildTableSDs(cIdT);
   let innerSummary = this._buildTbSummary(innerSDs.numShapes);
-  let innerMap = this._buildTbMap();
+  let innerMap = this._buildTbMap(cIdT);
   if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
   }
@@ -27,7 +39,8 @@ p5.prototype._updateTableOutput = function(cnvId, ing, bkgr) {
   }
 };
 
-p5.prototype._buildTbMap = function() {
+p5.prototype._buildTbMap = function(cId) {
+  let el = 0;
   let table = '';
   let cells = Array.apply(null, Array(10)).map(function() {});
   for (let r in cells) {
@@ -35,19 +48,33 @@ p5.prototype._buildTbMap = function() {
   }
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
+      el++;
       if (
         cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] ===
         undefined
       ) {
         cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
-          ingredients[x][y].color + ' ' + x;
+          '<a href="#' +
+          cId +
+          'shape' +
+          el +
+          '">' +
+          ingredients[x][y].color +
+          ' ' +
+          x +
+          '</a>';
       } else {
         cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
           cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] +
-          ', ' +
+          '  <a href="#' +
+          cId +
+          'shape' +
+          el +
+          '">' +
           ingredients[x][y].color +
           ' ' +
-          x;
+          x +
+          '</a>';
       }
     }
   }

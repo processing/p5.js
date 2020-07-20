@@ -9,6 +9,20 @@ import p5 from '../core/main';
 let ingredients = {};
 let background;
 
+p5.prototype._createTextOutput = function(cIdT) {
+  let inner =
+    '<h1>Text Output</h1><div id="' +
+    cIdT +
+    'Summary" aria-label="text output summary"><p id="' +
+    cIdT +
+    'SumP"></p><ul id="' +
+    cIdT +
+    'lst"></ul></div><table id="' +
+    cIdT +
+    'SD" summary="text output shape details"></table>';
+  return inner;
+};
+
 p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
