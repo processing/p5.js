@@ -23,6 +23,8 @@ import './core/shape/curves';
 import './core/shape/vertex';
 //accessibility
 import './accessibility/outputs';
+import './accessibility/textOutput';
+import './accessibility/tableOutput';
 import './accessibility/color_namer';
 // color
 import './color/color_conversion';
