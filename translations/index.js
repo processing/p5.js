@@ -1,5 +1,4 @@
 import en from './en/translation';
-import es from './es/translation';
 
 /**
  * Maps our translations to their language key
@@ -11,8 +10,11 @@ import es from './es/translation';
 export default {
   en: {
     translation: en
-  },
-  es: {
-    translation: es
   }
 };
+
+// List of languages added so far
+export const languages = [
+  'en',
+  'es'
+];
