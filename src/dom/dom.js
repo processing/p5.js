@@ -1710,9 +1710,7 @@ p5.Element.prototype.html = function() {
  * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
  *
  * @method position
- * @returns {Object} config the x and y position of the element in an object
- * @param {Number} config.x   x is a number
- * @param {Number} config.y   y is a number
+ * @returns {Object} object of form { x: 0, y: 0 } containing the position of the element in an object
  * @example
  * <div><code class='norender'>
  * function setup() {
