@@ -3,16 +3,34 @@
 
 const open = require('open');
 const spawn = require('child_process').spawnSync;
+const simpleGit = require('simple-git/promise');
 
 module.exports = function(grunt) {
   // Register the Release Task
   grunt.registerTask(
     'release-p5',
     'Drafts and Publishes a fresh release of p5.js',
-    function(args) {
+    async function(args) {
+      const done = this.async();
+
+      // Check we are currently on the 'main' branch, refuse to continue
+      // if not and preview is not true.
+      // This section should be removed once support for 'main' branch
+      // is added to np
+      const git = simpleGit();
+      const branches = await git.branchLocal();
+      if (branches.current !== 'main' && !grunt.option('preview')) {
+        console.log('Not on "main" branch, refusing to deploy.');
+        console.log('Preview the release step with the "--preview" flag.');
+        done();
+        return;
+      }
+
       spawn(
         'npx np',
-        grunt.option('preview') ? ['--any-branch', '--preview'] : [],
+        grunt.option('preview')
+          ? ['--any-branch', '--preview']
+          : ['--any-branch'],
         {
           stdio: 'inherit',
           shell: true
@@ -45,6 +63,8 @@ module.exports = function(grunt) {
       // 3. Push the docs out to the website
       grunt.task.run('yui');
       grunt.task.run('release-docs');
+
+      done();
     }
   );
 };
