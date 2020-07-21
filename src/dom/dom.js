@@ -1706,8 +1706,13 @@ p5.Element.prototype.html = function() {
  * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
  * If no arguments given, the function returns the x and y position of the element.
  *
+ * found documentation on how to be more specific with object type
+ * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
+ *
  * @method position
- * @returns {Object} the x and y position of the element in an object
+ * @returns {Object} config the x and y position of the element in an object
+ * @param {Number} config.x   x is a number
+ * @param {Number} config.y   y is a number
  * @example
  * <div><code class='norender'>
  * function setup() {
