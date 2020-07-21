@@ -496,10 +496,10 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * and b and c are the control points.
  *
  * @method curveTangent
- * @param {Number} a coordinate of first point on the curve
- * @param {Number} b coordinate of first control point
- * @param {Number} c coordinate of second control point
- * @param {Number} d coordinate of second point on the curve
+ * @param {Number} a coordinate of first control point
+ * @param {Number} b coordinate of first point on the curve
+ * @param {Number} c coordinate of second point on the curve
+ * @param {Number} d coordinate of second conrol point
  * @param {Number} t value between 0 and 1
  * @return {Number} the tangent at position t
  * @example
