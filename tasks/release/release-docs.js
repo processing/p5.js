@@ -47,7 +47,7 @@ module.exports = function(grunt) {
       console.log('Pushing to GitHub ...');
       await git('p5-website').add('.');
       await git('p5-website').commit(version);
-      await git('p5-website').push('origin', 'master');
+      await git('p5-website').push('origin', 'main');
 
       console.log('Released Docs on Website!');
       done();

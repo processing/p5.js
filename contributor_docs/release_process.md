@@ -29,7 +29,7 @@ npm run release
 * A draft release is created on github.com with changelogs that can be edited.
 * Create a Zip file `p5.zip` of `lib` folder (now includes the empty example), which should be uploaded in the GitHub Release draft created above.
 	* After this process completes a window pointing at `release/` will open and it will contain all the files that should be uploaded as part of the Github Release.
-* Push the newly built library to [p5.js-release](https://github.com/lmccart/p5.js-release) repo for Bower.
+* Push the newly built library to [p5.js-release](https://github.com/processing/p5.js-release) repo for Bower.
 * Building the Docs: This is run as `grunt yui`
 * Push the newly built reference to [p5.js-website](https://github.com/processing/p5.js-website)
 
