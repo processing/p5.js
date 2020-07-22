@@ -272,7 +272,9 @@ Here is an example for a well documentated method. To create a new method, you c
 
 ## Generating documentation
 
-Run `grunt yui:build` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme-src folder, NOT inline documentation changes to src. If you only made changes to the source code, you can just run `grunt yui`, though `grunt yui:build` will also do the trick. 
+* Run `grunt yui:build` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme-src folder, NOT inline documentation changes to src.
+* If you only made changes to the source code, you can just run `grunt yui`, though `grunt yui:build` will also do the trick. 
+* You can run `npm run docs:dev` to launch a live preview of the site that will update each time you make changes. (You will need to refresh the page after making changes to see them appear.)
 
 The build reference can be found in docs/reference. To preview it locally, run `grunt yui:dev` and view it as http://localhost:9001/docs/reference/.
 
