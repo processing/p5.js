@@ -42,7 +42,7 @@ module.exports = function(grunt) {
       // them to add their own, to test if release works or not.
       grunt.config.set(
         'bowerReleaser',
-        grunt.option('bowerReleaser') || 'lmccart'
+        grunt.option('bowerReleaser') || 'processing'
       );
       grunt.config.set(
         'docsReleaser',
