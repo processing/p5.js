@@ -40,7 +40,7 @@ module.exports = function(grunt) {
       if (isMin) {
         browseified = browseified
           .exclude('../../docs/reference/data.json')
-          .exclude('../../../docs/parameterData.json')
+          .exclude('../../docs/parameterData.json')
           .exclude('../../translations')
           .exclude('./browser_errors')
           .ignore('i18next')
