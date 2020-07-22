@@ -178,6 +178,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
     return this;
   }
 
+  if (start === stop) {
+    return this;
+  }
+
   start = this._toRadians(start);
   stop = this._toRadians(stop);
 
