@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       }
 
       spawn(
-        'npx np',
+        'npx np --no-2fa',
         grunt.option('preview')
           ? ['--any-branch', '--preview']
           : ['--any-branch'],
