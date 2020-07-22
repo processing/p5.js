@@ -325,12 +325,12 @@ module.exports = grunt => {
           {
             expand: true,
             src: ['lib/p5.js', 'lib/p5.min.js'],
-            dest: 'bower-repo/lib/'
+            dest: 'bower-repo/'
           },
           {
             expand: true,
             src: 'lib/addons/*',
-            dest: 'bower-repo/lib/addons/'
+            dest: 'bower-repo/'
           }
         ]
       },
