@@ -1,3 +1,5 @@
+// This file holds the "browersify" task which compiles the individual src/ code into p5.js and p5.min.js.
+
 'use strict';
 
 import { resolve } from 'path';

@@ -1,3 +1,5 @@
+// This file contains the "eslint-samples" task.
+
 'use strict';
 import { magenta } from 'chalk';
 

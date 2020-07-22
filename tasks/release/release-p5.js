@@ -1,5 +1,8 @@
-// Grunt Task to create release archive. Also handles releasing
-// for Bower and release of reference on the website.
+// This file holds the "release" task. It spawns the menu in terminal to initiate the release process.
+// The release process includes:
+// 1. Creating the release archive (p5.js, p5.min.js, p5.sound.js, p5.sound.min.js, and p5.zip).
+// 2. Releasing to Bower via https://github.com/processing/p5.js-release (release-bower)
+// 3. Releasing the reference on the website via https://github.com/processing/p5.js-website (release-docs)
 
 const open = require('open');
 const spawn = require('child_process').spawnSync;

@@ -1,3 +1,5 @@
+// This file contains the "combineModules" task called during the build process.
+
 'use strict';
 
 const fs = require('fs');
