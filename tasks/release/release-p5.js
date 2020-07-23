@@ -64,7 +64,6 @@ module.exports = function(grunt) {
       grunt.task.run('release-bower');
 
       // 3. Push the docs out to the website
-      grunt.task.run('yui');
       grunt.task.run('release-docs');
 
       done();

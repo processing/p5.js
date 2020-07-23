@@ -16,7 +16,7 @@
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
     "release": "grunt release-p5",
-    "prepublish": "grunt build"
+    "prepublishOnly": "grunt prerelease"
   },
   "lint-staged": {
     "ignore": [

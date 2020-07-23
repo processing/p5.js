@@ -561,5 +561,9 @@ module.exports = grunt => {
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
+
+  // builds the docs and the library before release
+  grunt.registerTask('prerelease', ['yui', 'build']);
+
   grunt.registerTask('default', ['lint-no-fix', 'test']);
 };
