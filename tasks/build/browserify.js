@@ -38,9 +38,12 @@ module.exports = function(grunt) {
       });
 
       if (isMin) {
+        // These paths should be the exact same as what are used in the import
+        // statements in the source. They are not relative to this file. It's
+        // just how browserify works apparently.
         browseified = browseified
           .exclude('../../docs/reference/data.json')
-          .exclude('../../docs/parameterData.json')
+          .exclude('../../../docs/parameterData.json')
           .exclude('../../translations')
           .exclude('./browser_errors')
           .ignore('i18next')

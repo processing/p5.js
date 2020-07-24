@@ -561,5 +561,11 @@ module.exports = grunt => {
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
+
+  // This is called by the "prepublishOnly" script in package.json to build the
+  // documentation and the library after np bumps up the version number so that
+  // the newly built files with the updated version number can be published.
+  grunt.registerTask('prerelease', ['yui', 'build']);
+
   grunt.registerTask('default', ['lint-no-fix', 'test']);
 };
