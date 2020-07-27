@@ -42,6 +42,21 @@ suite('describe', function() {
       let actual = getInner(myID + '_fds');
       assert.deepEqual(actual, expected);
     });
+    test('should not add extra period if string ends in "."', function() {
+      myp5.describe('a.');
+      let actual = getInner(myID + '_fds');
+      assert.deepEqual(actual, expected);
+    });
+    test('should not add period if string ends in "!"', function() {
+      myp5.describe('A!');
+      let actual = getInner(myID + '_fds');
+      assert.deepEqual(actual, 'A!');
+    });
+    test('should not add period if string ends in "?"', function() {
+      myp5.describe('A?');
+      let actual = getInner(myID + '_fds');
+      assert.deepEqual(actual, 'A?');
+    });
     test('should create description when called after describeElement()', function() {
       myp5.describeElement(b, c);
       myp5.describe(a);
@@ -91,6 +106,11 @@ suite('describe', function() {
       let actual = getInner(myID + '_fte_' + a);
       assert.deepEqual(actual, expected);
     });
+    //test('regEx should not add extra colon and period', function() {
+    //myp5.describeElement('A:', 'B.');
+    //let actual = getInner(myID + '_fds');
+    //assert.deepEqual(actual, expected);
+    //});
     test('should create element description when called after describe()', function() {
       myp5.describe(c);
       myp5.describeElement(a, b);

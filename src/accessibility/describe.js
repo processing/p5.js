@@ -132,7 +132,11 @@ p5.prototype._descriptionText = function(t) {
     throw new Error('description should not be LABEL or FALLBACK');
   }
   //if string does not end with '.'
-  if (t.endsWith('.') === false) {
+  if (
+    t.endsWith('.') === false &&
+    t.endsWith('?') === false &&
+    t.endsWith('!') === false
+  ) {
     //add '.' to the end of string
     t = t + '.';
   }
