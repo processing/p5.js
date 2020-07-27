@@ -9,25 +9,25 @@ import p5 from '../core/main';
 let ingredients = {};
 let background;
 
-p5.prototype._createTableOutput = function(cIdT) {
+p5.prototype._createGridOutput = function(cIdT) {
   let inner =
-    'Table Output<p id="' +
+    'Grid Output<p id="' +
     cIdT +
-    'Summary" aria-label="table output summary"><table id="' +
+    'Summary" aria-label="grid output summary"><table id="' +
     cIdT +
-    'OD" summary="table output content"></table><ul id="' +
+    'OD" summary="grid output content"></table><ul id="' +
     cIdT +
-    'SD" aria-label="table output shape details"></ul>';
+    'SD" aria-label="grid output shape details"></ul>';
   return inner;
 };
 
-p5.prototype._updateTableOutput = function(cnvId, ing, bkgr) {
+p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
-  let cIdT = cnvId + 'tbOut';
-  let innerSDs = this._buildTableSDs(cIdT);
-  let innerSummary = this._buildTbSummary(innerSDs.numShapes);
-  let innerMap = this._buildTbMap(cIdT);
+  let cIdT = cnvId + 'grOut';
+  let innerSDs = this._buildGridSDs(cIdT);
+  let innerSummary = this._buildGrSummary(innerSDs.numShapes);
+  let innerMap = this._buildGrMap(cIdT);
   if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
   }
@@ -39,7 +39,7 @@ p5.prototype._updateTableOutput = function(cnvId, ing, bkgr) {
   }
 };
 
-p5.prototype._buildTbMap = function(cId) {
+p5.prototype._buildGrMap = function(cId) {
   let el = 0;
   let table = '';
   let cells = Array.apply(null, Array(10)).map(function() {});
@@ -92,7 +92,7 @@ p5.prototype._buildTbMap = function(cId) {
   return table;
 };
 
-p5.prototype._buildTbSummary = function(numShapes) {
+p5.prototype._buildGrSummary = function(numShapes) {
   let text =
     background +
     ' canvas, ' +
@@ -106,7 +106,7 @@ p5.prototype._buildTbSummary = function(numShapes) {
   return text;
 };
 
-p5.prototype._buildTableSDs = function(cId) {
+p5.prototype._buildGridSDs = function(cId) {
   let shapeDetails = '';
   let shapes = '';
   let el = 0;

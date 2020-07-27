@@ -5,7 +5,6 @@
  * @requires core
  */
 
-//table output name must change
 //color names could improve
 //pos and loc formulas should be updated to middle point of shape
 
@@ -13,7 +12,7 @@ import p5 from '../core/main';
 let ingredients = {};
 let preIngredients = {};
 let txtOut = false;
-let tbOut = false;
+let grOut = false;
 let cnvConfig = {};
 
 p5.prototype.textOutput = function() {
@@ -26,19 +25,19 @@ p5.prototype.textOutput = function() {
   }
 };
 
-p5.prototype.tableOutput = function() {
-  tbOut = true;
+p5.prototype.gridOutput = function() {
+  grOut = true;
   if (this.canvas !== undefined) {
     this._setDefaults();
-    this._createOutput('tbOut');
+    this._createOutput('grOut');
   } else {
-    throw new Error('tableOutput() should be called after canvas is created');
+    throw new Error('gridOutput() should be called after canvas is created');
   }
 };
 
 //helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
-  if (txtOut === true || tbOut === true) {
+  if (txtOut === true || grOut === true) {
     return true;
   } else {
     return false;
@@ -60,8 +59,8 @@ p5.prototype._createOutput = function(type) {
       let inner = this._createTextOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
-    if (type === 'tbOut') {
-      let inner = this._createTableOutput(cIdT);
+    if (type === 'grOut') {
+      let inner = this._createGridOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
     this._updateOutput();
@@ -77,8 +76,8 @@ p5.prototype._updateOutput = function() {
   if (txtOut === true) {
     this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
   }
-  if (tbOut === true) {
-    this._updateTableOutput(cnvId, ingredients, cnvConfig.background);
+  if (grOut === true) {
+    this._updateGridOutput(cnvId, ingredients, cnvConfig.background);
   }
 };
 
