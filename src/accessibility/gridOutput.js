@@ -143,7 +143,10 @@ p5.prototype._buildGridSDs = function(cId) {
       }
       shapeDetails = shapeDetails + line;
     }
-    shapes = shapes + shapeNum + ' ' + x + ', ';
+    shapes = shapes + shapeNum + ' ' + x;
+    if (shapeNum > 1) {
+      shapes = shapes + 's ';
+    }
   }
   return { numShapes: [el, shapes], details: shapeDetails };
 };
