@@ -46,14 +46,14 @@ p5.prototype._buildGrMap = function(cId) {
   for (let r in cells) {
     cells[r] = Array.apply(null, Array(10)).map(function() {});
   }
-  for (let x in ingredients) {
-    for (let y in ingredients[x]) {
+  for (var x in ingredients) {
+    for (var y in ingredients[x]) {
       el++;
       if (
-        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] ===
+        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] ===
         undefined
       ) {
-        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
+        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           '<a href="#' +
           cId +
           'shape' +
@@ -64,8 +64,8 @@ p5.prototype._buildGrMap = function(cId) {
           x +
           '</a>';
       } else {
-        cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] =
-          cells[ingredients[x][y].loc.locX][ingredients[x][y].loc.locY] +
+        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
+          cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
           '  <a href="#' +
           cId +
           'shape' +
@@ -78,15 +78,16 @@ p5.prototype._buildGrMap = function(cId) {
       }
     }
   }
-  for (let r in cells) {
-    let row = '<tr>';
-    for (let c in cells[r]) {
+  for (var _r in cells) {
+    var row = '<tr>';
+    for (var c in cells[_r]) {
       row = row + '<td>';
-      if (cells[r][c] !== undefined) {
-        row = row + cells[r][c];
+      if (cells[_r][c] !== undefined) {
+        row = row + cells[_r][c];
       }
       row = row + '</td>';
     }
+    row = row + '</tr>';
     table = table + row;
   }
   return table;

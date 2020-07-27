@@ -5,9 +5,6 @@
  * @requires core
  */
 
-//color names could improve
-//pos and loc formulas should be updated to middle point of shape
-
 import p5 from '../core/main';
 let ingredients = {};
 let preIngredients = {};
