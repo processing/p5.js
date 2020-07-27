@@ -13,7 +13,7 @@ const fte = '_fte_'; //Fallback Table Element
 const lb = '_Label'; //Label container
 const lds = '_lds'; //Label description
 const lt = '_lt'; //Label Table
-const lte = '_lte_'; //Lable Table Element
+const lte = '_lte_'; //Label Table Element
 
 /**
  * Creates a screen-reader accessible description for the canvas.
