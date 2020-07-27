@@ -165,8 +165,9 @@ p5.prototype._accsOutput = function(f, args) {
   }
 };
 
-//gets middle point of shape
+//gets middle point / centroid of shape
 p5.prototype._getMiddle = function(f, args) {
+  let x, y;
   if (
     f === 'rectangle' ||
     f === 'ellipse' ||
@@ -174,17 +175,19 @@ p5.prototype._getMiddle = function(f, args) {
     f === 'circle' ||
     f === 'square'
   ) {
-    let x = Math.round(args[0] + args[2] / 2);
-    let y = Math.round(args[1] + args[3] / 2);
-    return [x, y];
+    x = Math.round(args[0] + args[2] / 2);
+    y = Math.round(args[1] + args[3] / 2);
   } else if (f === 'triangle') {
-    //get centroid
-    let x = (args[0] + args[2] + args[4]) / 3;
-    let y = (args[1] + args[3] + args[5]) / 3;
-    return [x, y];
+    x = (args[0] + args[2] + args[4]) / 3;
+    y = (args[1] + args[3] + args[5]) / 3;
+  } else if (f === 'quadrilateral') {
+    x = (args[0] + args[2] + args[4] + args[6]) / 4;
+    y = (args[1] + args[3] + args[5] + args[7]) / 4;
   } else {
-    return [args[0], args[1]];
+    x = args[0];
+    y = args[1];
   }
+  return [x, y];
 };
 
 //gets position of shape in the canvas
