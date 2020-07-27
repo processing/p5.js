@@ -143,8 +143,9 @@ p5.prototype._accsOutput = function(f, args) {
       include.color = cnvConfig.fill;
       include.area = this._getArea(f, args);
     }
-    include.pos = this._getPos(args);
-    include.loc = this._canvasLocator(args);
+    include.middle = this._getMiddle(f, args);
+    include.pos = this._getPos(include.middle);
+    include.loc = this._canvasLocator(include.middle);
   }
   include.args = args;
   if (ingredients[f] === undefined) {
@@ -161,6 +162,28 @@ p5.prototype._accsOutput = function(f, args) {
   }
   if (ingredients !== preIngredients) {
     this._updateOutput();
+  }
+};
+
+//gets middle point of shape
+p5.prototype._getMiddle = function(f, args) {
+  if (
+    f === 'rectangle' ||
+    f === 'ellipse' ||
+    f === 'arc' ||
+    f === 'circle' ||
+    f === 'square'
+  ) {
+    let x = Math.round(args[0] + args[2] / 2);
+    let y = Math.round(args[1] + args[3] / 2);
+    return [x, y];
+  } else if (f === 'triangle') {
+    //get centroid
+    let x = (args[0] + args[2] + args[4]) / 3;
+    let y = (args[1] + args[3] + args[5]) / 3;
+    return [x, y];
+  } else {
+    return [args[0], args[1]];
   }
 };
 
