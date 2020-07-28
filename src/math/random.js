@@ -165,8 +165,8 @@ p5.prototype.random = function(min, max) {
  * If two args, first is mean, second is standard deviation.
  *
  * @method randomGaussian
- * @param  {Number} mean  the mean
- * @param  {Number} sd    the standard deviation
+ * @param  {Number} [mean]  the mean
+ * @param  {Number} [sd]    the standard deviation
  * @return {Number} the random number
  * @example
  * <div>
