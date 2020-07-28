@@ -388,24 +388,43 @@ suite('Error Helpers', function() {
     });
 
     testUnMinified('detects capitalization mistakes', function() {
+      const logMsg = help(new ReferenceError('MouseX is not defined'));
       assert.match(
-        help(new ReferenceError('MouseX is not defined')),
-        /It seems that you may have accidently written MouseX instead of mouseX/
+        logMsg,
+        /It seems that you may have accidently written "MouseX"/
       );
+      assert.match(logMsg, /mouseX/);
     });
 
     testUnMinified('detects spelling mistakes', function() {
+      const logMsg = help(new ReferenceError('colour is not defined'));
       assert.match(
-        help(new ReferenceError('colour is not defined')),
-        /It seems that you may have accidently written colour instead of color/
+        logMsg,
+        /It seems that you may have accidently written "colour"/
       );
+      assert.match(logMsg, /color/);
     });
 
+    testUnMinified(
+      'can give more than one closest matches, if applicable',
+      function() {
+        const logMsg = help(new ReferenceError('strok is not defined'));
+        assert.match(
+          logMsg,
+          /It seems that you may have accidently written "strok"/
+        );
+        assert.match(logMsg, /stroke/);
+        assert.match(logMsg, /STROKE/);
+      }
+    );
+
     testUnMinified('detects spelling + captialization mistakes', function() {
+      const logMsg = help(new ReferenceError('RandomGossian is not defined'));
       assert.match(
-        help(new ReferenceError('RandomGossian is not defined')),
-        /It seems that you may have accidently written RandomGossian instead of randomGaussian/
+        logMsg,
+        /It seems that you may have accidently written "RandomGossian"/
       );
+      assert.match(logMsg, /randomGaussian/);
     });
   });
 
