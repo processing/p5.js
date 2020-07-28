@@ -46,8 +46,8 @@ p5.prototype._buildGrMap = function(cId) {
   for (let r in cells) {
     cells[r] = Array.apply(null, Array(10)).map(function() {});
   }
-  for (var x in ingredients) {
-    for (var y in ingredients[x]) {
+  for (let x in ingredients) {
+    for (let y in ingredients[x]) {
       el++;
       if (
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] ===
@@ -78,9 +78,9 @@ p5.prototype._buildGrMap = function(cId) {
       }
     }
   }
-  for (var _r in cells) {
-    var row = '<tr>';
-    for (var c in cells[_r]) {
+  for (let _r in cells) {
+    let row = '<tr>';
+    for (let c in cells[_r]) {
       row = row + '<td>';
       if (cells[_r][c] !== undefined) {
         row = row + cells[_r][c];

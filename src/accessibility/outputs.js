@@ -12,13 +12,75 @@ let txtOut = false;
 let grOut = false;
 let cnvConfig = {};
 
+/**
+ * <code class="language-javascript">textOutput()</code> creates a screereader
+ * accessible output that describes the shapes present on the canvas.
+ * The general description of the canvas includes canvas size,
+ * canvas color, and number of elements in the canvas
+ * (example: 'Your output is a, 400 by 400 pixels, lavender blue
+ * canvas containing the following 4 shapes:'). This description
+ * is followed by a list of shapes where the color, position, and area
+ * of each shape are described (example: "orange ellipse at top left
+ * covering 1% of the canvas"). Each element can be selected to get
+ * more details. A table of elements is also provided. In this table,
+ * shape, color, location, coordinates and area are described
+ * (example: "orange ellipse location=top left area=2").
+ *
+ * The function has one optional parameter. <code class="language-javascript">textOutput(LABEL)</code> displays
+ * the text output to all users in a
+ * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
+ * adjacent to the canvas. You can style it as you wish in your CSS.
+ * <code class="language-javascript">textOutput(FALLBACK)</code> makes the
+ * text output accessible to screen-reader users only, in
+ * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+ * a sub DOM inside the canvas element</a>. If a parameter is not
+ * specified, by default, the description will only be available to
+ * screen-reader users.
+ *
+ * @method describe
+ * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ *
+ * @example
+ * <div>
+ * <code>
+ * //textOutput();
+ * background(148, 196, 0);
+ * fill(255, 0, 0);
+ * ellipse(20, 20, 20, 20);
+ * fill(0, 0, 255);
+ * rect(50, 50, 50, 50);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let x = 0;
+ * function draw() {
+ *   //textOutput();
+ *   background(148, 196, 0);
+ *   fill(255, 0, 0);
+ *   ellipse(x, 20, 20, 20);
+ *   fill(0, 0, 255);
+ *   rect(50, 50, 50, 50);
+ *   ellipse(20, 20, 20, 20);
+ *   x += 0.1;
+ * }
+ * </code>
+ * </div>
+ *
+ */
+
 p5.prototype.textOutput = function() {
-  txtOut = true;
-  if (this.canvas !== undefined) {
-    this._setDefaults();
-    this._createOutput('txtOut');
+  if (txtOut === false) {
+    txtOut = true;
+    if (this.canvas !== undefined) {
+      this._setDefaults();
+      this._createOutput('txtOut');
+    } else {
+      throw new Error('textOutput() should be called after canvas is created');
+    }
   } else {
-    throw new Error('textOutput() should be called after canvas is created');
+    return;
   }
 };
 
@@ -148,8 +210,8 @@ p5.prototype._accsOutput = function(f, args) {
   if (ingredients[f] === undefined) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
-    for (var i = 0; i < ingredients[f].length; i++) {
-      if (ingredients[f][i] === include) {
+    for (let y in ingredients[x]) {
+      if (JSON.stringify(ingredients[f][y]) === JSON.stringify(include)) {
         add = false;
       }
     }
