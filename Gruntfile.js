@@ -189,7 +189,7 @@ module.exports = grunt => {
           'src/**/*.vert',
           'src/**/*.glsl'
         ],
-        tasks: ['browserify'],
+        tasks: ['browserify:dev'],
         options: {
           livereload: true
         }

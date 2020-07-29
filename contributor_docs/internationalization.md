@@ -82,7 +82,12 @@ The easiest way to do this is to add your language code (like "de" for German, "
 
 This will generate you a fresh translations file in `translations/{LANGUAGE_CODE}/`! Now you can begin populating it with your fresh translations! 🥖
 
-You'll also need to add an entry for it in `translations/index.js`. You can follow the pattern used in that file for `en` and `es`.
+You'll also need to add an entry for it in [`translations/index.js`](../translations/index.js) and [`translations/dev.js`](../translations/dev.js). You can follow the pattern used in that file for `en` and `es`.
+
+### Testing changes
+The bulk of translations are not included in the final library, but are hosted online and are automatically downloaded by p5.js when it needs them. Updates to these only happen whenever a new version of p5.js is released. 
+
+However, if you want to see your changes (or any other changes which aren't released yet), you can simply run `npm run dev` which will build p5.js configured to use the translation files present locally on your computer, instead of the ones on the internet.
 
 ### Further Reading
 
