@@ -5,6 +5,12 @@
  * @requires core
  */
 
+// Errors when running example:
+// - point
+// - line
+// - appending does not work
+// Call update only at the end of draw?
+
 import p5 from '../core/main';
 let ingredients = {};
 let preIngredients = {};
@@ -13,7 +19,7 @@ let grOut = false;
 let cnvConfig = {};
 
 /**
- * <code class="language-javascript">textOutput()</code> creates a screereader
+ * <code class="language-javascript">textOutput()</code> creates a screenreader
  * accessible output that describes the shapes present on the canvas.
  * The general description of the canvas includes canvas size,
  * canvas color, and number of elements in the canvas
@@ -26,51 +32,39 @@ let cnvConfig = {};
  * shape, color, location, coordinates and area are described
  * (example: "orange ellipse location=top left area=2").
  *
- * The function has one optional parameter. <code class="language-javascript">textOutput(LABEL)</code> displays
- * the text output to all users in a
- * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
- * adjacent to the canvas. You can style it as you wish in your CSS.
- * <code class="language-javascript">textOutput(FALLBACK)</code> makes the
- * text output accessible to screen-reader users only, in
- * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
- * a sub DOM inside the canvas element</a>. If a parameter is not
- * specified, by default, the description will only be available to
- * screen-reader users.
- *
- * @method describe
+ * @method textOutput
  * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
  *
  * @example
- * <div>
- * <code>
+ * //<div>
+ * //<code>
  * //textOutput();
- * background(148, 196, 0);
- * fill(255, 0, 0);
- * ellipse(20, 20, 20, 20);
- * fill(0, 0, 255);
- * rect(50, 50, 50, 50);
- * </code>
- * </div>
+ * //background(148, 196, 0);
+ * //fill(255, 0, 0);
+ * //ellipse(20, 20, 20, 20);
+ * //fill(0, 0, 255);
+ * //rect(50, 50, 50, 50);
+ * //</code>
+ * //</div>
  *
- * <div>
- * <code>
- * let x = 0;
- * function draw() {
+ *
+ * //<div>
+ * //<code>
+ * //let x = 0;
+ * //function draw() {
  *   //textOutput();
- *   background(148, 196, 0);
- *   fill(255, 0, 0);
- *   ellipse(x, 20, 20, 20);
- *   fill(0, 0, 255);
- *   rect(50, 50, 50, 50);
- *   ellipse(20, 20, 20, 20);
- *   x += 0.1;
- * }
- * </code>
- * </div>
+ *   //background(148, 196, 0);
+ *   //fill(255, 0, 0);
+ *   //ellipse(x, 20, 20, 20);
+ *   //fill(0, 0, 255);
+ *   //rect(50, 50, 50, 50);
+ *   //ellipse(20, 20, 20, 20);
+ *   //x += 0.1;
+ * //}
  *
  */
 
-p5.prototype.textOutput = function() {
+p5.prototype.textOutput = function(display) {
   if (txtOut === false) {
     txtOut = true;
     if (this.canvas !== undefined) {
@@ -84,13 +78,64 @@ p5.prototype.textOutput = function() {
   }
 };
 
-p5.prototype.gridOutput = function() {
-  grOut = true;
-  if (this.canvas !== undefined) {
-    this._setDefaults();
-    this._createOutput('grOut');
+/**
+ * <code class="language-javascript">gridOutput()</code>, formerly called
+ * table output, lays out the content of the canvas in the form of a grid
+ * (html table) based on the spatial location of each shape. A brief
+ * description of the canvas is available before the table output.
+ * This description includes: color of the background, size of the canvas,
+ * number of objects, and object types (example: "lavender blue canvas is
+ * 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle"). The grid
+ * describes the content spatially, each element is placed on a cell of the
+ * table depending on its position. Within each cell an element the color
+ * and type of shape of that element are available (example: "orange ellipse").
+ * These descriptions can be selected individually to get more details.
+ * A list of elements where shape, color, location, and area are described
+ * (example: "orange ellipse location=top left area=1%") is also available.
+ *
+ * @method gridOutput
+ * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ *
+ * @example
+ * //<div>
+ * //<code>
+ * //textOutput();
+ * //background(148, 196, 0);
+ * //fill(255, 0, 0);
+ * //ellipse(20, 20, 20, 20);
+ * //fill(0, 0, 255);
+ * //rect(50, 50, 50, 50);
+ * //</code>
+ * //</div>
+ *
+ *
+ * //<div>
+ * //<code>
+ * //let x = 0;
+ * //function draw() {
+ *   //textOutput();
+ *   //background(148, 196, 0);
+ *   //fill(255, 0, 0);
+ *   //ellipse(x, 20, 20, 20);
+ *   //fill(0, 0, 255);
+ *   //rect(50, 50, 50, 50);
+ *   //ellipse(20, 20, 20, 20);
+ *   //x += 0.1;
+ * //}
+ *
+ */
+
+p5.prototype.gridOutput = function(display) {
+  if (txtOut === false) {
+    grOut = true;
+    if (this.canvas !== undefined) {
+      this._setDefaults();
+      this._createOutput('grOut');
+    } else {
+      throw new Error('gridOutput() should be called after canvas is created');
+    }
   } else {
-    throw new Error('gridOutput() should be called after canvas is created');
+    return;
   }
 };
 
@@ -122,14 +167,14 @@ p5.prototype._createOutput = function(type) {
       let inner = this._createGridOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
-    this._updateOutput();
+    //this._updateOutput();
   }
 };
 
 //helper function that updates accessible outputs
 p5.prototype._updateOutput = function() {
-  if (ingredients === preIngredients) {
-    return;
+  if (JSON.stringify(ingredients) !== JSON.stringify(preIngredients)) {
+    this._updateOutput();
   }
   let cnvId = this.canvas.id;
   if (txtOut === true) {
@@ -157,13 +202,11 @@ p5.prototype._accscnvConfig = function(f, args) {
     if (cnvConfig.fillRGBA !== args) {
       cnvConfig.fillRGBA = args;
       cnvConfig.fill = this._rgbColorName(args);
-      this._updateOutput();
     }
   } else if (f === 'stroke') {
     if (cnvConfig.strokeRGBA !== args) {
       cnvConfig.strokeRGBA = args;
       cnvConfig.stroke = this._rgbColorName(args);
-      this._updateOutput();
     }
   }
 };
@@ -174,6 +217,14 @@ p5.prototype._setDefaults = function() {
   cnvConfig.background = 'white';
   cnvConfig.fill = 'white';
   cnvConfig.stroke = 'black';
+};
+
+// return length of lines
+p5.prototype._getLineL = function(args) {
+  const lineLength = Math.round(
+    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
+  );
+  return lineLength;
 };
 
 //builds ingredients list for building outputs
@@ -187,7 +238,7 @@ p5.prototype._accsOutput = function(f, args) {
   let add = true;
   if (f === 'line') {
     include.color = cnvConfig.stroke;
-    include.length = _getLineLength(args);
+    include.length = _getLineL(args);
     let p1 = this._getPos([args[0], [1]]);
     let p2 = this._getPos([args[2], [3]]);
     if (p1 === p2) {
@@ -210,7 +261,7 @@ p5.prototype._accsOutput = function(f, args) {
   if (ingredients[f] === undefined) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
-    for (let y in ingredients[x]) {
+    for (let y in ingredients[f]) {
       if (JSON.stringify(ingredients[f][y]) === JSON.stringify(include)) {
         add = false;
       }
@@ -219,9 +270,7 @@ p5.prototype._accsOutput = function(f, args) {
       ingredients[f].push(include);
     }
   }
-  if (ingredients !== preIngredients) {
-    this._updateOutput();
-  }
+  this._updateOutput();
 };
 
 //gets middle point / centroid of shape
@@ -281,14 +330,6 @@ p5.prototype._getPos = function(args) {
   }
 };
 
-// return length of lines
-p5.prototype._getLineLength = function(args) {
-  const lineLength = Math.round(
-    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
-  );
-  return lineLength;
-};
-
 //locates shape in a 10*10 grid
 p5.prototype._canvasLocator = function(args) {
   const noRows = 10;
@@ -317,20 +358,25 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
     // therefore, area of arc = difference bet. arc's start and end radians * horizontal radius * vertical radius.
     // the below expression is adjusted for negative values and differences in arc's start and end radians over PI*2
     const arcSizeInRadians =
-      ((shapeArgs[5] - shapeArgs[4]) % (PI * 2) + PI * 2) % (PI * 2);
+      ((shapeArgs[5] - shapeArgs[4]) % (Math.PI * 2) + Math.PI * 2) %
+      (Math.PI * 2);
     objectArea = arcSizeInRadians * shapeArgs[2] * shapeArgs[3] / 8;
     if (shapeArgs[6] === 'open' || shapeArgs[6] === 'chord') {
       // when the arc's mode is OPEN or CHORD, we need to account for the area of the triangle that is formed to close the arc
       // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ) )/2
       const Ax = shapeArgs[0];
       const Ay = shapeArgs[1];
-      const Bx = shapeArgs[0] + shapeArgs[2] / 2 * cos(shapeArgs[4]).toFixed(2);
-      const By = shapeArgs[1] + shapeArgs[3] / 2 * sin(shapeArgs[4]).toFixed(2);
-      const Cx = shapeArgs[0] + shapeArgs[2] / 2 * cos(shapeArgs[5]).toFixed(2);
-      const Cy = shapeArgs[1] + shapeArgs[3] / 2 * sin(shapeArgs[5]).toFixed(2);
+      const Bx =
+        shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[4]).toFixed(2);
+      const By =
+        shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[4]).toFixed(2);
+      const Cx =
+        shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[5]).toFixed(2);
+      const Cy =
+        shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[5]).toFixed(2);
       const areaOfExtraTriangle =
-        abs(Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By)) / 2;
-      if (arcSizeInRadians > PI) {
+        Math.abs(Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By)) / 2;
+      if (arcSizeInRadians > Math.PI) {
         objectArea = objectArea + areaOfExtraTriangle;
       } else {
         objectArea = objectArea - areaOfExtraTriangle;
@@ -345,7 +391,7 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
   } else if (objectType === 'quadrilateral') {
     // ((x4+x1)*(y4-y1)+(x1+x2)*(y1-y2)+(x2+x3)*(y2-y3)+(x3+x4)*(y3-y4))/2
     objectArea =
-      abs(
+      Math.abs(
         (shapeArgs[6] + shapeArgs[0]) * (shapeArgs[7] - shapeArgs[1]) +
           (shapeArgs[0] + shapeArgs[2]) * (shapeArgs[1] - shapeArgs[3]) +
           (shapeArgs[2] + shapeArgs[4]) * (shapeArgs[3] - shapeArgs[5]) +
@@ -355,7 +401,7 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
     objectArea = shapeArgs[2] * shapeArgs[3];
   } else if (objectType === 'triangle') {
     objectArea =
-      abs(
+      Math.abs(
         shapeArgs[0] * (shapeArgs[3] - shapeArgs[5]) +
           shapeArgs[2] * (shapeArgs[5] - shapeArgs[1]) +
           shapeArgs[4] * (shapeArgs[1] - shapeArgs[3])

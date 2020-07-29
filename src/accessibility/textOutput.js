@@ -30,14 +30,20 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   let innerList = this._buildShapeList(cIdT);
   let innerSummary = this._buildTxtSummary(innerList.numShapes);
   let innerShapeDetails = this._buildShapeDetails(cIdT);
-  if (innerSummary !== document.getElementById(cIdT + 'SumP').innerHTML) {
-    document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
+  if (document.getElementById(cIdT + 'SumP') !== null) {
+    if (innerSummary !== document.getElementById(cIdT + 'SumP').innerHTML) {
+      document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
+    }
   }
-  if (innerList !== document.getElementById(cIdT + 'lst').innerHTML) {
-    document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
+  if (document.getElementById(cIdT + 'lst') !== null) {
+    if (innerList !== document.getElementById(cIdT + 'lst').innerHTML) {
+      document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
+    }
   }
-  if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
-    document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
+  if (document.getElementById(cIdT + 'SD') !== null) {
+    if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
+      document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
+    }
   }
 };
 
