@@ -34,21 +34,21 @@ module.exports = function(grunt) {
       // Render the banner for the top of the file
       const banner = grunt.template.process(bannerTemplate);
 
-      let globalsVars = {};
+      let globalVars = {};
       if (isDev) {
-        globalsVars['P5_DEV_BUILD'] = () => true;
+        globalVars['P5_DEV_BUILD'] = () => true;
       }
       // Invoke Browserify programatically to bundle the code
-      let browseified = browserify(srcFilePath, {
+      let browserified = browserify(srcFilePath, {
         standalone: 'p5',
-        insertGlobalVars: globalsVars
+        insertGlobalVars: globalVars
       });
 
       if (isMin) {
         // These paths should be the exact same as what are used in the import
         // statements in the source. They are not relative to this file. It's
         // just how browserify works apparently.
-        browseified = browseified
+        browserified = browserified
           .exclude('../../docs/reference/data.json')
           .exclude('../../../docs/parameterData.json')
           .exclude('../../translations')
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
       }
 
       if (!isDev) {
-        browseified = browseified.exclude('../../translations/dev');
+        browserified = browserified.exclude('../../translations/dev');
       }
 
       const babelifyOpts = { plugins: ['static-fs'] };
@@ -67,7 +67,7 @@ module.exports = function(grunt) {
         babelifyOpts.envName = 'test';
       }
 
-      const bundle = browseified.transform('babelify', babelifyOpts).bundle();
+      const bundle = browserified.transform('babelify', babelifyOpts).bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
