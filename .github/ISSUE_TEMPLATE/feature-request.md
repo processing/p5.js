@@ -15,6 +15,7 @@ To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it
 
 #### Most appropriate sub-area of p5.js?
 
+- [ ] Accessibility (Web Accessibility)
 - [ ] Color
 - [ ] Core/Environment/Rendering
 - [ ] Data
