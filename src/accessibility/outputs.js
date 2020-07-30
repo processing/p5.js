@@ -65,6 +65,7 @@ let cnvConfig = {};
  */
 
 p5.prototype.textOutput = function(display) {
+  p5._validateParameters('textOutput', arguments);
   if (txtOut === false) {
     txtOut = true;
     if (this.canvas !== undefined) {
@@ -126,6 +127,7 @@ p5.prototype.textOutput = function(display) {
  */
 
 p5.prototype.gridOutput = function(display) {
+  p5._validateParameters('gridOutput', arguments);
   if (txtOut === false) {
     grOut = true;
     if (this.canvas !== undefined) {
