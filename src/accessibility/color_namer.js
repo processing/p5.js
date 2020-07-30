@@ -653,8 +653,7 @@ p5.prototype._calculateColor = function(hsv) {
     }
   }
   if (hsv[0] === 0 && hsv[1] === 0 && hsv[2] === 1) {
-    for (var i = 2; i >= 0; i--) {
-      //cambio
+    for (let i = 2; i >= 0; i--) {
       //for (let i = oghsv.length - 1; i >= 0; i--) {
       oghsv[i] = Math.round(oghsv[i] * 10000) / 10000;
     }
@@ -691,3 +690,5 @@ p5.prototype._rgbColorName = function(arg) {
   let colorname = this._calculateColor([hsv[0], hsv[1], hsv[2]]);
   return colorname;
 };
+
+export default p5;

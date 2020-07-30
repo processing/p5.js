@@ -9,6 +9,7 @@ import p5 from '../core/main';
 let ingredients = {};
 let background;
 
+//creates html structure
 p5.prototype._createGridOutput = function(cIdT) {
   let inner =
     'Grid Output<p id="' +
@@ -21,6 +22,7 @@ p5.prototype._createGridOutput = function(cIdT) {
   return inner;
 };
 
+//creates output content
 p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
@@ -39,6 +41,7 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   }
 };
 
+//creates spatial grid
 p5.prototype._buildGrMap = function(cId) {
   let el = 0;
   let table = '';
@@ -93,6 +96,7 @@ p5.prototype._buildGrMap = function(cId) {
   return table;
 };
 
+//creates grid summary
 p5.prototype._buildGrSummary = function(numShapes) {
   let text =
     background +
@@ -107,6 +111,7 @@ p5.prototype._buildGrSummary = function(numShapes) {
   return text;
 };
 
+//creates list of shapes
 p5.prototype._buildGridSDs = function(cId) {
   let shapeDetails = '';
   let shapes = '';
@@ -150,3 +155,5 @@ p5.prototype._buildGridSDs = function(cId) {
   }
   return { numShapes: [el, shapes], details: shapeDetails };
 };
+
+export default p5;

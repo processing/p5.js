@@ -6,9 +6,12 @@
  */
 import p5 from '../core/main';
 
+//the functions in this document support the creation of text output
+
 let ingredients = {};
 let background;
 
+//creates html structure for text output
 p5.prototype._createTextOutput = function(cIdT) {
   let inner =
     'Text Output<div id="' +
@@ -23,6 +26,7 @@ p5.prototype._createTextOutput = function(cIdT) {
   return inner;
 };
 
+//updates textOutput
 p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
@@ -47,6 +51,7 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   }
 };
 
+//Builds textOutput summary
 p5.prototype._buildTxtSummary = function(numShapes) {
   let text =
     'Your output is a, ' +
@@ -61,6 +66,7 @@ p5.prototype._buildTxtSummary = function(numShapes) {
   return text;
 };
 
+//Builds textOutput table with shape details
 p5.prototype._buildShapeDetails = function(cId) {
   let shapeDetails = '';
   let el = 0;
@@ -98,6 +104,7 @@ p5.prototype._buildShapeDetails = function(cId) {
   return shapeDetails;
 };
 
+//Builds textOutput shape list
 p5.prototype._buildShapeList = function(cId) {
   let elText = '';
   let el = 0;
