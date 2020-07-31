@@ -137,13 +137,40 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
+   * Takes a message and a p5 function func, and adds a link pointing to
+   * the reference documentation of func at the end of the message
+   *
+   * @method mapToReference
+   * @private
+   * @param {String} message the words to be said
+   * @param {String} [func]    the name of the function to link
+   *
+   * @returns {String}
+   */
+  const mapToReference = (message, func) => {
+    let msgWithReference = '';
+    if (func == null || func.substring(0, 4) === 'load') {
+      msgWithReference = message;
+    } else {
+      const methodParts = func.split('.');
+      const referenceSection =
+        methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : 'p5';
+
+      const funcName =
+        methodParts.length === 1 ? func : methodParts.slice(2).join('/');
+      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
+    }
+    return msgWithReference;
+  };
+
+  /**
    * Prints out a fancy, colorful message to the console log
    *
    * @method report
    * @private
    * @param  {String}               message the words to be said
-   * @param  {String}               func    the name of the function to link
-   * @param  {Number|String} color   CSS color string or error type
+   * @param  {String}               [func]  the name of the function to link
+   * @param  {Number|String} [color]   CSS color string or error type
    *
    * @return console logs
    */
@@ -164,22 +191,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
       color = typeColors[color];
     }
 
-    let prefixedMsg;
+    // Add a link to the reference docs of func at the end of the message
+    message = mapToReference(message, func);
     let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
-    if (func == null || func.substring(0, 4) === 'load') {
-      prefixedMsg = translator('fes.pre', { message });
-    } else {
-      const methodParts = func.split('.');
-      const referenceSection =
-        methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : 'p5';
+    const prefixedMsg = translator('fes.pre', { message });
 
-      const funcName =
-        methodParts.length === 1 ? func : methodParts.slice(2).join('/');
-
-      prefixedMsg = translator('fes.pre', {
-        message: `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`
-      });
-    }
     if (ENABLE_FES_STYLING) {
       log('%c' + prefixedMsg, style.join(';'));
     } else {
@@ -193,7 +209,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @method _friendlyError
    * @private
    * @param  {Number} message message to be printed
-   * @param  {String} method name of method
+   * @param  {String} [method] name of method
    * @param  {Number|String} [color]   CSS color string or error type (Optional)
    */
   p5._friendlyError = function(message, method, color) {
@@ -304,25 +320,27 @@ if (typeof IS_MINIFIED !== 'undefined') {
       defineMisusedAtTopLevelCode();
     }
 
-    let min = 999999,
-      minIndex = 0;
+    const distanceMap = {};
+    let min = 999999;
     // compute the levenshtein distance for the symbol against all known
     // public p5 properties. Find the property with the minimum distance
-    misusedAtTopLevelCode.forEach((symbol, idx) => {
+    misusedAtTopLevelCode.forEach(symbol => {
       let dist = computeEditDistance(errSym, symbol.name);
-      if (dist < min) {
-        min = dist;
-        minIndex = idx;
-      }
+      if (distanceMap[dist]) distanceMap[dist].push(symbol);
+      else distanceMap[dist] = [symbol];
+
+      if (dist < min) min = dist;
     });
 
+    // if the closest match has more "distance" than the max allowed threshold
     if (min > Math.min(EDIT_DIST_THRESHOLD, errSym.length)) return false;
-
-    let symbol = misusedAtTopLevelCode[minIndex];
 
     // Show a message only if the caught symbol and the matched property name
     // differ in their name ( either letter difference or difference of case )
-    if (errSym !== symbol.name) {
+    const matchedSymbols = distanceMap[min].filter(
+      symbol => symbol.name !== errSym
+    );
+    if (matchedSymbols.length !== 0) {
       const parsed = p5._getErrorStackParser().parse(error);
       let locationObj;
       if (
@@ -336,18 +354,51 @@ if (typeof IS_MINIFIED !== 'undefined') {
           location: `${parsed[0].fileName}:${parsed[0].lineNumber}:${
             parsed[0].columnNumber
           }`,
-          file: parsed[0].fileName,
+          file: parsed[0].fileName.split('/').slice(-1),
           line: parsed[0].lineNumber
         };
       }
-      const msg = translator('fes.misspelling', {
-        name: errSym,
-        actualName: symbol.name,
-        type: symbol.type,
-        location: locationObj ? translator('fes.location', locationObj) : ''
-      });
 
-      p5._friendlyError(msg, symbol.name);
+      let msg;
+      if (matchedSymbols.length === 1) {
+        // To be used when there is only one closest match. The count parameter
+        // allows i18n to pick between the keys "fes.misspelling" and
+        // "fes.misspelling__plural"
+        msg = translator('fes.misspelling', {
+          name: errSym,
+          actualName: matchedSymbols[0].name,
+          type: matchedSymbols[0].type,
+          location: locationObj ? translator('fes.location', locationObj) : '',
+          count: matchedSymbols.length
+        });
+      } else {
+        // To be used when there are multiple closest matches. Gives each
+        // suggestion on its own line, the function name followed by a link to
+        // reference documentation
+        const suggestions = matchedSymbols
+          .map(symbol => {
+            const message =
+              '▶️ ' + symbol.name + (symbol.type === 'function' ? '()' : '');
+            return mapToReference(message, symbol.name);
+          })
+          .join('\n');
+
+        msg = translator('fes.misspelling', {
+          name: errSym,
+          suggestions: suggestions,
+          location: locationObj ? translator('fes.location', locationObj) : '',
+          count: matchedSymbols.length
+        });
+      }
+
+      // If there is only one closest match, tell _friendlyError to also add
+      // a link to the reference documentation. In case of multiple matches,
+      // this is already done in the suggestions variable, one link for each
+      // suggestion.
+      p5._friendlyError(
+        msg,
+        matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
+      );
       return true;
     }
     return false;
