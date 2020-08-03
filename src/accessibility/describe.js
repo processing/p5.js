@@ -132,16 +132,12 @@ p5.prototype._descriptionText = function(t) {
     throw new Error('description should not be LABEL or FALLBACK');
   }
   //if string does not end with '.'
-  if (
-    t.endsWith('.') === false &&
-    t.endsWith('?') === false &&
-    t.endsWith('!') === false
-  ) {
+  if (!t.endsWith('.') && !t.endsWith('?') && !t.endsWith('!')) {
     //add '.' to the end of string
     t = t + '.';
   }
   //if first character of string is not capitalized
-  if (/^[A-Z]/.test(t) === false) {
+  if (!/^[A-Z]/.test(t)) {
     //capitalize first character of string
     t = t[0].toUpperCase() + t.slice(1);
   }
@@ -289,12 +285,12 @@ p5.prototype._elementName = function(n) {
     //replace last character with ':'
     n = n.replace(/.$/, ':');
     //if string n does not end with ':'
-  } else if (n.endsWith(':') === false) {
+  } else if (!n.endsWith(':')) {
     //add ':'' at the end of string
     n = n + ':';
   }
   //if first character of string is not capitalized
-  if (/^[A-Z]/.test(n) === false) {
+  if (!/^[A-Z]/.test(n)) {
     //capitalize first character
     n = n[0].toUpperCase() + n.slice(1);
   }
