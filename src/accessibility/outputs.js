@@ -13,7 +13,7 @@
 
 import p5 from '../core/main';
 let ingredients = {};
-let preIngredients = {};
+//let preIngredients = {};
 let txtOut = false;
 let grOut = false;
 let cnvConfig = {};
@@ -175,9 +175,9 @@ p5.prototype._createOutput = function(type) {
 
 //helper function that updates accessible outputs
 p5.prototype._updateOutput = function() {
-  if (JSON.stringify(ingredients) !== JSON.stringify(preIngredients)) {
-    this._updateOutput();
-  }
+  //if (JSON.stringify(ingredients) !== JSON.stringify(preIngredients)) {
+  //this._updateOutput();
+  //}
   let cnvId = this.canvas.id;
   if (txtOut === true) {
     this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
