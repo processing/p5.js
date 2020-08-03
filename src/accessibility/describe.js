@@ -79,7 +79,7 @@ p5.prototype.describe = function(text, display) {
     return;
   }
   text = this._descriptionText(text);
-  if (document.getElementById(cnvId + descContainer) === null) {
+  if (!document.getElementById(cnvId + descContainer)) {
     document.getElementById(cnvId).innerHTML =
       '<div id="' +
       cnvId +
@@ -88,7 +88,7 @@ p5.prototype.describe = function(text, display) {
       cnvId +
       fallbackDesc +
       '"></p></div>';
-  } else if (document.getElementById(cnvId + fallbackDesc) === null) {
+  } else if (!document.getElementById(cnvId + fallbackDesc)) {
     document
       .getElementById(cnvId + fallbackTable)
       .insertAdjacentHTML(
@@ -102,7 +102,7 @@ p5.prototype.describe = function(text, display) {
   //If display is LABEL creates a div adjacent to the canvas element with
   //description text.
   if (display === this.LABEL) {
-    if (document.getElementById(cnvId + labelContainer) === null) {
+    if (!document.getElementById(cnvId + labelContainer)) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
@@ -115,7 +115,7 @@ p5.prototype.describe = function(text, display) {
             labelDesc +
             '></p></div>'
         );
-    } else if (document.getElementById(cnvId + labelDesc) === null) {
+    } else if (!document.getElementById(cnvId + labelDesc)) {
       document
         .getElementById(cnvId + labelTable)
         .insertAdjacentHTML(
@@ -206,7 +206,7 @@ p5.prototype.describeElement = function(name, text, display) {
   //Creates a sub DOM inside of the canvas with a table, populates
   //a row header cell with the name of the elements and adds the description
   //of the element in adjecent cell.
-  if (document.getElementById(cnvId + descContainer) === null) {
+  if (!document.getElementById(cnvId + descContainer)) {
     document.getElementById(cnvId).innerHTML =
       '<div id="' +
       cnvId +
@@ -215,7 +215,7 @@ p5.prototype.describeElement = function(name, text, display) {
       cnvId +
       fallbackTable +
       '"><caption>Canvas elements and their descriptions</caption></table></div>';
-  } else if (document.getElementById(cnvId + fallbackTable) === null) {
+  } else if (!document.getElementById(cnvId + fallbackTable)) {
     document
       .getElementById(cnvId + fallbackDesc)
       .insertAdjacentHTML(
@@ -226,7 +226,7 @@ p5.prototype.describeElement = function(name, text, display) {
           '"><caption>Canvas elements and their descriptions</caption></table>'
       );
   }
-  if (document.getElementById(cnvId + fallbackTableElement + name) === null) {
+  if (!document.getElementById(cnvId + fallbackTableElement + name)) {
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + fallbackTableElement + name;
     document.getElementById(cnvId + fallbackTable).appendChild(tableRow);
@@ -242,7 +242,7 @@ p5.prototype.describeElement = function(name, text, display) {
   //a table, a row header cell with the name of the elements,
   //and adds the description of the element in adjecent cell.
   if (display === this.LABEL) {
-    if (document.getElementById(cnvId + labelContainer) === null) {
+    if (!document.getElementById(cnvId + labelContainer)) {
       document
         .getElementById(cnvId)
         .insertAdjacentHTML(
@@ -255,7 +255,7 @@ p5.prototype.describeElement = function(name, text, display) {
             labelTable +
             '"></table></div>'
         );
-    } else if (document.getElementById(cnvId + labelTable) === null) {
+    } else if (!document.getElementById(cnvId + labelTable)) {
       document
         .getElementById(cnvId + labelDesc)
         .insertAdjacentHTML(
@@ -263,7 +263,7 @@ p5.prototype.describeElement = function(name, text, display) {
           '<table id="' + cnvId + labelTable + '"></table>'
         );
     }
-    if (document.getElementById(cnvId + labelTableElement + name) === null) {
+    if (!document.getElementById(cnvId + labelTableElement + name)) {
       let tableRow = document.createElement('tr');
       tableRow.id = cnvId + labelTableElement + name;
       document.getElementById(cnvId + labelTable).appendChild(tableRow);
