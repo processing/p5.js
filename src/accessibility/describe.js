@@ -285,9 +285,8 @@ p5.prototype._elementName = function(name) {
   if (name === this.LABEL || name === this.FALLBACK) {
     throw new Error('element name should not be LABEL or FALLBACK');
   }
-  let lm = name[name.length - 1];
   //check if last character of string n is '.', ';', or ','
-  if (lm === '.' || lm === ';' || lm === ',') {
+  if (name.endsWith('.') || name.endsWith(';') || name.endsWith(',')) {
     //replace last character with ':'
     name = name.replace(/.$/, ':');
     //if string n does not end with ':'
