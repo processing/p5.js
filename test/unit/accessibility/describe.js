@@ -39,38 +39,38 @@ suite('describe', function() {
     });
     test('should create description as fallback', function() {
       myp5.describe(a);
-      let actual = getInner(myID + '_fds');
+      let actual = getInner(myID + '_fallbackDesc');
       assert.deepEqual(actual, expected);
     });
     test('should not add extra period if string ends in "."', function() {
       myp5.describe('a.');
-      let actual = getInner(myID + '_fds');
+      let actual = getInner(myID + '_fallbackDesc');
       assert.deepEqual(actual, expected);
     });
     test('should not add period if string ends in "!" or "?', function() {
       myp5.describe('A!');
-      let actual = getInner(myID + '_fds');
+      let actual = getInner(myID + '_fallbackDesc');
       if (actual === 'A!') {
         myp5.describe('A?');
-        actual = getInner(myID + '_fds');
+        actual = getInner(myID + '_fallbackDesc');
       }
       assert.deepEqual(actual, 'A?');
     });
     test('should create description when called after describeElement()', function() {
       myp5.describeElement(b, c);
       myp5.describe(a);
-      let actual = getInner(myID + '_fds');
+      let actual = getInner(myID + '_fallbackDesc');
       assert.deepEqual(actual, expected);
     });
     test('should create Label adjacent to canvas', function() {
       myp5.describe(a, myp5.LABEL);
-      let actual = getInner(myID + '_lds');
+      let actual = getInner(myID + '_labelDesc');
       assert.deepEqual(actual, expected);
     });
     test('should create Label adjacent to canvas when label of element already exists', function() {
       myp5.describeElement(b, c, myp5.LABEL);
       myp5.describe(a, myp5.LABEL);
-      let actual = getInner(myID + '_lds');
+      let actual = getInner(myID + '_labelDesc');
       assert.deepEqual(actual, expected);
     });
     test('wrong param type at #0', function() {
