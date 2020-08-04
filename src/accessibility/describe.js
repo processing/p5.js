@@ -138,11 +138,6 @@ function _descriptionText(text) {
     //add '.' to the end of string
     text = text + '.';
   }
-  //if first character of string is not capitalized
-  if (!/^[A-Z]/.test(text)) {
-    //capitalize first character of string
-    text = text[0].toUpperCase() + text.slice(1);
-  }
   return text;
 }
 
@@ -284,11 +279,6 @@ function _elementName(name) {
   } else if (!name.endsWith(':')) {
     //add ':'' at the end of string
     name = name + ':';
-  }
-  //if first character of string is not capitalized
-  if (!/^[A-Z]/.test(name)) {
-    //capitalize first character
-    name = name[0].toUpperCase() + name.slice(1);
   }
   return name;
 }

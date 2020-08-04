@@ -32,7 +32,7 @@ suite('describe', function() {
   };
 
   suite('p5.prototype.describe', function() {
-    let expected = 'A.';
+    let expected = 'a.';
     test('should be a function', function() {
       assert.ok(myp5.describe);
       assert.typeOf(myp5.describe, 'function');
@@ -95,7 +95,7 @@ suite('describe', function() {
   });
 
   suite('p5.prototype.describeElement', function() {
-    let expected = '<th scope="row">A:</th><td>B.</td>';
+    let expected = '<th scope="row">a:</th><td>b.</td>';
     test('should be a function', function() {
       assert.ok(myp5.describeElement);
       assert.typeOf(myp5.describeElement, 'function');
@@ -106,18 +106,18 @@ suite('describe', function() {
       assert.deepEqual(actual, expected);
     });
     test('should not add extra ":" if element name ends in colon', function() {
-      myp5.describeElement('A:', 'B.');
-      let actual = getInner(myID + '_fte_A:');
+      myp5.describeElement('a:', 'b.');
+      let actual = getInner(myID + '_fte_a:');
       assert.deepEqual(actual, expected);
     });
     test('should replace ";", ",", "." for ":" in element name', function() {
       let actual;
-      myp5.describeElement('A;', 'B.');
-      if (getInner(myID + '_fte_A;') === expected) {
-        myp5.describeElement('A,', 'B.');
-        if (getInner(myID + '_fte_A,') === expected) {
-          myp5.describeElement('A.', 'B.');
-          actual = getInner(myID + '_fte_A.');
+      myp5.describeElement('a;', 'b.');
+      if (getInner(myID + '_fte_a;') === expected) {
+        myp5.describeElement('a,', 'b.');
+        if (getInner(myID + '_fte_a,') === expected) {
+          myp5.describeElement('a.', 'b.');
+          actual = getInner(myID + '_fte_a.');
         }
       }
       assert.deepEqual(actual, expected);
