@@ -7,13 +7,17 @@
 
 import p5 from '../core/main';
 const descContainer = '_Description'; //Fallback container
-const fallbackDesc = '_fallbackDesc'; //Fallback description
-const fallbackTable = '_fallbackTable'; //Fallback Table
-const fallbackTableElement = '_fte_'; //Fallback Table Element
+const fallbackDescId = '_fallbackDesc'; //Fallback description
+const fallbackTableId = '_fallbackTable'; //Fallback Table
+const fallbackTableElId = '_fte_'; //Fallback Table Element
 const labelContainer = '_Label'; //Label container
-const labelDesc = '_labelDesc'; //Label description
-const labelTable = '_labelTable'; //Label Table
-const labelTableElement = '_lte_'; //Label Table Element
+const labelDescId = '_labelDesc'; //Label description
+const labelTableId = '_labelTable'; //Label Table
+const labelTableElId = '_lte_'; //Label Table Element
+let fallbackDesc = ''; //stores latest fallback description
+let labelDesc = ''; //stores latest label description
+let fallbackElements = {}; //stores elements by name
+let labelElements = {}; //stores elements by name
 
 /**
  * Creates a screen-reader accessible description for the canvas.
@@ -82,17 +86,19 @@ p5.prototype.describe = function(text, display) {
   if (!document.getElementById(cnvId + descContainer)) {
     document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
-      fallbackDesc}"></p></div>`;
-  } else if (!document.getElementById(cnvId + fallbackDesc)) {
+      fallbackDescId}"></p></div>`;
+  } else if (!document.getElementById(cnvId + fallbackDescId)) {
     document
-      .getElementById(cnvId + fallbackTable)
+      .getElementById(cnvId + fallbackTableId)
       .insertAdjacentHTML(
         'beforebegin',
-        `<p id="${cnvId + fallbackDesc}"></p>`
+        `<p id="${cnvId + fallbackDescId}"></p>`
       );
   }
-  if (document.getElementById(cnvId + fallbackDesc).innerHTML !== text) {
-    document.getElementById(cnvId + fallbackDesc).innerHTML = text;
+  //updates description
+  if (fallbackDesc !== text) {
+    document.getElementById(cnvId + fallbackDescId).innerHTML = text;
+    fallbackDesc = text;
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //description text.
@@ -103,15 +109,19 @@ p5.prototype.describe = function(text, display) {
         .insertAdjacentHTML(
           'afterend',
           `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
-            labelDesc}"></p></div>`
+            labelDescId}"></p></div>`
         );
-    } else if (!document.getElementById(cnvId + labelDesc)) {
+    } else if (!document.getElementById(cnvId + labelDescId)) {
       document
-        .getElementById(cnvId + labelTable)
-        .insertAdjacentHTML('beforebegin', `<p id="${cnvId}${labelDesc}"></p>`);
+        .getElementById(cnvId + labelTableId)
+        .insertAdjacentHTML(
+          'beforebegin',
+          `<p id="${cnvId}${labelDescId}"></p>`
+        );
     }
-    if (document.getElementById(cnvId + labelDesc).innerHTML !== text) {
-      document.getElementById(cnvId + labelDesc).innerHTML = text;
+    if (labelDesc !== text) {
+      document.getElementById(cnvId + labelDescId).innerHTML = text;
+      labelDesc = text;
     }
   }
 };
@@ -119,7 +129,6 @@ p5.prototype.describe = function(text, display) {
 /**
  * Helper function for describe() and describeElement().
  */
-
 function _descriptionText(text) {
   if (text === 'label' || text === 'fallback') {
     throw new Error('description should not be LABEL or FALLBACK');
@@ -196,28 +205,30 @@ p5.prototype.describeElement = function(name, text, display) {
   if (!document.getElementById(cnvId + descContainer)) {
     document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
-      fallbackTable}"><caption>Canvas elements and their descriptions</caption></table></div>`;
-  } else if (!document.getElementById(cnvId + fallbackTable)) {
+      fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
+  } else if (!document.getElementById(cnvId + fallbackTableId)) {
     document
-      .getElementById(cnvId + fallbackDesc)
+      .getElementById(cnvId + fallbackDescId)
       .insertAdjacentHTML(
         'afterend',
         `<table id="${cnvId +
-          fallbackTable}"><caption>Canvas elements and their descriptions</caption></table>`
+          fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table>`
       );
   }
-  if (!document.getElementById(cnvId + fallbackTableElement + name)) {
+  if (!document.getElementById(cnvId + fallbackTableElId + name)) {
     let tableRow = document.createElement('tr');
-    tableRow.id = cnvId + fallbackTableElement + name;
-    document.getElementById(cnvId + fallbackTable).appendChild(tableRow);
+    tableRow.id = cnvId + fallbackTableElId + name;
+    document.getElementById(cnvId + fallbackTableId).appendChild(tableRow);
   }
   if (
-    document.getElementById(cnvId + fallbackTableElement + name).innerHTML !==
+    fallbackElements[name] !==
     `<th scope="row">${elementName}</th><td>${text}</td>`
   ) {
-    document.getElementById(
-      cnvId + fallbackTableElement + name
-    ).innerHTML = `<th scope="row">${elementName}</th><td>${text}</td>`;
+    fallbackElements[
+      name
+    ] = `<th scope="row">${elementName}</th><td>${text}</td>`;
+    document.getElementById(cnvId + fallbackTableElId + name).innerHTML =
+      fallbackElements[name];
   }
   //If display is LABEL creates a div adjacent to the canvas element with
   //a table, a row header cell with the name of the elements,
@@ -230,29 +241,31 @@ p5.prototype.describeElement = function(name, text, display) {
           'afterend',
           `<div id="${cnvId +
             labelContainer}" class="p5Label"><table id="${cnvId +
-            labelTable}"></table></div>`
+            labelTableId}"></table></div>`
         );
-    } else if (!document.getElementById(cnvId + labelTable)) {
+    } else if (!document.getElementById(cnvId + labelTableId)) {
       document
-        .getElementById(cnvId + labelDesc)
+        .getElementById(cnvId + labelDescId)
         .insertAdjacentHTML(
           'afterend',
-          `<table id="${cnvId + labelTable}"></table>`
+          `<table id="${cnvId + labelTableId}"></table>`
         );
     }
-    if (!document.getElementById(cnvId + labelTableElement + name)) {
+    if (!document.getElementById(cnvId + labelTableElId + name)) {
       let tableRow = document.createElement('tr');
-      tableRow.id = cnvId + labelTableElement + name;
-      document.getElementById(cnvId + labelTable).appendChild(tableRow);
+      tableRow.id = cnvId + labelTableElId + name;
+      document.getElementById(cnvId + labelTableId).appendChild(tableRow);
     }
 
     if (
-      document.getElementById(cnvId + labelTableElement + name).innerHTML !==
+      labelElements[name] !==
       `<th scope="row">${elementName}</th><td>${text}</td>`
     ) {
-      document.getElementById(
-        cnvId + labelTableElement + name
-      ).innerHTML = `<th scope="row">${elementName}</th><td>${text}</td>`;
+      labelElements[
+        name
+      ] = `<th scope="row">${elementName}</th><td>${text}</td>`;
+      document.getElementById(cnvId + labelTableElId + name).innerHTML =
+        labelElements[name];
     }
   }
 };

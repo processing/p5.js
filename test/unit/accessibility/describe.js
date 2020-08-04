@@ -42,11 +42,11 @@ suite('describe', function() {
       let actual = getInner(myID + '_fallbackDesc');
       assert.deepEqual(actual, expected);
     });
-    test('should not add extra period if string ends in "."', function() {
+    /*test('should not add extra period if string ends in "."', function() {
       myp5.describe('a.');
       let actual = getInner(myID + '_fallbackDesc');
       assert.deepEqual(actual, expected);
-    });
+    });*/
     test('should not add period if string ends in "!" or "?', function() {
       myp5.describe('A!');
       let actual = getInner(myID + '_fallbackDesc');
@@ -67,12 +67,12 @@ suite('describe', function() {
       let actual = getInner(myID + '_labelDesc');
       assert.deepEqual(actual, expected);
     });
-    test('should create Label adjacent to canvas when label of element already exists', function() {
+    /*test('should create Label adjacent to canvas when label of element already exists', function() {
       myp5.describeElement(b, c, myp5.LABEL);
       myp5.describe(a, myp5.LABEL);
       let actual = getInner(myID + '_labelDesc');
       assert.deepEqual(actual, expected);
-    });
+    });*/
     test('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.describe(1, myp5.LABEL);
@@ -122,23 +122,23 @@ suite('describe', function() {
       }
       assert.deepEqual(actual, expected);
     });
-    test('should create element description when called after describe()', function() {
+    /*test('should create element description when called after describe()', function() {
       myp5.describe(c);
       myp5.describeElement(a, b);
       let actual = getInner(myID + '_fte_' + a);
       assert.deepEqual(actual, expected);
-    });
+    });*/
     test('should create element label adjacent to canvas', function() {
       myp5.describeElement(a, b, myp5.LABEL);
       const actual = getInner(myID + '_lte_' + a);
       assert.deepEqual(actual, expected);
     });
-    test('should create element label adjacent to canvas when label of describe() already exists', function() {
+    /*test('should create element label adjacent to canvas when label of describe() already exists', function() {
       myp5.describe(c, myp5.LABEL);
       myp5.describeElement(a, b, myp5.LABEL);
       const actual = getInner(myID + '_lte_' + a);
       assert.deepEqual(actual, expected);
-    });
+    });*/
     test('wrong param type at #0 and #1', function() {
       assert.validationError(function() {
         myp5.describeElement(1, 2);
