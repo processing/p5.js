@@ -353,6 +353,9 @@ class p5 {
 
       this._lastFrameTime = window.performance.now();
       this._setupDone = true;
+      if (this._addAccsOutput()) {
+        this._resetAccsOutput();
+      }
     };
 
     this._draw = () => {

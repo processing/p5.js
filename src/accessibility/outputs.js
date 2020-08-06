@@ -13,7 +13,7 @@
 
 import p5 from '../core/main';
 let ingredients = {};
-//let preIngredients = {};
+let preIngredients = '';
 let txtOut = false;
 let grOut = false;
 let cnvConfig = {};
@@ -168,11 +168,15 @@ p5.prototype._createOutput = function(type) {
   }
 };
 
+p5.prototype._resetAccsOutput = function() {
+  if (JSON.stringify(ingredients) !== preIngredients) {
+    this._updateOutput();
+    preIngredients = JSON.stringify(ingredients);
+  }
+};
+
 //helper function that updates accessible outputs
 p5.prototype._updateOutput = function() {
-  //if (JSON.stringify(ingredients) !== JSON.stringify(preIngredients)) {
-  //this._updateOutput();
-  //}
   let cnvId = this.canvas.id;
   if (txtOut) {
     this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
@@ -265,7 +269,6 @@ p5.prototype._accsOutput = function(f, args) {
       ingredients[f].push(include);
     }
   }
-  this._updateOutput();
 };
 
 //gets middle point / centroid of shape
