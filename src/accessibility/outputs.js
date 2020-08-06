@@ -9,7 +9,6 @@
 // - point
 // - line
 // - appending does not work
-// Call update only at the end of draw?
 
 import p5 from '../core/main';
 let ingredients = {};
@@ -69,7 +68,7 @@ p5.prototype.textOutput = function(display) {
   if (!txtOut) {
     txtOut = true;
     if (this.canvas !== undefined) {
-      this._setDefaults();
+      _setDefaults();
       this._createOutput('txtOut');
     } else {
       throw new Error('textOutput() should be called after canvas is created');
@@ -131,7 +130,7 @@ p5.prototype.gridOutput = function(display) {
   if (!txtOut) {
     grOut = true;
     if (this.canvas !== undefined) {
-      this._setDefaults();
+      _setDefaults();
       this._createOutput('grOut');
     } else {
       throw new Error('gridOutput() should be called after canvas is created');
@@ -164,24 +163,21 @@ p5.prototype._createOutput = function(type) {
       let inner = this._createGridOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
-    //this._updateOutput();
   }
 };
 
-p5.prototype._resetAccsOutput = function() {
+//this function is called at the end of setup and draw if using
+//accessOutputs and calls update functions of outputs
+p5.prototype._updateAccsOutput = function() {
   if (JSON.stringify(ingredients) !== preIngredients) {
-    this._updateOutput();
     preIngredients = JSON.stringify(ingredients);
-  }
-};
-
-//helper function that updates accessible outputs
-p5.prototype._updateOutput = function() {
-  let cnvId = this.canvas.id;
-  if (txtOut) {
-    this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
-  } else if (grOut) {
-    this._updateGridOutput(cnvId, ingredients, cnvConfig.background);
+    let cnvId = this.canvas.id;
+    if (txtOut) {
+      this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
+    }
+    if (grOut) {
+      this._updateGridOutput(cnvId, ingredients, cnvConfig.background);
+    }
   }
 };
 
@@ -213,18 +209,11 @@ p5.prototype._accsCanvasColors = function(f, args) {
 
 //helper function that sets defaul colors for background
 //fill and stroke.
-p5.prototype._setDefaults = function() {
+function _setDefaults() {
   cnvConfig.background = 'white';
   cnvConfig.fill = 'white';
   cnvConfig.stroke = 'black';
-};
-
-// return length of lines
-p5.prototype._getLineL = function(args) {
-  return (lineLength = Math.round(
-    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
-  ));
-};
+}
 
 //builds ingredients list for building outputs
 p5.prototype._accsOutput = function(f, args) {
@@ -238,8 +227,8 @@ p5.prototype._accsOutput = function(f, args) {
   if (f === 'line') {
     include.color = cnvConfig.stroke;
     include.length = _getLineL(args);
-    let p1 = this._getPos([args[0], [1]]);
-    let p2 = this._getPos([args[2], [3]]);
+    let p1 = _getPos([args[0], [1]], this.width, this.height);
+    let p2 = _getPos([args[2], [3]], this.width, this.height);
     if (p1 === p2) {
       include.pos = 'at ' + p1;
     } else {
@@ -250,11 +239,11 @@ p5.prototype._accsOutput = function(f, args) {
       include.color = cnvConfig.stroke;
     } else {
       include.color = cnvConfig.fill;
-      include.area = this._getArea(f, args);
+      include.area = _getArea(f, args, this.width, this.height);
     }
-    include.middle = this._getMiddle(f, args);
-    include.pos = this._getPos(include.middle);
-    include.loc = this._canvasLocator(include.middle);
+    let middle = _getMiddle(f, args);
+    include.pos = _getPos(middle, this.width, this.height);
+    include.loc = _canvasLocator(middle, this.width, this.height);
   }
   include.args = args;
   if (!ingredients[f]) {
@@ -271,8 +260,15 @@ p5.prototype._accsOutput = function(f, args) {
   }
 };
 
+// return length of lines
+function _getLineL(args) {
+  return (lineLength = Math.round(
+    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
+  ));
+}
+
 //gets middle point / centroid of shape
-p5.prototype._getMiddle = function(f, args) {
+function _getMiddle(f, args) {
   let x, y;
   if (
     f === 'rectangle' ||
@@ -294,43 +290,43 @@ p5.prototype._getMiddle = function(f, args) {
     y = args[1];
   }
   return [x, y];
-};
+}
 
 //gets position of shape in the canvas
-p5.prototype._getPos = function(args) {
-  if (args[0] < 0.4 * this.width) {
-    if (args[1] < 0.4 * this.height) {
+function _getPos(args, canvasWidth, canvasHeight) {
+  if (args[0] < 0.4 * canvasWidth) {
+    if (args[1] < 0.4 * canvasHeight) {
       return 'top left';
-    } else if (args[1] > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * canvasHeight) {
       return 'bottom left';
     } else {
       return 'mid left';
     }
-  } else if (args[0] > 0.6 * this.width) {
-    if (args[1] < 0.4 * this.height) {
+  } else if (args[0] > 0.6 * canvasWidth) {
+    if (args[1] < 0.4 * canvasHeight) {
       return 'top right';
-    } else if (args[1] > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * canvasHeight) {
       return 'bottom right';
     } else {
       return 'mid right';
     }
   } else {
-    if (args[1] < 0.4 * this.height) {
+    if (args[1] < 0.4 * canvasHeight) {
       return 'top middle';
-    } else if (args[1] > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * canvasHeight) {
       return 'bottom middle';
     } else {
       return 'middle';
     }
   }
-};
+}
 
 //locates shape in a 10*10 grid
-p5.prototype._canvasLocator = function(args) {
+function _canvasLocator(args, canvasWidth, canvasHeight) {
   const noRows = 10;
   const noCols = 10;
-  let locX = Math.floor(args[0] / this.width * noRows);
-  let locY = Math.floor(args[1] / this.height * noCols);
+  let locX = Math.floor(args[0] / canvasWidth * noRows);
+  let locY = Math.floor(args[1] / canvasHeight * noCols);
   if (locX === noRows) {
     locX = locX - 1;
   }
@@ -341,10 +337,10 @@ p5.prototype._canvasLocator = function(args) {
     locX,
     locY
   };
-};
+}
 
 //Calculates area of shape
-p5.prototype._getArea = function(objectType, shapeArgs) {
+function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
   let objectArea = 0;
   if (objectType === 'arc') {
     // area of full ellipse = PI * horizontal radius * vertical radius.
@@ -402,8 +398,8 @@ p5.prototype._getArea = function(objectType, shapeArgs) {
     // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
   }
 
-  let percentage = Math.round(objectArea * 100 / (this.width * this.height));
+  let percentage = Math.round(objectArea * 100 / (canvasWidth * canvasHeight));
   return percentage;
-};
+}
 
 export default p5;

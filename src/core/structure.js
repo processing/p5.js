@@ -416,7 +416,7 @@ p5.prototype.redraw = function(n) {
     for (let idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
       context.resetMatrix();
       if (this._addAccsOutput()) {
-        this._resetAccsOutput();
+        this._updateAccsOutput();
       }
       if (context._renderer.isP3D) {
         context._renderer._update();
