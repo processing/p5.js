@@ -11,14 +11,7 @@ let background;
 
 //creates html structure
 p5.prototype._createGridOutput = function(cIdT) {
-  let inner =
-    'Grid Output<p id="' +
-    cIdT +
-    'Summary" aria-label="grid output summary"><table id="' +
-    cIdT +
-    'OD" summary="grid output content"></table><ul id="' +
-    cIdT +
-    'SD" aria-label="grid output shape details"></ul>';
+  let inner = `Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul>`;
   return inner;
 };
 
@@ -27,23 +20,27 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'grOut';
-  let innerSDs = this._buildGridShapeDetails(cIdT);
-  let innerSummary = this._buildGridSummary(innerSDs.numShapes);
-  let innerMap = this._buildGridMap(cIdT);
+  let innerShapeDetails = _buildGridShapeDetails(cIdT);
+  let innerSummary = _buildGridSummary(
+    innerShapeDetails.numShapes,
+    this.width,
+    this.height
+  );
+  let innerMap = _buildGridMap(cIdT);
   if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
   }
   if (innerMap !== document.getElementById(cIdT + 'OD').innerHTML) {
     document.getElementById(cIdT + 'OD').innerHTML = innerMap;
   }
-  if (innerSDs !== document.getElementById(cIdT + 'SD').innerHTML) {
-    document.getElementById(cIdT + 'SD').innerHTML = innerSDs.details;
+  if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
+    document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails.details;
   }
 };
 
 //creates spatial grid
-p5.prototype._buildGridMap = function(cId) {
-  let el = 0;
+function _buildGridMap(cId) {
+  let shapeNumber = 0;
   let table = '';
   let cells = Array.apply(null, Array(10)).map(function() {});
   for (let r in cells) {
@@ -51,31 +48,20 @@ p5.prototype._buildGridMap = function(cId) {
   }
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
-      el++;
       if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
-        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
-          '<a href="#' +
-          cId +
-          'shape' +
-          el +
-          '">' +
-          ingredients[x][y].color +
-          ' ' +
-          x +
-          '</a>';
+        cells[ingredients[x][y].loc.locY][
+          ingredients[x][y].loc.locX
+        ] = `<a href="#${cId}shape${shapeNumber}">${
+          ingredients[x][y].color
+        } ${x}</a>`;
       } else {
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
-          '  <a href="#' +
-          cId +
-          'shape' +
-          el +
-          '">' +
-          ingredients[x][y].color +
-          ' ' +
-          x +
-          '</a>';
+          `  <a href="#${cId}shape${shapeNumber}">${
+            ingredients[x][y].color
+          } ${x}</a>`;
       }
+      shapeNumber++;
     }
   }
   for (let _r in cells) {
@@ -87,70 +73,52 @@ p5.prototype._buildGridMap = function(cId) {
       }
       row = row + '</td>';
     }
-    row = row + '</tr>';
-    table = table + row;
+    table = table + row + '</tr>';
   }
   return table;
-};
+}
 
 //creates grid summary
-p5.prototype._buildGridSummary = function(numShapes) {
-  let text =
-    background +
-    ' canvas, ' +
-    Math.round(this.width) +
-    ' by ' +
-    Math.round(this.height) +
-    ' pixels, contains ' +
-    numShapes[0] +
-    ' shapes: ' +
-    numShapes[1];
-  return text;
-};
+function _buildGridSummary(numShapes, canvasWidth, canvasHeight) {
+  return `${background} canvas, ${canvasWidth} by ${canvasHeight} pixels, contains ${
+    numShapes[0]
+  } shapes: ${numShapes[1]}`;
+}
 
 //creates list of shapes
-p5.prototype._buildGridShapeDetails = function(cId) {
+function _buildGridShapeDetails(cId) {
   let shapeDetails = '';
   let shapes = '';
-  let el = 0;
+  let totalShapes = 0;
   for (let x in ingredients) {
     let shapeNum = 0;
     for (let y in ingredients[x]) {
-      shapeNum++;
-      el++;
-      let line =
-        '<li id="' +
-        cId +
-        'shape' +
-        el +
-        '">' +
-        ingredients[x][y].color +
-        ' ' +
-        x +
-        ',';
+      let line = `<li id="${cId}shape${totalShapes}">${
+        ingredients[x][y].color
+      } ${x},`;
       if (x === 'line') {
         line =
           line +
-          ' location = ' +
-          ingredients[x][y].pos +
-          ', length = ' +
-          ingredients[x][y].length +
-          ' pixels';
+          ` location = ${ingredients[x][y].pos}, length = ${
+            ingredients[x][y].length
+          } pixels`;
       } else {
-        line = line + ' location = at ' + ingredients[x][y].pos + '';
+        line = line + ` location = at ${ingredients[x][y].pos} `;
         if (x !== 'point') {
-          line = line + ', area = ' + ingredients[x][y].area + '%';
+          line = line + `, area = ${ingredients[x][y].area} %`;
         }
         line = line + '</li>';
       }
       shapeDetails = shapeDetails + line;
+      shapeNum++;
+      totalShapes++;
     }
-    shapes = shapes + ', ' + shapeNum + ' ' + x;
+    shapes = `${shapes}, ${shapeNum} ${x}`;
     if (shapeNum > 1) {
       shapes = shapes + 's';
     }
   }
-  return { numShapes: [el, shapes], details: shapeDetails };
-};
+  return { numShapes: [totalShapes, shapes], details: shapeDetails };
+}
 
 export default p5;

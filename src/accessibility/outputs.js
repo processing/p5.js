@@ -15,7 +15,7 @@ let ingredients = {};
 let preIngredients = '';
 let txtOut = false;
 let grOut = false;
-let cnvConfig = {};
+let canvasColors = {};
 
 /**
  * <code class="language-javascript">textOutput()</code> creates a screenreader
@@ -154,7 +154,7 @@ p5.prototype._createOutput = function(type) {
       .getElementById(cnvId)
       .insertAdjacentHTML(
         'afterend',
-        '<section id="' + cIdT + '" class="accessibleOutput"></section>'
+        `<section id="${cIdT}" class="accessibleOutput"></section>`
       );
     if (type === 'txtOut') {
       let inner = this._createTextOutput(cIdT);
@@ -173,10 +173,10 @@ p5.prototype._updateAccsOutput = function() {
     preIngredients = JSON.stringify(ingredients);
     let cnvId = this.canvas.id;
     if (txtOut) {
-      this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
+      this._updateTextOutput(cnvId, ingredients, canvasColors.background);
     }
     if (grOut) {
-      this._updateGridOutput(cnvId, ingredients, cnvConfig.background);
+      this._updateGridOutput(cnvId, ingredients, canvasColors.background);
     }
   }
 };
@@ -186,23 +186,23 @@ p5.prototype._updateAccsOutput = function() {
 p5.prototype._accsBackground = function(args) {
   preIngredients = ingredients;
   ingredients = {};
-  if (cnvConfig.backgroundRGBA !== args) {
-    //cnvConfig.backgroundRGBA = args;
-    cnvConfig.background = this._rgbColorName(args);
+  if (canvasColors.backgroundRGBA !== args) {
+    canvasColors.backgroundRGBA = args;
+    canvasColors.background = this._rgbColorName(args);
   }
 };
 
 //helper function that gets fill and stroke of shapes
 p5.prototype._accsCanvasColors = function(f, args) {
   if (f === 'fill') {
-    if (cnvConfig.fillRGBA !== args) {
-      cnvConfig.fillRGBA = args;
-      cnvConfig.fill = this._rgbColorName(args);
+    if (canvasColors.fillRGBA !== args) {
+      canvasColors.fillRGBA = args;
+      canvasColors.fill = this._rgbColorName(args);
     }
   } else if (f === 'stroke') {
-    if (cnvConfig.strokeRGBA !== args) {
-      cnvConfig.strokeRGBA = args;
-      cnvConfig.stroke = this._rgbColorName(args);
+    if (canvasColors.strokeRGBA !== args) {
+      canvasColors.strokeRGBA = args;
+      canvasColors.stroke = this._rgbColorName(args);
     }
   }
 };
@@ -210,9 +210,9 @@ p5.prototype._accsCanvasColors = function(f, args) {
 //helper function that sets defaul colors for background
 //fill and stroke.
 function _setDefaults() {
-  cnvConfig.background = 'white';
-  cnvConfig.fill = 'white';
-  cnvConfig.stroke = 'black';
+  canvasColors.background = 'white';
+  canvasColors.fill = 'white';
+  canvasColors.stroke = 'black';
 }
 
 //builds ingredients list for building outputs
@@ -225,27 +225,26 @@ p5.prototype._accsOutput = function(f, args) {
   let include = {};
   let add = true;
   if (f === 'line') {
-    include.color = cnvConfig.stroke;
+    include.color = canvasColors.stroke;
     include.length = _getLineL(args);
     let p1 = _getPos([args[0], [1]], this.width, this.height);
     let p2 = _getPos([args[2], [3]], this.width, this.height);
     if (p1 === p2) {
-      include.pos = 'at ' + p1;
+      include.pos = `at ${p1}`;
     } else {
-      include.pos = 'from ' + p1 + ' to ' + p2;
+      include.pos = `from ${p1} to ${p2}`;
     }
   } else {
     if (f === 'point') {
-      include.color = cnvConfig.stroke;
+      include.color = canvasColors.stroke;
     } else {
-      include.color = cnvConfig.fill;
+      include.color = canvasColors.fill;
       include.area = _getArea(f, args, this.width, this.height);
     }
     let middle = _getMiddle(f, args);
     include.pos = _getPos(middle, this.width, this.height);
     include.loc = _canvasLocator(middle, this.width, this.height);
   }
-  include.args = args;
   if (!ingredients[f]) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
