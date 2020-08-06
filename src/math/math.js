@@ -37,11 +37,7 @@ import p5 from '../core/main';
  * draws a line from center of canvas to mouse pointer position.
  */
 p5.prototype.createVector = function(x, y, z) {
-  if (this instanceof p5) {
-    return new p5.Vector(this, arguments);
-  } else {
-    return new p5.Vector(x, y, z);
-  }
+  return this instanceof p5 ? new p5.Vector(this, arguments) : new p5.Vector(x, y, z);
 };
 
 export default p5;
