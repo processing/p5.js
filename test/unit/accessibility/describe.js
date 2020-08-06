@@ -5,6 +5,7 @@ suite('describe', function() {
   let a = 'a';
   let b = 'b';
   let c = 'c';
+  let time = 0.0005;
 
   setup(function(done) {
     myp5Container = document.createElement('div');
@@ -27,10 +28,6 @@ suite('describe', function() {
     p5Container = null;
   });
 
-  const getInner = elID => {
-    return document.getElementById(elID).innerHTML;
-  };
-
   suite('p5.prototype.describe', function() {
     let expected = 'a.';
     test('should be a function', function() {
@@ -39,40 +36,52 @@ suite('describe', function() {
     });
     test('should create description as fallback', function() {
       myp5.describe(a);
-      let actual = getInner(myID + '_fallbackDesc');
+      let actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
       assert.deepEqual(actual, expected);
     });
-    /*test('should not add extra period if string ends in "."', function() {
+    test('should not add extra period if string ends in "."', function() {
       myp5.describe('a.');
-      let actual = getInner(myID + '_fallbackDesc');
-      assert.deepEqual(actual, expected);
-    });*/
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
+    });
     test('should not add period if string ends in "!" or "?', function() {
       myp5.describe('A!');
-      let actual = getInner(myID + '_fallbackDesc');
-      if (actual === 'A!') {
-        myp5.describe('A?');
-        actual = getInner(myID + '_fallbackDesc');
-      }
-      assert.deepEqual(actual, 'A?');
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
+        if (actual === 'A!') {
+          myp5.describe('A?');
+          setTimeout(function() {
+            actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
+            assert.deepEqual(actual, 'A?');
+          }, time);
+        }
+      }, time);
     });
     test('should create description when called after describeElement()', function() {
       myp5.describeElement(b, c);
       myp5.describe(a);
-      let actual = getInner(myID + '_fallbackDesc');
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });
     test('should create Label adjacent to canvas', function() {
       myp5.describe(a, myp5.LABEL);
-      let actual = getInner(myID + '_labelDesc');
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_labelDesc').innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });
-    /*test('should create Label adjacent to canvas when label of element already exists', function() {
+    test('should create Label adjacent to canvas when label of element already exists', function() {
       myp5.describeElement(b, c, myp5.LABEL);
       myp5.describe(a, myp5.LABEL);
-      let actual = getInner(myID + '_labelDesc');
-      assert.deepEqual(actual, expected);
-    });*/
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_labelDesc').innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
+    });
     test('wrong param type at #0', function() {
       assert.validationError(function() {
         myp5.describe(1, myp5.LABEL);
@@ -102,42 +111,60 @@ suite('describe', function() {
     });
     test('should create element description as fallback', function() {
       myp5.describeElement(a, b);
-      let actual = getInner(myID + '_fte_' + a);
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fte_' + a).innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });
     test('should not add extra ":" if element name ends in colon', function() {
       myp5.describeElement('a:', 'b.');
-      let actual = getInner(myID + '_fte_a:');
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fte_a:').innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });
     test('should replace ";", ",", "." for ":" in element name', function() {
       let actual;
       myp5.describeElement('a;', 'b.');
-      if (getInner(myID + '_fte_a;') === expected) {
-        myp5.describeElement('a,', 'b.');
-        if (getInner(myID + '_fte_a,') === expected) {
-          myp5.describeElement('a.', 'b.');
-          actual = getInner(myID + '_fte_a.');
+      setTimeout(function() {
+        if (document.getElementById(myID + '_fte_a;').innerHTML === expected) {
+          myp5.describeElement('a,', 'b.');
+          setTimeout(function() {
+            if (
+              document.getElementById(myID + '_fte_a,').innerHTML === expected
+            ) {
+              myp5.describeElement('a.', 'b.');
+              setTimeout(function() {
+                actual = document.getElementById(myID + '_fte_a.').innerHTML;
+                assert.deepEqual(actual, expected);
+              }, time);
+            }
+          }, time);
         }
-      }
-      assert.deepEqual(actual, expected);
+      }, time);
     });
-    /*test('should create element description when called after describe()', function() {
+    test('should create element description when called after describe()', function() {
       myp5.describe(c);
       myp5.describeElement(a, b);
-      let actual = getInner(myID + '_fte_' + a);
-      assert.deepEqual(actual, expected);
-    });*/
+      setTimeout(function() {
+        let actual = document.getElementById(myID + '_fte_' + a).innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
+    });
     test('should create element label adjacent to canvas', function() {
       myp5.describeElement(a, b, myp5.LABEL);
-      const actual = getInner(myID + '_lte_' + a);
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        const actual = document.getElementById(myID + '_lte_' + a).innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });
-    /*test('should create element label adjacent to canvas when label of describe() already exists', function() {
+    /*test('should create element label adjacent to canvas when called after describe()', function() {
       myp5.describe(c, myp5.LABEL);
       myp5.describeElement(a, b, myp5.LABEL);
-      const actual = getInner(myID + '_lte_' + a);
-      assert.deepEqual(actual, expected);
+      setTimeout(function() {
+        const actual = document.getElementById(myID + '_lte_' + a).innerHTML;
+        assert.deepEqual(actual, expected);
+      }, time);
     });*/
     test('wrong param type at #0 and #1', function() {
       assert.validationError(function() {
