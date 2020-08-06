@@ -23,6 +23,11 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'txtOut';
+  if (dummy.summary === '') {
+    if (!document.getElementById(`#${cIdT}Summary`)) {
+      return;
+    }
+  }
   let innerList = _buildShapeList(cIdT);
   let innerSummary = _buildTxtSummary(
     innerList.numShapes,

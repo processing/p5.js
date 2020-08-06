@@ -23,6 +23,11 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'grOut';
+  if (dummy.summary === '') {
+    if (!document.getElementById(`#${cIdT}Summary`)) {
+      return;
+    }
+  }
   let innerShapeDetails = _buildGridShapeDetails(cIdT);
   let innerSummary = _buildGridSummary(
     innerShapeDetails.numShapes,

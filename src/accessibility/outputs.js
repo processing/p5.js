@@ -6,11 +6,8 @@
  */
 
 // To-do:
-// Improve updating to include only shapes that have changed
-// Errors when running example:
-// - point
-// - line
-// - appending does not work
+// Improve updating to include only shapes that have changed?
+// Add Fallback and other option
 
 import p5 from '../core/main';
 let ingredients = {};
@@ -37,31 +34,31 @@ let canvasColors = {};
  * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
  *
  * @example
- * //<div>
- * //<code>
- * //textOutput();
- * //background(148, 196, 0);
- * //fill(255, 0, 0);
- * //ellipse(20, 20, 20, 20);
- * //fill(0, 0, 255);
- * //rect(50, 50, 50, 50);
- * //</code>
- * //</div>
+ * <div>
+ * <code>
+ * textOutput();
+ * background(148, 196, 0);
+ * fill(255, 0, 0);
+ * ellipse(20, 20, 20, 20);
+ * fill(0, 0, 255);
+ * rect(50, 50, 50, 50);
+ * </code>
+ * </div>
  *
  *
- * //<div>
- * //<code>
- * //let x = 0;
- * //function draw() {
- *   //textOutput();
- *   //background(148, 196, 0);
- *   //fill(255, 0, 0);
- *   //ellipse(x, 20, 20, 20);
- *   //fill(0, 0, 255);
- *   //rect(50, 50, 50, 50);
- *   //ellipse(20, 20, 20, 20);
- *   //x += 0.1;
- * //}
+ * <div>
+ * <code>
+ * let x = 0;
+ * function draw() {
+ *   textOutput();
+ *   background(148, 196, 0);
+ *   fill(255, 0, 0);
+ *   ellipse(x, 20, 20, 20);
+ *   fill(0, 0, 255);
+ *   rect(50, 50, 50, 50);
+ *   ellipse(20, 20, 20, 20);
+ *   x += 0.1;
+ * }
  *
  */
 
@@ -99,31 +96,31 @@ p5.prototype.textOutput = function(display) {
  * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
  *
  * @example
- * //<div>
- * //<code>
- * //textOutput();
- * //background(148, 196, 0);
- * //fill(255, 0, 0);
- * //ellipse(20, 20, 20, 20);
- * //fill(0, 0, 255);
- * //rect(50, 50, 50, 50);
- * //</code>
- * //</div>
+ * <div>
+ * <code>
+ * textOutput();
+ * background(148, 196, 0);
+ * fill(255, 0, 0);
+ * ellipse(20, 20, 20, 20);
+ * fill(0, 0, 255);
+ * rect(50, 50, 50, 50);
+ * </code>
+ * </div>
  *
  *
- * //<div>
- * //<code>
- * //let x = 0;
- * //function draw() {
- *   //textOutput();
- *   //background(148, 196, 0);
- *   //fill(255, 0, 0);
- *   //ellipse(x, 20, 20, 20);
- *   //fill(0, 0, 255);
- *   //rect(50, 50, 50, 50);
- *   //ellipse(20, 20, 20, 20);
- *   //x += 0.1;
- * //}
+ * <div>
+ * <code>
+ * let x = 0;
+ * function draw() {
+ *   textOutput();
+ *   background(148, 196, 0);
+ *   fill(255, 0, 0);
+ *   ellipse(x, 20, 20, 20);
+ *   fill(0, 0, 255);
+ *   rect(50, 50, 50, 50);
+ *   ellipse(20, 20, 20, 20);
+ *   x += 0.1;
+ * }
  *
  */
 
@@ -263,9 +260,9 @@ p5.prototype._accsOutput = function(f, args) {
 
 // return length of lines
 function _getLineL(args) {
-  return (lineLength = Math.round(
+  return Math.round(
     Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
-  ));
+  );
 }
 
 //gets middle point / centroid of shape
