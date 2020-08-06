@@ -6,8 +6,11 @@
  */
 import p5 from '../core/main';
 
+//the functions in this document support the creation of grid output
+
 let ingredients = {};
 let background;
+let dummy = { summary: '', map: '', shapeDetails: '' };
 
 //creates html structure
 p5.prototype._createGridOutput = function(cIdT) {
@@ -27,14 +30,17 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
     this.height
   );
   let innerMap = _buildGridMap(cIdT);
-  if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
+  if (innerSummary !== dummy.summary) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
+    dummy.summary = innerSummary;
   }
-  if (innerMap !== document.getElementById(cIdT + 'OD').innerHTML) {
+  if (innerMap !== dummy.map) {
     document.getElementById(cIdT + 'OD').innerHTML = innerMap;
+    dummy.map = innerMap;
   }
-  if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
+  if (innerShapeDetails.details !== dummy.shapeDetails) {
     document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails.details;
+    dummy.shapeDetails = innerShapeDetails.details;
   }
 };
 

@@ -5,6 +5,8 @@
  * @requires core
  */
 
+// To-do:
+// Improve updating to include only shapes that have changed
 // Errors when running example:
 // - point
 // - line

@@ -10,6 +10,7 @@ import p5 from '../core/main';
 
 let ingredients = {};
 let background;
+let dummy = { list: '', summary: '', shapeDetails: '' };
 
 //creates html structure for text output
 p5.prototype._createTextOutput = function(cIdT) {
@@ -29,20 +30,17 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
     this.height
   );
   let innerShapeDetails = _buildShapeDetails(cIdT);
-  if (document.getElementById(cIdT + 'SumP') !== null) {
-    if (innerSummary !== document.getElementById(cIdT + 'SumP').innerHTML) {
-      document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
-    }
+  if (innerSummary !== dummy.summary) {
+    document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
+    dummy.summary = innerSummary;
   }
-  if (document.getElementById(cIdT + 'lst') !== null) {
-    if (innerList !== document.getElementById(cIdT + 'lst').innerHTML) {
-      document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
-    }
+  if (innerList.listShapes !== dummy.list) {
+    document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
+    dummy.list = innerList.listShapes;
   }
-  if (document.getElementById(cIdT + 'SD') !== null) {
-    if (innerShapeDetails !== document.getElementById(cIdT + 'SD').innerHTML) {
-      document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
-    }
+  if (innerShapeDetails !== dummy.shapeDetails) {
+    document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
+    dummy.shapeDetails = innerShapeDetails;
   }
 };
 
