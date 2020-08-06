@@ -210,7 +210,6 @@ p5.prototype.describeElement = function(name, text, display) {
     return;
   }
   const cnvId = this.canvas.id;
-  let result;
   text = _descriptionText(text);
   let elementName = _elementName(name);
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
