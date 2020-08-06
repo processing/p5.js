@@ -66,7 +66,7 @@ let cnvConfig = {};
 
 p5.prototype.textOutput = function(display) {
   p5._validateParameters('textOutput', arguments);
-  if (txtOut === false) {
+  if (!txtOut) {
     txtOut = true;
     if (this.canvas !== undefined) {
       this._setDefaults();
@@ -128,7 +128,7 @@ p5.prototype.textOutput = function(display) {
 
 p5.prototype.gridOutput = function(display) {
   p5._validateParameters('gridOutput', arguments);
-  if (txtOut === false) {
+  if (!txtOut) {
     grOut = true;
     if (this.canvas !== undefined) {
       this._setDefaults();
@@ -143,18 +143,14 @@ p5.prototype.gridOutput = function(display) {
 
 //helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
-  if (txtOut === true || grOut === true) {
-    return true;
-  } else {
-    return false;
-  }
+  return txtOut || grOut;
 };
 
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type) {
   let cnvId = this.canvas.id;
   let cIdT = cnvId + type;
-  if (document.getElementById(cIdT) === null) {
+  if (!document.getElementById(cIdT)) {
     document
       .getElementById(cnvId)
       .insertAdjacentHTML(
@@ -164,8 +160,7 @@ p5.prototype._createOutput = function(type) {
     if (type === 'txtOut') {
       let inner = this._createTextOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
-    }
-    if (type === 'grOut') {
+    } else if (type === 'grOut') {
       let inner = this._createGridOutput(cIdT);
       document.getElementById(cIdT).innerHTML = inner;
     }
@@ -179,10 +174,9 @@ p5.prototype._updateOutput = function() {
   //this._updateOutput();
   //}
   let cnvId = this.canvas.id;
-  if (txtOut === true) {
+  if (txtOut) {
     this._updateTextOutput(cnvId, ingredients, cnvConfig.background);
-  }
-  if (grOut === true) {
+  } else if (grOut) {
     this._updateGridOutput(cnvId, ingredients, cnvConfig.background);
   }
 };
@@ -199,7 +193,7 @@ p5.prototype._accsBackground = function(args) {
 };
 
 //helper function that gets fill and stroke of shapes
-p5.prototype._accscnvConfig = function(f, args) {
+p5.prototype._accsCanvasColors = function(f, args) {
   if (f === 'fill') {
     if (cnvConfig.fillRGBA !== args) {
       cnvConfig.fillRGBA = args;
@@ -223,10 +217,9 @@ p5.prototype._setDefaults = function() {
 
 // return length of lines
 p5.prototype._getLineL = function(args) {
-  const lineLength = Math.round(
+  return (lineLength = Math.round(
     Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
-  );
-  return lineLength;
+  ));
 };
 
 //builds ingredients list for building outputs
@@ -260,7 +253,7 @@ p5.prototype._accsOutput = function(f, args) {
     include.loc = this._canvasLocator(include.middle);
   }
   include.args = args;
-  if (ingredients[f] === undefined) {
+  if (!ingredients[f]) {
     ingredients[f] = [include];
   } else if (ingredients[f] !== [include]) {
     for (let y in ingredients[f]) {
@@ -302,29 +295,26 @@ p5.prototype._getMiddle = function(f, args) {
 
 //gets position of shape in the canvas
 p5.prototype._getPos = function(args) {
-  let x = Math.round(args[0]);
-  let y = Math.round(args[1]);
-
-  if (x < 0.4 * this.width) {
-    if (y < 0.4 * this.height) {
+  if (args[0] < 0.4 * this.width) {
+    if (args[1] < 0.4 * this.height) {
       return 'top left';
-    } else if (y > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * this.height) {
       return 'bottom left';
     } else {
       return 'mid left';
     }
-  } else if (x > 0.6 * this.width) {
-    if (y < 0.4 * this.height) {
+  } else if (args[0] > 0.6 * this.width) {
+    if (args[1] < 0.4 * this.height) {
       return 'top right';
-    } else if (y > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * this.height) {
       return 'bottom right';
     } else {
       return 'mid right';
     }
   } else {
-    if (y < 0.4 * this.height) {
+    if (args[1] < 0.4 * this.height) {
       return 'top middle';
-    } else if (y > 0.6 * this.height) {
+    } else if (args[1] > 0.6 * this.height) {
       return 'bottom middle';
     } else {
       return 'middle';
@@ -336,10 +326,8 @@ p5.prototype._getPos = function(args) {
 p5.prototype._canvasLocator = function(args) {
   const noRows = 10;
   const noCols = 10;
-  let locX, locY;
-
-  locX = Math.floor(args[0] / this.width * noRows);
-  locY = Math.floor(args[1] / this.height * noCols);
+  let locX = Math.floor(args[0] / this.width * noRows);
+  let locY = Math.floor(args[1] / this.height * noCols);
   if (locX === noRows) {
     locX = locX - 1;
   }

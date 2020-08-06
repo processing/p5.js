@@ -54,7 +54,7 @@ p5.Renderer2D.prototype.background = function(...args) {
     const color = this._pInst.color(...args);
 
     //accessible Outputs
-    if (this._pInst._addAccsOutput() === true) {
+    if (this._pInst._addAccsOutput()) {
       this._pInst._accsBackground(color.levels);
     }
 
@@ -88,8 +88,8 @@ p5.Renderer2D.prototype.fill = function(...args) {
   this._setFill(color.toString());
 
   //accessible Outputs
-  if (this._pInst._addAccsOutput() === true) {
-    this._pInst._accscnvConfig('fill', color.levels);
+  if (this._pInst._addAccsOutput()) {
+    this._pInst._accsCanvasColors('fill', color.levels);
   }
 };
 
@@ -98,8 +98,8 @@ p5.Renderer2D.prototype.stroke = function(...args) {
   this._setStroke(color.toString());
 
   //accessible Outputs
-  if (this._pInst._addAccsOutput() === true) {
-    this._pInst._accscnvConfig('stroke', color.levels);
+  if (this._pInst._addAccsOutput()) {
+    this._pInst._accsCanvasColors('stroke', color.levels);
   }
 };
 

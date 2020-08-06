@@ -27,9 +27,9 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   ingredients = ing;
   background = bkgr;
   let cIdT = cnvId + 'grOut';
-  let innerSDs = this._buildGridSDs(cIdT);
-  let innerSummary = this._buildGrSummary(innerSDs.numShapes);
-  let innerMap = this._buildGrMap(cIdT);
+  let innerSDs = this._buildGridShapeDetails(cIdT);
+  let innerSummary = this._buildGridSummary(innerSDs.numShapes);
+  let innerMap = this._buildGridMap(cIdT);
   if (innerSummary !== document.getElementById(cIdT + 'Summary').innerHTML) {
     document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
   }
@@ -42,7 +42,7 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
 };
 
 //creates spatial grid
-p5.prototype._buildGrMap = function(cId) {
+p5.prototype._buildGridMap = function(cId) {
   let el = 0;
   let table = '';
   let cells = Array.apply(null, Array(10)).map(function() {});
@@ -52,10 +52,7 @@ p5.prototype._buildGrMap = function(cId) {
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
       el++;
-      if (
-        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] ===
-        undefined
-      ) {
+      if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           '<a href="#' +
           cId +
@@ -97,7 +94,7 @@ p5.prototype._buildGrMap = function(cId) {
 };
 
 //creates grid summary
-p5.prototype._buildGrSummary = function(numShapes) {
+p5.prototype._buildGridSummary = function(numShapes) {
   let text =
     background +
     ' canvas, ' +
@@ -112,7 +109,7 @@ p5.prototype._buildGrSummary = function(numShapes) {
 };
 
 //creates list of shapes
-p5.prototype._buildGridSDs = function(cId) {
+p5.prototype._buildGridShapeDetails = function(cId) {
   let shapeDetails = '';
   let shapes = '';
   let el = 0;

@@ -208,7 +208,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
     );
 
     //accessible Outputs
-    if (this._addAccsOutput() === true) {
+    if (this._addAccsOutput()) {
       this._accsOutput('arc', [
         vals.x,
         vals.y,
@@ -321,7 +321,7 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
   //accessible Outputs
-  if (this._addAccsOutput() === true) {
+  if (this._addAccsOutput()) {
     this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
   }
 
@@ -382,7 +382,7 @@ p5.prototype.line = function(...args) {
   }
 
   //accessible Outputs
-  if (this._addAccsOutput() === true) {
+  if (this._addAccsOutput()) {
     this._accsOutput('line', args);
   }
 
@@ -458,7 +458,7 @@ p5.prototype.point = function(...args) {
     } else {
       this._renderer.point(...args);
       //accessible Outputs
-      if (this._addAccsOutput() === true) {
+      if (this._addAccsOutput()) {
         this._accsOutput('point', args);
       }
     }
@@ -527,7 +527,7 @@ p5.prototype.quad = function(...args) {
     } else {
       this._renderer.quad(...args);
       //accessibile outputs
-      if (this._addAccsOutput() === true) {
+      if (this._addAccsOutput()) {
         this._accsOutput('quadrilateral', args);
       }
     }
@@ -683,7 +683,7 @@ p5.prototype._renderRect = function() {
     this._renderer.rect(args);
 
     //accessible outputs
-    if (this._addAccsOutput() === true) {
+    if (this._addAccsOutput()) {
       this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
     }
   }
@@ -723,7 +723,7 @@ p5.prototype.triangle = function(...args) {
   }
 
   //accessible outputs
-  if (this._addAccsOutput() === true) {
+  if (this._addAccsOutput()) {
     this._accsOutput('triangle', args);
   }
 
