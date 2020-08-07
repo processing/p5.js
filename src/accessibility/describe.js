@@ -14,7 +14,7 @@ const labelContainer = '_Label'; //Label container
 const labelDescId = '_labelDesc'; //Label description
 const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
-let dummy = { fallbackElements: {}, labelElements: {} }; //stores DOM element booleans and DOM Elements
+let dummy = { fallbackElements: {}, labelElements: {} };
 
 /**
  * Creates a screen-reader accessible description for the canvas.
@@ -79,34 +79,38 @@ p5.prototype.describe = function(text, display) {
   const cnvId = this.canvas.id;
   text = _descriptionText(text);
   //check if text is different
-  if (dummy.fallbackDesc !== text) {
+  if (dummy[cnvId + 'fallbackDesc'] !== text) {
     //if html structure is not there yet
-    if (!dummy.fallbackDesc) {
+    if (!dummy[cnvId + fallbackDescId]) {
       _describeFallbackHTML(cnvId, text);
-    } else if (dummy.fallbackDescId) {
+    } else if (document.getElementById(cnvId + fallbackDescId)) {
       document.getElementById(cnvId + fallbackDescId).innerHTML = text;
-      dummy.fallbackDesc = text;
+      dummy[cnvId + 'fallbackDesc'] = text;
     }
   }
   //If display is LABEL create a div adjacent to the canvas element with
   //description text.
   //check if text is different
-  if (display === this.LABEL && dummy.labelDesc !== text) {
+  if (display === this.LABEL && dummy[cnvId + 'labelDesc'] !== text) {
     //reassign value of dummy.describeText
-    if (!dummy[labelDescId]) {
+    if (!dummy[cnvId + labelDescId]) {
       _describeLabelHTML(cnvId, text);
     } else {
       document.getElementById(cnvId + labelDescId).innerHTML = text;
-      dummy.labelDesc = text;
+      dummy[cnvId + 'labelDesc'] = text;
     }
   }
+};
+
+p5.prototype._clearDummy = function() {
+  dummy = { fallbackElements: {}, labelElements: {} };
 };
 
 /**
  * Helper function for describe() and describeElement().
  */
 function _describeLabelHTML(cnvId, text) {
-  if (!dummy[labelContainer]) {
+  if (!dummy[cnvId + labelContainer]) {
     document
       .getElementById(cnvId)
       .insertAdjacentHTML(
@@ -114,36 +118,36 @@ function _describeLabelHTML(cnvId, text) {
         `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
           labelDescId}"></p></div>`
       );
-    dummy[labelContainer] = true;
-    dummy[labelDescId] = true;
-  } else if (!dummy[labelDescId] && dummy[labelTableId]) {
+    dummy[cnvId + labelContainer] = true;
+    dummy[cnvId + labelDescId] = true;
+  } else if (!dummy[cnvId + labelDescId] && dummy[cnvId + labelTableId]) {
     document
       .getElementById(cnvId + labelTableId)
       .insertAdjacentHTML('beforebegin', `<p id="${cnvId}${labelDescId}"></p>`);
-    dummy[labelDescId] = true;
+    dummy[cnvId + labelDescId] = true;
   }
   document.getElementById(cnvId + labelDescId).innerHTML = text;
-  dummy.labelDesc = text;
+  dummy[cnvId + 'labelDesc'] = text;
 }
 
 function _describeFallbackHTML(cnvId, text) {
-  if (!dummy[descContainer]) {
+  if (!dummy[cnvId + descContainer]) {
     document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
       fallbackDescId}"></p></div>`;
-    dummy[descContainer] = true;
-    dummy[fallbackDescId] = true;
-  } else if (dummy[fallbackTableId]) {
+    dummy[cnvId + descContainer] = true;
+    dummy[cnvId + fallbackDescId] = true;
+  } else if (dummy[cnvId + fallbackTableId]) {
     document
       .getElementById(cnvId + fallbackTableId)
       .insertAdjacentHTML(
         'beforebegin',
         `<p id="${cnvId + fallbackDescId}"></p>`
       );
-    dummy[fallbackDescId] = true;
+    dummy[cnvId + fallbackDescId] = true;
   }
   document.getElementById(cnvId + fallbackDescId).innerHTML = text;
-  dummy.fallbackDesc = text;
+  dummy[cnvId + 'fallbackDesc'] = text;
   return;
 }
 
@@ -214,11 +218,11 @@ p5.prototype.describeElement = function(name, text, display) {
   let elementName = _elementName(name);
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
 
-  if (dummy.fallbackElements[name] !== inner) {
-    if (!dummy.fallbackElements[name]) {
+  if (dummy.fallbackElements[cnvId + name] !== inner) {
+    if (!dummy.fallbackElements[cnvId + name]) {
       _descElementFallbackHTML(cnvId, name, inner);
     } else {
-      dummy.fallbackElements[name] = inner;
+      dummy.fallbackElements[cnvId + name] = inner;
       document.getElementById(
         cnvId + fallbackTableElId + name
       ).innerHTML = inner;
@@ -227,11 +231,11 @@ p5.prototype.describeElement = function(name, text, display) {
   //If display is LABEL creates a div adjacent to the canvas element with
   //a table, a row header cell with the name of the elements,
   //and adds the description of the element in adjecent cell.
-  if (display === this.LABEL && dummy.labelElements[name] !== inner) {
-    if (!dummy.labelElements[name]) {
+  if (display === this.LABEL && dummy.labelElements[cnvId + name] !== inner) {
+    if (!dummy.labelElements[cnvId + name]) {
       _descElementLabelHTML(cnvId, name, inner);
     } else {
-      dummy.labelElements[name] = inner;
+      dummy.labelElements[cnvId + name] = inner;
       document.getElementById(cnvId + labelTableElId + name).innerHTML = inner;
     }
   }
@@ -240,7 +244,7 @@ p5.prototype.describeElement = function(name, text, display) {
  * Helper functions for describeElement().
  */
 function _descElementLabelHTML(cnvId, name, inner) {
-  if (!dummy[labelContainer]) {
+  if (!dummy[cnvId + labelContainer]) {
     document
       .getElementById(cnvId)
       .insertAdjacentHTML(
@@ -249,8 +253,8 @@ function _descElementLabelHTML(cnvId, name, inner) {
           labelContainer}" class="p5Label"><table id="${cnvId +
           labelTableId}"></table></div>`
       );
-    dummy[labelContainer] = true;
-    dummy[labelTableId] = true;
+    dummy[cnvId + labelContainer] = true;
+    dummy[cnvId + labelTableId] = true;
   } else if (document.getElementById(cnvId + labelDescId)) {
     document
       .getElementById(cnvId + labelDescId)
@@ -258,24 +262,24 @@ function _descElementLabelHTML(cnvId, name, inner) {
         'afterend',
         `<table id="${cnvId + labelTableId}"></table>`
       );
-    dummy[labelTableId] = true;
+    dummy[cnvId + labelTableId] = true;
   }
-  if (!dummy.labelElements[name] && dummy[labelTableId]) {
+  if (!dummy.labelElements[cnvId + name] && dummy[cnvId + labelTableId]) {
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + labelTableElId + name;
     document.getElementById(cnvId + labelTableId).appendChild(tableRow);
-    dummy.labelElements[name] = inner;
+    dummy.labelElements[cnvId + name] = inner;
     document.getElementById(cnvId + labelTableElId + name).innerHTML = inner;
   }
 }
 
 function _descElementFallbackHTML(cnvId, name, inner) {
-  if (!dummy[descContainer]) {
+  if (!dummy[cnvId + descContainer]) {
     document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
       fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
-    dummy[descContainer] = true;
-    dummy[fallbackTableId] = true;
+    dummy[cnvId + descContainer] = true;
+    dummy[cnvId + fallbackTableId] = true;
   } else if (document.getElementById(cnvId + fallbackDescId)) {
     document
       .getElementById(cnvId + fallbackDescId)
@@ -284,13 +288,13 @@ function _descElementFallbackHTML(cnvId, name, inner) {
         `<table id="${cnvId +
           fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table>`
       );
-    dummy[fallbackTableId] = true;
+    dummy[cnvId + fallbackTableId] = true;
   }
-  if (!dummy.fallbackElements[name] && dummy[fallbackTableId]) {
+  if (!dummy.fallbackElements[cnvId + name] && dummy[cnvId + fallbackTableId]) {
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + fallbackTableElId + name;
     document.getElementById(cnvId + fallbackTableId).appendChild(tableRow);
-    dummy.fallbackElements[name] = inner;
+    dummy.fallbackElements[cnvId + name] = inner;
     document.getElementById(cnvId + fallbackTableElId + name).innerHTML = inner;
   }
 }
