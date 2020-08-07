@@ -78,14 +78,20 @@ p5.prototype.describe = function(text, display) {
   }
   const cnvId = this.canvas.id;
   text = _descriptionText(text);
+  if (!dummy[cnvId + 'fallbackDesc'] || !dummy[cnvId + 'labelDesc']) {
+    _populateDummyDOM(cnvId);
+  }
+
   //check if text is different
   if (dummy[cnvId + 'fallbackDesc'] !== text) {
     //if html structure is not there yet
-    if (!dummy[cnvId + fallbackDescId]) {
-      _describeFallbackHTML(cnvId, text);
-    } else if (document.getElementById(cnvId + fallbackDescId)) {
-      document.getElementById(cnvId + fallbackDescId).innerHTML = text;
+    if (dummy[cnvId + 'updateFallbackDesc']) {
+      dummy[cnvId + 'DOM'].querySelector(
+        '#' + cnvId + fallbackDescId
+      ).innerHTML = text;
       dummy[cnvId + 'fallbackDesc'] = text;
+    } else {
+      _describeFallbackHTML(cnvId, text);
     }
   }
   //If display is LABEL create a div adjacent to the canvas element with
@@ -93,11 +99,13 @@ p5.prototype.describe = function(text, display) {
   //check if text is different
   if (display === this.LABEL && dummy[cnvId + 'labelDesc'] !== text) {
     //reassign value of dummy.describeText
-    if (!dummy[cnvId + labelDescId]) {
-      _describeLabelHTML(cnvId, text);
-    } else {
-      document.getElementById(cnvId + labelDescId).innerHTML = text;
+    if (dummy[cnvId + labelDescId]) {
+      dummy[cnvId + 'DOM'].querySelector(
+        '#' + cnvId + labelDescId
+      ).innerHTML = text;
       dummy[cnvId + 'labelDesc'] = text;
+    } else {
+      _describeLabelHTML(cnvId, text);
     }
   }
 };
@@ -106,13 +114,17 @@ p5.prototype._clearDummy = function() {
   dummy = { fallbackElements: {}, labelElements: {} };
 };
 
+function _populateDummyDOM(cnvId) {
+  dummy[cnvId + 'DOM'] = document.getElementsByTagName('body')[0];
+}
+
 /**
  * Helper function for describe() and describeElement().
  */
 function _describeLabelHTML(cnvId, text) {
   if (!dummy[cnvId + labelContainer]) {
-    document
-      .getElementById(cnvId)
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId)
       .insertAdjacentHTML(
         'afterend',
         `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
@@ -121,33 +133,42 @@ function _describeLabelHTML(cnvId, text) {
     dummy[cnvId + labelContainer] = true;
     dummy[cnvId + labelDescId] = true;
   } else if (!dummy[cnvId + labelDescId] && dummy[cnvId + labelTableId]) {
-    document
-      .getElementById(cnvId + labelTableId)
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + labelTableId)
       .insertAdjacentHTML('beforebegin', `<p id="${cnvId}${labelDescId}"></p>`);
     dummy[cnvId + labelDescId] = true;
   }
-  document.getElementById(cnvId + labelDescId).innerHTML = text;
+  dummy[cnvId + 'DOM'].querySelector(
+    '#' + cnvId + labelDescId
+  ).innerHTML = text;
   dummy[cnvId + 'labelDesc'] = text;
 }
 
 function _describeFallbackHTML(cnvId, text) {
   if (!dummy[cnvId + descContainer]) {
-    document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
+    dummy[cnvId + 'DOM'].querySelector(
+      '#' + cnvId
+    ).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
       fallbackDescId}"></p></div>`;
     dummy[cnvId + descContainer] = true;
     dummy[cnvId + fallbackDescId] = true;
   } else if (dummy[cnvId + fallbackTableId]) {
-    document
-      .getElementById(cnvId + fallbackTableId)
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + fallbackTableId)
       .insertAdjacentHTML(
         'beforebegin',
         `<p id="${cnvId + fallbackDescId}"></p>`
       );
     dummy[cnvId + fallbackDescId] = true;
   }
-  document.getElementById(cnvId + fallbackDescId).innerHTML = text;
-  dummy[cnvId + 'fallbackDesc'] = text;
+  if (dummy[cnvId + 'DOM'].querySelector('#' + cnvId + fallbackDescId)) {
+    dummy[cnvId + 'DOM'].querySelector(
+      '#' + cnvId + fallbackDescId
+    ).innerHTML = text;
+    dummy[cnvId + 'fallbackDesc'] = text;
+    dummy[cnvId + 'updateFallbackDesc'] === true;
+  }
   return;
 }
 
@@ -216,15 +237,23 @@ p5.prototype.describeElement = function(name, text, display) {
   const cnvId = this.canvas.id;
   text = _descriptionText(text);
   let elementName = _elementName(name);
+  name = _nameForID(name);
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
+
+  if (
+    !dummy.fallbackElements[cnvId + name] ||
+    !dummy.labelElements[cnvId + name]
+  ) {
+    _populateDummyDOM(cnvId);
+  }
 
   if (dummy.fallbackElements[cnvId + name] !== inner) {
     if (!dummy.fallbackElements[cnvId + name]) {
       _descElementFallbackHTML(cnvId, name, inner);
     } else {
       dummy.fallbackElements[cnvId + name] = inner;
-      document.getElementById(
-        cnvId + fallbackTableElId + name
+      dummy[cnvId + 'DOM'].querySelector(
+        '#' + cnvId + fallbackTableElId + name
       ).innerHTML = inner;
     }
   }
@@ -236,7 +265,9 @@ p5.prototype.describeElement = function(name, text, display) {
       _descElementLabelHTML(cnvId, name, inner);
     } else {
       dummy.labelElements[cnvId + name] = inner;
-      document.getElementById(cnvId + labelTableElId + name).innerHTML = inner;
+      dummy[cnvId + 'DOM'].querySelector(
+        '#' + cnvId + labelTableElId + name
+      ).innerHTML = inner;
     }
   }
 };
@@ -245,8 +276,8 @@ p5.prototype.describeElement = function(name, text, display) {
  */
 function _descElementLabelHTML(cnvId, name, inner) {
   if (!dummy[cnvId + labelContainer]) {
-    document
-      .getElementById(cnvId)
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId)
       .insertAdjacentHTML(
         'afterend',
         `<div id="${cnvId +
@@ -255,9 +286,9 @@ function _descElementLabelHTML(cnvId, name, inner) {
       );
     dummy[cnvId + labelContainer] = true;
     dummy[cnvId + labelTableId] = true;
-  } else if (document.getElementById(cnvId + labelDescId)) {
-    document
-      .getElementById(cnvId + labelDescId)
+  } else if (dummy[cnvId + 'DOM'].querySelector('#' + cnvId + labelDescId)) {
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + labelDescId)
       .insertAdjacentHTML(
         'afterend',
         `<table id="${cnvId + labelTableId}"></table>`
@@ -267,22 +298,28 @@ function _descElementLabelHTML(cnvId, name, inner) {
   if (!dummy.labelElements[cnvId + name] && dummy[cnvId + labelTableId]) {
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + labelTableElId + name;
-    document.getElementById(cnvId + labelTableId).appendChild(tableRow);
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + labelTableId)
+      .appendChild(tableRow);
     dummy.labelElements[cnvId + name] = inner;
-    document.getElementById(cnvId + labelTableElId + name).innerHTML = inner;
+    dummy[cnvId + 'DOM'].querySelector(
+      '#' + cnvId + labelTableElId + name
+    ).innerHTML = inner;
   }
 }
 
 function _descElementFallbackHTML(cnvId, name, inner) {
   if (!dummy[cnvId + descContainer]) {
-    document.getElementById(cnvId).innerHTML = `<div id="${cnvId +
+    dummy[cnvId + 'DOM'].querySelector(
+      '#' + cnvId
+    ).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
       fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
     dummy[cnvId + descContainer] = true;
     dummy[cnvId + fallbackTableId] = true;
   } else if (document.getElementById(cnvId + fallbackDescId)) {
-    document
-      .getElementById(cnvId + fallbackDescId)
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + fallbackDescId)
       .insertAdjacentHTML(
         'afterend',
         `<table id="${cnvId +
@@ -293,10 +330,27 @@ function _descElementFallbackHTML(cnvId, name, inner) {
   if (!dummy.fallbackElements[cnvId + name] && dummy[cnvId + fallbackTableId]) {
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + fallbackTableElId + name;
-    document.getElementById(cnvId + fallbackTableId).appendChild(tableRow);
+    dummy[cnvId + 'DOM']
+      .querySelector('#' + cnvId + fallbackTableId)
+      .appendChild(tableRow);
     dummy.fallbackElements[cnvId + name] = inner;
-    document.getElementById(cnvId + fallbackTableElId + name).innerHTML = inner;
+    dummy[cnvId + 'DOM'].querySelector(
+      '#' + cnvId + fallbackTableElId + name
+    ).innerHTML = inner;
   }
+}
+
+function _nameForID(name) {
+  //remove any punctuation at the end of name
+  if (
+    name.endsWith('.') ||
+    name.endsWith(';') ||
+    name.endsWith(',') ||
+    name.endsWith(':')
+  ) {
+    name = name.replace(/.$/, '');
+  }
+  return name;
 }
 
 function _elementName(name) {

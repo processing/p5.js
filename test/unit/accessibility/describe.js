@@ -108,21 +108,17 @@ suite('describe', function() {
     });
     test('should not add extra ":" if element name ends in colon', function() {
       myp5.describeElement('a:', 'b.');
-
-      let actual = document.getElementById(myID + '_fte_a:').innerHTML;
+      let actual = document.getElementById(myID + '_fte_a').innerHTML;
       assert.deepEqual(actual, expected);
     });
     test('should replace ";", ",", "." for ":" in element name', function() {
       let actual;
       myp5.describeElement('a;', 'b.');
-
-      if (document.getElementById(myID + '_fte_a;').innerHTML === expected) {
+      if (document.getElementById(myID + '_fte_a').innerHTML === expected) {
         myp5.describeElement('a,', 'b.');
-
-        if (document.getElementById(myID + '_fte_a,').innerHTML === expected) {
+        if (document.getElementById(myID + '_fte_a').innerHTML === expected) {
           myp5.describeElement('a.', 'b.');
-
-          actual = document.getElementById(myID + '_fte_a.').innerHTML;
+          actual = document.getElementById(myID + '_fte_a').innerHTML;
           assert.deepEqual(actual, expected);
         }
       }
