@@ -28,6 +28,9 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
       return;
     }
   }
+  if (!dummy[cnvId + 'DOM']) {
+    dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
+  }
   let innerShapeDetails = _buildGridShapeDetails(cIdT);
   let innerSummary = _buildGridSummary(
     innerShapeDetails.numShapes,
@@ -36,15 +39,18 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   );
   let innerMap = _buildGridMap(cIdT);
   if (innerSummary !== dummy.summary) {
-    document.getElementById(cIdT + 'Summary').innerHTML = innerSummary;
+    dummy[cnvId + 'DOM'].querySelector(
+      `#${cIdT}Summary`
+    ).innerHTML = innerSummary;
     dummy.summary = innerSummary;
   }
   if (innerMap !== dummy.map) {
-    document.getElementById(cIdT + 'OD').innerHTML = innerMap;
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
     dummy.map = innerMap;
   }
   if (innerShapeDetails.details !== dummy.shapeDetails) {
-    document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails.details;
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
+      innerShapeDetails.details;
     dummy.shapeDetails = innerShapeDetails.details;
   }
 };

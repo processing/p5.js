@@ -28,6 +28,9 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
       return;
     }
   }
+  if (!dummy[cnvId + 'DOM']) {
+    dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
+  }
   let innerList = _buildShapeList(cIdT);
   let innerSummary = _buildTxtSummary(
     innerList.numShapes,
@@ -36,15 +39,18 @@ p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
   );
   let innerShapeDetails = _buildShapeDetails(cIdT);
   if (innerSummary !== dummy.summary) {
-    document.getElementById(cIdT + 'SumP').innerHTML = innerSummary;
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`).innerHTML = innerSummary;
     dummy.summary = innerSummary;
   }
   if (innerList.listShapes !== dummy.list) {
-    document.getElementById(cIdT + 'lst').innerHTML = innerList.listShapes;
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
+      innerList.listShapes;
     dummy.list = innerList.listShapes;
   }
   if (innerShapeDetails !== dummy.shapeDetails) {
-    document.getElementById(cIdT + 'SD').innerHTML = innerShapeDetails;
+    dummy[cnvId + 'DOM'].querySelector(
+      `#${cIdT}SD`
+    ).innerHTML = innerShapeDetails;
     dummy.shapeDetails = innerShapeDetails;
   }
 };

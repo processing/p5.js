@@ -6,7 +6,7 @@
  */
 
 // To-do:
-// Improve updating to include only shapes that have changed?
+// Improve updating to include only shapes that have changed? [leave as an issue]
 // Add Fallback and other option
 
 import p5 from '../core/main';
@@ -138,19 +138,20 @@ p5.prototype._addAccsOutput = function() {
 p5.prototype._createOutput = function(type) {
   let cnvId = this.canvas.id;
   let cIdT = cnvId + type;
-  if (!document.getElementById(cIdT)) {
-    document
-      .getElementById(cnvId)
+  let doc = document.getElementsByTagName('body')[0];
+  if (!doc.querySelector('#' + cIdT)) {
+    doc
+      .querySelector('#' + cnvId)
       .insertAdjacentHTML(
         'afterend',
         `<section id="${cIdT}" class="accessibleOutput"></section>`
       );
     if (type === 'txtOut') {
       let inner = this._createTextOutput(cIdT);
-      document.getElementById(cIdT).innerHTML = inner;
+      doc.querySelector('#' + cIdT).innerHTML = inner;
     } else if (type === 'grOut') {
       let inner = this._createGridOutput(cIdT);
-      document.getElementById(cIdT).innerHTML = inner;
+      doc.querySelector('#' + cIdT).innerHTML = inner;
     }
   }
 };
