@@ -64,17 +64,12 @@ let canvasColors = {};
 
 p5.prototype.textOutput = function(display) {
   p5._validateParameters('textOutput', arguments);
-  if (!txtOut) {
-    txtOut = true;
-    if (this.canvas !== undefined) {
-      _setDefaults();
-      this._createOutput('txtOut');
-    } else {
-      throw new Error('textOutput() should be called after canvas is created');
-    }
-  } else {
+  if (txtOut) {
     return;
   }
+  txtOut = true;
+  _setDefaults();
+  this._createOutput('txtOut');
 };
 
 /**
@@ -126,17 +121,12 @@ p5.prototype.textOutput = function(display) {
 
 p5.prototype.gridOutput = function(display) {
   p5._validateParameters('gridOutput', arguments);
-  if (!txtOut) {
-    grOut = true;
-    if (this.canvas !== undefined) {
-      _setDefaults();
-      this._createOutput('grOut');
-    } else {
-      throw new Error('gridOutput() should be called after canvas is created');
-    }
-  } else {
+  if (txtOut) {
     return;
   }
+  grOut = true;
+  _setDefaults();
+  this._createOutput('grOut');
 };
 
 //helper function returns true when accessible outputs are true
