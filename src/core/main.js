@@ -283,9 +283,11 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
-        this._lastFrameTime = window.performance.now();
-        context._setup();
-        context._draw();
+        if (!this._setupDone) {
+          this._lastFrameTime = window.performance.now();
+          context._setup();
+          context._draw();
+        }
       }
     };
 
