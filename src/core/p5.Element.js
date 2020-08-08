@@ -813,7 +813,7 @@ p5.Element._attachListener = function(ev, fxn, ctx) {
   if (ctx._events[ev]) {
     p5.Element._detachListener(ev, ctx);
   }
-  const f = fxn.bind(ctx);
+  const f = p5._fesErrorWrapper.bind(fxn.bind(ctx));
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
 };

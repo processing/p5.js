@@ -59,6 +59,9 @@ const ENABLE_FES_STYLING = false;
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
+  p5._fesErrorWrapper = function() {
+    return this.apply(null, arguments);
+  };
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
 
@@ -409,7 +412,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // and also for detectiong if the error happened inside the library
 
     // cannot process a stacktrace that doesn't exist
-    if (!stacktrace) return [false, null];
+    if (!stacktrace || error.name === 'SyntaxError') return [false, null];
 
     stacktrace.forEach(frame => {
       frame.functionName = frame.functionName || '';
@@ -483,6 +486,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
         // if already handled by another part of the FES, don't handle again
         if (p5._fesLogCache[locationObj.location]) return [true, null];
+
+        if (locationObj.location) p5._fesLogCache[locationObj.location] = true;
       }
 
       // Check if the error is due to a non loadX method being used incorrectly
@@ -610,6 +615,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
         file: stacktrace[0].fileName.split('/').slice(-1),
         line: friendlyStack[0].lineNumber
       };
+
+      if (p5._fesLogCache[locationObj.location]) return;
+      if (locationObj.location) p5._fesLogCache[locationObj.location] = true;
     }
 
     switch (error.name) {
@@ -712,12 +720,37 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
+  /**
+   * Wrapper function to call all user-defined functions.
+   * (setup, draw, mouseClicked, etc.). Allows fesErrorMonitor to catch errors
+   * in user-code when the event listener doesn't trigger due to same-origin
+   * security policies.
+   *
+   * @method fesErrorWrapper
+   * @private
+   */
+  const fesErrorWrapper = function() {
+    try {
+      return this.apply(null, arguments);
+    } catch (err) {
+      fesErrorMonitor(err);
+      throw err;
+    }
+  };
+
   p5._fesErrorMonitor = fesErrorMonitor;
+  p5._fesErrorWrapper = fesErrorWrapper;
   p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
 
-  // logger for testing purposes.
+  // for testing purposes only.
   p5._fesLogger = null;
   p5._fesLogCache = {};
+  const clearFESLogCache = function() {
+    for (const key in p5._fesLogCache) {
+      delete p5._fesLogCache[key];
+    }
+  };
+  p5._clearFESLogCache = clearFESLogCache;
 
   window.addEventListener('load', checkForUserDefinedFunctions, false);
   window.addEventListener('error', p5._fesErrorMonitor, false);

@@ -268,7 +268,7 @@ class p5 {
           obj[method] = this._wrapPreload(obj, method);
         }
 
-        userPreload();
+        p5._fesErrorWrapper.call(userPreload);
         this._runIfPreloadsAreDone();
       } else {
         this._setup();
@@ -340,7 +340,7 @@ class p5 {
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
       if (typeof context.setup === 'function') {
-        context.setup();
+        p5._fesErrorWrapper.call(context.setup);
       }
 
       // unhide any hidden canvases that were created
@@ -548,7 +548,7 @@ class p5 {
     for (const e in this._events) {
       const f = this[`_on${e}`];
       if (f) {
-        const m = f.bind(this);
+        const m = p5._fesErrorWrapper.bind(f.bind(this));
         window.addEventListener(e, m, { passive: false });
         this._events[e] = m;
       }

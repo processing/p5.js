@@ -530,6 +530,7 @@ suite('Global Error Handling', function() {
 
   teardown(function() {
     p5._fesLogger = null;
+    p5._clearFESLogCache();
   });
 
   testUnMinified(

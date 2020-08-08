@@ -484,7 +484,7 @@ p5.prototype.redraw = function(n) {
       context._registeredMethods.pre.forEach(callMethod);
       this._inUserDraw = true;
       try {
-        userDraw();
+        p5._fesErrorWrapper.call(userDraw);
       } finally {
         this._inUserDraw = false;
       }
