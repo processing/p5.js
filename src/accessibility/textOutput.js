@@ -9,64 +9,85 @@ import p5 from '../core/main';
 //the functions in this document support the creation of text output
 
 let ingredients = {};
-let background;
+let canvasInfo = {};
 let dummy = { list: '', summary: '', shapeDetails: '' };
 
 //creates html structure for text output
-p5.prototype._createTextOutput = function(cIdT) {
-  let inner = `Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}SumP"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table>`;
+p5.prototype._createTextOutput = function(cIdT, cnvId, container, query) {
+  let doc = document.getElementsByTagName('body')[0];
+  let inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}SumP"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table></div>`;
+  if (doc.querySelector(query)) {
+    doc.querySelector(query).insertAdjacentHTML('beforebegin', inner);
+  } else {
+    doc.querySelector(`#${container}`).innerHTML = inner;
+  }
+  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
   return inner;
 };
 
 //updates textOutput
-p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
-  let cIdT = cnvId + 'txtOut';
-  if (!dummy[cnvId + 'DOM']) {
-    _populateDummyDOM(cnvId, cIdT);
-  }
-  ingredients = ing;
-  background = bkgr;
+p5.prototype._updateTextOutput = function(
+  cnvId,
+  type,
+  cnvIngredients,
+  cnvInfo
+) {
+  let cIdT = cnvId + type;
+  ingredients = cnvIngredients;
+  canvasInfo = cnvInfo;
   if (dummy.summary === '') {
     if (!document.getElementById(cIdT + 'Summary')) {
       return;
     }
   }
-  if (dummy[cnvId + 'DOM']) {
-    let innerList = _buildShapeList(cIdT);
-    let innerSummary = _buildTxtSummary(
-      innerList.numShapes,
-      this.width,
-      this.height
-    );
-    let innerShapeDetails = _buildShapeDetails(cIdT);
-    if (innerSummary !== dummy.summary) {
-      dummy[cnvId + 'DOM'].querySelector(
-        `#${cIdT}SumP`
-      ).innerHTML = innerSummary;
-      dummy.summary = innerSummary;
-    }
-    if (innerList.listShapes !== dummy.list) {
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
-        innerList.listShapes;
-      dummy.list = innerList.listShapes;
-    }
-    if (innerShapeDetails !== dummy.shapeDetails) {
-      dummy[cnvId + 'DOM'].querySelector(
-        `#${cIdT}SD`
-      ).innerHTML = innerShapeDetails;
-      dummy.shapeDetails = innerShapeDetails;
-    }
+  if (dummy[cIdT + 'Update']) {
+    _buildAndUpdateTextOutput(cIdT, cnvId);
+  } else {
+    _readyToUpdateTextCheck(cIdT, cnvId);
   }
 };
 
-function _populateDummyDOM(cnvId, cIdT) {
-  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
-  dummy.ready = true;
+function _readyToUpdateTextCheck(cIdT, cnvId) {
+  if (dummy[cnvId + 'DOM']) {
+    if (
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`) &&
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`) &&
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`)
+    ) {
+      dummy[cIdT + 'Update'] = true;
+      _buildAndUpdateTextOutput(cIdT, cnvId);
+    }
+  }
+}
+
+function _buildAndUpdateTextOutput(cIdT, cnvId) {
+  let innerList = _buildShapeList(cIdT);
+  let innerSummary = _buildTxtSummary(innerList.numShapes, cnvId);
+  let innerShapeDetails = _buildShapeDetails(cIdT);
+  if (innerSummary !== dummy.summary) {
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`).innerHTML = innerSummary;
+    dummy.summary = innerSummary;
+  }
+  if (innerList.listShapes !== dummy.list) {
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
+      innerList.listShapes;
+    dummy.list = innerList.listShapes;
+  }
+  if (innerShapeDetails !== dummy.shapeDetails) {
+    dummy[cnvId + 'DOM'].querySelector(
+      `#${cIdT}SD`
+    ).innerHTML = innerShapeDetails;
+    dummy.shapeDetails = innerShapeDetails;
+  }
 }
 
 //Builds textOutput summary
-function _buildTxtSummary(numShapes, canvasWidth, canvasHeight) {
-  let text = `Your output is a, ${canvasWidth} by ${canvasHeight} pixels, ${background} canvas. Containing the following ${numShapes} shapes:`;
+function _buildTxtSummary(numShapes, cnvId) {
+  let text = `Your output is a, ${canvasInfo.width} by ${
+    canvasInfo.height
+  } pixels, ${
+    canvasInfo.background
+  } canvas. Containing the following ${numShapes} shapes:`;
   return text;
 }
 

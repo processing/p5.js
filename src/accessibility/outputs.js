@@ -12,9 +12,13 @@
 import p5 from '../core/main';
 let ingredients = {};
 let preIngredients = '';
-let txtOut = false;
-let grOut = false;
+let textOutput = false;
+let gridOutput = false;
+let textLabel = false;
+let gridLabel = false;
 let canvasColors = {};
+let canvasInfo = {};
+let preCanvasInfo = '';
 
 /**
  * <code class="language-javascript">textOutput()</code> creates a screenreader
@@ -64,12 +68,16 @@ let canvasColors = {};
 
 p5.prototype.textOutput = function(display) {
   p5._validateParameters('textOutput', arguments);
-  if (txtOut) {
+  if (textOutput) {
     return;
   }
-  txtOut = true;
+  textOutput = true;
   _setDefaults();
-  this._createOutput('txtOut');
+  this._createOutput('textOutput');
+  if (display === this.LABEL) {
+    textLabel = true;
+    this._createLabel('textOutput');
+  }
 };
 
 /**
@@ -121,52 +129,83 @@ p5.prototype.textOutput = function(display) {
 
 p5.prototype.gridOutput = function(display) {
   p5._validateParameters('gridOutput', arguments);
-  if (txtOut) {
+  if (textOutput) {
     return;
   }
-  grOut = true;
+  gridOutput = true;
   _setDefaults();
-  this._createOutput('grOut');
+  this._createOutput('gridOutput');
+  if (display === this.LABEL) {
+    gridLabel = true;
+    this._createLabel('gridOutput');
+  }
 };
 
 //helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
-  return txtOut || grOut;
+  return textOutput || gridOutput;
 };
 
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type) {
+  let doc = document.getElementsByTagName('body')[0];
   let cnvId = this.canvas.id;
   let cIdT = cnvId + type;
+  let container = cnvId + 'accessibleOutput';
+  if (!doc.querySelector(`#${container}`)) {
+    doc.querySelector(
+      `#${cnvId}`
+    ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
+  }
+  if (type === 'textOutput') {
+    this._createTextOutput(cIdT, cnvId, container, `#${cnvId}gridOutput`);
+  } else if (type === 'gridOutput') {
+    this._createGridOutput(cIdT, cnvId, container, `#${cnvId}textOutput`);
+  }
+};
+
+p5.prototype._createLabel = function(type) {
   let doc = document.getElementsByTagName('body')[0];
-  if (!doc.querySelector('#' + cIdT)) {
+  let cnvId = this.canvas.id;
+  let cIdT = cnvId + type + 'Label';
+  let container = cnvId + 'accessibleOutputLabel';
+  if (!doc.querySelector(`#${container}`)) {
     doc
-      .querySelector('#' + cnvId)
-      .insertAdjacentHTML(
-        'afterend',
-        `<section id="${cIdT}" class="accessibleOutput"></section>`
-      );
-    if (type === 'txtOut') {
-      let inner = this._createTextOutput(cIdT);
-      doc.querySelector('#' + cIdT).innerHTML = inner;
-    } else if (type === 'grOut') {
-      let inner = this._createGridOutput(cIdT);
-      doc.querySelector('#' + cIdT).innerHTML = inner;
-    }
+      .querySelector(`#${cnvId}`)
+      .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
+  }
+  if (type === 'textOutput') {
+    this._createTextOutput(cIdT, cnvId, container, `#${cnvId}gridOutputLabel`);
+  } else if (type === 'gridOutput') {
+    this._createGridOutput(cIdT, cnvId, container, `#${cnvId}textOutputLabel`);
   }
 };
 
 //this function is called at the end of setup and draw if using
 //accessOutputs and calls update functions of outputs
 p5.prototype._updateAccsOutput = function() {
-  if (JSON.stringify(ingredients) !== preIngredients) {
+  canvasInfo.width = this.width;
+  canvasInfo.height = this.height;
+  if (
+    JSON.stringify(ingredients) !== preIngredients &&
+    JSON.stringify(canvasInfo) !== preCanvasInfo
+  ) {
     preIngredients = JSON.stringify(ingredients);
+    preCanvasInfo = JSON.stringify(canvasInfo);
     let cnvId = this.canvas.id;
-    if (txtOut) {
-      this._updateTextOutput(cnvId, ingredients, canvasColors.background);
+    if (textOutput) {
+      this._updateTextOutput(cnvId, 'textOutput', ingredients, canvasInfo);
     }
-    if (grOut) {
-      this._updateGridOutput(cnvId, ingredients, canvasColors.background);
+    if (gridOutput) {
+      this._updateGridOutput(cnvId, 'gridOutput', ingredients, canvasInfo);
+    }
+    if (textLabel) {
+      this._updateTextOutput(cnvId, 'textOutputLabel', ingredients, canvasInfo);
+      //
+    }
+    if (gridLabel) {
+      this._updateGridOutput(cnvId, 'gridOutputLabel', ingredients, canvasInfo);
+      //
     }
   }
 };
@@ -178,7 +217,7 @@ p5.prototype._accsBackground = function(args) {
   ingredients = {};
   if (canvasColors.backgroundRGBA !== args) {
     canvasColors.backgroundRGBA = args;
-    canvasColors.background = this._rgbColorName(args);
+    canvasInfo.background = this._rgbColorName(args);
   }
 };
 
@@ -200,7 +239,7 @@ p5.prototype._accsCanvasColors = function(f, args) {
 //helper function that sets defaul colors for background
 //fill and stroke.
 function _setDefaults() {
-  canvasColors.background = 'white';
+  canvasInfo.background = 'white';
   canvasColors.fill = 'white';
   canvasColors.stroke = 'black';
 }

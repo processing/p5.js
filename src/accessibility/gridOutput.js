@@ -9,49 +9,78 @@ import p5 from '../core/main';
 //the functions in this document support the creation of grid output
 
 let ingredients = {};
-let background;
+let canvasInfo = {};
 let dummy = { summary: '', map: '', shapeDetails: '' };
 
 //creates html structure
-p5.prototype._createGridOutput = function(cIdT) {
-  let inner = `Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul>`;
+p5.prototype._createGridOutput = function(cIdT, cnvId, container, query) {
+  let doc = document.getElementsByTagName('body')[0];
+  let inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
+  if (doc.querySelector(query)) {
+    doc.querySelector(query).insertAdjacentHTML('afterend', inner);
+  } else {
+    doc.querySelector(`#${container}`).innerHTML = inner;
+  }
+  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
   return inner;
 };
 
 //creates output content
-p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
-  ingredients = ing;
-  background = bkgr;
-  let cIdT = cnvId + 'grOut';
+p5.prototype._updateGridOutput = function(
+  cnvId,
+  type,
+  cnvIngredients,
+  cnvInfo
+) {
+  let cIdT = cnvId + type;
+  ingredients = cnvIngredients;
+  canvasInfo = cnvInfo;
   if (dummy.summary === '') {
     if (!document.getElementById(`${cIdT}Summary`)) {
       return;
     }
   }
-  dummy[cIdT + 'DOM'] = document.getElementById(cIdT);
+  if (dummy[cIdT + 'Update']) {
+    _buildAndUpdateGridOutput(cIdT, cnvId);
+  } else {
+    _readyToUpdateGridCheck(cIdT, cnvId);
+  }
+};
+
+function _readyToUpdateGridCheck(cIdT, cnvId) {
+  if (dummy[cnvId + 'DOM']) {
+    if (
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`) &&
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}Summary`) &&
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`)
+    ) {
+      dummy[cIdT + 'Update'] = true;
+
+      _buildAndUpdateGridOutput(cIdT, cnvId);
+    }
+  }
+}
+
+function _buildAndUpdateGridOutput(cIdT, cnvId) {
   let innerShapeDetails = _buildGridShapeDetails(cIdT);
-  let innerSummary = _buildGridSummary(
-    innerShapeDetails.numShapes,
-    this.width,
-    this.height
-  );
+  let innerSummary = _buildGridSummary(innerShapeDetails.numShapes);
   let innerMap = _buildGridMap(cIdT);
   if (innerSummary !== dummy.summary) {
-    dummy[cIdT + 'DOM'].querySelector(
+    dummy[cnvId + 'DOM'].querySelector(
       `#${cIdT}Summary`
     ).innerHTML = innerSummary;
     dummy.summary = innerSummary;
   }
   if (innerMap !== dummy.map) {
-    dummy[cIdT + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
     dummy.map = innerMap;
   }
   if (innerShapeDetails.details !== dummy.shapeDetails) {
-    dummy[cIdT + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
+    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
       innerShapeDetails.details;
     dummy.shapeDetails = innerShapeDetails.details;
   }
-};
+}
 
 //creates spatial grid
 function _buildGridMap(cId) {
@@ -94,10 +123,10 @@ function _buildGridMap(cId) {
 }
 
 //creates grid summary
-function _buildGridSummary(numShapes, canvasWidth, canvasHeight) {
-  return `${background} canvas, ${canvasWidth} by ${canvasHeight} pixels, contains ${
-    numShapes[0]
-  } shapes: ${numShapes[1]}`;
+function _buildGridSummary(numShapes) {
+  return `${canvasInfo.background} canvas, ${canvasInfo.width} by ${
+    canvasInfo.height
+  } pixels, contains ${numShapes[0]} shapes: ${numShapes[1]}`;
 }
 
 //creates list of shapes
