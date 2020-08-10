@@ -216,7 +216,7 @@ p5.prototype._accsOutput = function(f, args) {
   let add = true;
   if (f === 'line') {
     include.color = canvasColors.stroke;
-    include.length = _getLineL(args);
+    include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
     let p1 = _getPos([args[0], [1]], this.width, this.height);
     let p2 = _getPos([args[2], [3]], this.width, this.height);
     if (p1 === p2) {
@@ -248,13 +248,6 @@ p5.prototype._accsOutput = function(f, args) {
     }
   }
 };
-
-// return length of lines
-function _getLineL(args) {
-  return Math.round(
-    Math.sqrt(Math.pow(args[2] - args[0], 2) + Math.pow(args[3] - args[1], 2))
-  );
-}
 
 //gets middle point / centroid of shape
 function _getMiddle(f, args) {
