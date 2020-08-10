@@ -20,40 +20,49 @@ p5.prototype._createTextOutput = function(cIdT) {
 
 //updates textOutput
 p5.prototype._updateTextOutput = function(cnvId, ing, bkgr) {
+  let cIdT = cnvId + 'txtOut';
+  if (!dummy[cnvId + 'DOM']) {
+    _populateDummyDOM(cnvId, cIdT);
+  }
   ingredients = ing;
   background = bkgr;
-  let cIdT = cnvId + 'txtOut';
   if (dummy.summary === '') {
-    if (!document.getElementById(`#${cIdT}Summary`)) {
+    if (!document.getElementById(cIdT + 'Summary')) {
       return;
     }
   }
-  if (!dummy[cnvId + 'DOM']) {
-    dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
-  }
-  let innerList = _buildShapeList(cIdT);
-  let innerSummary = _buildTxtSummary(
-    innerList.numShapes,
-    this.width,
-    this.height
-  );
-  let innerShapeDetails = _buildShapeDetails(cIdT);
-  if (innerSummary !== dummy.summary) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`).innerHTML = innerSummary;
-    dummy.summary = innerSummary;
-  }
-  if (innerList.listShapes !== dummy.list) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
-      innerList.listShapes;
-    dummy.list = innerList.listShapes;
-  }
-  if (innerShapeDetails !== dummy.shapeDetails) {
-    dummy[cnvId + 'DOM'].querySelector(
-      `#${cIdT}SD`
-    ).innerHTML = innerShapeDetails;
-    dummy.shapeDetails = innerShapeDetails;
+  if (dummy[cnvId + 'DOM']) {
+    let innerList = _buildShapeList(cIdT);
+    let innerSummary = _buildTxtSummary(
+      innerList.numShapes,
+      this.width,
+      this.height
+    );
+    let innerShapeDetails = _buildShapeDetails(cIdT);
+    if (innerSummary !== dummy.summary) {
+      dummy[cnvId + 'DOM'].querySelector(
+        `#${cIdT}SumP`
+      ).innerHTML = innerSummary;
+      dummy.summary = innerSummary;
+    }
+    if (innerList.listShapes !== dummy.list) {
+      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
+        innerList.listShapes;
+      dummy.list = innerList.listShapes;
+    }
+    if (innerShapeDetails !== dummy.shapeDetails) {
+      dummy[cnvId + 'DOM'].querySelector(
+        `#${cIdT}SD`
+      ).innerHTML = innerShapeDetails;
+      dummy.shapeDetails = innerShapeDetails;
+    }
   }
 };
+
+function _populateDummyDOM(cnvId, cIdT) {
+  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
+  dummy.ready = true;
+}
 
 //Builds textOutput summary
 function _buildTxtSummary(numShapes, canvasWidth, canvasHeight) {

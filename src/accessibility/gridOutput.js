@@ -24,13 +24,11 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   background = bkgr;
   let cIdT = cnvId + 'grOut';
   if (dummy.summary === '') {
-    if (!document.getElementById(`#${cIdT}Summary`)) {
+    if (!document.getElementById(`${cIdT}Summary`)) {
       return;
     }
   }
-  if (!dummy[cnvId + 'DOM']) {
-    dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
-  }
+  dummy[cIdT + 'DOM'] = document.getElementById(cIdT);
   let innerShapeDetails = _buildGridShapeDetails(cIdT);
   let innerSummary = _buildGridSummary(
     innerShapeDetails.numShapes,
@@ -39,17 +37,17 @@ p5.prototype._updateGridOutput = function(cnvId, ing, bkgr) {
   );
   let innerMap = _buildGridMap(cIdT);
   if (innerSummary !== dummy.summary) {
-    dummy[cnvId + 'DOM'].querySelector(
+    dummy[cIdT + 'DOM'].querySelector(
       `#${cIdT}Summary`
     ).innerHTML = innerSummary;
     dummy.summary = innerSummary;
   }
   if (innerMap !== dummy.map) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
+    dummy[cIdT + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
     dummy.map = innerMap;
   }
   if (innerShapeDetails.details !== dummy.shapeDetails) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
+    dummy[cIdT + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
       innerShapeDetails.details;
     dummy.shapeDetails = innerShapeDetails.details;
   }
