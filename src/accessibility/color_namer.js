@@ -616,7 +616,7 @@ const colorLookUp = [
   }
 ];
 
-p5.prototype._calculateColor = function(hsv) {
+function _calculateColor(hsv) {
   let colortext;
   if (hsv[0] !== 0) {
     hsv[0] = Math.round(hsv[0] * 100);
@@ -682,12 +682,12 @@ p5.prototype._calculateColor = function(hsv) {
     }
   }
   return colortext;
-};
+}
 
 p5.prototype._rgbColorName = function(arg) {
   let hsv = color_conversion._rgbaToHSBA(arg);
   oghsv = hsv;
-  let colorname = this._calculateColor([hsv[0], hsv[1], hsv[2]]);
+  let colorname = _calculateColor([hsv[0], hsv[1], hsv[2]]);
   return colorname;
 };
 
