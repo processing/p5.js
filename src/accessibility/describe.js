@@ -341,15 +341,8 @@ function _descElementFallbackHTML(cnvId, name, inner) {
 }
 
 function _nameForID(name) {
-  //remove any punctuation at the end of name
-  if (
-    name.endsWith('.') ||
-    name.endsWith(';') ||
-    name.endsWith(',') ||
-    name.endsWith(':')
-  ) {
-    name = name.replace(/.$/, '');
-  }
+  //remove any special characters from name for ID
+  name = name.replace(/[^a-zA-Z0-9 ]/g, '');
   return name;
 }
 
