@@ -8,96 +8,89 @@ import p5 from '../core/main';
 
 //the functions in this document support the creation of text output
 
-let ingredients = {};
-let canvasInfo = {};
-let dummy = { list: '', summary: '', shapeDetails: '' };
+let dummy = {};
 
 //creates html structure for text output
-p5.prototype._createTextOutput = function(cIdT, cnvId, container, query) {
+p5.prototype._createTextOutput = function(idT, id, container, query) {
   let doc = document.getElementsByTagName('body')[0];
-  let inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}SumP"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table></div>`;
+  let inner = `<div id="${idT}">Text Output<div id="${idT}Summary" aria-label="text output summary"><p id="${idT}SumP"></p><ul id="${idT}lst"></ul></div><table id="${idT}SD" summary="text output shape details"></table></div>`;
   if (doc.querySelector(query)) {
     doc.querySelector(query).insertAdjacentHTML('beforebegin', inner);
   } else {
     doc.querySelector(`#${container}`).innerHTML = inner;
   }
-  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
+  dummy[id + 'DOM'] = document.getElementById(idT);
   return inner;
 };
 
 //updates textOutput
-p5.prototype._updateTextOutput = function(
-  cnvId,
-  type,
-  cnvIngredients,
-  cnvInfo
-) {
-  let cIdT = cnvId + type;
-  ingredients = cnvIngredients;
-  canvasInfo = cnvInfo;
-  if (dummy.summary === '') {
-    if (!document.getElementById(cIdT + 'Summary')) {
+p5.prototype._updateTextOutput = function(id, type, ingredients, info) {
+  let idT = id + type;
+  if (!dummy[id]) {
+    if (!document.getElementById(idT + 'Summary')) {
       return;
     }
   }
-  if (dummy[cIdT + 'Update']) {
-    _buildAndUpdateTextOutput(cIdT, cnvId);
+  if (dummy[idT + 'Update']) {
+    _buildAndUpdateTextOutput(idT, id, ingredients, info);
   } else {
-    _readyToUpdateTextCheck(cIdT, cnvId);
+    _readyToUpdateTextCheck(idT, id, ingredients, info);
   }
 };
 
-function _readyToUpdateTextCheck(cIdT, cnvId) {
-  if (dummy[cnvId + 'DOM']) {
+function _readyToUpdateTextCheck(idT, id, ingredients, info) {
+  if (dummy[id + 'DOM']) {
     if (
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`) &&
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`) &&
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`)
+      dummy[id + 'DOM'].querySelector(`#${idT}SumP`) &&
+      dummy[id + 'DOM'].querySelector(`#${idT}lst`) &&
+      dummy[id + 'DOM'].querySelector(`#${idT}SD`)
     ) {
-      dummy[cIdT + 'Update'] = true;
-      _buildAndUpdateTextOutput(cIdT, cnvId);
+      dummy[idT + 'Update'] = true;
+      dummy[id] = {};
+      _buildAndUpdateTextOutput(idT, id, ingredients, info);
     }
   }
 }
 
-function _buildAndUpdateTextOutput(cIdT, cnvId) {
-  let innerList = _buildShapeList(cIdT);
-  let innerSummary = _buildTxtSummary(innerList.numShapes, cnvId);
-  let innerShapeDetails = _buildShapeDetails(cIdT);
-  if (innerSummary !== dummy.summary) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SumP`).innerHTML = innerSummary;
-    dummy.summary = innerSummary;
+function _buildAndUpdateTextOutput(idT, id, ingredients, info) {
+  let innerList = _shapeList(idT, ingredients);
+  let innerSummary = _textSummary(innerList.numShapes, info);
+  let innerShapeDetails = _shapeDetails(idT, ingredients);
+  if (innerSummary !== dummy[id].summary) {
+    dummy[id + 'DOM'].querySelector(`#${idT}SumP`).innerHTML = innerSummary;
+    dummy[id].summary = innerSummary;
   }
-  if (innerList.listShapes !== dummy.list) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}lst`).innerHTML =
+  if (innerList.listShapes !== dummy[id].list) {
+    dummy[id + 'DOM'].querySelector(`#${idT}lst`).innerHTML =
       innerList.listShapes;
-    dummy.list = innerList.listShapes;
+    dummy[id].list = innerList.listShapes;
   }
-  if (innerShapeDetails !== dummy.shapeDetails) {
-    dummy[cnvId + 'DOM'].querySelector(
-      `#${cIdT}SD`
-    ).innerHTML = innerShapeDetails;
-    dummy.shapeDetails = innerShapeDetails;
+  if (innerShapeDetails !== dummy[id].shapeDetails) {
+    dummy[id + 'DOM'].querySelector(`#${idT}SD`).innerHTML = innerShapeDetails;
+    dummy[id].shapeDetails = innerShapeDetails;
   }
 }
 
 //Builds textOutput summary
-function _buildTxtSummary(numShapes, cnvId) {
-  let text = `Your output is a, ${canvasInfo.width} by ${
-    canvasInfo.height
-  } pixels, ${
-    canvasInfo.background
-  } canvas. Containing the following ${numShapes} shapes:`;
+function _textSummary(numShapes, info) {
+  let text = `Your output is a, ${info.width} by ${info.height} pixels, ${
+    info.background
+  } canvas containing the following`;
+  if (numShapes === 1) {
+    text = `${text} shape:`;
+  } else {
+    text = `${text} ${numShapes} shapes:`;
+  }
   return text;
 }
 
 //Builds textOutput table with shape details
-function _buildShapeDetails(cId) {
+function _shapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapeNumber = 0;
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
-      let row = `<tr id="${cId}shape${shapeNumber}"><th>${
+      let row = `<tr id="${idT}shape${shapeNumber}"><th>${
         ingredients[x][y].color
       } ${x}</th>`;
       if (x === 'line') {
@@ -107,7 +100,7 @@ function _buildShapeDetails(cId) {
             ingredients[x][y].length
           } pixels</td></tr>`;
       } else {
-        row = row + `<td>location = at ${ingredients[x][y].pos}</td>`;
+        row = row + `<td>location = ${ingredients[x][y].pos}</td>`;
         if (x !== 'point') {
           row = row + `<td> area = ${ingredients[x][y].area}%</td>`;
         }
@@ -121,12 +114,12 @@ function _buildShapeDetails(cId) {
 }
 
 //Builds textOutput shape list
-function _buildShapeList(cId) {
+function _shapeList(idT, ingredients) {
   let shapeList = '';
   let shapeNumber = 0;
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
-      let _line = `<li><a href="#${cId}shape${shapeNumber}">${
+      let _line = `<li><a href="#${idT}shape${shapeNumber}">${
         ingredients[x][y].color
       } ${x}</a>`;
       if (x === 'line') {

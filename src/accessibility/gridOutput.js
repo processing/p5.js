@@ -8,82 +8,71 @@ import p5 from '../core/main';
 
 //the functions in this document support the creation of grid output
 
-let ingredients = {};
-let canvasInfo = {};
-let dummy = { summary: '', map: '', shapeDetails: '' };
+let dummy = {};
 
 //creates html structure
-p5.prototype._createGridOutput = function(cIdT, cnvId, container, query) {
+p5.prototype._createGridOutput = function(idT, id, container, query) {
   let doc = document.getElementsByTagName('body')[0];
-  let inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
+  let inner = `<div id="${idT}">Grid Output<p id="${idT}Summary" aria-label="grid output summary"><table id="${idT}OD" summary="grid output content"></table><ul id="${idT}SD" aria-label="grid output shape details"></ul></div>`;
   if (doc.querySelector(query)) {
     doc.querySelector(query).insertAdjacentHTML('afterend', inner);
   } else {
     doc.querySelector(`#${container}`).innerHTML = inner;
   }
-  dummy[cnvId + 'DOM'] = document.getElementById(cIdT);
+  dummy[id + 'DOM'] = document.getElementById(idT);
   return inner;
 };
 
 //creates output content
-p5.prototype._updateGridOutput = function(
-  cnvId,
-  type,
-  cnvIngredients,
-  cnvInfo
-) {
-  let cIdT = cnvId + type;
-  ingredients = cnvIngredients;
-  canvasInfo = cnvInfo;
-  if (dummy.summary === '') {
-    if (!document.getElementById(`${cIdT}Summary`)) {
+p5.prototype._updateGridOutput = function(id, type, ingredients, info) {
+  let idT = id + type;
+  if (!dummy[id]) {
+    if (!document.getElementById(`${idT}Summary`)) {
       return;
     }
   }
-  if (dummy[cIdT + 'Update']) {
-    _buildAndUpdateGridOutput(cIdT, cnvId);
+  if (dummy[idT + 'Update']) {
+    _buildAndUpdateGridOutput(idT, id, ingredients, info);
   } else {
-    _readyToUpdateGridCheck(cIdT, cnvId);
+    _readyToUpdateGridCheck(idT, id, ingredients, info);
   }
 };
 
-function _readyToUpdateGridCheck(cIdT, cnvId) {
-  if (dummy[cnvId + 'DOM']) {
+function _readyToUpdateGridCheck(idT, id, ingredients, info) {
+  if (dummy[id + 'DOM']) {
     if (
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`) &&
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}Summary`) &&
-      dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`)
+      dummy[id + 'DOM'].querySelector(`#${idT}OD`) &&
+      dummy[id + 'DOM'].querySelector(`#${idT}Summary`) &&
+      dummy[id + 'DOM'].querySelector(`#${idT}SD`)
     ) {
-      dummy[cIdT + 'Update'] = true;
-
-      _buildAndUpdateGridOutput(cIdT, cnvId);
+      dummy[idT + 'Update'] = true;
+      dummy[id] = {};
+      _buildAndUpdateGridOutput(idT, id, ingredients, info);
     }
   }
 }
 
-function _buildAndUpdateGridOutput(cIdT, cnvId) {
-  let innerShapeDetails = _buildGridShapeDetails(cIdT);
-  let innerSummary = _buildGridSummary(innerShapeDetails.numShapes);
-  let innerMap = _buildGridMap(cIdT);
-  if (innerSummary !== dummy.summary) {
-    dummy[cnvId + 'DOM'].querySelector(
-      `#${cIdT}Summary`
-    ).innerHTML = innerSummary;
-    dummy.summary = innerSummary;
+function _buildAndUpdateGridOutput(idT, id, ingredients, info) {
+  let innerShapeDetails = _gridShapeDetails(idT, ingredients);
+  let innerSummary = _gridSummary(innerShapeDetails.numShapes, info);
+  let innerMap = _gridMap(idT, ingredients);
+  if (innerSummary !== dummy[id].summary) {
+    dummy[id + 'DOM'].querySelector(`#${idT}Summary`).innerHTML = innerSummary;
+    dummy[id].summary = innerSummary;
   }
-  if (innerMap !== dummy.map) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}OD`).innerHTML = innerMap;
-    dummy.map = innerMap;
+  if (innerMap !== dummy[id].map) {
+    dummy[id + 'DOM'].querySelector(`#${idT}OD`).innerHTML = innerMap;
+    dummy[id].map = innerMap;
   }
-  if (innerShapeDetails.details !== dummy.shapeDetails) {
-    dummy[cnvId + 'DOM'].querySelector(`#${cIdT}SD`).innerHTML =
+  if (innerShapeDetails.details !== dummy[id].shapeDetails) {
+    dummy[id + 'DOM'].querySelector(`#${idT}SD`).innerHTML =
       innerShapeDetails.details;
-    dummy.shapeDetails = innerShapeDetails.details;
+    dummy[id].shapeDetails = innerShapeDetails.details;
   }
 }
 
 //creates spatial grid
-function _buildGridMap(cId) {
+function _gridMap(idT, ingredients) {
   let shapeNumber = 0;
   let table = '';
   let cells = Array.apply(null, Array(10)).map(function() {});
@@ -95,13 +84,13 @@ function _buildGridMap(cId) {
       if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
         cells[ingredients[x][y].loc.locY][
           ingredients[x][y].loc.locX
-        ] = `<a href="#${cId}shape${shapeNumber}">${
+        ] = `<a href="#${idT}shape${shapeNumber}">${
           ingredients[x][y].color
         } ${x}</a>`;
       } else {
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
-          `  <a href="#${cId}shape${shapeNumber}">${
+          `  <a href="#${idT}shape${shapeNumber}">${
             ingredients[x][y].color
           } ${x}</a>`;
       }
@@ -123,21 +112,27 @@ function _buildGridMap(cId) {
 }
 
 //creates grid summary
-function _buildGridSummary(numShapes) {
-  return `${canvasInfo.background} canvas, ${canvasInfo.width} by ${
-    canvasInfo.height
-  } pixels, contains ${numShapes[0]} shapes: ${numShapes[1]}`;
+function _gridSummary(numShapes, info) {
+  let text = `${info.background} canvas, ${info.width} by ${
+    info.height
+  } pixels, contains ${numShapes[0]}`;
+  if (numShapes[0] === 1) {
+    text = `${text} shape: ${numShapes[1]}`;
+  } else {
+    text = `${text} shapes: ${numShapes[1]}`;
+  }
+  return text;
 }
 
 //creates list of shapes
-function _buildGridShapeDetails(cId) {
+function _gridShapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapes = '';
   let totalShapes = 0;
   for (let x in ingredients) {
     let shapeNum = 0;
     for (let y in ingredients[x]) {
-      let line = `<li id="${cId}shape${totalShapes}">${
+      let line = `<li id="${idT}shape${totalShapes}">${
         ingredients[x][y].color
       } ${x},`;
       if (x === 'line') {
@@ -147,7 +142,7 @@ function _buildGridShapeDetails(cId) {
             ingredients[x][y].length
           } pixels`;
       } else {
-        line = line + ` location = at ${ingredients[x][y].pos} `;
+        line = line + ` location = ${ingredients[x][y].pos} `;
         if (x !== 'point') {
           line = line + `, area = ${ingredients[x][y].area} %`;
         }
@@ -157,9 +152,10 @@ function _buildGridShapeDetails(cId) {
       shapeNum++;
       totalShapes++;
     }
-    shapes = `${shapes}, ${shapeNum} ${x}`;
     if (shapeNum > 1) {
-      shapes = shapes + 's';
+      shapes = `${shapes}, ${shapeNum} ${x}s`;
+    } else {
+      shapes = `${shapes} ${shapeNum} ${x}`;
     }
   }
   return { numShapes: [totalShapes, shapes], details: shapeDetails };
