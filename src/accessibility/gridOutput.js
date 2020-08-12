@@ -140,7 +140,7 @@ function _gridShapeDetails(idT, ingredients) {
             ingredients[x][y].length
           } pixels`;
       } else {
-        line = line + ` location = ${ingredients[x][y].pos} `;
+        line = line + ` location = ${ingredients[x][y].pos}`;
         if (x !== 'point') {
           line = line + `, area = ${ingredients[x][y].area} %`;
         }
@@ -151,7 +151,7 @@ function _gridShapeDetails(idT, ingredients) {
       totalShapes++;
     }
     if (shapeNum > 1) {
-      shapes = `${shapes}, ${shapeNum} ${x}s`;
+      shapes = `${shapes} ${shapeNum} ${x}s`;
     } else {
       shapes = `${shapes} ${shapeNum} ${x}`;
     }

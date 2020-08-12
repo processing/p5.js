@@ -63,10 +63,10 @@ p5.prototype.textOutput = function(display) {
     return;
   } else {
     this._accessibleOutputs.text = true;
-    this._createOutput('textOutput');
+    this._createOutput('textOutput', 'Fallback');
     if (display === this.LABEL) {
       this._accessibleOutputs.textLabel = true;
-      this._createLabel('textOutput');
+      this._createOutput('textOutput', 'Label');
     }
   }
 };
@@ -124,10 +124,10 @@ p5.prototype.gridOutput = function(display) {
     return;
   } else {
     this._accessibleOutputs.grid = true;
-    this._createOutput('gridOutput');
+    this._createOutput('gridOutput', 'Fallback');
     if (display === this.LABEL) {
       this._accessibleOutputs.gridLabel = true;
-      this._createLabel('gridOutput');
+      this._createOutput('gridOutput', 'Label');
     }
   }
 };
@@ -146,7 +146,7 @@ p5.prototype._addAccsOutput = function() {
 };
 
 //helper function that creates html structure for accessible outputs
-p5.prototype._createOutput = function(type) {
+p5.prototype._createOutput = function(type, display) {
   if (!this.ingredients) {
     this.ingredients = {
       shapes: {},
@@ -158,34 +158,28 @@ p5.prototype._createOutput = function(type) {
     this.dummyDOM = document.getElementsByTagName('body')[0];
   }
   let cnvId = this.canvas.id;
-  let cIdT = cnvId + type;
-  let container = cnvId + 'accessibleOutput';
-  if (!this.dummyDOM.querySelector(`#${container}`)) {
-    this.dummyDOM.querySelector(
-      `#${cnvId}`
-    ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
+  let cIdT, container;
+  if (display === 'Fallback') {
+    cIdT = cnvId + type;
+    container = cnvId + 'accessibleOutput';
+    if (!this.dummyDOM.querySelector(`#${container}`)) {
+      this.dummyDOM.querySelector(
+        `#${cnvId}`
+      ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
+    }
+  } else if (display === 'Label') {
+    cIdT = cnvId + type + display;
+    container = cnvId + 'accessibleOutput' + display;
+    if (!this.dummyDOM.querySelector(`#${container}`)) {
+      this.dummyDOM
+        .querySelector(`#${cnvId}`)
+        .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
+    }
   }
   if (type === 'textOutput') {
-    this._createTextOutput(cIdT, cnvId, container, `#${cnvId}gridOutput`);
+    this._createTextOutput(cIdT, cnvId, container, `#${cIdT}`);
   } else if (type === 'gridOutput') {
-    this._createGridOutput(cIdT, cnvId, container, `#${cnvId}textOutput`);
-  }
-};
-
-p5.prototype._createLabel = function(type) {
-  let doc = document.getElementsByTagName('body')[0];
-  let cnvId = this.canvas.id;
-  let cIdT = cnvId + type + 'Label';
-  let container = cnvId + 'accessibleOutputLabel';
-  if (!doc.querySelector(`#${container}`)) {
-    doc
-      .querySelector(`#${cnvId}`)
-      .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
-  }
-  if (type === 'textOutput') {
-    this._createTextOutput(cIdT, cnvId, container, `#${cnvId}gridOutputLabel`);
-  } else if (type === 'gridOutput') {
-    this._createGridOutput(cIdT, cnvId, container, `#${cnvId}textOutputLabel`);
+    this._createGridOutput(cIdT, cnvId, container, `#${cIdT}`);
   }
 };
 
