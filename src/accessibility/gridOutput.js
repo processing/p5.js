@@ -45,18 +45,16 @@ function _gridMap(idT, ingredients) {
   }
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
+      let fill = `<a href="#${idT}shape${shapeNumber}">${
+        ingredients[x][y].color
+      } ${x}</a>`;
       if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
-        cells[ingredients[x][y].loc.locY][
-          ingredients[x][y].loc.locX
-        ] = `<a href="#${idT}shape${shapeNumber}">${
-          ingredients[x][y].color
-        } ${x}</a>`;
+        cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
       } else {
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
-          `  <a href="#${idT}shape${shapeNumber}">${
-            ingredients[x][y].color
-          } ${x}</a>`;
+          '  ' +
+          fill;
       }
       shapeNumber++;
     }

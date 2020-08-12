@@ -92,7 +92,7 @@ p5.prototype.textOutput = function(display) {
  * @example
  * <div>
  * <code>
- * textOutput();
+ * gridOutput();
  * background(148, 196, 0);
  * fill(255, 0, 0);
  * ellipse(20, 20, 20, 20);
@@ -106,7 +106,7 @@ p5.prototype.textOutput = function(display) {
  * <code>
  * let x = 0;
  * function draw() {
- *   textOutput();
+ *   gridOutput();
  *   background(148, 196, 0);
  *   fill(255, 0, 0);
  *   ellipse(x, 20, 20, 20);
@@ -166,7 +166,7 @@ p5.prototype._createOutput = function(type, display) {
     if (!this.dummyDOM.querySelector(`#${container}`)) {
       this.dummyDOM.querySelector(
         `#${cnvId}`
-      ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
+      ).innerHTML = `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
     }
   } else if (display === 'Label') {
     query = display;
