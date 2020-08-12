@@ -161,4 +161,8 @@ function _gridShapeDetails(idT, ingredients) {
   return { numShapes: [totalShapes, shapes], details: shapeDetails };
 }
 
+p5.prototype._clearGridOutput = function() {
+  dummy = {};
+};
+
 export default p5;

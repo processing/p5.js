@@ -149,6 +149,15 @@ p5.prototype._addAccsOutput = function() {
   );
 };
 
+p5.prototype._clearOutputs = function() {
+  ingredients = {};
+  preIngredients = {};
+  accessibleOutputs = {};
+  canvasColors = {};
+  canvasInfo = {};
+  preCanvasInfo = {};
+};
+
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type) {
   let doc = document.getElementsByTagName('body')[0];

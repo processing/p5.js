@@ -142,4 +142,8 @@ function _shapeList(idT, ingredients) {
   return { numShapes: shapeNumber, listShapes: shapeList };
 }
 
+p5.prototype._clearTextOutput = function() {
+  dummy = {};
+};
+
 export default p5;
