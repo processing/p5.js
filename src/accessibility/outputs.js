@@ -7,7 +7,7 @@
 
 // To-do:
 // Improve updating to include only shapes that have changed? [leave as an issue]
-// Add Fallback and other option
+// line has problems in grid output
 
 import p5 from '../core/main';
 
