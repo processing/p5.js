@@ -205,17 +205,17 @@ p5.prototype._updateAccsOutput = function() {
   if (JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes) {
     this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
     if (this._accessibleOutputs.text) {
-      this._updateTextOutput(cnvId, 'textOutput');
+      this._updateTextOutput(cnvId + 'textOutput');
     }
     if (this._accessibleOutputs.grid) {
-      this._updateGridOutput(cnvId, 'gridOutput');
+      this._updateGridOutput(cnvId + 'gridOutput');
     }
     if (this._accessibleOutputs.textLabel) {
-      this._updateTextOutput(cnvId, 'textOutputLabel');
+      this._updateTextOutput(cnvId + 'textOutputLabel');
       //
     }
     if (this._accessibleOutputs.gridLabel) {
-      this._updateGridOutput(cnvId, 'gridOutputLabel');
+      this._updateGridOutput(cnvId + 'gridOutputLabel');
       //
     }
   }

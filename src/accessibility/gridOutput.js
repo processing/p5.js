@@ -9,29 +9,7 @@ import p5 from '../core/main';
 //the functions in this document support the creation of grid output
 
 //creates output content
-p5.prototype._updateGridOutput = function(id, type) {
-  let idT = id + type;
-  if (this._accessibleOutputs[idT].update) {
-    this._buildAndUpdateGridOutput(idT, id);
-  } else {
-    this._readyToUpdateGridCheck(idT, id);
-  }
-};
-
-p5.prototype._readyToUpdateGridCheck = function(idT, id) {
-  if (this.dummyDOM) {
-    if (
-      this.dummyDOM.querySelector(`#${idT}OD`) &&
-      this.dummyDOM.querySelector(`#${idT}Summary`) &&
-      this.dummyDOM.querySelector(`#${idT}SD`)
-    ) {
-      this._accessibleOutputs[idT].update = true;
-      this._buildAndUpdateGridOutput(idT, id);
-    }
-  }
-};
-
-p5.prototype._buildAndUpdateGridOutput = function(idT, id) {
+p5.prototype._updateGridOutput = function(idT) {
   let current = this._accessibleOutputs[idT];
   let innerShapeDetails = _gridShapeDetails(idT, this.ingredients.shapes);
   let innerSummary = _gridSummary(

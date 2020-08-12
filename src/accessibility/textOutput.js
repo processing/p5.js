@@ -9,29 +9,7 @@ import p5 from '../core/main';
 //the functions in this document support the creation of text output
 
 //updates textOutput
-p5.prototype._updateTextOutput = function(id, type) {
-  let idT = id + type;
-  if (this._accessibleOutputs[idT].update) {
-    this._buildAndUpdateTextOutput(idT, id);
-  } else {
-    this._readyToUpdateTextCheck(idT, id);
-  }
-};
-
-p5.prototype._readyToUpdateTextCheck = function(idT) {
-  if (this.dummyDOM) {
-    if (
-      this.dummyDOM.querySelector(`#${idT}_summary`) &&
-      this.dummyDOM.querySelector(`#${idT}lst`) &&
-      this.dummyDOM.querySelector(`#${idT}SD`)
-    ) {
-      this._accessibleOutputs[idT].update = true;
-      this._buildAndUpdateTextOutput(idT);
-    }
-  }
-};
-
-p5.prototype._buildAndUpdateTextOutput = function(idT) {
+p5.prototype._updateTextOutput = function(idT) {
   let current = this._accessibleOutputs[idT];
   let innerList = _shapeList(idT, this.ingredients.shapes);
   let innerSummary = _textSummary(
