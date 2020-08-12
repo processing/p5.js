@@ -8,18 +8,6 @@ import p5 from '../core/main';
 
 //the functions in this document support the creation of text output
 
-//creates html structure for text output
-p5.prototype._createTextOutput = function(idT, id, container, query) {
-  this._accessibleOutputs[idT] = {};
-  let inner = `<div id="${idT}">Text Output<div id="${idT}Summary" aria-label="text output summary"><p id="${idT}_summary"></p><ul id="${idT}lst"></ul></div><table id="${idT}SD" summary="text output shape details"></table></div>`;
-  if (this.dummyDOM.querySelector(query)) {
-    this.dummyDOM.querySelector(query).insertAdjacentHTML('beforebegin', inner);
-  } else {
-    this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
-  }
-  return inner;
-};
-
 //updates textOutput
 p5.prototype._updateTextOutput = function(id, type) {
   let idT = id + type;

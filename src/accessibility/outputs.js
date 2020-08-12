@@ -158,7 +158,8 @@ p5.prototype._createOutput = function(type, display) {
     this.dummyDOM = document.getElementsByTagName('body')[0];
   }
   let cnvId = this.canvas.id;
-  let cIdT, container;
+  let cIdT, container, inner;
+  let query = '';
   if (display === 'Fallback') {
     cIdT = cnvId + type;
     container = cnvId + 'accessibleOutput';
@@ -168,6 +169,7 @@ p5.prototype._createOutput = function(type, display) {
       ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
     }
   } else if (display === 'Label') {
+    query = display;
     cIdT = cnvId + type + display;
     container = cnvId + 'accessibleOutput' + display;
     if (!this.dummyDOM.querySelector(`#${container}`)) {
@@ -176,11 +178,24 @@ p5.prototype._createOutput = function(type, display) {
         .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
     }
   }
+  this._accessibleOutputs[cIdT] = {};
   if (type === 'textOutput') {
-    this._createTextOutput(cIdT, cnvId, container, `#${cIdT}`);
+    query = `#${cnvId}gridOutput${query}`;
+    inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}_summary"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table></div>`;
+    if (this.dummyDOM.querySelector(query)) {
+      this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
+      return;
+    }
   } else if (type === 'gridOutput') {
-    this._createGridOutput(cIdT, cnvId, container, `#${cIdT}`);
+    query = `#${cnvId}textOutput${query}`;
+    inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
+    if (this.dummyDOM.querySelector(query)) {
+      this.dummyDOM
+        .querySelector(query)
+        .insertAdjacentHTML('beforebegin', inner);
+    }
   }
+  this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
 };
 
 //this function is called at the end of setup and draw if using

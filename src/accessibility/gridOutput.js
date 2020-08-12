@@ -8,18 +8,6 @@ import p5 from '../core/main';
 
 //the functions in this document support the creation of grid output
 
-//creates html structure
-p5.prototype._createGridOutput = function(idT, id, container, query) {
-  this._accessibleOutputs[idT] = {};
-  let inner = `<div id="${idT}">Grid Output<p id="${idT}Summary" aria-label="grid output summary"><table id="${idT}OD" summary="grid output content"></table><ul id="${idT}SD" aria-label="grid output shape details"></ul></div>`;
-  if (this.dummyDOM.querySelector(query)) {
-    this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
-  } else {
-    this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
-  }
-  return inner;
-};
-
 //creates output content
 p5.prototype._updateGridOutput = function(id, type) {
   let idT = id + type;
