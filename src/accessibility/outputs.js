@@ -10,12 +10,6 @@
 // Add Fallback and other option
 
 import p5 from '../core/main';
-let ingredients = {};
-let preIngredients = {};
-let accessibleOutputs = {};
-let canvasColors = {};
-let canvasInfo = {};
-let preCanvasInfo = {};
 
 /**
  * <code class="language-javascript">textOutput()</code> creates a screenreader
@@ -65,16 +59,15 @@ let preCanvasInfo = {};
 
 p5.prototype.textOutput = function(display) {
   p5._validateParameters('textOutput', arguments);
-  let cnvId = this.canvas.id;
-  if (accessibleOutputs[cnvId + 'text']) {
+  if (this._accessibleOutputs.text) {
     return;
-  }
-  accessibleOutputs[cnvId + 'textOutput'] = true;
-  _setDefaults(cnvId);
-  this._createOutput('textOutput');
-  if (display === this.LABEL) {
-    accessibleOutputs[cnvId + 'textOutputLabel'] = true;
-    this._createLabel('textOutput');
+  } else {
+    this._accessibleOutputs.text = true;
+    this._createOutput('textOutput');
+    if (display === this.LABEL) {
+      this._accessibleOutputs.textLabel = true;
+      this._createLabel('textOutput');
+    }
   }
 };
 
@@ -127,45 +120,48 @@ p5.prototype.textOutput = function(display) {
 
 p5.prototype.gridOutput = function(display) {
   p5._validateParameters('gridOutput', arguments);
-  let cnvId = this.canvas.id;
-  if (accessibleOutputs[cnvId + 'gridOutput']) {
+  if (this._accessibleOutputs.grid) {
     return;
-  }
-  accessibleOutputs[cnvId + 'gridOutput'] = true;
-  _setDefaults();
-  this._createOutput('gridOutput');
-  if (display === this.LABEL) {
-    accessibleOutputs[cnvId + 'gridOutput'] = true;
-    this._createLabel('gridOutput');
+  } else {
+    this._accessibleOutputs.grid = true;
+    this._createOutput('gridOutput');
+    if (display === this.LABEL) {
+      this._accessibleOutputs.gridLabel = true;
+      this._createLabel('gridOutput');
+    }
   }
 };
 
 //helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
-  let cnvId = this.canvas.id;
-  return (
-    accessibleOutputs[cnvId + 'textOutput'] ||
-    accessibleOutputs[cnvId + 'gridOutput']
-  );
-};
-
-p5.prototype._clearOutputs = function() {
-  ingredients = {};
-  preIngredients = {};
-  accessibleOutputs = {};
-  canvasColors = {};
-  canvasInfo = {};
-  preCanvasInfo = {};
+  if (!this._accessibleOutputs) {
+    this._accessibleOutputs = {
+      text: false,
+      grid: false,
+      textLabel: false,
+      gridLabel: false
+    };
+  }
+  return this._accessibleOutputs.grid || this._accessibleOutputs.text;
 };
 
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type) {
-  let doc = document.getElementsByTagName('body')[0];
+  if (!this.ingredients) {
+    this.ingredients = {
+      shapes: {},
+      colors: { background: 'white', fill: 'white', stroke: 'black' },
+      pShapes: ''
+    };
+  }
+  if (!this.dummyDOM) {
+    this.dummyDOM = document.getElementsByTagName('body')[0];
+  }
   let cnvId = this.canvas.id;
   let cIdT = cnvId + type;
   let container = cnvId + 'accessibleOutput';
-  if (!doc.querySelector(`#${container}`)) {
-    doc.querySelector(
+  if (!this.dummyDOM.querySelector(`#${container}`)) {
+    this.dummyDOM.querySelector(
       `#${cnvId}`
     ).innerHTML = `<div id="${container}" " role="region" aria-label="Canvas Outputs"></div>`;
   }
@@ -197,46 +193,20 @@ p5.prototype._createLabel = function(type) {
 //accessOutputs and calls update functions of outputs
 p5.prototype._updateAccsOutput = function() {
   let cnvId = this.canvas.id;
-  canvasInfo[cnvId].width = this.width;
-  canvasInfo[cnvId].height = this.height;
-  if (
-    JSON.stringify(ingredients[cnvId]) !== preIngredients[cnvId] &&
-    JSON.stringify(canvasInfo[cnvId]) !== preCanvasInfo[cnvId]
-  ) {
-    preIngredients[cnvId] = JSON.stringify(ingredients[cnvId]);
-    preCanvasInfo[cnvId] = JSON.stringify(canvasInfo[cnvId]);
-    if (accessibleOutputs[cnvId + 'textOutput']) {
-      this._updateTextOutput(
-        cnvId,
-        'textOutput',
-        ingredients[cnvId],
-        canvasInfo[cnvId]
-      );
+  if (JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes) {
+    this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+    if (this._accessibleOutputs.text) {
+      this._updateTextOutput(cnvId, 'textOutput');
     }
-    if (accessibleOutputs[cnvId + 'gridOutput']) {
-      this._updateGridOutput(
-        cnvId,
-        'gridOutput',
-        ingredients[cnvId],
-        canvasInfo[cnvId]
-      );
+    if (this._accessibleOutputs.grid) {
+      this._updateGridOutput(cnvId, 'gridOutput');
     }
-    if (accessibleOutputs[cnvId + 'textOutputLabel']) {
-      this._updateTextOutput(
-        cnvId,
-        'textOutputLabel',
-        ingredients[cnvId],
-        canvasInfo[cnvId]
-      );
+    if (this._accessibleOutputs.textLabel) {
+      this._updateTextOutput(cnvId, 'textOutputLabel');
       //
     }
-    if (accessibleOutputs[cnvId + 'gridOutput']) {
-      this._updateGridOutput(
-        cnvId,
-        'gridOutputLabel',
-        ingredients[cnvId],
-        canvasInfo[cnvId]
-      );
+    if (this._accessibleOutputs.gridLabel) {
+      this._updateGridOutput(cnvId, 'gridOutputLabel');
       //
     }
   }
@@ -245,45 +215,31 @@ p5.prototype._updateAccsOutput = function() {
 //helper function that resets all ingredients when background is called
 //and saves background color name
 p5.prototype._accsBackground = function(args) {
-  let cnvId = this.canvas.id;
-  preIngredients[cnvId] = JSON.stringify(ingredients[cnvId]);
-  ingredients[cnvId] = {};
-  if (canvasColors.backgroundRGBA !== args) {
-    canvasColors[cnvId].backgroundRGBA = args;
-    canvasInfo[cnvId].background = this._rgbColorName(args);
+  this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+  this.ingredients.shapes = {};
+  if (this.ingredients.colors.backgroundRGBA !== args) {
+    this.ingredients.colors.backgroundRGBA = args;
+    this.ingredients.colors.background = this._rgbColorName(args);
   }
 };
 
 //helper function that gets fill and stroke of shapes
 p5.prototype._accsCanvasColors = function(f, args) {
-  let cnvId = this.canvas.id;
   if (f === 'fill') {
-    if (canvasColors[cnvId].fillRGBA !== args) {
-      canvasColors[cnvId].fillRGBA = args;
-      canvasColors[cnvId].fill = this._rgbColorName(args);
+    if (this.ingredients.colors.fillRGBA !== args) {
+      this.ingredients.colors.fillRGBA = args;
+      this.ingredients.colors.fill = this._rgbColorName(args);
     }
   } else if (f === 'stroke') {
-    if (canvasColors[cnvId].strokeRGBA !== args) {
-      canvasColors[cnvId].strokeRGBA = args;
-      canvasColors[cnvId].stroke = this._rgbColorName(args);
+    if (this.ingredients.colors.strokeRGBA !== args) {
+      this.ingredients.colors.strokeRGBA = args;
+      this.ingredients.colors.stroke = this._rgbColorName(args);
     }
   }
 };
 
-//helper function that sets defaul colors for background
-//fill and stroke.
-function _setDefaults(cnvId) {
-  canvasInfo[cnvId] = {};
-  preCanvasInfo[cnvId] = '';
-  canvasColors[cnvId] = {};
-  canvasInfo[cnvId].background = 'white';
-  canvasColors[cnvId].fill = 'white';
-  canvasColors[cnvId].stroke = 'black';
-}
-
 //builds ingredients list for building outputs
 p5.prototype._accsOutput = function(f, args) {
-  let cnvId = this.canvas.id;
   if (f === 'ellipse' && args[2] === args[3]) {
     f = 'circle';
   } else if (f === 'rectangle' && args[2] === args[3]) {
@@ -292,7 +248,7 @@ p5.prototype._accsOutput = function(f, args) {
   let include = {};
   let add = true;
   if (f === 'line') {
-    include.color = canvasColors[cnvId].stroke;
+    include.color = this.ingredients.colors.stroke;
     include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
     let p1 = _getPos([args[0], [1]], this.width, this.height);
     let p2 = _getPos([args[2], [3]], this.width, this.height);
@@ -303,30 +259,28 @@ p5.prototype._accsOutput = function(f, args) {
     }
   } else {
     if (f === 'point') {
-      include.color = canvasColors[cnvId].stroke;
+      include.color = this.ingredients.colors.stroke;
     } else {
-      include.color = canvasColors[cnvId].fill;
+      include.color = this.ingredients.colors.fill;
       include.area = _getArea(f, args, this.width, this.height);
     }
     let middle = _getMiddle(f, args);
     include.pos = _getPos(middle, this.width, this.height);
     include.loc = _canvasLocator(middle, this.width, this.height);
   }
-  if (!ingredients[cnvId]) {
-    ingredients[cnvId] = {};
-  }
-  if (!ingredients[cnvId][f]) {
-    ingredients[cnvId][f] = [include];
-  } else if (ingredients[cnvId][f] !== [include]) {
-    for (let y in ingredients[f]) {
+  if (!this.ingredients.shapes[f]) {
+    this.ingredients.shapes[f] = [include];
+  } else if (this.ingredients.shapes[f] !== [include]) {
+    for (let y in this.ingredients.shapes[f]) {
       if (
-        JSON.stringify(ingredients[cnvId][f][y]) === JSON.stringify(include)
+        JSON.stringify(this.ingredients.shapes[f][y]) ===
+        JSON.stringify(include)
       ) {
         add = false;
       }
     }
     if (add === true) {
-      ingredients[cnvId][f].push(include);
+      this.ingredients.shapes[f].push(include);
     }
   }
 };

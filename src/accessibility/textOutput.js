@@ -8,74 +8,69 @@ import p5 from '../core/main';
 
 //the functions in this document support the creation of text output
 
-let dummy = {};
-
 //creates html structure for text output
 p5.prototype._createTextOutput = function(idT, id, container, query) {
-  let doc = document.getElementsByTagName('body')[0];
-  let inner = `<div id="${idT}">Text Output<div id="${idT}Summary" aria-label="text output summary"><p id="${idT}SumP"></p><ul id="${idT}lst"></ul></div><table id="${idT}SD" summary="text output shape details"></table></div>`;
-  if (doc.querySelector(query)) {
-    doc.querySelector(query).insertAdjacentHTML('beforebegin', inner);
+  this._accessibleOutputs[idT] = {};
+  let inner = `<div id="${idT}">Text Output<div id="${idT}Summary" aria-label="text output summary"><p id="${idT}_summary"></p><ul id="${idT}lst"></ul></div><table id="${idT}SD" summary="text output shape details"></table></div>`;
+  if (this.dummyDOM.querySelector(query)) {
+    this.dummyDOM.querySelector(query).insertAdjacentHTML('beforebegin', inner);
   } else {
-    doc.querySelector(`#${container}`).innerHTML = inner;
+    this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
   }
-  dummy[id + 'DOM'] = document.getElementById(idT);
   return inner;
 };
 
 //updates textOutput
-p5.prototype._updateTextOutput = function(id, type, ingredients, info) {
+p5.prototype._updateTextOutput = function(id, type) {
   let idT = id + type;
-  if (!dummy[id]) {
-    if (!document.getElementById(idT + 'Summary')) {
-      return;
-    }
-  }
-  if (dummy[idT + 'Update']) {
-    _buildAndUpdateTextOutput(idT, id, ingredients, info);
+  if (this._accessibleOutputs[idT].update) {
+    this._buildAndUpdateTextOutput(idT, id);
   } else {
-    _readyToUpdateTextCheck(idT, id, ingredients, info);
+    this._readyToUpdateTextCheck(idT, id);
   }
 };
 
-function _readyToUpdateTextCheck(idT, id, ingredients, info) {
-  if (dummy[id + 'DOM']) {
+p5.prototype._readyToUpdateTextCheck = function(idT) {
+  if (this.dummyDOM) {
     if (
-      dummy[id + 'DOM'].querySelector(`#${idT}SumP`) &&
-      dummy[id + 'DOM'].querySelector(`#${idT}lst`) &&
-      dummy[id + 'DOM'].querySelector(`#${idT}SD`)
+      this.dummyDOM.querySelector(`#${idT}_summary`) &&
+      this.dummyDOM.querySelector(`#${idT}lst`) &&
+      this.dummyDOM.querySelector(`#${idT}SD`)
     ) {
-      dummy[idT + 'Update'] = true;
-      dummy[id] = {};
-      _buildAndUpdateTextOutput(idT, id, ingredients, info);
+      this._accessibleOutputs[idT].update = true;
+      this._buildAndUpdateTextOutput(idT);
     }
   }
-}
+};
 
-function _buildAndUpdateTextOutput(idT, id, ingredients, info) {
-  let innerList = _shapeList(idT, ingredients);
-  let innerSummary = _textSummary(innerList.numShapes, info);
-  let innerShapeDetails = _shapeDetails(idT, ingredients);
-  if (innerSummary !== dummy[id].summary) {
-    dummy[id + 'DOM'].querySelector(`#${idT}SumP`).innerHTML = innerSummary;
-    dummy[id].summary = innerSummary;
+p5.prototype._buildAndUpdateTextOutput = function(idT) {
+  let current = this._accessibleOutputs[idT];
+  let innerList = _shapeList(idT, this.ingredients.shapes);
+  let innerSummary = _textSummary(
+    innerList.numShapes,
+    this.ingredients.colors.background,
+    this.width,
+    this.height
+  );
+  let innerShapeDetails = _shapeDetails(idT, this.ingredients.shapes);
+  if (innerSummary !== current.summary) {
+    this.dummyDOM.querySelector(`#${idT}_summary`).innerHTML = innerSummary;
+    current.summary = innerSummary;
   }
-  if (innerList.listShapes !== dummy[id].list) {
-    dummy[id + 'DOM'].querySelector(`#${idT}lst`).innerHTML =
-      innerList.listShapes;
-    dummy[id].list = innerList.listShapes;
+  if (innerList.listShapes !== current.list) {
+    this.dummyDOM.querySelector(`#${idT}lst`).innerHTML = innerList.listShapes;
+    current.list = innerList.listShapes;
   }
-  if (innerShapeDetails !== dummy[id].shapeDetails) {
-    dummy[id + 'DOM'].querySelector(`#${idT}SD`).innerHTML = innerShapeDetails;
-    dummy[id].shapeDetails = innerShapeDetails;
+  if (innerShapeDetails !== current.shapeDetails) {
+    this.dummyDOM.querySelector(`#${idT}SD`).innerHTML = innerShapeDetails;
+    current.shapeDetails = innerShapeDetails;
   }
-}
+  this._accessibleOutputs[idT] = current;
+};
 
 //Builds textOutput summary
-function _textSummary(numShapes, info) {
-  let text = `Your output is a, ${info.width} by ${info.height} pixels, ${
-    info.background
-  } canvas containing the following`;
+function _textSummary(numShapes, background, width, height) {
+  let text = `Your output is a, ${width} by ${height} pixels, ${background} canvas containing the following`;
   if (numShapes === 1) {
     text = `${text} shape:`;
   } else {
@@ -141,9 +136,5 @@ function _shapeList(idT, ingredients) {
   }
   return { numShapes: shapeNumber, listShapes: shapeList };
 }
-
-p5.prototype._clearTextOutput = function() {
-  dummy = {};
-};
 
 export default p5;

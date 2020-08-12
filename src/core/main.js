@@ -166,6 +166,12 @@ class p5 {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this._accessibleOutputs = {
+      text: false,
+      grid: false,
+      textLabel: false,
+      gridLabel: false
+    };
     this._setupDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
@@ -353,7 +359,7 @@ class p5 {
 
       this._lastFrameTime = window.performance.now();
       this._setupDone = true;
-      if (this._addAccsOutput()) {
+      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
       }
     };

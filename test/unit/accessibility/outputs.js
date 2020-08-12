@@ -14,8 +14,6 @@ suite('outputs', function() {
   });
 
   teardown(function() {
-    myp5._clearOutputs();
-    myp5._clearTextOutput();
     myp5.remove();
   });
 
@@ -33,22 +31,22 @@ suite('outputs', function() {
       return new Promise(function(resolve, reject) {
         let actual = '';
         let expected =
-          'Your output is a, 100 by 100 pixels, white canvas containing the following 0 shapes:';
+          'Your output is a, 100 by 100 pixels, white canvas containing the following shape:';
         new p5(function(p) {
           p.setup = function() {
             let cnv = p.createCanvas(100, 100);
             cnv.id('myCanvasID');
             p.textOutput();
-            p.background(255);
+            p.line(0, 0, 100, 100);
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutputSumP')
+              actual = document.getElementById('myCanvasIDtextOutput_summary')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
               } else {
-                reject(' expected: ' + expected + '  //// found: ' + actual);
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
               }
               p.remove();
             }
@@ -58,24 +56,28 @@ suite('outputs', function() {
     });
     test('should create output as label', function() {
       return new Promise(function(resolve, reject) {
-        let actual = '';
+        let label = '';
+        let fallback = '';
         let expected =
-          'Your output is a, 100 by 100 pixels, white canvas containing the following 0 shapes:';
+          'Your output is a, 100 by 100 pixels, white canvas containing the following shape:';
         new p5(function(p) {
           p.setup = function() {
             let cnv = p.createCanvas(100, 100);
             cnv.id('myCanvasID');
             p.textOutput(p.LABEL);
-            p.background(255);
+            p.line(0, 0, 100, 100);
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutputLabelSumP')
+              label = document.getElementById(
+                'myCanvasIDtextOutputLabel_summary'
+              ).innerHTML;
+              fallback = document.getElementById('myCanvasIDtextOutput_summary')
                 .innerHTML;
-              if (actual === expected) {
+              if (label === expected && fallback === expected) {
                 resolve();
               } else {
-                reject(' expected: ' + expected + '  //// found: ' + actual);
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
               }
               p.remove();
             }
