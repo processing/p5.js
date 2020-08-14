@@ -150,7 +150,7 @@ p5.prototype.getItem = function(key) {
   } else if (value !== null) {
     switch (type) {
       case 'number':
-        value = parseInt(value);
+        value = parseFloat(value);
         break;
       case 'boolean':
         value = value === 'true';
