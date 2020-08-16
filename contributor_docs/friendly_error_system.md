@@ -20,6 +20,11 @@ So far FES is able to detect and print messages for four kinds of errors:
 
 4. `helpForMisusedAtTopLevelCode()` is called on window load to check for use of p5.js functions outside of setup() or draw()
 
+Apart from this, the FES can also detect several other common errors that the browser may show.
+This is handled by `fesErrorMonitor()`. The full list of errors that the FES can work with can be found in [src/core/friendly_errors/browser_errors.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/vrowser_errors.js).
+
+The FES can also help the user differentiate between errors that happen inside the library and errors that happen in the sketch. It also detects if the error was caused due to a non-loadX() method being called in `preload()`
+
 Please also see inline notes in [src/core/friendly_errors/fes_core.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/fes_core.js) for more technical information.
 
 ### `core/friendly_errors/file_errors/friendlyFileLoadError()`: 
@@ -65,6 +70,88 @@ arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 * This can be called through: `p5._validateParameters(FUNCT_NAME, ARGUMENTS)` 
 or, `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` inside the function that requires parameter validation. It is recommended to use static version, `p5._validateParameters` for general purposes. `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` mainly remained for debugging and unit testing purposes.
 * Implemented to functions in `color/creating_reading`, `core/2d_primitives`, `core/curves`, and `utilities/string_functions`. 
+
+### `core/friendly_errors/fes_core/fesErrorMonitor()`:
+* This function is triggered whenever an error happens in the script. It attempts to help the user by providing more details,
+likely causes and ways to address it. 
+
+* Internal Error Example 1
+```js
+function preload() {
+  // error in background() due to it being called in
+  // preload
+  background(200);
+}
+
+/* 
+FES will show:
+p5.js says: An error with message "Cannot read property 'background' of undefined" occured inside the p5js library when "background" was called (on line 4 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:4:3]).
+
+If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
+*/
+```
+
+* Internal Error Example 2
+```js
+function setup() {
+  cnv = createCanvas(200, 200);
+  cnv.mouseClicked();
+}
+
+/* 
+
+p5.js says: An error with message "Cannot read property 'bind' of undefined" occured inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7])
+
+If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
+*/
+```
+
+* Error in user's sketch example (scope)
+```js
+function setup() {
+  let b = 1;
+}
+function draw() {
+  b += 1;
+}
+/* 
+FES will show:
+p5.js says: There's an error due to "b" not being defined in the current scope (on line 5 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:5:3]).
+
+If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:
+https://p5js.org/examples/data-variable-scope.html
+https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
+*/
+```
+
+* Error in user's sketch example (spelling)
+```js
+function setup() {
+  colour(1, 2, 3);
+}
+/* 
+FES will show:
+p5.js says: It seems that you may have accidently written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]).
+
+Please correct it to color if you wish to use the function from p5.js (http://p5js.org/reference/#/p5/color)
+*/
+```
+
+### `core/friendly_errors/fes_core/checkForUserDefinedFunctions()`:
+* Checks if any user defined function (`setup()`, `draw()`, `mouseMoved()`, etc.) has been used with a capitalization mistake
+* For example
+```js
+function preLoad() {
+  loadImage('myimage.png');
+}
+/* 
+FES will show:
+p5.js says: It seems that you may have accidently written preLoad instead of preload.
+
+Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
+*/
+```
+
 
 ## Additional Features
 * The FES welcomes the developer to p5 and the friendly debugger. 
