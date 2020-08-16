@@ -33,7 +33,7 @@ function ErrorStackParser() {
   return {
     /**
      * Given an Error object, extract the most information from it.
-     *
+     * @private
      * @param {Error} error object
      * @return {Array} of stack frames
      */
