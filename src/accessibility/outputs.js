@@ -59,13 +59,18 @@ import p5 from '../core/main';
 
 p5.prototype.textOutput = function(display) {
   p5._validateParameters('textOutput', arguments);
+  //if textOutput is already true
   if (this._accessibleOutputs.text) {
     return;
   } else {
+    //make textOutput true
     this._accessibleOutputs.text = true;
+    //create output for fallback
     this._createOutput('textOutput', 'Fallback');
     if (display === this.LABEL) {
+      //make textOutput label true
       this._accessibleOutputs.textLabel = true;
+      //create output for label
       this._createOutput('textOutput', 'Label');
     }
   }
@@ -120,13 +125,18 @@ p5.prototype.textOutput = function(display) {
 
 p5.prototype.gridOutput = function(display) {
   p5._validateParameters('gridOutput', arguments);
+  //if gridOutput is already true
   if (this._accessibleOutputs.grid) {
     return;
   } else {
+    //make gridOutput true
     this._accessibleOutputs.grid = true;
+    //create output for fallback
     this._createOutput('gridOutput', 'Fallback');
     if (display === this.LABEL) {
+      //make gridOutput label true
       this._accessibleOutputs.gridLabel = true;
+      //create output for label
       this._createOutput('gridOutput', 'Label');
     }
   }
@@ -134,6 +144,7 @@ p5.prototype.gridOutput = function(display) {
 
 //helper function returns true when accessible outputs are true
 p5.prototype._addAccsOutput = function() {
+  //if there are no accessible outputs create object with all false
   if (!this._accessibleOutputs) {
     this._accessibleOutputs = {
       text: false,
@@ -147,6 +158,7 @@ p5.prototype._addAccsOutput = function() {
 
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type, display) {
+  //if there are no ingredients create object. this object stores data for the outputs
   if (!this.ingredients) {
     this.ingredients = {
       shapes: {},
@@ -154,6 +166,7 @@ p5.prototype._createOutput = function(type, display) {
       pShapes: ''
     };
   }
+  //if there is no dummyDOM create it
   if (!this.dummyDOM) {
     this.dummyDOM = document.getElementsByTagName('body')[0];
   }
@@ -164,11 +177,14 @@ p5.prototype._createOutput = function(type, display) {
     cIdT = cnvId + type;
     container = cnvId + 'accessibleOutput';
     if (!this.dummyDOM.querySelector(`#${container}`)) {
+      //if there is no canvas description (see describe() and describeElement())
       if (!this.dummyDOM.querySelector(`#${cnvId}_Description`)) {
+        //create html structure inside of canvas
         this.dummyDOM.querySelector(
           `#${cnvId}`
         ).innerHTML = `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
       } else {
+        //create html structure after canvas description container
         this.dummyDOM
           .querySelector(`#${cnvId}_Description`)
           .insertAdjacentHTML(
@@ -182,42 +198,54 @@ p5.prototype._createOutput = function(type, display) {
     cIdT = cnvId + type + display;
     container = cnvId + 'accessibleOutput' + display;
     if (!this.dummyDOM.querySelector(`#${container}`)) {
+      //if there is no canvas description label (see describe() and describeElement())
       if (!this.dummyDOM.querySelector(`#${cnvId}_Label`)) {
+        //create html structure adjacent to canvas
         this.dummyDOM
           .querySelector(`#${cnvId}`)
           .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
       } else {
+        //create html structure after canvas label
         this.dummyDOM
           .querySelector(`#${cnvId}_Label`)
           .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
       }
     }
   }
+  //create an object to store the latest output. this object is used in _updateTextOutput() and _updateGridOutput()
   this._accessibleOutputs[cIdT] = {};
   if (type === 'textOutput') {
-    query = `#${cnvId}gridOutput${query}`;
+    query = `#${cnvId}gridOutput${query}`; //query is used to check if gridOutput already exists
     inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}_summary"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table></div>`;
+    //if gridOutput already exists
     if (this.dummyDOM.querySelector(query)) {
-      this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
-      return;
-    }
-  } else if (type === 'gridOutput') {
-    query = `#${cnvId}textOutput${query}`;
-    inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
-    if (this.dummyDOM.querySelector(query)) {
+      //create textOutput before gridOutput
       this.dummyDOM
         .querySelector(query)
         .insertAdjacentHTML('beforebegin', inner);
+      return;
+    }
+  } else if (type === 'gridOutput') {
+    query = `#${cnvId}textOutput${query}`; //query is used to check if textOutput already exists
+    inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
+    //if textOutput already exists
+    if (this.dummyDOM.querySelector(query)) {
+      //create gridOutput after textOutput
+      this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
+      return;
     }
   }
+  //create output inside of container
   this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
 };
 
 //this function is called at the end of setup and draw if using
-//accessOutputs and calls update functions of outputs
+//accessibleOutputs and calls update functions of outputs
 p5.prototype._updateAccsOutput = function() {
   let cnvId = this.canvas.id;
+  //if the shapes are not the same as before
   if (JSON.stringify(this.ingredients.shapes) !== this.ingredients.pShapes) {
+    //save current shapes as string in pShapes
     this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
     if (this._accessibleOutputs.text) {
       this._updateTextOutput(cnvId + 'textOutput');
@@ -227,11 +255,9 @@ p5.prototype._updateAccsOutput = function() {
     }
     if (this._accessibleOutputs.textLabel) {
       this._updateTextOutput(cnvId + 'textOutputLabel');
-      //
     }
     if (this._accessibleOutputs.gridLabel) {
       this._updateGridOutput(cnvId + 'gridOutputLabel');
-      //
     }
   }
 };
@@ -239,8 +265,11 @@ p5.prototype._updateAccsOutput = function() {
 //helper function that resets all ingredients when background is called
 //and saves background color name
 p5.prototype._accsBackground = function(args) {
+  //save current shapes as string in pShapes
   this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
+  //empty shapes JSON
   this.ingredients.shapes = {};
+  //update background different
   if (this.ingredients.colors.backgroundRGBA !== args) {
     this.ingredients.colors.backgroundRGBA = args;
     this.ingredients.colors.background = this._rgbColorName(args);
@@ -250,11 +279,13 @@ p5.prototype._accsBackground = function(args) {
 //helper function that gets fill and stroke of shapes
 p5.prototype._accsCanvasColors = function(f, args) {
   if (f === 'fill') {
+    //update fill different
     if (this.ingredients.colors.fillRGBA !== args) {
       this.ingredients.colors.fillRGBA = args;
       this.ingredients.colors.fill = this._rgbColorName(args);
     }
   } else if (f === 'stroke') {
+    //update stroke if different
     if (this.ingredients.colors.strokeRGBA !== args) {
       this.ingredients.colors.strokeRGBA = args;
       this.ingredients.colors.stroke = this._rgbColorName(args);
@@ -262,7 +293,7 @@ p5.prototype._accsCanvasColors = function(f, args) {
   }
 };
 
-//builds ingredients list for building outputs
+//builds ingredients.shapes used for building outputs
 p5.prototype._accsOutput = function(f, args) {
   if (f === 'ellipse' && args[2] === args[3]) {
     f = 'circle';
@@ -272,8 +303,11 @@ p5.prototype._accsOutput = function(f, args) {
   let include = {};
   let add = true;
   if (f === 'line') {
+    //make color stroke
     include.color = this.ingredients.colors.stroke;
+    //get lenght
     include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
+    //get position of end points
     let p1 = _getPos([args[0], [1]], this.width, this.height);
     let p2 = _getPos([args[2], [3]], this.width, this.height);
     if (p1 === p2) {
@@ -283,19 +317,29 @@ p5.prototype._accsOutput = function(f, args) {
     }
   } else {
     if (f === 'point') {
+      //make color stroke
       include.color = this.ingredients.colors.stroke;
     } else {
+      //make color fill
       include.color = this.ingredients.colors.fill;
+      //get area of shape
       include.area = _getArea(f, args, this.width, this.height);
     }
+    //get middle of shapes
     let middle = _getMiddle(f, args);
+    //calculate position using middle of shape
     include.pos = _getPos(middle, this.width, this.height);
+    //calculate location using middle of shape
     include.loc = _canvasLocator(middle, this.width, this.height);
   }
+  //if it is the first time this shape is created
   if (!this.ingredients.shapes[f]) {
     this.ingredients.shapes[f] = [include];
+    //if other shapes of this type have been created
   } else if (this.ingredients.shapes[f] !== [include]) {
+    //for every shape of this type
     for (let y in this.ingredients.shapes[f]) {
+      //compare it with current shape and if it already exists make add false
       if (
         JSON.stringify(this.ingredients.shapes[f][y]) ===
         JSON.stringify(include)
@@ -303,6 +347,7 @@ p5.prototype._accsOutput = function(f, args) {
         add = false;
       }
     }
+    //add shape by pushing it to the end
     if (add === true) {
       this.ingredients.shapes[f].push(include);
     }
@@ -381,7 +426,7 @@ function _canvasLocator(args, canvasWidth, canvasHeight) {
   };
 }
 
-//Calculates area of shape
+//calculates area of shape
 function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
   let objectArea = 0;
   if (objectType === 'arc') {

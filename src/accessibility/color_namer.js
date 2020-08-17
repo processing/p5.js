@@ -8,8 +8,10 @@
 import p5 from '../core/main';
 import color_conversion from '../color/color_conversion';
 
+//stores the original hsv values
 let oghsv;
 
+//stores values for color names
 const xcp = [
   {
     h: 0,
@@ -616,6 +618,7 @@ const colorLookUp = [
   }
 ];
 
+//returns text with color name
 function _calculateColor(hsv) {
   let colortext;
   if (hsv[0] !== 0) {
@@ -684,9 +687,13 @@ function _calculateColor(hsv) {
   return colortext;
 }
 
+//gets rgba and returs a color name
 p5.prototype._rgbColorName = function(arg) {
+  //conversts rgba to hsv
   let hsv = color_conversion._rgbaToHSBA(arg);
+  //stores hsv in global variable
   oghsv = hsv;
+  //calculate color name
   let colorname = _calculateColor([hsv[0], hsv[1], hsv[2]]);
   return colorname;
 };

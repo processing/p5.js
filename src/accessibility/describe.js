@@ -14,7 +14,6 @@ const labelContainer = '_Label'; //Label container
 const labelDescId = '_labelDesc'; //Label description
 const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
-//dummy stores a copy of the DOM and previous descriptions
 
 /**
  * Creates a screen-reader accessible description for the canvas.
@@ -79,15 +78,13 @@ p5.prototype.describe = function(text, display) {
   const cnvId = this.canvas.id;
   //calls function that adds punctuation for better screen reading
   text = _descriptionText(text);
-
   //if there is no dummyDOM
   if (!this.dummyDOM) {
     this.dummyDOM = document.getElementsByTagName('body')[0];
   }
-
-  //check if text is different
+  //check if html structure for description is ready
   if (this.dummyDOM.querySelector(`#${cnvId}${fallbackDescId}`)) {
-    //if html structure for description is ready
+    //check if text is different from current description
     if (
       this.dummyDOM.querySelector(`#${cnvId}${fallbackDescId}`).innerHTML !==
       text
@@ -102,10 +99,11 @@ p5.prototype.describe = function(text, display) {
     let results = _describeFallbackHTML(this.dummyDOM, cnvId, text);
     this.dummyDOM = results;
   }
-  //if display is LABEL and label text is different
+  //if display is LABEL
   if (display === this.LABEL) {
+    //check if html structure for label is ready
     if (this.dummyDOM.querySelector(`#${cnvId}${labelDescId}`)) {
-      //if html structure for label is ready
+      //check if text is different from current label
       if (
         this.dummyDOM.querySelector(`#${cnvId}${labelDescId}`).innerHTML !==
         text
@@ -180,12 +178,13 @@ p5.prototype.describeElement = function(name, text, display) {
   name = name.replace(/[^a-zA-Z0-9 ]/g, '');
   //store element description
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
+  //if there is no dummyDOM
   if (!this.dummyDOM) {
     this.dummyDOM = document.getElementsByTagName('body')[0];
   }
-  //check if element description is different from current
+  //check if html structure for element description is ready
   if (this.dummyDOM.querySelector(`#${cnvId + fallbackTableElId + name}`)) {
-    //if html structure for element description is ready
+    //if current element description is not the same as inner
     if (
       this.dummyDOM.querySelector(`#${cnvId + fallbackTableElId + name}`)
         .innerHTML !== inner
@@ -200,10 +199,11 @@ p5.prototype.describeElement = function(name, text, display) {
     let results = _descElementFallbackHTML(this.dummyDOM, cnvId, name, inner);
     this.dummyDOM = results;
   }
-  //if display is LABEL and label element description is different
+  //if display is LABEL
   if (display === this.LABEL) {
+    //if html structure for label element description is ready
     if (this.dummyDOM.querySelector('#' + cnvId + labelTableElId + name)) {
-      //if html structure for label element description is ready
+      //if label element description is different
       if (
         this.dummyDOM.querySelector('#' + cnvId + labelTableElId + name)
           .innerHTML !== inner
@@ -253,12 +253,14 @@ function _descriptionText(text) {
 function _describeFallbackHTML(dummyDOM, cnvId, text) {
   //if there is no description container
   if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
-    //create description container + <p> for fallback description
+    //if there are no accessible outputs (see textOutput() and gridOutput())
     if (!dummyDOM.querySelector(`#${cnvId}accessibleOutput`)) {
+      //create description container + <p> for fallback description
       dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
         descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
         fallbackDescId}"></p></div>`;
     } else {
+      //create description container + <p> for fallback description before outputs
       dummyDOM
         .querySelector(`#${cnvId}accessibleOutput`)
         .insertAdjacentHTML(
@@ -291,7 +293,9 @@ function _describeFallbackHTML(dummyDOM, cnvId, text) {
 function _describeLabelHTML(dummyDOM, cnvId, text) {
   //if there is no label container
   if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
+    //if there are no accessible outputs (see textOutput() and gridOutput())
     if (!dummyDOM.querySelector(`#${cnvId}accessibleOutputLabel`)) {
+      //create label container + <p> for label description
       dummyDOM
         .querySelector('#' + cnvId)
         .insertAdjacentHTML(
@@ -300,6 +304,7 @@ function _describeLabelHTML(dummyDOM, cnvId, text) {
             labelDescId}"></p></div>`
         );
     } else {
+      //create label container + <p> for label description before outputs
       dummyDOM
         .querySelector(`#${cnvId}accessibleOutputLabel`)
         .insertAdjacentHTML(
@@ -308,7 +313,6 @@ function _describeLabelHTML(dummyDOM, cnvId, text) {
             labelDescId}"></p></div>`
         );
     }
-    //create label container + <p> for label description
     //if describeElement() has already created the container and added a table of elements
   } else if (dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
     //create label description <p> before the table
@@ -346,11 +350,14 @@ function _elementName(name) {
 function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
   //if there is no description container
   if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
+    //if there are no accessible outputs (see textOutput() and gridOutput())
     if (!dummyDOM.querySelector(`#${cnvId}accessibleOutput`)) {
+      //create container + table for element descriptions
       dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
         descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
         fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
     } else {
+      //create container + table for element descriptions before outputs
       dummyDOM
         .querySelector(`#${cnvId}accessibleOutput`)
         .insertAdjacentHTML(
@@ -360,8 +367,6 @@ function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
             fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`
         );
     }
-    //create container + table for element descriptions
-
     //if describe() has already created the container and added a description
   } else if (dummyDOM.querySelector('#' + cnvId + fallbackDescId)) {
     //create fallback table for element description after fallback description
@@ -383,7 +388,6 @@ function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
     dummyDOM.querySelector(
       '#' + cnvId + fallbackTableElId + name
     ).innerHTML = inner;
-    //store updated element description
     return dummyDOM;
   }
 }
@@ -393,8 +397,9 @@ function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
 function _descElementLabelHTML(dummyDOM, cnvId, name, inner) {
   //if there is no label description container
   if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
-    //create container + table for element descriptions
+    //if there are no accessible outputs (see textOutput() and gridOutput())
     if (!dummyDOM.querySelector(`#${cnvId}accessibleOutputLabel`)) {
+      //create container + table for element descriptions
       dummyDOM
         .querySelector('#' + cnvId)
         .insertAdjacentHTML(
@@ -404,6 +409,7 @@ function _descElementLabelHTML(dummyDOM, cnvId, name, inner) {
             labelTableId}"></table></div>`
         );
     } else {
+      //create container + table for element descriptions before outputs
       dummyDOM
         .querySelector(`#${cnvId}accessibleOutputLabel`)
         .insertAdjacentHTML(
@@ -433,7 +439,6 @@ function _descElementLabelHTML(dummyDOM, cnvId, name, inner) {
     dummyDOM.querySelector(
       '#' + cnvId + labelTableElId + name
     ).innerHTML = inner;
-    //store updated element label description
     return dummyDOM;
   }
 }

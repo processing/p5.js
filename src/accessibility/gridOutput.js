@@ -6,42 +6,56 @@
  */
 import p5 from '../core/main';
 
-//the functions in this document support the creation of grid output
+//the functions in this document support updating the grid output
 
-//creates output content
+//updates gridOutput
 p5.prototype._updateGridOutput = function(idT) {
+  //if html structure is not there yet
   if (!this.dummyDOM.querySelector(`#${idT}Summary`)) {
     return;
   }
   let current = this._accessibleOutputs[idT];
+  //create shape details list
   let innerShapeDetails = _gridShapeDetails(idT, this.ingredients.shapes);
+  //create summary
   let innerSummary = _gridSummary(
     innerShapeDetails.numShapes,
     this.ingredients.colors.background,
     this.width,
     this.height
   );
+  //create grid map
   let innerMap = _gridMap(idT, this.ingredients.shapes);
+  //if it is different from current summary
   if (innerSummary !== current.summary) {
+    //update
     this.dummyDOM.querySelector(`#${idT}Summary`).innerHTML = innerSummary;
+    //save
     current.summary = innerSummary;
   }
+  //if it is different from current map
   if (innerMap !== current.map) {
+    //update
     this.dummyDOM.querySelector(`#${idT}OD`).innerHTML = innerMap;
+    //save
     current.map = innerMap;
   }
+  //if it is different from current shape details
   if (innerShapeDetails.details !== current.shapeDetails) {
+    //update
     this.dummyDOM.querySelector(`#${idT}SD`).innerHTML =
       innerShapeDetails.details;
+    //save
     current.shapeDetails = innerShapeDetails.details;
   }
   this._accessibleOutputs[idT] = current;
 };
 
-//creates spatial grid
+//creates spatial grid that maps the location of shapes
 function _gridMap(idT, ingredients) {
   let shapeNumber = 0;
   let table = '';
+  //create an array of arrays 10*10 of empty cells
   let cells = Array.apply(null, Array(10)).map(function() {});
   for (let r in cells) {
     cells[r] = Array.apply(null, Array(10)).map(function() {});
@@ -51,9 +65,13 @@ function _gridMap(idT, ingredients) {
       let fill = `<a href="#${idT}shape${shapeNumber}">${
         ingredients[x][y].color
       } ${x}</a>`;
+      //if empty cell of location of shape is undefined
       if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
+        //fill it with shape info
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] = fill;
+        //if a shape is already in that location
       } else {
+        //add it
         cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] =
           cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX] +
           '  ' +
@@ -62,6 +80,7 @@ function _gridMap(idT, ingredients) {
       shapeNumber++;
     }
   }
+  //make table based on array
   for (let _r in cells) {
     let row = '<tr>';
     for (let c in cells[_r]) {
@@ -94,9 +113,11 @@ function _gridShapeDetails(idT, ingredients) {
   let shapeDetails = '';
   let shapes = '';
   let totalShapes = 0;
+  //goes trhough every shape type in ingredients
   for (let x in ingredients) {
     let shapeNum = 0;
     for (let y in ingredients[x]) {
+      //it creates a line in a list
       let line = `<li id="${idT}shape${totalShapes}">${
         ingredients[x][y].color
       } ${x},`;
