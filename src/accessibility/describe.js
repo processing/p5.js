@@ -15,7 +15,6 @@ const labelDescId = '_labelDesc'; //Label description
 const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
 //dummy stores a copy of the DOM and previous descriptions
-let dummy = { fallbackElements: {}, labelElements: {} };
 
 /**
  * Creates a screen-reader accessible description for the canvas.
@@ -80,41 +79,49 @@ p5.prototype.describe = function(text, display) {
   const cnvId = this.canvas.id;
   //calls function that adds punctuation for better screen reading
   text = _descriptionText(text);
-
-  //if it is the first time describe() is called
-  if (!dummy[cnvId + 'fallbackDesc'] || !dummy[cnvId + 'labelDesc']) {
-    //store copy of body dom in dummy
-    _populateDummyDOM(cnvId);
+  if (!this.describe) {
+    this.describe = {
+      fallbackElements: {},
+      labelElements: {},
+      fallbackDesc: '',
+      labelDesc: ''
+    };
+  }
+  //if there is no dummyDOM
+  if (!this.dummyDOM) {
+    this.dummyDOM = document.getElementsByTagName('body')[0];
   }
 
   //check if text is different
-  if (dummy[cnvId + 'fallbackDesc'] !== text) {
+  if (this.describe.fallbackDesc !== text) {
     //if html structure for description is ready
-    if (dummy[cnvId + 'updateFallbackDesc']) {
+    if (this.dummyDOM.querySelector(`#${cnvId}${fallbackDescId}`)) {
       //update description
-      dummy[cnvId + 'DOM'].querySelector(
-        '#' + cnvId + fallbackDescId
+      this.dummyDOM.querySelector(
+        `#${cnvId}${fallbackDescId}`
       ).innerHTML = text;
       //store updated description
-      dummy[cnvId + 'fallbackDesc'] = text;
+      this.describe.fallbackDesc = text;
     } else {
       //create fallback html structure
-      _describeFallbackHTML(cnvId, text);
+      let results = _describeFallbackHTML(this.dummyDOM, cnvId, text);
+      this.dummyDOM = results[0];
+      this.describe.fallbackDesc = results[1];
     }
   }
   //if display is LABEL and label text is different
-  if (display === this.LABEL && dummy[cnvId + 'labelDesc'] !== text) {
+  if (display === this.LABEL && this.describe.labelDesc !== text) {
     //if html structure for label is ready
-    if (dummy[cnvId + labelDescId]) {
+    if (this.dummyDOM.querySelector(`#${cnvId}${labelDescId}`)) {
       //update label description
-      dummy[cnvId + 'DOM'].querySelector(
-        '#' + cnvId + labelDescId
-      ).innerHTML = text;
+      this.dummyDOM.querySelector(`#${cnvId}${labelDescId}`).innerHTML = text;
       //store updated label description
-      dummy[cnvId + 'labelDesc'] = text;
+      this.describe.labelDesc = text;
     } else {
       //create label html structure
-      _describeLabelHTML(cnvId, text);
+      let results = _describeLabelHTML(this.dummyDOM, cnvId, text);
+      this.dummyDOM = results[0];
+      this.describe.labelDesc = results[1];
     }
   }
 };
@@ -178,44 +185,56 @@ p5.prototype.describeElement = function(name, text, display) {
   name = name.replace(/[^a-zA-Z0-9 ]/g, '');
   //store element description
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
-
-  //if it is the first time describeElement() is called
-  if (
-    !dummy.fallbackElements[cnvId + name] ||
-    !dummy.labelElements[cnvId + name]
-  ) {
-    //store copy of body dom in dummy
-    _populateDummyDOM(cnvId);
+  if (!this.describe) {
+    this.describe = {
+      fallbackElements: {},
+      labelElements: {},
+      fallbackDesc: '',
+      labelDesc: ''
+    };
   }
 
+  if (!this.dummyDOM) {
+    this.dummyDOM = document.getElementsByTagName('body')[0];
+  }
+  if (!this.describe.fallbackElements) {
+    this.describe.fallbackElements = {};
+  }
   //check if element description is different from current
-  if (dummy.fallbackElements[cnvId + name] !== inner) {
+  if (this.describe.fallbackElements[name] !== inner) {
     //if html structure for element description is ready
-    if (dummy.fallbackElements[cnvId + name]) {
+    if (this.describe.fallbackElements[name]) {
       //update element description
-      dummy[cnvId + 'DOM'].querySelector(
-        '#' + cnvId + fallbackTableElId + name
+      this.dummyDOM.querySelector(
+        `#${cnvId + fallbackTableElId + name}`
       ).innerHTML = inner;
       //store updated element description
-      dummy.fallbackElements[cnvId + name] = inner;
+      this.describe.fallbackElements[name] = inner;
     } else {
       //create fallback html structure
-      _descElementFallbackHTML(cnvId, name, inner);
+      let results = _descElementFallbackHTML(this.dummyDOM, cnvId, name, inner);
+      this.dummyDOM = results[0];
+      this.describe.fallbackElements[name] = results[1];
     }
   }
+  if (!this.describe.labelElements) {
+    this.describe.labelElements = {};
+  }
   //if display is LABEL and label element description is different
-  if (display === this.LABEL && dummy.labelElements[cnvId + name] !== inner) {
+  if (display === this.LABEL && this.describe.labelElements[name] !== inner) {
     //if html structure for label element description is ready
-    if (dummy.labelElements[cnvId + name]) {
+    if (this.describe.labelElements[name]) {
       //update label element description
-      dummy[cnvId + 'DOM'].querySelector(
+      this.dummyDOM.querySelector(
         '#' + cnvId + labelTableElId + name
       ).innerHTML = inner;
       //store updated label element description
-      dummy.labelElements[cnvId + name] = inner;
+      this.describe.labelElements[name] = inner;
     } else {
       //create label element html structure
-      _descElementLabelHTML(cnvId, name, inner);
+      let results = _descElementLabelHTML(this.dummyDOM, cnvId, name, inner);
+      this.dummyDOM = results[0];
+      this.describe.labelElements[name] = results[1];
     }
   }
 };
@@ -225,16 +244,6 @@ p5.prototype.describeElement = function(name, text, display) {
  * Helper functions for describe() and describeElement().
  *
  */
-
-//clear dummy
-p5.prototype._clearDummy = function() {
-  dummy = { fallbackElements: {}, labelElements: {} };
-};
-
-//stores html body in dummy
-function _populateDummyDOM(cnvId) {
-  dummy[cnvId + 'DOM'] = document.getElementsByTagName('body')[0];
-}
 
 // check that text is not LABEL or FALLBACK and ensure text ends with punctuation mark
 function _descriptionText(text) {
@@ -259,76 +268,54 @@ function _descriptionText(text) {
  */
 
 //creates fallback HTML structure
-function _describeFallbackHTML(cnvId, text) {
+function _describeFallbackHTML(dummyDOM, cnvId, text) {
   //if there is no description container
-  if (!dummy[cnvId + descContainer]) {
+  if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
     //create description container + <p> for fallback description
-    dummy[cnvId + 'DOM'].querySelector(
-      '#' + cnvId
-    ).innerHTML = `<div id="${cnvId +
+    dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
       fallbackDescId}"></p></div>`;
-    //set container and fallbackDescId to true
-    dummy[cnvId + descContainer] = true;
-    dummy[cnvId + fallbackDescId] = true;
     //if describeElement() has already created the container and added a table of elements
-  } else if (dummy[cnvId + fallbackTableId]) {
+  } else if (dummyDOM.querySelector(`#${cnvId + fallbackTableId}`)) {
     //create fallback description <p> before the table
-    dummy[cnvId + 'DOM']
+    dummyDOM
       .querySelector('#' + cnvId + fallbackTableId)
       .insertAdjacentHTML(
         'beforebegin',
         `<p id="${cnvId + fallbackDescId}"></p>`
       );
-    //set fallbackDescId to true
-    dummy[cnvId + fallbackDescId] = true;
   }
   //If the container for the description exists
-  if (dummy[cnvId + 'DOM'].querySelector('#' + cnvId + fallbackDescId)) {
+  if (dummyDOM.querySelector(`#${cnvId}${fallbackDescId}`)) {
     //update description
-    dummy[cnvId + 'DOM'].querySelector(
-      '#' + cnvId + fallbackDescId
-    ).innerHTML = text;
-    //store updated description
-    dummy[cnvId + 'fallbackDesc'] = text;
-    //html structure is ready for any description updates
-    dummy[cnvId + 'updateFallbackDesc'] === true;
+    dummyDOM.querySelector(`#${cnvId}${fallbackDescId}`).innerHTML = text;
+    return [dummyDOM, text];
   }
-  return;
 }
 
 //If display is LABEL create a div adjacent to the canvas element with
 //description text.
-function _describeLabelHTML(cnvId, text) {
+function _describeLabelHTML(dummyDOM, cnvId, text) {
   //if there is no label container
-  if (!dummy[cnvId + labelContainer]) {
+  if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
     //create label container + <p> for label description
-    dummy[cnvId + 'DOM']
+    dummyDOM
       .querySelector('#' + cnvId)
       .insertAdjacentHTML(
         'afterend',
         `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
           labelDescId}"></p></div>`
       );
-    //set container and labelDescId to true
-    dummy[cnvId + labelContainer] = true;
-    dummy[cnvId + labelDescId] = true;
     //if describeElement() has already created the container and added a table of elements
-  } else if (!dummy[cnvId + labelDescId] && dummy[cnvId + labelTableId]) {
+  } else if (dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
     //create label description <p> before the table
-    dummy[cnvId + 'DOM']
-      .querySelector('#' + cnvId + labelTableId)
+    dummyDOM
+      .querySelector(`#${cnvId + labelTableId}`)
       .insertAdjacentHTML('beforebegin', `<p id="${cnvId}${labelDescId}"></p>`);
-    //set fallbackDescId to true
-    dummy[cnvId + labelDescId] = true;
   }
   //update description
-  dummy[cnvId + 'DOM'].querySelector(
-    '#' + cnvId + labelDescId
-  ).innerHTML = text;
-  //store updated description
-  dummy[cnvId + 'labelDesc'] = text;
-  return;
+  dummyDOM.querySelector('#' + cnvId + labelDescId).innerHTML = text;
+  return [dummyDOM, text];
 }
 
 /*
@@ -353,55 +340,46 @@ function _elementName(name) {
 }
 
 //creates fallback HTML structure for element descriptions
-function _descElementFallbackHTML(cnvId, name, inner) {
+function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
   //if there is no description container
-  if (!dummy[cnvId + descContainer]) {
+  if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
     //create container + table for element descriptions
-    dummy[cnvId + 'DOM'].querySelector(
-      '#' + cnvId
-    ).innerHTML = `<div id="${cnvId +
+    dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
       descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
       fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
-    //set container and fallbackTableId to true
-    dummy[cnvId + descContainer] = true;
-    dummy[cnvId + fallbackTableId] = true;
     //if describe() has already created the container and added a description
-  } else if (document.getElementById(cnvId + fallbackDescId)) {
+  } else if (dummyDOM.querySelector('#' + cnvId + fallbackDescId)) {
     //create fallback table for element description after fallback description
-    dummy[cnvId + 'DOM']
+    dummyDOM
       .querySelector('#' + cnvId + fallbackDescId)
       .insertAdjacentHTML(
         'afterend',
         `<table id="${cnvId +
           fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table>`
       );
-    //set fallbackTableId to true
-    dummy[cnvId + fallbackTableId] = true;
   }
   //if it is the first time this element is being added to the table
-  if (!dummy.fallbackElements[cnvId + name] && dummy[cnvId + fallbackTableId]) {
+  if (dummyDOM.querySelector('#' + cnvId + fallbackTableId)) {
     //create a table row for the element
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + fallbackTableElId + name;
-    dummy[cnvId + 'DOM']
-      .querySelector('#' + cnvId + fallbackTableId)
-      .appendChild(tableRow);
+    dummyDOM.querySelector('#' + cnvId + fallbackTableId).appendChild(tableRow);
     //update element description
-    dummy[cnvId + 'DOM'].querySelector(
+    dummyDOM.querySelector(
       '#' + cnvId + fallbackTableElId + name
     ).innerHTML = inner;
     //store updated element description
-    dummy.fallbackElements[cnvId + name] = inner;
+    return [dummyDOM, inner];
   }
 }
 //If display is LABEL creates a div adjacent to the canvas element with
 //a table, a row header cell with the name of the elements,
 //and adds the description of the element in adjecent cell.
-function _descElementLabelHTML(cnvId, name, inner) {
+function _descElementLabelHTML(dummyDOM, cnvId, name, inner) {
   //if there is no label description container
-  if (!dummy[cnvId + labelContainer]) {
+  if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
     //create container + table for element descriptions
-    dummy[cnvId + 'DOM']
+    dummyDOM
       .querySelector('#' + cnvId)
       .insertAdjacentHTML(
         'afterend',
@@ -409,35 +387,28 @@ function _descElementLabelHTML(cnvId, name, inner) {
           labelContainer}" class="p5Label"><table id="${cnvId +
           labelTableId}"></table></div>`
       );
-    //set container and labelTableId to true
-    dummy[cnvId + labelContainer] = true;
-    dummy[cnvId + labelTableId] = true;
     //if describe() has already created the label container and added a description
-  } else if (dummy[cnvId + 'DOM'].querySelector('#' + cnvId + labelDescId)) {
+  } else if (dummyDOM.querySelector('#' + cnvId + labelDescId)) {
     //create label table for element description after label description
-    dummy[cnvId + 'DOM']
+    dummyDOM
       .querySelector('#' + cnvId + labelDescId)
       .insertAdjacentHTML(
         'afterend',
         `<table id="${cnvId + labelTableId}"></table>`
       );
-    //set labelTableId to true
-    dummy[cnvId + labelTableId] = true;
   }
   //if it is the first time this element is being added to the table
-  if (!dummy.labelElements[cnvId + name] && dummy[cnvId + labelTableId]) {
+  if (dummyDOM.querySelector('#' + cnvId + fallbackTableId)) {
     //create a table row for the element label description
     let tableRow = document.createElement('tr');
     tableRow.id = cnvId + labelTableElId + name;
-    dummy[cnvId + 'DOM']
-      .querySelector('#' + cnvId + labelTableId)
-      .appendChild(tableRow);
+    dummyDOM.querySelector('#' + cnvId + labelTableId).appendChild(tableRow);
     //update element label description
-    dummy[cnvId + 'DOM'].querySelector(
+    dummyDOM.querySelector(
       '#' + cnvId + labelTableElId + name
     ).innerHTML = inner;
     //store updated element label description
-    dummy.labelElements[cnvId + name] = inner;
+    return [dummyDOM, inner];
   }
 }
 
