@@ -23,14 +23,14 @@ npm run release
 * `np` will then reinstall `node_modules` then run tests with `npm test`.
 * `np` will bump the version according to what was selected at the beginning.
 * If any step prior to this failed, the repo will be reverted to its initial state before running `npm run release`.
+* The task mentioned in `prepublishOnly` in `package.json` will run ( `grunt prerelease` ) to build the documentation and the library with the updated version number
 * The NPM package is published.
 	* Release on NPM : __Only__ the files mentioned in `files` in `package.json` are published.
 * Tags and local commits are pushed to the git remote.
 * A draft release is created on github.com with changelogs that can be edited.
 * Create a Zip file `p5.zip` of `lib` folder (now includes the empty example), which should be uploaded in the GitHub Release draft created above.
 	* After this process completes a window pointing at `release/` will open and it will contain all the files that should be uploaded as part of the Github Release.
-* Push the newly built library to [p5.js-release](https://github.com/lmccart/p5.js-release) repo for Bower.
-* Building the Docs: This is run as `grunt yui`
+* Push the newly built library to [p5.js-release](https://github.com/processing/p5.js-release) repo for Bower.
 * Push the newly built reference to [p5.js-website](https://github.com/processing/p5.js-website)
 
 ## Testing

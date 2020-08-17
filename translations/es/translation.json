@@ -1,6 +1,7 @@
 {
   "fes": {
     "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
+    "checkUserDefinedFns": "",
     "fileLoadError": {
       "bytes": "",
       "font": "",
@@ -19,7 +20,25 @@
       "type_TOO_MANY_ARGUMENTS": "",
       "type_WRONG_TYPE": ""
     },
+    "globalErrors": {
+      "reference": {
+        "notDefined": ""
+      },
+      "stackSubseq": "",
+      "stackTop": "",
+      "syntax": {
+        "invalidToken": "",
+        "unexpectedToken": ""
+      },
+      "type": {
+        "notfunc": "",
+        "notfuncObj": ""
+      }
+    },
+    "libraryError": "",
     "location": "",
+    "misspelling": "",
+    "misspelling_plural": "",
     "misusedTopLevel": "",
     "positions": {
       "p_1": "",
@@ -36,6 +55,7 @@
       "p_9": ""
     },
     "pre": "🌸 p5.js dice: {{message}}",
-    "welcome": ""
+    "welcome": "",
+    "wrongPreload": ""
   }
 }

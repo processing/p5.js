@@ -4,7 +4,7 @@
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
-    "dev": "grunt browserify connect:yui watch:quick",
+    "dev": "grunt browserify:dev connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
     "test": "grunt",
@@ -15,7 +15,8 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "generate": "all-contributors generate",
-    "release": "grunt release-p5"
+    "release": "grunt release-p5",
+    "prepublishOnly": "grunt prerelease"
   },
   "lint-staged": {
     "ignore": [
@@ -31,7 +32,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.0.0",
+  "version": "1.1.9",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
@@ -65,6 +66,7 @@
     "grunt-mocha-test": "^0.13.3",
     "grunt-newer": "^1.1.0",
     "grunt-simple-nyc": "^3.0.1",
+    "html-entities": "^1.3.1",
     "husky": "^4.2.3",
     "i18next": "^19.0.2",
     "i18next-browser-languagedetector": "^4.0.1",
@@ -72,7 +74,7 @@
     "lint-staged": "^4.3.0",
     "marked": "^0.7.0",
     "mocha": "^6.2.2",
-    "np": "^6.2.0",
+    "np": "^5.2.1",
     "omggif": "^1.0.10",
     "open": "^7.0.3",
     "opentype.js": "^0.9.0",
@@ -86,13 +88,14 @@
     "whatwg-fetch": "^2.0.4"
   },
   "license": "LGPL-2.1",
-  "main": "./lib/p5.js",
+  "main": "./lib/p5.min.js",
   "files": [
     "license.txt",
     "lib/p5.min.js",
     "lib/p5.js",
     "lib/addons/p5.sound.js",
-    "lib/addons/p5.sound.min.js"
+    "lib/addons/p5.sound.min.js",
+    "translations/**"
   ],
   "description": "[![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)",
   "bugs": {

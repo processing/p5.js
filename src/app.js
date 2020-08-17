@@ -39,6 +39,9 @@ import './data/local_storage.js';
 // DOM
 import './dom/dom';
 
+// accessibility
+import './accessibility/describe';
+
 // events
 import './events/acceleration';
 import './events/keyboard';

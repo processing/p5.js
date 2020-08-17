@@ -58,8 +58,19 @@ import p5 from '../core/main';
  * If you reload the page, the last letter typed is still displaying.
  */
 p5.prototype.storeItem = function(key, value) {
+  if (typeof key !== 'string') {
+    console.log(
+      `The argument that you passed to storeItem() - ${key} is not a string.`
+    );
+  }
+  if (key.endsWith('p5TypeID')) {
+    console.log(
+      `The argument that you passed to storeItem() - ${key} must not end with 'p5TypeID'.`
+    );
+  }
+
   if (typeof value === 'undefined') {
-    console.log('You cannot store undefined variables using storeItem()');
+    console.log('You cannot store undefined variables using storeItem().');
   }
   let type = typeof value;
   switch (type) {
@@ -139,7 +150,7 @@ p5.prototype.getItem = function(key) {
   } else if (value !== null) {
     switch (type) {
       case 'number':
-        value = parseInt(value);
+        value = parseFloat(value);
         break;
       case 'boolean':
         value = value === 'true';

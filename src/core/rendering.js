@@ -90,7 +90,13 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     // user input node case
     this._userNode.appendChild(c);
   } else {
-    document.body.appendChild(c);
+    //create main element
+    if (document.getElementsByTagName('main').length === 0) {
+      let m = document.createElement('main');
+      document.body.appendChild(m);
+    }
+    //append canvas to main
+    document.getElementsByTagName('main')[0].appendChild(c);
   }
 
   // Init our graphics renderer
@@ -313,7 +319,6 @@ p5.prototype.blendMode = function(mode) {
 };
 
 /**
- * @property drawingContext
  * The p5.js API provides a lot of functionality for creating graphics, but there is
  * some native HTML5 Canvas functionality that is not exposed by p5. You can still call
  * it directly using the variable `drawingContext`, as in the example shown. This is
@@ -322,6 +327,7 @@ p5.prototype.blendMode = function(mode) {
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">
  * reference for the native canvas API</a> for possible drawing functions you can call.
  *
+ * @property drawingContext
  * @example
  * <div>
  * <code>

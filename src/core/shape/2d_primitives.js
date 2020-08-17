@@ -178,6 +178,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
     return this;
   }
 
+  if (start === stop) {
+    return this;
+  }
+
   start = this._toRadians(start);
   stop = this._toRadians(stop);
 
@@ -692,7 +696,7 @@ p5.prototype._renderRect = function() {
 };
 
 /**
- * Draws a trangle to the canvas. A triangle is a plane created by connecting
+ * Draws a triangle to the canvas. A triangle is a plane created by connecting
  * three points. The first two arguments specify the first point, the middle two
  * arguments specify the second point, and the last two arguments specify the
  * third point.

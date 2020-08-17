@@ -990,11 +990,13 @@ p5.prototype.createColorPicker = function(value) {
   self = addElement(elt, this);
   // Method to return a p5.Color object for the given color.
   self.color = function() {
-    if (value.mode) {
-      p5.prototype._colorMode = value.mode;
-    }
-    if (value.maxes) {
-      p5.prototype._colorMaxes = value.maxes;
+    if (value) {
+      if (value.mode) {
+        p5.prototype._colorMode = value.mode;
+      }
+      if (value.maxes) {
+        p5.prototype._colorMaxes = value.maxes;
+      }
     }
     return p5.prototype.color(this.elt.value);
   };
@@ -1704,8 +1706,11 @@ p5.Element.prototype.html = function() {
  * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
  * If no arguments given, the function returns the x and y position of the element.
  *
+ * found documentation on how to be more specific with object type
+ * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
+ *
  * @method position
- * @returns {Object} the x and y position of the element in an object
+ * @returns {Object} object of form { x: 0, y: 0 } containing the position of the element in an object
  * @example
  * <div><code class='norender'>
  * function setup() {
@@ -1849,7 +1854,7 @@ p5.Element.prototype._rotate = function() {
 /**
  * @method style
  * @param  {String} property
- * @param  {String|Number|p5.Color} value     value to assign to property
+ * @param  {String|p5.Color} value     value to assign to property
  * @return {String} current value of property, if no value is given as second argument
  * @chainable
  */
@@ -1870,12 +1875,13 @@ p5.Element.prototype.style = function(prop, val) {
   }
 
   if (typeof val === 'undefined') {
-    // input provided as single line string
     if (prop.indexOf(':') === -1) {
-      var styles = window.getComputedStyle(self.elt);
-      var style = styles.getPropertyValue(prop);
+      // no value set, so assume requesting a value
+      let styles = window.getComputedStyle(self.elt);
+      let style = styles.getPropertyValue(prop);
       return style;
     } else {
+      // value set using `:` in a single line string
       var attrs = prop.split(';');
       for (var i = 0; i < attrs.length; i++) {
         var parts = attrs[i].split(':');
@@ -1893,7 +1899,9 @@ p5.Element.prototype.style = function(prop, val) {
       prop === 'left' ||
       prop === 'top'
     ) {
-      var numVal = val.replace(/\D+/g, '');
+      let styles = window.getComputedStyle(self.elt);
+      let styleVal = styles.getPropertyValue(prop);
+      let numVal = styleVal.replace(/\D+/g, '');
       this[prop] = parseInt(numVal, 10);
     }
   }
@@ -2663,6 +2671,7 @@ p5.MediaElement.prototype.loop = function() {
  *
  *     if (sampleIsPlaying) {
  *       ele.noLoop();
+ *       sampleIsPlaying = false;
  *       text('No more Loops!', width / 2, height / 2);
  *     } else {
  *       ele.loop();
@@ -2674,7 +2683,7 @@ p5.MediaElement.prototype.loop = function() {
  * </code></div>
  */
 p5.MediaElement.prototype.noLoop = function() {
-  this.elt.setAttribute('loop', false);
+  this.elt.removeAttribute('loop');
   return this;
 };
 

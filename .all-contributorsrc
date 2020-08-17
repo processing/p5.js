@@ -1832,6 +1832,8 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/43696525?v=4",
       "profile": "http://divyanshuraj.co",
       "contributions": [
+        "code",
+        "bug",
         "doc"
       ]
     },
@@ -1996,6 +1998,25 @@
       "name": "skyperx",
       "avatar_url": "https://avatars1.githubusercontent.com/u/64559807?v=4",
       "profile": "http://skyperx.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "joeyaronson",
+      "name": "Joseph Aronson",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/32691229?v=4",
+      "profile": "http://josepharonson.com/",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "haideralipunjabi",
+      "name": "Haider Ali Punjabi",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/11888687?v=4",
+      "profile": "https://haideralipunjabi.com",
       "contributions": [
         "code"
       ]
