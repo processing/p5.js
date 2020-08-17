@@ -16,7 +16,7 @@ const labelTableId = '_labelTable'; //Label Table
 const labelTableElId = '_lte_'; //Label Table Element
 
 /**
- * Creates a screen-reader accessible description for the canvas.
+ * Creates a screen reader accessible description for the canvas.
  * The first parameter should be a string with a description of the canvas.
  * The second parameter is optional. If specified, it determines how the
  * description is displayed.
@@ -235,6 +235,7 @@ function _descriptionText(text) {
   //if string does not end with '.'
   if (
     !text.endsWith('.') &&
+    !text.endsWith(';') &&
     !text.endsWith(',') &&
     !text.endsWith('?') &&
     !text.endsWith('!')

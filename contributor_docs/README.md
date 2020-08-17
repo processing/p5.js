@@ -16,7 +16,6 @@ The overarching p5.js project includes some repositories other than this one:
 - [p5.js-website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren Lee McCarthy](https://github.com/lmccart).
 - [p5.js-sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor) This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
-- [p5.accessibility](https://github.com/processing/p5.accessibility) A library that makes the p5 canvas more accessible to people who are blind and visually impaired.
 
 
 
