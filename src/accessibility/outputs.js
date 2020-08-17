@@ -164,18 +164,33 @@ p5.prototype._createOutput = function(type, display) {
     cIdT = cnvId + type;
     container = cnvId + 'accessibleOutput';
     if (!this.dummyDOM.querySelector(`#${container}`)) {
-      this.dummyDOM.querySelector(
-        `#${cnvId}`
-      ).innerHTML = `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
+      if (!this.dummyDOM.querySelector(`#${cnvId}_Description`)) {
+        this.dummyDOM.querySelector(
+          `#${cnvId}`
+        ).innerHTML = `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
+      } else {
+        this.dummyDOM
+          .querySelector(`#${cnvId}_Description`)
+          .insertAdjacentHTML(
+            'afterend',
+            `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`
+          );
+      }
     }
   } else if (display === 'Label') {
     query = display;
     cIdT = cnvId + type + display;
     container = cnvId + 'accessibleOutput' + display;
     if (!this.dummyDOM.querySelector(`#${container}`)) {
-      this.dummyDOM
-        .querySelector(`#${cnvId}`)
-        .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
+      if (!this.dummyDOM.querySelector(`#${cnvId}_Label`)) {
+        this.dummyDOM
+          .querySelector(`#${cnvId}`)
+          .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
+      } else {
+        this.dummyDOM
+          .querySelector(`#${cnvId}_Label`)
+          .insertAdjacentHTML('afterend', `<div id="${container}"></div>`);
+      }
     }
   }
   this._accessibleOutputs[cIdT] = {};

@@ -10,6 +10,9 @@ import p5 from '../core/main';
 
 //creates output content
 p5.prototype._updateGridOutput = function(idT) {
+  if (!this.dummyDOM.querySelector(`#${idT}Summary`)) {
+    return;
+  }
   let current = this._accessibleOutputs[idT];
   let innerShapeDetails = _gridShapeDetails(idT, this.ingredients.shapes);
   let innerSummary = _gridSummary(

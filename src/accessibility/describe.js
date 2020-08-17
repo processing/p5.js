@@ -272,9 +272,20 @@ function _describeFallbackHTML(dummyDOM, cnvId, text) {
   //if there is no description container
   if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
     //create description container + <p> for fallback description
-    dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
-      descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
-      fallbackDescId}"></p></div>`;
+    if (!dummyDOM.querySelector(`#${cnvId}accessibleOutput`)) {
+      dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
+        descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
+        fallbackDescId}"></p></div>`;
+    } else {
+      dummyDOM
+        .querySelector(`#${cnvId}accessibleOutput`)
+        .insertAdjacentHTML(
+          'beforebegin',
+          `<div id="${cnvId +
+            descContainer}" role="region" aria-label="Canvas Description"><p id="${cnvId +
+            fallbackDescId}"></p></div>`
+        );
+    }
     //if describeElement() has already created the container and added a table of elements
   } else if (dummyDOM.querySelector(`#${cnvId + fallbackTableId}`)) {
     //create fallback description <p> before the table
@@ -298,14 +309,24 @@ function _describeFallbackHTML(dummyDOM, cnvId, text) {
 function _describeLabelHTML(dummyDOM, cnvId, text) {
   //if there is no label container
   if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
+    if (!dummyDOM.querySelector(`#${cnvId}accessibleOutputLabel`)) {
+      dummyDOM
+        .querySelector('#' + cnvId)
+        .insertAdjacentHTML(
+          'afterend',
+          `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
+            labelDescId}"></p></div>`
+        );
+    } else {
+      dummyDOM
+        .querySelector(`#${cnvId}accessibleOutputLabel`)
+        .insertAdjacentHTML(
+          'beforebegin',
+          `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
+            labelDescId}"></p></div>`
+        );
+    }
     //create label container + <p> for label description
-    dummyDOM
-      .querySelector('#' + cnvId)
-      .insertAdjacentHTML(
-        'afterend',
-        `<div id="${cnvId + labelContainer}" class="p5Label"><p id="${cnvId +
-          labelDescId}"></p></div>`
-      );
     //if describeElement() has already created the container and added a table of elements
   } else if (dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
     //create label description <p> before the table
@@ -343,10 +364,22 @@ function _elementName(name) {
 function _descElementFallbackHTML(dummyDOM, cnvId, name, inner) {
   //if there is no description container
   if (!dummyDOM.querySelector(`#${cnvId + descContainer}`)) {
+    if (!dummyDOM.querySelector(`#${cnvId}accessibleOutput`)) {
+      dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
+        descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
+        fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
+    } else {
+      dummyDOM
+        .querySelector(`#${cnvId}accessibleOutput`)
+        .insertAdjacentHTML(
+          'beforebegin',
+          `<div id="${cnvId +
+            descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
+            fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`
+        );
+    }
     //create container + table for element descriptions
-    dummyDOM.querySelector('#' + cnvId).innerHTML = `<div id="${cnvId +
-      descContainer}" role="region" aria-label="Canvas Description"><table id="${cnvId +
-      fallbackTableId}"><caption>Canvas elements and their descriptions</caption></table></div>`;
+
     //if describe() has already created the container and added a description
   } else if (dummyDOM.querySelector('#' + cnvId + fallbackDescId)) {
     //create fallback table for element description after fallback description
@@ -379,14 +412,25 @@ function _descElementLabelHTML(dummyDOM, cnvId, name, inner) {
   //if there is no label description container
   if (!dummyDOM.querySelector(`#${cnvId + labelContainer}`)) {
     //create container + table for element descriptions
-    dummyDOM
-      .querySelector('#' + cnvId)
-      .insertAdjacentHTML(
-        'afterend',
-        `<div id="${cnvId +
-          labelContainer}" class="p5Label"><table id="${cnvId +
-          labelTableId}"></table></div>`
-      );
+    if (!dummyDOM.querySelector(`#${cnvId}accessibleOutputLabel`)) {
+      dummyDOM
+        .querySelector('#' + cnvId)
+        .insertAdjacentHTML(
+          'afterend',
+          `<div id="${cnvId +
+            labelContainer}" class="p5Label"><table id="${cnvId +
+            labelTableId}"></table></div>`
+        );
+    } else {
+      dummyDOM
+        .querySelector(`#${cnvId}accessibleOutputLabel`)
+        .insertAdjacentHTML(
+          'beforebegin',
+          `<div id="${cnvId +
+            labelContainer}" class="p5Label"><table id="${cnvId +
+            labelTableId}"></table></div>`
+        );
+    }
     //if describe() has already created the label container and added a description
   } else if (dummyDOM.querySelector('#' + cnvId + labelDescId)) {
     //create label table for element description after label description

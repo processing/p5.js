@@ -10,6 +10,9 @@ import p5 from '../core/main';
 
 //updates textOutput
 p5.prototype._updateTextOutput = function(idT) {
+  if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
+    return;
+  }
   let current = this._accessibleOutputs[idT];
   let innerList = _shapeList(idT, this.ingredients.shapes);
   let innerSummary = _textSummary(
