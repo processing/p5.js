@@ -6,7 +6,7 @@
  */
 import p5 from '../core/main';
 
-//the functions in this document support updating the text output
+//the functions in this file support updating the text output
 
 //updates textOutput
 p5.prototype._updateTextOutput = function(idT) {

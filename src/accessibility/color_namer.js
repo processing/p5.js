@@ -694,8 +694,7 @@ p5.prototype._rgbColorName = function(arg) {
   //stores hsv in global variable
   oghsv = hsv;
   //calculate color name
-  let colorname = _calculateColor([hsv[0], hsv[1], hsv[2]]);
-  return colorname;
+  return _calculateColor([hsv[0], hsv[1], hsv[2]]);
 };
 
 export default p5;

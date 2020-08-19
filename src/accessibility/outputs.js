@@ -489,8 +489,7 @@ function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
     // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
   }
 
-  let percentage = Math.round(objectArea * 100 / (canvasWidth * canvasHeight));
-  return percentage;
+  return Math.round(objectArea * 100 / (canvasWidth * canvasHeight));
 }
 
 export default p5;

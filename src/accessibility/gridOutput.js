@@ -6,7 +6,7 @@
  */
 import p5 from '../core/main';
 
-//the functions in this document support updating the grid output
+//the functions in this file support updating the grid output
 
 //updates gridOutput
 p5.prototype._updateGridOutput = function(idT) {
