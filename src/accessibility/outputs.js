@@ -21,8 +21,19 @@ import p5 from '../core/main';
  * shape, color, location, coordinates and area are described
  * (example: "orange ellipse location=top left area=2").
  *
+ * <code class="language-javascript">textOutput()</code> and <code class="language-javascript">texOutput(FALLBACK)</code>
+ * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+ * a sub DOM inside the canvas element</a> which is accessible to screen readers.
+ * <code class="language-javascript">textOutput(LABEL)</code> creates an
+ * additional div with the output adjacent to the canvas, this is useful
+ * for non-screen reader users that might want to display the output outside
+ * of the canvas' sub DOM as they code. However, using LABEL will create
+ * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * only as part of the development process of a sketch and removing it before
+ * publishing or sharing with screen reader users.
+ *
  * @method textOutput
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
  *
  * @example
  * <div>
@@ -50,6 +61,8 @@ import p5 from '../core/main';
  *   ellipse(20, 20, 20, 20);
  *   x += 0.1;
  * }
+ * </code>
+ * </div>
  *
  */
 
@@ -87,8 +100,19 @@ p5.prototype.textOutput = function(display) {
  * A list of elements where shape, color, location, and area are described
  * (example: "orange ellipse location=top left area=1%") is also available.
  *
+ * <code class="language-javascript">gridOutput()</code> and <code class="language-javascript">gridOutput(FALLBACK)</code>
+ * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
+ * a sub DOM inside the canvas element</a> which is accessible to screen readers.
+ * <code class="language-javascript">gridOutput(LABEL)</code> creates an
+ * additional div with the output adjacent to the canvas, this is useful
+ * for non-screen reader users that might want to display the output outside
+ * of the canvas' sub DOM as they code. However, using LABEL will create
+ * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * only as part of the development process of a sketch and removing it before
+ * publishing or sharing with screen reader users.
+ *
  * @method gridOutput
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
  *
  * @example
  * <div>
@@ -116,6 +140,8 @@ p5.prototype.textOutput = function(display) {
  *   ellipse(20, 20, 20, 20);
  *   x += 0.1;
  * }
+ * </code>
+ * </div>
  *
  */
 
