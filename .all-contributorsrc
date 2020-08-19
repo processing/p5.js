@@ -2029,6 +2029,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "TakumaKira",
+      "name": "Takuma Kira",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/50410641",
+      "profile": "https://github.com/TakumaKira",
+      "contributions": [
+        "bug", "code", "test"
+      ]
     }
   ],
   "repoType": "github",
