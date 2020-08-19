@@ -21,3 +21,4 @@
   - [WebGL Architecture](webgl_mode_architecture.md)
   - [Supported Browsers](supported_browsers.md)
   - [Custom Builds](custom_p5_build.md)
+  - [Web Accessibility](web_accessibility.md)

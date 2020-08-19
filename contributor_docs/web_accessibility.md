@@ -74,14 +74,14 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 #### color_namer.js
 When creating screen reader accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js]() contains `_rgbColorName()` a function that receives rgba values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in `src/accessibility/outputs.js`. 
 
-`_rgbColorName()` uses `color_conversion._rgbaToHSBA()` to get the hsv values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer) which was developed in 2018 as part of a Processing Foundation fellowship and in consultation with blind screen reader expert users. This function returns color names by comparing hsv values to those stored in the `xcp` array. The function should be updated as some shades of gray are not named correctly. When updating it, it is also important to ensure contributor readability by including comments that explain what each line of code does.
+`_rgbColorName()` uses `color_conversion._rgbaToHSBA()` to get the hsv values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer) which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing hsv values to those stored in the `xcp` array. The function should be updated as some shades of gray are not named correctly. When updating it, it is also important to ensure contributor readability by including comments that explain what each line of code does.
 
 ## User-generated accessible canvas descriptions
 
 ### describe()
 The `describe()` function creates a screen reader accessible description for the canvas. The first parameter should be a string with a description of the canvas. The second parameter is optional. If specified, it determines how the description is displayed. All descriptions become part of the sub DOM of the canvas element. If a user passes `LABEL` as a second parameter, an additional div with the description adjacent to the canvas is created. 
 
-`describe()` is supported by several functions in [src/accessibility/describe.js]():
+`describe()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 * `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
 * `_describeFallbackHTML()`: Creates fallback HTML structure for the canvas. 
 * `_describeLabelHTML()`: This function is only called when the second parameter of `_describe()` is `LABEL`. It creates a div adjacent to the canvas element for the description text.
@@ -89,7 +89,7 @@ The `describe()` function creates a screen reader accessible description for the
 ### describeElement()
 The `_describeElement()` function creates a screen reader accessible description for sketch elements or groups of shapes that create meaning together. The first parameter should be a string with the name of the element, the second parameter should be a string with the description of the element. The third parameter is optional. If specified, it determines how the description is displayed. All element descriptions become part of the sub DOM of the canvas element. If a user passes `LABEL` as a third parameter, an additional div with the element description adjacent to the canvas is created. 
 
-`_describeElement()` is supported by several functions in [src/accessibility/describe.js]():
+`_describeElement()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 * `_elementName()`: Checks that element name is not `LABEL` or `FALLBACK` and ensures text ends with a colon. Returns element name.
 * `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
 * `_describeElementFallbackHTML()`: Creates fallback HTML structure for the canvas. 
