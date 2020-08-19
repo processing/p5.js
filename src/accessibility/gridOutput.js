@@ -62,9 +62,16 @@ function _gridMap(idT, ingredients) {
   }
   for (let x in ingredients) {
     for (let y in ingredients[x]) {
-      let fill = `<a href="#${idT}shape${shapeNumber}">${
-        ingredients[x][y].color
-      } ${x}</a>`;
+      let fill;
+      if (x !== 'line') {
+        fill = `<a href="#${idT}shape${shapeNumber}">${
+          ingredients[x][y].color
+        } ${x}</a>`;
+      } else {
+        fill = `<a href="#${idT}shape${shapeNumber}">${
+          ingredients[x][y].color
+        } ${x} midpoint</a>`;
+      }
       //if empty cell of location of shape is undefined
       if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
         //fill it with shape info

@@ -302,6 +302,7 @@ p5.prototype._accsOutput = function(f, args) {
   }
   let include = {};
   let add = true;
+  let middle = _getMiddle(f, args);
   if (f === 'line') {
     //make color stroke
     include.color = this.ingredients.colors.stroke;
@@ -310,6 +311,7 @@ p5.prototype._accsOutput = function(f, args) {
     //get position of end points
     let p1 = _getPos([args[0], [1]], this.width, this.height);
     let p2 = _getPos([args[2], [3]], this.width, this.height);
+    include.loc = _canvasLocator(middle, this.width, this.height);
     if (p1 === p2) {
       include.pos = `at ${p1}`;
     } else {
@@ -326,7 +328,6 @@ p5.prototype._accsOutput = function(f, args) {
       include.area = _getArea(f, args, this.width, this.height);
     }
     //get middle of shapes
-    let middle = _getMiddle(f, args);
     //calculate position using middle of shape
     include.pos = _getPos(middle, this.width, this.height);
     //calculate location using middle of shape
@@ -372,6 +373,9 @@ function _getMiddle(f, args) {
   } else if (f === 'quadrilateral') {
     x = (args[0] + args[2] + args[4] + args[6]) / 4;
     y = (args[1] + args[3] + args[5] + args[7]) / 4;
+  } else if (f === 'line') {
+    x = (args[0] + args[2]) / 2;
+    y = (args[1] + args[3]) / 2;
   } else {
     x = args[0];
     y = args[1];
