@@ -617,4 +617,41 @@ Filters.blur = function(canvas, radius) {
   blurARGB(canvas, radius);
 };
 
+Filters.replaceColor = function(canvas, [oldColor, newColor]) {
+  // Check performance of the process
+  const beforeOp = new Date().getTime();
+
+  // Operation
+  const oldR = oldColor.levels[0];
+  const oldG = oldColor.levels[1];
+  const oldB = oldColor.levels[2];
+  const oldA = oldColor.levels[3];
+  const newR = newColor.levels[0];
+  const newG = newColor.levels[1];
+  const newB = newColor.levels[2];
+  const newA = newColor.levels[3];
+  const pixels = canvas.data.length / 4;
+  for (let i = 0; i < pixels; i++) {
+    const rIndex = i * 4;
+    const gIndex = rIndex + 1;
+    const bIndex = rIndex + 2;
+    const aIndex = rIndex + 3;
+    const tempR = canvas.data[rIndex];
+    const tempG = canvas.data[gIndex];
+    const tempB = canvas.data[bIndex];
+    const tempA = canvas.data[aIndex];
+    if (tempR === oldR && tempG === oldG && tempB === oldB && tempA === oldA) {
+      canvas.data[rIndex] = newR;
+      canvas.data[gIndex] = newG;
+      canvas.data[bIndex] = newB;
+      canvas.data[aIndex] = newA;
+    }
+  }
+
+  // Check the result of the performance
+  const afterOp = new Date().getTime();
+  const duration = afterOp - beforeOp;
+  console.log(`${duration} ms`);
+};
+
 export default Filters;

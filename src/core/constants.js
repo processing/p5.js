@@ -566,6 +566,11 @@ export const ERODE = 'erode';
  * @final
  */
 export const BLUR = 'blur';
+/**
+ * @property {String} REPLACE_COLOR
+ * @final
+ */
+export const REPLACE_COLOR = 'replaceColor';
 
 // TYPOGRAPHY
 /**
