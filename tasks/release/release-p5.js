@@ -2,7 +2,6 @@
 // The release process includes:
 // 1. Creating the release archive (p5.js, p5.min.js, p5.sound.js, p5.sound.min.js, and p5.zip).
 // 2. Releasing to Bower via https://github.com/processing/p5.js-release (release-bower)
-// 3. Releasing the reference on the website via https://github.com/processing/p5.js-website (release-docs)
 
 const open = require('open');
 const spawn = require('child_process').spawnSync;
@@ -62,9 +61,6 @@ module.exports = function(grunt) {
 
       // 2. Push the new lib files to the dist repo (to be referred as bower-repo here)
       grunt.task.run('release-bower');
-
-      // 3. Push the docs out to the website
-      grunt.task.run('release-docs');
 
       done();
     }

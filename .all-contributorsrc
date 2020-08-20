@@ -2033,10 +2033,12 @@
     {
       "login": "TakumaKira",
       "name": "Takuma Kira",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/50410641",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/50410641?v=4",
       "profile": "https://github.com/TakumaKira",
       "contributions": [
-        "bug", "code", "test"
+        "bug",
+        "code",
+        "test"
       ]
     }
   ],
