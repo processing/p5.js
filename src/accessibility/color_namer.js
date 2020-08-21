@@ -8,11 +8,11 @@
 import p5 from '../core/main';
 import color_conversion from '../color/color_conversion';
 
-//stores the original hsv values
-let oghsv;
+//stores the original hsb values
+let originalHSB;
 
-//stores values for color names
-const xcp = [
+//stores values for color name exceptions
+const colorExceptions = [
   {
     h: 0,
     s: 0,
@@ -39,6 +39,7 @@ const xcp = [
   }
 ];
 
+//stores values for color names
 const colorLookUp = [
   {
     h: 0,
@@ -619,11 +620,11 @@ const colorLookUp = [
 ];
 
 //returns text with color name
-function _calculateColor(hsv) {
+function _calculateColor(hsb) {
   let colortext;
-  if (hsv[0] !== 0) {
-    hsv[0] = Math.round(hsv[0] * 100);
-    let hue = hsv[0].toString().split('');
+  if (hsb[0] !== 0) {
+    hsb[0] = Math.round(hsb[0] * 100);
+    let hue = hsb[0].toString().split('');
     const last = hue.length - 1;
     hue[last] = parseInt(hue[last]);
     if (hue[last] < 2.5) {
@@ -637,36 +638,36 @@ function _calculateColor(hsv) {
         hue[last] = 0;
         hue[0] = hue[0] + 1;
       }
-      hsv[0] = hue[0] * 10 + hue[1];
+      hsb[0] = hue[0] * 10 + hue[1];
     } else {
       if (hue[last] >= 7.5) {
-        hsv[0] = 10;
+        hsb[0] = 10;
       } else {
-        hsv[0] = hue[last];
+        hsb[0] = hue[last];
       }
     }
   }
-  for (let i = hsv.length - 1; i >= 1; i--) {
-    if (hsv[i] <= 0.25) {
-      hsv[i] = 0;
-    } else if (hsv[i] > 0.25 && hsv[i] < 0.75) {
-      hsv[i] = 0.5;
+  for (let i = hsb.length - 1; i >= 1; i--) {
+    if (hsb[i] <= 0.25) {
+      hsb[i] = 0;
+    } else if (hsb[i] > 0.25 && hsb[i] < 0.75) {
+      hsb[i] = 0.5;
     } else {
-      hsv[i] = 1;
+      hsb[i] = 1;
     }
   }
-  if (hsv[0] === 0 && hsv[1] === 0 && hsv[2] === 1) {
+  if (hsb[0] === 0 && hsb[1] === 0 && hsb[2] === 1) {
     for (let i = 2; i >= 0; i--) {
-      //for (let i = oghsv.length - 1; i >= 0; i--) {
-      oghsv[i] = Math.round(oghsv[i] * 10000) / 10000;
+      //for (let i = originalHSB.length - 1; i >= 0; i--) {
+      originalHSB[i] = Math.round(originalHSB[i] * 10000) / 10000;
     }
-    for (let e = 0; e < xcp.length; e++) {
+    for (let e = 0; e < colorExceptions.length; e++) {
       if (
-        xcp[e].h === oghsv[0] &&
-        xcp[e].s === oghsv[1] &&
-        xcp[e].b === oghsv[2]
+        colorExceptions[e].h === originalHSB[0] &&
+        colorExceptions[e].s === originalHSB[1] &&
+        colorExceptions[e].b === originalHSB[2]
       ) {
-        colortext = xcp[e].name;
+        colortext = colorExceptions[e].name;
         break;
       } else {
         colortext = 'white';
@@ -675,9 +676,9 @@ function _calculateColor(hsv) {
   } else {
     for (let i = 0; i < colorLookUp.length; i++) {
       if (
-        colorLookUp[i].h === hsv[0] &&
-        colorLookUp[i].s === hsv[1] &&
-        colorLookUp[i].b === hsv[2]
+        colorLookUp[i].h === hsb[0] &&
+        colorLookUp[i].s === hsb[1] &&
+        colorLookUp[i].b === hsb[2]
       ) {
         colortext = colorLookUp[i].name;
         break;
@@ -689,12 +690,12 @@ function _calculateColor(hsv) {
 
 //gets rgba and returs a color name
 p5.prototype._rgbColorName = function(arg) {
-  //conversts rgba to hsv
-  let hsv = color_conversion._rgbaToHSBA(arg);
-  //stores hsv in global variable
-  oghsv = hsv;
+  //conversts rgba to hsb
+  let hsb = color_conversion._rgbaToHSBA(arg);
+  //stores hsb in global variable
+  originalHSB = hsb;
   //calculate color name
-  return _calculateColor([hsv[0], hsv[1], hsv[2]]);
+  return _calculateColor([hsb[0], hsb[1], hsb[2]]);
 };
 
 export default p5;
