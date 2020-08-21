@@ -97,7 +97,7 @@ suite('outputs', function() {
             p.fill(255, 0, 0);
             p.arc(50, 50, 80, 80, 0, p.PI + p.QUARTER_PI);
             if (p.frameCount === 2) {
-              actual = document.getElementById('myCanvasIDtextOutputlst')
+              actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -124,7 +124,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutputlst')
+              actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -151,7 +151,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDtextOutputlst')
+              actual = document.getElementById('myCanvasIDtextOutput_list')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -190,7 +190,7 @@ suite('outputs', function() {
           };
           p.draw = function() {
             if (p.frameCount === 1) {
-              actual = document.getElementById('myCanvasIDgridOutputSummary')
+              actual = document.getElementById('myCanvasIDgridOutput_summary')
                 .innerHTML;
               if (actual === expected) {
                 resolve();
@@ -217,9 +217,9 @@ suite('outputs', function() {
             p.square(0, 0, 100, 100);
             if (p.frameCount === 2) {
               label = document.getElementById(
-                'myCanvasIDgridOutputLabelSummary'
+                'myCanvasIDgridOutputLabel_summary'
               ).innerHTML;
-              fallback = document.getElementById('myCanvasIDgridOutputSummary')
+              fallback = document.getElementById('myCanvasIDgridOutput_summary')
                 .innerHTML;
               if (label === expected && fallback === expected) {
                 resolve();

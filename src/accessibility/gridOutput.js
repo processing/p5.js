@@ -11,7 +11,7 @@ import p5 from '../core/main';
 //updates gridOutput
 p5.prototype._updateGridOutput = function(idT) {
   //if html structure is not there yet
-  if (!this.dummyDOM.querySelector(`#${idT}Summary`)) {
+  if (!this.dummyDOM.querySelector(`#${idT}_summary`)) {
     return;
   }
   let current = this._accessibleOutputs[idT];

@@ -238,7 +238,7 @@ p5.prototype._createOutput = function(type, display) {
   this._accessibleOutputs[cIdT] = {};
   if (type === 'textOutput') {
     query = `#${cnvId}gridOutput${query}`; //query is used to check if gridOutput already exists
-    inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}_summary"></p><ul id="${cIdT}lst"></ul></div><table id="${cIdT}SD" summary="text output shape details"></table></div>`;
+    inner = `<div id="${cIdT}">Text Output<div id="${cIdT}Summary" aria-label="text output summary"><p id="${cIdT}_summary"></p><ul id="${cIdT}_list"></ul></div><table id="${cIdT}_shapeDetails" summary="text output shape details"></table></div>`;
     //if gridOutput already exists
     if (this.dummyDOM.querySelector(query)) {
       //create textOutput before gridOutput
@@ -250,18 +250,12 @@ p5.prototype._createOutput = function(type, display) {
       this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
     }
     //store output html elements
-    this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
-      `#${cIdT}_summary`
-    );
     this._accessibleOutputs[cIdT].list = this.dummyDOM.querySelector(
-      `#${cIdT}lst`
-    );
-    this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
-      `#${cIdT}SD`
+      `#${cIdT}_list`
     );
   } else if (type === 'gridOutput') {
     query = `#${cnvId}textOutput${query}`; //query is used to check if textOutput already exists
-    inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
+    inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}_summary" aria-label="grid output summary"><table id="${cIdT}_map" summary="grid output content"></table><ul id="${cIdT}_shapeDetails" aria-label="grid output shape details"></ul></div>`;
     //if textOutput already exists
     if (this.dummyDOM.querySelector(query)) {
       //create gridOutput after textOutput
@@ -271,16 +265,16 @@ p5.prototype._createOutput = function(type, display) {
       this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
     }
     //store output html elements
-    this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
-      `#${cIdT}Summary`
-    );
     this._accessibleOutputs[cIdT].map = this.dummyDOM.querySelector(
-      `#${cIdT}OD`
-    );
-    this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
-      `#${cIdT}SD`
+      `#${cIdT}_map`
     );
   }
+  this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
+    `#${cIdT}_shapeDetails`
+  );
+  this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
+    `#${cIdT}_summary`
+  );
 };
 
 //this function is called at the end of setup and draw if using
