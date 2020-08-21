@@ -86,9 +86,9 @@ p5.prototype.textOutput = function(display) {
 };
 
 /**
- * <code class="language-javascript">gridOutput()</code>, formerly called
- * table output, lays out the content of the canvas in the form of a grid
- * (html table) based on the spatial location of each shape. A brief
+ * <code class="language-javascript">gridOutput()</code> lays out the
+ * content of the canvas in the form of a grid (html table) based
+ * on the spatial location of each shape. A brief
  * description of the canvas is available before the table output.
  * This description includes: color of the background, size of the canvas,
  * number of objects, and object types (example: "lavender blue canvas is
