@@ -787,6 +787,37 @@ p5.prototype.sq = n => n * n;
  */
 p5.prototype.sqrt = Math.sqrt;
 
+/**
+ * Returns the remainder left over when one number is divided by a second
+ * number. It takes the sign of the dividend (the first number).
+ *
+ * @method mod
+ * @param  {Number} a first number
+ * @param  {Number} b second number
+ * @return {Number}   remainder of the division of a by b
+ * @example
+ * <div><code>
+ * function setup() {
+ *   let a = 5;
+ *   let b = 3;
+ *   let rem1 = mod(a, b);
+ *
+ *   let c = -12;
+ *   let d = 5;
+ *   let rem2 = mod(c, d);
+ *
+ *   print(rem1); // 2
+ *   print(rem2); // -2
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
+ */
+p5.prototype.mod = function(a, b) {
+  return a % b;
+};
+
 // Calculate the length of the hypotenuse of a right triangle
 // This won't under- or overflow in intermediate steps
 // https://en.wikipedia.org/wiki/Hypot
