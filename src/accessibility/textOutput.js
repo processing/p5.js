@@ -27,25 +27,19 @@ p5.prototype._updateTextOutput = function(idT) {
   //create shape details
   let innerShapeDetails = _shapeDetails(idT, this.ingredients.shapes);
   //if it is different from current summary
-  if (innerSummary !== current.summary) {
+  if (innerSummary !== current.summary.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}_summary`).innerHTML = innerSummary;
-    //save
-    current.summary = innerSummary;
+    current.summary.innerHTML = innerSummary;
   }
   //if it is different from current shape list
-  if (innerList.listShapes !== current.list) {
+  if (innerList.listShapes !== current.list.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}lst`).innerHTML = innerList.listShapes;
-    //save
-    current.list = innerList.listShapes;
+    current.list.innerHTML = innerList.listShapes;
   }
   //if it is different from current shape details
-  if (innerShapeDetails !== current.shapeDetails) {
+  if (innerShapeDetails !== current.shapeDetails.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}SD`).innerHTML = innerShapeDetails;
-    //save
-    current.shapeDetails = innerShapeDetails;
+    current.shapeDetails.innerHTML = innerShapeDetails;
   }
   this._accessibleOutputs[idT] = current;
 };

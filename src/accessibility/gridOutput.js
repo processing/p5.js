@@ -27,26 +27,19 @@ p5.prototype._updateGridOutput = function(idT) {
   //create grid map
   let innerMap = _gridMap(idT, this.ingredients.shapes);
   //if it is different from current summary
-  if (innerSummary !== current.summary) {
+  if (innerSummary !== current.summary.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}Summary`).innerHTML = innerSummary;
-    //save
-    current.summary = innerSummary;
+    current.summary.innerHTML = innerSummary;
   }
   //if it is different from current map
-  if (innerMap !== current.map) {
+  if (innerMap !== current.map.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}OD`).innerHTML = innerMap;
-    //save
-    current.map = innerMap;
+    current.map.innerHTML = innerMap;
   }
   //if it is different from current shape details
-  if (innerShapeDetails.details !== current.shapeDetails) {
+  if (innerShapeDetails.details !== current.shapeDetails.innerHTML) {
     //update
-    this.dummyDOM.querySelector(`#${idT}SD`).innerHTML =
-      innerShapeDetails.details;
-    //save
-    current.shapeDetails = innerShapeDetails.details;
+    current.shapeDetails.innerHTML = innerShapeDetails.details;
   }
   this._accessibleOutputs[idT] = current;
 };

@@ -180,6 +180,7 @@ p5.prototype._addAccsOutput = function() {
 
 //helper function that creates html structure for accessible outputs
 p5.prototype._createOutput = function(type, display) {
+  let cnvId = this.canvas.id;
   //if there are no ingredients create object. this object stores data for the outputs
   if (!this.ingredients) {
     this.ingredients = {
@@ -190,9 +191,8 @@ p5.prototype._createOutput = function(type, display) {
   }
   //if there is no dummyDOM create it
   if (!this.dummyDOM) {
-    this.dummyDOM = document.getElementsByTagName('body')[0];
+    this.dummyDOM = document.getElementById(cnvId).parentNode;
   }
-  let cnvId = this.canvas.id;
   let cIdT, container, inner;
   let query = '';
   if (display === 'Fallback') {
@@ -245,8 +245,20 @@ p5.prototype._createOutput = function(type, display) {
       this.dummyDOM
         .querySelector(query)
         .insertAdjacentHTML('beforebegin', inner);
-      return;
+    } else {
+      //create output inside of container
+      this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
     }
+    //store output html elements
+    this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
+      `#${cIdT}_summary`
+    );
+    this._accessibleOutputs[cIdT].list = this.dummyDOM.querySelector(
+      `#${cIdT}lst`
+    );
+    this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
+      `#${cIdT}SD`
+    );
   } else if (type === 'gridOutput') {
     query = `#${cnvId}textOutput${query}`; //query is used to check if textOutput already exists
     inner = `<div id="${cIdT}">Grid Output<p id="${cIdT}Summary" aria-label="grid output summary"><table id="${cIdT}OD" summary="grid output content"></table><ul id="${cIdT}SD" aria-label="grid output shape details"></ul></div>`;
@@ -254,11 +266,21 @@ p5.prototype._createOutput = function(type, display) {
     if (this.dummyDOM.querySelector(query)) {
       //create gridOutput after textOutput
       this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
-      return;
+    } else {
+      //create output inside of container
+      this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
     }
+    //store output html elements
+    this._accessibleOutputs[cIdT].summary = this.dummyDOM.querySelector(
+      `#${cIdT}Summary`
+    );
+    this._accessibleOutputs[cIdT].map = this.dummyDOM.querySelector(
+      `#${cIdT}OD`
+    );
+    this._accessibleOutputs[cIdT].shapeDetails = this.dummyDOM.querySelector(
+      `#${cIdT}SD`
+    );
   }
-  //create output inside of container
-  this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
 };
 
 //this function is called at the end of setup and draw if using
