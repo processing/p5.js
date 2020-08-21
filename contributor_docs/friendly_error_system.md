@@ -21,7 +21,7 @@ So far FES is able to detect and print messages for four kinds of errors:
 4. `helpForMisusedAtTopLevelCode()` is called on window load to check for use of p5.js functions outside of setup() or draw()
 
 Apart from this, the FES can also detect several other common errors that the browser may show.
-This is handled by `fesErrorMonitor()`. The full list of errors that the FES can work with can be found in [src/core/friendly_errors/browser_errors.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/vrowser_errors.js).
+This is handled by `fesErrorMonitor()`. The full list of errors that the FES can work with can be found in [src/core/friendly_errors/browser_errors.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/browser_errors.js).
 
 The FES can also help the user differentiate between errors that happen inside the library and errors that happen in the sketch. It also detects if the error was caused due to a non-loadX() method being called in `preload()`
 
@@ -198,6 +198,8 @@ line(0, 0, 100, 100, x3, Math.PI);
  will escape FES, because there is an acceptable parameter pattern (`Number`, `Number`, `Number`, `Number`) in `line()`'s inline documentation for drawing in 2D setting. This also means the current version of FES doesn't check for the environmental variables such as `_renderer.isP3D`.
  * FES is only able to detect global variables overwritten when declared using `const` or `var`. If `let` is used, they go undetected. This is not currently solvable due to the way `let` instantiates variables.
 
+ * The functionality described under **`fesErrorMonitor()`** currently only works on the web editor or if running on a local server. For more details see [this](https://github.com/processing/p5.js/pull/4730).
+
 ## In The Works
 * Identify more common error types and generalize with FES (e.g. `bezierVertex()`, `quadraticVertex()` - required object not initiated; checking Number parameters positive for `nf()` `nfc()` `nfp()` `nfs()`)
 
@@ -208,7 +210,8 @@ line(0, 0, 100, 100, x3, Math.PI);
 * Completing the spanish translation for `validateParameters()` as well.
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
-* Global Error catching. It would be very helpful to catch the errors the browser is throwing to the console, so we can match them up with friendly comments. 
+* Extend Global Error catching. This means catching errors that the browser is throwing to the console and matching them with friendly messages. `fesErrorMonitor()` does this for a select few kinds of errors but help in supporting more is welcome :)
+
 
 ```javascript
 // this snippet wraps window.console methods with a new function to modify their functionality

@@ -6,13 +6,15 @@
  * brief outline of the functions called in this system.
  *
  * The FES may be invoked by a call to either (1) _validateParameters,
- * (2) _friendlyFileLoadError, (3) _friendlyError (4) helpForMisusedAtTopLevelCode,
- * or (5) fesErrorMontitor
+ * (2) _friendlyFileLoadError, (3) _friendlyError, (4) helpForMisusedAtTopLevelCode,
+ * or (5) _fesErrorMontitor.
  *
  * _validateParameters is located in validate_params.js along with other code used
  * for parameter validation.
  * _friendlyFileLoadError is located in file_errors.js along with other code used for
  * dealing with file load errors.
+ * Apart from this, there's also a file stacktrace.js, which contains the code to parse
+ * the error stack, borrowed from https://github.com/stacktracejs/stacktrace.js
  *
  * This file contains the core as well as miscellaneous functionality of the FES.
  *
@@ -20,7 +22,7 @@
  * of p5.js functions outside of setup() or draw()
  * Items 1-3 above are called by functions in the p5 library located in other files.
  *
- * fesErrorMonitor can be called either by an error event, an unhandled rejection event
+ * _fesErrorMonitor can be called either by an error event, an unhandled rejection event
  * or it can be manually called in a catch block as follows:
  * try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
  * fesErrorMonitor is responsible for handling all kinds of errors that the browser may show.
