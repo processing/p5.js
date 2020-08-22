@@ -848,11 +848,11 @@ p5.prototype.httpGet = function() {
  *
  * function setup() {
  *   createCanvas(100, 100);
- *	 background(200);
+ *   background(200);
  * }
  *
  * function mousePressed() {
- *     httpPost(url, 'json', postData, function(result) {
+ *   httpPost(url, 'json', postData, function(result) {
  *     strokeWeight(2);
  *     text(result.body, mouseX, mouseY);
  *   });
@@ -866,7 +866,7 @@ p5.prototype.httpGet = function() {
  *
  * function setup() {
  *   createCanvas(100, 100);
- *	 background(200);
+ *   background(200);
  * }
  *
  * function mousePressed() {
