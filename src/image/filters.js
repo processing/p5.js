@@ -617,6 +617,12 @@ Filters.blur = function(canvas, radius) {
   blurARGB(canvas, radius);
 };
 
+/**
+ * replace oldColor to newColor
+ * @private
+ * @param  {Canvas} canvas
+ * @param  {[p5.Color, p5.Color]} colorsToReplace
+ */
 Filters.replaceColor = function(canvas, [oldColor, newColor]) {
   // Check performance of the process
   const beforeOp = new Date().getTime();
@@ -630,21 +636,17 @@ Filters.replaceColor = function(canvas, [oldColor, newColor]) {
   const newG = newColor.levels[1];
   const newB = newColor.levels[2];
   const newA = newColor.levels[3];
-  const pixels = canvas.data.length / 4;
-  for (let i = 0; i < pixels; i++) {
-    const rIndex = i * 4;
-    const gIndex = rIndex + 1;
-    const bIndex = rIndex + 2;
-    const aIndex = rIndex + 3;
-    const tempR = canvas.data[rIndex];
-    const tempG = canvas.data[gIndex];
-    const tempB = canvas.data[bIndex];
-    const tempA = canvas.data[aIndex];
+  const pixels = Filters._toPixels(canvas);
+  for (let i = 0; i < pixels.length; i += 4) {
+    const tempR = pixels[i];
+    const tempG = pixels[i + 1];
+    const tempB = pixels[i + 2];
+    const tempA = pixels[i + 3];
     if (tempR === oldR && tempG === oldG && tempB === oldB && tempA === oldA) {
-      canvas.data[rIndex] = newR;
-      canvas.data[gIndex] = newG;
-      canvas.data[bIndex] = newB;
-      canvas.data[aIndex] = newA;
+      pixels[i] = newR;
+      pixels[i + 1] = newG;
+      pixels[i + 2] = newB;
+      pixels[i + 3] = newA;
     }
   }
 
