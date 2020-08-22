@@ -624,10 +624,6 @@ Filters.blur = function(canvas, radius) {
  * @param  {[p5.Color, p5.Color]} colorsToReplace
  */
 Filters.replaceColor = function(canvas, [oldColor, newColor]) {
-  // Check performance of the process
-  const beforeOp = new Date().getTime();
-
-  // Operation
   const oldR = oldColor.levels[0];
   const oldG = oldColor.levels[1];
   const oldB = oldColor.levels[2];
@@ -649,11 +645,6 @@ Filters.replaceColor = function(canvas, [oldColor, newColor]) {
       pixels[i + 3] = newA;
     }
   }
-
-  // Check the result of the performance
-  const afterOp = new Date().getTime();
-  const duration = afterOp - beforeOp;
-  console.log(`${duration} ms`);
 };
 
 export default Filters;
