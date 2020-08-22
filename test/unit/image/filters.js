@@ -89,4 +89,31 @@ suite('Filters', function() {
       assert.strictEqual(myp5.pixels[i + 2], 215);
     }
   });
+
+  test('replace color filter', function() {
+    const oldColor = myp5.color(120, 20, 40);
+    const newColor = myp5.color(
+      myp5.random(255),
+      myp5.random(255),
+      myp5.random(255),
+      myp5.random(127, 255) // Alpha less than 127 makes assertion difficult because it changes rgb values greater.
+    );
+    img.filter(myp5.REPLACE_COLOR, [oldColor, newColor]);
+    myp5.image(img, 0, 0);
+    myp5.loadPixels();
+    const newR = newColor.levels[0];
+    const newG = newColor.levels[1];
+    const newB = newColor.levels[2];
+    const newA = newColor.levels[3];
+    for (let i = 0; i < img.width * img.height; i += 4) {
+      // rgb values need to allow ±1 error for using alpha < 1
+      assert.isAtLeast(myp5.pixels[i], newR - 1);
+      assert.isAtMost(myp5.pixels[i], newR + 1);
+      assert.isAtLeast(myp5.pixels[i + 1], newG - 1);
+      assert.isAtMost(myp5.pixels[i + 1], newG + 1);
+      assert.isAtLeast(myp5.pixels[i + 2], newB - 1);
+      assert.isAtMost(myp5.pixels[i + 2], newB + 1);
+      assert.strictEqual(myp5.pixels[i + 3], newA);
+    }
+  });
 });
