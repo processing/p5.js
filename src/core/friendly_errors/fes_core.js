@@ -6,11 +6,29 @@
  * brief outline of the functions called in this system.
  *
  * The FES may be invoked by a call to either (1) _validateParameters,
- * (2) _friendlyFileLoadError, (3) _friendlyError, or (4) helpForMisusedAtTopLevelCode.
+ * (2) _friendlyFileLoadError, (3) _friendlyError, (4) helpForMisusedAtTopLevelCode,
+ * or (5) _fesErrorMontitor.
+ *
+ * _validateParameters is located in validate_params.js along with other code used
+ * for parameter validation.
+ * _friendlyFileLoadError is located in file_errors.js along with other code used for
+ * dealing with file load errors.
+ * Apart from this, there's also a file stacktrace.js, which contains the code to parse
+ * the error stack, borrowed from https://github.com/stacktracejs/stacktrace.js
+ *
+ * This file contains the core as well as miscellaneous functionality of the FES.
  *
  * helpForMisusedAtTopLevelCode is called by this file on window load to check for use
  * of p5.js functions outside of setup() or draw()
  * Items 1-3 above are called by functions in the p5 library located in other files.
+ *
+ * _fesErrorMonitor can be called either by an error event, an unhandled rejection event
+ * or it can be manually called in a catch block as follows:
+ * try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
+ * fesErrorMonitor is responsible for handling all kinds of errors that the browser may show.
+ * It gives a simplified explanation for these. It currently works with some kinds of
+ * ReferenceError, SyntaxError, and TypeError. The complete list of supported errors can be
+ * found in browser_errors.js.
  *
  * _friendlyFileLoadError is called by the loadX() methods.
  * _friendlyError can be called by any function to offer a helpful error message.
@@ -21,6 +39,8 @@
  * checking. The call sequence from _validateParameters looks something like this:
  *
  * _validateParameters
+ *   buildArgTypeCache
+ *     addType
  *   lookupParamDoc
  *   scoreOverload
  *     testParamTypes
@@ -37,6 +57,20 @@
  *
  * _friendlyError
  *   report
+ *
+ * The call sequence for _fesErrorMonitor roughly looks something like:
+ * _fesErrorMonitor
+ *   processStack
+ *     printFriendlyError
+ *   (if type of error is ReferenceError)
+ *     _handleMisspelling
+ *       computeEditDistance
+ *       report
+ *     report
+ *     printFriendlyStack
+ *   (if type of error is SyntaxError, TypeError, etc)
+ *     report
+ *     printFriendlyStack
  *
  * report() is the main function that prints directly to console with the output
  * of the error helper message. Note: friendlyWelcome() also prints to console directly.
@@ -230,12 +264,21 @@ if (typeof IS_MINIFIED !== 'undefined') {
     console.log(translator('fes.pre', { message }));
   };
 
+  /**
+   * An implementation of
+   * https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm to
+   * compute the Levenshtein distance. It gives a measure of how dissimilar
+   * two strings are. If the "distance" between them is small enough, it is
+   * reasonable to think that one is the misspelled version of the other.
+   * @method computeEditDistance
+   * @private
+   * @param {String} w1 the first word
+   * @param {String} w2 the second word
+   *
+   * @returns {Number} the "distance" between the two words, a smaller value
+   *                   indicates that the words are similar
+   */
   const computeEditDistance = (w1, w2) => {
-    // An implementation of
-    // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm to
-    // compute the Levenshtein distance. It gives a measure of how dissimilar
-    // two strings are. If the "distance" between them is small enough, it is
-    // reasonable to think that one is the misspelled version of the other.
     const l1 = w1.length,
       l2 = w2.length;
     if (l1 === 0) return w2;
@@ -272,8 +315,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return cur[l2];
   };
 
-  // checks if the various functions such as setup, draw, preload have been
-  // defined with capitalization mistakes
+  /**
+   * checks if the various functions such as setup, draw, preload have been
+   * defined with capitalization mistakes
+   * @method checkForUserDefinedFunctions
+   * @private
+   * @param {*} context The current default context. It's set to window in
+   * "global mode" and to a p5 instance in "instance mode"
+   */
   const checkForUserDefinedFunctions = context => {
     if (p5.disableFriendlyErrors) return;
 
@@ -305,16 +354,26 @@ if (typeof IS_MINIFIED !== 'undefined') {
           actualName: fxns[lowercase]
         });
 
-        p5._friendlyError(msg, fxns[lowercase]);
+        report(msg, fxns[lowercase]);
       }
     }
   };
 
-  // compares the the symbol caught in the ReferenceErrror to everything
-  // in misusedAtTopLevel ( all public p5 properties ). The use of
-  // misusedAtTopLevel here is for convenience as it was an array that was
-  // already defined when spelling check was implemented. For this particular
-  // use-case, it's a misnomer.
+  /**
+   * compares the the symbol caught in the ReferenceErrror to everything
+   * in misusedAtTopLevel ( all public p5 properties ). The use of
+   * misusedAtTopLevel here is for convenience as it was an array that was
+   * already defined when spelling check was implemented. For this particular
+   * use-case, it's a misnomer.
+   *
+   * @method handleMisspelling
+   * @private
+   * @param {String} errSym the symbol to whose spelling to check
+   * @param {Error} error the ReferenceError object
+   *
+   * @returns {Boolean} a boolean value indicating if this error was likely due
+   * to a mis-spelling
+   */
   const handleMisspelling = (errSym, error) => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
@@ -395,7 +454,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // a link to the reference documentation. In case of multiple matches,
       // this is already done in the suggestions variable, one link for each
       // suggestion.
-      p5._friendlyError(
+      report(
         msg,
         matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
       );
@@ -404,10 +463,61 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return false;
   };
 
-  const processStack = (error, stacktrace) => {
-    // Responsible for removing internal library calls from the stacktrace
-    // and also for detectiong if the error happened inside the library
+  /**
+   * prints a friendly stacktrace which only includes user-written functions
+   * and is easier for newcomers to understand
+   * @method printFriendlyStack
+   * @private
+   * @param {Array} friendlyStack
+   */
+  const printFriendlyStack = friendlyStack => {
+    const log =
+      p5._fesLogger && typeof p5._fesLogger === 'function'
+        ? p5._fesLogger
+        : console.log.bind(console);
+    if (friendlyStack.length > 1) {
+      let stacktraceMsg = '';
+      friendlyStack.forEach((frame, idx) => {
+        const location = `${frame.fileName}:${frame.lineNumber}:${
+          frame.columnNumber
+        }`;
+        let frameMsg,
+          translationObj = {
+            func: frame.functionName,
+            line: frame.lineNumber,
+            location: location,
+            file: frame.fileName.split('/').slice(-1)
+          };
+        if (idx === 0) {
+          frameMsg = translator('fes.globalErrors.stackTop', translationObj);
+        } else {
+          frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
+        }
+        stacktraceMsg += frameMsg;
+      });
+      log(stacktraceMsg);
+    }
+  };
 
+  /**
+   * Takes a stacktrace array and filters out all frames that show internal p5
+   * details. It also uses this processed stack to figure out if the error
+   * error happened internally within the library, and if the error was due to
+   * a non-loadX() method being used in preload
+   * "Internally" here means that the error exact location of the error (the
+   * top of the stack) is a piece of code write in the p5.js library (which may
+   * or may not have been called from the user's sketch)
+   *
+   * @method processStack
+   * @private
+   * @param {Error} error
+   * @param {Array} stacktrace
+   *
+   * @returns {Array} An array with two elements, [isInternal, friendlyStack]
+   * isInternal: a boolean indicating if the error happened internally
+   * friendlyStack: the simplified stacktrace, with internal details filtered
+   */
+  const processStack = (error, stacktrace) => {
     // cannot process a stacktrace that doesn't exist
     if (!stacktrace) return [false, null];
 
@@ -491,7 +601,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         currentEntryPoint === 'preload' &&
         p5.prototype._preloadMethods[func] == null
       ) {
-        p5._friendlyError(
+        report(
           translator('fes.wrongPreload', {
             func: func,
             location: locationObj
@@ -503,7 +613,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         );
       } else {
         // Library error
-        p5._friendlyError(
+        report(
           translator('fes.libraryError', {
             func: func,
             location: locationObj
@@ -514,41 +624,25 @@ if (typeof IS_MINIFIED !== 'undefined') {
           func
         );
       }
+
+      // Finally, if it's an internal error, print the friendlyStack
+      // ( fesErrorMonitor won't handle this error )
+      if (friendlyStack && friendlyStack.length) {
+        printFriendlyStack(friendlyStack);
+      }
     }
     return [isInternal, friendlyStack];
   };
 
-  // prints a friendly stacktrace which only includes user-written functions
-  // and is easier for newcomers to understand
-  const printFriendlyStack = friendlyStack => {
-    const log =
-      p5._fesLogger && typeof p5._fesLogger === 'function'
-        ? p5._fesLogger
-        : console.log.bind(console);
-    if (friendlyStack.length > 1) {
-      let stacktraceMsg = '';
-      friendlyStack.forEach((frame, idx) => {
-        const location = `${frame.fileName}:${frame.lineNumber}:${
-          frame.columnNumber
-        }`;
-        let frameMsg,
-          translationObj = {
-            func: frame.functionName,
-            line: frame.lineNumber,
-            location: location,
-            file: frame.fileName.split('/').slice(-1)
-          };
-        if (idx === 0) {
-          frameMsg = translator('fes.globalErrors.stackTop', translationObj);
-        } else {
-          frameMsg = translator('fes.globalErrors.stackSubseq', translationObj);
-        }
-        stacktraceMsg += frameMsg;
-      });
-      log(stacktraceMsg);
-    }
-  };
-
+  /**
+   * The main function for handling global errors. Called when an error
+   * happens and is responsible for detecting the type of error that
+   * has happened and showing the appropriate message
+   *
+   * @method fesErrorMonitor
+   * @private
+   * @param {*} e The object to extract error details from
+   */
   const fesErrorMonitor = e => {
     if (p5.disableFriendlyErrors) return;
     // Try to get the error object from e
@@ -569,9 +663,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     let [isInternal, friendlyStack] = processStack(error, stacktrace);
 
     // if this is an internal library error, the type of the error is not relevant,
-    // only the user code that lead to it is. Show the friendlyStack and return
+    // only the user code that lead to it is.
     if (isInternal) {
-      if (friendlyStack) printFriendlyStack(friendlyStack);
       return;
     }
 
@@ -621,7 +714,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'INVALIDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-            p5._friendlyError(
+            report(
               translator('fes.globalErrors.syntax.invalidToken', {
                 url
               })
@@ -631,7 +724,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'UNEXPECTEDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-            p5._friendlyError(
+            report(
               translator('fes.globalErrors.syntax.unexpectedToken', {
                 url
               })
@@ -655,7 +748,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url1 = 'https://p5js.org/examples/data-variable-scope.html';
             let url2 =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
-            p5._friendlyError(
+            report(
               translator('fes.globalErrors.reference.notDefined', {
                 url1,
                 url2,
@@ -695,11 +788,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
             // as a property of an object and when it's called independently.
             // Both have different explanations.
             if (splitSym.length > 1) {
-              p5._friendlyError(
+              report(
                 translator('fes.globalErrors.type.notfuncObj', translationObj)
               );
             } else {
-              p5._friendlyError(
+              report(
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }

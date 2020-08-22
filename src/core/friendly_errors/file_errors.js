@@ -1,6 +1,9 @@
 /**
  * @for p5
  * @requires core
+ *
+ * This file contains the part of the FES responsible for dealing with
+ * file load errors
  */
 import p5 from '../main';
 import { translator } from '../internationalization';

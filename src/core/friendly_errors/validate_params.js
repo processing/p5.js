@@ -1,6 +1,9 @@
 /**
  * @for p5
  * @requires core
+ *
+ * This file contains the part of the FES responsible for validating function
+ * parameters
  */
 import p5 from '../main';
 import * as constants from '../constants';
