@@ -844,23 +844,16 @@ p5.prototype.httpGet = function() {
  * // Examples use jsonplaceholder.typicode.com for a Mock Data API
  *
  * let url = 'https://jsonplaceholder.typicode.com/posts';
- * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *	 background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
- *   httpPost(url, 'json', postData, function(result) {
+ *     httpPost(url, 'json', postData, function(result) {
  *     strokeWeight(2);
- *     stroke(r, g, b);
- *     fill(r, g, b, 127);
- *     ellipse(mouseX, mouseY, 200, 200);
  *     text(result.body, mouseX, mouseY);
  *   });
  * }
@@ -869,18 +862,14 @@ p5.prototype.httpGet = function() {
  *
  * <div><code>
  * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
- * let postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let postData = { title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *	 background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
  *   httpPost(
  *     url,
  *     'json',
@@ -890,8 +879,6 @@ p5.prototype.httpGet = function() {
  *     },
  *     function(error) {
  *       strokeWeight(2);
- *       stroke(r, g, b);
- *       fill(r, g, b, 127);
  *       text(error.toString(), mouseX, mouseY);
  *     }
  *   );
