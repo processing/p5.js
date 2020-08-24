@@ -8,6 +8,12 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 
 
+# Prioritizing access
+
+We are prioritizing work that expands access (inclusion and accessibility) to p5.js! See [our access statement](./access.md) for more details.
+
+
+
 # Where our code lives
 
 The overarching p5.js project includes some repositories other than this one:
