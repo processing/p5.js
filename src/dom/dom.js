@@ -310,7 +310,7 @@ function addElement(elt, pInst, media) {
 }
 
 /**
- * Creates a &lt;div&gt;&lt;/div&gt; element in the DOM with given inner HTML.
+ * Creates a `&lt;div&gt;&lt;/div&gt;` element in the DOM with given inner HTML.
  *
  * @method createDiv
  * @param  {String} [html] inner HTML for element created
@@ -327,7 +327,7 @@ p5.prototype.createDiv = function(html = '') {
 };
 
 /**
- * Creates a &lt;p&gt;&lt;/p&gt; element in the DOM with given inner HTML. Used
+ * Creates a `&lt;p&gt;&lt;/p&gt;` element in the DOM with given inner HTML. Used
  * for paragraph length text.
  *
  * @method createP
@@ -345,7 +345,7 @@ p5.prototype.createP = function(html = '') {
 };
 
 /**
- * Creates a &lt;span&gt;&lt;/span&gt; element in the DOM with given inner HTML.
+ * Creates a `&lt;span&gt;&lt;/span&gt;` element in the DOM with given inner HTML.
  *
  * @method createSpan
  * @param  {String} [html] inner HTML for element created
@@ -362,7 +362,7 @@ p5.prototype.createSpan = function(html = '') {
 };
 
 /**
- * Creates an &lt;img&gt; element in the DOM with given src and
+ * Creates an `&lt;img&gt;` element in the DOM with given src and
  * alternate text.
  *
  * @method createImg
@@ -408,7 +408,7 @@ p5.prototype.createImg = function() {
 };
 
 /**
- * Creates an &lt;a&gt;&lt;/a&gt; element in the DOM for including a hyperlink.
+ * Creates an `&lt;a&gt;&lt;/a&gt;` element in the DOM for including a hyperlink.
  *
  * @method createA
  * @param  {String} href       url of page to link to
@@ -433,7 +433,7 @@ p5.prototype.createA = function(href, html, target) {
 /** INPUT **/
 
 /**
- * Creates a slider &lt;input&gt;&lt;/input&gt; element in the DOM.
+ * Creates a slider `&lt;input&gt;&lt;/input&gt;` element in the DOM.
  * Use .size() to set the display length of the slider.
  *
  * @method createSlider
@@ -488,7 +488,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
 };
 
 /**
- * Creates a &lt;button&gt;&lt;/button&gt; element in the DOM.
+ * Creates a `&lt;button&gt;&lt;/button&gt;` element in the DOM.
  * Use .size() to set the display size of the button.
  * Use .mousePressed() to specify behavior on press.
  *
@@ -522,7 +522,7 @@ p5.prototype.createButton = function(label, value) {
 };
 
 /**
- * Creates a checkbox &lt;input&gt;&lt;/input&gt; element in the DOM.
+ * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element in the DOM.
  * Calling .checked() on a checkbox returns if it is checked or not
  *
  * @method createCheckbox
@@ -590,7 +590,7 @@ p5.prototype.createCheckbox = function() {
 };
 
 /**
- * Creates a dropdown menu &lt;select&gt;&lt;/select&gt; element in the DOM.
+ * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
  * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
  * - `.option(name, [value])` can be used to set options for the select after it is created.
  * - `.value()` will return the currently selected option.
@@ -1004,7 +1004,7 @@ p5.prototype.createColorPicker = function(value) {
 };
 
 /**
- * Creates an &lt;input&gt;&lt;/input&gt; element in the DOM for text input.
+ * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM for text input.
  * Use .<a href="#/p5.Element/size">size()</a> to set the display length of the box.
  *
  * @method createInput
@@ -1038,7 +1038,7 @@ p5.prototype.createInput = function(value = '', type = 'text') {
 };
 
 /**
- * Creates an &lt;input&gt;&lt;/input&gt; element in the DOM of type 'file'.
+ * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM of type 'file'.
  * This allows users to select local files for use in a sketch.
  *
  * @method createFileInput
@@ -1145,7 +1145,7 @@ function createMedia(pInst, type, src, callback) {
 }
 
 /**
- * Creates an HTML5 &lt;video&gt; element in the DOM for simple playback
+ * Creates an HTML5 `&lt;video&gt;` element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
  * and drawn into canvas using <a href="#/p5/image">image()</a>. The first parameter
  * can be either a single string path to a video file, or an array of string
@@ -1193,7 +1193,7 @@ p5.prototype.createVideo = function(src, callback) {
 /** AUDIO STUFF **/
 
 /**
- * Creates a hidden HTML5 &lt;audio&gt; element in the DOM for simple audio
+ * Creates a hidden HTML5 `&lt;audio&gt;` element in the DOM for simple audio
  * playback. The first parameter can be either a single string path to a
  * audio file, or an array of string paths to different formats of the same
  * audio. This is useful for ensuring that your audio can play across
@@ -1275,7 +1275,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 }
 
 /**
- * Creates a new HTML5 &lt;video&gt; element that contains the audio/video feed
+ * Creates a new HTML5 `&lt;video&gt;` element that contains the audio/video feed
  * from a webcam. The element is separate from the canvas and is displayed by
  * default. The element can be hidden using .<a href="#/p5.Element/hide">hide()</a>.
  * The feed can be drawn onto the canvas using <a href="#/p5/image">image()</a>.
