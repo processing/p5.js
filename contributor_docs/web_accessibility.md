@@ -1,6 +1,6 @@
 # p5.js Web Accessibility
 
-This document describes the structure of the web accessibility features of p5.js for contributors and maintainers—and any other interested parties. If you're interested in making your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader) accessible, visit the [tutorial]() or if you want to use p5.js with a screen reader visit the [Using p5.js with a Screen Reader tutorial]().
+This document describes the structure of the web accessibility features of p5.js for contributors and maintainers—and any other interested parties. If you're interested in making your sketches [screen reader](https://en.wikipedia.org/wiki/Screen_reader) accessible, visit the [tutorial](https://p5js.org/learn) or if you want to use p5.js with a screen reader visit the [Using p5.js with a Screen Reader tutorial](https://p5js.org/learn/p5-screen-reader.html).
 
 ## Overview
 
@@ -19,10 +19,10 @@ Supported accessible outputs for basic shapes include text and grid outputs.
 If a user passes `LABEL` as a parameter in either of these functions, an additional div with the output adjacent to the canvas is created, this is useful for non-screen reader users that might want to display the output outside of the canvas' sub DOM as they code. However, using `LABEL` will create unnecessary redundancy for screen reader users. We recommend using `LABEL` only as part of the development process of a sketch and removing it before publishing or sharing your sketch with screen reader users.
  
 ### Outputs structure
-Although `textOutput()` and `gridOutput()` are located in [src/accessibility/outputs.js](), the outputs are created and updated using functions distributed across the library. This section details the different functions that support the accessible outputs.
+Although `textOutput()` and `gridOutput()` are located in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js), the outputs are created and updated using functions distributed across the library. This section details the different functions that support the accessible outputs.
 
 #### outputs.js
-[src/accessibility/outputs.js]() includes the core functions that create the accessible outputs:
+[src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) includes the core functions that create the accessible outputs:
 * `textOutput()`: This function activates the text output by setting `this._accessibleOutputs.text` to `true` and calling `_createOutput('textOutput', 'Fallback')`. If `LABEL` is passed as a parameter the function also activates the text output label by setting `this._accessibleOutputs.textLabel` as `true` and calls `_createOutput('textOutput', 'Label')` for the label.
 * `gridOutput()`: This function activates the grid output by setting `this._accessibleOutputs.grid` to `true` and calling `_createOutput('gridOutput', 'Fallback')`. If `LABEL` is passed as a parameter the function also activates the grid output label by setting `this._accessibleOutputs.textLabel` as `true` and calls `_createOutput('gridOutput', 'Label')` for the label.
 * `_createOutput()`: This function creates the HTML structure for all accessible outputs. Depending on the type and display of the outputs the HTML structure created varies. The function also initializes `this.ingredients` which stores all the data for the outputs including: shapes, colors, and pShapes (which stores a string of the previous shapes of the canvas). It also creates `this.dummyDOM` if it doesn't exist. `this.dummyDOM` stores the HTMLCollection of DOM elements inside of `<body>`.
@@ -56,7 +56,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
   * `p5.Renderer2D.prototype.background()`
 
 #### textOutput.js
-[src/accessibility/textOutput.js]() contains all functions that update the text output. The main function in this file is `_updateTextOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js]() when `this._accessibleOutputs.text` or `this._accessibleOutputs.textLabel` are `true.`
+[src/accessibility/textOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/textOutput.js) contains all functions that update the text output. The main function in this file is `_updateTextOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.text` or `this._accessibleOutputs.textLabel` are `true.`
 
 `_updateTextOutput()` uses `this.ingredients` to build the content of the text output and text output label which include a summary, a list of shapes, and a table of shapes details. If these are different from the current outputs it updates them. Building the output content is supported by several helper functions in the file that are not part of the prototype: 
 *  `_textSummary()`: Builds the content of the text output summary.
@@ -64,7 +64,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 *  `_shapeList()`: Builds the list of shapes of the text output.
 
 #### gridOutput.js
-[src/accessibility/gridOutput.js]() contains all functions that update the grid output. The main function in this file is `_updateGridOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js]() when `this._accessibleOutputs.grid` or `this._accessibleOutputs.gridLabel` are `true.`
+[src/accessibility/gridOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/gridOutput.js) contains all functions that update the grid output. The main function in this file is `_updateGridOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.grid` or `this._accessibleOutputs.gridLabel` are `true.`
 
 `_updateGridOutput()` uses `this.ingredients` to build the content of the grid output and grid output label which include a summary, a grid that maps the location of shapes and a list of shapes. If these are different from the current outputs it updates them. Building the output content is supported by several helper functions in the file that are not part of the prototype: 
 *  `_gridSummary()`: Builds the content of the grid output summary.
@@ -72,7 +72,7 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 *  `_gridShapeDetails()`: Builds the list of shapes of the grid output, each line of the list includes details about the shape.
 
 #### color_namer.js
-When creating screen reader accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js]() contains `_rgbColorName()` a function that receives rgba values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in `src/accessibility/outputs.js`. 
+When creating screen reader accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a function that receives rgba values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js). 
 
 `_rgbColorName()` uses `color_conversion._rgbaToHSBA()` to get the hsv values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer) which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing hsv values to those stored in the `colorLookUp` array. The function should be updated as some shades of gray are not named correctly. When updating it, it is also important to ensure contributor readability by including comments that explain what each line of code does.
 
