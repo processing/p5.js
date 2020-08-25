@@ -260,7 +260,7 @@ suite('outputs', function() {
     });
     test('should create text output for point()', function() {
       return new Promise(function(resolve, reject) {
-        expected = 'fuchsia point, location = bottom right';
+        expected = 'dark fuchsia point, location = bottom right';
         new p5(function(p) {
           p.setup = function() {
             let cnv = p.createCanvas(100, 100);

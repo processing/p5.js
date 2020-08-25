@@ -83,8 +83,7 @@ The `describe()` function creates a screen reader accessible description for the
 
 `describe()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 * `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
-* `_describeFallbackHTML()`: Creates fallback HTML structure for the canvas. 
-* `_describeLabelHTML()`: This function is only called when the second parameter of `_describe()` is `LABEL`. It creates a div adjacent to the canvas element for the description text.
+* `_describeHTML()`: Creates fallback HTML structure for the canvas. If the second parameter of `_describe()` is `LABEL`, this function creates a div adjacent to the canvas element for the description text.
 
 ### describeElement()
 The `describeElement()` function creates a screen reader accessible description for sketch elements or groups of shapes that create meaning together. The first parameter should be a string with the name of the element, the second parameter should be a string with the description of the element. The third parameter is optional. If specified, it determines how the description is displayed. All element descriptions become part of the sub DOM of the canvas element. If a user passes `LABEL` as a third parameter, an additional div with the element description adjacent to the canvas is created. 
@@ -92,5 +91,4 @@ The `describeElement()` function creates a screen reader accessible description 
 `describeElement()` is supported by several functions in [src/accessibility/describe.js](https://github.com/processing/p5.js/blob/main/src/accessibility/describe.js):
 * `_elementName()`: Checks that element name is not `LABEL` or `FALLBACK` and ensures text ends with a colon. Returns element name.
 * `_descriptionText()`: Checks that text is not `LABEL` or `FALLBACK` and ensures text ends with a punctuation mark. If the text does not end with '.', ',', ';', '?', '!', this function adds a '.' at the end of the string. Returns text.
-* `_describeElementFallbackHTML()`: Creates fallback HTML structure for the canvas. 
-* `_describeElementLabelHTML()`: This function is only called when the second parameter of `_describeElement()` is `LABEL`. It creates a div adjacent to the canvas element for the description text.
+* `_describeElementHTML()`: Creates fallback HTML structure for the canvas. When the second parameter of `_describeElement()` is `LABEL`, this function creates a div adjacent to the canvas element for the descriptions.

@@ -239,7 +239,7 @@ function _descriptionText(text) {
  * Helper functions for describe()
  */
 
-//creates fallback HTML structure
+//creates HTML structure for canvas descriptions
 p5.prototype._describeHTML = function(type, text) {
   const cnvId = this.canvas.id;
   if (type === 'fallback') {
@@ -327,7 +327,7 @@ function _elementName(name) {
   return name;
 }
 
-//creates fallback HTML structure for element descriptions
+//creates HTML structure for element descriptions
 p5.prototype._describeElementHTML = function(type, name, text) {
   const cnvId = this.canvas.id;
   if (type === 'fallback') {
