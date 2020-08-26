@@ -398,6 +398,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/TakumaKira"><img src="https://avatars1.githubusercontent.com/u/50410641?v=4" width="100px;" alt=""/><br /><sub><b>Takuma Kira</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ATakumaKira" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=TakumaKira" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=TakumaKira" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/NagariaHussain"><img src="https://avatars1.githubusercontent.com/u/34810212?v=4" width="100px;" alt=""/><br /><sub><b>Mohammad Hussain Nagaria</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ANagariaHussain" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://nakulshahdadpuri3141@gmail.com"><img src="https://avatars2.githubusercontent.com/u/43999912?v=4" width="100px;" alt=""/><br /><sub><b>Nakul Shahdadpuri</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakul-shahdadpuri" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
