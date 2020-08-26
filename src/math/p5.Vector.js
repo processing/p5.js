@@ -1441,6 +1441,30 @@ p5.Vector.prototype.heading = function heading() {
 };
 
 /**
+ * Rotate the vector to a specific angle (only 2D vectors), magnitude remains the
+ * same
+ *
+ * @method setHeading
+ * @param  {number}    angle the angle of rotation
+ * @chainable
+ * @example
+ * <div class="norender">
+ * <code>
+ * let v = createVector(10.0, 20.0);
+ * // result of v.heading() is 1.1071487177940904
+ * v.setHeading(Math.PI);
+ * // result of v.heading() is now 3.141592653589793
+ * </code>
+ * </div>
+ */
+
+p5.Vector.prototype.setHeading = function setHeading(a) {
+  this.rotate(-this.heading());
+  this.rotate(a);
+  return this;
+};
+
+/**
  * Rotate the vector by an angle (only 2D vectors), magnitude remains the
  * same
  *
