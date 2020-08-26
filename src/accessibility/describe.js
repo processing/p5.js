@@ -388,7 +388,7 @@ p5.prototype._describeElementHTML = function(type, name, text) {
       }
     } else if (!this.dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
       //if describe() has already created the label container and added a description
-      //and there is no table create label table for element description after 
+      //and there is no table create label table for element description after
       //label description
       this.dummyDOM
         .querySelector('#' + cnvId + labelDescId)
