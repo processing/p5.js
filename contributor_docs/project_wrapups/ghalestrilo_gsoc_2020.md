@@ -2,7 +2,7 @@
 
 #### by [@ghalestrilo](https://github.com/ghalestrilo)
 
-The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is today an important tool for the p5.js ecossystem: beginners and old-schoolers alike rely on the tool for prototyping p5 sketches, for its convenience and availability. Now, maybe you have a sketch idea while away from home, or you want to show your favorite one to your friend! So you naturally pick up your phone and realize the project does not work very well on mobile. Slightly disappointed, you tell your friend "I'll send you a screenshot when I get home" 😢
+The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is today an important tool for the p5.js ecossystem: beginners and old-schoolers alike rely on the tool for prototyping p5 sketches, for its convenience and availability. Now, maybe you have a sketch idea while away from home, or you want to show your favorite one to your friend! So you naturally pick up your phone and realize the editor does not work very well on mobile. Slightly disappointed, you tell your friend "I'll send you a screenshot when I get home" 😢
 
 I'm [Ghales](https://ghales.top), and the story above happened to me ~~(I've never sent the screenshot)~~. My project for Google Summer of Code '20 was to design and implement a mobile user interface for the editor, so that everyone can use the editor comfortably wherever they are. This requires:
 
@@ -13,20 +13,35 @@ I'm [Ghales](https://ghales.top), and the story above happened to me ~~(I've nev
 
 ## Step 1: Studying UX
 
-User experience design is a dense field, and my understanding of it is very limited, so my first step was studying how to properly develop an UX. The main takeaway is: first we lay out everything the editor can do, understand the different user journeys within it and reorder them trying different possibilities
+I have very limited understanding of UX design, so my first step was studying how to properly develop one. The main takeaway is: first we lay out everything the editor can do, understand the different user journeys within it and try different possibilities. We choose those who make the most frequent and important features easier to find. From there, we make a few wireframes, which we turn into prototypes, and then have users test them. from the gathered feedback, we can iterate this a few times.
 
-The process turned out as follows:
+Seeing how other mobile editors organize functionality helps a **lot** when thinking of where things go, because most problems already have well-tested solutions. For instance: a bottom bar with editor actions, the project and filename on the header, an explorer sidebar, etc...
 
-0. **Research:** Seeing how other mobile editors organize functionality helps a **lot** when thinking of where things go, because most problems already have well-tested solutions. For instance: a bottom bar with editor actions, the project and filename on the header, an explorer sidebar, etc...
++ Feedback: Mentor
++ Feedback: Users
 
-1. **Feature mapping:** A decent amount of time was spent mapping out what the current editor does onto a spreadsheet - a very rudimentary *Feature Map*. Notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
+## Step 2: Feature Mapping
 
-2. **WireFraming:**  Once the feature map was done, time to draw some screens. Below is the very first draft:
+A decent amount of time was spent mapping out what the current editor does onto a spreadsheet - a very rudimentary *Feature Map*. Notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
+
+## Step 3: Prototyping
+
+Once the feature map was done, time to draw some screens. We created a Figma project and pretty much followed the feature map when putting things in place. Below is the very first draft:
 
 
 ![First design draft of the mobile layout](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/mobile-draft-1.png)
 
 
++ Wireframing
++ User tests
+
+![Final mobile UI proposals](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/mobile-final-proposals.png)
+
+## Step 4: Coding!
+
+Now we have more confidence that the UI will fulfill its purpose. So, knowing that many things will be adjusted along the way, we begin
+
+A key point here is that some core code will be the same **regardless** of the final design we decide on. This allowed me to get some stuff out of the way as I ran the user tests.
 
 
 ## PR Timeline:
