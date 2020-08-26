@@ -256,8 +256,8 @@ p5.prototype._describeHTML = function(type, text) {
           .querySelector(`#${cnvId}accessibleOutput`)
           .insertAdjacentHTML('beforebegin', html);
       }
-      //if describeElement() has already created the container and added a table of elements
     } else {
+      //if describeElement() has already created the container and added a table of elements
       //create fallback description <p> before the table
       this.dummyDOM
         .querySelector('#' + cnvId + fallbackTableId)
@@ -266,7 +266,7 @@ p5.prototype._describeHTML = function(type, text) {
           `<p id="${cnvId + fallbackDescId}"></p>`
         );
     }
-    //If the container for the description exists
+    //if the container for the description exists
     this.descriptions.fallback = this.dummyDOM.querySelector(
       `#${cnvId}${fallbackDescId}`
     );
@@ -288,8 +288,8 @@ p5.prototype._describeHTML = function(type, text) {
           .querySelector(`#${cnvId}accessibleOutputLabel`)
           .insertAdjacentHTML('beforebegin', html);
       }
-      //if describeElement() has already created the container and added a table of elements
     } else if (this.dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
+      //if describeElement() has already created the container and added a table of elements
       //create label description <p> before the table
       this.dummyDOM
         .querySelector(`#${cnvId + labelTableId}`)
@@ -319,8 +319,8 @@ function _elementName(name) {
   if (name.endsWith('.') || name.endsWith(';') || name.endsWith(',')) {
     //replace last character with ':'
     name = name.replace(/.$/, ':');
-    //if string n does not end with ':'
   } else if (!name.endsWith(':')) {
+    //if string n does not end with ':'
     //add ':'' at the end of string
     name = name + ':';
   }
@@ -344,10 +344,10 @@ p5.prototype._describeElementHTML = function(type, name, text) {
           .querySelector(`#${cnvId}accessibleOutput`)
           .insertAdjacentHTML('beforebegin', html);
       }
-      //if describe() has already created the container and added a description
-      //and there is no table
     } else if (!this.dummyDOM.querySelector('#' + cnvId + fallbackTableId)) {
-      //create fallback table for element description after fallback description
+      //if describe() has already created the container and added a description
+      //and there is no table create fallback table for element description after
+      //fallback description
       this.dummyDOM
         .querySelector('#' + cnvId + fallbackDescId)
         .insertAdjacentHTML(
@@ -386,10 +386,10 @@ p5.prototype._describeElementHTML = function(type, name, text) {
           .querySelector(`#${cnvId}accessibleOutputLabel`)
           .insertAdjacentHTML('beforebegin', html);
       }
-      //if describe() has already created the label container and added a description
-      //and there is no table
     } else if (!this.dummyDOM.querySelector(`#${cnvId + labelTableId}`)) {
-      //create label table for element description after label description
+      //if describe() has already created the label container and added a description
+      //and there is no table create label table for element description after 
+      //label description
       this.dummyDOM
         .querySelector('#' + cnvId + labelDescId)
         .insertAdjacentHTML(
