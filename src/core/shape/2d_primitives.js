@@ -210,6 +210,19 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
       mode,
       detail
     );
+
+    //accessible Outputs
+    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+      this._accsOutput('arc', [
+        vals.x,
+        vals.y,
+        vals.w,
+        vals.h,
+        angles.start,
+        angles.stop,
+        mode
+      ]);
+    }
   }
 
   return this;
@@ -311,6 +324,11 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
   const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
+  //accessible Outputs
+  if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
+  }
+
   return this;
 };
 
@@ -365,6 +383,11 @@ p5.prototype.line = function(...args) {
 
   if (this._renderer._doStroke) {
     this._renderer.line(...args);
+  }
+
+  //accessible Outputs
+  if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    this._accsOutput('line', args);
   }
 
   return this;
@@ -438,6 +461,10 @@ p5.prototype.point = function(...args) {
       );
     } else {
       this._renderer.point(...args);
+      //accessible Outputs
+      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+        this._accsOutput('point', args);
+      }
     }
   }
 
@@ -503,6 +530,10 @@ p5.prototype.quad = function(...args) {
         args[6], args[7], 0);
     } else {
       this._renderer.quad(...args);
+      //accessibile outputs
+      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+        this._accsOutput('quadrilateral', args);
+      }
     }
   }
 
@@ -654,6 +685,11 @@ p5.prototype._renderRect = function() {
       args[i] = arguments[i];
     }
     this._renderer.rect(args);
+
+    //accessible outputs
+    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+      this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
+    }
   }
 
   return this;
@@ -688,6 +724,11 @@ p5.prototype.triangle = function(...args) {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.triangle(args);
+  }
+
+  //accessible outputs
+  if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    this._accsOutput('triangle', args);
   }
 
   return this;
