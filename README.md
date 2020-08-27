@@ -400,6 +400,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="http://tush.xyz"><img src="https://avatars1.githubusercontent.com/u/33191895?v=4" width="100px;" alt=""/><br /><sub><b>Tushar Choudhari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Code">💻</a></td>
+    <td align="center"><a href="http://nakulshahdadpuri3141@gmail.com"><img src="https://avatars2.githubusercontent.com/u/43999912?v=4" width="100px;" alt=""/><br /><sub><b>Nakul Shahdadpuri</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakul-shahdadpuri" title="Code">💻</a></td>
   </tr>
 </table>
 
