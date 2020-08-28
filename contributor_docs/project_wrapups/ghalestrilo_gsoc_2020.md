@@ -3,38 +3,33 @@
 
 #### by [@ghalestrilo](https://github.com/ghalestrilo)
 
-The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is today an important tool for the p5.js ecossystem: beginners and old-schoolers alike rely on the tool for prototyping p5 sketches, for its convenience and availability. Now, maybe you have a sketch idea while away from home, or you want to show your favorite one to your friend! So you naturally pick up your phone and realize the editor does not work very well on mobile. Slightly disappointed, you tell your friend "I'll send you a screenshot when I get home" 😢
-
-I'm [Ghales](https://ghales.top), and the story above happened to me ~~(I never sent the screenshot)~~. My project for Google Summer of Code '20 was to design and implement a mobile user interface for the editor, so that everyone can use the editor comfortably wherever they are. This requires:
+The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is an important tool in the p5.js ecosystem. Beginners and experts both rely on the tool for prototyping p5.js sketches because of its convenience and accessibility. However, one of its limitations is that it doesn’t work well on small-screen devices, such as smartphones. Perhaps you only have access to a smartphone, or from my personal experience, maybe you have a sketch idea while away from home or you want to show your favorite one to a friend. I wanted to create a version of the web editor that everyone could use comfortably wherever they are. I’m [Ghales](https://ghales.top), and my project for Google Summer of Code '20 was to design and implement a mobile user interface for the editor. This required:
 
 1. Understanding the UI limitations imposed by low-resolutions
-2. Detecting common patterns accross mobile editors
+2. Detecting common patterns across mobile editors
 3. Defining the core functionality of the editor
-4. Studying alternatives for the editor's UI and functionality solutions
-
-This is how it went:
+4. Studying alternatives for the editor’s UI and functionality solutions
 
 ## Step 1: Studying UX
 
-I have very limited understanding of UX design, so my first step was studying how to properly develop one. The main takeaway is: first we lay out everything the editor can do, understand the different user journeys within it and try different possibilities. We choose those who make the most frequent and important features easier to find. From there, we make a few wireframes, which we turn into prototypes, and then have users test them. from the gathered feedback, we can iterate this a few times.
+I have very limited understanding of UX design, so my first step was studying how to properly develop one. The main takeaway was to first lay out everything the editor can do, then understand the different user journeys within it and then try different possibilities. We chose the designs that made the most frequent and important features the easiest to find. From there, we made a few wireframes, which we turned into prototypes, and then had users test them. With the gathered feedback, we iterated on the design a few times.
 
-Seeing how other mobile editors organize functionality helps a **lot** when thinking of where things go, because most problems already have well-tested solutions. For instance: a bottom bar with editor actions, the project and filename on the header, an explorer sidebar, etc... 
+Researching how other mobile editors organize functionality also helped a lot when thinking of where to place elements in the design, because many problems already have well-tested solutions. For example creating a bottom bar with editor actions that are used often and easy to reach with a user’s thumb, or having the project and filename in the header so it’s clear to a user what they are working on.
 
 ## Step 2: Feature Mapping
 
-  
+The next phase of work was mapping out what the current editor does onto a spreadsheet, creating what is called a  feature map. When looking at the map, notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
 
-A decent amount of time was spent mapping out what the current editor does onto a spreadsheet - a very rudimentary *Feature Map*. Notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
   ![First feature map](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/mobile-feature-map.png)
 
 ## Step 3: Prototyping
 
 
-Once the feature map was done, time to draw some screens. We created a Figma project and pretty much followed the feature map when putting things in place. Below is the glorious first draft:
+Once the feature map was done, it was time to draw some screens. We created a Figma project and followed the feature map when putting things in place. Below is the glorious first draft:
 
 ![First design draft of the mobile layout](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/mobile-draft-1.png)
 
-This phase involved getting a lot of feedback both from users and my mentor, [Cassie Tarakajian (@catarak)](), who helped me a **ton** throughout the process (thank you!). Cassie pointed to the importance of accessibility, and that we made sure the app was A11Y-compliant, in both code and layout. Among other things, that means **no white on pink** text, because it's hard to read.
+This phase involved getting a lot of feedback both from users and my mentor, [Cassie Tarakajian (@catarak)](https://github.com/catarak), who helped me a ton throughout the process (thank you!). Cassie pointed to the importance of accessibility, and that we made sure the app was WCAG-compliant, in both code and layout. Among other things, that means no white on pink text, because it’s hard to read.
 
 Despite many questionable design choices here, some things did hit the spot: the floating canvas was generally appreciated, and the buttons and screen navigation were overall intuitive, which was a huge win. After a lot of back-and-forth with users, these were the final layout proposals:
 
@@ -46,7 +41,7 @@ They're mostly the same, except for the bottom bar, and the position of the navi
 
 ## Step 4: Coding!
 
-Now we have more confidence that the UI will fulfill its purpose. So, knowing that many things will be changed along the way (and also, understanding the very limited time frame left), I start coding this thing.
+With a researched and tested design, it was time to start coding. I knew I wasn’t going to implement the whole design, given that this is a summer project, but I was excited to complete as much as possible. 
 
 Some key points here:
 
@@ -63,9 +58,10 @@ To close the project, the editor had to detect automatically if it's being run o
 
 ## Conclusion
 
-The project delivered more than it set out to. Its focus was creating a design plan, and an implementation roadmap. At first we were skeptical that working, production code could be deployed by the end of summer, and that a product could be available for users to interact with, but it seems we will have it pretty soon.
+I was able to deliver more than I set out to at the beginning of the summer!. My focus was to create a design plan and an implementation roadmap. At first we were skeptical that working, production code could be deployed by the end of summer, and that a product could be available for users to interact with, but with a little more testing it will be ready!.
 
-It was my first contribution to open-source, and I learned a lot with it: doing many things I'm not used to, facing new challenges and developing new abilities. If approved by the community, this constitutes a nice milestone for the project (and for me!), and I'm excited to see how it unfolds in the future!
+It was my first contribution to open-source, and I learned a lot with it: doing many things I’m not used to, facing new challenges and developing new abilities. If approved by the community, this constitutes a nice milestone for the project (and for me!), and I’m excited to see how it unfolds in the future.
+
 
 ## Future work
 
