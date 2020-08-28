@@ -43,4 +43,4 @@ npm run release
 * `package.json`의 `name` 필드를 편집 한 경우 `npm run release`로 릴리스의 전체 테스트를 실행할 수 잇습니다. Bower 릴리스와 웹 사이트 저장소를 복제하고 푸시 할 위치를 선택하려면, 다음과 같이 추가 인수를 지정할 수 있습니다:
 `npm run release -- --bowerReleaser=username --docsReleaser=username`.
 
-__참고:__  `np` (`6.2.0`)에는 현재 네임스페이스 패키지 이름으로 릴리스를 막는 [bug](https://github.com/sindresorhus/np/issues/508)가 존재하며, 이것을 테스트해야하는 경우 `5.2.1`로 되돌릴 수 있습니다. 그렇지 않으면 게시 단계에서 실패합니다.
+__참고:__  `np` (`6.2.0`)에는 현재 네임스페이스 패키지 이름으로 릴리스를 막는 [bug](https://github.com/sindresorhus/np/issues/508)가 존재하며, 이것을 테스트해야하는 경우 `5.2.1`로 되돌릴 수 있습니다. 그렇지 않으면 릴리즈 단계에서 실패합니다.

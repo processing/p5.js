@@ -87,4 +87,4 @@ console.log(translator('fileLoading.notFound', { fileName: file.name }))
 
 ### 좀더 살펴보기
 
-[i18next 번역 기능 문서](https://www.i18next.com/translation-function/essentials)를 살펴보세요. 위에서 설명된 모든 내용들은 단지 기능들 중 일부분 일 뿐입니다.
+[i18next 번역 기능 문서](https://www.i18next.com/translation-function/essentials)를 살펴보세요. 위에서 설명된 모든 내용들은 단 일부 기능들 일 뿐입니다.
