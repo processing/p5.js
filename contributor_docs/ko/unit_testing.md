@@ -22,7 +22,7 @@ npm test
 
 ### 단윌 스위트 실행
 
-단일 테스트나 그룹 테스트를 실행하기 위해, `.js` 파일에 `suite` 혹은 `test`에 `.only`를 붙이고 위에 명령어를 사용해 테스트를 실행합니다.a
+단일 테스트나 그룹 테스트를 실행하기 위해, `.js` 파일에 `suite` 혹은 `test`에 `.only`를 붙이고 위에 명령어를 사용해 테스트를 실행합니다.
 
 **`.only`를 커밋하지 않도록 주의해주세요**(저희는 항상 CI가 _모든_ 단위 테스트를 실행하기를 원합니다.)
 
@@ -46,7 +46,7 @@ suite.only('color/p5.ColorConversion', function() {
 
 단위 테스트를 구조화하고 실행하기 위해 [mocha](https://mochajs.org)를 사용합니다.
 
-[chai의 `assert` (및`expect`)](https://www.chaijs.com/api/assert/)를 사용하여 코드의 작동 방식에 대한 개별 문장을 작성합니다.
+[chai의 `assert` (및 `expect`)](https://www.chaijs.com/api/assert/)를 사용하여 코드의 작동 방식에 대한 개별 문장을 작성합니다.
 
 ### 환경
 
@@ -59,7 +59,7 @@ suite.only('color/p5.ColorConversion', function() {
 이러한 테스트는 현재 브라우저 테스트에서만 사용할 수 있습니다(대부분의 테스트가 실행되는 위치):
 
 - `test/js/mocha_setup.js`  mocha의 몇가지 옵션을 설정
-- `test/js/chai_helpers.js` chai 설정 및 `chai.assert` 에 몇가지 도움되는 함수 추가
+- `test/js/chai_helpers.js` chai 설정 및 `chai.assert` 에 도움되는 몇가지 함수 추가
 - `test/js/p5_helpers.js` p5 스케치의 테스트를 도와주는 몇가지 헬퍼 함수 추가
 
 Node.js를 위한 설정은 `test/mocha.opts`에서 모두 수행됩니다.
@@ -74,7 +74,7 @@ p5.js 레파지토리에서 풀리퀘스트를 오픈하면, 자동으로 [테�
 
 찾을 수 없다면, 아마 해당 파일에 대한 테스트가 없기 때문일 것이기에 (아직 😉), 위에 컨벤션에 따라 새로운 파일을 생성합니다. 작성하고 있는 모듈이 동작하기위해 브라우저가 필요하다면, `test/unit`안에 넣고 싶지만, 그렇지 않다면, `test/node` 아래에 추가할 수 있습니다.
 
-**의심이 든다면 `test/unit`에 브라우저 테스트를 추가하는 것이 기본이 됩니다!(추후 필요한 경우 이동시키는 편이 매우 쉽습니다.)**
+**의심이 든다면 `test/unit`에 브라우저 테스트를 추가하면 됩니다!(추후 필요한 경우 이동하는 편이 매우 쉽습니다.)**
 
 `test/unit`에 모듈을 위한 테스트 파일을 추가해야 한다면, `test/unit/spec.js`안 `spec`배열의 테스트 아래에 모듈을 두어야 합니다. 이 부분은 테스트 실행에 필요한 모듈이 로드되어 있는지 확인합니다. 브라우저에서 `test/test.html` 파일을 보면서 해당 테스트들을 확인 할 수 있습니다.
 
@@ -119,4 +119,4 @@ test('keyIsPressed is a boolean', function() {
 });
 ```
 
-유사하게, 해당 값이 참인지 확인하기 위해 `assert.strictEqual(myp5.keyIsPressed, true)` 사용 할 수 잇습니다. chai의 assert에 대해 [여기]https://www.chaijs.com/api/assert/)에서 좀더 살펴 볼수 잇습니다. 테스트를 작성 했으므로 테스트를 실행하고 메소드가 예상대로 작동하는지 확인해보세요. 그렇지 않다면, 동일한 이슈를 생성하고, 원한다면 문제를 해결 볼 수 있습니다!
+유사하게, 해당 값이 참인지 확인하기 위해 `assert.strictEqual(myp5.keyIsPressed, true)` 사용 할 수 잇습니다. chai의 assert에 대해 [여기](https://www.chaijs.com/api/assert/)에서 좀더 살펴 볼수 잇습니다. 테스트를 작성 했으므로 테스트를 실행하고 메소드가 예상대로 작동하는지 확인해보세요. 그렇지 않다면, 동일한 이슈를 생성하고, 원한다면 문제를 해결 볼 수 있습니다!

@@ -10,15 +10,13 @@ p5.js는 여러 분야(기여자 문서, [공식 웹사이트](https://p5js.org)
 
 ### 설치
 
-i18next 통합 `src/core/internationalization.js`안에서 설정 했고 번역은`translations/`안에 있습니다.
+i18next를 `src/core/internationalization.js`안에서 통합 설정 했고 번역은`translations/`안에 있습니다.
 
 p5 스케치가 초기화 되기 전에 번역 엔진을 설정하고 브라우저 설정에서 사용자 언어를 자동으로 감지합니다. 이를 통해 스케치 `setup()` 및 `preload()`에서 발생하는 모든 오류에 대해 번역을 사용할 수 있습니다.
 
 (언어 자동 감지에서 오류가 발생하면 영어로 넘어갑니다.)
 
 #### `p5.min.js`안에서는 번역하지 않습니다.
-
-There is specific logic in the browserify build task and `src/core/init.js` to avoid loading or setting up translations in the minified build. Adding translations does not increase the size of the minified build.
 
 browserify 빌드 작업과 압축된 빌드에서 번역을 로드하거 설정하지 않도록 하는 특정 로직이 `src/core/init.js`안에 있습니다. 번역을 추가해도 압축된 빌드의 크기는 증가하지 않습니다.
 
@@ -32,7 +30,7 @@ import { translator } from './internationalization';
 
 ### 간단한 메세지
 
-국제화 없이, 텍스트 인라인 메시지를 기록 할 수 있습니다.
+국제화를 하지 않고, 텍스트 인라인 메시지를 기록 할 수 있습니다.
 
 ```js
 console.log('Loading your sketch right now!')
@@ -59,7 +57,7 @@ console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
 console.log(translator('fileLoading.notFound', { fileName: file.name }))
 ```
 
-이와 같은 번역에서는 특정 이름을 사용하는 변수가 필요하므로 반드시 해당 이름을 사용해야 합니다. 변수명을 확인하기 위해 번역파일(translations/{YOUR_LANGUAGE}/를 확인하세요)을 확인해 보세요. 번역은 번역키 안에 오브젝트 경로 아래서 찾아볼 수 있습니다.
+이와 같은 번역에서는 특정 이름을 사용하는 변수가 필요하므로 반드시 해당 이름을 사용해야 합니다. 변수명을 확인하기 위해 번역파일 (translations/{YOUR_LANGUAGE})을 확인해 보세요. 번역은 번역키 안에 오브젝트 경로 아래에서 찾아볼 수 있습니다.
 
 "`fileLoading.notFound`"는 다음에서 찾아볼 수 있습니다.
 
