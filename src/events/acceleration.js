@@ -659,18 +659,18 @@ p5.prototype._handleMotion = function() {
   } else if (window.orientation === undefined) {
     this._setProperty('deviceOrientation', 'undefined');
   }
-  const deviceMoved = this.deviceMoved || window.deviceMoved;
-  if (typeof deviceMoved === 'function') {
+  const context = this._isGlobal ? window : this;
+  if (typeof context.deviceMoved === 'function') {
     if (
       Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
       Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
       Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
     ) {
-      deviceMoved();
+      context.deviceMoved();
     }
   }
-  const deviceTurned = this.deviceTurned || window.deviceTurned;
-  if (typeof deviceTurned === 'function') {
+
+  if (typeof context.deviceTurned === 'function') {
     // The angles given by rotationX etc is from range -180 to 180.
     // The following will convert them to 0 to 360 for ease of calculation
     // of cases when the angles wrapped around.
@@ -689,7 +689,7 @@ p5.prototype._handleMotion = function() {
     if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
       wSAX = wRX;
       this._setProperty('turnAxis', 'X');
-      deviceTurned();
+      context.deviceTurned();
     }
     this.pRotateDirectionX = rotateDirectionX;
     startAngleX = wSAX - 180;
@@ -709,7 +709,7 @@ p5.prototype._handleMotion = function() {
     if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
       wSAY = wRY;
       this._setProperty('turnAxis', 'Y');
-      deviceTurned();
+      context.deviceTurned();
     }
     this.pRotateDirectionY = rotateDirectionY;
     startAngleY = wSAY - 180;
@@ -737,13 +737,12 @@ p5.prototype._handleMotion = function() {
     ) {
       startAngleZ = this.rotationZ;
       this._setProperty('turnAxis', 'Z');
-      deviceTurned();
+      context.deviceTurned();
     }
     this.pRotateDirectionZ = rotateDirectionZ;
     this._setProperty('turnAxis', undefined);
   }
-  const deviceShaken = this.deviceShaken || window.deviceShaken;
-  if (typeof deviceShaken === 'function') {
+  if (typeof context.deviceShaken === 'function') {
     let accelerationChangeX;
     let accelerationChangeY;
     // Add accelerationChangeZ if acceleration change on Z is needed
@@ -752,7 +751,7 @@ p5.prototype._handleMotion = function() {
       accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
     }
     if (accelerationChangeX + accelerationChangeY > shake_threshold) {
-      deviceShaken();
+      context.deviceShaken();
     }
   }
 };

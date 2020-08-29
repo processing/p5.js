@@ -244,8 +244,7 @@ class p5 {
       }
 
       const context = this._isGlobal ? window : this;
-      const userPreload = context.preload;
-      if (userPreload) {
+      if (context.preload) {
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -274,7 +273,7 @@ class p5 {
           obj[method] = this._wrapPreload(obj, method);
         }
 
-        userPreload();
+        context.preload();
         this._runIfPreloadsAreDone();
       } else {
         this._setup();
