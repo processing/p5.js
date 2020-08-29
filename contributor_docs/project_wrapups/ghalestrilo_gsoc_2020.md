@@ -3,7 +3,7 @@
 
 #### by [@ghalestrilo](https://github.com/ghalestrilo)
 
-The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is an important tool in the p5.js ecosystem. Beginners and experts both rely on the tool for prototyping p5.js sketches because of its convenience and accessibility. However, one of its limitations is that it doesn’t work well on small-screen devices, such as smartphones. Perhaps you only have access to a smartphone, or from my personal experience, maybe you have a sketch idea while away from home or you want to show your favorite one to a friend. I wanted to create a version of the web editor that everyone could use comfortably wherever they are. I’m [Ghales](https://ghales.top), and my project for Google Summer of Code '20 was to design and implement a mobile user interface for the editor. This required:
+The [p5.js Web Editor](https://github.com/processing/p5.js-web-editor) is an important tool in the p5.js ecosystem. Beginners and experts both rely on the tool for prototyping p5.js sketches because of its convenience and accessibility. However, one of its limitations is that it doesn’t work well on small-screen devices, such as smartphones. Perhaps you only have access to a smartphone, or from my personal experience, maybe you have a sketch idea while away from home or you want to show your favorite one to a friend. I wanted to create a version of the web editor that everyone could use comfortably wherever they are. I’m [Ghales](https://ghales.top), and my project for Google Summer of Code '20 was to design and implement a mobile user interface for the editor. This required:
 
 1. Understanding the UI limitations imposed by low-resolutions
 2. Detecting common patterns across mobile editors
@@ -14,11 +14,11 @@ The [p5.js web editor](https://github.com/processing/p5.js-web-editor) is an imp
 
 I have very limited understanding of UX design, so my first step was studying how to properly develop one. The main takeaway was to first lay out everything the editor can do, then understand the different user journeys within it and then try different possibilities. We chose the designs that made the most frequent and important features the easiest to find. From there, we made a few wireframes, which we turned into prototypes, and then had users test them. With the gathered feedback, we iterated on the design a few times.
 
-Researching how other mobile editors organize functionality also helped a lot when thinking of where to place elements in the design, because many problems already have well-tested solutions. For example creating a bottom bar with editor actions that are used often and easy to reach with a user’s thumb, or having the project and filename in the header so it’s clear to a user what they are working on.
+Researching how other mobile editors organize functionality also helped a lot when thinking of where to place elements in the design, because many problems already have well-tested solutions. For example, creating a bottom bar with editor actions that are used often and easy to reach with a user’s thumb, or having the project and filename in the header so it’s clear to a user what they are working on.
 
 ## Step 2: Feature Mapping
 
-The next phase of work was mapping out what the current editor does onto a spreadsheet, creating what is called a  feature map. When looking at the map, notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
+The next phase of work was mapping out what the current editor does onto a spreadsheet, creating what is called a *feature map*. When looking at the map, notice how the UI is described in a tree structure, where the further from the root, the more clicks a functionality takes. The most urgent ones need to be as left as possible, near the user.
 
   ![First feature map](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/mobile-feature-map.png)
 
