@@ -402,6 +402,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://tush.xyz"><img src="https://avatars1.githubusercontent.com/u/33191895?v=4" width="100px;" alt=""/><br /><sub><b>Tushar Choudhari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Code">💻</a></td>
     <td align="center"><a href="http://nakulshahdadpuri3141@gmail.com"><img src="https://avatars2.githubusercontent.com/u/43999912?v=4" width="100px;" alt=""/><br /><sub><b>Nakul Shahdadpuri</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakul-shahdadpuri" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/surajsurajsuraj"><img src="https://avatars1.githubusercontent.com/u/45002201?v=4" width="100px;" alt=""/><br /><sub><b>surajsurajsuraj</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asurajsurajsuraj" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://connieliu0.github.io"><img src="https://avatars3.githubusercontent.com/u/50529223?v=4" width="100px;" alt=""/><br /><sub><b>Connie Liu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=connieliu0" title="Code">💻</a> <a href="#design-connieliu0" title="Design">🎨</a></td>
   </tr>
 </table>
 

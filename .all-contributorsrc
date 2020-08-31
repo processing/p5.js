@@ -2077,6 +2077,16 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "connieliu0",
+      "name": "Connie Liu",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/50529223?v=4",
+      "profile": "http://connieliu0.github.io",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "repoType": "github",
