@@ -1,5 +1,5 @@
 # p5 for 50+ teaching
-#### by Inhwa Yeom ([@junshern](https://github.com/yinhwa)), mentored by [Qianqian Ye](https://qianqian-ye.com) 
+#### by Inhwa Yeom ([@yinhwa](https://github.com/yinhwa)), mentored by [Qianqian Ye](https://qianqian-ye.com) 
 
 
 ## Overview
