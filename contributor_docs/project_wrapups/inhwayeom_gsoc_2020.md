@@ -38,12 +38,12 @@ Based on this analysis, design principle for creating /teach page, and created s
 
 ### Feature & Use Flow Design for /teach 
 
-####1) Leading Users to /teach Page
+#### 1) Leading Users to /teach Page
 Instead of adding a direct link on the sidemenu, which already has 15, I added hyperlinks to some existing text and button elements:
 - main page > "Get Involved" > text: "teach a workshop or class"
 - "/learn" page > "Contributing to the Community" > "Teach" tab
 
-####2) Basic Structure of /teach 
+#### 2) Basic Structure of /teach 
 Just as the structure of other pages, /teach also has less than three steps for exploration: introduction & submission guideline, search filter, and search results
 
 #### 3) Personalizing Information
