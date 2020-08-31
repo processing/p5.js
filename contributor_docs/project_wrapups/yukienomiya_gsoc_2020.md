@@ -6,6 +6,8 @@ Throughout these past three months, I worked on improving and facilitating the i
 
 As the title of my project suggests, I originally planned to also add the Italian translation to the p5.js website. During the coding period, however, Evelyn and I decided to focus on the i18n improvements and prioritize building a new tool (**p5.js-website-translator**) over the completion of the Italian translation.
 
+I wrote a [Design Doc](https://docs.google.com/document/d/1l8-h3fjIS_o7ncG7OJXPwOFA1O3htVjjJ_a_RgxoCxk/edit?usp=sharing) for the i18n improvements, where I explained the reasoning behind some choices and other possible future extensions to the project.
+
 My contributions mostly concern the [p5.js-website](https://github.com/processing/p5.js-website) and [p5.js-website-translator](https://github.com/processing/p5.js-website-translator) repositories.
 
 ## Contributions
