@@ -8,6 +8,8 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 * [p5.js Web Editor Mobile UI](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/ghalestrilo_gsoc_2020.md) by [ghales](https://github.com/ghalestrilo), 2020
 * [Extending the p5.js Friendly Error System](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/akshaypadte_gsoc_2020.md) by Akshay Padte, 2020
 * [Increasing the Organization and Scope of the p5.js Showcase](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/connieliu_gsoc_2020.md) by Connie Liu, 2020
+* [p5 for 50+ teaching](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/inhwayeom_gsoc_2020.md) by Inhwa Yeom, 2020
+* [i18n improvements and Italian translation](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/yukienomiya_gsoc_2020.md) by Yukie Nomiya, 2020
 
 
 ### Google Summer of Code 2019
