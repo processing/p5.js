@@ -269,9 +269,9 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 };
 
 /**
- * Draws a circle to the screen. A circle is a simple closed shape.It is the set
+ * Draws a circle to the screen. A circle is a simple closed shape. It is the set
  * of all points in a plane that are at a given distance from a given point,
- * the centre.This function is a special case of the ellipse() function, where
+ * the centre. This function is a special case of the ellipse() function, where
  * the width and height of the ellipse are the same. Height and width of the
  * ellipse correspond to the diameter of the circle. By default, the first two
  * parameters set the location of the centre of the circle, the third sets the
