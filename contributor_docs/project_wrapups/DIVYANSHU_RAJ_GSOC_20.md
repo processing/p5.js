@@ -45,7 +45,7 @@ here to save the day  , which with help of WEBPACK ( module bundler ) ships the 
 
 
 
-## Class Based Audio Nodes
+## ES6 class syntax 
 
 The introduction of es6 classes into the JS world , was a great relief for developers out there , though its a syntactic sugar for ``constructor functions`` yet it abstracts out the protypal approach under the hood ,leaving a cleaner interface to the developers .
 
@@ -53,7 +53,7 @@ The introduction of es6 classes into the JS world , was a great relief for devel
 
 when it comes to AUDIO GRAPHS , where one node is connected to so many other nodes and inherit property from its parent nodes , a more robust and cleaner  implementation of Nodes was required and ES6 classes rocked the way  .
 
-Following PR REVAMPED the p5.sound's AUDIO NODES ( a wrapper over WEB AUDIO API's AUDIO NODES )   to use ES6 Classes 
+Following PR REVAMPED the p5.sound's   AUDIO NODES from ``funtion syntax`` to  ``ES6 classes syntax``
 
  [ [#502](https://github.com/processing/p5.js-sound/pull/502)
 [#503](https://github.com/processing/p5.js-sound/pull/503)
