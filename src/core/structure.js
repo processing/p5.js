@@ -466,10 +466,8 @@ p5.prototype.redraw = function(n) {
   }
 
   const context = this._isGlobal ? window : this;
-  const userSetup = context.setup;
-  const userDraw = context.draw;
-  if (typeof userDraw === 'function') {
-    if (typeof userSetup === 'undefined') {
+  if (typeof context.draw === 'function') {
+    if (typeof context.setup === 'undefined') {
       context.scale(context._pixelDensity, context._pixelDensity);
     }
     const callMethod = f => {
@@ -487,7 +485,7 @@ p5.prototype.redraw = function(n) {
       context._registeredMethods.pre.forEach(callMethod);
       this._inUserDraw = true;
       try {
-        userDraw();
+        context.draw();
       } finally {
         this._inUserDraw = false;
       }
