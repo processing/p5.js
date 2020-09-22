@@ -405,6 +405,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/surajsurajsuraj"><img src="https://avatars1.githubusercontent.com/u/45002201?v=4" width="100px;" alt=""/><br /><sub><b>surajsurajsuraj</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asurajsurajsuraj" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://connieliu0.github.io"><img src="https://avatars3.githubusercontent.com/u/50529223?v=4" width="100px;" alt=""/><br /><sub><b>Connie Liu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=connieliu0" title="Code">💻</a> <a href="#design-connieliu0" title="Design">🎨</a></td>
     <td align="center"><a href="http://zeke.sikelianos.com"><img src="https://avatars1.githubusercontent.com/u/2289?v=4" width="100px;" alt=""/><br /><sub><b>Zeke Sikelianos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zeke" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/dryniguez"><img src="https://avatars3.githubusercontent.com/u/5209194?v=4" width="100px;" alt=""/><br /><sub><b>Ramon Jr. Yniguez</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TheoNeUpKid88" title="Code">💻</a></td>
   </tr>
 </table>
 
