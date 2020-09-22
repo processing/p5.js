@@ -407,6 +407,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://zeke.sikelianos.com"><img src="https://avatars1.githubusercontent.com/u/2289?v=4" width="100px;" alt=""/><br /><sub><b>Zeke Sikelianos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zeke" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/dryniguez"><img src="https://avatars3.githubusercontent.com/u/5209194?v=4" width="100px;" alt=""/><br /><sub><b>Ramon Jr. Yniguez</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TheoNeUpKid88" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://twitter.com/Benoit_Boure"><img src="https://avatars0.githubusercontent.com/u/7089997?v=4" width="100px;" alt=""/><br /><sub><b>Benoît Bouré</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bboure" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
