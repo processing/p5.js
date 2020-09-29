@@ -2123,6 +2123,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "HeroicHitesh",
+      "name": "Hitesh Kumar",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/37622734?v=4",
+      "profile": "http://www.linkedin.com/in/heroichitesh",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
