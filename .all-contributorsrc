@@ -2132,6 +2132,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "samporapeli",
+      "name": "Sampo Rapeli",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/35733458?v=4",
+      "profile": "https://samporapeli.fi",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
