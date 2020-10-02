@@ -891,6 +891,7 @@ p5.Image.prototype.reset = function() {
     props.playing = true;
     props.timeSinceStart = 0;
     props.timeDisplayed = 0;
+    props.lastChangeTime = 0;
     props.loopCount = 0;
     props.displayIndex = 0;
     this.drawingContext.putImageData(props.frames[0].image, 0, 0);
@@ -962,6 +963,7 @@ p5.Image.prototype.setFrame = function(index) {
     const props = this.gifProperties;
     if (index < props.numFrames && index >= 0) {
       props.timeDisplayed = 0;
+      props.lastChangeTime = 0;
       props.displayIndex = index;
       this.drawingContext.putImageData(props.frames[index].image, 0, 0);
     } else {
