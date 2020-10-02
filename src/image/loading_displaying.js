@@ -220,7 +220,8 @@ function _createGif(
       frames,
       numFrames,
       playing: true,
-      timeDisplayed: 0
+      timeDisplayed: 0,
+      lastChangeTime: 0
     };
   }
 
