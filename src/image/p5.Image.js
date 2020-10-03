@@ -224,17 +224,18 @@ p5.Image = function(width, height) {
  */
 p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
+  const curTime = pInst._lastFrameTime + pInst.deltaTime;
   if (props.lastChangeTime === 0) {
-    props.lastChangeTime = pInst.millis();
+    props.lastChangeTime = curTime;
   }
   if (props.playing) {
-    props.timeDisplayed = pInst.millis() - props.lastChangeTime;
+    props.timeDisplayed = curTime - props.lastChangeTime;
     const curDelay = props.frames[props.displayIndex].delay;
     if (props.timeDisplayed >= curDelay) {
       //GIF is bound to 'realtime' so can skip frames
       const skips = Math.floor(props.timeDisplayed / curDelay);
       props.timeDisplayed = 0;
-      props.lastChangeTime = millis();
+      props.lastChangeTime = curTime;
       props.displayIndex += skips;
       props.loopCount = Math.floor(props.displayIndex / props.numFrames);
       if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
