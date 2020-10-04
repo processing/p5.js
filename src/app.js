@@ -21,7 +21,7 @@ import './core/shape/2d_primitives';
 import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
-//accessibility
+// accessibility
 import './accessibility/outputs';
 import './accessibility/textOutput';
 import './accessibility/gridOutput';
