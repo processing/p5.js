@@ -2141,6 +2141,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "milchreis",
+      "name": "Nick Müller",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/544436?v=4",
+      "profile": "https://github.com/Milchreis",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",
