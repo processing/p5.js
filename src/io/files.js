@@ -267,7 +267,18 @@ p5.prototype.loadStrings = function(...args) {
         .replace(/\r\n/g, '\r')
         .replace(/\n/g, '\r')
         .split(/\r/);
-      Array.prototype.push.apply(ret, lines);
+
+      // same logic as in p5.RendererGL.prototype._flatten, see PR#2455
+      if (lines.length > 20000) {
+        // large number of lines can potentially lead to the browser
+        // exceeding its call stack size. better be slow but safe.
+        lines.forEach(line => {
+          ret.push(line);
+        });
+      } else {
+        // use faster recursive method
+        Array.prototype.push.apply(ret, lines);
+      }
 
       if (typeof callback !== 'undefined') {
         callback(ret);
