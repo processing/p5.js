@@ -2159,6 +2159,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "berkeozgen08",
+      "name": "Berke Özgen",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/56646605?v=4",
+      "profile": "https://berkeozgen.me/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
