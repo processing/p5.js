@@ -413,6 +413,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://samporapeli.fi"><img src="https://avatars0.githubusercontent.com/u/35733458?v=4" width="100px;" alt=""/><br /><sub><b>Sampo Rapeli</b></sub></a><br /><a href="#example-samporapeli" title="Examples">💡</a></td>
     <td align="center"><a href="https://github.com/Milchreis"><img src="https://avatars1.githubusercontent.com/u/544436?v=4" width="100px;" alt=""/><br /><sub><b>Nick Müller</b></sub></a><br /><a href="#plugin-milchreis" title="Plugin/utility libraries">🔌</a></td>
     <td align="center"><a href="https://github.com/tankeith"><img src="https://avatars0.githubusercontent.com/u/24620742?v=4" width="100px;" alt=""/><br /><sub><b>Keith Tan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tankeith" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://berkeozgen.me/"><img src="https://avatars1.githubusercontent.com/u/56646605?v=4" width="100px;" alt=""/><br /><sub><b>Berke Özgen</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aberkeozgen08" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
