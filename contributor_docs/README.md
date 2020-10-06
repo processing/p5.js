@@ -6,20 +6,16 @@ Thanks for your interest in contributing to p5.js! Our community values contribu
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/main/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)! Or comment in the [GitHub issues](https://github.com/processing/p5.js/issues) with your contribution and we'll add you.
 
-
-
 # Prioritizing access
 
 We are prioritizing work that expands access (inclusion and accessibility) to p5.js! See [our access statement](./access.md) for more details.
-
-
 
 # Where our code lives
 
 The overarching p5.js project includes some repositories other than this one:
 
-- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren Lee McCarthy](https://github.com/lmccart).
-- [p5.js-website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren Lee McCarthy](https://github.com/lmccart).
+- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Moira Turner](https://github.com/mcturner1995).
+- [p5.js-website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Moira Turner](https://github.com/mcturner1995).
 - [p5.js-sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor) This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
 
