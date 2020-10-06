@@ -148,7 +148,7 @@ p5.prototype.noSmooth = function() {
  *
  * rectMode(CORNERS);
  * fill(100);
- * rect(25, 25, 50, 50); // Draw gray rectanle using CORNERS mode
+ * rect(25, 25, 50, 50); // Draw gray rectangle using CORNERS mode
  * </code>
  * </div>
  *
