@@ -166,5 +166,12 @@ suite('Random', function() {
         }
       });
     });
+
+    suite('randomGaussian(42, 0)', function() {
+      test('should return 42', function() {
+        result = myp5.randomGaussian(42, 0);
+        assert.isTrue(result === 42);
+      });
+    });
   });
 });
