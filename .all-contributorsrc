@@ -2168,6 +2168,16 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "musabkilic",
+      "name": "Musab Kılıç",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/30195912?v=4",
+      "profile": "https://musab.me",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
