@@ -22,7 +22,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 # 저장소 파일 구조
 
-본 프로젝트엔 많은 파일들이 있습니다! 여기에 그 간략한 개요가 있습니다. 헷갈릴 수도 있지만, 기여하기 위해서 저장소의 모든 파일을 이해할 필요까지는 없습니다. 우리는 한 영역(인라인 도큐멘테이션을 고치는 것이 한 예가 될 수 있겠습니다)에서 시작해서 차근차근 다른 영역으로 나아가는 걸 권장합니다. 루이사 페레이라(Luisa Pereira)의 강의 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에 p5.js 작업 흐름에 사용되는 도구와 파일들에 대한 소개를 동영상으로 확인하실 수 있습니다.
+본 프로젝트엔 많은 파일들이 있습니다! 여기에 그 간략한 개요가 있습니다. 헷갈릴 수도 있지만, 기여하기 위해서 저장소의 모든 파일을 이해할 필요까지는 없습니다. 우리는 한 영역(인라인 도큐멘테이션을 고치는 것이 한 예가 될 수 있겠습니다)에서 시작해서 차근차근 다른 영역으로 나아가는 걸 권장합니다. 루이사 페레이라(Luisa Pereira)의 강의 [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation)에 p5.js 작업 흐름에 사용되는 도구와 파일들에 대한 소개를 동영상으로 확인하실 수 있습니다.
 
 - `contributor_docs/`에는 컨트리뷰터들을 위한 관례와 원칙을 설명하는 문서가 들어 있습니다.
 - `docs/`에는 사실 문서들이 없습니다! 대신, [온라인 레퍼런스 매뉴얼](https://p5js.org/reference)을 생성하기 위한 코드가 담겨 있습니다.
@@ -188,7 +188,7 @@ $ npm run dev
 # 기타
 
 - [contributor_docs/](https://github.com/processing/p5.js/tree/main/contributor_docs) 폴더에는 살펴볼만한 다른 파일들도 있습니다. 이들은 본 프로젝트의 기술적인 혹은 비기술적인 각 영역과 관계된 것들입니다.
-- p5.js 개발 작업 흐름에서 사용되는 도구와 파일들에 대한 영상 설명은 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/)에서 보실 수 있습니다.
+- p5.js 개발 작업 흐름에서 사용되는 도구와 파일들에 대한 영상 설명은 [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation)에서 보실 수 있습니다.
 - [코딩 트레인의 이 동영상](https://youtu.be/Rr3vLyP1Ods)🚋🌈에서는 p5.js에 기술적 기여를 시작하는 것에 대한 개요를 제공합니다.
 - p5.js [도커(Docker) 이미지](https://github.com/toolness/p5.js-docker)는 [도커](https://www.docker.com/)에 마운트 될 수 있는데, 이는 [Node](https://nodejs.org/) 같은 필수 요소들을 수동으로 설치할 필요 없이, 그리고 도커 설치를 제외하고는 어떤 방식으로든지 호스트 운영 체제에 영향을 주지 않고도 p5.js를 개발하는데에 사용될 수 있습니다.
 - p5.js 라이브러리의 빌드 과정은 [json 데이터 파일](https://p5js.org/reference/data.json)을 생성하는데, 이는 p5.js의 공개 API를 담고 있으며, 이는 에디터에서 p5.js 메서드를 자동으로 완성하는 등의 자동화된 툴링에 사용될 수 있습니다. 이 파일은 p5.js 웹사이트에서 호스트 되지만, 저장소의 일부로 포함되어 있지는 않습니다.

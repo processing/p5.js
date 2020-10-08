@@ -18,7 +18,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 # 文件结构
 
-这个代码库有很多文件，所以这里提供了文件总览。有些文件可能很难懂——不过你并不需要每一个都看懂才能开始。我们建议你先从一个特定区域入手（例如说，修复某些内联参考文献），并逐渐地探索更多领域。Luisa Pereira 的 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) 也给出了 p5.js 工具与文件的视频总览。
+这个代码库有很多文件，所以这里提供了文件总览。有些文件可能很难懂——不过你并不需要每一个都看懂才能开始。我们建议你先从一个特定区域入手（例如说，修复某些内联参考文献），并逐渐地探索更多领域。Luisa Pereira 的 [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) 也给出了 p5.js 工具与文件的视频总览。
 
 - `contributor_docs/` 包含了贡献者所需遵循的原则；
 - `docs/` 并不包含参考文献！它包含了 _*生成*_ [线上参考文献](https://p5js.org/reference/)的代码；
