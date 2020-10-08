@@ -267,7 +267,17 @@ p5.prototype.loadStrings = function(...args) {
         .replace(/\r\n/g, '\r')
         .replace(/\n/g, '\r')
         .split(/\r/);
-      Array.prototype.push.apply(ret, lines);
+
+      // safe insert approach which will not blow up stack when inserting
+      // >100k lines, but still be faster than iterating line-by-line. based on
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply#Examples
+      const QUANTUM = 32768;
+      for (let i = 0, len = lines.length; i < len; i += QUANTUM) {
+        Array.prototype.push.apply(
+          ret,
+          lines.slice(i, Math.min(i + QUANTUM, len))
+        );
+      }
 
       if (typeof callback !== 'undefined') {
         callback(ret);
