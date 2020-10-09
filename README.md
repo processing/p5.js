@@ -417,6 +417,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://berkeozgen.me/"><img src="https://avatars1.githubusercontent.com/u/56646605?v=4" width="100px;" alt=""/><br /><sub><b>Berke Özgen</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aberkeozgen08" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://musab.me"><img src="https://avatars3.githubusercontent.com/u/30195912?v=4" width="100px;" alt=""/><br /><sub><b>Musab Kılıç</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Tests">⚠️</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://nmarino.dev"><img src="https://avatars2.githubusercontent.com/u/56003967?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nsmarino" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
