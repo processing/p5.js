@@ -160,7 +160,7 @@ Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
 # Iné
 
-- [Náhľad Dovnútra p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
+- [Náhľad Dovnútra p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
 - p5.js [Docker image](https://github.com/toolness/p5.js-docker) môže byť namontovaný do [Docker](https://www.docker.com/) a použitý na vývoj p5.js bez potreby manuálnej inštalácie požiadaviek ako [Node](https://nodejs.org/) alebo iných, takých, ktoré ovlyvňujú hosťovský operačný systém (s výnimkou inštalácie Docker-a).
 - Budovací proces knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
 
