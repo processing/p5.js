@@ -37,7 +37,7 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "@babel/register": "^7.7.7",
-    "all-contributors-cli": "^5.11.0",
+    "all-contributors-cli": "^6.19.0",
     "babel-plugin-i18next-extract": "^0.5.0",
     "babel-plugin-istanbul": "^5.2.0",
     "babel-plugin-static-fs": "^1.2.1",
