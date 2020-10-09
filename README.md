@@ -55,6 +55,7 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
 * [@lmccart](https://github.com/lmccart) project lead
+* [@outofambit](https://github.com/outofambit) areas: color, core, DOM, events, build process, localization tools, unit testing, friendly errors, [access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)
 * more to come...
 
 ## Contributors
