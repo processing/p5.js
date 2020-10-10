@@ -2187,6 +2187,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "gregsadetsky",
+      "name": "Greg Sadetsky",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1017304?v=4",
+      "profile": "https://greg.technology/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

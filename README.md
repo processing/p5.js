@@ -438,7 +438,8 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://musab.me"><img src="https://avatars3.githubusercontent.com/u/30195912?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Musab Kılıç</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Tests">⚠️</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://nmarino.dev"><img src="https://avatars2.githubusercontent.com/u/56003967?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nicholas Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nsmarino" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://nmarino.dev"><img src="https://avatars2.githubusercontent.com/u/56003967?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nsmarino" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://greg.technology/"><img src="https://avatars0.githubusercontent.com/u/1017304?v=4" width="100px;" alt=""/><br /><sub><b>Greg Sadetsky</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gregsadetsky" title="Code">💻</a></td>
   </tr>
 </table>
 
