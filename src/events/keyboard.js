@@ -84,7 +84,6 @@ p5.prototype.key = '';
  *   } else if (keyCode === DOWN_ARROW) {
  *     fillVal = 0;
  *   }
- *   return false; // prevent default
  * }
  * </code></div>
  * <div><code>
@@ -93,7 +92,6 @@ p5.prototype.key = '';
  *   background('yellow');
  *   text(`${key} ${keyCode}`, 10, 40);
  *   print(key, ' ', keyCode);
- *   return false; // prevent default
  * }
  * </code></div>
  * @alt
