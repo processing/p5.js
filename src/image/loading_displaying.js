@@ -213,6 +213,10 @@ function _createGif(
       loopLimit = null;
     }
 
+    // we used the pImg for painting and saving during load
+    // so we have to reset it to the first frame
+    pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+
     pImg.gifProperties = {
       displayIndex: 0,
       loopLimit,
@@ -220,7 +224,8 @@ function _createGif(
       frames,
       numFrames,
       playing: true,
-      timeDisplayed: 0
+      timeDisplayed: 0,
+      lastChangeTime: 0
     };
   }
 
