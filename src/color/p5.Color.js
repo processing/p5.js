@@ -76,8 +76,18 @@ p5.Color = function(pInst, vals) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * createCanvas(200, 100);
+ * let myColor;
+ * stroke(255);
+ * myColor = color(100, 130, 250);
+ * text(myColor.toString('#rrggbb'), 25, 25);
+ * </code>
+ * </div>
+ *
  * @alt
- * A canvas with 3 text representation of thier color.
+ * A canvas with 3 text representation of their color.
  */
 p5.Color.prototype.toString = function(format) {
   const a = this.levels;
