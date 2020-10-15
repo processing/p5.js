@@ -164,7 +164,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     }
   };
 
-  // Imediate Mode
+  // Immediate Mode
   // Geometry and Material hashes stored here
   this.immediateMode = {
     geometry: new p5.Geometry(),
