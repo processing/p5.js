@@ -441,6 +441,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://nmarino.dev"><img src="https://avatars2.githubusercontent.com/u/56003967?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nsmarino" title="Documentation">📖</a></td>
     <td align="center"><a href="https://greg.technology/"><img src="https://avatars0.githubusercontent.com/u/1017304?v=4" width="100px;" alt=""/><br /><sub><b>Greg Sadetsky</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gregsadetsky" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Priya-Pathak"><img src="https://avatars1.githubusercontent.com/u/39853633?v=4" width="100px;" alt=""/><br /><sub><b>Priya-Pathak</b></sub></a><br /><a href="#example-Priya-Pathak" title="Examples">💡</a></td>
+    <td align="center"><a href="https://github.com/daniel-michel"><img src="https://avatars1.githubusercontent.com/u/65034538?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Michel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=daniel-michel" title="Code">💻</a></td>
   </tr>
 </table>
 
