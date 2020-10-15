@@ -78,10 +78,7 @@ p5.Color = function(pInst, vals) {
  *
  * <div>
  * <code>
- * createCanvas(200, 100);
- * let myColor;
- * stroke(255);
- * myColor = color(100, 130, 250);
+ * let myColor = color(100, 130, 250);
  * text(myColor.toString('#rrggbb'), 25, 25);
  * </code>
  * </div>
