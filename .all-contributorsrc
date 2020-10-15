@@ -2205,6 +2205,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "daniel-michel",
+      "name": "Daniel Michel",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/65034538?v=4",
+      "profile": "https://github.com/daniel-michel",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
