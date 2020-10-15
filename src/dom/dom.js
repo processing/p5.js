@@ -2440,7 +2440,7 @@ p5.MediaElement.prototype.play = function() {
     promise = this.elt.play();
   }
   if (promise && promise.catch) {
-    promise.catch(function(e) {
+    promise.catch(e => {
       // if it's an autoplay failure error
       if (e.name === 'NotAllowedError') {
         p5._friendlyAutoplayError(this.src);
