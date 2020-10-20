@@ -443,6 +443,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/Priya-Pathak"><img src="https://avatars1.githubusercontent.com/u/39853633?v=4" width="100px;" alt=""/><br /><sub><b>Priya-Pathak</b></sub></a><br /><a href="#example-Priya-Pathak" title="Examples">💡</a></td>
     <td align="center"><a href="https://github.com/daniel-michel"><img src="https://avatars1.githubusercontent.com/u/65034538?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Michel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=daniel-michel" title="Code">💻</a></td>
     <td align="center"><a href="https://nisar.dev"><img src="https://avatars3.githubusercontent.com/u/46004116?v=4" width="100px;" alt=""/><br /><sub><b>Nisar Hassan Naqvi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nisarhassan12" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/shocknoble"><img src="https://avatars2.githubusercontent.com/u/36461802?v=4" width="100px;" alt=""/><br /><sub><b>Joshua Noble</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shocknoble" title="Documentation">📖</a></td>
   </tr>
 </table>
 

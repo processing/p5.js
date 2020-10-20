@@ -2223,6 +2223,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shocknoble",
+      "name": "Joshua Noble",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/36461802?v=4",
+      "profile": "https://github.com/shocknoble",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
