@@ -666,7 +666,7 @@ p5.Image.prototype.mask = function(p5Image) {
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
- *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                POSTERIZE, ERODE, DILATE or BLUR.
  *                                See Filters.js for docs on
  *                                each available filter
  * @param  {Number} [filterParam] an optional parameter unique
