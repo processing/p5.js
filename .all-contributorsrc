@@ -2232,6 +2232,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "liampuk",
+      "name": "Liam Piesley",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/17195367?v=4",
+      "profile": "https://liamp.uk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
