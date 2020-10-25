@@ -16,14 +16,18 @@ To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it
 #### Most appropriate sub-area of p5.js?
 
 - [ ] Accessibility (Web Accessibility)
+- [ ] Build tools and processes
 - [ ] Color
 - [ ] Core/Environment/Rendering
 - [ ] Data
-- [ ] Dom
+- [ ] DOM
 - [ ] Events
+- [ ] Friendly error system
 - [ ] Image
-- [ ] IO
+- [ ] IO (Input/Output)
+- [ ] Localization
 - [ ] Math
+- [ ] Unit Testing
 - [ ] Typography
 - [ ] Utilities
 - [ ] WebGL
@@ -31,7 +35,7 @@ To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it
 
 #### Details about the bug:
 
-- p5.js version: <!-- You can first this in the first line of the p5.js file -->
+- p5.js version: <!-- You can find this in the first line of the p5.js file -->
 - Web browser and version: <!-- In the address bar, on Chrome enter "chrome://version", on Firefox enter "about:support". On Safari, use "About Safari". -->
 - Operating System: <!-- Ex: Windows/MacOSX/Linux/Android/iOS along with version -->
 - Steps to reproduce this:
