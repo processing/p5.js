@@ -446,6 +446,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/shocknoble"><img src="https://avatars2.githubusercontent.com/u/36461802?v=4" width="100px;" alt=""/><br /><sub><b>Joshua Noble</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shocknoble" title="Documentation">📖</a></td>
     <td align="center"><a href="https://liamp.uk"><img src="https://avatars1.githubusercontent.com/u/17195367?v=4" width="100px;" alt=""/><br /><sub><b>Liam Piesley</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=liampuk" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/rt1301"><img src="https://avatars0.githubusercontent.com/u/63252510?v=4" width="100px;" alt=""/><br /><sub><b>Rishabh Taparia</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rt1301" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
