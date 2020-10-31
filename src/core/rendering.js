@@ -24,7 +24,7 @@ const defaultClass = 'p5Canvas';
  * is positioned at the top left of the screen. In 3D mode (i.e. when `p5.Renderer`
  * is set to `WEBGL`), the origin is positioned at the center of the canvas.
  * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
- * 
+ *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
  * window will be given a default size of 100x100 pixels.
