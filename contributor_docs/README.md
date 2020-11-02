@@ -68,8 +68,6 @@ We know the development process can be a little tricky at first. You're not alon
 
 This process is also covered [in a video by The Coding Train.](https://youtu.be/Rr3vLyP1Ods) :train::rainbow:
 
-
-
 1. Install [node.js](http://nodejs.org/), which also automatically installs the [npm](https://www.npmjs.org) package manager.
 
 2. [Fork](https://help.github.com/articles/fork-a-repo) the [p5.js repository](https://github.com/processing/p5.js) into your own GitHub account.
@@ -113,6 +111,9 @@ This process is also covered [in a video by The Coding Train.](https://youtu.be/
 9. Once everything is ready, submit your changes as a [pull request](https://help.github.com/articles/creating-a-pull-request).
 
 
+Alternatively you can also use Gitpod for the one-click online setup for contributing with a single click it will launch a workspace and automatically clone the repo, install the dependencies run `npm run grunt` and `npm run dev`.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
 
 # Gotchas
 

@@ -1,0 +1,16 @@
+image:
+  file: .gitpod.Dockerfile
+tasks:
+  - init: | 
+      npm ci 
+      gp sync-done boot
+    command: npm run grunt 
+    
+  - name: Dev
+    command: gp sync-await boot && sleep 10 && npm run dev 
+
+ports:
+  - port: 9001
+    onOpen: open-preview
+  - port: 5900
+    onOpen: ignore
