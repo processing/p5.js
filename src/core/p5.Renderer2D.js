@@ -582,7 +582,18 @@ p5.Renderer2D.prototype.point = function(x, y) {
   this._setFill(f);
 };
 
-p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+p5.Renderer2D.prototype.quad = function(
+  x1,
+  y1,
+  x2,
+  y2,
+  x3,
+  y3,
+  x4,
+  y4,
+  detailX,
+  detailY
+) {
   const ctx = this.drawingContext;
   const doFill = this._doFill,
     doStroke = this._doStroke;
@@ -595,12 +606,41 @@ p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       return this;
     }
   }
+
+  if (typeof detailX === 'undefined') {
+    detailX = 2;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 2;
+  }
+
   ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.lineTo(x3, y3);
-  ctx.lineTo(x4, y4);
+
+  let xRes = 1.0 / (detailX - 1);
+  let yRes = 1.0 / (detailY - 1);
+  for (let y = 0; y < detailY; y++) {
+    for (let x = 0; x < detailX; x++) {
+      let pctx = x * xRes;
+      let pcty = y * yRes;
+
+      let linePt0x = (1 - pcty) * x1 + pcty * x4;
+      let linePt0y = (1 - pcty) * y1 + pcty * y4;
+      let linePt1x = (1 - pcty) * x2 + pcty * x3;
+      let linePt1y = (1 - pcty) * y2 + pcty * y3;
+
+      let ptx = (1 - pctx) * linePt0x + pctx * linePt1x;
+      let pty = (1 - pctx) * linePt0y + pctx * linePt1y;
+
+      if (x === 0 && y === 0) {
+        ctx.moveTo(ptx, pty);
+      } else {
+        ctx.lineTo(ptx, pty);
+      }
+    }
+  }
+
   ctx.closePath();
+
   if (doFill) {
     ctx.fill();
   }
