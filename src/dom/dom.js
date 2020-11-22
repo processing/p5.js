@@ -3325,7 +3325,7 @@ var Cue = function(callback, time, id, val) {
  * //
  * //
  * function setup() {
- *   createCanvas(200,200);
+ *   createCanvas(200, 200);
  *
  *   let audioEl = createAudio('assets/beat.mp3');
  *   audioEl.showControls();
