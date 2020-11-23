@@ -411,8 +411,6 @@ p5.prototype.loadTable = function(path) {
     }
   }
 
-  console.log('SEP IS ' + sep);
-
   const t = new p5.Table();
 
   const self = this;
