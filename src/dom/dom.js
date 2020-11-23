@@ -784,7 +784,7 @@ p5.prototype.createSelect = function() {
  *   radio.option('apple', 1);
  *   radio.option('bread', 2);
  *   radio.option('juice', 3);
- *   radio.style('width', '60px');
+ *   radio.style('width', '30px');
  *   textAlign(CENTER);
  * }
  *
