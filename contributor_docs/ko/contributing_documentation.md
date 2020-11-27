@@ -15,7 +15,7 @@
 
 ## ✨ 예제 만들기
 레퍼런스에 있는 예제는 매우 간단한 코드 스닛펫이지만, 더 길고 복잡한 예제도 유용합니다.
-* 현재 [프로세싱 예제 페이지](https://processing.org/examples/)에서 [p5.js 예제 페이지](http://p5js.org/examples)로 예제들을 포팅하는 작업을 진행하고 있습니다. 여러분이 이 작업에 도움을 주고 싶다면, [여기](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md)의 안내를 참조하시기 바랍니다.
+* 현재 [프로세싱 예제 페이지](https://processing.org/examples/)에서 [p5.js 예제 페이지](http://p5js.org/examples)로 예제들을 포팅하는 작업을 진행하고 있습니다. 여러분이 이 작업에 도움을 주고 싶다면, [여기](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md)의 안내를 참조하시기 바랍니다.
 * 또는 여러분이 만든 예제를 원하는 곳에 독립적으로 게시할 수 있습니다. 온라인 태그 [@p5xjs](https://twitter.com/p5xjs)로 공유하거나 또는 이메일 [hello@p5js.org](mailto:hello@p5js.org)로 알려주시면, 더욱 폭넓게 공유해 드리겠습니다! [p5.js를 임베딩 하기 위한 가이드](https://github.com/processing/p5.js/wiki/Embedding-p5.js)는 여러분의 예제를 온라인에 게시하는 데 유용할 수 있습니다.
 * 도중에 p5.js에서 버그를 발견하면 [이슈](https://github.com/processing/p5.js/issues)를 등록 해 주세요.
 

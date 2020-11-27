@@ -84,7 +84,6 @@ p5.prototype.key = '';
  *   } else if (keyCode === DOWN_ARROW) {
  *     fillVal = 0;
  *   }
- *   return false; // prevent default
  * }
  * </code></div>
  * <div><code>
@@ -93,7 +92,6 @@ p5.prototype.key = '';
  *   background('yellow');
  *   text(`${key} ${keyCode}`, 10, 40);
  *   print(key, ' ', keyCode);
- *   return false; // prevent default
  * }
  * </code></div>
  * @alt
@@ -180,9 +178,9 @@ p5.prototype._onkeydown = function(e) {
   this._setProperty('keyCode', e.which);
   this._downKeys[e.which] = true;
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
-  const keyPressed = this.keyPressed || window.keyPressed;
-  if (typeof keyPressed === 'function' && !e.charCode) {
-    const executeDefault = keyPressed(e);
+  const context = this._isGlobal ? window : this;
+  if (typeof context.keyPressed === 'function' && !e.charCode) {
+    const executeDefault = context.keyPressed(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -219,7 +217,6 @@ p5.prototype._onkeydown = function(e) {
  * black rect center. turns white when key pressed and black when pressed again
  */
 p5.prototype._onkeyup = function(e) {
-  const keyReleased = this.keyReleased || window.keyReleased;
   this._downKeys[e.which] = false;
 
   if (!this._areDownKeys()) {
@@ -231,8 +228,10 @@ p5.prototype._onkeyup = function(e) {
 
   this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
   this._setProperty('keyCode', e.which);
-  if (typeof keyReleased === 'function') {
-    const executeDefault = keyReleased(e);
+
+  const context = this._isGlobal ? window : this;
+  if (typeof context.keyReleased === 'function') {
+    const executeDefault = context.keyReleased(e);
     if (executeDefault === false) {
       e.preventDefault();
     }
@@ -283,10 +282,11 @@ p5.prototype._onkeypress = function(e) {
     return;
   }
   this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
-  this._setProperty('key', String.fromCharCode(e.which));
-  const keyTyped = this.keyTyped || window.keyTyped;
-  if (typeof keyTyped === 'function') {
-    const executeDefault = keyTyped(e);
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
+
+  const context = this._isGlobal ? window : this;
+  if (typeof context.keyTyped === 'function') {
+    const executeDefault = context.keyTyped(e);
     if (executeDefault === false) {
       e.preventDefault();
     }

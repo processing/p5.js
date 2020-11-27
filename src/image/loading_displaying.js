@@ -18,7 +18,7 @@ import '../core/friendly_errors/fes_core';
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
  *
- * The image may not be immediately available for rendering
+ * The image may not be immediately available for rendering.
  * If you want to ensure that the image is ready before doing
  * anything with it, place the <a href="#/p5/loadImage">loadImage()</a> call in <a href="#/p5/preload">preload()</a>.
  * You may also supply a callback function to handle the image when it's ready.
@@ -213,6 +213,10 @@ function _createGif(
       loopLimit = null;
     }
 
+    // we used the pImg for painting and saving during load
+    // so we have to reset it to the first frame
+    pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+
     pImg.gifProperties = {
       displayIndex: 0,
       loopLimit,
@@ -220,7 +224,8 @@ function _createGif(
       frames,
       numFrames,
       playing: true,
-      timeDisplayed: 0
+      timeDisplayed: 0,
+      lastChangeTime: 0
     };
   }
 

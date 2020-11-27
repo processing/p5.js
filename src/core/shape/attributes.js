@@ -121,7 +121,7 @@ p5.prototype.noSmooth = function() {
  * width and height.
  *
  * rectMode(CORNERS) interprets the first two parameters as the location of
- * one of the corner, and the third and fourth parameters as the location of
+ * one of the corners, and the third and fourth parameters as the location of
  * the diagonally opposite corner. Note, the rectangle is drawn between the
  * coordinates, so it is not neccesary that the first corner be the upper left
  * corner.
@@ -130,7 +130,7 @@ p5.prototype.noSmooth = function() {
  * point, while the third and fourth parameters are its width and height.
  *
  * rectMode(RADIUS) also uses the first two parameters as the shape's center
- * point, but uses the third and fourth parameters to specify half of the shapes's
+ * point, but uses the third and fourth parameters to specify half of the shape's
  * width and height respectively.
  *
  * The parameter to this method must be written in ALL CAPS because they are
@@ -148,7 +148,7 @@ p5.prototype.noSmooth = function() {
  *
  * rectMode(CORNERS);
  * fill(100);
- * rect(25, 25, 50, 50); // Draw gray rectanle using CORNERS mode
+ * rect(25, 25, 50, 50); // Draw gray rectangle using CORNERS mode
  * </code>
  * </div>
  *

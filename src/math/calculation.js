@@ -142,7 +142,7 @@ p5.prototype.constrain = function(n, low, high) {
  *
  *   // d is the length of the line
  *   // the distance from point 1 to point 2.
- *   let d = int(dist(x1, y1, x2, y2));
+ *   let d = dist(x1, y1, x2, y2);
  *
  *   // Let's write d along the line we are drawing!
  *   push();

@@ -189,7 +189,7 @@ module.exports = grunt => {
           'src/**/*.vert',
           'src/**/*.glsl'
         ],
-        tasks: ['browserify'],
+        tasks: ['browserify:dev'],
         options: {
           livereload: true
         }
@@ -325,12 +325,12 @@ module.exports = grunt => {
           {
             expand: true,
             src: ['lib/p5.js', 'lib/p5.min.js'],
-            dest: 'bower-repo/lib/'
+            dest: 'bower-repo/'
           },
           {
             expand: true,
             src: 'lib/addons/*',
-            dest: 'bower-repo/lib/addons/'
+            dest: 'bower-repo/'
           }
         ]
       },
@@ -561,5 +561,11 @@ module.exports = grunt => {
     'watch:yui'
   ]);
   grunt.registerTask('yui:build', ['yui']);
+
+  // This is called by the "prepublishOnly" script in package.json to build the
+  // documentation and the library after np bumps up the version number so that
+  // the newly built files with the updated version number can be published.
+  grunt.registerTask('prerelease', ['yui', 'build']);
+
   grunt.registerTask('default', ['lint-no-fix', 'test']);
 };

@@ -18,7 +18,7 @@ We are a community of, and in solidarity with, people from every gender identity
 
 p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contributor-docs/#/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
 
-Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/master/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
+Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
 
 ## Get Started
 
@@ -50,12 +50,33 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 
 ## Stewards
 
-Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/master/contributor_docs/organization.md).
+Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md).
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* [@lmccart](https://github.com/lmccart) project lead
-* more to come...
+* [@mcturner1995](https://github.com/mcturner1995) - project lead
+* [@lmccart](https://github.com/lmccart)
+* [@outofambit](https://github.com/outofambit)
+* [@limzykenneth](https://github.com/limzykenneth)
+
+| Area                              | Steward(s)                                   |
+| :-------------------------------- | :------------------------------------------- |
+| Accessibility (Web Accessibility) | outofambit                                   |
+| Color                             | outofambit                                   |
+| Core/Environment/Rendering        | outofambit<br/>limzykenneth                  |
+| Data                              |                                              |
+| DOM                               | outofambit                                   |
+| Events                            | outofambit<br/>limzykenneth                  |
+| Image                             |                                              |
+| IO                                | limzykenneth                                 |
+| Math                              | limzykenneth                                 |
+| Typography                        |                                              |
+| Utilities                         |                                              |
+| WebGL                             |                                              |
+| Build Process/Unit Testing        | outofambit                                   |
+| Localization Tools                | outofambit                                   |
+| Friendly Errors                   | outofambit                                   |
+| [Website](https://github.com/processing/p5.js-website) | limzykenneth            |
 
 ## Contributors
 
@@ -69,163 +90,163 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://lauren-mccarthy.com"><img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;" alt=""/><br /><sub><b>Lauren McCarthy</b></sub></a><br /></td>
     <td align="center"><a href="http://jasonsigal.cc"><img src="https://avatars2.githubusercontent.com/u/504124?v=4" width="100px;" alt=""/><br /><sub><b>Jason Sigal</b></sub></a><br /></td>
     <td align="center"><a href="https://twitter.com/KarenPunkPunk"><img src="https://avatars3.githubusercontent.com/u/1695075?v=4" width="100px;" alt=""/><br /><sub><b>Karen</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/rubayet170746"><img src="https://avatars0.githubusercontent.com/u/35176093?s=40&v=4" width="100px;" alt=""/><br /><sub><b>Shahriar Rahman Rubayet</b></sub></a><br /></td>
     <td align="center"><a href="http://www.evelyneastmond.com"><img src="https://avatars1.githubusercontent.com/u/699840?v=4" width="100px;" alt=""/><br /><sub><b>Evelyn Eastmond</b></sub></a><br /></td>
     <td align="center"><a href="http://www.shiffman.net"><img src="https://avatars0.githubusercontent.com/u/191758?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Shiffman</b></sub></a><br /></td>
     <td align="center"><a href="http://reas.com"><img src="https://avatars2.githubusercontent.com/u/677774?v=4" width="100px;" alt=""/><br /><sub><b>Casey Reas</b></sub></a><br /></td>
+    <td align="center"><a href="http://fathom.info"><img src="https://avatars1.githubusercontent.com/u/1623101?v=4" width="100px;" alt=""/><br /><sub><b>Ben Fry</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://fathom.info"><img src="https://avatars1.githubusercontent.com/u/1623101?v=4" width="100px;" alt=""/><br /><sub><b>Ben Fry</b></sub></a><br /></td>
-    <td align="center"><a href="https://designerken.be/designing"><img src="https://avatars3.githubusercontent.com/u/7543950?v=4" width="100px;" alt=""/><br /><sub><b>Kenneth Lim</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Alimzykenneth" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://limzykenneth.com"><img src="https://avatars3.githubusercontent.com/u/7543950?v=4" width="100px;" alt=""/><br /><sub><b>Kenneth Lim</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Alimzykenneth" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Documentation">📖</a></td>
     <td align="center"><a href="http://www.katehollenbach.com"><img src="https://avatars0.githubusercontent.com/u/78966?v=4" width="100px;" alt=""/><br /><sub><b>kate hollenbach</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/mlarghydracept"><img src="https://avatars2.githubusercontent.com/u/10382506?v=4" width="100px;" alt=""/><br /><sub><b>Stalgia Grigg</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/machinic"><img src="https://avatars3.githubusercontent.com/u/3985997?v=4" width="100px;" alt=""/><br /><sub><b>Jerel Johnson</b></sub></a><br /></td>
     <td align="center"><a href="http://sakshamsaxena.in"><img src="https://avatars2.githubusercontent.com/u/8774516?v=4" width="100px;" alt=""/><br /><sub><b>Saksham Saxena</b></sub></a><br /></td>
     <td align="center"><a href="https://twitter.com/ed_saber"><img src="https://avatars3.githubusercontent.com/u/11218401?v=4" width="100px;" alt=""/><br /><sub><b>saber khan</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/dhowe"><img src="https://avatars3.githubusercontent.com/u/737638?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Howe</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/dhowe"><img src="https://avatars3.githubusercontent.com/u/737638?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Howe</b></sub></a><br /></td>
     <td align="center"><a href="http://kevinsiwoff.com"><img src="https://avatars1.githubusercontent.com/u/1585036?v=4" width="100px;" alt=""/><br /><sub><b>Kevin Siwoff</b></sub></a><br /></td>
     <td align="center"><a href="http://portfolio.toolness.org/"><img src="https://avatars2.githubusercontent.com/u/124687?v=4" width="100px;" alt=""/><br /><sub><b>Atul Varma</b></sub></a><br /></td>
     <td align="center"><a href="http://www.jessklein.is/"><img src="https://avatars3.githubusercontent.com/u/535012?v=4" width="100px;" alt=""/><br /><sub><b>Jess Klein</b></sub></a><br /></td>
     <td align="center"><a href="http://unoseistres.com"><img src="https://avatars1.githubusercontent.com/u/7158943?v=4" width="100px;" alt=""/><br /><sub><b>uno seis tres</b></sub></a><br /></td>
     <td align="center"><a href="http://www.susanev.com/"><img src="https://avatars3.githubusercontent.com/u/5489125?v=4" width="100px;" alt=""/><br /><sub><b>susan evans</b></sub></a><br /></td>
     <td align="center"><a href="http://sasj.tumblr.com"><img src="https://avatars3.githubusercontent.com/u/2619912?v=4" width="100px;" alt=""/><br /><sub><b>Saskia Freeke</b></sub></a><br /></td>
+    <td align="center"><a href="http://www.phoenixperry.com"><img src="https://avatars0.githubusercontent.com/u/783625?v=4" width="100px;" alt=""/><br /><sub><b>Phoenix Perry</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://www.phoenixperry.com"><img src="https://avatars0.githubusercontent.com/u/783625?v=4" width="100px;" alt=""/><br /><sub><b>Phoenix Perry</b></sub></a><br /></td>
     <td align="center"><a href="https://s01e01.xyz/jct"><img src="https://avatars1.githubusercontent.com/u/2850174?v=4" width="100px;" alt=""/><br /><sub><b>jesse cahn-thompson</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/lee2sman"><img src="https://avatars1.githubusercontent.com/u/7377908?v=4" width="100px;" alt=""/><br /><sub><b>Lee T</b></sub></a><br /></td>
     <td align="center"><a href="http://www.cargocollective.com/chellyjin"><img src="https://avatars0.githubusercontent.com/u/26236471?v=4" width="100px;" alt=""/><br /><sub><b>Chelly Jin</b></sub></a><br /></td>
     <td align="center"><a href="http://L05.is"><img src="https://avatars0.githubusercontent.com/u/3998826?v=4" width="100px;" alt=""/><br /><sub><b>L05</b></sub></a><br /></td>
     <td align="center"><a href="http://www.diygirls.org"><img src="https://avatars3.githubusercontent.com/u/1680038?v=4" width="100px;" alt=""/><br /><sub><b>DIYgirls</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/lam802"><img src="https://avatars3.githubusercontent.com/u/8697852?v=4" width="100px;" alt=""/><br /><sub><b>lam802</b></sub></a><br /></td>
+    <td align="center"><a href="http://www.mayaman.cc"><img src="https://avatars0.githubusercontent.com/u/8224678?v=4" width="100px;" alt=""/><br /><sub><b>Maya Man</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://www.mayaman.cc"><img src="https://avatars0.githubusercontent.com/u/8224678?v=4" width="100px;" alt=""/><br /><sub><b>Maya Man</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tegacodes"><img src="https://avatars0.githubusercontent.com/u/5488045?v=4" width="100px;" alt=""/><br /><sub><b>Tega Brain</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/luisaph"><img src="https://avatars3.githubusercontent.com/u/295879?v=4" width="100px;" alt=""/><br /><sub><b>luisaph</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/almchung"><img src="https://avatars2.githubusercontent.com/u/22488500?v=4" width="100px;" alt=""/><br /><sub><b>AlM Chng</b></sub></a><br /></td>
     <td align="center"><a href="http://montoyamoraga.io"><img src="https://avatars3.githubusercontent.com/u/3926350?v=4" width="100px;" alt=""/><br /><sub><b>aarón montoya-moraga</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/catarak"><img src="https://avatars1.githubusercontent.com/u/6063380?v=4" width="100px;" alt=""/><br /><sub><b>Cassie Tarakajian</b></sub></a><br /></td>
     <td align="center"><a href="https://www.niklaspeters.com"><img src="https://avatars0.githubusercontent.com/u/20650298?s=460&amp;v=4" width="100px;" alt=""/><br /><sub><b>Niklas Peters</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nikfm" title="Documentation">📖</a> <a href="#tutorial-nikfm" title="Tutorials">✅</a></td>
+    <td align="center"><a href="http://mathuramg.com"><img src="https://avatars3.githubusercontent.com/u/5505598?v=4" width="100px;" alt=""/><br /><sub><b>Mathura MG</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://mathuramg.com"><img src="https://avatars3.githubusercontent.com/u/5505598?v=4" width="100px;" alt=""/><br /><sub><b>Mathura MG</b></sub></a><br /></td>
     <td align="center"><a href="http://1023.io"><img src="https://avatars3.githubusercontent.com/u/8662372?v=4" width="100px;" alt=""/><br /><sub><b>Yining Shi</b></sub></a><br /></td>
     <td align="center"><a href="http://kaganjd.github.io/portfolio/"><img src="https://avatars0.githubusercontent.com/u/9204835?v=4" width="100px;" alt=""/><br /><sub><b>Jen Kagan</b></sub></a><br /></td>
     <td align="center"><a href="http://fromjia.com/"><img src="https://avatars1.githubusercontent.com/u/6025418?v=4" width="100px;" alt=""/><br /><sub><b>Jiashan Wu</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/futuremarc"><img src="https://avatars3.githubusercontent.com/u/8646752?v=4" width="100px;" alt=""/><br /><sub><b>Marc Abbey</b></sub></a><br /></td>
     <td align="center"><a href="http://www.kadamwhite.com"><img src="https://avatars1.githubusercontent.com/u/442115?v=4" width="100px;" alt=""/><br /><sub><b>K.Adam White</b></sub></a><br /></td>
     <td align="center"><a href="https://www.joecridge.me/"><img src="https://avatars2.githubusercontent.com/u/11491479?v=4" width="100px;" alt=""/><br /><sub><b>Joe Cridge</b></sub></a><br /></td>
+    <td align="center"><a href="http://mikewesthad.com"><img src="https://avatars1.githubusercontent.com/u/1131802?v=4" width="100px;" alt=""/><br /><sub><b>Michael Hadley</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://mikewesthad.com"><img src="https://avatars1.githubusercontent.com/u/1131802?v=4" width="100px;" alt=""/><br /><sub><b>Michael Hadley</b></sub></a><br /></td>
     <td align="center"><a href="http://tiller.dog"><img src="https://avatars1.githubusercontent.com/u/2047962?v=4" width="100px;" alt=""/><br /><sub><b>Todd H. Page</b></sub></a><br /></td>
     <td align="center"><a href="http://jaredsprague.com/"><img src="https://avatars1.githubusercontent.com/u/3926730?v=4" width="100px;" alt=""/><br /><sub><b>Jared Sprague</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Jared-Sprague" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Jared-Sprague" title="Documentation">📖</a> <a href="#example-Jared-Sprague" title="Examples">💡</a> <a href="#financial-Jared-Sprague" title="Financial">💵</a> <a href="https://github.com/processing/p5.js/commits?author=Jared-Sprague" title="Tests">⚠️</a> <a href="https://github.com/processing/p5.js/issues?q=author%3AJared-Sprague" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://www.outofambit.com"><img src="https://avatars3.githubusercontent.com/u/964912?v=4" width="100px;" alt=""/><br /><sub><b>evelyn masso</b></sub></a><br /></td>
     <td align="center"><a href="http://bomoko.net"><img src="https://avatars1.githubusercontent.com/u/297936?v=4" width="100px;" alt=""/><br /><sub><b>Blaize Kaye</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/DarkPrince304"><img src="https://avatars1.githubusercontent.com/u/9005407?v=4" width="100px;" alt=""/><br /><sub><b>Sanchit Kapoor</b></sub></a><br /></td>
     <td align="center"><a href="http://meiamso.me"><img src="https://avatars3.githubusercontent.com/u/1187491?v=4" width="100px;" alt=""/><br /><sub><b>Oliver Wright</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/mindofmatthew"><img src="https://avatars1.githubusercontent.com/u/911429?v=4" width="100px;" alt=""/><br /><sub><b>Matthew Kaney</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/mindofmatthew"><img src="https://avatars1.githubusercontent.com/u/911429?v=4" width="100px;" alt=""/><br /><sub><b>Matthew Kaney</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/Spongman"><img src="https://avatars2.githubusercontent.com/u/1088194?v=4" width="100px;" alt=""/><br /><sub><b>Spongman</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/CleezyITP"><img src="https://avatars1.githubusercontent.com/u/5375410?v=4" width="100px;" alt=""/><br /><sub><b>Claire K-V</b></sub></a><br /></td>
     <td align="center"><a href="http://lukedubois.com"><img src="https://avatars0.githubusercontent.com/u/4147978?v=4" width="100px;" alt=""/><br /><sub><b>R. Luke DuBois</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/kevinbarabash"><img src="https://avatars3.githubusercontent.com/u/1044413?v=4" width="100px;" alt=""/><br /><sub><b>Kevin Barabash</b></sub></a><br /></td>
     <td align="center"><a href="http://andrescolubri.net/"><img src="https://avatars2.githubusercontent.com/u/62246?v=4" width="100px;" alt=""/><br /><sub><b>codeanticode</b></sub></a><br /></td>
     <td align="center"><a href="http://www.bobholtwebdev.com/"><img src="https://avatars2.githubusercontent.com/u/94167?v=4" width="100px;" alt=""/><br /><sub><b>Bob Holt</b></sub></a><br /></td>
+    <td align="center"><a href="http://sarahghp.com"><img src="https://avatars1.githubusercontent.com/u/1477362?v=4" width="100px;" alt=""/><br /><sub><b>Sarah Groff Hennigh-Palermo</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://sarahghp.com"><img src="https://avatars1.githubusercontent.com/u/1477362?v=4" width="100px;" alt=""/><br /><sub><b>Sarah Groff Hennigh-Palermo</b></sub></a><br /></td>
     <td align="center"><a href="http://jordanshaw.com"><img src="https://avatars1.githubusercontent.com/u/288140?v=4" width="100px;" alt=""/><br /><sub><b>Jordan Shaw</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/brightredchilli"><img src="https://avatars3.githubusercontent.com/u/751191?v=4" width="100px;" alt=""/><br /><sub><b>brightredchilli</b></sub></a><br /></td>
     <td align="center"><a href="http://derekkinsman.com/"><img src="https://avatars0.githubusercontent.com/u/611218?v=4" width="100px;" alt=""/><br /><sub><b>Derek J. Kinsman</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/hkirat"><img src="https://avatars2.githubusercontent.com/u/8079861?v=4" width="100px;" alt=""/><br /><sub><b>harkirat singh</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/GoToLoop"><img src="https://avatars2.githubusercontent.com/u/6551569?v=4" width="100px;" alt=""/><br /><sub><b>GoToLoop</b></sub></a><br /></td>
     <td align="center"><a href="http://maxgoldste.in/"><img src="https://avatars3.githubusercontent.com/u/1191970?v=4" width="100px;" alt=""/><br /><sub><b>Max Goldstein</b></sub></a><br /></td>
+    <td align="center"><a href="http://xystudio.cc"><img src="https://avatars2.githubusercontent.com/u/1507265?v=4" width="100px;" alt=""/><br /><sub><b>XY Feng</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://xystudio.cc"><img src="https://avatars2.githubusercontent.com/u/1507265?v=4" width="100px;" alt=""/><br /><sub><b>XY Feng</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/PaliwalSparsh"><img src="https://avatars1.githubusercontent.com/u/6324861?v=4" width="100px;" alt=""/><br /><sub><b>Sparsh Paliwal</b></sub></a><br /></td>
     <td align="center"><a href="https://austince.me"><img src="https://avatars3.githubusercontent.com/u/4655775?v=4" width="100px;" alt=""/><br /><sub><b>Austin Cawley-Edwards</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=austince" title="Documentation">📖</a> <a href="#example-austince" title="Examples">💡</a></td>
     <td align="center"><a href="http://www.estebanalmiron.com"><img src="https://avatars1.githubusercontent.com/u/1040718?v=4" width="100px;" alt=""/><br /><sub><b>taseenb</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tafsiri"><img src="https://avatars1.githubusercontent.com/u/26408?v=4" width="100px;" alt=""/><br /><sub><b>Yannick Assogba</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/johnpasquarello"><img src="https://avatars3.githubusercontent.com/u/2349625?v=4" width="100px;" alt=""/><br /><sub><b>John Pasquarello</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=johnpasquarello" title="Code">💻</a></td>
     <td align="center"><a href="http://HappyCoding.io"><img src="https://avatars1.githubusercontent.com/u/6930986?v=4" width="100px;" alt=""/><br /><sub><b>Kevin Workman</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/gauini"><img src="https://avatars1.githubusercontent.com/u/4229215?v=4" width="100px;" alt=""/><br /><sub><b>gauini</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/gauini"><img src="https://avatars1.githubusercontent.com/u/4229215?v=4" width="100px;" alt=""/><br /><sub><b>gauini</b></sub></a><br /></td>
     <td align="center"><a href="http://sansumbrella.com/"><img src="https://avatars0.githubusercontent.com/u/81553?v=4" width="100px;" alt=""/><br /><sub><b>David Wicks</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/guillemontecinos"><img src="https://avatars1.githubusercontent.com/u/19594257?v=4" width="100px;" alt=""/><br /><sub><b>Guillermo Montecinos</b></sub></a><br /></td>
     <td align="center"><a href="http://www.walking-productions.com/notslop/"><img src="https://avatars0.githubusercontent.com/u/431774?v=4" width="100px;" alt=""/><br /><sub><b>Shawn Van Every</b></sub></a><br /></td>
     <td align="center"><a href="http://www.wiredpieces.com"><img src="https://avatars3.githubusercontent.com/u/579033?v=4" width="100px;" alt=""/><br /><sub><b>Sinan Ascioglu</b></sub></a><br /></td>
     <td align="center"><a href="https://hamoid.com"><img src="https://avatars0.githubusercontent.com/u/108264?v=4" width="100px;" alt=""/><br /><sub><b>Abe Pazos</b></sub></a><br /></td>
     <td align="center"><a href="http://charstiles.com/"><img src="https://avatars1.githubusercontent.com/u/10173517?v=4" width="100px;" alt=""/><br /><sub><b>Char</b></sub></a><br /></td>
+    <td align="center"><a href="http://genekogan.com"><img src="https://avatars3.githubusercontent.com/u/1335251?v=4" width="100px;" alt=""/><br /><sub><b>Gene Kogan</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://genekogan.com"><img src="https://avatars3.githubusercontent.com/u/1335251?v=4" width="100px;" alt=""/><br /><sub><b>Gene Kogan</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/jay-manday"><img src="https://avatars2.githubusercontent.com/u/13109165?v=4" width="100px;" alt=""/><br /><sub><b>Jason Mandel</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/russomf"><img src="https://avatars1.githubusercontent.com/u/11917158?v=4" width="100px;" alt=""/><br /><sub><b>Mark Russo</b></sub></a><br /></td>
     <td align="center"><a href="http://jedahan.com"><img src="https://avatars1.githubusercontent.com/u/32407?v=4" width="100px;" alt=""/><br /><sub><b>Jonathan Dahan</b></sub></a><br /></td>
     <td align="center"><a href="https://nok.onl"><img src="https://avatars1.githubusercontent.com/u/670641?v=4" width="100px;" alt=""/><br /><sub><b>Darius Morawiec</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/darbicus"><img src="https://avatars3.githubusercontent.com/u/3231573?v=4" width="100px;" alt=""/><br /><sub><b>Darby Rathbone</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/hrishit"><img src="https://avatars1.githubusercontent.com/u/2214025?v=4" width="100px;" alt=""/><br /><sub><b>hrishit</b></sub></a><br /></td>
+    <td align="center"><a href="https://twitter.com/chiunhauyou"><img src="https://avatars1.githubusercontent.com/u/6561433?v=4" width="100px;" alt=""/><br /><sub><b>Chiun Hau You</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://twitter.com/chiunhauyou"><img src="https://avatars1.githubusercontent.com/u/6561433?v=4" width="100px;" alt=""/><br /><sub><b>Chiun Hau You</b></sub></a><br /></td>
     <td align="center"><a href="https://zaerl.com"><img src="https://avatars1.githubusercontent.com/u/167611?v=4" width="100px;" alt=""/><br /><sub><b>Francesco Bigiarini</b></sub></a><br /></td>
     <td align="center"><a href="https://fabianmoronzirfas.me"><img src="https://avatars3.githubusercontent.com/u/315106?v=4" width="100px;" alt=""/><br /><sub><b>Fabian Morón Zirfas</b></sub></a><br /></td>
     <td align="center"><a href="http://cambridgemike.com"><img src="https://avatars1.githubusercontent.com/u/163429?v=4" width="100px;" alt=""/><br /><sub><b>Mike Anderson</b></sub></a><br /></td>
     <td align="center"><a href="http://linkedin.com/in/limikael"><img src="https://avatars2.githubusercontent.com/u/902911?v=4" width="100px;" alt=""/><br /><sub><b>Mikael Lindqvist</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/ctlusto"><img src="https://avatars0.githubusercontent.com/u/3980953?v=4" width="100px;" alt=""/><br /><sub><b>Chris</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/max0410"><img src="https://avatars2.githubusercontent.com/u/16921177?v=4" width="100px;" alt=""/><br /><sub><b>Max Segal</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/tstefanich"><img src="https://avatars1.githubusercontent.com/u/810727?v=4" width="100px;" alt=""/><br /><sub><b>Tyler Stefanich</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/tstefanich"><img src="https://avatars1.githubusercontent.com/u/810727?v=4" width="100px;" alt=""/><br /><sub><b>Tyler Stefanich</b></sub></a><br /></td>
     <td align="center"><a href="http://www.sixhat.net/"><img src="https://avatars3.githubusercontent.com/u/614881?v=4" width="100px;" alt=""/><br /><sub><b>Dave</b></sub></a><br /></td>
     <td align="center"><a href="http://wxs.ca"><img src="https://avatars0.githubusercontent.com/u/326559?v=4" width="100px;" alt=""/><br /><sub><b>Xavier Snelgrove</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/DoubleJump"><img src="https://avatars2.githubusercontent.com/u/1791943?v=4" width="100px;" alt=""/><br /><sub><b>Gareth Battensby</b></sub></a><br /></td>
     <td align="center"><a href="http://taeyoonchoi.com"><img src="https://avatars3.githubusercontent.com/u/683107?v=4" width="100px;" alt=""/><br /><sub><b>Taeyoon Choi</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/akashraj9828"><img src="https://avatars0.githubusercontent.com/u/29796785?v=4" width="100px;" alt=""/><br /><sub><b>AKASH RAJ</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/keho98"><img src="https://avatars3.githubusercontent.com/u/1147122?v=4" width="100px;" alt=""/><br /><sub><b>Kevin Ho</b></sub></a><br /></td>
+    <td align="center"><a href="http://dexter1691.github.io"><img src="https://avatars0.githubusercontent.com/u/2039548?v=4" width="100px;" alt=""/><br /><sub><b>Harsh Agrawal</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://dexter1691.github.io"><img src="https://avatars0.githubusercontent.com/u/2039548?v=4" width="100px;" alt=""/><br /><sub><b>Harsh Agrawal</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/Luxapodular"><img src="https://avatars1.githubusercontent.com/u/8699557?v=4" width="100px;" alt=""/><br /><sub><b>Luca Damasco</b></sub></a><br /></td>
     <td align="center"><a href="http://lav.io"><img src="https://avatars0.githubusercontent.com/u/344861?v=4" width="100px;" alt=""/><br /><sub><b>Sam Lavigne</b></sub></a><br /></td>
     <td align="center"><a href="http://epicjefferson.com"><img src="https://avatars1.githubusercontent.com/u/658242?v=4" width="100px;" alt=""/><br /><sub><b>Epic Jefferson</b></sub></a><br /></td>
     <td align="center"><a href="http://www.carolinerecord.com/"><img src="https://avatars0.githubusercontent.com/u/3160465?v=4" width="100px;" alt=""/><br /><sub><b>Caroline Record</b></sub></a><br /></td>
     <td align="center"><a href="http://cjdecarteret.com"><img src="https://avatars2.githubusercontent.com/u/7853707?v=4" width="100px;" alt=""/><br /><sub><b>Christine de Carteret</b></sub></a><br /></td>
     <td align="center"><a href="http://crhallberg.com"><img src="https://avatars0.githubusercontent.com/u/451107?v=4" width="100px;" alt=""/><br /><sub><b>Chris Hallberg</b></sub></a><br /></td>
+    <td align="center"><a href="http://www.workergnome.com"><img src="https://avatars0.githubusercontent.com/u/34536?v=4" width="100px;" alt=""/><br /><sub><b>David Newbury</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="http://www.workergnome.com"><img src="https://avatars0.githubusercontent.com/u/34536?v=4" width="100px;" alt=""/><br /><sub><b>David Newbury</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/piinthecloud"><img src="https://avatars3.githubusercontent.com/u/6187313?v=4" width="100px;" alt=""/><br /><sub><b>piinthecloud</b></sub></a><br /></td>
     <td align="center"><a href="http://www.molleindustria.org"><img src="https://avatars1.githubusercontent.com/u/12369651?v=4" width="100px;" alt=""/><br /><sub><b>Paolo Pedercini</b></sub></a><br /></td>
     <td align="center"><a href="http://huah.net/jason/"><img src="https://avatars0.githubusercontent.com/u/3819772?v=4" width="100px;" alt=""/><br /><sub><b>Jason Alderman</b></sub></a><br /></td>
     <td align="center"><a href="http://media.mit.edu/~jacobsj"><img src="https://avatars1.githubusercontent.com/u/295733?v=4" width="100px;" alt=""/><br /><sub><b>Jennifer Jacobs</b></sub></a><br /></td>
     <td align="center"><a href="http://sepans.com"><img src="https://avatars3.githubusercontent.com/u/687513?v=4" width="100px;" alt=""/><br /><sub><b>Sepand Ansari</b></sub></a><br /></td>
     <td align="center"><a href="http://valhead.com"><img src="https://avatars2.githubusercontent.com/u/1289596?v=4" width="100px;" alt=""/><br /><sub><b>Val Head</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/six5532one"><img src="https://avatars1.githubusercontent.com/u/1435725?v=4" width="100px;" alt=""/><br /><sub><b>Emily Chen</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/six5532one"><img src="https://avatars1.githubusercontent.com/u/1435725?v=4" width="100px;" alt=""/><br /><sub><b>Emily Chen</b></sub></a><br /></td>
     <td align="center"><a href="http://benmoren.com"><img src="https://avatars3.githubusercontent.com/u/1385996?v=4" width="100px;" alt=""/><br /><sub><b>Ben Moren</b></sub></a><br /></td>
     <td align="center"><a href="http://www.runemadsen.com"><img src="https://avatars0.githubusercontent.com/u/192021?v=4" width="100px;" alt=""/><br /><sub><b>Rune Skjoldborg Madsen</b></sub></a><br /></td>
     <td align="center"><a href="http://alignedleft.com"><img src="https://avatars0.githubusercontent.com/u/1034002?v=4" width="100px;" alt=""/><br /><sub><b>Scott Murray</b></sub></a><br /></td>
     <td align="center"><a href="http://www.scottmadethis.net/"><img src="https://avatars0.githubusercontent.com/u/786436?v=4" width="100px;" alt=""/><br /><sub><b>Scott Garner</b></sub></a><br /></td>
     <td align="center"><a href="http://b2renger.github.io/"><img src="https://avatars2.githubusercontent.com/u/1818874?v=4" width="100px;" alt=""/><br /><sub><b>b2renger</b></sub></a><br /></td>
     <td align="center"><a href="http://craigpickard.net/"><img src="https://avatars2.githubusercontent.com/u/4640172?v=4" width="100px;" alt=""/><br /><sub><b>Craig Pickard</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/mxchelle"><img src="https://avatars3.githubusercontent.com/u/4912796?v=4" width="100px;" alt=""/><br /><sub><b>mxchelle</b></sub></a><br /></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/mxchelle"><img src="https://avatars3.githubusercontent.com/u/4912796?v=4" width="100px;" alt=""/><br /><sub><b>mxchelle</b></sub></a><br /></td>
     <td align="center"><a href="http://www.wickeditor.com"><img src="https://avatars0.githubusercontent.com/u/4970417?v=4" width="100px;" alt=""/><br /><sub><b>Zach Rispoli</b></sub></a><br /></td>
     <td align="center"><a href="http://www.liuchang.work"><img src="https://avatars1.githubusercontent.com/u/7039783?v=4" width="100px;" alt=""/><br /><sub><b>Liu Chang</b></sub></a><br /></td>
     <td align="center"><a href="http://cvalenzuelab.com/"><img src="https://avatars0.githubusercontent.com/u/10605821?v=4" width="100px;" alt=""/><br /><sub><b>Cristóbal Valenzuela</b></sub></a><br /></td>
     <td align="center"><a href="http://www.milespeyton.info"><img src="https://avatars2.githubusercontent.com/u/1015606?v=4" width="100px;" alt=""/><br /><sub><b>Miles Peyton</b></sub></a><br /></td>
     <td align="center"><a href="http://www.flong.com"><img src="https://avatars2.githubusercontent.com/u/290053?v=4" width="100px;" alt=""/><br /><sub><b>Golan Levin</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/feedzh"><img src="https://avatars3.githubusercontent.com/u/378124?v=4" width="100px;" alt=""/><br /><sub><b>feedzh</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/rubayet170746"><img src="https://avatars0.githubusercontent.com/u/35176093?s=40&v=4" width="100px;" alt=""/><br /><sub><b>Shahriar Rahman Rubayet</b></sub></a><br /></td>
   </tr>
   <tr>
     <td align="center"><a href="http://nicusor.org/"><img src="https://avatars0.githubusercontent.com/u/4076804?v=4" width="100px;" alt=""/><br /><sub><b>Chiciuc Nicușor</b></sub></a><br /></td>
@@ -367,7 +388,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/fisherdiede"><img src="https://avatars2.githubusercontent.com/u/11671032?s=400&u=212a5392a3a1d3c68a5c41527529fed19cb72e23&v=4" width="100px;" alt=""/><br /><sub><b>Fisher Diede</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=fisherdiede" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/karinaxlpz"><img src="https://avatars2.githubusercontent.com/u/64159159?v=4" width="100px;" alt=""/><br /><sub><b>karinaxlpz</b></sub></a><br /><a href="#translation-karinaxlpz" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/SamuelAl"><img src="https://avatars3.githubusercontent.com/u/33717014?v=4" width="100px;" alt=""/><br /><sub><b>Samuel Alarco Cantos</b></sub></a><br /><a href="#translation-SamuelAl" title="Translation">🌍</a></td>
-    <td align="center"><a href="http://divyanshuraj.co"><img src="https://avatars1.githubusercontent.com/u/43696525?v=4" width="100px;" alt=""/><br /><sub><b>DIVYANSHU RAJ</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=endurance21" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://divyanshuraj.co"><img src="https://avatars1.githubusercontent.com/u/43696525?v=4" width="100px;" alt=""/><br /><sub><b>DIVYANSHU RAJ</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=endurance21" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aendurance21" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=endurance21" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/sm7515"><img src="https://avatars1.githubusercontent.com/u/36653440?v=4" width="100px;" alt=""/><br /><sub><b>sm7515</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sm7515" title="Documentation">📖</a></td>
     <td align="center"><a href="http://adityarp.com"><img src="https://avatars3.githubusercontent.com/u/5263688?v=4" width="100px;" alt=""/><br /><sub><b>Aditya Rachman Putra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=banditelol" title="Documentation">📖</a></td>
   </tr>
@@ -391,6 +412,45 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/ismailnamdar"><img src="https://avatars1.githubusercontent.com/u/31315754?v=4" width="100px;" alt=""/><br /><sub><b>İsmail Namdar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=ismailnamdar" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://skyperx.github.io"><img src="https://avatars1.githubusercontent.com/u/64559807?v=4" width="100px;" alt=""/><br /><sub><b>skyperx</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=skyperx" title="Code">💻</a></td>
+    <td align="center"><a href="http://josepharonson.com/"><img src="https://avatars0.githubusercontent.com/u/32691229?v=4" width="100px;" alt=""/><br /><sub><b>Joseph Aronson</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=joeyaronson" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Ajoeyaronson" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://haideralipunjabi.com"><img src="https://avatars1.githubusercontent.com/u/11888687?v=4" width="100px;" alt=""/><br /><sub><b>Haider Ali Punjabi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=haideralipunjabi" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Swapnil-2001"><img src="https://avatars0.githubusercontent.com/u/53232360?v=4" width="100px;" alt=""/><br /><sub><b>Swapnil-2001</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Swapnil-2001" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/TakumaKira"><img src="https://avatars1.githubusercontent.com/u/50410641?v=4" width="100px;" alt=""/><br /><sub><b>Takuma Kira</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ATakumaKira" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=TakumaKira" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=TakumaKira" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/NagariaHussain"><img src="https://avatars1.githubusercontent.com/u/34810212?v=4" width="100px;" alt=""/><br /><sub><b>Mohammad Hussain Nagaria</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ANagariaHussain" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://tush.xyz"><img src="https://avatars1.githubusercontent.com/u/33191895?v=4" width="100px;" alt=""/><br /><sub><b>Tushar Choudhari</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=chtushar" title="Code">💻</a></td>
+    <td align="center"><a href="http://nakulshahdadpuri3141@gmail.com"><img src="https://avatars2.githubusercontent.com/u/43999912?v=4" width="100px;" alt=""/><br /><sub><b>Nakul Shahdadpuri</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakul-shahdadpuri" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jpdutoit"><img src="https://avatars3.githubusercontent.com/u/160440?v=4" width="100px;" alt=""/><br /><sub><b>Jacques P. du Toit</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jpdutoit" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/surajsurajsuraj"><img src="https://avatars1.githubusercontent.com/u/45002201?v=4" width="100px;" alt=""/><br /><sub><b>surajsurajsuraj</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asurajsurajsuraj" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://connieliu0.github.io"><img src="https://avatars3.githubusercontent.com/u/50529223?v=4" width="100px;" alt=""/><br /><sub><b>Connie Liu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=connieliu0" title="Code">💻</a> <a href="#design-connieliu0" title="Design">🎨</a></td>
+    <td align="center"><a href="http://zeke.sikelianos.com"><img src="https://avatars1.githubusercontent.com/u/2289?v=4" width="100px;" alt=""/><br /><sub><b>Zeke Sikelianos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=zeke" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/dryniguez"><img src="https://avatars3.githubusercontent.com/u/5209194?v=4" width="100px;" alt=""/><br /><sub><b>Ramon Jr. Yniguez</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TheoNeUpKid88" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://twitter.com/Benoit_Boure"><img src="https://avatars0.githubusercontent.com/u/7089997?v=4" width="100px;" alt=""/><br /><sub><b>Benoît Bouré</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=bboure" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.linkedin.com/in/heroichitesh"><img src="https://avatars3.githubusercontent.com/u/37622734?v=4" width="100px;" alt=""/><br /><sub><b>Hitesh Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=HeroicHitesh" title="Code">💻</a></td>
+    <td align="center"><a href="https://samporapeli.fi"><img src="https://avatars0.githubusercontent.com/u/35733458?v=4" width="100px;" alt=""/><br /><sub><b>Sampo Rapeli</b></sub></a><br /><a href="#example-samporapeli" title="Examples">💡</a></td>
+    <td align="center"><a href="https://github.com/Milchreis"><img src="https://avatars1.githubusercontent.com/u/544436?v=4" width="100px;" alt=""/><br /><sub><b>Nick Müller</b></sub></a><br /><a href="#plugin-milchreis" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="https://github.com/tankeith"><img src="https://avatars0.githubusercontent.com/u/24620742?v=4" width="100px;" alt=""/><br /><sub><b>Keith Tan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tankeith" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://berkeozgen.me/"><img src="https://avatars1.githubusercontent.com/u/56646605?v=4" width="100px;" alt=""/><br /><sub><b>Berke Özgen</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aberkeozgen08" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://musab.me"><img src="https://avatars3.githubusercontent.com/u/30195912?v=4" width="100px;" alt=""/><br /><sub><b>Musab Kılıç</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=musabkilic" title="Tests">⚠️</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://nmarino.dev"><img src="https://avatars2.githubusercontent.com/u/56003967?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Marino</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nsmarino" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://greg.technology/"><img src="https://avatars0.githubusercontent.com/u/1017304?v=4" width="100px;" alt=""/><br /><sub><b>Greg Sadetsky</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gregsadetsky" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Priya-Pathak"><img src="https://avatars1.githubusercontent.com/u/39853633?v=4" width="100px;" alt=""/><br /><sub><b>Priya-Pathak</b></sub></a><br /><a href="#example-Priya-Pathak" title="Examples">💡</a></td>
+    <td align="center"><a href="https://github.com/daniel-michel"><img src="https://avatars1.githubusercontent.com/u/65034538?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Michel</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=daniel-michel" title="Code">💻</a></td>
+    <td align="center"><a href="https://nisar.dev"><img src="https://avatars3.githubusercontent.com/u/46004116?v=4" width="100px;" alt=""/><br /><sub><b>Nisar Hassan Naqvi</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nisarhassan12" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/shocknoble"><img src="https://avatars2.githubusercontent.com/u/36461802?v=4" width="100px;" alt=""/><br /><sub><b>Joshua Noble</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shocknoble" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://liamp.uk"><img src="https://avatars1.githubusercontent.com/u/17195367?v=4" width="100px;" alt=""/><br /><sub><b>Liam Piesley</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=liampuk" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/rt1301"><img src="https://avatars0.githubusercontent.com/u/63252510?v=4" width="100px;" alt=""/><br /><sub><b>Rishabh Taparia</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=rt1301" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=rt1301" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/dansarno"><img src="https://avatars0.githubusercontent.com/u/48413743?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Sarno</b></sub></a><br /><a href="#example-dansarno" title="Examples">💡</a></td>
+    <td align="center"><a href="https://kkvanonymous.github.io/"><img src="https://avatars3.githubusercontent.com/u/58628586?v=4" width="100px;" alt=""/><br /><sub><b>Kunal Kumar Verma</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KKVANONYMOUS" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://bharathkumarravichandran.github.io"><img src="https://avatars2.githubusercontent.com/u/16106573?v=4" width="100px;" alt=""/><br /><sub><b>Bharath Kumar R</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=BharathKumarRavichandran" title="Code">💻</a></td>
   </tr>
 </table>
 

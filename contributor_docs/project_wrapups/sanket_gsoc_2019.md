@@ -14,7 +14,7 @@ During the course of Summer of Code, I submitted 7 pull requests which were rela
 - [frustum()](https://github.com/processing/p5.js/pull/3927)
 - [noLights()](https://github.com/processing/p5.js/pull/3955)
 
-Apart from implementing these functions, I also added unit tests, manual tests, documentation, and inline example for each of these functions. While documentation and inline example for each function can be found [here](https://p5js.org/reference/), [unit tests](https://github.com/processing/p5.js/tree/master/test/unit) and [manual tests](https://github.com/processing/p5.js/tree/master/test/manual-test-examples) are present in the codebase and are evaluated every time the library is built.
+Apart from implementing these functions, I also added unit tests, manual tests, documentation, and inline example for each of these functions. While documentation and inline example for each function can be found [here](https://p5js.org/reference/), [unit tests](https://github.com/processing/p5.js/tree/main/test/unit) and [manual tests](https://github.com/processing/p5.js/tree/main/test/manual-test-examples) are present in the codebase and are evaluated every time the library is built.
 
 Before and during the Summer of Code, I fixed minor bugs unrelated to my project, which helped me immensely to understand and get around the codebase and the workflow of p5.js. They are listed [here](https://github.com/processing/p5.js/pulls?utf8=%E2%9C%93&q=is%3Apr+author%3Asanketsingh24).
 

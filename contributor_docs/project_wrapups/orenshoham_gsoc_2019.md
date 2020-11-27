@@ -32,7 +32,7 @@ function loadAudioWorkletModules() {
 
 To play nicely with the rest of p5.js, the AudioWorkletProcessors needed to be loaded before a sketch's `setup()` function, during `preload()`. However, I didn't want to force users to write a `preload()` function every time they made a sketch with p5.js-sound, as that would break existing sketches and make the library harder to use.
 
-The (slightly-hacky) solution that I arrived at was to register a function with the p5.js ["init" hook](https://github.com/processing/p5.js/blob/master/contributor_docs/creating_libraries.md#use-registermethod-to-register-functions-with-p5-that-should-be-called-at-various-times) that first ensured that a `preload()` function was defined on the sketch, then incremented p5.js's internal preload counter to get `preload()` to wait for all of the processor modules to load:
+The (slightly-hacky) solution that I arrived at was to register a function with the p5.js ["init" hook](https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md#use-registermethod-to-register-functions-with-p5-that-should-be-called-at-various-times) that first ensured that a `preload()` function was defined on the sketch, then incremented p5.js's internal preload counter to get `preload()` to wait for all of the processor modules to load:
 
 ```javascript
 p5.prototype.registerMethod('init', function() {

@@ -166,6 +166,12 @@ class p5 {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this._accessibleOutputs = {
+      text: false,
+      grid: false,
+      textLabel: false,
+      gridLabel: false
+    };
     this._setupDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
@@ -242,8 +248,7 @@ class p5 {
       }
 
       const context = this._isGlobal ? window : this;
-      const userPreload = context.preload;
-      if (userPreload) {
+      if (context.preload) {
         // Setup loading screen
         // Set loading screen into dom if not present
         // Otherwise displays and removes user provided loading screen
@@ -272,7 +277,7 @@ class p5 {
           obj[method] = this._wrapPreload(obj, method);
         }
 
-        userPreload();
+        context.preload();
         this._runIfPreloadsAreDone();
       } else {
         this._setup();
@@ -287,9 +292,11 @@ class p5 {
         if (loadingScreen) {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
-        this._lastFrameTime = window.performance.now();
-        context._setup();
-        context._draw();
+        if (!this._setupDone) {
+          this._lastFrameTime = window.performance.now();
+          context._setup();
+          context._draw();
+        }
       }
     };
 
@@ -357,6 +364,9 @@ class p5 {
 
       this._lastFrameTime = window.performance.now();
       this._setupDone = true;
+      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+        this._updateAccsOutput();
+      }
     };
 
     this._draw = () => {
@@ -539,6 +549,10 @@ class p5 {
       // Else, the user has passed in a sketch closure that may set
       // user-provided 'setup', 'draw', etc. properties on this instance of p5
       sketch(this);
+
+      // Run a check to see if the user has misspelled 'setup', 'draw', etc
+      // detects capitalization mistakes only ( Setup, SETUP, MouseClicked, etc)
+      p5._checkForUserDefinedFunctions(this);
     }
 
     // Bind events to window (not using container div bc key events don't work)

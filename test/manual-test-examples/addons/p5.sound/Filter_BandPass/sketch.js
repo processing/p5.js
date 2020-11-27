@@ -19,7 +19,7 @@ function setup() {
 
   noise = new p5.Noise();
 
-  noise.disconnect(); // Disconnect soundfile from master output...
+  noise.disconnect(); // Disconnect soundfile from main output...
   filter.process(noise); // ...and connect to filter so we'll only hear BandPass.
   noise.start();
 

@@ -12,13 +12,13 @@ Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby ak�
 
 # Ako Prispieť
 
-Známe chyby a zamýšľané nové funkcie sú zaznamenané pomocou [GitHub issues](https://github.com/processing/p5.js/issues). Problémoé [štítky](./issue_labels.md) sa používajú na kategorizovanie problémov, ako napríklad tie, ktoré sú [vhodné pre začiatočníkov](https://github.com/processing/p5.js/labels/level%3Abeginner). Ak by si chcel začať pracovať na existujúcom probléme, pridaj komentár k problému a tým pádom upozornil ostatných o svojom úmysle prispieť. Zároveň ti môže byť poskytnutá pomoc. Ak si dokončil svoju prácu na konkrétnom probléme, [predlož pull request (PR)](./preparing_a_pull_request.md) proti master vetve repozitára p5.js. Do políčka s popisom PR uveď vetu "resolves #XXXX", pričom namiesto #XXXX zadaj problém, ktorý si vyriešil. Ak PR adresuje problém, ale nevyriešil ho úplne (teda problém ostáva nevyriešený po prijatí tvojich zmien), napíš "addresses #XXXX".
+Známe chyby a zamýšľané nové funkcie sú zaznamenané pomocou [GitHub issues](https://github.com/processing/p5.js/issues). Problémoé [štítky](./issue_labels.md) sa používajú na kategorizovanie problémov, ako napríklad tie, ktoré sú [vhodné pre začiatočníkov](https://github.com/processing/p5.js/labels/level%3Abeginner). Ak by si chcel začať pracovať na existujúcom probléme, pridaj komentár k problému a tým pádom upozornil ostatných o svojom úmysle prispieť. Zároveň ti môže byť poskytnutá pomoc. Ak si dokončil svoju prácu na konkrétnom probléme, [predlož pull request (PR)](./preparing_a_pull_request.md) proti main vetve repozitára p5.js. Do políčka s popisom PR uveď vetu "resolves #XXXX", pričom namiesto #XXXX zadaj problém, ktorý si vyriešil. Ak PR adresuje problém, ale nevyriešil ho úplne (teda problém ostáva nevyriešený po prijatí tvojich zmien), napíš "addresses #XXXX".
 
 Ak si objavil chybu alebo ťa napadla nejaká nová funkionalita, ktorú by si rád pridal, začni s predložením problému. Nepredkladaj jednoducho pull request obsahujúci kód, ktorý rieši chyby alebo prináša novú funkcionalitu bez toho, aby si najskôr predložil problém, pretože nebudeme schopný tvoj kód akceptovať. Akonáhle obdržíš spätnú väzbu na svoj problém a povolenie na jeho riešenie, môžeš začať s procesom prispievania.
 
 Môžes triediť problémy ktoré môžu obsahovať reprodukcie chýb alebo otázky ohľadom dôležitých informácií ako napríklad otázky ohľadom čísla verzie alebo informácie ohľadom reprodukcie chyby. Ak by si chcel začať triediť problémy, tak jednou z možností je [prihlásiť sa na odber p5.js na CodeTriage](https://www.codetriage.com/processing/p5.js). [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-Rozpoznávame všetky druhy príspevkov. Tento projekt sa riadi podľa [all-contributors](https://github.com/kentcdodds/all-contributors) špecifikácie. Pridaj sa ako prispievateľ do [readme](https://github.com/processing/p5.js/blob/master/README.md#contributors) podľa [týchto inštrukcií](https://github.com/processing/p5.js/issues/2309)!
+Rozpoznávame všetky druhy príspevkov. Tento projekt sa riadi podľa [all-contributors](https://github.com/kentcdodds/all-contributors) špecifikácie. Pridaj sa ako prispievateľ do [readme](https://github.com/processing/p5.js/blob/main/README.md#contributors) podľa [týchto inštrukcií](https://github.com/processing/p5.js/issues/2309)!
 
 ## Doprovody a Dodatky
 
@@ -29,7 +29,7 @@ Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 
 ## Príklady
 
-Stránka p5.js obsahujé [integrované príklady](http://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
+Stránka p5.js obsahujé [integrované príklady](http://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
 p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](./es6-adoption.md).
@@ -57,7 +57,7 @@ $ npm run lint:fix
 ```
 Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky](https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
 
-Toto je krátky sumár k pravidlám štýlu kódu. Prosím ber na vedomie, že tento zoznam môže byť nekompletný a preto je najlepšie sa okazovať na [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) a [.eslintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) súbory pre kompletný zoznam pravidiel.
+Toto je krátky sumár k pravidlám štýlu kódu. Prosím ber na vedomie, že tento zoznam môže byť nekompletný a preto je najlepšie sa okazovať na [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) a [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) súbory pre kompletný zoznam pravidiel.
 * Používa sa ES6 syntax kódu.
 * Používaj apostrof (radšej než úvodzovky).
 * Na odsadenie použi dve medzery.
@@ -160,7 +160,7 @@ Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 
 # Iné
 
-- [Náhľad Dovnútra p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
+- [Náhľad Dovnútra p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
 - p5.js [Docker image](https://github.com/toolness/p5.js-docker) môže byť namontovaný do [Docker](https://www.docker.com/) a použitý na vývoj p5.js bez potreby manuálnej inštalácie požiadaviek ako [Node](https://nodejs.org/) alebo iných, takých, ktoré ovlyvňujú hosťovský operačný systém (s výnimkou inštalácie Docker-a).
 - Budovací proces knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
 

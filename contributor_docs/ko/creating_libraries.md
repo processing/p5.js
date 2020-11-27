@@ -24,7 +24,7 @@ p5.js 라이브러리는 p5.js의 핵심 기능을 확장하거나 추가하는 
   DOM 라이브러리가 프로젝트에 포함되면 `createImg()`는 `createCanvas()` 또는 `background()`와 함께 호출 될 수 있습니다.
 
 ### 내부 helpers를 위한 private 함수 사용하기
-사용자에 의해 호출되지 않을 목적의 함수를 의미합니다. 위의 예제의 `addElement()`는 [dom.js](https://GitHub.com/processing/p5.js/blob/master/src/dom/dom.js)에서 내부 함수 입니다. 하지만 `p5.prototype`에는 공개적으로 바운드 되지 않았습니다.
+사용자에 의해 호출되지 않을 목적의 함수를 의미합니다. 위의 예제의 `addElement()`는 [dom.js](https://GitHub.com/processing/p5.js/blob/main/src/dom/dom.js)에서 내부 함수 입니다. 하지만 `p5.prototype`에는 공개적으로 바운드 되지 않았습니다.
 
 ### 프로토타입에 메소드를 추가하여 p5.js 클래스를 확장 할 수 있습니다.
 아래 예제에서 `p5.Element.prototype`은 `html()` 메소드와 함께 확장되어 엘리먼트의 내부 html을 설정합니다.

@@ -1,3 +1,5 @@
+// This file contains the "combineModules" task called during the build process.
+
 'use strict';
 
 const fs = require('fs');
@@ -59,7 +61,7 @@ module.exports = function(grunt) {
       if (isMin) {
         browseified = browseified
           .exclude('../../docs/reference/data.json')
-          .exclude('../../../docs/parameterData.json');
+          .exclude('../../docs/parameterData.json');
       }
 
       const babelifyOpts = { plugins: ['static-fs'] };

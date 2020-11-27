@@ -267,7 +267,17 @@ p5.prototype.loadStrings = function(...args) {
         .replace(/\r\n/g, '\r')
         .replace(/\n/g, '\r')
         .split(/\r/);
-      Array.prototype.push.apply(ret, lines);
+
+      // safe insert approach which will not blow up stack when inserting
+      // >100k lines, but still be faster than iterating line-by-line. based on
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply#Examples
+      const QUANTUM = 32768;
+      for (let i = 0, len = lines.length; i < len; i += QUANTUM) {
+        Array.prototype.push.apply(
+          ret,
+          lines.slice(i, Math.min(i + QUANTUM, len))
+        );
+      }
 
       if (typeof callback !== 'undefined') {
         callback(ret);
@@ -400,8 +410,6 @@ p5.prototype.loadTable = function(path) {
       }
     }
   }
-
-  console.log('SEP IS ' + sep);
 
   const t = new p5.Table();
 
@@ -844,23 +852,16 @@ p5.prototype.httpGet = function() {
  * // Examples use jsonplaceholder.typicode.com for a Mock Data API
  *
  * let url = 'https://jsonplaceholder.typicode.com/posts';
- * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *   background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
  *   httpPost(url, 'json', postData, function(result) {
  *     strokeWeight(2);
- *     stroke(r, g, b);
- *     fill(r, g, b, 127);
- *     ellipse(mouseX, mouseY, 200, 200);
  *     text(result.body, mouseX, mouseY);
  *   });
  * }
@@ -869,18 +870,14 @@ p5.prototype.httpGet = function() {
  *
  * <div><code>
  * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
- * let postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let postData = { title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *   background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
  *   httpPost(
  *     url,
  *     'json',
@@ -890,8 +887,6 @@ p5.prototype.httpGet = function() {
  *     },
  *     function(error) {
  *       strokeWeight(2);
- *       stroke(r, g, b);
- *       fill(r, g, b, 127);
  *       text(error.toString(), mouseX, mouseY);
  *     }
  *   );
@@ -1080,13 +1075,16 @@ p5.prototype.httpDo = function(...args) {
       }
     }
 
+    let headers =
+      method === 'GET'
+        ? new Headers()
+        : new Headers({ 'Content-Type': contentType });
+
     request = new Request(path, {
       method,
       mode: 'cors',
       body: data,
-      headers: new Headers({
-        'Content-Type': contentType
-      })
+      headers: headers
     });
   }
   // do some sort of smart type checking
@@ -1728,11 +1726,19 @@ p5.prototype.saveTable = function(table, filename, options) {
       let j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
-          pWriter.write(table.rows[i].arr[j] + sep);
-        } else if (i < table.rows.length - 1) {
-          pWriter.write(table.rows[i].arr[j]);
+          //double quotes should be inserted in csv only if contains comma separated single value
+          if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+            pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
+          } else {
+            pWriter.write(table.rows[i].arr[j] + sep);
+          }
         } else {
-          pWriter.write(table.rows[i].arr[j]);
+          //double quotes should be inserted in csv only if contains comma separated single value
+          if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+            pWriter.write('"' + table.rows[i].arr[j] + '"');
+          } else {
+            pWriter.write(table.rows[i].arr[j]);
+          }
         }
       }
       pWriter.write('\n');

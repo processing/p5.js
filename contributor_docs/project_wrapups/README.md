@@ -3,17 +3,25 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 
 *Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
 
+### Google Summer of Code 2020
+* [p5.js accessibility and canvas descriptions](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/luismn_gsoc_2020.md) by Luis Morales-Navarro, 2020
+* [p5.js Web Editor Mobile UI](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/ghalestrilo_gsoc_2020.md) by [ghales](https://github.com/ghalestrilo), 2020
+* [Extending the p5.js Friendly Error System](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/akshaypadte_gsoc_2020.md) by Akshay Padte, 2020
+* [Increasing the Organization and Scope of the p5.js Showcase](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/connieliu_gsoc_2020.md) by Connie Liu, 2020
+* [p5 for 50+ teaching](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/inhwayeom_gsoc_2020.md) by Inhwa Yeom, 2020
+* [i18n improvements and Italian translation](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/yukienomiya_gsoc_2020.md) by Yukie Nomiya, 2020
+
 
 ### Google Summer of Code 2019
-* [Search Bar for Sketches in the p5.js Web Editor](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/rachellim_gsoc_2019.md) by Rachel Lim, 2019
-* [Improving WebGL functionality of p5.js](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/sanket_gsoc_2019.md) by [Sanket Singh](https://github.com/sanketsingh24), 2019
-* [Improve p5.js unit tests](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/urvashi_gsoc_2019.md) by [Urvashi](https://github.com/ihsavru), 2019
-* [Stabilizing and improving p5.xr](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/vedhant_gsoc_2019.md) by [Vedhant Agarwal](https://github.com/vedhant), 2019
-* [AudioWorklet Support in p5.js-sound](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/orenshoham_gsoc_2019.md) by Oren Shoham, 2019
-* [Code Slang](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/xu_gsoc_2019.md) by Jenna Xu, 2019
-* [p5.touchgui](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/L05_GSOC_2019.md) by [Carlos L05 Garcia](https://github.com/L05), 2019 
-* [Curating Community Creativity for p5.js 1.0](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/ashleykang_gsoc2019.md) by Ashley Kang, 2019
-* [Math in Motion](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/acheng_ogarcia_gsoc_2019.md) by Alexandra Cheng and Oskar Garcia, 2019
+* [Search Bar for Sketches in the p5.js Web Editor](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/rachellim_gsoc_2019.md) by Rachel Lim, 2019
+* [Improving WebGL functionality of p5.js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/sanket_gsoc_2019.md) by [Sanket Singh](https://github.com/sanketsingh24), 2019
+* [Improve p5.js unit tests](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/urvashi_gsoc_2019.md) by [Urvashi](https://github.com/ihsavru), 2019
+* [Stabilizing and improving p5.xr](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/vedhant_gsoc_2019.md) by [Vedhant Agarwal](https://github.com/vedhant), 2019
+* [AudioWorklet Support in p5.js-sound](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/orenshoham_gsoc_2019.md) by Oren Shoham, 2019
+* [Code Slang](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/xu_gsoc_2019.md) by Jenna Xu, 2019
+* [p5.touchgui](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/L05_GSOC_2019.md) by [Carlos L05 Garcia](https://github.com/L05), 2019 
+* [Curating Community Creativity for p5.js 1.0](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/ashleykang_gsoc2019.md) by Ashley Kang, 2019
+* [Math in Motion](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/acheng_ogarcia_gsoc_2019.md) by Alexandra Cheng and Oskar Garcia, 2019
 
 ### Processing Foundation Fellowships 2018
 * [A p5.js Dissection Manual](https://medium.com/processing-foundation/a-p5-js-dissection-manual-38959ff8522e) by Vijith Assar, 2018
@@ -23,14 +31,14 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 
 ### Google Summer of Code 2018
 
-* [A Platform for Algorithmic Composition on p5.js-sound](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/junshern_gsoc_2018.md) by Chan Jun Shern, 2018
-* [New JavaScript console in p5.js web editor](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/liang_gsoc_2018.md) by Liang Tang, 2018
-* [Updates to WebGL Mode](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/aidannelson_gsoc_2018.md) by Aidan Nelson, 2018
-* [Implementing missing primitives in p5.js WebGL mode](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/adilrabbani_gsoc_2018.md) by Adil Rabbani, 2018
+* [A Platform for Algorithmic Composition on p5.js-sound](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/junshern_gsoc_2018.md) by Chan Jun Shern, 2018
+* [New JavaScript console in p5.js web editor](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/liang_gsoc_2018.md) by Liang Tang, 2018
+* [Updates to WebGL Mode](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/aidannelson_gsoc_2018.md) by Aidan Nelson, 2018
+* [Implementing missing primitives in p5.js WebGL mode](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/adilrabbani_gsoc_2018.md) by Adil Rabbani, 2018
 * [Dynamic Learning, a collaborative platform for teachers and creative coders](
-https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/jithinks_gsoc_2018.md) by Jithin KS, 2018
-* [Updating hello.p5js.org](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/elginmclaren_gsoc_2018.md) by Elgin-Skye McLaren, 2018
-* [Improvements to existing I/O Methods of p5.js](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/tanvi_gsoc_2018.md) by Tanvi Kumar, 2018
+https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/jithinks_gsoc_2018.md) by Jithin KS, 2018
+* [Updating hello.p5js.org](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/elginmclaren_gsoc_2018.md) by Elgin-Skye McLaren, 2018
+* [Improvements to existing I/O Methods of p5.js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/tanvi_gsoc_2018.md) by Tanvi Kumar, 2018
 
 ### Processing Foundation Fellowships 2017
 * [p5 Accessibility](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8) by Claire Kearney-Volpe, 2017
@@ -45,7 +53,7 @@ https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups
 ### Google Summer of Code 2017 ([archive](https://summerofcode.withgoogle.com/archive/2017/organizations/5256745899261952/))
 
 * [Processing Foundation: GSOC Grand Wrap-Up Post](https://medium.com/processing-foundation/2017-google-summer-of-code-grand-wrap-up-post-16680b1438db)
-* [Improving Developer Operations](https://github.com/processing/p5.js/blob/master/contributor_docs/project_wrapups/sakshamsaxena_gsoc_2017.md) by Saksham Saxena, 2017
+* [Improving Developer Operations](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/sakshamsaxena_gsoc_2017.md) by Saksham Saxena, 2017
 * [Maps, Maps, Maps!](https://medium.com/processing-foundation/maps-maps-maps-f0914218c87b) by Cristobal Valenzuela, 2017
 * [Friendly Error System for p5.js](https://medium.com/processing-foundation/2017-marks-the-processing-foundations-sixth-year-participating-in-google-summer-of-code-d365f62fc463) by A. Mira Chung, 2017
 * [Processing Foundation: Our Summer of Code Has Begun!](https://medium.com/processing-foundation/our-summer-of-code-has-begun-dffc1bbddb7c)

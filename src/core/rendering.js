@@ -20,6 +20,11 @@ const defaultClass = 'p5Canvas';
  * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics</a>
  * (hidden by default but it can be shown).
  *
+ * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
+ * is positioned at the top left of the screen. In 3D mode (i.e. when `p5.Renderer`
+ * is set to `WEBGL`), the origin is positioned at the center of the canvas.
+ * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
+ *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
  * window will be given a default size of 100x100 pixels.
@@ -90,7 +95,13 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     // user input node case
     this._userNode.appendChild(c);
   } else {
-    document.body.appendChild(c);
+    //create main element
+    if (document.getElementsByTagName('main').length === 0) {
+      let m = document.createElement('main');
+      document.body.appendChild(m);
+    }
+    //append canvas to main
+    document.getElementsByTagName('main')[0].appendChild(c);
   }
 
   // Init our graphics renderer
@@ -162,6 +173,10 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     if (!noRedraw) {
       this.redraw();
     }
+  }
+  //accessible Outputs
+  if (this._addAccsOutput()) {
+    this._updateAccsOutput();
   }
 };
 
@@ -309,7 +324,6 @@ p5.prototype.blendMode = function(mode) {
 };
 
 /**
- * @property drawingContext
  * The p5.js API provides a lot of functionality for creating graphics, but there is
  * some native HTML5 Canvas functionality that is not exposed by p5. You can still call
  * it directly using the variable `drawingContext`, as in the example shown. This is
@@ -318,6 +332,7 @@ p5.prototype.blendMode = function(mode) {
  * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">
  * reference for the native canvas API</a> for possible drawing functions you can call.
  *
+ * @property drawingContext
  * @example
  * <div>
  * <code>

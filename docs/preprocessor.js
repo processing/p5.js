@@ -1,4 +1,5 @@
 const marked = require('marked');
+const Entities = require('html-entities').AllHtmlEntities;
 
 const DocumentedMethod = require('./documented-method');
 
@@ -269,7 +270,8 @@ function buildParamDocs(docs) {
 
 function renderItemDescriptionsAsMarkdown(item) {
   if (item.description) {
-    item.description = marked(item.description);
+    const entities = new Entities();
+    item.description = entities.decode(marked(item.description));
   }
   if (item.params) {
     item.params.forEach(renderItemDescriptionsAsMarkdown);

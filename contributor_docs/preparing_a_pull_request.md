@@ -25,8 +25,8 @@ Then ask git about the latest changes.
 ### Just in case: make a copy of your changes in a new branch
     git branch your-branch-name-backup 
 
-### Apply changes from master branch, adds your changes *after* 
-    git rebase upstream/master 
+### Apply changes from main branch, adds your changes *after* 
+    git rebase upstream/main 
 
 ### Resolving Conflicts
 You may have some conflicts! 
@@ -45,6 +45,6 @@ Here's a good reference on rebasing, in case you're intensely curious about the 
 
 ## Creating a pull request
 
-Here are [instructions for creating a pull request on github](https://help.github.com/articles/creating-a-pull-request/). You can name the branch you are working in anything you like. You will submit your pull request against the "master" branch of p5.js.
+Here are [instructions for creating a pull request on github](https://help.github.com/articles/creating-a-pull-request/). You can name the branch you are working in anything you like. You will submit your pull request against the "main" branch of p5.js.
 
 Once you have submitted your pull request, it will be reviewed and merged as soon as others are available to do so. Changes will show up with the next release of the p5.js library.

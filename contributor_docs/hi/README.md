@@ -18,7 +18,7 @@
 
 आप उन समस्याओं को ट्राइएज कर सकते हैं जिनमें बग रिपोर्ट को पुन: प्रस्तुत करना या महत्वपूर्ण जानकारी मांगना शामिल हो सकता है, जैसे कि संस्करण संख्या या प्रजनन निर्देश। यदि आप त्रिकोणीय मुद्दों को शुरू करना चाहते हैं, तो आरंभ करने का एक आसान तरीका है [CodeTriage पर p5.js की सदस्यता लें](https://www.codetriage.com/processing/p5.js)। [![ओपन सोर्स हेल्पर्स](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-हम सभी प्रकार के योगदानों को पहचानते हैं। यह परियोजना [सभी योगदानकर्ताओं](https://github.com/kentcdodds/all-contributors) विनिर्देशन का अनुसरण करती है। [निर्देश यहाँ](https://github.com/processing/p5.js/issues/2309) का अनुसरण करके अपने आप को [रीडमी](https://github.com/processing/p5.js/blob/master/README.md#contributors) में जोड़ें।
+हम सभी प्रकार के योगदानों को पहचानते हैं। यह परियोजना [सभी योगदानकर्ताओं](https://github.com/kentcdodds/all-contributors) विनिर्देशन का अनुसरण करती है। [निर्देश यहाँ](https://github.com/processing/p5.js/issues/2309) का अनुसरण करके अपने आप को [रीडमी](https://github.com/processing/p5.js/blob/main/README.md#contributors) में जोड़ें।
 
 ## ैकपेनीमेंट्स
 
@@ -29,7 +29,7 @@
 
 ## उदाहरण
 
-P5.js साइट में [एकीकृत उदाहरण](http://p5js.org/examples/) शामिल हैं। आप [और जोड़ सकते हैं](https://github.com/processing/p5.js-website/blob/master/contributor_docs/Adding_examples.md), और एक मुद्दा है जो कुछ [वांछित उदाहरणों](https://github.com/processing/p5.js/issues/1954) को सूचीबद्ध करता है।
+P5.js साइट में [एकीकृत उदाहरण](http://p5js.org/examples/) शामिल हैं। आप [और जोड़ सकते हैं](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md), और एक मुद्दा है जो कुछ [वांछित उदाहरणों](https://github.com/processing/p5.js/issues/1954) को सूचीबद्ध करता है।
 
 ## ईएस6
 
@@ -61,7 +61,7 @@ $ npm run lint:fix
 
 स्थापित परियोजना शैली के साथ चिपके रहना आमतौर पर बेहतर होता है, लेकिन [कभी-कभी](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) एक वैकल्पिक वाक्यविन्यास का उपयोग कर सकते हैं। अपने कोड को समझना आसान बनाएं। इन मामलों के लिए, Prettier [एक एस्केप हैच प्रदान करता है](https://prettier.io/docs/en/ignore.html), `// prettier-ignore` टिप्पणी, जिसका उपयोग आप ग्रैनुलर अपवाद बनाने के लिए कर सकते हैं। यदि आप कर सकते हैं तो इसका उपयोग करने से बचने की कोशिश करें, क्योंकि लाइनिंग द्वारा लागू अधिकांश शैली वरीयताओं के लिए अच्छे कारण हैं।
 
-यहाँ कोड शैली नियमों का एक त्वरित सारांश है। कृपया ध्यान दें कि यह सूची अधूरी हो सकती है, और [.prettierrc](https://github.com/processing/p5.js/blob/master/.prettierrc) और [.esintintrc](https://github.com/processing/p5.js/blob/master/.eslintrc) को संदर्भित करना सबसे अच्छा है। 
+यहाँ कोड शैली नियमों का एक त्वरित सारांश है। कृपया ध्यान दें कि यह सूची अधूरी हो सकती है, और [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) और [.esintintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) को संदर्भित करना सबसे अच्छा है। 
 * ES6 कोड सिंटैक्स का उपयोग किया जाता है
 * सिंगल कोट्स (डबल कोट्स के बजाय) का उपयोग करें
 * इंडेंटेशन दो स्थानों के साथ किया जाता है
@@ -164,6 +164,6 @@ $ npm run docs:dev
 
 # विविध
 
-- (लुकिंग इनसाइड p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) p5.js डेवलपमेंट वर्कफ़्लो में इस्तेमाल होने वाले टूल्स और फाइल्स का वीडियो टूर है।
+- (लुकिंग इनसाइड p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) p5.js डेवलपमेंट वर्कफ़्लो में इस्तेमाल होने वाले टूल्स और फाइल्स का वीडियो टूर है।
 - p5.js [डॉकर छवि](https://github.com/toolness/p5.js-docker) [डॉकर](https://www.docker.com/) में आरोहित किया जा सकता है और इसका उपयोग p5 विकसित करने के लिए किया जाता है [नोड](https://nodejs.org/) जैसी आवश्यकताओं की मैन्युअल स्थापना की आवश्यकता के बिना .js या अन्यथा डॉकर की स्थापना से अलग किसी भी तरह से मेजबान ऑपरेटिंग सिस्टम को प्रभावित करना।
 - p5.js लाइब्रेरी के लिए निर्माण प्रक्रिया एक [json डेटा फ़ाइल](https://p5js.org/reference/data.json) उत्पन्न करती है, जिसमें p5.js की सार्वजनिक API होती है और इसका उपयोग स्वचालित टूलिंग में किया जा सकता है, जैसे एक संपादक में स्वतः पूर्ण p5.js विधियों के रूप में। यह फ़ाइल p5.js वेबसाइट पर होस्ट की गई है, लेकिन यह रिपॉजिटरी के हिस्से के रूप में शामिल नहीं है।

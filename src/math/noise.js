@@ -9,7 +9,7 @@
 // someday we might consider using "improved noise"
 // http://mrl.nyu.edu/~perlin/paper445.pdf
 // See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/
-//      blob/master/introduction/Noise1D/noise.js
+//      blob/main/introduction/Noise1D/noise.js
 
 /**
  * @module Math

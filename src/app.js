@@ -21,7 +21,11 @@ import './core/shape/2d_primitives';
 import './core/shape/attributes';
 import './core/shape/curves';
 import './core/shape/vertex';
-
+//accessibility
+import './accessibility/outputs';
+import './accessibility/textOutput';
+import './accessibility/gridOutput';
+import './accessibility/color_namer';
 // color
 import './color/color_conversion';
 import './color/creating_reading';
@@ -34,6 +38,9 @@ import './data/local_storage.js';
 
 // DOM
 import './dom/dom';
+
+// accessibility
+import './accessibility/describe';
 
 // events
 import './events/acceleration';

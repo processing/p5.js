@@ -1,9 +1,13 @@
 /**
  * @for p5
  * @requires core
+ *
+ * This file contains the part of the FES responsible for validating function
+ * parameters
  */
 import p5 from '../main';
 import * as constants from '../constants';
+import { translator } from '../internationalization';
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._clearValidateParamsCache = () => {};
@@ -401,7 +405,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const format = formats[p];
       // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
-        // handle non-optional and non-trailing undefined args
+        // handle undefined args
         if (!format.optional || p < minParams || p < argCount) {
           score += 1;
         }
@@ -442,7 +446,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const format = formats[p];
       // '== null' checks for 'null' and typeof 'undefined'
       if (arg == null) {
-        // handle non-optional and non-trailing undefined args
+        // handle undefined args
         if (!format.optional || p < minParams || p < argCount) {
           errorArray.push({
             type: 'EMPTY_VAR',
@@ -467,10 +471,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // tests when expecting validation errors
   p5.ValidationError = (name => {
     class err extends Error {
-      constructor(message, func) {
+      constructor(message, func, type) {
         super();
         this.message = message;
         this.func = func;
+        this.type = type;
         if ('captureStackTrace' in Error) Error.captureStackTrace(this, err);
         else this.stack = new Error().stack;
       }
@@ -483,6 +488,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // function for generating console.log() msg
   p5._friendlyParamError = function(errorObj, func) {
     let message;
+    let translationObj;
 
     function formatType() {
       const format = errorObj.format;
@@ -493,9 +499,20 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     switch (errorObj.type) {
       case 'EMPTY_VAR': {
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received an empty variable instead. If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]`;
+        translationObj = {
+          func,
+          formatType: formatType(),
+          // It needs to be this way for i18next-extract to work. The comment
+          // specifies the values that the context can take so that it can
+          // statically prepare the translation files with them.
+          /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+          position: translator('fes.positions.p', {
+            context: (errorObj.position + 1).toString(),
+            defaultValue: (errorObj.position + 1).toString()
+          }),
+          link: '[https://p5js.org/examples/data-variable-scope.html]'
+        };
+
         break;
       }
       case 'WRONG_TYPE': {
@@ -504,26 +521,41 @@ if (typeof IS_MINIFIED !== 'undefined') {
           arg instanceof Array
             ? 'array'
             : arg === null ? 'null' : arg.name || typeof arg;
-        message = `${func}() was expecting ${formatType()} for parameter #${
-          errorObj.position
-        } (zero-based index), received ${argType} instead`;
+
+        translationObj = {
+          func,
+          formatType: formatType(),
+          argType,
+          /* i18next-extract-mark-context-next-line ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] */
+          position: translator('fes.positions.p', {
+            context: (errorObj.position + 1).toString(),
+            defaultValue: (errorObj.position + 1).toString()
+          })
+        };
+
         break;
       }
       case 'TOO_FEW_ARGUMENTS': {
-        message = `${func}() was expecting at least ${
-          errorObj.minParams
-        } arguments, but received only ${errorObj.argCount}`;
+        translationObj = {
+          func,
+          minParams: errorObj.minParams,
+          argCount: errorObj.argCount
+        };
+
         break;
       }
       case 'TOO_MANY_ARGUMENTS': {
-        message = `${func}() was expecting no more than ${
-          errorObj.maxParams
-        } arguments, but received ${errorObj.argCount}`;
+        translationObj = {
+          func,
+          maxParams: errorObj.maxParams,
+          argCount: errorObj.argCount
+        };
+
         break;
       }
     }
 
-    if (message) {
+    if (translationObj) {
       try {
         // const re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
         const myError = new Error();
@@ -537,19 +569,41 @@ if (typeof IS_MINIFIED !== 'undefined') {
           return;
         }
         if (p5._throwValidationErrors) {
-          throw new p5.ValidationError(message);
+          throw new p5.ValidationError(message, func, errorObj.type);
         }
-        const location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
+
+        // try to extract the location from where the function was called
+        if (
+          parsed[3] &&
+          parsed[3].fileName &&
+          parsed[3].lineNumber &&
           parsed[3].columnNumber
-        }`;
-        if (location) {
-          message += ` at ${location}`;
+        ) {
+          let location = `${parsed[3].fileName}:${parsed[3].lineNumber}:${
+            parsed[3].columnNumber
+          }`;
+
+          translationObj.location = translator('fes.location', {
+            location: location,
+            // for e.g. get "sketch.js" from "https://example.com/abc/sketch.js"
+            file: parsed[3].fileName.split('/').slice(-1),
+            line: parsed[3].lineNumber
+          });
+
+          // tell fesErrorMonitor that we have already given a friendly message
+          // for this line, so it need not to do the same in case of an error
+          p5._fesLogCache[location] = true;
         }
       } catch (err) {
         if (err instanceof p5.ValidationError) {
           throw err;
         }
       }
+
+      translationObj.context = errorObj.type;
+      // i18next-extract-mark-context-next-line ["EMPTY_VAR", "TOO_MANY_ARGUMENTS", "TOO_FEW_ARGUMENTS", "WRONG_TYPE"]
+      message = translator('fes.friendlyParamError.type', translationObj);
+
       p5._friendlyError(`${message}.`, func, 3);
     }
   };
@@ -603,10 +657,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     const docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
     const overloads = docs.overloads;
 
-    // ignore any trailing `undefined` arguments
     let argCount = args.length;
+
+    // the following line ignores trailing undefined arguments, commenting
+    // it to resolve https://github.com/processing/p5.js/issues/4571
     // '== null' checks for 'null' and typeof 'undefined'
-    while (argCount > 0 && args[argCount - 1] == null) argCount--;
+    // while (argCount > 0 && args[argCount - 1] == null) argCount--;
 
     // find the overload with the best score
     let minScore = 99999;

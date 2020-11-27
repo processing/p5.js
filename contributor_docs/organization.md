@@ -2,13 +2,13 @@
 
 Keeping the repository organized ensures that it is always clear which discussions and tasks are the most important. This helps everyone from maintainers to new contributors navigate the repository without getting overwhelmed. To help with this, we have a set of guidelines for how to organize issues, work, and pull requests.
 
-Helping with organization can be a great way to contribute. If a bug report is missing information such as example code, feel free to chime in and ask for the missing info. If an issue with an assignee has seen no activity for 60 days, it can be helpful to comment on the issue to check in with the assignee to see if they still want to work on the issue. Whenever you are helping with organizational tasks, make sure to be kind and always keep the community guidelines in mind. 
+Helping with organization can be a great way to contribute. If a bug report is missing information such as example code, feel free to chime in and ask for the missing info. If an issue with an assignee has seen no activity for 60 days, it can be helpful to comment on the issue to check in with the assignee to see if they still want to work on the issue. Whenever you are helping with organizational tasks, make sure to be kind and always keep the community guidelines in mind.
 
 # Guidelines for Organization
 
 ## Issues
 - **All bug reports should include sample code**
-  - This can be in the form of code posted in the body of the issue, or it can be a link to an online example of the code preferably in [the online editor](editor.p5js.org)
+  - This can be in the form of code posted in the body of the issue, or it can be a link to an online example of the code preferably in [the online editor](https://editor.p5js.org)
 - **All issues should have at least 2 labels**
   - This makes it much easier to navigate the issues.
   - Try adding a label for the area (webgl, core, image, etc)
@@ -20,8 +20,8 @@ Helping with organization can be a great way to contribute. If a bug report is m
 - **All pull requests should be associated with an issue**
   - If you want to fix a bug or add a feature, start by opening an issue so the community can discuss it.
   - If a pull request is opened without an associated issue, comment and ask the contributor to open a pull request.
-  
-  
+
+
 
 # Guidelines for Decision-Making
 
@@ -44,6 +44,3 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
 Once added, a steward's username will remain in the [stewards section of the readme](https://github.com/processing/p5.js#stewards) until they request to be removed. If a steward is unresponsive for an extended period of time, we may ping them to ask about their status. And you can always take a break as a steward and come back!
-
-
-
