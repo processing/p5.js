@@ -2267,7 +2267,9 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/58628586?v=4",
       "profile": "https://kkvanonymous.github.io/",
       "contributions": [
-        "doc"
+        "doc",
+        "bug",
+        "code"
       ]
     },
     {
