@@ -1118,7 +1118,7 @@ function createMedia(pInst, type, src, callback) {
 
   // If callback is provided, attach to element
   if (typeof callback === 'function') {
-    const callbackHandler = () => {
+    const callbackHandler = function() {
       callback();
       elt.removeEventListener('canplaythrough', callbackHandler);
     };

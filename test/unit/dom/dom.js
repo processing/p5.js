@@ -1068,7 +1068,7 @@ suite('DOM', function() {
       myp5.remove();
     });
 
-    const emptyCallback = () => {};
+    const emptyCallback = function() {};
     const createDummyFile = filename => {
       return new File(['testFileBlob'], filename, {
         type: 'text/plain'
@@ -1877,14 +1877,14 @@ suite('DOM', function() {
         // Setup test functions and constants
         const file1 = new File(['foo'], 'foo.txt', { type: 'text/plain' });
         const file2 = new File(['foo'], 'foo.txt', { type: 'text/plain' });
-        const hasFinished = () => {
+        const hasFinished = function() {
           if (fileFnCounter > 1 && eventFnCounter === 1) resolve();
         };
-        const testFileFn = () => {
+        const testFileFn = function() {
           fileFnCounter += 1;
           hasFinished();
         };
-        const testEventFn = () => {
+        const testEventFn = function() {
           eventFnCounter += 1;
           hasFinished();
         };

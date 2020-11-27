@@ -25,11 +25,11 @@ suite('preloads', () => {
       });
 
       return promisedSketch((sketch, resolve, reject) => {
-        sketch.preload = () => {
+        sketch.preload = function() {
           target.testPreloadFunction();
         };
 
-        sketch.setup = () => {
+        sketch.setup = function() {
           if (resolved) {
             resolve();
           } else {
@@ -52,12 +52,12 @@ suite('preloads', () => {
       });
 
       return promisedSketch((sketch, resolve, reject) => {
-        sketch.preload = () => {
+        sketch.preload = function() {
           target.testPreloadFunction();
           setTimeout(resolve, 10);
         };
 
-        sketch.setup = () => {
+        sketch.setup = function() {
           reject('Sketch should not enter setup');
         };
       });
@@ -78,7 +78,7 @@ suite('preloads', () => {
         });
 
         return promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             target
               .testPreloadFunction(() => {}, () => {}, () => {})
               .catch(reject);
@@ -102,7 +102,7 @@ suite('preloads', () => {
         });
 
         return promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             target
               .testPreloadFunction(() => {}, () => {}, () => {})
               .catch(reject);
@@ -128,7 +128,7 @@ suite('preloads', () => {
         let success = 0;
 
         return promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             target
               .testPreloadFunction(0, () => {
                 success++;
@@ -147,7 +147,7 @@ suite('preloads', () => {
               .catch(reject);
           };
 
-          sketch.setup = () => {
+          sketch.setup = function() {
             if (success !== 2) {
               reject(
                 new Error(`Not all success callbacks were run: ${success}/2`)
@@ -178,11 +178,11 @@ suite('preloads', () => {
         });
 
         return promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             target.testPreloadLegacy();
           };
 
-          sketch.setup = () => {
+          sketch.setup = function() {
             if (resolved) {
               resolve();
             } else {
@@ -208,12 +208,12 @@ suite('preloads', () => {
         });
 
         return promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             target.testPreloadLegacy();
             setTimeout(resolve, 10);
           };
 
-          sketch.setup = () => {
+          sketch.setup = function() {
             reject('Sketch should not enter setup');
           };
         });
@@ -241,7 +241,7 @@ suite('preloads', () => {
         let testResult;
 
         await promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             testResult = target.testPreloadLegacy();
           };
 
@@ -271,7 +271,7 @@ suite('preloads', () => {
         let testResult;
 
         await promisedSketch((sketch, resolve, reject) => {
-          sketch.preload = () => {
+          sketch.preload = function() {
             testResult = target.testPreloadLegacy();
           };
 

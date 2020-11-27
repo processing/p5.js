@@ -10,7 +10,7 @@ import * as constants from '../constants';
 import { translator } from '../internationalization';
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._clearValidateParamsCache = () => {};
+  p5._validateParameters = p5._clearValidateParamsCache = function() {};
 } else {
   // for parameter validation
   const dataDoc = require('../../../docs/parameterData.json');
