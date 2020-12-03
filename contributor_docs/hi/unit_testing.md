@@ -49,7 +49,7 @@ suite.only('color/p5.ColorConversion', function() {
 चिह्नित किया जाएगा, और इस तरह की रिपोर्ट की जाएगी।
 
 
-##Infrastucture
+##Infrastructure
 ###Framework
 
 हम अपने यूनिट परीक्षणों को संरचित करने और चलाने के लिए [Mocha](https://mochajs.org/) का उपयोग करते हैं
