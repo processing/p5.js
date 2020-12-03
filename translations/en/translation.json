@@ -1,7 +1,7 @@
 {
   "fes": {
     "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy. Check out {{link}} for more information about why.",
-    "checkUserDefinedFns": "It seems that you may have accidently written {{name}} instead of {{actualName}}.\n\nPlease correct it if it's not intentional.",
+    "checkUserDefinedFns": "It seems that you may have accidentally written {{name}} instead of {{actualName}}.\n\nPlease correct it if it's not intentional.",
     "fileLoadError": {
       "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
       "font": "It looks like there was a problem loading your font. {{suggestion}}",
@@ -37,8 +37,8 @@
     },
     "libraryError": "An error with message \"{{error}}\" occured inside the p5js library when {{func}} was called {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
     "location": "(on line {{line}} in {{file}} [{{location}}])",
-    "misspelling": "It seems that you may have accidently written \"{{name}}\" instead of \"{{actualName}}\" {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
-    "misspelling_plural": "It seems that you may have accidently written \"{{name}}\" {{location}}.\n\nYou may have meant one of the following:\n{{suggestions}}",
+    "misspelling": "It seems that you may have accidentally written \"{{name}}\" instead of \"{{actualName}}\" {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
+    "misspelling_plural": "It seems that you may have accidentally written \"{{name}}\" {{location}}.\n\nYou may have meant one of the following:\n{{suggestions}}",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: {{link}}",
     "positions": {
       "p_1": "first",
