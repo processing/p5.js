@@ -501,7 +501,6 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @return {Number}
  */
 p5.prototype.max = function(...args) {
-  p5._validateParameters('max', args);
   if (args[0] instanceof Array) {
     return Math.max.apply(null, args[0]);
   } else {
@@ -550,7 +549,6 @@ p5.prototype.max = function(...args) {
  * @return {Number}
  */
 p5.prototype.min = function(...args) {
-  p5._validateParameters('min', args);
   if (args[0] instanceof Array) {
     return Math.min.apply(null, args[0]);
   } else {
