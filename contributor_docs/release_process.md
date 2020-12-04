@@ -39,6 +39,6 @@ In the case where you have push access to the repositories:
 
 In the case where you don't have push access to the repositories:
 * You will need to edit the `name` field of `package.json` to a namespaced version, eg. `@username/p5` and commit this change into git before running `npm run release -- --preview` as usual. When prompted just choose not to publish the package to the namespaced packaged on NPM, nothing will be published online.
-* You can do a full test run of the release with `npm run release` provided you have edited the `name` field of `package.json`. To choose where to clone and push the Bower release and website repositories from, you can set them by specifiying additional arguments like so: `npm run release -- --bowerReleaser=username --docsReleaser=username`.
+* You can do a full test run of the release with `npm run release` provided you have edited the `name` field of `package.json`. To choose where to clone and push the Bower release and website repositories from, you can set them by specifying additional arguments like so: `npm run release -- --bowerReleaser=username --docsReleaser=username`.
 
 __NOTE:__ `np` (`6.2.0`) currently has a [bug](https://github.com/sindresorhus/np/issues/508) that prevents release to namespaced package name, you can revert to `5.2.1` if you must test this otherwise it will fail at the publish step.

@@ -131,7 +131,7 @@ function setup() {
 }
 /* 
 FES will show:
-p5.js says: It seems that you may have accidently written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]).
+p5.js says: It seems that you may have accidentally written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]).
 
 Please correct it to color if you wish to use the function from p5.js (http://p5js.org/reference/#/p5/color)
 */
@@ -146,7 +146,7 @@ function preLoad() {
 }
 /* 
 FES will show:
-p5.js says: It seems that you may have accidently written preLoad instead of preload.
+p5.js says: It seems that you may have accidentally written preLoad instead of preload.
 
 Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
 */

@@ -391,7 +391,7 @@ suite('Error Helpers', function() {
       const logMsg = help(new ReferenceError('MouseX is not defined'));
       assert.match(
         logMsg,
-        /It seems that you may have accidently written "MouseX"/
+        /It seems that you may have accidentally written "MouseX"/
       );
       assert.match(logMsg, /mouseX/);
     });
@@ -400,7 +400,7 @@ suite('Error Helpers', function() {
       const logMsg = help(new ReferenceError('colour is not defined'));
       assert.match(
         logMsg,
-        /It seems that you may have accidently written "colour"/
+        /It seems that you may have accidentally written "colour"/
       );
       assert.match(logMsg, /color/);
     });
@@ -411,7 +411,7 @@ suite('Error Helpers', function() {
         const logMsg = help(new ReferenceError('strok is not defined'));
         assert.match(
           logMsg,
-          /It seems that you may have accidently written "strok"/
+          /It seems that you may have accidentally written "strok"/
         );
         assert.match(logMsg, /stroke/);
         assert.match(logMsg, /STROKE/);
@@ -422,7 +422,7 @@ suite('Error Helpers', function() {
       const logMsg = help(new ReferenceError('RandomGossian is not defined'));
       assert.match(
         logMsg,
-        /It seems that you may have accidently written "RandomGossian"/
+        /It seems that you may have accidentally written "RandomGossian"/
       );
       assert.match(logMsg, /randomGaussian/);
     });
@@ -459,7 +459,7 @@ suite('Error Helpers', function() {
         assert.strictEqual(log.length, 1, 'One message is displayed');
         assert.match(
           log[0],
-          /It seems that you may have accidently written preLoad instead of preload/
+          /It seems that you may have accidentally written preLoad instead of preload/
         );
       }
     );
@@ -492,7 +492,7 @@ suite('Error Helpers', function() {
           assert.strictEqual(log.length, 1);
           assert.match(
             log[0],
-            /It seems that you may have accidently written DRAW instead of draw/
+            /It seems that you may have accidentally written DRAW instead of draw/
           );
         });
       }

@@ -40,7 +40,7 @@ Now when you use `npm test`, only tests within that `function()` body will be ru
 
 This feature is the inverse of `.only()`. By appending `.skip()`, you may tell Mocha to simply ignore these suite(s) and test case(s). Anything skipped will be marked as pending, and reported as such.
 
-## Infrastucture
+## Infrastructure
 
 ### Frameworks
 
