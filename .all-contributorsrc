@@ -2289,6 +2289,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "covalentbond",
+      "name": "Arijit Kundu",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/53327173?v=4",
+      "profile": "https://www.linkedin.com/in/arijit-kundu/",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
