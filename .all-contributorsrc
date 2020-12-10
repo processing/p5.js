@@ -2300,6 +2300,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "tannerdolby",
+      "name": "Tanner Dolby",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/48612525?v=4",
+      "profile": "https://tannerdolby.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
