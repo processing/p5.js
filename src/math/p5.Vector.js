@@ -1459,8 +1459,9 @@ p5.Vector.prototype.heading = function heading() {
  */
 
 p5.Vector.prototype.setHeading = function setHeading(a) {
-  this.rotate(-this.heading());
-  this.rotate(a);
+  let m = this.mag();
+  this.x = m * Math.cos(a);
+  this.y = m * Math.sin(a);
   return this;
 };
 
