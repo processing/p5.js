@@ -18,6 +18,15 @@ suite('p5.Vector', function() {
   });
   var v;
 
+  suite('setHeading', function() {
+    setup(function() {
+      v = myp5.createVector(1, 1);
+      v.setHeading(1);
+    });
+    test('should have heading() value of 1', function() {
+      assert.closeTo(v.heading(), 1, 0.001);
+    });
+  });
   suite('p5.prototype.createVector()', function() {
     setup(function() {
       v = myp5.createVector();
