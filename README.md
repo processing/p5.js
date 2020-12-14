@@ -455,6 +455,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://www.linkedin.com/in/arijit-kundu/"><img src="https://avatars1.githubusercontent.com/u/53327173?v=4" width="100px;" alt=""/><br /><sub><b>Arijit Kundu</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acovalentbond" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=covalentbond" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=covalentbond" title="Documentation">📖</a></td>
     <td align="center"><a href="https://tannerdolby.com"><img src="https://avatars3.githubusercontent.com/u/48612525?v=4" width="100px;" alt=""/><br /><sub><b>Tanner Dolby</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=tannerdolby" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://samdelong.com"><img src="https://avatars0.githubusercontent.com/u/20839292?v=4" width="100px;" alt=""/><br /><sub><b>sam delong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=samdelong" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
