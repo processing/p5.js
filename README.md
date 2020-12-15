@@ -457,7 +457,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://samdelong.com"><img src="https://avatars0.githubusercontent.com/u/20839292?v=4" width="100px;" alt=""/><br /><sub><b>sam delong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=samdelong" title="Code">💻</a></td>
-    <td align="center"><a href="https://www.haoohaoo.com"><img src="https://avatars0.githubusercontent.com/u/1265068?v=4" width="100px;" alt=""/><br /><sub><b>Zhao Xin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=archtaurus" title="Code">💻</a></td>
+    <td align="center"><a href="https://www.haoohaoo.com"><img src="https://avatars0.githubusercontent.com/u/1265068?v=4" width="100px;" alt=""/><br /><sub><b>Zhao Xin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=archtaurus" title="Code">💻</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Aarchtaurus" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 
