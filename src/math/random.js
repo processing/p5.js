@@ -216,7 +216,7 @@ p5.prototype.randomGaussian = function(mean, sd = 1) {
       x1 = this.random(2) - 1;
       x2 = this.random(2) - 1;
       w = x1 * x1 + x2 * x2;
-    } while (w >= 1);
+    } while (w == 0 || w >= 1);
     w = Math.sqrt(-2 * Math.log(w) / w);
     y1 = x1 * w;
     y2 = x2 * w;
