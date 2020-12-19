@@ -2173,10 +2173,14 @@ p5.Element.prototype.remove = function() {
   // stop all audios/videos and detach all devices like microphone/camera etc
   // used as input/output for audios/videos.
   if (this instanceof p5.MediaElement) {
-    const tracks = this.elt.srcObject.getTracks();
-    tracks.forEach(function(track) {
-      track.stop();
-    });
+    this.stop();
+    let sources = this.elt.srcObject;
+    if (sources !== null) {
+      let tracks = sources.getTracks();
+      tracks.forEach(track => {
+        track.stop();
+      });
+    }
   }
 
   // delete the reference in this._pInst._elements
