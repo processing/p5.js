@@ -2174,9 +2174,9 @@ p5.Element.prototype.remove = function() {
   // used as input/output for audios/videos.
   if (this instanceof p5.MediaElement) {
     this.stop();
-    let sources = this.elt.srcObject;
+    const sources = this.elt.srcObject;
     if (sources !== null) {
-      let tracks = sources.getTracks();
+      const tracks = sources.getTracks();
       tracks.forEach(track => {
         track.stop();
       });
