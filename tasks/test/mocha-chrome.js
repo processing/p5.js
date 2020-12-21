@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     // Launch Chrome in headless mode
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
     try {

@@ -1310,7 +1310,10 @@ p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
   pointShader.setUniform('uMaterialColor', this.curStrokeColor);
   // @todo is there an instance where this isn't stroke weight?
   // should be they be same var?
-  pointShader.setUniform('uPointSize', this.pointSize);
+  pointShader.setUniform(
+    'uPointSize',
+    this.pointSize * this._pInst._pixelDensity
+  );
 };
 
 /* Binds a buffer to the drawing context
