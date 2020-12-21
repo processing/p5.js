@@ -267,6 +267,7 @@ horizontal wave pattern effected by mouse x-position & updating noise values.
 
 ## Template for methods
 Here is an example for a well-documented method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/main/contributor_docs/method.example.js). Replace the text with your method's variables and remove the remaining ones.
+
 ![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/method-template-example.png)
 
 
