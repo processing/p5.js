@@ -115,7 +115,7 @@ If a method has multiple possible parameter options, you can specify each indivi
 ```
 
 Notes:
-* If a parameter has been defined previously, like `a` in this case, you do not need to fill in the definition again. 
+* If a parameter was given description previously, like `a` in this case, you do not need to rewrite its description again. 
 * It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter.
 * You can see two examples of this inline in the source code for [background](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/setting.js#L106) and [color](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/creating_reading.js#L241).
 
