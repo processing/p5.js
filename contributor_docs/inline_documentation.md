@@ -147,7 +147,7 @@ Use `@private` if a property or variable is a private variable (default is `@pub
 
 ## Specify module for files
 
-The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See http://p5js.org/api/#methods (the modules are COLOR, IMAGE, PVECTOR, etc.). 
+The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See [here](https://p5js.org/reference/#collection-list-nav) (the modules are COLOR, IMAGE, IO, PVECTOR, etc.). 
 
 ```
 /**
