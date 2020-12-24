@@ -1,6 +1,6 @@
-Documentation is essential for new learners and experienced programmers alike. It helps make our community inclusive by extending a friendly hand to those who are less familiar with p5.js. It also helps us find the bugs and issues with the code itself, because we test and try things out as we document.
+Documentation is essential for new learners and experienced programmers alike. It helps make our community inclusive by extending a friendly hand to those who are less familiar with p5.js. It also helps us finding the bugs and issues with the code itself, because we test and try things out as we document.
 
-There are several ways to contribute to documentation:
+There are several ways to contribute to documentation section:
 
 ## ☝️ Open issues
 If you're just getting started, one really helpful way you can contribute is by opening issues for documentation needs. If you notice a typo, a missing or broken example, or a function description that is confusing, [open an issue for it](https://github.com/processing/p5.js/issues)! Please include a link to the page that needs fixing so we can find it easily.
