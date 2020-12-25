@@ -2137,6 +2137,14 @@ p5.Element.prototype.size = function(w, h) {
   if (arguments.length === 0) {
     return { width: this.elt.offsetWidth, height: this.elt.offsetHeight };
   } else {
+    if (this.elt instanceof HTMLCanvasElement) {
+      p5._friendlyError(
+        'Try using the method resizeCanvas for canvas instead of size method check this for reference',
+        'resizeCanvas'
+      );
+      return;
+    }
+
     let aW = w;
     let aH = h;
     const AUTO = p5.prototype.AUTO;
@@ -2146,29 +2154,6 @@ p5.Element.prototype.size = function(w, h) {
       } else if (aH === AUTO) {
         aH = w * this.height / this.width;
       }
-      // set diff for cnv vs normal div
-      if (this.elt instanceof HTMLCanvasElement) {
-        const j = {};
-        const k = this.elt.getContext('2d');
-        let prop;
-        for (prop in k) {
-          j[prop] = k[prop];
-        }
-        this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
-        this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
-        this.elt.style.width = aW + 'px';
-        this.elt.style.height = aH + 'px';
-        this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
-        for (prop in j) {
-          this.elt.getContext('2d')[prop] = j[prop];
-        }
-      } else {
-        this.elt.style.width = aW + 'px';
-        this.elt.style.height = aH + 'px';
-        this.elt.width = aW;
-        this.elt.height = aH;
-      }
-
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
 
