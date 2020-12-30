@@ -2139,6 +2139,34 @@ p5.Vector.mult = function mult(v, n, target) {
 };
 
 /**
+ * Rotates the vector (only 2D vectors) by the given angle, magnitude remains the same and returns a new vector.
+ */
+
+/**
+ * @method rotate
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number} angle angle of rotation
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ */
+
+p5.Vector.rotate = function rotate(v, a, target) {
+  if (!target) {
+    target = v.copy();
+    if (arguments.length === 3) {
+      p5._friendlyError(
+        'The target parameter is undefined, it should be of type p5.Vector',
+        'p5.Vector.rotate'
+      );
+    }
+  } else {
+    target.set(v);
+  }
+  target.rotate(a);
+  return target;
+};
+
+/**
  * Divides a vector by a scalar and returns a new vector.
  */
 
