@@ -1482,6 +1482,19 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // static function implementation
+ * let v = createVector(10.0, 20.0);
+ * // v has components [10.0, 20.0, 0.0]
+ * let rotated_v = p5.Vector.rotate(v, HALF_PI);
+ * console.log(rotated_v);
+ * // rotated_v's components are set to [-20.0, 9.999999, 0.0]
+ * console.log(v);
+ * // v's components remains the same (i.e, [10.0, 20.0, 0.0])
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let angle = 0;
