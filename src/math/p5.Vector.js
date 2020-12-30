@@ -2146,7 +2146,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @method rotate
  * @static
  * @param  {p5.Vector} v
- * @param  {Number} angle angle of rotation
+ * @param  {Number} angle
  * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  */
 
