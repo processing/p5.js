@@ -79,7 +79,7 @@ p5.prototype.select = function(e, p) {
  *                                             , or HTML element to search within
  * @return {p5.Element[]} Array of <a href="#/p5.Element">p5.Element</a>s containing nodes found
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * function setup() {
  *   createButton('btn');
  *   createButton('2nd btn');
@@ -91,7 +91,7 @@ p5.prototype.select = function(e, p) {
  *   }
  * }
  * </code></div>
- * <div class='norender'><code>
+ * <div><code>
  * // these are all valid calls to selectAll()
  * let a = selectAll('.beep');
  * a = selectAll('div');
@@ -178,7 +178,7 @@ p5.prototype._wrapElement = function(elt) {
  * Event handlers are removed, and element is removed from the DOM.
  * @method removeElements
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * function setup() {
  *   createCanvas(100, 100);
  *   createDiv('this is some text');
@@ -278,7 +278,7 @@ p5.Element.prototype.changed = function(fxn) {
  *                                firing function will no longer fire.
  * @chainable
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * // Open your console to see the output
  * function setup() {
  *   let inp = createInput('');
@@ -318,7 +318,7 @@ function addElement(elt, pInst, media) {
  * @param  {String} [html] inner HTML for element created
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createDiv('this is some text');
  * </code></div>
  */
@@ -336,7 +336,7 @@ p5.prototype.createDiv = function(html = '') {
  * @param  {String} [html] inner HTML for element created
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createP('this is some text');
  * </code></div>
  */
@@ -353,7 +353,7 @@ p5.prototype.createP = function(html = '') {
  * @param  {String} [html] inner HTML for element created
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createSpan('this is some text');
  * </code></div>
  */
@@ -372,7 +372,7 @@ p5.prototype.createSpan = function(html = '') {
  * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (`""`) if that an image is not intended to be viewed.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createImg(
  *   'https://p5js.org/assets/img/asterisk-01.png',
  *   'the p5 magenta asterisk'
@@ -419,7 +419,7 @@ p5.prototype.createImg = function() {
  *                             could be _blank, _self, _parent, _top.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createA('http://p5js.org/', 'this is a link');
  * </code></div>
  */
@@ -499,7 +499,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
  * @param  {String} [value] value of the button
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * let button;
  * function setup() {
  *   createCanvas(100, 100);
@@ -532,7 +532,7 @@ p5.prototype.createButton = function(label, value) {
  * @param  {boolean} [value] value of the checkbox; checked is true, unchecked is false
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * let checkbox;
  *
  * function setup() {
@@ -1015,7 +1015,7 @@ p5.prototype.createColorPicker = function(value) {
  *   Needs a value to be specified first.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * function setup() {
  *   let inp = createInput('');
  *   inp.input(myInputEvent);
@@ -1303,7 +1303,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  *                                   stream has loaded
  * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
  * @example
- * <div class='norender notest'>
+ * <div class='notest'>
  * <code>
  * let capture;
  *
@@ -1320,7 +1320,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  *
- * <div class='norender notest'>
+ * <div class='notest'>
  * <code>
  * function setup() {
  *   createCanvas(480, 120);
@@ -1340,7 +1340,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  * </code>
  * </div>
- * <div class='norender notest'>
+ * <div class='notest'>
  * <code>
  * let capture;
  *
@@ -1421,7 +1421,7 @@ p5.prototype.createCapture = function() {
  * @param  {String} [content] html content to be inserted into the element
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div class='norender'><code>
+ * <div><code>
  * createElement('h2', 'im an h2 p5.element!');
  * </code></div>
  */
