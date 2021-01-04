@@ -2162,18 +2162,17 @@ p5.Vector.mult = function mult(v, n, target) {
  * @param  {Number} angle
  * @param  {p5.Vector} [target] the vector to receive the result (Optional)
  */
-
 p5.Vector.rotate = function rotate(v, a, target) {
-  if (!target) {
+  if (arguments.length === 2) {
     target = v.copy();
-    if (arguments.length === 3) {
-      p5._friendlyError(
-        'The target parameter is undefined, it should be of type p5.Vector',
-        'p5.Vector.rotate'
-      );
-    }
-  } else {
+  } else if (target instanceof p5.Vector) {
     target.set(v);
+  } else {
+    target = v.copy();
+    p5._friendlyError(
+      'The target parameter should be of type p5.Vector',
+      'p5.Vector.rotate'
+    );
   }
   target.rotate(a);
   return target;
