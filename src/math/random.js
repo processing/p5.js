@@ -206,7 +206,7 @@ p5.prototype.random = function(min, max) {
  * 100 horizontal lines from center of canvas. height & side change each render
  * black lines radiate from center of canvas. size determined each render
  */
-p5.prototype.randomGaussian = function(mean, sd) {
+p5.prototype.randomGaussian = function(mean, sd = 1) {
   let y1, x1, x2, w;
   if (this._gaussian_previous) {
     y1 = y2;
@@ -224,8 +224,7 @@ p5.prototype.randomGaussian = function(mean, sd) {
   }
 
   const m = mean || 0;
-  const s = sd || 1;
-  return y1 * s + m;
+  return y1 * sd + m;
 };
 
 export default p5;

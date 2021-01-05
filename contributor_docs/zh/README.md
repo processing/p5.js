@@ -18,7 +18,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 # 文件结构
 
-这个代码库有很多文件，所以这里提供了文件总览。有些文件可能很难懂——不过你并不需要每一个都看懂才能开始。我们建议你先从一个特定区域入手（例如说，修复某些内联参考文献），并逐渐地探索更多领域。Luisa Pereira 的 [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) 也给出了 p5.js 工具与文件的视频总览。
+这个代码库有很多文件，所以这里提供了文件总览。有些文件可能很难懂——不过你并不需要每一个都看懂才能开始。我们建议你先从一个特定区域入手（例如说，修复某些内联参考文献），并逐渐地探索更多领域。Luisa Pereira 的 [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) 也给出了 p5.js 工具与文件的视频总览。
 
 - `contributor_docs/` 包含了贡献者所需遵循的原则；
 - `docs/` 并不包含参考文献！它包含了 _*生成*_ [线上参考文献](https://p5js.org/reference/)的代码；
@@ -170,7 +170,7 @@ $ npm run dev
 # 其他
 
 - 您可以浏览 [contributor_docs /](https://github.com/processing/p5.js/tree/main/contributor_docs) 文件夹中的其他文件。它们涉及贡献于此项目的技术和非技术方面的特定领域。
-- [深入p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) 是 p5.js 开发工作流程中使用的工具和文件的视频教程。
+- [深入p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) 是 p5.js 开发工作流程中使用的工具和文件的视频教程。
 - [来自 The Coding Train 的视频](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: 概述了对 p5.js 的技术贡献入门。
 - p5.js [Docker 映像](https://github.com/toolness/p5.js-docker)可以安装在 [Docker](https://www.docker.com/) 中，并用于开发p5 .js，无需手动安装诸如 [Node](https://nodejs.org/) 之类的要求，也无需以其他方式影响主机操作系统（除了安装 Docker 外）。
 - p5.js 库的构建过程会生成一个 [json 数据文件](https://p5js.org/reference/data.json)，其中包含了 p5.js 的公共 API，可用于自动化工具中，例如在编辑器中自动完成 p5.js 语法。该文件托管在 p5.js 网站上，但不包含在代码库中。

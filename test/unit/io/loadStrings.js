@@ -2,6 +2,7 @@ suite('loadStrings', function() {
   const invalidFile = '404file';
   const validFile = 'unit/assets/sentences.txt';
   const fileWithEmptyLines = 'unit/assets/empty_lines.txt';
+  const fileWithManyLines = 'unit/assets/many_lines.txt';
 
   test('_friendlyFileLoadError is called', async function() {
     const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
@@ -125,5 +126,15 @@ suite('loadStrings', function() {
     });
     assert.isArray(strings, 'Array passed to callback function');
     assert.lengthOf(strings, 6, 'length of data is 6');
+  });
+
+  test('can load file with many lines', async function() {
+    const strings = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadStrings(fileWithManyLines, resolve, reject);
+      };
+    });
+    assert.isArray(strings, 'Array passed to callback function');
+    assert.lengthOf(strings, 131073, 'length of data is 131073');
   });
 });

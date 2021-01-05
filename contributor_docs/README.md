@@ -6,20 +6,16 @@ Thanks for your interest in contributing to p5.js! Our community values contribu
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Add yourself to the [readme](https://github.com/processing/p5.js/blob/main/README.md#contributors) by following the [instructions here](https://github.com/processing/p5.js/issues/2309)! Or comment in the [GitHub issues](https://github.com/processing/p5.js/issues) with your contribution and we'll add you.
 
-
-
 # Prioritizing access
 
 We are prioritizing work that expands access (inclusion and accessibility) to p5.js! See [our access statement](./access.md) for more details.
-
-
 
 # Where our code lives
 
 The overarching p5.js project includes some repositories other than this one:
 
-- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Lauren Lee McCarthy](https://github.com/lmccart).
-- [p5.js-website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Lauren Lee McCarthy](https://github.com/lmccart).
+- [p5.js](https://github.com/processing/p5.js): This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](http://usejsdoc.org/) comments included in this source code. It is maintained by [Moira Turner](https://github.com/mcturner1995).
+- [p5.js-website](https://github.com/processing/p5.js-website) This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Moira Turner](https://github.com/mcturner1995).
 - [p5.js-sound](https://github.com/processing/p5.js-sound) This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor) This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak). Note that the older [p5.js editor](https://github.com/processing/p5.js-editor) is now deprecated.
 
@@ -27,7 +23,7 @@ The overarching p5.js project includes some repositories other than this one:
 
 # Repository File Structure
 
-There are a lot of files here! Here's a brief overview. It can be confusing, but you don't need to understand every file in the repository to get started. We recommend beginning in one area (for example, fixing some inline documentation), and working your way outwards to exploring more. Luisa Pereira's [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) also gives a video tour of the tools and files used in the p5.js workflow.
+There are a lot of files here! Here's a brief overview. It can be confusing, but you don't need to understand every file in the repository to get started. We recommend beginning in one area (for example, fixing some inline documentation), and working your way outwards to exploring more. Luisa Pereira's [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) also gives a video tour of the tools and files used in the p5.js workflow.
 
 - `contributor_docs/` contains  documents that explain practices and principles for contributors
 - `docs/` does not actually contain docs! Rather, it contains the code used to *generate* the [online reference manual](https://p5js.org/reference/).
@@ -193,7 +189,7 @@ A complete guide to unit testing is beyond the scope of the p5.js documentation,
 # Miscellaneous
 
 - There are other files in the [contributor_docs/](https://github.com/processing/p5.js/tree/main/contributor_docs) folder that you might explore. They pertain to contributing to specific areas of this project, both technical and non-technical.
-- [Looking Inside p5.js](http://www.luisapereira.net/teaching/looking-inside-p5/) is a video tour of the tools and files used in the p5.js development workflow.
+- [Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) is a video tour of the tools and files used in the p5.js development workflow.
 -  [This video from The Coding Train](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: gives an overview of getting started with technical contribution to p5.js.
 - The p5.js [Docker image](https://github.com/toolness/p5.js-docker) can be mounted in [Docker](https://www.docker.com/) and used to develop p5.js without requiring manual installation of requirements like [Node](https://nodejs.org/) or otherwise affecting the host operating system in any way, aside from the installation of Docker.
 - The build process for the p5.js library generates a [json data file](https://p5js.org/reference/data.json) which contains the public API of p5.js and can be used in automated tooling, such as for autocompleting p5.js methods in an editor. This file is hosted on the p5.js website, but it is not included as part of the repository.

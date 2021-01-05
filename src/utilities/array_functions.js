@@ -48,7 +48,7 @@ p5.prototype.append = function(array, value) {
  * iterating through a for() loop and copying each element individually.
  *
  * @method arrayCopy
- * @deprecated
+ * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">arr1.copyWithin(arr2)</a> instead.
  * @param {Array}  src           the source Array
  * @param {Integer} srcPosition  starting position in the source Array
  * @param {Array}  dst           the destination Array

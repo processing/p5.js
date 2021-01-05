@@ -84,7 +84,6 @@ p5.prototype.key = '';
  *   } else if (keyCode === DOWN_ARROW) {
  *     fillVal = 0;
  *   }
- *   return false; // prevent default
  * }
  * </code></div>
  * <div><code>
@@ -93,7 +92,6 @@ p5.prototype.key = '';
  *   background('yellow');
  *   text(`${key} ${keyCode}`, 10, 40);
  *   print(key, ' ', keyCode);
- *   return false; // prevent default
  * }
  * </code></div>
  * @alt
@@ -284,7 +282,7 @@ p5.prototype._onkeypress = function(e) {
     return;
   }
   this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
-  this._setProperty('key', String.fromCharCode(e.which));
+  this._setProperty('key', e.key || String.fromCharCode(e.which) || e.which);
 
   const context = this._isGlobal ? window : this;
   if (typeof context.keyTyped === 'function') {

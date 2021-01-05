@@ -140,7 +140,12 @@ export const initialize = () => {
         escapeValue: false
       },
       detection: {
-        checkWhitelist: false
+        checkWhitelist: false,
+
+        // prevent storing or locating language from cookie or localStorage
+        // more info on https://github.com/processing/p5.js/issues/4862
+        order: ['querystring', 'navigator', 'htmlTag', 'path', 'subdomain'],
+        caches: []
       },
       backend: {
         fallback: 'en',

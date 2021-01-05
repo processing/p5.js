@@ -102,6 +102,14 @@ suite('loading images', function() {
     });
   });
 
+  test('first frame of GIF should be painted after load', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/white_black.gif', resolve, reject);
+    }).then(function(img) {
+      assert.deepEqual(img.get(0, 0), [255, 255, 255, 255]);
+    });
+  });
+
   /* TODO: make this resilient to platform differences in image resizing.
   test('should draw cropped image', function() {
     return new Promise(function(resolve, reject) {

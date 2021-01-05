@@ -142,7 +142,7 @@ p5.prototype.constrain = function(n, low, high) {
  *
  *   // d is the length of the line
  *   // the distance from point 1 to point 2.
- *   let d = int(dist(x1, y1, x2, y2));
+ *   let d = dist(x1, y1, x2, y2);
  *
  *   // Let's write d along the line we are drawing!
  *   push();
@@ -501,7 +501,6 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @return {Number}
  */
 p5.prototype.max = function(...args) {
-  p5._validateParameters('max', args);
   if (args[0] instanceof Array) {
     return Math.max.apply(null, args[0]);
   } else {
@@ -550,7 +549,6 @@ p5.prototype.max = function(...args) {
  * @return {Number}
  */
 p5.prototype.min = function(...args) {
-  p5._validateParameters('min', args);
   if (args[0] instanceof Array) {
     return Math.min.apply(null, args[0]);
   } else {

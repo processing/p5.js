@@ -882,13 +882,17 @@ p5.Camera.prototype.camera = function(
   this.eyeY = eyeY;
   this.eyeZ = eyeZ;
 
-  this.centerX = centerX;
-  this.centerY = centerY;
-  this.centerZ = centerZ;
+  if (typeof centerX !== 'undefined') {
+    this.centerX = centerX;
+    this.centerY = centerY;
+    this.centerZ = centerZ;
+  }
 
-  this.upX = upX;
-  this.upY = upY;
-  this.upZ = upZ;
+  if (typeof upX !== 'undefined') {
+    this.upX = upX;
+    this.upY = upY;
+    this.upZ = upZ;
+  }
 
   const local = this._getLocalAxes();
 

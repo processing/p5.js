@@ -164,7 +164,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     }
   };
 
-  // Imediate Mode
+  // Immediate Mode
   // Geometry and Material hashes stored here
   this.immediateMode = {
     geometry: new p5.Geometry(),
@@ -1310,7 +1310,10 @@ p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
   pointShader.setUniform('uMaterialColor', this.curStrokeColor);
   // @todo is there an instance where this isn't stroke weight?
   // should be they be same var?
-  pointShader.setUniform('uPointSize', this.pointSize);
+  pointShader.setUniform(
+    'uPointSize',
+    this.pointSize * this._pInst._pixelDensity
+  );
 };
 
 /* Binds a buffer to the drawing context
