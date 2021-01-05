@@ -2165,14 +2165,14 @@ p5.Vector.mult = function mult(v, n, target) {
 p5.Vector.rotate = function rotate(v, a, target) {
   if (arguments.length === 2) {
     target = v.copy();
-  } else if (target instanceof p5.Vector) {
-    target.set(v);
   } else {
-    target = v.copy();
-    p5._friendlyError(
-      'The target parameter should be of type p5.Vector',
-      'p5.Vector.rotate'
-    );
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.rotate'
+      );
+    }
+    target.set(v);
   }
   target.rotate(a);
   return target;
