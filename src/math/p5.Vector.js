@@ -1482,6 +1482,19 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  * </code>
  * </div>
  *
+ * <div class="norender">
+ * <code>
+ * // static function implementation
+ * let v = createVector(10.0, 20.0);
+ * // v has components [10.0, 20.0, 0.0]
+ * let rotated_v = p5.Vector.rotate(v, HALF_PI);
+ * console.log(rotated_v);
+ * // rotated_v's components are set to [-20.0, 9.999999, 0.0]
+ * console.log(v);
+ * // v's components remains the same (i.e, [10.0, 20.0, 0.0])
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * let angle = 0;
@@ -2135,6 +2148,33 @@ p5.Vector.mult = function mult(v, n, target) {
     target.set(v);
   }
   target.mult(n);
+  return target;
+};
+
+/**
+ * Rotates the vector (only 2D vectors) by the given angle, magnitude remains the same and returns a new vector.
+ */
+
+/**
+ * @method rotate
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number} angle
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ */
+p5.Vector.rotate = function rotate(v, a, target) {
+  if (arguments.length === 2) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.rotate'
+      );
+    }
+    target.set(v);
+  }
+  target.rotate(a);
   return target;
 };
 
