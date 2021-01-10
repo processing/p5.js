@@ -428,6 +428,7 @@ p5.prototype.windowHeight = getWindowHeight();
  *
  * @method windowResized
  * @param  {Object} [event] optional UIEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div class="norender"><code>
  * function setup() {

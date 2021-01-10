@@ -487,6 +487,7 @@ p5.prototype._setMouseButton = function(e) {
  *
  * @method mouseMoved
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -542,6 +543,7 @@ p5.prototype._setMouseButton = function(e) {
  *
  * @method mouseDragged
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -624,6 +626,7 @@ p5.prototype._onmousemove = function(e) {
  *
  * @method mousePressed
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -703,6 +706,7 @@ p5.prototype._onmousedown = function(e) {
  *
  * @method mouseReleased
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -781,6 +785,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *
  * @method mouseClicked
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -849,6 +854,7 @@ p5.prototype._onclick = function(e) {
  *
  * @method doubleClicked
  * @param  {Object} [event] optional MouseEvent callback argument.
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -939,7 +945,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *
  * @method mouseWheel
  * @param  {Object} [event] optional WheelEvent callback argument.
- *
+ * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
