@@ -66,6 +66,7 @@ p5.prototype.float = function(str) {
 /**
  * @method int
  * @param {Array} ns                    values to parse
+ * @param {Integer}       [radix]
  * @return {Number[]}                   integer representation of values
  */
 p5.prototype.int = function(n, radix = 10) {
