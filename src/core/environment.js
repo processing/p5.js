@@ -421,9 +421,13 @@ p5.prototype.windowHeight = getWindowHeight();
 /**
  * The <a href="#/p5/windowResized">windowResized()</a> function is called once
  * every time the browser window is resized. This is a good place to resize the
- * canvas or do any other adjustments to accommodate the new window size.
+ * canvas or do any other adjustments to accommodate the new window size.<br><br>
+ * Browsers may have different default behaviors attached to various UI
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method windowResized
+ * @param  {Object} [event] optional UIEvent callback argument.
  * @example
  * <div class="norender"><code>
  * function setup() {
