@@ -122,6 +122,7 @@ p5.prototype.keyCode = 0;
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method keyPressed
+ * @param  {Object} [event] optional KeyboardEvent callback argument.
  * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
@@ -195,6 +196,7 @@ p5.prototype._onkeydown = function(e) {
  * behavior for this event, add "return false" to the end of the method.
  *
  * @method keyReleased
+ * @param  {Object} [event] optional KeyboardEvent callback argument.
  * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
@@ -255,6 +257,7 @@ p5.prototype._onkeyup = function(e) {
  * to the end of the method.
  *
  * @method keyTyped
+ * @param  {Object} [event] optional KeyboardEvent callback argument.
  * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
