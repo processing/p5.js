@@ -2304,10 +2304,14 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
 };
 
 /**
+ * Calculates the magnitude (length) of the vector and returns the result as
+ * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
+ */
+/**
  * @method mag
+ * @static
  * @param {p5.Vector} vecT the vector to return the magnitude of
  * @return {Number}        the magnitude of vecT
- * @static
  */
 p5.Vector.mag = function mag(vecT) {
   const x = vecT.x,
