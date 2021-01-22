@@ -58,6 +58,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@lmccart](https://github.com/lmccart)
 * [@outofambit](https://github.com/outofambit)
 * [@limzykenneth](https://github.com/limzykenneth)
+* [stalgiag](https://github.com/stalgiag)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -67,12 +68,12 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Data                              |                                              |
 | DOM                               | outofambit                                   |
 | Events                            | outofambit<br/>limzykenneth                  |
-| Image                             |                                              |
+| Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
 | Typography                        |                                              |
 | Utilities                         |                                              |
-| WebGL                             |                                              |
+| WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
 | Localization Tools                | outofambit                                   |
 | Friendly Errors                   | outofambit                                   |
