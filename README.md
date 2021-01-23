@@ -58,7 +58,8 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@lmccart](https://github.com/lmccart)
 * [@outofambit](https://github.com/outofambit)
 * [@limzykenneth](https://github.com/limzykenneth)
-* [stalgiag](https://github.com/stalgiag)
+* [@stalgiag](https://github.com/stalgiag)
+* [@montoyamoraga](https://github.com/montoyamoraga)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
