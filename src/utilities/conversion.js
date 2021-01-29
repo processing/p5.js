@@ -320,4 +320,28 @@ p5.prototype.unhex = function(n) {
   }
 };
 
+/**
+ * Converts a hexadecimal representation of a binary string to its equivalent
+ * binary value.
+ *
+ * @method binary
+ * @param {String} n value to parse
+ * @return {String}      binary representation of hexadecimal value
+ *
+ * @example
+ * <div class='norender'><code>
+ * print(binary('A')); // 1010
+ * print(binary('FF')); // 11111111
+ * </code></div>
+ */
+
+p5.prototype.binary = function(n) {
+  let binary = '';
+  for (let i = 0; i < n.length; i++) {
+    let tempbin = parseInt(n[i], 16).toString(2);
+    binary += '0000'.substr(tempbin.length) + tempbin;
+  }
+  return binary;
+};
+
 export default p5;
