@@ -193,9 +193,13 @@ function _createGif(
       loadGIFFrameIntoImage(j, gifReader);
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
+      let frameDelay = frameInfo.delay;
+      if (frameDelay === 0) {
+        frameDelay = 10;
+      }
       frames.push({
         image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-        delay: frameInfo.delay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+        delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
       });
     }
 
