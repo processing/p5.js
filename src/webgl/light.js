@@ -408,9 +408,22 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * the light is partially ambient and partially directional
  */
 p5.prototype.lights = function() {
-  this._assert3d('lights');
-  this.ambientLight(128, 128, 128);
-  this.directionalLight(128, 128, 128, 0, 0, -1);
+  if (this._colorMode !== 'rgb') {
+    // only restore the colorMode to default if it is not in default already
+    const tempColorMode = this._colorMode;
+    const tempColorMaxes = this._colorMaxes[tempColorMode].slice();
+    this._colorMode = 'rgb'; //default color mode
+    this._colorMaxes[this._colorMode] = [255, 255, 255, 255]; //default colorMaxes
+    this._assert3d('lights');
+    this.ambientLight(128, 128, 128);
+    this.directionalLight(128, 128, 128, 0, 0, -1);
+    this._colorMode = tempColorMode;
+    this._colorMaxes[this._colorMode] = tempColorMaxes;
+  } else {
+    this._assert3d('lights');
+    this.ambientLight(128, 128, 128);
+    this.directionalLight(128, 128, 128, 0, 0, -1);
+  }
   return this;
 };
 
