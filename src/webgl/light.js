@@ -408,8 +408,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * the light is partially ambient and partially directional
  */
 p5.prototype.lights = function() {
-  if (this._colorMode !== 'rgb') {
-    // only restore the colorMode to default if it is not in default already
+  if (this._colorMode !== 'rgb') { // only restore the colorMode to default if it is not in default already
     const tempColorMode = this._colorMode;
     const tempColorMaxes = this._colorMaxes[tempColorMode].slice();
     this._colorMode = 'rgb'; //default color mode
