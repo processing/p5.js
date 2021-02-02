@@ -194,6 +194,7 @@ function _createGif(
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
       let frameDelay = frameInfo.delay;
+      // To maintain the default of 10FPS when frameInfo.delay equals to 0
       if (frameDelay === 0) {
         frameDelay = 10;
       }
