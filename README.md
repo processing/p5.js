@@ -463,6 +463,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/siv2r"><img src="https://avatars3.githubusercontent.com/u/56887198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sivaram D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=siv2r" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=siv2r" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/frappelatte28"><img src="https://avatars0.githubusercontent.com/u/64382399?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pragya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frappelatte28" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/myselfhimself"><img src="https://avatars.githubusercontent.com/u/1265346?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonathan-David Schröder</b></sub></a><br /><a href="#ideas-myselfhimself" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/processing/p5.js/commits?author=myselfhimself" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ShenpaiSharma"><img src="https://avatars.githubusercontent.com/u/47415702?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shubham Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ShenpaiSharma" title="Code">💻</a></td>
   </tr>
 </table>
 
