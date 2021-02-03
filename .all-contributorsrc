@@ -2366,7 +2366,18 @@
       "contributions": [
         "code"
       ]
-    }
+    },
+    {
+      "login": "nakednous",
+      "name": "Jean Pierre Charalambos",
+      "avatar_url": "https://avatars.githubusercontent.com/nakednous",
+      "profile": "https://github.com/nakednous",
+      "contributions": [
+        "code",
+        "tool",
+        "tool"
+      ]
+    },
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
