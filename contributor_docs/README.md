@@ -149,7 +149,7 @@ Here is a quick summary of code style rules. Please note that this list may be i
 
 * Comment your code whenever there is ambiguity or complexity in the function you are writing
 
-* See the [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) as a useful guide for more styling tips
+* See the [Mozilla JS practices](https://firefox-source-docs.mozilla.org/code-quality/coding-style/index.html) as a useful guide for more styling tips
 
   
 
