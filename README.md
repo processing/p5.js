@@ -464,6 +464,10 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/frappelatte28"><img src="https://avatars0.githubusercontent.com/u/64382399?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pragya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frappelatte28" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/myselfhimself"><img src="https://avatars.githubusercontent.com/u/1265346?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonathan-David Schröder</b></sub></a><br /><a href="#ideas-myselfhimself" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/processing/p5.js/commits?author=myselfhimself" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/ShenpaiSharma"><img src="https://avatars.githubusercontent.com/u/47415702?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shubham Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ShenpaiSharma" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/nakednous"><img src="https://avatars.githubusercontent.com/u/645599?&v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jean Pierre Charalambos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakednous" title="Code">💻</a> <a href="#tool-nakednous" title="Tools">🔧</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/satyasaibhushan"><img src="https://avatars.githubusercontent.com/u/40578313?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sai Bhushan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Documentation">📖</a></td>
   </tr>
 </table>
 
