@@ -1023,26 +1023,57 @@ suite('p5.Vector', function() {
   });
 
   suite('rotate', function() {
-    test('should return the same object', function() {
-      expect(v.rotate()).to.eql(v);
+    suite('v.rotate()', function() {
+      test('should return the same object', function() {
+        expect(v.rotate()).to.eql(v);
+      });
+
+      test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        v.rotate(Math.PI);
+        expect(v.x).to.be.closeTo(-1, 0.01);
+        expect(v.y).to.be.closeTo(0, 0.01);
+      });
+
+      test('should rotate the vector [1, 0, 0] by pi/2 radians to [0, 1, 0]', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        v.rotate(Math.PI / 2);
+        expect(v.x).to.be.closeTo(0, 0.01);
+        expect(v.y).to.be.closeTo(1, 0.01);
+      });
     });
 
-    test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      v.rotate(Math.PI);
-      expect(v.x).to.be.closeTo(-1, 0.01);
-      expect(v.y).to.be.closeTo(0, 0.01);
-    });
+    suite('p5.Vector.rotate()', function() {
+      test('should not change the original object', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        p5.Vector.rotate(v, Math.PI / 2);
+        expect(v.x).to.equal(1);
+        expect(v.y).to.equal(0);
+      });
 
-    test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      v.rotate(Math.PI / 2);
-      expect(v.x).to.be.closeTo(0, 0.01);
-      expect(v.y).to.be.closeTo(1, 0.01);
+      test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        const v1 = p5.Vector.rotate(v, Math.PI);
+        expect(v1.x).to.be.closeTo(-1, 0.01);
+        expect(v1.y).to.be.closeTo(0, 0.01);
+      });
+
+      test('should rotate the vector [1, 0, 0] by pi/2 radians to [0, 1, 0]', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        const v1 = p5.Vector.rotate(v, Math.PI / 2);
+        expect(v1.x).to.be.closeTo(0, 0.01);
+        expect(v1.y).to.be.closeTo(1, 0.01);
+      });
     });
   });
 
