@@ -94,31 +94,94 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.Vector.prototype.rotate() RADIANS', function() {
-    setup(function() {
-      myp5.angleMode(RADIANS);
-      v = myp5.createVector(0, 1);
+  suite('rotate', function() {
+    suite('p5.Vector.prototype.rotate() [MUTABLE]', function() {
+      test('should return the same object', function() {
+        v = myp5.createVector(0, 1);
+        expect(v.rotate(Math.PI)).to.eql(v);
+      });
+
+      suite('radians', function() {
+        setup(function() {
+          myp5.angleMode(RADIANS);
+        });
+
+        test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
+          v = myp5.createVector(0, 1, 0);
+          v.rotate(Math.PI);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(-Math.PI / 2);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(Math.PI);
+          expect(v.x).to.be.closeTo(-1, 0.01);
+          expect(v.y).to.be.closeTo(0, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+      });
+
+      suite('degrees', function() {
+        setup(function() {
+          myp5.angleMode(DEGREES);
+        });
+
+        test('should rotate the vector [0, 1, 0] by 180 degrees to [0, -1, 0]', function() {
+          v = myp5.createVector(0, 1, 0);
+          v.rotate(180);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by -90 degrees to [0, -1, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(-90);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+      });
     });
 
-    test('should have x, y, z rotated to 0, -1, 0 (RADIANS)', function() {
-      v.rotate(Math.PI);
-      assert.closeTo(v.x, 0, 0.001);
-      assert.closeTo(v.y, -1, 0.001);
-      assert.closeTo(v.z, 0, 0.001);
-    });
-  });
+    suite('p5.Vector.rotate() [STATIC]', function() {
+      setup(function() {
+        myp5.angleMode(RADIANS);
+      });
 
-  suite('p5.Vector.prototype.rotate() DEGREES', function() {
-    setup(function() {
-      myp5.angleMode(DEGREES);
-      v = myp5.createVector(0, 1);
-    });
+      test('should not change the original object', function() {
+        v = myp5.createVector(1, 0, 0);
+        p5.Vector.rotate(v, Math.PI / 2);
+        expect(v.x).to.equal(1);
+        expect(v.y).to.equal(0);
+        expect(v.z).to.equal(0);
+      });
 
-    test('should have x, y, z rotated to 0, -1, 0 (DEGREES)', function() {
-      v.rotate(180);
-      assert.closeTo(v.x, 0, 0.001);
-      assert.closeTo(v.y, -1, 0.001);
-      assert.closeTo(v.z, 0, 0.001);
+      test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
+        v = myp5.createVector(0, 1, 0);
+        const v1 = p5.Vector.rotate(v, Math.PI);
+        expect(v1.x).to.be.closeTo(0, 0.01);
+        expect(v1.y).to.be.closeTo(-1, 0.01);
+        expect(v1.z).to.be.closeTo(0, 0.01);
+      });
+
+      test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
+        v = myp5.createVector(1, 0, 0);
+        const v1 = p5.Vector.rotate(v, -Math.PI / 2);
+        expect(v1.x).to.be.closeTo(0, 0.01);
+        expect(v1.y).to.be.closeTo(-1, 0.01);
+        expect(v1.z).to.be.closeTo(0, 0.01);
+      });
     });
   });
 
@@ -1019,61 +1082,6 @@ suite('p5.Vector', function() {
       v.y = 0;
       v.z = 0;
       expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
-    });
-  });
-
-  suite('rotate', function() {
-    suite('v.rotate()', function() {
-      test('should return the same object', function() {
-        expect(v.rotate()).to.eql(v);
-      });
-
-      test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
-        v.x = 1;
-        v.y = 0;
-        v.z = 0;
-        v.rotate(Math.PI);
-        expect(v.x).to.be.closeTo(-1, 0.01);
-        expect(v.y).to.be.closeTo(0, 0.01);
-      });
-
-      test('should rotate the vector [1, 0, 0] by pi/2 radians to [0, 1, 0]', function() {
-        v.x = 1;
-        v.y = 0;
-        v.z = 0;
-        v.rotate(Math.PI / 2);
-        expect(v.x).to.be.closeTo(0, 0.01);
-        expect(v.y).to.be.closeTo(1, 0.01);
-      });
-    });
-
-    suite('p5.Vector.rotate()', function() {
-      test('should not change the original object', function() {
-        v.x = 1;
-        v.y = 0;
-        v.z = 0;
-        p5.Vector.rotate(v, Math.PI / 2);
-        expect(v.x).to.equal(1);
-        expect(v.y).to.equal(0);
-      });
-
-      test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
-        v.x = 1;
-        v.y = 0;
-        v.z = 0;
-        const v1 = p5.Vector.rotate(v, Math.PI);
-        expect(v1.x).to.be.closeTo(-1, 0.01);
-        expect(v1.y).to.be.closeTo(0, 0.01);
-      });
-
-      test('should rotate the vector [1, 0, 0] by pi/2 radians to [0, 1, 0]', function() {
-        v.x = 1;
-        v.y = 0;
-        v.z = 0;
-        const v1 = p5.Vector.rotate(v, Math.PI / 2);
-        expect(v1.x).to.be.closeTo(0, 0.01);
-        expect(v1.y).to.be.closeTo(1, 0.01);
-      });
     });
   });
 
