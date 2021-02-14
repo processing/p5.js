@@ -3,6 +3,7 @@ suite('p5.Vector', function() {
   var DEGREES = 'degrees';
 
   var myp5;
+  var v;
 
   setup(function(done) {
     new p5(function(p) {
@@ -16,7 +17,6 @@ suite('p5.Vector', function() {
   teardown(function() {
     myp5.remove();
   });
-  var v;
 
   suite('setHeading', function() {
     setup(function() {
@@ -27,6 +27,7 @@ suite('p5.Vector', function() {
       assert.closeTo(v.heading(), 1, 0.001);
     });
   });
+
   suite('p5.prototype.createVector()', function() {
     setup(function() {
       v = myp5.createVector();
@@ -42,7 +43,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.createVector()', function() {
+  suite('p5.prototype.createVector(1, 2, 3)', function() {
     setup(function() {
       v = myp5.createVector(1, 2, 3);
     });
@@ -93,7 +94,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.rotate() RADIANS', function() {
+  suite('p5.Vector.prototype.rotate() RADIANS', function() {
     setup(function() {
       myp5.angleMode(RADIANS);
       v = myp5.createVector(0, 1);
@@ -107,7 +108,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.rotate() DEGREES', function() {
+  suite('p5.Vector.prototype.rotate() DEGREES', function() {
     setup(function() {
       myp5.angleMode(DEGREES);
       v = myp5.createVector(0, 1);
@@ -121,7 +122,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.angleBetween()', function() {
+  suite('p5.Vector.prototype.angleBetween()', function() {
     setup(function() {
       myp5.angleMode(DEGREES);
     });
@@ -868,7 +869,7 @@ suite('p5.Vector', function() {
   });
 
   suite('normalize', function() {
-    suite('v.normalize()', function() {
+    suite('p5.Vector.prototype.normalize() [MUTABLE]', function() {
       setup(function() {
         v = myp5.createVector(1, 1, 1);
       });
@@ -898,7 +899,7 @@ suite('p5.Vector', function() {
       });
     });
 
-    suite('p5.Vector.normalize(v)', function() {
+    suite('p5.Vector.normalize(v) [STATIC]', function() {
       var res;
       setup(function() {
         v = myp5.createVector(1, 0, 0);
