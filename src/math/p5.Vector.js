@@ -2036,6 +2036,18 @@ p5.Vector.random3D = function random3D() {
   return new p5.Vector(vx, vy, vz);
 };
 
+// Returns a copy of a vector.
+/**
+ * @method copy
+ * @static
+ * @param  {p5.Vector} v the <a href="#/p5.Vector">p5.Vector</a> to create a copy of
+ * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
+ */
+
+p5.Vector.copy = function copy(v) {
+  return v.copy(v);
+};
+
 // Adds two vectors together and returns a new one.
 /**
  * @method add
