@@ -95,7 +95,7 @@ suite('p5.Vector', function() {
   });
 
   suite('rotate', function() {
-    suite('p5.Vector.prototype.rotate() [MUTABLE]', function() {
+    suite('p5.Vector.prototype.rotate() [INSTANCE]', function() {
       test('should return the same object', function() {
         v = myp5.createVector(0, 1);
         expect(v.rotate(Math.PI)).to.eql(v);
@@ -154,7 +154,7 @@ suite('p5.Vector', function() {
       });
     });
 
-    suite('p5.Vector.rotate() [STATIC]', function() {
+    suite('p5.Vector.rotate() [CLASS]', function() {
       setup(function() {
         myp5.angleMode(RADIANS);
       });
@@ -256,24 +256,37 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('copy()', function() {
+  suite('copy', function() {
     setup(function() {
-      v = new p5.Vector(1, 2, 3);
+      v = new p5.Vector(2, 3, 4);
     });
 
-    test('should not return the same instance', function() {
-      var newObject = v.copy();
-      expect(newObject).to.not.equal(v);
+    suite('p5.Vector.prototype.copy() [INSTANCE]', function() {
+      test('should not return the same instance', function() {
+        var newObject = v.copy();
+        expect(newObject).to.not.equal(v);
+      });
+
+      test("should return the calling object's x, y, z", function() {
+        var newObject = v.copy();
+        expect(newObject.x).to.eql(2);
+        expect(newObject.y).to.eql(3);
+        expect(newObject.z).to.eql(4);
+      });
     });
 
-    test("should return the calling object's x, y, z", function() {
-      v.x = 2;
-      v.y = 3;
-      v.z = 4;
-      var newObject = v.copy();
-      expect(newObject.x).to.eql(2);
-      expect(newObject.y).to.eql(3);
-      expect(newObject.z).to.eql(4);
+    suite('p5.Vector.copy() [CLASS]', function() {
+      test('should not return the same instance', function() {
+        var newObject = p5.Vector.copy(v);
+        expect(newObject).to.not.equal(v);
+      });
+
+      test("should return the passed object's x, y, z", function() {
+        var newObject = p5.Vector.copy(v);
+        expect(newObject.x).to.eql(2);
+        expect(newObject.y).to.eql(3);
+        expect(newObject.z).to.eql(4);
+      });
     });
   });
 
@@ -932,7 +945,7 @@ suite('p5.Vector', function() {
   });
 
   suite('normalize', function() {
-    suite('p5.Vector.prototype.normalize() [MUTABLE]', function() {
+    suite('p5.Vector.prototype.normalize() [INSTANCE]', function() {
       setup(function() {
         v = myp5.createVector(1, 1, 1);
       });
@@ -962,7 +975,7 @@ suite('p5.Vector', function() {
       });
     });
 
-    suite('p5.Vector.normalize(v) [STATIC]', function() {
+    suite('p5.Vector.normalize(v) [CLASS]', function() {
       var res;
       setup(function() {
         v = myp5.createVector(1, 0, 0);
