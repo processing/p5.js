@@ -2370,14 +2370,23 @@
     {
       "login": "nakednous",
       "name": "Jean Pierre Charalambos",
-      "avatar_url": "https://avatars.githubusercontent.com/nakednous",
+      "avatar_url": "https://avatars.githubusercontent.com/u/645599?&v=4",
       "profile": "https://github.com/nakednous",
       "contributions": [
         "code",
-        "tool",
         "tool"
       ]
     },
+    {
+      "login": "satyasaibhushan",
+      "name": "Sai Bhushan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40578313?v=4",
+      "profile": "https://github.com/satyasaibhushan",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
