@@ -40,7 +40,7 @@ Now when you use `npm test`, only tests within that `function()` body will be ru
 
 This feature is the inverse of `.only()`. By appending `.skip()`, you may tell Mocha to simply ignore these suite(s) and test case(s). Anything skipped will be marked as pending, and reported as such.
 
-## Infrastucture
+## Infrastructure
 
 ### Frameworks
 
@@ -78,7 +78,7 @@ If you have to add a test file for a module to `test/unit`, then you'll also nee
 
 ### Writing Unit Tests
 
-Pick a unit, it can be a method or a variable to test. Lets use `p5.prototype.isKeyPressed` as an example. Before beginning to write tests, we need to understand the expected behaviour of this method.
+Pick a unit, it can be a method or a variable to test. Lets use `p5.prototype.keyIsPressed` as an example. Before beginning to write tests, we need to understand the expected behaviour of this method.
 **Expected behaviour:** The boolean system variable should be true if any key is pressed and false if no keys are pressed.
 Now you can think of various tests against this expected behaviour. Possible test cases could be:
 
@@ -89,7 +89,7 @@ Now you can think of various tests against this expected behaviour. Possible tes
 - it should be false if no keys are pressed
 - if you can think of more, go ahead and add tests for them!
 
-We can create a test suite for `p5.prototype.isKeyPressed` and start creating tests for it. We will use mocha for structuring our unit tests.
+We can create a test suite for `p5.prototype.keyIsPressed` and start creating tests for it. We will use mocha for structuring our unit tests.
 
 ```
 suite('p5.prototype.keyIsPressed', function() {
