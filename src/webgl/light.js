@@ -72,7 +72,7 @@ import p5 from '../core/main';
  * @param  {p5.Color}      color   the ambient light color
  * @chainable
  */
-p5.prototype.ambientLight = function(v1, v2, v3, a) {
+p5.prototype.ambientLight = function (v1, v2, v3, a) {
   this._assert3d('ambientLight');
   p5._validateParameters('ambientLight', arguments);
   const color = this.color(...arguments);
@@ -159,7 +159,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {p5.Color}      color   the ambient light color
  * @chainable
  */
-p5.prototype.specularColor = function(v1, v2, v3) {
+p5.prototype.specularColor = function (v1, v2, v3) {
   this._assert3d('specularColor');
   p5._validateParameters('specularColor', arguments);
   const color = this.color(...arguments);
@@ -233,7 +233,7 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * @param  {Number}    z
  * @chainable
  */
-p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('directionalLight');
   p5._validateParameters('directionalLight', arguments);
 
@@ -343,7 +343,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {p5.Vector}                position
  * @chainable
  */
-p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+p5.prototype.pointLight = function (v1, v2, v3, x, y, z) {
   this._assert3d('pointLight');
   p5._validateParameters('pointLight', arguments);
 
@@ -407,10 +407,22 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * @alt
  * the light is partially ambient and partially directional
  */
-p5.prototype.lights = function() {
+p5.prototype.lights = function () {
   this._assert3d('lights');
-  this.ambientLight(128, 128, 128);
-  this.directionalLight(128, 128, 128, 0, 0, -1);
+  if (this._colorMode !== 'rgb') {
+    // only restore the colorMode to default if it is not in default already
+    const tempColorMode = this._colorMode;
+    const tempColorMaxes = this._colorMaxes[tempColorMode].slice();
+    this._colorMode = 'rgb'; //default color mode
+    this._colorMaxes[this._colorMode] = [255, 255, 255, 255]; //default colorMaxes
+    this.ambientLight(128, 128, 128);
+    this.directionalLight(128, 128, 128, 0, 0, -1);
+    this._colorMode = tempColorMode;
+    this._colorMaxes[this._colorMode] = tempColorMaxes;
+  } else {
+    this.ambientLight(128, 128, 128);
+    this.directionalLight(128, 128, 128, 0, 0, -1);
+  }
   return this;
 };
 
@@ -453,7 +465,7 @@ p5.prototype.lights = function() {
  * @alt
  * Two spheres with different falloff values show different intensity of light
  */
-p5.prototype.lightFalloff = function(
+p5.prototype.lightFalloff = function (
   constantAttenuation,
   linearAttenuation,
   quadraticAttenuation
@@ -626,7 +638,7 @@ p5.prototype.lightFalloff = function(
  * @param  {Number}                   [angle]
  * @param  {Number}                   [conc]
  */
-p5.prototype.spotLight = function(
+p5.prototype.spotLight = function (
   v1,
   v2,
   v3,
@@ -792,8 +804,7 @@ p5.prototype.spotLight = function(
 
     default:
       console.warn(
-        `Sorry, input for spotlight() is not in prescribed format. Too ${
-          length < 3 ? `few` : `many`
+        `Sorry, input for spotlight() is not in prescribed format. Too ${length < 3 ? `few` : `many`
         } arguments were provided`
       );
       return this;
@@ -873,7 +884,7 @@ p5.prototype.spotLight = function(
  * @alt
  * Two spheres showing different colors
  */
-p5.prototype.noLights = function() {
+p5.prototype.noLights = function () {
   this._assert3d('noLights');
   p5._validateParameters('noLights', arguments);
 
