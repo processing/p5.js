@@ -58,6 +58,8 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@lmccart](https://github.com/lmccart)
 * [@outofambit](https://github.com/outofambit)
 * [@limzykenneth](https://github.com/limzykenneth)
+* [@stalgiag](https://github.com/stalgiag)
+* [@montoyamoraga](https://github.com/montoyamoraga)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -67,12 +69,12 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Data                              |                                              |
 | DOM                               | outofambit                                   |
 | Events                            | outofambit<br/>limzykenneth                  |
-| Image                             |                                              |
+| Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
 | Typography                        |                                              |
 | Utilities                         |                                              |
-| WebGL                             |                                              |
+| WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
 | Localization Tools                | outofambit                                   |
 | Friendly Errors                   | outofambit                                   |
@@ -458,8 +460,14 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://samdelong.com"><img src="https://avatars0.githubusercontent.com/u/20839292?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sam delong</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=samdelong" title="Code">💻</a></td>
     <td align="center"><a href="https://www.haoohaoo.com"><img src="https://avatars0.githubusercontent.com/u/1265068?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zhao Xin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=archtaurus" title="Code">💻</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Aarchtaurus" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/siv2r"><img src="https://avatars3.githubusercontent.com/u/56887198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sivaram D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=siv2r" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/siv2r"><img src="https://avatars3.githubusercontent.com/u/56887198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sivaram D</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=siv2r" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=siv2r" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/frappelatte28"><img src="https://avatars0.githubusercontent.com/u/64382399?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Pragya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frappelatte28" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/myselfhimself"><img src="https://avatars.githubusercontent.com/u/1265346?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonathan-David Schröder</b></sub></a><br /><a href="#ideas-myselfhimself" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/processing/p5.js/commits?author=myselfhimself" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ShenpaiSharma"><img src="https://avatars.githubusercontent.com/u/47415702?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shubham Kumar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ShenpaiSharma" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/nakednous"><img src="https://avatars.githubusercontent.com/u/645599?&v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jean Pierre Charalambos</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nakednous" title="Code">💻</a> <a href="#tool-nakednous" title="Tools">🔧</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/satyasaibhushan"><img src="https://avatars.githubusercontent.com/u/40578313?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sai Bhushan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Documentation">📖</a></td>
   </tr>
 </table>
 

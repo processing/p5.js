@@ -86,8 +86,9 @@ p5.prototype.select = function(e, p) {
  *   createButton('3rd btn');
  *   let buttons = selectAll('button');
  *
- *   for (let i = 0; i < buttons.length; i++) {
- *     buttons[i].size(100, 100);
+ *   for (let i = 0; i < 3; i++) {
+ *     buttons[i].size(100);
+ *     buttons[i].position(0, i * 30);
  *   }
  * }
  * </code></div>
@@ -181,8 +182,11 @@ p5.prototype._wrapElement = function(elt) {
  * <div><code>
  * function setup() {
  *   createCanvas(100, 100);
- *   createDiv('this is some text');
- *   createP('this is a paragraph');
+ *   background('grey');
+ *   let div = createDiv('this is some text');
+ *   let p = createP('this is a paragraph');
+ *   div.style('font-size', '16px');
+ *   p.style('font-size', '16px');
  * }
  * function mousePressed() {
  *   removeElements(); // this will remove the div and p, not canvas
@@ -281,7 +285,11 @@ p5.Element.prototype.changed = function(fxn) {
  * <div><code>
  * // Open your console to see the output
  * function setup() {
+ *   createCanvas(100, 100);
+ *   background('grey');
  *   let inp = createInput('');
+ *   inp.position(0, 0);
+ *   inp.size(100);
  *   inp.input(myInputEvent);
  * }
  *
@@ -319,7 +327,9 @@ function addElement(elt, pInst, media) {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * createDiv('this is some text');
+ * let div = createDiv('this is some text');
+ * div.style('font-size', '16px');
+ * div.position(10, 0);
  * </code></div>
  */
 p5.prototype.createDiv = function(html = '') {
@@ -337,7 +347,9 @@ p5.prototype.createDiv = function(html = '') {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * createP('this is some text');
+ * let p = createP('this is some text');
+ * p.style('font-size', '16px');
+ * p.position(10, 0);
  * </code></div>
  */
 p5.prototype.createP = function(html = '') {
@@ -354,7 +366,8 @@ p5.prototype.createP = function(html = '') {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * createSpan('this is some text');
+ * let span = createSpan('this is some text');
+ * span.position(0, 0);
  * </code></div>
  */
 p5.prototype.createSpan = function(html = '') {
@@ -372,11 +385,12 @@ p5.prototype.createSpan = function(html = '') {
  * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (`""`) if that an image is not intended to be viewed.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
- * <div><code>
- * createImg(
+ *  <div><code>
+ * let img = createImg(
  *   'https://p5js.org/assets/img/asterisk-01.png',
  *   'the p5 magenta asterisk'
  * );
+ * img.position(0, -10);
  * </code></div>
  */
 /**
@@ -420,7 +434,8 @@ p5.prototype.createImg = function() {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * createA('http://p5js.org/', 'this is a link');
+ * let a = createA('http://p5js.org/', 'this is a link');
+ * a.position(0, 0);
  * </code></div>
  */
 p5.prototype.createA = function(href, html, target) {
@@ -505,7 +520,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
  *   createCanvas(100, 100);
  *   background(0);
  *   button = createButton('click me');
- *   button.position(19, 19);
+ *   button.position(0, 0);
  *   button.mousePressed(changeBG);
  * }
  *
@@ -1017,7 +1032,11 @@ p5.prototype.createColorPicker = function(value) {
  * @example
  * <div><code>
  * function setup() {
+ *   createCanvas(100, 100);
+ *   background('grey');
  *   let inp = createInput('');
+ *   inp.position(0, 0);
+ *   inp.size(100);
  *   inp.input(myInputEvent);
  * }
  *
@@ -1308,7 +1327,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * let capture;
  *
  * function setup() {
- *   createCanvas(480, 480);
+ *   createCanvas(100, 100);
  *   capture = createCapture(VIDEO);
  *   capture.hide();
  * }
@@ -1422,7 +1441,9 @@ p5.prototype.createCapture = function() {
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
- * createElement('h2', 'im an h2 p5.element!');
+ * let h5 = createElement('h5', 'im an h5 p5.element!');
+ * h5.style('color', '#00a1d3');
+ * h5.position(0, 0);
  * </code></div>
  */
 p5.prototype.createElement = function(tag, content) {

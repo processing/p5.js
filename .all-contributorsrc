@@ -2335,7 +2335,8 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/56887198?v=4",
       "profile": "https://github.com/siv2r",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -2345,6 +2346,45 @@
       "profile": "https://github.com/frappelatte28",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "myselfhimself",
+      "name": "Jonathan-David Schröder",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1265346?v=4",
+      "profile": "https://github.com/myselfhimself",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    },
+    {
+      "login": "ShenpaiSharma",
+      "name": "Shubham Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47415702?v=4",
+      "profile": "https://github.com/ShenpaiSharma",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nakednous",
+      "name": "Jean Pierre Charalambos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/645599?&v=4",
+      "profile": "https://github.com/nakednous",
+      "contributions": [
+        "code",
+        "tool"
+      ]
+    },
+    {
+      "login": "satyasaibhushan",
+      "name": "Sai Bhushan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40578313?v=4",
+      "profile": "https://github.com/satyasaibhushan",
+      "contributions": [
+        "code",
+        "doc"
       ]
     }
   ],

@@ -1213,6 +1213,20 @@ p5.Vector.prototype.dist = function dist(v) {
  * // [0.4454354, 0.8908708, 0.089087084]
  * </code>
  * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // Static method
+ * let v_initial = createVector(10, 20, 2);
+ * // v_initial has components [10.0, 20.0, 2.0]
+ * let v_normalized = p5.Vector.normalize(v_initial);
+ * print(v_normalized);
+ * // returns a new vector with components set to
+ * // [0.4454354, 0.8908708, 0.089087084]
+ * // v_initial remains unchanged
+ * </code>
+ * </div>
+ *
  * <div>
  * <code>
  * function draw() {
@@ -1479,6 +1493,19 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  * // v has components [10.0, 20.0, 0.0]
  * v.rotate(HALF_PI);
  * // v's components are set to [-20.0, 9.999999, 0.0]
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * // static function implementation
+ * let v = createVector(10.0, 20.0);
+ * // v has components [10.0, 20.0, 0.0]
+ * let rotated_v = p5.Vector.rotate(v, HALF_PI);
+ * console.log(rotated_v);
+ * // rotated_v's components are set to [-20.0, 9.999999, 0.0]
+ * console.log(v);
+ * // v's components remains the same (i.e, [10.0, 20.0, 0.0])
  * </code>
  * </div>
  *
@@ -2139,6 +2166,33 @@ p5.Vector.mult = function mult(v, n, target) {
 };
 
 /**
+ * Rotates the vector (only 2D vectors) by the given angle, magnitude remains the same and returns a new vector.
+ */
+
+/**
+ * @method rotate
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number} angle
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ */
+p5.Vector.rotate = function rotate(v, a, target) {
+  if (arguments.length === 2) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.rotate'
+      );
+    }
+    target.set(v);
+  }
+  target.rotate(a);
+  return target;
+};
+
+/**
  * Divides a vector by a scalar and returns a new vector.
  */
 
@@ -2264,10 +2318,14 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
 };
 
 /**
+ * Calculates the magnitude (length) of the vector and returns the result as
+ * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
+ */
+/**
  * @method mag
+ * @static
  * @param {p5.Vector} vecT the vector to return the magnitude of
  * @return {Number}        the magnitude of vecT
- * @static
  */
 p5.Vector.mag = function mag(vecT) {
   const x = vecT.x,
@@ -2275,6 +2333,31 @@ p5.Vector.mag = function mag(vecT) {
     z = vecT.z;
   const magSq = x * x + y * y + z * z;
   return Math.sqrt(magSq);
+};
+
+/**
+ * Normalize the vector to length 1 (make it a unit vector).
+ */
+/**
+ * @method normalize
+ * @static
+ * @param {p5.Vector} v  the vector to normalize
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector}   v normalized to a length of 1
+ */
+p5.Vector.normalize = function normalize(v, target) {
+  if (arguments.length < 2) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.normalize'
+      );
+    }
+    target.set(v);
+  }
+  return target.normalize();
 };
 
 export default p5.Vector;
