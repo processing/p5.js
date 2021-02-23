@@ -1,5 +1,6 @@
 /**
  * @module Foundation
+ * @submodule Foundation
  * @for p5
  */
 
