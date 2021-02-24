@@ -6,6 +6,7 @@
  */
 
 import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /**
  * Creates an ambient light with a color. Ambient light is light that comes from everywhere on the canvas.
@@ -409,19 +410,14 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  */
 p5.prototype.lights = function() {
   this._assert3d('lights');
-  if (this._colorMode !== 'rgb') {
-    // only restore the colorMode to default if it is not in default already
-    const tempColorMode = this._colorMode;
-    const tempColorMaxes = this._colorMaxes[tempColorMode].slice();
-    this._colorMode = 'rgb'; //default color mode
-    this._colorMaxes[this._colorMode] = [255, 255, 255, 255]; //default colorMaxes
+  // only restore the colorMode to default if it is not in default already
+  if (this._colorMode === constants.RGB) {
     this.ambientLight(128, 128, 128);
     this.directionalLight(128, 128, 128, 0, 0, -1);
-    this._colorMode = tempColorMode;
-    this._colorMaxes[this._colorMode] = tempColorMaxes;
   } else {
-    this.ambientLight(128, 128, 128);
-    this.directionalLight(128, 128, 128, 0, 0, -1);
+    const maxBright = this._colorMaxes[this._colorMode][2];
+    this.ambientLight(0, 0, maxBright);
+    this.directionalLight(0, 0, maxBright, 0, 0, -1);
   }
   return this;
 };
