@@ -468,6 +468,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/satyasaibhushan"><img src="https://avatars.githubusercontent.com/u/40578313?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sai Bhushan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/vulongphan"><img src="https://avatars.githubusercontent.com/u/46087559?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Long Phan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vulongphan" title="Code">💻</a></td>
   </tr>
 </table>
 
