@@ -2386,6 +2386,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "vulongphan",
+      "name": "Long Phan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46087559?v=4",
+      "profile": "https://github.com/vulongphan",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
