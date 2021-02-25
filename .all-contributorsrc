@@ -2395,6 +2395,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jcelerier",
+      "name": "Jean-Michaël Celerier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2772730?v=4",
+      "profile": "https://jcelerier.name",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
