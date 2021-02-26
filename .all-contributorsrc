@@ -2404,6 +2404,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "sosunnyproject",
+      "name": "So Sun Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17012862?v=4",
+      "profile": "https://sosunnyproject.github.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
