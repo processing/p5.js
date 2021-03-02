@@ -360,6 +360,12 @@ p5.prototype.createCamera = function() {
  * <a href="#/p5.Camera/setPosition">setPosition()</a>
  * method sets the camera's position in world-space.
  *
+ * The camera object propreties
+ * <code>centerX, centerY, centerZ, eyeX, eyeY, eyeZ, upX, upY, upZ</code>
+ * which describes camera position, orientation, and projection
+ * are also accessible via the camera object generated using
+ * <a href="#/p5/createCamera">createCamera()</a>
+ *
  * @class p5.Camera
  * @param {rendererGL} rendererGL instance of WebGL renderer
  * @example
