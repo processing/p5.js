@@ -423,6 +423,84 @@ p5.Camera = function(renderer) {
   this.cameraMatrix = new p5.Matrix();
   this.projMatrix = new p5.Matrix();
 };
+/**
+ * camera position value on x axis
+ * @property {Number} eyeX
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(0);
+ *   cam = createCamera();
+ *   cam.eyeX = 100;
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   cam.lookAt(0, 0, 0);
+ *   box(50);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * camera position value on y axis
+ * @property {Number} eyeY
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(0);
+ *   cam = createCamera();
+ *   cam.eyeY = 100;
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   cam.lookAt(0, 0, 0);
+ *   box(50);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+/**
+ * camera position value on z axis
+ * @property {Number} eyeZ
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(0);
+ *   cam = createCamera();
+ *   cam.eyeX = 100;
+ *   cam.eyeY = 100;
+ *   cam.eyeZ = 100;
+ *   setCamera(cam);
+ * }
+ *
+ * function draw() {
+ *   cam.lookAt(0, 0, 0);
+ *   box(50);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
 
 ////////////////////////////////////////////////////////////////////////////////
 // Camera Projection Methods
