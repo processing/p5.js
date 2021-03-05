@@ -361,7 +361,7 @@ p5.prototype.createCamera = function() {
  * method sets the camera's position in world-space.
  *
  * The camera object propreties
- * <code>centerX, centerY, centerZ, eyeX, eyeY, eyeZ, upX, upY, upZ</code>
+ * <code>eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ</code>
  * which describes camera position, orientation, and projection
  * are also accessible via the camera object generated using
  * <a href="#/p5/createCamera">createCamera()</a>
@@ -474,6 +474,7 @@ p5.Camera = function(renderer) {
  * An example showing the use of camera object properties
  *
  */
+
 /**
  * camera position value on z axis
  * @property {Number} eyeZ
@@ -494,6 +495,144 @@ p5.Camera = function(renderer) {
  * function draw() {
  *   cam.lookAt(0, 0, 0);
  *   box(50);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * x coordinate representing center of the sketch
+ * @property {Number} centerX
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('centerX = ' + cam.centerX);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * y coordinate representing center of the sketch
+ * @property {Number} centerY
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('centerY = ' + cam.centerY);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * z coordinate representing center of the sketch
+ * @property {Number} centerZ
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('centerZ = ' + cam.centerZ);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * x component of direction 'up' from camera
+ * @property {Number} upX
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('upX = ' + cam.upX);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * y component of direction 'up' from camera
+ * @property {Number} upY
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('upY = ' + cam.upY);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * An example showing the use of camera object properties
+ *
+ */
+
+/**
+ * z component of direction 'up' from camera
+ * @property {Number} upZ
+ * @readonly
+ * @example
+ * <div><code>
+ * let cam, div;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   background(255);
+ *   cam = createCamera();
+ *   div = createDiv('upZ = ' + cam.upZ);
+ *   div.position(0, 0);
+ *   div.style('color', 'blue');
+ *   div.style('font-size', '18px');
  * }
  * </code></div>
  *
