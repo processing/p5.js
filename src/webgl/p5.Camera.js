@@ -428,7 +428,7 @@ p5.Camera = function(renderer) {
  * @property {Number} eyeX
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -454,7 +454,7 @@ p5.Camera = function(renderer) {
  * @property {Number} eyeY
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -480,7 +480,7 @@ p5.Camera = function(renderer) {
  * @property {Number} eyeZ
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -508,7 +508,7 @@ p5.Camera = function(renderer) {
  * @property {Number} centerX
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -531,7 +531,7 @@ p5.Camera = function(renderer) {
  * @property {Number} centerY
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -554,7 +554,7 @@ p5.Camera = function(renderer) {
  * @property {Number} centerZ
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -577,7 +577,7 @@ p5.Camera = function(renderer) {
  * @property {Number} upX
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -600,7 +600,7 @@ p5.Camera = function(renderer) {
  * @property {Number} upY
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -623,7 +623,7 @@ p5.Camera = function(renderer) {
  * @property {Number} upZ
  * @readonly
  * @example
- * <div><code>
+ * <div class='norender'><code>
  * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
