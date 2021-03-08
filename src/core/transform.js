@@ -137,13 +137,25 @@ import p5 from './main';
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   let testMatrix = [1, 0, 0, 1, 0, 0];
+ *   applyMatrix(testMatrix);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * A rectangle translating to the right
  * A rectangle shrinking to the center
  * A rectangle rotating clockwise about the center
  * A rectangle shearing
+ * A rectangle in the upper left corner
  */
-p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
+p5.prototype.applyMatrix = function() {
   if (Array.isArray(arguments[0])) {
     this._renderer.applyMatrix(...arguments[0]);
   } else {
