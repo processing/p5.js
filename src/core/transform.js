@@ -25,7 +25,7 @@ import p5 from './main';
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Number} a numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number|Array} a numbers which define the 2x3 matrix to be multiplied, or an array of numbers
  * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
@@ -144,7 +144,11 @@ import p5 from './main';
  * A rectangle shearing
  */
 p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix(...arguments);
+  if (Array.isArray(arguments[0])) {
+    this._renderer.applyMatrix(...arguments[0]);
+  } else {
+    this._renderer.applyMatrix(...arguments);
+  }
   return this;
 };
 
