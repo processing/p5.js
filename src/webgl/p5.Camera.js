@@ -428,19 +428,21 @@ p5.Camera = function(renderer) {
  * @property {Number} eyeX
  * @readonly
  * @example
+ *
  * <div class='norender'><code>
- * let cam;
+ * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   cam = createCamera();
- *   cam.eyeX = 100;
- *   setCamera(cam);
+ *   div = createDiv();
+ *   div.position(0, 0);
  * }
  *
  * function draw() {
- *   cam.lookAt(0, 0, 0);
- *   box(50);
+ *   orbitControl();
+ *   box(10);
+ *   div.html('eyeX = ' + cam.eyeX);
  * }
  * </code></div>
  *
@@ -455,18 +457,19 @@ p5.Camera = function(renderer) {
  * @readonly
  * @example
  * <div class='norender'><code>
- * let cam;
+ * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   cam = createCamera();
- *   cam.eyeY = 100;
- *   setCamera(cam);
+ *   div = createDiv();
+ *   div.position(0, 0);
  * }
  *
  * function draw() {
- *   cam.lookAt(0, 0, 0);
- *   box(50);
+ *   orbitControl();
+ *   box(10);
+ *   div.html('eyeY = ' + cam.eyeY);
  * }
  * </code></div>
  *
@@ -481,20 +484,19 @@ p5.Camera = function(renderer) {
  * @readonly
  * @example
  * <div class='norender'><code>
- * let cam;
+ * let cam, div;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   cam = createCamera();
- *   cam.eyeX = 100;
- *   cam.eyeY = 100;
- *   cam.eyeZ = 100;
- *   setCamera(cam);
+ *   div = createDiv();
+ *   div.position(0, 0);
  * }
  *
  * function draw() {
- *   cam.lookAt(0, 0, 0);
- *   box(50);
+ *   orbitControl();
+ *   box(10);
+ *   div.html('eyeZ = ' + cam.eyeZ);
  * }
  * </code></div>
  *
@@ -514,10 +516,15 @@ p5.Camera = function(renderer) {
  *   createCanvas(100, 100, WEBGL);
  *   background(255);
  *   cam = createCamera();
+ *   cam.lookAt(1, 0, 0);
  *   div = createDiv('centerX = ' + cam.centerX);
  *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
+ *   div.style('color', 'white');
+ * }
+ *
+ * function draw() {
+ *   orbitControl();
+ *   box(10);
  * }
  * </code></div>
  *
@@ -537,12 +544,16 @@ p5.Camera = function(renderer) {
  *   createCanvas(100, 100, WEBGL);
  *   background(255);
  *   cam = createCamera();
+ *   cam.lookAt(0, 1, 0);
  *   div = createDiv('centerY = ' + cam.centerY);
  *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
+ *   div.style('color', 'white');
  * }
- * </code></div>
+ *
+ * function draw() {
+ *   orbitControl();
+ *   box(10);
+ * }
  *
  * @alt
  * An example showing the use of camera object properties
@@ -560,12 +571,16 @@ p5.Camera = function(renderer) {
  *   createCanvas(100, 100, WEBGL);
  *   background(255);
  *   cam = createCamera();
+ *   cam.lookAt(0, 0, 1);
  *   div = createDiv('centerZ = ' + cam.centerZ);
  *   div.position(0, 0);
- *   div.style('color', 'blue');
- *   div.style('font-size', '18px');
+ *   div.style('color', 'white');
  * }
- * </code></div>
+ *
+ * function draw() {
+ *   orbitControl();
+ *   box(10);
+ * }
  *
  * @alt
  * An example showing the use of camera object properties
