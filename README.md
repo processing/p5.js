@@ -471,6 +471,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/vulongphan"><img src="https://avatars.githubusercontent.com/u/46087559?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Long Phan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vulongphan" title="Code">💻</a></td>
     <td align="center"><a href="https://jcelerier.name"><img src="https://avatars.githubusercontent.com/u/2772730?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jean-Michaël Celerier</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajcelerier" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://sosunnyproject.github.io"><img src="https://avatars.githubusercontent.com/u/17012862?v=4?s=100" width="100px;" alt=""/><br /><sub><b>So Sun Park</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sosunnyproject" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://msub2.com"><img src="https://avatars.githubusercontent.com/u/70986246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Adams</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=msub2" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=msub2" title="Documentation">📖</a></td>
   </tr>
 </table>
 
