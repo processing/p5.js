@@ -2413,6 +2413,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "msub2",
+      "name": "Daniel Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70986246?v=4",
+      "profile": "http://msub2.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
