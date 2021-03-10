@@ -387,6 +387,18 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
   w *= pd;
   h *= pd;
 
+  // checking if user assigned pixel array is appropriate for this object
+  if (pixelsState.pixels.length !== pixelsState.imageData.data.length) {
+    throw new Error(`
+      User assigned pixel array does not match image/canvas dimensions.
+    `);
+  }
+
+  // assigning the pixels to imageData.data (given the above check passes)
+  for (let i = 0; i < pixelsState.pixels.length; i++) {
+    pixelsState.imageData.data[i] = pixelsState.pixels[i];
+  }
+
   if (this.gifProperties) {
     this.gifProperties.frames[this.gifProperties.displayIndex].image =
       pixelsState.imageData;
