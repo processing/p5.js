@@ -657,7 +657,10 @@ function exitFullscreen() {
 }
 
 /**
- * Gets the current URL.
+ * Gets the current URL. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using sketch the edtior's present or share URLs.
  * @method getURL
  * @return {String} url
  * @example
@@ -685,7 +688,10 @@ function exitFullscreen() {
  */
 p5.prototype.getURL = () => location.href;
 /**
- * Gets the current URL path as an array.
+ * Gets the current URL path as an array. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using sketch the edtior's present or share URLs.
  * @method getURLPath
  * @return {String[]} path components
  * @example
@@ -704,7 +710,10 @@ p5.prototype.getURL = () => location.href;
 p5.prototype.getURLPath = () =>
   location.pathname.split('/').filter(v => v !== '');
 /**
- * Gets the current URL params as an Object.
+ * Gets the current URL params as an Object. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using sketch the edtior's present or share URLs.
  * @method getURLParams
  * @return {Object} URL params
  * @example
