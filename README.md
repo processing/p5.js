@@ -473,6 +473,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://sosunnyproject.github.io"><img src="https://avatars.githubusercontent.com/u/17012862?v=4?s=100" width="100px;" alt=""/><br /><sub><b>So Sun Park</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sosunnyproject" title="Documentation">📖</a></td>
     <td align="center"><a href="http://msub2.com"><img src="https://avatars.githubusercontent.com/u/70986246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Adams</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=msub2" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=msub2" title="Documentation">📖</a></td>
     <td align="center"><a href="https://shantanu-kaushik.herokuapp.com/"><img src="https://avatars.githubusercontent.com/u/54030684?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aloneduckling</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aloneduckling" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://msundaram.me"><img src="https://avatars.githubusercontent.com/u/60923158?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohana Sundaram S</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=highonweb" title="Code">💻</a></td>
   </tr>
 </table>
 
