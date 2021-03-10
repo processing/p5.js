@@ -228,11 +228,14 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
 /**
  * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
+ * If textFont() is called without any argument, it will return the current font if one has
+ * been loaded already. If not, it will return the name of the default font as a string.
+ * If textFont() is called with a font to load, it will return the p5 object.
  *
  * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
  *
  * @method textFont
- * @return {Object} the current font
+ * @return {Object} the current font / p5 Object
  *
  * @example
  * <div>
