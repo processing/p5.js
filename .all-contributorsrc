@@ -2328,6 +2328,110 @@
         "code",
         "review"
       ]
+    },
+    {
+      "login": "siv2r",
+      "name": "Sivaram D",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/56887198?v=4",
+      "profile": "https://github.com/siv2r",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    },
+    {
+      "login": "frappelatte28",
+      "name": "Pragya",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/64382399?v=4",
+      "profile": "https://github.com/frappelatte28",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "myselfhimself",
+      "name": "Jonathan-David Schröder",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1265346?v=4",
+      "profile": "https://github.com/myselfhimself",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    },
+    {
+      "login": "ShenpaiSharma",
+      "name": "Shubham Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47415702?v=4",
+      "profile": "https://github.com/ShenpaiSharma",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nakednous",
+      "name": "Jean Pierre Charalambos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/645599?&v=4",
+      "profile": "https://github.com/nakednous",
+      "contributions": [
+        "code",
+        "tool"
+      ]
+    },
+    {
+      "login": "satyasaibhushan",
+      "name": "Sai Bhushan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40578313?v=4",
+      "profile": "https://github.com/satyasaibhushan",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "vulongphan",
+      "name": "Long Phan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46087559?v=4",
+      "profile": "https://github.com/vulongphan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jcelerier",
+      "name": "Jean-Michaël Celerier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2772730?v=4",
+      "profile": "https://jcelerier.name",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "sosunnyproject",
+      "name": "So Sun Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17012862?v=4",
+      "profile": "https://sosunnyproject.github.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "msub2",
+      "name": "Daniel Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70986246?v=4",
+      "profile": "http://msub2.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Aloneduckling",
+      "name": "Aloneduckling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54030684?v=4",
+      "profile": "https://shantanu-kaushik.herokuapp.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

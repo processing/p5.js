@@ -115,7 +115,7 @@ If a method has multiple possible parameter options, you can specify each indivi
 ```
 
 Notes:
-* If a parameter has been defined previously, like `a` in this case, you do not need to fill in the definition again. 
+* If a parameter was given description previously, like `a` in this case, you do not need to rewrite its description again. 
 * It is not necessary to create a separate signature if the only difference between two signatures is the addition of an optional parameter.
 * You can see two examples of this inline in the source code for [background](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/setting.js#L106) and [color](https://github.com/processing/p5.js/blob/f38f91308fdacc2f1982e0430b620778fff30a5a/src/color/creating_reading.js#L241).
 
@@ -147,7 +147,7 @@ Use `@private` if a property or variable is a private variable (default is `@pub
 
 ## Specify module for files
 
-The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See http://p5js.org/api/#methods (the modules are COLOR, IMAGE, PVECTOR, etc.). 
+The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See [here](https://p5js.org/reference/#collection-list-nav) (the modules are COLOR, IMAGE, IO, PVECTOR, etc.). 
 
 ```
 /**
@@ -267,16 +267,17 @@ horizontal wave pattern effected by mouse x-position & updating noise values.
 
 ## Template for methods
 Here is an example for a well-documented method. To create a new method, you can use [this template](https://github.com/processing/p5.js/tree/main/contributor_docs/method.example.js). Replace the text with your method's variables and remove the remaining ones.
+
 ![Image showing inline documentation example for methods](https://raw.githubusercontent.com/processing/p5.js/main/contributor_docs/images/method-template-example.png)
 
 
 ## Generating documentation
 
-* Run `grunt yui:build` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme-src folder, NOT inline documentation changes to src.
-* If you only made changes to the source code, you can just run `grunt yui`, though `grunt yui:build` will also do the trick. 
+* Run `npm run grunt yui:build` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme folder, NOT inline documentation changes to src.
+* If you only made changes to the source code, you can just run `npm run grunt yui`, though `npm run grunt yui:build` will also do the trick. 
 * You can run `npm run docs:dev` to launch a live preview of the site that will update each time you make changes. (You will need to refresh the page after making changes to see them appear.)
 
-The build reference can be found in docs/reference. To preview it locally, run `grunt yui:dev` and view it as http://localhost:9001/docs/reference/.
+The build reference can be found in docs/reference. To preview it locally, run `npm run grunt yui:dev` and view it as http://localhost:9001/docs/reference/.
 
 
 ## Spanish language version

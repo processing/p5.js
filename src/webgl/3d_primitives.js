@@ -1233,24 +1233,60 @@ p5.RendererGL.prototype.rect = function(args) {
 };
 
 // prettier-ignore
-p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
+  if (typeof detailX === 'undefined') {
+    detailX = 2;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 2;
+  }
+
   const gId =
-    `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}`;
+    `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
+  
   if (!this.geometryInHash(gId)) {
-    const _quad = function() {
-      this.vertices.push(new p5.Vector(x1, y1, z1));
-      this.vertices.push(new p5.Vector(x2, y2, z2));
-      this.vertices.push(new p5.Vector(x3, y3, z3));
-      this.vertices.push(new p5.Vector(x4, y4, z4));
-      this.uvs.push(0, 0, 1, 0, 1, 1, 0, 1);
-      this.strokeIndices = [[0, 1], [1, 2], [2, 3], [3, 0]];
-    };
-    const quadGeom = new p5.Geometry(2, 2, _quad);
+    const quadGeom = new p5.Geometry(detailX, detailY, function() {
+      //algorithm adapted from c++ to js
+      //https://stackoverflow.com/questions/16989181/whats-the-correct-way-to-draw-a-distorted-plane-in-opengl/16993202#16993202
+      let xRes = 1.0 / (this.detailX - 1);
+      let yRes = 1.0 / (this.detailY - 1);
+      for (let y = 0; y < this.detailY; y++) {
+        for (let x = 0; x < this.detailX; x++) {
+          let pctx = x * xRes;
+          let pcty = y * yRes;
+
+          let linePt0x = (1 - pcty) * x1 + pcty * x4;
+          let linePt0y = (1 - pcty) * y1 + pcty * y4;
+          let linePt0z = (1 - pcty) * z1 + pcty * z4;
+          let linePt1x = (1 - pcty) * x2 + pcty * x3;
+          let linePt1y = (1 - pcty) * y2 + pcty * y3;
+          let linePt1z = (1 - pcty) * z2 + pcty * z3;
+
+          let ptx = (1 - pctx) * linePt0x + pctx * linePt1x;
+          let pty = (1 - pctx) * linePt0y + pctx * linePt1y;
+          let ptz = (1 - pctx) * linePt0z + pctx * linePt1z;
+
+          this.vertices.push(new p5.Vector(ptx, pty, ptz));
+          this.uvs.push([pctx, pcty]);
+        }
+      }
+    });
+    
+    quadGeom.faces = [];
+    for(let y = 0; y < detailY-1; y++){
+      for(let x = 0; x < detailX-1; x++){
+        let pt0 = x + y * detailX;
+        let pt1 = (x + 1) + y * detailX;
+        let pt2 = (x + 1) + (y + 1) * detailX;
+        let pt3 = x + (y + 1) * detailX;
+        quadGeom.faces.push([pt0, pt1, pt2]);
+        quadGeom.faces.push([pt0, pt2, pt3]);
+      }
+    }
     quadGeom
       .computeNormals()
       ._makeTriangleEdges()
       ._edgesToVertices();
-    quadGeom.faces = [[0, 1, 2], [2, 3, 0]];
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);

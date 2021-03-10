@@ -222,8 +222,10 @@ function parseObj(model, lines) {
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
-        // It will have two numeric parameters.
-        const texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
+        // It will have two numeric parameters U and V (W is omitted).
+        // Because of WebGL texture coordinates rendering behaviour, the V
+        // coordinate is inversed.
+        const texVertex = [parseFloat(tokens[1]), 1 - parseFloat(tokens[2])];
         loadedVerts[tokens[0]].push(texVertex);
       } else if (tokens[0] === 'f') {
         // Check if this line describes a face.
