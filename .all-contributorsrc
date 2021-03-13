@@ -2441,6 +2441,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "two-ticks",
+      "name": "TwoTicks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68433541?v=4",
+      "profile": "https://github.com/two-ticks",
+      "contributions": [
+        "code",
+        "doc",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
