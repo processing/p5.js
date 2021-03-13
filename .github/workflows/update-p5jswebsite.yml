@@ -14,7 +14,7 @@ jobs:
       - name: Dispatch event to p5.js-website
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.P5JS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           repository: processing/p5.js-website
           event-type: p5.js-release
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
