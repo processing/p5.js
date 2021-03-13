@@ -1,4 +1,5 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
+[![Codecov](https://codecov.io/gh/processing/p5.js/branch/main/graph/badge.svg)](https://codecov.io/gh/processing/p5.js)
 
 # [p5.js](https://p5js.org)
 
