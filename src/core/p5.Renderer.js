@@ -220,6 +220,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   let testWidth;
   let words;
   let totalHeight;
+  let shiftedY;
   let finalMaxHeight = Number.MAX_VALUE;
 
   if (!(this._doFill || this._doStroke)) {
