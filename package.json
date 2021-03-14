@@ -35,7 +35,7 @@
   "version": "1.2.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-env": "^7.10.2",
     "@babel/register": "^7.7.7",
     "all-contributors-cli": "^6.19.0",
     "babel-plugin-i18next-extract": "^0.5.0",
@@ -45,6 +45,7 @@
     "browserify": "^16.5.0",
     "chai": "^3.5.0",
     "connect-modrewrite": "^0.10.1",
+    "core-js": "^3.6.5",
     "derequire": "^2.0.0",
     "es6-promise": "^4.2.8",
     "eslint": "^5.14.1",
@@ -108,7 +109,13 @@
   },
   "babel": {
     "presets": [
-      "@babel/preset-env"
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "usage",
+          "corejs": 3
+        }
+      ]
     ],
     "plugins": [
       [
