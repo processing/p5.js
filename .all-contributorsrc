@@ -2452,6 +2452,16 @@
         "doc",
         "example"
       ]
+    },
+    {
+      "login": "lawreka",
+      "name": "Kathryn Isabelle Lawrence",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15334958?v=4",
+      "profile": "http://kathrynisabelle.com",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "repoType": "github",
