@@ -475,6 +475,10 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://shantanu-kaushik.herokuapp.com/"><img src="https://avatars.githubusercontent.com/u/54030684?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aloneduckling</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aloneduckling" title="Documentation">📖</a></td>
     <td align="center"><a href="http://msundaram.me"><img src="https://avatars.githubusercontent.com/u/60923158?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohana Sundaram S</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=highonweb" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/two-ticks"><img src="https://avatars.githubusercontent.com/u/68433541?v=4?s=100" width="100px;" alt=""/><br /><sub><b>TwoTicks</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=two-ticks" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=two-ticks" title="Documentation">📖</a> <a href="#example-two-ticks" title="Examples">💡</a></td>
+    <td align="center"><a href="http://kathrynisabelle.com"><img src="https://avatars.githubusercontent.com/u/15334958?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kathryn Isabelle Lawrence</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lawreka" title="Code">💻</a> <a href="#ideas-lawreka" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
