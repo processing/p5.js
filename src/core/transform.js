@@ -156,7 +156,8 @@ import p5 from './main';
  * A rectangle in the upper left corner
  */
 p5.prototype.applyMatrix = function() {
-  if (Array.isArray(arguments[0])) {
+  let isTypedArray = arguments[0] instanceof Object.getPrototypeOf(Uint8Array);
+  if (Array.isArray(arguments[0]) || isTypedArray) {
     this._renderer.applyMatrix(...arguments[0]);
   } else {
     this._renderer.applyMatrix(...arguments);

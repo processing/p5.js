@@ -216,6 +216,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   let jj;
   let line;
   let testLine;
+  let currentLineLength;
   let testWidth;
   let words;
   let totalHeight;
@@ -237,27 +238,20 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
   if (typeof maxWidth !== 'undefined') {
     totalHeight = 0;
+    currentLineLength = 1;
     for (ii = 0; ii < cars.length; ii++) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
         testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
-          let currentWord = words[n];
-          for (let index = 0; index < currentWord.length; index++) {
-            testLine = `${line + currentWord[index]}`;
-            testWidth = this.textWidth(testLine);
-            if (testWidth > maxWidth && line.length > 0) {
-              line = `${currentWord[index]}`;
-              totalHeight += p.textLeading();
-            } else {
-              line = testLine;
-            }
-          }
-          line = `${line} `;
+        if (testWidth > maxWidth && currentLineLength > 1) {
+          line = `${words[n]} `;
+          totalHeight += p.textLeading();
+          currentLineLength = 1;
         } else {
           line = testLine;
+          currentLineLength += 1;
         }
       }
       if (ii < cars.length - 1) {
@@ -306,25 +300,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       for (n = 0; n < words.length; n++) {
         testLine = `${line + words[n]} `;
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
-          let currentWord = words[n];
-          for (let index = 0; index < currentWord.length; index++) {
-            testLine = `${line + currentWord[index]}`;
-            testWidth = this.textWidth(testLine);
-            if (testWidth > maxWidth && line.length > 0) {
-              const lastChar = line.slice(-1);
-              const shouldAddHyphen = lastChar !== '\n' && lastChar !== ' ';
-              line = `${line}${shouldAddHyphen ? '-' : ''}`;
-
-              this._renderText(p, line, x, y, finalMaxHeight);
-              y += p.textLeading();
-
-              line = `${currentWord[index]}`;
-            } else {
-              line = testLine;
-            }
-          }
-          line = `${line} `;
+        if (testWidth > maxWidth && line.length > 0) {
+          this._renderText(p, line, x, y, finalMaxHeight);
+          line = `${words[n]} `;
+          y += p.textLeading();
         } else {
           line = testLine;
         }
