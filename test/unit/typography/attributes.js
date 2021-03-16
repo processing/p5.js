@@ -111,4 +111,26 @@ suite('Typography Attributes', function() {
       assert.isNumber(myp5.textDescent());
     });
   });
+
+  suite('p5.prototype.textHyphens', function() {
+    test('should throw error for non-bool input', function() {
+      expect(function() {
+        myp5.textHyphens('true');
+      }).to.throw('Error: textHyphens accepts true or false');
+    });
+    test('returns textHyphens text attribute', function() {
+      assert.strictEqual(myp5.textHyphens(false), false);
+    });
+  });
+
+  suite('p5.prototype.textWrap', function() {
+    test('should throw error for non-constant input', function() {
+      expect(function() {
+        myp5.textWrap('NO-WRAP');
+      }).to.throw('Error: textWrap accepts only LINE or WORD');
+    });
+    test('returns textWrap text attribute', function() {
+      assert.strictEqual(myp5.textWrap(myp5.LINE), myp5.LINE);
+    });
+  });
 });

@@ -44,6 +44,8 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textDescent = null;
   this._textAlign = constants.LEFT;
   this._textBaseline = constants.BASELINE;
+  this._textHyphens = true;
+  this._textWrap = constants.LINE;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -77,7 +79,9 @@ p5.Renderer.prototype.push = function() {
       _textSize: this._textSize,
       _textAlign: this._textAlign,
       _textBaseline: this._textBaseline,
-      _textStyle: this._textStyle
+      _textStyle: this._textStyle,
+      _textHyphens: this._textHyphens,
+      _textWrap: this._textWrap
     }
   };
 };
@@ -206,6 +210,16 @@ p5.Renderer.prototype.textAlign = function(h, v) {
       vertical: this._textBaseline
     };
   }
+};
+
+p5.Renderer.prototype.textHyphens = function(bool) {
+  this._setProperty('_textHyphens', bool);
+  return this._textHyphens;
+};
+
+p5.Renderer.prototype.textWrap = function(wrapStyle) {
+  this._setProperty('_textWrap', wrapStyle);
+  return this._textWrap;
 };
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {

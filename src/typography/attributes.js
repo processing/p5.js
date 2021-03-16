@@ -284,4 +284,74 @@ p5.prototype._updateTextMetrics = function() {
   return this._renderer._updateTextMetrics();
 };
 
+/**
+ * Specifies if words should be hyphenated when text wrapped across multiple lines breaks mid-word. Setting textHyphens to true inserts hyphens when a word is broken, false does not. Default is true.
+ *
+ * @method textHyphens
+ * @param {Boolean} hyphenation true or false
+ * @return {Boolean}
+ * @example
+ * <div>
+ * <code>
+ * let longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
+ * let font;
+ * function preload() {
+ *   font = loadFont('./assets/Regular.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 400);
+ * }
+ * function draw() {
+ *   textFont(font);
+ *   textSize(12);
+ *   textWrap(WORD);
+ *   textHyphens(true);
+ *   text(longText, 0, 0, 100, 50);
+ *   textHyphens(false);
+ *   text(longText, 0, 51, 100, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.textHyphens = function(bool) {
+  if (typeof bool !== 'boolean') {
+    throw 'Error: textHyphens accepts true or false';
+  }
+  return this._renderer.textHyphens(bool);
+};
+
+/**
+ * Specifies how lines of text are wrapped within the canvas. LINE (default) sets line breaks only at new lines ('\n') and spaces. WORD sets line breaks mid-word if necessary. Set textHyphens to true if you would like a hyphen injected when the word is broken, or false if the word should wrap without hyphenation.
+ *
+ * @method textWrap
+ * @param {Constant} wrapStyle text wrapping style, either LINE or WORD
+ * @return {String}
+ * @example
+ * <div>
+ * <code>
+ * let longText = 'Blorem blipsum dolor sit amet, consectetur adipiscing elit';
+ * let font;
+ * function preload() {
+ *   font = loadFont('./assets/Regular.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 400);
+ * }
+ * function draw() {
+ *   textFont(font);
+ *   textWrap(LINE);
+ *   text(longText, 0, 0, 100, 50);
+ *   textWrap(WORD);
+ *   text(longText, 0, 51, 100, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.textWrap = function(wrapStyle) {
+  if (wrapStyle !== 'LINE' && wrapStyle !== 'WORD') {
+    throw 'Error: textWrap accepts only LINE or WORD';
+  }
+  return this._renderer.textWrap(wrapStyle);
+};
+
 export default p5;

@@ -588,6 +588,16 @@ export const BOLD = 'bold';
  * @final
  */
 export const BOLDITALIC = 'bold italic';
+/**
+ * @property {String} LINE
+ * @final
+ */
+export const LINE = 'LINE';
+/**
+ * @property {String} WORD
+ * @final
+ */
+export const WORD = 'WORD';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';
