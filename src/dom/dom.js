@@ -879,6 +879,18 @@ p5.prototype.createRadio = function() {
 
     labelElement.innerHTML = label === undefined ? value : label;
     optionEl.setAttribute('name', self._name);
+
+    // Check if 'id' attribute is set on option, else set it
+    let id = '_id_' + value;
+    if (!optionEl.getAttribute('id')) {
+      optionEl.setAttribute('id', id);
+    } else {
+      id = optionEl.getAttribute('id');
+    }
+
+    // Use the 'id' attribute of option to set 'for' attribute of label
+    labelElement.setAttribute('for', id);
+
     return optionEl;
   };
 
