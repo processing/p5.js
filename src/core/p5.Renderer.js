@@ -224,16 +224,13 @@ p5.Renderer.prototype.textWrap = function(wrapStyle) {
 
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   const p = this._pInst;
-  let cars;
-  let n;
-  let ii;
-  let jj;
+  const textWrapStyle = this._textWrap;
+  const hyphenation = this._textHyphens;
+  let lines;
   let line;
   let testLine;
-  let currentLineLength;
   let testWidth;
   let words;
-  let totalHeight;
   let shiftedY;
   let finalMaxHeight = Number.MAX_VALUE;
 
@@ -248,34 +245,11 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   }
 
   str = str.replace(/(\t)/g, '  ');
-  cars = str.split('\n');
+  lines = str.split('\n');
 
   if (typeof maxWidth !== 'undefined') {
-    totalHeight = 0;
-    currentLineLength = 1;
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = `${line + words[n]} `;
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && currentLineLength > 1) {
-          line = `${words[n]} `;
-          totalHeight += p.textLeading();
-          currentLineLength = 1;
-        } else {
-          line = testLine;
-          currentLineLength += 1;
-        }
-      }
-      if (ii < cars.length - 1) {
-        totalHeight += p.textLeading();
-      }
-    }
-
     if (this._rectMode === constants.CENTER) {
       x -= maxWidth / 2;
-      y -= maxHeight / 2;
     }
 
     switch (this._textAlign) {
@@ -289,6 +263,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
+      if (this._rectMode === constants.CENTER) {
+        y -= maxHeight / 2;
+      }
+
       switch (this._textBaseline) {
         case constants.BOTTOM:
           shiftedY = y + (maxHeight - totalHeight);
@@ -303,23 +281,93 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           this._textBaseline = constants.TOP;
           break;
       }
-
       // remember the max-allowed y-position for any line (fix to #928)
       finalMaxHeight = y + maxHeight - p.textAscent();
     }
 
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = `${line + words[n]} `;
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y, finalMaxHeight);
-          line = `${words[n]} `;
-          y += p.textLeading();
-        } else {
-          line = testLine;
+    // break lines according to textWrap settings
+    if (textWrapStyle === constants.LINE) {
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          testLine = `${line + words[wordIndex]} `;
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line, x, y, finalMaxHeight);
+            line = `${words[wordIndex]} `;
+            y += p.textLeading();
+          } else {
+            line = testLine;
+          }
+        }
+        this._renderText(p, line, x, y, finalMaxHeight);
+        y += p.textLeading();
+
+        if (baselineHacked) {
+          this._textBaseline = constants.BASELINE;
+        }
+      }
+    } else {
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        // words is now an array, e.g. ["Lorem", "ipsum", "dolor", "sit"]
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          // test length of "Lorem ipsum "
+          testLine = `${line + words[wordIndex]} `;
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth) {
+            // if the full previous word plus a space is too long, start adding characters from the word one at a time
+            let currentWord = words[wordIndex];
+            for (
+              let charIndex = 0;
+              charIndex < currentWord.length;
+              charIndex++
+            ) {
+              // try "Lorem ipsum d"
+              testLine = `${line + currentWord[charIndex]}`;
+              testWidth = this.textWidth(testLine);
+              if (testWidth < maxWidth) {
+                // if we meet the end of a word ("Lorem ipsum dolor") but the string is still not too long, add a space at the end and keep going
+                if (charIndex === currentWord.length - 1) {
+                  line += `${currentWord[charIndex]} `;
+                } else {
+                  line += currentWord[charIndex];
+                }
+              } else {
+                // if we meet the width limit while adding characters, go back one character
+                const lastChar = line.slice(-1);
+                // if the character we are going back to is the first letter of the word (charIndex[0]) or a space we added by going character by character, we are not going to replace it with a hyphen no matter what
+                if (lastChar !== ' ' && charIndex !== 1) {
+                  line = line.substring(0, line.length - 1);
+                  line = hyphenation ? `${line}-` : `${line}`;
+
+                  this._renderText(p, line, x, y, finalMaxHeight);
+                  y += p.textLeading();
+
+                  line = `${lastChar + currentWord[charIndex]}`;
+                  // if we are going back to the beginning of a word, we need to make sure to append it to the next line
+                } else if (charIndex === 1) {
+                  line = line.substring(0, line.length - 1);
+
+                  this._renderText(p, line, x, y, finalMaxHeight);
+                  y += p.textLeading();
+
+                  line = `${lastChar + currentWord[charIndex]}`;
+                } else {
+                  line = line.substring(0, line.length - 1);
+
+                  this._renderText(p, line, x, y, finalMaxHeight);
+                  y += p.textLeading();
+
+                  line = `${currentWord[charIndex]}`;
+                }
+              }
+            }
+          } else {
+            line = testLine;
+          }
         }
       }
 
@@ -337,13 +385,13 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     const vAlign = p.textAlign().vertical;
     if (vAlign === constants.CENTER) {
-      offset = (cars.length - 1) * p.textLeading() / 2;
+      offset = (lines.length - 1) * p.textLeading() / 2;
     } else if (vAlign === constants.BOTTOM) {
-      offset = (cars.length - 1) * p.textLeading();
+      offset = (lines.length - 1) * p.textLeading();
     }
 
-    for (jj = 0; jj < cars.length; jj++) {
-      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+    for (let i = 0; i < lines.length; i++) {
+      this._renderText(p, lines[i], x, y - offset, finalMaxHeight);
       y += p.textLeading();
     }
   }

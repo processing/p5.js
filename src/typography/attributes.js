@@ -293,22 +293,15 @@ p5.prototype._updateTextMetrics = function() {
  * @example
  * <div>
  * <code>
- * let longText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit';
- * let font;
- * function preload() {
- *   font = loadFont('./assets/Regular.otf');
- * }
- * function setup() {
- *   createCanvas(100, 400);
- * }
+ * let longWord = 'Supercalifragilistic';
  * function draw() {
- *   textFont(font);
- *   textSize(12);
+ *   textSize(14);
+ *   textLeading(14);
  *   textWrap(WORD);
  *   textHyphens(true);
- *   text(longText, 0, 0, 100, 50);
+ *   text(longWord, 0, 10, 100, 50);
  *   textHyphens(false);
- *   text(longText, 0, 51, 100, 50);
+ *   text(longWord, 0, 60, 100, 50);
  * }
  * </code>
  * </div>
@@ -329,20 +322,14 @@ p5.prototype.textHyphens = function(bool) {
  * @example
  * <div>
  * <code>
- * let longText = 'Blorem blipsum dolor sit amet, consectetur adipiscing elit';
- * let font;
- * function preload() {
- *   font = loadFont('./assets/Regular.otf');
- * }
- * function setup() {
- *   createCanvas(100, 400);
- * }
+ * let longText = 'Sphinx of black quartz, judge my vow';
  * function draw() {
- *   textFont(font);
+ *   textSize(14);
+ *   textLeading(12);
  *   textWrap(LINE);
- *   text(longText, 0, 0, 100, 50);
+ *   text(longText, 0, 10, 100);
  *   textWrap(WORD);
- *   text(longText, 0, 51, 100, 50);
+ *   text(longText, 0, 60, 100);
  * }
  * </code>
  * </div>
