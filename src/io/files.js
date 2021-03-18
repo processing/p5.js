@@ -1727,14 +1727,14 @@ p5.prototype.saveTable = function(table, filename, options) {
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
           //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
             pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
           } else {
             pWriter.write(table.rows[i].arr[j] + sep);
           }
         } else {
           //double quotes should be inserted in csv only if contains comma separated single value
-          if (ext === 'csv' && table.rows[i].arr[j].includes(',')) {
+          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
             pWriter.write('"' + table.rows[i].arr[j] + '"');
           } else {
             pWriter.write(table.rows[i].arr[j]);

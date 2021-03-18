@@ -20,7 +20,7 @@ import p5 from './main';
  * call <a href="#/p5/redraw">redraw()</a> or <a href="#/p5/loop">loop()</a>,
  * which will run <a href="#/p5/draw">draw()</a>, which can update the screen
  * properly. This means that when <a href="#/p5/noLoop">noLoop()</a> has been
- * called, no drawing can happen, and functions like <a href="#/p5/saveFrame">saveFrame()</a>
+ * called, no drawing can happen, and functions like <a href="#/p5/saveFrames">saveFrames()</a>
  * or <a href="#/p5/loadPixels">loadPixels()</a> may not be used.
  *
  * Note that if the sketch is resized, <a href="#/p5/redraw">redraw()</a> will

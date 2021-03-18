@@ -868,18 +868,16 @@ suite('p5.Vector', function() {
   });
 
   suite('normalize', function() {
-    setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
-    });
+    suite('v.normalize()', function() {
+      setup(function() {
+        v = myp5.createVector(1, 1, 1);
+      });
 
-    test('should return the same object', function() {
-      expect(v.normalize()).to.eql(v);
-    });
+      test('should return the same object', function() {
+        expect(v.normalize()).to.eql(v);
+      });
 
-    suite('with unit vector', function() {
-      test('should not change the vector', function() {
+      test('unit vector should not change values', function() {
         v.x = 1;
         v.y = 0;
         v.z = 0;
@@ -888,10 +886,8 @@ suite('p5.Vector', function() {
         expect(v.y).to.eql(0);
         expect(v.z).to.eql(0);
       });
-    });
 
-    suite('with 2,2,1', function() {
-      test('should normalize to 0.66,0.66,0.33', function() {
+      test('2,2,1 should normalize to ~0.66,0.66,0.33', function() {
         v.x = 2;
         v.y = 2;
         v.z = 1;
@@ -899,6 +895,38 @@ suite('p5.Vector', function() {
         expect(v.x).to.be.closeTo(0.6666, 0.01);
         expect(v.y).to.be.closeTo(0.6666, 0.01);
         expect(v.z).to.be.closeTo(0.3333, 0.01);
+      });
+    });
+
+    suite('p5.Vector.normalize(v)', function() {
+      var res;
+      setup(function() {
+        v = myp5.createVector(1, 0, 0);
+        res = p5.Vector.normalize(v);
+      });
+
+      test('should not be undefined', function() {
+        expect(res).to.not.eql(undefined);
+      });
+
+      test('should not return same object v', function() {
+        expect(res).to.not.equal(v);
+      });
+
+      test('unit vector 1,0,0 should normalize to 1,0,0', function() {
+        expect(res.x).to.eql(1);
+        expect(res.y).to.eql(0);
+        expect(res.z).to.eql(0);
+      });
+
+      test('2,2,1 should normalize to ~0.66,0.66,0.33', function() {
+        v.x = 2;
+        v.y = 2;
+        v.z = 1;
+        res = p5.Vector.normalize(v);
+        expect(res.x).to.be.closeTo(0.6666, 0.01);
+        expect(res.y).to.be.closeTo(0.6666, 0.01);
+        expect(res.z).to.be.closeTo(0.3333, 0.01);
       });
     });
   });
