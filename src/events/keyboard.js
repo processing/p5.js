@@ -123,7 +123,6 @@ p5.prototype.keyCode = 0;
  *
  * @method keyPressed
  * @param  {Object} [event] optional KeyboardEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -197,7 +196,6 @@ p5.prototype._onkeydown = function(e) {
  *
  * @method keyReleased
  * @param  {Object} [event] optional KeyboardEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -258,7 +256,6 @@ p5.prototype._onkeyup = function(e) {
  *
  * @method keyTyped
  * @param  {Object} [event] optional KeyboardEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>

@@ -78,7 +78,6 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  *
  * @method touchStarted
  * @param  {Object} [event] optional TouchEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -159,7 +158,6 @@ p5.prototype._ontouchstart = function(e) {
  *
  * @method touchMoved
  * @param  {Object} [event] optional TouchEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
@@ -232,7 +230,6 @@ p5.prototype._ontouchmove = function(e) {
  *
  * @method touchEnded
  * @param  {Object} [event] optional TouchEvent callback argument.
- * @return {*} false if any default behavior should be prevented for this event. (Optional)
  * @example
  * <div>
  * <code>
