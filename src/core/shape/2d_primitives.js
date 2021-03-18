@@ -122,9 +122,10 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc. either CHORD, PIE or OPEN
- * @param  {Number} [detail] optional parameter for WebGL mode only. This is to
+ * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
- *                         perimeter of the arc. Default value is 25.
+ *                         perimeter of the arc. Default value is 25. Won't 
+ *                         draw a stroke for a detail of more than 50.
  * @chainable
  *
  * @example
@@ -261,7 +262,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} detail number of radial sectors to draw (for WebGL mode)
+ * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
+ *                         specify the number of vertices that makes up the
+ *                         perimeter of the ellipse. Default value is 25. Won't 
+ *                         draw a stroke for a detail of more than 50.
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
