@@ -285,7 +285,7 @@ p5.prototype._updateTextMetrics = function() {
 };
 
 /**
- * Specifies if words should be hyphenated when text wrapped across multiple lines breaks mid-word. Setting textHyphens to true inserts hyphens when a word is broken, false does not. Default is true.
+ * Specifies if words should be hyphenated when text wrapped across multiple lines breaks mid-word. Setting textHyphens to true inserts a hyphen whenever a line is broken at a non-space character, false does not. Default is true.
  *
  * @method textHyphens
  * @param {Boolean} hyphenation true or false
@@ -295,8 +295,8 @@ p5.prototype._updateTextMetrics = function() {
  * <code>
  * let longWord = 'Supercalifragilistic';
  * function draw() {
- *   textSize(14);
- *   textLeading(14);
+ *   textSize(18);
+ *   textLeading(20);
  *   textWrap(WORD);
  *   textHyphens(true);
  *   text(longWord, 0, 10, 100, 50);
@@ -322,10 +322,10 @@ p5.prototype.textHyphens = function(bool) {
  * @example
  * <div>
  * <code>
- * let longText = 'Sphinx of black quartz, judge my vow';
+ * let longText = 'Have a wonderful day';
  * function draw() {
- *   textSize(14);
- *   textLeading(12);
+ *   textSize(16);
+ *   textLeading(14);
  *   textWrap(LINE);
  *   text(longText, 0, 10, 100);
  *   textWrap(WORD);

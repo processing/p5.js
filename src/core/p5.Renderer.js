@@ -231,6 +231,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   let testLine;
   let testWidth;
   let words;
+  let chars;
   let shiftedY;
   let finalMaxHeight = Number.MAX_VALUE;
 
@@ -244,6 +245,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     str = str.toString();
   }
 
+  // Replaces tabs with double-spaces and splits string at any line breakes present in the original string
   str = str.replace(/(\t)/g, '  ');
   lines = str.split('\n');
 
@@ -285,7 +287,8 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       finalMaxHeight = y + maxHeight - p.textAscent();
     }
 
-    // break lines according to textWrap settings
+    // Render lines of text according to settings of textWrap and textHyphens
+    // Splits lines at spaces, for loop adds one word + space at a time and tests length with next word added. If line + next word is too long, print currents line
     if (textWrapStyle === constants.LINE) {
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         line = '';
@@ -309,64 +312,49 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         }
       }
     } else {
+      // Splits lines at characters, for loop adds one char at a time and tests length with next char added. If line + next char is too long, chars are trimmed according to additional hyphenation rules
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         line = '';
-        words = lines[lineIndex].split(' ');
-        // words is now an array, e.g. ["Lorem", "ipsum", "dolor", "sit"]
-        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
-          // test length of "Lorem ipsum "
-          testLine = `${line + words[wordIndex]} `;
+        chars = lines[lineIndex].split('');
+        for (let charIndex = 0; charIndex < chars.length; charIndex++) {
+          testLine = `${line + chars[charIndex]}`;
           testWidth = this.textWidth(testLine);
-          if (testWidth > maxWidth) {
-            // if the full previous word plus a space is too long, start adding characters from the word one at a time
-            let currentWord = words[wordIndex];
-            for (
-              let charIndex = 0;
-              charIndex < currentWord.length;
-              charIndex++
-            ) {
-              // try "Lorem ipsum d"
-              testLine = `${line + currentWord[charIndex]}`;
-              testWidth = this.textWidth(testLine);
-              if (testWidth < maxWidth) {
-                // if we meet the end of a word ("Lorem ipsum dolor") but the string is still not too long, add a space at the end and keep going
-                if (charIndex === currentWord.length - 1) {
-                  line += `${currentWord[charIndex]} `;
+          if (testWidth < maxWidth) {
+            line += chars[charIndex];
+          } else if (testWidth > maxWidth && line.length > 0) {
+            const lastChar = line.slice(-1);
+            // if the last char is a space, we won't add a hyphen no matter what, just add next char to next line
+            if (lastChar === ' ') {
+              this._renderText(p, line, x, y, finalMaxHeight);
+              y += p.textLeading();
+              line = `${chars[charIndex]}`;
+            } else {
+              if (hyphenation) {
+                // if the char before last is a space, we won't add a hyphen because this would mean replacing the first letter of the word, just remove the last character and add it to the next line with the next char
+                const lastChars = line.slice(-2);
+                const charBeforeLast = lastChars[0];
+                const lastChar = lastChars[1];
+                if (charBeforeLast === ' ') {
+                  line = line.substring(0, line.length - 1);
+                  this._renderText(p, line, x, y, finalMaxHeight);
+                  y += p.textLeading();
+                  line = `${lastChar + chars[charIndex]}`;
                 } else {
-                  line += currentWord[charIndex];
+                  // substitutes the last character added with a hyphen and adds it to the next line with the next char
+                  line = line.substring(0, line.length - 1);
+                  line = `${line}-`;
+                  this._renderText(p, line, x, y, finalMaxHeight);
+                  y += p.textLeading();
+                  line = `${lastChar + chars[charIndex]}`;
                 }
               } else {
-                // if we meet the width limit while adding characters, go back one character
-                const lastChar = line.slice(-1);
-                // if the character we are going back to is the first letter of the word (charIndex[0]) or a space we added by going character by character, we are not going to replace it with a hyphen no matter what
-                if (lastChar !== ' ' && charIndex !== 1) {
-                  line = line.substring(0, line.length - 1);
-                  line = hyphenation ? `${line}-` : `${line}`;
-
-                  this._renderText(p, line, x, y, finalMaxHeight);
-                  y += p.textLeading();
-
-                  line = `${lastChar + currentWord[charIndex]}`;
-                  // if we are going back to the beginning of a word, we need to make sure to append it to the next line
-                } else if (charIndex === 1) {
-                  line = line.substring(0, line.length - 1);
-
-                  this._renderText(p, line, x, y, finalMaxHeight);
-                  y += p.textLeading();
-
-                  line = `${lastChar + currentWord[charIndex]}`;
-                } else {
-                  line = line.substring(0, line.length - 1);
-
-                  this._renderText(p, line, x, y, finalMaxHeight);
-                  y += p.textLeading();
-
-                  line = `${currentWord[charIndex]}`;
-                }
+                // if hyphenation is off, remove last character regardless of what it is and add it to the next line with the next char
+                line = line.substring(0, line.length - 1);
+                this._renderText(p, line, x, y, finalMaxHeight);
+                y += p.textLeading();
+                line = `${lastChar + chars[charIndex]}`;
               }
             }
-          } else {
-            line = testLine;
           }
         }
       }
@@ -390,6 +378,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       offset = (lines.length - 1) * p.textLeading();
     }
 
+    // Renders lines of text at any line breaks present in original string
     for (let i = 0; i < lines.length; i++) {
       this._renderText(p, lines[i], x, y - offset, finalMaxHeight);
       y += p.textLeading();
