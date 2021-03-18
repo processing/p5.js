@@ -146,7 +146,14 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       img.src = path;
     }
     pImg.modified = true;
-  });
+  }).catch(e => {
+    p5._friendlyFileLoadError(0, path);
+    if (typeof failureCallback === 'function') {
+      failureCallback(e);
+    } else {
+      console.error(e);
+    }
+  })
   return pImg;
 };
 
