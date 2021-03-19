@@ -294,15 +294,13 @@ p5.prototype._updateTextMetrics = function() {
  * <div>
  * <code>
  * let longWord = 'Supercalifragilistic';
- * function draw() {
- *   textSize(18);
- *   textLeading(20);
- *   textWrap(WORD);
- *   textHyphens(true);
- *   text(longWord, 0, 10, 100, 50);
- *   textHyphens(false);
- *   text(longWord, 0, 60, 100, 50);
- * }
+ * textSize(18);
+ * textLeading(20);
+ * textWrap(WORD);
+ * textHyphens(true);
+ * text(longWord, 0, 10, 100, 50);
+ * textHyphens(false);
+ * text(longWord, 0, 60, 100, 50);
  * </code>
  * </div>
  */
@@ -323,14 +321,12 @@ p5.prototype.textHyphens = function(bool) {
  * <div>
  * <code>
  * let longText = 'Have a wonderful day';
- * function draw() {
- *   textSize(16);
- *   textLeading(14);
- *   textWrap(LINE);
- *   text(longText, 0, 10, 100);
- *   textWrap(WORD);
- *   text(longText, 0, 60, 100);
- * }
+ * textSize(16);
+ * textLeading(14);
+ * textWrap(LINE);
+ * text(longText, 0, 10, 100);
+ * textWrap(WORD);
+ * text(longText, 0, 60, 100);
  * </code>
  * </div>
  */
