@@ -11,7 +11,7 @@ const _PI = Math.PI;
  * @property {String} VERSION
  * @final
  */
-export const VERSION = require('../../package.json').version;
+export const VERSION = VERSIONCONST;
 
 // GRAPHICS RENDERER
 /**
