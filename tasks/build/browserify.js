@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         })
         .on('end', function() {
           code = code.replace(
-            `'VERSIONCONST'`,
+            `'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'`,
             grunt.template.process(`'<%= pkg.version %>'`)
           );
 
