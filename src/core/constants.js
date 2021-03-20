@@ -6,6 +6,14 @@
 
 const _PI = Math.PI;
 
+/**
+ * Version of this p5.js.
+ * @property {String} VERSION
+ * @final
+ */
+export const VERSION =
+  'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS';
+
 // GRAPHICS RENDERER
 /**
  * The default, two-dimensional renderer.
