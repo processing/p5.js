@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         })
         .on('end', function() {
           code = code.replace(
-            'VERSIONCONST',
+            `'VERSIONCONST'`,
             grunt.template.process(`'<%= pkg.version %>'`)
           );
 

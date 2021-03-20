@@ -11,7 +11,7 @@ const _PI = Math.PI;
  * @property {String} VERSION
  * @final
  */
-export const VERSION = VERSIONCONST;
+export const VERSION = 'VERSIONCONST';
 
 // GRAPHICS RENDERER
 /**
