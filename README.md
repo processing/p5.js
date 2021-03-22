@@ -480,6 +480,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://kathrynisabelle.com"><img src="https://avatars.githubusercontent.com/u/15334958?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kathryn Isabelle Lawrence</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lawreka" title="Code">💻</a> <a href="#ideas-lawreka" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="http://www.joonasjokinen.fi"><img src="https://avatars.githubusercontent.com/u/46967273?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joonas Jokinen</b></sub></a><br /><a href="#design-jnsjknn" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/Ajaya1000"><img src="https://avatars.githubusercontent.com/u/43005088?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ajaya Mati</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ajaya1000" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/suhascv"><img src="https://avatars.githubusercontent.com/u/43292181?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Suhas CV</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=suhascv" title="Documentation">📖</a></td>
   </tr>
 </table>
 
