@@ -2480,6 +2480,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "suhascv",
+      "name": "Suhas CV",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43292181?v=4",
+      "profile": "https://github.com/suhascv",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
