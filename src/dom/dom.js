@@ -844,10 +844,17 @@ p5.prototype.createRadio = function() {
   // setup member functions
   const isRadioInput = el =>
     el instanceof HTMLInputElement && el.type === 'radio';
-  const isNextLabel = el => el.nextElementSibling instanceof HTMLLabelElement;
+  const isLabelElement = el => el instanceof HTMLLabelElement;
+  const isSpanElement = el => el instanceof HTMLSpanElement;
 
   self._getOptionsArray = function() {
-    return Array.from(this.elt.children).filter(isRadioInput);
+    return Array.from(this.elt.children)
+      .filter(
+        el =>
+          isRadioInput(el) ||
+          (isLabelElement(el) && isRadioInput(el.firstElementChild))
+      )
+      .map(el => (isRadioInput(el) ? el : el.firstElementChild));
   };
 
   self.option = function(value, label) {
@@ -865,31 +872,33 @@ p5.prototype.createRadio = function() {
       optionEl = document.createElement('input');
       optionEl.setAttribute('type', 'radio');
       optionEl.setAttribute('value', value);
-      this.elt.appendChild(optionEl);
     }
+    optionEl.setAttribute('name', self._name);
 
     // Check if label element exists, else create it
     let labelElement;
-    if (!isNextLabel(optionEl)) {
+    if (!isLabelElement(optionEl.parentElement)) {
       labelElement = document.createElement('label');
-      optionEl.insertAdjacentElement('afterend', labelElement);
+      labelElement.insertAdjacentElement('afterbegin', optionEl);
     } else {
-      labelElement = optionEl.nextElementSibling;
+      labelElement = optionEl.parentElement;
     }
 
-    labelElement.innerHTML = label === undefined ? value : label;
-    optionEl.setAttribute('name', self._name);
-
-    // Check if 'id' attribute is set on option, else set it
-    let id = '_id_' + value;
-    if (!optionEl.getAttribute('id')) {
-      optionEl.setAttribute('id', id);
+    // Check if span element exists, else create it
+    let spanElement;
+    if (!isSpanElement(labelElement.lastElementChild)) {
+      spanElement = document.createElement('span');
+      optionEl.insertAdjacentElement('afterend', spanElement);
     } else {
-      id = optionEl.getAttribute('id');
+      spanElement = labelElement.lastElementChild;
     }
 
-    // Use the 'id' attribute of option to set 'for' attribute of label
-    labelElement.setAttribute('for', id);
+    // Set the innerHTML of span element as the label text
+    spanElement.innerHTML = label === undefined ? value : label;
+
+    // Append the label element, which includes option element and
+    // span element to the radio container element
+    this.elt.appendChild(labelElement);
 
     return optionEl;
   };
@@ -897,7 +906,9 @@ p5.prototype.createRadio = function() {
   self.remove = function(value) {
     for (const optionEl of self._getOptionsArray()) {
       if (optionEl.value === value) {
-        if (isNextLabel(optionEl)) optionEl.nextElementSibling.remove();
+        if (isLabelElement(optionEl.parentElement)) {
+          optionEl.parentElement.remove();
+        }
         optionEl.remove();
         return;
       }

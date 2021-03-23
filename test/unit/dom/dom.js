@@ -792,8 +792,18 @@ suite('DOM', function() {
       return radioEl;
     };
 
+    const isRadioInput = el =>
+      el instanceof HTMLInputElement && el.type === 'radio';
+    const isLabelElement = el => el instanceof HTMLLabelElement;
+
     const getChildren = radioEl =>
-      Array.from(radioEl.children).filter(el => el instanceof HTMLInputElement);
+      Array.from(radioEl.children)
+        .filter(
+          el =>
+            isRadioInput(el) ||
+            (isLabelElement(el) && isRadioInput(el.firstElementChild))
+        )
+        .map(el => (isRadioInput(el) ? el : el.firstElementChild));
 
     test('should be a function', function() {
       assert.isFunction(myp5.createRadio);
@@ -811,10 +821,6 @@ suite('DOM', function() {
       testElement = myp5.createRadio(radioElement);
 
       assert.deepEqual(testElement.elt, radioElement);
-      for (const radioEl of getChildren(radioElement)) {
-        const optionEl = testElement.option(radioEl.value);
-        assert.deepEqual(optionEl, radioEl);
-      }
     });
 
     test('calling option(value) should return existing radio element', function() {
@@ -839,8 +845,8 @@ suite('DOM', function() {
         assert.deepEqual(optionEl.type, 'radio');
         assert.deepEqual(optionEl.value, option);
         assert.deepEqual(optionEl.name, testName);
-        // Double , one for input and one for label
-        count += 2;
+        // Increment by one for every label element
+        count += 1;
 
         assert.deepEqual(testElement.elt.childElementCount, count);
       }
@@ -855,8 +861,8 @@ suite('DOM', function() {
         const optionEl = testElement.option(option, optionLabel);
         assert.deepEqual(optionEl.value, option);
         assert.deepEqual(optionEl.name, testName);
-        const labelEl = optionEl.nextElementSibling;
-        assert.deepEqual(labelEl.innerHTML, optionLabel);
+        const spanEl = optionEl.nextElementSibling;
+        assert.deepEqual(spanEl.innerHTML, optionLabel);
       }
     });
 
@@ -882,7 +888,7 @@ suite('DOM', function() {
       options.splice(options.indexOf(testValue), 1);
       testElement.remove(testValue);
       // Verify remaining options
-      const remainingOptions = Array.from(testElement.elt.children).map(
+      const remainingOptions = Array.from(getChildren(testElement.elt)).map(
         el => el.value
       );
       assert.deepEqual(options, remainingOptions);
