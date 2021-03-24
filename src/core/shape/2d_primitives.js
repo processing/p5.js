@@ -236,7 +236,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * value of width is used for both the width and height. If a negative height or
  * width is specified, the absolute value is taken.
  *
- * An ellipse with equal width and height is a circle.The origin may be changed
+ * An ellipse with equal width and height is a circle. The origin may be changed
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
