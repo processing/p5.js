@@ -907,9 +907,12 @@ p5.prototype.createRadio = function() {
     for (const optionEl of self._getOptionsArray()) {
       if (optionEl.value === value) {
         if (isLabelElement(optionEl.parentElement)) {
+          // Remove parent label which also removes children elements
           optionEl.parentElement.remove();
+        } else {
+          // Remove the option input if parent label does not exist
+          optionEl.remove();
         }
-        optionEl.remove();
         return;
       }
     }
