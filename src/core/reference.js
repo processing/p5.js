@@ -377,7 +377,7 @@
 
 /**
  * Creates and names a <a href="#/p5/class">class</a> which is a template for
- * the creation of <a href="#/p5/objects">objects</a>.
+ * the creation of <a href="#/p5/object">objects</a>.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class">the MDN entry</a>:
  * The class declaration creates a new Class with a given name using
