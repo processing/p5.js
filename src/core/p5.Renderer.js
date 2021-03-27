@@ -45,7 +45,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textAlign = constants.LEFT;
   this._textBaseline = constants.BASELINE;
   this._textHyphens = true;
-  this._textWrap = constants.LINE;
+  this._textWrap = constants.WORD;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -289,7 +289,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     // Render lines of text according to settings of textWrap and textHyphens
     // Splits lines at spaces, for loop adds one word + space at a time and tests length with next word added. If line + next word is too long, print currents line
-    if (textWrapStyle === constants.LINE) {
+    if (textWrapStyle === constants.WORD) {
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         line = '';
         words = lines[lineIndex].split(' ');

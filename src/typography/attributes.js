@@ -289,14 +289,14 @@ p5.prototype._updateTextMetrics = function() {
  *
  * @method textHyphens
  * @param {Boolean} hyphenation true or false
- * @return {Boolean}
+ * @return {Boolean} true or false
  * @example
  * <div>
  * <code>
  * let longWord = 'Supercalifragilistic';
  * textSize(18);
  * textLeading(20);
- * textWrap(WORD);
+ * textWrap(CHAR);
  * textHyphens(true);
  * text(longWord, 0, 10, 100, 50);
  * textHyphens(false);
@@ -312,27 +312,27 @@ p5.prototype.textHyphens = function(bool) {
 };
 
 /**
- * Specifies how lines of text are wrapped within the canvas. LINE (default) sets line breaks only at new lines ('\n') and spaces. WORD sets line breaks mid-word if necessary. Set textHyphens to true if you would like a hyphen injected when the word is broken, or false if the word should wrap without hyphenation.
+ * Specifies how lines of text are wrapped within the canvas. WORD (default) sets line breaks only at new lines ('\n') and spaces. CHAR sets line breaks mid-word if necessary. Set textHyphens to true if you would like a hyphen injected when the word is broken, or false if the word should wrap without hyphenation.
  *
  * @method textWrap
- * @param {Constant} wrapStyle text wrapping style, either LINE or WORD
- * @return {String}
+ * @param {Constant} wrapStyle text wrapping style, either WORD or CHAR
+ * @return {String} the text wrapping style
  * @example
  * <div>
  * <code>
  * let longText = 'Have a wonderful day';
  * textSize(16);
  * textLeading(14);
- * textWrap(LINE);
- * text(longText, 0, 10, 100);
  * textWrap(WORD);
+ * text(longText, 0, 10, 100);
+ * textWrap(CHAR);
  * text(longText, 0, 60, 100);
  * </code>
  * </div>
  */
 p5.prototype.textWrap = function(wrapStyle) {
-  if (wrapStyle !== 'LINE' && wrapStyle !== 'WORD') {
-    throw 'Error: textWrap accepts only LINE or WORD';
+  if (wrapStyle !== 'WORD' && wrapStyle !== 'CHAR') {
+    throw 'Error: textWrap accepts only WORD or CHAR';
   }
   return this._renderer.textWrap(wrapStyle);
 };

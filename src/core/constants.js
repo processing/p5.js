@@ -589,10 +589,10 @@ export const BOLD = 'bold';
  */
 export const BOLDITALIC = 'bold italic';
 /**
- * @property {String} LINE
+ * @property {String} CHAR
  * @final
  */
-export const LINE = 'LINE';
+export const CHAR = 'CHAR';
 /**
  * @property {String} WORD
  * @final
