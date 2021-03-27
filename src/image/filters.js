@@ -40,12 +40,19 @@ Filters._toPixels = function(canvas) {
         .getContext('2d')
         .getImageData(0, 0, canvas.width, canvas.height).data;
     } else if (canvas.getContext('webgl')) {
-      const offCanvas = document.createElement('canvas');
-      offCanvas.width = canvas.width;
-      offCanvas.height = canvas.height;
-      const gl = offCanvas.getContext('2d');
-      gl.drawImage(canvas, 0, 0);
-      return gl.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
+      const gl = canvas.getContext('webgl');
+      const len = gl.drawingBufferWidth * gl.drawingBufferHeight * 4;
+      const data = new Uint8Array(len);
+      gl.readPixels(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        data
+      );
+      return data;
     }
   }
 };
