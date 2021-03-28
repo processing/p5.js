@@ -60,6 +60,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
+* [dhowe](https://github.com/dhowe)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -72,7 +73,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
-| Typography                        |                                              |
+| Typography                        | dhowe                                             |
 | Utilities                         |                                              |
 | WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
