@@ -2386,6 +2386,127 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "vulongphan",
+      "name": "Long Phan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46087559?v=4",
+      "profile": "https://github.com/vulongphan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jcelerier",
+      "name": "Jean-Michaël Celerier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2772730?v=4",
+      "profile": "https://jcelerier.name",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "sosunnyproject",
+      "name": "So Sun Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17012862?v=4",
+      "profile": "https://sosunnyproject.github.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "msub2",
+      "name": "Daniel Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70986246?v=4",
+      "profile": "http://msub2.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "Aloneduckling",
+      "name": "Aloneduckling",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54030684?v=4",
+      "profile": "https://shantanu-kaushik.herokuapp.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "highonweb",
+      "name": "Mohana Sundaram S",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60923158?v=4",
+      "profile": "http://msundaram.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "two-ticks",
+      "name": "TwoTicks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68433541?v=4",
+      "profile": "https://github.com/two-ticks",
+      "contributions": [
+        "code",
+        "doc",
+        "example"
+      ]
+    },
+    {
+      "login": "lawreka",
+      "name": "Kathryn Isabelle Lawrence",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15334958?v=4",
+      "profile": "http://kathrynisabelle.com",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "jnsjknn",
+      "name": "Joonas Jokinen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46967273?v=4",
+      "profile": "http://www.joonasjokinen.fi",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "Ajaya1000",
+      "name": "Ajaya Mati",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43005088?v=4",
+      "profile": "https://github.com/Ajaya1000",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "suhascv",
+      "name": "Suhas CV",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43292181?v=4",
+      "profile": "https://github.com/suhascv",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "SanjaySinghRajpoot",
+      "name": "Sanjay Singh Rajpoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67458417?v=4",
+      "profile": "http://sanjaysinghrajpoot.me",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "b4ux1t3",
+      "name": "Chris P.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5150833?v=4",
+      "profile": "http://chrispilcher.me",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

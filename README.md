@@ -60,6 +60,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
+* [@dhowe](https://github.com/dhowe)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -72,7 +73,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
-| Typography                        |                                              |
+| Typography                        | dhowe                                             |
 | Utilities                         |                                              |
 | WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
@@ -468,6 +469,21 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/satyasaibhushan"><img src="https://avatars.githubusercontent.com/u/40578313?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sai Bhushan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=satyasaibhushan" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/vulongphan"><img src="https://avatars.githubusercontent.com/u/46087559?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Long Phan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=vulongphan" title="Code">💻</a></td>
+    <td align="center"><a href="https://jcelerier.name"><img src="https://avatars.githubusercontent.com/u/2772730?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jean-Michaël Celerier</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajcelerier" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://sosunnyproject.github.io"><img src="https://avatars.githubusercontent.com/u/17012862?v=4?s=100" width="100px;" alt=""/><br /><sub><b>So Sun Park</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sosunnyproject" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://msub2.com"><img src="https://avatars.githubusercontent.com/u/70986246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Adams</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=msub2" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=msub2" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://shantanu-kaushik.herokuapp.com/"><img src="https://avatars.githubusercontent.com/u/54030684?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aloneduckling</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aloneduckling" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://msundaram.me"><img src="https://avatars.githubusercontent.com/u/60923158?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohana Sundaram S</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=highonweb" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/two-ticks"><img src="https://avatars.githubusercontent.com/u/68433541?v=4?s=100" width="100px;" alt=""/><br /><sub><b>TwoTicks</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=two-ticks" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=two-ticks" title="Documentation">📖</a> <a href="#example-two-ticks" title="Examples">💡</a></td>
+    <td align="center"><a href="http://kathrynisabelle.com"><img src="https://avatars.githubusercontent.com/u/15334958?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kathryn Isabelle Lawrence</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=lawreka" title="Code">💻</a> <a href="#ideas-lawreka" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://www.joonasjokinen.fi"><img src="https://avatars.githubusercontent.com/u/46967273?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joonas Jokinen</b></sub></a><br /><a href="#design-jnsjknn" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/Ajaya1000"><img src="https://avatars.githubusercontent.com/u/43005088?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ajaya Mati</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ajaya1000" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/suhascv"><img src="https://avatars.githubusercontent.com/u/43292181?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Suhas CV</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=suhascv" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://sanjaysinghrajpoot.me"><img src="https://avatars.githubusercontent.com/u/67458417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sanjay Singh Rajpoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SanjaySinghRajpoot" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://chrispilcher.me"><img src="https://avatars.githubusercontent.com/u/5150833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chris P.</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=b4ux1t3" title="Documentation">📖</a></td>
   </tr>
 </table>
 
