@@ -71,9 +71,33 @@ p5.prototype.beginContour = function() {
  * types of shapes to create from the provided vertices. With no mode
  * specified, the shape can be any irregular polygon.
  *
- * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
- * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and TESS (WebGL only). After calling the
- * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
+ * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are:
+ *
+ * POINTS
+ * Draw a series of points
+ *
+ * LINES
+ * Draw a series of unconnected line segments (individual lines)
+ *
+ * TRIANGLES
+ * Draw a series of separate triangles
+ *
+ * TRIANGLE_FAN
+ * Draw a series of connected triangles sharing the first vertex in a fan-like fashion
+ *
+ * TRIANGLE_STRIP
+ * Draw a series of connected triangles in strip fashion
+ *
+ * QUADS
+ * Draw a series of seperate quad
+ *
+ * QUAD_STRIP
+ * Draw quad strip using adjacent edges to form the next quad
+ *
+ * TESS (WebGl only)
+ * Handle irregular polygon for filling curve by explicit tessellation
+ *
+ * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
  * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
  * current stroke color and filled with the fill color.
  *
@@ -215,13 +239,15 @@ p5.prototype.beginContour = function() {
  *
  * <div>
  * <code>
- * beginShape();
+ * beginShape(TESS);
  * vertex(20, 20);
- * vertex(40, 20);
+ * vertex(80, 20);
+ * vertex(80, 40);
  * vertex(40, 40);
- * vertex(60, 40);
- * vertex(60, 60);
- * vertex(20, 60);
+ * vertex(40, 60);
+ * vertex(80, 60);
+ * vertex(80, 80);
+ * vertex(20, 80);
  * endShape(CLOSE);
  * </code>
  * </div>
