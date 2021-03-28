@@ -60,7 +60,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
-* [dhowe](https://github.com/dhowe)
+* [@dhowe](https://github.com/dhowe)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
