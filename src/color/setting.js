@@ -769,6 +769,9 @@ p5.prototype.stroke = function(...args) {
  * erase();
  * ellipse(25, 30, 30);
  * noErase();
+ * describe(
+ *   'centered pink rect over purple background. Elliptical area in top-left of rect is erased white'
+ * );
  * </code>
  * </div>
  *
@@ -781,6 +784,9 @@ p5.prototype.stroke = function(...args) {
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
+ * describe(
+ *   'purple rect centered over mint green background. Triangle in top-right is partially erased with fully erased outline'
+ * );
  * </code>
  * </div>
  *
@@ -807,14 +813,13 @@ p5.prototype.stroke = function(...args) {
  *   translate(0, 0, 40);
  *   torus(15, 5);
  *   noErase();
+ *   describe(
+ *     'teal sphere centered over yellow background. Torus rotating around sphere erases to reveal black text underneath'
+ *   );
  * }
  * </code>
  * </div>
  *
- * @alt
- * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
- * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
- * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
  */
 p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
@@ -841,11 +846,12 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
+ * decribe(
+ *   'Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
  */
 
 p5.prototype.noErase = function() {

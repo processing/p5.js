@@ -136,39 +136,42 @@ p5.prototype._normalizeArcAngles = (
  * arc(50, 55, 60, 60, HALF_PI, PI);
  * arc(50, 55, 70, 70, PI, PI + QUARTER_PI);
  * arc(50, 55, 80, 80, PI + QUARTER_PI, TWO_PI);
+ * describe(
+ *   'shattered outline of ellipse with a quarter of a white circle bottom-right'
+ * );
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI);
+ * describe('white ellipse with top right quarter missing');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
+ * describe('white ellipse with black outline with top right missing');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, CHORD);
+ * describe('white open arc with black outline with top right missing');
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, PIE);
+ * describe(
+ *   'white ellipse with top right quarter missing with black outline around the shape'
+ * );
  * </code>
  * </div>
  *
- * @alt
- *shattered outline of an ellipse with a quarter of a white circle bottom-right.
- *white ellipse with top right quarter missing.
- *white ellipse with black outline with top right missing.
- *white ellipse with top right missing with black outline around shape.
- *white ellipse with top right quarter missing with black outline around the shape.
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
@@ -249,11 +252,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * <div>
  * <code>
  * ellipse(56, 46, 55, 55);
+ * describe('white ellipse with black outline in middle of a gray canvas');
  * </code>
  * </div>
  *
- * @alt
- *white ellipse with black outline in middle-right of canvas that is 55x55
  */
 
 /**
@@ -291,11 +293,10 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * <code>
  * // Draw a circle at location (30, 30) with a diameter of 20.
  * circle(30, 30, 20);
+ * describe('white circle with black outline in mid of gray canvas');
  * </code>
  * </div>
  *
- * @alt
- * white circle with black outline in mid of canvas that is 55x55.
  */
 p5.prototype.circle = function() {
   p5._validateParameters('circle', arguments);
@@ -354,6 +355,9 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * <div>
  * <code>
  * line(30, 20, 85, 75);
+ * describe(
+ *   'a 78 pixels long line running from mid-top to bottom-right of canvas'
+ * );
  * </code>
  * </div>
  *
@@ -364,12 +368,12 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * line(85, 20, 85, 75);
  * stroke(255);
  * line(85, 75, 30, 75);
+ * describe(
+ *   '3 lines of various stroke sizes. Form top, bottom and right sides of a square'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * An example showing a line 78 pixels long running from mid-top to bottom-right of canvas.
- * An example showing 3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  */
 
 /**
@@ -416,6 +420,7 @@ p5.prototype.line = function(...args) {
  * point(85, 20);
  * point(85, 75);
  * point(30, 75);
+ * describe('4 points create the corners of a square');
  * </code>
  * </div>
  *
@@ -427,6 +432,7 @@ p5.prototype.line = function(...args) {
  * strokeWeight(10); // Make the points 10 pixels in size
  * point(85, 75);
  * point(30, 75);
+ * describe('2 points and 2 large purple points in middle-right of canvas');
  * </code>
  * </div>
  *
@@ -438,13 +444,12 @@ p5.prototype.line = function(...args) {
  * point(b);
  * point(createVector(20, 10));
  * point(createVector(20, 20));
+ * describe(
+ *   'four points create vertices of 10x10 pixel square on top-left of canvas'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * 4 points centered in the middle-right of the canvas.
- * 2 large points and 2 large purple points centered in the middle-right of the canvas.
- * Vertices of a square of length 10 pixels towards the top-left of the canvas.
  */
 
 /**
@@ -499,11 +504,10 @@ p5.prototype.point = function(...args) {
  * <div>
  * <code>
  * quad(38, 31, 86, 20, 69, 63, 30, 76);
+ * describe('irregular white quadrilateral with black outline');
  * </code>
  * </div>
  *
- * @alt
- *irregular white quadrilateral shape with black outline mid-right of canvas.
  */
 /**
  * @method quad
@@ -576,6 +580,7 @@ p5.prototype.quad = function(...args) {
  * <code>
  * // Draw a rectangle at location (30, 20) with a width and height of 55.
  * rect(30, 20, 55, 55);
+ * describe('white rect with black outline in mid-right of canvas');
  * </code>
  * </div>
  *
@@ -583,6 +588,9 @@ p5.prototype.quad = function(...args) {
  * <code>
  * // Draw a rectangle with rounded corners, each having a radius of 20.
  * rect(30, 20, 55, 55, 20);
+ * describe(
+ *   'white rect with black outline and round edges in mid-right of canvas'
+ * );
  * </code>
  * </div>
  *
@@ -591,13 +599,10 @@ p5.prototype.quad = function(...args) {
  * // Draw a rectangle with rounded corners having the following radii:
  * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
  * rect(30, 20, 55, 55, 20, 15, 10, 5);
+ * describe('white rect with black outline and round edges of different radii');
  * </code>
  * </div>
  *
- * @alt
- * 55x55 white rect with black outline in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges of different radii.
  */
 
 /**
@@ -643,6 +648,7 @@ p5.prototype.rect = function() {
  * <code>
  * // Draw a square at location (30, 20) with a side size of 55.
  * square(30, 20, 55);
+ * describe('white square with black outline in mid-right of canvas');
  * </code>
  * </div>
  *
@@ -650,6 +656,9 @@ p5.prototype.rect = function() {
  * <code>
  * // Draw a square with rounded corners, each having a radius of 20.
  * square(30, 20, 55, 20);
+ * describe(
+ *   'white square with black outline and round edges in mid-right of canvas'
+ * );
  * </code>
  * </div>
  *
@@ -658,13 +667,10 @@ p5.prototype.rect = function() {
  * // Draw a square with rounded corners having the following radii:
  * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
  * square(30, 20, 55, 20, 15, 10, 5);
+ * describe('white square with black outline and round edges of different radii');
  * </code>
  * </div>
  *
- * @alt
- * 55x55 white square with black outline in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);
@@ -722,11 +728,10 @@ p5.prototype._renderRect = function() {
  * <div>
  * <code>
  * triangle(30, 75, 58, 20, 86, 75);
+ * describe('white triangle with black outline in mid-right of canvas');
  * </code>
  * </div>
  *
- *@alt
- * white triangle with black outline in mid-right of canvas.
  */
 p5.prototype.triangle = function(...args) {
   p5._validateParameters('triangle', args);
