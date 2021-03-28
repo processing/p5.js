@@ -846,7 +846,7 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
- * decribe(
+ * describe(
  *   'Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second'
  * );
  * </code>
