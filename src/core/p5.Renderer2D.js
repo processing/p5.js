@@ -281,7 +281,7 @@ p5.Renderer2D.prototype._getPixel = function(x, y) {
 
 p5.Renderer2D.prototype.loadPixels = function() {
   const pixelsState = this._pixelsState; // if called by p5.Image
-
+  
   const pd = pixelsState._pixelDensity;
   const w = this.width * pd;
   const h = this.height * pd;
@@ -391,18 +391,24 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
     this.gifProperties.frames[this.gifProperties.displayIndex].image =
       pixelsState.imageData;
   }
-
-  if (pixelsState.pixels !== pixelsState.imageData.data) {
+  
+  let pixels = pixelsState.pixels
+  if (this._pInst instanceof p5 &&  
+      this._pInst._isGlobal === true) {
+    pixels = globalThis.pixels;
+  }
+  
+  if (pixels !== pixelsState.imageData.data) {
     let imgData;
-    if (pixelsState.pixels instanceof Uint8ClampedArray) {
-      if (pixelsState.pixels.length === pixelsState.imageData.data.length) {
+    if (pixels instanceof Uint8ClampedArray) {
+      if (pixels.length === pixelsState.imageData.data.length) {
         imgData = new ImageData(
-          pixelsState.pixels,
+          pixels,
           pixelsState.width,
           pixelsState.height
         );
       } else {
-        let imgArr = Array.from(pixelsState.pixels);
+        let imgArr = Array.from(pixels);
         imgArr.length = pixelsState.imageData.data.length;
         imgData = new ImageData(
           Uint8ClampedArray.from(imgArr),
@@ -411,10 +417,10 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
         );
       }
     } else {
-      if (Array.isArray(pixelsState.pixels)) {
-        pixelsState.pixels.length = pixelsState.imageData.data.length;
+      if (Array.isArray(pixels)) {
+        pixels.length = pixelsState.imageData.data.length;
         imgData = new ImageData(
-          Uint8ClampedArray.from(pixelsState.pixels),
+          Uint8ClampedArray.from(pixels),
           pixelsState.imageData.width,
           pixelsState.imageData.height
         );
