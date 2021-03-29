@@ -281,7 +281,7 @@ p5.Renderer2D.prototype._getPixel = function(x, y) {
 
 p5.Renderer2D.prototype.loadPixels = function() {
   const pixelsState = this._pixelsState; // if called by p5.Image
-  
+
   const pd = pixelsState._pixelDensity;
   const w = this.width * pd;
   const h = this.height * pd;
@@ -391,22 +391,17 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
     this.gifProperties.frames[this.gifProperties.displayIndex].image =
       pixelsState.imageData;
   }
-  
-  let pixels = pixelsState.pixels
-  if (this._pInst instanceof p5 &&  
-      this._pInst._isGlobal === true) {
+
+  let pixels = pixelsState.pixels;
+  if (this._pInst instanceof p5 && this._pInst._isGlobal === true) {
     pixels = globalThis.pixels;
   }
-  
+
   if (pixels !== pixelsState.imageData.data) {
     let imgData;
     if (pixels instanceof Uint8ClampedArray) {
       if (pixels.length === pixelsState.imageData.data.length) {
-        imgData = new ImageData(
-          pixels,
-          pixelsState.width,
-          pixelsState.height
-        );
+        imgData = new ImageData(pixels, pixelsState.width, pixelsState.height);
       } else {
         let imgArr = Array.from(pixels);
         imgArr.length = pixelsState.imageData.data.length;
