@@ -2139,7 +2139,7 @@ p5.Element.prototype.size = function(w, h) {
   } else {
     if (this.elt instanceof HTMLCanvasElement) {
       p5._friendlyError(
-        'Try using the method resizeCanvas for canvas instead of size method check this for reference',
+        'Use resizeCanvas() instead of size() when changing the size of a canvas or graphics object check this for reference',
         'resizeCanvas'
       );
       return;
@@ -2154,6 +2154,10 @@ p5.Element.prototype.size = function(w, h) {
       } else if (aH === AUTO) {
         aH = w * this.height / this.width;
       }
+      this.elt.style.width = aW + 'px';
+      this.elt.style.height = aH + 'px';
+      this.elt.width = aW;
+      this.elt.height = aH;
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
 
