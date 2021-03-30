@@ -556,7 +556,7 @@ p5.prototype.createButton = function(label, value) {
  * }
  *
  * function myCheckedEvent() {
- *   if (this.checked()) {
+ *   if (checkbox.checked()) {
  *     console.log('Checking!');
  *   } else {
  *     console.log('Unchecking!');
@@ -566,14 +566,26 @@ p5.prototype.createButton = function(label, value) {
  */
 p5.prototype.createCheckbox = function() {
   p5._validateParameters('createCheckbox', arguments);
+
+  // Create a container element
   const elt = document.createElement('div');
+
+  // Create checkbox type input element
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  elt.appendChild(checkbox);
+
+  // Create label element and wrap it around checkbox
+  const label = document.createElement('label');
+  label.appendChild(checkbox);
+
+  // Append label element inside the container
+  elt.appendChild(label);
+
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
+
   self.checked = function() {
-    const cb = self.elt.getElementsByTagName('input')[0];
+    const cb = self.elt.innerHTML.getElementsByTagName('input')[0];
     if (cb) {
       if (arguments.length === 0) {
         return cb.checked;
@@ -585,24 +597,25 @@ p5.prototype.createCheckbox = function() {
     }
     return self;
   };
+
   this.value = function(val) {
     self.value = val;
     return this;
   };
+
+  // Set the span element innerHTML as the label value if passed
   if (arguments[0]) {
-    const ran = Math.random()
-      .toString(36)
-      .slice(2);
-    const label = document.createElement('label');
-    checkbox.setAttribute('id', ran);
-    label.htmlFor = ran;
     self.value(arguments[0]);
-    label.appendChild(document.createTextNode(arguments[0]));
-    elt.appendChild(label);
+    const span = document.createElement('span');
+    span.innerHTML = arguments[0];
+    label.appendChild(span);
   }
+
+  // Set the checked value of checkbox if passed
   if (arguments[1]) {
     checkbox.checked = true;
   }
+
   return self;
 };
 
