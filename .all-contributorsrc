@@ -2507,6 +2507,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "maxthomax",
+      "name": "Thomas Herlea",
+      "avatar_url": "https://avatars.githubusercontent.com/u/888491?v=4",
+      "profile": "https://github.com/maxthomax",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
