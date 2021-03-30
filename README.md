@@ -60,6 +60,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
+* [@dhowe](https://github.com/dhowe)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -72,7 +73,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
-| Typography                        |                                              |
+| Typography                        | dhowe                                             |
 | Utilities                         |                                              |
 | WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
@@ -482,6 +483,10 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/Ajaya1000"><img src="https://avatars.githubusercontent.com/u/43005088?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ajaya Mati</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Ajaya1000" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/suhascv"><img src="https://avatars.githubusercontent.com/u/43292181?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Suhas CV</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=suhascv" title="Documentation">📖</a></td>
     <td align="center"><a href="http://sanjaysinghrajpoot.me"><img src="https://avatars.githubusercontent.com/u/67458417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sanjay Singh Rajpoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SanjaySinghRajpoot" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://chrispilcher.me"><img src="https://avatars.githubusercontent.com/u/5150833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chris P.</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=b4ux1t3" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/maxthomax"><img src="https://avatars.githubusercontent.com/u/888491?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Thomas Herlea</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amaxthomax" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Documentation">📖</a></td>
   </tr>
 </table>
 
