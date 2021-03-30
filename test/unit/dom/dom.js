@@ -626,8 +626,8 @@ suite('DOM', function() {
     );
   });
 
-  // Tests for createCheckBox
-  suite('p5.prototype.createCheckBox', function() {
+  // Tests for createCheckbox
+  suite('p5.prototype.createCheckbox', function() {
     let myp5;
     let testElement;
 
@@ -649,27 +649,30 @@ suite('DOM', function() {
 
     // helper functions
     const getSpanElement = el =>
-      el.elt.innerHTML.getElementsByTagName('span').length
-        ? el.elt.innerHTML.getElementsByTagName('span')[0]
+      el.elt.firstElementChild.getElementsByTagName('span').length
+        ? el.elt.firstElementChild.getElementsByTagName('span')[0]
         : null;
 
     const getCheckboxElement = el =>
-      el.elt.innerHTML.getElementsByTagName('input').length
-        ? el.elt.innerHTML.getElementsByTagName('input')[0]
+      el.elt.firstElementChild.getElementsByTagName('input').length
+        ? el.elt.firstElementChild.getElementsByTagName('input')[0]
         : null;
 
     test('should be a function', function() {
-      assert.isFunction(myp5.createCheckBox);
+      assert.isFunction(myp5.createCheckbox);
     });
 
-    test('should return a p5.Element', function() {
-      testElement = myp5.createCheckBox();
+    test('should return a p5.Element with checkbox as descendant', function() {
+      testElement = myp5.createCheckbox();
+      const checkboxElement = getCheckboxElement(testElement);
+
       assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(checkboxElement, HTMLInputElement);
     });
 
     test('calling createCheckbox(label) should create checkbox and set its label', function() {
       const labelValue = 'label';
-      testElement = myp5.createCheckBox(labelValue);
+      testElement = myp5.createCheckbox(labelValue);
       const spanElement = getSpanElement(testElement);
       const testElementLabelValue = getSpanElement(testElement)
         ? getSpanElement(testElement).innerHTML
@@ -682,31 +685,28 @@ suite('DOM', function() {
 
     test('calling createCheckbox(label, true) should create a checked checkbox and set its label', function() {
       const labelValue = 'label';
-      testElement = myp5.createCheckBox(labelValue);
+      testElement = myp5.createCheckbox(labelValue, true);
 
       const spanElement = getSpanElement(testElement);
       const testElementLabelValue = getSpanElement(testElement)
         ? getSpanElement(testElement).innerHTML
         : '';
 
-      const checkboxElement = getCheckboxElement(testElement);
-      const checkboxElementValue = checkboxElement
-        ? checkboxElement.checked
-        : false;
-
       assert.instanceOf(testElement, p5.Element);
       assert.instanceOf(spanElement, HTMLSpanElement);
       assert.deepEqual(testElementLabelValue, labelValue);
-      assert.isTrue(checkboxElementValue);
+      assert.isTrue(testElement.checked());
     });
 
-    test('calling checked() should return value of checkbox', function() {
-      testElement = myp5.createCheckBox('', true);
-      const checkboxElement = getCheckboxElement(testElement);
-      const checkboxElementValue = checkboxElement
-        ? checkboxElement.checked()
-        : false;
-      assert.isTrue(checkboxElementValue);
+    test('calling checked() should return checked value of checkbox', function() {
+      testElement = myp5.createCheckbox('', true);
+      assert.isTrue(testElement.checked());
+    });
+
+    test('calling checked(true) should set checked value of checkbox', function() {
+      testElement = myp5.createCheckbox('', false);
+      testElement.checked(true);
+      assert.isTrue(testElement.checked());
     });
   });
 

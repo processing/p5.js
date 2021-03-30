@@ -585,7 +585,7 @@ p5.prototype.createCheckbox = function() {
   const self = addElement(elt, this);
 
   self.checked = function() {
-    const cb = self.elt.innerHTML.getElementsByTagName('input')[0];
+    const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
       if (arguments.length === 0) {
         return cb.checked;
