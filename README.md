@@ -101,7 +101,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://limzykenneth.com"><img src="https://avatars3.githubusercontent.com/u/7543950?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kenneth Lim</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Alimzykenneth" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=limzykenneth" title="Documentation">📖</a></td>
     <td align="center"><a href="http://www.katehollenbach.com"><img src="https://avatars0.githubusercontent.com/u/78966?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kate hollenbach</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/stalgiag"><img src="https://avatars2.githubusercontent.com/u/10382506?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stalgia Grigg</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/mlarghydracept"><img src="https://avatars2.githubusercontent.com/u/10382506?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stalgia Grigg</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/machinic"><img src="https://avatars3.githubusercontent.com/u/3985997?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jerel Johnson</b></sub></a><br /></td>
     <td align="center"><a href="http://sakshamsaxena.in"><img src="https://avatars2.githubusercontent.com/u/8774516?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Saksham Saxena</b></sub></a><br /></td>
     <td align="center"><a href="https://twitter.com/ed_saber"><img src="https://avatars3.githubusercontent.com/u/11218401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>saber khan</b></sub></a><br /></td>
@@ -484,6 +484,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/suhascv"><img src="https://avatars.githubusercontent.com/u/43292181?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Suhas CV</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=suhascv" title="Documentation">📖</a></td>
     <td align="center"><a href="http://sanjaysinghrajpoot.me"><img src="https://avatars.githubusercontent.com/u/67458417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sanjay Singh Rajpoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=SanjaySinghRajpoot" title="Documentation">📖</a></td>
     <td align="center"><a href="http://chrispilcher.me"><img src="https://avatars.githubusercontent.com/u/5150833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chris P.</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=b4ux1t3" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/maxthomax"><img src="https://avatars.githubusercontent.com/u/888491?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Thomas Herlea</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amaxthomax" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Documentation">📖</a></td>
   </tr>
 </table>
 
