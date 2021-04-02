@@ -168,7 +168,8 @@ p5.prototype.describeElement = function(name, text, display) {
   //calls function that adds punctuation for better screen reading
   let elementName = _elementName(name);
   //remove any special characters from name to use it as html id
-  name = name.replace(/[^a-zA-Z0-9 ]/g, '');
+  name = name.replace(/[^a-zA-Z0-9]/g, '');
+
   //store element description
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
   //if there is no dummyDOM
