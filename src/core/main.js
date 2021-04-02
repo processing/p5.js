@@ -675,9 +675,8 @@ class p5 {
             }
           });
         } catch (e) {
-          log(
-            `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`
-          );
+          let msg = `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`;
+          p5._friendlyError(msg, prop);
           globalObject[prop] = value;
         }
       } else {
