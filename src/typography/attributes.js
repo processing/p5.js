@@ -284,4 +284,73 @@ p5.prototype._updateTextMetrics = function() {
   return this._renderer._updateTextMetrics();
 };
 
+/**
+ * Specifies how lines of text are wrapped within a text box. This requires a max-width set on the text area, specified in <a href="#/p5/text">text()</a> as parameter `x2`.
+ *
+ * WORD wrap style only breaks lines at spaces. A single string without spaces that exceeds the boundaries of the canvas or text area is not truncated, and will overflow the desired area, disappearing at the canvas edge.
+ *
+ * CHAR wrap style breaks lines wherever needed to stay within the text box.
+ *
+ * WORD is the default wrap style, and both styles will still break lines at any line breaks (`\n`) specified in the original text. The text area max-height parameter (`y2`) also still applies to wrapped text in both styles, lines of text that do not fit within the text area will not be drawn to the screen.
+ *
+ * @method textWrap
+ * @param {Constant} wrapStyle text wrapping style, either WORD or CHAR
+ * @return {String} wrapStyle
+ * @example
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(WORD);
+ * text('Have a wonderful day', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(CHAR);
+ * text('Have a wonderful day', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(CHAR);
+ * text('祝你有美好的一天', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * const scream = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+ * textSize(20);
+ * textWrap(WORD);
+ * text(scream, 0, 0, 100);
+ * fill(0, 0, 0, 75);
+ * text(scream, 0, 20, 100);
+ * fill(0, 0, 0, 50);
+ * text(scream, 0, 40, 100);
+ * fill(0, 0, 0, 25);
+ * text(scream, 0, 60, 100);
+ * strokeWeight(2);
+ * ellipseMode(CENTER);
+ * fill(255);
+ * ellipse(15, 50, 15, 15);
+ * fill(0);
+ * ellipse(11, 47, 1, 1);
+ * ellipse(19, 47, 1, 1);
+ * ellipse(15, 52, 5, 5);
+ * line(15, 60, 15, 70);
+ * line(15, 65, 5, 55);
+ * line(15, 65, 25, 55);
+ * line(15, 70, 10, 80);
+ * line(15, 70, 20, 80);
+ * </code>
+ * </div>
+ */
+p5.prototype.textWrap = function(wrapStyle) {
+  if (wrapStyle !== 'WORD' && wrapStyle !== 'CHAR') {
+    throw 'Error: textWrap accepts only WORD or CHAR';
+  }
+  return this._renderer.textWrap(wrapStyle);
+};
+
 export default p5;

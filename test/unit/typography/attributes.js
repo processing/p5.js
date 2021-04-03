@@ -111,4 +111,15 @@ suite('Typography Attributes', function() {
       assert.isNumber(myp5.textDescent());
     });
   });
+
+  suite('p5.prototype.textWrap', function() {
+    test('should throw error for non-constant input', function() {
+      expect(function() {
+        myp5.textWrap('NO-WRAP');
+      }).to.throw('Error: textWrap accepts only WORD or CHAR');
+    });
+    test('returns textWrap text attribute', function() {
+      assert.strictEqual(myp5.textWrap(myp5.WORD), myp5.WORD);
+    });
+  });
 });

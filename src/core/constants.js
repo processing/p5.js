@@ -596,6 +596,16 @@ export const BOLD = 'bold';
  * @final
  */
 export const BOLDITALIC = 'bold italic';
+/**
+ * @property {String} CHAR
+ * @final
+ */
+export const CHAR = 'CHAR';
+/**
+ * @property {String} WORD
+ * @final
+ */
+export const WORD = 'WORD';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';

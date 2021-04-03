@@ -44,6 +44,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textDescent = null;
   this._textAlign = constants.LEFT;
   this._textBaseline = constants.BASELINE;
+  this._textWrap = constants.WORD;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -77,7 +78,8 @@ p5.Renderer.prototype.push = function() {
       _textSize: this._textSize,
       _textAlign: this._textAlign,
       _textBaseline: this._textBaseline,
-      _textStyle: this._textStyle
+      _textStyle: this._textStyle,
+      _textWrap: this._textWrap
     }
   };
 };
@@ -208,18 +210,20 @@ p5.Renderer.prototype.textAlign = function(h, v) {
   }
 };
 
+p5.Renderer.prototype.textWrap = function(wrapStyle) {
+  this._setProperty('_textWrap', wrapStyle);
+  return this._textWrap;
+};
+
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   const p = this._pInst;
-  let cars;
-  let n;
-  let ii;
-  let jj;
+  const textWrapStyle = this._textWrap;
+  let lines;
   let line;
   let testLine;
-  let currentLineLength;
   let testWidth;
   let words;
-  let totalHeight;
+  let chars;
   let shiftedY;
   let finalMaxHeight = Number.MAX_VALUE;
 
@@ -233,35 +237,13 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     str = str.toString();
   }
 
+  // Replaces tabs with double-spaces and splits string at any line breaks present in the original string
   str = str.replace(/(\t)/g, '  ');
-  cars = str.split('\n');
+  lines = str.split('\n');
 
   if (typeof maxWidth !== 'undefined') {
-    totalHeight = 0;
-    currentLineLength = 1;
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = `${line + words[n]} `;
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && currentLineLength > 1) {
-          line = `${words[n]} `;
-          totalHeight += p.textLeading();
-          currentLineLength = 1;
-        } else {
-          line = testLine;
-          currentLineLength += 1;
-        }
-      }
-      if (ii < cars.length - 1) {
-        totalHeight += p.textLeading();
-      }
-    }
-
     if (this._rectMode === constants.CENTER) {
       x -= maxWidth / 2;
-      y -= maxHeight / 2;
     }
 
     switch (this._textAlign) {
@@ -275,6 +257,10 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
+      if (this._rectMode === constants.CENTER) {
+        y -= maxHeight / 2;
+      }
+
       switch (this._textBaseline) {
         case constants.BOTTOM:
           shiftedY = y + (maxHeight - totalHeight);
@@ -294,21 +280,46 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       finalMaxHeight = y + maxHeight - p.textAscent();
     }
 
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = `${line + words[n]} `;
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y, finalMaxHeight);
-          line = `${words[n]} `;
-          y += p.textLeading();
-        } else {
-          line = testLine;
+    // Render lines of text according to settings of textWrap
+    // Splits lines at spaces, for loop adds one word + space at a time and tests length with next word added
+    if (textWrapStyle === constants.WORD) {
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          testLine = `${line + words[wordIndex]}` + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line, x, y, finalMaxHeight);
+            line = `${words[wordIndex]}` + ' ';
+            y += p.textLeading();
+          } else {
+            line = testLine;
+          }
+        }
+        this._renderText(p, line, x, y, finalMaxHeight);
+        y += p.textLeading();
+        if (baselineHacked) {
+          this._textBaseline = constants.BASELINE;
         }
       }
-
+    } else {
+      // Splits lines at characters, for loop adds one char at a time and tests length with next char added
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        chars = lines[lineIndex].split('');
+        for (let charIndex = 0; charIndex < chars.length; charIndex++) {
+          testLine = `${line + chars[charIndex]}`;
+          testWidth = this.textWidth(testLine);
+          if (testWidth <= maxWidth) {
+            line += chars[charIndex];
+          } else if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line, x, y, finalMaxHeight);
+            y += p.textLeading();
+            line = `${chars[charIndex]}`;
+          }
+        }
+      }
       this._renderText(p, line, x, y, finalMaxHeight);
       y += p.textLeading();
 
@@ -323,13 +334,14 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     const vAlign = p.textAlign().vertical;
     if (vAlign === constants.CENTER) {
-      offset = (cars.length - 1) * p.textLeading() / 2;
+      offset = (lines.length - 1) * p.textLeading() / 2;
     } else if (vAlign === constants.BOTTOM) {
-      offset = (cars.length - 1) * p.textLeading();
+      offset = (lines.length - 1) * p.textLeading();
     }
 
-    for (jj = 0; jj < cars.length; jj++) {
-      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+    // Renders lines of text at any line breaks present in the original string
+    for (let i = 0; i < lines.length; i++) {
+      this._renderText(p, lines[i], x, y - offset, finalMaxHeight);
       y += p.textLeading();
     }
   }
