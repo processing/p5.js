@@ -37,7 +37,7 @@ const labelTableElId = '_lte_'; //Label Table Element
  *
  * @method describe
  * @param  {String} text      description of the canvas
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either LABEL or FALLBACK
  *
  * @example
  * <div>
@@ -137,7 +137,7 @@ p5.prototype.describe = function(text, display) {
  * @method describeElement
  * @param  {String} name      name of the element
  * @param  {String} text      description of the element
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either LABEL or FALLBACK
  *
  * @example
  * <div>
