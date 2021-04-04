@@ -387,13 +387,13 @@ p5.prototype.image = function(
 
   p5._validateParameters('image', arguments);
 
-  let defW = img.width;
-  let defH = img.height;
+  let defW = img.width || img.elt.width;
+  let defH = img.height || img.elt.height;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
-    defW = img.elt.videoWidth;
-    defH = img.elt.videoHeight;
+    defH = defH || img.elt.videoHeight;
+    defW = defW || img.elt.videoWidth;
   }
 
   const _dx = dx;
