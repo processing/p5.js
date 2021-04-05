@@ -2518,6 +2518,18 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "smrnjeet222",
+      "name": "Simranjeet Singh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48654626?v=4",
+      "profile": "http://smrnjeet222.github.io",
+      "contributions": [
+        "code",
+        "talk",
+        "design",
+        "review"
+      ]
     }
   ],
   "repoType": "github",
