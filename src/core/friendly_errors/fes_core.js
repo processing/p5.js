@@ -244,7 +244,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    * @param  {Number} message message to be printed
    * @param  {String} [method] name of method
-   * @param  {Number|String} [color]   CSS color string or error type (Optional)
+   * @param  {Number|String} [color]   CSS color string or error type
    */
   p5._friendlyError = function(message, method, color) {
     report(message, method, color);
