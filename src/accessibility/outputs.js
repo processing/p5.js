@@ -33,7 +33,7 @@ import p5 from '../core/main';
  * publishing or sharing with screen reader users.
  *
  * @method textOutput
- * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL
  *
  * @example
  * <div>
@@ -112,7 +112,7 @@ p5.prototype.textOutput = function(display) {
  * publishing or sharing with screen reader users.
  *
  * @method gridOutput
- * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL
  *
  * @example
  * <div>

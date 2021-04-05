@@ -2042,7 +2042,7 @@ p5.Vector.random3D = function random3D() {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] the vector to receive the result
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
@@ -2093,7 +2093,7 @@ p5.Vector.rem = function rem(v1, v2) {
  * @static
  * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
  * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] the vector to receive the result
  * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
@@ -2131,7 +2131,7 @@ p5.Vector.sub = function sub(v1, v2, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] the vector to receive the result
  */
 
 /**
@@ -2174,7 +2174,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number} angle
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] the vector to receive the result
  */
 p5.Vector.rotate = function rotate(v, a, target) {
   if (arguments.length === 2) {
@@ -2210,7 +2210,7 @@ p5.Vector.rotate = function rotate(v, a, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param  {p5.Vector} [target] the vector to receive the result
  */
 
 /**
@@ -2298,7 +2298,7 @@ p5.Vector.dist = function dist(v1, v2) {
  * @param {p5.Vector} v1
  * @param {p5.Vector} v2
  * @param {Number} amt
- * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param {p5.Vector} [target] the vector to receive the result
  * @return {p5.Vector}      the lerped value
  */
 p5.Vector.lerp = function lerp(v1, v2, amt, target) {
@@ -2342,7 +2342,7 @@ p5.Vector.mag = function mag(vecT) {
  * @method normalize
  * @static
  * @param {p5.Vector} v  the vector to normalize
- * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @param {p5.Vector} [target] the vector to receive the result
  * @return {p5.Vector}   v normalized to a length of 1
  */
 p5.Vector.normalize = function normalize(v, target) {
