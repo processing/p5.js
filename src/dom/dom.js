@@ -495,11 +495,7 @@ p5.prototype.createSlider = function(min, max, value, step) {
   elt.type = 'range';
   elt.min = min;
   elt.max = max;
-  if (step === 0) {
-    elt.step = 0.000000000000000001; // smallest valid step
-  } else if (step) {
-    elt.step = step;
-  }
+  elt.step = Math.max(step, 0.000000000000000001);
   if (typeof value === 'number') elt.value = value;
   return addElement(elt, this);
 };
@@ -2067,6 +2063,144 @@ p5.Element.prototype.value = function() {
       return parseFloat(this.elt.value);
     } else return this.elt.value;
   }
+};
+
+/**
+ * Either returns the min value of the element if no arguments
+ * given, or sets the min value of the element.
+ *
+ * @method min
+ * @return {Number} value of the element
+ * @example
+ * <div class='norender'><code>
+ * // gets the value
+ * let slider;
+ * function setup() {
+ *  slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   print(slider.min());
+ * }
+ * </code></div>
+ * <div class='norender'><code>
+ * 
+ * // sets the min value
+ * let inp;
+ * function setup() {
+ *   slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   slider.min(3);
+ * }
+ * </code></div>
+ */
+/**
+ * @method min
+ * @param  {Number}     min
+ * @chainable
+ */
+ p5.Element.prototype.min = function() {
+  if (arguments.length > 0) {
+    this.elt.value = this.elt.value < arguments[0] ?  arguments[0] : this.elt.value;
+    this.elt.min = arguments[0];
+    return this;
+  }
+
+  return parseFloat(this.elt.min);
+};
+
+/**
+ * Either returns the max value of the element if no arguments
+ * given, or sets the max value of the element.
+ *
+ * @method max
+ * @return {Number} value of the element
+ * @example
+ * <div class='norender'><code>
+ * // gets the max value
+ * let slider;
+ * function setup() {
+ *  slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   print(slider.max());
+ * }
+ * </code></div>
+ * <div class='norender'><code>
+ * 
+ * // sets the max value
+ * let inp;
+ * function setup() {
+ *   slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   slider.max(8);
+ * }
+ * </code></div>
+ */
+/**
+ * @method min
+ * @param  {Number}     max
+ * @chainable
+ */
+ p5.Element.prototype.max = function() {
+  if (arguments.length > 0) {
+    this.elt.value = this.elt.value > arguments[0] ?  arguments[0] : this.elt.value;
+    this.elt.max = arguments[0];
+    return this;
+  }
+
+  return parseFloat(this.elt.max);
+};
+
+/**
+ * Either returns the step value of the element if no arguments
+ * given, or sets the step value of the element.
+ *
+ * @method step
+ * @return {Number} value of the element
+ * @example
+ * <div class='norender'><code>
+ * // gets the step value
+ * let slider;
+ * function setup() {
+ *  slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   print(slider.step());
+ * }
+ * </code></div>
+ * <div class='norender'><code>
+ * 
+ * // sets the step value
+ * let inp;
+ * function setup() {
+ *   slider = createSlider(0, 10, 1, 0.1);
+ * }
+ *
+ * function mousePressed() {
+ *   slider.step(8);
+ * }
+ * </code></div>
+ */
+/**
+ * @method step
+ * @param  {Number}     step
+ * @chainable
+ */
+ p5.Element.prototype.step = function() {
+  if(arguments.length === 0){
+    return parseFloat(this.elt.step);
+  }
+  this.elt.step = arguments[0] > this.elt.max - this.elt.min ?
+  this.elt.max - this.elt.min : arguments[0];
+  this.elt.step = Math.max(this.elt.step, 0.000000000000000001);
+  return this;
 };
 
 /**
