@@ -401,21 +401,26 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
     let imgData;
     if (pixels instanceof Uint8ClampedArray) {
       if (pixels.length === pixelsState.imageData.data.length) {
-        imgData = new ImageData(pixels, pixelsState.width, pixelsState.height);
-      } else {
-        let imgArr = Array.from(pixels);
-        imgArr.length = pixelsState.imageData.data.length;
         imgData = new ImageData(
-          Uint8ClampedArray.from(imgArr),
-          pixelsState.width,
-          pixelsState.height
+          pixels,
+          pixelsState.imageData.width,
+          pixelsState.imageData.height
+        );
+      } else {
+        let imgArr = new Uint8ClampedArray(pixelsState.imageData.data.length);
+        imgArr.set(pixels);
+        imgData = new ImageData(
+          imgArr,
+          pixelsState.imageData.width,
+          pixelsState.imageData.height
         );
       }
     } else {
       if (Array.isArray(pixels)) {
-        pixels.length = pixelsState.imageData.data.length;
+        let imgArr = new Uint8ClampedArray(pixelsState.imageData.data.length);
+        imgArr.set(pixels);
         imgData = new ImageData(
-          Uint8ClampedArray.from(pixels),
+          imgArr,
           pixelsState.imageData.width,
           pixelsState.imageData.height
         );
