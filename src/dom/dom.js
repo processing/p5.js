@@ -2076,7 +2076,7 @@ p5.Element.prototype.value = function() {
  * // gets the value
  * let slider;
  * function setup() {
- *  slider = createSlider(0, 10, 1, 0.1);
+ *   slider = createSlider(0, 10, 1, 0.1);
  * }
  *
  * function mousePressed() {
@@ -2084,9 +2084,8 @@ p5.Element.prototype.value = function() {
  * }
  * </code></div>
  * <div class='norender'><code>
- * 
  * // sets the min value
- * let inp;
+ * let slider;
  * function setup() {
  *   slider = createSlider(0, 10, 1, 0.1);
  * }
@@ -2101,9 +2100,10 @@ p5.Element.prototype.value = function() {
  * @param  {Number}     min
  * @chainable
  */
- p5.Element.prototype.min = function() {
+p5.Element.prototype.min = function() {
   if (arguments.length > 0) {
-    this.elt.value = this.elt.value < arguments[0] ?  arguments[0] : this.elt.value;
+    this.elt.value =
+      this.elt.value < arguments[0] ? arguments[0] : this.elt.value;
     this.elt.min = arguments[0];
     return this;
   }
@@ -2122,7 +2122,7 @@ p5.Element.prototype.value = function() {
  * // gets the max value
  * let slider;
  * function setup() {
- *  slider = createSlider(0, 10, 1, 0.1);
+ *   slider = createSlider(0, 10, 1, 0.1);
  * }
  *
  * function mousePressed() {
@@ -2130,9 +2130,8 @@ p5.Element.prototype.value = function() {
  * }
  * </code></div>
  * <div class='norender'><code>
- * 
  * // sets the max value
- * let inp;
+ * let slider;
  * function setup() {
  *   slider = createSlider(0, 10, 1, 0.1);
  * }
@@ -2147,9 +2146,10 @@ p5.Element.prototype.value = function() {
  * @param  {Number}     max
  * @chainable
  */
- p5.Element.prototype.max = function() {
+p5.Element.prototype.max = function() {
   if (arguments.length > 0) {
-    this.elt.value = this.elt.value > arguments[0] ?  arguments[0] : this.elt.value;
+    this.elt.value =
+      this.elt.value > arguments[0] ? arguments[0] : this.elt.value;
     this.elt.max = arguments[0];
     return this;
   }
@@ -2168,7 +2168,7 @@ p5.Element.prototype.value = function() {
  * // gets the step value
  * let slider;
  * function setup() {
- *  slider = createSlider(0, 10, 1, 0.1);
+ *   slider = createSlider(0, 10, 1, 0.1);
  * }
  *
  * function mousePressed() {
@@ -2176,9 +2176,8 @@ p5.Element.prototype.value = function() {
  * }
  * </code></div>
  * <div class='norender'><code>
- * 
  * // sets the step value
- * let inp;
+ * let slider;
  * function setup() {
  *   slider = createSlider(0, 10, 1, 0.1);
  * }
@@ -2193,12 +2192,14 @@ p5.Element.prototype.value = function() {
  * @param  {Number}     step
  * @chainable
  */
- p5.Element.prototype.step = function() {
-  if(arguments.length === 0){
+p5.Element.prototype.step = function() {
+  if (arguments.length === 0) {
     return parseFloat(this.elt.step);
   }
-  this.elt.step = arguments[0] > this.elt.max - this.elt.min ?
-  this.elt.max - this.elt.min : arguments[0];
+  this.elt.step =
+    arguments[0] > this.elt.max - this.elt.min
+      ? this.elt.max - this.elt.min
+      : arguments[0];
   this.elt.step = Math.max(this.elt.step, 0.000000000000000001);
   return this;
 };
