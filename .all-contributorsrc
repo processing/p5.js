@@ -2518,6 +2518,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "DavidWeiss2",
+      "name": "David Weiss",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12801099?v=4",
+      "profile": "https://github.com/DavidWeiss2",
+      "contributions": [
+        "example",
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
