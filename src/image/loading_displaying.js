@@ -193,7 +193,7 @@ function _createGif(
       // Some GIFs are encoded so that they expect the previous frame
       // to be under the current frame. This can occur at a sub-frame level
       // There are possible disposal codes but I didn't encounter any
-      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
+      if (j > 0 && gifReader.frameInfo(j - 1).disposal === 1) {
         pImg.drawingContext.putImageData(frames[j - 1].image, 0, 0);
       } else {
         pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
