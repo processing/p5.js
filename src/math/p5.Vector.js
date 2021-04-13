@@ -1130,6 +1130,7 @@ p5.Vector.prototype.cross = function cross(v) {
 /**
  * Calculates the Euclidean distance between two points (considering a
  * point as a vector object).
+ * If you are looking to calculate distance with 2 points see <a href="#/p5/dist">dist()</a>
  *
  * @method dist
  * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
@@ -1189,6 +1190,8 @@ p5.Vector.prototype.cross = function cross(v) {
  *   pop();
  * }
  * </code>
+ * see alse:
+ * math dist function.
  * </div>
  */
 p5.Vector.prototype.dist = function dist(v) {
