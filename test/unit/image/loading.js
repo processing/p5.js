@@ -110,6 +110,54 @@ suite('loading images', function() {
     });
   });
 
+  var backgroundColor = [135, 206, 235, 255];
+  var blue = [0, 0, 255, 255];
+  var transparent = [0, 0, 0, 0];
+  test('animated gifs work with no disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_none.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 1 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 2 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 3 does not erase untouched parts of frame 2
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), blue);
+    });
+  });
+
+  test('animated gifs work with background disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_background.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 1 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 2 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 3 erases the content added in frame 2
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), transparent);
+    });
+  });
+
+  test('animated gifs work with previous disposal', function() {
+    return new Promise(function(resolve, reject) {
+      myp5.loadImage('unit/assets/dispose_previous.gif', resolve, reject);
+    }).then(function(img) {
+      // Frame 1 shows the background
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+      // Frame 2 draws on top of the background
+      img.setFrame(1);
+      assert.deepEqual(img.get(7, 12), blue);
+      // Frame 3 returns the content added in frame 2 to its previous value
+      img.setFrame(2);
+      assert.deepEqual(img.get(7, 12), backgroundColor);
+    });
+  });
+
   /* TODO: make this resilient to platform differences in image resizing.
   test('should draw cropped image', function() {
     return new Promise(function(resolve, reject) {
