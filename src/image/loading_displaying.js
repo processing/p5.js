@@ -196,12 +196,7 @@ function _createGif(
         pImg.width,
         pImg.height
       );
-      framePixels = pImg.drawingContext.getImageData(
-        0,
-        0,
-        pImg.width,
-        pImg.height
-      ).data;
+      framePixels = prevFrameData.data.slice();
       loadGIFFrameIntoImage(j, gifReader);
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
