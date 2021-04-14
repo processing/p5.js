@@ -115,6 +115,7 @@ p5.prototype.constrain = function(n, low, high) {
 
 /**
  * Calculates the distance between two points, in either two or three dimensions.
+ * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">dist()</a>
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
