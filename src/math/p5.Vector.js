@@ -1190,8 +1190,6 @@ p5.Vector.prototype.cross = function cross(v) {
  *   pop();
  * }
  * </code>
- * see alse:
- * math dist function.
  * </div>
  */
 p5.Vector.prototype.dist = function dist(v) {
