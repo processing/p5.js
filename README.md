@@ -488,6 +488,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/maxthomax"><img src="https://avatars.githubusercontent.com/u/888491?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Thomas Herlea</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Amaxthomax" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=maxthomax" title="Documentation">📖</a></td>
     <td align="center"><a href="http://smrnjeet222.github.io"><img src="https://avatars.githubusercontent.com/u/48654626?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Simranjeet Singh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=smrnjeet222" title="Code">💻</a> <a href="#talk-smrnjeet222" title="Talks">📢</a> <a href="#design-smrnjeet222" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Asmrnjeet222" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="http://rahulm2310.github.io/Portfolio"><img src="https://avatars.githubusercontent.com/u/54268438?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rahul Mohata</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Rahulm2310" title="Documentation">📖</a></td>
   </tr>
 </table>
 
