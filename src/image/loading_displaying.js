@@ -190,15 +190,13 @@ function _createGif(
     };
     for (let j = 0; j < numFrames; j++) {
       const frameInfo = gifReader.frameInfo(j);
-      // Some GIFs are encoded so that they expect the previous frame
-      // to be under the current frame. This can occur at a sub-frame level
-      // There are possible disposal codes but I didn't encounter any
-      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
-        pImg.drawingContext.putImageData(frames[j - 1].image, 0, 0);
-      } else {
-        pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
-        framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
-      }
+      const prevFrameData = pImg.drawingContext.getImageData(
+        0,
+        0,
+        pImg.width,
+        pImg.height
+      );
+      framePixels = prevFrameData.data.slice();
       loadGIFFrameIntoImage(j, gifReader);
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
@@ -211,6 +209,40 @@ function _createGif(
         image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
         delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
       });
+
+      // Some GIFs are encoded so that they expect the previous frame
+      // to be under the current frame. This can occur at a sub-frame level
+      //
+      // Values :    0 -   No disposal specified. The decoder is
+      //                   not required to take any action.
+      //             1 -   Do not dispose. The graphic is to be left
+      //                   in place.
+      //             2 -   Restore to background color. The area used by the
+      //                   graphic must be restored to the background color.
+      //             3 -   Restore to previous. The decoder is required to
+      //                   restore the area overwritten by the graphic with
+      //                   what was there prior to rendering the graphic.
+      //          4-7 -    To be defined.
+      if (frameInfo.disposal === 2) {
+        // Restore background color
+        pImg.drawingContext.clearRect(
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      } else if (frameInfo.disposal === 3) {
+        // Restore previous
+        pImg.drawingContext.putImageData(
+          prevFrameData,
+          0,
+          0,
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      }
     }
 
     //Uses Netscape block encoding
