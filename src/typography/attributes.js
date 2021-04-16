@@ -261,12 +261,12 @@ p5.prototype.textAscent = function(...args) {
  * let scalar = 0.8; // Different for each font
  *
  * textSize(32); // Set initial text size
- * let desc = textDescent() * scalar; // Calc ascent
+ * let desc = textDescent() * scalar; // Calc descent
  * line(0, base + desc, width, base + desc);
  * text('dp', 0, base); // Draw text on baseline
  *
  * textSize(64); // Increase text size
- * desc = textDescent() * scalar; // Recalc ascent
+ * desc = textDescent() * scalar; // Recalc descent
  * line(40, base + desc, width, base + desc);
  * text('dp', 40, base); // Draw text on baseline
  * </code>
