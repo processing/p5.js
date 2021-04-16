@@ -56,6 +56,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._doFill = true;
   this._strokeSet = false;
   this._fillSet = false;
+  this._leadingSet = false;
 };
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
@@ -75,6 +76,7 @@ p5.Renderer.prototype.push = function() {
       _ellipseMode: this._ellipseMode,
       _textFont: this._textFont,
       _textLeading: this._textLeading,
+      _leadingSet: this._leadingSet,
       _textSize: this._textSize,
       _textAlign: this._textAlign,
       _textBaseline: this._textBaseline,
@@ -145,6 +147,7 @@ p5.Renderer.prototype.get = function(x, y, w, h) {
 
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
+    this._setProperty('_leadingSet', true);
     this._setProperty('_textLeading', l);
     return this._pInst;
   }
@@ -155,7 +158,10 @@ p5.Renderer.prototype.textLeading = function(l) {
 p5.Renderer.prototype.textSize = function(s) {
   if (typeof s === 'number') {
     this._setProperty('_textSize', s);
-    this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+    if (!this._leadingSet) {
+      // only use a default value if not previously set (#5181)
+      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+    }
     return this._applyTextProperties();
   }
 
