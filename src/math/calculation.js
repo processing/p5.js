@@ -686,9 +686,9 @@ p5.prototype.pow = Math.pow;
  * </code></div>
  *
  * @alt
- * "3" written in middle of canvas
+ * "4" written in middle of canvas
  * "12.78" written in middle of canvas
- * horizontal center line squared values displayed on top and regular on bottom.
+ * two horizontal lines rounded values displayed on top.
  */
 p5.prototype.round = function(n, decimals) {
   if (!decimals) {
@@ -841,7 +841,7 @@ function hypot(x, y, z) {
  * </code></div>
  *
  * <div><code>
- *  text(1.4215e-15, 10, 25);
+ * text(1.4215e-15, 10, 25);
  * text(fract(1.4215e-15), 10, 75);
  * </code></div>
  *
