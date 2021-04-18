@@ -686,9 +686,9 @@ p5.prototype.pow = Math.pow;
  * </code></div>
  *
  * @alt
- * "3" written in middle of canvas
+ * "4" written in middle of canvas
  * "12.78" written in middle of canvas
- * horizontal center line squared values displayed on top and regular on bottom.
+ * two horizontal lines rounded values displayed on top.
  */
 p5.prototype.round = function(n, decimals) {
   if (!decimals) {
@@ -835,20 +835,19 @@ function hypot(x, y, z) {
  * @param {Number} num Number whose fractional part needs to be found out
  * @returns {Number} fractional part of x, i.e, {x}
  * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(windowWidth, windowHeight);
- *   fill(0);
- *   text(7345.73472742, 0, 50);
- *   text(fract(7345.73472742), 0, 100);
- *   text(1.4215e-15, 150, 50);
- *   text(fract(1.4215e-15), 150, 100);
- * }
- * </code>
- * </div>
+ * <div><code>
+ * text(7345.73472742, 10, 25);
+ * text(fract(7345.73472742), 10, 75);
+ * </code></div>
+ *
+ * <div><code>
+ * text(1.4215e-15, 10, 25);
+ * text(fract(1.4215e-15), 10, 75);
+ * </code></div>
+ *
  * @alt
- * 2 rows of numbers, the first row having 8 numbers and the second having the fractional parts of those numbers.
+ * first row having a number and the second having the fractional part of the number
+ * first row having a number expressed in scientific notation and the second having the fractional part of the number
  */
 p5.prototype.fract = function(toConvert) {
   p5._validateParameters('fract', arguments);
