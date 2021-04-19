@@ -294,10 +294,13 @@ p5.prototype.textFont = function(theFont, theSize) {
 
     if (theSize) {
       this._renderer._setProperty('_textSize', theSize);
-      this._renderer._setProperty(
-        '_textLeading',
-        theSize * constants._DEFAULT_LEADMULT
-      );
+      if (!this._renderer._leadingSet) {
+        // only use a default value if not previously set (#5181)
+        this._renderer._setProperty(
+          '_textLeading',
+          theSize * constants._DEFAULT_LEADMULT
+        );
+      }
     }
 
     return this._renderer._applyTextProperties();

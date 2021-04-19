@@ -155,6 +155,44 @@ var textSketch1958 = function(p) {
 }
 new p5(textSketch1957, "textSketch1957");*/
 
+var textSketch5181 = function(p) {
+  // issue #5181
+  var font,
+    txt =
+      "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.";
+
+  p.preload = function() {
+    font = p.loadFont('../OpenSans-Regular.ttf');
+  };
+
+  p.setup = function() {
+    p.createCanvas(300, 700);
+    p.background(255);
+
+    let bounds = [20, 10, 250, 130];
+    p.textFont(font, 12);
+    p.rect(...bounds);
+    p.text('Default Size/Lead (12/15): ' + txt, ...bounds);
+
+    bounds = [20, 150, 250, 230];
+    p.textFont(font, 16);
+    p.rect(...bounds);
+    p.text('Default Size/Lead (16/20): ' + txt, ...bounds);
+
+    bounds = [20, 390, 250, 105];
+    p.textLeading(12);
+    p.textFont(font, 12);
+    p.rect(...bounds);
+    p.text('User-set Size/Lead (12/12): ' + txt, ...bounds);
+
+    bounds = [20, 505, 250, 185];
+    p.textFont(font, 20);
+    p.rect(...bounds);
+    p.text('Maintain Custom Leading (20/12): ' + txt, ...bounds);
+  };
+};
+
 new p5(textSketch, 'textSketch');
 new p5(textSketchMono, 'textSketchMono');
 new p5(textSketch1958, 'textSketch1958');
+new p5(textSketch5181, 'textSketch5181');
