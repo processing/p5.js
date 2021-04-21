@@ -2549,6 +2549,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "leokamwathi",
+      "name": "Leo Kamwathi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9960539?v=4",
+      "profile": "http://fb.com/leo.kamwathi",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
