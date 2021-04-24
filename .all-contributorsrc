@@ -2571,6 +2571,16 @@
         "doc"
       ]
     }
+    {
+      "login": "matiasvlevi",
+      "name": "Matias Vazquez-Levi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50473168?v=4",
+      "profile": "https://github.com/matiasvlevi",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",

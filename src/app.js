@@ -64,8 +64,10 @@ import './io/p5.XML';
 // math
 import './math/calculation';
 import './math/math';
+import './math/matrixmath';
 import './math/noise';
 import './math/p5.Vector';
+import './math/p5.MatrixTensor';
 import './math/random';
 import './math/trigonometry';
 
