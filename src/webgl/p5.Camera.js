@@ -554,6 +554,7 @@ p5.Camera = function(renderer) {
  *   orbitControl();
  *   box(10);
  * }
+ * </code></div>
  *
  * @alt
  * An example showing the use of camera object properties
@@ -581,6 +582,7 @@ p5.Camera = function(renderer) {
  *   orbitControl();
  *   box(10);
  * }
+ * </code></div>
  *
  * @alt
  * An example showing the use of camera object properties
