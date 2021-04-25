@@ -32,7 +32,14 @@ var spec = {
     'loadModel',
     'loadShader'
   ],
-  math: ['calculation', 'noise', 'p5.Vector', 'random', 'trigonometry'],
+  math: [
+    'calculation',
+    'noise',
+    'p5.Vector',
+    'p5.MatrixTensor',
+    'random',
+    'trigonometry'
+  ],
   typography: ['attributes', 'loadFont', 'p5.Font'],
   utilities: ['array_functions', 'conversion', 'string_functions', 'time_date'],
   webgl: [

@@ -77,8 +77,8 @@ p5.MatrixTensor = function MatrixTensor() {
  * console.log(rawMatrix);
  * </code></div>
  */
-p5.MatrixTensor.make = function make(x, y) {
-  let m = [];
+p5.MatrixTensor.make = function make(x = 0, y = 0) {
+  let m = [[]];
   for (let i = 0; i < x; i++) {
     m[i] = [];
     for (let j = 0; j < y; j++) {
