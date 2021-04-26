@@ -35,8 +35,8 @@ var spec = {
   math: [
     'calculation',
     'noise',
-    'p5.Vector',
     'p5.MatrixTensor',
+    'p5.Vector',
     'random',
     'trigonometry'
   ],
