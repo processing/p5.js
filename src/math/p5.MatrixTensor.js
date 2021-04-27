@@ -110,7 +110,7 @@ p5.MatrixTensor.prototype.toArray = function toArray() {
     return ans;
   } else {
     p5._friendlyError(
-      'The none of the lengths of the matrix equal 1',
+      'none of the lengths of the matrix equal 1',
       'p5.MatrixTensor.prototype.toArray'
     );
     return undefined;
@@ -216,15 +216,14 @@ p5.MatrixTensor.prototype.getValue = function getValue(x, y) {
  * </code></div>
  */
 p5.MatrixTensor.prototype.copy = function copy() {
+  let result;
   if (this.p5) {
-    let result = new p5.MatrixTensor(this.p5, [this.cols, this.rows]);
-    result.matrix = this.matrix;
-    return result;
+    result = new p5.MatrixTensor(this.p5, [this.cols, this.rows]);
   } else {
-    let result = new p5.MatrixTensor(this.cols, this.rows);
-    result.matrix = this.matrix;
-    return result;
+    result = new p5.MatrixTensor(this.cols, this.rows);
   }
+  result.set(this.matrix);
+  return result;
 };
 
 /**
@@ -242,9 +241,9 @@ p5.MatrixTensor.prototype.copy = function copy() {
  */
 p5.MatrixTensor.prototype.set = function set(m) {
   if (m instanceof p5.MatrixTensor) {
-    this.matrix = m.matrix;
     this.rows = m.rows;
     this.cols = m.cols;
+    this.matrix = m.matrix;
     return this;
   } else {
     this.matrix = m;
@@ -412,13 +411,13 @@ p5.MatrixTensor.prototype.map = function map(f) {
 p5.MatrixTensor.map = function map(m, f) {
   if (m instanceof p5.MatrixTensor) {
     if (typeof f === 'function') {
-      for (let i = 0; i < m.cols; i++) {
-        for (let j = 0; j < m.rows; j++) {
-          let v = m.matrix[i][j];
-          m.matrix[i][j] = f(v);
+      let mc = new p5.MatrixTensor(m.cols, m.rows);
+      for (let i = 0; i < mc.cols; i++) {
+        for (let j = 0; j < mc.rows; j++) {
+          mc.matrix[i][j] = f(m.matrix[i][j]);
         }
       }
-      return m;
+      return mc;
     } else {
       p5._friendlyError(
         'Second argument must be a function.',
@@ -541,15 +540,15 @@ p5.MatrixTensor.prototype.add = function add(n) {
       );
       return undefined;
     } else {
-      result = p5.MatrixTensor.make(this.cols, this.rows);
+      let result = new p5.MatrixTensor(this.cols, this.rows);
       for (let i = 0; i < result.cols; i++) {
         for (let j = 0; j < result.rows; j++) {
-          result[i][j] = this.matrix[i][j] + n.matrix[i][j];
+          result.matrix[i][j] = this.matrix[i][j] + n.matrix[i][j];
         }
       }
+      this.set(result);
+      return this;
     }
-    this.set(result);
-    return this;
   } else {
     for (let i = 0; i < this.cols; i++) {
       for (let j = 0; j < this.rows; j++) {
@@ -580,7 +579,6 @@ p5.MatrixTensor.prototype.add = function add(n) {
  * </code></div>
  */
 p5.MatrixTensor.add = function add(a, b) {
-  let result;
   if (a instanceof p5.MatrixTensor && b instanceof p5.MatrixTensor) {
     if (a.cols !== b.cols || a.rows !== b.rows) {
       p5._friendlyError(
@@ -589,15 +587,14 @@ p5.MatrixTensor.add = function add(a, b) {
       );
       return undefined;
     } else {
-      result = p5.MatrixTensor.make(a.cols, a.rows);
+      let result = new p5.MatrixTensor(a.cols, a.rows);
       for (let i = 0; i < result.cols; i++) {
         for (let j = 0; j < result.rows; j++) {
-          result[i][j] = a.matrix[i][j] + b.matrix[i][j];
+          result.matrix[i][j] = a.matrix[i][j] + b.matrix[i][j];
         }
       }
+      return result;
     }
-    this.set(result);
-    return this;
   } else {
     p5._friendlyError(
       'Arguments must be instances of p5.MatrixTensor.',
@@ -692,9 +689,92 @@ p5.MatrixTensor.div = function div(a, b) {
 };
 
 /**
- * Matrix multiplication of a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
+ * Multiply a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> to a number or <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
  * @method mult
- * @param {p5.MatrixTensor|Number} x The value to multiply the <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> with.
+ * @param {Number|p5.MatrixTensor} n the value to multiply the matrix.
+ * @chainable
+ * @example
+ * <div><code>
+ * let m1 = createMatrixTensor(3, 3);
+ * m1.initiate(4);
+ * m1.mult(2);
+ * m1.table();
+ * </code></div>
+ * <div><code>
+ * let a = createMatrixTensor(3, 3);
+ * a.initiate(5);
+ * a.setValue(4, 2, 2);
+ * a.table();
+ * let b = createMatrixTensor(3, 3);
+ * b.initiate(2);
+ * b.table();
+ * let c = p5.MatrixTensor.mult(a, b);
+ * c.table();
+ * </code></div>
+ */
+p5.MatrixTensor.prototype.mult = function mult(n) {
+  if (n instanceof p5.MatrixTensor) {
+    if (n.cols !== this.cols || n.rows !== this.rows) {
+      p5._friendlyError(
+        'The matrix dimensions should match, be sure you are not mistaking matrix multiplication & matrix dot product.',
+        'p5.MatrixTensor.prototype.mult'
+      );
+      return undefined;
+    } else {
+      for (let i = 0; i < this.cols; i++) {
+        for (let j = 0; j < this.rows; j++) {
+          this.matrix[i][j] *= n.matrix[i][j];
+        }
+      }
+      return this;
+    }
+  } else {
+    for (let i = 0; i < this.cols; i++) {
+      for (let j = 0; j < this.rows; j++) {
+        this.matrix[i][j] *= n;
+      }
+    }
+    return this;
+  }
+};
+
+/**
+ * @method mult
+ * @static
+ * @param {p5.MatrixTensor} a the first matrix in the calculation.
+ * @param {p5.MatrixTensor} b the second matrix in the calculation.
+ * @return {p5.MatrixTensor}
+ */
+p5.MatrixTensor.mult = function mult(a, b) {
+  if (a instanceof p5.MatrixTensor && b instanceof p5.MatrixTensor) {
+    if (a.cols !== b.cols || a.rows !== b.rows) {
+      p5._friendlyError(
+        'The matrix dimensions should match',
+        'p5.MatrixTensor.mult'
+      );
+      return undefined;
+    } else {
+      let result = new p5.MatrixTensor(a.cols, a.rows);
+      for (let i = 0; i < result.cols; i++) {
+        for (let j = 0; j < result.rows; j++) {
+          result.matrix[i][j] = a.matrix[i][j] * b.matrix[i][j];
+        }
+      }
+      return result;
+    }
+  } else {
+    p5._friendlyError(
+      'The arguments should be p5.MatrixTensors',
+      'p5.MatrixTensor.mult'
+    );
+    return undefined;
+  }
+};
+
+/**
+ * Matrix dot product operation of a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
+ * @method dot
+ * @param {p5.MatrixTensor} x The matrix to multiply the <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> with.
  * @chainable
  * @example
  * <div>
@@ -703,12 +783,12 @@ p5.MatrixTensor.div = function div(a, b) {
  * a.set([[1, 0, 1, 0], [0, 1, 0, 0], [0, 1, 1, 1]]);
  * let b = createMatrixTensor(4, 3);
  * b.set([[1, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0]]);
- * let c = a.mult(b);
+ * let c = a.dot(b);
  * c.table();
  * </code>
  * </div>
  */
-p5.MatrixTensor.prototype.mult = function mult(x) {
+p5.MatrixTensor.prototype.dot = function dot(x) {
   if (x instanceof p5.MatrixTensor) {
     let ans = new p5.MatrixTensor(this.cols, x.rows);
     if (this.rows !== x.cols) {
@@ -728,13 +808,7 @@ p5.MatrixTensor.prototype.mult = function mult(x) {
         }
       }
     }
-    return ans;
-  } else if (typeof x === 'number') {
-    for (let i = 0; i < this.cols; i++) {
-      for (let j = 0; j < this.rows; j++) {
-        this.matrix[i][j] *= x;
-      }
-    }
+    this.set(ans);
     return this;
   } else {
     p5._friendlyError(
@@ -746,10 +820,10 @@ p5.MatrixTensor.prototype.mult = function mult(x) {
 };
 
 /**
- * @method mult
+ * @method dot
  * @static
- * @param {p5.MatrixTensor} a the first matrix in the multiplication.
- * @param {p5.MatrixTensor} b the second matrix in the multiplication.
+ * @param {p5.MatrixTensor} a the first matrix of the dot product operation.
+ * @param {p5.MatrixTensor} b the second matrix of the dot product operation.
  * @return {p5.MatrixTensor}
  * @example
  * <div>
@@ -758,12 +832,12 @@ p5.MatrixTensor.prototype.mult = function mult(x) {
  * a.set([[1, 0, 1, 0], [0, 1, 0, 0], [0, 1, 1, 1]]);
  * let b = createMatrixTensor(4, 3);
  * b.set([[1, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0]]);
- * let c = p5.MatrixTensor.mult(a, b);
+ * let c = p5.MatrixTensor.dot(a, b);
  * c.table();
  * </code>
  * </div>
  */
-p5.MatrixTensor.mult = function mult(a, b) {
+p5.MatrixTensor.dot = function dot(a, b) {
   if (a instanceof p5.MatrixTensor && b instanceof p5.MatrixTensor) {
     let ans = new p5.MatrixTensor(a.cols, b.rows);
     if (a.rows !== b.cols) {
@@ -804,6 +878,33 @@ p5.MatrixTensor.mult = function mult(a, b) {
  */
 p5.MatrixTensor.prototype.table = function table() {
   console.table(p5.MatrixTensor.transpose(this).matrix);
+};
+
+/**
+ * Initiate a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> to an identity matrix. Needs to be a square matrix.
+ * @method identity
+ * @chainable
+ * @example
+ * <div><code>
+ * let m1 = createMatrixTensor(5, 5);
+ * m1.table();
+ * m1.identity();
+ * m1.table();
+ * </code></div>
+ */
+p5.MatrixTensor.prototype.identity = function identity() {
+  if (this.cols !== this.rows) {
+    p5._friendlyError(
+      'An identity matrix can only be initiated if rows are equal to columns (square matrix)',
+      'p5.MatrixTensor.prototype.initiate'
+    );
+    return undefined;
+  } else {
+    for (let i = 0; i < this.rows; i++) {
+      this.matrix[i][i] = 1;
+    }
+    return this;
+  }
 };
 
 /**
