@@ -1,3 +1,5 @@
+const { expect } = require('chai');
+
 suite('Core', function() {
   suite('p5.prototype.registerMethod', function() {
     test('should register and call "init" methods', function() {
@@ -126,13 +128,19 @@ suite('Core', function() {
         }
       });
     });
-
     if (!window.IS_TESTING_MINIFIED_VERSION) {
       test('should warn when globals already exist', function() {
-        globalObject.text = 'hi';
-        bind('text', noop);
-        assert.match(logMsg, /p5 had problems creating .+ "text"/);
-        assert.equal(globalObject.text, noop);
+        const _friendlyErrorStub = sinon.stub(p5, '_friendlyError');
+        try {
+          globalObject.text = 'hi';
+          bind('text', noop);
+          expect(
+            _friendlyErrorStub.calledOnce,
+            'p5._friendlyError was not called'
+          ).to.be.true;
+        } finally {
+          _friendlyErrorStub.restore();
+        }
       });
 
       test('should warn when globals are overwritten', function() {
@@ -145,10 +153,17 @@ suite('Core', function() {
       });
     } else {
       test('should NOT warn when globals already exist', function() {
-        globalObject.text = 'hi';
-        bind('text', noop);
-        assert.isUndefined(logMsg);
-        assert.equal(globalObject.text, noop);
+        const _friendlyErrorStub = sinon.stub(p5, '_friendlyError');
+        try {
+          globalObject.text = 'hi';
+          bind('text', noop);
+          expect(
+            _friendlyErrorStub.calledOnce,
+            'p5._friendlyError was called in minified p5.js'
+          ).to.be.false;
+        } finally {
+          _friendlyErrorStub.restore();
+        }
       });
 
       test('should NOT warn when globals are overwritten', function() {
