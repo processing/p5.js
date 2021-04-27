@@ -6,11 +6,13 @@
 import p5 from '../core/main';
 
 /**
- * A class to describe 2 dimensional matrices.
+ * A class to describe matrices. Matrices are a way to store numerical information in the form of a 2-dimensional table, and perform multiple operations with them.
+ * We represent the size of a matrix with a (column, row) notation.
+ * This class is usefull for solving problems in statistics, physics, economics, machine learning aswell as engineering.
  * @class p5.MatrixTensor
  * @constructor
- * @param {Number} x the x component of the matrix
- * @param {Number} y the y component of the matrix
+ * @param {Number} x the column component of the matrix
+ * @param {Number} y the row component of the matrix
  * @example
  * <div>
  * <code>
@@ -118,10 +120,10 @@ p5.MatrixTensor.prototype.toArray = function toArray() {
 };
 
 /**
- * Convert an array to a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
+ * Convert an array to a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> with (n by 1) dimensions.
  * @method fromArray
  * @static
- * @param {Array} arr the array to convert into a 'n by 1' matrix.
+ * @param {Array} arr the array to convert into a (n by 1) matrix.
  * @return {p5.MatrixTensor}
  * @example
  * <div><code>
@@ -227,7 +229,7 @@ p5.MatrixTensor.prototype.copy = function copy() {
 };
 
 /**
- * Set a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> to a certain matrix.
+ * Set a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> or a Number[][] matrix to a certain <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
  * @method set
  * @param {Number[][]|p5.MatrixTensor} m the matrix with which to set the <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
  * @chainable
@@ -258,6 +260,7 @@ p5.MatrixTensor.prototype.set = function set(m) {
   }
 };
 /**
+ * Transpose operation for a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>. Transpose inverts (x, y) coordinates to (y, x) , thus returning a matrix that has the dimensions (row, column) of the original matrix.
  * @method transpose
  * @chainable
  * @example
@@ -716,7 +719,7 @@ p5.MatrixTensor.prototype.mult = function mult(n) {
   if (n instanceof p5.MatrixTensor) {
     if (n.cols !== this.cols || n.rows !== this.rows) {
       p5._friendlyError(
-        'The matrix dimensions should match, be sure you are not mistaking matrix multiplication & matrix dot product.',
+        'The matrix dimensions should match, this .mult() function multiplies index by index each matrix value. If you are looking for the dot product of a matrix on the other hand, try matrixA.dot(matrixB);',
         'p5.MatrixTensor.prototype.mult'
       );
       return undefined;
@@ -749,7 +752,7 @@ p5.MatrixTensor.mult = function mult(a, b) {
   if (a instanceof p5.MatrixTensor && b instanceof p5.MatrixTensor) {
     if (a.cols !== b.cols || a.rows !== b.rows) {
       p5._friendlyError(
-        'The matrix dimensions should match',
+        'The matrix dimensions should match, this .mult(a, b) function multiplies index by index each matrix value. If you are looking for the dot product of a matrix on the other hand, try p5.MatrixTensor.dot(matrixA, matrixB);',
         'p5.MatrixTensor.mult'
       );
       return undefined;
@@ -772,7 +775,7 @@ p5.MatrixTensor.mult = function mult(a, b) {
 };
 
 /**
- * Matrix dot product operation of a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>.
+ * Matrix dot product operation of a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a>. This is an operation that produces a matrix from two other matrices. The number of rows in the first matrix must match the number of columns in the second one.
  * @method dot
  * @param {p5.MatrixTensor} x The matrix to multiply the <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> with.
  * @chainable
@@ -785,6 +788,11 @@ p5.MatrixTensor.mult = function mult(a, b) {
  * b.set([[1, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0]]);
  * let c = a.dot(b);
  * c.table();
+ * // c.matrix is
+ * // [1, 0, 1]
+ * // [0, 1, 0]
+ * // [0, 1, 1]
+ * // [1, 0, 0]
  * </code>
  * </div>
  */
@@ -868,7 +876,7 @@ p5.MatrixTensor.dot = function dot(a, b) {
 };
 
 /**
- * Log a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> in the form of a table.
+ * Log a <a href="#/p5.MatrixTensor">p5.MatrixTensor</a> in the console in the form of a table.
  * @method table
  * @example
  * <div><code>

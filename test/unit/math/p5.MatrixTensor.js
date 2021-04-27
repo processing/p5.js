@@ -1,4 +1,4 @@
-suite.only('p5.MatrixTensor', function() {
+suite('p5.MatrixTensor', function() {
   var myp5;
   setup(function(done) {
     new p5(function(p) {
@@ -717,6 +717,68 @@ suite.only('p5.MatrixTensor', function() {
       assert.equal(7, b.matrix[1][1]);
       assert.equal(1, b.matrix[2][0]);
       assert.equal(8, b.matrix[2][1]);
+    });
+  });
+  suite('p5.MatrixTensor.prototype.identity()', function() {
+    let m;
+    suite('with 4 by 4 matrix', function() {
+      setup(function() {
+        m = new p5.MatrixTensor(4, 4);
+        m.identity();
+      });
+      test('Should have initiated a 4 by 4 identity matrix', function() {
+        assert.instanceOf(m, p5.MatrixTensor);
+        assert.equal(1, m.matrix[0][0]);
+        assert.equal(0, m.matrix[0][1]);
+        assert.equal(0, m.matrix[0][2]);
+        assert.equal(0, m.matrix[0][3]);
+        assert.equal(0, m.matrix[1][0]);
+        assert.equal(1, m.matrix[1][1]);
+        assert.equal(0, m.matrix[1][2]);
+        assert.equal(0, m.matrix[1][3]);
+        assert.equal(0, m.matrix[2][0]);
+        assert.equal(0, m.matrix[2][1]);
+        assert.equal(1, m.matrix[2][2]);
+        assert.equal(0, m.matrix[2][3]);
+        assert.equal(0, m.matrix[3][0]);
+        assert.equal(0, m.matrix[3][1]);
+        assert.equal(0, m.matrix[3][2]);
+        assert.equal(1, m.matrix[3][3]);
+      });
+    });
+    suite('white non-square matrix (should return undefined)', function() {
+      let out;
+      setup(function() {
+        m = new p5.MatrixTensor(2, 4);
+        out = m.identity();
+      });
+      test('Should have returned undefined & not changed the original matrix', function() {
+        assert.equal(out, undefined);
+        //Original matrix should have stayed the same.
+        assert.instanceOf(m, p5.MatrixTensor);
+        assert.equal(0, m.matrix[0][0]);
+        assert.equal(0, m.matrix[0][1]);
+        assert.equal(0, m.matrix[0][2]);
+        assert.equal(0, m.matrix[0][3]);
+        assert.equal(0, m.matrix[1][0]);
+        assert.equal(0, m.matrix[1][1]);
+        assert.equal(0, m.matrix[1][2]);
+        assert.equal(0, m.matrix[1][3]);
+      });
+    });
+  });
+  suite('p5.MatrixTensor.prototype.initiate()', function() {
+    let m;
+    setup(function() {
+      m = new p5.MatrixTensor(2, 2);
+      m.initiate(5);
+    });
+    test('Should have initiated all the 2 by 2 matrix values to 5', function() {
+      assert.instanceOf(m, p5.MatrixTensor);
+      assert.equal(5, m.matrix[0][0]);
+      assert.equal(5, m.matrix[0][1]);
+      assert.equal(5, m.matrix[1][1]);
+      assert.equal(5, m.matrix[1][0]);
     });
   });
 });
