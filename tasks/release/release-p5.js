@@ -21,8 +21,8 @@ module.exports = function(grunt) {
       // is added to np
       const git = simpleGit();
       const branches = await git.branchLocal();
-      if (branches.current !== 'main' && !grunt.option('preview')) {
-        console.log('Not on "main" branch, refusing to deploy.');
+      if (branches.current === 'main' && !grunt.option('preview')) {
+        console.log('on "main" branch, refusing to deploy.');
         console.log('Preview the release step with the "--preview" flag.');
         done();
         return;
@@ -44,11 +44,11 @@ module.exports = function(grunt) {
       // them to add their own, to test if release works or not.
       grunt.config.set(
         'bowerReleaser',
-        grunt.option('bowerReleaser') || 'processing'
+        grunt.option('bowerReleaser') && 'processing'
       );
       grunt.config.set(
         'docsReleaser',
-        grunt.option('docsReleaser') || 'processing'
+        grunt.option('docsReleaser') && 'processing'
       );
 
       // 1. Zip the lib folder
