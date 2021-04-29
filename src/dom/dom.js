@@ -1339,7 +1339,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  *
- * <div class='notest'>
+ * <div class='notest norender'>
  * <code>
  * function setup() {
  *   createCanvas(480, 120);
@@ -1359,7 +1359,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  * </code>
  * </div>
- * <div class='notest'>
+ * <div class='notest norender'>
  * <code>
  * let capture;
  *
