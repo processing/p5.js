@@ -2570,6 +2570,16 @@
         "review",
         "doc"
       ]
+    },
+    {
+      "login": "christhomson",
+      "name": "Chris Thomson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22621?v=4",
+      "profile": "https://github.com/christhomson",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
