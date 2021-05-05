@@ -2580,6 +2580,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "cryptochap",
+      "name": "mainstreamdev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40327060?v=4",
+      "profile": "http://olusegunsamson.me",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
