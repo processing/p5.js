@@ -45,9 +45,32 @@ p5.Renderer2D.prototype.resize = function(w, h) {
 p5.Renderer2D.prototype.background = function(...args) {
   this.drawingContext.save();
   this.resetMatrix();
-
   if (args[0] instanceof p5.Image) {
-    this._pInst.image(args[0], 0, 0, this.width, this.height);
+    if (args[1] >= 0) {
+      // set transparency of background
+      const img = args[0];
+      const pixels = filters._toPixels(img.canvas);
+      const tmpCanvas = document.createElement('canvas');
+      tmpCanvas.width = img.canvas.width;
+      tmpCanvas.height = img.canvas.height;
+      const tmpCtx = tmpCanvas.getContext('2d');
+      const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+      const newPixels = id.data;
+      for (let i = 0; i < pixels.length; i += 4) {
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
+        newPixels[i] = r;
+        newPixels[i + 1] = g;
+        newPixels[i + 2] = b;
+        newPixels[i + 3] = args[1];
+      }
+      tmpCtx.putImageData(id, 0, 0);
+      img.canvas = tmpCanvas;
+      this._pInst.image(img, 0, 0, this.width, this.height);
+    } else {
+      this._pInst.image(args[0], 0, 0, this.width, this.height);
+    }
   } else {
     const curFill = this._getFill();
     // create background rect
