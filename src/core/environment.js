@@ -661,7 +661,7 @@ function exitFullscreen() {
  * Gets the current URL. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
  * is embedded in an iframe. It will work correctly if you view the
- * sketch using sketch the edtior's present or share URLs.
+ * sketch using sketch the editor's present or share URLs.
  * @method getURL
  * @return {String} url
  * @example
