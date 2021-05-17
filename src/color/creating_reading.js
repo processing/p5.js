@@ -361,7 +361,7 @@ p5.prototype.hue = function(c) {
 /**
  * Blends two colors to find a third color somewhere between them. The amt
  * parameter is the amount to interpolate between the two values where 0.0
- * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
+ * is equal to the first color, 0.1 is very near the first color, 0.5 is halfway
  * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
  * above 1 will be capped at 1. This is different from the behavior of <a href="#/p5/lerp">lerp()</a>,
  * but necessary because otherwise numbers outside the range will produce
