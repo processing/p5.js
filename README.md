@@ -61,6 +61,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
 * [@dhowe](https://github.com/dhowe)
+* [@rahulm2310](https://github.com/rahulm2310)
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
@@ -79,7 +80,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Build Process/Unit Testing        | outofambit                                   |
 | Localization Tools                | outofambit                                   |
 | Friendly Errors                   | outofambit                                   |
-| [Website](https://github.com/processing/p5.js-website) | limzykenneth            |
+| [Website](https://github.com/processing/p5.js-website) | limzykenneth<br/>rahulm2310             |
 
 ## Contributors
 
