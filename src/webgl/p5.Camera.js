@@ -802,6 +802,8 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 };
 
 /**
+ * Sets the frustum for a p5.Camera object and sets parameters
+ * for that frustum according to <a href="#/p5/frustum">frustum()</a> syntax.
  * @method frustum
  * @for p5.Camera
  */
