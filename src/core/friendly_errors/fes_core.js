@@ -731,6 +731,38 @@ if (typeof IS_MINIFIED !== 'undefined') {
             );
             break;
           }
+          case 'REDECLAREDVARIABLE': {
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
+            report(
+              translator('fes.globalErrors.syntax.redeclaredVariable', {
+                symbol: errSym,
+                url
+              })
+            );
+            break;
+          }
+          case 'MISSINGINITIALIZER': {
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
+            report(
+              translator('fes.globalErrors.syntax.missingInitializer', {
+                url
+              })
+            );
+            break;
+          }
+          case 'BADRETURNORYIELD': {
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
+            report(
+              translator('fes.globalErrors.syntax.badReturnOrYield', {
+                url
+              })
+            );
+            break;
+          }
         }
         break;
       }
@@ -760,6 +792,23 @@ if (typeof IS_MINIFIED !== 'undefined') {
             );
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CANNOTACCESS': {
+            let errSym = matchedError.match[1];
+
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
+            report(
+              translator('fes.globalErrors.reference.cannotAccess', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
             break;
           }
         }
@@ -798,6 +847,49 @@ if (typeof IS_MINIFIED !== 'undefined') {
             }
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READNULL': {
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            report(
+              translator('fes.globalErrors.type.readFromNullorUndefined', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+            break;
+          }
+          case 'READUDEFINED': {
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            report(
+              translator('fes.globalErrors.type.readFromNullorUndefined', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+            break;
+          }
+          case 'CONSTASSIGN': {
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
+            report(
+              translator('fes.globalErrors.type.constAssign', {
+                url,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
             break;
           }
         }

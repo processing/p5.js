@@ -22,17 +22,26 @@
     },
     "globalErrors": {
       "reference": {
-        "notDefined": ""
+        "cannotAccess": "",
+        "notDefined": "",
+        "readNull": ""
       },
       "stackSubseq": "",
       "stackTop": "",
       "syntax": {
+        "badReturnOrYield": "",
         "invalidToken": "",
-        "unexpectedToken": ""
+        "missingInitializer": "",
+        "redeclaredVariable": "",
+        "unexpectedToken": "",
+        "unexpectedToken ": ""
       },
       "type": {
+        "constAssign": "",
         "notfunc": "",
-        "notfuncObj": ""
+        "notfuncObj": "",
+        "readFromNullorUndefined": "",
+        "readNull": ""
       }
     },
     "libraryError": "",

@@ -15,6 +15,11 @@ const strings = {
       msg: "Can't find variable: {{}}",
       type: 'NOTDEFINED',
       browser: 'Safari'
+    },
+    {
+      msg: "Cannot access '{{.}}' before initialization",
+      type: 'CANNOTACCESS',
+      browser: 'Chrome'
     }
   ],
   SyntaxError: [
@@ -42,6 +47,21 @@ const strings = {
       msg: "expected {{.}}, got '{{.}}'",
       type: 'UNEXPECTEDTOKEN',
       browser: 'Chrome'
+    },
+    {
+      msg: "Identifier '{{.}}' has already been declared",
+      type: 'REDECLAREDVARIABLE',
+      browser: 'Chrome'
+    },
+    {
+      msg: 'Missing initializer in const declaration',
+      type: 'MISSINGINITIALIZER',
+      browser: 'Chrome'
+    },
+    {
+      msg: 'Illegal return statement',
+      type: 'BADRETURNORYIELD',
+      browser: 'Chrome'
     }
   ],
   TypeError: [
@@ -49,6 +69,21 @@ const strings = {
       msg: '{{.}} is not a function',
       type: 'NOTFUNC',
       browser: 'all'
+    },
+    {
+      msg: "Cannot read property '{{.}}' of null",
+      type: 'READNULL',
+      browser: 'chrome'
+    },
+    {
+      msg: "Cannot read property '{{.}}' of undefined",
+      type: 'READUDEFINED',
+      browser: 'chrome'
+    },
+    {
+      msg: 'Assignment to constant variable',
+      type: 'CONSTASSIGN',
+      browser: 'chrome'
     }
   ]
 };
