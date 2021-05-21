@@ -33,8 +33,7 @@
         "invalidToken": "",
         "missingInitializer": "",
         "redeclaredVariable": "",
-        "unexpectedToken": "",
-        "unexpectedToken ": ""
+        "unexpectedToken": ""
       },
       "type": {
         "constAssign": "",
