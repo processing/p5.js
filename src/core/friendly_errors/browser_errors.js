@@ -20,6 +20,11 @@ const strings = {
       msg: "Cannot access '{{.}}' before initialization",
       type: 'CANNOTACCESS',
       browser: 'Chrome'
+    },
+    {
+      msg: "can't access lexical declaration '{{.}}' before initialization",
+      type: 'CANNOTACCESS',
+      browser: 'Firefox'
     }
   ],
   SyntaxError: [
@@ -54,14 +59,29 @@ const strings = {
       browser: 'Chrome'
     },
     {
+      msg: 'redeclaration of {} {{.}}',
+      type: 'REDECLAREDVARIABLE',
+      browser: 'Firefox'
+    },
+    {
       msg: 'Missing initializer in const declaration',
       type: 'MISSINGINITIALIZER',
       browser: 'Chrome'
     },
     {
+      msg: 'Missing = in const declaration',
+      type: 'MISSINGINITIALIZER',
+      browser: 'Firefox'
+    },
+    {
       msg: 'Illegal return statement',
       type: 'BADRETURNORYIELD',
       browser: 'Chrome'
+    },
+    {
+      msg: 'return not in function',
+      type: 'BADRETURNORYIELD',
+      browser: 'Firefox'
     }
   ],
   TypeError: [
@@ -73,17 +93,32 @@ const strings = {
     {
       msg: "Cannot read property '{{.}}' of null",
       type: 'READNULL',
-      browser: 'chrome'
+      browser: 'Chrome'
+    },
+    {
+      msg: '{{.}} is null',
+      type: 'READNULL',
+      browser: 'Firefox'
     },
     {
       msg: "Cannot read property '{{.}}' of undefined",
       type: 'READUDEFINED',
-      browser: 'chrome'
+      browser: 'Chrome'
+    },
+    {
+      msg: '{{.}} is undefined',
+      type: 'READUDEFINED',
+      browser: 'Firefox'
     },
     {
       msg: 'Assignment to constant variable',
       type: 'CONSTASSIGN',
-      browser: 'chrome'
+      browser: 'Chrome'
+    },
+    {
+      msg: "invalid assignment to const '{{.}}'",
+      type: 'CONSTASSIGN',
+      browser: 'Firefox'
     }
   ]
 };
