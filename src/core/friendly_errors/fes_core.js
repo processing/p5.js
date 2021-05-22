@@ -796,7 +796,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
           }
           case 'CANNOTACCESS': {
             let errSym = matchedError.match[1];
-
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
             report(
@@ -809,6 +808,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               })
             );
 
+            if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
           }
         }
@@ -862,6 +862,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
                   : ''
               })
             );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
           }
           case 'READUDEFINED': {
@@ -877,6 +879,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
                   : ''
               })
             );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
           }
           case 'CONSTASSIGN': {
@@ -890,6 +894,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
                   : ''
               })
             );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
           }
         }
