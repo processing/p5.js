@@ -663,9 +663,10 @@ p5.Camera = function(renderer) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets a perspective projection for a p5.Camera object and sets parameters
- * for that projection according to <a href="#/p5/perspective">perspective()</a>
- * syntax.
+ * Sets a perspective projection.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/perspective">perspective()</a>.
+ * More information on this function can be found there.
  * @method perspective
  * @for p5.Camera
  */
@@ -743,8 +744,10 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 };
 
 /**
- * Sets an orthographic projection for a p5.Camera object and sets parameters
- * for that projection according to <a href="#/p5/ortho">ortho()</a> syntax.
+ * Sets an orthographic projection.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/ortho">ortho()</a>.
+ * More information on this function can be found there.
  * @method ortho
  * @for p5.Camera
  */
@@ -802,8 +805,10 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 };
 
 /**
- * Sets the frustum for a p5.Camera object and sets parameters
- * for that frustum according to <a href="#/p5/frustum">frustum()</a> syntax.
+ * Sets the camera's frustum.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/frustum">frustum()</a>.
+ * More information on this function can be found there.
  * @method frustum
  * @for p5.Camera
  */
@@ -1092,8 +1097,10 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets a camera's position and orientation.  This is equivalent to calling
- * <a href="#/p5/camera">camera()</a> on a p5.Camera object.
+ * Sets the camera's position and orientation.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/camera">camera()</a>.
+ * More information on this function can be found there.
  * @method camera
  * @for p5.Camera
  */
