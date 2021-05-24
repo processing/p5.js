@@ -2607,6 +2607,17 @@
       "contributions": [
         "docs"
       ]
+    },
+    {
+      "login": "ghalestrilo",
+      "name": "Thales Grilo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37638655?v=4",
+      "profile": "https://github.com/ghalestrilo",
+      "contributions": [
+        "design",
+        "code",
+        "tool",
+      ]
     }
   ],
   "repoType": "github",
