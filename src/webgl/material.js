@@ -274,6 +274,58 @@ p5.prototype.shader = function(s) {
  *
  * @method resetShader
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // This variable will hold our shader object
+ * let shaderProgram;
+ *
+ * function preload() {
+ *   shaderProgram = loadShader(
+ *     'assets/shader-mvp.vert',
+ *     'assets/shader-basicGradient.frag'
+ *   );
+ * }
+ *
+ * function setup() {
+ *   // Shaders require WEBGL mode to work
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   // Clear the scene
+ *   background(200);
+ *
+ *   // Draw a box using our shader
+ *   {
+ *     // shader() sets the active shader with our shader
+ *     shader(shaderProgram);
+ *     push();
+ *     translate(-width / 4, 0, 0);
+ *     rotateX(millis() * 0.00025);
+ *     rotateY(millis() * 0.0005);
+ *     box(width / 4);
+ *     pop();
+ *   }
+ *
+ *   // Draw a box using the default fill shader
+ *   {
+ *     // resetShader() restores the default fill shader
+ *     resetShader();
+ *     fill(255, 0, 0);
+ *     push();
+ *     translate(width / 4, 0, 0);
+ *     rotateX(millis() * 0.00025);
+ *     rotateY(millis() * 0.0005);
+ *     box(width / 4);
+ *     pop();
+ *   }
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Two rotating cubes. The left one is painted using a custom (user-defined) shader,
+ * while the right one is painted using the default fill shader.
  */
 p5.prototype.resetShader = function() {
   this._renderer.userFillShader = this._renderer.userStrokeShader = null;
