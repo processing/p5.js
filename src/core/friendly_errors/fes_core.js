@@ -851,11 +851,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
           }
           case 'READNULL': {
             let errSym = matchedError.match[1];
-            let url =
+            let url1 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
             report(
               translator('fes.globalErrors.type.readFromNullorUndefined', {
-                url,
+                url1,
+                url2,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
@@ -868,11 +871,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
           }
           case 'READUDEFINED': {
             let errSym = matchedError.match[1];
-            let url =
+            let url1 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
             report(
               translator('fes.globalErrors.type.readFromNullorUndefined', {
-                url,
+                url1,
+                url2,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
