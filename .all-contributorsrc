@@ -2616,6 +2616,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ghalestrilo",
+      "name": "Ghales",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37638655?v=4",
+      "profile": "https://ghales.top",
+      "contributions": [
+        "design",
+        "code",
+        "tool"
+      ]
     }
   ],
   "repoType": "github",
