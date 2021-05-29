@@ -75,7 +75,20 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     // allocate space for faces
     if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
     const vals = p5.RendererGL.prototype._flatten(model.faces);
-    this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, Uint16Array);
+
+    // If any face references a vertex with an index greater than the maximum
+    // un-singed 16 bit integer, then we need to use a Uint32Array instead of a
+    // Uint32Array
+    const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
+    let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
+    this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
+
+    // If we're using a Uint32Array for our indexBuffer we will need to pass a
+    // different enum value to WebGL draw triangles. This happens in
+    // the _drawElements function.
+    buffers.indexBufferType = hasVertexIndicesOverMaxUInt16
+      ? gl.UNSIGNED_INT
+      : gl.UNSIGNED_SHORT;
 
     // the vertex count is based on the number of faces
     buffers.vertexCount = model.faces.length * 3;
@@ -176,8 +189,22 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   const gl = this.GL;
   // render the fill
   if (buffers.indexBuffer) {
+    // If this model is using a Uint32Array we need to ensure the
+    // OES_element_index_uint WebGL extension is enabled.
+    if (buffers.indexBufferType === gl.UNSIGNED_INT) {
+      if (!gl.getExtension('OES_element_index_uint')) {
+        throw new Error(
+          'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'
+        );
+      }
+    }
     // we're drawing faces
-    gl.drawElements(gl.TRIANGLES, buffers.vertexCount, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(
+      gl.TRIANGLES,
+      buffers.vertexCount,
+      buffers.indexBufferType,
+      0
+    );
   } else {
     // drawing vertices
     gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
