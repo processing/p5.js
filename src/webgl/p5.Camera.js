@@ -663,11 +663,49 @@ p5.Camera = function(renderer) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets a perspective projection for a p5.Camera object and sets parameters
- * for that projection according to <a href="#/p5/perspective">perspective()</a>
- * syntax.
+ * Sets a perspective projection.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/perspective">perspective()</a>.
+ * More information on this function can be found there.
  * @method perspective
  * @for p5.Camera
+ * @example
+ * <div>
+ * <code>
+ * // drag the mouse to look around!
+ *
+ * let cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // create a camera
+ *   cam = createCamera();
+ *   // give it a perspective projection
+ *   cam.perspective(PI / 3.0, width / height, 0.1, 500);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   normalMaterial();
+ *
+ *   rotateX(-0.3);
+ *   rotateY(-0.2);
+ *   translate(0, 0, -50);
+ *
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 95);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 95);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  */
 p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   this.cameraType = arguments.length > 0 ? 'custom' : 'default';
@@ -743,10 +781,47 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 };
 
 /**
- * Sets an orthographic projection for a p5.Camera object and sets parameters
- * for that projection according to <a href="#/p5/ortho">ortho()</a> syntax.
+ * Sets an orthographic projection.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/ortho">ortho()</a>.
+ * More information on this function can be found there.
  * @method ortho
  * @for p5.Camera
+ * @example
+ * <div>
+ * <code>
+ * // drag the mouse to look around!
+ * // there's no vanishing point
+ *
+ * let cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // create a camera
+ *   cam = createCamera();
+ *   // give it an orthographic projection
+ *   cam.ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ * }
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   normalMaterial();
+ *
+ *   rotateX(0.2);
+ *   rotateY(-0.2);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 65);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 65);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
 p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (left === undefined) left = -this._renderer.width / 2;
@@ -802,8 +877,48 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 };
 
 /**
+ * Sets the camera's frustum.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/frustum">frustum()</a>.
+ * More information on this function can be found there.
  * @method frustum
  * @for p5.Camera
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ *
+ * function setup() {
+ *   x = createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   // create a camera
+ *   cam = createCamera();
+ *   // set its frustum
+ *   cam.frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   strokeWeight(10);
+ *   stroke(0, 0, 255);
+ *   noFill();
+ *
+ *   rotateY(-0.2);
+ *   rotateX(-0.3);
+ *   push();
+ *   translate(-15, 0, sin(frameCount / 30) * 25);
+ *   box(30);
+ *   pop();
+ *   push();
+ *   translate(15, 0, sin(frameCount / 30 + PI) * 25);
+ *   box(30);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
 p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
   if (left === undefined) left = -this._renderer.width / 2;
@@ -1090,10 +1205,88 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Sets a camera's position and orientation.  This is equivalent to calling
- * <a href="#/p5/camera">camera()</a> on a p5.Camera object.
+ * Sets the camera's position and orientation.
+ * Accepts the same parameters as the global
+ * <a href="#/p5/camera">camera()</a>.
+ * More information on this function can be found there.
  * @method camera
  * @for p5.Camera
+ * @example
+ * <div>
+ * <code>
+ * let cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // Create a camera.
+ *   // createCamera() sets the newly created camera as
+ *   // the current (active) camera.
+ *   cam = createCamera();
+ * }
+ *
+ * function draw() {
+ *   background(204);
+ *   // Move the camera away from the plane by a sin wave
+ *   cam.camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
+ *   plane(10, 10);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * White square repeatedly grows to fill canvas and then shrinks.
+ *
+ * @example
+ * <div>
+ * <code>
+ * // move slider to see changes!
+ * // sliders control the first 6 parameters of camera()
+ *
+ * let sliderGroup = [];
+ * let X;
+ * let Y;
+ * let Z;
+ * let centerX;
+ * let centerY;
+ * let centerZ;
+ * let h = 20;
+ * let cam;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   // create a camera
+ *   cam = createCamera();
+ *   // create sliders
+ *   for (var i = 0; i < 6; i++) {
+ *     if (i === 2) {
+ *       sliderGroup[i] = createSlider(10, 400, 200);
+ *     } else {
+ *       sliderGroup[i] = createSlider(-400, 400, 0);
+ *     }
+ *     h = map(i, 0, 6, 5, 85);
+ *     sliderGroup[i].position(10, height + h);
+ *     sliderGroup[i].style('width', '80px');
+ *   }
+ * }
+ *
+ * function draw() {
+ *   background(60);
+ *   // assigning sliders' value to each parameters
+ *   X = sliderGroup[0].value();
+ *   Y = sliderGroup[1].value();
+ *   Z = sliderGroup[2].value();
+ *   centerX = sliderGroup[3].value();
+ *   centerY = sliderGroup[4].value();
+ *   centerZ = sliderGroup[5].value();
+ *   cam.camera(X, Y, Z, centerX, centerY, centerZ, 0, 1, 0);
+ *   stroke(255);
+ *   fill(255, 102, 94);
+ *   box(85);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * An interactive example of a red cube with 3 sliders for moving it across x, y,
+ * z axis and 3 sliders for shifting it's center.
  */
 p5.Camera.prototype.camera = function(
   eyeX,
