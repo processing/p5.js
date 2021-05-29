@@ -499,6 +499,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://olusegunsamson.me"><img src="https://avatars.githubusercontent.com/u/40327060?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mainstreamdev</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acryptochap" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/ageonic"><img src="https://avatars.githubusercontent.com/u/79060613?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron George</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aageonic" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/aLyonsGH"><img src="https://avatars.githubusercontent.com/u/52976155?s=400&u=e1dde38fbd983995c459ec3d1f999193bd1e132e&v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Lyons</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aLyonsGH" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/TylersGit"><img src="https://avatars.githubusercontent.com/u/71571453?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tyler Jordan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TylersGit" title="Documentation">📖</a></td>
   </tr>
 </table>
 
