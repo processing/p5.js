@@ -1238,6 +1238,13 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
     strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
     strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
     strokeShader.setUniform('uViewport', this._viewport);
+    if (this._curCamera.cameraType === 'default') {
+      // strokes scale up as they approach camera, default
+      strokeShader.setUniform('uPerspective', 1);
+    } else {
+      // strokes have uniform scale regardless of distance from camera
+      strokeShader.setUniform('uPerspective', 0);
+    }
   }
 };
 

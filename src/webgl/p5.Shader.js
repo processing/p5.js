@@ -260,15 +260,6 @@ p5.Shader.prototype.unbindTextures = function() {
 
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
-  if (this.isStrokeShader() && this._renderer.userStrokeShader === null) {
-    if (this._renderer._curCamera.cameraType === 'default') {
-      // strokes scale up as they approach camera, default
-      this.setUniform('uPerspective', 1);
-    } else {
-      // strokes have uniform scale regardless of distance from camera
-      this.setUniform('uPerspective', 0);
-    }
-  }
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
