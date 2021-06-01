@@ -349,7 +349,7 @@ p5.prototype.pwinMouseX = 0;
 p5.prototype.pwinMouseY = 0;
 
 /**
- * Processing automatically tracks if the mouse button is pressed and which
+ * p5 automatically tracks if the mouse button is pressed and which
  * button is pressed. The value of the system variable mouseButton is either
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
