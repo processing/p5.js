@@ -209,8 +209,6 @@ p5.Shader.prototype.bindShader = function() {
     this._bound = true;
 
     this._setMatrixUniforms();
-
-    this.setUniform('uViewport', this._renderer._viewport);
   }
 };
 

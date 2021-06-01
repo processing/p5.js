@@ -1237,6 +1237,7 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
     // set the uniform values
     strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
     strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    strokeShader.setUniform('uViewport', this._viewport);
   }
 };
 
