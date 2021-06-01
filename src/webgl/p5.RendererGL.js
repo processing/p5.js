@@ -1233,9 +1233,11 @@ p5.RendererGL.prototype.getTexture = function(img) {
 p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.bindShader();
 
-  // set the uniform values
-  strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-  strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  if (strokeShader !== this.userStrokeShader) {
+    // set the uniform values
+    strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  }
 };
 
 p5.RendererGL.prototype._setFillUniforms = function(fillShader) {

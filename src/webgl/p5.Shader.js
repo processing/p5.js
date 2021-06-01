@@ -262,7 +262,7 @@ p5.Shader.prototype.unbindTextures = function() {
 
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
-  if (this.isStrokeShader()) {
+  if (this.isStrokeShader() && this._renderer.userStrokeShader === null) {
     if (this._renderer._curCamera.cameraType === 'default') {
       // strokes scale up as they approach camera, default
       this.setUniform('uPerspective', 1);
