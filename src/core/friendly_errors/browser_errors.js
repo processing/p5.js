@@ -69,7 +69,7 @@ const strings = {
       browser: 'Chrome'
     },
     {
-      msg: 'Missing = in const declaration',
+      msg: 'missing = in const declaration',
       type: 'MISSINGINITIALIZER',
       browser: 'Firefox'
     },

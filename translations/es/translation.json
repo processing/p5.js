@@ -23,8 +23,7 @@
     "globalErrors": {
       "reference": {
         "cannotAccess": "",
-        "notDefined": "",
-        "readNull": ""
+        "notDefined": ""
       },
       "stackSubseq": "",
       "stackTop": "",
@@ -39,8 +38,8 @@
         "constAssign": "",
         "notfunc": "",
         "notfuncObj": "",
-        "readFromNullorUndefined": "",
-        "readNull": ""
+        "readFromNull": "",
+        "readFromUndefined": ""
       }
     },
     "libraryError": "",

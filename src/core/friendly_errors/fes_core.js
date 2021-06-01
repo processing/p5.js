@@ -856,7 +856,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url2 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
             report(
-              translator('fes.globalErrors.type.readFromNullorUndefined', {
+              translator('fes.globalErrors.type.readFromNull', {
                 url1,
                 url2,
                 symbol: errSym,
@@ -876,7 +876,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url2 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
             report(
-              translator('fes.globalErrors.type.readFromNullorUndefined', {
+              translator('fes.globalErrors.type.readFromUndefined', {
                 url1,
                 url2,
                 symbol: errSym,
