@@ -344,7 +344,7 @@ p5.prototype.normalMaterial = function(...args) {
  *   rotateY(frameCount * 0.01);
  *   //pass image as texture
  *   texture(img);
- *   box(200, 200, 200);
+ *   box(width / 2);
  * }
  * </code>
  * </div>
