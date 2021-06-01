@@ -261,7 +261,13 @@ p5.Shader.prototype.unbindTextures = function() {
 };
 
 p5.Shader.prototype._setMatrixUniforms = function() {
-  this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
+  const viewMatrix = this._renderer._curCamera.cameraMatrix;
+  const projectionMatrix = this._renderer.uPMatrix;
+  const modelViewMatrix = this._renderer.uMVMatrix;
+
+  const modelViewProjectionMatrix = modelViewMatrix.copy();
+  modelViewProjectionMatrix.mult(projectionMatrix);
+
   if (this.isStrokeShader()) {
     if (this._renderer._curCamera.cameraType === 'default') {
       // strokes scale up as they approach camera, default
@@ -271,8 +277,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
       this.setUniform('uPerspective', 0);
     }
   }
-  this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
-  this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
+  this.setUniform('uViewMatrix', viewMatrix.mat4);
+  this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+  this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
+  this.setUniform('uModelViewProjectionMatrix', modelViewProjectionMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
