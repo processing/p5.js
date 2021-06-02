@@ -262,9 +262,7 @@ p5.prototype.ortho = function(...args) {
  * function draw() {
  *   background(200);
  *   orbitControl();
- *   strokeWeight(10);
- *   stroke(0, 0, 255);
- *   noFill();
+ *   normalMaterial();
  *
  *   rotateY(-0.2);
  *   rotateX(-0.3);
@@ -900,9 +898,7 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * function draw() {
  *   background(200);
  *   orbitControl();
- *   strokeWeight(10);
- *   stroke(0, 0, 255);
- *   noFill();
+ *   normalMaterial();
  *
  *   rotateY(-0.2);
  *   rotateX(-0.3);
