@@ -281,44 +281,6 @@ p5.prototype.resetShader = function() {
 };
 
 /**
- * Normal material for geometry is a material that is not affected by light.
- * It is not reflective and is a placeholder material often used for debugging.
- * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
- * You can view all possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
- * @method normalMaterial
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(200);
- *   normalMaterial();
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * Red, green and blue gradient.
- */
-p5.prototype.normalMaterial = function(...args) {
-  this._assert3d('normalMaterial');
-  p5._validateParameters('normalMaterial', args);
-  this._renderer.drawMode = constants.FILL;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
-  this._renderer._useNormalMaterial = true;
-  this._renderer.curFillColor = [1, 1, 1, 1];
-  this._renderer._setProperty('_doFill', true);
-  this.noStroke();
-  return this;
-};
-
-/**
  * Texture for geometry.  You can view other possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method texture
@@ -566,6 +528,44 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
   for (let i = 0; i < textures.length; i++) {
     textures[i].setWrapMode(wrapX, wrapY);
   }
+};
+
+/**
+ * Normal material for geometry is a material that is not affected by light.
+ * It is not reflective and is a placeholder material often used for debugging.
+ * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
+ * You can view all possible materials in this
+ * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * @method normalMaterial
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   normalMaterial();
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Red, green and blue gradient.
+ */
+p5.prototype.normalMaterial = function(...args) {
+  this._assert3d('normalMaterial');
+  p5._validateParameters('normalMaterial', args);
+  this._renderer.drawMode = constants.FILL;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = false;
+  this._renderer._useNormalMaterial = true;
+  this._renderer.curFillColor = [1, 1, 1, 1];
+  this._renderer._setProperty('_doFill', true);
+  this.noStroke();
+  return this;
 };
 
 /**
