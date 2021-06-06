@@ -307,7 +307,6 @@ p5.prototype.frustum = function(...args) {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   camera = createCamera();
- *   setCamera(camera);
  * }
  *
  * function draw() {
