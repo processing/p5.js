@@ -255,14 +255,14 @@ p5.prototype.shader = function(s) {
     s._renderer = this._renderer;
   }
 
+  s.init();
+
   if (s.isStrokeShader()) {
     this._renderer.userStrokeShader = s;
   } else {
     this._renderer.userFillShader = s;
     this._renderer._useNormalMaterial = false;
   }
-
-  s.init();
 
   return this;
 };
