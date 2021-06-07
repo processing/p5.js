@@ -2637,6 +2637,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "code4humanity",
+      "name": "Avelar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66260854?v=4",
+      "profile": "https://github.com/code4humanity",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
