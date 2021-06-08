@@ -285,10 +285,8 @@ p5.prototype.shader = function(s) {
  *
  *    attribute vec3 aPosition;
  *    attribute vec2 aTexCoord;
- *
  *    uniform mat4 uProjectionMatrix;
  *    uniform mat4 uModelViewMatrix;
- *
  *    varying vec2 vTexCoord;
  *
  *    void main() {
@@ -312,11 +310,7 @@ p5.prototype.shader = function(s) {
  *
  *      vec2 uv = vTexCoord;
  *
- *      vec3 color = vec3(
- *        uv.x,
- *        uv.y,
- *        min(uv.x + uv.y, 1.0)
- *      );
+ *      vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
  *
  *      gl_FragColor = vec4(color, 1.0);
  *    }
