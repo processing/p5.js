@@ -282,7 +282,6 @@ p5.prototype.shader = function(s) {
  *
  * // This variable will hold our vertex shader source code
  * let vertSrc = `
- *
  *    attribute vec3 aPosition;
  *    attribute vec2 aTexCoord;
  *    uniform mat4 uProjectionMatrix;
@@ -290,28 +289,21 @@ p5.prototype.shader = function(s) {
  *    varying vec2 vTexCoord;
  *
  *    void main() {
- *
  *      vTexCoord = aTexCoord;
- *
  *      vec4 position = vec4(aPosition, 1.0);
- *
  *      gl_Position = uProjectionMatrix * uModelViewMatrix * position;
  *    }
  * `;
  *
  * // This variable will hold our fragment shader source code
  * let fragSrc = `
- *
  *    precision mediump float;
  *
  *    varying vec2 vTexCoord;
  *
  *    void main() {
- *
  *      vec2 uv = vTexCoord;
- *
  *      vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
- *
  *      gl_FragColor = vec4(color, 1.0);
  *    }
  * `;
