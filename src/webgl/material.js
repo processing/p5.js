@@ -10,13 +10,13 @@ import * as constants from '../core/constants';
 import './p5.Texture';
 
 /**
- * Loads a custom shader from the provided vertex and fragment
- * shader paths. The shader files are loaded asynchronously in the
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader files.
+ *
+ * The shader files are loaded asynchronously in the
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
- * For now, there are three main types of shaders. p5 will automatically
- * supply appropriate vertices, normals, colors, and lighting attributes
- * if the parameters defined in the shader match the names.
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method loadShader
  * @param {String} vertFilename path to file containing vertex shader
@@ -24,7 +24,7 @@ import './p5.Texture';
  * @param {String} fragFilename path to file containing fragment shader
  * source code
  * @param {function} [callback] callback to be executed after loadShader
- * completes. On success, the Shader object is passed as the first argument.
+ * completes. On success, the p5.Shader object is passed as the first argument.
  * @param {function} [errorCallback] callback to be executed when an error
  * occurs inside loadShader. On error, the error is passed as the first
  * argument.
@@ -109,6 +109,11 @@ p5.prototype.loadShader = function(
 };
 
 /**
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader code.
+ *
+ * Note, shaders can only be used in WEBGL mode.
+ *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
  * @param {String} fragSrc source code for the fragment shader
@@ -177,15 +182,22 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
- * to fill in shapes in WEBGL mode. Users can create their
- * own shaders by loading vertex and fragment shaders with
- * <a href="#/p5/loadShader">loadShader()</a>.
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
+ * be used to render subsequent shapes.
+ *
+ * Custom shaders can be created using the
+ * <a href="#/p5/createShader">createShader()</a> and
+ * <a href="#/p5/loadShader">loadShader()</a> functions.
+ *
+ * Use <a href="#/p5/resetShader">resetShader()</a> to
+ * restore the default shaders.
+ *
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
- * shapes.
+ * @param {p5.Shader} s the <a href="#/p5.Shader">p5.Shader</a> object
+ * to use for rendering shapes.
  *
  * @example
  * <div modernizr='webgl'>
@@ -268,9 +280,9 @@ p5.prototype.shader = function(s) {
 };
 
 /**
- * This function restores the default shaders in WEBGL mode. Code that runs
- * after resetShader() will not be affected by previously defined
- * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ * Restores the default shaders. Code that runs after resetShader()
+ * will not be affected by the shader previously set by
+ * <a href="#/p5/shader">shader()</a>
  *
  * @method resetShader
  * @chainable
