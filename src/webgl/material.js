@@ -281,11 +281,15 @@ p5.prototype.resetShader = function() {
 };
 
 /**
- * Texture for geometry.  You can view other possible materials in this
+ * Sets the texture that will be used to render subsequent shapes.
+ *
+ * Note, texture() can only be used in WEBGL mode.
+ *
+ * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics} tex 2-dimensional graphics
- *                    to render as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics} tex  image to use as texture
  * @chainable
  * @example
  * <div>
@@ -310,7 +314,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * spinning cube with a texture from an image
  *
+ * @example
  * <div>
  * <code>
  * let pg;
@@ -333,7 +340,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * plane with a texture from an image created by createGraphics()
  *
+ * @example
  * <div>
  * <code>
  * let vid;
@@ -359,9 +369,7 @@ p5.prototype.resetShader = function() {
  * </div>
  *
  * @alt
- * Rotating view of many images umbrella and grid roof on a 3d plane
- * black canvas
- * black canvas
+ * rectangle with video as texture
  */
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
@@ -384,7 +392,6 @@ p5.prototype.texture = function(tex) {
  * Sets the coordinate space for texture mapping. The default mode is IMAGE
  * which refers to the actual coordinates of the image.
  * NORMAL refers to a normalized space of values ranging from 0 to 1.
- * This function only works in WEBGL mode.
  *
  * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
@@ -418,7 +425,7 @@ p5.prototype.texture = function(tex) {
  * </div>
  *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture
  *
  * <div>
  * <code>
@@ -460,18 +467,18 @@ p5.prototype.textureMode = function(mode) {
 
 /**
  * Sets the global texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 - 1 range. There are three options:
+ * when their uv's go outside of the 0 to 1 range. There are three options:
  * CLAMP, REPEAT, and MIRROR.
  *
- * CLAMP causes the pixels at the edge of the texture to extend to the bounds
- * REPEAT causes the texture to tile repeatedly until reaching the bounds
- * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds.
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds.
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile.
  *
  * REPEAT & MIRROR are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  *
  * This method will affect all textures in your sketch until a subsequent
- * textureWrap call is made.
+ * textureWrap() call is made.
  *
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
