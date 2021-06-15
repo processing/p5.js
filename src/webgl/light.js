@@ -113,6 +113,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @example
  * <div>
  * <code>
+ * let setSpecularColor = true;
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
@@ -120,20 +122,31 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *
  * function draw() {
  *   background(0);
- *   shininess(20);
- *   ambientLight(50);
- *   specularColor(255, 0, 0);
- *   pointLight(255, 0, 0, 0, -50, 50);
- *   specularColor(0, 255, 0);
- *   pointLight(0, 255, 0, 0, 50, 50);
- *   specularMaterial(255);
- *   sphere(40);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular color
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   if (setSpecularColor) {
+ *     specularColor(255, 0, 0); // red specular highlight
+ *   }
+ *   pointLight(200, 200, 200, locX, locY, 50); // white light
+ *
+ *   specularMaterial(150);
+ *   shininess(50);
+ *   sphere(30, 64, 64);
+ * }
+ *
+ * function mouseClicked() {
+ *   setSpecularColor = !setSpecularColor;
  * }
  * </code>
  * </div>
  *
  * @alt
- * different specular light sources from top and bottom of canvas
+ * Sphere with specular highlight. Clicking the mouse toggles the
+ * specular highlight color between red and the default white.
  */
 
 /**
