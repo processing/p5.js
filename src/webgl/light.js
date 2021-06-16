@@ -197,12 +197,16 @@ p5.prototype.specularColor = function(v1, v2, v3) {
 /**
  * Creates a directional light with the given color and direction.
  *
- * Directional light comes from one direction. The direction is specified as numbers inclusively between -1 and 1.
+ * Directional light comes from one direction.
+ * The direction is specified as numbers inclusively between -1 and 1.
  * For example, setting the direction as (0, -1, 0) will cause the
  * geometry to be lit from below (since the light will be facing
  * directly upwards). Similarly, setting the direction as (1, 0, 0)
  * will cause the geometry to be lit from the left (since the light
  * will be facing directly rightwards).
+ *
+ * Directional lights do not have a specific point of origin, and
+ * therefore cannot be positioned closer or farther away from a geometry.
  *
  * A maximum of **5** directional lights can be active at once.
  *
@@ -318,6 +322,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * Creates a point light with the given color and position.
  *
  * A point light emits light from a single point in all directions.
+ * Because the light is emitted from a specific point (position),
+ * it has a different effect when it is positioned farther vs. nearer
+ * an object.
  *
  * A maximum of **5** point lights can be active at once.
  *
@@ -572,13 +579,19 @@ p5.prototype.lightFalloff = function(
  * Creates a spot light with the given color, position,
  * light direction, angle, and concentration.
  *
- * A spot light emits light from a single point in one direction
- * along a conical shape. The `angle` parameter is used to
+ * Like a <a href="#/p5/pointLight">pointLight()</a>, a spotLight()
+ * emits light from a specific point (position). It has a different effect
+ * when it is positioned farther vs. nearer an object.
+ *
+ * However, unlike a pointLight(), the light is emitted in **one direction**
+ * along a conical shape. The shape of the cone can be controlled using
+ * the `angle` and `concentration` parameters.
+ *
+ * The `angle` parameter is used to
  * determine the radius of the cone. And the `concentration`
  * parameter is used to focus the light towards the center of
  * the cone. Both parameters are optional, however if you want
  * to specify `concentration`, you must also specify `angle`.
- *
  * The minimum concentration value is 1.
  *
  * A maximum of **5** spot lights can be active at once.
