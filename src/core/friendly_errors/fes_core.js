@@ -200,7 +200,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Prints out a fancy, colorful message to the console log
    *
-   * @method report
+   * @method _report
    * @private
    * @param  {String}               message the words to be said
    * @param  {String}               [func]  the name of the function to link
@@ -208,7 +208,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @return console logs
    */
-  const report = (message, func, color) => {
+  p5._report = (message, func, color) => {
     // if p5._fesLogger is set ( i.e we are running tests ), use that
     // instead of console.log
     const log =
