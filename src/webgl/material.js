@@ -283,6 +283,12 @@ p5.prototype.resetShader = function() {
 /**
  * Sets the texture that will be used to render subsequent shapes.
  *
+ * A texture is like a "skin" that wraps around a 3D geometry. Currently
+ * supported textures are images, video, and offscreen renders.
+ *
+ * To texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
+ * you will need to specify uv coordinates in <a href="#/p5/vertex">vertex()</a>.
+ *
  * Note, texture() can only be used in WEBGL mode.
  *
  * You can view more materials in this
@@ -370,6 +376,35 @@ p5.prototype.resetShader = function() {
  *
  * @alt
  * rectangle with video as texture
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-40, -40, 0, 0);
+ *   vertex(40, -40, 1, 0);
+ *   vertex(40, 40, 1, 1);
+ *   vertex(-40, 40, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * quad with a texture, mapped using normalized coordinates
  */
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
@@ -423,10 +458,10 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * quad with a texture
+ * quad with a texture, mapped using normalized coordinates
  *
+ * @example
  * <div>
  * <code>
  * let img;
@@ -441,7 +476,7 @@ p5.prototype.texture = function(tex) {
  *
  * function draw() {
  *   texture(img);
- *   textureMode(NORMAL);
+ *   textureMode(IMAGE);
  *   beginShape();
  *   vertex(-50, -50, 0, 0);
  *   vertex(50, -50, img.width, 0);
@@ -451,9 +486,8 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture, mapped using image coordinates
  */
 p5.prototype.textureMode = function(mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
