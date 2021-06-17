@@ -162,6 +162,8 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
  * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
  * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
+ * Learn more about working with text in webgl mode
+ * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">here</a>.
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
