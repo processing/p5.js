@@ -958,9 +958,17 @@ p5.prototype.quadraticVertex = function(...args) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex
- * @param  {Number} [u] the vertex's texture u-coordinate
- * @param  {Number} [v] the vertex's texture v-coordinate
+ * @param  {Number} z   z-coordinate of the vertex.
+ *                       Defaults to 0 if not specified.
+ * @chainable
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @param  {Number} u   the vertex's texture u-coordinate
+ * @param  {Number} v   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
