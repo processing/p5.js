@@ -589,7 +589,7 @@ suite('Global Error Handling', function() {
     });
   });
 
-  testUnMinified('correctly identifies errors in user code I', function() {
+  testUnMinified("correctly identifies TypeError 'notDefined'", function() {
     return new Promise(function(resolve) {
       iframe = createP5Iframe(
         [
@@ -612,53 +612,59 @@ suite('Global Error Handling', function() {
     });
   });
 
-  testUnMinified('correctly identifies errors in user code II', function() {
-    return new Promise(function(resolve) {
-      iframe = createP5Iframe(
-        [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
-          'function setup() {',
-          'let x = “not a string”', // SyntaxError: Invalid or unexpected token
-          '}',
-          '</script>'
-        ].join('\n')
-      );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
-    }).then(function() {
-      assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
-      assert.match(log[0], /JavaScript doesn't recognize/);
-    });
-  });
+  testUnMinified(
+    "correctly identifies SyntaxError 'Invalid or unexpected Token'",
+    function() {
+      return new Promise(function(resolve) {
+        iframe = createP5Iframe(
+          [
+            P5_SCRIPT_TAG,
+            WAIT_AND_RESOLVE,
+            '<script>',
+            'function setup() {',
+            'let x = “not a string”', // SyntaxError: Invalid or unexpected token
+            '}',
+            '</script>'
+          ].join('\n')
+        );
+        log = [];
+        iframe.elt.contentWindow.logger = logger;
+        iframe.elt.contentWindow.afterSetup = resolve;
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /syntax error/);
+        assert.match(log[0], /JavaScript doesn't recognize/);
+      });
+    }
+  );
 
-  testUnMinified('correctly identifies errors in user code III', function() {
-    return new Promise(function(resolve) {
-      iframe = createP5Iframe(
-        [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
-          'function setup() {',
-          'for (let i = 0; i < 5,; ++i) {}', // SyntaxError: Unexpected token
-          '}',
-          '</script>'
-        ].join('\n')
-      );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
-    }).then(function() {
-      assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
-      assert.match(log[0], /typo/);
-    });
-  });
+  testUnMinified(
+    "correctly identifies SyntaxError 'unexpectedToken'",
+    function() {
+      return new Promise(function(resolve) {
+        iframe = createP5Iframe(
+          [
+            P5_SCRIPT_TAG,
+            WAIT_AND_RESOLVE,
+            '<script>',
+            'function setup() {',
+            'for (let i = 0; i < 5,; ++i) {}', // SyntaxError: Unexpected token
+            '}',
+            '</script>'
+          ].join('\n')
+        );
+        log = [];
+        iframe.elt.contentWindow.logger = logger;
+        iframe.elt.contentWindow.afterSetup = resolve;
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /syntax error/);
+        assert.match(log[0], /typo/);
+      });
+    }
+  );
 
-  testUnMinified('correctly identifies errors in user code IV', function() {
+  testUnMinified("correctly identifies TypeError 'notFunc'", function() {
     return new Promise(function(resolve) {
       iframe = createP5Iframe(
         [
@@ -681,7 +687,7 @@ suite('Global Error Handling', function() {
     });
   });
 
-  testUnMinified('correctly identifies errors in user code IV', function() {
+  testUnMinified("correctly identifies TypeError 'notFuncObj'", function() {
     return new Promise(function(resolve) {
       iframe = createP5Iframe(
         [
