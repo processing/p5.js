@@ -713,8 +713,8 @@ suite('Global Error Handling', function() {
           WAIT_AND_RESOLVE,
           '<script>',
           'function setup() {',
-          'console.log(x);', // ReferenceError: Cannot access 'x' before initialization
-          'let x = 100;',
+          'console.log(x)', // ReferenceError: Cannot access 'x' before initialization
+          'let x = 100',
           '}',
           '</script>'
         ].join('\n')
