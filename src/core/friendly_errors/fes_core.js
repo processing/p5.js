@@ -354,7 +354,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           actualName: fxns[lowercase]
         });
 
-        report(msg, fxns[lowercase]);
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
@@ -454,7 +454,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // a link to the reference documentation. In case of multiple matches,
       // this is already done in the suggestions variable, one link for each
       // suggestion.
-      report(
+      p5._friendlyError(
         msg,
         matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
       );
@@ -601,7 +601,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         currentEntryPoint === 'preload' &&
         p5.prototype._preloadMethods[func] == null
       ) {
-        report(
+        p5._friendlyError(
           translator('fes.wrongPreload', {
             func: func,
             location: locationObj
@@ -613,7 +613,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         );
       } else {
         // Library error
-        report(
+        p5._friendlyError(
           translator('fes.libraryError', {
             func: func,
             location: locationObj
@@ -714,7 +714,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'INVALIDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.invalidToken', {
                 url
               })
@@ -724,7 +724,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'UNEXPECTEDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.unexpectedToken', {
                 url
               })
@@ -735,7 +735,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let errSym = matchedError.match[1];
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.redeclaredVariable', {
                 symbol: errSym,
                 url
@@ -746,7 +746,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'MISSINGINITIALIZER': {
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.missingInitializer', {
                 url
               })
@@ -756,7 +756,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'BADRETURNORYIELD': {
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.badReturnOrYield', {
                 url
               })
@@ -780,7 +780,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url1 = 'https://p5js.org/examples/data-variable-scope.html';
             let url2 =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
                 url1,
                 url2,
@@ -798,7 +798,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let errSym = matchedError.match[1];
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.reference.cannotAccess', {
                 url,
                 symbol: errSym,
@@ -837,11 +837,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
             // as a property of an object and when it's called independently.
             // Both have different explanations.
             if (splitSym.length > 1) {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfuncObj', translationObj)
               );
             } else {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }
@@ -855,7 +855,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
             let url2 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.type.readFromNull', {
                 url1,
                 url2,
@@ -875,7 +875,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
             let url2 =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.type.readFromUndefined', {
                 url1,
                 url2,
@@ -892,7 +892,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'CONSTASSIGN': {
             let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.type.constAssign', {
                 url,
                 location: locationObj
