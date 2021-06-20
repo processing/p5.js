@@ -2646,6 +2646,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "osteele",
+      "name": "Oliver Steele",
+      "avatar_url": "https://avatars.githubusercontent.com/u/674?v=4",
+      "profile": "https://code.osteele.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
