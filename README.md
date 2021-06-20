@@ -504,6 +504,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/JetStarBlues"><img src="https://avatars.githubusercontent.com/u/4354703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JetStarBlues</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JetStarBlues" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=JetStarBlues" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/code4humanity"><img src="https://avatars.githubusercontent.com/u/66260854?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Avelar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=code4humanity" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://code.osteele.com/"><img src="https://avatars.githubusercontent.com/u/674?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Oliver Steele</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=osteele" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
