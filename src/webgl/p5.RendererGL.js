@@ -122,6 +122,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uPMatrix = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
 
+  // Current vertex normal
+  this._currentNormal = new p5.Vector(0, 0, 1);
+
   // Camera
   this._curCamera = new p5.Camera(this);
   this._curCamera._computeCameraDefaultSettings();
@@ -1025,6 +1028,8 @@ p5.RendererGL.prototype.push = function() {
   properties._useNormalMaterial = this._useNormalMaterial;
   properties._tex = this._tex;
   properties.drawMode = this.drawMode;
+
+  properties._currentNormal = this._currentNormal;
 
   return style;
 };

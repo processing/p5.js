@@ -54,9 +54,9 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* [@mcturner1995](https://github.com/mcturner1995) - project lead
+* [@outofambit](https://github.com/outofambit) - project co-lead
+* [@qianqianye](https://github.com/qianqianye) - project co-lead
 * [@lmccart](https://github.com/lmccart)
-* [@outofambit](https://github.com/outofambit)
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
 * [@montoyamoraga](https://github.com/montoyamoraga)
@@ -498,6 +498,14 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="http://olusegunsamson.me"><img src="https://avatars.githubusercontent.com/u/40327060?v=4?s=100" width="100px;" alt=""/><br /><sub><b>mainstreamdev</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acryptochap" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/ageonic"><img src="https://avatars.githubusercontent.com/u/79060613?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron George</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aageonic" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/aLyonsGH"><img src="https://avatars.githubusercontent.com/u/52976155?s=400&u=e1dde38fbd983995c459ec3d1f999193bd1e132e&v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Lyons</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=aLyonsGH" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/TylersGit"><img src="https://avatars.githubusercontent.com/u/71571453?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tyler Jordan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=TylersGit" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://ghales.top"><img src="https://avatars.githubusercontent.com/u/37638655?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ghales</b></sub></a><br /><a href="#design-ghalestrilo" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=ghalestrilo" title="Code">💻</a> <a href="#tool-ghalestrilo" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/JetStarBlues"><img src="https://avatars.githubusercontent.com/u/4354703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>JetStarBlues</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JetStarBlues" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=JetStarBlues" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/code4humanity"><img src="https://avatars.githubusercontent.com/u/66260854?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Avelar</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=code4humanity" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://code.osteele.com/"><img src="https://avatars.githubusercontent.com/u/674?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Oliver Steele</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=osteele" title="Documentation">📖</a></td>
   </tr>
 </table>
 

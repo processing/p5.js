@@ -1,6 +1,6 @@
 /**
- * @module Lights, Camera
- * @submodule Material
+ * @module Shape
+ * @submodule 3D Primitives
  * @for p5
  * @requires core
  * @requires p5.Geometry
