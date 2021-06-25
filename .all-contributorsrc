@@ -2664,6 +2664,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sflanker",
+      "name": "Paul Wheeler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/940246?v=4",
+      "profile": "http://www.paulwheeler.us/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
