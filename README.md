@@ -506,6 +506,8 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://code.osteele.com/"><img src="https://avatars.githubusercontent.com/u/674?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Oliver Steele</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=osteele" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/pearmini"><img src="https://avatars.githubusercontent.com/u/49330279?v=4?s=100" width="100px;" alt=""/><br /><sub><b>MiniPear</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=pearmini" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://www.paulwheeler.us/"><img src="https://avatars.githubusercontent.com/u/940246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Paul Wheeler</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sflanker" title="Code">💻</a></td>
   </tr>
 </table>
 
