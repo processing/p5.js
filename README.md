@@ -74,7 +74,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
-| Typography                        | dhowe                                             |
+| Typography                        | dhowe                                        |
 | Utilities                         |                                              |
 | WebGL                             | stalgiag                                     |
 | Build Process/Unit Testing        | outofambit                                   |
