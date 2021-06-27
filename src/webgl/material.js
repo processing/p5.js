@@ -712,6 +712,33 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * @param  {Number} [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular material
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *
+ *   specularMaterial(250);
+ *   shininess(50);
+ *   torus(30, 10, 64, 64);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * torus with specular material
  */
 
 /**
@@ -724,24 +751,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   ambientLight(50);
- *   pointLight(250, 250, 250, 100, 100, 30);
- *   specularMaterial(250);
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * diffused radiating light source from top right of canvas
  */
 
 /**
