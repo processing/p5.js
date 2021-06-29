@@ -694,7 +694,8 @@ p5.prototype.round = function(n, decimals) {
   if (!decimals) {
     return Math.round(n);
   }
-  return Number(Math.round(n + 'e' + decimals) + 'e-' + decimals);
+  const multiplier = Math.pow(10, decimals);
+  return Math.round(n * multiplier) / multiplier;
 };
 
 /**
