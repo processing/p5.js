@@ -725,7 +725,7 @@ suite('Global Error Handling', function() {
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /Error/);
-      assert.match(log[0], /used before initialization/);
+      assert.match(log[0], /used before declaration/);
     });
   });
 
