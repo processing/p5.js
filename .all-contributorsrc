@@ -2682,6 +2682,16 @@
       "contributions": [
         "doc"
       ]
+    },
+      {
+      "login": "anniemckinnon",
+      "name": "Annie McKinnon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35992537?v=4",
+      "profile": "https://www.anniemckinnon.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
