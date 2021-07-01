@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Interaction
  * @for p5
  * @requires core
