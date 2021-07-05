@@ -43,7 +43,6 @@ const _extractVariables = arr => {
   });
   console.log(matches);
   //now we have to check if the obtained variables are a part of p5.js or not
-  //problem 1 => if we have comma declaration after a normal declaration then the matches array is overritten prevent that
 };
 
 const _extractFuncVariables = arr => {
@@ -90,6 +89,24 @@ const _codeToLines = code => {
   _extractFuncVariables(arrFunc);
 };
 
+const _removeMultilineComments = str => {
+  //get the start index of open multiline comment
+  let start = str.indexOf('/*');
+  let end = str.indexOf('*/');
+
+  //create a new string which don't have things in comments
+  while (start !== -1 && end !== -1) {
+    if (start === 0) {
+      str = str.substr(end + 2);
+    } else str = str.substr(0, start) + str.substr(end + 2);
+
+    start = str.indexOf('/*');
+    end = str.indexOf('*/');
+  }
+
+  return str;
+};
+
 const _fesCodeReader = async () => {
   let codeNode = document.querySelector('[data-tag="@fs-sketch.js"]'),
     text = '';
@@ -102,29 +119,26 @@ const _fesCodeReader = async () => {
       .map(file => file.getAttribute('src'))
       .filter(
         attr =>
-          ![
-            null,
-            undefined,
-            '',
-            'p5.js',
-            'p5.min.js',
-            'p5.sound.min.js',
-            'p5.sound.js'
-          ].includes(attr)
+          attr !== null &&
+          attr !== undefined &&
+          !attr.includes('p5.js') &&
+          !attr.includes('p5.min.js') &&
+          !attr.includes('p5.sounds.min.js') &&
+          !attr.includes('p5.sounds.js') &&
+          attr !== ''
       );
     //scripts will have all the files which donsen't contains the files in the array: [null, undefined, '', 'p5.js','p5.min.js','p5.sound.min.js', 'p5.sound.js']
     //there can be multiple files but we will check only 1 file because we assume that user will only use 1 file and not multiple
     //this can of course be extended to multiple files
 
-    await fetch(`${scripts[0]}`)
-      .then(res =>
-        res.text().then(txt => {
-          text = txt;
-        })
-      )
-      .catch(err => console.log(`ERROR: ${err}`));
+    await fetch(`${scripts[0]}`).then(res =>
+      res.text().then(txt => {
+        text = txt;
+      })
+    );
   }
   //convert the code to array of lines of code
+  text = _removeMultilineComments(text);
   _codeToLines(text);
 };
 
