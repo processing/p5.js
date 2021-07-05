@@ -605,7 +605,7 @@ suite('Global Error Handling', function() {
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /asdfg/);
-      assert.match(log[0], /not being defined in the current scope/);
+      assert.match(log[0], /not defined in the current scope/);
     });
   });
 
@@ -629,7 +629,7 @@ suite('Global Error Handling', function() {
         iframe.elt.contentWindow.afterSetup = resolve;
       }).then(function() {
         assert.strictEqual(log.length, 1);
-        assert.match(log[0], /syntax error/);
+        assert.match(log[0], /Syntax Error/);
         assert.match(log[0], /JavaScript doesn't recognize/);
       });
     }
@@ -653,7 +653,7 @@ suite('Global Error Handling', function() {
       iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
+      assert.match(log[0], /Syntax Error/);
       assert.match(log[0], /typo/);
     });
   });
@@ -868,7 +868,7 @@ suite('Global Error Handling', function() {
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /Error/);
-      assert.match(log[0], /of something undefined/);
+      assert.match(log[0], /property of undefined/);
     });
   });
 
@@ -896,7 +896,7 @@ suite('Global Error Handling', function() {
       let temp = log[1].split('\n');
       temp = temp.filter(e => e.trim().length > 0);
       assert.strictEqual(temp.length, 2);
-      assert.match(log[0], /"asdfg" not being defined/);
+      assert.match(log[0], /"asdfg" is not defined/);
       assert.match(temp[0], /Error at/);
       assert.match(temp[0], /myfun/);
       assert.match(temp[1], /Called from/);
@@ -980,7 +980,7 @@ suite('Global Error Handling', function() {
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /myfun/);
-      assert.match(log[0], /not being defined in the current scope/);
+      assert.match(log[0], /is not defined in the current scope/);
     });
   });
 });
