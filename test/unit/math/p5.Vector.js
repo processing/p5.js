@@ -1341,4 +1341,30 @@ suite('p5.Vector', function() {
       );
     });
   });
+
+  suite('mag', function() {
+    const MAG = 3.7416573867739413; // sqrt(1*1 + 2*2 + 3*3)
+
+    let v0;
+    let v1;
+
+    setup(function() {
+      v0 = new p5.Vector(0, 0, 0);
+      v1 = new p5.Vector(1, 2, 3);
+    });
+
+    suite('p5.Vector.prototype.mag() [INSTANCE]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(v0.mag()).to.eql(0);
+        expect(v1.mag()).to.eql(MAG);
+      });
+    });
+
+    suite('p5.Vector.mag() [CLASS]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(p5.Vector.mag(v0)).to.eql(0);
+        expect(p5.Vector.mag(v1)).to.eql(MAG);
+      });
+    });
+  });
 });
