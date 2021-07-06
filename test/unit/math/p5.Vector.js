@@ -1009,37 +1009,67 @@ suite('p5.Vector', function() {
   });
 
   suite('limit', function() {
+    let v;
+
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(5, 5, 5);
     });
 
-    test('should return the same object', function() {
-      expect(v.limit()).to.eql(v);
-    });
+    suite('p5.Vector.prototype.limit() [INSTANCE]', function() {
+      test('should return the same object', function() {
+        expect(v.limit()).to.equal(v);
+      });
 
-    suite('with a vector larger than the limit', function() {
-      test('should limit the vector', function() {
-        v.x = 5;
-        v.y = 5;
-        v.z = 5;
-        v.limit(1);
-        expect(v.x).to.be.closeTo(0.5773, 0.01);
-        expect(v.y).to.be.closeTo(0.5773, 0.01);
-        expect(v.z).to.be.closeTo(0.5773, 0.01);
+      suite('with a vector larger than the limit', function() {
+        test('should limit the vector', function() {
+          v.limit(1);
+          expect(v.x).to.be.closeTo(0.5773, 0.01);
+          expect(v.y).to.be.closeTo(0.5773, 0.01);
+          expect(v.z).to.be.closeTo(0.5773, 0.01);
+        });
+      });
+
+      suite('with a vector smaller than the limit', function() {
+        test('should not limit the vector', function() {
+          v.limit(8.67);
+          expect(v.x).to.eql(5);
+          expect(v.y).to.eql(5);
+          expect(v.z).to.eql(5);
+        });
       });
     });
 
-    suite('with a vector smaller than the limit', function() {
-      test('should not limit the vector', function() {
-        v.x = 5;
-        v.y = 5;
-        v.z = 5;
-        v.limit(8.67);
-        expect(v.x).to.eql(5);
-        expect(v.y).to.eql(5);
-        expect(v.z).to.eql(5);
+    suite('p5.Vector.limit() [CLASS]', function() {
+      test('should not return the same object', function() {
+        expect(p5.Vector.limit(v)).to.not.equal(v);
+      });
+
+      suite('with a vector larger than the limit', function() {
+        test('should limit the vector', function() {
+          const res = p5.Vector.limit(v, 1);
+          expect(res.x).to.be.closeTo(0.5773, 0.01);
+          expect(res.y).to.be.closeTo(0.5773, 0.01);
+          expect(res.z).to.be.closeTo(0.5773, 0.01);
+        });
+      });
+
+      suite('with a vector smaller than the limit', function() {
+        test('should not limit the vector', function() {
+          const res = p5.Vector.limit(v, 8.67);
+          expect(res.x).to.eql(5);
+          expect(res.y).to.eql(5);
+          expect(res.z).to.eql(5);
+        });
+      });
+
+      suite('when given a target vector', function() {
+        test('should store limited vector in the target', function() {
+          const target = new p5.Vector(0, 0, 0);
+          p5.Vector.limit(v, 1, target);
+          expect(target.x).to.be.closeTo(0.5773, 0.01);
+          expect(target.y).to.be.closeTo(0.5773, 0.01);
+          expect(target.z).to.be.closeTo(0.5773, 0.01);
+        });
       });
     });
   });

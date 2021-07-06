@@ -2384,4 +2384,31 @@ p5.Vector.normalize = function normalize(v, target) {
   return target.normalize();
 };
 
+/**
+ * Limit the magnitude of this vector to the value used for the <b>max</b>
+ * parameter.
+ */
+/**
+ * @method limit
+ * @static
+ * @param {p5.Vector} v  the vector to limit
+ * @param {Number}    max
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector} v with a magnitude limited to max
+ */
+p5.Vector.limit = function limit(v, max, target) {
+  if (arguments.length < 3) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.normalize'
+      );
+    }
+    target.set(v);
+  }
+  return target.limit(max);
+};
+
 export default p5.Vector;
