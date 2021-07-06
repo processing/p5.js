@@ -2340,11 +2340,23 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
  * @return {Number}        the magnitude of vecT
  */
 p5.Vector.mag = function mag(vecT) {
-  const x = vecT.x,
-    y = vecT.y,
-    z = vecT.z;
-  const magSq = x * x + y * y + z * z;
-  return Math.sqrt(magSq);
+  return vecT.mag();
+};
+
+/**
+ * Calculates the squared magnitude of the vector and returns the result
+ * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
+ * Faster if the real length is not required in the
+ * case of comparing vectors, etc.
+ */
+/**
+ * @method magSq
+ * @static
+ * @param {p5.Vector} vecT the vector to return the squared magnitude of
+ * @return {Number}        the squared magnitude of vecT
+ */
+p5.Vector.magSq = function magSq(vecT) {
+  return vecT.magSq();
 };
 
 /**
