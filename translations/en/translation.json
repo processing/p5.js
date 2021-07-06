@@ -35,7 +35,7 @@
         "unexpectedToken": "\nSyntax Error ▶️ Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\nFor more: {{url}}"
       },
       "type": {
-        "constAssign": "\nError ▶️ A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is not declared a const.\n{{location}}\nFor more: {{url}}",
+        "constAssign": "\nError ▶️ A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n{{location}}\nFor more: {{url}}",
         "notfunc": "\nError ▶️ \"{{symbol}}\" could not be called as a function {{location}}.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}",
         "notfuncObj": "\nError ▶️ \"{{symbol}}\" could not be called as a function {{location}}.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}",
         "readFromNull": "\nError ▶️ The property of null can't be read. In javascript the value null indicates that an object has no value.\nFor more: \n{{url1}}\n{{url2}}",

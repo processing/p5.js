@@ -534,7 +534,7 @@ suite('Global Error Handling', function() {
 
   testUnMinified('identifies errors happenning internally', function() {
     return new Promise(function(resolve) {
-      // quite an unusual way to test, but the error listerner doesn't work
+      // quite an unusual way to test, but the error listener doesn't work
       // under mocha. Also the stacktrace gets filled with mocha internal
       // function calls. Using this method solves both of these problems.
       // This method also allows us to test for SyntaxError without messing
