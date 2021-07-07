@@ -1075,29 +1075,67 @@ suite('p5.Vector', function() {
   });
 
   suite('setMag', function() {
+    let v;
+
     setup(function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
+      v = new p5.Vector(1, 0, 0);
     });
 
-    test('should return the same object', function() {
-      expect(v.setMag(2)).to.eql(v);
+    suite('p5.Vector.setMag() [INSTANCE]', function() {
+      test('should return the same object', function() {
+        expect(v.setMag(2)).to.equal(v);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.setMag(4);
+        expect(v.x).to.eql(4);
+        expect(v.y).to.eql(0);
+        expect(v.z).to.eql(0);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.x = 2;
+        v.y = 3;
+        v.z = -6;
+        v.setMag(14);
+        expect(v.x).to.eql(4);
+        expect(v.y).to.eql(6);
+        expect(v.z).to.eql(-12);
+      });
     });
 
-    test('should set the magnitude of the vector', function() {
-      v.setMag(4);
-      expect(v.mag()).to.eql(4);
-    });
+    suite('p5.Vector.prototype.setMag() [CLASS]', function() {
+      test('should not return the same object', function() {
+        expect(p5.Vector.setMag(v, 2)).to.not.equal(v);
+      });
 
-    test('should set the magnitude of the vector', function() {
-      v.x = 2;
-      v.y = 3;
-      v.z = 0;
-      v.setMag(2);
-      expect(v.mag()).to.eql(2);
-      expect(v.x).to.be.closeTo(1.1094, 0.01);
-      expect(v.y).to.be.closeTo(1.6641006, 0.01);
+      test('should set the magnitude of the vector', function() {
+        const res = p5.Vector.setMag(v, 4);
+        expect(res.x).to.eql(4);
+        expect(res.y).to.eql(0);
+        expect(res.z).to.eql(0);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.x = 2;
+        v.y = 3;
+        v.z = -6;
+        const res = p5.Vector.setMag(v, 14);
+        expect(res.x).to.eql(4);
+        expect(res.y).to.eql(6);
+        expect(res.z).to.eql(-12);
+      });
+
+      suite('when given a target vector', function() {
+        test('should set the magnitude on the target', function() {
+          const target = new p5.Vector(0, 1, 0);
+          const res = p5.Vector.setMag(v, 4, target);
+          expect(target).to.equal(res);
+          expect(target.x).to.eql(4);
+          expect(target.y).to.eql(0);
+          expect(target.z).to.eql(0);
+        });
+      });
     });
   });
 
