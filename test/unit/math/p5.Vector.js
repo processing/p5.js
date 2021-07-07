@@ -1140,29 +1140,89 @@ suite('p5.Vector', function() {
   });
 
   suite('heading', function() {
-    test('should return a number', function() {
-      expect(typeof v.heading() === 'number').to.eql(true);
+    setup(function() {
+      v = myp5.createVector();
     });
 
-    test('heading for vector pointing right is 0', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(0, 0.01);
+    suite('p5.Vector.prototype.heading() [INSTANCE]', function() {
+      test('should return a number', function() {
+        expect(typeof v.heading() === 'number').to.eql(true);
+      });
+
+      test('heading for vector pointing right is 0', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(0, 0.01);
+      });
+
+      test('heading for vector pointing down is PI/2', function() {
+        v.x = 0;
+        v.y = 1;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(Math.PI / 2, 0.01);
+      });
+
+      test('heading for vector pointing left is PI', function() {
+        v.x = -1;
+        v.y = 0;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
+      });
+
+      suite('with `angleMode(DEGREES)`', function() {
+        setup(function() {
+          myp5.angleMode(DEGREES);
+        });
+
+        test('heading for vector pointing right is 0', function() {
+          v.x = 1;
+          v.y = 0;
+          v.z = 0;
+          expect(v.heading()).to.equal(0);
+        });
+
+        test('heading for vector pointing down is 90', function() {
+          v.x = 0;
+          v.y = 1;
+          v.z = 0;
+          expect(v.heading()).to.equal(90);
+        });
+
+        test('heading for vector pointing left is 180', function() {
+          v.x = -1;
+          v.y = 0;
+          v.z = 0;
+          expect(v.heading()).to.equal(180);
+        });
+      });
     });
 
-    test('heading for vector pointing down is PI/2', function() {
-      v.x = 0;
-      v.y = 1;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(Math.PI / 2, 0.01);
-    });
+    suite('p5.Vector.heading() [CLASS]', function() {
+      test('should return a number', function() {
+        expect(typeof p5.Vector.heading(v) === 'number').to.eql(true);
+      });
 
-    test('heading for vector pointing left is PI', function() {
-      v.x = -1;
-      v.y = 0;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
+      test('heading for vector pointing right is 0', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(0, 0.01);
+      });
+
+      test('heading for vector pointing down is PI/2', function() {
+        v.x = 0;
+        v.y = 1;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI / 2, 0.01);
+      });
+
+      test('heading for vector pointing left is PI', function() {
+        v.x = -1;
+        v.y = 0;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI, 0.01);
+      });
     });
   });
 

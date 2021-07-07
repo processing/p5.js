@@ -1383,7 +1383,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector(only 2D vectors).
+ * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a src="#/p5/createVector">createVector()</a>
  * will take the current <a = src="#/p5/angleMode">angleMode</a> into consideration, and give the angle
  * in radians or degree accordingly.
@@ -2436,6 +2436,22 @@ p5.Vector.setMag = function setMag(v, len, target) {
     target.set(v);
   }
   return target.setMag(len);
+};
+
+/**
+ * Calculate the angle of rotation for this vector (only 2D vectors).
+ * p5.Vectors created using <a src="#/p5/createVector">createVector()</a>
+ * will take the current <a = src="#/p5/angleMode">angleMode</a> into consideration, and give the angle
+ * in radians or degree accordingly.
+ */
+/**
+ * @method heading
+ * @static
+ * @param {p5.Vector} v the vector to find the angle of
+ * @return {Number} the angle of rotation
+ */
+p5.Vector.heading = function heading(v) {
+  return v.heading();
 };
 
 export default p5.Vector;
