@@ -185,83 +185,107 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.Vector.prototype.angleBetween()', function() {
+  suite('angleBetween', function() {
     let v1, v2;
     setup(function() {
       v1 = new p5.Vector(1, 0, 0);
       v2 = new p5.Vector(2, 2, 0);
     });
 
-    test('should return a Number', function() {
-      const res = v1.angleBetween(v2);
-      expect(typeof res).to.eql('number');
+    suite('p5.Vector.prototype.angleBetween() [INSTANCE]', function() {
+      test('should return a Number', function() {
+        const res = v1.angleBetween(v2);
+        expect(typeof res).to.eql('number');
+      });
+
+      test('should not trip on rounding issues in 2D space', function() {
+        v1 = new p5.Vector(-11, -20);
+        v2 = new p5.Vector(-5.5, -10);
+        const v3 = new p5.Vector(5.5, 10);
+
+        expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+        expect(v1.angleBetween(v3)).to.be.closeTo(Math.PI, 0.00001);
+      });
+
+      test('should not trip on rounding issues in 3D space', function() {
+        v1 = new p5.Vector(1, 1.1, 1.2);
+        v2 = new p5.Vector(2, 2.2, 2.4);
+        expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+      });
+
+      test('should return NaN for zero vector', function() {
+        v1 = new p5.Vector(0, 0, 0);
+        v2 = new p5.Vector(2, 3, 4);
+        expect(v1.angleBetween(v2)).to.be.NaN;
+        expect(v2.angleBetween(v1)).to.be.NaN;
+      });
+
+      test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(1, 0, 0);
+        v2 = myp5.createVector(1, 0, 0);
+        expect(v1.angleBetween(v2)).to.equal(0);
+      });
+
+      test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(0, 3, 0);
+        v2 = myp5.createVector(0, -3, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
+      });
+
+      test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function() {
+        v1 = new p5.Vector(1, 0, 0);
+        v2 = new p5.Vector(2, 2, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI / 4, 0.01);
+        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
+      });
+
+      test('between [2,0,0] and [-2,0,0] should be PI radians', function() {
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, 0, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.01);
+      });
+
+      test('between [2,0,0] and [-2,-2,0] should be -3/4 PI radians  ', function() {
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, -2, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          -1 * (Math.PI / 2 + Math.PI / 4),
+          0.01
+        );
+      });
+
+      test('between [-2,-2,0] and [2,0,0] should be 3/4 PI radians', function() {
+        v1 = new p5.Vector(-2, -2, 0);
+        v2 = new p5.Vector(2, 0, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          Math.PI / 2 + Math.PI / 4,
+          0.01
+        );
+      });
     });
 
-    test('should not trip on rounding issues in 2D space', function() {
-      v1 = new p5.Vector(-11, -20);
-      v2 = new p5.Vector(-5.5, -10);
-      const v3 = new p5.Vector(5.5, 10);
+    suite('p5.Vector.angleBetween() [CLASS]', function() {
+      test('should return NaN for zero vector', function() {
+        v1 = new p5.Vector(0, 0, 0);
+        v2 = new p5.Vector(2, 3, 4);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.NaN;
+        expect(p5.Vector.angleBetween(v2, v1)).to.be.NaN;
+      });
 
-      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
-      expect(v1.angleBetween(v3)).to.be.closeTo(Math.PI, 0.00001);
-    });
+      test('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(1, 0, 0);
+        v2 = myp5.createVector(0, -1, 0);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
+      });
 
-    test('should not trip on rounding issues in 3D space', function() {
-      v1 = new p5.Vector(1, 1.1, 1.2);
-      v2 = new p5.Vector(2, 2.2, 2.4);
-      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
-    });
-
-    test('should return NaN for zero vector', function() {
-      v1 = new p5.Vector(0, 0, 0);
-      v2 = new p5.Vector(2, 3, 4);
-      expect(v1.angleBetween(v2)).to.be.NaN;
-      expect(v2.angleBetween(v1)).to.be.NaN;
-    });
-
-    test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
-      myp5.angleMode(DEGREES);
-      v1 = myp5.createVector(1, 0, 0);
-      v2 = myp5.createVector(1, 0, 0);
-      expect(v1.angleBetween(v2)).to.equal(0);
-    });
-
-    test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
-      myp5.angleMode(DEGREES);
-      v1 = myp5.createVector(0, 3, 0);
-      v2 = myp5.createVector(0, -3, 0);
-      expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
-    });
-
-    test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function() {
-      v1 = new p5.Vector(1, 0, 0);
-      v2 = new p5.Vector(2, 2, 0);
-      expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI / 4, 0.01);
-      expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
-    });
-
-    test('between [2,0,0] and [-2,0,0] should be PI radians', function() {
-      v1 = new p5.Vector(2, 0, 0);
-      v2 = new p5.Vector(-2, 0, 0);
-      expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.01);
-    });
-
-    test('between [2,0,0] and [-2,-2,0] should be -3/4 PI radians  ', function() {
-      v1 = new p5.Vector(2, 0, 0);
-      v2 = new p5.Vector(-2, -2, 0);
-      expect(v1.angleBetween(v2)).to.be.closeTo(
-        -1 * (Math.PI / 2 + Math.PI / 4),
-        0.01
-      );
-    });
-
-    test('between [-2,-2,0] and [2,0,0] should be 3/4 PI radians', function() {
-      v1 = new p5.Vector(-2, -2, 0);
-      v2 = new p5.Vector(2, 0, 0);
-      expect(v1.angleBetween(v2)).to.be.closeTo(
-        Math.PI / 2 + Math.PI / 4,
-        0.01
-      );
+      test('between [0,3,0] and [0,-3,0] should be PI radians', function() {
+        v1 = new p5.Vector(0, 3, 0);
+        v2 = new p5.Vector(0, -3, 0);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(Math.PI, 0.01);
+      });
     });
   });
 

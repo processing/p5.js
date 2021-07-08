@@ -2457,4 +2457,21 @@ p5.Vector.heading = function heading(v) {
   return v.heading();
 };
 
+/**
+ * Calculates and returns the angle between two vectors. This function will take
+ * the <a href="#/p5/angleMode">angleMode</a> on v1 into consideration, and
+ * give the angle in radians or degree accordingly.
+ */
+/**
+ * @method angleBetween
+ * @static
+ * @param  {p5.Vector}    v1 the first vector
+ * @param  {p5.Vector}    v2 the second vector
+ * @return {Number}       the angle between the two vectors
+ * @example
+ */
+p5.Vector.angleBetween = function angleBetween(v1, v2) {
+  return v1.angleBetween(v2);
+};
+
 export default p5.Vector;
