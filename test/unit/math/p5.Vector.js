@@ -186,37 +186,82 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.prototype.angleBetween()', function() {
+    let v1, v2;
     setup(function() {
-      myp5.angleMode(DEGREES);
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(2, 2, 0);
+    });
+
+    test('should return a Number', function() {
+      const res = v1.angleBetween(v2);
+      expect(typeof res).to.eql('number');
     });
 
     test('should not trip on rounding issues in 2D space', function() {
-      var v1 = myp5.createVector(-11, -20);
-      var v2 = myp5.createVector(-5.5, -10);
-      var res = v1.angleBetween(v2);
-      //expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(0, 0.00001);
-      expect(res).to.be.closeTo(0, 0.00001);
+      v1 = new p5.Vector(-11, -20);
+      v2 = new p5.Vector(-5.5, -10);
+      const v3 = new p5.Vector(5.5, 10);
 
-      var v3 = myp5.createVector(-11, -20);
-      var v4 = myp5.createVector(5.5, 10);
-      expect(Math.abs(v3.angleBetween(v4))).to.be.closeTo(180, 0.00001);
-      expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
+      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+      expect(v1.angleBetween(v3)).to.be.closeTo(Math.PI, 0.00001);
     });
 
     test('should not trip on rounding issues in 3D space', function() {
-      var v1 = myp5.createVector(1, 1.1, 1.2);
-      var v2 = myp5.createVector(2, 2.2, 2.4);
-
-      var angle = Math.abs(v1.angleBetween(v2));
-      expect(angle).to.be.closeTo(0, 0.00001);
+      v1 = new p5.Vector(1, 1.1, 1.2);
+      v2 = new p5.Vector(2, 2.2, 2.4);
+      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
     });
 
     test('should return NaN for zero vector', function() {
-      var v1 = myp5.createVector(0, 0, 0);
-      var v2 = myp5.createVector(2, 3, 4);
+      v1 = new p5.Vector(0, 0, 0);
+      v2 = new p5.Vector(2, 3, 4);
+      expect(v1.angleBetween(v2)).to.be.NaN;
+      expect(v2.angleBetween(v1)).to.be.NaN;
+    });
 
-      expect(Math.abs(v1.angleBetween(v2))).to.be.NaN; // jshint ignore:line
-      expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
+    test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
+      myp5.angleMode(DEGREES);
+      v1 = myp5.createVector(1, 0, 0);
+      v2 = myp5.createVector(1, 0, 0);
+      expect(v1.angleBetween(v2)).to.equal(0);
+    });
+
+    test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
+      myp5.angleMode(DEGREES);
+      v1 = myp5.createVector(0, 3, 0);
+      v2 = myp5.createVector(0, -3, 0);
+      expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
+    });
+
+    test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function() {
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(2, 2, 0);
+      expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI / 4, 0.01);
+      expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
+    });
+
+    test('between [2,0,0] and [-2,0,0] should be PI radians', function() {
+      v1 = new p5.Vector(2, 0, 0);
+      v2 = new p5.Vector(-2, 0, 0);
+      expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.01);
+    });
+
+    test('between [2,0,0] and [-2,-2,0] should be -3/4 PI radians  ', function() {
+      v1 = new p5.Vector(2, 0, 0);
+      v2 = new p5.Vector(-2, -2, 0);
+      expect(v1.angleBetween(v2)).to.be.closeTo(
+        -1 * (Math.PI / 2 + Math.PI / 4),
+        0.01
+      );
+    });
+
+    test('between [-2,-2,0] and [2,0,0] should be 3/4 PI radians', function() {
+      v1 = new p5.Vector(-2, -2, 0);
+      v2 = new p5.Vector(2, 0, 0);
+      expect(v1.angleBetween(v2)).to.be.closeTo(
+        Math.PI / 2 + Math.PI / 4,
+        0.01
+      );
     });
   });
 
@@ -1333,62 +1378,6 @@ suite('p5.Vector', function() {
     });
     test('should be a unit p5.Vector', function() {
       expect(res.mag()).to.be.closeTo(1, 0.01);
-    });
-  });
-
-  suite('v1.angleBetween(v2)', function() {
-    var res, v1, v2;
-    setup(function() {
-      v1 = new p5.Vector(1, 0, 0);
-      v2 = new p5.Vector(2, 2, 0);
-      res = v1.angleBetween(v2);
-    });
-
-    test('should be a Number', function() {
-      expect(typeof res).to.eql('number');
-    });
-
-    suite('with [1,0,0] and [2,2,0]', function() {
-      test('should be 45 deg difference', function() {
-        v1 = new p5.Vector(1, 0, 0);
-        v2 = new p5.Vector(2, 2, 0);
-        res = v1.angleBetween(v2);
-        expect(res).to.be.closeTo(Math.PI / 4, 0.01);
-        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
-      });
-    });
-
-    suite('with [2,0,0] and [-2,0,0]', function() {
-      test('should be 180 deg difference', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, 0, 0);
-        res = Math.abs(v1.angleBetween(v2));
-        expect(res).to.be.closeTo(Math.PI, 0.01);
-      });
-    });
-
-    suite('with [2,0,0] and [-2,-2,0]', function() {
-      test('should be 135 deg difference', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, -2, 0);
-        expect(v1.angleBetween(v2)).to.be.closeTo(
-          -1 * (Math.PI / 2 + Math.PI / 4),
-          0.01
-        );
-        expect(v2.angleBetween(v1)).to.be.closeTo(
-          Math.PI / 2 + Math.PI / 4,
-          0.01
-        );
-      });
-
-      test('should be commutative', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, -2, 0);
-        expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(
-          Math.abs(v2.angleBetween(v1)),
-          0.01
-        );
-      });
     });
   });
 
