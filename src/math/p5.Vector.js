@@ -1718,11 +1718,12 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
- * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
- * This method acts on the vector directly
+ * Reflect a vector about a normal to a line in 2D, or about a normal to a
+ * plane in 3D.
  *
  * @method reflect
- * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @param  {p5.Vector} surfaceNormal  the <a href="#/p5.Vector">p5.Vector</a>
+ *                                    to reflect about
  * @chainable
  * @example
  * <div class="norender">
@@ -1775,8 +1776,8 @@ p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
 /**
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
- * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
- * array.
+ * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
+ * method to copy into your own array.
  *
  * @method array
  * @return {Number[]} an Array with the 3 values
@@ -2443,9 +2444,9 @@ p5.Vector.setMag = function setMag(v, len, target) {
 
 /**
  * Calculate the angle of rotation for this vector (only 2D vectors).
- * p5.Vectors created using <a src="#/p5/createVector">createVector()</a>
- * will take the current <a = src="#/p5/angleMode">angleMode</a> into consideration, and give the angle
- * in radians or degree accordingly.
+ * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
+ * will take the current <a href="#/p5/angleMode">angleMode</a> into
+ * consideration, and give the angle in radians or degree accordingly.
  */
 /**
  * @method heading
@@ -2468,7 +2469,6 @@ p5.Vector.heading = function heading(v) {
  * @param  {p5.Vector}    v1 the first vector
  * @param  {p5.Vector}    v2 the second vector
  * @return {Number}       the angle between the two vectors
- * @example
  */
 p5.Vector.angleBetween = function angleBetween(v1, v2) {
   return v1.angleBetween(v2);
