@@ -6,6 +6,14 @@
 
 const _PI = Math.PI;
 
+/**
+ * Version of this p5.js.
+ * @property {String} VERSION
+ * @final
+ */
+export const VERSION =
+  'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS';
+
 // GRAPHICS RENDERER
 /**
  * The default, two-dimensional renderer.
@@ -147,7 +155,7 @@ export const TAU = _PI * 2;
 export const TWO_PI = _PI * 2;
 /**
  * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprates and calculates angles (either DEGREES or RADIANS).
+ * p5.js interprets and calculates angles (either DEGREES or RADIANS).
  * @property {String} DEGREES
  * @final
  *
@@ -161,7 +169,7 @@ export const TWO_PI = _PI * 2;
 export const DEGREES = 'degrees';
 /**
  * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprates and calculates angles (either RADIANS or DEGREES).
+ * p5.js interprets and calculates angles (either RADIANS or DEGREES).
  * @property {String} RADIANS
  * @final
  *
@@ -588,6 +596,16 @@ export const BOLD = 'bold';
  * @final
  */
 export const BOLDITALIC = 'bold italic';
+/**
+ * @property {String} CHAR
+ * @final
+ */
+export const CHAR = 'CHAR';
+/**
+ * @property {String} WORD
+ * @final
+ */
+export const WORD = 'WORD';
 
 // TYPOGRAPHY-INTERNAL
 export const _DEFAULT_TEXT_FILL = '#000000';

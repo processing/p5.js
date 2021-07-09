@@ -21,7 +21,7 @@ import p5 from '../core/main';
  * shape, color, location, coordinates and area are described
  * (example: "orange ellipse location=top left area=2").
  *
- * <code class="language-javascript">textOutput()</code> and <code class="language-javascript">texOutput(FALLBACK)</code>
+ * <code class="language-javascript">textOutput()</code> and <code class="language-javascript">textOutput(FALLBACK)</code>
  * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a> which is accessible to screen readers.
  * <code class="language-javascript">textOutput(LABEL)</code> creates an
@@ -33,7 +33,7 @@ import p5 from '../core/main';
  * publishing or sharing with screen reader users.
  *
  * @method textOutput
- * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL
  *
  * @example
  * <div>
@@ -112,7 +112,7 @@ p5.prototype.textOutput = function(display) {
  * publishing or sharing with screen reader users.
  *
  * @method gridOutput
- * @param  {Constant} [display] either FALLBACK or LABEL (Optional)
+ * @param  {Constant} [display] either FALLBACK or LABEL
  *
  * @example
  * <div>

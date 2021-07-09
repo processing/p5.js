@@ -78,6 +78,11 @@ module.exports = function(grunt) {
           code += data;
         })
         .on('end', function() {
+          code = code.replace(
+            `'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'`,
+            grunt.template.process(`'<%= pkg.version %>'`)
+          );
+
           // "code" is complete: create the distributable UMD build by running
           // the bundle through derequire
           // (Derequire changes the bundle's internal "require" function to

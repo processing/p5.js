@@ -24,8 +24,7 @@ const labelTableElId = '_lte_'; //Label Table Element
  * <code class="language-javascript">describe(text, LABEL)</code> displays
  * the description to all users as a <a
  * href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
- * tombstone or exhibit label/caption</a> in a
- * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
+ * tombstone or exhibit label/caption</a> in a div
  * adjacent to the canvas. You can style it as you wish in your CSS.
  *
  * <code class="language-javascript">describe(text, FALLBACK)</code> makes the
@@ -37,12 +36,12 @@ const labelTableElId = '_lte_'; //Label Table Element
  *
  * @method describe
  * @param  {String} text      description of the canvas
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either LABEL or FALLBACK
  *
  * @example
  * <div>
  * <code>
- * describe('pink square with red heart in the bottom right corner', LABEL);
+ * describe('pink square with red heart in the bottom right corner');
  * background('pink');
  * fill('red');
  * noStroke();
@@ -123,8 +122,7 @@ p5.prototype.describe = function(text, display) {
  * <code class="language-javascript">describeElement(name, text, LABEL)</code>
  * displays the element description to all users as a
  * <a href="https://en.wikipedia.org/wiki/Museum_label" target="_blank">
- * tombstone or exhibit label/caption</a> in a
- * <code class="language-javascript">&lt;div class="p5Label"&gt;&lt;/div&gt;</code>
+ * tombstone or exhibit label/caption</a> in a div
  * adjacent to the canvas. You can style it as you wish in your CSS.
  *
  * <code class="language-javascript">describeElement(name, text, FALLBACK)</code>
@@ -137,18 +135,18 @@ p5.prototype.describe = function(text, display) {
  * @method describeElement
  * @param  {String} name      name of the element
  * @param  {String} text      description of the element
- * @param  {Constant} [display] either LABEL or FALLBACK (Optional)
+ * @param  {Constant} [display] either LABEL or FALLBACK
  *
  * @example
  * <div>
  * <code>
- * describe('Heart and yellow circle over pink background', LABEL);
+ * describe('Heart and yellow circle over pink background');
  * noStroke();
  * background('pink');
- * describeElement('Circle', 'Yellow circle in the top left corner', LABEL);
+ * describeElement('Circle', 'Yellow circle in the top left corner');
  * fill('yellow');
  * ellipse(25, 25, 40, 40);
- * describeElement('Heart', 'red heart in the bottom right corner', LABEL);
+ * describeElement('Heart', 'red heart in the bottom right corner');
  * fill('red');
  * ellipse(66.6, 66.6, 20, 20);
  * ellipse(83.2, 66.6, 20, 20);
@@ -168,7 +166,8 @@ p5.prototype.describeElement = function(name, text, display) {
   //calls function that adds punctuation for better screen reading
   let elementName = _elementName(name);
   //remove any special characters from name to use it as html id
-  name = name.replace(/[^a-zA-Z0-9 ]/g, '');
+  name = name.replace(/[^a-zA-Z0-9]/g, '');
+
   //store element description
   let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
   //if there is no dummyDOM

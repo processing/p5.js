@@ -377,7 +377,7 @@ class p5 {
         !this._loop ||
         time_since_last >= target_time_between_frames - epsilon
       ) {
-        //mandatory update values(matrixs and stack)
+        //mandatory update values(matrixes and stack)
         this.redraw();
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
         this.deltaTime = now - this._lastFrameTime;
@@ -675,9 +675,8 @@ class p5 {
             }
           });
         } catch (e) {
-          log(
-            `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`
-          );
+          let message = `p5 had problems creating the global function "${prop}", possibly because your code is already using that name as a variable. You may want to rename your variable to something else.`;
+          p5._friendlyError(message, prop);
           globalObject[prop] = value;
         }
       } else {

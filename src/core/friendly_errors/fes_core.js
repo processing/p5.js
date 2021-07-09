@@ -200,15 +200,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Prints out a fancy, colorful message to the console log
    *
-   * @method report
+   * @method _report
    * @private
    * @param  {String}               message the words to be said
    * @param  {String}               [func]  the name of the function to link
-   * @param  {Number|String} [color]   CSS color string or error type
+   * @param  {Number|String}        [color] CSS color string or error type
    *
    * @return console logs
    */
-  const report = (message, func, color) => {
+  p5._report = (message, func, color) => {
     // if p5._fesLogger is set ( i.e we are running tests ), use that
     // instead of console.log
     const log =
@@ -244,10 +244,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    * @param  {Number} message message to be printed
    * @param  {String} [method] name of method
-   * @param  {Number|String} [color]   CSS color string or error type (Optional)
+   * @param  {Number|String} [color]   CSS color string or error type
    */
   p5._friendlyError = function(message, method, color) {
-    report(message, method, color);
+    p5._report(message, method, color);
   };
 
   /**
@@ -354,7 +354,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           actualName: fxns[lowercase]
         });
 
-        report(msg, fxns[lowercase]);
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
@@ -454,7 +454,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // a link to the reference documentation. In case of multiple matches,
       // this is already done in the suggestions variable, one link for each
       // suggestion.
-      report(
+      p5._friendlyError(
         msg,
         matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
       );
@@ -601,7 +601,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         currentEntryPoint === 'preload' &&
         p5.prototype._preloadMethods[func] == null
       ) {
-        report(
+        p5._friendlyError(
           translator('fes.wrongPreload', {
             func: func,
             location: locationObj
@@ -613,7 +613,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         );
       } else {
         // Library error
-        report(
+        p5._friendlyError(
           translator('fes.libraryError', {
             func: func,
             location: locationObj
@@ -714,7 +714,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'INVALIDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.invalidToken', {
                 url
               })
@@ -724,7 +724,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           case 'UNEXPECTEDTOKEN': {
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.unexpectedToken', {
                 url
               })
@@ -748,7 +748,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url1 = 'https://p5js.org/examples/data-variable-scope.html';
             let url2 =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
                 url1,
                 url2,
@@ -788,11 +788,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
             // as a property of an object and when it's called independently.
             // Both have different explanations.
             if (splitSym.length > 1) {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfuncObj', translationObj)
               );
             } else {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }
@@ -822,22 +822,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
    */
   /* function testColors() {
     const str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
-    report(str, 'print', '#ED225D'); // p5.js magenta
-    report(str, 'print', '#2D7BB6'); // p5.js blue
-    report(str, 'print', '#EE9900'); // p5.js orange
-    report(str, 'print', '#A67F59'); // p5.js light brown
-    report(str, 'print', '#704F21'); // p5.js gold
-    report(str, 'print', '#1CC581'); // auto cyan
-    report(str, 'print', '#FF6625'); // auto orange
-    report(str, 'print', '#79EB22'); // auto green
-    report(str, 'print', '#B40033'); // p5.js darkened magenta
-    report(str, 'print', '#084B7F'); // p5.js darkened blue
-    report(str, 'print', '#945F00'); // p5.js darkened orange
-    report(str, 'print', '#6B441D'); // p5.js darkened brown
-    report(str, 'print', '#2E1B00'); // p5.js darkened gold
-    report(str, 'print', '#008851'); // auto dark cyan
-    report(str, 'print', '#C83C00'); // auto dark orange
-    report(str, 'print', '#4DB200'); // auto dark green
+    p5._friendlyError(str, 'print', '#ED225D'); // p5.js magenta
+    p5._friendlyError(str, 'print', '#2D7BB6'); // p5.js blue
+    p5._friendlyError(str, 'print', '#EE9900'); // p5.js orange
+    p5._friendlyError(str, 'print', '#A67F59'); // p5.js light brown
+    p5._friendlyError(str, 'print', '#704F21'); // p5.js gold
+    p5._friendlyError(str, 'print', '#1CC581'); // auto cyan
+    p5._friendlyError(str, 'print', '#FF6625'); // auto orange
+    p5._friendlyError(str, 'print', '#79EB22'); // auto green
+    p5._friendlyError(str, 'print', '#B40033'); // p5.js darkened magenta
+    p5._friendlyError(str, 'print', '#084B7F'); // p5.js darkened blue
+    p5._friendlyError(str, 'print', '#945F00'); // p5.js darkened orange
+    p5._friendlyError(str, 'print', '#6B441D'); // p5.js darkened brown
+    p5._friendlyError(str, 'print', '#2E1B00'); // p5.js darkened gold
+    p5._friendlyError(str, 'print', '#008851'); // auto dark cyan
+    p5._friendlyError(str, 'print', '#C83C00'); // auto dark orange
+    p5._friendlyError(str, 'print', '#4DB200'); // auto dark green
   } */
 }
 

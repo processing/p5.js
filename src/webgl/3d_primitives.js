@@ -1156,8 +1156,10 @@ p5.RendererGL.prototype.arc = function(args) {
 
     if (detail <= 50) {
       arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
-    } else if (this._renderer._doStroke) {
-      console.log('Cannot stroke ${shape} with more than 50 detail');
+    } else if (this._doStroke) {
+      console.log(
+        `Cannot apply a stroke to an ${shape} with more than 50 detail`
+      );
     }
 
     this.createBuffers(gId, arcGeom);

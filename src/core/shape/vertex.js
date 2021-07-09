@@ -71,9 +71,33 @@ p5.prototype.beginContour = function() {
  * types of shapes to create from the provided vertices. With no mode
  * specified, the shape can be any irregular polygon.
  *
- * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
- * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP, and TESS (WebGL only). After calling the
- * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
+ * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are:
+ *
+ * POINTS
+ * Draw a series of points
+ *
+ * LINES
+ * Draw a series of unconnected line segments (individual lines)
+ *
+ * TRIANGLES
+ * Draw a series of separate triangles
+ *
+ * TRIANGLE_FAN
+ * Draw a series of connected triangles sharing the first vertex in a fan-like fashion
+ *
+ * TRIANGLE_STRIP
+ * Draw a series of connected triangles in strip fashion
+ *
+ * QUADS
+ * Draw a series of seperate quad
+ *
+ * QUAD_STRIP
+ * Draw quad strip using adjacent edges to form the next quad
+ *
+ * TESS (WebGl only)
+ * Handle irregular polygon for filling curve by explicit tessellation
+ *
+ * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
  * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
  * current stroke color and filled with the fill color.
  *
@@ -215,13 +239,15 @@ p5.prototype.beginContour = function() {
  *
  * <div>
  * <code>
- * beginShape();
+ * beginShape(TESS);
  * vertex(20, 20);
- * vertex(40, 20);
+ * vertex(80, 20);
+ * vertex(80, 40);
  * vertex(40, 40);
- * vertex(60, 40);
- * vertex(60, 60);
- * vertex(20, 60);
+ * vertex(40, 60);
+ * vertex(80, 60);
+ * vertex(80, 80);
+ * vertex(20, 80);
  * endShape(CLOSE);
  * </code>
  * </div>
@@ -932,9 +958,17 @@ p5.prototype.quadraticVertex = function(...args) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex
- * @param  {Number} [u] the vertex's texture u-coordinate
- * @param  {Number} [v] the vertex's texture v-coordinate
+ * @param  {Number} z   z-coordinate of the vertex.
+ *                       Defaults to 0 if not specified.
+ * @chainable
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @param  {Number} u   the vertex's texture u-coordinate
+ * @param  {Number} v   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
@@ -963,6 +997,58 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
       vertices.push(vert);
     }
   }
+  return this;
+};
+
+/**
+ * Sets the 3d vertex normal to use for subsequent vertices drawn with
+ * <a href="#/p5/vertex">vertex()</a>. A normal is a vector that is generally
+ * nearly perpendicular to a shape's surface which controls how much light will
+ * be reflected from that part of the surface.
+ *
+ * @method normal
+ * @param  {Vector} vector A p5.Vector representing the vertex normal.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   rotateY(frameCount / 100);
+ *   normalMaterial();
+ *   beginShape(TRIANGLE_STRIP);
+ *   normal(-0.4, 0.4, 0.8);
+ *   vertex(-30, 30, 0);
+ *
+ *   normal(0, 0, 1);
+ *   vertex(-30, -30, 30);
+ *   vertex(30, 30, 30);
+ *
+ *   normal(0.4, -0.4, 0.8);
+ *   vertex(30, -30, 0);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @method normal
+ * @param  {Number} x The x component of the vertex normal.
+ * @param  {Number} y The y component of the vertex normal.
+ * @param  {Number} z The z component of the vertex normal.
+ * @chainable
+ */
+p5.prototype.normal = function(x, y, z) {
+  this._assert3d('normal');
+  p5._validateParameters('normal', arguments);
+  this._renderer.normal(...arguments);
+
   return this;
 };
 

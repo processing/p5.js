@@ -107,7 +107,7 @@ p5.prototype._normalizeArcAngles = (
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * The arc is always drawn clockwise from wherever start falls to wherever stop
- * falls on the ellipse.Adding or subtracting TWO_PI to either angle does not
+ * falls on the ellipse. Adding or subtracting TWO_PI to either angle does not
  * change where they fall. If both start and stop fall at the same place, a full
  * ellipse will be drawn. Be aware that the y-axis increases in the downward
  * direction, therefore angles are measured clockwise from the positive
@@ -122,9 +122,10 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc. either CHORD, PIE or OPEN
- * @param  {Number} [detail] optional parameter for WebGL mode only. This is to
+ * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
- *                         perimeter of the arc. Default value is 25.
+ *                         perimeter of the arc. Default value is 25. Won't
+ *                         draw a stroke for a detail of more than 50.
  * @chainable
  *
  * @example
@@ -235,7 +236,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * value of width is used for both the width and height. If a negative height or
  * width is specified, the absolute value is taken.
  *
- * An ellipse with equal width and height is a circle.The origin may be changed
+ * An ellipse with equal width and height is a circle. The origin may be changed
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
@@ -261,7 +262,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} detail number of radial sectors to draw (for WebGL mode)
+ * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
+ *                         specify the number of vertices that makes up the
+ *                         perimeter of the ellipse. Default value is 25. Won't
+ *                         draw a stroke for a detail of more than 50.
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);

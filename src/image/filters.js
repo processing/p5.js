@@ -35,9 +35,25 @@ Filters._toPixels = function(canvas) {
   if (canvas instanceof ImageData) {
     return canvas.data;
   } else {
-    return canvas
-      .getContext('2d')
-      .getImageData(0, 0, canvas.width, canvas.height).data;
+    if (canvas.getContext('2d')) {
+      return canvas
+        .getContext('2d')
+        .getImageData(0, 0, canvas.width, canvas.height).data;
+    } else if (canvas.getContext('webgl')) {
+      const gl = canvas.getContext('webgl');
+      const len = gl.drawingBufferWidth * gl.drawingBufferHeight * 4;
+      const data = new Uint8Array(len);
+      gl.readPixels(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        data
+      );
+      return data;
+    }
   }
 };
 

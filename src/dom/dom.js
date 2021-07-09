@@ -1339,7 +1339,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * </code>
  * </div>
  *
- * <div class='notest'>
+ * <div class='notest norender'>
  * <code>
  * function setup() {
  *   createCanvas(480, 120);
@@ -1359,7 +1359,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * }
  * </code>
  * </div>
- * <div class='notest'>
+ * <div class='notest norender'>
  * <code>
  * let capture;
  *
@@ -1854,23 +1854,26 @@ p5.Element.prototype._rotate = function() {
  * let myDiv = createDiv('I like pandas.');
  * myDiv.style('font-size', '18px');
  * myDiv.style('color', '#ff0000');
+ * myDiv.position(0, 0);
  * </code></div>
  * <div><code class='norender'>
  * let col = color(25, 23, 200, 50);
  * let button = createButton('button');
  * button.style('background-color', col);
- * button.position(10, 10);
+ * button.position(0, 0);
  * </code></div>
  * <div><code class='norender'>
- * let myDiv;
+ * let myDiv, fontSize;
  * function setup() {
  *   background(200);
  *   myDiv = createDiv('I like gray.');
- *   myDiv.position(20, 20);
+ *   myDiv.position(0, 0);
+ *   myDiv.style('z-index', 10);
  * }
  *
  * function draw() {
- *   myDiv.style('font-size', mouseX + 'px');
+ *   fontSize = min(mouseX, 90);
+ *   myDiv.style('font-size', fontSize + 'px');
  * }
  * </code></div>
  */

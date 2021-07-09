@@ -25,7 +25,7 @@ import p5 from './main';
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Number} a numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number|Array} a numbers which define the 2x3 matrix to be multiplied, or an array of numbers
  * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
@@ -137,14 +137,31 @@ import p5 from './main';
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   let testMatrix = [1, 0, 0, 1, 0, 0];
+ *   applyMatrix(testMatrix);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * A rectangle translating to the right
  * A rectangle shrinking to the center
  * A rectangle rotating clockwise about the center
  * A rectangle shearing
+ * A rectangle in the upper left corner
  */
-p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix(...arguments);
+p5.prototype.applyMatrix = function() {
+  let isTypedArray = arguments[0] instanceof Object.getPrototypeOf(Uint8Array);
+  if (Array.isArray(arguments[0]) || isTypedArray) {
+    this._renderer.applyMatrix(...arguments[0]);
+  } else {
+    this._renderer.applyMatrix(...arguments);
+  }
   return this;
 };
 
@@ -166,7 +183,7 @@ p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
  * </div>
  *
  * @alt
- * A rotated retangle in the center with another at the top left corner
+ * A rotated rectangle in the center with another at the top left corner
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -183,7 +200,7 @@ p5.prototype.resetMatrix = function() {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
@@ -218,7 +235,7 @@ p5.prototype.rotate = function(angle, axis) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method  rotateX
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -254,7 +271,7 @@ p5.prototype.rotateX = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateY
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -292,7 +309,7 @@ p5.prototype.rotateY = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateZ
  * @param  {Number} angle the angle of rotation, specified in radians

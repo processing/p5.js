@@ -76,77 +76,86 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     mode: 'cors'
   });
 
-  fetch(path, req).then(response => {
-    // GIF section
-    const contentType = response.headers.get('content-type');
-    if (contentType === null) {
-      console.warn(
-        'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
-      );
-    }
-    if (contentType && contentType.includes('image/gif')) {
-      response.arrayBuffer().then(
-        arrayBuffer => {
-          if (arrayBuffer) {
-            const byteArray = new Uint8Array(arrayBuffer);
-            _createGif(
-              byteArray,
-              pImg,
-              successCallback,
-              failureCallback,
-              (pImg => {
-                self._decrementPreload();
-              }).bind(self)
-            );
+  fetch(path, req)
+    .then(response => {
+      // GIF section
+      const contentType = response.headers.get('content-type');
+      if (contentType === null) {
+        console.warn(
+          'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
+        );
+      }
+      if (contentType && contentType.includes('image/gif')) {
+        response.arrayBuffer().then(
+          arrayBuffer => {
+            if (arrayBuffer) {
+              const byteArray = new Uint8Array(arrayBuffer);
+              _createGif(
+                byteArray,
+                pImg,
+                successCallback,
+                failureCallback,
+                (pImg => {
+                  self._decrementPreload();
+                }).bind(self)
+              );
+            }
+          },
+          e => {
+            if (typeof failureCallback === 'function') {
+              failureCallback(e);
+            } else {
+              console.error(e);
+            }
           }
-        },
-        e => {
+        );
+      } else {
+        // Non-GIF Section
+        const img = new Image();
+
+        img.onload = () => {
+          pImg.width = pImg.canvas.width = img.width;
+          pImg.height = pImg.canvas.height = img.height;
+
+          // Draw the image into the backing canvas of the p5.Image
+          pImg.drawingContext.drawImage(img, 0, 0);
+          pImg.modified = true;
+          if (typeof successCallback === 'function') {
+            successCallback(pImg);
+          }
+          self._decrementPreload();
+        };
+
+        img.onerror = e => {
+          p5._friendlyFileLoadError(0, img.src);
           if (typeof failureCallback === 'function') {
             failureCallback(e);
           } else {
             console.error(e);
           }
+        };
+
+        // Set crossOrigin in case image is served with CORS headers.
+        // This will let us draw to the canvas without tainting it.
+        // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+        // When using data-uris the file will be loaded locally
+        // so we don't need to worry about crossOrigin with base64 file types.
+        if (path.indexOf('data:image/') !== 0) {
+          img.crossOrigin = 'Anonymous';
         }
-      );
-    } else {
-      // Non-GIF Section
-      const img = new Image();
-
-      img.onload = () => {
-        pImg.width = pImg.canvas.width = img.width;
-        pImg.height = pImg.canvas.height = img.height;
-
-        // Draw the image into the backing canvas of the p5.Image
-        pImg.drawingContext.drawImage(img, 0, 0);
-        pImg.modified = true;
-        if (typeof successCallback === 'function') {
-          successCallback(pImg);
-        }
-        self._decrementPreload();
-      };
-
-      img.onerror = e => {
-        p5._friendlyFileLoadError(0, img.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
-      };
-
-      // Set crossOrigin in case image is served with CORS headers.
-      // This will let us draw to the canvas without tainting it.
-      // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-      // When using data-uris the file will be loaded locally
-      // so we don't need to worry about crossOrigin with base64 file types.
-      if (path.indexOf('data:image/') !== 0) {
-        img.crossOrigin = 'Anonymous';
+        // start loading the image
+        img.src = path;
       }
-      // start loading the image
-      img.src = path;
-    }
-    pImg.modified = true;
-  });
+      pImg.modified = true;
+    })
+    .catch(e => {
+      p5._friendlyFileLoadError(0, path);
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
+      } else {
+        console.error(e);
+      }
+    });
   return pImg;
 };
 
@@ -181,15 +190,13 @@ function _createGif(
     };
     for (let j = 0; j < numFrames; j++) {
       const frameInfo = gifReader.frameInfo(j);
-      // Some GIFs are encoded so that they expect the previous frame
-      // to be under the current frame. This can occur at a sub-frame level
-      // There are possible disposal codes but I didn't encounter any
-      if (gifReader.frameInfo(j).disposal === 1 && j > 0) {
-        pImg.drawingContext.putImageData(frames[j - 1].image, 0, 0);
-      } else {
-        pImg.drawingContext.clearRect(0, 0, pImg.width, pImg.height);
-        framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
-      }
+      const prevFrameData = pImg.drawingContext.getImageData(
+        0,
+        0,
+        pImg.width,
+        pImg.height
+      );
+      framePixels = prevFrameData.data.slice();
       loadGIFFrameIntoImage(j, gifReader);
       const imageData = new ImageData(framePixels, pImg.width, pImg.height);
       pImg.drawingContext.putImageData(imageData, 0, 0);
@@ -202,6 +209,40 @@ function _createGif(
         image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
         delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
       });
+
+      // Some GIFs are encoded so that they expect the previous frame
+      // to be under the current frame. This can occur at a sub-frame level
+      //
+      // Values :    0 -   No disposal specified. The decoder is
+      //                   not required to take any action.
+      //             1 -   Do not dispose. The graphic is to be left
+      //                   in place.
+      //             2 -   Restore to background color. The area used by the
+      //                   graphic must be restored to the background color.
+      //             3 -   Restore to previous. The decoder is required to
+      //                   restore the area overwritten by the graphic with
+      //                   what was there prior to rendering the graphic.
+      //          4-7 -    To be defined.
+      if (frameInfo.disposal === 2) {
+        // Restore background color
+        pImg.drawingContext.clearRect(
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      } else if (frameInfo.disposal === 3) {
+        // Restore previous
+        pImg.drawingContext.putImageData(
+          prevFrameData,
+          0,
+          0,
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      }
     }
 
     //Uses Netscape block encoding

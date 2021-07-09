@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Material
  * @for p5
  * @requires core
@@ -255,14 +255,14 @@ p5.prototype.shader = function(s) {
     s._renderer = this._renderer;
   }
 
+  s.init();
+
   if (s.isStrokeShader()) {
     this._renderer.userStrokeShader = s;
   } else {
     this._renderer.userFillShader = s;
     this._renderer._useNormalMaterial = false;
   }
-
-  s.init();
 
   return this;
 };
@@ -277,44 +277,6 @@ p5.prototype.shader = function(s) {
  */
 p5.prototype.resetShader = function() {
   this._renderer.userFillShader = this._renderer.userStrokeShader = null;
-  return this;
-};
-
-/**
- * Normal material for geometry is a material that is not affected by light.
- * It is not reflective and is a placeholder material often used for debugging.
- * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
- * You can view all possible materials in this
- * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
- * @method normalMaterial
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(200);
- *   normalMaterial();
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * Red, green and blue gradient.
- */
-p5.prototype.normalMaterial = function(...args) {
-  this._assert3d('normalMaterial');
-  p5._validateParameters('normalMaterial', args);
-  this._renderer.drawMode = constants.FILL;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
-  this._renderer._useNormalMaterial = true;
-  this._renderer.curFillColor = [1, 1, 1, 1];
-  this._renderer._setProperty('_doFill', true);
-  this.noStroke();
   return this;
 };
 
@@ -344,7 +306,7 @@ p5.prototype.normalMaterial = function(...args) {
  *   rotateY(frameCount * 0.01);
  *   //pass image as texture
  *   texture(img);
- *   box(200, 200, 200);
+ *   box(width / 2);
  * }
  * </code>
  * </div>
@@ -569,6 +531,44 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 };
 
 /**
+ * Normal material for geometry is a material that is not affected by light.
+ * It is not reflective and is a placeholder material often used for debugging.
+ * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
+ * You can view all possible materials in this
+ * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ * @method normalMaterial
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   normalMaterial();
+ *   sphere(40);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Red, green and blue gradient.
+ */
+p5.prototype.normalMaterial = function(...args) {
+  this._assert3d('normalMaterial');
+  p5._validateParameters('normalMaterial', args);
+  this._renderer.drawMode = constants.FILL;
+  this._renderer._useSpecularMaterial = false;
+  this._renderer._useEmissiveMaterial = false;
+  this._renderer._useNormalMaterial = true;
+  this._renderer.curFillColor = [1, 1, 1, 1];
+  this._renderer._setProperty('_doFill', true);
+  this.noStroke();
+  return this;
+};
+
+/**
  * Ambient material for geometry with a given color. Ambient material defines the color the object reflects under any lighting.
  * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
  * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
@@ -712,6 +712,33 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * @param  {Number} [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular material
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *
+ *   specularMaterial(250);
+ *   shininess(50);
+ *   torus(30, 10, 64, 64);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * torus with specular material
  */
 
 /**
@@ -724,24 +751,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   ambientLight(50);
- *   pointLight(250, 250, 250, 100, 100, 30);
- *   specularMaterial(250);
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * diffused radiating light source from top right of canvas
  */
 
 /**
