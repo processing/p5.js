@@ -1406,15 +1406,28 @@ suite('p5.Vector', function() {
   });
 
   suite('array', function() {
-    test('should return an array', function() {
-      expect(v.array()).to.be.instanceof(Array);
+    setup(function() {
+      v = new p5.Vector(1, 23, 4);
     });
 
-    test('should return an with the x y and z components', function() {
-      v.x = 1;
-      v.y = 23;
-      v.z = 4;
-      expect(v.array()).to.eql([1, 23, 4]);
+    suite('p5.Vector.prototype.array() [INSTANCE]', function() {
+      test('should return an array', function() {
+        expect(v.array()).to.be.instanceof(Array);
+      });
+
+      test('should return an with the x y and z components', function() {
+        expect(v.array()).to.eql([1, 23, 4]);
+      });
+    });
+
+    suite('p5.Vector.array() [CLASS]', function() {
+      test('should return an array', function() {
+        expect(p5.Vector.array(v)).to.be.instanceof(Array);
+      });
+
+      test('should return an with the x y and z components', function() {
+        expect(p5.Vector.array(v)).to.eql([1, 23, 4]);
+      });
     });
   });
 

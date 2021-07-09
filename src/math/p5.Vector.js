@@ -1777,7 +1777,7 @@ p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
  * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
- * method to copy into your own array.
+ * method to copy into your own vector.
  *
  * @method array
  * @return {Number[]} an Array with the 3 values
@@ -2499,6 +2499,22 @@ p5.Vector.reflect = function reflect(incidentVector, surfaceNormal, target) {
     target.set(incidentVector);
   }
   return target.reflect(surfaceNormal);
+};
+
+/**
+ * Return a representation of this vector as a float array. This is only
+ * for temporary use. If used in any other fashion, the contents should be
+ * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
+ * method to copy into your own vector.
+ */
+/**
+ * @method array
+ * @static
+ * @param  {p5.Vector} v the vector to convert to an array
+ * @return {Number[]} an Array with the 3 values
+ */
+p5.Vector.array = function array(v) {
+  return v.array();
 };
 
 export default p5.Vector;
