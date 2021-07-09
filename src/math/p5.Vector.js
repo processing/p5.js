@@ -2474,4 +2474,31 @@ p5.Vector.angleBetween = function angleBetween(v1, v2) {
   return v1.angleBetween(v2);
 };
 
+/**
+ * Reflect a vector about a normal to a line in 2D, or about a normal to a
+ * plane in 3D.
+ */
+/**
+ * @method reflect
+ * @static
+ * @param  {p5.Vector} incidentVector vector to be reflected
+ * @param  {p5.Vector} surfaceNormal
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector} the reflected vector
+ */
+p5.Vector.reflect = function reflect(incidentVector, surfaceNormal, target) {
+  if (arguments.length < 3) {
+    target = incidentVector.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.reflect'
+      );
+    }
+    target.set(incidentVector);
+  }
+  return target.reflect(surfaceNormal);
+};
+
 export default p5.Vector;
