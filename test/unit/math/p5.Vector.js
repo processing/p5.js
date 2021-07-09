@@ -1647,4 +1647,64 @@ suite('p5.Vector', function() {
       });
     });
   });
+
+  suite('equals', function() {
+    suite('p5.Vector.prototype.equals() [INSTANCE]', function() {
+      test('should return false for parameters inequal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(1, 2, 3);
+        const a2 = [1, 2, 3];
+        expect(v1.equals(v2)).to.be.false;
+        expect(v1.equals(a2)).to.be.false;
+        expect(v1.equals(1, 2, 3)).to.be.false;
+      });
+
+      test('should return true for equal vectors', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(0, -1, 1);
+        expect(v1.equals(v2)).to.be.true;
+      });
+
+      test('should return true for arrays equal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const a1 = [0, -1, 1];
+        expect(v1.equals(a1)).to.be.true;
+      });
+
+      test('should return true for arguments equal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        expect(v1.equals(0, -1, 1)).to.be.true;
+      });
+    });
+
+    suite('p5.Vector.equals() [CLASS]', function() {
+      test('should return false for inequal parameters', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(1, 2, 3);
+        const a2 = [1, 2, 3];
+        expect(p5.Vector.equals(v1, v2)).to.be.false;
+        expect(p5.Vector.equals(v1, a2)).to.be.false;
+        expect(p5.Vector.equals(a2, v1)).to.be.false;
+      });
+
+      test('should return true for equal vectors', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(0, -1, 1);
+        expect(p5.Vector.equals(v1, v2)).to.be.true;
+      });
+
+      test('should return true for equal vectors and arrays', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const a1 = [0, -1, 1];
+        expect(p5.Vector.equals(v1, a1)).to.be.true;
+        expect(p5.Vector.equals(a1, v1)).to.be.true;
+      });
+
+      test('should return true for equal arrays', function() {
+        const a1 = [0, -1, 1];
+        const a2 = [0, -1, 1];
+        expect(p5.Vector.equals(a1, a2)).to.be.true;
+      });
+    });
+  });
 });

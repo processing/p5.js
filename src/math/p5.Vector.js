@@ -2517,4 +2517,29 @@ p5.Vector.array = function array(v) {
   return v.array();
 };
 
+/**
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+ */
+/**
+ * @method equals
+ * @static
+ * @param {p5.Vector|Array} v1 the first vector to compare
+ * @param {p5.Vector|Array} v2 the second vector to compare
+ * @return {Boolean}
+ */
+p5.Vector.equals = function equals(v1, v2) {
+  let v;
+  if (v1 instanceof p5.Vector) {
+    v = v1;
+  } else if (v1 instanceof Array) {
+    v = new p5.Vector().set(v1);
+  } else {
+    p5._friendlyError(
+      'The v1 parameter should be of type Array or p5.Vector',
+      'p5.Vector.equals'
+    );
+  }
+  return v.equals(v2);
+};
+
 export default p5.Vector;
