@@ -5,7 +5,23 @@
  */
 
 import p5 from '../main';
-// import * as constants from '../constants';
+import * as constants from '../constants';
+import { translator } from '../internationalization';
+
+const _checkForConsts = variables => {
+  for (let i = 0; i < variables.length; i++) {
+    if (constants[variables[i]] !== undefined) {
+      let url = `https://p5js.org/reference/#/p5/${variables[i]}`;
+      p5._friendlyError(
+        translator('fes.sketchReaderErrors.reservedConst', {
+          url: url,
+          symbol: variables[i]
+        })
+      );
+      break;
+    }
+  }
+};
 
 const _extractVariables = arr => {
   console.log(
@@ -41,7 +57,7 @@ const _extractVariables = arr => {
       }
     }
   });
-  console.log(matches);
+  _checkForConsts(matches);
   //now we have to check if the obtained variables are a part of p5.js or not
 };
 
