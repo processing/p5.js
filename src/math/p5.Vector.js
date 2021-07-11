@@ -2364,4 +2364,23 @@ p5.Vector.normalize = function normalize(v, target) {
   return target.normalize();
 };
 
+/**
+ * Returns a string representation of a vector v. This method is useful for
+ * logging vectors in the console.
+ * Note that the static method p5.Vector.toString() overrides the existing
+ * inherited method Function.prototype.toString().
+ */
+/**
+ * @method toString
+ * @static
+ * @param  {p5.Vector}    v the vector to stringify
+ * @return {String}       the string representation
+ */
+p5.Vector.toString = function toString(v) {
+  // NOTE: Returning `v.toString()` directly here will cause test cases such as
+  //       `assert.instanceOf(v, p5.Vector)` that check if something is an instance
+  //       of a p5.Vector to fail. Using `String(v)` as a workaround.
+  return String(v);
+};
+
 export default p5.Vector;
