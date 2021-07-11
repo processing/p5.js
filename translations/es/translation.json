@@ -22,17 +22,24 @@
     },
     "globalErrors": {
       "reference": {
+        "cannotAccess": "",
         "notDefined": ""
       },
       "stackSubseq": "",
       "stackTop": "",
       "syntax": {
+        "badReturnOrYield": "",
         "invalidToken": "",
+        "missingInitializer": "",
+        "redeclaredVariable": "",
         "unexpectedToken": ""
       },
       "type": {
+        "constAssign": "",
         "notfunc": "",
-        "notfuncObj": ""
+        "notfuncObj": "",
+        "readFromNull": "",
+        "readFromUndefined": ""
       }
     },
     "libraryError": "",

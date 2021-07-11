@@ -712,6 +712,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // for syntax errors
         switch (matchedError.type) {
           case 'INVALIDTOKEN': {
+            //Error if there is an invalid or unexpected token that doesn't belong at this position in the code
+            //let x = “not a string”; -> string not in proper quotes
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
             p5._friendlyError(
@@ -722,10 +724,54 @@ if (typeof IS_MINIFIED !== 'undefined') {
             break;
           }
           case 'UNEXPECTEDTOKEN': {
+            //Error if a specific language construct(, { ; etc) was expected, but something else was provided
+            //for (let i = 0; i < 5,; ++i) -> a comma after i<5 instead of a semicolon
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
             p5._friendlyError(
               translator('fes.globalErrors.syntax.unexpectedToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'REDECLAREDVARIABLE': {
+            //Error if a variable is redeclared by the user. Example=>
+            //let a = 10;
+            //let a = 100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.redeclaredVariable', {
+                symbol: errSym,
+                url
+              })
+            );
+            break;
+          }
+          case 'MISSINGINITIALIZER': {
+            //Error if a const variable is not initialized during declaration
+            //Example => const a;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.missingInitializer', {
+                url
+              })
+            );
+            break;
+          }
+          case 'BADRETURNORYIELD': {
+            //Error when a return statement is misplaced(usually outside of a function)
+            // const a = function(){
+            //  .....
+            //  }
+            //  return; -> misplaced return statement
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.badReturnOrYield', {
                 url
               })
             );
@@ -737,6 +783,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'ReferenceError': {
         switch (matchedError.type) {
           case 'NOTDEFINED': {
+            //Error if there is a non-existent variable referenced somewhere
+            //let a = 10;
+            //console.log(x);
             let errSym = matchedError.match[1];
 
             if (errSym && handleMisspelling(errSym, error)) {
@@ -762,6 +811,26 @@ if (typeof IS_MINIFIED !== 'undefined') {
             if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
           }
+          case 'CANNOTACCESS': {
+            //Error if a lexical variable was accessed before it was initialized
+            //console.log(a); -> variable accessed before it was initialized
+            //let a=100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.cannotAccess', {
+                url,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
         }
         break;
       }
@@ -769,6 +838,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'TypeError': {
         switch (matchedError.type) {
           case 'NOTFUNC': {
+            //Error when some code expects you to provide a function, but that didn't happen
+            //let a = document.getElementByID('foo'); -> getElementById instead of getElementByID
             let errSym = matchedError.match[1];
             let splitSym = errSym.split('.');
             let url =
@@ -796,6 +867,70 @@ if (typeof IS_MINIFIED !== 'undefined') {
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READNULL': {
+            //Error if a property of null is accessed
+            //let a = null;
+            //console.log(a.property); -> a is null
+            let errSym = matchedError.match[1];
+            let url1 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromNull', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READUDEFINED': {
+            //Error if a property of undefined is accessed
+            //let a; -> default value of a is undefined
+            //console.log(a.property); -> a is undefined
+            let errSym = matchedError.match[1];
+            let url1 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromUndefined', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CONSTASSIGN': {
+            //Error when a const variable is reassigned a value
+            //const a = 100;
+            //a=10;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.constAssign', {
+                url,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
