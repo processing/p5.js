@@ -1384,7 +1384,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector(only 2D vectors).
+ * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
  * will take the current <a href="#/p5/angleMode">angleMode</a> into
  * consideration, and give the angle in radians or degree accordingly.
@@ -1555,8 +1555,8 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * give the angle in radians or degree accordingly.
  *
  * @method angleBetween
- * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}       the angle between (in radians)
+ * @param  {p5.Vector}    v the <a href="#/p5.Vector">p5.Vector</a> to compare the angle of
+ * @return {Number}       the angle between
  * @example
  * <div class="norender">
  * <code>
@@ -1629,6 +1629,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   }
   return angle;
 };
+
 /**
  * Linear interpolate the vector to another vector
  *
@@ -1719,11 +1720,12 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
- * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
- * This method acts on the vector directly
+ * Reflect a vector about a normal to a line in 2D, or about a normal to a
+ * plane in 3D.
  *
  * @method reflect
- * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @param  {p5.Vector} surfaceNormal  the <a href="#/p5.Vector">p5.Vector</a>
+ *                                    to reflect about
  * @chainable
  * @example
  * <div class="norender">
@@ -1776,8 +1778,8 @@ p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
 /**
  * Return a representation of this vector as a float array. This is only
  * for temporary use. If used in any other fashion, the contents should be
- * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b> method to copy into your own
- * array.
+ * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
+ * method to copy into your own vector.
  *
  * @method array
  * @return {Number[]} an Array with the 3 values
@@ -2038,6 +2040,18 @@ p5.Vector.random3D = function random3D() {
   const vx = vzBase * Math.cos(angle);
   const vy = vzBase * Math.sin(angle);
   return new p5.Vector(vx, vy, vz);
+};
+
+// Returns a copy of a vector.
+/**
+ * @method copy
+ * @static
+ * @param  {p5.Vector} v the <a href="#/p5.Vector">p5.Vector</a> to create a copy of
+ * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
+ */
+
+p5.Vector.copy = function copy(v) {
+  return v.copy(v);
 };
 
 // Adds two vectors together and returns a new one.
@@ -2332,11 +2346,23 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
  * @return {Number}        the magnitude of vecT
  */
 p5.Vector.mag = function mag(vecT) {
-  const x = vecT.x,
-    y = vecT.y,
-    z = vecT.z;
-  const magSq = x * x + y * y + z * z;
-  return Math.sqrt(magSq);
+  return vecT.mag();
+};
+
+/**
+ * Calculates the squared magnitude of the vector and returns the result
+ * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
+ * Faster if the real length is not required in the
+ * case of comparing vectors, etc.
+ */
+/**
+ * @method magSq
+ * @static
+ * @param {p5.Vector} vecT the vector to return the squared magnitude of
+ * @return {Number}        the squared magnitude of vecT
+ */
+p5.Vector.magSq = function magSq(vecT) {
+  return vecT.magSq();
 };
 
 /**
@@ -2362,6 +2388,160 @@ p5.Vector.normalize = function normalize(v, target) {
     target.set(v);
   }
   return target.normalize();
+};
+
+/**
+ * Limit the magnitude of the vector to the value used for the <b>max</b>
+ * parameter.
+ */
+/**
+ * @method limit
+ * @static
+ * @param {p5.Vector} v  the vector to limit
+ * @param {Number}    max
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector} v with a magnitude limited to max
+ */
+p5.Vector.limit = function limit(v, max, target) {
+  if (arguments.length < 3) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.limit'
+      );
+    }
+    target.set(v);
+  }
+  return target.limit(max);
+};
+
+/**
+ * Set the magnitude of the vector to the value used for the <b>len</b>
+ * parameter.
+ */
+/**
+ * @method setMag
+ * @static
+ * @param {p5.Vector} v  the vector to set the magnitude of
+ * @param {number}    len
+ * @param {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector} v with a magnitude set to len
+ */
+p5.Vector.setMag = function setMag(v, len, target) {
+  if (arguments.length < 3) {
+    target = v.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.setMag'
+      );
+    }
+    target.set(v);
+  }
+  return target.setMag(len);
+};
+
+/**
+ * Calculate the angle of rotation for this vector (only 2D vectors).
+ * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
+ * will take the current <a href="#/p5/angleMode">angleMode</a> into
+ * consideration, and give the angle in radians or degree accordingly.
+ */
+/**
+ * @method heading
+ * @static
+ * @param {p5.Vector} v the vector to find the angle of
+ * @return {Number} the angle of rotation
+ */
+p5.Vector.heading = function heading(v) {
+  return v.heading();
+};
+
+/**
+ * Calculates and returns the angle between two vectors. This function will take
+ * the <a href="#/p5/angleMode">angleMode</a> on v1 into consideration, and
+ * give the angle in radians or degree accordingly.
+ */
+/**
+ * @method angleBetween
+ * @static
+ * @param  {p5.Vector}    v1 the first vector
+ * @param  {p5.Vector}    v2 the second vector
+ * @return {Number}       the angle between the two vectors
+ */
+p5.Vector.angleBetween = function angleBetween(v1, v2) {
+  return v1.angleBetween(v2);
+};
+
+/**
+ * Reflect a vector about a normal to a line in 2D, or about a normal to a
+ * plane in 3D.
+ */
+/**
+ * @method reflect
+ * @static
+ * @param  {p5.Vector} incidentVector vector to be reflected
+ * @param  {p5.Vector} surfaceNormal
+ * @param  {p5.Vector} [target] the vector to receive the result (Optional)
+ * @return {p5.Vector} the reflected vector
+ */
+p5.Vector.reflect = function reflect(incidentVector, surfaceNormal, target) {
+  if (arguments.length < 3) {
+    target = incidentVector.copy();
+  } else {
+    if (!(target instanceof p5.Vector)) {
+      p5._friendlyError(
+        'The target parameter should be of type p5.Vector',
+        'p5.Vector.reflect'
+      );
+    }
+    target.set(incidentVector);
+  }
+  return target.reflect(surfaceNormal);
+};
+
+/**
+ * Return a representation of this vector as a float array. This is only
+ * for temporary use. If used in any other fashion, the contents should be
+ * copied by using the <b>p5.Vector.<a href="#/p5.Vector/copy">copy()</a></b>
+ * method to copy into your own vector.
+ */
+/**
+ * @method array
+ * @static
+ * @param  {p5.Vector} v the vector to convert to an array
+ * @return {Number[]} an Array with the 3 values
+ */
+p5.Vector.array = function array(v) {
+  return v.array();
+};
+
+/**
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+ */
+/**
+ * @method equals
+ * @static
+ * @param {p5.Vector|Array} v1 the first vector to compare
+ * @param {p5.Vector|Array} v2 the second vector to compare
+ * @return {Boolean}
+ */
+p5.Vector.equals = function equals(v1, v2) {
+  let v;
+  if (v1 instanceof p5.Vector) {
+    v = v1;
+  } else if (v1 instanceof Array) {
+    v = new p5.Vector().set(v1);
+  } else {
+    p5._friendlyError(
+      'The v1 parameter should be of type Array or p5.Vector',
+      'p5.Vector.equals'
+    );
+  }
+  return v.equals(v2);
 };
 
 export default p5.Vector;

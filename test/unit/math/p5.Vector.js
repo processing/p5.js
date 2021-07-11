@@ -3,6 +3,7 @@ suite('p5.Vector', function() {
   var DEGREES = 'degrees';
 
   var myp5;
+  var v;
 
   setup(function(done) {
     new p5(function(p) {
@@ -16,7 +17,6 @@ suite('p5.Vector', function() {
   teardown(function() {
     myp5.remove();
   });
-  var v;
 
   suite('setHeading', function() {
     setup(function() {
@@ -27,6 +27,7 @@ suite('p5.Vector', function() {
       assert.closeTo(v.heading(), 1, 0.001);
     });
   });
+
   suite('p5.prototype.createVector()', function() {
     setup(function() {
       v = myp5.createVector();
@@ -42,7 +43,7 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.createVector()', function() {
+  suite('p5.prototype.createVector(1, 2, 3)', function() {
     setup(function() {
       v = myp5.createVector(1, 2, 3);
     });
@@ -93,66 +94,198 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('p5.prototype.rotate() RADIANS', function() {
-    setup(function() {
-      myp5.angleMode(RADIANS);
-      v = myp5.createVector(0, 1);
+  suite('rotate', function() {
+    suite('p5.Vector.prototype.rotate() [INSTANCE]', function() {
+      test('should return the same object', function() {
+        v = myp5.createVector(0, 1);
+        expect(v.rotate(Math.PI)).to.eql(v);
+      });
+
+      suite('radians', function() {
+        setup(function() {
+          myp5.angleMode(RADIANS);
+        });
+
+        test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
+          v = myp5.createVector(0, 1, 0);
+          v.rotate(Math.PI);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(-Math.PI / 2);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by pi radians to [-1, 0, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(Math.PI);
+          expect(v.x).to.be.closeTo(-1, 0.01);
+          expect(v.y).to.be.closeTo(0, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+      });
+
+      suite('degrees', function() {
+        setup(function() {
+          myp5.angleMode(DEGREES);
+        });
+
+        test('should rotate the vector [0, 1, 0] by 180 degrees to [0, -1, 0]', function() {
+          v = myp5.createVector(0, 1, 0);
+          v.rotate(180);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+
+        test('should rotate the vector [1, 0, 0] by -90 degrees to [0, -1, 0]', function() {
+          v = myp5.createVector(1, 0, 0);
+          v.rotate(-90);
+          expect(v.x).to.be.closeTo(0, 0.01);
+          expect(v.y).to.be.closeTo(-1, 0.01);
+          expect(v.z).to.be.closeTo(0, 0.01);
+        });
+      });
     });
 
-    test('should have x, y, z rotated to 0, -1, 0 (RADIANS)', function() {
-      v.rotate(Math.PI);
-      assert.closeTo(v.x, 0, 0.001);
-      assert.closeTo(v.y, -1, 0.001);
-      assert.closeTo(v.z, 0, 0.001);
+    suite('p5.Vector.rotate() [CLASS]', function() {
+      setup(function() {
+        myp5.angleMode(RADIANS);
+      });
+
+      test('should not change the original object', function() {
+        v = myp5.createVector(1, 0, 0);
+        p5.Vector.rotate(v, Math.PI / 2);
+        expect(v.x).to.equal(1);
+        expect(v.y).to.equal(0);
+        expect(v.z).to.equal(0);
+      });
+
+      test('should rotate the vector [0, 1, 0] by pi radians to [0, -1, 0]', function() {
+        v = myp5.createVector(0, 1, 0);
+        const v1 = p5.Vector.rotate(v, Math.PI);
+        expect(v1.x).to.be.closeTo(0, 0.01);
+        expect(v1.y).to.be.closeTo(-1, 0.01);
+        expect(v1.z).to.be.closeTo(0, 0.01);
+      });
+
+      test('should rotate the vector [1, 0, 0] by -pi/2 radians to [0, -1, 0]', function() {
+        v = myp5.createVector(1, 0, 0);
+        const v1 = p5.Vector.rotate(v, -Math.PI / 2);
+        expect(v1.x).to.be.closeTo(0, 0.01);
+        expect(v1.y).to.be.closeTo(-1, 0.01);
+        expect(v1.z).to.be.closeTo(0, 0.01);
+      });
     });
   });
 
-  suite('p5.prototype.rotate() DEGREES', function() {
+  suite('angleBetween', function() {
+    let v1, v2;
     setup(function() {
-      myp5.angleMode(DEGREES);
-      v = myp5.createVector(0, 1);
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(2, 2, 0);
     });
 
-    test('should have x, y, z rotated to 0, -1, 0 (DEGREES)', function() {
-      v.rotate(180);
-      assert.closeTo(v.x, 0, 0.001);
-      assert.closeTo(v.y, -1, 0.001);
-      assert.closeTo(v.z, 0, 0.001);
+    suite('p5.Vector.prototype.angleBetween() [INSTANCE]', function() {
+      test('should return a Number', function() {
+        const res = v1.angleBetween(v2);
+        expect(typeof res).to.eql('number');
+      });
+
+      test('should not trip on rounding issues in 2D space', function() {
+        v1 = new p5.Vector(-11, -20);
+        v2 = new p5.Vector(-5.5, -10);
+        const v3 = new p5.Vector(5.5, 10);
+
+        expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+        expect(v1.angleBetween(v3)).to.be.closeTo(Math.PI, 0.00001);
+      });
+
+      test('should not trip on rounding issues in 3D space', function() {
+        v1 = new p5.Vector(1, 1.1, 1.2);
+        v2 = new p5.Vector(2, 2.2, 2.4);
+        expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+      });
+
+      test('should return NaN for zero vector', function() {
+        v1 = new p5.Vector(0, 0, 0);
+        v2 = new p5.Vector(2, 3, 4);
+        expect(v1.angleBetween(v2)).to.be.NaN;
+        expect(v2.angleBetween(v1)).to.be.NaN;
+      });
+
+      test('between [1,0,0] and [1,0,0] should be 0 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(1, 0, 0);
+        v2 = myp5.createVector(1, 0, 0);
+        expect(v1.angleBetween(v2)).to.equal(0);
+      });
+
+      test('between [0,3,0] and [0,-3,0] should be 180 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(0, 3, 0);
+        v2 = myp5.createVector(0, -3, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
+      });
+
+      test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function() {
+        v1 = new p5.Vector(1, 0, 0);
+        v2 = new p5.Vector(2, 2, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI / 4, 0.01);
+        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
+      });
+
+      test('between [2,0,0] and [-2,0,0] should be PI radians', function() {
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, 0, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.01);
+      });
+
+      test('between [2,0,0] and [-2,-2,0] should be -3/4 PI radians  ', function() {
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, -2, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          -1 * (Math.PI / 2 + Math.PI / 4),
+          0.01
+        );
+      });
+
+      test('between [-2,-2,0] and [2,0,0] should be 3/4 PI radians', function() {
+        v1 = new p5.Vector(-2, -2, 0);
+        v2 = new p5.Vector(2, 0, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(
+          Math.PI / 2 + Math.PI / 4,
+          0.01
+        );
+      });
     });
-  });
 
-  suite('p5.prototype.angleBetween()', function() {
-    setup(function() {
-      myp5.angleMode(DEGREES);
-    });
+    suite('p5.Vector.angleBetween() [CLASS]', function() {
+      test('should return NaN for zero vector', function() {
+        v1 = new p5.Vector(0, 0, 0);
+        v2 = new p5.Vector(2, 3, 4);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.NaN;
+        expect(p5.Vector.angleBetween(v2, v1)).to.be.NaN;
+      });
 
-    test('should not trip on rounding issues in 2D space', function() {
-      var v1 = myp5.createVector(-11, -20);
-      var v2 = myp5.createVector(-5.5, -10);
-      var res = v1.angleBetween(v2);
-      //expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(0, 0.00001);
-      expect(res).to.be.closeTo(0, 0.00001);
+      test('between [1,0,0] and [0,-1,0] should be -90 degrees', function() {
+        myp5.angleMode(DEGREES);
+        v1 = myp5.createVector(1, 0, 0);
+        v2 = myp5.createVector(0, -1, 0);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
+      });
 
-      var v3 = myp5.createVector(-11, -20);
-      var v4 = myp5.createVector(5.5, 10);
-      expect(Math.abs(v3.angleBetween(v4))).to.be.closeTo(180, 0.00001);
-      expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
-    });
-
-    test('should not trip on rounding issues in 3D space', function() {
-      var v1 = myp5.createVector(1, 1.1, 1.2);
-      var v2 = myp5.createVector(2, 2.2, 2.4);
-
-      var angle = Math.abs(v1.angleBetween(v2));
-      expect(angle).to.be.closeTo(0, 0.00001);
-    });
-
-    test('should return NaN for zero vector', function() {
-      var v1 = myp5.createVector(0, 0, 0);
-      var v2 = myp5.createVector(2, 3, 4);
-
-      expect(Math.abs(v1.angleBetween(v2))).to.be.NaN; // jshint ignore:line
-      expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
+      test('between [0,3,0] and [0,-3,0] should be PI radians', function() {
+        v1 = new p5.Vector(0, 3, 0);
+        v2 = new p5.Vector(0, -3, 0);
+        expect(p5.Vector.angleBetween(v1, v2)).to.be.closeTo(Math.PI, 0.01);
+      });
     });
   });
 
@@ -192,24 +325,37 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('copy()', function() {
+  suite('copy', function() {
     setup(function() {
-      v = new p5.Vector(1, 2, 3);
+      v = new p5.Vector(2, 3, 4);
     });
 
-    test('should not return the same instance', function() {
-      var newObject = v.copy();
-      expect(newObject).to.not.equal(v);
+    suite('p5.Vector.prototype.copy() [INSTANCE]', function() {
+      test('should not return the same instance', function() {
+        var newObject = v.copy();
+        expect(newObject).to.not.equal(v);
+      });
+
+      test("should return the calling object's x, y, z", function() {
+        var newObject = v.copy();
+        expect(newObject.x).to.eql(2);
+        expect(newObject.y).to.eql(3);
+        expect(newObject.z).to.eql(4);
+      });
     });
 
-    test("should return the calling object's x, y, z", function() {
-      v.x = 2;
-      v.y = 3;
-      v.z = 4;
-      var newObject = v.copy();
-      expect(newObject.x).to.eql(2);
-      expect(newObject.y).to.eql(3);
-      expect(newObject.z).to.eql(4);
+    suite('p5.Vector.copy() [CLASS]', function() {
+      test('should not return the same instance', function() {
+        var newObject = p5.Vector.copy(v);
+        expect(newObject).to.not.equal(v);
+      });
+
+      test("should return the passed object's x, y, z", function() {
+        var newObject = p5.Vector.copy(v);
+        expect(newObject.x).to.eql(2);
+        expect(newObject.y).to.eql(3);
+        expect(newObject.z).to.eql(4);
+      });
     });
   });
 
@@ -868,7 +1014,7 @@ suite('p5.Vector', function() {
   });
 
   suite('normalize', function() {
-    suite('v.normalize()', function() {
+    suite('p5.Vector.prototype.normalize() [INSTANCE]', function() {
       setup(function() {
         v = myp5.createVector(1, 1, 1);
       });
@@ -898,7 +1044,7 @@ suite('p5.Vector', function() {
       });
     });
 
-    suite('p5.Vector.normalize(v)', function() {
+    suite('p5.Vector.normalize(v) [CLASS]', function() {
       var res;
       setup(function() {
         v = myp5.createVector(1, 0, 0);
@@ -932,116 +1078,220 @@ suite('p5.Vector', function() {
   });
 
   suite('limit', function() {
+    let v;
+
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(5, 5, 5);
     });
 
-    test('should return the same object', function() {
-      expect(v.limit()).to.eql(v);
-    });
+    suite('p5.Vector.prototype.limit() [INSTANCE]', function() {
+      test('should return the same object', function() {
+        expect(v.limit()).to.equal(v);
+      });
 
-    suite('with a vector larger than the limit', function() {
-      test('should limit the vector', function() {
-        v.x = 5;
-        v.y = 5;
-        v.z = 5;
-        v.limit(1);
-        expect(v.x).to.be.closeTo(0.5773, 0.01);
-        expect(v.y).to.be.closeTo(0.5773, 0.01);
-        expect(v.z).to.be.closeTo(0.5773, 0.01);
+      suite('with a vector larger than the limit', function() {
+        test('should limit the vector', function() {
+          v.limit(1);
+          expect(v.x).to.be.closeTo(0.5773, 0.01);
+          expect(v.y).to.be.closeTo(0.5773, 0.01);
+          expect(v.z).to.be.closeTo(0.5773, 0.01);
+        });
+      });
+
+      suite('with a vector smaller than the limit', function() {
+        test('should not limit the vector', function() {
+          v.limit(8.67);
+          expect(v.x).to.eql(5);
+          expect(v.y).to.eql(5);
+          expect(v.z).to.eql(5);
+        });
       });
     });
 
-    suite('with a vector smaller than the limit', function() {
-      test('should not limit the vector', function() {
-        v.x = 5;
-        v.y = 5;
-        v.z = 5;
-        v.limit(8.67);
-        expect(v.x).to.eql(5);
-        expect(v.y).to.eql(5);
-        expect(v.z).to.eql(5);
+    suite('p5.Vector.limit() [CLASS]', function() {
+      test('should not return the same object', function() {
+        expect(p5.Vector.limit(v)).to.not.equal(v);
+      });
+
+      suite('with a vector larger than the limit', function() {
+        test('should limit the vector', function() {
+          const res = p5.Vector.limit(v, 1);
+          expect(res.x).to.be.closeTo(0.5773, 0.01);
+          expect(res.y).to.be.closeTo(0.5773, 0.01);
+          expect(res.z).to.be.closeTo(0.5773, 0.01);
+        });
+      });
+
+      suite('with a vector smaller than the limit', function() {
+        test('should not limit the vector', function() {
+          const res = p5.Vector.limit(v, 8.67);
+          expect(res.x).to.eql(5);
+          expect(res.y).to.eql(5);
+          expect(res.z).to.eql(5);
+        });
+      });
+
+      suite('when given a target vector', function() {
+        test('should store limited vector in the target', function() {
+          const target = new p5.Vector(0, 0, 0);
+          p5.Vector.limit(v, 1, target);
+          expect(target.x).to.be.closeTo(0.5773, 0.01);
+          expect(target.y).to.be.closeTo(0.5773, 0.01);
+          expect(target.z).to.be.closeTo(0.5773, 0.01);
+        });
       });
     });
   });
 
   suite('setMag', function() {
+    let v;
+
     setup(function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
+      v = new p5.Vector(1, 0, 0);
     });
 
-    test('should return the same object', function() {
-      expect(v.setMag(2)).to.eql(v);
+    suite('p5.Vector.setMag() [INSTANCE]', function() {
+      test('should return the same object', function() {
+        expect(v.setMag(2)).to.equal(v);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.setMag(4);
+        expect(v.x).to.eql(4);
+        expect(v.y).to.eql(0);
+        expect(v.z).to.eql(0);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.x = 2;
+        v.y = 3;
+        v.z = -6;
+        v.setMag(14);
+        expect(v.x).to.eql(4);
+        expect(v.y).to.eql(6);
+        expect(v.z).to.eql(-12);
+      });
     });
 
-    test('should set the magnitude of the vector', function() {
-      v.setMag(4);
-      expect(v.mag()).to.eql(4);
-    });
+    suite('p5.Vector.prototype.setMag() [CLASS]', function() {
+      test('should not return the same object', function() {
+        expect(p5.Vector.setMag(v, 2)).to.not.equal(v);
+      });
 
-    test('should set the magnitude of the vector', function() {
-      v.x = 2;
-      v.y = 3;
-      v.z = 0;
-      v.setMag(2);
-      expect(v.mag()).to.eql(2);
-      expect(v.x).to.be.closeTo(1.1094, 0.01);
-      expect(v.y).to.be.closeTo(1.6641006, 0.01);
+      test('should set the magnitude of the vector', function() {
+        const res = p5.Vector.setMag(v, 4);
+        expect(res.x).to.eql(4);
+        expect(res.y).to.eql(0);
+        expect(res.z).to.eql(0);
+      });
+
+      test('should set the magnitude of the vector', function() {
+        v.x = 2;
+        v.y = 3;
+        v.z = -6;
+        const res = p5.Vector.setMag(v, 14);
+        expect(res.x).to.eql(4);
+        expect(res.y).to.eql(6);
+        expect(res.z).to.eql(-12);
+      });
+
+      suite('when given a target vector', function() {
+        test('should set the magnitude on the target', function() {
+          const target = new p5.Vector(0, 1, 0);
+          const res = p5.Vector.setMag(v, 4, target);
+          expect(target).to.equal(res);
+          expect(target.x).to.eql(4);
+          expect(target.y).to.eql(0);
+          expect(target.z).to.eql(0);
+        });
+      });
     });
   });
 
   suite('heading', function() {
-    test('should return a number', function() {
-      expect(typeof v.heading() === 'number').to.eql(true);
+    setup(function() {
+      v = myp5.createVector();
     });
 
-    test('heading for vector pointing right is 0', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(0, 0.01);
+    suite('p5.Vector.prototype.heading() [INSTANCE]', function() {
+      test('should return a number', function() {
+        expect(typeof v.heading() === 'number').to.eql(true);
+      });
+
+      test('heading for vector pointing right is 0', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(0, 0.01);
+      });
+
+      test('heading for vector pointing down is PI/2', function() {
+        v.x = 0;
+        v.y = 1;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(Math.PI / 2, 0.01);
+      });
+
+      test('heading for vector pointing left is PI', function() {
+        v.x = -1;
+        v.y = 0;
+        v.z = 0;
+        expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
+      });
+
+      suite('with `angleMode(DEGREES)`', function() {
+        setup(function() {
+          myp5.angleMode(DEGREES);
+        });
+
+        test('heading for vector pointing right is 0', function() {
+          v.x = 1;
+          v.y = 0;
+          v.z = 0;
+          expect(v.heading()).to.equal(0);
+        });
+
+        test('heading for vector pointing down is 90', function() {
+          v.x = 0;
+          v.y = 1;
+          v.z = 0;
+          expect(v.heading()).to.equal(90);
+        });
+
+        test('heading for vector pointing left is 180', function() {
+          v.x = -1;
+          v.y = 0;
+          v.z = 0;
+          expect(v.heading()).to.equal(180);
+        });
+      });
     });
 
-    test('heading for vector pointing down is PI/2', function() {
-      v.x = 0;
-      v.y = 1;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(Math.PI / 2, 0.01);
-    });
+    suite('p5.Vector.heading() [CLASS]', function() {
+      test('should return a number', function() {
+        expect(typeof p5.Vector.heading(v) === 'number').to.eql(true);
+      });
 
-    test('heading for vector pointing left is PI', function() {
-      v.x = -1;
-      v.y = 0;
-      v.z = 0;
-      expect(v.heading()).to.be.closeTo(Math.PI, 0.01);
-    });
-  });
+      test('heading for vector pointing right is 0', function() {
+        v.x = 1;
+        v.y = 0;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(0, 0.01);
+      });
 
-  suite('rotate', function() {
-    test('should return the same object', function() {
-      expect(v.rotate()).to.eql(v);
-    });
+      test('heading for vector pointing down is PI/2', function() {
+        v.x = 0;
+        v.y = 1;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI / 2, 0.01);
+      });
 
-    test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      v.rotate(Math.PI);
-      expect(v.x).to.be.closeTo(-1, 0.01);
-      expect(v.y).to.be.closeTo(0, 0.01);
-    });
-
-    test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      v.rotate(Math.PI / 2);
-      expect(v.x).to.be.closeTo(0, 0.01);
-      expect(v.y).to.be.closeTo(1, 0.01);
+      test('heading for vector pointing left is PI', function() {
+        v.x = -1;
+        v.y = 0;
+        v.z = 0;
+        expect(p5.Vector.heading(v)).to.be.closeTo(Math.PI, 0.01);
+      });
     });
   });
 
@@ -1155,137 +1405,306 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('v1.angleBetween(v2)', function() {
-    var res, v1, v2;
-    setup(function() {
-      v1 = new p5.Vector(1, 0, 0);
-      v2 = new p5.Vector(2, 2, 0);
-      res = v1.angleBetween(v2);
-    });
-
-    test('should be a Number', function() {
-      expect(typeof res).to.eql('number');
-    });
-
-    suite('with [1,0,0] and [2,2,0]', function() {
-      test('should be 45 deg difference', function() {
-        v1 = new p5.Vector(1, 0, 0);
-        v2 = new p5.Vector(2, 2, 0);
-        res = v1.angleBetween(v2);
-        expect(res).to.be.closeTo(Math.PI / 4, 0.01);
-        expect(v2.angleBetween(v1)).to.be.closeTo(-1 * Math.PI / 4, 0.01);
-      });
-    });
-
-    suite('with [2,0,0] and [-2,0,0]', function() {
-      test('should be 180 deg difference', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, 0, 0);
-        res = Math.abs(v1.angleBetween(v2));
-        expect(res).to.be.closeTo(Math.PI, 0.01);
-      });
-    });
-
-    suite('with [2,0,0] and [-2,-2,0]', function() {
-      test('should be 135 deg difference', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, -2, 0);
-        expect(v1.angleBetween(v2)).to.be.closeTo(
-          -1 * (Math.PI / 2 + Math.PI / 4),
-          0.01
-        );
-        expect(v2.angleBetween(v1)).to.be.closeTo(
-          Math.PI / 2 + Math.PI / 4,
-          0.01
-        );
-      });
-
-      test('should be commutative', function() {
-        v1 = new p5.Vector(2, 0, 0);
-        v2 = new p5.Vector(-2, -2, 0);
-        expect(Math.abs(v1.angleBetween(v2))).to.be.closeTo(
-          Math.abs(v2.angleBetween(v1)),
-          0.01
-        );
-      });
-    });
-  });
-
   suite('array', function() {
-    test('should return an array', function() {
-      expect(v.array()).to.be.instanceof(Array);
+    setup(function() {
+      v = new p5.Vector(1, 23, 4);
     });
 
-    test('should return an with the x y and z components', function() {
-      v.x = 1;
-      v.y = 23;
-      v.z = 4;
-      expect(v.array()).to.eql([1, 23, 4]);
+    suite('p5.Vector.prototype.array() [INSTANCE]', function() {
+      test('should return an array', function() {
+        expect(v.array()).to.be.instanceof(Array);
+      });
+
+      test('should return an with the x y and z components', function() {
+        expect(v.array()).to.eql([1, 23, 4]);
+      });
+    });
+
+    suite('p5.Vector.array() [CLASS]', function() {
+      test('should return an array', function() {
+        expect(p5.Vector.array(v)).to.be.instanceof(Array);
+      });
+
+      test('should return an with the x y and z components', function() {
+        expect(p5.Vector.array(v)).to.eql([1, 23, 4]);
+      });
     });
   });
 
   suite('reflect', function() {
+    suite('p5.Vector.prototype.reflect() [INSTANCE]', function() {
+      setup(function() {
+        incoming_x = 1;
+        incoming_y = 1;
+        incoming_z = 1;
+        original_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+
+        x_normal = new p5.Vector(3, 0, 0);
+        y_normal = new p5.Vector(0, 3, 0);
+        z_normal = new p5.Vector(0, 0, 3);
+
+        x_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
+
+        y_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
+
+        z_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
+      });
+
+      test('should return a p5.Vector', function() {
+        expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      });
+
+      test('should update this', function() {
+        assert.equal(x_bounce_incoming, x_bounce_outgoing);
+        assert.equal(y_bounce_incoming, y_bounce_outgoing);
+        assert.equal(z_bounce_incoming, z_bounce_outgoing);
+      });
+
+      test('x-normal should flip incoming x component and maintain y,z components', function() {
+        expect(x_bounce_outgoing.x).to.be.closeTo(-1, 0.01);
+        expect(x_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+        expect(x_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+      });
+      test('y-normal should flip incoming y component and maintain x,z components', function() {
+        expect(y_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+        expect(y_bounce_outgoing.y).to.be.closeTo(-1, 0.01);
+        expect(y_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+      });
+      test('z-normal should flip incoming z component and maintain x,y components', function() {
+        expect(z_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+        expect(z_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+        expect(z_bounce_outgoing.z).to.be.closeTo(-1, 0.01);
+      });
+
+      test('angle of incidence should match angle of reflection', function() {
+        expect(
+          Math.abs(x_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(x_normal.angleBetween(x_bounce_outgoing.mult(-1))),
+          0.01
+        );
+        expect(
+          Math.abs(y_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(y_normal.angleBetween(y_bounce_outgoing.mult(-1))),
+          0.01
+        );
+        expect(
+          Math.abs(z_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
+          0.01
+        );
+      });
+    });
+
+    suite('p5.Vector.reflect() [CLASS]', function() {
+      setup(function() {
+        incoming_x = 1;
+        incoming_y = 1;
+        incoming_z = 1;
+        original_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        x_target = new p5.Vector();
+        y_target = new p5.Vector();
+        z_target = new p5.Vector();
+
+        x_normal = new p5.Vector(3, 0, 0);
+        y_normal = new p5.Vector(0, 3, 0);
+        z_normal = new p5.Vector(0, 0, 3);
+
+        x_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        x_bounce_outgoing = p5.Vector.reflect(
+          x_bounce_incoming,
+          x_normal,
+          x_target
+        );
+
+        y_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        y_bounce_outgoing = p5.Vector.reflect(
+          y_bounce_incoming,
+          y_normal,
+          y_target
+        );
+
+        z_bounce_incoming = new p5.Vector(incoming_x, incoming_y, incoming_z);
+        z_bounce_outgoing = p5.Vector.reflect(
+          z_bounce_incoming,
+          z_normal,
+          z_target
+        );
+      });
+
+      test('should return a p5.Vector', function() {
+        expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
+        expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+      });
+
+      test('should not update this', function() {
+        expect(x_bounce_incoming).to.not.equal(x_bounce_outgoing);
+        expect(y_bounce_incoming).to.not.equal(y_bounce_outgoing);
+        expect(z_bounce_incoming).to.not.equal(z_bounce_outgoing);
+      });
+
+      test('should update target', function() {
+        assert.equal(x_target, x_bounce_outgoing);
+        assert.equal(y_target, y_bounce_outgoing);
+        assert.equal(z_target, z_bounce_outgoing);
+      });
+
+      test('x-normal should flip incoming x component and maintain y,z components', function() {
+        expect(x_bounce_outgoing.x).to.be.closeTo(-1, 0.01);
+        expect(x_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+        expect(x_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+      });
+      test('y-normal should flip incoming y component and maintain x,z components', function() {
+        expect(y_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+        expect(y_bounce_outgoing.y).to.be.closeTo(-1, 0.01);
+        expect(y_bounce_outgoing.z).to.be.closeTo(1, 0.01);
+      });
+      test('z-normal should flip incoming z component and maintain x,y components', function() {
+        expect(z_bounce_outgoing.x).to.be.closeTo(1, 0.01);
+        expect(z_bounce_outgoing.y).to.be.closeTo(1, 0.01);
+        expect(z_bounce_outgoing.z).to.be.closeTo(-1, 0.01);
+      });
+
+      test('angle of incidence should match angle of reflection', function() {
+        expect(
+          Math.abs(x_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(x_normal.angleBetween(x_bounce_outgoing.mult(-1))),
+          0.01
+        );
+        expect(
+          Math.abs(y_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(y_normal.angleBetween(y_bounce_outgoing.mult(-1))),
+          0.01
+        );
+        expect(
+          Math.abs(z_normal.angleBetween(original_incoming))
+        ).to.be.closeTo(
+          Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
+          0.01
+        );
+      });
+    });
+  });
+
+  suite('mag', function() {
+    const MAG = 3.7416573867739413; // sqrt(1*1 + 2*2 + 3*3)
+
+    let v0;
+    let v1;
+
     setup(function() {
-      incoming_x = 1;
-      incoming_y = 1;
-      incoming_z = 1;
-      original_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
-
-      x_normal = myp5.createVector(3, 0, 0);
-      y_normal = myp5.createVector(0, 3, 0);
-      z_normal = myp5.createVector(0, 0, 3);
-
-      x_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
-      x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
-
-      y_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
-      y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
-
-      z_bounce_incoming = myp5.createVector(incoming_x, incoming_y, incoming_z);
-      z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
+      v0 = new p5.Vector(0, 0, 0);
+      v1 = new p5.Vector(1, 2, 3);
     });
 
-    test('should return a p5.Vector', function() {
-      expect(x_bounce_incoming).to.be.an.instanceof(p5.Vector);
-      expect(y_bounce_incoming).to.be.an.instanceof(p5.Vector);
-      expect(z_bounce_incoming).to.be.an.instanceof(p5.Vector);
+    suite('p5.Vector.prototype.mag() [INSTANCE]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(v0.mag()).to.eql(0);
+        expect(v1.mag()).to.eql(MAG);
+      });
     });
 
-    test('should update this', function() {
-      assert.equal(x_bounce_incoming, x_bounce_outgoing);
-      assert.equal(y_bounce_incoming, y_bounce_outgoing);
-      assert.equal(z_bounce_incoming, z_bounce_outgoing);
+    suite('p5.Vector.mag() [CLASS]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(p5.Vector.mag(v0)).to.eql(0);
+        expect(p5.Vector.mag(v1)).to.eql(MAG);
+      });
+    });
+  });
+
+  suite('magSq', function() {
+    const MAG = 14; // 1*1 + 2*2 + 3*3
+
+    let v0;
+    let v1;
+
+    setup(function() {
+      v0 = new p5.Vector(0, 0, 0);
+      v1 = new p5.Vector(1, 2, 3);
     });
 
-    test('x-normal should flip incoming x component and maintain y,z components', function() {
-      expect(x_bounce_outgoing.x).to.be.closeTo(-1, 0.01);
-      expect(x_bounce_outgoing.y).to.be.closeTo(1, 0.01);
-      expect(x_bounce_outgoing.z).to.be.closeTo(1, 0.01);
-    });
-    test('y-normal should flip incoming y component and maintain x,z components', function() {
-      expect(y_bounce_outgoing.x).to.be.closeTo(1, 0.01);
-      expect(y_bounce_outgoing.y).to.be.closeTo(-1, 0.01);
-      expect(y_bounce_outgoing.z).to.be.closeTo(1, 0.01);
-    });
-    test('z-normal should flip incoming z component and maintain x,y components', function() {
-      expect(z_bounce_outgoing.x).to.be.closeTo(1, 0.01);
-      expect(z_bounce_outgoing.y).to.be.closeTo(1, 0.01);
-      expect(z_bounce_outgoing.z).to.be.closeTo(-1, 0.01);
+    suite('p5.Vector.prototype.magSq() [INSTANCE]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(v0.magSq()).to.eql(0);
+        expect(v1.magSq()).to.eql(MAG);
+      });
     });
 
-    test('angle of incidence should match angle of reflection', function() {
-      expect(Math.abs(x_normal.angleBetween(original_incoming))).to.be.closeTo(
-        Math.abs(x_normal.angleBetween(x_bounce_outgoing.mult(-1))),
-        0.01
-      );
-      expect(Math.abs(y_normal.angleBetween(original_incoming))).to.be.closeTo(
-        Math.abs(y_normal.angleBetween(y_bounce_outgoing.mult(-1))),
-        0.01
-      );
-      expect(Math.abs(z_normal.angleBetween(original_incoming))).to.be.closeTo(
-        Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
-        0.01
-      );
+    suite('p5.Vector.magSq() [CLASS]', function() {
+      test('should return the magnitude of the vector', function() {
+        expect(p5.Vector.magSq(v0)).to.eql(0);
+        expect(p5.Vector.magSq(v1)).to.eql(MAG);
+      });
+    });
+  });
+
+  suite('equals', function() {
+    suite('p5.Vector.prototype.equals() [INSTANCE]', function() {
+      test('should return false for parameters inequal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(1, 2, 3);
+        const a2 = [1, 2, 3];
+        expect(v1.equals(v2)).to.be.false;
+        expect(v1.equals(a2)).to.be.false;
+        expect(v1.equals(1, 2, 3)).to.be.false;
+      });
+
+      test('should return true for equal vectors', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(0, -1, 1);
+        expect(v1.equals(v2)).to.be.true;
+      });
+
+      test('should return true for arrays equal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const a1 = [0, -1, 1];
+        expect(v1.equals(a1)).to.be.true;
+      });
+
+      test('should return true for arguments equal to the vector', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        expect(v1.equals(0, -1, 1)).to.be.true;
+      });
+    });
+
+    suite('p5.Vector.equals() [CLASS]', function() {
+      test('should return false for inequal parameters', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(1, 2, 3);
+        const a2 = [1, 2, 3];
+        expect(p5.Vector.equals(v1, v2)).to.be.false;
+        expect(p5.Vector.equals(v1, a2)).to.be.false;
+        expect(p5.Vector.equals(a2, v1)).to.be.false;
+      });
+
+      test('should return true for equal vectors', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const v2 = new p5.Vector(0, -1, 1);
+        expect(p5.Vector.equals(v1, v2)).to.be.true;
+      });
+
+      test('should return true for equal vectors and arrays', function() {
+        const v1 = new p5.Vector(0, -1, 1);
+        const a1 = [0, -1, 1];
+        expect(p5.Vector.equals(v1, a1)).to.be.true;
+        expect(p5.Vector.equals(a1, v1)).to.be.true;
+      });
+
+      test('should return true for equal arrays', function() {
+        const a1 = [0, -1, 1];
+        const a2 = [0, -1, 1];
+        expect(p5.Vector.equals(a1, a2)).to.be.true;
+      });
     });
   });
 });
