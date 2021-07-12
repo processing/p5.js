@@ -1238,72 +1238,90 @@ p5.RendererGL.prototype.getTexture = function(img) {
 p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.bindShader();
 
-  // set the uniform values
-  strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
-  strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  if (strokeShader !== this.userStrokeShader) {
+    // set the uniform values
+    strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
+    strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+    strokeShader.setUniform('uViewport', this._viewport);
+    if (this._curCamera.cameraType === 'default') {
+      // strokes scale up as they approach camera, default
+      strokeShader.setUniform('uPerspective', 1);
+    } else {
+      // strokes have uniform scale regardless of distance from camera
+      strokeShader.setUniform('uPerspective', 0);
+    }
+  }
 };
 
 p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.bindShader();
 
-  // TODO: optimize
-  fillShader.setUniform('uMaterialColor', this.curFillColor);
-  fillShader.setUniform('isTexture', !!this._tex);
-  if (this._tex) {
-    fillShader.setUniform('uSampler', this._tex);
+  if (fillShader !== this.userFillShader) {
+    // TODO: optimize
+    fillShader.setUniform('uMaterialColor', this.curFillColor);
+    fillShader.setUniform('isTexture', !!this._tex);
+    if (this._tex) {
+      fillShader.setUniform('uSampler', this._tex);
+    }
+    fillShader.setUniform('uTint', this._tint);
+
+    fillShader.setUniform('uSpecular', this._useSpecularMaterial);
+    fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
+    fillShader.setUniform('uShininess', this._useShininess);
+
+    fillShader.setUniform('uUseLighting', this._enableLighting);
+
+    const pointLightCount = this.pointLightDiffuseColors.length / 3;
+    fillShader.setUniform('uPointLightCount', pointLightCount);
+    fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
+    fillShader.setUniform(
+      'uPointLightDiffuseColors',
+      this.pointLightDiffuseColors
+    );
+    fillShader.setUniform(
+      'uPointLightSpecularColors',
+      this.pointLightSpecularColors
+    );
+
+    const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
+    fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
+    fillShader.setUniform(
+      'uLightingDirection',
+      this.directionalLightDirections
+    );
+    fillShader.setUniform(
+      'uDirectionalDiffuseColors',
+      this.directionalLightDiffuseColors
+    );
+    fillShader.setUniform(
+      'uDirectionalSpecularColors',
+      this.directionalLightSpecularColors
+    );
+
+    // TODO: sum these here...
+    const ambientLightCount = this.ambientLightColors.length / 3;
+    fillShader.setUniform('uAmbientLightCount', ambientLightCount);
+    fillShader.setUniform('uAmbientColor', this.ambientLightColors);
+
+    const spotLightCount = this.spotLightDiffuseColors.length / 3;
+    fillShader.setUniform('uSpotLightCount', spotLightCount);
+    fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
+    fillShader.setUniform('uSpotLightConc', this.spotLightConc);
+    fillShader.setUniform(
+      'uSpotLightDiffuseColors',
+      this.spotLightDiffuseColors
+    );
+    fillShader.setUniform(
+      'uSpotLightSpecularColors',
+      this.spotLightSpecularColors
+    );
+    fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
+    fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
+
+    fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
+    fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
+    fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
   }
-  fillShader.setUniform('uTint', this._tint);
-
-  fillShader.setUniform('uSpecular', this._useSpecularMaterial);
-  fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
-  fillShader.setUniform('uShininess', this._useShininess);
-
-  fillShader.setUniform('uUseLighting', this._enableLighting);
-
-  const pointLightCount = this.pointLightDiffuseColors.length / 3;
-  fillShader.setUniform('uPointLightCount', pointLightCount);
-  fillShader.setUniform('uPointLightLocation', this.pointLightPositions);
-  fillShader.setUniform(
-    'uPointLightDiffuseColors',
-    this.pointLightDiffuseColors
-  );
-  fillShader.setUniform(
-    'uPointLightSpecularColors',
-    this.pointLightSpecularColors
-  );
-
-  const directionalLightCount = this.directionalLightDiffuseColors.length / 3;
-  fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
-  fillShader.setUniform('uLightingDirection', this.directionalLightDirections);
-  fillShader.setUniform(
-    'uDirectionalDiffuseColors',
-    this.directionalLightDiffuseColors
-  );
-  fillShader.setUniform(
-    'uDirectionalSpecularColors',
-    this.directionalLightSpecularColors
-  );
-
-  // TODO: sum these here...
-  const ambientLightCount = this.ambientLightColors.length / 3;
-  fillShader.setUniform('uAmbientLightCount', ambientLightCount);
-  fillShader.setUniform('uAmbientColor', this.ambientLightColors);
-
-  const spotLightCount = this.spotLightDiffuseColors.length / 3;
-  fillShader.setUniform('uSpotLightCount', spotLightCount);
-  fillShader.setUniform('uSpotLightAngle', this.spotLightAngle);
-  fillShader.setUniform('uSpotLightConc', this.spotLightConc);
-  fillShader.setUniform('uSpotLightDiffuseColors', this.spotLightDiffuseColors);
-  fillShader.setUniform(
-    'uSpotLightSpecularColors',
-    this.spotLightSpecularColors
-  );
-  fillShader.setUniform('uSpotLightLocation', this.spotLightPositions);
-  fillShader.setUniform('uSpotLightDirection', this.spotLightDirections);
-
-  fillShader.setUniform('uConstantAttenuation', this.constantAttenuation);
-  fillShader.setUniform('uLinearAttenuation', this.linearAttenuation);
-  fillShader.setUniform('uQuadraticAttenuation', this.quadraticAttenuation);
 
   fillShader.bindTextures();
 };
