@@ -392,6 +392,45 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
       pixelsState.imageData;
   }
 
+  let pixels = pixelsState.pixels;
+  if (this._pInst instanceof p5 && this._pInst._isGlobal === true) {
+    pixels = globalThis.pixels;
+  }
+
+  if (pixels !== pixelsState.imageData.data) {
+    let imgData;
+    if (pixels instanceof Uint8ClampedArray) {
+      if (pixels.length === pixelsState.imageData.data.length) {
+        imgData = new ImageData(
+          pixels,
+          pixelsState.imageData.width,
+          pixelsState.imageData.height
+        );
+      } else {
+        let imgArr = new Uint8ClampedArray(pixelsState.imageData.data.length);
+        imgArr.set(pixels);
+        imgData = new ImageData(
+          imgArr,
+          pixelsState.imageData.width,
+          pixelsState.imageData.height
+        );
+      }
+    } else {
+      if (Array.isArray(pixels)) {
+        let imgArr = new Uint8ClampedArray(pixelsState.imageData.data.length);
+        imgArr.set(pixels);
+        imgData = new ImageData(
+          imgArr,
+          pixelsState.imageData.width,
+          pixelsState.imageData.height
+        );
+      }
+    }
+
+    pixelsState._setProperty('imageData', imgData);
+    pixelsState._setProperty('pixels', imgData.data);
+  }
+
   this.drawingContext.putImageData(pixelsState.imageData, x, y, 0, 0, w, h);
 };
 
