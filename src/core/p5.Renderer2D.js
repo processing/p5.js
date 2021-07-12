@@ -155,10 +155,10 @@ p5.Renderer2D.prototype.image = function(
   }
 
   try {
+    if (p5.MediaElement && img instanceof p5.MediaElement) {
+      img.loadPixels();
+    }
     if (this._tint) {
-      if (p5.MediaElement && img instanceof p5.MediaElement) {
-        img.loadPixels();
-      }
       if (img.canvas) {
         cnv = this._getTintedImageCanvas(img);
       }
