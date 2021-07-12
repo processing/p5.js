@@ -713,6 +713,8 @@ for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
 
+p5.VERSION = constants.VERSION;
+
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)
 p5.prototype._preloadMethods = {
