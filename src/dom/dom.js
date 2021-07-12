@@ -556,7 +556,7 @@ p5.prototype.createButton = function(label, value) {
  * }
  *
  * function myCheckedEvent() {
- *   if (this.checked()) {
+ *   if (checkbox.checked()) {
  *     console.log('Checking!');
  *   } else {
  *     console.log('Unchecking!');
@@ -566,14 +566,26 @@ p5.prototype.createButton = function(label, value) {
  */
 p5.prototype.createCheckbox = function() {
   p5._validateParameters('createCheckbox', arguments);
+
+  // Create a container element
   const elt = document.createElement('div');
+
+  // Create checkbox type input element
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  elt.appendChild(checkbox);
+
+  // Create label element and wrap it around checkbox
+  const label = document.createElement('label');
+  label.appendChild(checkbox);
+
+  // Append label element inside the container
+  elt.appendChild(label);
+
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
+
   self.checked = function() {
-    const cb = self.elt.getElementsByTagName('input')[0];
+    const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
       if (arguments.length === 0) {
         return cb.checked;
@@ -585,24 +597,25 @@ p5.prototype.createCheckbox = function() {
     }
     return self;
   };
+
   this.value = function(val) {
     self.value = val;
     return this;
   };
+
+  // Set the span element innerHTML as the label value if passed
   if (arguments[0]) {
-    const ran = Math.random()
-      .toString(36)
-      .slice(2);
-    const label = document.createElement('label');
-    checkbox.setAttribute('id', ran);
-    label.htmlFor = ran;
     self.value(arguments[0]);
-    label.appendChild(document.createTextNode(arguments[0]));
-    elt.appendChild(label);
+    const span = document.createElement('span');
+    span.innerHTML = arguments[0];
+    label.appendChild(span);
   }
+
+  // Set the checked value of checkbox if passed
   if (arguments[1]) {
     checkbox.checked = true;
   }
+
   return self;
 };
 
@@ -844,10 +857,17 @@ p5.prototype.createRadio = function() {
   // setup member functions
   const isRadioInput = el =>
     el instanceof HTMLInputElement && el.type === 'radio';
-  const isNextLabel = el => el.nextElementSibling instanceof HTMLLabelElement;
+  const isLabelElement = el => el instanceof HTMLLabelElement;
+  const isSpanElement = el => el instanceof HTMLSpanElement;
 
   self._getOptionsArray = function() {
-    return Array.from(this.elt.children).filter(isRadioInput);
+    return Array.from(this.elt.children)
+      .filter(
+        el =>
+          isRadioInput(el) ||
+          (isLabelElement(el) && isRadioInput(el.firstElementChild))
+      )
+      .map(el => (isRadioInput(el) ? el : el.firstElementChild));
   };
 
   self.option = function(value, label) {
@@ -865,28 +885,47 @@ p5.prototype.createRadio = function() {
       optionEl = document.createElement('input');
       optionEl.setAttribute('type', 'radio');
       optionEl.setAttribute('value', value);
-      this.elt.appendChild(optionEl);
     }
+    optionEl.setAttribute('name', self._name);
 
     // Check if label element exists, else create it
     let labelElement;
-    if (!isNextLabel(optionEl)) {
+    if (!isLabelElement(optionEl.parentElement)) {
       labelElement = document.createElement('label');
-      optionEl.insertAdjacentElement('afterend', labelElement);
+      labelElement.insertAdjacentElement('afterbegin', optionEl);
     } else {
-      labelElement = optionEl.nextElementSibling;
+      labelElement = optionEl.parentElement;
     }
 
-    labelElement.innerHTML = label === undefined ? value : label;
-    optionEl.setAttribute('name', self._name);
+    // Check if span element exists, else create it
+    let spanElement;
+    if (!isSpanElement(labelElement.lastElementChild)) {
+      spanElement = document.createElement('span');
+      optionEl.insertAdjacentElement('afterend', spanElement);
+    } else {
+      spanElement = labelElement.lastElementChild;
+    }
+
+    // Set the innerHTML of span element as the label text
+    spanElement.innerHTML = label === undefined ? value : label;
+
+    // Append the label element, which includes option element and
+    // span element to the radio container element
+    this.elt.appendChild(labelElement);
+
     return optionEl;
   };
 
   self.remove = function(value) {
     for (const optionEl of self._getOptionsArray()) {
       if (optionEl.value === value) {
-        if (isNextLabel(optionEl)) optionEl.nextElementSibling.remove();
-        optionEl.remove();
+        if (isLabelElement(optionEl.parentElement)) {
+          // Remove parent label which also removes children elements
+          optionEl.parentElement.remove();
+        } else {
+          // Remove the option input if parent label does not exist
+          optionEl.remove();
+        }
         return;
       }
     }
