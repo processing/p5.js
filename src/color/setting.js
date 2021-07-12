@@ -40,6 +40,7 @@ import './p5.Color';
  * <code>
  * // Grayscale integer value
  * background(51);
+ * describe('canvas with darkest charcoal grey background');
  * </code>
  * </div>
  *
@@ -47,6 +48,7 @@ import './p5.Color';
  * <code>
  * // R, G & B integer values
  * background(255, 204, 0);
+ * describe('canvas with yellow background');
  * </code>
  * </div>
  *
@@ -55,6 +57,7 @@ import './p5.Color';
  * // H, S & B integer values
  * colorMode(HSB);
  * background(255, 204, 100);
+ * describe('canvas with royal blue background');
  * </code>
  * </div>
  *
@@ -62,6 +65,7 @@ import './p5.Color';
  * <code>
  * // Named SVG/CSS color string
  * background('red');
+ * describe('canvas with red background');
  * </code>
  * </div>
  *
@@ -69,6 +73,7 @@ import './p5.Color';
  * <code>
  * // three-digit hexadecimal RGB notation
  * background('#fae');
+ * describe('canvas with pink background');
  * </code>
  * </div>
  *
@@ -76,6 +81,7 @@ import './p5.Color';
  * <code>
  * // six-digit hexadecimal RGB notation
  * background('#222222');
+ * describe('canvas with black background');
  * </code>
  * </div>
  *
@@ -83,6 +89,7 @@ import './p5.Color';
  * <code>
  * // integer RGB notation
  * background('rgb(0,255,0)');
+ * describe('canvas with bright green background');
  * </code>
  * </div>
  *
@@ -90,6 +97,7 @@ import './p5.Color';
  * <code>
  * // integer RGBA notation
  * background('rgba(0,255,0, 0.25)');
+ * describe('canvas with soft green background');
  * </code>
  * </div>
  *
@@ -97,6 +105,7 @@ import './p5.Color';
  * <code>
  * // percentage RGB notation
  * background('rgb(100%,0%,10%)');
+ * describe('canvas with red background');
  * </code>
  * </div>
  *
@@ -104,6 +113,7 @@ import './p5.Color';
  * <code>
  * // percentage RGBA notation
  * background('rgba(100%,0%,100%,0.5)');
+ * describe('canvas with light purple background');
  * </code>
  * </div>
  *
@@ -111,21 +121,10 @@ import './p5.Color';
  * <code>
  * // p5 Color object
  * background(color(0, 0, 255));
+ * describe('canvas with blue background');
  * </code>
  * </div>
  *
- * @alt
- * canvas with darkest charcoal grey background.
- * canvas with yellow background.
- * canvas with royal blue background.
- * canvas with red background.
- * canvas with pink background.
- * canvas with black background.
- * canvas with bright green background.
- * canvas with soft green background.
- * canvas with red background.
- * canvas with light purple background.
- * canvas with blue background.
  */
 
 /**
@@ -194,16 +193,20 @@ p5.prototype.background = function(...args) {
  * // Clear the screen on mouse press.
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
+ *   describe(
+ *     'small white ellipses are continually drawn at mouse x and y coordinates'
+ *   );
  * }
  * function mousePressed() {
  *   clear();
  *   background(128);
+ *   describe(
+ *     'canvas is cleared, small white ellipse is drawn at mouse X and mouse Y'
+ *   );
  * }
  * </code>
  * </div>
  *
- * @alt
- * small white ellipses are continually drawn at mouse's x and y coordinates.
  */
 
 p5.prototype.clear = function() {
@@ -241,6 +244,9 @@ p5.prototype.clear = function() {
  *     point(i, j);
  *   }
  * }
+ * describe(
+ *   'Green to red gradient from bottom left to top red with shading from top left'
+ * );
  * </code>
  * </div>
  *
@@ -254,6 +260,9 @@ p5.prototype.clear = function() {
  *     point(i, j);
  *   }
  * }
+ * describe(
+ *   'Rainbow gradient from left to right, brightness increasing to white at top'
+ * );
  * </code>
  * </div>
  *
@@ -264,6 +273,7 @@ p5.prototype.clear = function() {
  * colorMode(RGB, 1);
  * let myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
+ * describe('value of color red 0.4980... written on canvas');
  * </code>
  * </div>
  *
@@ -276,14 +286,10 @@ p5.prototype.clear = function() {
  * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
+ * describe('two translucent pink ellipse outlines at middle left and at center');
  * </code>
  * </div>
  *
- * @alt
- *Green to red gradient from bottom L to top R. shading originates from top left.
- *Rainbow gradient from left to right. Brightness increasing to white at top.
- *unknown image.
- *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
  */
 
 /**
@@ -359,6 +365,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // Grayscale integer value
  * fill(51);
  * rect(20, 20, 60, 60);
+ * describe('dark charcoal grey rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -367,6 +374,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // R, G & B integer values
  * fill(255, 204, 0);
  * rect(20, 20, 60, 60);
+ * describe('yellow rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -376,6 +384,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * colorMode(HSB);
  * fill(255, 204, 100);
  * rect(20, 20, 60, 60);
+ * describe('royal blue rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -384,6 +393,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // Named SVG/CSS color string
  * fill('red');
  * rect(20, 20, 60, 60);
+ * describe('red rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -392,6 +402,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // three-digit hexadecimal RGB notation
  * fill('#fae');
  * rect(20, 20, 60, 60);
+ * describe('pink rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -400,6 +411,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // six-digit hexadecimal RGB notation
  * fill('#222222');
  * rect(20, 20, 60, 60);
+ * describe('black rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -408,6 +420,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // integer RGB notation
  * fill('rgb(0,255,0)');
  * rect(20, 20, 60, 60);
+ * describe('bright green rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -416,6 +429,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // integer RGBA notation
  * fill('rgba(0,255,0, 0.25)');
  * rect(20, 20, 60, 60);
+ * describe('soft green rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -424,6 +438,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // percentage RGB notation
  * fill('rgb(100%,0%,10%)');
  * rect(20, 20, 60, 60);
+ * describe('red rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -432,6 +447,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // percentage RGBA notation
  * fill('rgba(100%,0%,100%,0.5)');
  * rect(20, 20, 60, 60);
+ * describe('dark fuchsia rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -440,21 +456,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // p5 Color object
  * fill(color(0, 0, 255));
  * rect(20, 20, 60, 60);
+ * describe('blue rect with black outline in center of canvas');
  * </code>
  * </div>
  *
- * @alt
- * 60x60 dark charcoal grey rect with black outline in center of canvas.
- * 60x60 yellow rect with black outline in center of canvas.
- * 60x60 royal blue rect with black outline in center of canvas.
- * 60x60 red rect with black outline in center of canvas.
- * 60x60 pink rect with black outline in center of canvas.
- * 60x60 black rect with black outline in center of canvas.
- * 60x60 light green rect with black outline in center of canvas.
- * 60x60 soft green rect with black outline in center of canvas.
- * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fuchsia rect with black outline in center of canvas.
- * 60x60 blue rect with black outline in center of canvas.
  */
 
 /**
@@ -501,6 +506,7 @@ p5.prototype.fill = function(...args) {
  * rect(15, 10, 55, 55);
  * noFill();
  * rect(20, 20, 60, 60);
+ * describe('noFill rect center over white rect. Both 60x60 with black outlines');
  * </code>
  * </div>
  *
@@ -517,13 +523,11 @@ p5.prototype.fill = function(...args) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
+ *   describe('black canvas with purple cube wireframe spinning');
  * }
  * </code>
  * </div>
  *
- * @alt
- * white rect top middle and noFill rect center. Both 60x60 with black outlines.
- * black canvas with purple cube wireframe spinning
  */
 p5.prototype.noFill = function() {
   this._renderer._setProperty('_doFill', false);
@@ -541,6 +545,7 @@ p5.prototype.noFill = function() {
  * <code>
  * noStroke();
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. no outline');
  * </code>
  * </div>
  *
@@ -557,13 +562,11 @@ p5.prototype.noFill = function() {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
+ *   describe('black canvas with pink cube spinning');
  * }
  * </code>
  * </div>
  *
- * @alt
- * 60x60 white rect at center. no outline.
- * black canvas with pink cube spinning
  */
 p5.prototype.noStroke = function() {
   this._renderer._setProperty('_doStroke', false);
@@ -601,6 +604,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(51);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Dark charcoal grey outline');
  * </code>
  * </div>
  *
@@ -610,6 +614,7 @@ p5.prototype.noStroke = function() {
  * stroke(255, 204, 0);
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Yellow outline');
  * </code>
  * </div>
  *
@@ -620,6 +625,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(255, 204, 100);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Royal blue outline');
  * </code>
  * </div>
  *
@@ -629,6 +635,7 @@ p5.prototype.noStroke = function() {
  * stroke('red');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Red outline');
  * </code>
  * </div>
  *
@@ -638,6 +645,7 @@ p5.prototype.noStroke = function() {
  * stroke('#fae');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Pink outline');
  * </code>
  * </div>
  *
@@ -647,6 +655,7 @@ p5.prototype.noStroke = function() {
  * stroke('#222222');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Black outline');
  * </code>
  * </div>
  *
@@ -656,6 +665,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(0,255,0)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Bright green outline');
  * </code>
  * </div>
  *
@@ -665,6 +675,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(0,255,0,0.25)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Soft green outline');
  * </code>
  * </div>
  *
@@ -674,6 +685,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(100%,0%,10%)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Red outline');
  * </code>
  * </div>
  *
@@ -683,6 +695,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(100%,0%,100%,0.5)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Dark fuchsia outline');
  * </code>
  * </div>
  *
@@ -692,21 +705,10 @@ p5.prototype.noStroke = function() {
  * stroke(color(0, 0, 255));
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
+ * describe('60x60 white rect at center. Blue outline');
  * </code>
  * </div>
  *
- * @alt
- * 60x60 white rect at center. Dark charcoal grey outline.
- * 60x60 white rect at center. Yellow outline.
- * 60x60 white rect at center. Royal blue outline.
- * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Pink outline.
- * 60x60 white rect at center. Black outline.
- * 60x60 white rect at center. Bright green outline.
- * 60x60 white rect at center. Soft green outline.
- * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fuchsia outline.
- * 60x60 white rect at center. Blue outline.
  */
 
 /**
@@ -769,6 +771,9 @@ p5.prototype.stroke = function(...args) {
  * erase();
  * ellipse(25, 30, 30);
  * noErase();
+ * describe(
+ *   'centered pink rect over purple background. Elliptical area in top-left of rect is erased white'
+ * );
  * </code>
  * </div>
  *
@@ -781,6 +786,9 @@ p5.prototype.stroke = function(...args) {
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
+ * describe(
+ *   'purple rect centered over mint green background. Triangle in top-right is partially erased with fully erased outline'
+ * );
  * </code>
  * </div>
  *
@@ -807,14 +815,13 @@ p5.prototype.stroke = function(...args) {
  *   translate(0, 0, 40);
  *   torus(15, 5);
  *   noErase();
+ *   describe(
+ *     'teal sphere centered over yellow background. Torus rotating around sphere erases to reveal black text underneath'
+ *   );
  * }
  * </code>
  * </div>
  *
- * @alt
- * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
- * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
- * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
  */
 p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
@@ -841,11 +848,12 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
+ * describe(
+ *   'Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second'
+ * );
  * </code>
  * </div>
  *
- * @alt
- * Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second.
  */
 
 p5.prototype.noErase = function() {
