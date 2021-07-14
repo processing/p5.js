@@ -62,6 +62,9 @@
       "p_9": "ninth"
     },
     "pre": "\n🌸 p5.js says: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "you have used a p5.js reserved variable \"{{symbol}}\" make sure you change the variable name to something else.\n({{url}})"
+    },
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
     "wrongPreload": "An error with message \"{{error}}\" occured inside the p5js library when \"{{func}}\" was called {{location}}.\n\nIf not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
   }
