@@ -365,6 +365,10 @@ p5.Color.prototype._calculateLevels = function() {
   for (let i = array.length - 1; i >= 0; --i) {
     levels[i] = Math.round(array[i] * 255);
   }
+
+  // Clear cached HSL/HSB values
+  this.hsla = null;
+  this.hsba = null;
 };
 
 p5.Color.prototype._getAlpha = function() {
