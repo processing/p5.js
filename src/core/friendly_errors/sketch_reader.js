@@ -121,7 +121,7 @@ const _removeMultilineComments = str => {
 };
 
 const _fesCodeReader = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     let codeNode = document.querySelector('[data-tag="@fs-sketch.js"]'),
       text = '';
     if (codeNode) {
