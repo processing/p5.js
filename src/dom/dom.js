@@ -1184,7 +1184,7 @@ function createMedia(pInst, type, src, callback) {
  *                             enough data has been loaded to play the media
  *                             up to its end without having to stop for
  *                             further buffering of content
- * @return {p5.MediaElement}   pointer to video <a href="#/p5.Element">p5.Element</a>
+ * @return {p5.MediaElement}   pointer to video <a href="#/p5.MediaElement">p5.MediaElement</a>
  * @example
  * <div><code>
  * let vid;
@@ -1231,7 +1231,7 @@ p5.prototype.createVideo = function(src, callback) {
  *                             enough data has been loaded to play the media
  *                             up to its end without having to stop for
  *                             further buffering of content
- * @return {p5.MediaElement}   pointer to audio <a href="#/p5.Element">p5.Element</a>
+ * @return {p5.MediaElement}   pointer to audio <a href="#/p5.MediaElement">p5.MediaElement</a>
  * @example
  * <div><code>
  * let ele;
