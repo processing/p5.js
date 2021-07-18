@@ -23,11 +23,35 @@ const _checkForConsts = variables => {
   }
 };
 
+const _checkForFuncs = funcs => {
+  const p5Constructors = {};
+  for (let key of Object.keys(p5)) {
+    // Get a list of all constructors in p5. They are functions whose names
+    // start with a capital letter
+    if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+      p5Constructors[key] = p5[key];
+    }
+  }
+  for (let i = 0; i < funcs.length; i++) {
+    //for every function name obtained check if it matches any p5.js function name
+    const keyArr = Object.keys(p5Constructors);
+    let j = 0;
+    for (; j < keyArr.length; j++) {
+      if (p5Constructors[keyArr[j]].prototype[funcs[i]] !== undefined) {
+        //if a p5.js function is used ie it is in the funcs array
+        p5._friendlyError(
+          translator('fes.sketchReaderErrors.reservedFunc', {
+            symbol: funcs[i]
+          })
+        );
+        break;
+      }
+    }
+    if (j < keyArr.length) break;
+  }
+};
+
 const _extractVariables = arr => {
-  console.log(
-    '%cFrom _extractVariables',
-    'color: black; font-weight: bold; font-size: 16px; background: yellow;'
-  );
   //extract variable names from the user's code
   let matches = [];
   arr.forEach(ele => {
@@ -60,16 +84,12 @@ const _extractVariables = arr => {
 const _extractFuncVariables = arr => {
   let matches = [];
   //extract function names
-  console.log(
-    '%cFrom _extractFuncVariables',
-    'color: black; font-weight: bold; font-size: 16px; background: yellow;'
-  );
   const reg = /(?:(?:let|const)\s+)([\w$]+)/;
   arr.forEach(ele => {
     matches.push(ele.match(reg)[1]);
   });
   //matches array contains the names of the functions
-  console.log(matches);
+  _checkForFuncs(matches);
 };
 
 const _codeToLines = code => {

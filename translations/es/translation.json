@@ -56,7 +56,8 @@
     },
     "pre": "🌸 p5.js dice: {{message}}",
     "sketchReaderErrors": {
-      "reservedConst": ""
+      "reservedConst": "",
+      "reservedFunc": ""
     },
     "welcome": "",
     "wrongPreload": ""
