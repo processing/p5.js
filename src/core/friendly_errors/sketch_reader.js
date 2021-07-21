@@ -64,7 +64,9 @@ const _extractVariables = arr => {
             match = s.match(/(\w+)\s*(?==)/i);
             return match[1];
           } else if (!s.match(new RegExp('[[]{}]'))) {
-            return s.match(/(?:(?:let|const|var)\s+)?([\w$]+)/)[1];
+            let m = s.match(/(?:(?:let|const|var)\s+)?([\w$]+)/);
+            if (m !== null)
+              return s.match(/(?:(?:let|const|var)\s+)?([\w$,]+)/)[1];
           } else return [];
         })
       );
