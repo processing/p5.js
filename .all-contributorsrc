@@ -2701,6 +2701,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "truemaxdh",
+      "name": "Daehwan Choi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53327429?v=4",
+      "profile": "https://truemaxdh.github.io/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
