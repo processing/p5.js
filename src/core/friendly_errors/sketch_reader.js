@@ -144,12 +144,16 @@ const _removeMultilineComments = str => {
 
 const _fesCodeReader = () => {
   return new Promise(resolve => {
-    let codeNode = document.querySelector('[data-tag="@fs-sketch.js"]'),
+    let codeNode = document.querySelector('body'),
       text = '';
     if (codeNode) {
       //if web editor
-      text = codeNode.innerHTML;
-      resolve(text);
+      fetch(codeNode.children[0].getAttribute('src')).then(res =>
+        res.text().then(txt => {
+          text = txt;
+          resolve(text);
+        })
+      );
     } else {
       //obtain the name of the file in script tag
       //ignore p5.js, p5.min.js, p5.sounds.js, p5.sounds.min.js
@@ -163,6 +167,7 @@ const _fesCodeReader = () => {
             !attr.includes('p5.min.js') &&
             !attr.includes('p5.sounds.min.js') &&
             !attr.includes('p5.sounds.js') &&
+            !attr.includes('previewScripts') &&
             attr !== ''
         );
       //obtain the user's code form the JS file
