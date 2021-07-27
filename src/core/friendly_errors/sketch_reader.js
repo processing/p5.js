@@ -18,10 +18,9 @@ import p5 from '../main';
 import { translator } from '../internationalization';
 import * as constants from '../constants';
 
-if (
-  typeof IS_MINIFIED !== 'undefined' ||
-  document.location.pathname.includes('file://')
-) {
+const IS_LOCAL = document.location.origin.includes('file://');
+
+if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
   //if p5.min.js or directly running the html file then skip check
   p5._fesCodeReader = () => {};
 } else {
@@ -222,7 +221,7 @@ if (
     return new Promise(resolve => {
       let codeNode = document.querySelector('body'),
         text = '';
-      if (codeNode) {
+      if (codeNode && window.location.href.includes('blob')) {
         //if web editor
         fetch(codeNode.children[0].getAttribute('src')).then(res =>
           res.text().then(txt => {
