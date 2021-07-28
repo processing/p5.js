@@ -443,17 +443,26 @@ p5.prototype.lights = function() {
  *   noStroke();
  * }
  * function draw() {
+ *   ortho();
  *   background(0);
+ *
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
- *   translate(-25, 0, 0);
+ *   locX /= 2; // half scale
+ *
  *   lightFalloff(1, 0, 0);
- *   pointLight(250, 250, 250, locX, locY, 50);
+ *   push();
+ *   translate(-25, 0, 0);
+ *   pointLight(250, 250, 250, locX - 25, locY, 50);
  *   sphere(20);
- *   translate(50, 0, 0);
- *   lightFalloff(0.9, 0.01, 0);
- *   pointLight(250, 250, 250, locX, locY, 50);
+ *   pop();
+ *
+ *   lightFalloff(0.97, 0.03, 0);
+ *   push();
+ *   translate(25, 0, 0);
+ *   pointLight(250, 250, 250, locX + 25, locY, 50);
  *   sphere(20);
+ *   pop();
  * }
  * </code>
  * </div>
