@@ -511,6 +511,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://nitin-rana.github.io/nitinrana.github.io/"><img src="https://avatars.githubusercontent.com/u/58933197?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nitin Rana</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Nitin-Rana" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.anniemckinnon.com/"><img src="https://avatars.githubusercontent.com/u/35992537?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Annie McKinnon</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aanniemckinnon" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=anniemckinnon" title="Code">💻</a></td>
     <td align="center"><a href="http://jiwon.me"><img src="https://avatars.githubusercontent.com/u/53327429?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jiwon Park (hanpanic)</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=jiwonme" title="Code">💻</a></td>
+    <td align="center"><a href="https://truemaxdh.github.io/"><img src="https://avatars.githubusercontent.com/u/12081386?v=4?s=100" width="100px;" alt=""/><br /><sub><b>truemaxdh</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Atruemaxdh" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=truemaxdh" title="Code">💻</a></td>
   </tr>
 </table>
 
