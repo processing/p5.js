@@ -154,7 +154,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
         new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
         //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
