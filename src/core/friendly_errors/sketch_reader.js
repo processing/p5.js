@@ -18,70 +18,61 @@ import p5 from '../main';
 import { translator } from '../internationalization';
 import * as constants from '../constants';
 
-const IS_LOCAL = document.location.origin.includes('file://');
-
-if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
-  //if p5.min.js or directly running the html file then skip check
+if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesCodeReader = () => {};
 } else {
   /**
    * Takes a list of variables defined by the user in the code
-   * as an array and checks if the list contains p5.js constants.
+   * as an array and checks if the list contains p5.js constants and functions.
    * If found then display a friendly error message.
    *
-   * @method checkForConsts
+   * @method checkForConstsAndFuncs
    * @private
-   * @param {Array} variables list of variables defined by user
+   * @param {Array} arr
    */
-  const checkForConsts = variables => {
-    for (let i = 0; i < variables.length; i++) {
-      if (constants[variables[i]] !== undefined) {
-        let url = `https://p5js.org/reference/#/p5/${variables[i]}`;
+  const checkForConstsAndFuncs = arr => {
+    let foundMatch = false;
+
+    for (let i = 0; i < arr.length; i++) {
+      if (constants[arr[i]] !== undefined) {
+        let url = `https://p5js.org/reference/#/p5/${arr[i]}`;
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
             url: url,
-            symbol: variables[i]
+            symbol: arr[i]
           })
         );
+        foundMatch = true;
         break;
       }
     }
-  };
-
-  /**
-   * Takes a list of functions defined by the user in the code
-   * as an array and checks if the list contains a reserved p5.js function.
-   * If found then display a friendly error message.
-   *
-   * @method checkForFuncs
-   * @private
-   * @param {Array} funcs list of functions defined by user
-   */
-  const checkForFuncs = funcs => {
-    const p5Constructors = {};
-    for (let key of Object.keys(p5)) {
-      // Get a list of all constructors in p5. They are functions whose names
-      // start with a capital letter
-      if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
-        p5Constructors[key] = p5[key];
-      }
-    }
-    for (let i = 0; i < funcs.length; i++) {
-      //for every function name obtained check if it matches any p5.js function name
-      const keyArr = Object.keys(p5Constructors);
-      let j = 0;
-      for (; j < keyArr.length; j++) {
-        if (p5Constructors[keyArr[j]].prototype[funcs[i]] !== undefined) {
-          //if a p5.js function is used ie it is in the funcs array
-          p5._friendlyError(
-            translator('fes.sketchReaderErrors.reservedFunc', {
-              symbol: funcs[i]
-            })
-          );
-          break;
+    if (!foundMatch) {
+      //if match already found then skip
+      const p5Constructors = {};
+      for (let key of Object.keys(p5)) {
+        // Get a list of all constructors in p5. They are functions whose names
+        // start with a capital letter
+        if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+          p5Constructors[key] = p5[key];
         }
       }
-      if (j < keyArr.length) break;
+      for (let i = 0; i < arr.length; i++) {
+        //for every function name obtained check if it matches any p5.js function name
+        const keyArr = Object.keys(p5Constructors);
+        let j = 0;
+        for (; j < keyArr.length; j++) {
+          if (p5Constructors[keyArr[j]].prototype[arr[i]] !== undefined) {
+            //if a p5.js function is used ie it is in the funcs array
+            p5._friendlyError(
+              translator('fes.sketchReaderErrors.reservedFunc', {
+                symbol: arr[i]
+              })
+            );
+            break;
+          }
+        }
+        if (j < keyArr.length) break;
+      }
     }
   };
 
@@ -105,7 +96,7 @@ if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
             let match;
             if (s.includes('=')) {
               match = s.match(/(\w+)\s*(?==)/i);
-              return match[1];
+              if (match !== null) return match[1];
             } else if (!s.match(new RegExp('[[]{}]'))) {
               let m = s.match(/(?:(?:let|const|var)\s+)?([\w$]+)/);
               if (m !== null)
@@ -115,15 +106,13 @@ if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
         );
       } else {
         //extract a from let/const a=10;
-        const reg = /(?:(?:let|const)\s+)([\w$]+)/g;
-        const found = ele.matchAll(reg);
-        for (const match of found) {
-          matches.push(match[1]);
-        }
+        const reg = /(?:(?:let|const)\s+)([\w$]+)/;
+        const match = ele.match(reg);
+        if (match !== null) matches.push(match[1]);
       }
     });
     //check if the obtained variables are a part of p5.js or not
-    checkForConsts(matches); //check if the obtained variables are a p5.js constants
+    checkForConstsAndFuncs(matches);
   };
 
   /**
@@ -140,10 +129,11 @@ if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
     //extract function names
     const reg = /(?:(?:let|const)\s+)([\w$]+)/;
     arr.forEach(ele => {
-      matches.push(ele.match(reg)[1]);
+      let m = ele.match(reg);
+      if (m !== null) matches.push(ele.match(reg)[1]);
     });
     //matches array contains the names of the functions
-    checkForFuncs(matches);
+    checkForConstsAndFuncs(matches);
   };
 
   /**
@@ -191,6 +181,7 @@ if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
    * @method removeMultilineComments
    * @private
    * @param {String} str code written by the user
+   * @returns {String}
    */
   const removeMultilineComments = str => {
     let start = str.indexOf('/*');
@@ -211,62 +202,33 @@ if (typeof IS_MINIFIED !== 'undefined' || IS_LOCAL) {
 
   /**
    * Initiates the sketch_reader's processes.
-   * Obtains the user's code and forwards it for further
-   * processing and evaluation.
+   * Obtains the code in setup and draw function
+   * and forwards it for further processing and evaluation.
    *
    * @method fesCodeReader
    * @private
    */
   const fesCodeReader = () => {
-    return new Promise(resolve => {
-      let codeNode = document.querySelector('body'),
-        text = '';
-      if (codeNode && window.location.href.includes('blob')) {
-        //if web editor
-        fetch(codeNode.children[0].getAttribute('src')).then(res =>
-          res.text().then(txt => {
-            text = txt;
-            resolve(text);
-          })
-        );
-      } else {
-        //obtain the name of the file in script tag
-        //ignore p5.js, p5.min.js, p5.sounds.js, p5.sounds.min.js
-        const scripts = [...document.querySelectorAll('script')]
-          .map(file => file.getAttribute('src'))
-          .filter(
-            attr =>
-              attr !== null &&
-              attr !== undefined &&
-              !attr.includes('p5.js') &&
-              !attr.includes('p5.min.js') &&
-              !attr.includes('p5.sounds.min.js') &&
-              !attr.includes('p5.sounds.js') &&
-              !attr.includes('previewScripts') &&
-              attr !== ''
-          );
-        //obtain the user's code form the JS file
-        fetch(`${scripts[0]}`).then(res =>
-          res.text().then(txt => {
-            text = txt;
-            resolve(text);
-          })
-        );
-      }
-    });
+    let code = '';
+    try {
+      //get code from setup
+      code += '' + setup;
+    } catch (e) {
+      code += '';
+    }
+    try {
+      //get code from draw
+      code += '\n' + draw;
+    } catch (e) {
+      code += '';
+    }
+    if (code === '') return;
+    code = removeMultilineComments(code);
+    codeToLines(code);
   };
 
   p5._fesCodeReader = fesCodeReader;
 
-  window.addEventListener('load', () => {
-    fesCodeReader()
-      .then(code => {
-        //remove multiline comments
-        code = removeMultilineComments(code);
-        //convert the code to array of lines of code
-        codeToLines(code);
-      })
-      .catch(err => console.log(err));
-  });
+  window.addEventListener('load', p5._fesCodeReader);
 }
 export default p5;
