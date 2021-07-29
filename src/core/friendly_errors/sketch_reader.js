@@ -21,6 +21,38 @@ import * as constants from '../constants';
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesCodeReader = () => {};
 } else {
+  //list of functions to ignore as they either
+  //are ment to be defined or generate false positive
+  //outputs
+  const ignoreFunction = [
+    'setup',
+    'draw',
+    'preload',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized',
+    'name',
+    'parent',
+    'toString',
+    'print',
+    'stop',
+    'onended'
+  ];
+
   /**
    * Takes a list of variables defined by the user in the code
    * as an array and checks if the list contains p5.js constants and functions.
@@ -46,9 +78,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
         break;
       }
     }
+    //if match already found then skip
     if (!foundMatch) {
-      //if match already found then skip
-      const p5Constructors = {};
+      let p5Constructors = {};
       for (let key of Object.keys(p5)) {
         // Get a list of all constructors in p5. They are functions whose names
         // start with a capital letter
@@ -57,21 +89,24 @@ if (typeof IS_MINIFIED !== 'undefined') {
         }
       }
       for (let i = 0; i < arr.length; i++) {
-        //for every function name obtained check if it matches any p5.js function name
-        const keyArr = Object.keys(p5Constructors);
-        let j = 0;
-        for (; j < keyArr.length; j++) {
-          if (p5Constructors[keyArr[j]].prototype[arr[i]] !== undefined) {
-            //if a p5.js function is used ie it is in the funcs array
-            p5._friendlyError(
-              translator('fes.sketchReaderErrors.reservedFunc', {
-                symbol: arr[i]
-              })
-            );
-            break;
+        //ignoreFunction contains the list of functions to be ignored
+        if (!ignoreFunction.includes(arr[i])) {
+          const keyArr = Object.keys(p5Constructors);
+          let j = 0;
+          //for every function name obtained check if it matches any p5.js function name
+          for (; j < keyArr.length; j++) {
+            if (p5Constructors[keyArr[j]].prototype[arr[i]] !== undefined) {
+              //if a p5.js function is used ie it is in the funcs array
+              p5._friendlyError(
+                translator('fes.sketchReaderErrors.reservedFunc', {
+                  symbol: arr[i]
+                })
+              );
+              break;
+            }
           }
+          if (j < keyArr.length) break;
         }
-        if (j < keyArr.length) break;
       }
     }
   };
@@ -176,7 +211,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   *  Remove multiline comments and the code written inside it.
+   *  Remove multiline comments and the content inside it.
    *
    * @method removeMultilineComments
    * @private
@@ -201,6 +236,113 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
+   * Checks if a p5.js constant or a function is
+   * declared outside a function and reports it if found.
+   *
+   * @method globalConstFuncCheck
+   * @private
+   * @returns {Boolean}
+   */
+
+  const globalConstFuncCheck = () => {
+    // generate all the const key data as an array
+    const arr = Object.keys(constants);
+    let element;
+    let isFound = false;
+    for (let i = 0; i < arr.length; i++) {
+      try {
+        //if the user has not declared p5.js constant anywhere outside the
+        //setup or draw function then this will throw an
+        //error.
+        element = eval(arr[i]);
+      } catch (e) {
+        //We are catching the error due to the above mentioned
+        //reason. Since there is no declaration of constant everything
+        //is OK so we will skip the current iteration and check for the
+        //next element.
+        continue;
+      }
+      //if we are not getting an error this means
+      //user have changed the value. We will check
+      //if the value is changed and if it is changed
+      //then report.
+      if (constants[arr[i]] !== element) {
+        let url = `https://p5js.org/reference/#/p5/${arr[i]}`;
+        p5._friendlyError(
+          translator('fes.sketchReaderErrors.reservedConst', {
+            url: url,
+            symbol: arr[i]
+          })
+        );
+        isFound = true;
+        break;
+      }
+    }
+    //if a p5.js constant is already reported then no need to check
+    //for p5.js functions.
+    if (!isFound) {
+      //the below code gets a list of p5.js functions
+      let p5Constructors = {};
+      for (let key of Object.keys(p5)) {
+        // Get a list of all constructors in p5. They are functions whose names
+        // start with a capital letter
+        if (typeof p5[key] === 'function' && key[0] !== key[0].toLowerCase()) {
+          p5Constructors[key] = p5[key];
+        }
+      }
+      const keyArr = Object.keys(p5Constructors);
+      let funcArray = [];
+      //get the names of all p5.js functions
+      for (let i = 0; i < keyArr.length; i++) {
+        funcArray.push(...Object.keys(p5Constructors[keyArr[i]].prototype));
+      }
+      funcArray = funcArray.filter(ele => !ele.includes('_'));
+
+      //we have p5.js function names with us so we will check
+      //if they have been declared or not.
+      for (let i = 0; i < funcArray.length; i++) {
+        //ignoreFunction contains the list of functions to be ignored
+        if (!ignoreFunction.includes(funcArray[i])) {
+          try {
+            //if we get an error that means the function is not declared
+            element = eval(funcArray[i]);
+          } catch (e) {
+            //we will skip the iteration
+            continue;
+          }
+          //if we are not getting an error this means
+          //user have used p5.js function. Check if it is
+          //changed and if so then report it.
+          let k = 0;
+          for (; k < keyArr.length; k++) {
+            if (
+              p5Constructors[keyArr[k]].prototype[funcArray[i]] === undefined
+            );
+            else {
+              if (
+                p5Constructors[keyArr[k]].prototype[funcArray[i]] !== element
+              ) {
+                p5._friendlyError(
+                  translator('fes.sketchReaderErrors.reservedFunc', {
+                    symbol: funcArray[i]
+                  })
+                );
+                isFound = true;
+                break;
+              }
+            }
+          }
+          if (k < keyArr.length) break;
+        }
+      }
+    }
+    //if there is a match found already then we don't want to check
+    //further.
+    if (isFound === true) return true;
+    else return false;
+  };
+
+  /**
    * Initiates the sketch_reader's processes.
    * Obtains the code in setup and draw function
    * and forwards it for further processing and evaluation.
@@ -209,22 +351,28 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    */
   const fesCodeReader = () => {
-    let code = '';
-    try {
-      //get code from setup
-      code += '' + setup;
-    } catch (e) {
-      code += '';
+    //moveAhead will determine if a match is found outside
+    //the setup and draw function. If a match is found then
+    //to prevent further potential reporting we will exit immidiately
+    let moveAhead = globalConstFuncCheck();
+    if (!moveAhead) {
+      let code = '';
+      try {
+        //get code from setup
+        code += '' + setup;
+      } catch (e) {
+        code += '';
+      }
+      try {
+        //get code from draw
+        code += '\n' + draw;
+      } catch (e) {
+        code += '';
+      }
+      if (code === '') return;
+      code = removeMultilineComments(code);
+      codeToLines(code);
     }
-    try {
-      //get code from draw
-      code += '\n' + draw;
-    } catch (e) {
-      code += '';
-    }
-    if (code === '') return;
-    code = removeMultilineComments(code);
-    codeToLines(code);
   };
 
   p5._fesCodeReader = fesCodeReader;
