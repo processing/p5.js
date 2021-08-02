@@ -60,18 +60,21 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method checkForConstsAndFuncs
    * @private
-   * @param {Array} arr
+   * @param {Array} variableArray
    */
-  const checkForConstsAndFuncs = arr => {
+  const checkForConstsAndFuncs = variableArray => {
     let foundMatch = false;
 
-    for (let i = 0; i < arr.length; i++) {
-      if (constants[arr[i]] !== undefined) {
-        let url = `https://p5js.org/reference/#/p5/${arr[i]}`;
+    for (let i = 0; i < variableArray.length; i++) {
+      //if the element in variableArray is a  p5.js constant then the below condidion
+      //will be true, hence a match is found
+      if (constants[variableArray[i]] !== undefined) {
+        let url = `https://p5js.org/reference/#/p5/${variableArray[i]}`;
+        //display the FES message if a match is found
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
             url: url,
-            symbol: arr[i]
+            symbol: variableArray[i]
           })
         );
         foundMatch = true;
@@ -88,24 +91,27 @@ if (typeof IS_MINIFIED !== 'undefined') {
           p5Constructors[key] = p5[key];
         }
       }
-      for (let i = 0; i < arr.length; i++) {
+      for (let i = 0; i < variableArray.length; i++) {
         //ignoreFunction contains the list of functions to be ignored
-        if (!ignoreFunction.includes(arr[i])) {
-          const keyArr = Object.keys(p5Constructors);
+        if (!ignoreFunction.includes(variableArray[i])) {
+          const keyArray = Object.keys(p5Constructors);
           let j = 0;
           //for every function name obtained check if it matches any p5.js function name
-          for (; j < keyArr.length; j++) {
-            if (p5Constructors[keyArr[j]].prototype[arr[i]] !== undefined) {
+          for (; j < keyArray.length; j++) {
+            if (
+              p5Constructors[keyArray[j]].prototype[variableArray[i]] !==
+              undefined
+            ) {
               //if a p5.js function is used ie it is in the funcs array
               p5._friendlyError(
                 translator('fes.sketchReaderErrors.reservedFunc', {
-                  symbol: arr[i]
+                  symbol: variableArray[i]
                 })
               );
               break;
             }
           }
-          if (j < keyArr.length) break;
+          if (j < keyArray.length) break;
         }
       }
     }
@@ -118,16 +124,17 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method extractVariables
    * @private
-   * @param {Array} arr array of lines of code
+   * @param {Array} linesArray array of lines of code
    */
-  const extractVariables = arr => {
+  const extractVariables = linesArray => {
     //extract variable names from the user's code
     let matches = [];
-    arr.forEach(ele => {
-      //extract a, b, c from let/const a=10, b=20, c;
+    linesArray.forEach(ele => {
       if (ele.includes(',')) {
         matches.push(
           ...ele.split(',').flatMap(s => {
+            //below RegExps extract a, b, c from let/const a=10, b=20, c;
+            //visit https://regexr.com/ for the detailed view.
             let match;
             if (s.includes('=')) {
               match = s.match(/(\w+)\s*(?==)/i);
@@ -141,6 +148,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         );
       } else {
         //extract a from let/const a=10;
+        //visit https://regexr.com/ for the detailed view.
         const reg = /(?:(?:let|const)\s+)([\w$]+)/;
         const match = ele.match(reg);
         if (match !== null) matches.push(match[1]);
@@ -152,18 +160,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Takes an array in which each element is a line of code
-   * containing a function definition(arr=['let x = () => {...}'])
+   * containing a function definition(array=['let x = () => {...}'])
    * and extracts the functions defined.
    *
    * @method extractFuncVariables
    * @private
-   * @param {Array} arr array of lines of code
+   * @param {Array} linesArray array of lines of code
    */
-  const extractFuncVariables = arr => {
+  const extractFuncVariables = linesArray => {
     let matches = [];
-    //extract function names
+    //RegExp to extract function names from let/const x = function()...
+    //visit https://regexr.com/ for the detailed view.
     const reg = /(?:(?:let|const)\s+)([\w$]+)/;
-    arr.forEach(ele => {
+    linesArray.forEach(ele => {
       let m = ele.match(reg);
       if (m !== null) matches.push(ele.match(reg)[1]);
     });
@@ -182,9 +191,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const codeToLines = code => {
     //convert code to array of code and filter out
     //unnecessary lines
-    let arr = code.split('\n');
-    //filter out lines containing variable names
-    let arrVars = arr
+    let arrayVariables = code
+      .split('\n')
       .map(line => line.trim())
       .filter(
         line =>
@@ -192,10 +200,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
           !line.includes('//') &&
           (line.includes('let') || line.includes('const')) &&
           (!line.includes('=>') && !line.includes('function'))
+        //filter out lines containing variable names
       );
 
     //filter out lines containing function names
-    let arrFunc = arr
+    let arrayFunctions = code
+      .split('\n')
       .map(line => line.trim())
       .filter(
         line =>
@@ -206,8 +216,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
       );
 
     //pass the relevant array to a function which will extract all the variables/functions names
-    extractVariables(arrVars);
-    extractFuncVariables(arrFunc);
+    extractVariables(arrayVariables);
+    extractFuncVariables(arrayFunctions);
   };
 
   /**
@@ -215,24 +225,24 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method removeMultilineComments
    * @private
-   * @param {String} str code written by the user
+   * @param {String} code code written by the user
    * @returns {String}
    */
-  const removeMultilineComments = str => {
-    let start = str.indexOf('/*');
-    let end = str.indexOf('*/');
+  const removeMultilineComments = code => {
+    let start = code.indexOf('/*');
+    let end = code.indexOf('*/');
 
     //create a new string which don't have multiline comments
     while (start !== -1 && end !== -1) {
       if (start === 0) {
-        str = str.substr(end + 2);
-      } else str = str.substr(0, start) + str.substr(end + 2);
+        code = code.substr(end + 2);
+      } else code = code.substr(0, start) + code.substr(end + 2);
 
-      start = str.indexOf('/*');
-      end = str.indexOf('*/');
+      start = code.indexOf('/*');
+      end = code.indexOf('*/');
     }
 
-    return str;
+    return code;
   };
 
   /**
@@ -246,15 +256,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   const globalConstFuncCheck = () => {
     // generate all the const key data as an array
-    const arr = Object.keys(constants);
+    const tempArray = Object.keys(constants);
     let element;
     let isFound = false;
-    for (let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < tempArray.length; i++) {
       try {
         //if the user has not declared p5.js constant anywhere outside the
         //setup or draw function then this will throw an
         //error.
-        element = eval(arr[i]);
+        element = eval(tempArray[i]);
       } catch (e) {
         //We are catching the error due to the above mentioned
         //reason. Since there is no declaration of constant everything
@@ -266,12 +276,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
       //user have changed the value. We will check
       //if the value is changed and if it is changed
       //then report.
-      if (constants[arr[i]] !== element) {
-        let url = `https://p5js.org/reference/#/p5/${arr[i]}`;
+      if (constants[tempArray[i]] !== element) {
+        let url = `https://p5js.org/reference/#/p5/${tempArray[i]}`;
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
             url: url,
-            symbol: arr[i]
+            symbol: tempArray[i]
           })
         );
         isFound = true;
@@ -290,22 +300,24 @@ if (typeof IS_MINIFIED !== 'undefined') {
           p5Constructors[key] = p5[key];
         }
       }
-      const keyArr = Object.keys(p5Constructors);
-      let funcArray = [];
+      const keyArray = Object.keys(p5Constructors);
+      let functionArray = [];
       //get the names of all p5.js functions
-      for (let i = 0; i < keyArr.length; i++) {
-        funcArray.push(...Object.keys(p5Constructors[keyArr[i]].prototype));
+      for (let i = 0; i < keyArray.length; i++) {
+        functionArray.push(
+          ...Object.keys(p5Constructors[keyArray[i]].prototype)
+        );
       }
-      funcArray = funcArray.filter(ele => !ele.includes('_'));
+      functionArray = functionArray.filter(ele => !ele.includes('_'));
 
       //we have p5.js function names with us so we will check
       //if they have been declared or not.
-      for (let i = 0; i < funcArray.length; i++) {
+      for (let i = 0; i < functionArray.length; i++) {
         //ignoreFunction contains the list of functions to be ignored
-        if (!ignoreFunction.includes(funcArray[i])) {
+        if (!ignoreFunction.includes(functionArray[i])) {
           try {
             //if we get an error that means the function is not declared
-            element = eval(funcArray[i]);
+            element = eval(functionArray[i]);
           } catch (e) {
             //we will skip the iteration
             continue;
@@ -314,17 +326,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
           //user have used p5.js function. Check if it is
           //changed and if so then report it.
           let k = 0;
-          for (; k < keyArr.length; k++) {
+          for (; k < keyArray.length; k++) {
             if (
-              p5Constructors[keyArr[k]].prototype[funcArray[i]] === undefined
+              p5Constructors[keyArray[k]].prototype[functionArray[i]] ===
+              undefined
             );
             else {
               if (
-                p5Constructors[keyArr[k]].prototype[funcArray[i]] !== element
+                p5Constructors[keyArray[k]].prototype[functionArray[i]] !==
+                element
               ) {
                 p5._friendlyError(
                   translator('fes.sketchReaderErrors.reservedFunc', {
-                    symbol: funcArray[i]
+                    symbol: functionArray[i]
                   })
                 );
                 isFound = true;
@@ -332,7 +346,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               }
             }
           }
-          if (k < keyArr.length) break;
+          if (k < keyArray.length) break;
         }
       }
     }
