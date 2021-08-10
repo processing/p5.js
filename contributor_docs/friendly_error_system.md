@@ -245,8 +245,8 @@ line(0, 0, 100, 100, x3, Math.PI);
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
 * Extend Global Error catching. This means catching errors that the browser is throwing to the console and matching them with friendly messages. `fesErrorMonitor()` does this for a select few kinds of errors but help in supporting more is welcome :)
-* Improve `sketch_reader.js`'s code reading and variable/function name extracting functionality.
-* `sketch_reader.js` can be extended and new features can be added to it to better aid the user.
+* Improve `sketch_reader.js`'s code reading and variable/function name extracting functionality (which extracts names of the function and variables declared by the user in their code). For example currently `sketch_reader.js` is not able to extract variable/function names properly if all the code is written in a single line.
+* `sketch_reader.js` can be extended and new features (for example: Alerting the user when they have declared a variable in the `draw()` function) can be added to it to better aid the user. 
 
 
 ```javascript
