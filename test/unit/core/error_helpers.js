@@ -883,3 +883,95 @@ suite('Global Error Handling', function() {
     });
   });
 });
+
+suite('Tests for p5.js sketch_reader', function() {
+  const WAIT_AND_RESOLVE = [
+    '<script>',
+    'p5._fesLogger = window.logger',
+    'let flag = false;',
+    'setInterval(() => {',
+    // just because the log has one element doesn't necessarily mean that the
+    // handler has finished its job. The flag allows it to take some more time
+    // after adding the first log message
+    '  if (window.logger.length > 0) {',
+    '    if (flag) window.afterSetup();',
+    '    flag = true;',
+    '  }',
+    '}, 50);',
+    '</script>'
+  ].join('\n');
+
+  let log;
+  const logger = function(err) {
+    log.push(err);
+  };
+
+  const prepSketchReaderTest = (arr, resolve) => {
+    iframe = createP5Iframe(
+      [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
+        '\n'
+      )
+    );
+    log = [];
+    iframe.elt.contentWindow.logger = logger;
+    iframe.elt.contentWindow.afterSetup = resolve;
+    return iframe;
+  };
+
+  testUnMinified(
+    'detects reassignment of p5.js constant inside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['function setup() {', 'let PI = 100', '}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved variable/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js function inside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['function setup() {', 'let text = 100', '}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js constant outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(['let PI = 100', 'function setup() {}'], resolve);
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved variable/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js function outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['let text = 100', 'function setup() {}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+});
