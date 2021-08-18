@@ -714,6 +714,8 @@ for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
 
+// makes the `VERSION` constant available on the p5 object
+// in instance mode, even if it hasn't been instatiated yet
 p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
