@@ -167,3 +167,28 @@ export const initialize = () => {
   // we have the translation files.
   return i18init;
 };
+
+/**
+ * Returns a list of languages we have translations loaded for
+ */
+export const availableTranslatorLanguages = () => {
+  return i18next.languages;
+};
+
+/**
+ * Returns the current language selected for translation
+ */
+export const currentTranslatorLanguage = language => {
+  return i18next.language;
+};
+
+/**
+ * Sets the current language for translation
+ * Returns a promise that resolved when loading is finished,
+ * or rejects if it fails.
+ */
+export const setTranslatorLanguage = language => {
+  return i18next.changeLanguage(language || undefined, e =>
+    console.debug(`Translations failed to load (${e})`)
+  );
+};
