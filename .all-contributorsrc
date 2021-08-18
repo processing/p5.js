@@ -2720,6 +2720,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "guilhermesilveira",
+      "name": "Guilherme Silveira",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51391?v=4",
+      "profile": "http://www.alura.com.br",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
