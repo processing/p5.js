@@ -130,10 +130,13 @@ p5.prototype.matchAll = function(str, reg) {
 /**
  * Utility function for formatting numbers into strings. There are two
  * versions: one for formatting floats, and one for formatting ints.
+ *
  * The values for the digits, left, and right parameters should always
  * be positive integers.
+ *
  * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
+ *
  * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
  * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
  * the result will be 123.200.
@@ -149,10 +152,6 @@ p5.prototype.matchAll = function(str, reg) {
  * @example
  * <div>
  * <code>
- * let myFont;
- * function preload() {
- *   myFont = loadFont('assets/fonts/inconsolata.ttf');
- * }
  * function setup() {
  *   background(200);
  *   let num1 = 321;
@@ -160,7 +159,6 @@ p5.prototype.matchAll = function(str, reg) {
  *
  *   noStroke();
  *   fill(0);
- *   textFont(myFont);
  *   textSize(22);
  *
  *   text(nf(num1, 4, 2), 10, 30);
@@ -376,13 +374,18 @@ function addNfp(num) {
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
  * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
  * numbers which includes "-" (minus) sign.
+ *
  * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
  * number with some negative number (See the example to get a clear picture).
  * There are two versions: one for formatting float, and one for formatting int.
+ *
  * The values for the digits, left, and right parameters should always be positive integers.
+ *
  * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
+ *
  * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
+ *
  * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
  * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
  * the result will be 123.200.
@@ -398,10 +401,6 @@ function addNfp(num) {
  * @example
  * <div>
  * <code>
- * let myFont;
- * function preload() {
- *   myFont = loadFont('assets/fonts/inconsolata.ttf');
- * }
  * function setup() {
  *   background(200);
  *   let num1 = 321;
@@ -409,7 +408,6 @@ function addNfp(num) {
  *
  *   noStroke();
  *   fill(0);
- *   textFont(myFont);
  *   textSize(22);
  *
  *   // nfs() aligns num1 (positive number) with num2 (negative number) by
