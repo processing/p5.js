@@ -25,7 +25,7 @@ The list of errors that were added:
 
 ![image](https://user-images.githubusercontent.com/54030684/129186690-1f8739ef-3748-455d-96f6-c7488f141346.png)
 
-While working on this phase I had a lot of back and forth interaction with my mentos to ensure that the error messages are to the point and easy to understand by the user.
+While working on this phase I had a lot of back and forth interaction with my mentors to ensure that the error messages are to the point and easy to understand by the user.
 
 All the code and error messages can be viewed here: [GSoC'21: adding to FES phase 1 #5305](https://github.com/processing/p5.js/pull/5305)
 
