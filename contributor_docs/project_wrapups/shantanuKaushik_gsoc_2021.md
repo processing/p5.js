@@ -27,8 +27,6 @@ The list of errors that were added:
 
 While working on this phase I had a lot of back and forth interaction with my mentos to ensure that the error messages are to the point and easy to understand by the user.
 
-Later on, me and my mentors discussed and finalized the error messages which would be displayed to the user.
-
 All the code and error messages can be viewed here: [GSoC'21: adding to FES phase 1 #5305](https://github.com/processing/p5.js/pull/5305)
 
 #### Phase 2: New feature `sketch_reader.js`
