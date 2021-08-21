@@ -37,9 +37,9 @@ PRs in this section: [#137](https://github.com/stalgiag/p5.xr/pull/137) , [#138]
 
 I wanted to be able to draw a few solid colors in the basic example and then draw different textures for the complex example. 
 
-I started experimenting with using 3D shapes as drawing tools in WEBGL by removing background() from draw(), but quickly ran into problems when trying to do this same method in VR. I learned that if background() is put into draw(), one of the eyes of the headset becomes completely blocked out. This is because draw runs twice in VR (once per eye), which is why [setVRBackgroundColor()](https://p5xr.org/#/reference/vr?id=setvrbackgroundcolor) goes in setup, so that the background is cleared after rendering for each eye. 
+I started experimenting with using 3D shapes as drawing tools in WEBGL by removing `background()` from `draw()`, but quickly ran into problems when trying to do this same method in VR. I learned that if background() is put into `draw()`, one of the eyes of the headset becomes completely blocked out. This is because draw runs twice in VR (once per eye), which is why [setVRBackgroundColor()](https://p5xr.org/#/reference/vr?id=setvrbackgroundcolor) goes in setup, so that the background is cleared after rendering for each eye.
 
-Since I couldn't use this method of not drawing the background to draw, Stalgia showed me a different method which creates an array of objects that are drawn at the x, y, and z positions of the viewer's controller. Now that the positioning was correct, we had to use [generateRay()](https://p5xr.org/#/reference/raycasting?id=generateray) to create a ray originating at the hand's location in order to activate intersectSphere. It's also necessary to use **"applyMatrix(hand.pose)"** so that the tilt of one's hand is tracked as well. 
+Since I couldn't use this approach of not drawing the background to keep previously drawn shapes, Stalgia showed me a different approach that stores an array of objects indicating previous brush strokes at the x, y, and z positions of the viewer's controller. Now that the positioning was correct, we had to use [generateRay()](https://p5xr.org/#/reference/raycasting?id=generateray) to create a ray originating at the hand's location in order to use `intersectSphere()`. It's also necessary to use **`applyMatrix(hand.pose)`** to apply the position and rotation of the hand to a box indicating the location of the player's hand.
 
 ![visual-art-making-tools-gif-1](https://user-images.githubusercontent.com/83731139/130161879-d61c1ecb-2000-4310-9794-b11009e46225.gif)
 
@@ -66,11 +66,11 @@ PRs in this section: [#145](https://github.com/stalgiag/p5.xr/pull/145) , [#146]
 
 
 ### [Example #4: Physics](https://github.com/stalgiag/p5.xr/tree/master/examples/physics)
-I had never worked on a physics example before, so I tried watching some Coding Train tutorials on strings, but couldn't get that to function correctly in VR. After speaking with my mentor about it, they showed me a working physics example that I was able to expand upon for the complex version of this theme. The basic example includes boundaries and a ball that can be held and thrown around.  
+I've never worked with physics in code before so I watched a Coding Train tutorial on strings, but the example didn't easily translate to the scale of VR. After speaking with my mentor about it, they showed me a working physics example that I was able to expand upon for the complex version of this theme. The basic example includes boundaries and a ball that can be held and thrown around.
 
 ![physics-gif-1](https://user-images.githubusercontent.com/83731139/130161918-e969e700-eea6-46dc-923a-95979775cd6e.gif)
 
-For the complex example, I made the Ball class from earlier generate multiple balls at random x, y, and z locations that could change size, shape, texture, and color the moment they'd collide with a boundary. I also tried to include type textures on the shapes too, but they didn't display correctly for some reason, so instead I displayed the type textures on the boundaries of the room. I eventually removed the ability for the ball to change shape or texture since it felt too busy and just left it so it changes only size and color upon collision. Once I added in the other walls and ceiling, the whole thing really came together.  
+For the complex example, I made the Ball class from earlier generate multiple balls at random locations that could change size, shape, texture, and color the moment they collide with a boundary. I also tried to include type textures on the shapes too, but UV wrapping on the 3D shapes made them illegible. So instead I displayed the type textures on the boundaries of the room. I eventually removed the ability for the ball to change shape or texture since it felt too busy and just left it so it changes only size and color upon collision. Once I added in the other walls and ceiling, the whole thing really came together.
 
 ![physics-gif-2](https://user-images.githubusercontent.com/83731139/130161920-9fea2aa4-8e75-458a-9bac-97e67b9ce463.gif)
 
@@ -79,11 +79,11 @@ PRs in this section: [#143](https://github.com/stalgiag/p5.xr/pull/143) , [#144]
 
 
 ### [Example #5: Embodiment](https://github.com/stalgiag/p5.xr/pull/147)
-For the embodiment example, my mentor explained some other XR functions to me that helped me try to position things in VR. We can get the location of the camera with viewerPosition and we can also get the pose of the camera with viewerPoseMatrix. We can use "applyMatrix(viewerPoseMatrix);" on the head of the body, which allows it mirror the direction/pose that the viewers head is moving. By putting viewerPosition inside of translate, now the other parts of the body will be relative to the location of the head.
+For the embodiment example, my mentor explained p5.xr viewer properties that helped position objects relative to the body in VR. We can get the location of the camera with `viewerPosition` and we can also get the pose of the camera with viewerPoseMatrix. We can use `applyMatrix(viewerPoseMatrix)` on the head of the body, which allows it to mirror the direction and pose of the viewer's head. By putting `viewerPosition` inside of translate, now the other parts of the body will be relative to the location of the head.
 
 ![embodiment-gif-1](https://user-images.githubusercontent.com/83731139/130161883-66469af7-3e6b-4ab8-bd11-ef92933a9402.gif)
 
-I didn't get to finish the complex example because I ran out of time. I wanted to create a dragon that the viewer could look at and move with, but I was having trouble converting the size of the dragon's body in WEBGL to the correct dimensions in VR, which are extremely small whenever hand positioning is included. I only managed to get the head and wings working so far.
+There wasn't enough time to finish the complex example. I wanted to create a dragon that the viewer could look at and move with, but I was having trouble converting the scale to the correct dimensions in VR, which are extremely small.
 
 PRs in this section: [#147](https://github.com/stalgiag/p5.xr/pull/147)
 
@@ -96,8 +96,8 @@ PRs in this section: [#147](https://github.com/stalgiag/p5.xr/pull/147)
 
 
 ## Future
-* Could include specific input button controls for the Oculus Quest 2's x, y, a and b buttons because right now the gamepad lines of code don't function for Oculus even though they work fine for the Vibe. 
-* Could figure out why including text in VR sometimes makes the sketch run much much slower than it would if it were running in WEBGL mode
+Future work could add specific input controls for the Oculus Quest 2's x, y, a, and b buttons. Right now the gamepad code does not function for Oculus but does work with HTC Vive.
+Future work could investigate performance issues with text in VR.
 
 
 
