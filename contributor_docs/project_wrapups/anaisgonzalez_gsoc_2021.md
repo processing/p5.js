@@ -2,6 +2,15 @@
 
 #### by [Anais Gonzalez](https://anaisgonzalez.design)
 
+
+
+## Work Pull Requests and Issues
+  * All of the pull requests made as a part of the project can be found [here](https://github.com/stalgiag/p5.xr/pulls?q=is%3Apr+author%3Aanagondesign+created%3A%3C2021-08-23).
+  * All of the issues opened as part of the project can be found [here](https://github.com/stalgiag/p5.xr/issues?q=is%3Aissue+author%3Aanagondesign+created%3A%3C2021-08-23+).
+  * All of the commits I made for the project can be found [here](https://github.com/stalgiag/p5.xr/commits?author=anagondesign).
+
+
+
 ## Overview 
 Over the course of this summer, I worked on improving the p5.xr library by creating a series of artistic examples with the guidance of my mentor Stalgia Grigg. The p5.xr library is an add-on for p5 that adds the ability to run p5 sketches in Augmented Reality or Virtual Reality. It does this with the help of WebXR and anyone who is familiar with p5 can experiment with this library as long as they have the necessary equipment. 
 
@@ -87,11 +96,6 @@ There wasn't enough time to finish the complex example. I wanted to create a dra
 
 PRs in this section: [#147](https://github.com/stalgiag/p5.xr/pull/147)
 
-
-
-## Work Pull Requests and Issues
-  * All of the pull requests made as a part of the project can be found here: https://github.com/stalgiag/p5.xr/pulls?q=is%3Apr+author%3Aanagondesign+created%3A%3C2021-08-23
-  * All of the issues opened as part of the project can be found here: https://github.com/stalgiag/p5.xr/issues?q=is%3Aissue+author%3Aanagondesign+created%3A%3C2021-08-23+
 
 
 
