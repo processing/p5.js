@@ -44,8 +44,6 @@ PRs in this section: [#137](https://github.com/stalgiag/p5.xr/pull/137) , [#138]
 
 ![visual-art-making-tools-sketch](https://user-images.githubusercontent.com/83731139/130163201-9443f3b4-2a7b-48c6-bc51-cdb708bd53c4.jpg)
 
-I wanted to be able to draw a few solid colors in the basic example and then draw different textures for the complex example. 
-
 I started experimenting with using 3D shapes as drawing tools in WEBGL by removing `background()` from `draw()`, but quickly ran into problems when trying to do this same method in VR. I learned that if background() is put into `draw()`, one of the eyes of the headset becomes completely blocked out. This is because draw runs twice in VR (once per eye), which is why [setVRBackgroundColor()](https://p5xr.org/#/reference/vr?id=setvrbackgroundcolor) goes in setup, so that the background is cleared after rendering for each eye.
 
 Since I couldn't use this approach of not drawing the background to keep previously drawn shapes, Stalgia showed me a different approach that stores an array of objects indicating previous brush strokes at the x, y, and z positions of the viewer's controller. Now that the positioning was correct, we had to use [generateRay()](https://p5xr.org/#/reference/raycasting?id=generateray) to create a ray originating at the hand's location in order to use `intersectSphere()`. It's also necessary to use **`applyMatrix(hand.pose)`** to apply the position and rotation of the hand to a box indicating the location of the player's hand.
