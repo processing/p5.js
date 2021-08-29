@@ -1746,8 +1746,8 @@ p5.Element.prototype.html = function() {
  * <div><code class='norender'>
  * function setup() {
  *   let cnv = createCanvas(100, 100);
- *   // positions canvas 50px to the right and 100px
- *   // below upper left corner of the window
+ *   // positions canvas at upper left corner of the window
+ *   // with a 'fixed' position type
  *   cnv.position(0, 0, 'fixed');
  * }
  * </code></div>
