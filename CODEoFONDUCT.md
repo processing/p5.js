@@ -1,5 +1,5 @@
-
-## [p5.js community statement](http://p5js.org/community/)
+**//JCS Enterprises LLC,Copyright-License(2021) https://jcsenterprises.github.io
+## Patrick Rene Guerrero=JCS Enterprises LLC[p5.js community statement](http://p5js.org/community/)
 
 p5.js is a community interested in exploring the creation of art and design with technology.
 
@@ -7,7 +7,7 @@ We are a community of, and in solidarity with, people from every gender identity
 
 We like these hashtags: #noCodeSnobs (because we value community over efficiency), #newKidLove (because we all started somewhere), #unassumeCore (because we don't assume knowledge), and #BlackLivesMatter (because of course).
 
-In practice:
+In practice: https://truth4purpose.wordpress.com and https://jcsenterprises.github.io
 * We are not code snobs. We do not assume knowledge or imply there are things that somebody should know.
 * We insist on actively engaging with requests for feedback regardless of their complexity.
 * We welcome newcomers and prioritize the education of others. We strive to approach all tasks with the enthusiasm of a newcomer. Because we believe that newcomers are just as valuable in this effort as experts.
