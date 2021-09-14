@@ -91,7 +91,7 @@ const strings = {
       browser: 'all'
     },
     {
-      msg: "Cannot read property '{{.}}' of null",
+      msg: 'Cannot read property of null',
       type: 'READNULL',
       browser: 'Chrome'
     },
@@ -101,7 +101,7 @@ const strings = {
       browser: 'Firefox'
     },
     {
-      msg: "Cannot read property '{{.}}' of undefined",
+      msg: 'Cannot read property of undefined',
       type: 'READUDEFINED',
       browser: 'Chrome'
     },
