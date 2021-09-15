@@ -90,7 +90,7 @@ p5.Vector = function Vector() {
  * <code>
  * function setup() {
  *   let v = createVector(20, 30);
- *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
+ *   print(v.toString()); // prints "p5.Vector Object : [20, 30, 0]"
  * }
  * </code>
  * </div>
@@ -274,7 +274,7 @@ p5.Vector.prototype.copy = function copy() {
  *
  * let v3 = p5.Vector.add(v1, v2);
  * // v3 has components [3, 5, 7]
- * print(String(v3));
+ * print(v3.toString());
  * </code>
  * </div>
  *
@@ -384,7 +384,7 @@ const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
  *
  * let v3 = p5.Vector.rem(v1, v2);
  * // v3 has components [1, 1, 1]
- * print(String(v3));
+ * print(v3.toString());
  * </code>
  * </div>
  */
@@ -482,7 +482,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
  *
  * let v3 = p5.Vector.sub(v1, v2);
  * // v3 has components [1, 1, 1]
- * print(String(v3));
+ * print(v3.toString());
  * </code>
  * </div>
  *
@@ -588,7 +588,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * let v0 = createVector(1, 2, 3);
  * let v1 = createVector(2, 3, 4);
  * const result = p5.Vector.mult(v0, v1);
- * print(String(result)); // result's components are set to [2, 6, 12]
+ * print(result.toString()); // result's components are set to [2, 6, 12]
  * </code>
  * </div>
  *
@@ -598,7 +598,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * let v1 = createVector(1, 2, 3);
  * let v2 = p5.Vector.mult(v1, 2);
  * // v2 has components [2, 4, 6]
- * print(String(v2));
+ * print(v2.toString());
  * </code>
  * </div>
  *
@@ -780,7 +780,7 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * let v0 = createVector(9, 4, 2);
  * let v1 = createVector(3, 2, 4);
  * let result = p5.Vector.div(v0, v1);
- * print(String(result)); // result's components are set to [3, 2, 0.5]
+ * print(result.toString()); // result's components are set to [3, 2, 0.5]
  * </code>
  * </div>
  *
@@ -790,7 +790,7 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * let v1 = createVector(6, 4, 2);
  * let v2 = p5.Vector.div(v1, 2);
  * // v2 has components [3, 2, 1]
- * print(String(v2));
+ * print(v2.toString());
  * </code>
  * </div>
  *
@@ -1100,7 +1100,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  * let v2 = createVector(1, 2, 3);
  *
  * let v = v1.cross(v2); // v's components are [0, 0, 0]
- * print(String(v));
+ * print(v.toString());
  * </code>
  * </div>
  *
@@ -1112,7 +1112,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  *
  * let crossProduct = p5.Vector.cross(v1, v2);
  * // crossProduct has components [0, 0, 1]
- * print(String(crossProduct));
+ * print(crossProduct.toString());
  * </code>
  * </div>
  */
@@ -1221,7 +1221,7 @@ p5.Vector.prototype.dist = function dist(v) {
  * let v_initial = createVector(10, 20, 2);
  * // v_initial has components [10.0, 20.0, 2.0]
  * let v_normalized = p5.Vector.normalize(v_initial);
- * print(String(v_normalized));
+ * print(v_normalized.toString());
  * // returns a new vector with components set to
  * // [0.4454354, 0.8908708, 0.089087084]
  * // v_initial remains unchanged
@@ -1503,9 +1503,9 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  * let v = createVector(10.0, 20.0);
  * // v has components [10.0, 20.0, 0.0]
  * let rotated_v = p5.Vector.rotate(v, HALF_PI);
- * print(String(rotated_v));
+ * print(rotated_v.toString());
  * // rotated_v's components are set to [-20.0, 9.999999, 0.0]
- * print(String(v));
+ * print(v.toString());
  * // v's components remains the same (i.e, [10.0, 20.0, 0.0])
  * </code>
  * </div>
@@ -1657,7 +1657,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  *
  * let v3 = p5.Vector.lerp(v1, v2, 0.5);
  * // v3 has components [50,50,0]
- * print(String(v3));
+ * print(v3.toString());
  * </code>
  * </div>
  *
@@ -1974,7 +1974,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  * // [0.61554617, -0.51195765, 0.0] or
  * // [-0.4695841, -0.14366731, 0.0] or
  * // [0.6091097, -0.22805278, 0.0]
- * print(String(v));
+ * print(v.toString());
  * </code>
  * </div>
  *
@@ -2027,7 +2027,7 @@ p5.Vector.random2D = function random2D() {
  * // [0.61554617, -0.51195765, 0.599168] or
  * // [-0.4695841, -0.14366731, -0.8711202] or
  * // [0.6091097, -0.22805278, -0.7595902]
- * print(String(v));
+ * print(v.toString());
  * </code>
  * </div>
  */
