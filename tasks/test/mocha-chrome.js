@@ -16,8 +16,7 @@ module.exports = function(grunt) {
     // Launch Chrome in headless mode
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: '/Applications/Chromium.app/Contents/MacOS/Chromium'
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
     try {
