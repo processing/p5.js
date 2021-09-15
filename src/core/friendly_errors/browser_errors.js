@@ -91,7 +91,7 @@ const strings = {
       browser: 'all'
     },
     {
-      msg: 'Cannot read {{.}} of null',
+      msg: 'Cannot read {{.}} null',
       type: 'READNULL',
       browser: 'Chrome'
     },
