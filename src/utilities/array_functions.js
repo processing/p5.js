@@ -195,14 +195,14 @@ p5.prototype.shorten = function(list) {
  * <div><code>
  * function setup() {
  *   let regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
- *   print(regularArr);
+ *   print(String(regularArr));
  *   shuffle(regularArr, true); // force modifications to passed array
- *   print(regularArr);
+ *   print(String(regularArr));
  *
  *   // By default shuffle() returns a shuffled cloned array:
  *   let newArr = shuffle(regularArr);
- *   print(regularArr);
- *   print(newArr);
+ *   print(String(regularArr));
+ *   print(String(newArr));
  * }
  * </code></div>
  */
