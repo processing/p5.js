@@ -22,17 +22,24 @@
     },
     "globalErrors": {
       "reference": {
-        "notDefined": "There's an error due to \"{{symbol}}\" not being defined in the current scope {{location}}.\n\nIf you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
+        "cannotAccess": "\nError ▶️ \"{{symbol}}\" is used before declaration. Make sure you have declared the variable before using it.\n\n{{location}}\n\nFor more: {{url}}",
+        "notDefined": "\nError ▶️ \"{{symbol}}\" is not defined in the current scope {{location}}.\n\nIf you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more:\n{{url1}}\n{{url2}}"
       },
       "stackSubseq": "▶️ Called from line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
       "stackTop": "▶️ Error at line {{line}} in \"{{func}}\" in {{file}} ({{location}})\n\n",
       "syntax": {
-        "invalidToken": "There's a syntax error due to a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nFor more: {{url}}",
-        "unexpectedToken": "There's a syntax error due to a symbol that wasn't expected at it's place.\nUsually this is due to a typo. Check the line number in the error below for anything missing/extra.\nFor more: {{url}}"
+        "badReturnOrYield": "\nSyntax Error ▶️ return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\nFor more: {{url}}",
+        "invalidToken": "\nSyntax Error ▶️ Found a symbol that JavaScript doesn't recognize or didn't expect at it's place.\nFor more: {{url}}",
+        "missingInitializer": "\nSyntax Error ▶️ A const variable is declared but not initialized. In JavaScript, an initializer for a const is required. A value must be specified in the same statement in which the variable is declared. Check the line number in the error and assign the const variable a value.\nFor more: {{url}}",
+        "redeclaredVariable": "\nSyntax Error ▶️ \"{{symbol}}\" is being redeclared. JavaScript doesn't allow declaring a variable more than once. Check the line number in error for redeclaration of the variable.\nFor more: {{url}}",
+        "unexpectedToken": "\nSyntax Error ▶️ Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\nFor more: {{url}}"
       },
       "type": {
-        "notfunc": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}",
-        "notfuncObj": "There's an error as \"{{symbol}}\" could not be called as a function {{location}}.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}"
+        "constAssign": "\nError ▶️ A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n{{location}}\nFor more: {{url}}",
+        "notfunc": "\nError ▶️ \"{{symbol}}\" could not be called as a function {{location}}.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}",
+        "notfuncObj": "\nError ▶️ \"{{symbol}}\" could not be called as a function {{location}}.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\nFor more: {{url}}",
+        "readFromNull": "\nError ▶️ The property of null can't be read. In javascript the value null indicates that an object has no value.\nFor more: \n{{url1}}\n{{url2}}",
+        "readFromUndefined": "\nError ▶️ Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\nFor more: \n{{url1}}\n{{url2}}"
       }
     },
     "libraryError": "An error with message \"{{error}}\" occured inside the p5js library when {{func}} was called {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
@@ -55,6 +62,10 @@
       "p_9": "ninth"
     },
     "pre": "\n🌸 p5.js says: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "you have used a p5.js reserved variable \"{{symbol}}\" make sure you change the variable name to something else.\n({{url}})",
+      "reservedFunc": "you have used a p5.js reserved function \"{{symbol}}\" make sure you change the function name to something else."
+    },
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
     "wrongPreload": "An error with message \"{{error}}\" occured inside the p5js library when \"{{func}}\" was called {{location}}.\n\nIf not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
   }

@@ -122,6 +122,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uPMatrix = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
 
+  // Current vertex normal
+  this._currentNormal = new p5.Vector(0, 0, 1);
+
   // Camera
   this._curCamera = new p5.Camera(this);
   this._curCamera._computeCameraDefaultSettings();
@@ -151,7 +154,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
         new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
         //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
@@ -1025,6 +1028,8 @@ p5.RendererGL.prototype.push = function() {
   properties._useNormalMaterial = this._useNormalMaterial;
   properties._tex = this._tex;
   properties.drawMode = this.drawMode;
+
+  properties._currentNormal = this._currentNormal;
 
   return style;
 };
