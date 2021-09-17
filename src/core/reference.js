@@ -415,7 +415,7 @@
  * the initial state for the loop.The second expression is a condition that you
  * would like to check before each loop. If this expression returns false then
  * the loop will exit.The third expression is executed at the end of each loop.
- * These expression are seperated by ; (semi-colon).In case of an empty expression,
+ * These expression are separated by ; (semi-colon).In case of an empty expression,
  * only a semi-colon is written.
  *
  * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second

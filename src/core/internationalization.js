@@ -104,7 +104,7 @@ FetchResources.type = 'backend';
 
 /**
  * This is our translation function. Give it a key and
- * it will retreive the appropriate string
+ * it will retrieve the appropriate string
  * (within supported languages) according to the
  * user's browser's language settings.
  * @function translator

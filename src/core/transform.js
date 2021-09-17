@@ -183,7 +183,7 @@ p5.prototype.applyMatrix = function() {
  * </div>
  *
  * @alt
- * A rotated retangle in the center with another at the top left corner
+ * A rotated rectangle in the center with another at the top left corner
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -200,7 +200,7 @@ p5.prototype.resetMatrix = function() {
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
@@ -235,7 +235,7 @@ p5.prototype.rotate = function(angle, axis) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method  rotateX
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -271,7 +271,7 @@ p5.prototype.rotateX = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateY
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -309,7 +309,7 @@ p5.prototype.rotateY = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateZ
  * @param  {Number} angle the angle of rotation, specified in radians

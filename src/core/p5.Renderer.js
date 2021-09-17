@@ -269,11 +269,11 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
       switch (this._textBaseline) {
         case constants.BOTTOM:
-          shiftedY = y + (maxHeight - totalHeight);
+          shiftedY = y + maxHeight;
           y = Math.max(shiftedY, y);
           break;
         case constants.CENTER:
-          shiftedY = y + (maxHeight - totalHeight) / 2;
+          shiftedY = y + maxHeight / 2;
           y = Math.max(shiftedY, y);
           break;
         case constants.BASELINE:

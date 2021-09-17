@@ -67,6 +67,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   }
   const vert = new p5.Vector(x, y, z);
   this.immediateMode.geometry.vertices.push(vert);
+  this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
     vertexColor[0],
@@ -99,6 +100,28 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   this.immediateMode._quadraticVertex[0] = x;
   this.immediateMode._quadraticVertex[1] = y;
   this.immediateMode._quadraticVertex[2] = z;
+
+  return this;
+};
+
+/**
+ * Sets the normal to use for subsequent vertices.
+ * @method vertexNormal
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} z
+ * @chainable
+ *
+ * @method vertexNormal
+ * @param  {Vector} v
+ * @chainable
+ */
+p5.RendererGL.prototype.normal = function(xorv, y, z) {
+  if (xorv instanceof p5.Vector) {
+    this._currentNormal = xorv;
+  } else {
+    this._currentNormal = new p5.Vector(xorv, y, z);
+  }
 
   return this;
 };
@@ -251,7 +274,6 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
   const shader = this._getImmediateFillShader();
 
-  this._calculateNormals(this.immediateMode.geometry);
   this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.fill) {
@@ -296,18 +318,6 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     this.immediateMode.geometry.lineVertices.length
   );
   shader.unbindShader();
-};
-
-/**
- * Called from _drawImmediateFill(). Currently adds default normals which
- * only work for flat shapes.
- * @parem
- * @private
- */
-p5.RendererGL.prototype._calculateNormals = function(geometry) {
-  geometry.vertices.forEach(() => {
-    geometry.vertexNormals.push(new p5.Vector(0, 0, 1));
-  });
 };
 
 export default p5.RendererGL;
