@@ -8,7 +8,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 * [Activism Through Storytelling with Code](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/nikiito_gsoc_2021.md) by Niki Ito, 2021
 * [Addon Library Development - p5.teach.js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/aditya_gsoc_2021.md) by Aditya Siddheshwar, 2021
 * [Internationalization(i18n) and Deployment of p5.js website](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/sanjay_singh_rajpoot_gsoc2020.md) by Sanjay Singh Rajpoot, 2021
-
+* [Improving the p5.xr Library Through Artistic Examples](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/anaisgonzalez_gsoc_2021.md) by Anais Gonzalez, 2021
 
 ### Google Summer of Code 2020
 * [p5.js accessibility and canvas descriptions](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/luismn_gsoc_2020.md) by Luis Morales-Navarro, 2020
