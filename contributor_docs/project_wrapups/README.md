@@ -4,6 +4,7 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 *Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
 
 ### Google Summer of Code 2021
+* [Adding Alt Text to the p5.js Website](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/katiejliu_gsoc_2021.md) by Katie Liu, 2021
 * [Adding to p5.js Friendly Error System](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/shantanuKaushik_gsoc_2021.md) by Shantanu Kaushik, 2021
 * [Activism Through Storytelling with Code](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/nikiito_gsoc_2021.md) by Niki Ito, 2021
 * [Addon Library Development - p5.teach.js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/aditya_gsoc_2021.md) by Aditya Siddheshwar, 2021
