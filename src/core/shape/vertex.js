@@ -89,7 +89,7 @@ p5.prototype.beginContour = function() {
  * Draw a series of connected triangles in strip fashion
  *
  * QUADS
- * Draw a series of seperate quad
+ * Draw a series of separate quad
  *
  * QUAD_STRIP
  * Draw quad strip using adjacent edges to form the next quad
