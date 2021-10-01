@@ -289,6 +289,8 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     // Render lines of text according to settings of textWrap
     // Splits lines at spaces, for loop adds one word + space at a time and tests length with next word added
     if (textWrapStyle === constants.WORD) {
+      // ADDED-WORD /////////////////////////////////////////////////////////
+      let nlines = [];
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         line = '';
         words = lines[lineIndex].split(' ');
@@ -296,20 +298,78 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           testLine = `${line + words[wordIndex]}` + ' ';
           testWidth = this.textWidth(testLine);
           if (testWidth > maxWidth && line.length > 0) {
-            this._renderText(p, line, x, y, finalMaxHeight);
+            //this._renderText(p, line, x, y, finalMaxHeight);
+            nlines.push(line);
+            line = `${words[wordIndex]}` + ' ';
+            //y += p.textLeading();
+          } else {
+            line = testLine;
+          }
+        }
+        //this._renderText(p, line, x, y, finalMaxHeight);
+        nlines.push(line);
+        //y += p.textLeading();
+      }
+      //console.log('WORD: ', nlines);
+      let offset = 0;
+
+      const vAlign = p.textAlign().vertical;
+      if (vAlign === constants.CENTER) {
+        offset = (nlines.length - 1) * p.textLeading() / 2;
+      } else if (vAlign === constants.BOTTOM) {
+        offset = (nlines.length - 1) * p.textLeading();
+      }
+      ////////////////////////////////////////////////////////////////////////
+
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          testLine = `${line + words[wordIndex]}` + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
             line = `${words[wordIndex]}` + ' ';
             y += p.textLeading();
           } else {
             line = testLine;
           }
         }
-        this._renderText(p, line, x, y, finalMaxHeight);
+        this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
         y += p.textLeading();
         if (baselineHacked) {
           this._textBaseline = constants.BASELINE;
         }
       }
     } else {
+      // ADDED-CHAR /////////////////////////////////////////////////////////
+      let nlines = [];
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        chars = lines[lineIndex].split('');
+        for (let charIndex = 0; charIndex < chars.length; charIndex++) {
+          testLine = `${line + chars[charIndex]}`;
+          testWidth = this.textWidth(testLine);
+          if (testWidth <= maxWidth) {
+            line += chars[charIndex];
+          } else if (testWidth > maxWidth && line.length > 0) {
+            nlines.push(line);
+            line = `${chars[charIndex]}`;
+          }
+        }
+      }
+      nlines.push(line);
+      console.log('CHAR: ', nlines);
+      let offset = 0;
+
+      const vAlign = p.textAlign().vertical;
+      if (vAlign === constants.CENTER) {
+        offset = (nlines.length - 1) * p.textLeading() / 2;
+      } else if (vAlign === constants.BOTTOM) {
+        offset = (nlines.length - 1) * p.textLeading();
+      }
+      ////////////////////////////////////////////////////////////////////////
+
       // Splits lines at characters, for loop adds one char at a time and tests length with next char added
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         line = '';
@@ -320,13 +380,13 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           if (testWidth <= maxWidth) {
             line += chars[charIndex];
           } else if (testWidth > maxWidth && line.length > 0) {
-            this._renderText(p, line, x, y, finalMaxHeight);
+            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
             y += p.textLeading();
             line = `${chars[charIndex]}`;
           }
         }
       }
-      this._renderText(p, line, x, y, finalMaxHeight);
+      this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
       y += p.textLeading();
 
       if (baselineHacked) {
