@@ -1,22 +1,22 @@
 var textSketch = function(p) {
   var font, font2;
   p.preload = function() {
-    font = p.loadFont('../acmesa.ttf');
+    //font = p.loadFont('../acmesa.ttf');
     font2 = p.loadFont('../SourceSansPro-Regular.otf');
   };
   p.setup = function() {
     p.createCanvas(240, 160);
     //p.ellipse(20,20,50,70);
-    p.textFont(font);
+    //p.textFont(font);
+    //p.text('Default Text', 10, 30);
     p.textSize(18);
-    p.text('Default Text', 10, 30);
     p.textFont(font2);
     p.noStroke();
     p.fill(0, 102, 153);
     p.text('Blue No Stroke Text', 10, 60);
-    p.stroke(0, 200, 0);
-    p.strokeWeight(0.5);
-    p.text('Blue with Green Stroked Text', 10, 90);
+    //p.stroke(0, 200, 0);
+    //p.strokeWeight(0.5);
+    //p.text('Blue with Green Stroked Text', 10, 90);
     p.noStroke();
     p.textSize(12);
     p.fill(120);
@@ -469,7 +469,7 @@ var textAlignmentSketch = function(p) {
   var textString = 'Hello p5';
   var padding = 10;
   p.preload = function() {
-    font1 = p.loadFont('../SourceSansPro-Regular.otf');
+    font1 = p.loadFont('../SourceSansPro-Regular.otf'); // different
     font2 = p.loadFont('../FiraSans-Book.otf');
     font3 = p.loadFont('../Inconsolata-Bold.ttf');
     font4 = p.loadFont('../PlayfairDisplay-Regular.ttf');
@@ -523,7 +523,7 @@ var textVertAlignmentSketch = function(p) {
     'Merriweather-LightItalic.ttf',
     'Montserrat-Regular.ttf',
     'OpenSans-Regular.ttf',
-    'SourceSansPro-Regular.otf'
+    'SourceSansPro-Regular.otf' // different
   ];
   var fonts = [];
   var vAligns = [p.TOP, p.CENTER, p.BASELINE, p.BOTTOM];
