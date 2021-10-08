@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/gsoc.png"  width="300" style="margin-left:50%;transform:translateX(-50%);"/>
+  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/gsoc.png" alt="gsoc logo" width="300" style="margin-left:50%;transform:translateX(-50%);"/>
 </p>
 
 <p>
@@ -71,12 +71,12 @@ As you can see below, the before and after images, I've implemented more than 30
 
 ### before :
 <p align="center">
-  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/before.png"  width="300" style="margin-left:50%;transform:translateX(-50%);"/>
+  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/before.png" alt="a picture showing the result of running testcases before the project" width="300" style="margin-left:50%;transform:translateX(-50%);"/>
 </p>   
 
 ### after : 
 <p align="center">
-  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/after.png"  width="300" style="margin-left:50%;transform:translateX(-50%);"/>
+  <img src="https://github.com/satyasaibhushan/gsoc-21-wrapup/blob/master/assets/after.png" alt="a picture showing the result of running testcases after the project" width="300" style="margin-left:50%;transform:translateX(-50%);"/>
 </p>
 
 
