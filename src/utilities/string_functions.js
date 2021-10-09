@@ -14,9 +14,9 @@ import '../core/friendly_errors/fes_core';
 
 /**
  * Combines an array of Strings into one String, each separated by the
- * character(s) used for the separator parameter. To join arrays of ints or
+ * character(s) used for the `separator` parameter. To join arrays of ints or
  * floats, it's necessary to first convert them to Strings using <a href="#/p5/nf">nf()</a> or
- * nfs().
+ * <a href="#/p5/nfs">nfs()</a>.
  *
  * @method join
  * @param  {Array}  list      array of Strings to be joined
@@ -43,20 +43,20 @@ p5.prototype.join = function(list, separator) {
 /**
  * This function is used to apply a regular expression to a piece of text,
  * and return matching groups (elements found inside parentheses) as a
- * String array. If there are no matches, a null value will be returned.
+ * String array. If there are no matches, a `null` value will be returned.
  * If no groups are specified in the regular expression, but the sequence
  * matches, an array of length 1 (with the matched text as the first element
  * of the array) will be returned.
  *
- * To use the function, first check to see if the result is null. If the
- * result is null, then the sequence did not match at all. If the sequence
+ * To use the function, first check to see if the result is `null`. If the
+ * result is `null`, then the sequence did not match at all. If the sequence
  * did match, an array is returned.
  *
  * If there are groups (specified by sets of parentheses) in the regular
  * expression, then the contents of each will be returned in the array.
- * Element [0] of a regular expression match returns the entire matching
- * string, and the match groups start at element [1] (the first group is [1],
- * the second [2], and so on).
+ * Element `[0]` of a regular expression match returns the entire matching
+ * string, and the match groups start at element `[1]` (the first group is `[1]`,
+ * the second `[2]`, and so on).
  *
  * @method match
  * @param  {String} str    the String to be searched
@@ -83,20 +83,20 @@ p5.prototype.match = function(str, reg) {
 /**
  * This function is used to apply a regular expression to a piece of text,
  * and return a list of matching groups (elements found inside parentheses)
- * as a two-dimensional String array. If there are no matches, a null value
+ * as a two-dimensional String array. If there are no matches, a `null` value
  * will be returned. If no groups are specified in the regular expression,
  * but the sequence matches, a two dimensional array is still returned, but
  * the second dimension is only of length one.
  *
- * To use the function, first check to see if the result is null. If the
- * result is null, then the sequence did not match at all. If the sequence
+ * To use the function, first check to see if the result is `null`. If the
+ * result is `null`, then the sequence did not match at all. If the sequence
  * did match, a 2D array is returned.
  *
  * If there are groups (specified by sets of parentheses) in the regular
  * expression, then the contents of each will be returned in the array.
- * Assuming a loop with counter variable i, element [i][0] of a regular
+ * Assuming a loop with counter variable `i`, element `[i][0]` of a regular
  * expression match returns the entire matching string, and the match groups
- * start at element [i][1] (the first group is [i][1], the second [i][2],
+ * start at element `[i][1]` (the first group is `[i][1]`, the second `[i][2]`,
  * and so on).
  *
  * @method matchAll
@@ -130,13 +130,14 @@ p5.prototype.matchAll = function(str, reg) {
 /**
  * Utility function for formatting numbers into strings. There are two
  * versions: one for formatting floats, and one for formatting ints.
- * The values for the digits, left, and right parameters should always
+ * The values for the `digits`, `left`, and `right` parameters should always
  * be positive integers.
- * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
- * if greater than the current length of the number.
- * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
- * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
- * the result will be 123.200.
+ *
+ * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's
+ * if the parameter is greater than the current length of the number.
+ * For example, if `number` is `123.2` and `left` parameter passed is `4`, which is greater than length of `123`
+ the integer part) i.e. 3, then the result will be `0123.2`. The same is true for the `right` parameter (i.e. if `right` is 3, then
+ * the result will be `123.200`).
  *
  * @method nf
  * @param {Number|String}       num      the Number to format
@@ -240,7 +241,7 @@ function doNf(num, left, right) {
  * Utility function for formatting numbers into strings and placing
  * appropriate commas to mark units of 1000. There are two versions: one
  * for formatting ints, and one for formatting an array of ints. The value
- * for the right parameter should always be a positive integer.
+ * for the `right` parameter should always be a positive integer.
  *
  * @method nfc
  * @param  {Number|String}   num     the Number to format
@@ -312,9 +313,9 @@ function doNfc(num, right) {
 
 /**
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
- * puts a "+" in front of positive numbers and a "-" in front of negative
+ * puts a `"+"` in front of positive numbers and a `"-"` in front of negative
  * numbers. There are two versions: one for formatting floats, and one for
- * formatting ints. The values for left, and right parameters
+ * formatting ints. The values for the `left` and `right` parameters
  * should always be positive integers.
  *
  * @method nfp
@@ -374,18 +375,20 @@ function addNfp(num) {
 
 /**
  * Utility function for formatting numbers into strings. Similar to <a href="#/p5/nf">nf()</a> but
- * puts an additional "_" (space) in front of positive numbers just in case to align it with negative
- * numbers which includes "-" (minus) sign.
- * The main usecase of nfs() can be seen when one wants to align the digits (place values) of a non-negative
- * number with some negative number (See the example to get a clear picture).
+ * puts an additional `" "` (space) in front of positive numbers just in case to align it with negative
+ * numbers which includes `"-"` (minus) sign.
+ *
+ * The main usecase of `nfs()` can be seen when one wants to align the digits (place values) of a non-negative
+ * number with some negative number. (See the example to get a clear picture.)
+ *
  * There are two versions: one for formatting float, and one for formatting int.
- * The values for the digits, left, and right parameters should always be positive integers.
- * (IMP): The result on the canvas basically the expected alignment can vary based on the typeface you are using.
- * (NOTE): Be cautious when using left and right parameters as it prepends numbers of 0's if the parameter
+ * The values for the `digits`, `left`, and `right` parameters should always be positive integers.
+ * (IMP): The result on the canvas (basically, the expected alignment) can vary based on the typeface you are using.
+ * (NOTE): Be cautious when using `left` and `right`, parameters as it prepends numbers of 0's if the parameter
  * if greater than the current length of the number.
- * For example if number is 123.2 and left parameter passed is 4 which is greater than length of 123
- * (integer part) i.e 3 than result will be 0123.2. Same case for right parameter i.e. if right is 3 than
- * the result will be 123.200.
+ * For example if number is `123.2` and the `left` parameter is 4, which is greater than length of `123`
+ * (the integer part) i.e. 3, then the result will be `0123.2`. (The same is true for the `right` parameter (i.e. if `right` is 3, then
+ * the result will be `123.200`).
  *
  * @method nfs
  * @param {Number}       num      the Number to format
@@ -451,8 +454,8 @@ function addNfs(num) {
 }
 
 /**
- * The <a href="#/p5/split">split()</a> function maps to String.split(), it breaks a String into
- * pieces using a character or string as the delimiter. The delim parameter
+ * The <a href="#/p5/split">split()</a> function maps to `String.split()`. It breaks a String into
+ * pieces using a character or string as the delimiter. The `delim` parameter
  * specifies the character or characters that mark the boundaries between
  * each piece. A String[] array is returned that contains each of the pieces.
  *
@@ -485,12 +488,12 @@ p5.prototype.split = function(str, delim) {
 
 /**
  * The <a href="#/p5/splitTokens">splitTokens()</a> function splits a String at one or many character
- * delimiters or "tokens." The delim parameter specifies the character or
+ * delimiters (or "tokens"). The `delim` parameter specifies the character or
  * characters to be used as a boundary.
  *
- * If no delim characters are specified, any whitespace character is used to
- * split. Whitespace characters include tab (\t), line feed (\n), carriage
- * return (\r), form feed (\f), and space.
+ * If no `delim` characters are specified, any whitespace character is used to
+ * split. Whitespace characters include tab (`\t`), line feed (`\n`), carriage
+ * return (`\r`), form feed (`\f`), and space.
  *
  * @method splitTokens
  * @param  {String} value   the String to be split
@@ -539,7 +542,8 @@ p5.prototype.splitTokens = function(value, delims) {
 /**
  * Removes whitespace characters from the beginning and end of a String. In
  * addition to standard whitespace characters such as space, carriage return,
- * and tab, this function also removes the Unicode "nbsp" character.
+ * and tab, this function also removes the Unicode "nbsp" (non-breaking space)
+ * character.
  *
  * @method trim
  * @param  {String} str a String to be trimmed

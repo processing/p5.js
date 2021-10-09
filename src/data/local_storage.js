@@ -14,7 +14,7 @@ import p5 from '../core/main';
  * between browsing sessions and page reloads.
  * The key can be the name of the variable but doesn't
  * have to be. To retrieve stored items
- * see <a href="#/p5/getItem">getItem</a>.
+ * see <a href="#/p5/getItem">getItem()</a>.
  *
  * Sensitive data such as passwords or personal information
  * should not be stored in local storage.
@@ -101,7 +101,7 @@ p5.prototype.storeItem = function(key, value) {
 /**
  *
  * Returns the value of an item that was stored in local storage
- * using storeItem()
+ * using `storeItem()`.
  *
  * @method getItem
  * @for p5
@@ -176,7 +176,7 @@ p5.prototype.getItem = function(key) {
 
 /**
  *
- * Clears all local storage items set with storeItem()
+ * Clears all local storage items set with `storeItem()`
  * for the current domain.
  *
  * @method clearStorage
@@ -204,7 +204,7 @@ p5.prototype.clearStorage = function() {
 
 /**
  *
- * Removes an item that was stored with storeItem()
+ * Removes an item that was stored with `storeItem()`.
  *
  * @method removeItem
  * @param {String} key

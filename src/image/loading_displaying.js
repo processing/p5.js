@@ -29,7 +29,7 @@ import '../core/friendly_errors/fes_core';
  * security.
 
  * You can also pass in a string of a base64 encoded image as an alternative to the file path.
- * Remember to add "data:image/png;base64," in front of the string.
+ * Remember to add `"data:image/png;base64,"` in front of the string.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded

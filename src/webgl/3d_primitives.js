@@ -11,7 +11,7 @@ import './p5.Geometry';
 import * as constants from '../core/constants';
 
 /**
- * Draw a plane with given a width and height
+ * Draw a plane with a given `width` and `height`.
  * @method plane
  * @param  {Number} [width]    width of the plane
  * @param  {Number} [height]   height of the plane
@@ -95,7 +95,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
 };
 
 /**
- * Draw a box with given width, height and depth
+ * Draw a box with given `width`, `height`, and `depth`.
  * @method  box
  * @param  {Number} [width]     width of the box
  * @param  {Number} [Height]    height of the box
@@ -215,7 +215,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
 /**
  * Draw a sphere with given radius.
  *
- * DetailX and detailY determines the number of subdivisions in the x-dimension
+ * `detailX` and `detailY` determines the number of subdivisions in the x-dimension
  * and the y-dimension of a sphere. More subdivisions make the sphere seem
  * smoother. The recommended maximum values are both 24. Using a value greater
  * than 24 may cause a warning or slow down the browser.
@@ -419,9 +419,9 @@ const _truncatedCone = function(
 /**
  * Draw a cylinder with given radius and height
  *
- * DetailX and detailY determines the number of subdivisions in the x-dimension
+ * `detailX` and `detailY` determines the number of subdivisions in the x-dimension
  * and the y-dimension of a cylinder. More subdivisions make the cylinder seem smoother.
- * The recommended maximum value for detailX is 24. Using a value greater than 24
+ * The recommended maximum value for `detailX` is 24. Using a value greater than 24
  * may cause a warning or slow down the browser.
  *
  * @method cylinder
@@ -552,11 +552,11 @@ p5.prototype.cylinder = function(
 };
 
 /**
- * Draw a cone with given radius and height
+ * Draw a cone with a given `radius` and `height`.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * `detailX` and `detailY` determine the number of subdivisions in the x-dimension and
  * the y-dimension of a cone. More subdivisions make the cone seem smoother. The
- * recommended maximum value for detailX is 24. Using a value greater than 24
+ * recommended maximum value for `detailX` is 24. Using a value greater than 24
  * may cause a warning or slow down the browser.
  * @method cone
  * @param  {Number}  [radius]  radius of the bottom surface
@@ -667,9 +667,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
 };
 
 /**
- * Draw an ellipsoid with given radius
+ * Draw an ellipsoid with given `radius`.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * `detailX` and `detailY` determine the number of subdivisions in the x-dimension and
  * the y-dimension of a cone. More subdivisions make the ellipsoid appear to be smoother.
  * Avoid detail number above 150, it may crash the browser.
  * @method ellipsoid
@@ -802,11 +802,11 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 };
 
 /**
- * Draw a torus with given radius and tube radius
+ * Draw a torus with given `radius` and `tubeRadius`.
  *
- * DetailX and detailY determine the number of subdivisions in the x-dimension and
+ * `detailX` and `detailY` determine the number of subdivisions in the x-dimension and
  * the y-dimension of a torus. More subdivisions make the torus appear to be smoother.
- * The default and maximum values for detailX and detailY are 24 and 16, respectively.
+ * The default and maximum values for `detailX` and `detailY` are 24 and 16, respectively.
  * Setting them to relatively small values like 4 and 6 allows you to create new
  * shapes other than a torus.
  * @method torus
@@ -954,7 +954,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 
 /**
  * Draws a point, a coordinate in space at the dimension of one pixel,
- * given x, y and z coordinates. The color of the point is determined
+ * given `x`, `y`, and `z` coordinates. The color of the point is determined
  * by the current stroke, while the point size is determined by current
  * stroke weight.
  * @private
@@ -1245,7 +1245,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
-  
+
   if (!this.geometryInHash(gId)) {
     const quadGeom = new p5.Geometry(detailX, detailY, function() {
       //algorithm adapted from c++ to js
@@ -1273,7 +1273,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
         }
       }
     });
-    
+
     quadGeom.faces = [];
     for(let y = 0; y < detailY-1; y++){
       for(let x = 0; x < detailX-1; x++){
@@ -1391,7 +1391,7 @@ p5.RendererGL.prototype.curve = function(
 };
 
 /**
- * Draw a line given two points
+ * Draw a line given two points.
  * @private
  * @param {Number} x0 x-coordinate of first vertex
  * @param {Number} y0 y-coordinate of first vertex

@@ -1,5 +1,5 @@
 /**
- * This module defines the p5.Shader class
+ * This module defines the `p5.Shader` class.
  * @module 3D
  * @submodule Material
  * @for p5
@@ -12,8 +12,8 @@ import p5 from '../core/main';
  * Shader class for WEBGL Mode
  * @class p5.Shader
  * @constructor
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
- * will provide the GL context for this new p5.Shader
+ * @param {p5.RendererGL} renderer an instance of `p5.RendererGL` that
+ * will provide the GL context for this new `p5.Shader`
  * @param {String} vertSrc source code for the vertex shader (as a string)
  * @param {String} fragSrc source code for the fragment shader (as a string)
  */
@@ -198,7 +198,7 @@ p5.Shader.prototype.compile = function() {
 };
 
 /**
- * initializes (if needed) and binds the shader program.
+ * Initializes (if needed) and binds the shader program.
  * @method bindShader
  * @private
  */
@@ -308,7 +308,7 @@ p5.Shader.prototype.useProgram = function() {
  * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement}
  * data the data to associate with the uniform. The type can be
  * a boolean (true/false), a number, an array of numbers, or
- * an image (p5.Image, p5.Graphics, p5.MediaElement)
+ * an image (`p5.Image`, `p5.Graphics`, `p5.MediaElement`)
  *
  * @example
  * <div modernizr='webgl'>

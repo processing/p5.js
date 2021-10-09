@@ -16,7 +16,7 @@ import './p5.Texture';
  * The shader files are loaded asynchronously in the
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * Note: Shaders can only be used in WEBGL mode.
  *
  * @method loadShader
  * @param {String} vertFilename path to file containing vertex shader
@@ -112,7 +112,7 @@ p5.prototype.loadShader = function(
  * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
  * from the provided vertex and fragment shader code.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * Note: Shaders can only be used in WEBGL mode.
  *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
@@ -192,7 +192,7 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * Use <a href="#/p5/resetShader">resetShader()</a> to
  * restore the default shaders.
  *
- * Note, shaders can only be used in WEBGL mode.
+ * Note: Shaders can only be used in WEBGL mode.
  *
  * @method shader
  * @chainable
@@ -280,9 +280,9 @@ p5.prototype.shader = function(s) {
 };
 
 /**
- * Restores the default shaders. Code that runs after resetShader()
+ * Restores the default shaders. Code that runs after `resetShader()`
  * will not be affected by the shader previously set by
- * <a href="#/p5/shader">shader()</a>
+ * <a href="#/p5/shader">shader()</a>.
  *
  * @method resetShader
  * @chainable
@@ -301,7 +301,7 @@ p5.prototype.resetShader = function() {
  * To texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
  * you will need to specify uv coordinates in <a href="#/p5/vertex">vertex()</a>.
  *
- * Note, texture() can only be used in WEBGL mode.
+ * Note: `texture()` can only be used in WEBGL mode.
  *
  * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
@@ -436,13 +436,15 @@ p5.prototype.texture = function(tex) {
 };
 
 /**
- * Sets the coordinate space for texture mapping. The default mode is IMAGE
- * which refers to the actual coordinates of the image.
- * NORMAL refers to a normalized space of values ranging from 0 to 1.
+ * Sets the coordinate space for texture mapping. The default mode is
+ * <a href="#/p5/IMAGE">IMAGE</a>, which refers to the actual coordinates
+ * of the image.
+ * <a href="#/p5/NORMAL">NORMAL</a> refers to a normalized space of values
+ * ranging from 0 to 1.
  *
- * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+ * With `IMAGE`, if an image is 100×200 pixels, mapping the image onto the entire
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
- * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
+ * The same mapping in `NORMAL` is (0,0) (1,0) (1,1) (0,1).
  * @method  textureMode
  * @param {Constant} mode either IMAGE or NORMAL
  * @example
@@ -514,17 +516,21 @@ p5.prototype.textureMode = function(mode) {
 /**
  * Sets the global texture wrapping mode. This controls how textures behave
  * when their uv's go outside of the 0 to 1 range. There are three options:
- * CLAMP, REPEAT, and MIRROR.
+ * <a href="#/p5/CLAMP">CLAMP</a>, <a href="#/p5/REPEAT">REPEAT</a>, and
+ * <a href="#/p5/MIRROR">MIRROR</a>.
  *
- * CLAMP causes the pixels at the edge of the texture to extend to the bounds.
- * REPEAT causes the texture to tile repeatedly until reaching the bounds.
- * MIRROR works similarly to REPEAT but it flips the texture with every new tile.
+ * <a href="#/p5/CLAMP">CLAMP</a> causes the pixels at the edge of the
+ * texture to extend to the bounds.
+ * <a href="#/p5/REPEAT">REPEAT</a> causes the texture to tile repeatedly
+ * until reaching the bounds.
+ * <a href="#/p5/MIRROR">MIRROR</a> works similarly to `REPEAT`, but it
+ * flips the texture with every new tile.
  *
- * REPEAT & MIRROR are only available if the texture
+ * `REPEAT` & `MIRROR` are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  *
  * This method will affect all textures in your sketch until a subsequent
- * textureWrap() call is made.
+ * `textureWrap()` call is made.
  *
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
@@ -586,7 +592,10 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 /**
  * Normal material for geometry is a material that is not affected by light.
  * It is not reflective and is a placeholder material often used for debugging.
- * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
+ * Surfaces facing the X-axis become red;
+ * those facing the Y-axis become green;
+ * and those facing the Z-axis become blue.
+ *
  * You can view all possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method normalMaterial
@@ -828,8 +837,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
 
 /**
  * Sets the amount of gloss in the surface of shapes.
- * Used in combination with specularMaterial() in setting
- * the material properties of shapes. The default and minimum value is 1.
+ * Used in combination with <a href="#/p5/specularMaterial">specularMaterial()</a> in setting
+ * the material properties of shapes. The default (and minimum) value is 1.
  * @method shininess
  * @param {Number} shine Degree of Shininess.
  *                       Defaults to 1.

@@ -92,7 +92,7 @@ p5.prototype.bezier = function(...args) {
 /**
  * Sets the resolution at which Bezier's curve is displayed. The default value is 20.
  *
- * Note, This function is only useful when using the WEBGL renderer
+ * Note: This function is only useful when using the WEBGL renderer
  * as the default canvas renderer does not use this information.
  *
  * @method bezierDetail
@@ -129,12 +129,12 @@ p5.prototype.bezierDetail = function(d) {
 
 /**
  * Given the x or y co-ordinate values of control and anchor points of a bezier
- * curve, it evaluates the x or y coordinate of the bezier at position t. The
- * parameters a and d are the x or y coordinates of first and last points on the
- * curve while b and c are of the control points.The final parameter t is the
- * position of the resultant point which is given between 0 and 1.
+ * curve, it evaluates the x or y coordinate of the bezier at position `t`. The
+ * parameters `a` and `d` are the x or y coordinates of first and last points on the
+ * curve, while `b` and `c` are the control points. The final parameter `t` is the
+ * position of the resulting point, which is given between 0 and 1.
  * This can be done once with the x coordinates and a second time
- * with the y coordinates to get the location of a bezier curve at t.
+ * with the y coordinates to get the location of a bezier curve at `t`.
  *
  * @method bezierPoint
  * @param {Number} a coordinate of first point on the curve
@@ -183,10 +183,10 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
 };
 
 /**
- * Evaluates the tangent to the Bezier at position t for points a, b, c, d.
- * The parameters a and d are the first and last points
- * on the curve, and b and c are the control points.
- * The final parameter t varies between 0 and 1.
+ * Evaluates the tangent to the Bezier at position `t` for points `a`, `b`, `c`, `d`.
+ * The parameters `a` and `d` are the first and last points
+ * on the curve, and `b` and `c` are the control points.
+ * The final parameter `t` varies between 0 and 1.
  *
  * @method bezierTangent
  * @param {Number} a coordinate of first point on the curve
@@ -397,7 +397,7 @@ p5.prototype.curveDetail = function(d) {
 
 /**
  * Modifies the quality of forms created with <a href="#/p5/curve">curve()</a>
- * and <a href="#/p5/curveVertex">curveVertex()</a>.The parameter tightness
+ * and <a href="#/p5/curveVertex">curveVertex()</a>. The parameter `amount`
  * determines how the curve fits to the vertex points. The value 0.0 is the
  * default value for tightness (this value defines the curves to be Catmull-Rom
  * splines) and the value 1.0 connects all the points with straight lines.
@@ -442,11 +442,11 @@ p5.prototype.curveTightness = function(t) {
 };
 
 /**
- * Evaluates the curve at position t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are control points
- * of the curve, and b and c are the start and end points of the curve.
+ * Evaluates the curve at position `t` for points `a`, `b`, `c`, `d`.
+ * The parameter `t` varies between 0 and 1, `a` and `d` are control points
+ * of the curve, and `b` and `c` are the start and end points of the curve.
  * This can be done once with the x coordinates and a second time
- * with the y coordinates to get the location of a curve at t.
+ * with the y coordinates to get the location of a curve at `t`.
  *
  * @method curvePoint
  * @param {Number} a coordinate of first control point of the curve
@@ -491,9 +491,9 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 };
 
 /**
- * Evaluates the tangent to the curve at position t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points on the curve,
- * and b and c are the control points.
+ * Evaluates the tangent to the curve at position `t` for points `a`, `b`, `c`, `d`.
+ * The parameter `t` varies between 0 and 1, `a` and `d` are points on the curve,
+ * and `b` and `c` are the control points.
  *
  * @method curveTangent
  * @param {Number} a coordinate of first control point

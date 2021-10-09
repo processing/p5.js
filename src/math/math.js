@@ -14,9 +14,9 @@ import p5 from '../core/main';
  * direction.
  *
  * @method createVector
- * @param {Number} [x] x component of the vector
- * @param {Number} [y] y component of the vector
- * @param {Number} [z] z component of the vector
+ * @param {Number} [x] `x` component of the vector
+ * @param {Number} [y] `y` component of the vector
+ * @param {Number} [z] `z` component of the vector
  * @return {p5.Vector}
  * @example
  * <div><code>

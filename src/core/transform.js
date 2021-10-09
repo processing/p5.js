@@ -199,7 +199,7 @@ p5.prototype.resetMatrix = function() {
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
- * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
+ * `rotate(HALF_PI)` and then `rotate(HALF_PI)` is the same as `rotate(PI)`.
  * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
@@ -208,7 +208,7 @@ p5.prototype.resetMatrix = function() {
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ *                        or degrees, depending on current `angleMode`
  * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
  * @chainable
  * @example
@@ -239,7 +239,7 @@ p5.prototype.rotate = function(angle, axis) {
  *
  * @method  rotateX
  * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ *                        or degrees, depending on current `angleMode`
  * @chainable
  * @example
  * <div modernizr='webgl'>
@@ -275,7 +275,7 @@ p5.prototype.rotateX = function(angle) {
  *
  * @method rotateY
  * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ *                        or degrees, depending on current `angleMode`
  * @chainable
  * @example
  * <div modernizr='webgl'>
@@ -313,7 +313,7 @@ p5.prototype.rotateY = function(angle) {
  *
  * @method rotateZ
  * @param  {Number} angle the angle of rotation, specified in radians
- *                        or degrees, depending on current angleMode
+ *                        or degrees, depending on current `angleMode`
  * @chainable
  * @example
  * <div modernizr='webgl'>
@@ -343,12 +343,12 @@ p5.prototype.rotateZ = function(angle) {
  * Increases or decreases the size of a shape by expanding or contracting
  * vertices. Objects always scale from their relative origin to the
  * coordinate system. Scale values are specified as decimal percentages.
- * For example, the function call scale(2.0) increases the dimension of a
+ * For example, the function call `scale(2.0)` increases the dimension of a
  * shape by 200%.
  *
  * Transformations apply to everything that happens after and subsequent
- * calls to the function multiply the effect. For example, calling scale(2.0)
- * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
+ * calls to the function multiply the effect. For example, calling `scale(2.0)`
+ * and then `scale(1.5)` is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
  * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
  *
  * Using this function with the z parameter is only available in WEBGL mode.
@@ -415,13 +415,13 @@ p5.prototype.scale = function(x, y, z) {
 
 /**
  * Shears a shape around the x-axis by the amount specified by the angle
- * parameter. Angles should be specified in the current angleMode.
+ * parameter. Angles should be specified in the current `angleMode`.
  * Objects are always sheared around their relative position to the origin
  * and positive numbers shear objects in a clockwise direction.
  *
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
- * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
+ * `shearX(PI/2)` and then `shearX(PI/2)` is the same as `shearX(PI)`.
  * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>,
  * the transformation is reset when the loop begins again.
  *
@@ -431,7 +431,7 @@ p5.prototype.scale = function(x, y, z) {
  *
  * @method shearX
  * @param  {Number} angle angle of shear specified in radians or degrees,
- *                        depending on current angleMode
+ *                        depending on current `angleMode`
  * @chainable
  * @example
  * <div>
@@ -454,13 +454,13 @@ p5.prototype.shearX = function(angle) {
 
 /**
  * Shears a shape around the y-axis the amount specified by the angle
- * parameter. Angles should be specified in the current angleMode. Objects
+ * parameter. Angles should be specified in the current `angleMode`. Objects
  * are always sheared around their relative position to the origin and
  * positive numbers shear objects in a clockwise direction.
  *
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
- * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
+ * `shearY(PI/2)` and then `shearY(PI/2)` is the same as `shearY(PI)`. If
  * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
  *
@@ -470,7 +470,7 @@ p5.prototype.shearX = function(angle) {
  *
  * @method shearY
  * @param  {Number} angle angle of shear specified in radians or degrees,
- *                        depending on current angleMode
+ *                        depending on current `angleMode`
  * @chainable
  * @example
  * <div>
@@ -493,13 +493,13 @@ p5.prototype.shearY = function(angle) {
 
 /**
  * Specifies an amount to displace objects within the display window.
- * The x parameter specifies left/right translation, the y parameter
+ * The `x` parameter specifies left/right translation, the `y` parameter
  * specifies up/down translation.
  *
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
- * calling translate(50, 0) and then translate(20, 0) is the same as
- * translate(70, 0). If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
+ * calling `translate(50, 0)` and then `translate(20, 0)` is the same as
+ * `translate(70, 0)`. If <a href="#/p5/translate">translate()</a> is called within <a href="#/p5/draw">draw()</a>, the
  * transformation is reset when the loop begins again. This function can be
  * further controlled by using <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *

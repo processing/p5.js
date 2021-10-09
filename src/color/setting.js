@@ -21,9 +21,9 @@ import './p5.Color';
  * The color is either specified in terms of the RGB, HSB, or HSL color depending
  * on the current <a href="#/p5/colorMode">colorMode</a>. (The default color space
  * is RGB, with each value in the range from 0 to 255). The alpha range by default
- * is also 0 to 255.<br><br>
+ * is also 0 to 255.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+ * If a single string argument is provided, RGB, RGBA, and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  *
@@ -179,7 +179,7 @@ p5.prototype.background = function(...args) {
 
 /**
  * Clears the pixels within a buffer. This function only clears the canvas.
- * It will not clear objects created by createX() methods such as
+ * It will not clear objects created by `create*()` methods such as
  * <a href="#/p5/createVideo">createVideo()</a> or <a href="#/p5/createDiv">createDiv()</a>.
  * Unlike the main graphics context, pixels in additional graphics areas created
  * with <a href="#/p5/createGraphics">createGraphics()</a> can be entirely
@@ -216,17 +216,17 @@ p5.prototype.clear = function() {
  * color data. By default, the parameters for <a href="#/p5/fill">fill()</a>,
  * <a href="#/p5/stroke">stroke()</a>, <a href="#/p5/background">background()</a>,
  * and <a href="#/p5/color">color()</a> are defined by values between 0 and 255
- * using the RGB color model. This is equivalent to setting colorMode(RGB, 255).
- * Setting colorMode(HSB) lets you use the HSB system instead. By default, this
- * is colorMode(HSB, 360, 100, 100, 1). You can also use HSL.
+ * using the RGB color model. This is equivalent to setting `colorMode(RGB, 255)`.
+ * Setting `colorMode(HSB)` lets you use the HSB system instead. By default, this
+ * is `colorMode(HSB, 360, 100, 100, 1)`. You can also use HSL.
  *
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
- *                          Red/Green/Blue and Hue/Saturation/Brightness
- *                          (or Lightness)
+ * @param {Constant} mode   either RGB, HSB, or HSL, corresponding to
+ *                          Red/Green/Blue, Hue/Saturation/Brightness, or
+ *                          Hue/Saturation/Lightness
  * @param {Number}  [max]  range for all values
  * @chainable
  *
@@ -331,14 +331,14 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 };
 
 /**
- * Sets the color used to fill shapes. For example, if you run fill(204, 102, 0),
+ * Sets the color used to fill shapes. For example, if you run `fill(204, 102, 0)`,
  * all shapes drawn after the fill command will be filled with the color orange.
  * This color is either specified in terms of the RGB or HSB color depending on
  * the current <a href="#/p5/colorMode">colorMode()</a>. (The default color space
  * is RGB, with each value in the range from 0 to 255). The alpha range by default
  * is also 0 to 255.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+ * If a single string argument is provided, RGB, RGBA, and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  *
@@ -472,7 +472,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
 
 /**
  * @method fill
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color
  * @chainable
  */
@@ -572,12 +572,12 @@ p5.prototype.noStroke = function() {
 
 /**
  * Sets the color used to draw lines and borders around shapes. This color
- * is either specified in terms of the RGB or HSB color depending on the
- * current <a href="#/p5/colorMode">colorMode()</a> (the default color space
- * is RGB, with each value in the range from 0 to 255). The alpha range by
+ * is either specified in terms of the RGB or HSB color, depending on the
+ * current <a href="#/p5/colorMode">colorMode()</a>. (The default color space
+ * is RGB, with each value in the range from 0 to 255.) The alpha range by
  * default is also 0 to 255.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * If a single string argument is provided, RGB, RGBA, and Hex CSS color
  * strings and all named color strings are supported. In this case, an alpha
  * number value as a second argument is not supported, the RGBA form should be
  * used.
@@ -724,7 +724,7 @@ p5.prototype.noStroke = function() {
 
 /**
  * @method stroke
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color
  * @chainable
  */
@@ -744,12 +744,12 @@ p5.prototype.stroke = function(...args) {
 
 /**
  * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
- * the canvas.Erased areas will reveal the web page underneath the canvas.Erasing
+ * the canvas. Erased areas will reveal the web page underneath the canvas. Erasing
  * can be canceled with <a href="#/p5/noErase">noErase()</a>.
  *
  * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">
  * background()</a> in between <a href="#/p5/erase">erase()</a> and
- * <a href="#/p5/noErase">noErase()</a> will not erase the canvas but works as usual.
+ * <a href="#/p5/noErase">noErase()</a> will not erase the canvas, but works as usual.
  *
  * @method erase
  * @param  {Number}   [strengthFill]      A number (0-255) for the strength of erasing for a shape's fill.

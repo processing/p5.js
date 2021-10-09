@@ -104,7 +104,7 @@ p5.prototype.keyCode = 0;
  * The <a href="#/p5/keyPressed">keyPressed()</a> function is called once every time a key is pressed. The
  * keyCode for the key that was pressed is stored in the <a href="#/p5/keyCode">keyCode</a> variable.
  *
- * For non-ASCII keys, use the keyCode variable. You can check if the keyCode
+ * For non-ASCII keys, use the `keyCode` variable. You can check if the `keyCode`
  * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
  * OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
  *
@@ -116,10 +116,11 @@ p5.prototype.keyCode = 0;
  * Because of how operating systems handle key repeats, holding down a key
  * may cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
- * configured.<br><br>
+ * configured.
+ *
  * Browsers may have different default
  * behaviors attached to various key events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add `return false` to the end of the method.
  *
  * @method keyPressed
  * @param  {Object} [event] optional KeyboardEvent callback argument.
@@ -189,10 +190,10 @@ p5.prototype._onkeydown = function(e) {
 };
 /**
  * The <a href="#/p5/keyReleased">keyReleased()</a> function is called once every time a key is released.
- * See <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a> for more information.<br><br>
- * Browsers may have different default
- * behaviors attached to various key events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * See <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a> for more information.
+ *
+ * Browsers may have different default behaviors attached to various key events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method keyReleased
  * @param  {Object} [event] optional KeyboardEvent callback argument.
@@ -249,10 +250,10 @@ p5.prototype._onkeyup = function(e) {
  * Because of how operating systems handle key repeats, holding down a key
  * will cause multiple calls to <a href="#/p5/keyTyped">keyTyped()</a> (and <a href="#/p5/keyReleased">keyReleased()</a> as well). The
  * rate of repeat is set by the operating system and how each computer is
- * configured.<br><br>
- * Browsers may have different default behaviors attached to various key
- * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * configured.
+ *
+ * Browsers may have different default behaviors attached to various key events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method keyTyped
  * @param  {Object} [event] optional KeyboardEvent callback argument.
@@ -309,7 +310,7 @@ p5.prototype._onblur = function(e) {
  * The <a href="#/p5/keyIsDown">keyIsDown()</a> function checks if the key is currently down, i.e. pressed.
  * It can be used if you have an object that moves, and you want several keys
  * to be able to affect its behaviour simultaneously, such as moving a
- * sprite diagonally. You can put in any number representing the keyCode of
+ * sprite diagonally. You can put in any number representing the `keyCode` of
  * the key, or use any of the variable <a href="#/p5/keyCode">keyCode</a> names listed
  * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
  *

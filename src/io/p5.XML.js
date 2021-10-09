@@ -312,8 +312,8 @@ function elementsToP5XML(elements) {
 }
 
 /**
- * Returns the first of the element's children that matches the name parameter
- * or the child of the given index.It returns undefined if no matching
+ * Returns the first of the element's children that matches the `name` parameter
+ * or the child of the given index. It returns `undefined` if no matching
  * child is found.
  *
  * @method getChild
@@ -620,10 +620,10 @@ p5.XML.prototype.hasAttribute = function(name) {
 };
 
 /**
- * Returns an attribute value of the element as an Number. If the defaultValue
- * parameter is specified and the attribute doesn't exist, then defaultValue
- * is returned. If no defaultValue is specified and the attribute doesn't
- * exist, the value 0 is returned.
+ * Returns an attribute value of the element as an Number. If the `defaultValue`
+ * parameter is specified and the attribute doesn't exist, then `defaultValue`
+ * is returned. If no `defaultValue` is specified and the attribute doesn't
+ * exist, the value `0` is returned.
  *
  * @method getNum
  * @param {String} name            the non-null full name of the attribute
@@ -667,10 +667,10 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
 };
 
 /**
- * Returns an attribute value of the element as an String. If the defaultValue
- * parameter is specified and the attribute doesn't exist, then defaultValue
- * is returned. If no defaultValue is specified and the attribute doesn't
- * exist, null is returned.
+ * Returns an attribute value of the element as an String. If the `defaultValue`
+ * parameter is specified and the attribute doesn't exist, then `defaultValue`
+ * is returned. If no `defaultValue` is specified and the attribute doesn't
+ * exist, `null` is returned.
  *
  * @method getString
  * @param {String} name            the non-null full name of the attribute
@@ -756,7 +756,7 @@ p5.XML.prototype.setAttribute = function(name, value) {
 
 /**
  * Returns the content of an element. If there is no such content,
- * defaultValue is returned if specified, otherwise null is returned.
+ * `defaultValue` is returned if specified, otherwise `null` is returned.
  *
  * @method getContent
  * @param {String} [defaultValue] value returned if no content is found

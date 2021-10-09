@@ -1,5 +1,5 @@
 /**
- * This module defines the p5.Texture class
+ * This module defines the `p5.Texture` class
  * @module 3D
  * @submodule Material
  * @for p5
@@ -13,8 +13,8 @@ import * as constants from '../core/constants';
  * Texture class for WEBGL Mode
  * @private
  * @class p5.Texture
- * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
- * will provide the GL context for this new p5.Texture
+ * @param {p5.RendererGL} renderer an instance of `p5.RendererGL` that
+ * will provide the GL context for this new `p5.Texture`
  * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
  * object containing the image data to store in the texture.
  */
@@ -74,7 +74,7 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
 };
 
 /**
- * Initializes common texture parameters, creates a gl texture,
+ * Initializes common texture parameters, creates a GL texture,
  * tries to upload the texture for the first time if data is
  * already available.
  * @private
@@ -277,7 +277,7 @@ p5.Texture.prototype.setInterpolation = function(downScale, upScale) {
 /**
  * Sets the texture wrapping mode. This controls how textures behave
  * when their uv's go outside of the 0 - 1 range. There are three options:
- * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
+ * CLAMP, REPEAT, and MIRROR. REPEAT an MIRROR are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  * @method setWrapMode
  * @param {String} wrapX Controls the horizontal texture wrapping behavior

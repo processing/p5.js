@@ -5,7 +5,7 @@
  * @requires core
  *
  * This module defines the p5 methods for the p5 Dictionary classes.
- * The classes StringDict and NumberDict are for storing and working
+ * The classes <a href="#/p5.StringDict">StringDict</a> and <a href="#/p5.NumberDict">NumberDict</a> are for storing and working
  * with key-value pairs.
  */
 
@@ -13,7 +13,7 @@ import p5 from '../core/main';
 
 /**
  *
- * Creates a new instance of p5.StringDict using the key-value pair
+ * Creates a new instance of `p5.StringDict` using the key-value pair
  * or the object you provide.
  *
  * @method createStringDict
@@ -81,7 +81,7 @@ p5.prototype.createNumberDict = function(key, value) {
 
 /**
  *
- * Base class for all p5.Dictionary types. Specifically
+ * Base class for all `p5.Dictionary` types. Specifically,
  * typed Dictionary classes inherit from this class.
  *
  * @class p5.TypedDict
@@ -120,8 +120,8 @@ p5.TypedDict.prototype.size = function() {
 };
 
 /**
- * Returns true if the given key exists in the Dictionary,
- * otherwise returns false.
+ * Returns `true` if the given `key` exists in the Dictionary,
+ * otherwise returns `false`.
  *
  * @method hasKey
  * @param {Number|String} key that you want to look up
@@ -142,7 +142,7 @@ p5.TypedDict.prototype.hasKey = function(key) {
 };
 
 /**
- * Returns the value stored at the given key.
+ * Returns the value stored at the given `key`.
  *
  * @method get
  * @param {Number|String} the key you want to access
@@ -168,8 +168,8 @@ p5.TypedDict.prototype.get = function(key) {
 };
 
 /**
- * Updates the value associated with the given key in case it already exists
- * in the Dictionary. Otherwise a new key-value pair is added.
+ * Updates the `value` associated with the given `key`, if it already exists
+ * in the Dictionary. Otherwise, a new key-value pair is added.
  *
  * @method set
  * @param {Number|String} key
@@ -263,7 +263,7 @@ p5.TypedDict.prototype.clear = function() {
 };
 
 /**
- * Removes the key-value pair stored at the given key from the Dictionary.
+ * Removes the key-value pair stored at the given `key` from the Dictionary.
  *
  * @method remove
  * @param {Number|String} key for the pair to remove

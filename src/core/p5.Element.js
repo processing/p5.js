@@ -9,8 +9,8 @@ import p5 from './main';
 /**
  * Base class for all elements added to a sketch, including canvas,
  * graphics buffers, and other HTML elements. It is not called directly, but <a href="#/p5.Element">p5.Element</a>
- * objects are created by calling <a href="#/p5/createCanvas">createCanvas</a>, <a href="#/p5/createGraphics">createGraphics</a>,
- * <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg</a>, <a href="#/p5/createInput">createInput</a>, etc.
+ * objects are created by calling <a href="#/p5/createCanvas">createCanvas()</a>, <a href="#/p5/createGraphics">createGraphics()</a>,
+ * <a href="#/p5/createDiv">createDiv</a>, <a href="#/p5/createImg">createImg()</a>, <a href="#/p5/createInput">createInput()</a>, etc.
  *
  * @class p5.Element
  * @constructor
@@ -46,9 +46,10 @@ p5.Element = function(elt, pInst) {
 
 /**
  *
- * Attaches the element to the parent specified. A way of setting
+ * Attaches the element to the `parent` specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
  * node, or <a href="#/p5.Element">p5.Element</a>. If no arguments given, parent node is returned.
+ *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
  * positioning the canvas</a> wiki page.
@@ -115,6 +116,7 @@ p5.Element.prototype.parent = function(p) {
  *
  * Sets the ID of the element. If no ID argument is passed in, it instead
  * returns the current ID of the element.
+ *
  * Note that only one element can have a particular id in a page.
  * The <a href="#/p5.Element/class">.class()</a> function can be used
  * to identify multiple elements with the same class name.
@@ -153,7 +155,7 @@ p5.Element.prototype.id = function(id) {
 
 /**
  *
- * Adds given class to the element. If no class argument is passed in, it
+ * Adds given `class` to the element. If no class argument is passed in, it
  * instead returns a string containing the current class(es) of the element.
  *
  * @method class
@@ -190,12 +192,12 @@ p5.Element.prototype.class = function(c) {
  * The .<a href="#/p5.Element/mousePressed">mousePressed()</a> function is called
  * once after every time a mouse button is pressed over the element. Some mobile
  * browsers may also trigger this event on a touch screen, if the user performs
- * a quick tap. This can be used to attach element specific event listeners.
+ * a quick tap. This can be used to attach element-specific event listeners.
  *
  * @method mousePressed
- * @param  {Function|Boolean} fxn function to be fired when mouse is
+ * @param  {Function|Boolean} fxn Function to be fired when mouse is
  *                                pressed over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -251,7 +253,7 @@ p5.Element.prototype.mousePressed = function(fxn) {
  * @method doubleClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
  *                                double clicked over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @return {p5.Element}
  * @example
@@ -292,7 +294,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
 /**
  * The <a href="#/p5.Element/mouseWheel">mouseWheel()</a> function is called
  * once after every time a mouse wheel is scrolled over the element. This can
- * be used to attach element specific event listeners.
+ * be used to attach element-specific event listeners.
  *
  * The function accepts a callback function as argument which will be executed
  * when the `wheel` event is triggered on the element, the callback function is
@@ -307,7 +309,7 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  * @method mouseWheel
  * @param  {Function|Boolean} fxn function to be fired when mouse is
  *                                scrolled over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -355,12 +357,12 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  * The <a href="#/p5.Element/mouseReleased">mouseReleased()</a> function is
  * called once after every time a mouse button is released over the element.
  * Some mobile browsers may also trigger this event on a touch screen, if the
- * user performs a quick tap. This can be used to attach element specific event listeners.
+ * user performs a quick tap. This can be used to attach element-specific event listeners.
  *
  * @method mouseReleased
  * @param  {Function|Boolean} fxn function to be fired when mouse is
  *                                released over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -404,12 +406,12 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  * The .<a href="#/p5.Element/mouseClicked">mouseClicked()</a> function is
  * called once after a mouse button is pressed and released over the element.
  * Some mobile browsers may also trigger this event on a touch screen, if the
- * user performs a quick tap.This can be used to attach element specific event listeners.
+ * user performs a quick tap. This can be used to attach element-specific event listeners.
  *
  * @method mouseClicked
  * @param  {Function|Boolean} fxn function to be fired when mouse is
  *                                clicked over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -454,12 +456,12 @@ p5.Element.prototype.mouseClicked = function(fxn) {
 /**
  * The .<a href="#/p5.Element/mouseMoved">mouseMoved()</a> function is called once every time a
  * mouse moves over the element. This can be used to attach an
- * element specific event listener.
+ * element-specific event listener.
  *
  * @method mouseMoved
  * @param  {Function|Boolean} fxn function to be fired when a mouse moves
  *                                over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -510,12 +512,12 @@ p5.Element.prototype.mouseMoved = function(fxn) {
 /**
  * The .<a href="#/p5.Element/mouseOver">mouseOver()</a> function is called once after every time a
  * mouse moves onto the element. This can be used to attach an
- * element specific event listener.
+ * element-specific event listener.
  *
  * @method mouseOver
  * @param  {Function|Boolean} fxn function to be fired when a mouse moves
  *                                onto the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -551,12 +553,12 @@ p5.Element.prototype.mouseOver = function(fxn) {
 /**
  * The .<a href="#/p5.Element/mouseOut">mouseOut()</a> function is called once after every time a
  * mouse moves off the element. This can be used to attach an
- * element specific event listener.
+ * element-specific event listener.
  *
  * @method mouseOut
  * @param  {Function|Boolean} fxn function to be fired when a mouse
  *                                moves off of an element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -591,12 +593,12 @@ p5.Element.prototype.mouseOut = function(fxn) {
 
 /**
  * The .<a href="#/p5.Element/touchStarted">touchStarted()</a> function is called once after every time a touch is
- * registered. This can be used to attach element specific event listeners.
+ * registered. This can be used to attach element-specific event listeners.
  *
  * @method touchStarted
  * @param  {Function|Boolean} fxn function to be fired when a touch
  *                                starts over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -638,12 +640,12 @@ p5.Element.prototype.touchStarted = function(fxn) {
 
 /**
  * The .<a href="#/p5.Element/touchMoved">touchMoved()</a> function is called once after every time a touch move is
- * registered. This can be used to attach element specific event listeners.
+ * registered. This can be used to attach element-specific event listeners.
  *
  * @method touchMoved
  * @param  {Function|Boolean} fxn function to be fired when a touch moves over
  *                                the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -677,12 +679,12 @@ p5.Element.prototype.touchMoved = function(fxn) {
 
 /**
  * The .<a href="#/p5.Element/touchEnded">touchEnded()</a> function is called once after every time a touch is
- * registered. This can be used to attach element specific event listeners.
+ * registered. This can be used to attach element-specific event listeners.
  *
  * @method touchEnded
  * @param  {Function|Boolean} fxn function to be fired when a touch ends
  *                                over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -725,12 +727,12 @@ p5.Element.prototype.touchEnded = function(fxn) {
 /**
  * The .<a href="#/p5.Element/dragOver">dragOver()</a> function is called once after every time a
  * file is dragged over the element. This can be used to attach an
- * element specific event listener.
+ * element-specific event listener.
  *
  * @method dragOver
  * @param  {Function|Boolean} fxn function to be fired when a file is
  *                                dragged over the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -761,14 +763,14 @@ p5.Element.prototype.dragOver = function(fxn) {
 };
 
 /**
- * The .dragLeave() function is called once after every time a
+ * The .<a href="#/p5.Element/dragLeave">dragLeave()</a> function is called once after every time a
  * dragged file leaves the element area. This can be used to attach an
- * element specific event listener.
+ * element-specific event listener.
  *
  * @method dragLeave
  * @param  {Function|Boolean} fxn function to be fired when a file is
  *                                dragged off the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example

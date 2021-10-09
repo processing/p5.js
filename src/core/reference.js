@@ -39,7 +39,7 @@
  * elements can still be changeable. So if a variable is assigned an array, you
  * can still add or remove elements from the array but cannot reassign another
  * array to it. Also unlike `let`, you cannot declare variables without value
- * using const.
+ * using `const`.
  *
  * Constants have block-scope. This means that the constant only exists within
  * the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block">
@@ -48,7 +48,7 @@
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const">the MDN entry</a>:
  * Declares a read-only named constant.
- * Constants are block-scoped, much like variables defined using the 'let' statement.
+ * Constants are block-scoped, much like variables defined using the `let` statement.
  * The value of a constant can't be changed through reassignment, and it can't be redeclared.
  * @property const
  *
@@ -93,7 +93,7 @@
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">the MDN entry</a>:
  * The non-identity operator returns true if the operands are not equal and/or not of the same type.
  *
- * Note: In some examples around the web you may see a double-equals-sign
+ * Note: In some examples around the web, you may see a double-equals-sign
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality">==</a>,
  * used for comparison instead. This is the non-strict equality operator in Javascript.
  * This will convert the two values being compared to the same type before comparing them.
@@ -113,8 +113,8 @@
  */
 
 /**
- * The greater than operator <a href="#/p5/>">></a>
- * evaluates to true if the left value is greater than
+ * The greater than operator <a href="#/p5/>">&gt;</a>
+ * evaluates to `true` if the left value is greater than
  * the right value.
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">
@@ -135,8 +135,8 @@
  */
 
 /**
- * The greater than or equal to operator <a href="#/p5/>=">>=</a>
- * evaluates to true if the left value is greater than or equal to
+ * The greater than or equal to operator <a href="#/p5/>=">&gt;=</a>
+ * evaluates to `true` if the left value is greater than or equal to
  * the right value.
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
@@ -156,8 +156,8 @@
  */
 
 /**
- * The less than operator <a href="#/p5/<"><</a>
- * evaluates to true if the left value is less than
+ * The less than operator <a href="#/p5/<">&lt;</a>
+ * evaluates to `true` if the left value is less than
  * the right value.
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
@@ -177,8 +177,8 @@
  */
 
 /**
- * The less than or equal to operator <a href="#/p5/<="><=</a>
- * evaluates to true if the left value is less than or equal to
+ * The less than or equal to operator <a href="#/p5/<=">&lt;=</a>
+ * evaluates to `true` if the left value is less than or equal to
  * the right value.
  *
  * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators">There is more info on comparison operators on MDN.</a>
@@ -200,16 +200,16 @@
 /**
  * The <a href="#/p5/if-else">if-else</a> statement helps control the flow of your code.
  *
- * A condition is placed between the parenthesis following 'if',
- * when that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
+ * A condition is placed between the parenthesis following `if`.
+ * When that condition evalues to <a href="https://developer.mozilla.org/en-US/docs/Glossary/truthy">truthy</a>,
  * the code between the following curly braces is run.
  * Alternatively, when the condition evaluates to <a href="https://developer.mozilla.org/en-US/docs/Glossary/Falsy">falsy</a>,
- * the code between the curly braces of 'else' block is run instead. Writing an
- * else block is optional.
+ * the code between the curly braces of `else` block is run instead. Writing an
+ * `else` block is optional.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else">the MDN entry</a>:
  * The 'if' statement executes a statement if a specified condition is truthy.
- * If the condition is falsy, another statement can be executed
+ * If the condition is falsy, another statement can be executed.
  * @property if-else
  *
  * @example
@@ -234,7 +234,7 @@
  *
  * Optionally, functions can have parameters. <a href="https://developer.mozilla.org/en-US/docs/Glossary/Parameter">Parameters</a>
  * are variables that are scoped to the function, that can be assigned a value
- * when calling the function.Multiple parameters can be given by seperating them
+ * when calling the function. Multiple parameters can be given by seperating them
  * with commmas.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function">the MDN entry</a>:
@@ -290,7 +290,7 @@
  * A boolean can only be `true` or `false`.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type">the MDN entry</a>:
- * Boolean represents a logical entity and can have two values: true, and false.
+ * Boolean represents a logical entity and can have two values: `true`, and `false`.
  *
  * @property boolean
  *
@@ -309,7 +309,7 @@
 /**
  * A <a href="#/p5/string">string</a> is one of the 7 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Primitive_values">primitive data types</a> in Javascript.
  * A string is a series of text characters. In Javascript, a string value must
- * be surrounded by either single-quotation marks(') or double-quotation marks(").
+ * be surrounded by either single-quotation marks(`) or double-quotation marks(`"`).
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Glossary/string">the MDN entry</a>:
  * A string is a sequence of characters used to represent text.
@@ -410,25 +410,25 @@
  * section of code multiple times.
  *
  * A 'for loop' consists of three different expressions inside of a parenthesis,
- * all of which are optional.These expressions are used to control the number of
- * times the loop is run.The first expression is a statement that is used to set
- * the initial state for the loop.The second expression is a condition that you
- * would like to check before each loop. If this expression returns false then
- * the loop will exit.The third expression is executed at the end of each loop.
- * These expression are separated by ; (semi-colon).In case of an empty expression,
+ * all of which are optional. These expressions are used to control the number of
+ * times the loop is run. The first expression is a statement that is used to set
+ * the initial state for the loop. The second expression is a condition that you
+ * would like to check before each loop. If this expression returns `false`, then
+ * the loop will exit. The third expression is executed at the end of each loop.
+ * These expression are separated by `;` (semi-colons). In case of an empty expression,
  * only a semi-colon is written.
  *
  * The code inside of the loop body (in between the curly braces) is executed between the evaluation of the second
  * and third expression.
  *
  * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. The test condition with a <a href="#/p5/for">for</a> loop
+ * the test condition will eventually evaluate to `false`. The test condition with a <a href="#/p5/for">for</a> loop
  * is the second expression detailed above. Ensuring that this expression can eventually
- * become false ensures that your loop doesn't attempt to run an infinite amount of times,
+ * become `false` ensures that your loop doesn't attempt to run an infinite amount of times,
  * which can crash your browser.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for">the MDN entry</a>:
- * Creates a loop that executes a specified statement until the test condition evaluates to false.
+ * Creates a loop that executes a specified statement until the test condition evaluates to `false`.
  * The condition is evaluated after executing the statement, resulting in the specified statement executing at least once.
  * @property for
  *
@@ -451,12 +451,12 @@
  *
  * With a 'while loop', the code inside of the loop body (between the curly
  * braces) is run repeatedly until the test condition (inside of the parenthesis)
- * evaluates to false. The condition is tested before executing the code body
+ * evaluates to `false`. The condition is tested before executing the code body
  * with <a href="#/p5/while">while</a>, so if the condition is initially false
  * the loop body, or statement, will never execute.
  *
  * As with any loop, it is important to ensure that the loop can 'exit', or that
- * the test condition will eventually evaluate to false. This is to keep your loop
+ * the test condition will eventually evaluate to `false`. This is to keep your loop
  * from trying to run an infinite amount of times, which can crash your browser.
  *
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while">the MDN entry</a>:
@@ -489,7 +489,7 @@
 
 /**
  * From <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">the MDN entry</a>:
- * The JSON.stringify() method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
+ * The `JSON.stringify()` method converts a JavaScript object or value to a JSON <a href="#/p5/string">string</a>.
  * @method stringify
  * @static
  * @for JSON

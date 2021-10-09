@@ -50,11 +50,11 @@ p5.Matrix = function() {
 };
 
 /**
- * Sets the x, y, and z component of the vector using two or three separate
- * variables, the data from a p5.Matrix, or the values from a float array.
+ * Sets the `x`, `y`, and `z` component of the vector using two or three separate
+ * variables, the data from a `p5.Matrix`, or the values from a float array.
  *
  * @method set
- * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
+ * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input `p5.Matrix` or
  *                                     an Array of length 16
  * @chainable
  */
@@ -93,7 +93,7 @@ p5.Matrix.prototype.set = function(inMatrix) {
 };
 
 /**
- * Gets a copy of the vector, returns a p5.Matrix object.
+ * Gets a copy of the vector, and returns a `p5.Matrix` object.
  *
  * @method get
  * @return {p5.Matrix} the copy of the p5.Matrix object
@@ -103,7 +103,7 @@ p5.Matrix.prototype.get = function() {
 };
 
 /**
- * return a copy of a matrix
+ * Return a copy of a matrix.
  * @method copy
  * @return {p5.Matrix}   the result matrix
  */
@@ -136,7 +136,7 @@ p5.Matrix.prototype.copy = function() {
 p5.Matrix.identity = pInst => new p5.Matrix(pInst);
 
 /**
- * transpose according to a given matrix
+ * Transpose according to a given matrix.
  * @method transpose
  * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
  *                                               based on to transpose
@@ -197,7 +197,7 @@ p5.Matrix.prototype.transpose = function(a) {
 };
 
 /**
- * invert  matrix according to a give matrix
+ * Invert a matrix according to the given matrix.
  * @method invert
  * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
  *                                                based on to invert
@@ -284,7 +284,7 @@ p5.Matrix.prototype.invert = function(a) {
 };
 
 /**
- * Inverts a 3x3 matrix
+ * Inverts a 3x3 matrix.
  * @method invert3x3
  * @chainable
  */
@@ -321,7 +321,7 @@ p5.Matrix.prototype.invert3x3 = function() {
 };
 
 /**
- * transposes a 3x3 p5.Matrix by a mat3
+ * Transposes a 3x3 `p5.Matrix` by a mat3.
  * @method transpose3x3
  * @param  {Number[]} mat3 1-dimensional array
  * @chainable
@@ -340,8 +340,8 @@ p5.Matrix.prototype.transpose3x3 = function(mat3) {
 };
 
 /**
- * converts a 4x4 matrix to its 3x3 inverse transform
- * commonly used in MVMatrix to NMatrix conversions.
+ * Converts a 4x4 matrix to its 3x3 inverse transform.
+ * Commonly used in `MVMatrix` to `NMatrix` conversions.
  * @method invertTranspose
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
  * @chainable
@@ -377,7 +377,7 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
 };
 
 /**
- * inspired by Toji's mat4 determinant
+ * Inspired by Toji's mat4 determinant.
  * @method determinant
  * @return {Number} Determinant of our 4x4 matrix
  */
@@ -400,7 +400,7 @@ p5.Matrix.prototype.determinant = function() {
 };
 
 /**
- * multiply two mat4s
+ * Multiply two mat4s.
  * @method mult
  * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
  *                                                we want to multiply by
@@ -519,7 +519,7 @@ p5.Matrix.prototype.apply = function(multMatrix) {
 };
 
 /**
- * scales a p5.Matrix by scalars or a vector
+ * Scales a `p5.Matrix` by scalars or a vector
  * @method scale
  * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
  * @chainable
@@ -554,7 +554,7 @@ p5.Matrix.prototype.scale = function(x, y, z) {
 };
 
 /**
- * rotate our Matrix around an axis by the given angle.
+ * Rotate a Matrix around an axis by the given angle `a`.
  * @method rotate
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
@@ -652,7 +652,7 @@ p5.Matrix.prototype.rotateZ = function(a) {
 };
 
 /**
- * sets the perspective matrix
+ * Sets the perspective matrix.
  * @method perspective
  * @param  {Number} fovy   [description]
  * @param  {Number} aspect [description]
@@ -685,7 +685,7 @@ p5.Matrix.prototype.perspective = function(fovy, aspect, near, far) {
 };
 
 /**
- * sets the ortho matrix
+ * Sets the orthogonal matrix.
  * @method ortho
  * @param  {Number} left   [description]
  * @param  {Number} right  [description]

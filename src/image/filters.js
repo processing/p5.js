@@ -7,7 +7,7 @@
  * as opposed to modules. The functions are destructive, modifying
  * the passed in canvas rather than creating a copy.
  *
- * Generally speaking users of this module will use the Filters.apply method
+ * Generally speaking users of this module will use the `Filters.apply()` method
  * on a canvas to create an effect.
  *
  * A number of functions are borrowed/adapted from
@@ -189,7 +189,7 @@ Filters.apply = function(canvas, func, filterParam) {
 /**
  * Converts the image to black and white pixels depending if they are above or
  * below the threshold defined by the level parameter. The parameter must be
- * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+ * between 0.0 (black) and 1.0 (white). If no `level` is specified, 0.5 is used.
  *
  * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  *
@@ -279,7 +279,7 @@ Filters.invert = function(canvas) {
  * the parameter. The parameter can be set to values between 2 and 255, but
  * results are most noticeable in the lower ranges.
  *
- * Adapted from java based processing implementation
+ * Adapted from Java-based processing implementation
  *
  * @private
  * @param  {Canvas} canvas
@@ -307,7 +307,7 @@ Filters.posterize = function(canvas, level) {
 };
 
 /**
- * reduces the bright areas in an image
+ * Reduces the bright areas in an image
  * @private
  * @param  {Canvas} canvas
  */
@@ -394,7 +394,7 @@ Filters.dilate = function(canvas) {
 };
 
 /**
- * increases the bright areas in an image
+ * Increases the bright areas in an image
  * @private
  * @param  {Canvas} canvas
  */

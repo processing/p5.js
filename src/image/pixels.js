@@ -17,7 +17,7 @@ import '../color/p5.Color';
  * factor for <a href="#/p5/pixelDensity">pixelDensity</a>) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. Retina and other
- * high density displays will have more pixels[] (by a factor of
+ * high density displays will have more `pixels[]` (by a factor of
  * pixelDensity^2).
  * For example, if the image is 100x100 pixels, there will be 40,000. On a
  * retina display, there will be 160,000.
@@ -94,7 +94,7 @@ p5.prototype.pixels = [];
  * @param  {Constant} blendMode the blend mode. either
  *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
  *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
- *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
+ *     SOFT_LIGHT, DODGE, BURN, ADD, or NORMAL.
  *
  * @example
  * <div><code>
@@ -172,8 +172,8 @@ p5.prototype.blend = function(...args) {
 
 /**
  * Copies a region of the canvas to another region of the canvas
- * and copies a region of pixels from an image used as the srcImg parameter
- * into the canvas srcImage is specified this is used as the source. If
+ * and copies a region of pixels from an image used as the `srcImg` parameter
+ * into the canvas `srcImage` is specified this is used as the source. If
  * the source and destination regions aren't the same size, it will
  * automatically resize source pixels to fit the specified
  * target region.
@@ -309,8 +309,8 @@ p5.prototype._copyHelper = (
  *
  * THRESHOLD
  * Converts the image to black and white pixels depending if they are above or
- * below the threshold defined by the level parameter. The parameter must be
- * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+ * below the threshold defined by the `level` parameter. The parameter must be
+ * between 0.0 (black) and 1.0 (white). If no `level` is specified, 0.5 is used.
  *
  * GRAY
  * Converts any colors in the image to grayscale equivalents. No parameter
@@ -328,7 +328,7 @@ p5.prototype._copyHelper = (
  * results are most noticeable in the lower ranges.
  *
  * BLUR
- * Executes a Gaussian blur with the level parameter specifying the extent
+ * Executes a Gaussian blur with the `level` parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
  * Gaussian blur of radius 1. Larger values increase the blur.
  *
@@ -338,7 +338,7 @@ p5.prototype._copyHelper = (
  * DILATE
  * Increases the light areas. No parameter is used.
  *
- * filter() does not work in WEBGL mode.
+ * `filter()` does not work in WEBGL mode.
  * A similar effect can be achieved in WEBGL mode using custom
  * shaders. Adam Ferriss has written
  * a <a href="https://github.com/aferriss/p5jsShaderExamples"
@@ -347,7 +347,7 @@ p5.prototype._copyHelper = (
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
- *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                POSTERIZE, BLUR, ERODE, DILATE, or BLUR.
  *                                See Filters.js for docs on
  *                                each available filter
  * @param  {Number} [filterParam] an optional parameter unique
@@ -483,14 +483,14 @@ p5.prototype.filter = function(operation, value) {
  *
  * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
  * an image. If no parameters are specified, the entire image is returned.
- * Use the x and y parameters to get the value of one pixel. Get a section of
- * the display window by specifying additional w and h parameters. When
- * getting an image, the x and y parameters define the coordinates for the
+ * Use the `x` and `y` parameters to get the value of one pixel. Get a section of
+ * the display window by specifying additional `w` and `h` parameters. When
+ * getting an image, the `x` and `y` parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  *
- * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+ * Getting the color of a single pixel with `get(x, y)` is easy, but not as fast
  * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
- * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
+ * `get(x, y)` using <a href="#/p5/pixels">pixels[]</a> with pixel density `d` is:
  * ```javascript
  * let x, y, d; // set these to the coordinates
  * let off = (y * width + x) * d * 4;
@@ -504,7 +504,7 @@ p5.prototype.filter = function(operation, value) {
  * ```
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
- * If you want to extract an array of colors or a subimage from an p5.Image object,
+ * If you want to extract an array of colors or a subimage from an `p5.Image` object,
  * take a look at <a href="#/p5.Image/get">p5.Image.get()</a>
  *
  * @method get
@@ -556,7 +556,7 @@ p5.prototype.filter = function(operation, value) {
  * @method get
  * @param  {Number}        x
  * @param  {Number}        y
- * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+ * @return {Number[]}      color of pixel at `x`,`y` in array format [R, G, B, A]
  */
 p5.prototype.get = function(x, y, w, h) {
   p5._validateParameters('get', arguments);
@@ -602,17 +602,18 @@ p5.prototype.loadPixels = function(...args) {
 /**
  * Changes the color of any pixel, or writes an image directly to the
  * display window.
- * The x and y parameters specify the pixel to change and the c parameter
+ *
+ * The `x` and `y` parameters specify the pixel to change and the `c` parameter
  * specifies the color value. This can be a <a href="#/p5.Color">p5.Color</a> object, or [R, G, B, A]
  * pixel array. It can also be a single grayscale value.
- * When setting an image, the x and y parameters define the coordinates for
+ * When setting an image, the `x` and `y` parameters define the coordinates for
  * the upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
  *
  * After using <a href="#/p5/set">set()</a>, you must call <a href="#/p5/updatePixels">updatePixels()</a> for your changes to appear.
  * This should be called once all pixels have been set, and must be called before
  * calling .<a href="#/p5/get">get()</a> or drawing the image.
  *
- * Setting the color of a single pixel with set(x, y) is easy, but not as
+ * Setting the color of a single pixel with `set(x, y)` is easy, but not as
  * fast as putting the data directly into <a href="#/p5/pixels">pixels[]</a>. Setting the <a href="#/p5/pixels">pixels[]</a>
  * values directly may be complicated when working with a retina display,
  * but will perform better when lots of pixels need to be set directly on

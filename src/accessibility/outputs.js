@@ -11,24 +11,24 @@ import p5 from '../core/main';
  * <code class="language-javascript">textOutput()</code> creates a screenreader
  * accessible output that describes the shapes present on the canvas.
  * The general description of the canvas includes canvas size,
- * canvas color, and number of elements in the canvas
- * (example: 'Your output is a, 400 by 400 pixels, lavender blue
- * canvas containing the following 4 shapes:'). This description
+ * canvas color, and number of elements in the canvas.
+ * (Example: "Your output is a, 400 by 400 pixels, lavender blue
+ * canvas containing the following 4 shapes: ".) This description
  * is followed by a list of shapes where the color, position, and area
- * of each shape are described (example: "orange ellipse at top left
- * covering 1% of the canvas"). Each element can be selected to get
+ * of each shape are described. (Example: "orange ellipse at top left
+ * covering 1% of the canvas".) Each element can be selected to get
  * more details. A table of elements is also provided. In this table,
- * shape, color, location, coordinates and area are described
- * (example: "orange ellipse location=top left area=2").
+ * shape, color, location, coordinates, and area are described.
+ * (Example: "orange ellipse location=top left area=2".)
  *
  * <code class="language-javascript">textOutput()</code> and <code class="language-javascript">textOutput(FALLBACK)</code>
  * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a> which is accessible to screen readers.
  * <code class="language-javascript">textOutput(LABEL)</code> creates an
- * additional div with the output adjacent to the canvas, this is useful
+ * additional `div` with the output adjacent to the canvas, this is useful
  * for non-screen reader users that might want to display the output outside
- * of the canvas' sub DOM as they code. However, using LABEL will create
- * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * of the canvas' sub DOM as they code. However, using `LABEL` will create
+ * unnecessary redundancy for screen reader users. We recommend using `LABEL`
  * only as part of the development process of a sketch and removing it before
  * publishing or sharing with screen reader users.
  *
@@ -87,18 +87,18 @@ p5.prototype.textOutput = function(display) {
 
 /**
  * <code class="language-javascript">gridOutput()</code> lays out the
- * content of the canvas in the form of a grid (html table) based
+ * content of the canvas in the form of a grid (HTML table) based
  * on the spatial location of each shape. A brief
  * description of the canvas is available before the table output.
  * This description includes: color of the background, size of the canvas,
- * number of objects, and object types (example: "lavender blue canvas is
- * 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle"). The grid
+ * number of objects, and object types. (Example: "lavender blue canvas is
+ * 200 by 200 and contains 4 objects - 3 ellipses 1 rectangle".) The grid
  * describes the content spatially, each element is placed on a cell of the
  * table depending on its position. Within each cell an element the color
- * and type of shape of that element are available (example: "orange ellipse").
+ * and type of shape of that element are available. (Example: "orange ellipse".)
  * These descriptions can be selected individually to get more details.
  * A list of elements where shape, color, location, and area are described
- * (example: "orange ellipse location=top left area=1%") is also available.
+ * (Example: "orange ellipse location=top left area=1%") is also available.
  *
  * <code class="language-javascript">gridOutput()</code> and <code class="language-javascript">gridOutput(FALLBACK)</code>
  * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
@@ -106,8 +106,8 @@ p5.prototype.textOutput = function(display) {
  * <code class="language-javascript">gridOutput(LABEL)</code> creates an
  * additional div with the output adjacent to the canvas, this is useful
  * for non-screen reader users that might want to display the output outside
- * of the canvas' sub DOM as they code. However, using LABEL will create
- * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * of the canvas' sub DOM as they code. However, using `LABEL` will create
+ * unnecessary redundancy for screen reader users. We recommend using `LABEL`
  * only as part of the development process of a sketch and removing it before
  * publishing or sharing with screen reader users.
  *

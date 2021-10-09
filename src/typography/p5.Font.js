@@ -41,7 +41,7 @@ p5.Font = function(p) {
  *                            opentype fonts contains alignment and baseline options.
  *                            Default is 'LEFT' and 'alphabetic'
  *
- * @return {Object}          a rectangle object with properties: x, y, w, h
+ * @return {Object}          a rectangle object with properties: `x`, `y`, `w`, `h`
  *
  * @example
  * <div>
@@ -190,7 +190,7 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
  * be removed from the polygon; the value represents the threshold angle to use
  * when determining whether two edges are collinear
  *
- * @return {Array}  an array of points, each with x, y, alpha (the path angle)
+ * @return {Array}  an array of points, each with `x`, `y`, and `alpha` (the path angle)
  * @example
  * <div>
  * <code>

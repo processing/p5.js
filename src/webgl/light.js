@@ -63,7 +63,7 @@ import * as constants from '../core/constants';
 
 /**
  * @method ambientLight
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color
  * @chainable
  */
@@ -90,17 +90,17 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 };
 
 /**
- * Set's the color of the specular highlight when using a specular material and
+ * Sets the color of the specular highlight when using a specular material and
  * specular light.
  *
- * This method can be combined with specularMaterial() and shininess()
- * functions to set specular highlights. The default color is white, ie
- * (255, 255, 255), which is used if this method is not called before
- * specularMaterial(). If this method is called without specularMaterial(),
+ * This method can be combined with `specularMaterial()` and `shininess()`
+ * functions to set specular highlights. The default color is white (i.e.
+ * `(255, 255, 255)`), which is used if this method is not called before
+ * `specularMaterial()`. If this method is called without `specularMaterial()`,
  * There will be no effect.
  *
- * Note: specularColor is equivalent to the processing function
- * <a href="https://processing.org/reference/lightSpecular_.html">lightSpecular</a>.
+ * Note: `specularColor()` is equivalent to the processing function
+ * <a href="https://processing.org/reference/lightSpecular_.html">lightSpecular()</a>.
  *
  * @method specularColor
  * @param  {Number}        v1      red or hue value relative to
@@ -150,7 +150,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
 
 /**
  * @method specularColor
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color
  * @chainable
  */
@@ -180,7 +180,7 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * A maximum of 5 directionalLight can be active at one time
  * @method directionalLight
  * @param  {Number}    v1       red or hue value (depending on the current
- * color mode),
+ *                              color mode)
  * @param  {Number}    v2       green or saturation value
  * @param  {Number}    v3       blue or brightness value
  * @param  {p5.Vector} position the direction of the light
@@ -278,12 +278,12 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * Creates a point light with a color and a light position
+ * Creates a point light with a color and a light position.
  *
- * A maximum of 5 pointLight can be active at one time
+ * A maximum of 5 pointLight can be active at one time.
  * @method pointLight
  * @param  {Number}    v1       red or hue value (depending on the current
- * color mode),
+ *                              color mode)
  * @param  {Number}    v2       green or saturation value
  * @param  {Number}    v3       blue or brightness value
  * @param  {Number}    x        x axis position
@@ -331,7 +331,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 /**
  * @method pointLight
  * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
- * or <a href="#/p5.Color">p5.Color</a> value
+ *                                            or <a href="#/p5.Color">p5.Color</a> value
  * @param  {Number}                   x
  * @param  {Number}                   y
  * @param  {Number}                   z
@@ -385,7 +385,13 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 };
 
 /**
- * Sets the default ambient and directional light. The defaults are <a href="#/p5/ambientLight">ambientLight(128, 128, 128)</a> and <a href="#/p5/directionalLight">directionalLight(128, 128, 128, 0, 0, -1)</a>. Lights need to be included in the <a href="#/p5/draw">draw()</a> to remain persistent in a looping program. Placing them in the <a href="#/p5/setup">setup()</a> of a looping program will cause them to only have an effect the first time through the loop.
+ * Sets the default ambient and directional light.
+ * The defaults are <a href="#/p5/ambientLight">ambientLight(128, 128, 128)</a> and
+ * <a href="#/p5/directionalLight">directionalLight(128, 128, 128, 0, 0, -1)</a>.
+ *
+ * Lights need to be included in the <a href="#/p5/draw">draw()</a> function to remain
+ * persistent in a looping program. Placing them in the <a href="#/p5/setup">setup()</a>
+ * of a looping program will cause them to only have an effect the first time through the loop.
  * @method lights
  * @chainable
  * @example
@@ -424,11 +430,13 @@ p5.prototype.lights = function() {
 
 /**
  * Sets the falloff rates for point lights. It affects only the elements which are created after it in the code.
- * The default value is lightFalloff(1.0, 0.0, 0.0), and the parameters are used to calculate the falloff with the following equation:
+ * The default value is `lightFalloff(1.0, 0.0, 0.0)`, and the parameters are used to calculate the falloff with the following equation:
  *
+ * <code><pre>
  * d = distance from light position to vertex position
  *
- * falloff = 1 / (CONSTANT + d \* LINEAR + ( d \* d ) \* QUADRATIC)
+ * falloff = 1 / (CONSTANT + d * LINEAR + ( d * d ) * QUADRATIC)
+ * </pre></code>
  *
  * @method lightFalloff
  * @param {Number} constant   constant value for determining falloff
@@ -518,12 +526,14 @@ p5.prototype.lightFalloff = function(
 
 /**
  * Creates a spotlight with a given color, position, direction of light,
- * angle and concentration. Here, angle refers to the opening or aperture
- * of the cone of the spotlight, and concentration is used to focus the
- * light towards the center. Both angle and concentration are optional, but if
- * you want to provide concentration, you will also have to specify the angle.
+ * angle, and concentration.
  *
- * A maximum of 5 spotLight can be active at one time
+ * Here, `angle` refers to the opening or aperture of the cone of the spotlight,
+ * and `concentration` is used to focus the light towards the center.
+ * Both `angle` and `concentration` are optional, but if you want to provide
+ * `concentration`, you will also have to specify the `angle`.
+ *
+ * A maximum of 5 `spotLight` can be active at one time.
  * @method spotLight
  * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
@@ -571,7 +581,7 @@ p5.prototype.lightFalloff = function(
 /**
  * @method spotLight
  * @param  {Number[]|String|p5.Color} color color Array, CSS color string,
- * or <a href="#/p5.Color">p5.Color</a> value
+ *                                          or <a href="#/p5.Color">p5.Color</a> value
  * @param  {p5.Vector}                position the position of the light
  * @param  {p5.Vector}                direction the direction of the light
  * @param  {Number}                   [angle]
@@ -859,7 +869,7 @@ p5.prototype.spotLight = function(
 /**
  * This function will remove all the lights from the sketch for the
  * subsequent materials rendered. It affects all the subsequent methods.
- * Calls to lighting methods made after noLights() will re-enable lights
+ * Calls to lighting methods made after `noLights()` will re-enable lights
  * in the sketch.
  * @method noLights
  * @chainable

@@ -26,7 +26,7 @@ import p5 from '../core/main';
  * to view the position of your camera.
  *
  * If no parameters are given, the following default is used:
- * camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0)
+ * `camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0)`
  * @method camera
  * @constructor
  * @for p5
@@ -103,7 +103,7 @@ import p5 from '../core/main';
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting it's center.
+ * z axis and 3 sliders for shifting its center.
  */
 p5.prototype.camera = function(...args) {
   this._assert3d('camera');
@@ -124,8 +124,8 @@ p5.prototype.camera = function(...args) {
  * clipping planes.
  *
  * If no parameters are given, the following default is used:
- * perspective(PI/3, width/height, eyeZ/10, eyeZ*10),
- * where eyeZ is equal to ((height/2) / tan(PI/6)).
+ * `perspective(PI/3, width/height, eyeZ/10, eyeZ*10)`,
+ * where `eyeZ` is equal to `((height/2) / tan(PI/6))`.
  * @method  perspective
  * @for p5
  * @param  {Number} [fovy]   camera frustum vertical field of view,
@@ -185,7 +185,7 @@ p5.prototype.perspective = function(...args) {
  * maximum z values.
  *
  * If no parameters are given, the following default is used:
- * ortho(-width/2, width/2, -height/2, height/2).
+ * `ortho(-width/2, width/2, -height/2, height/2)`.
  * @method  ortho
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -249,7 +249,7 @@ p5.prototype.ortho = function(...args) {
  * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
  *
  * If no parameters are given, the following default is used:
- * frustum(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
+ * `frustum(-width/2, width/2, -height/2, height/2, 0, max(width, height))`.
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -360,7 +360,7 @@ p5.prototype.createCamera = function() {
  * WebGL mode</a>. It contains camera position, orientation, and projection
  * information necessary for rendering a 3D scene.
  *
- * New p5.Camera objects can be made through the
+ * New `p5.Camera` objects can be made through the
  * <a href="#/p5/createCamera">createCamera()</a> function and controlled through
  * the methods described below. A camera created in this way will use a default
  * position in the scene and a default perspective projection until these
@@ -371,16 +371,16 @@ p5.prototype.createCamera = function() {
  * Note:
  * The methods below operate in two coordinate systems: the 'world' coordinate
  * system describe positions in terms of their relationship to the origin along
- * the X, Y and Z axes whereas the camera's 'local' coordinate system
+ * the X, Y, and Z axes, whereas the camera's 'local' coordinate system
  * describes positions from the camera's point of view: left-right, up-down,
  * and forward-backward. The <a href="#/p5.Camera/move">move()</a> method,
  * for instance, moves the camera along its own axes, whereas the
  * <a href="#/p5.Camera/setPosition">setPosition()</a>
  * method sets the camera's position in world-space.
  *
- * The camera object propreties
+ * The camera object properties
  * <code>eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ</code>
- * which describes camera position, orientation, and projection
+ * which describe camera position, orientation, and projection
  * are also accessible via the camera object generated using
  * <a href="#/p5/createCamera">createCamera()</a>
  *
@@ -442,7 +442,7 @@ p5.Camera = function(renderer) {
   this.projMatrix = new p5.Matrix();
 };
 /**
- * camera position value on x axis
+ * Camera position value on x axis
  * @property {Number} eyeX
  * @readonly
  * @example
@@ -470,7 +470,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * camera position value on y axis
+ * Camera position value on y axis
  * @property {Number} eyeY
  * @readonly
  * @example
@@ -497,7 +497,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * camera position value on z axis
+ * Camera position value on z axis
  * @property {Number} eyeZ
  * @readonly
  * @example
@@ -524,7 +524,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * x coordinate representing center of the sketch
+ * X coordinate representing center of the sketch
  * @property {Number} centerX
  * @readonly
  * @example
@@ -552,7 +552,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * y coordinate representing center of the sketch
+ * Y coordinate representing center of the sketch
  * @property {Number} centerY
  * @readonly
  * @example
@@ -580,7 +580,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * z coordinate representing center of the sketch
+ * Z coordinate representing center of the sketch
  * @property {Number} centerZ
  * @readonly
  * @example
@@ -608,7 +608,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * x component of direction 'up' from camera
+ * X component of direction 'up' from camera
  * @property {Number} upX
  * @readonly
  * @example
@@ -631,7 +631,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * y component of direction 'up' from camera
+ * Y component of direction 'up' from camera
  * @property {Number} upY
  * @readonly
  * @example
@@ -654,7 +654,7 @@ p5.Camera = function(renderer) {
  */
 
 /**
- * z component of direction 'up' from camera
+ * Z component of direction 'up' from camera
  * @property {Number} upZ
  * @readonly
  * @example
@@ -994,7 +994,7 @@ p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Rotate camera view about arbitrary axis defined by x,y,z
+ * Rotate camera view about arbitrary axis defined by `x`,`y`,`z`
  * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
  * @method _rotateView
  * @private
@@ -1658,7 +1658,7 @@ p5.Camera.prototype._getLocalAxes = function() {
 };
 
 /**
- * Orbits the camera about center point. For use with orbitControl().
+ * Orbits the camera about center point. For use with `orbitControl()`.
  * @method _orbit
  * @private
  * @param {Number} dTheta change in spherical coordinate theta
@@ -1712,7 +1712,7 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
 };
 
 /**
- * Returns true if camera is currently attached to renderer.
+ * Returns `true` if camera is currently attached to renderer.
  * @method _isActive
  * @private
  */

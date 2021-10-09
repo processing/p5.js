@@ -9,9 +9,9 @@ import p5 from '../core/main';
 
 /**
  * Converts a string to its floating point representation. The contents of a
- * string must resemble a number, or NaN (not a number) will be returned.
- * For example, float("1234.56") evaluates to 1234.56, but float("giraffe")
- * will return NaN.
+ * string must resemble a number, or `NaN` (not a number) will be returned.
+ * For example, `float("1234.56")` evaluates to `1234.56`, but `float("giraffe")`
+ * will return `NaN`.
  *
  * When an array of values is passed in, then an array of floats of the same
  * length is returned.
@@ -86,7 +86,7 @@ p5.prototype.int = function(n, radix = 10) {
 };
 
 /**
- * Converts a boolean, string or number to its string representation.
+ * Converts a boolean, string, or number to its string representation.
  * When an array of values is passed in, then an array of strings of the same
  * length is returned.
  *
@@ -113,9 +113,9 @@ p5.prototype.str = function(n) {
 
 /**
  * Converts a number or string to its boolean representation.
- * For a number, any non-zero value (positive or negative) evaluates to true,
- * while zero evaluates to false. For a string, the value "true" evaluates to
- * true, while any other value evaluates to false. When an array of number or
+ * For a number, any non-zero value (positive or negative) evaluates to `true`,
+ * while zero evaluates to `false`. For a string, the value `"true"` evaluates to
+ * `true`, while any other value evaluates to `false`. When an array of number or
  * string values is passed in, then a array of booleans of the same length is
  * returned.
  *

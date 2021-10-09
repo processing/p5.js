@@ -9,7 +9,7 @@ import p5 from '../core/main';
 
 /**
  * Adds a value to the end of an array. Extends the length of
- * the array by one. Maps to Array.push().
+ * the array by one. Maps to `Array.push()`.
  *
  * @method append
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">array.push(value)</a> instead.
@@ -40,12 +40,12 @@ p5.prototype.append = function(array, value) {
  * overwrites existing values in the destination array. To append values
  * instead of overwriting them, use <a href="#/p5/concat">concat()</a>.
  *
- * The simplified version with only two arguments, arrayCopy(src, dst),
+ * The simplified version with only two arguments, `arrayCopy(src, dst)`,
  * copies an entire array to another of the same size. It is equivalent to
- * arrayCopy(src, 0, dst, 0, src.length).
+ * `arrayCopy(src, 0, dst, 0, src.length)`.
  *
  * Using this function is far more efficient for copying array data than
- * iterating through a for() loop and copying each element individually.
+ * iterating through a `for()` loop and copying each element individually.
  *
  * @method arrayCopy
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">arr1.copyWithin(arr2)</a> instead.
@@ -110,7 +110,7 @@ p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
 };
 
 /**
- * Concatenates two arrays, maps to Array.concat(). Does not modify the
+ * Concatenates two arrays. Maps to `Array.concat()`. Does not modify the
  * input arrays.
  *
  * @method concat
@@ -139,7 +139,7 @@ p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
 p5.prototype.concat = (list0, list1) => list0.concat(list1);
 
 /**
- * Reverses the order of an array, maps to Array.reverse()
+ * Reverses the order of an array. Maps to `Array.reverse()`.
  *
  * @method reverse
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">array.reverse()</a> instead.
@@ -159,8 +159,8 @@ p5.prototype.concat = (list0, list1) => list0.concat(list1);
 p5.prototype.reverse = list => list.reverse();
 
 /**
- * Decreases an array by one element and returns the shortened array,
- * maps to Array.pop().
+ * Decreases an array by one element and returns the shortened array.
+ * Maps to `Array.pop()`.
  *
  * @method shorten
  * @deprecated Use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">array.pop()</a> instead.
@@ -227,7 +227,7 @@ p5.prototype.shuffle = function(arr, bool) {
 /**
  * Sorts an array of numbers from smallest to largest, or puts an array of
  * words in alphabetical order. The original array is not modified; a
- * re-ordered array is returned. The count parameter states the number of
+ * re-ordered array is returned. The `count` parameter states the number of
  * elements to sort. For example, if there are 12 elements in an array and
  * count is set to 5, only the first 5 elements in the array will be sorted.
  *
@@ -306,11 +306,11 @@ p5.prototype.splice = function(list, value, index) {
 };
 
 /**
- * Extracts an array of elements from an existing array. The list parameter
- * defines the array from which the elements will be copied, and the start
- * and count parameters specify which elements to extract. If no count is
- * given, elements will be extracted from the start to the end of the array.
- * When specifying the start, remember that the first array element is 0.
+ * Extracts an array of elements from an existing array. The `list` parameter
+ * defines the array from which the elements will be copied, and the `start`
+ * and `count` parameters specify which elements to extract. If no `count` is
+ * given, elements will be extracted from the `start` to the end of the array.
+ * When specifying the `start`, remember that the first array element is 0.
  * This function does not change the source array.
  *
  * @method subset

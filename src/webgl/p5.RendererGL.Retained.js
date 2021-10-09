@@ -146,9 +146,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 };
 
 /**
- * Calls drawBuffers() with a scaled model/view matrix.
+ * Calls `drawBuffers()` with a scaled model/view matrix.
  *
- * This is used by various 3d primitive methods (in primitives.js, eg. plane,
+ * This is used by various 3d primitive methods (in `primitives.js`, eg. plane,
  * box, torus, etc...) to allow caching of un-scaled geometries. Those
  * geometries are generally created with unit-length dimensions, cached as
  * such, and then scaled appropriately in this method prior to rendering.

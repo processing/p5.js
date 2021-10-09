@@ -30,9 +30,9 @@ import '../core/friendly_errors/fes_core';
  *
  * This method is suitable for fetching files up to size of 64MB.
  * @method loadJSON
- * @param  {String}        path       name of the file or url to load
+ * @param  {String}        path       name of the file or URL to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
- * @param  {String}        [datatype] "json" or "jsonp"
+ * @param  {String}        [datatype] `"json"` or `"jsonp"`
  * @param  {function}      [callback] function to be executed after
  *                                    <a href="#/p5/loadJSON">loadJSON()</a> completes, data is passed
  *                                    in as first argument
@@ -186,7 +186,7 @@ p5.prototype.loadJSON = function(...args) {
  * example, the file must be located in the sketch directory/folder.
  *
  * Alternatively, the file maybe be loaded from anywhere on the local
- * computer using an absolute path (something that starts with / on Unix and
+ * computer using an absolute path (something that starts with `/` on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
  *
@@ -205,7 +205,7 @@ p5.prototype.loadJSON = function(...args) {
  * @return {String[]}            Array of Strings
  * @example
  *
- * Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * Calling `loadStrings()` inside <a href="#/p5/preload">preload()</a> guarantees to complete the
  * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
@@ -317,9 +317,9 @@ p5.prototype.loadStrings = function(...args) {
  * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
  * @param  {String}         filename    name of the file or URL to load
- * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
- *                                      values "ssv", or tab-separated values "tsv"
- * @param  {String}         [header]    "header" to indicate table has header row
+ * @param  {String}         [extension] parse the table by comma-separated values `"csv"`, semicolon-separated
+ *                                      values `"ssv"`, or tab-separated values `"tsv"`
+ * @param  {String}         [header]    `"header"` to indicate table has header row
  * @param  {function}       [callback]  function to be executed after
  *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
  *                                      <a href="#/p5.Table">Table</a> object is passed in as the
@@ -586,7 +586,7 @@ function makeObject(row, headers) {
  * the file must be located in the sketch directory/folder.
  *
  * Alternatively, the file maybe be loaded from anywhere on the local
- * computer using an absolute path (something that starts with / on Unix and
+ * computer using an absolute path (something that starts with `/` on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
  *
@@ -698,7 +698,7 @@ p5.prototype.loadXML = function(...args) {
  *                                    completes
  * @param {function} [errorCallback] function to be executed if there
  *                                    is an error
- * @returns {Object} an object whose 'bytes' property will be the loaded buffer
+ * @returns {Object} an object whose `bytes` property will be the loaded buffer
  *
  * @example
  * <div class='norender'><code>
@@ -750,16 +750,16 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
 };
 
 /**
- * Method for executing an HTTP GET request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
- * calling <code>httpDo(path, 'GET')</code>. The 'binary' datatype will return
- * a Blob object, and the 'arrayBuffer' datatype will return an ArrayBuffer
+ * Method for executing an HTTP GET request. If `datatype` is not specified,
+ * p5 will try to guess based on the URL, defaulting to `"text"`. This is equivalent to
+ * calling `httpDo(path, 'GET')`. The `"binary"` datatype will return
+ * a Blob object, and the `"arrayBuffer"` datatype will return an ArrayBuffer
  * which can be used to initialize typed arrays (such as Uint8Array).
  *
  * @method httpGet
- * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "binary", "arrayBuffer",
- *                                    "xml", or "text"
+ * @param  {String}        path       name of the file or URL to load
+ * @param  {String}        [datatype] `"json"`, `"jsonp"`, `"binary"`, `"arrayBuffer"`,
+ *                                    `"xml"`, or `"text"`
  * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    <a href="#/p5/httpGet">httpGet()</a> completes, data is passed in
@@ -827,13 +827,13 @@ p5.prototype.httpGet = function() {
 };
 
 /**
- * Method for executing an HTTP POST request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
- * calling <code>httpDo(path, 'POST')</code>.
+ * Method for executing an HTTP POST request. If `datatype` is not specified,
+ * p5 will try to guess based on the URL, defaulting to `"text"`. This is equivalent to
+ * calling `httpDo(path, 'POST')`.
  *
  * @method httpPost
- * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+ * @param  {String}        path       name of the file or URL to load
+ * @param  {String}        [datatype] `"json"`, `"jsonp"`, `"xml"`, or `"text"`.
  *                                    If omitted, <a href="#/p5/httpPost">httpPost()</a> will guess.
  * @param  {Object|Boolean} [data]    param data passed sent with request
  * @param  {function}      [callback] function to be executed after
@@ -917,11 +917,13 @@ p5.prototype.httpPost = function() {
 };
 
 /**
- * Method for executing an HTTP request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.<br><br>
- * For more advanced use, you may also pass in the path as the first argument
- * and a object as the second argument, the signature follows the one specified
- * in the Fetch API specification.
+ * Method for executing an HTTP request. If `datatype` is not specified,
+ * p5 will try to guess based on the URL, defaulting to `"text"`.
+ *
+ * For more advanced use, you may also pass in the `path` as the first argument
+ * and a object as the second argument (such that signature follows the one specified
+ * in the Fetch API specification).
+ *
  * This method is suitable for fetching files up to size of 64MB when "GET" is used.
  *
  * @method httpDo
@@ -1391,25 +1393,32 @@ p5.PrintWriter = function(filename, extension) {
 // filename, [extension] [canvas] --> saveImage
 
 /**
- *  Saves a given element(image, text, json, csv, wav, or html) to the client's
- *  computer. The first parameter can be a pointer to element we want to save.
- *  The element can be one of <a href="#/p5.Element">p5.Element</a>,an Array of
- *  Strings, an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table
- *  </a>, a <a href="#/p5.Image">p5.Image</a>, or a p5.SoundFile (requires
- *  p5.sound). The second parameter is a filename (including extension).The
- *  third parameter is for options specific to this type of object. This method
+ *  Saves a given element (image, text, json, csv, wav, or html) to the client's
+ *  computer.
+ *
+ *  The first parameter can be a pointer to element we want to save.
+ *  The element can be one of <a href="#/p5.Element">p5.Element</a>, an Array of
+ *  Strings, an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table</a>,
+ *  a <a href="#/p5.Image">p5.Image</a>, or a `p5.SoundFile` (requires
+ *  `p5.sound`).
+ *
+ *  The second parameter is a filename (including extension).
+ *
+ *  The third parameter is for options specific to this type of object. This method
  *  will save a file that fits the given parameters.
+ *
  *  If it is called without specifying an element, by default it will save the
  *  whole canvas as an image file. You can optionally specify a filename as
  *  the first parameter in such a case.
+ *
  *  **Note that it is not recommended to
- *  call this method within draw, as it will open a new save dialog on every
+ *  call this method within `draw()`, as it will open a new save dialog on every
  *  render.**
  *
  * @method save
  * @param  {Object|String} [objectOrFilename]  If filename is provided, will
  *                                             save canvas as an image with
- *                                             either png or jpg extension
+ *                                             either `png` or `jpg` extension,
  *                                             depending on the filename.
  *                                             If object is provided, will
  *                                             save depending on the object
@@ -1422,7 +1431,7 @@ p5.PrintWriter = function(filename, extension) {
  *                               file extension (see examples above).
  * @param  {Boolean|String} [options]  Additional options depend on
  *                            filetype. For example, when saving JSON,
- *                            <code>true</code> indicates that the
+ *                            `true` indicates that the
  *                            output will be optimized for filesize,
  *                            rather than readability.
  *
@@ -1533,7 +1542,7 @@ p5.prototype.save = function(object, _filename, _options) {
 };
 
 /**
- *  Writes the contents of an Array or a JSON object to a .json file.
+ *  Writes the contents of an Array or a JSON object to a `.json` file.
  *  The file saving process and location of the saved file will
  *  vary between web browsers.
  *
@@ -1655,15 +1664,15 @@ function escapeHelper(content) {
 
 /**
  *  Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
- *  text file with comma-separated-values ('csv') but can also
- *  use tab separation ('tsv'), or generate an HTML table ('html').
+ *  text file with comma-separated-values (`'csv'`) but can also
+ *  use tab separation (`'tsv'`), or generate an HTML table (`'html'`).
  *  The file saving process and location of the saved file will
  *  vary between web browsers.
  *
  *  @method saveTable
  *  @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
  *  @param  {String} filename the filename to which the Table should be saved
- *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
+ *  @param  {String} [options]  can be one of `"tsv"`, `"csv"`, or `"html"`
  *  @example
  *  <div><code>
  * let table;
@@ -1787,10 +1796,10 @@ p5.prototype.saveTable = function(table, filename, options) {
 }; // end saveTable()
 
 /**
- *  Generate a blob of file data as a url to prepare for download.
+ *  Generate a blob of file data as a URL to prepare for download.
  *  Accepts an array of data, a filename, and an extension (optional).
  *  This is a private function because it does not do any formatting,
- *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a> etc.
+ *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a>, etc.
  *
  *  @param  {Array} dataToDownload
  *  @param  {String} filename
@@ -1809,7 +1818,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
 };
 
 /**
- *  Forces download. Accepts a url to filedata/blob, a filename,
+ *  Forces download. Accepts a URL to filedata/blob, a filename,
  *  and an extension (optional).
  *  This is a private function because it does not do any formatting,
  *  but it is used by <a href="#/p5/saveStrings">saveStrings</a>, <a href="#/p5/saveJSON">saveJSON</a>, <a href="#/p5/saveTable">saveTable</a> etc.

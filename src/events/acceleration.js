@@ -9,9 +9,9 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * The system variable deviceOrientation always contains the orientation of
- * the device. The value of this variable will either be set 'landscape'
- * or 'portrait'. If no data is available it will be set to 'undefined'.
+ * The system variable `deviceOrientation` always contains the orientation of
+ * the device. The value of this variable will either be set `'landscape'`
+ * or `'portrait'`. If no data is available, it will be set to `undefined`.
  * either LANDSCAPE or PORTRAIT.
  *
  * @property {Constant} deviceOrientation
@@ -21,7 +21,7 @@ p5.prototype.deviceOrientation =
   window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
 
 /**
- * The system variable accelerationX always contains the acceleration of the
+ * The system variable `accelerationX` always contains the acceleration of the
  * device along the x axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationX
@@ -44,7 +44,7 @@ p5.prototype.deviceOrientation =
 p5.prototype.accelerationX = 0;
 
 /**
- * The system variable accelerationY always contains the acceleration of the
+ * The system variable `accelerationY` always contains the acceleration of the
  * device along the y axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationY
@@ -67,7 +67,7 @@ p5.prototype.accelerationX = 0;
 p5.prototype.accelerationY = 0;
 
 /**
- * The system variable accelerationZ always contains the acceleration of the
+ * The system variable `accelerationZ` always contains the acceleration of the
  * device along the z axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationZ
@@ -92,7 +92,7 @@ p5.prototype.accelerationY = 0;
 p5.prototype.accelerationZ = 0;
 
 /**
- * The system variable pAccelerationX always contains the acceleration of the
+ * The system variable `pAccelerationX` always contains the acceleration of the
  * device along the x axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
@@ -102,7 +102,7 @@ p5.prototype.accelerationZ = 0;
 p5.prototype.pAccelerationX = 0;
 
 /**
- * The system variable pAccelerationY always contains the acceleration of the
+ * The system variable `pAccelerationY` always contains the acceleration of the
  * device along the y axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
@@ -112,7 +112,7 @@ p5.prototype.pAccelerationX = 0;
 p5.prototype.pAccelerationY = 0;
 
 /**
- * The system variable pAccelerationZ always contains the acceleration of the
+ * The system variable `pAccelerationZ` always contains the acceleration of the
  * device along the z axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
@@ -133,13 +133,14 @@ p5.prototype._updatePAccelerations = function() {
 };
 
 /**
- * The system variable rotationX always contains the rotation of the
+ * The system variable `rotationX` always contains the rotation of the
  * device along the x axis. If the sketch <a href="#/p5/angleMode">
- * angleMode()</a> is set to DEGREES, the value will be -180 to 180. If
- * it is set to RADIANS, the value will be -PI to PI.
+ * angleMode()</a> is set to <a href="#/p5/DEGREES">DEGREES</a>, the
+ * value will be `-180` to `180`. If it is set to <a href="#/p5/RADIANS">RADIANS</a>,
+ * the value will be `-PI` to `PI`.
  *
- * Note: The order the rotations are called is important, ie. if used
- * together, it must be called in the order Z-X-Y or there might be
+ * Note: The order the rotations are called is important. i.e. if used
+ * together, it must be called in the order Z-X-Y, or there might be
  * unexpected behaviour.
  *
  * @property {Number} rotationX
@@ -166,13 +167,14 @@ p5.prototype._updatePAccelerations = function() {
 p5.prototype.rotationX = 0;
 
 /**
- * The system variable rotationY always contains the rotation of the
+ * The system variable `rotationY` always contains the rotation of the
  * device along the y axis. If the sketch <a href="#/p5/angleMode">
- * angleMode()</a> is set to DEGREES, the value will be -90 to 90. If
- * it is set to RADIANS, the value will be -PI/2 to PI/2.
+ * angleMode()</a> is set to <a href="#/p5/DEGREES">DEGREES</a>, the
+ * value will be `-90` to `90`. If it is set to <a href="#/p5/RADIANS">RADIANS</a>,
+ * the value will be `-PI/2` to `PI/2`.
  *
- * Note: The order the rotations are called is important, ie. if used
- * together, it must be called in the order Z-X-Y or there might be
+ * Note: The order the rotations are called is important. i.e. if used
+ * together, it must be called in the order Z-X-Y, or there might be
  * unexpected behaviour.
  *
  * @property {Number} rotationY
@@ -199,16 +201,17 @@ p5.prototype.rotationX = 0;
 p5.prototype.rotationY = 0;
 
 /**
- * The system variable rotationZ always contains the rotation of the
+ * The system variable `rotationZ` always contains the rotation of the
  * device along the z axis. If the sketch <a href="#/p5/angleMode">
- * angleMode()</a> is set to DEGREES, the value will be 0 to 360. If
- * it is set to RADIANS, the value will be 0 to 2*PI.
+ * angleMode()</a> is set to <a href="#/p5/DEGREES">DEGREES</a>, the value
+ * will be `0` to `360`. If it is set to <a href="#/p5/RADIANS">RADIANS</a>,
+ * the value will be `0` to `2*PI`.
  *
- * Unlike rotationX and rotationY, this variable is available for devices
+ * Unlike `rotationX` and `rotationY`, this variable is available for devices
  * with a built-in compass only.
  *
- * Note: The order the rotations are called is important, ie. if used
- * together, it must be called in the order Z-X-Y or there might be
+ * Note: The order the rotations are called is important. i.e. if used
+ * together, it must be called in the order Z-X-Y, or there might be
  * unexpected behaviour.
  *
  * @example
@@ -237,13 +240,13 @@ p5.prototype.rotationY = 0;
 p5.prototype.rotationZ = 0;
 
 /**
- * The system variable pRotationX always contains the rotation of the
+ * The system variable `pRotationX` always contains the rotation of the
  * device along the x axis in the frame previous to the current frame.
- * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
- * the value will be -180 to 180. If it is set to RADIANS, the value will
- * be -PI to PI.
+ * If the sketch <a href="#/p5/angleMode">angleMode()</a> is set to <a href="#/p5/DEGREES">DEGREES</a>,
+ * the value will be `-180` to `180`. If it is set to <a href="#/p5/RADIANS">RADIANS</a>, the value will
+ * be `-PI` to `PI`.
  *
- * pRotationX can also be used with rotationX to determine the rotate
+ * `pRotationX` can also be used with `rotationX` to determine the rotate
  * direction of the device along the X-axis.
  * @example
  * <div class='norender'>
@@ -283,13 +286,13 @@ p5.prototype.rotationZ = 0;
 p5.prototype.pRotationX = 0;
 
 /**
- * The system variable pRotationY always contains the rotation of the
+ * The system variable `pRotationY` always contains the rotation of the
  * device along the y axis in the frame previous to the current frame.
- * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
- * the value will be -90 to 90. If it is set to RADIANS, the value will
- * be -PI/2 to PI/2.
+ * If the sketch <a href="#/p5/angleMode">angleMode()</a> is set to <a href="#/p5/DEGREES">DEGREES</a>,
+ * the value will be `-90` to `90`. If it is set to <a href="#/p5/RADIANS">RADIANS</a>, the value will
+ * be `-PI/2` to `PI/2`.
  *
- * pRotationY can also be used with rotationY to determine the rotate
+ * `pRotationY` can also be used with `rotationY` to determine the rotate
  * direction of the device along the Y-axis.
  * @example
  * <div class='norender'>
@@ -328,13 +331,14 @@ p5.prototype.pRotationX = 0;
 p5.prototype.pRotationY = 0;
 
 /**
- * The system variable pRotationZ always contains the rotation of the
+ * The system variable `pRotationZ` always contains the rotation of the
  * device along the z axis in the frame previous to the current frame.
- * If the sketch <a href="#/p5/angleMode"> angleMode()</a> is set to DEGREES,
- * the value will be 0 to 360. If it is set to RADIANS, the value will
- * be 0 to 2*PI.
+ * If the sketch <a href="#/p5/angleMode">angleMode()</a> is set to
+ * <a href="#/p5/DEGREES">DEGREES</a>, the value will be `0` to `360`.
+ * If it is set to <a href="#/p5/RADIANS">RADIANS</a>, the value will
+ * be `0` to `2*PI`.
  *
- * pRotationZ can also be used with rotationZ to determine the rotate
+ * `pRotationZ` can also be used with `rotationZ` to determine the rotate
  * direction of the device along the Z-axis.
  * @example
  * <div class='norender'>
@@ -388,8 +392,8 @@ p5.prototype._updatePRotations = function() {
 
 /**
  * When a device is rotated, the axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a>
- * method is stored in the turnAxis variable. The turnAxis variable is only defined within
- * the scope of deviceTurned().
+ * method is stored in the `turnAxis` variable. The `turnAxis` variable is only defined within
+ * the scope of `deviceTurned()`.
  * @property {String} turnAxis
  * @readOnly
  * @example
@@ -514,7 +518,7 @@ p5.prototype.setShakeThreshold = function(val) {
 
 /**
  * The <a href="#/p5/deviceMoved">deviceMoved()</a> function is called when the device is moved by more than
- * the threshold value along X, Y or Z axis. The default threshold is set to 0.5.
+ * the threshold value along X, Y, or Z axis. The default threshold is set to 0.5.
  * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setMoveThreshold">setMoveThreshold()</a>.
  *
  * @method deviceMoved
@@ -547,9 +551,9 @@ p5.prototype.setShakeThreshold = function(val) {
  * The <a href="#/p5/deviceTurned">deviceTurned()</a> function is called when the device rotates by
  * more than 90 degrees continuously.
  *
- * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the turnAxis
+ * The axis that triggers the <a href="#/p5/deviceTurned">deviceTurned()</a> method is stored in the `turnAxis`
  * variable. The <a href="#/p5/deviceTurned">deviceTurned()</a> method can be locked to trigger on any axis:
- * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
+ * `X`, `Y`, or `Z`, by comparing the `turnAxis` variable to `X`, `Y`, or `Z`.
  *
  * @method deviceTurned
  * @example
@@ -603,7 +607,7 @@ p5.prototype.setShakeThreshold = function(val) {
 
 /**
  * The <a href="#/p5/deviceShaken">deviceShaken()</a> function is called when the device total acceleration
- * changes of accelerationX and accelerationY values is more than
+ * changes of `accelerationX` and `accelerationY` values is more than
  * the threshold value. The default threshold is set to 30.
  * The threshold value can be changed using <a href="https://p5js.org/reference/#/p5/setShakeThreshold">setShakeThreshold()</a>.
  *

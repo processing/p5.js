@@ -37,12 +37,12 @@ import p5 from '../core/main';
  *
  *  @class p5.Table
  *  @constructor
- *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
+ *  @param  {p5.TableRow[]}     [rows] An array of <a href="#/p5.TableRow">p5.TableRow</a> objects
  */
 p5.Table = function(rows) {
   /**
    * An array containing the names of the columns in the table, if the "header" the table is
-   * loaded with the "header" parameter.
+   * loaded with the `header` parameter.
    * @property columns {String[]}
    * @example
    * <div class="norender">
@@ -85,7 +85,7 @@ p5.Table = function(rows) {
 /**
  *  Use <a href="#/p5/addRow">addRow()</a> to add a new row of data to a <a href="#/p5.Table">p5.Table</a> object. By default,
  *  an empty row is created. Typically, you would store a reference to
- *  the new row in a TableRow object (see newRow in the example above),
+ *  the new row in a <a href="#/p5.TableRow">p5.TableRow</a> object (see newRow in the example above),
  *  and then set individual values using <a href="#/p5/set">set()</a>.
  *
  *  If a <a href="#/p5.TableRow">p5.TableRow</a> object is included as a parameter, then that row is
@@ -360,7 +360,7 @@ p5.Table.prototype.findRow = function(value, column) {
  *  @param  {String} value  The value to match
  *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
- *  @return {p5.TableRow[]}        An Array of TableRow objects
+ *  @return {p5.TableRow[]}        An Array of <a href="#/p5.TableRow">p5.TableRow</a> objects
  *
  * @example
  * <div class="norender">
@@ -428,7 +428,7 @@ p5.Table.prototype.findRows = function(value, column) {
  * @param  {String|RegExp} regexp The regular expression to match
  * @param  {String|Integer} column The column ID (number) or
  *                                  title (string)
- * @return {p5.TableRow}        TableRow object
+ * @return {p5.TableRow}        <a href="#/p5.TableRow">p5.TableRow</a> object
  *
  * @example
  * <div class="norender">
@@ -485,7 +485,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  * @param  {String} regexp The regular expression to match
  * @param  {String|Integer} [column] The column ID (number) or
  *                                  title (string)
- * @return {p5.TableRow[]}          An Array of TableRow objects
+ * @return {p5.TableRow[]}          An Array of <a href="#/p5.TableRow">p5.TableRow</a> objects
  * @example
  * <div class="norender">
  * <code>
@@ -637,9 +637,9 @@ p5.Table.prototype.clearRows = function() {
 
 /**
  *  Use <a href="#/p5/addColumn">addColumn()</a> to add a new column to a <a href="#/p5.Table">Table</a> object.
- *  Typically, you will want to specify a title, so the column
- *  may be easily referenced later by name. (If no title is
- *  specified, the new column's title will be null.)
+ *  Typically, you will want to specify a `title`, so the column
+ *  may be easily referenced later by name. (If no `title` is
+ *  specified, the new column's `title` will be `null`.)
  *
  *  @method  addColumn
  *  @param {String} [title] title of the given column
@@ -896,8 +896,8 @@ p5.Table.prototype.trim = function(column) {
 /**
  *  Use <a href="#/p5/removeColumn">removeColumn()</a> to remove an existing column from a Table
  *  object. The column to be removed may be identified by either
- *  its title (a String) or its index value (an int).
- *  removeColumn(0) would remove the first column, removeColumn(1)
+ *  its `title` (a String) or its index value (an int).
+ *  `removeColumn(0)` would remove the first column, `removeColumn(1)`
  *  would remove the second column, and so on.
  *
  *  @method  removeColumn

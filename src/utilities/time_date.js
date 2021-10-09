@@ -142,7 +142,7 @@ p5.prototype.second = function() {
 
 /**
  * p5.js communicates with the clock on your computer. The <a href="#/p5/year">year()</a> function
- * returns the current year as an integer (2014, 2015, 2016, etc).
+ * returns the current year as an integer (2014, 2015, 2016, etc.).
  *
  * @method year
  * @return {Integer} the current year

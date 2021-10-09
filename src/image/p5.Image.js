@@ -22,7 +22,7 @@ import Filters from './filters';
  * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
  * image.
  *
- * p5 can display .gif, .jpg and .png images. Images may be displayed
+ * p5 can display `.gif`, `.jpg`, and `.png` images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
  * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
  * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
@@ -347,8 +347,8 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  * Get a region of pixels from an image.
  *
  * If no params are passed, the whole image is returned.
- * If x and y are the only params passed a single pixel is extracted.
- * If all params are passed a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
+ * If `x` and `y` are the only params passed, a single pixel is extracted.
+ * If all params are passed, a rectangle region is extracted and a <a href="#/p5.Image">p5.Image</a>
  * is returned.
  *
  * @method get
@@ -436,9 +436,9 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
 
 /**
  * Resize the image to a new width and height. To make the image scale
- * proportionally, use 0 as the value for the wide or high parameter.
+ * proportionally, use `0` as the value for the `width` or `height` parameter.
  * For instance, to make the width of an image 150 pixels, and change
- * the height using the same proportion, use resize(150, 0).
+ * the height using the same proportion, use `resize(150, 0)`.
  *
  * @method resize
  * @param {Number} width the resized image width
@@ -603,8 +603,9 @@ p5.Image.prototype.copy = function(...args) {
 /**
  * Masks part of an image from displaying by loading another
  * image and using its alpha channel as an alpha channel for
- * this image. Masks are cumulative, one applied to an image
- * object, they cannot be removed.
+ * this image.
+ *
+ * Masks are cumulative. Once applied to an image object, they cannot be removed.
  *
  * @method mask
  * @param {p5.Image} srcImage source image
@@ -696,7 +697,7 @@ p5.Image.prototype.mask = function(p5Image) {
  * DILATE
  * Increases the light areas. No parameter is used.
  *
- * filter() does not work in WEBGL mode.
+ * `filter()` does not work in WEBGL mode.
  * A similar effect can be achieved in WEBGL mode using custom
  * shaders. Adam Ferriss has written
  * a <a href="https://github.com/aferriss/p5jsShaderExamples"
@@ -859,13 +860,13 @@ p5.Image.prototype.isModified = function() {
 /**
  * Saves the image to a file and force the browser to download it.
  * Accepts two strings for filename and file extension
- * Supports png (default), jpg, and gif
- *<br><br>
+ * Supports `png` (default), `jpg`, and `gif`.
+ *
  * Note that the file will only be downloaded as an animated GIF
- * if the p5.Image was loaded from a GIF file.
+ * if the `p5.Image` was loaded from a GIF file.
  * @method save
  * @param {String} filename give your file a name
- * @param  {String} extension 'png' or 'jpg'
+ * @param  {String} extension `'png'` or `'jpg'`
  * @example
  * <div><code>
  * let photo;

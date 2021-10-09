@@ -113,8 +113,8 @@ p5.prototype.describe = function(text, display) {
 
 /**
  * This function creates a screen-reader accessible
- * description for elements —shapes or groups of shapes that create
- * meaning together— in the canvas. The first paramater should
+ * description for elements&mdash;shapes or groups of shapes that create
+ * meaning together&mdash;in the canvas. The first paramater should
  * be the name of the element. The second parameter should be a string
  * with a description of the element. The third parameter is optional.
  * If specified, it determines how the element description is displayed.
@@ -211,7 +211,7 @@ p5.prototype.describeElement = function(name, text, display) {
 
 /*
  *
- * Helper functions for describe() and describeElement().
+ * Helper functions for `describe()` and `describeElement()`.
  *
  */
 
@@ -235,7 +235,7 @@ function _descriptionText(text) {
 }
 
 /*
- * Helper functions for describe()
+ * Helper functions for `describe()`.
  */
 
 //creates HTML structure for canvas descriptions
@@ -306,7 +306,7 @@ p5.prototype._describeHTML = function(type, text) {
 };
 
 /*
- * Helper functions for describeElement().
+ * Helper functions for `describeElement()`.
  */
 
 //check that name is not LABEL or FALLBACK and ensure text ends with colon

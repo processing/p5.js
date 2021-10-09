@@ -10,12 +10,12 @@ import p5 from '../core/main';
  *  A TableRow object represents a single row of data values,
  *  stored in columns, from a table.
  *
- *  A Table Row contains both an ordered array, and an unordered
+ *  A TableRow contains both an ordered array, and an unordered
  *  JSON object.
  *
  *  @class p5.TableRow
  *  @constructor
- *  @param {String} [str]       optional: populate the row with a
+ *  @param {String} [str]       (optional) populate the row with a
  *                              string of values, separated by the
  *                              separator
  *  @param {String} [separator] comma separated values (csv) by default

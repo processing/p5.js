@@ -36,26 +36,31 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
 /**
  * Returns the Perlin noise value at specified coordinates. Perlin noise is
  * a random sequence generator producing a more naturally ordered, harmonic
- * succession of numbers compared to the standard <b>random()</b> function.
+ * succession of numbers compared to the standard `random()` function.
  * It was invented by Ken Perlin in the 1980s and been used since in
  * graphical applications to produce procedural textures, natural motion,
- * shapes, terrains etc.<br /><br /> The main difference to the
- * <b>random()</b> function is that Perlin noise is defined in an infinite
- * n-dimensional space where each pair of coordinates corresponds to a
- * fixed semi-random value (fixed only for the lifespan of the program; see
- * the <a href="#/p5/noiseSeed">noiseSeed()</a> function). p5.js can compute 1D, 2D and 3D noise,
+ * shapes, terrains, etc.
+ *
+ * The main difference to the `random()` function is that Perlin noise is
+ * defined in an infinite n-dimensional space, where each pair of coordinates
+ * corresponds to a fixed semi-random value (fixed only for the lifespan of the program;
+ * see the <a href="#/p5/noiseSeed">noiseSeed()</a> function).
+ *
+ * p5.js can compute 1D, 2D, and 3D noise,
  * depending on the number of coordinates given. The resulting value will
  * always be between 0.0 and 1.0. The noise value can be animated by moving
  * through the noise space as demonstrated in the example above. The 2nd
- * and 3rd dimension can also be interpreted as time.<br /><br />The actual
- * noise is structured similar to an audio signal, in respect to the
+ * and 3rd dimension can also be interpreted as time.
+ *
+ * The actual noise is structured similar to an audio signal, in respect to the
  * function's use of frequencies. Similar to the concept of harmonics in
  * physics, perlin noise is computed over several octaves which are added
- * together for the final result. <br /><br />Another way to adjust the
- * character of the resulting sequence is the scale of the input
+ * together for the final result.
+ *
+ * Another way to adjust the character of the resulting sequence is the scale of the input
  * coordinates. As the function works within an infinite space the value of
  * the coordinates doesn't matter as such, only the distance between
- * successive coordinates does (eg. when using <b>noise()</b> within a
+ * successive coordinates does (e.g., when using `noise()` within a
  * loop). As a general rule the smaller the difference between coordinates,
  * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
  * work best for most applications, but this will differ depending on use.
@@ -186,12 +191,12 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  * By default, noise is computed over 4 octaves with each octave contributing
  * exactly half than its predecessor, starting at 50% strength for the 1st
  * octave. This falloff amount can be changed by adding an additional function
- * parameter. Eg. a falloff factor of 0.75 means each octave will now have
- * 75% impact (25% less) of the previous lower octave. Any value between
+ * parameter. For example, a falloff factor of 0.75 means each octave will now
+ * have 75% impact (25% less) of the previous lower octave. Any value between
  * 0.0 and 1.0 is valid, however note that values greater than 0.5 might
- * result in greater than 1.0 values returned by <b>noise()</b>.
+ * result in greater than 1.0 values returned by `noise()`.
  *
- * By changing these parameters, the signal created by the <b>noise()</b>
+ * By changing these parameters, the signal created by the `noise()`
  * function can be adapted to fit very specific needs and characteristics.
  *
  * @method noiseDetail
@@ -241,9 +246,9 @@ p5.prototype.noiseDetail = function(lod, falloff) {
 };
 
 /**
- * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
+ * Sets the seed value for `noise()`. By default, `noise()`
  * produces different results each time the program is run. Set the
- * <b>value</b> parameter to a constant to return the same pseudo-random
+ * `value` parameter to a constant to return the same pseudo-random
  * numbers each time the software is run.
  *
  * @method noiseSeed

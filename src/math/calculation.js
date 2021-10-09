@@ -8,7 +8,7 @@
 import p5 from '../core/main';
 
 /**
- * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
+ * Calculates the absolute value (magnitude) of a number. Maps to `Math.abs()`.
  * The absolute value of a number is always positive.
  *
  * @method abs
@@ -32,8 +32,8 @@ p5.prototype.abs = Math.abs;
 
 /**
  * Calculates the closest int value that is greater than or equal to the
- * value of the parameter. Maps to Math.ceil(). For example, ceil(9.03)
- * returns the value 10.
+ * value of the parameter. Maps to `Math.ceil()`. For example, `ceil(9.03)`
+ * returns the value `10`.
  *
  * @method ceil
  * @param  {Number} n number to round up
@@ -162,10 +162,10 @@ p5.prototype.constrain = function(n, low, high) {
  * @method dist
  * @param  {Number} x1
  * @param  {Number} y1
- * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} z1 `z`-coordinate of the first point
  * @param  {Number} x2
  * @param  {Number} y2
- * @param  {Number} z2 z-coordinate of the second point
+ * @param  {Number} z2 `z`-coordinate of the second point
  * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function(...args) {
@@ -180,8 +180,8 @@ p5.prototype.dist = function(...args) {
 };
 
 /**
- * Returns Euler's number e (2.71828...) raised to the power of the n
- * parameter. Maps to Math.exp().
+ * Returns Euler's number `e` (2.71828...) raised to the power of the `n`
+ * parameter. Maps to `Math.exp()`.
  *
  * @method exp
  * @param  {Number} n exponent to raise
@@ -230,7 +230,7 @@ p5.prototype.exp = Math.exp;
 
 /**
  * Calculates the closest int value that is less than or equal to the
- * value of the parameter. Maps to Math.floor().
+ * value of the parameter. Maps to `Math.floor()`.
  *
  * @method floor
  * @param  {Number} n number to round down
@@ -267,13 +267,15 @@ p5.prototype.exp = Math.exp;
 p5.prototype.floor = Math.floor;
 
 /**
- * Calculates a number between two numbers at a specific increment. The amt
- * parameter is the amount to interpolate between the two values where 0.0
+ * Calculates a number between two numbers at a specific increment. The `amt`
+ * parameter is the amount to interpolate between the two values (where 0.0
  * equal to the first point, 0.1 is very near the first point, 0.5 is
- * half-way in between, and 1.0 is equal to the second point. If the
- * value of amt is more than 1.0 or less than 0.0, the number will be
- * calculated accordingly in the ratio of the two given numbers. The lerp
- * function is convenient for creating motion along a straight
+ * half-way in between, and 1.0 is equal to the second point).
+ *
+ * If the value of `amt` is more than 1.0 or less than 0.0, the number will be
+ * calculated accordingly in the ratio of the two given numbers.
+ *
+ * The `lerp()` function is convenient for creating motion along a straight
  * path and for drawing dotted lines.
  *
  * @method lerp
@@ -315,12 +317,12 @@ p5.prototype.lerp = function(start, stop, amt) {
 
 /**
  * Calculates the natural logarithm (the base-e logarithm) of a number. This
- * function expects the n parameter to be a value greater than 0.0. Maps to
- * Math.log().
+ * function expects the `n` parameter to be a value greater than `0.0`. Maps to
+ * `Math.log()`.
  *
  * @method log
  * @param  {Number} n number greater than 0
- * @return {Number}   natural logarithm of n
+ * @return {Number}   natural logarithm of `n`
  * @example
  * <div><code>
  * function draw() {
@@ -369,11 +371,12 @@ p5.prototype.lerp = function(start, stop, amt) {
 p5.prototype.log = Math.log;
 
 /**
- * Calculates the magnitude (or length) of a vector. A vector is a direction
- * in space commonly used in computer graphics and linear algebra. Because it
- * has no "start" position, the magnitude of a vector can be thought of as
- * the distance from the coordinate 0,0 to its x,y value. Therefore, <a href="#/p5/mag">mag()</a> is
- * a shortcut for writing dist(0, 0, x, y).
+ * Calculates the magnitude (or length) of a vector.
+ *
+ * A vector is a direction in space commonly used in computer graphics and linear algebra.
+ * Because it has no "start" position, the magnitude of a vector can be thought of as
+ * the distance from the coordinate `0,0` to its `x,y` value. Therefore,
+ * <a href="#/p5/mag">mag()</a> is a shortcut for writing `dist(0, 0, x, y)`.
  *
  * @method mag
  * @param  {Number} a first value
@@ -410,8 +413,8 @@ p5.prototype.mag = function(x, y) {
  * Re-maps a number from one range to another.
  *
  * In the first example above, the number 25 is converted from a value in the
- * range of 0 to 100 into a value that ranges from the left edge of the
- * window (0) to the right edge (width).
+ * range of `0` to `100` into a value that ranges from the left edge of the
+ * window (`0`) to the right edge (`width`).
  *
  * @method map
  * @param  {Number} value  the incoming value to be converted
@@ -558,8 +561,9 @@ p5.prototype.min = function(...args) {
 };
 
 /**
- * Normalizes a number from another range into a value between 0 and 1.
- * Identical to map(value, low, high, 0, 1).
+ * Normalizes a number from another range into a value between `0` and `1`.
+ * Identical to `map(value, low, high, 0, 1)`.
+ *
  * Numbers outside of the range are not clamped to 0 and 1, because
  * out-of-range values are often intentional and useful. (See the example above.)
  *
@@ -612,10 +616,10 @@ p5.prototype.norm = function(n, start, stop) {
 /**
  * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
  * way of multiplying numbers by themselves (or their reciprocals) in large
- * quantities. For example, pow(3, 5) is equivalent to the expression
- * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
- * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
- * Math.pow().
+ * quantities. For example, `pow(3, 5)` is equivalent to the expression
+ * `3 &times; 3 &times; 3 &times; 3 &times; 3` and `pow(3, -5)` is equivalent to `1 /
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3`.
+ * Maps to `Math.pow()`.
  *
  * @method pow
  * @param  {Number} n base of the exponential expression
@@ -645,7 +649,7 @@ p5.prototype.pow = Math.pow;
 
 /**
  * Calculates the integer closest to the n parameter. For example,
- * round(133.8) returns the value 134. Maps to Math.round().
+ * `round(133.8)` returns the value `134`. Maps to `Math.round()`.
  *
  * @method round
  * @param  {Number} n number to round
@@ -701,7 +705,7 @@ p5.prototype.round = function(n, decimals) {
 /**
  * Squares a number (multiplies a number by itself). The result is always a
  * positive number, as multiplying two negative numbers always yields a
- * positive result. For example, -1 * -1 = 1.
+ * positive result. For example: `-1 * -1 = 1`.
  *
  * @method sq
  * @param  {Number} n number to square
@@ -745,8 +749,8 @@ p5.prototype.sq = n => n * n;
 /**
  * Calculates the square root of a number. The square root of a number is
  * always positive, even though there may be a valid negative root. The
- * square root s of number a is such that s*s = a. It is the opposite of
- * squaring. Maps to Math.sqrt().
+ * square root `s` of number `a` is such that `s*s = a`. It is the opposite of
+ * squaring. Maps to `Math.sqrt()`.
  *
  * @method sqrt
  * @param  {Number} n non-negative number to square root
@@ -834,7 +838,7 @@ function hypot(x, y, z) {
  *
  * @method fract
  * @param {Number} num Number whose fractional part needs to be found out
- * @returns {Number} fractional part of x, i.e, {x}
+ * @returns {Number} fractional part of `num`.
  * @example
  * <div><code>
  * text(7345.73472742, 10, 25);

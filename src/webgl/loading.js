@@ -180,12 +180,14 @@ p5.prototype.loadModel = function(path) {
  * Parse OBJ lines into model. For reference, this is what a simple model of a
  * square might look like:
  *
+ * <code><pre>
  * v -0.5 -0.5 0.5
  * v -0.5 -0.5 -0.5
  * v -0.5 0.5 -0.5
  * v -0.5 0.5 0.5
  *
  * f 4 3 2 1
+ * </pre></code>
  */
 function parseObj(model, lines) {
   // OBJ allows a face to specify an index for a vertex (in the above example),
@@ -288,9 +290,9 @@ function parseObj(model, lines) {
 }
 
 /**
- * STL files can be of two types, ASCII and Binary,
+ * STL files can be of two types: ASCII and Binary.
  *
- * We need to convert the arrayBuffer to an array of strings,
+ * We need to convert the arrayBuffer to an array of strings
  * to parse it as an ASCII file.
  */
 function parseSTL(model, buffer) {
@@ -315,7 +317,7 @@ function parseSTL(model, buffer) {
 }
 
 /**
- * This function checks if the file is in ASCII format or in Binary format
+ * This function checks if the file is in ASCII format or in Binary format.
  *
  * It is done by searching keyword `solid` at the start of the file.
  *
@@ -342,7 +344,7 @@ function isBinary(data) {
 }
 
 /**
- * This function matches the `query` at the provided `offset`
+ * This function matches the `query` at the provided `offset`.
  */
 function matchDataViewAt(query, reader, offset) {
   // Check if each byte in query matches the corresponding byte from the current offset
@@ -442,14 +444,14 @@ function parseBinarySTL(model, buffer) {
 }
 
 /**
- * ASCII STL file starts with `solid 'nameOfFile'`
- * Then contain the normal of the face, starting with `facet normal`
- * Next contain a keyword indicating the start of face vertex, `outer loop`
- * Next comes the three vertex, starting with `vertex x y z`
- * Vertices ends with `endloop`
- * Face ends with `endfacet`
- * Next face starts with `facet normal`
- * The end of the file is indicated by `endsolid`
+ * ASCII STL file starts with `solid 'nameOfFile'`.
+ * Then contain the normal of the face, starting with `facet normal`.
+ * Next, contain a keyword indicating the start of face vertex, `outer loop`.
+ * Next comes the three vertex, starting with `vertex x y z`.
+ * Vertices ends with `endloop`.
+ * Face ends with `endfacet`.
+ * Next face starts with `facet normal`.
+ * The end of the file is indicated by `endsolid`.
  */
 function parseASCIISTL(model, lines) {
   let state = '';

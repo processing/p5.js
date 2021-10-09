@@ -15,7 +15,7 @@ import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a PFont Object. This method is asynchronous,
+ * and returns a `PFont` Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
  * is executed.
  *
@@ -25,7 +25,7 @@ import '../core/friendly_errors/fes_core';
  * security.
  *
  * @method loadFont
- * @param  {String}        path       name of the file or url to load
+ * @param  {String}        path       name of the file or URL to load
  * @param  {Function}      [callback] function to be executed after
  *                                    <a href="#/p5/loadFont">loadFont()</a> completes
  * @param  {Function}      [onError]  function to be executed if
@@ -33,7 +33,7 @@ import '../core/friendly_errors/fes_core';
  * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
  * @example
  *
- * Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees
+ * Calling` loadFont()` inside <a href="#/p5/preload">preload()</a> guarantees
  * that the load operation will have completed before <a href="#/p5/setup">setup()</a>
  * and <a href="#/p5/draw">draw()</a> are called.
  *
@@ -151,18 +151,18 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * function, which gives the option to draw to the left, right, and center of the
  * coordinates.
  *
- * The x2 and y2 parameters define a rectangular area to display within and
+ * The `x2` and `y2` parameters define a rectangular area to display within and
  * may only be used with string data. When these parameters are specified,
  * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a>
  * setting. Text that does not fit completely within the rectangle specified will
- * not be drawn to the screen. If x2 and y2 are not specified, the baseline
+ * not be drawn to the screen. If `x2` and `y2` are not specified, the baseline
  * alignment is the default, which means that the text will be drawn upwards
- * from x and y.
+ * from `x` and `y`.
  *
  * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
  * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
- * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
- * Learn more about working with text in webgl mode on the
+ * <a href="#/p5/stroke">stroke()</a> currently has no effect in WebGL mode.
+ * Learn more about working with text in WebGL mode on the
  * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">wiki</a>.
  *
  * @method text
@@ -230,9 +230,9 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
 /**
  * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
- * If textFont() is called without any argument, it will return the current font if one has
+ * If `textFont()` is called without any argument, it will return the current font if one has
  * been set already. If not, it will return the name of the default font as a string.
- * If textFont() is called with a font to use, it will return the p5 object.
+ * If `textFont()` is called with a font to use, it will return the p5 object.
  *
  * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
  *

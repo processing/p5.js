@@ -343,31 +343,31 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * not declared in the object will be set to defaults.
  *
  * The available attributes are:
- * <br>
- * alpha - indicates if the canvas contains an alpha buffer
- * default is true
  *
- * depth - indicates whether the drawing buffer has a depth buffer
- * of at least 16 bits - default is true
+ * `alpha` - indicates if the canvas contains an alpha buffer
+ * default is `true`
  *
- * stencil - indicates whether the drawing buffer has a stencil buffer
+ * `depth` - indicates whether the drawing buffer has a depth buffer
+ * of at least 16 bits - default is `true`
+ *
+ * `stencil` - indicates whether the drawing buffer has a stencil buffer
  * of at least 8 bits
  *
- * antialias - indicates whether or not to perform anti-aliasing
- * default is false (true in Safari)
+ * `antialias` - indicates whether or not to perform anti-aliasing
+ * default is `false` (`true` in Safari)
  *
- * premultipliedAlpha - indicates that the page compositor will assume
+ * `premultipliedAlpha` - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
- * default is false
+ * default is `false`
  *
- * preserveDrawingBuffer - if true the buffers will not be cleared and
+ * `preserveDrawingBuffer` - indicates that the buffers will not be cleared and
  * and will preserve their values until cleared or overwritten by author
  * (note that p5 clears automatically on draw loop)
- * default is true
+ * default is `true`
  *
- * perPixelLighting - if true, per-pixel lighting will be used in the
- * lighting shader otherwise per-vertex lighting is used.
- * default is true.
+ * `perPixelLighting` - indicates that per-pixel lighting will be used in the
+ * lighting shader; otherwise, per-vertex lighting is used.
+ * default is `true`.
  *
  * @method setAttributes
  * @for p5
@@ -812,9 +812,9 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
 };
 
 /**
- * Loads the pixels data for this canvas into the pixels[] attribute.
- * Note that updatePixels() and set() do not work.
- * Any pixel manipulation must be done directly to the pixels[] array.
+ * Loads the pixels data for this canvas into the `pixels[]` attribute.
+ * Note that `updatePixels()` and `set()` do not work.
+ * Any pixel manipulation must be done directly to the `pixels[]` array.
  *
  * @private
  * @method loadPixels
@@ -1362,7 +1362,7 @@ p5.RendererGL.prototype._isTypedArray = function(arr) {
   return res;
 };
 /**
- * turn a two dimensional array into one dimensional array
+ * Turn a two dimensional array into one dimensional array
  * @private
  * @param  {Array} arr 2-dimensional array
  * @return {Array}     1-dimensional array
@@ -1399,9 +1399,9 @@ p5.RendererGL.prototype._flatten = function(arr) {
 };
 
 /**
- * turn a p5.Vector Array into a one dimensional number array
+ * Turn a `p5.Vector` Array into a one dimensional number array
  * @private
- * @param  {p5.Vector[]} arr  an array of p5.Vector
+ * @param  {p5.Vector[]} arr  an array of `p5.Vector`
  * @return {Number[]}     a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]

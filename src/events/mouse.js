@@ -11,7 +11,7 @@ import * as constants from '../core/constants';
 
 /**
  *
- * The variable movedX contains the horizontal movement of the mouse since the last frame
+ * The variable `movedX` contains the horizontal movement of the mouse since the last frame.
  * @property {Number} movedX
  * @readOnly
  * @example
@@ -41,7 +41,7 @@ import * as constants from '../core/constants';
 p5.prototype.movedX = 0;
 
 /**
- * The variable movedY contains the vertical movement of the mouse since the last frame
+ * The variable `movedY` contains the vertical movement of the mouse since the last frame.
  * @property {Number} movedY
  * @readOnly
  * @example
@@ -71,17 +71,18 @@ p5.prototype.movedX = 0;
 p5.prototype.movedY = 0;
 /*
  * This is a flag which is false until the first time
- * we receive a mouse event. The pmouseX and pmouseY
- * values will match the mouseX and mouseY values until
+ * we receive a mouse event. The `pmouseX` and `pmouseY`
+ * values will match the `mouseX` and `mouseY` values until
  * this interaction takes place.
  */
 p5.prototype._hasMouseInteracted = false;
 
 /**
- * The system variable mouseX always contains the current horizontal
+ * The system variable `mouseX` always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the canvas. The value at
  * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseX will hold the x value
+ *
+ * If touch is used instead of mouse input, `mouseX` will hold the x value
  * of the most recent touch point.
  *
  * @property {Number} mouseX
@@ -104,10 +105,11 @@ p5.prototype._hasMouseInteracted = false;
 p5.prototype.mouseX = 0;
 
 /**
- * The system variable mouseY always contains the current vertical
+ * The system variable `mouseY` always contains the current vertical
  * position of the mouse, relative to (0, 0) of the canvas. The value at
  * the top-left corner is (0, 0) for 2-D and (-width/2, -height/2) for WebGL.
- * If touch is used instead of mouse input, mouseY will hold the y value
+ *
+ * If touch is used instead of mouse input, `mouseY` will hold the y value
  * of the most recent touch point.
  *
  * @property {Number} mouseY
@@ -130,10 +132,10 @@ p5.prototype.mouseX = 0;
 p5.prototype.mouseY = 0;
 
 /**
- * The system variable pmouseX always contains the horizontal position of
+ * The system variable `pmouseX` always contains the horizontal position of
  * the mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
- * (-width/2, -height/2) for WebGL. Note: pmouseX will be reset to the current mouseX
+ * (-width/2, -height/2) for WebGL. Note: `pmouseX` will be reset to the current `mouseX`
  * value at the start of each touch event.
  *
  * @property {Number} pmouseX
@@ -162,10 +164,10 @@ p5.prototype.mouseY = 0;
 p5.prototype.pmouseX = 0;
 
 /**
- * The system variable pmouseY always contains the vertical position of
+ * The system variable `pmouseY` always contains the vertical position of
  * the mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas. The value at the top-left corner is (0, 0) for 2-D and
- * (-width/2, -height/2) for WebGL. Note: pmouseY will be reset to the current mouseY
+ * (-width/2, -height/2) for WebGL. Note: `pmouseY` will be reset to the current `mouseY`
  * value at the start of each touch event.
  *
  * @property {Number} pmouseY
@@ -193,7 +195,7 @@ p5.prototype.pmouseX = 0;
 p5.prototype.pmouseY = 0;
 
 /**
- * The system variable winMouseX always contains the current horizontal
+ * The system variable `winMouseX` always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseX
@@ -231,7 +233,7 @@ p5.prototype.pmouseY = 0;
 p5.prototype.winMouseX = 0;
 
 /**
- * The system variable winMouseY always contains the current vertical
+ * The system variable `winMouseY` always contains the current vertical
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseY
@@ -269,9 +271,9 @@ p5.prototype.winMouseX = 0;
 p5.prototype.winMouseY = 0;
 
 /**
- * The system variable pwinMouseX always contains the horizontal position
+ * The system variable `pwinMouseX` always contains the horizontal position
  * of the mouse in the frame previous to the current frame, relative to
- * (0, 0) of the window. Note: pwinMouseX will be reset to the current winMouseX
+ * (0, 0) of the window. Note: `pwinMouseX` will be reset to the current `winMouseX`
  * value at the start of each touch event.
  *
  * @property {Number} pwinMouseX
@@ -309,9 +311,9 @@ p5.prototype.winMouseY = 0;
 p5.prototype.pwinMouseX = 0;
 
 /**
- * The system variable pwinMouseY always contains the vertical position of
+ * The system variable `pwinMouseY` always contains the vertical position of
  * the mouse in the frame previous to the current frame, relative to (0, 0)
- * of the window. Note: pwinMouseY will be reset to the current winMouseY
+ * of the window. Note: `pwinMouseY` will be reset to the current `winMouseY`
  * value at the start of each touch event.
  *
  * @property {Number} pwinMouseY
@@ -350,9 +352,9 @@ p5.prototype.pwinMouseY = 0;
 
 /**
  * p5 automatically tracks if the mouse button is pressed and which
- * button is pressed. The value of the system variable mouseButton is either
+ * button is pressed. The value of the system variable `mouseButton` is either
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
- * Warning: different browsers may track mouseButton differently.
+ * Warning: different browsers may track `mouseButton` differently.
  *
  * @property {Constant} mouseButton
  * @readOnly
@@ -387,8 +389,8 @@ p5.prototype.pwinMouseY = 0;
 p5.prototype.mouseButton = 0;
 
 /**
- * The boolean system variable mouseIsPressed is true if the mouse is pressed
- * and false if not.
+ * The boolean system variable `mouseIsPressed` is `true` if the mouse is pressed
+ * and `false` if not.
  *
  * @property {Boolean} mouseIsPressed
  * @readOnly
@@ -480,10 +482,10 @@ p5.prototype._setMouseButton = function(e) {
 
 /**
  * The <a href="#/p5/mouseMoved">mouseMoved()</a> function is called every time the mouse moves and a mouse
- * button is not pressed.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * button is not pressed.
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method mouseMoved
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -535,10 +537,10 @@ p5.prototype._setMouseButton = function(e) {
 /**
  * The <a href="#/p5/mouseDragged">mouseDragged()</a> function is called once every time the mouse moves and
  * a mouse button is pressed. If no <a href="#/p5/mouseDragged">mouseDragged()</a> function is defined, the
- * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method mouseDragged
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -614,13 +616,13 @@ p5.prototype._onmousemove = function(e) {
 
 /**
  * The <a href="#/p5/mousePressed">mousePressed()</a> function is called once after every time a mouse button
- * is pressed. The mouseButton variable (see the related reference entry)
+ * is pressed. The `mouseButton` variable (see the related reference entry)
  * can be used to determine which button has been pressed. If no
  * <a href="#/p5/mousePressed">mousePressed()</a> function is defined, the <a href="#/p5/touchStarted">touchStarted()</a> function will be
- * called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * called instead if it is defined.
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method mousePressed
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -696,10 +698,10 @@ p5.prototype._onmousedown = function(e) {
 /**
  * The <a href="#/p5/mouseReleased">mouseReleased()</a> function is called every time a mouse button is
  * released. If no <a href="#/p5/mouseReleased">mouseReleased()</a> function is defined, the <a href="#/p5/touchEnded">touchEnded()</a>
- * function will be called instead if it is defined.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * function will be called instead if it is defined.
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method mouseReleased
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -771,13 +773,14 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
 
 /**
  * The <a href="#/p5/mouseClicked">mouseClicked()</a> function is called once after a mouse button has been
- * pressed and then released.<br><br>
+ * pressed and then released.
+ *
  * Browsers handle clicks differently, so this function is only guaranteed to be
  * run when the left mouse button is clicked. To handle other mouse buttons
- * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
- * Browsers may have different default
- * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
  *
  * @method mouseClicked
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -840,11 +843,12 @@ p5.prototype._onclick = function(e) {
 
 /**
  * The <a href="#/p5/doubleClicked">doubleClicked()</a> function is executed every time a event
- * listener has detected a dblclick event which is a part of the
- * DOM L3 specification. The doubleClicked event is fired when a
+ * listener has detected a `dblclick` event which is a part of the
+ * DOM L3 specification. The `doubleClicked` event is fired when a
  * pointing device button (usually a mouse's primary button)
- * is clicked twice on a single element. For more info on the
- * dblclick event refer to mozilla's documentation here:
+ * is clicked twice on a single element.
+ *
+ * For more info on the `dblclick` event, refer to Mozilla's documentation here:
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
@@ -926,16 +930,18 @@ p5.prototype._pmouseWheelDeltaY = 0;
 /**
  * The function <a href="#/p5/mouseWheel">mouseWheel()</a> is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
- * touchpad.<br><br>
- * The event.delta property returns the amount the mouse wheel
- * have scrolled. The values can be positive or negative depending on the
+ * touchpad.
+ *
+ * The `event.delta` property returns the amount the mouse wheel
+ * have scrolled. The values can be positive or negative, depending on the
  * scroll direction (on OS X with "natural" scrolling enabled, the signs
- * are inverted).<br><br>
- * Browsers may have different default behaviors attached to various
- * mouse events. To prevent any default behavior for this event, add
- * "return false" to the end of the method.<br><br>
+ * are inverted).
+ *
+ * Browsers may have different default behaviors attached to various mouse events.
+ * To prevent any default behavior for this event, add `return false` to the end of the method.
+ *
  * Due to the current support of the "wheel" event on Safari, the function
- * may only work as expected if "return false" is included while using Safari.
+ * may only work as expected if `return false` is included while using Safari.
  *
  * @method mouseWheel
  * @param  {Object} [event] optional WheelEvent callback argument.
@@ -981,7 +987,9 @@ p5.prototype._onwheel = function(e) {
  * locks the pointer to its current position and makes it invisible.
  * Use <a href="#/p5/movedX">movedX</a> and <a href="#/p5/movedY">movedY</a> to get the difference the mouse was moved since
  * the last call of draw.
+ *
  * Note that not all browsers support this feature.
+ *
  * This enables you to create experiences that aren't limited by the mouse moving out of the screen
  * even if it is repeatedly moved into one direction.
  * For example, a first person perspective experience.
@@ -1024,8 +1032,8 @@ p5.prototype.requestPointerLock = function() {
 
 /**
  * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
- * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
- * for example to make ui elements usable etc
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer lock</a>
+ * for example to make UI elements usable, etc.
  *
  * @method exitPointerLock
  * @example

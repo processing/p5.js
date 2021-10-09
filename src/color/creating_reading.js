@@ -117,7 +117,7 @@ p5.prototype.brightness = function(c) {
  * Creates colors for storing in variables of the color datatype. The
  * parameters are interpreted as RGB or HSB values depending on the
  * current <a href="#/p5/colorMode">colorMode()</a>. The default mode is RGB values from 0 to 255
- * and, therefore, the function call color(255, 204, 0) will return a
+ * and, therefore, the function call `color(255, 204, 0)` will return a
  * bright yellow color.
  *
  * Note that if only one value is provided to <a href="#/p5/color">color()</a>, it will be interpreted
@@ -126,7 +126,7 @@ p5.prototype.brightness = function(c) {
  * either RGB or HSB values. Adding a fourth value applies alpha
  * transparency.
  *
- * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * If a single string argument is provided, RGB, RGBA,and Hex CSS color
  * strings and all named color strings are supported. In this case, an alpha
  * number value as a second argument is not supported, the RGBA form should be
  * used.
@@ -274,7 +274,7 @@ p5.prototype.brightness = function(c) {
 
 /**
  * @method color
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red, green, blue,
  *                                 and alpha components of the color
  * @return {p5.Color}
  */
@@ -359,7 +359,7 @@ p5.prototype.hue = function(c) {
 };
 
 /**
- * Blends two colors to find a third color somewhere between them. The amt
+ * Blends two colors to find a third color somewhere between them. The `amt`
  * parameter is the amount to interpolate between the two values where 0.0
  * is equal to the first color, 0.1 is very near the first color, 0.5 is halfway
  * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts

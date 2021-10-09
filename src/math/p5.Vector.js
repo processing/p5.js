@@ -11,8 +11,8 @@ import * as constants from '../core/constants';
  * A class to describe a two or three dimensional vector, specifically
  * a Euclidean (also known as geometric) vector. A vector is an entity
  * that has both magnitude and direction. The datatype, however, stores
- * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
- * and direction can be accessed via the methods <a href="#/p5.Vector/mag">mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
+ * the components of the vector (`x`, `y` for 2D, and `x`, `y`, `z` for 3D).
+ * The magnitude and direction can be accessed via the methods <a href="#/p5.Vector/mag">mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
  *
  * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
  * position, velocity, or acceleration. For example, if you consider a rectangle
@@ -28,9 +28,9 @@ import * as constants from '../core/constants';
  *
  * @class p5.Vector
  * @constructor
- * @param {Number} [x] x component of the vector
- * @param {Number} [y] y component of the vector
- * @param {Number} [z] z component of the vector
+ * @param {Number} [x] `x` component of the vector
+ * @param {Number} [y] `y` component of the vector
+ * @param {Number} [z] `z` component of the vector
  * @example
  * <div>
  * <code>
@@ -63,25 +63,25 @@ p5.Vector = function Vector() {
     z = arguments[2] || 0;
   }
   /**
-   * The x component of the vector
+   * The `x` component of the vector
    * @property x {Number}
    */
   this.x = x;
   /**
-   * The y component of the vector
+   * The `y` component of the vector
    * @property y {Number}
    */
   this.y = y;
   /**
-   * The z component of the vector
+   * The `z` component of the vector
    * @property z {Number}
    */
   this.z = z;
 };
 
 /**
- * Returns a string representation of a vector v by calling String(v)
- * or v.toString(). This method is useful for logging vectors in the
+ * Returns a string representation of a vector `v` by calling `String(v)`
+ * or `v.toString()`. This method is useful for logging vectors in the
  * console.
  * @method  toString
  * @return {String}
@@ -130,12 +130,12 @@ p5.Vector.prototype.toString = function p5VectorToString() {
 };
 
 /**
- * Sets the x, y, and z component of the vector using two or three separate
+ * Sets the `x`, `y`, and `z` component of the vector using two or three separate
  * variables, the data from a <a href="#/p5.Vector">p5.Vector</a>, or the values from a float array.
  * @method set
- * @param {Number} [x] the x component of the vector
- * @param {Number} [y] the y component of the vector
- * @param {Number} [z] the z component of the vector
+ * @param {Number} [x] the `x` component of the vector
+ * @param {Number} [y] the `y` component of the vector
+ * @param {Number} [z] the `z` component of the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -190,7 +190,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  */
 /**
  * @method set
- * @param {p5.Vector|Number[]} value the vector to set
+ * @param {p5.Vector|Number[]} value The vector to set
  * @chainable
  */
 p5.Vector.prototype.set = function set(x, y, z) {
@@ -236,16 +236,16 @@ p5.Vector.prototype.copy = function copy() {
 };
 
 /**
- * Adds x, y, and z components to a vector, adds one vector to another, or
+ * Adds `x`, `y`, and `z` components to a vector; or, adds one vector to another; or
  * adds two independent vectors together. The version of the method that adds
  * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
  * acts directly on the vector. Additionally, you may provide arguments to this function as an array.
  * See the examples for more context.
  *
  * @method add
- * @param  {Number} x   the x component of the vector to be added
- * @param  {Number} [y] the y component of the vector to be added
- * @param  {Number} [z] the z component of the vector to be added
+ * @param  {Number} x   the `x` component of the vector to be added
+ * @param  {Number} [y] the `y` component of the vector to be added
+ * @param  {Number} [z] the `z` component of the vector to be added
  * @chainable
  * @example
  * <div class="norender">
@@ -444,16 +444,16 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
 };
 
 /**
- * Subtracts x, y, and z components from a vector, subtracts one vector from
- * another, or subtracts two independent vectors. The version of the method
+ * Subtracts `x`, `y`, and `z` components from a vector; or, subtracts one vector from
+ * another; or, subtracts two independent vectors. The version of the method
  * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
  * other acts directly on the vector. Additionally, you may provide arguments to this function as an array.
  * See the examples for more context.
  *
  * @method sub
- * @param  {Number} x   the x component of the vector to subtract
- * @param  {Number} [y] the y component of the vector to subtract
- * @param  {Number} [z] the z component of the vector to subtract
+ * @param  {Number} x   the `x` component of the vector to subtract
+ * @param  {Number} [y] the `y` component of the vector to subtract
+ * @param  {Number} [z] the `z` component of the vector to subtract
  * @chainable
  * @example
  * <div class="norender">
@@ -545,11 +545,11 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 };
 
 /**
- * Multiplies the vector by a scalar, multiplies the x, y, and z components from a vector, or multiplies
- * the x, y, and z components of two independent vectors. When multiplying a vector by a scalar, the x, y,
- * and z components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
- * the x, y, z components of both vectors are multiplied by each other
- * (for example, with two vectors a and b: a.x * b.x, a.y * b.y, a.z * b.z). The static version of this method
+ * Multiplies the vector by a scalar; or, multiplies the `x`, `y`, and `z` components from a vector; or, multiplies
+ * the `x`, `y`, and `z` components of two independent vectors. When multiplying a vector by a scalar, the `x`, `y`,
+ * and `z` components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
+ * the `x`, `y`, and `z` components of both vectors are multiplied by each other
+ * (for example, with two vectors `a` and `b`: `a.x * b.x`, `a.y * b.y`, `a.z * b.z`). The static version of this method
  * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
  * directly. Additionally, you may provide arguments to this function as an array.
  * See the examples for more context.
@@ -639,9 +639,9 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
 
 /**
  * @method mult
- * @param  {Number} x The number to multiply with the x component of the vector
- * @param  {Number} y The number to multiply with the y component of the vector
- * @param  {Number} [z] The number to multiply with the z component of the vector
+ * @param  {Number} x The number to multiply with the `x` component of the vector
+ * @param  {Number} y The number to multiply with the `y` component of the vector
+ * @param  {Number} [z] The number to multiply with the `z` component of the vector
  * @chainable
  */
 
@@ -737,11 +737,11 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
 };
 
 /**
- * Divides the vector by a scalar, divides a vector by the x, y, and z arguments, or divides the x, y, and
- * z components of two vectors against each other. When dividing a vector by a scalar, the x, y,
- * and z components of the vector are all divided by the scalar. When dividing a vector by a vector,
- * the x, y, z components of the source vector are treated as the dividend, and the x, y, z components
- * of the argument is treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
+ * Divides the vector by a scalar; or, divides a vector by the `x`, `y`, and `z` arguments; or, divides the `x`, `y`, and
+ * `z` components of two vectors against each other. When dividing a vector by a scalar, the `x`, `y`,
+ * and `z` components of the vector are all divided by the scalar. When dividing a vector by a vector,
+ * the `x`, `y`, and `z` components of the source vector are treated as the dividend, and the `x`, `y`, and `z` components
+ * of the argument is treated as the divisor. (For example, with the vectors `a` and `b`: `a.x / b.x`, `a.y / b.y`, `a.z / b.z`.)
  * The static version of this method creates a
  * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
  * Additionally, you may provide arguments to this function as an array.
@@ -831,9 +831,9 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
 
 /**
  * @method div
- * @param  {Number} x The number to divide with the x component of the vector
- * @param  {Number} y The number to divide with the y component of the vector
- * @param  {Number} [z] The number to divide with the z component of the vector
+ * @param  {Number} x The number to divide with the `x` component of the vector
+ * @param  {Number} y The number to divide with the `y` component of the vector
+ * @param  {Number} [z] The number to divide with the `z` component of the vector
  * @chainable
  */
 
@@ -943,7 +943,7 @@ p5.Vector.prototype.div = function div(x, y, z) {
 };
 /**
  * Calculates the magnitude (length) of the vector and returns the result as
- * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
+ * a float. (This is simply the equation `sqrt(x*x + y*y + z*z)`.)
  *
  * @method mag
  * @return {Number} magnitude of the vector
@@ -991,7 +991,7 @@ p5.Vector.prototype.mag = function mag() {
 
 /**
  * Calculates the squared magnitude of the vector and returns the result
- * as a float (this is simply the equation <em>(x\*x + y\*y + z\*z)</em>.)
+ * as a float (this is simply the equation `(x*x + y*y + z*z)`.)
  * Faster if the real length is not required in the
  * case of comparing vectors, etc.
  *
@@ -1049,9 +1049,9 @@ p5.Vector.prototype.magSq = function magSq() {
  * method. See the examples for more context.
  *
  * @method dot
- * @param  {Number} x   x component of the vector
- * @param  {Number} [y] y component of the vector
- * @param  {Number} [z] z component of the vector
+ * @param  {Number} x   `x` component of the vector
+ * @param  {Number} [y] `y` component of the vector
+ * @param  {Number} [z] `z` component of the vector
  * @return {Number}       the dot product
  *
  * @example
@@ -1128,12 +1128,11 @@ p5.Vector.prototype.cross = function cross(v) {
 };
 
 /**
- * Calculates the Euclidean distance between two points (considering a
- * point as a vector object).
- * If you are looking to calculate distance with 2 points see <a href="#/p5/dist">dist()</a>
+ * Calculates the Euclidean distance between two points (considering a point as a vector object).
+ * If you are looking to calculate distance with 2 points, see <a href="#/p5/dist">dist()</a>.
  *
  * @method dist
- * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v the `x`, `y`, and `z` coordinates of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}      the distance
  * @example
  * <div class="norender">
@@ -1200,7 +1199,7 @@ p5.Vector.prototype.dist = function dist(v) {
 };
 
 /**
- * Normalize the vector to length 1 (make it a unit vector).
+ * Normalize the vector to length `1` (make it a unit vector).
  *
  * @method normalize
  * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>
@@ -1270,8 +1269,7 @@ p5.Vector.prototype.normalize = function normalize() {
 };
 
 /**
- * Limit the magnitude of this vector to the value used for the <b>max</b>
- * parameter.
+ * Limit the magnitude of this vector to the value of the `max` parameter.
  *
  * @method limit
  * @param  {Number}    max the maximum magnitude for the vector
@@ -1328,8 +1326,7 @@ p5.Vector.prototype.limit = function limit(max) {
 };
 
 /**
- * Set the magnitude of this vector to the value used for the <b>len</b>
- * parameter.
+ * Set the magnitude of this vector to the value of the `len` parameter.
  *
  * @method setMag
  * @param  {number}    len the new length for this vector
@@ -1384,8 +1381,8 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector(only 2D vectors).
- * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
+ * Calculate the angle of rotation for this vector (only 2D vectors).
+ * Vectors created using <a href="#/p5/createVector">createVector()</a>
  * will take the current <a href="#/p5/angleMode">angleMode</a> into
  * consideration, and give the angle in radians or degree accordingly.
  *
@@ -1456,8 +1453,8 @@ p5.Vector.prototype.heading = function heading() {
 };
 
 /**
- * Rotate the vector to a specific angle (only 2D vectors), magnitude remains the
- * same
+ * Rotate the vector to a specific angle (only 2D vectors).
+ * Magnitude remains the same.
  *
  * @method setHeading
  * @param  {number}    angle the angle of rotation
@@ -1481,8 +1478,8 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
 };
 
 /**
- * Rotate the vector by an angle (only 2D vectors), magnitude remains the
- * same
+ * Rotate the vector by an angle (only 2D vectors).
+ * Magnitude remains the same.
  *
  * @method rotate
  * @param  {number}    angle the angle of rotation
@@ -1555,7 +1552,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * give the angle in radians or degree accordingly.
  *
  * @method angleBetween
- * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector}    value the `x`, `y`, and `z` components of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}       the angle between (in radians)
  * @example
  * <div class="norender">
@@ -1630,15 +1627,15 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   return angle;
 };
 /**
- * Linear interpolate the vector to another vector
+ * Linear interpolate the vector to another vector.
  *
  * @method lerp
- * @param  {Number}    x   the x component
- * @param  {Number}    y   the y component
- * @param  {Number}    z   the z component
- * @param  {Number}    amt the amount of interpolation; some value between 0.0
- *                         (old vector) and 1.0 (new vector). 0.9 is very near
- *                         the new vector. 0.5 is halfway in between.
+ * @param  {Number}    x   the `x` component
+ * @param  {Number}    y   the `y` component
+ * @param  {Number}    z   the `z` component
+ * @param  {Number}    amt the amount of interpolation; some value between `0.0`
+ *                         (old vector) and `1.0` (new vector). `0.9` is very near
+ *                         the new vector. `0.5` is halfway in between.
  * @chainable
  *
  * @example
@@ -1720,7 +1717,7 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 
 /**
  * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
- * This method acts on the vector directly
+ * This method acts on the vector directly.
  *
  * @method reflect
  * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
@@ -1806,12 +1803,12 @@ p5.Vector.prototype.array = function array() {
 };
 
 /**
- * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>.
  *
  * @method equals
- * @param {Number} [x] the x component of the vector
- * @param {Number} [y] the y component of the vector
- * @param {Number} [z] the z component of the vector
+ * @param {Number} [x] the `x` component of the vector
+ * @param {Number} [y] the `y` component of the vector
+ * @param {Number} [z] the `z` component of the vector
  * @return {Boolean} whether the vectors are equals
  * @example
  * <div class = "norender">
@@ -1861,12 +1858,12 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
 // Static Methods
 
 /**
- * Make a new 2D vector from an angle
+ * Make a new 2D vector from an `angle`.
  *
  * @method fromAngle
  * @static
  * @param {Number}     angle the desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
- * @param {Number}     [length] the length of the new vector (defaults to 1)
+ * @param {Number}     [length] the length of the new vector (defaults to `1`)
  * @return {p5.Vector}       the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div>
@@ -1912,14 +1909,14 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
 };
 
 /**
- * Make a new 3D vector from a pair of ISO spherical angles
+ * Make a new 3D vector from a pair of ISO spherical angles.
  *
  * @method fromAngles
  * @static
- * @param {Number}     theta    the polar angle, in radians (zero is up)
+ * @param {Number}     theta    the polar angle, in radians (`0` is up)
  * @param {Number}     phi      the azimuthal angle, in radians
- *                               (zero is out of the screen)
- * @param {Number}     [length] the length of the new vector (defaults to 1)
+ *                               (`0` is out of the screen)
+ * @param {Number}     [length] the length of the new vector (defaults to `1`)
  * @return {p5.Vector}          the new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div modernizr='webgl'>
@@ -1961,7 +1958,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
 };
 
 /**
- * Make a new 2D unit vector from a random angle
+ * Make a new 2D unit vector from a random angle.
  *
  * @method random2D
  * @static
@@ -2089,8 +2086,8 @@ p5.Vector.rem = function rem(v1, v2) {
 };
 
 /*
- * Subtracts one <a href="#/p5.Vector">p5.Vector</a> from another and returns a new one.  The second
- * vector (v2) is subtracted from the first (v1), resulting in v1-v2.
+ * Subtracts one <a href="#/p5.Vector">p5.Vector</a> from another and returns a new one.
+ * The second vector (`v2`) is subtracted from the first (`v1`), resulting in `v1-v2`.
  */
 /**
  * @method sub
@@ -2170,7 +2167,8 @@ p5.Vector.mult = function mult(v, n, target) {
 };
 
 /**
- * Rotates the vector (only 2D vectors) by the given angle, magnitude remains the same and returns a new vector.
+ * Rotates the vector (only 2D vectors) by the given angle.
+ * Magnitude remains the same. This returns a new vector.
  */
 
 /**
@@ -2323,13 +2321,13 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
 
 /**
  * Calculates the magnitude (length) of the vector and returns the result as
- * a float (this is simply the equation sqrt(x\*x + y\*y + z\*z).)
+ * a float. (This is simply the equation `sqrt(x*x + y*y + z*z)`.)
  */
 /**
  * @method mag
  * @static
  * @param {p5.Vector} vecT the vector to return the magnitude of
- * @return {Number}        the magnitude of vecT
+ * @return {Number}        the magnitude of `vecT`
  */
 p5.Vector.mag = function mag(vecT) {
   const x = vecT.x,
@@ -2340,14 +2338,14 @@ p5.Vector.mag = function mag(vecT) {
 };
 
 /**
- * Normalize the vector to length 1 (make it a unit vector).
+ * Normalize the vector to length `1` (make it a unit vector).
  */
 /**
  * @method normalize
  * @static
  * @param {p5.Vector} v  the vector to normalize
  * @param {p5.Vector} [target] the vector to receive the result
- * @return {p5.Vector}   v normalized to a length of 1
+ * @return {p5.Vector}   `v` normalized to a length of `1`
  */
 p5.Vector.normalize = function normalize(v, target) {
   if (arguments.length < 2) {

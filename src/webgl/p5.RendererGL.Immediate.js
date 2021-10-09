@@ -1,15 +1,15 @@
 /**
  * Welcome to RendererGL Immediate Mode.
- * Immediate mode is used for drawing custom shapes
- * from a set of vertices.  Immediate Mode is activated
- * when you call <a href="#/p5/beginShape">beginShape()</a> & de-activated when you call <a href="#/p5/endShape">endShape()</a>.
- * Immediate mode is a style of programming borrowed
- * from OpenGL's (now-deprecated) immediate mode.
- * It differs from p5.js' default, Retained Mode, which caches
- * geometries and buffers on the CPU to reduce the number of webgl
- * draw calls. Retained mode is more efficient & performative,
- * however, Immediate Mode is useful for sketching quick
- * geometric ideas.
+ *
+ * Immediate mode is used for drawing custom shapes from a set of vertices.
+ * Immediate Mode is activated when you call <a href="#/p5/beginShape">beginShape()</a>
+ * and de-activated when you call <a href="#/p5/endShape">endShape()</a>.
+ *
+ * Immediate mode is a style of programming borrowed from OpenGL's (now-deprecated) immediate mode.
+ * It differs from p5.js' default, Retained Mode, which caches geometries and buffers on the CPU
+ * to reduce the number of WebGL draw calls.
+ * Retained mode is more efficient & performative; however,
+ * Immediate Mode is useful for sketching quick geometric ideas.
  */
 import p5 from '../core/main';
 import * as constants from '../core/constants';
@@ -19,8 +19,8 @@ import './p5.RenderBuffer';
  * Begin shape drawing.  This is a helpful way of generating
  * custom shapes quickly.  However in WEBGL mode, application
  * performance will likely drop as a result of too many calls to
- * <a href="#/p5/beginShape">beginShape()</a> / <a href="#/p5/endShape">endShape()</a>.  As a high performance alternative,
- * please use p5.js geometry primitives.
+ * <a href="#/p5/beginShape">beginShape()</a> / <a href="#/p5/endShape">endShape()</a>.
+ * As a high performance alternative, please use p5.js geometry primitives.
  * @private
  * @method beginShape
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
@@ -37,7 +37,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
 };
 
 /**
- * adds a vertex to be drawn in a custom Shape.
+ * Adds a vertex to be drawn in a custom Shape.
  * @private
  * @method vertex
  * @param  {Number} x x-coordinate of vertex
@@ -167,13 +167,13 @@ p5.RendererGL.prototype.endShape = function(
 };
 
 /**
- * Called from endShape(). This function calculates the stroke vertices for custom shapes and
+ * Called from `endShape()`. This function calculates the stroke vertices for custom shapes and
  * tesselates shapes when applicable.
  * @private
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
- *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
- *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+ *                       POINTS, LINES, LINE_STRIP, LINE_LOOP, TRIANGLES,
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN, and TESS (WEBGL only)
  */
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
@@ -201,7 +201,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
 };
 
 /**
- * Called from _processVertices(). This function calculates the stroke vertices for custom shapes and
+ * Called from `_processVertices()`. This function calculates the stroke vertices for custom shapes and
  * tesselates shapes when applicable.
  * @private
  * @returns  {Array[Number]} indices for custom shape vertices indicating edges.
@@ -246,7 +246,7 @@ p5.RendererGL.prototype._calculateEdges = function(
 };
 
 /**
- * Called from _processVertices() when applicable. This function tesselates immediateMode.geometry.
+ * Called from `_processVertices()` when applicable. This function tesselates `immediateMode.geometry`.
  * @private
  */
 p5.RendererGL.prototype._tesselateShape = function() {
@@ -266,7 +266,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
 };
 
 /**
- * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+ * Called from `endShape()`. Responsible for calculating normals, setting shader uniforms,
  * enabling all appropriate buffers, applying color blend, and drawing the fill geometry.
  * @private
  */
@@ -300,7 +300,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 };
 
 /**
- * Called from endShape(). Responsible for calculating normals, setting shader uniforms,
+ * Called from `endShape()`. Responsible for calculating normals, setting shader uniforms,
  * enabling all appropriate buffers, applying color blend, and drawing the stroke geometry.
  * @private
  */

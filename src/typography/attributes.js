@@ -10,18 +10,18 @@ import p5 from '../core/main';
 
 /**
  * Sets the current alignment for drawing text. Accepts two
- * arguments: horizAlign (LEFT, CENTER, or RIGHT) and
- * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
+ * arguments: `horizAlign` (LEFT, CENTER, or RIGHT) and
+ * `vertAlign` (TOP, BOTTOM, CENTER, or BASELINE).
  *
- * The horizAlign parameter is in reference to the x value
- * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter
- * is in reference to the y value.
+ * The `horizAlign` parameter is in reference to the `x` value
+ * of the <a href="#/p5/text">text()</a> function, while the `vertAlign` parameter
+ * is in reference to the `y` value.
  *
- * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
- * If you write textAlign(RIGHT, TOP), you are aligning the right edge
- * of your text to the x value and the top of edge of the text
- * to the y value.
+ * So if you write `textAlign(LEFT)`, you are aligning the left
+ * edge of your text to the `x` value you give in <a href="#/p5/text">text()</a>.
+ * If you write `textAlign(RIGHT, TOP)`, you are aligning the right edge
+ * of your text to the `x` value and the top of edge of the text
+ * to the `y` value.
  *
  * @method textAlign
  * @param {Constant} horizAlign horizontal alignment, either LEFT,
@@ -148,13 +148,14 @@ p5.prototype.textSize = function(theSize) {
 };
 
 /**
- * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, BOLD or BOLDITALIC.
- * Note: this may be is overridden by CSS styling. For non-system fonts
- * (opentype, truetype, etc.) please load styled fonts instead.
+ * Sets/gets the style of the text for system fonts to NORMAL, ITALIC, BOLD, or BOLDITALIC.
+ *
+ * Note: This may be overridden by CSS styling. For non-system fonts
+ * (opentype, truetype, etc.), please load styled fonts instead.
  *
  * @method textStyle
  * @param {Constant} theStyle styling for text, either NORMAL,
- *                            ITALIC, BOLD or BOLDITALIC
+ *                            ITALIC, BOLD, or BOLDITALIC
  * @chainable
  * @example
  * <div>
@@ -285,13 +286,20 @@ p5.prototype._updateTextMetrics = function() {
 };
 
 /**
- * Specifies how lines of text are wrapped within a text box. This requires a max-width set on the text area, specified in <a href="#/p5/text">text()</a> as parameter `x2`.
+ * Specifies how lines of text are wrapped within a text box. This requires a
+ * `max-width` set on the text area, specified in <a href="#/p5/text">text()</a>
+ * as parameter `x2`.
  *
- * WORD wrap style only breaks lines at spaces. A single string without spaces that exceeds the boundaries of the canvas or text area is not truncated, and will overflow the desired area, disappearing at the canvas edge.
+ * WORD wrap style only breaks lines at spaces. A single string without spaces
+ * that exceeds the boundaries of the canvas or text area is not truncated, and
+ * will overflow the desired area, disappearing at the canvas edge.
  *
  * CHAR wrap style breaks lines wherever needed to stay within the text box.
  *
- * WORD is the default wrap style, and both styles will still break lines at any line breaks (`\n`) specified in the original text. The text area max-height parameter (`y2`) also still applies to wrapped text in both styles, lines of text that do not fit within the text area will not be drawn to the screen.
+ * WORD is the default wrap style, and both styles will still break lines at any
+ * line breaks (`\n`) specified in the original text. The text area `max-height`
+ * parameter (`y2`) also still applies to wrapped text in both styles, lines of
+ * text that do not fit within the text area will not be drawn to the screen.
  *
  * @method textWrap
  * @param {Constant} wrapStyle text wrapping style, either WORD or CHAR
