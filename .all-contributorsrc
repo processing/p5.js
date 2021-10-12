@@ -2729,6 +2729,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "camilleroux",
+      "name": "Camille Roux",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25977?v=4",
+      "profile": "https://www.camilleroux.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
