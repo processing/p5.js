@@ -584,7 +584,7 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 };
 
 /**
- * Creates a normal material.
+ * Sets the current material as a normal material.
  *
  * A normal material is not affected by light. It is often used as
  * a placeholder material when debugging.
@@ -628,7 +628,7 @@ p5.prototype.normalMaterial = function(...args) {
 };
 
 /**
- * Creates an ambient material with the given color.
+ * Sets the current material as an ambient material of the given color.
  *
  * The ambientMaterial() color is the color the object will reflect
  * under **any** lighting.
@@ -740,7 +740,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
 };
 
 /**
- * Creates an emissive material with the given color.
+ * Sets the current material as an emissive material of
+ * the given color.
  *
  * An emissive material will display the emissive color at
  * full strength regardless of lighting. This can give the
@@ -812,7 +813,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Creates a specular material with the given color.
+ * Sets the current material as a specular material of the given color.
  *
  * A specular material is reflective (shiny). The shininess can be
  * controlled by the <a href="#/p5/shininess">shininess()</a> function.
