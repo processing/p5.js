@@ -88,16 +88,16 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     this._setProperty('wheelDefaultDisabled', true);
   }
 
-  const scaleFactor = this.height < this.width ? this.height : this.width;
-
+  const scaleFactor = 50;
   // ZOOM if there is a change in mouseWheelDelta
-  if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
+  if (this._mouseWheelDeltaY !=0) {
     // zoom according to direction of mouseWheelDeltaY rather than value
     if (this._mouseWheelDeltaY > 0) {
       this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
     } else {
       this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
     }
+    this._mouseWheelDeltaY=0;
   }
 
   if (this.mouseIsPressed) {
