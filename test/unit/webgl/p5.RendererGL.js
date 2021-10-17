@@ -449,6 +449,7 @@ suite('p5.RendererGL', function() {
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);
+      assert.isDefined(buffers.indexBufferType);
       assert.isDefined(buffers.vertexBuffer);
       assert.isDefined(buffers.lineNormalBuffer);
       assert.isDefined(buffers.lineVertexBuffer);

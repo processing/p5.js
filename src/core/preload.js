@@ -81,7 +81,7 @@ p5.prototype._wrapPromisePreload = function(thisValue, fn, addCallbacks) {
         callback = args.pop();
       }
     }
-    // Call the underlying funciton and pass it to Promise.resolve,
+    // Call the underlying function and pass it to Promise.resolve,
     // so that even if it didn't return a promise we can still
     // act on the result as if it did.
     const promise = Promise.resolve(fn.apply(this, args));

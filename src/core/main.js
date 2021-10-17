@@ -377,7 +377,7 @@ class p5 {
         !this._loop ||
         time_since_last >= target_time_between_frames - epsilon
       ) {
-        //mandatory update values(matrixs and stack)
+        //mandatory update values(matrixes and stack)
         this.redraw();
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
         this.deltaTime = now - this._lastFrameTime;
@@ -712,6 +712,10 @@ p5.disableFriendlyErrors = false;
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
+
+// makes the `VERSION` constant available on the p5 object
+// in instance mode, even if it hasn't been instatiated yet
+p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)

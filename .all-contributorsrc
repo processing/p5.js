@@ -2646,6 +2646,98 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "osteele",
+      "name": "Oliver Steele",
+      "avatar_url": "https://avatars.githubusercontent.com/u/674?v=4",
+      "profile": "https://code.osteele.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "pearmini",
+      "name": "MiniPear",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49330279?v=4",
+      "profile": "https://github.com/pearmini",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "sflanker",
+      "name": "Paul Wheeler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/940246?v=4",
+      "profile": "http://www.paulwheeler.us/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Nitin-Rana",
+      "name": "Nitin Rana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58933197?v=4",
+      "profile": "https://nitin-rana.github.io/nitinrana.github.io/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "anniemckinnon",
+      "name": "Annie McKinnon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35992537?v=4",
+      "profile": "https://www.anniemckinnon.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "jiwonme",
+      "name": "Jiwon Park (hanpanic)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53327429?v=4",
+      "profile": "http://jiwon.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "truemaxdh",
+      "name": "truemaxdh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12081386?v=4",
+      "profile": "https://truemaxdh.github.io/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "katiejliu",
+      "name": "Katie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78124298?v=4",
+      "profile": "https://github.com/katiejliu",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "guilhermesilveira",
+      "name": "Guilherme Silveira",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51391?v=4",
+      "profile": "http://www.alura.com.br",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "camilleroux",
+      "name": "Camille Roux",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25977?v=4",
+      "profile": "https://www.camilleroux.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",

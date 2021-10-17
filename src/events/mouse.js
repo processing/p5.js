@@ -364,7 +364,7 @@ p5.prototype.pwinMouseY = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     if (mouseButton === LEFT) {
  *       ellipse(50, 50, 50, 50);
  *     }
@@ -400,7 +400,7 @@ p5.prototype.mouseButton = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     ellipse(50, 50, 50, 50);
  *   } else {
  *     rect(25, 25, 50, 50);

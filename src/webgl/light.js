@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Lights
  * @for p5
  * @requires core
@@ -456,17 +456,26 @@ p5.prototype.lights = function() {
  *   noStroke();
  * }
  * function draw() {
+ *   ortho();
  *   background(0);
+ *
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
- *   translate(-25, 0, 0);
+ *   locX /= 2; // half scale
+ *
  *   lightFalloff(1, 0, 0);
- *   pointLight(250, 250, 250, locX, locY, 50);
+ *   push();
+ *   translate(-25, 0, 0);
+ *   pointLight(250, 250, 250, locX - 25, locY, 50);
  *   sphere(20);
- *   translate(50, 0, 0);
- *   lightFalloff(0.9, 0.01, 0);
- *   pointLight(250, 250, 250, locX, locY, 50);
+ *   pop();
+ *
+ *   lightFalloff(0.97, 0.03, 0);
+ *   push();
+ *   translate(25, 0, 0);
+ *   pointLight(250, 250, 250, locX + 25, locY, 50);
  *   sphere(20);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -874,25 +883,30 @@ p5.prototype.spotLight = function(
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw() {
- *   background(0);
+ *   background(200);
  *   noStroke();
  *
- *   ambientLight(150, 0, 0);
- *   translate(-25, 0, 0);
- *   ambientMaterial(250);
- *   sphere(20);
+ *   ambientLight(255, 0, 0);
+ *   translate(-30, 0, 0);
+ *   ambientMaterial(255);
+ *   sphere(13);
  *
  *   noLights();
- *   ambientLight(0, 150, 0);
- *   translate(50, 0, 0);
- *   ambientMaterial(250);
- *   sphere(20);
+ *   translate(30, 0, 0);
+ *   ambientMaterial(255);
+ *   sphere(13);
+ *
+ *   ambientLight(0, 255, 0);
+ *   translate(30, 0, 0);
+ *   ambientMaterial(255);
+ *   sphere(13);
  * }
  * </code>
  * </div>
  *
  * @alt
- * Two spheres showing different colors
+ * Three white spheres. Each appears as a different
+ * color due to lighting.
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');
