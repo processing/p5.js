@@ -27,6 +27,8 @@ The FES can also help the user differentiate between errors that happen inside t
 
 Please also see inline notes in [src/core/friendly_errors/fes_core.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/fes_core.js) for more technical information.
 
+The FES can detect the declaration of reserved p5.js constants (for eg: PI) and functions (for eg: text) by the user. This operation is performed by `fesCodeReader()` in `sketch_reader.js`. You can have a look at the full code [src/core/friendly_errors/sketch_reader.js](https://github.com/processing/p5.js/blob/main/src/core/friendly_errors/sketch_reader.js)
+
 ### `core/friendly_errors/file_errors/friendlyFileLoadError()`: 
 * This function generates and displays friendly error messages if a file fails to load correctly. It also checks if the size of a file might be too large to load and produces a warning. 
 * This can be called through : `p5._friendlyFileLoadError(ERROR_TYPE, FILE_PATH)`.
@@ -137,6 +139,36 @@ Please correct it to color if you wish to use the function from p5.js (http://p5
 */
 ```
 
+### `core/friendly_errors/fes_core/sketch_reader/fesCodeReader()`:
+* This function is executed everytime when the `load` event is triggered. It checks if a p5.js reserved constant or function is redefined by the user.
+
+* Redefining p5.js reserved constant
+```js
+function setup() {
+  //PI is a p5.js reserved constant
+  let PI = 100;
+}
+
+/* 
+FES will show:
+p5.js says: you have used a p5.js reserved variable "PI" make sure you change the variable name to something else.
+(https://p5js.org/reference/#/p5/PI)
+*/
+```
+
+* Redefining p5.js reserved function
+```js
+function setup() {
+  //text is a p5.js reserved function
+  let text = 100;
+}
+
+/* 
+FES will show:
+p5.js says: you have used a p5.js reserved function "text" make sure you change the function name to something else.
+*/
+```
+
 ### `core/friendly_errors/fes_core/checkForUserDefinedFunctions()`:
 * Checks if any user defined function (`setup()`, `draw()`, `mouseMoved()`, etc.) has been used with a capitalization mistake
 * For example
@@ -200,6 +232,8 @@ line(0, 0, 100, 100, x3, Math.PI);
 
  * The functionality described under **`fesErrorMonitor()`** currently only works on the web editor or if running on a local server. For more details see [this](https://github.com/processing/p5.js/pull/4730).
 
+ * The extracting variable/function names feature of FES's `sketch_reader` is not perfect and some cases might go undetected (for eg: when all the code is written in a single line).
+
 ## In The Works
 * Identify more common error types and generalize with FES (e.g. `bezierVertex()`, `quadraticVertex()` - required object not initiated; checking Number parameters positive for `nf()` `nfc()` `nfp()` `nfs()`)
 
@@ -211,6 +245,8 @@ line(0, 0, 100, 100, x3, Math.PI);
 * All the colors are checked for being color blind friendly.
 * More elaborate ascii is always welcome! 
 * Extend Global Error catching. This means catching errors that the browser is throwing to the console and matching them with friendly messages. `fesErrorMonitor()` does this for a select few kinds of errors but help in supporting more is welcome :)
+* Improve `sketch_reader.js`'s code reading and variable/function name extracting functionality (which extracts names of the function and variables declared by the user in their code). For example currently `sketch_reader.js` is not able to extract variable/function names properly if all the code is written in a single line.
+* `sketch_reader.js` can be extended and new features (for example: Alerting the user when they have declared a variable in the `draw()` function) can be added to it to better aid the user. 
 
 
 ```javascript

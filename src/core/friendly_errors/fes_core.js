@@ -200,15 +200,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Prints out a fancy, colorful message to the console log
    *
-   * @method report
+   * @method _report
    * @private
    * @param  {String}               message the words to be said
    * @param  {String}               [func]  the name of the function to link
-   * @param  {Number|String} [color]   CSS color string or error type
+   * @param  {Number|String}        [color] CSS color string or error type
    *
    * @return console logs
    */
-  const report = (message, func, color) => {
+  p5._report = (message, func, color) => {
     // if p5._fesLogger is set ( i.e we are running tests ), use that
     // instead of console.log
     const log =
@@ -247,7 +247,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @param  {Number|String} [color]   CSS color string or error type
    */
   p5._friendlyError = function(message, method, color) {
-    report(message, method, color);
+    p5._report(message, method, color);
   };
 
   /**
@@ -354,7 +354,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           actualName: fxns[lowercase]
         });
 
-        report(msg, fxns[lowercase]);
+        p5._friendlyError(msg, fxns[lowercase]);
       }
     }
   };
@@ -454,7 +454,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // a link to the reference documentation. In case of multiple matches,
       // this is already done in the suggestions variable, one link for each
       // suggestion.
-      report(
+      p5._friendlyError(
         msg,
         matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
       );
@@ -601,7 +601,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         currentEntryPoint === 'preload' &&
         p5.prototype._preloadMethods[func] == null
       ) {
-        report(
+        p5._friendlyError(
           translator('fes.wrongPreload', {
             func: func,
             location: locationObj
@@ -613,7 +613,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         );
       } else {
         // Library error
-        report(
+        p5._friendlyError(
           translator('fes.libraryError', {
             func: func,
             location: locationObj
@@ -712,9 +712,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // for syntax errors
         switch (matchedError.type) {
           case 'INVALIDTOKEN': {
+            //Error if there is an invalid or unexpected token that doesn't belong at this position in the code
+            //let x = “not a string”; -> string not in proper quotes
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.invalidToken', {
                 url
               })
@@ -722,10 +724,54 @@ if (typeof IS_MINIFIED !== 'undefined') {
             break;
           }
           case 'UNEXPECTEDTOKEN': {
+            //Error if a specific language construct(, { ; etc) was expected, but something else was provided
+            //for (let i = 0; i < 5,; ++i) -> a comma after i<5 instead of a semicolon
             let url =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.syntax.unexpectedToken', {
+                url
+              })
+            );
+            break;
+          }
+          case 'REDECLAREDVARIABLE': {
+            //Error if a variable is redeclared by the user. Example=>
+            //let a = 10;
+            //let a = 100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.redeclaredVariable', {
+                symbol: errSym,
+                url
+              })
+            );
+            break;
+          }
+          case 'MISSINGINITIALIZER': {
+            //Error if a const variable is not initialized during declaration
+            //Example => const a;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.missingInitializer', {
+                url
+              })
+            );
+            break;
+          }
+          case 'BADRETURNORYIELD': {
+            //Error when a return statement is misplaced(usually outside of a function)
+            // const a = function(){
+            //  .....
+            //  }
+            //  return; -> misplaced return statement
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.syntax.badReturnOrYield', {
                 url
               })
             );
@@ -737,6 +783,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'ReferenceError': {
         switch (matchedError.type) {
           case 'NOTDEFINED': {
+            //Error if there is a non-existent variable referenced somewhere
+            //let a = 10;
+            //console.log(x);
             let errSym = matchedError.match[1];
 
             if (errSym && handleMisspelling(errSym, error)) {
@@ -748,10 +797,30 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url1 = 'https://p5js.org/examples/data-variable-scope.html';
             let url2 =
               'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
-            report(
+            p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
                 url1,
                 url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CANNOTACCESS': {
+            //Error if a lexical variable was accessed before it was initialized
+            //console.log(a); -> variable accessed before it was initialized
+            //let a=100;
+            let errSym = matchedError.match[1];
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.reference.cannotAccess', {
+                url,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
@@ -769,6 +838,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'TypeError': {
         switch (matchedError.type) {
           case 'NOTFUNC': {
+            //Error when some code expects you to provide a function, but that didn't happen
+            //let a = document.getElementByID('foo'); -> getElementById instead of getElementByID
             let errSym = matchedError.match[1];
             let splitSym = errSym.split('.');
             let url =
@@ -788,14 +859,78 @@ if (typeof IS_MINIFIED !== 'undefined') {
             // as a property of an object and when it's called independently.
             // Both have different explanations.
             if (splitSym.length > 1) {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfuncObj', translationObj)
               );
             } else {
-              report(
+              p5._friendlyError(
                 translator('fes.globalErrors.type.notfunc', translationObj)
               );
             }
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READNULL': {
+            //Error if a property of null is accessed
+            //let a = null;
+            //console.log(a.property); -> a is null
+            let errSym = matchedError.match[1];
+            let url1 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromNull', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'READUDEFINED': {
+            //Error if a property of undefined is accessed
+            //let a; -> default value of a is undefined
+            //console.log(a.property); -> a is undefined
+            let errSym = matchedError.match[1];
+            let url1 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
+            let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.readFromUndefined', {
+                url1,
+                url2,
+                symbol: errSym,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
+
+            if (friendlyStack) printFriendlyStack(friendlyStack);
+            break;
+          }
+          case 'CONSTASSIGN': {
+            //Error when a const variable is reassigned a value
+            //const a = 100;
+            //a=10;
+            let url =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
+            p5._friendlyError(
+              translator('fes.globalErrors.type.constAssign', {
+                url,
+                location: locationObj
+                  ? translator('fes.location', locationObj)
+                  : ''
+              })
+            );
 
             if (friendlyStack) printFriendlyStack(friendlyStack);
             break;
@@ -822,22 +957,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
    */
   /* function testColors() {
     const str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
-    report(str, 'print', '#ED225D'); // p5.js magenta
-    report(str, 'print', '#2D7BB6'); // p5.js blue
-    report(str, 'print', '#EE9900'); // p5.js orange
-    report(str, 'print', '#A67F59'); // p5.js light brown
-    report(str, 'print', '#704F21'); // p5.js gold
-    report(str, 'print', '#1CC581'); // auto cyan
-    report(str, 'print', '#FF6625'); // auto orange
-    report(str, 'print', '#79EB22'); // auto green
-    report(str, 'print', '#B40033'); // p5.js darkened magenta
-    report(str, 'print', '#084B7F'); // p5.js darkened blue
-    report(str, 'print', '#945F00'); // p5.js darkened orange
-    report(str, 'print', '#6B441D'); // p5.js darkened brown
-    report(str, 'print', '#2E1B00'); // p5.js darkened gold
-    report(str, 'print', '#008851'); // auto dark cyan
-    report(str, 'print', '#C83C00'); // auto dark orange
-    report(str, 'print', '#4DB200'); // auto dark green
+    p5._friendlyError(str, 'print', '#ED225D'); // p5.js magenta
+    p5._friendlyError(str, 'print', '#2D7BB6'); // p5.js blue
+    p5._friendlyError(str, 'print', '#EE9900'); // p5.js orange
+    p5._friendlyError(str, 'print', '#A67F59'); // p5.js light brown
+    p5._friendlyError(str, 'print', '#704F21'); // p5.js gold
+    p5._friendlyError(str, 'print', '#1CC581'); // auto cyan
+    p5._friendlyError(str, 'print', '#FF6625'); // auto orange
+    p5._friendlyError(str, 'print', '#79EB22'); // auto green
+    p5._friendlyError(str, 'print', '#B40033'); // p5.js darkened magenta
+    p5._friendlyError(str, 'print', '#084B7F'); // p5.js darkened blue
+    p5._friendlyError(str, 'print', '#945F00'); // p5.js darkened orange
+    p5._friendlyError(str, 'print', '#6B441D'); // p5.js darkened brown
+    p5._friendlyError(str, 'print', '#2E1B00'); // p5.js darkened gold
+    p5._friendlyError(str, 'print', '#008851'); // auto dark cyan
+    p5._friendlyError(str, 'print', '#C83C00'); // auto dark orange
+    p5._friendlyError(str, 'print', '#4DB200'); // auto dark green
   } */
 }
 

@@ -14,6 +14,7 @@ var spec = {
     'rendering',
     'structure',
     'transform',
+    'version',
     'vertex'
   ],
   data: ['p5.TypedDict', 'local_storage'],

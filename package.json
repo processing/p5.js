@@ -4,7 +4,7 @@
   "scripts": {
     "grunt": "grunt",
     "build": "grunt build",
-    "dev": "grunt browserify:dev connect:yui watch:quick",
+    "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "grunt yui",
     "docs:dev": "grunt yui:dev",
     "test": "grunt",
@@ -32,7 +32,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.3.1",
+  "version": "1.4.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
@@ -81,9 +81,8 @@
     "opentype.js": "^0.9.0",
     "prettier": "^1.7.4",
     "promise-map-series": "^0.2.3",
-    "puppeteer": "^5.5.0",
+    "puppeteer": "^10.2.0",
     "regenerator-runtime": "^0.13.3",
-    "release-it": "^12.6.2",
     "request": "^2.88.0",
     "simple-git": "^1.132.0",
     "whatwg-fetch": "^2.0.4"

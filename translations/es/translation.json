@@ -22,17 +22,24 @@
     },
     "globalErrors": {
       "reference": {
+        "cannotAccess": "",
         "notDefined": ""
       },
       "stackSubseq": "",
       "stackTop": "",
       "syntax": {
+        "badReturnOrYield": "",
         "invalidToken": "",
+        "missingInitializer": "",
+        "redeclaredVariable": "",
         "unexpectedToken": ""
       },
       "type": {
+        "constAssign": "",
         "notfunc": "",
-        "notfuncObj": ""
+        "notfuncObj": "",
+        "readFromNull": "",
+        "readFromUndefined": ""
       }
     },
     "libraryError": "",
@@ -55,6 +62,10 @@
       "p_9": ""
     },
     "pre": "🌸 p5.js dice: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "",
+      "reservedFunc": ""
+    },
     "welcome": "",
     "wrongPreload": ""
   }

@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Material
  * @for p5
  * @requires core
@@ -10,13 +10,13 @@ import * as constants from '../core/constants';
 import './p5.Texture';
 
 /**
- * Loads a custom shader from the provided vertex and fragment
- * shader paths. The shader files are loaded asynchronously in the
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader files.
+ *
+ * The shader files are loaded asynchronously in the
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
- * For now, there are three main types of shaders. p5 will automatically
- * supply appropriate vertices, normals, colors, and lighting attributes
- * if the parameters defined in the shader match the names.
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method loadShader
  * @param {String} vertFilename path to file containing vertex shader
@@ -24,7 +24,7 @@ import './p5.Texture';
  * @param {String} fragFilename path to file containing fragment shader
  * source code
  * @param {function} [callback] callback to be executed after loadShader
- * completes. On success, the Shader object is passed as the first argument.
+ * completes. On success, the p5.Shader object is passed as the first argument.
  * @param {function} [errorCallback] callback to be executed when an error
  * occurs inside loadShader. On error, the error is passed as the first
  * argument.
@@ -109,6 +109,11 @@ p5.prototype.loadShader = function(
 };
 
 /**
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader code.
+ *
+ * Note, shaders can only be used in WEBGL mode.
+ *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
  * @param {String} fragSrc source code for the fragment shader
@@ -177,15 +182,22 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
- * to fill in shapes in WEBGL mode. Users can create their
- * own shaders by loading vertex and fragment shaders with
- * <a href="#/p5/loadShader">loadShader()</a>.
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
+ * be used to render subsequent shapes.
+ *
+ * Custom shaders can be created using the
+ * <a href="#/p5/createShader">createShader()</a> and
+ * <a href="#/p5/loadShader">loadShader()</a> functions.
+ *
+ * Use <a href="#/p5/resetShader">resetShader()</a> to
+ * restore the default shaders.
+ *
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
- * shapes.
+ * @param {p5.Shader} s the <a href="#/p5.Shader">p5.Shader</a> object
+ * to use for rendering shapes.
  *
  * @example
  * <div modernizr='webgl'>
@@ -268,9 +280,9 @@ p5.prototype.shader = function(s) {
 };
 
 /**
- * This function restores the default shaders in WEBGL mode. Code that runs
- * after resetShader() will not be affected by previously defined
- * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ * Restores the default shaders. Code that runs after resetShader()
+ * will not be affected by the shader previously set by
+ * <a href="#/p5/shader">shader()</a>
  *
  * @method resetShader
  * @chainable
@@ -281,11 +293,21 @@ p5.prototype.resetShader = function() {
 };
 
 /**
- * Texture for geometry.  You can view other possible materials in this
+ * Sets the texture that will be used to render subsequent shapes.
+ *
+ * A texture is like a "skin" that wraps around a 3D geometry. Currently
+ * supported textures are images, video, and offscreen renders.
+ *
+ * To texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
+ * you will need to specify uv coordinates in <a href="#/p5/vertex">vertex()</a>.
+ *
+ * Note, texture() can only be used in WEBGL mode.
+ *
+ * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics} tex 2-dimensional graphics
- *                    to render as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics} tex  image to use as texture
  * @chainable
  * @example
  * <div>
@@ -310,7 +332,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * spinning cube with a texture from an image
  *
+ * @example
  * <div>
  * <code>
  * let pg;
@@ -333,7 +358,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * plane with a texture from an image created by createGraphics()
  *
+ * @example
  * <div>
  * <code>
  * let vid;
@@ -359,9 +387,36 @@ p5.prototype.resetShader = function() {
  * </div>
  *
  * @alt
- * Rotating view of many images umbrella and grid roof on a 3d plane
- * black canvas
- * black canvas
+ * rectangle with video as texture
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-40, -40, 0, 0);
+ *   vertex(40, -40, 1, 0);
+ *   vertex(40, 40, 1, 1);
+ *   vertex(-40, 40, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * quad with a texture, mapped using normalized coordinates
  */
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
@@ -384,7 +439,6 @@ p5.prototype.texture = function(tex) {
  * Sets the coordinate space for texture mapping. The default mode is IMAGE
  * which refers to the actual coordinates of the image.
  * NORMAL refers to a normalized space of values ranging from 0 to 1.
- * This function only works in WEBGL mode.
  *
  * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
@@ -416,10 +470,10 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture, mapped using normalized coordinates
  *
+ * @example
  * <div>
  * <code>
  * let img;
@@ -434,7 +488,7 @@ p5.prototype.texture = function(tex) {
  *
  * function draw() {
  *   texture(img);
- *   textureMode(NORMAL);
+ *   textureMode(IMAGE);
  *   beginShape();
  *   vertex(-50, -50, 0, 0);
  *   vertex(50, -50, img.width, 0);
@@ -444,9 +498,8 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture, mapped using image coordinates
  */
 p5.prototype.textureMode = function(mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
@@ -460,18 +513,18 @@ p5.prototype.textureMode = function(mode) {
 
 /**
  * Sets the global texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 - 1 range. There are three options:
+ * when their uv's go outside of the 0 to 1 range. There are three options:
  * CLAMP, REPEAT, and MIRROR.
  *
- * CLAMP causes the pixels at the edge of the texture to extend to the bounds
- * REPEAT causes the texture to tile repeatedly until reaching the bounds
- * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds.
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds.
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile.
  *
  * REPEAT & MIRROR are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  *
  * This method will affect all textures in your sketch until a subsequent
- * textureWrap call is made.
+ * textureWrap() call is made.
  *
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
@@ -782,6 +835,33 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * @param  {Number} [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular material
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *
+ *   specularMaterial(250);
+ *   shininess(50);
+ *   torus(30, 10, 64, 64);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * torus with specular material
  */
 
 /**
@@ -794,24 +874,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   ambientLight(50);
- *   pointLight(250, 250, 250, 100, 100, 30);
- *   specularMaterial(250);
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * diffused radiating light source from top right of canvas
  */
 
 /**

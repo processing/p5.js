@@ -1,6 +1,6 @@
 /**
  * This module defines the p5.Texture class
- * @module Lights, Camera
+ * @module 3D
  * @submodule Material
  * @for p5
  * @requires core

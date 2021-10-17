@@ -3,6 +3,16 @@ This folder contains wrapup reports for projects from p5.js related [Google Summ
 
 *Note for contributors: Embedded images and media are welcome. Please host these files externally rather than placing in this repo to avoid adding growing the repository filesize too much.*
 
+### Google Summer of Code 2021
+* [Adding Alt Text to the p5.js Website](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/katiejliu_gsoc_2021.md) by Katie Liu, 2021
+* [Adding to p5.js Friendly Error System](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/shantanuKaushik_gsoc_2021.md) by Shantanu Kaushik, 2021
+* [Activism Through Storytelling with Code](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/nikiito_gsoc_2021.md) by Niki Ito, 2021
+* [Addon Library Development - p5.teach.js](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/aditya_gsoc_2021.md) by Aditya Siddheshwar, 2021
+* [Internationalization(i18n) and Deployment of p5.js website](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/sanjay_singh_rajpoot_gsoc2020.md) by Sanjay Singh Rajpoot, 2021
+* [Improving the p5.xr Library Through Artistic Examples](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/anaisgonzalez_gsoc_2021.md) by Anais Gonzalez, 2021
+* [Korean Translations and Website Redesign Proposal](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/josephhong_gsoc_2021.md) by [Joseph Hong](github.com/jhongover9000), 2021
+* [Improve Test Coverage in p5.Sound library](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/sai_bhushan_gsoc_2021.md) by [Sai Bhushan](https://github.com/satyasaibhushan), 2021
+
 ### Google Summer of Code 2020
 * [p5.js accessibility and canvas descriptions](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/luismn_gsoc_2020.md) by Luis Morales-Navarro, 2020
 * [p5.js Web Editor Mobile UI](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/ghalestrilo_gsoc_2020.md) by [ghales](https://github.com/ghalestrilo), 2020
