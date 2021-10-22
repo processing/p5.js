@@ -102,6 +102,8 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
 
   if (this.mouseIsPressed) {
     // ORBIT BEHAVIOR
+    if(Math.abs(this.mouseX-this.pmouseX)>50||Math.abs(this.mouseY-this.pmouseY)>50)
+      return this;//when noloop() is disabled,need a frame to reset pmouse position 
     if (this.mouseButton === this.LEFT) {
       const deltaTheta =
         -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
