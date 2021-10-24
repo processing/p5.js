@@ -1,9 +1,6 @@
 /**
  * @for p5
  * @requires core
- *
- * This file contains the part of the FES responsible for dealing with
- * file load errors
  */
 import p5 from '../main';
 import { translator } from '../internationalization';
@@ -79,19 +76,19 @@ if (typeof IS_MINIFIED !== 'undefined') {
         };
     }
   };
-
-  /**
-   * This is called internally if there is a error during file loading.
-   *
-   * @method _friendlyFileLoadError
-   * @private
-   * @param  {Number} errorType
-   * @param  {String} filePath
-   */
-  p5._friendlyFileLoadError = function(errorType, filePath) {
-    const { message, method } = fileLoadErrorCases(errorType, filePath);
-    p5._friendlyError(message, method, 3);
-  };
 }
+
+/**
+ * Called internally if there is a error during file loading.
+ *
+ * @method _friendlyFileLoadError
+ * @private
+ * @param  {Number} errorType
+ * @param  {String} filePath
+ */
+p5._friendlyFileLoadError = function(errorType, filePath) {
+  const { message, method } = fileLoadErrorCases(errorType, filePath);
+  p5._friendlyError(message, method, 3);
+};
 
 export default p5;

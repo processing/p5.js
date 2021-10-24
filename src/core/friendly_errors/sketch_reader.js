@@ -1,13 +1,13 @@
 /**
  * @for p5
  * @requires core
+ */
+
+ /* p5._fesCodeReader() with the help of other helper functions
+ * performs the following tasks
  *
- * This file contains the code for sketch reader functionality
- * of the FES.
- * p5._fesCodeReader() with the help of other helper functions performs the following tasks
- *
- * (I) Checks if any p5.js constant or function is declared by the user outside setup and draw function
- *  and report it.
+ * (I) Checks if any p5.js constant or function is declared by
+ * the user outside setup and draw function and report it.
  *
  * (II) In setup and draw function it performs:
  * 1. Extraction of the code written by the user
