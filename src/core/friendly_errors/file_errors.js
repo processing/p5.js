@@ -76,19 +76,18 @@ if (typeof IS_MINIFIED !== 'undefined') {
         };
     }
   };
+  /**
+   * Called internally if there is a error during file loading.
+   *
+   * @method _friendlyFileLoadError
+   * @private
+   * @param  {Number} errorType
+   * @param  {String} filePath
+   */
+  p5._friendlyFileLoadError = function(errorType, filePath) {
+    const { message, method } = fileLoadErrorCases(errorType, filePath);
+    p5._friendlyError(message, method, 3);
+  };
 }
-
-/**
- * Called internally if there is a error during file loading.
- *
- * @method _friendlyFileLoadError
- * @private
- * @param  {Number} errorType
- * @param  {String} filePath
- */
-p5._friendlyFileLoadError = function(errorType, filePath) {
-  const { message, method } = fileLoadErrorCases(errorType, filePath);
-  p5._friendlyError(message, method, 3);
-};
 
 export default p5;

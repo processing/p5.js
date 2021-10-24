@@ -3,25 +3,24 @@
  * @requires core
  */
 
- /* p5._fesCodeReader() with the help of other helper functions
- * performs the following tasks
- *
- * (I) Checks if any p5.js constant or function is declared by
+import p5 from '../main';
+import { translator } from '../internationalization';
+import * as constants from '../constants';
+
+/**
+ * Checks if any p5.js constant or function is declared by
  * the user outside setup and draw function and report it.
  *
- * (II) In setup and draw function it performs:
+ * Also, in setup() and draw() function it performs:
  * 1. Extraction of the code written by the user
  * 2. Conversion of the code to an array of lines of code
  * 3. Catching variable and function decleration
  * 4. Checking if the declared function/variable is a reserved p5.js
  *    constant or function and report it.
  *
+ * @method _fesCodeReader
+ * @private
  */
-
-import p5 from '../main';
-import { translator } from '../internationalization';
-import * as constants from '../constants';
-
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesCodeReader = () => {};
 } else {
