@@ -6,7 +6,7 @@ The Friendly Error System (FES, 🌸) aims to help new programmers by providing 
 
 The FES prints messages in the console window, as seen in the [p5.js Web Editor](https://github.com/processing/p5.js-web-editor) and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
 
- *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸](https://forms.gle/2qStHJFSiw9XMCQJ8)
+ *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸](https://forms.gle/4cCGE1ecfoiaMGzt7)
 
 
 ## Writing Friendly Error Messages
