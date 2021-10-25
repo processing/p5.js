@@ -4,18 +4,23 @@
 
 The Friendly Error System (FES, 🌸) aims to help new programmers by providing error messages in simple, friendly language. It supplements browser console error messages by adding an alternative description of the error and links to helpful references.
 
-The FES prints messages in the console window, as seen in the [p5.js Web Editor](https://github.com/processing/p5.js-web-editor) and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
+The FES prints messages in the console window, as seen in the [p5.js Web Editor] and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
 
- *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸](https://forms.gle/4cCGE1ecfoiaMGzt7)
+ *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸]
 
+[p5.js Web Editor]: (https://github.com/processing/p5.js-web-editor)
+[🌸 SURVEY 🌸]: (https://forms.gle/4cCGE1ecfoiaMGzt7)
 
 ## Writing Friendly Error Messages
 
 In this section, we will talk about how to contribute by writing and translating error messages.
 
-The FES is a part of the p5.js' [internationalization](https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md) effort. We generate all FES messages' content through [i18next](https://www.i18next.com/)-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of p5.
+The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of p5.
 
 We welcome contributions from all over the world! 🌐
+
+[internationalization]: (https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md)
+[i18next]: (https://www.i18next.com/)
 
 #### Writing Best Practice
 
@@ -23,11 +28,15 @@ Writers writing FES messages should prioritize lowering the barrier to understan
 
 Here are some highlights from our upcoming best practice doc:
 
-* Use simple sentences. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation](https://www.i18next.com/translation-function/interpolation) feature.
-* Keep the language friendly and inclusive. Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct).
+* Use simple sentences. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
+* Keep the language friendly and inclusive. Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
 * Avoid using figures of speech. Prioritize cross-cultural communication.
-* Try to spot possible "[expert blind spots](https://tilt.colostate.edu/TipsAndGuides/Tip/181)" in an error message and its related docs.
+* Try to spot possible "[expert blind spots]" in an error message and its related docs.
 * Introduce one technical concept or term at a time—link one external resource written in a beginner-friendly language with plenty of short, practical examples.
+
+[interpolation]: (https://www.i18next.com/translation-function/interpolation)
+[p5.js Code of Conduct]: (https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct)
+[expert blind spots]: (https://tilt.colostate.edu/TipsAndGuides/Tip/181)
 
 #### Translation File Location
 
@@ -78,11 +87,14 @@ translator('fes.fileLoadError.image', { suggestion });
 
 #### How to Add or Modify Translation
 
-The [internationalization doc](https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md) has a step-by-step guide on adding and modifying translation files.
+The [internationalization doc] has a step-by-step guide on adding and modifying translation files.
 
+[internationalization doc]: (https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md)
 
 ## Understanding How FES Works
-In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md).
+In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
+
+[FES Reference + Dev Notes]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md)
 
 #### Overview
 p5.js calls the FES from multiple locations for different situations, when:
@@ -98,12 +110,15 @@ You can find the translation files used by the `translator()` inside:
 
 #### FES Message Generators
 These functions are responsible for catching errors and generating FES messages:
-* [`_friendlyFileLoadError()`](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md#corefriendly_errorsfile_errorsfriendlyfileloaderror) catches file loading errors.
-* [`_validateParameters()`](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md#corefriendly_errorsvalidate_paramsvalidateparameters) checks a p5.js function’s input parameters based on inline documentations.
-* [`_fesErrorMontitor()`](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md#corefriendly_errorsfes_corefeserrormonitor) handles global errors.
-* `helpForMisusedAtTopLevelCode()` is called on window load to check for use of p5.js functions outside of setup() or draw().
-* [`fesCodeReader()`](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md#corefriendly_errorsfes_coresketch_readerfescodereader) checks if a p5.js reserved constant or function is redefined by the user.
-* [`checkForUserDefinedFunctions()`](https://github.com/almchung/p5jsdocs/blob/main/fes_reference_dev_notes.md#corefriendly_errorsfes_corecheckforuserdefinedfunctions) checks if any user defined function has been used with a capitalization mistake.
+* [`_friendlyFileLoadError()`] catches file loading errors.
+* [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documentations.
+* [`_fesErrorMontitor()`] handles global errors.
+
+[`_friendlyFileLoadError()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfile_errorsfriendlyfileloaderror)
+[`_validateParameters()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsvalidate_paramsvalidateparameters)
+[`_fesErrorMontitor()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_corefeserrormonitor)
+[`fesCodeReader()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_coresketch_readerfescodereader)
+[`checkForUserDefinedFunctions()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_corecheckforuserdefinedfunctions)
 
 #### FES Message Displayer
 `fes_core.js/_friendlyError()` prints generated friendly error messages in the console. For example:
@@ -116,7 +131,7 @@ p5._friendlyError(
 This function can be called anywhere in p5.
 
 ## Turning Off the FES
-There may be cases where you want to [disable the FES for performance](https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes).
+There may be cases where you want to [disable the FES for performance].
 
 `p5.disableFriendlyErrors` allows you to turn off the FES when set to `true`.
 
@@ -130,3 +145,5 @@ function setup() {
 ```
 
 The single minified file of p5 (p5.min.js) automatically omits the FES.
+
+[disable the FES for performance]: (https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes)
