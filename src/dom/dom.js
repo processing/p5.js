@@ -2761,7 +2761,7 @@ p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
  *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
  * }
  * function onVideoLoad() {
- *   // The media will not play untill some explicitly triggered.
+ *   // The media will not play until some explicitly triggered.
  *   videoElement.autoplay(false);
  *   videoElement.volume(0);
  *   videoElement.size(100, 100);
