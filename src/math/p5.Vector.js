@@ -399,7 +399,12 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
       const xComponent = parseFloat(x.x);
       const yComponent = parseFloat(x.y);
       const zComponent = parseFloat(x.z);
-      return calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
+      return calculateRemainder3D.call(
+        this,
+        xComponent,
+        yComponent,
+        zComponent
+      );
     }
   } else if (x instanceof Array) {
     if (x.every(element => Number.isFinite(element))) {
@@ -421,7 +426,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
     const vectorComponents = [...arguments];
     if (vectorComponents.every(element => Number.isFinite(element))) {
       if (vectorComponents.length === 2) {
-       return calculateRemainder2D.call(
+        return calculateRemainder2D.call(
           this,
           vectorComponents[0],
           vectorComponents[1]
