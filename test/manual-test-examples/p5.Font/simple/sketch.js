@@ -86,7 +86,7 @@ var textSketch1958 = function(p) {
     function textAsWords(words, x, y) {
       var tw,
         spaceW = p.textWidth(' ');
-      console.log(spaceW);
+      //console.log(spaceW);
       for (var i = 0; i < words.length; i++) {
         if (i !== 0) {
           tw = p.textWidth(words[i - 1]);

@@ -238,8 +238,8 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
   function isSpace(i) {
     return (
       (glyphs[i].name && glyphs[i].name === 'space') ||
-      (txt.length === glyphs.length && txt[i] === ' ') ||
-      (glyphs[i].index && glyphs[i].index === 3)
+      (txt.length === glyphs.length && txt[i] === ' ') //||
+      //(glyphs[i].index && glyphs[i].index === 3)
     );
   }
 
