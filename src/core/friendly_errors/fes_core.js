@@ -169,12 +169,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _friendlyError
    * @private
-   * @param  {Number} message message to be printed
-   * @param  {String} [method] name of method
-   * @param  {Number|String} [color]   CSS color string or error type
+   * @param  {String} message           message to be printed
+   * @param  {String} [func]            name of function calling
+   * @param  {Number|String} [color]    CSS color string or error type
    */
-  p5._friendlyError = function(message, method, color) {
-    p5._report(message, method, color);
+  p5._friendlyError = function(message, func, color) {
+    p5._report(message, func, color);
   };
 
   /**
@@ -249,8 +249,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method checkForUserDefinedFunctions
    * @private
-   * @param {*} context The current default context. This is set to window
-   *                   in "global mode" and to a p5 instance in "instance mode"
+   * @param {*} context   Current default context. Set to window in
+   *                      "global mode" and to a p5 instance in "instance mode"
    */
   const checkForUserDefinedFunctions = context => {
     if (p5.disableFriendlyErrors) return;
@@ -562,14 +562,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * The main function for handling global errors.
+   * Handles various errors that the browser show.
+   * This is the main function for handling global errors.
    *
    * Called when an error happens. It detects the type of error
    * and generate an appropriate error message.
    *
    * @method fesErrorMonitor
    * @private
-   * @param {*} e The object to extract error details from
+   * @param {*} e  Event object to extract error details from
    */
   const fesErrorMonitor = e => {
     if (p5.disableFriendlyErrors) return;

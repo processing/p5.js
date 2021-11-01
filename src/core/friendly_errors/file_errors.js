@@ -77,7 +77,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
   /**
-   * Called internally if there is a error during file loading.
+   * Called internally if there is an error during file loading.
    *
    * @method _friendlyFileLoadError
    * @private

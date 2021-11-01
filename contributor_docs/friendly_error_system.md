@@ -94,7 +94,7 @@ The [internationalization doc] has a step-by-step guide on adding and modifying 
 ## Understanding How FES Works
 In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
 
-[FES Reference + Dev Notes]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md)
+[FES Reference + Dev Notes]: (https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md)
 
 #### Overview
 p5.js calls the FES from multiple locations for different situations, when:
@@ -109,16 +109,17 @@ You can find the translation files used by the `translator()` inside:
 `translations/`.
 
 #### FES Message Generators
-These functions are responsible for catching errors and generating FES messages:
+These functions are mainly responsible for catching errors and generating FES messages:
 * [`_friendlyFileLoadError()`] catches file loading errors.
 * [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documentations.
 * [`_fesErrorMontitor()`] handles global errors.
 
-[`_friendlyFileLoadError()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfile_errorsfriendlyfileloaderror)
-[`_validateParameters()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsvalidate_paramsvalidateparameters)
-[`_fesErrorMontitor()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_corefeserrormonitor)
-[`fesCodeReader()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_coresketch_readerfescodereader)
-[`checkForUserDefinedFunctions()`]: (https://github.com/almchung/p5.js/blob/gsdocs-fes/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_corecheckforuserdefinedfunctions)
+For full reference, please see our [Dev Notes].
+
+[`_friendlyFileLoadError()`]: (https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfile_errorsfriendlyfileloaderror)
+[`_validateParameters()`]: (https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsvalidate_paramsvalidateparameters)
+[`_fesErrorMontitor()`]: (https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#corefriendly_errorsfes_corefeserrormonitor)
+[Dev Notes]: (https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md)
 
 #### FES Message Displayer
 `fes_core.js/_friendlyError()` prints generated friendly error messages in the console. For example:

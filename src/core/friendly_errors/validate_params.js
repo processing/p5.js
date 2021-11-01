@@ -680,7 +680,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Validates parameters and generates corresponding error messages
+   * Runs parameter validation by matching the input parameters with information
+   * from `docs/reference/data.json`
+   *
    * @method _validateParameters
    * @private
    * @param  {String}               func    the name of the function

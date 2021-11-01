@@ -8,15 +8,9 @@ import { translator } from '../internationalization';
 import * as constants from '../constants';
 
 /**
- * Checks if any p5.js constant or function is declared by
- * the user outside setup and draw function and report it.
- *
- * Also, in setup() and draw() function it performs:
- * 1. Extraction of the code written by the user
- * 2. Conversion of the code to an array of lines of code
- * 3. Catching variable and function decleration
- * 4. Checking if the declared function/variable is a reserved p5.js
- *    constant or function and report it.
+ * Checks if any p5.js constant/function is declared outside of setup
+ * and draw function. Also checks any reserved constant/function is
+ * redeclared.
  *
  * @method _fesCodeReader
  * @private
