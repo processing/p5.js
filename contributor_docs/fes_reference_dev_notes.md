@@ -3,7 +3,7 @@ This document contains reference and development notes for the p5.js Friendly Er
 
 ## FES Functions: Reference
 
-### _report()
+### `_report()`
 ##### Description
 `_report()` is the primary function that prints directly to the console with the output of the error helper message.
 If `_fesLogger` is set ( i.e., we are running tests ), _report will call _fesLogger instead of console.log.
@@ -27,7 +27,7 @@ _report(message, func, color)
 core/friendly_errors/fes_core.js
 
 
-### _friendlyError()
+### `_friendlyError()`
 ##### Description
 `_friendlyError()` creates and prints a friendly error message. Any p5 function can call this function to offer a friendly error message.
 The call sequence to `_friendlyError` looks something like this:
@@ -54,7 +54,7 @@ _friendlyError(message, func, color)
 ##### Location
 core/friendly_errors/fes_core.js
 
-### _friendlyFileLoadError()
+### `_friendlyFileLoadError()`
 ##### Examples
 File loading error example:
 ````JavaScript
@@ -105,7 +105,7 @@ _friendlyFileLoadError(errorType, filePath)
 ##### Location
 core/friendly_errors/file_errors.js
 
-### validateParameters()
+### `validateParameters()`
 ##### Examples
 Missing parameter example:
 ````JavaScript
@@ -143,7 +143,7 @@ _validateParameters(func, args)
 ##### Location
 core/friendly_errors/validate_params.js
 
-### fesErrorMonitor()
+### `fesErrorMonitor()`
 ##### Examples
 Internal Error Example 1
 ````JavaScript
@@ -219,7 +219,7 @@ fesErrorMonitor(event)
 ##### Location
 core/friendly_errors/fes_core.js
 
-### _fesCodeReader()
+### `_fesCodeReader()`
 ##### Examples
 Redefining p5.js reserved constant
 ````JavaScript
@@ -252,7 +252,7 @@ This function is executed whenever the `load` event is triggered.
 ##### Location
 core/friendly_errors/fes_core/sketch_reader.js
 
-### checkForUserDefinedFunctions()
+### `checkForUserDefinedFunctions()`
 ##### Examples
 ````JavaScript
 function preLoad() {
