@@ -126,6 +126,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Prints out a fancy, colorful message to the console log
+   * Attaches Friendly Errors prefix [fes.pre] to the message.
    *
    * @method _report
    * @private
@@ -178,7 +179,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * This is called internally if there is a error with autoplay.
+   * This is called internally if there is a error with autoplay. Generates
+   * and prints a friendly error message [fes.autoplay].
    *
    * @method _friendlyAutoplayError
    * @private
@@ -245,7 +247,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Checks capitalization for user defined functions.
+   * Checks capitalization for user defined functions. Generates and prints
+   * a friendly error message [fes.checkUserDefinedFns].
    *
    * @method checkForUserDefinedFunctions
    * @private
@@ -290,7 +293,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Compares the symbol caught in the ReferenceErrror to everything in
-   * misusedAtTopLevel ( all public p5 properties ).
+   * misusedAtTopLevel ( all public p5 properties ). Generates and prints
+   * a friendly error message [fes.misspelling].
    *
    * @method handleMisspelling
    * @private
@@ -389,7 +393,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Prints a friendly stacktrace for user-written functions
+   * Prints a friendly stacktrace for user-written functions for "global" errors
+   * Generates and prints a friendly error message [fes.globalErrors.stackTop,
+   * fes.globalErrors.stackSubseq].
+   *
    * @method printFriendlyStack
    * @private
    * @param {Array} friendlyStack
@@ -425,14 +432,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Takes a stacktrace array and filters out all frames that show internal p5
-   * details.
+   * details. Generates and prints a friendly error message [fes.wrongPreload,
+   * fes.libraryError].
    *
    * The processed stack is used to find whether the error happended internally
    * within the library, and if the error was due to a non-loadX() method
    * being used in preload.
-   * "Internally" here means that the exact location of the error (the
-   * top of the stack) is a piece of code write in the p5.js library
-   * (which may or may not have been called from the user's sketch)
+   *
+   * "Internally" here means that the exact location of the error (the top of
+   * the stack) is a piece of code write in the p5.js library (which may or
+   * may not have been called from the user's sketch).
    *
    * @method processStack
    * @private
@@ -562,11 +571,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Handles various errors that the browser show.
-   * This is the main function for handling global errors.
+   * Handles "global" errors that the browser catches.
    *
-   * Called when an error happens. It detects the type of error
-   * and generate an appropriate error message.
+   * Called when an error event happens and detects the type of error.
+   * Generates and prints a friendly error message [fes.globalErrors.syntax.*,
+   * fes.globalErrors.reference.*, fes.globalErrors.type.*].
    *
    * @method fesErrorMonitor
    * @private
@@ -915,6 +924,12 @@ misusedAtTopLevelCode = null;
 const FAQ_URL =
   'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
 
+/**
+ * A helper function for populating misusedAtTopLevel list.
+ *
+ * @method defineMisusedAtTopLevelCode
+ * @private
+ */
 defineMisusedAtTopLevelCode = () => {
   const uniqueNamesFound = {};
 
@@ -960,6 +975,18 @@ defineMisusedAtTopLevelCode = () => {
   misusedAtTopLevelCode.sort((a, b) => b.name.length - a.name.length);
 };
 
+/**
+ * Detects browser level error event for p5 constants/functions used outside
+ * of setup() and draw().
+ * Then generates and prints a friendly error message [fes.misusedTopLevel].
+ *
+ * @method helpForMisusedAtTopLevelCode
+ * @private
+ * @param {e}     event
+ * @param {log}   log message
+ *
+ * @returns {Boolean} true
+ */
 const helpForMisusedAtTopLevelCode = (e, log) => {
   if (!log) {
     log = console.log.bind(console);

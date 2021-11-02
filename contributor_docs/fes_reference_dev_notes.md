@@ -30,11 +30,25 @@ core/friendly_errors/fes_core.js
 ### `_friendlyError()`
 ##### Description
 `_friendlyError()` creates and prints a friendly error message. Any p5 function can call this function to offer a friendly error message.
+
+Implemented to functions in:
+* `core/friendly_errors/fes_core/fesErrorMonitor()`
+* `core/friendly_errors/fes_core/checkForUserDefinedFunctions()`
+* `core/friendly_errors/fes_core/handleMisspelling()``
+* `core/friendly_errors/fes_core/processStack()`
+* `core/friendly_errors/file_errors`
+* `core/friendly_errors/sketch_reader`
+* `core/friendly_errors/validate_params/_friendlyParamError()`
+* `core/main/_createFriendlyGlobalFunctionBinder()`
+* `core/shape/vertex`
+* `math/p5.Vector`
+
 The call sequence to `_friendlyError` looks something like this:
 ```
 _friendlyError
   _report
 ```
+
 ##### Syntax
 ````JavaScript
 _friendlyError(message)
@@ -56,7 +70,7 @@ core/friendly_errors/fes_core.js
 
 ### `_friendlyFileLoadError()`
 ##### Examples
-File loading error example:
+Example of file loading error:
 ````JavaScript
 /// missing font file
 let myFont;
@@ -76,10 +90,11 @@ function draw() {};
 ##### Description
 `_friendlyFileLoadError()` is called by the `loadX()` functions if there is an error during file loading.
 
-This function generates and displays friendly error messages if a file fails to load correctly. It also checks if the size of a file might be too large to load and produces a warning.
+This function generates and displays friendly error messages if a file fails to load correctly. It also checks and produces a warning if the size of a file is too large to load.
 
-Currently version contains templates for generating error messages for `image`, `XML`, `table`, `text`, `json` and `font` files.
-Implemented to:
+The current version contains templates for generating error messages for `image`, `XML`, `table`, `text`, `json` and `font` files.
+
+Implemented to functions in:
 * `image/loading_displaying/loadImage()`
 * `io/files/loadFont()`
 * `io/files/loadTable()`
@@ -107,30 +122,71 @@ core/friendly_errors/file_errors.js
 
 ### `validateParameters()`
 ##### Examples
-Missing parameter example:
+Example of a missing parameter:
 ````JavaScript
 arc(1, 1, 10.5, 10);
 // FES will generate the following message in the console:
 // > 🌸 p5.js says: It looks like arc() received an empty variable in spot #4 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
 // > 🌸 p5.js says: It looks like arc() received an empty variable in spot #5 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
 ````
-Wrong type example:
+Example of a type mismatch:
 ````JavaScript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 // FES will generate the following message in the console:
 // > 🌸 p5.js says: arc() was expecting Number for parameter #0 (zero-based index), received string instead. [http://p5js.org/reference/#p5/arc]
 ````
 ##### Description
-`validateParameters()` runs parameter validation by matching the input parameters with information from `docs/reference/data.json`, which is created from the function's inline documentation. It checks that a function call contains the correct number and the correct type of parameters.
+`validateParameters()` runs parameter validation by matching the input parameters with information from `docs/reference/data.json`, which is created from the function's inline documentation. It checks that a function call contains the correct number and the correct types of parameters.
 
 This function can be called through: `p5._validateParameters(FUNCT_NAME, ARGUMENTS)` or, `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` inside the function that requires parameter validation. It is recommended to use static version, `p5._validateParameters` for general purposes. `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` mainly remained for debugging and unit testing purposes.
 
 Implemented to functions in:
+* `accessibility/outputs`
 * `color/creating_reading`
-* `core/2d_primitives`
-* `core/curves`
+* `color/setting`
+* `core/environment`
+* `core/rendering`
+* `core/shape/2d_primitives`
+* `core/shape/attributes`
+* `core/shape/curves`
+* `core/shape/vertex`
+* `core/transform`
+* `data/p5.TypedDict`
+* `dom/dom`
+* `events/acceleration`
+* `events/keyboard`
+* `image/image`
+* `image/loading_displaying`
+* `image/p5.Image`
+* `image/pixel`
+* `io/files`
+* `math/calculation`
+* `math/random`
+* `typography/attributes`
+* `typography/loading_displaying`
 * `utilities/string_functions`
+* `webgl/3d_primitives`
+* `webgl/interaction`
+* `webgl/light`
+* `webgl/loading`
+* `webgl/material`
+* `webgl/p5.Camera`
 
+The call sequence from _validateParameters looks something like this:
+```
+validateParameters
+   buildArgTypeCache
+      addType
+    lookupParamDoc
+    scoreOverload
+      testParamTypes
+      testParamType
+    getOverloadErrors
+    _friendlyParamError
+      ValidationError
+      report
+        friendlyWelcome
+```
 ##### Syntax
 ````JavaScript
 _validateParameters(func, args)
@@ -184,7 +240,7 @@ function setup() {
 // > 🌸 p5.js says: It seems that you may have accidentally written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]). Please correct it to color if you wish to use the function from p5.js (http://p5js.org/reference/#/p5/color)
 ````
 ##### Description
-`fesErrorMonitor()` handles various errors that the browser show. The function generates global error messages.
+`fesErrorMonitor()` handles various errors that the browser shows. The function generates global error messages.
 
 `_fesErrorMonitor()` can be called either by an error event, an unhandled rejection event, or it can be manually called in a catch block as follows:
 ```
@@ -219,7 +275,7 @@ fesErrorMonitor(event)
 ##### Location
 core/friendly_errors/fes_core.js
 
-### `_fesCodeReader()`
+### `fesCodeReader()`
 ##### Examples
 Redefining p5.js reserved constant
 ````JavaScript
@@ -240,8 +296,8 @@ function setup() {
 // > 🌸 p5.js says: you have used a p5.js reserved function "text" make sure you change the function name to something else.
 ````
 ##### Description
-`_fesCodeReader()` checks if (1) any p5.js constant or function is used outside of setup and draw function and (2) any p5.js reserved constant or function is redeclared.
-In setup() and draw() function it performs:
+`fesCodeReader()` checks (1) if any p5.js constant or function is used outside of the setup() and/or draw() function and (2) if any p5.js reserved constant or function is redeclared.
+In setup() and draw() functions it performs:
  * Extraction of the code written by the user
  * Conversion of the code to an array of lines of code
  * Catching variable and function declaration
@@ -286,7 +342,7 @@ core/friendly_errors/fes_core.js
 * `stacktrace.js` contains the code to parse the error stack, borrowed from https://github.com/stacktracejs/stacktrace.js. This is called by `fesErrorMonitor()` and `handleMisspelling()`
 
 #### Preparing p5.js Objects for Parameter Validation
-* Any p5.js objects that will be used for parameter validation will need to assign value for `name` parameter (name of the object) within the class declaration. e.g.:
+* Any p5.js objects that will be used for parameter validation will need to assign a value for `name` parameter (name of the object) within the class declaration. e.g.:
 ```javascript
 p5.newObject = function(parameter) {
    this.parameter = 'some parameter';
@@ -332,14 +388,14 @@ will escape FES, because there is an acceptable parameter pattern (`Number`, `Nu
 
 * The extracting variable/function names feature of FES's `sketch_reader` is not perfect and some cases might go undetected (for eg: when all the code is written in a single line).
 
-## Thoughts for the Future
-* re-introduce color coding for the Web Editor.
+## Thoughts for Future Work
+* Re-introduce color coding for the Web Editor.
 
-* More unit testings.
+* Add more unit tests for comprehensive test coverage.
 
 * More intuitive and narrowed down output messages.
 
-* All the colors are checked for being color blind friendly.
+* All the colors being used should be color blind friendly.
 
 * Identify more common error types and generalize with FES (e.g. `bezierVertex()`, `quadraticVertex()` - required object not initiated; checking Number parameters positive for `nf()` `nfc()` `nfp()` `nfs()`)
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Friendly Error System (FES, 🌸) aims to help new programmers by providing error messages in simple, friendly language. It supplements browser console error messages by adding an alternative description of the error and links to helpful references.
+The Friendly Error System (FES, 🌸) aims to help new programmers by providing error messages in simple, friendly language. It supplements your browser's console error messages by adding an alternative description of the error and links to helpful references.
 
 The FES prints messages in the console window, as seen in the [p5.js Web Editor] and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
 
@@ -13,20 +13,20 @@ The FES prints messages in the console window, as seen in the [p5.js Web Editor]
 
 ## Writing Friendly Error Messages
 
-In this section, we will talk about how to contribute by writing and translating error messages.
+In this section, we will describe how you can contribute to the p5.js library by writing and translating error messages.
 
-The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of p5.
+The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of the p5.js.
 
-We welcome contributions from all over the world! 🌐
+We welcome contributions from all around the world! 🌐
 
 [internationalization]: (https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md)
 [i18next]: (https://www.i18next.com/)
 
-#### Writing Best Practice
+#### Writing Best Practices
 
-Writers writing FES messages should prioritize lowering the barrier to understanding error messages and debugging.
+FES message writers should prioritize lowering the barrier of understanding error messages and debugging.
 
-Here are some highlights from our upcoming best practice doc:
+Here are some highlights from our upcoming best-practice doc:
 
 * Use simple sentences. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
 * Keep the language friendly and inclusive. Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
@@ -38,7 +38,7 @@ Here are some highlights from our upcoming best practice doc:
 [p5.js Code of Conduct]: (https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct)
 [expert blind spots]: (https://tilt.colostate.edu/TipsAndGuides/Tip/181)
 
-#### Translation File Location
+#### Location of Translation Files
 
 `translator()` is based on i18next and imported from `src/core/internationalization.js`. It generates messages by looking up text data from a JSON translation file:
 ```
@@ -50,7 +50,7 @@ If the detected browser locale is Korean (language designator: `ko`), the `trans
 
 The language designator can also include regional information, such as `es-PE` (Spanish from Peru).
 
-#### Translation File Structure
+#### Structure of Translation Files
 `translation.json` has a [format used by i18next](https://www.i18next.com/misc/json-format).
 
 The basic format of a translation file's item has a key and a value (message) in double quotation marks `""`, closed by the curly brackets `{}`:
@@ -145,6 +145,6 @@ function setup() {
 }
 ```
 
-The single minified file of p5 (p5.min.js) automatically omits the FES.
+The single minified file of p5 (i.e., p5.min.js) automatically omits the FES.
 
 [disable the FES for performance]: (https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes)

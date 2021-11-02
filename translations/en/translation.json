@@ -42,7 +42,7 @@
         "readFromUndefined": "\nError ▶️ Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\nFor more: \n{{url1}}\n{{url2}}"
       }
     },
-    "libraryError": "An error with message \"{{error}}\" occured inside the p5js library when {{func}} was called {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
+    "libraryError": "An error with message \"{{error}}\" occurred inside the p5js library when {{func}} was called {{location}}\n\nIf not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
     "location": "(on line {{line}} in {{file}} [{{location}}])",
     "misspelling": "It seems that you may have accidentally written \"{{name}}\" instead of \"{{actualName}}\" {{location}}.\n\nPlease correct it to {{actualName}} if you wish to use the {{type}} from p5.js",
     "misspelling_plural": "It seems that you may have accidentally written \"{{name}}\" {{location}}.\n\nYou may have meant one of the following:\n{{suggestions}}",
@@ -67,6 +67,6 @@
       "reservedFunc": "you have used a p5.js reserved function \"{{symbol}}\" make sure you change the function name to something else."
     },
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
-    "wrongPreload": "An error with message \"{{error}}\" occured inside the p5js library when \"{{func}}\" was called {{location}}.\n\nIf not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
+    "wrongPreload": "An error with message \"{{error}}\" occurred inside the p5js library when \"{{func}}\" was called {{location}}.\n\nIf not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
   }
 }
