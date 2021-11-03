@@ -170,9 +170,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _friendlyError
    * @private
-   * @param  {String} message           message to be printed
-   * @param  {String} [func]            name of function calling
-   * @param  {Number|String} [color]    CSS color string or error type
+   * @param  {String} message         message to be printed
+   * @param  {String} [func]          name of function calling
+   * @param  {Number|String} [color]  CSS color string or error type
    */
   p5._friendlyError = function(message, func, color) {
     p5._report(message, func, color);
