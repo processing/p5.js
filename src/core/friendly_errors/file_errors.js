@@ -84,8 +84,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _friendlyFileLoadError
    * @private
-   * @param  {Number} errorType
-   * @param  {String} filePath
+   * @param  {Number} errorType   Number of file load error type
+   * @param  {String} filePath    Path to file caused the error
    */
   p5._friendlyFileLoadError = function(errorType, filePath) {
     const { message, method } = fileLoadErrorCases(errorType, filePath);

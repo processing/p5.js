@@ -19,8 +19,8 @@ _report(message, func, color)
 ````
 ##### Parameters
 ```
-@param  {String} message          message to be printed
-@param  {String} [func]           name of function calling
+@param  {String}        message   Message to be printed
+@param  {String}        [func]    Name of function
 @param  {Number|String} [color]   CSS color string or error type
 ```
 ##### Location
@@ -61,9 +61,9 @@ _friendlyError(message, func, color)
 ````
 ##### Parameters
 ```
-@param  {String}               message the words to be said
-@param  {String}               [func]  the name of the function to link
-@param  {Number|String}        [color] CSS color string or error type
+@param  {String}        message   Message to be printed
+@param  {String}        [func]    Name of the function
+@param  {Number|String} [color]   CSS color string or error type
 ```
 ##### Location
 core/friendly_errors/fes_core.js
@@ -116,8 +116,8 @@ _friendlyFileLoadError(errorType, filePath)
 ````
 ##### Parameters
 ```
-@param  {Number} errorType
-@param  {String} filePath
+@param  {Number}  errorType   Number of file load error type
+@param  {String}  filePath    Path to file caused the error
 ```
 ##### Location
 core/friendly_errors/file_errors.js
@@ -197,8 +197,8 @@ _validateParameters(func, args)
 ````
 ##### Parameters
 ```
-@param  {String}  func     the name of the function
-@param  {Array}   args      user input arguments
+@param  {String}  func    Name of the function
+@param  {Array}   args    User input arguments
 ```
 ##### Location
 core/friendly_errors/validate_params.js
@@ -280,7 +280,7 @@ fesErrorMonitor(event)
 ````
 ##### Parameters
 ```
-@param {*} e	  Event object to extract error details from
+@param {*}  e     Error event
 ```
 ##### Location
 core/friendly_errors/fes_core.js
@@ -363,8 +363,8 @@ core/friendly_errors/fes_core.js
 Generates and prints a friendly error message using key: `fes.misusedTopLevel`.
 ##### Parameters
 ```
-@param {e}     event
-@param {log}   log message
+@param {*}        err    Error event
+@param {Boolean}  log    false
 ```
 ##### Location
 core/friendly_errors/fes_core.js

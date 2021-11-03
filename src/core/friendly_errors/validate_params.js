@@ -687,8 +687,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _validateParameters
    * @private
-   * @param  {String}               func    the name of the function
-   * @param  {Array}                args    user input arguments
+   * @param  {String}   func    Name of the function
+   * @param  {Array}    args    User input arguments
    *
    * @example:
    *  const a;

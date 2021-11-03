@@ -103,8 +103,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method mapToReference
    * @private
-   * @param {String} message the words to be said
-   * @param {String} [func]    the name of the function to link
+   * @param {String}  message   the words to be said
+   * @param {String}  [func]    the name of function
    *
    * @returns {String}
    */
@@ -130,9 +130,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _report
    * @private
-   * @param  {String}               message the words to be said
-   * @param  {String}               [func]  the name of the function to link
-   * @param  {Number|String}        [color] CSS color string or error type
+   * @param  {String}          message  Message to be printed
+   * @param  {String}          [func]   Name of function
+   * @param  {Number|String}   [color]  CSS color string or error type
    *
    * @return console logs
    */
@@ -170,9 +170,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method _friendlyError
    * @private
-   * @param  {String} message         message to be printed
-   * @param  {String} [func]          name of function calling
-   * @param  {Number|String} [color]  CSS color string or error type
+   * @param  {String}         message   Message to be printed
+   * @param  {String}         [func]    Name of the function linked to error
+   * @param  {Number|String}  [color]   CSS color string or error type
    */
   p5._friendlyError = function(message, func, color) {
     p5._report(message, func, color);
@@ -301,8 +301,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *
    * @method handleMisspelling
    * @private
-   * @param {String} errSym the symbol to whose spelling to check
-   * @param {Error} error the ReferenceError object
+   * @param {String} errSym   Symbol to whose spelling to check
+   * @param {Error} error     ReferenceError object
    *
    * @returns {Boolean} tell whether error was likely due to typo
    */
@@ -992,8 +992,8 @@ defineMisusedAtTopLevelCode = () => {
  *
  * @method helpForMisusedAtTopLevelCode
  * @private
- * @param {e}     event
- * @param {log}   log message
+ * @param {Event} e       Error event
+ * @param {Boolean} log   false
  *
  * @returns {Boolean} true
  */
