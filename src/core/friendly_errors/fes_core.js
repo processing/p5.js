@@ -179,7 +179,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * This is called internally if there is a error with autoplay. Generates
+   * This is called internally if there is an error with autoplay. Generates
    * and prints a friendly error message [fes.autoplay].
    *
    * @method _friendlyAutoplayError
@@ -247,8 +247,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Checks capitalization for user defined functions. Generates and prints
-   * a friendly error message [fes.checkUserDefinedFns].
+   * Checks capitalization for user defined functions.
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.checkUserDefinedFns".
    *
    * @method checkForUserDefinedFunctions
    * @private
@@ -293,8 +295,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Compares the symbol caught in the ReferenceErrror to everything in
-   * misusedAtTopLevel ( all public p5 properties ). Generates and prints
-   * a friendly error message [fes.misspelling].
+   * misusedAtTopLevel ( all public p5 properties ).
+   *
+   * Generates and prints a friendly error message using key: "fes.misspelling".
    *
    * @method handleMisspelling
    * @private
@@ -351,7 +354,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       if (matchedSymbols.length === 1) {
         // To be used when there is only one closest match. The count parameter
         // allows i18n to pick between the keys "fes.misspelling" and
-        // "fes.misspelling__plural"
+        // "fes.misspelling_plural"
         msg = translator('fes.misspelling', {
           name: errSym,
           actualName: matchedSymbols[0].name,
@@ -394,8 +397,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Prints a friendly stacktrace for user-written functions for "global" errors
-   * Generates and prints a friendly error message [fes.globalErrors.stackTop,
-   * fes.globalErrors.stackSubseq].
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.globalErrors.stackTop", "fes.globalErrors.stackSubseq".
    *
    * @method printFriendlyStack
    * @private
@@ -432,8 +436,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Takes a stacktrace array and filters out all frames that show internal p5
-   * details. Generates and prints a friendly error message [fes.wrongPreload,
-   * fes.libraryError].
+   * details.
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.wrongPreload", "fes.libraryError".
    *
    * The processed stack is used to find whether the error happended internally
    * within the library, and if the error was due to a non-loadX() method
@@ -574,8 +580,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * Handles "global" errors that the browser catches.
    *
    * Called when an error event happens and detects the type of error.
-   * Generates and prints a friendly error message [fes.globalErrors.syntax.*,
-   * fes.globalErrors.reference.*, fes.globalErrors.type.*].
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.globalErrors.syntax.[*]", "fes.globalErrors.reference.[*]",
+   * "fes.globalErrors.type.[*]".
    *
    * @method fesErrorMonitor
    * @private
@@ -978,7 +986,9 @@ defineMisusedAtTopLevelCode = () => {
 /**
  * Detects browser level error event for p5 constants/functions used outside
  * of setup() and draw().
- * Then generates and prints a friendly error message [fes.misusedTopLevel].
+ *
+ * Generates and prints a friendly error message using key:
+ * "fes.misusedTopLevel".
  *
  * @method helpForMisusedAtTopLevelCode
  * @private

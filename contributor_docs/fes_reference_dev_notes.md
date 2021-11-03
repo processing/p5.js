@@ -34,7 +34,7 @@ core/friendly_errors/fes_core.js
 Implemented to functions in:
 * `core/friendly_errors/fes_core/fesErrorMonitor()`
 * `core/friendly_errors/fes_core/checkForUserDefinedFunctions()`
-* `core/friendly_errors/fes_core/handleMisspelling()``
+* `core/friendly_errors/fes_core/handleMisspelling()`
 * `core/friendly_errors/fes_core/processStack()`
 * `core/friendly_errors/file_errors`
 * `core/friendly_errors/sketch_reader`
@@ -70,7 +70,7 @@ core/friendly_errors/fes_core.js
 
 ### `_friendlyFileLoadError()`
 ##### Examples
-Example of file loading error:
+Example of File Loading Error:
 ````JavaScript
 /// missing font file
 let myFont;
@@ -89,6 +89,8 @@ function draw() {};
 ````
 ##### Description
 `_friendlyFileLoadError()` is called by the `loadX()` functions if there is an error during file loading.
+
+Generates and prints a friendly error message using key: `fes.fileLoadError.*`.
 
 This function generates and displays friendly error messages if a file fails to load correctly. It also checks and produces a warning if the size of a file is too large to load.
 
@@ -122,14 +124,14 @@ core/friendly_errors/file_errors.js
 
 ### `validateParameters()`
 ##### Examples
-Example of a missing parameter:
+Example of a Missing Parameter:
 ````JavaScript
 arc(1, 1, 10.5, 10);
 // FES will generate the following message in the console:
 // > 🌸 p5.js says: It looks like arc() received an empty variable in spot #4 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
 // > 🌸 p5.js says: It looks like arc() received an empty variable in spot #5 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
 ````
-Example of a type mismatch:
+Example of a Type Mismatch:
 ````JavaScript
 arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 // FES will generate the following message in the console:
@@ -137,6 +139,8 @@ arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
 ````
 ##### Description
 `validateParameters()` runs parameter validation by matching the input parameters with information from `docs/reference/data.json`, which is created from the function's inline documentation. It checks that a function call contains the correct number and the correct types of parameters.
+
+Generates and prints a friendly error message using key: `fes.friendlyParamError.*`.
 
 This function can be called through: `p5._validateParameters(FUNCT_NAME, ARGUMENTS)` or, `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` inside the function that requires parameter validation. It is recommended to use static version, `p5._validateParameters` for general purposes. `p5.prototype._validateParameters(FUNCT_NAME, ARGUMENTS)` mainly remained for debugging and unit testing purposes.
 
@@ -220,7 +224,7 @@ function setup() {
 }
 // > 🌸 p5.js says: An error with message "Cannot read property 'bind' of undefined" occured inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7]) If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
 ````
-Error in user's sketch example (scope)
+Example of an Error in User's Sketch (Scope)
 ````JavaScript
 function setup() {
   let b = 1;
@@ -231,7 +235,7 @@ function draw() {
 // FES will show:
 // > 🌸 p5.js says: There's an error due to "b" not being defined in the current scope (on line 5 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:5:3]). If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more: https://p5js.org/examples/data-variable-scope.html https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
 ````
-Error in user's sketch example (spelling)
+Example of an Error in User's Sketch Example (Spelling)
 ````JavaScript
 function setup() {
   colour(1, 2, 3);
@@ -241,6 +245,12 @@ function setup() {
 ````
 ##### Description
 `fesErrorMonitor()` handles various errors that the browser shows. The function generates global error messages.
+
+Generates and prints...
+* ... a friendly error message using key: `fes.globalErrors.syntax.*`, `fes.globalErrors.reference.*`, `fes.globalErrors.type.*`.
+* ... an "internal library" error message via `processStack()` using key: `fes.wrongPreload`, `fes.libraryError`.
+* ... a stacktrace message via `printFriendlyStack()` using key: `fes.globalErrors.stackTop`,`fes.globalErrors.stackSubseq`.
+* ... a spell-check message (from a reference error) via `handleMisspelling()` using key: `fes.misspelling`.
 
 `_fesErrorMonitor()` can be called either by an error event, an unhandled rejection event, or it can be manually called in a catch block as follows:
 ```
@@ -277,7 +287,7 @@ core/friendly_errors/fes_core.js
 
 ### `fesCodeReader()`
 ##### Examples
-Redefining p5.js reserved constant
+Example of Redefining p5.js Reserved Constant
 ````JavaScript
 function setup() {
   //PI is a p5.js reserved constant
@@ -286,7 +296,7 @@ function setup() {
 // FES will show:
 // > 🌸 p5.js says: you have used a p5.js reserved variable "PI" make sure you change the variable name to something else. (https://p5js.org/reference/#/p5/PI)
 ````
-Redefining p5.js reserved function
+Example of Redefining p5.js Reserved Function
 ````JavaScript
 function setup() {
   //text is a p5.js reserved function
@@ -296,8 +306,11 @@ function setup() {
 // > 🌸 p5.js says: you have used a p5.js reserved function "text" make sure you change the function name to something else.
 ````
 ##### Description
-`fesCodeReader()` checks (1) if any p5.js constant or function is used outside of the setup() and/or draw() function and (2) if any p5.js reserved constant or function is redeclared.
-In setup() and draw() functions it performs:
+`fesCodeReader()` checks (1) if any p5.js constant or function is used outside of the `setup()` and/or `draw()` function and (2) if any p5.js reserved constant or function is redeclared.
+
+Generates and print a friendly error message with type: `fes.sketchReaderErrors.reservedConst`, `fes.sketchReaderErrors.reservedFunc`.
+
+In `setup()` and `draw()` functions it performs:
  * Extraction of the code written by the user
  * Conversion of the code to an array of lines of code
  * Catching variable and function declaration
@@ -306,7 +319,7 @@ In setup() and draw() functions it performs:
 This function is executed whenever the `load` event is triggered.
 
 ##### Location
-core/friendly_errors/fes_core/sketch_reader.js
+core/friendly_errors/sketch_reader.js
 
 ### `checkForUserDefinedFunctions()`
 ##### Examples
@@ -319,6 +332,8 @@ function preLoad() {
 ````
 ##### Description
 Checks if any user defined function (`setup()`, `draw()`, `mouseMoved()`, etc.) has been used with a capitalization mistake.
+
+Generates and prints a friendly error message using key: `fes.checkUserDefinedFns`.
 ##### Syntax
 ````JavaScript
 checkForUserDefinedFunctions(context)
@@ -332,11 +347,30 @@ checkForUserDefinedFunctions(context)
 ##### Location
 core/friendly_errors/fes_core.js
 
+### `_friendlyAutoplayError()`
+##### Description
+`_friendlyAutoplayError()` is called internally if there is an error with autoplay.
+
+Generates and prints a friendly error message using key: `fes.autoplay`.
+##### Location
+core/friendly_errors/fes_core.js
+
+
+### `helpForMisusedAtTopLevelCode()`
+##### Description
+`helpForMisusedAtTopLevelCode()` is called by `fes_core.js` on window load to check for use of p5.js functions outside of `setup()` or `draw()`.
+
+Generates and prints a friendly error message using key: `fes.misusedTopLevel`.
+##### Parameters
+```
+@param {e}     event
+@param {log}   log message
+```
+##### Location
+core/friendly_errors/fes_core.js
 
 ## Development Notes: Notes from Developers
 #### Misc. FES Functions that Generates Friendly Errors
-* `helpForMisusedAtTopLevelCode()` is called by `fes_core.js` on window load to check for use of p5.js functions outside of `setup()` or `draw()`.
-
 * `friendlyWelcome()` prints to console directly. (Hidden by default.)
 
 * `stacktrace.js` contains the code to parse the error stack, borrowed from https://github.com/stacktracejs/stacktrace.js. This is called by `fesErrorMonitor()` and `handleMisspelling()`

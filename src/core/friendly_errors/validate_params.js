@@ -681,7 +681,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Runs parameter validation by matching the input parameters with information
-   * from `docs/reference/data.json`
+   * from `docs/reference/data.json`.
+   * Generates and prints a friendly error message using key:
+   * "fes.friendlyParamError.[*]".
    *
    * @method _validateParameters
    * @private

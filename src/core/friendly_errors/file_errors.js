@@ -79,6 +79,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Called internally if there is an error during file loading.
    *
+   * Generates and prints a friendly error message using key:
+   * "fes.fileLoadError.[*]".
+   *
    * @method _friendlyFileLoadError
    * @private
    * @param  {Number} errorType

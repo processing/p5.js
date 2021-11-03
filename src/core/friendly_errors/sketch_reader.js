@@ -8,9 +8,13 @@ import { translator } from '../internationalization';
 import * as constants from '../constants';
 
 /**
- * Checks if any p5.js constant/function is declared outside of setup
- * and draw function. Also checks any reserved constant/function is
+ * Checks if any p5.js constant/function is declared outside of setup()
+ * and draw() function. Also checks any reserved constant/function is
  * redeclared.
+ *
+ * Generates and prints a friendly error message using key:
+ * "fes.sketchReaderErrors.reservedConst",
+ * "fes.sketchReaderErrors.reservedFunc".
  *
  * @method _fesCodeReader
  * @private
@@ -53,8 +57,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Takes a list of variables defined by the user in the code
    * as an array and checks if the list contains p5.js constants and functions.
-   * If found then generates and print a friendly error
-   * [fes.sketchReaderErrors.reservedConst, fes.sketchReaderErrors.reservedFunc]
    *
    * @method checkForConstsAndFuncs
    * @private
@@ -243,8 +245,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   /**
    * Checks if any p5.js constant or function is declared outside a function
-   * and reports it if found. Generates and print a friendly error
-   * [fes.sketchReaderErrors.reservedConst, fes.sketchReaderErrors.reservedFunc]
+   * and reports it if found.
    *
    * @method globalConstFuncCheck
    * @private
