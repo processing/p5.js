@@ -49,13 +49,17 @@ import * as constants from '../core/constants';
  */
 p5.Vector = function Vector() {
   let x, y, z;
+
   // This is how it comes in with createVector()
-  if (arguments[0] instanceof p5) {
-    // save reference to p5 if passed in
-    this.p5 = arguments[0];
-    x = arguments[1][0] || 0;
-    y = arguments[1][1] || 0;
-    z = arguments[1][2] || 0;
+  // This check if the first argument is a function
+  if ({}.toString.call(arguments[0]) === '[object Function]') {
+    // In this case the vector have an associated p5 instance
+    this.isPInst = true;
+    this._fromRadians = arguments[0];
+    this._toRadians = arguments[1];
+    x = arguments[2] || 0;
+    y = arguments[3] || 0;
+    z = arguments[4] || 0;
     // This is what we'll get with new p5.Vector()
   } else {
     x = arguments[0] || 0;
@@ -228,8 +232,14 @@ p5.Vector.prototype.set = function set(x, y, z) {
  * </div>
  */
 p5.Vector.prototype.copy = function copy() {
-  if (this.p5) {
-    return new p5.Vector(this.p5, [this.x, this.y, this.z]);
+  if (this.isPInst) {
+    return new p5.Vector(
+      this._fromRadians,
+      this._toRadians,
+      this.x,
+      this.y,
+      this.z
+    );
   } else {
     return new p5.Vector(this.x, this.y, this.z);
   }
@@ -1125,8 +1135,8 @@ p5.Vector.prototype.cross = function cross(v) {
   const x = this.y * v.z - this.z * v.y;
   const y = this.z * v.x - this.x * v.z;
   const z = this.x * v.y - this.y * v.x;
-  if (this.p5) {
-    return new p5.Vector(this.p5, [x, y, z]);
+  if (this.isPInst) {
+    return new p5.Vector(this._fromRadians, this._toRadians, x, y, z);
   } else {
     return new p5.Vector(x, y, z);
   }
@@ -1456,7 +1466,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
  */
 p5.Vector.prototype.heading = function heading() {
   const h = Math.atan2(this.y, this.x);
-  if (this.p5) return this.p5._fromRadians(h);
+  if (this.isPInst) return this._fromRadians(h);
   return h;
 };
 
@@ -1547,7 +1557,7 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  */
 p5.Vector.prototype.rotate = function rotate(a) {
   let newHeading = this.heading() + a;
-  if (this.p5) newHeading = this.p5._toRadians(newHeading);
+  if (this.isPInst) newHeading = this._toRadians(newHeading);
   const mag = this.mag();
   this.x = Math.cos(newHeading) * mag;
   this.y = Math.sin(newHeading) * mag;
@@ -1629,8 +1639,8 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   let angle;
   angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
   angle = angle * Math.sign(this.cross(v).z || 1);
-  if (this.p5) {
-    angle = this.p5._fromRadians(angle);
+  if (this.isPInst) {
+    angle = this._fromRadians(angle);
   }
   return angle;
 };
