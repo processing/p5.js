@@ -1,5 +1,20 @@
 # FES Reference and Notes from Developers
-This document contains reference and development notes for the p5.js Friendly Error System (FES).
+This document contains reference and development notes for the p5.js Friendly Error System (FES). The FES houses several functions responsible for generating friendly error messages for different types of errors. These functions gather errors from various locations, including error events triggered by the browser, mistakes found while scanning the user code, parameter checking within the library, etc.
+
+Main functions for generating the friendly error messages are:
+* `_validateParameters()`
+* `_friendlyFileLoadError()`
+* `_friendlyError()`
+* `helpForMisusedAtTopLevelCode()`
+* `_fesErrorMontitor()`
+
+These functions are located throughout the `core/friendly_errors/` folder.
+* `fes_core.js` contains the core as well as miscellaneous functionality of the FES.
+* `_validateParameters()` is located in `validate_params.js` along with other code used for parameter validation.
+* `_friendlyFileLoadError()` is located in `file_errors.js` along with other code used for dealing with file load errors.
+* Apart from this, there's also a file `stacktrace.js`, which contains the code to parse the error stack, borrowed from: https://github.com/stacktracejs/stacktrace.js
+
+The following section presents the full reference for the FES functions.
 
 ## FES Functions: Reference
 
@@ -21,7 +36,7 @@ _report(message, func, color)
 ```
 @param  {String}        message   Message to be printed
 @param  {String}        [func]    Name of function
-@param  {Number|String} [color]   CSS color string or error type
+@param  {Number|String} [color]   CSS color code
 ```
 ##### Location
 core/friendly_errors/fes_core.js
@@ -63,30 +78,12 @@ _friendlyError(message, func, color)
 ```
 @param  {String}        message   Message to be printed
 @param  {String}        [func]    Name of the function
-@param  {Number|String} [color]   CSS color string or error type
+@param  {Number|String} [color]   CSS color code
 ```
 ##### Location
 core/friendly_errors/fes_core.js
 
 ### `_friendlyFileLoadError()`
-##### Examples
-Example of File Loading Error:
-````JavaScript
-/// missing font file
-let myFont;
-function preload() {
-  myFont = loadFont('assets/OpenSans-Regular.ttf');
-};
-function setup() {
-  fill('#ED225D');
-  textFont(myFont);
-  textSize(36);
-  text('p5*js', 10, 50);
-};
-function draw() {};
-// FES will generate the following message in the console:
-// > 🌸 p5.js says: It looks like there was a problem loading your font. Try checking if the file path [assets/OpenSans-Regular.ttf] is correct, hosting the font online, or running a local server.[https://github.com/processing/p5.js/wiki/Local-server]
-````
 ##### Description
 `_friendlyFileLoadError()` is called by the `loadX()` functions if there is an error during file loading.
 
@@ -119,24 +116,30 @@ _friendlyFileLoadError(errorType, filePath)
 @param  {Number}  errorType   Number of file load error type
 @param  {String}  filePath    Path to file caused the error
 ```
+##### Examples
+<ins>File Loading Error Example</ins>
+````JavaScript
+/// missing font file
+let myFont;
+function preload() {
+  myFont = loadFont('assets/OpenSans-Regular.ttf');
+};
+function setup() {
+  fill('#ED225D');
+  textFont(myFont);
+  textSize(36);
+  text('p5*js', 10, 50);
+};
+function draw() {};
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: It looks like there was a problem loading your font. Try checking if the file path [assets/OpenSans-Regular.ttf] is correct, hosting the font online, or running a local server.[https://github.com/processing/p5.js/wiki/Local-server]
+
+
 ##### Location
 core/friendly_errors/file_errors.js
 
 ### `validateParameters()`
-##### Examples
-Example of a Missing Parameter:
-````JavaScript
-arc(1, 1, 10.5, 10);
-// FES will generate the following message in the console:
-// > 🌸 p5.js says: It looks like arc() received an empty variable in spot #4 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
-// > 🌸 p5.js says: It looks like arc() received an empty variable in spot #5 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
-````
-Example of a Type Mismatch:
-````JavaScript
-arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
-// FES will generate the following message in the console:
-// > 🌸 p5.js says: arc() was expecting Number for parameter #0 (zero-based index), received string instead. [http://p5js.org/reference/#p5/arc]
-````
 ##### Description
 `validateParameters()` runs parameter validation by matching the input parameters with information from `docs/reference/data.json`, which is created from the function's inline documentation. It checks that a function call contains the correct number and the correct types of parameters.
 
@@ -200,49 +203,26 @@ _validateParameters(func, args)
 @param  {String}  func    Name of the function
 @param  {Array}   args    User input arguments
 ```
+##### Examples
+<ins>Example of a Missing Parameter</ins>
+````JavaScript
+arc(1, 1, 10.5, 10);
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: It looks like arc() received an empty variable in spot #4 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
+
+> 🌸 p5.js says: It looks like arc() received an empty variable in spot #5 (zero-based index). If not intentional, this is often a problem with scope: [https://p5js.org/examples/data-variable-scope.html]. [http://p5js.org/reference/#p5/arc]
+
+<ins>Example of a Type Mismatch</ins>
+````JavaScript
+arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: arc() was expecting Number for parameter #0 (zero-based index), received string instead. [http://p5js.org/reference/#p5/arc]
 ##### Location
 core/friendly_errors/validate_params.js
 
 ### `fesErrorMonitor()`
-##### Examples
-Internal Error Example 1
-````JavaScript
-function preload() {
-  // error in background() due to it being called in
-  // preload
-  background(200);
-}
-// FES will show:
-// > 🌸 p5.js says: An error with message "Cannot read property 'background' of undefined" occured inside the p5js library when "background" was called (on line 4 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:4:3]).
-//If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
-````
-Internal Error Example 2
-````JavaScript
-function setup() {
-  cnv = createCanvas(200, 200);
-  cnv.mouseClicked();
-}
-// > 🌸 p5.js says: An error with message "Cannot read property 'bind' of undefined" occured inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7]) If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
-````
-Example of an Error in User's Sketch (Scope)
-````JavaScript
-function setup() {
-  let b = 1;
-}
-function draw() {
-  b += 1;
-}
-// FES will show:
-// > 🌸 p5.js says: There's an error due to "b" not being defined in the current scope (on line 5 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:5:3]). If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more: https://p5js.org/examples/data-variable-scope.html https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
-````
-Example of an Error in User's Sketch Example (Spelling)
-````JavaScript
-function setup() {
-  colour(1, 2, 3);
-}
-// FES will show:
-// > 🌸 p5.js says: It seems that you may have accidentally written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]). Please correct it to color if you wish to use the function from p5.js (http://p5js.org/reference/#/p5/color)
-````
 ##### Description
 `fesErrorMonitor()` handles various errors that the browser shows. The function generates global error messages.
 
@@ -282,29 +262,53 @@ fesErrorMonitor(event)
 ```
 @param {*}  e     Error event
 ```
+##### Examples
+<ins>Internal Error Example 1</ins>
+````JavaScript
+function preload() {
+  // error in background() due to it being called in
+  // preload
+  background(200);
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: An error with message "Cannot read property 'background' of undefined" occured inside the p5js library when "background" was called (on line 4 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:4:3]).
+//If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
+
+<ins>Internal Error Example 2</ins>
+````JavaScript
+function setup() {
+  cnv = createCanvas(200, 200);
+  cnv.mouseClicked();
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: An error with message "Cannot read property 'bind' of undefined" occured inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7]) If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
+
+<ins>Example of an Error in User's Sketch (Scope)</ins>
+````JavaScript
+function setup() {
+  let b = 1;
+}
+function draw() {
+  b += 1;
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: There's an error due to "b" not being defined in the current scope (on line 5 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:5:3]). If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive). For more: https://p5js.org/examples/data-variable-scope.html https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong
+
+<ins>Example of an Error in User's Sketch Example (Spelling)</ins>
+````JavaScript
+function setup() {
+  colour(1, 2, 3);
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: It seems that you may have accidentally written "colour" instead of "color" (on line 2 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:2:3]). Please correct it to color if you wish to use the function from p5.js (http://p5js.org/reference/#/p5/color)
 ##### Location
 core/friendly_errors/fes_core.js
 
 ### `fesCodeReader()`
-##### Examples
-Example of Redefining p5.js Reserved Constant
-````JavaScript
-function setup() {
-  //PI is a p5.js reserved constant
-  let PI = 100;
-}
-// FES will show:
-// > 🌸 p5.js says: you have used a p5.js reserved variable "PI" make sure you change the variable name to something else. (https://p5js.org/reference/#/p5/PI)
-````
-Example of Redefining p5.js Reserved Function
-````JavaScript
-function setup() {
-  //text is a p5.js reserved function
-  let text = 100;
-}
-// FES will show:
-// > 🌸 p5.js says: you have used a p5.js reserved function "text" make sure you change the function name to something else.
-````
 ##### Description
 `fesCodeReader()` checks (1) if any p5.js constant or function is used outside of the `setup()` and/or `draw()` function and (2) if any p5.js reserved constant or function is redeclared.
 
@@ -318,18 +322,32 @@ In `setup()` and `draw()` functions it performs:
 
 This function is executed whenever the `load` event is triggered.
 
+##### Examples
+<ins>Example of Redefining p5.js Reserved Constant</ins>
+````JavaScript
+function setup() {
+  //PI is a p5.js reserved constant
+  let PI = 100;
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: you have used a p5.js reserved variable "PI" make sure you change the variable name to something else. (https://p5js.org/reference/#/p5/PI)
+
+<ins>Example of Redefining p5.js Reserved Function</ins>
+````JavaScript
+function setup() {
+  //text is a p5.js reserved function
+  let text = 100;
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: you have used a p5.js reserved function "text" make sure you change the function name to something else.
+
+
 ##### Location
 core/friendly_errors/sketch_reader.js
 
 ### `checkForUserDefinedFunctions()`
-##### Examples
-````JavaScript
-function preLoad() {
-  loadImage('myimage.png');
-}
-// FES will show:
-// > 🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
-````
 ##### Description
 Checks if any user defined function (`setup()`, `draw()`, `mouseMoved()`, etc.) has been used with a capitalization mistake.
 
@@ -344,12 +362,21 @@ checkForUserDefinedFunctions(context)
                     Set to window in "global mode" and
                     to a p5 instance in "instance mode"
 ```
+##### Examples
+````JavaScript
+function preLoad() {
+  loadImage('myimage.png');
+}
+````
+FES will generate the following message in the console:
+> 🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (http://p5js.org/reference/#/p5/preload)
+
 ##### Location
 core/friendly_errors/fes_core.js
 
 ### `_friendlyAutoplayError()`
 ##### Description
-`_friendlyAutoplayError()` is called internally if there is an error with autoplay.
+`_friendlyAutoplayError()` is called internally if there is an error linked to playing a media (for example, a video), most likely due to the browser's autoplay policy.
 
 Generates and prints a friendly error message using key: `fes.autoplay`.
 ##### Location
@@ -418,9 +445,9 @@ will escape FES, because there is an acceptable parameter pattern (`Number`, `Nu
 
 * FES is only able to detect global variables overwritten when declared using `const` or `var`. If `let` is used, they go undetected. This is not currently solvable due to the way `let` instantiates variables.
 
-* The functionality described under **`fesErrorMonitor()`** currently only works on the web editor or if running on a local server. For more details see [this](https://github.com/processing/p5.js/pull/4730).
+* The functionality described under **`fesErrorMonitor()`** currently only works on the web editor or if running on a local server. For more details see pull request [#4730](https://github.com/processing/p5.js/pull/4730).
 
-* The extracting variable/function names feature of FES's `sketch_reader` is not perfect and some cases might go undetected (for eg: when all the code is written in a single line).
+* `sketch_reader()` may miss some cases (e.g. when all the code is written in a single line) while it extracts variable/function names from the user code.
 
 ## Thoughts for Future Work
 * Re-introduce color coding for the Web Editor.
@@ -435,7 +462,7 @@ will escape FES, because there is an acceptable parameter pattern (`Number`, `Nu
 
 * Extend Global Error catching. This means catching errors that the browser is throwing to the console and matching them with friendly messages. `fesErrorMonitor()` does this for a select few kinds of errors but help in supporting more is welcome :)
 
-* Improve `sketch_reader.js`'s code reading and variable/function name extracting functionality (which extracts names of the function and variables declared by the user in their code). For example currently `sketch_reader.js` is not able to extract variable/function names properly if all the code is written in a single line.
+* Improve `sketch_reader.js`'s code reading and variable/function name extracting functionality (which extracts names of the function and variables declared by the user in their code). For example,`sketch_reader.js` cannot extract variable/function names properly if all the code is written in a single line. We welcome future proposals to identify all these "escape" cases and add unit tests to catch them.
 
 * `sketch_reader.js` can be extended and new features (for example: Alerting the user when they have declared a variable in the `draw()` function) can be added to it to better aid the user.
 ```JavaScript
@@ -454,3 +481,5 @@ const original_functions  = {
     };
 });
 ```
+* Generate the FES reference from the inline doc. This generated reference can be a separate system from our main [p5.js reference], to keep functions for sketch and console separate to reduce possible confusion.
+[p5.js reference]: (https://p5js.org/reference/)  

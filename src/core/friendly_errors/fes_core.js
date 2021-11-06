@@ -1,6 +1,26 @@
 /**
  * @for p5
  * @requires core
+ *
+ * This is the main file for the Friendly Error System (FES), containing
+ * the core as well as miscellaneous functionality of the FES. Here is a
+ * brief outline of the functions called in this system.
+ *
+ * The FES may be invoked by a call to either
+ * (1) _validateParameters, (2) _friendlyFileLoadError, (3) _friendlyError,
+ * (4) helpForMisusedAtTopLevelCode, or (5) _fesErrorMontitor.
+ *
+ * _validateParameters is located in validate_params.js along with other code
+ * used for parameter validation.
+ * _friendlyFileLoadError is located in file_errors.js along with other code
+ * used for dealing with file load errors.
+ * Apart from this, there's also a file stacktrace.js, which contains the code
+ * to parse the error stack, borrowed from:
+ * https://github.com/stacktracejs/stacktrace.js
+ *
+ * For more detailed information on the FES functions, including the call
+ * sequence of each function, please look at the FES Reference + Dev Notes:
+ * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
 import p5 from '../main';
 import { translator } from '../internationalization';
@@ -132,7 +152,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    * @param  {String}          message  Message to be printed
    * @param  {String}          [func]   Name of function
-   * @param  {Number|String}   [color]  CSS color string or error type
+   * @param  {Number|String}   [color]  CSS color code
    *
    * @return console logs
    */
@@ -172,7 +192,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    * @param  {String}         message   Message to be printed
    * @param  {String}         [func]    Name of the function linked to error
-   * @param  {Number|String}  [color]   CSS color string or error type
+   * @param  {Number|String}  [color]   CSS color code
    */
   p5._friendlyError = function(message, func, color) {
     p5._report(message, func, color);
