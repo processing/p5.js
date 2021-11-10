@@ -111,7 +111,7 @@ You can find the translation files used by the `translator()` inside:
 #### FES Message Generators
 These functions are mainly responsible for catching errors and generating FES messages:
 * [`_friendlyFileLoadError()`] catches file loading errors.
-* [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documentations.
+* [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documents.
 * [`_fesErrorMontitor()`] handles global errors.
 
 For full reference, please see our [Dev Notes].
