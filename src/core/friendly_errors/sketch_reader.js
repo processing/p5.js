@@ -1,27 +1,24 @@
 /**
  * @for p5
  * @requires core
- *
- * This file contains the code for sketch reader functionality
- * of the FES.
- * p5._fesCodeReader() with the help of other helper functions performs the following tasks
- *
- * (I) Checks if any p5.js constant or function is declared by the user outside setup and draw function
- *  and report it.
- *
- * (II) In setup and draw function it performs:
- * 1. Extraction of the code written by the user
- * 2. Conversion of the code to an array of lines of code
- * 3. Catching variable and function decleration
- * 4. Checking if the declared function/variable is a reserved p5.js
- *    constant or function and report it.
- *
  */
 
 import p5 from '../main';
 import { translator } from '../internationalization';
 import * as constants from '../constants';
 
+/**
+ * Checks if any p5.js constant/function is declared outside of setup()
+ * and draw() function. Also checks any reserved constant/function is
+ * redeclared.
+ *
+ * Generates and prints a friendly error message using key:
+ * "fes.sketchReaderErrors.reservedConst",
+ * "fes.sketchReaderErrors.reservedFunc".
+ *
+ * @method _fesCodeReader
+ * @private
+ */
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._fesCodeReader = () => {};
 } else {
@@ -60,7 +57,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
   /**
    * Takes a list of variables defined by the user in the code
    * as an array and checks if the list contains p5.js constants and functions.
-   * If found then display a friendly error message.
    *
    * @method checkForConstsAndFuncs
    * @private
@@ -248,8 +244,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Checks if any p5.js constant or function is
-   * declared outside a function and reports it if found.
+   * Checks if any p5.js constant or function is declared outside a function
+   * and reports it if found.
    *
    * @method globalConstFuncCheck
    * @private

@@ -691,8 +691,15 @@ class p5 {
 p5.instance = null;
 
 /**
- * Allows for the friendly error system (FES) to be turned off when creating a sketch,
- * which can give a significant boost to performance when needed.
+ * Turn off some features of the friendly error system (FES), which can give
+ * a significant boost to performance when needed.
+ *
+ * Note that this will disable the parts of the FES that cause performance
+ * slowdown (like argument checking). Friendly errors that have no performance
+ * cost (like giving an descriptive error if a file load fails, or warning you
+ * if you try to override p5.js functions in the global space),
+ * will remain in place.
+ *
  * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
  * disabling the friendly error system</a>.
  *
