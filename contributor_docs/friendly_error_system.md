@@ -11,6 +11,7 @@ The FES prints messages in the console window, as seen in the [p5.js Web Editor]
 [p5.js Web Editor]: https://editor.p5js.org/
 [🌸 SURVEY 🌸]: https://bit.ly/p5fesSurvey
 
+
 ## Writing Friendly Error Messages
 
 In this section, we will describe how you can contribute to the p5.js library by writing and translating error messages.
@@ -21,6 +22,7 @@ We welcome contributions from all around the world! 🌐
 
 [internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
 [i18next]: https://www.i18next.com/
+
 
 #### Writing Best Practices
 
@@ -37,6 +39,7 @@ Here are some highlights from our upcoming best-practice doc:
 [interpolation]: https://www.i18next.com/translation-function/interpolation
 [p5.js Code of Conduct]: https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct
 [expert blind spots]: https://tilt.colostate.edu/TipsAndGuides/Tip/181
+
 
 #### Location of Translation Files
 
@@ -91,10 +94,12 @@ The [internationalization doc] has a step-by-step guide on adding and modifying 
 
 [internationalization doc]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
 
+
 ## Understanding How FES Works
 In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
 
 [FES Reference + Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
+
 
 #### Overview
 p5.js calls the FES from multiple locations for different situations, when:
@@ -120,6 +125,7 @@ For full reference, please see our [Dev Notes].
 [`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#validateparameters
 [`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
 [Dev Notes]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
+
 
 #### FES Message Displayer
 `fes_core.js/_friendlyError()` prints generated friendly error messages in the console. For example:
