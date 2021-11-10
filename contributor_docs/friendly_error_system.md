@@ -8,7 +8,7 @@ The FES prints messages in the console window, as seen in the [p5.js Web Editor]
 
  *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸]
 
-[p5.js Web Editor]: https://github.com/processing/p5.js-web-editor
+[p5.js Web Editor]: https://editor.p5js.org/
 [🌸 SURVEY 🌸]: https://bit.ly/p5fesSurvey
 
 ## Writing Friendly Error Messages
