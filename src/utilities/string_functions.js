@@ -159,7 +159,7 @@ p5.prototype.matchAll = function(str, reg) {
  *
  *   noStroke();
  *   fill(0);
- *   textSize(22);
+ *   textSize(16);
  *
  *   text(nf(num1, 4, 2), 10, 30);
  *   text(nf(num2, 4, 2), 10, 80);
@@ -408,7 +408,7 @@ function addNfp(num) {
  *
  *   noStroke();
  *   fill(0);
- *   textSize(22);
+ *   textSize(16);
  *
  *   // nfs() aligns num1 (positive number) with num2 (negative number) by
  *   // adding a blank space in front of the num1 (positive number)
