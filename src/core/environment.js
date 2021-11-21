@@ -21,12 +21,12 @@ const _windowPrint = window.print;
  * The <a href="#/p5/print">print()</a> function writes to the console area of
  * your browser. This function is often helpful for looking at the data a program
  * is producing. This function creates a new line of text for each call to
- * the function. Individual elements can be separated with quotes ("") and joined
- * with the addition operator (+).
+ * the function. Individual elements can be separated with quotes (`""`) and joined
+ * with the addition operator (`+`).
  *
- * Note that calling print() without any arguments invokes the window.print()
+ * Note that calling `print()` without any arguments invokes the `window.print()`
  * function which opens the browser's print dialog. To print a blank line
- * to console you can write print('\n').
+ * to console you can write `print('\n')`.
  *
  * @method print
  * @param {Any} contents any combination of Number, String, Object, Boolean,
@@ -129,7 +129,7 @@ p5.prototype.deltaTime = 0;
 /**
  * Confirms if the window a p5.js program is in is "focused," meaning that
  * the sketch will accept mouse or keyboard input. This variable is
- * "true" if the window is focused and "false" if not.
+ * `true` if the window is focused and `false` if not.
  *
  * @property {Boolean} focused
  * @readOnly
@@ -229,13 +229,13 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within 
+ * frame rate will not be achieved. Setting the frame rate within
  * <a href="#/p5/setup">setup()</a> is recommended. The default frame rate is
- * based on the frame rate of the display (here also called "refresh rate"), 
+ * based on the frame rate of the display (here also called "refresh rate"),
  * which is set to 60 frames per second on most computers. A frame rate of 24
- * frames per second (usual for movies) or above will be enough for smooth 
+ * frames per second (usual for movies) or above will be enough for smooth
  * animations. This is the same as setFrameRate(val).
- * 
+ *
  * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
  * the current framerate. The draw function must run at least once before it will
  * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
@@ -352,10 +352,10 @@ p5.prototype.noCursor = function() {
 };
 
 /**
- * System variable that stores the width of the screen display according to The
+ * System variable that stores the width of the screen display according to the
  * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
  * full-screen program on any display size. To return actual screen size,
- * multiply this by pixelDensity.
+ * multiply this by `pixelDensity`.
  *
  * @property {Number} displayWidth
  * @readOnly
@@ -373,7 +373,7 @@ p5.prototype.displayWidth = screen.width;
  * System variable that stores the height of the screen display according to The
  * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
  * full-screen program on any display size. To return actual screen size,
- * multiply this by pixelDensity.
+ * multiply this by `pixelDensity`.
  *
  * @property {Number} displayHeight
  * @readOnly
@@ -389,7 +389,7 @@ p5.prototype.displayHeight = screen.height;
 
 /**
  * System variable that stores the width of the inner window, it maps to
- * window.innerWidth.
+ * `window.innerWidth`.
  *
  * @property {Number} windowWidth
  * @readOnly
@@ -404,7 +404,7 @@ p5.prototype.displayHeight = screen.height;
 p5.prototype.windowWidth = getWindowWidth();
 /**
  * System variable that stores the height of the inner window, it maps to
- * window.innerHeight.
+ * `window.innerHeight`.
  *
  * @property {Number} windowHeight
  * @readOnly
@@ -476,8 +476,8 @@ function getWindowHeight() {
 /**
  * System variable that stores the width of the drawing canvas. This value
  * is set by the first parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function.
- * For example, the function call createCanvas(320, 240) sets the width
- * variable to the value 320. The value of width defaults to 100 if
+ * For example, the function call `createCanvas(320, 240)` sets the `width`
+ * variable to the value `320`. The value of `width` defaults to `100` if
  * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
  *
  * @property {Number} width
@@ -488,8 +488,8 @@ p5.prototype.width = 0;
 /**
  * System variable that stores the height of the drawing canvas. This value
  * is set by the second parameter of the <a href="#/p5/createCanvas">createCanvas()</a> function. For
- * example, the function call createCanvas(320, 240) sets the height
- * variable to the value 240. The value of height defaults to 100 if
+ * example, the function call `createCanvas(320, 240)` sets the `height`
+ * variable to the value `240`. The value of height defaults to `100` if
  * <a href="#/p5/createCanvas">createCanvas()</a> is not used in a program.
  *
  * @property {Number} height
@@ -549,7 +549,7 @@ p5.prototype.fullscreen = function(val) {
 
 /**
  * Sets the pixel scaling for high pixel density displays. By default
- * pixel density is set to match display density, call pixelDensity(1)
+ * pixel density is set to match display density, call `pixelDensity(1)`
  * to turn this off. Calling <a href="#/p5/pixelDensity">pixelDensity()</a> with no arguments returns
  * the current pixel density of the sketch.
  *
@@ -660,7 +660,7 @@ function exitFullscreen() {
 /**
  * Gets the current URL. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
- * is embedded in an iframe. It will work correctly if you view the
+ * is embedded in an `iframe`. It will work correctly if you view the
  * sketch using the editor's present or share URLs.
  * @method getURL
  * @return {String} url
@@ -691,7 +691,7 @@ p5.prototype.getURL = () => location.href;
 /**
  * Gets the current URL path as an array. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
- * is embedded in an iframe. It will work correctly if you view the
+ * is embedded in an `iframe`. It will work correctly if you view the
  * sketch using the editor's present or share URLs.
  * @method getURLPath
  * @return {String[]} path components
@@ -713,7 +713,7 @@ p5.prototype.getURLPath = () =>
 /**
  * Gets the current URL params as an Object. Note: when using the
  * p5 Editor, this will return an empty object because the sketch
- * is embedded in an iframe. It will work correctly if you view the
+ * is embedded in an `iframe`. It will work correctly if you view the
  * sketch using the editor's present or share URLs.
  * @method getURLParams
  * @return {Object} URL params
