@@ -41,15 +41,15 @@ class p5 {
 
     /**
      * Called directly before <a href="#/p5/setup">setup()</a>, the <a href="#/p5/preload">preload()</a> function is used to handle
-     * asynchronous loading of external files in a blocking way. If a preload
+     * asynchronous loading of external files in a blocking way. If a `preload()`
      * function is defined, <a href="#/p5/setup">setup()</a> will wait until any load calls within have
      * finished. Nothing besides load calls (<a href="#/p5/loadImage">loadImage</a>, <a href="#/p5/loadJSON">loadJSON</a>, <a href="#/p5/loadFont">loadFont</a>,
-     * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the preload function. If asynchronous
+     * <a href="#/p5/loadStrings">loadStrings</a>, etc.) should be inside the `preload()` function. If asynchronous
      * loading is preferred, the load methods can instead be called in <a href="#/p5/setup">setup()</a>
      * or anywhere else with the use of a callback parameter.
      *
      * By default the text "loading..." will be displayed. To make your own
-     * loading page, include an HTML element with id "p5_loading" in your
+     * loading page, include an HTML element with id `p5_loading` in your
      * page. More information <a href="http://bit.ly/2kQ6Nio">here</a>.
      *
      * @method preload
@@ -416,8 +416,8 @@ class p5 {
      * Removes the entire p5 sketch. This will remove the canvas and any
      * elements created by p5.js. It will also stop the draw loop and unbind
      * any properties or methods from the window global scope. It will
-     * leave a variable p5 in case you wanted to create a new p5 sketch.
-     * If you like, you can set p5 = null to erase it. While all functions and
+     * leave a variable `p5` in case you wanted to create a new p5 sketch.
+     * If you like, you can set `p5 = null` to erase it. While all functions and
      * variables and objects created by the p5 library will be removed, any
      * other global variables created by your code will remain.
      *
