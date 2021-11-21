@@ -25,10 +25,10 @@ import p5 from '../core/main';
  * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a> which is accessible to screen readers.
  * <code class="language-javascript">textOutput(LABEL)</code> creates an
- * additional div with the output adjacent to the canvas, this is useful
+ * additional `div` with the output adjacent to the canvas, this is useful
  * for non-screen reader users that might want to display the output outside
- * of the canvas' sub DOM as they code. However, using LABEL will create
- * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * of the canvas' sub DOM as they code. However, using `LABEL` will create
+ * unnecessary redundancy for screen reader users. We recommend using `LABEL`
  * only as part of the development process of a sketch and removing it before
  * publishing or sharing with screen reader users.
  *
@@ -87,7 +87,7 @@ p5.prototype.textOutput = function(display) {
 
 /**
  * <code class="language-javascript">gridOutput()</code> lays out the
- * content of the canvas in the form of a grid (html table) based
+ * content of the canvas in the form of a grid (HTML table) based
  * on the spatial location of each shape. A brief
  * description of the canvas is available before the table output.
  * This description includes: color of the background, size of the canvas,
@@ -104,10 +104,10 @@ p5.prototype.textOutput = function(display) {
  * make the output available in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Hit_regions_and_accessibility" target="_blank">
  * a sub DOM inside the canvas element</a> which is accessible to screen readers.
  * <code class="language-javascript">gridOutput(LABEL)</code> creates an
- * additional div with the output adjacent to the canvas, this is useful
+ * additional `div` with the output adjacent to the canvas, this is useful
  * for non-screen reader users that might want to display the output outside
- * of the canvas' sub DOM as they code. However, using LABEL will create
- * unnecessary redundancy for screen reader users. We recommend using LABEL
+ * of the canvas' sub DOM as they code. However, using `LABEL` will create
+ * unnecessary redundancy for screen reader users. We recommend using `LABEL`
  * only as part of the development process of a sketch and removing it before
  * publishing or sharing with screen reader users.
  *
