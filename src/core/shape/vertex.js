@@ -107,7 +107,7 @@ p5.prototype.beginContour = function() {
  *
  * @method beginShape
  * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
- *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS
+ *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP, or TESS
  * @chainable
  * @example
  * <div>
@@ -292,13 +292,13 @@ p5.prototype.beginShape = function(kind) {
 
 /**
  * Specifies vertex coordinates for Bezier curves. Each call to
- * bezierVertex() defines the position of two control points and
+ * `bezierVertex()` defines the position of two control points and
  * one anchor point of a Bezier curve, adding a new segment to a
- * line or shape. For WebGL mode bezierVertex() can be used in 2D
+ * line or shape. For WebGL mode `bezierVertex()` can be used in 2D
  * as well as 3D mode. 2D mode expects 6 parameters, while 3D mode
  * expects 9 parameters (including z coordinates).
  *
- * The first time bezierVertex() is used within a <a href="#/p5/beginShape">beginShape()</a>
+ * The first time `bezierVertex()` is used within a <a href="#/p5/beginShape">beginShape()</a>
  * call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor
  * point. This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
  * and only when there is no MODE or POINTS parameter specified to
@@ -416,15 +416,15 @@ p5.prototype.bezierVertex = function(...args) {
  * Specifies vertex coordinates for curves. This function may only
  * be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a> and only when there
  * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
- * For WebGL mode curveVertex() can be used in 2D as well as 3D mode.
+ * For WebGL mode `curveVertex()` can be used in 2D as well as 3D mode.
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  *
- * The first and last points in a series of curveVertex() lines will be used to
+ * The first and last points in a series of `curveVertex()` lines will be used to
  * guide the beginning and end of a the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
- * third points. Adding a fifth point with curveVertex() will draw
+ * third points. Adding a fifth point with `curveVertex()` will draw
  * the curve between the second, third, and fourth points. The
- * curveVertex() function is an implementation of Catmull-Rom
+ * `curveVertex()` function is an implementation of Catmull-Rom
  * splines.
  *
  * @method curveVertex
@@ -667,11 +667,11 @@ p5.prototype.endShape = function(mode) {
 
 /**
  * Specifies vertex coordinates for quadratic Bezier curves. Each call to
- * quadraticVertex() defines the position of one control points and one
+ * `quadraticVertex()` defines the position of one control points and one
  * anchor point of a Bezier curve, adding a new segment to a line or shape.
- * The first time quadraticVertex() is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
+ * The first time `quadraticVertex()` is used within a <a href="#/p5/beginShape">beginShape()</a> call, it
  * must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor point.
- * For WebGL mode quadraticVertex() can be used in 2D as well as 3D mode.
+ * For WebGL mode `quadraticVertex()` can be used in 2D as well as 3D mode.
  * 2D mode expects 4 parameters, while 3D mode expects 6 parameters
  * (including z coordinates).
  *
