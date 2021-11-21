@@ -54,11 +54,11 @@ p5.Color = function(pInst, vals) {
  *
  * @method toString
  * @param {String} [format] How the color string will be formatted.
- * Leaving this empty formats the string as rgba(r, g, b, a).
- * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
- * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
- * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
- * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
+ * Leaving this empty formats the string as `rgba(r, g, b, a)`.
+ * `#rgb`, `#rgba`, `#rrggbb`, and `#rrggbbaa` format as hexadecimal color codes.
+ * `rgb`, `hsb`, and `hsl` return the color formatted in the specified color mode.
+ * `rgba`, `hsba`, and `hsla` are the same as above but with alpha channels.
+ * `rgb%`, `hsb%`, `hsl%`, `rgba%`, `hsba%`, and `hsla%` format as percentages.
  * @return {String} the formatted string
  *
  * @example
@@ -254,8 +254,8 @@ p5.Color.prototype.toString = function(format) {
 };
 
 /**
- * The setRed function sets the red component of a color.
- * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+ * The `setRed()` function sets the red component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between `0` and `255`.
  * @method setRed
  * @param {Number} red the new red value
  * @example
@@ -283,8 +283,8 @@ p5.Color.prototype.setRed = function(new_red) {
 };
 
 /**
- * The setGreen function sets the green component of a color.
- * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+ * The `setGreen()` function sets the green component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between `0` and `255`.
  * @method setGreen
  * @param {Number} green the new green value
  * @example
@@ -307,8 +307,8 @@ p5.Color.prototype.setGreen = function(new_green) {
 };
 
 /**
- * The setBlue function sets the blue component of a color.
- * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+ * The `setBlue()` function sets the blue component of a color.
+ * The range depends on your color mode, in the default RGB mode it's between `0` and `255`.
  * @method setBlue
  * @param {Number} blue the new blue value
  * @example
@@ -331,8 +331,8 @@ p5.Color.prototype.setBlue = function(new_blue) {
 };
 
 /**
- * The setAlpha function sets the transparency (alpha) value of a color.
- * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
+ * The `setAlpha()` function sets the transparency (alpha) value of a color.
+ * The range depends on your color mode, in the default RGB mode it's between `0` and `255`.
  * @method setAlpha
  * @param {Number} alpha the new alpha value
  * @example
@@ -610,7 +610,7 @@ const namedColors = {
  * viable CSS color strings: fragmenting the regexes in this way increases the
  * legibility and comprehensibility of the code.
  *
- * Note that RGB values of .9 are not parsed by IE, but are supported here for
+ * Note that RGB values of `.9` are not parsed by IE, but are supported here for
  * color string consistency.
  */
 const WHITESPACE = /\s*/; // Match zero or more whitespace characters.
@@ -756,8 +756,8 @@ const colorPatterns = {
 };
 
 /**
- * For a number of different inputs, returns a color formatted as [r, g, b, a]
- * arrays, with each component normalized between 0 and 1.
+ * For a number of different inputs, returns a color formatted as `[r, g, b, a]`
+ * arrays, with each component normalized between `0` and `1`.
  *
  * @private
  * @param {Array} [...args] An 'array-like' object that represents a list of
