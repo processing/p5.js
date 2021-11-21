@@ -64,8 +64,8 @@ export const WAIT = 'wait';
 // TRIGONOMETRY
 
 /**
- * HALF_PI is a mathematical constant with the value
- * 1.57079632679489661923. It is half the ratio of the
+ * `HALF_PI` is a mathematical constant with the value
+ * `1.57079632679489661923`. It is half the ratio of the
  * circumference of a circle to its diameter. It is useful in
  * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
  *
@@ -82,8 +82,8 @@ export const WAIT = 'wait';
  */
 export const HALF_PI = _PI / 2;
 /**
- * PI is a mathematical constant with the value
- * 3.14159265358979323846. It is the ratio of the circumference
+ * `PI` is a mathematical constant with the value
+ * `3.14159265358979323846`. It is the ratio of the circumference
  * of a circle to its diameter. It is useful in combination with
  * the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
  *
@@ -100,7 +100,7 @@ export const HALF_PI = _PI / 2;
  */
 export const PI = _PI;
 /**
- * QUARTER_PI is a mathematical constant with the value 0.7853982.
+ * `QUARTER_PI` is a mathematical constant with the value `0.7853982`.
  * It is one quarter the ratio of the circumference of a circle to
  * its diameter. It is useful in combination with the trigonometric
  * functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
@@ -118,8 +118,8 @@ export const PI = _PI;
  */
 export const QUARTER_PI = _PI / 4;
 /**
- * TAU is an alias for TWO_PI, a mathematical constant with the
- * value 6.28318530717958647693. It is twice the ratio of the
+ * `TAU` is an alias for `TWO_PI`, a mathematical constant with the
+ * value `6.28318530717958647693`. It is twice the ratio of the
  * circumference of a circle to its diameter. It is useful in
  * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
  *
@@ -136,8 +136,8 @@ export const QUARTER_PI = _PI / 4;
  */
 export const TAU = _PI * 2;
 /**
- * TWO_PI is a mathematical constant with the value
- * 6.28318530717958647693. It is twice the ratio of the
+ * `TWO_PI` is a mathematical constant with the value
+ * `6.28318530717958647693`. It is twice the ratio of the
  * circumference of a circle to its diameter. It is useful in
  * combination with the trigonometric functions <a href="#/p5/sin">sin()</a> and <a href="#/p5/cos">cos()</a>.
  *
