@@ -5,9 +5,9 @@ import filters from '../image/filters';
 import './p5.Renderer';
 
 /**
- * p5.Renderer2D
+ * `p5.Renderer2D`
  * The 2D graphics canvas renderer class.
- * extends p5.Renderer
+ * extends `p5.Renderer`
  */
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
