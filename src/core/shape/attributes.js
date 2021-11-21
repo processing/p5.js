@@ -18,15 +18,15 @@ import * as constants from '../constants';
  * as the shape's center point's x and y coordinates respectively, while the third
  * and fourth parameters are its width and height.
  *
- * ellipseMode(RADIUS) also uses the first two parameters as the shape's center
+ * `ellipseMode(RADIUS)` also uses the first two parameters as the shape's center
  * point's x and y coordinates, but uses the third and fourth parameters to
  * specify half of the shapes's width and height.
  *
- * ellipseMode(CORNER) interprets the first two parameters as the upper-left
+ * `ellipseMode(CORNER)` interprets the first two parameters as the upper-left
  * corner of the shape, while the third and fourth parameters are its width
  * and height.
  *
- * ellipseMode(CORNERS) interprets the first two parameters as the location of
+ * `ellipseMode(CORNERS)` interprets the first two parameters as the location of
  * one corner of the ellipse's bounding box, and the third and fourth parameters
  * as the location of the opposite corner.
  *
@@ -120,16 +120,16 @@ p5.prototype.noSmooth = function() {
  * upper-left corner of the shape, while the third and fourth parameters are its
  * width and height.
  *
- * rectMode(CORNERS) interprets the first two parameters as the location of
+ * `rectMode(CORNERS)` interprets the first two parameters as the location of
  * one of the corners, and the third and fourth parameters as the location of
  * the diagonally opposite corner. Note, the rectangle is drawn between the
  * coordinates, so it is not neccesary that the first corner be the upper left
  * corner.
  *
- * rectMode(CENTER) interprets the first two parameters as the shape's center
+ * `rectMode(CENTER)` interprets the first two parameters as the shape's center
  * point, while the third and fourth parameters are its width and height.
  *
- * rectMode(RADIUS) also uses the first two parameters as the shape's center
+ * `rectMode(RADIUS)` also uses the first two parameters as the shape's center
  * point, but uses the third and fourth parameters to specify half of the shape's
  * width and height respectively.
  *
@@ -219,13 +219,13 @@ p5.prototype.smooth = function() {
 /**
  * Sets the style for rendering line endings. These ends are either rounded,
  * squared or extended, each of which specified with the corresponding
- * parameters: ROUND, SQUARE and PROJECT. The default cap is ROUND.
+ * parameters: ROUND, SQUARE, and PROJECT. The default cap is ROUND.
  *
  * The parameter to this method must be written in ALL CAPS because they are
  * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method strokeCap
- * @param  {Constant} cap either ROUND, SQUARE or PROJECT
+ * @param  {Constant} cap either ROUND, SQUARE, or PROJECT
  * @chainable
  * @example
  * <div>
@@ -258,15 +258,15 @@ p5.prototype.strokeCap = function(cap) {
 
 /**
  * Sets the style of the joints which connect line segments. These joints
- * are either mitered, beveled or rounded and specified with the
- * corresponding parameters MITER, BEVEL and ROUND. The default joint is
+ * are either mitered, beveled, or rounded, and specified with the
+ * corresponding parameters MITER, BEVEL, and ROUND. The default joint is
  * MITER.
  *
  * The parameter to this method must be written in ALL CAPS because they are
  * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.
  *
  * @method strokeJoin
- * @param  {Constant} join either MITER, BEVEL, ROUND
+ * @param  {Constant} join either MITER, BEVEL, or ROUND
  * @chainable
  * @example
  * <div>
@@ -329,7 +329,7 @@ p5.prototype.strokeJoin = function(join) {
 };
 
 /**
- * Sets the width of the stroke used for lines, points and the border around
+ * Sets the width of the stroke used for lines, points, and the border around
  * shapes. All widths are set in units of pixels.
  *
  * @method strokeWeight
