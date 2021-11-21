@@ -21,17 +21,17 @@ import '../friendly_errors/validate_params';
  *          0 <= start < TWO_PI ;    start <= stop < start + TWO_PI
  *
  *      This means that the arc rendering functions don't have to be concerned
- *      with what happens if stop is smaller than start, or if the arc 'goes
- *      round more than once', etc.: they can just start at start and increase
- *      until stop and the correct arc will be drawn.
+ *      with what happens if `stop` is smaller than `start`, or if the arc 'goes
+ *      round more than once', etc.: they can just start at `start` and increase
+ *      until `stop` and the correct arc will be drawn.
  *
  *   2. Optionally adjusts the angles within each quadrant to counter the naive
  *      scaling of the underlying ellipse up from the unit circle.  Without
- *      this, the angles become arbitrary when width != height: 45 degrees
+ *      this, the angles become arbitrary when `width != height`: 45 degrees
  *      might be drawn at 5 degrees on a 'wide' ellipse, or at 85 degrees on
  *      a 'tall' ellipse.
  *
- *   3. Flags up when start and stop correspond to the same place on the
+ *   3. Flags up when `start` and `stop` correspond to the same place on the
  *      underlying ellipse.  This is useful if you want to do something special
  *      there (like rendering a whole ellipse instead).
  */
@@ -100,15 +100,19 @@ p5.prototype._normalizeArcAngles = (
 };
 
 /**
- * Draw an arc to the screen. If called with only x, y, w, h, start and stop,
- * the arc will be drawn and filled as an open pie segment. If a mode parameter
+ * Draw an arc to the screen.
+ *
+ * If called with only `x`, `y`, `w`, `h`, `start`, and `stop`,
+ * the arc will be drawn and filled as an open pie segment.
+ *
+ * If a `mode` parameter
  * is provided, the arc will be filled like an open semi-circle (OPEN), a closed
  * semi-circle (CHORD), or as a closed pie segment (PIE). The origin may be changed
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
- * The arc is always drawn clockwise from wherever start falls to wherever stop
- * falls on the ellipse. Adding or subtracting TWO_PI to either angle does not
- * change where they fall. If both start and stop fall at the same place, a full
+ * The arc is always drawn clockwise from wherever `start` falls to wherever `stop`
+ * falls on the ellipse. Adding or subtracting `TWO_PI` to either angle does not
+ * change where they fall. If both `start` and `stop` fall at the same place, a full
  * ellipse will be drawn. Be aware that the y-axis increases in the downward
  * direction, therefore angles are measured clockwise from the positive
  * x-direction ("3 o'clock").
@@ -121,7 +125,7 @@ p5.prototype._normalizeArcAngles = (
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD, PIE or OPEN
+ *                         the arc. either CHORD, PIE, or OPEN
  * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
  *                         specify the number of vertices that makes up the
  *                         perimeter of the arc. Default value is 25. Won't
@@ -232,9 +236,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 /**
  * Draws an ellipse (oval) to the screen. By default, the first two parameters
  * set the location of the center of the ellipse, and the third and fourth
- * parameters set the shape's width and height. If no height is specified, the
- * value of width is used for both the width and height. If a negative height or
- * width is specified, the absolute value is taken.
+ * parameters set the shape's width and height.
+ *
+ * If no height is specified, the value of width is used for both the width and height.
+ * If a negative height or width is specified, the absolute value is taken.
  *
  * An ellipse with equal width and height is a circle. The origin may be changed
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
@@ -275,7 +280,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 /**
  * Draws a circle to the screen. A circle is a simple closed shape. It is the set
  * of all points in a plane that are at a given distance from a given point,
- * the centre. This function is a special case of the ellipse() function, where
+ * the centre. This function is a special case of the `ellipse()` function, where
  * the width and height of the ellipse are the same. Height and width of the
  * ellipse correspond to the diameter of the circle. By default, the first two
  * parameters set the location of the centre of the circle, the third sets the
@@ -340,9 +345,11 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * Draws a line (a direct path between two points) to the screen. If called with
  * only 4 parameters, it will draw a line in 2D with a default width of 1 pixel.
  * This width can be modified by using the <a href="#/p5/strokeWeight">
- * strokeWeight()</a> function. A line cannot be filled, therefore the <a
- * href="#/p5/fill">fill()</a> function will not affect the color of a line. So to
- * color a line, use the <a href="#/p5/stroke">stroke()</a> function.
+ * strokeWeight()</a> function.
+ *
+ * A line cannot be filled, therefore the <a href="#/p5/fill">fill()</a> function
+ * will not affect the color of a line.
+ * So to color a line, use the <a href="#/p5/stroke">stroke()</a> function.
  *
  * @method line
  * @param  {Number} x1 the x-coordinate of the first point
@@ -478,10 +485,10 @@ p5.prototype.point = function(...args) {
 /**
  * Draws a quad on the canvas. A quad is a quadrilateral, a four sided polygon. It is
  * similar to a rectangle, but the angles between its edges are not
- * constrained to ninety degrees. The first pair of parameters (x1,y1)
+ * constrained to ninety degrees. The first pair of parameters (`x1`,`y1`)
  * sets the first vertex and the subsequent pairs should proceed
  * clockwise or counter-clockwise around the defined shape.
- * z-arguments only work when quad() is used in WEBGL mode.
+ * z-arguments only work when `quad()` is used in WEBGL mode.
  *
  * @method quad
  * @param {Number} x1 the x-coordinate of the first point
@@ -553,11 +560,11 @@ p5.prototype.quad = function(...args) {
  * Draws a rectangle on the canvas. A rectangle is a four-sided closed shape with
  * every angle at ninety degrees. By default, the first two parameters set
  * the location of the upper-left corner, the third sets the width, and the
- * fourth sets the height. The way these parameters are interpreted, may be
+ * fourth sets the height. The way these parameters are interpreted may be
  * changed with the <a href="#/p5/rectMode">rectMode()</a> function.
  *
  * The fifth, sixth, seventh and eighth parameters, if specified,
- * determine corner radius for the top-left, top-right, lower-right and
+ * determine corner radius for the top-left, top-right, lower-right, and
  * lower-left corners, respectively. An omitted corner radius parameter is set
  * to the value of the previously specified radius value in the parameter list.
  *
@@ -618,14 +625,14 @@ p5.prototype.rect = function() {
 /**
  * Draws a square to the screen. A square is a four-sided shape with every angle
  * at ninety degrees, and equal side size. This function is a special case of the
- * rect() function, where the width and height are the same, and the parameter
- * is called "s" for side size. By default, the first two parameters set the
+ * `rect()` function, where the width and height are the same, and the parameter
+ * is called "`s`" for side size. By default, the first two parameters set the
  * location of the upper-left corner, the third sets the side size of the square.
- * The way these parameters are interpreted, may be changed with the <a
+ * The way these parameters are interpreted may be changed with the <a
  * href="#/p5/rectMode">rectMode()</a> function.
  *
- * The fourth, fifth, sixth and seventh parameters, if specified,
- * determine corner radius for the top-left, top-right, lower-right and
+ * The fourth, fifth, sixth, and seventh parameters, if specified,
+ * determine corner radius for the top-left, top-right, lower-right, and
  * lower-left corners, respectively. An omitted corner radius parameter is set
  * to the value of the previously specified radius value in the parameter list.
  *
