@@ -28,7 +28,7 @@ import p5 from './main';
  * has been specified. Otherwise, the sketch would enter an odd state until
  * <a href="#/p5/loop">loop()</a> was called.
  *
- * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of `loop()`.
  *
  * @method noLoop
  * @example
@@ -81,14 +81,14 @@ p5.prototype.noLoop = function() {
 };
 
 /**
- * By default, p5.js loops through draw() continuously, executing the code within
- * it. However, the <a href="#/p5/draw">draw()</a> loop may be stopped by calling
+ * By default, p5.js loops through <a href="#/p5/draw">draw()</a> continuously, executing the code within
+ * it. However, the `draw()` loop may be stopped by calling
  * <a href="#/p5/noLoop">noLoop()</a>. In that case, the <a href="#/p5/draw">draw()</a>
- * loop can be resumed with loop().
+ * loop can be resumed with `loop()`.
  *
- * Avoid calling loop() from inside setup().
+ * Avoid calling `loop()` from inside `setup()`.
  *
- * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of `loop()`.
  *
  * @method loop
  * @example
@@ -135,7 +135,7 @@ p5.prototype.loop = function() {
  * By default, p5.js loops through <a href="#/p5/draw">draw()</a> continuously,
  * executing the code within it. If the sketch is stopped with
  * <a href="#/p5/noLoop">noLoop()</a> or resumed with <a href="#/p5/loop">loop()</a>,
- * isLooping() returns the current state for use within custom event handlers.
+ * `isLooping()` returns the current state for use within custom event handlers.
  *
  * @method isLooping
  * @example
@@ -192,8 +192,11 @@ p5.prototype.isLooping = function() {
 /**
  * The <a href="#/p5/push">push()</a> function saves the current drawing style
  * settings and transformations, while <a href="#/p5/pop">pop()</a> restores these
- * settings. Note that these functions are always used together. They allow you to
+ * settings.
+ *
+ * Note that these functions are always used together. They allow you to
  * change the style and transformation settings and later return to what you had.
+ *
  * When a new state is started with <a href="#/p5/push">push()</a>, it builds on
  * the current style and transform information. The <a href="#/p5/push">push()</a>
  * and <a href="#/p5/pop">pop()</a> functions can be embedded to provide more
@@ -290,9 +293,13 @@ p5.prototype.push = function() {
 /**
  * The <a href="#/p5/push">push()</a> function saves the current drawing style
  * settings and transformations, while <a href="#/p5/pop">pop()</a> restores
- * these settings. Note that these functions are always used together. They allow
+ * these settings.
+ *
+ * Note that these functions are always used together. They allow
  * you to change the style and transformation settings and later return to what
- * you had. When a new state is started with <a href="#/p5/push">push()</a>, it
+ * you had.
+ *
+ * When a new state is started with <a href="#/p5/push">push()</a>, it
  * builds on the current style and transform information. The <a href="#/p5/push">push()</a>
  * and <a href="#/p5/pop">pop()</a> functions can be embedded to provide more
  * control. (See the second example for a demonstration.)
@@ -511,12 +518,12 @@ p5.prototype.redraw = function(n) {
  * are bound up in a single variable instead of polluting your global namespace.
  *
  * Optionally, you can specify a default container for the canvas and any other elements
- * to append to with a second argument. You can give the ID of an element in your html,
- * or an html node itself.
+ * to append to with a second argument. You can give the ID of an element in your HTML,
+ * or an HTML node itself.
  *
  * Note that creating instances like this also allows you to have more than one p5 sketch on
  * a single web page, as they will each be wrapped up with their own set up variables. Of
- * course, you could also use iframes to have multiple sketches in global mode.
+ * course, you could also use `iframe` elements to have multiple sketches in global mode.
  *
  * @method p5
  * @param {Object} sketch a function containing a p5.js sketch
