@@ -5,7 +5,7 @@ body:
 - type: textarea
   attributes:
     label: Increasing Access 
-    description: How would this new feature help increase access to p5.js?
+    description: How would this new feature help [increase access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md) to p5.js?
   validations:
     required: true
 - type: checkboxes
@@ -31,3 +31,8 @@ body:
       - label: Utilities
       - label: WebGL
       - label: Other (specify if possible)
+- type: textarea
+  attributes:
+    label: Feature enhancement details 
+  validations:
+    required: true
