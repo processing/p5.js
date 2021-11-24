@@ -1,0 +1,34 @@
+name: New Feature Request
+description: This template is for requesting a new feature be added.
+title: ""
+labels: [feature request]
+body:
+- type: textarea
+  attributes:
+    label: Increasing Access 
+    description: How would this new feature help increase access to p5.js?
+  validations:
+    required: true
+- type: checkboxes
+  id: sub-area
+  attributes:
+    label: Most appropriate sub-area of p5.js?
+    description: You may select more than one.
+    options:
+      - label: Accessibility (Web Accessibility)
+      - label: Build tools and processes
+      - label: Color
+      - label: Core/Environment/Rendering
+      - label: Data
+      - label: DOM
+      - label: Events
+      - label: Friendly error system
+      - label: Image
+      - label: IO (Input/Output)
+      - label: Localization
+      - label: Math
+      - label: Unit Testing
+      - label: Typography
+      - label: Utilities
+      - label: WebGL
+      - label: Other (specify if possible)
