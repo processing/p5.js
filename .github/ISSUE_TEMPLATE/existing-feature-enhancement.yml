@@ -1,6 +1,5 @@
 name: Existing Feature Enhancement
 description: This template is for suggesting an improvement for an existing feature.
-title: ""
 labels: [enhancement]
 body:
 - type: textarea

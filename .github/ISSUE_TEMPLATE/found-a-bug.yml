@@ -1,6 +1,5 @@
 name: Found a Bug
 description: This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
-title: ""
 labels: [bug]
 body:
 - type: checkboxes
