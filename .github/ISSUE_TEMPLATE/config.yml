@@ -1,8 +1,15 @@
 blank_issues_enabled: false
 contact_links:
-  - name: GitHub Community Support
-    url: https://github.community/
-    about: Please ask and answer questions here.
-  - name: GitHub Security Bug Bounty
-    url: https://bounty.github.com/
-    about: Please report security vulnerabilities here.
+  - name: p5.sound issues
+    url: https://github.com/processing/p5.js-sound/issues
+    about: Report issues with p5.sound here.
+  - name: p5.js website issues
+    url: https://github.com/processing/p5.js-website/issues
+    about: Report issues with the p5.js website here.
+  - name: p5.js web editor issues
+    url: https://github.com/processing/p5.js-web-editor/issues
+    about: Report issues with the p5.js web editor here.
+  - name: Forum
+    url: https://discourse.processing.org/c/p5js
+    about: Have other questions about using p5.js? Ask them here!
+  
