@@ -48,18 +48,26 @@ body:
     label: Steps to reproduce this 
     description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
     value: "*Steps:*
+    
     1.
+
     2.
+
     3.
 
     ```js
-      setup() {
+
+      function setup() {
+
 
       }
 
-      draw{} {
+
+      function draw() {
+
 
       }
+
     ```"
   validations:
     required: true
