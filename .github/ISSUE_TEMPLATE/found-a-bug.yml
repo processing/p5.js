@@ -47,8 +47,7 @@ body:
   attributes:
     label: Steps to reproduce this 
     description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
-    value: >-
-    *Steps:*
+    value: "*Steps:*
     1.
     2.
     3.
@@ -61,6 +60,6 @@ body:
       draw{} {
 
       }
-    ```
+    ```"
   validations:
     required: true
