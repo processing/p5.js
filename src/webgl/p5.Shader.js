@@ -178,15 +178,7 @@ p5.Shader.prototype._loadUniforms = function() {
       samplerIndex++;
       this.samplers.push(uniform);
     }
-    uniform.isArray =
-      uniform.type === gl.FLOAT_MAT3 ||
-      uniform.type === gl.FLOAT_MAT4 ||
-      uniform.type === gl.FLOAT_VEC2 ||
-      uniform.type === gl.FLOAT_VEC3 ||
-      uniform.type === gl.FLOAT_VEC4 ||
-      uniform.type === gl.INT_VEC2 ||
-      uniform.type === gl.INT_VEC3 ||
-      uniform.type === gl.INT_VEC4;
+    uniform.isArray = uniformInfo.size > 1;
 
     this.uniforms[uniformName] = uniform;
   }
@@ -378,7 +370,11 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
   } else if (uniform._cachedData && uniform._cachedData === data) {
     return;
   } else {
-    uniform._cachedData = data;
+    if (Array.isArray(data)) {
+      uniform._cachedData = data.slice(0);
+    } else {
+      uniform._cachedData = data;
+    }
   }
 
   const location = uniform.location;
