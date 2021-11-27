@@ -1,9 +1,11 @@
+// This file holds the "browersify" task which compiles the individual src/ code into p5.js and p5.min.js.
+
 'use strict';
 
-const path = require('path');
-const browserify = require('browserify');
-const prettier = require('prettier');
-const derequire = require('derequire');
+import { resolve } from 'path';
+import browserify from 'browserify';
+import { format } from 'prettier';
+import derequire from 'derequire';
 
 const bannerTemplate =
   '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
@@ -16,10 +18,15 @@ module.exports = function(grunt) {
     'Compile the p5.js source with Browserify',
     function(param) {
       const isMin = param === 'min';
-      const filename = isMin ? 'p5.pre-min.js' : 'p5.js';
+      const isTest = param === 'test';
+      const isDev = param === 'dev';
+
+      const filename = isMin
+        ? 'p5.pre-min.js'
+        : isTest ? 'p5-test.js' : 'p5.js';
 
       // This file will not exist until it has been built
-      const libFilePath = path.resolve('lib/' + filename);
+      const libFilePath = resolve('lib/' + filename);
 
       // Reading and writing files is asynchronous
       const done = this.async();
@@ -27,19 +34,40 @@ module.exports = function(grunt) {
       // Render the banner for the top of the file
       const banner = grunt.template.process(bannerTemplate);
 
+      let globalVars = {};
+      if (isDev) {
+        globalVars['P5_DEV_BUILD'] = () => true;
+      }
       // Invoke Browserify programatically to bundle the code
-      let browseified = browserify(srcFilePath, {
-        standalone: 'p5'
+      let browserified = browserify(srcFilePath, {
+        standalone: 'p5',
+        insertGlobalVars: globalVars
       });
 
       if (isMin) {
-        browseified = browseified.exclude('../../docs/reference/data.json');
+        // These paths should be the exact same as what are used in the import
+        // statements in the source. They are not relative to this file. It's
+        // just how browserify works apparently.
+        browserified = browserified
+          .exclude('../../docs/reference/data.json')
+          .exclude('../../../docs/parameterData.json')
+          .exclude('../../translations')
+          .exclude('./browser_errors')
+          .ignore('i18next')
+          .ignore('i18next-browser-languagedetector');
       }
 
-      const bundle = browseified
-        .transform('brfs')
-        .transform('babelify')
-        .bundle();
+      if (!isDev) {
+        browserified = browserified.exclude('../../translations/dev');
+      }
+
+      const babelifyOpts = { plugins: ['static-fs'] };
+
+      if (isTest) {
+        babelifyOpts.envName = 'test';
+      }
+
+      const bundle = browserified.transform('babelify', babelifyOpts).bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
@@ -50,6 +78,11 @@ module.exports = function(grunt) {
           code += data;
         })
         .on('end', function() {
+          code = code.replace(
+            `'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'`,
+            grunt.template.process(`'<%= pkg.version %>'`)
+          );
+
           // "code" is complete: create the distributable UMD build by running
           // the bundle through derequire
           // (Derequire changes the bundle's internal "require" function to
@@ -59,7 +92,7 @@ module.exports = function(grunt) {
 
           // and prettify the code
           if (!isMin) {
-            code = prettier.format(code, {
+            code = format(code, {
               singleQuote: true,
               printWidth: 80 + 12
             });

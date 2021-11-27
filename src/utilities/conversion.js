@@ -5,9 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Converts a string to its floating point representation. The contents of a
@@ -23,8 +21,8 @@ var p5 = require('../core/main');
  * @return {Number}     floating point representation of string
  * @example
  * <div><code>
- * var str = '20';
- * var diameter = float(str);
+ * let str = '20';
+ * let diameter = float(str);
  * ellipse(width / 2, height / 2, diameter, diameter);
  * </code></div>
  * <div class='norender'><code>
@@ -35,7 +33,6 @@ var p5 = require('../core/main');
  *
  * @alt
  * 20 by 20 white ellipse in the center of the canvas
- *
  */
 p5.prototype.float = function(str) {
   if (str instanceof Array) {
@@ -69,10 +66,10 @@ p5.prototype.float = function(str) {
 /**
  * @method int
  * @param {Array} ns                    values to parse
+ * @param {Integer}       [radix]
  * @return {Number[]}                   integer representation of values
  */
-p5.prototype.int = function(n, radix) {
-  radix = radix || 10;
+p5.prototype.int = function(n, radix = 10) {
   if (n === Infinity || n === 'Infinity') {
     return Infinity;
   } else if (n === -Infinity || n === '-Infinity') {
@@ -84,9 +81,7 @@ p5.prototype.int = function(n, radix) {
   } else if (typeof n === 'boolean') {
     return n ? 1 : 0;
   } else if (n instanceof Array) {
-    return n.map(function(n) {
-      return p5.prototype.int(n, radix);
-    });
+    return n.map(n => p5.prototype.int(n, radix));
   }
 };
 
@@ -176,7 +171,7 @@ p5.prototype.boolean = function(n) {
  * @return {Number[]}                  array of byte representation of values
  */
 p5.prototype.byte = function(n) {
-  var nn = p5.prototype.int(n, 10);
+  const nn = p5.prototype.int(n, 10);
   if (typeof nn === 'number') {
     return (nn + 128) % 256 - 128;
   } else if (nn instanceof Array) {
@@ -276,21 +271,19 @@ p5.prototype.unchar = function(n) {
 p5.prototype.hex = function(n, digits) {
   digits = digits === undefined || digits === null ? (digits = 8) : digits;
   if (n instanceof Array) {
-    return n.map(function(n) {
-      return p5.prototype.hex(n, digits);
-    });
+    return n.map(n => p5.prototype.hex(n, digits));
   } else if (n === Infinity || n === -Infinity) {
-    var c = n === Infinity ? 'F' : '0';
+    const c = n === Infinity ? 'F' : '0';
     return c.repeat(digits);
   } else if (typeof n === 'number') {
     if (n < 0) {
       n = 0xffffffff + n + 1;
     }
-    var hex = Number(n)
+    let hex = Number(n)
       .toString(16)
       .toUpperCase();
     while (hex.length < digits) {
-      hex = '0' + hex;
+      hex = `0${hex}`;
     }
     if (hex.length >= digits) {
       hex = hex.substring(hex.length - digits, hex.length);
@@ -324,8 +317,8 @@ p5.prototype.unhex = function(n) {
   if (n instanceof Array) {
     return n.map(p5.prototype.unhex);
   } else {
-    return parseInt('0x' + n, 16);
+    return parseInt(`0x${n}`, 16);
   }
 };
 
-module.exports = p5;
+export default p5;

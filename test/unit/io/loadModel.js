@@ -1,13 +1,15 @@
 suite('loadModel', function() {
   var invalidFile = '404file';
   var validFile = 'unit/assets/teapot.obj';
+  var validSTLfile = 'unit/assets/ascii.stl';
+  var validSTLfileWithoutExtension = 'unit/assets/ascii';
 
   test('_friendlyFileLoadError is called', async function() {
     const _friendlyFileLoadErrorStub = sinon.stub(p5, '_friendlyFileLoadError');
     try {
       await promisedSketch(function(sketch, resolve, reject) {
         sketch.preload = function() {
-          sketch.loadImage(invalidFile, reject, resolve);
+          sketch.loadModel(invalidFile, reject, resolve);
         };
       });
       expect(
@@ -116,6 +118,33 @@ suite('loadModel', function() {
     const model = await promisedSketch(function(sketch, resolve, reject) {
       sketch.preload = function() {
         sketch.loadModel(validFile, resolve, reject);
+      };
+    });
+    assert.instanceOf(model, p5.Geometry);
+  });
+
+  test('resolves STL file correctly', async function() {
+    const model = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadModel(validSTLfile, resolve, reject);
+      };
+    });
+    assert.instanceOf(model, p5.Geometry);
+  });
+
+  test('resolves STL file correctly with explicit extension', async function() {
+    const model = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadModel(validSTLfileWithoutExtension, resolve, reject, '.stl');
+      };
+    });
+    assert.instanceOf(model, p5.Geometry);
+  });
+
+  test('resolves STL file correctly with case insensitive extension', async function() {
+    const model = await promisedSketch(function(sketch, resolve, reject) {
+      sketch.preload = function() {
+        sketch.loadModel(validSTLfileWithoutExtension, resolve, reject, '.STL');
       };
     });
     assert.instanceOf(model, p5.Geometry);

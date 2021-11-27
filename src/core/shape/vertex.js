@@ -6,28 +6,26 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../main');
-var constants = require('../constants');
-var shapeKind = null;
-var vertices = [];
-var contourVertices = [];
-var isBezier = false;
-var isCurve = false;
-var isQuadratic = false;
-var isContour = false;
-var isFirstContour = true;
+import p5 from '../main';
+import * as constants from '../constants';
+let shapeKind = null;
+let vertices = [];
+let contourVertices = [];
+let isBezier = false;
+let isCurve = false;
+let isQuadratic = false;
+let isContour = false;
+let isFirstContour = true;
 
 /**
- * Use the <a href="#/p5/beginContour">beginContour()</a> and <a href="#/p5/endContour">endContour()</a> functions to create negative
- * shapes within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
+ * Use the <a href="#/p5/beginContour">beginContour()</a> and
+ * <a href="#/p5/endContour">endContour()</a> functions to create negative shapes
+ * within shapes such as the center of the letter 'O'. <a href="#/p5/beginContour">beginContour()</a>
  * begins recording vertices for the shape and <a href="#/p5/endContour">endContour()</a> stops recording.
- * The vertices that define a negative shape must "wind" in the opposite
- * direction from the exterior shape. First draw vertices for the exterior
- * clockwise order, then for internal shapes, draw vertices
+ * The vertices that define a negative shape must "wind" in the opposite direction
+ * from the exterior shape. First draw vertices for the exterior clockwise order, then for internal shapes, draw vertices
  * shape in counter-clockwise.
- * <br><br>
+ *
  * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
  * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
  * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
@@ -59,7 +57,6 @@ var isFirstContour = true;
  *
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
- *
  */
 p5.prototype.beginContour = function() {
   contourVertices = [];
@@ -73,20 +70,44 @@ p5.prototype.beginContour = function() {
  * <a href="#/p5/endShape">endShape()</a> stops recording. The value of the kind parameter tells it which
  * types of shapes to create from the provided vertices. With no mode
  * specified, the shape can be any irregular polygon.
- * <br><br>
- * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are POINTS, LINES, TRIANGLES,
- * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the
- * <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
+ *
+ * The parameters available for <a href="#/p5/beginShape">beginShape()</a> are:
+ *
+ * POINTS
+ * Draw a series of points
+ *
+ * LINES
+ * Draw a series of unconnected line segments (individual lines)
+ *
+ * TRIANGLES
+ * Draw a series of separate triangles
+ *
+ * TRIANGLE_FAN
+ * Draw a series of connected triangles sharing the first vertex in a fan-like fashion
+ *
+ * TRIANGLE_STRIP
+ * Draw a series of connected triangles in strip fashion
+ *
+ * QUADS
+ * Draw a series of separate quad
+ *
+ * QUAD_STRIP
+ * Draw quad strip using adjacent edges to form the next quad
+ *
+ * TESS (WebGl only)
+ * Handle irregular polygon for filling curve by explicit tessellation
+ *
+ * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
  * drawing the shape, call <a href="#/p5/endShape">endShape()</a>. Each shape will be outlined with the
  * current stroke color and filled with the fill color.
- * <br><br>
+ *
  * Transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
  * within <a href="#/p5/beginShape">beginShape()</a>. It is also not possible to use other shapes, such as
  * <a href="#/p5/ellipse">ellipse()</a> or <a href="#/p5/rect">rect()</a> within <a href="#/p5/beginShape">beginShape()</a>.
  *
  * @method beginShape
  * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
- *                                TRIANGLE_STRIP, QUADS, or QUAD_STRIP
+ *                                TRIANGLE_STRIP, QUADS, QUAD_STRIP or TESS
  * @chainable
  * @example
  * <div>
@@ -218,16 +239,19 @@ p5.prototype.beginContour = function() {
  *
  * <div>
  * <code>
- * beginShape();
+ * beginShape(TESS);
  * vertex(20, 20);
- * vertex(40, 20);
+ * vertex(80, 20);
+ * vertex(80, 40);
  * vertex(40, 40);
- * vertex(60, 40);
- * vertex(60, 60);
- * vertex(20, 60);
+ * vertex(40, 60);
+ * vertex(80, 60);
+ * vertex(80, 80);
+ * vertex(20, 80);
  * endShape(CLOSE);
  * </code>
  * </div>
+ *
  * @alt
  * white square-shape with black outline in middle-right of canvas.
  * 4 black points in a square shape in middle-right of canvas.
@@ -240,12 +264,11 @@ p5.prototype.beginContour = function() {
  * 2 white rectangle shapes in mid-right canvas. Both 20x55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
- *
  */
 p5.prototype.beginShape = function(kind) {
   p5._validateParameters('beginShape', arguments);
   if (this._renderer.isP3D) {
-    this._renderer.beginShape.apply(this._renderer, arguments);
+    this._renderer.beginShape(...arguments);
   } else {
     if (
       kind === constants.POINTS ||
@@ -274,7 +297,7 @@ p5.prototype.beginShape = function(kind) {
  * line or shape. For WebGL mode bezierVertex() can be used in 2D
  * as well as 3D mode. 2D mode expects 6 parameters, while 3D mode
  * expects 9 parameters (including z coordinates).
- * <br><br>
+ *
  * The first time bezierVertex() is used within a <a href="#/p5/beginShape">beginShape()</a>
  * call, it must be prefaced with a call to <a href="#/p5/vertex">vertex()</a> to set the first anchor
  * point. This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
@@ -301,10 +324,6 @@ p5.prototype.beginShape = function(kind) {
  * </code>
  * </div>
  *
- * @alt
- * crescent-shaped line in middle of canvas. Points facing left.
- *
- * @example
  * <div>
  * <code>
  * beginShape();
@@ -315,10 +334,6 @@ p5.prototype.beginShape = function(kind) {
  * </code>
  * </div>
  *
- * @alt
- * white crescent shape in middle of canvas. Points facing left.
- *
- * @example
  * <div>
  * <code>
  * function setup() {
@@ -352,6 +367,8 @@ p5.prototype.beginShape = function(kind) {
  * </div>
  *
  * @alt
+ * crescent-shaped line in middle of canvas. Points facing left.
+ * white crescent shape in middle of canvas. Points facing left.
  * crescent shape in middle of canvas with another crescent shape on positive z-axis.
  */
 
@@ -368,10 +385,10 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} z4 z-coordinate for the anchor point (for WebGL mode)
  * @chainable
  */
-p5.prototype.bezierVertex = function() {
-  p5._validateParameters('bezierVertex', arguments);
+p5.prototype.bezierVertex = function(...args) {
+  p5._validateParameters('bezierVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.bezierVertex.apply(this._renderer, arguments);
+    this._renderer.bezierVertex(...args);
   } else {
     if (vertices.length === 0) {
       p5._friendlyError(
@@ -380,9 +397,9 @@ p5.prototype.bezierVertex = function() {
       );
     } else {
       isBezier = true;
-      var vert = [];
-      for (var i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      const vert = [];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {
@@ -401,7 +418,7 @@ p5.prototype.bezierVertex = function() {
  * is no MODE parameter specified to <a href="#/p5/beginShape">beginShape()</a>.
  * For WebGL mode curveVertex() can be used in 2D as well as 3D mode.
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
- * <br><br>
+ *
  * The first and last points in a series of curveVertex() lines will be used to
  * guide the beginning and end of a the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
@@ -436,10 +453,10 @@ p5.prototype.bezierVertex = function() {
  * </code>
  * </div>
  *
- *
  * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
  */
+
 /**
  * @method curveVertex
  * @param {Number} x
@@ -492,15 +509,14 @@ p5.prototype.bezierVertex = function() {
  *
  * @alt
  * Upside-down u-shape line, mid canvas with the same shape in positive z-axis.
- *
  */
-p5.prototype.curveVertex = function() {
-  p5._validateParameters('curveVertex', arguments);
+p5.prototype.curveVertex = function(...args) {
+  p5._validateParameters('curveVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.curveVertex.apply(this._renderer, arguments);
+    this._renderer.curveVertex(...args);
   } else {
     isCurve = true;
-    this.vertex(arguments[0], arguments[1]);
+    this.vertex(args[0], args[1]);
   }
   return this;
 };
@@ -513,7 +529,7 @@ p5.prototype.curveVertex = function() {
  * direction from the exterior shape. First draw vertices for the exterior
  * clockwise order, then for internal shapes, draw vertices
  * shape in counter-clockwise.
- * <br><br>
+ *
  * These functions can only be used within a <a href="#/p5/beginShape">beginShape()</a>/<a href="#/p5/endShape">endShape()</a> pair and
  * transformations such as <a href="#/p5/translate">translate()</a>, <a href="#/p5/rotate">rotate()</a>, and <a href="#/p5/scale">scale()</a> do not work
  * within a <a href="#/p5/beginContour">beginContour()</a>/<a href="#/p5/endContour">endContour()</a> pair. It is also not possible to use
@@ -545,10 +561,9 @@ p5.prototype.curveVertex = function() {
  *
  * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
- *
  */
 p5.prototype.endContour = function() {
-  var vert = contourVertices[0].slice(); // copy all data
+  const vert = contourVertices[0].slice(); // copy all data
   vert.isVert = contourVertices[0].isVert;
   vert.moveTo = false;
   contourVertices.push(vert);
@@ -559,7 +574,7 @@ p5.prototype.endContour = function() {
     isFirstContour = false;
   }
 
-  for (var i = 0; i < contourVertices.length; i++) {
+  for (let i = 0; i < contourVertices.length; i++) {
     vertices.push(contourVertices[i]);
   }
   return this;
@@ -567,7 +582,7 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endshape()</a> is called, all of image data
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
  * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
  * buffer. The constant CLOSE as the value for the MODE parameter to close
  * the shape (to connect the beginning and the end).
@@ -596,7 +611,6 @@ p5.prototype.endContour = function() {
  *
  * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
- *
  */
 p5.prototype.endShape = function(mode) {
   p5._validateParameters('endShape', arguments);
@@ -617,7 +631,7 @@ p5.prototype.endShape = function(mode) {
       return this;
     }
 
-    var closeShape = mode === constants.CLOSE;
+    const closeShape = mode === constants.CLOSE;
 
     // if the shape is closed, the first element is also the last element
     if (closeShape && !isContour) {
@@ -660,7 +674,7 @@ p5.prototype.endShape = function(mode) {
  * For WebGL mode quadraticVertex() can be used in 2D as well as 3D mode.
  * 2D mode expects 4 parameters, while 3D mode expects 6 parameters
  * (including z coordinates).
- * <br><br>
+ *
  * This function must be used between <a href="#/p5/beginShape">beginShape()</a> and <a href="#/p5/endShape">endShape()</a>
  * and only when there is no MODE or POINTS parameter specified to
  * <a href="#/p5/beginShape">beginShape()</a>.
@@ -714,7 +728,6 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * arched-shaped black line with 4 pixel thick stroke weight.
  * backwards s-shaped black line with 4 pixel thick stroke weight.
- *
  */
 
 /**
@@ -770,19 +783,19 @@ p5.prototype.endShape = function(mode) {
  * @alt
  * backwards s-shaped black line with the same s-shaped line in postive z-axis.
  */
-p5.prototype.quadraticVertex = function() {
-  p5._validateParameters('quadraticVertex', arguments);
+p5.prototype.quadraticVertex = function(...args) {
+  p5._validateParameters('quadraticVertex', args);
   if (this._renderer.isP3D) {
-    this._renderer.quadraticVertex.apply(this._renderer, arguments);
+    this._renderer.quadraticVertex(...args);
   } else {
     //if we're drawing a contour, put the points into an
     // array for inside drawing
     if (this._contourInited) {
-      var pt = {};
-      pt.x = arguments[0];
-      pt.y = arguments[1];
-      pt.x3 = arguments[2];
-      pt.y3 = arguments[3];
+      const pt = {};
+      pt.x = args[0];
+      pt.y = args[1];
+      pt.x3 = args[2];
+      pt.y3 = args[3];
       pt.type = constants.QUADRATIC;
       this._contourVertices.push(pt);
 
@@ -790,9 +803,9 @@ p5.prototype.quadraticVertex = function() {
     }
     if (vertices.length > 0) {
       isQuadratic = true;
-      var vert = [];
-      for (var i = 0; i < arguments.length; i++) {
-        vert[i] = arguments[i];
+      const vert = [];
+      for (let i = 0; i < args.length; i++) {
+        vert[i] = args[i];
       }
       vert.isVert = false;
       if (isContour) {
@@ -833,9 +846,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 4 black points in a square shape in middle-right of canvas.
- *
  * <div>
  * <code>
  * createCanvas(100, 100, WEBGL);
@@ -850,9 +860,6 @@ p5.prototype.quadraticVertex = function() {
  * endShape();
  * </code>
  * </div>
- *
- * @alt
- * 4 points making a diamond shape
  *
  * <div>
  * <code>
@@ -873,9 +880,6 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making a star
- *
  * <div>
  * <code>
  * strokeWeight(3);
@@ -893,24 +897,85 @@ p5.prototype.quadraticVertex = function() {
  * </code>
  * </div>
  *
- * @alt
- * 8 points making 4 lines
+ * <div>
+ * <code>
+ * // Click to change the number of sides.
+ * // In WebGL mode, custom shapes will only
+ * // display hollow fill sections when
+ * // all calls to vertex() use the same z-value.
  *
+ * let sides = 3;
+ * let angle, px, py;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   setAttributes('antialias', true);
+ *   fill(237, 34, 93);
+ *   strokeWeight(3);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   ngon(sides, 0, 0, 80);
+ * }
+ *
+ * function mouseClicked() {
+ *   if (sides > 6) {
+ *     sides = 3;
+ *   } else {
+ *     sides++;
+ *   }
+ * }
+ *
+ * function ngon(n, x, y, d) {
+ *   beginShape(TESS);
+ *   for (let i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 2;
+ *     py = y - cos(angle) * d / 2;
+ *     vertex(px, py, 0);
+ *   }
+ *   for (let i = 0; i < n + 1; i++) {
+ *     angle = TWO_PI / n * i;
+ *     px = x + sin(angle) * d / 4;
+ *     py = y - cos(angle) * d / 4;
+ *     vertex(px, py, 0);
+ *   }
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * 4 black points in a square shape in middle-right of canvas.
+ * 4 points making a diamond shape.
+ * 8 points making a star.
+ * 8 points making 4 lines.
+ * A rotating 3D shape with a hollow section in the middle.
  */
 /**
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex
- * @param  {Number} [u] the vertex's texture u-coordinate
- * @param  {Number} [v] the vertex's texture v-coordinate
+ * @param  {Number} z   z-coordinate of the vertex.
+ *                       Defaults to 0 if not specified.
+ * @chainable
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @param  {Number} u   the vertex's texture u-coordinate
+ * @param  {Number} v   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
-    this._renderer.vertex.apply(this._renderer, arguments);
+    this._renderer.vertex(...arguments);
   } else {
-    var vert = [];
+    const vert = [];
     vert.isVert = true;
     vert[0] = x;
     vert[1] = y;
@@ -935,4 +1000,56 @@ p5.prototype.vertex = function(x, y, moveTo, u, v) {
   return this;
 };
 
-module.exports = p5;
+/**
+ * Sets the 3d vertex normal to use for subsequent vertices drawn with
+ * <a href="#/p5/vertex">vertex()</a>. A normal is a vector that is generally
+ * nearly perpendicular to a shape's surface which controls how much light will
+ * be reflected from that part of the surface.
+ *
+ * @method normal
+ * @param  {Vector} vector A p5.Vector representing the vertex normal.
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   rotateY(frameCount / 100);
+ *   normalMaterial();
+ *   beginShape(TRIANGLE_STRIP);
+ *   normal(-0.4, 0.4, 0.8);
+ *   vertex(-30, 30, 0);
+ *
+ *   normal(0, 0, 1);
+ *   vertex(-30, -30, 30);
+ *   vertex(30, 30, 30);
+ *
+ *   normal(0.4, -0.4, 0.8);
+ *   vertex(30, -30, 0);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ */
+
+/**
+ * @method normal
+ * @param  {Number} x The x component of the vertex normal.
+ * @param  {Number} y The y component of the vertex normal.
+ * @param  {Number} z The z component of the vertex normal.
+ * @chainable
+ */
+p5.prototype.normal = function(x, y, z) {
+  this._assert3d('normal');
+  p5._validateParameters('normal', arguments);
+  this._renderer.normal(...arguments);
+
+  return this;
+};
+
+export default p5;

@@ -5,27 +5,31 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
+import Filters from './filters';
+import canvas from '../core/helpers';
+import * as constants from '../core/constants';
+import omggif from 'omggif';
 
-var p5 = require('../core/main');
-var Filters = require('./filters');
-var canvas = require('../core/helpers');
-var constants = require('../core/constants');
-
-require('../core/error_helpers');
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an image from a path and creates a <a href="#/p5.Image">p5.Image</a> from it.
- * <br><br>
- * The image may not be immediately available for rendering
+ *
+ * The image may not be immediately available for rendering.
  * If you want to ensure that the image is ready before doing
  * anything with it, place the <a href="#/p5/loadImage">loadImage()</a> call in <a href="#/p5/preload">preload()</a>.
  * You may also supply a callback function to handle the image when it's ready.
- * <br><br>
+ *
  * The path to the image should be relative to the HTML file
  * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
+
+ * You can also pass in a string of a base64 encoded image as an alternative to the file path.
+ * Remember to add "data:image/png;base64," in front of the string.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
@@ -61,51 +65,221 @@ require('../core/error_helpers');
  * @alt
  * image of the underside of a white umbrella and grided ceililng above
  * image of the underside of a white umbrella and grided ceililng above
- *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   p5._validateParameters('loadImage', arguments);
-  var img = new Image();
-  var pImg = new p5.Image(1, 1, this);
+  const pImg = new p5.Image(1, 1, this);
+  const self = this;
 
-  var self = this;
-  img.onload = function() {
-    pImg.width = pImg.canvas.width = img.width;
-    pImg.height = pImg.canvas.height = img.height;
+  const req = new Request(path, {
+    method: 'GET',
+    mode: 'cors'
+  });
 
-    // Draw the image into the backing canvas of the p5.Image
-    pImg.drawingContext.drawImage(img, 0, 0);
-    pImg.modified = true;
+  fetch(path, req)
+    .then(response => {
+      // GIF section
+      const contentType = response.headers.get('content-type');
+      if (contentType === null) {
+        console.warn(
+          'The image you loaded does not have a Content-Type header. If you are using the online editor consider reuploading the asset.'
+        );
+      }
+      if (contentType && contentType.includes('image/gif')) {
+        response.arrayBuffer().then(
+          arrayBuffer => {
+            if (arrayBuffer) {
+              const byteArray = new Uint8Array(arrayBuffer);
+              _createGif(
+                byteArray,
+                pImg,
+                successCallback,
+                failureCallback,
+                (pImg => {
+                  self._decrementPreload();
+                }).bind(self)
+              );
+            }
+          },
+          e => {
+            if (typeof failureCallback === 'function') {
+              failureCallback(e);
+            } else {
+              console.error(e);
+            }
+          }
+        );
+      } else {
+        // Non-GIF Section
+        const img = new Image();
 
-    if (typeof successCallback === 'function') {
-      successCallback(pImg);
-    }
+        img.onload = () => {
+          pImg.width = pImg.canvas.width = img.width;
+          pImg.height = pImg.canvas.height = img.height;
 
-    self._decrementPreload();
-  };
-  img.onerror = function(e) {
-    p5._friendlyFileLoadError(0, img.src);
-    if (typeof failureCallback === 'function') {
-      failureCallback(e);
-    } else {
-      console.error(e);
-    }
-  };
+          // Draw the image into the backing canvas of the p5.Image
+          pImg.drawingContext.drawImage(img, 0, 0);
+          pImg.modified = true;
+          if (typeof successCallback === 'function') {
+            successCallback(pImg);
+          }
+          self._decrementPreload();
+        };
 
-  // Set crossOrigin in case image is served with CORS headers.
-  // This will let us draw to the canvas without tainting it.
-  // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-  // When using data-uris the file will be loaded locally
-  // so we don't need to worry about crossOrigin with base64 file types.
-  if (path.indexOf('data:image/') !== 0) {
-    img.crossOrigin = 'Anonymous';
-  }
+        img.onerror = e => {
+          p5._friendlyFileLoadError(0, img.src);
+          if (typeof failureCallback === 'function') {
+            failureCallback(e);
+          } else {
+            console.error(e);
+          }
+        };
 
-  // start loading the image
-  img.src = path;
-
+        // Set crossOrigin in case image is served with CORS headers.
+        // This will let us draw to the canvas without tainting it.
+        // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+        // When using data-uris the file will be loaded locally
+        // so we don't need to worry about crossOrigin with base64 file types.
+        if (path.indexOf('data:image/') !== 0) {
+          img.crossOrigin = 'Anonymous';
+        }
+        // start loading the image
+        img.src = path;
+      }
+      pImg.modified = true;
+    })
+    .catch(e => {
+      p5._friendlyFileLoadError(0, path);
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
+      } else {
+        console.error(e);
+      }
+    });
   return pImg;
 };
+
+/**
+ * Helper function for loading GIF-based images
+ */
+function _createGif(
+  arrayBuffer,
+  pImg,
+  successCallback,
+  failureCallback,
+  finishCallback
+) {
+  const gifReader = new omggif.GifReader(arrayBuffer);
+  pImg.width = pImg.canvas.width = gifReader.width;
+  pImg.height = pImg.canvas.height = gifReader.height;
+  const frames = [];
+  const numFrames = gifReader.numFrames();
+  let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
+  if (numFrames > 1) {
+    const loadGIFFrameIntoImage = (frameNum, gifReader) => {
+      try {
+        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+      } catch (e) {
+        p5._friendlyFileLoadError(8, pImg.src);
+        if (typeof failureCallback === 'function') {
+          failureCallback(e);
+        } else {
+          console.error(e);
+        }
+      }
+    };
+    for (let j = 0; j < numFrames; j++) {
+      const frameInfo = gifReader.frameInfo(j);
+      const prevFrameData = pImg.drawingContext.getImageData(
+        0,
+        0,
+        pImg.width,
+        pImg.height
+      );
+      framePixels = prevFrameData.data.slice();
+      loadGIFFrameIntoImage(j, gifReader);
+      const imageData = new ImageData(framePixels, pImg.width, pImg.height);
+      pImg.drawingContext.putImageData(imageData, 0, 0);
+      let frameDelay = frameInfo.delay;
+      // To maintain the default of 10FPS when frameInfo.delay equals to 0
+      if (frameDelay === 0) {
+        frameDelay = 10;
+      }
+      frames.push({
+        image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
+        delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+      });
+
+      // Some GIFs are encoded so that they expect the previous frame
+      // to be under the current frame. This can occur at a sub-frame level
+      //
+      // Values :    0 -   No disposal specified. The decoder is
+      //                   not required to take any action.
+      //             1 -   Do not dispose. The graphic is to be left
+      //                   in place.
+      //             2 -   Restore to background color. The area used by the
+      //                   graphic must be restored to the background color.
+      //             3 -   Restore to previous. The decoder is required to
+      //                   restore the area overwritten by the graphic with
+      //                   what was there prior to rendering the graphic.
+      //          4-7 -    To be defined.
+      if (frameInfo.disposal === 2) {
+        // Restore background color
+        pImg.drawingContext.clearRect(
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      } else if (frameInfo.disposal === 3) {
+        // Restore previous
+        pImg.drawingContext.putImageData(
+          prevFrameData,
+          0,
+          0,
+          frameInfo.x,
+          frameInfo.y,
+          frameInfo.width,
+          frameInfo.height
+        );
+      }
+    }
+
+    //Uses Netscape block encoding
+    //to repeat forever, this will be 0
+    //to repeat just once, this will be null
+    //to repeat N times (1<N), should contain integer for loop number
+    //this is changed to more usable values for us
+    //to repeat forever, loopCount = null
+    //everything else is just the number of loops
+    let loopLimit = gifReader.loopCount();
+    if (loopLimit === null) {
+      loopLimit = 1;
+    } else if (loopLimit === 0) {
+      loopLimit = null;
+    }
+
+    // we used the pImg for painting and saving during load
+    // so we have to reset it to the first frame
+    pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+
+    pImg.gifProperties = {
+      displayIndex: 0,
+      loopLimit,
+      loopCount: 0,
+      frames,
+      numFrames,
+      playing: true,
+      timeDisplayed: 0,
+      lastChangeTime: 0
+    };
+  }
+
+  if (typeof successCallback === 'function') {
+    successCallback(pImg);
+  }
+  finishCallback();
+}
 
 /**
  * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
@@ -210,7 +384,6 @@ function _sAssign(sVal, iVal) {
  * @alt
  * image of the underside of a white umbrella and gridded ceiling above
  * image of the underside of a white umbrella and gridded ceiling above
- *
  */
 /**
  * @method image
@@ -246,8 +419,8 @@ p5.prototype.image = function(
 
   p5._validateParameters('image', arguments);
 
-  var defW = img.width;
-  var defH = img.height;
+  let defW = img.width;
+  let defH = img.height;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -255,14 +428,14 @@ p5.prototype.image = function(
     defH = img.elt.videoHeight;
   }
 
-  var _dx = dx;
-  var _dy = dy;
-  var _dw = dWidth || defW;
-  var _dh = dHeight || defH;
-  var _sx = sx || 0;
-  var _sy = sy || 0;
-  var _sw = sWidth || defW;
-  var _sh = sHeight || defH;
+  const _dx = dx;
+  const _dy = dy;
+  const _dw = dWidth || defW;
+  const _dh = dHeight || defH;
+  let _sx = sx || 0;
+  let _sy = sy || 0;
+  let _sw = sWidth || defW;
+  let _sh = sHeight || defH;
 
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
@@ -270,7 +443,7 @@ p5.prototype.image = function(
   // This part needs cleanup and unit tests
   // see issues https://github.com/processing/p5.js/issues/1741
   // and https://github.com/processing/p5.js/issues/1673
-  var pd = 1;
+  let pd = 1;
 
   if (img.elt && !img.canvas && img.elt.style.width) {
     //if img is video and img.elt.size() has been used and
@@ -289,7 +462,7 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
   // tint the image if there is a tint
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
@@ -298,16 +471,15 @@ p5.prototype.image = function(
 /**
  * Sets the fill value for displaying images. Images can be tinted to
  * specified colors or made transparent by including an alpha value.
- * <br><br>
+ *
  * To apply transparency to an image without affecting its color, use
  * white as the tint color and specify an alpha value. For instance,
  * tint(255, 128) will make an image 50% transparent (assuming the default
  * alpha range of 0-255, which can be changed with <a href="#/p5/colorMode">colorMode()</a>).
- * <br><br>
+ *
  * The value for the gray parameter must be less than or equal to the current
  * maximum value as specified by <a href="#/p5/colorMode">colorMode()</a>. The default maximum value is
  * 255.
- *
  *
  * @method tint
  * @param  {Number}        v1      red or hue value relative to
@@ -365,7 +537,6 @@ p5.prototype.image = function(
  * 2 side by side images of umbrella and ceiling, one image with blue tint
  * Images of umbrella and ceiling, one half of image with blue tint
  * 2 side by side images of umbrella and ceiling, one image translucent
- *
  */
 
 /**
@@ -389,9 +560,9 @@ p5.prototype.image = function(
  * @method tint
  * @param  {p5.Color}      color   the tint color
  */
-p5.prototype.tint = function() {
-  p5._validateParameters('tint', arguments);
-  var c = this.color.apply(this, arguments);
+p5.prototype.tint = function(...args) {
+  p5._validateParameters('tint', args);
+  const c = this.color(...args);
   this._renderer._tint = c.levels;
 };
 
@@ -418,7 +589,6 @@ p5.prototype.tint = function() {
  *
  * @alt
  * 2 side by side images of bricks, left image with blue tint
- *
  */
 p5.prototype.noTint = function() {
   this._renderer._tint = null;
@@ -431,25 +601,24 @@ p5.prototype.noTint = function() {
  * @private
  * @param {p5.Image} The image to be tinted
  * @return {canvas} The resulting tinted canvas
- *
  */
 p5.prototype._getTintedImageCanvas = function(img) {
   if (!img.canvas) {
     return img;
   }
-  var pixels = Filters._toPixels(img.canvas);
-  var tmpCanvas = document.createElement('canvas');
+  const pixels = Filters._toPixels(img.canvas);
+  const tmpCanvas = document.createElement('canvas');
   tmpCanvas.width = img.canvas.width;
   tmpCanvas.height = img.canvas.height;
-  var tmpCtx = tmpCanvas.getContext('2d');
-  var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  var newPixels = id.data;
+  const tmpCtx = tmpCanvas.getContext('2d');
+  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+  const newPixels = id.data;
 
-  for (var i = 0; i < pixels.length; i += 4) {
-    var r = pixels[i];
-    var g = pixels[i + 1];
-    var b = pixels[i + 2];
-    var a = pixels[i + 3];
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    const a = pixels[i + 3];
 
     newPixels[i] = r * this._renderer._tint[0] / 255;
     newPixels[i + 1] = g * this._renderer._tint[1] / 255;
@@ -468,11 +637,11 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * third parameters of <a href="#/p5/image">image()</a> as the upper-left corner of the image. If
  * two additional parameters are specified, they are used to set the image's
  * width and height.
- * <br><br>
+ *
  * imageMode(CORNERS) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the location of one corner, and the fourth and fifth parameters as the
  * opposite corner.
- * <br><br>
+ *
  * imageMode(CENTER) interprets the second and third parameters of <a href="#/p5/image">image()</a>
  * as the image's center point. If two additional parameters are specified,
  * they are used to set the image's width and height.
@@ -524,7 +693,6 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * small square image of bricks
  * horizontal rectangle image of bricks
  * large square image of bricks
- *
  */
 p5.prototype.imageMode = function(m) {
   p5._validateParameters('imageMode', arguments);
@@ -537,4 +705,4 @@ p5.prototype.imageMode = function(m) {
   }
 };
 
-module.exports = p5;
+export default p5;

@@ -35,7 +35,7 @@ function setup() {
   createCanvas(710, 400);
   rawImpulse = loadSound('../_files/' + cVerb.impulses[currentIR].name);
 
-  // disconnect from master output...
+  // disconnect from main output...
   sound.disconnect();
   // ... and process with cVerb
   // so that we only hear the reverb

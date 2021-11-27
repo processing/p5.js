@@ -6,10 +6,8 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var constants = require('../core/constants');
+import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /*
  * all DEGREES/RADIANS conversion should be done in the p5 instance
@@ -18,9 +16,10 @@ var constants = require('../core/constants');
 p5.prototype._angleMode = constants.RADIANS;
 
 /**
- * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a value. This function
- * expects the values in the range of -1 to 1 and values are returned in
- * the range 0 to PI (3.1415927).
+ * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a value.
+ * This function expects the values in the range of -1 to 1 and values are returned in
+ * the range 0 to PI (3.1415927) if the angleMode is RADIANS or 0 to 180 if the
+ * angle mode is DEGREES.
  *
  * @method acos
  * @param  {Number} value the value whose arc cosine is to be returned
@@ -52,9 +51,10 @@ p5.prototype.acos = function(ratio) {
 };
 
 /**
- * The inverse of <a href="#/p5/sin">sin()</a>, returns the arc sine of a value. This function
- * expects the values in the range of -1 to 1 and values are returned
- * in the range -PI/2 to PI/2.
+ * The inverse of <a href="#/p5/sin">sin()</a>, returns the arc sine of a value.
+ * This function expects the values in the range of -1 to 1 and values are returned
+ * in the range -PI/2 to PI/2 if the angleMode is RADIANS or -90 to 90 if the angle
+ * mode is DEGREES.
  *
  * @method asin
  * @param  {Number} value the value whose arc sine is to be returned
@@ -63,10 +63,10 @@ p5.prototype.acos = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * let a = PI + PI / 3;
+ * let a = PI / 3.0;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "1.0471976 : 0.86602545 : 1.0471976"
+ * // Prints: "1.0471975 : 0.86602540 : 1.0471975"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
  * </div>
@@ -76,20 +76,20 @@ p5.prototype.acos = function(ratio) {
  * let a = PI + PI / 3.0;
  * let s = sin(a);
  * let as = asin(s);
- * // Prints: "4.1887903 : -0.86602545 : -1.0471976"
+ * // Prints: "4.1887902 : -0.86602540 : -1.0471975"
  * print(a + ' : ' + s + ' : ' + as);
  * </code>
  * </div>
- *
  */
 p5.prototype.asin = function(ratio) {
   return this._fromRadians(Math.asin(ratio));
 };
 
 /**
- * The inverse of <a href="#/p5/tan">tan()</a>, returns the arc tangent of a value. This function
- * expects the values in the range of -Infinity to Infinity (exclusive) and
- * values are returned in the range -PI/2 to PI/2.
+ * The inverse of <a href="#/p5/tan">tan()</a>, returns the arc tangent of a value.
+ * This function expects the values in the range of -Infinity to Infinity (exclusive) and
+ * values are returned in the range -PI/2 to PI/2 if the angleMode is RADIANS or
+ * -90 to 90 if the angle mode is DEGREES.
  *
  * @method atan
  * @param  {Number} value the value whose arc tangent is to be returned
@@ -98,10 +98,10 @@ p5.prototype.asin = function(ratio) {
  * @example
  * <div class= “norender">
  * <code>
- * let a = PI + PI / 3;
+ * let a = PI / 3.0;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "1.0471976 : 1.7320509 : 1.0471976"
+ * // Prints: "1.0471975 : 1.7320508 : 1.0471975"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
  * </div>
@@ -111,11 +111,10 @@ p5.prototype.asin = function(ratio) {
  * let a = PI + PI / 3.0;
  * let t = tan(a);
  * let at = atan(t);
- * // Prints: "4.1887903 : 1.7320513 : 1.0471977"
+ * // Prints: "4.1887902 : 1.7320508 : 1.0471975"
  * print(a + ' : ' + t + ' : ' + at);
  * </code>
  * </div>
- *
  */
 p5.prototype.atan = function(ratio) {
   return this._fromRadians(Math.atan(ratio));
@@ -124,9 +123,10 @@ p5.prototype.atan = function(ratio) {
 /**
  * Calculates the angle (in radians) from a specified point to the coordinate
  * origin as measured from the positive x-axis. Values are returned as a
- * float in the range from PI to -PI. The atan2<a href="#/p5/">()</a> function is most often used
- * for orienting geometry to the position of the cursor.
- * <br><br>
+ * float in the range from PI to -PI if the angleMode is RADIANS or 180 to
+ * -180 if the angleMode is DEGREES. The atan2<a href="#/p5/">()</a> function is
+ * most often used for orienting geometry to the position of the cursor.
+ *
  * Note: The y-coordinate of the point is the first parameter, and the
  * x-coordinate is the second parameter, due the the structure of calculating
  * the tangent.
@@ -151,7 +151,6 @@ p5.prototype.atan = function(ratio) {
  *
  * @alt
  * 60 by 10 rect at center of canvas rotates with mouse movements
- *
  */
 p5.prototype.atan2 = function(y, x) {
   return this._fromRadians(Math.atan2(y, x));
@@ -179,7 +178,6 @@ p5.prototype.atan2 = function(y, x) {
  *
  * @alt
  * vertical black lines form wave patterns, extend-down on left and right side
- *
  */
 p5.prototype.cos = function(angle) {
   return Math.cos(this._toRadians(angle));
@@ -207,7 +205,6 @@ p5.prototype.cos = function(angle) {
  *
  * @alt
  * vertical black lines extend down and up from center to form wave pattern
- *
  */
 p5.prototype.sin = function(angle) {
   return Math.sin(this._toRadians(angle));
@@ -215,7 +212,7 @@ p5.prototype.sin = function(angle) {
 
 /**
  * Calculates the tangent of an angle. This function takes into account
- * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range -1 to 1.
+ * the current <a href="#/p5/angleMode">angleMode</a>. Values are returned in the range of all real numbers.
  *
  * @method tan
  * @param  {Number} angle the angle
@@ -232,10 +229,8 @@ p5.prototype.sin = function(angle) {
  * }
  * </code>
  *
- *
  * @alt
  * vertical black lines end down and up from center to form spike pattern
- *
  */
 p5.prototype.tan = function(angle) {
   return Math.tan(this._toRadians(angle));
@@ -252,7 +247,6 @@ p5.prototype.tan = function(angle) {
  * @param  {Number} radians the radians value to convert to degrees
  * @return {Number}         the converted angle
  *
- *
  * @example
  * <div class= “norender">
  * <code>
@@ -262,11 +256,8 @@ p5.prototype.tan = function(angle) {
  * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
  * </div>
- *
  */
-p5.prototype.degrees = function(angle) {
-  return angle * constants.RAD_TO_DEG;
-};
+p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
 
 /**
  * Converts a degree measurement to its corresponding value in radians.
@@ -289,9 +280,7 @@ p5.prototype.degrees = function(angle) {
  * </code>
  * </div>
  */
-p5.prototype.radians = function(angle) {
-  return angle * constants.DEG_TO_RAD;
-};
+p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 
 /**
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
@@ -320,7 +309,6 @@ p5.prototype.radians = function(angle) {
  *
  * @alt
  * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
- *
  *
  */
 p5.prototype.angleMode = function(mode) {
@@ -374,4 +362,4 @@ p5.prototype._fromRadians = function(angle) {
   return angle;
 };
 
-module.exports = p5;
+export default p5;

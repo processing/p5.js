@@ -11,10 +11,8 @@
  * drawing images to the main display canvas.
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var Filters = require('./filters');
+import p5 from '../core/main';
+import Filters from './filters';
 
 /*
  * Class methods
@@ -23,16 +21,16 @@ var Filters = require('./filters');
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a>. A <a href="#/p5.Image">p5.Image</a> is a canvas backed representation of an
  * image.
- * <br><br>
+ *
  * p5 can display .gif, .jpg and .png images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
  * <a href="#/p5/loadImage">loadImage()</a> function. The <a href="#/p5.Image">p5.Image</a> class contains fields for the width and
  * height of the image, as well as an array called <a href="#/p5.Image/pixels">pixels[]</a> that contains the
  * values for every pixel in the image.
- * <br><br>
+ *
  * The methods described below allow easy access to the image's pixels and
  * alpha channel and simplify the process of compositing.
- * <br><br>
+ *
  * Before using the <a href="#/p5.Image/pixels">pixels[]</a> array, be sure to use the <a href="#/p5.Image/loadPixels">loadPixels()</a> method on
  * the image to make sure that the pixel data is properly loaded.
  * @example
@@ -81,8 +79,8 @@ var Filters = require('./filters');
  * }
  * </code></div>
  *
- *
  * @class p5.Image
+ * @constructor
  * @param {Number} width
  * @param {Number} height
  */
@@ -147,7 +145,8 @@ p5.Image = function(width, height) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelsState = this;
   this._pixelDensity = 1;
-  this._pixelsDirty = true;
+  //Object for working with GIFs, defaults to null
+  this.gifProperties = null;
   //For WebGL Texturing only: used to determine whether to reupload texture to GPU
   this._modified = false;
   /**
@@ -156,7 +155,7 @@ p5.Image = function(width, height) {
    * factor for pixelDensity) of the display window x4,
    * representing the R, G, B, A values in order for each pixel, moving from
    * left to right across each row, then down each column. Retina and other
-   * high denisty displays may have more pixels (by a factor of
+   * high density displays may have more pixels (by a factor of
    * pixelDensity^2).
    * For example, if the image is 100x100 pixels, there will be 40,000. With
    * pixelDensity = 2, there will be 160,000. The first four values
@@ -177,7 +176,7 @@ p5.Image = function(width, height) {
    *   }
    * }
    * ```
-   * <br><br>
+   *
    * Before accessing this array, the data must loaded with the <a href="#/p5.Image/loadPixels">loadPixels()</a>
    * function. After the array data has been modified, the <a href="#/p5.Image/updatePixels">updatePixels()</a>
    * function must be run to update the changes.
@@ -221,8 +220,38 @@ p5.Image = function(width, height) {
 };
 
 /**
+ * Helper function for animating GIF-based images with time
+ */
+p5.Image.prototype._animateGif = function(pInst) {
+  const props = this.gifProperties;
+  const curTime = pInst._lastFrameTime + pInst.deltaTime;
+  if (props.lastChangeTime === 0) {
+    props.lastChangeTime = curTime;
+  }
+  if (props.playing) {
+    props.timeDisplayed = curTime - props.lastChangeTime;
+    const curDelay = props.frames[props.displayIndex].delay;
+    if (props.timeDisplayed >= curDelay) {
+      //GIF is bound to 'realtime' so can skip frames
+      const skips = Math.floor(props.timeDisplayed / curDelay);
+      props.timeDisplayed = 0;
+      props.lastChangeTime = curTime;
+      props.displayIndex += skips;
+      props.loopCount = Math.floor(props.displayIndex / props.numFrames);
+      if (props.loopLimit !== null && props.loopCount >= props.loopLimit) {
+        props.playing = false;
+      } else {
+        const ind = props.displayIndex % props.numFrames;
+        this.drawingContext.putImageData(props.frames[ind].image, 0, 0);
+        props.displayIndex = ind;
+        this.setModified(true);
+      }
+    }
+  }
+};
+
+/**
  * Helper fxn for sharing pixel methods
- *
  */
 p5.Image.prototype._setProperty = function(prop, value) {
   this[prop] = value;
@@ -258,7 +287,6 @@ p5.Image.prototype._setProperty = function(prop, value) {
  *
  * @alt
  * 2 images of rocky mountains vertically stacked
- *
  */
 p5.Image.prototype.loadPixels = function() {
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -268,6 +296,9 @@ p5.Image.prototype.loadPixels = function() {
 /**
  * Updates the backing canvas for this image with the contents of
  * the [pixels] array.
+ *
+ * If this image is an animated GIF then the pixels will be updated
+ * in the frame that is currently displayed.
  *
  * @method updatePixels
  * @param {Integer} x x-offset of the target update area for the
@@ -303,7 +334,6 @@ p5.Image.prototype.loadPixels = function() {
  *
  * @alt
  * 2 images of rocky mountains vertically stacked
- *
  */
 /**
  * @method updatePixels
@@ -349,7 +379,6 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  *
  * @alt
  * image of rocky mountains with 50x50 green rect in front
- *
  */
 /**
  * @method get
@@ -399,7 +428,6 @@ p5.Image.prototype._getPixel = p5.Renderer2D.prototype._getPixel;
  *
  * @alt
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
- *
  */
 p5.Image.prototype.set = function(x, y, imgOrCol) {
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
@@ -434,7 +462,6 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
  *
  * @alt
  * image of rocky mountains. zoomed in
- *
  */
 p5.Image.prototype.resize = function(width, height) {
   // Copy contents to a temporary canvas, resize the original
@@ -460,9 +487,37 @@ p5.Image.prototype.resize = function(width, height) {
   width = Math.floor(width);
   height = Math.floor(height);
 
-  var tempCanvas = document.createElement('canvas');
+  const tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
+
+  if (this.gifProperties) {
+    const props = this.gifProperties;
+    //adapted from github.com/LinusU/resize-image-data
+    const nearestNeighbor = (src, dst) => {
+      let pos = 0;
+      for (let y = 0; y < dst.height; y++) {
+        for (let x = 0; x < dst.width; x++) {
+          const srcX = Math.floor(x * src.width / dst.width);
+          const srcY = Math.floor(y * src.height / dst.height);
+          let srcPos = (srcY * src.width + srcX) * 4;
+          dst.data[pos++] = src.data[srcPos++]; // R
+          dst.data[pos++] = src.data[srcPos++]; // G
+          dst.data[pos++] = src.data[srcPos++]; // B
+          dst.data[pos++] = src.data[srcPos++]; // A
+        }
+      }
+    };
+    for (let i = 0; i < props.numFrames; i++) {
+      const resizedImageData = this.drawingContext.createImageData(
+        width,
+        height
+      );
+      nearestNeighbor(props.frames[i].image, resizedImageData);
+      props.frames[i].image = resizedImageData;
+    }
+  }
+
   // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
@@ -488,7 +543,6 @@ p5.Image.prototype.resize = function(width, height) {
   }
 
   this.setModified(true);
-  this._pixelsDirty = true;
 };
 
 /**
@@ -530,7 +584,6 @@ p5.Image.prototype.resize = function(width, height) {
  *
  * @alt
  * image of rocky mountains and smaller image on top of bricks at top left
- *
  */
 /**
  * @method copy
@@ -543,39 +596,15 @@ p5.Image.prototype.resize = function(width, height) {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.Image.prototype.copy = function() {
-  var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-  if (arguments.length === 9) {
-    srcImage = arguments[0];
-    sx = arguments[1];
-    sy = arguments[2];
-    sw = arguments[3];
-    sh = arguments[4];
-    dx = arguments[5];
-    dy = arguments[6];
-    dw = arguments[7];
-    dh = arguments[8];
-  } else if (arguments.length === 8) {
-    srcImage = this;
-    sx = arguments[0];
-    sy = arguments[1];
-    sw = arguments[2];
-    sh = arguments[3];
-    dx = arguments[4];
-    dy = arguments[5];
-    dw = arguments[6];
-    dh = arguments[7];
-  } else {
-    throw new Error('Signature not supported');
-  }
-  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
-  this._pixelsDirty = true;
+p5.Image.prototype.copy = function(...args) {
+  p5.prototype.copy.apply(this, args);
 };
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
- * this image.
+ * image and using its alpha channel as an alpha channel for
+ * this image. Masks are cumulative, one applied to an image
+ * object, they cannot be removed.
  *
  * @method mask
  * @param {p5.Image} srcImage source image
@@ -597,27 +626,25 @@ p5.Image.prototype.copy = function() {
  * @alt
  * image of rocky mountains with white at right
  *
- *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
- *
  */
 // TODO: - Accept an array of alpha values.
 //       - Use other channels of an image. p5 uses the
 //       blue channel (which feels kind of arbitrary). Note: at the
-//       moment this method does not match native processings original
+//       moment this method does not match native processing's original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
     p5Image = this;
   }
-  var currBlend = this.drawingContext.globalCompositeOperation;
+  const currBlend = this.drawingContext.globalCompositeOperation;
 
-  var scaleFactor = 1;
+  let scaleFactor = 1;
   if (p5Image instanceof p5.Renderer) {
     scaleFactor = p5Image._pInst._pixelDensity;
   }
 
-  var copyArgs = [
+  const copyArgs = [
     p5Image,
     0,
     0,
@@ -638,9 +665,47 @@ p5.Image.prototype.mask = function(p5Image) {
 /**
  * Applies an image filter to a <a href="#/p5.Image">p5.Image</a>
  *
+ * THRESHOLD
+ * Converts the image to black and white pixels depending if they are above or
+ * below the threshold defined by the level parameter. The parameter must be
+ * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+ *
+ * GRAY
+ * Converts any colors in the image to grayscale equivalents. No parameter
+ * is used.
+ *
+ * OPAQUE
+ * Sets the alpha channel to entirely opaque. No parameter is used.
+ *
+ * INVERT
+ * Sets each pixel to its inverse value. No parameter is used.
+ *
+ * POSTERIZE
+ * Limits each channel of the image to the number of colors specified as the
+ * parameter. The parameter can be set to values between 2 and 255, but
+ * results are most noticeable in the lower ranges.
+ *
+ * BLUR
+ * Executes a Gaussian blur with the level parameter specifying the extent
+ * of the blurring. If no parameter is used, the blur is equivalent to
+ * Gaussian blur of radius 1. Larger values increase the blur.
+ *
+ * ERODE
+ * Reduces the light areas. No parameter is used.
+ *
+ * DILATE
+ * Increases the light areas. No parameter is used.
+ *
+ * filter() does not work in WEBGL mode.
+ * A similar effect can be achieved in WEBGL mode using custom
+ * shaders. Adam Ferriss has written
+ * a <a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>selection of shader examples</a> that contains many
+ * of the effects present in the filter examples.
+ *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
- *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                POSTERIZE, ERODE, DILATE or BLUR.
  *                                See Filters.js for docs on
  *                                each available filter
  * @param  {Number} [filterParam] an optional parameter unique
@@ -664,7 +729,6 @@ p5.Image.prototype.mask = function(p5Image) {
  *
  * @alt
  * 2 images of rocky mountains left one in color, right in black and white
- *
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation], value);
@@ -694,7 +758,6 @@ p5.Image.prototype.filter = function(operation, value) {
  *            darken | lighten | color-dodge | color-burn | hard-light |
  *            soft-light | difference | exclusion | hue | saturation |
  *            color | luminosity
- *
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  * @example
@@ -748,7 +811,6 @@ p5.Image.prototype.filter = function(operation, value) {
  * image of rocky mountains. Brick images on left and right. Right overexposed
  * image of rockies. Brickwall images on left and right. Right mortar transparent
  * image of rockies. Brickwall images on left and right. Right translucent
- *
  */
 /**
  * @method blend
@@ -762,8 +824,9 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.Image.prototype.blend = function() {
-  p5.prototype.blend.apply(this, arguments);
+p5.Image.prototype.blend = function(...args) {
+  p5._validateParameters('p5.Image.blend', arguments);
+  p5.prototype.blend.apply(this, args);
   this.setModified(true);
 };
 
@@ -796,8 +859,10 @@ p5.Image.prototype.isModified = function() {
 /**
  * Saves the image to a file and force the browser to download it.
  * Accepts two strings for filename and file extension
- * Supports png (default) and jpg.
- *
+ * Supports png (default), jpg, and gif
+ *<br><br>
+ * Note that the file will only be downloaded as an animated GIF
+ * if the p5.Image was loaded from a GIF file.
  * @method save
  * @param {String} filename give your file a name
  * @param  {String} extension 'png' or 'jpg'
@@ -822,10 +887,290 @@ p5.Image.prototype.isModified = function() {
  *
  * @alt
  * image of rocky mountains.
- *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  p5.prototype.saveCanvas(this.canvas, filename, extension);
+  if (this.gifProperties) {
+    p5.prototype.saveGif(this, filename);
+  } else {
+    p5.prototype.saveCanvas(this.canvas, filename, extension);
+  }
 };
 
-module.exports = p5.Image;
+// GIF Section
+/**
+ * Starts an animated GIF over at the beginning state.
+ *
+ * @method reset
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-wink-loop-once.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   // The GIF file that we loaded only loops once
+ *   // so it freezes on the last frame after playing through
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   // Click to reset the GIF and begin playback from start
+ *   gif.reset();
+ * }
+ * </code></div>
+ * @alt
+ * Animated image of a cartoon face that winks once and then freezes
+ * When you click it animates again, winks once and freezes
+ */
+p5.Image.prototype.reset = function() {
+  if (this.gifProperties) {
+    const props = this.gifProperties;
+    props.playing = true;
+    props.timeSinceStart = 0;
+    props.timeDisplayed = 0;
+    props.lastChangeTime = 0;
+    props.loopCount = 0;
+    props.displayIndex = 0;
+    this.drawingContext.putImageData(props.frames[0].image, 0, 0);
+  }
+};
+
+/**
+ * Gets the index for the frame that is currently visible in an animated GIF.
+ *
+ * @method getCurrentFrame
+ * @return {Number}       The index for the currently displaying frame in animated GIF
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   let frame = gif.getCurrentFrame();
+ *   image(gif, 0, 0);
+ *   text(frame, 10, 90);
+ * }
+ * </code></div>
+ * @alt
+ * Animated image of a cartoon eye looking around and then
+ * looking outwards, in the lower-left hand corner a number counts
+ * up quickly to 124 and then starts back over at 0
+ */
+p5.Image.prototype.getCurrentFrame = function() {
+  if (this.gifProperties) {
+    const props = this.gifProperties;
+    return props.displayIndex % props.numFrames;
+  }
+};
+
+/**
+ * Sets the index of the frame that is currently visible in an animated GIF
+ *
+ * @method setFrame
+ * @param {Number}       index the index for the frame that should be displayed
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
+ */
+p5.Image.prototype.setFrame = function(index) {
+  if (this.gifProperties) {
+    const props = this.gifProperties;
+    if (index < props.numFrames && index >= 0) {
+      props.timeDisplayed = 0;
+      props.lastChangeTime = 0;
+      props.displayIndex = index;
+      this.drawingContext.putImageData(props.frames[index].image, 0, 0);
+    } else {
+      console.log(
+        'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
+      );
+    }
+  }
+};
+
+/**
+ * Returns the number of frames in an animated GIF
+ *
+ * @method numFrames
+ * @return {Number}
+ * @example     The number of frames in the animated GIF
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * // Move your mouse up and down over canvas to see the GIF
+ * // frames animate
+ * function draw() {
+ *   gif.pause();
+ *   image(gif, 0, 0);
+ *   // Get the highest frame number which is the number of frames - 1
+ *   let maxFrame = gif.numFrames() - 1;
+ *   // Set the current frame that is mapped to be relative to mouse position
+ *   let frameNumber = floor(map(mouseY, 0, height, 0, maxFrame, true));
+ *   gif.setFrame(frameNumber);
+ * }
+ * </code></div>
+ * @alt
+ * A still image of a cartoon eye that looks around when you move your mouse
+ * up and down over the canvas
+ */
+p5.Image.prototype.numFrames = function() {
+  if (this.gifProperties) {
+    return this.gifProperties.numFrames;
+  }
+};
+
+/**
+ * Plays an animated GIF that was paused with
+ * <a href="#/p5.Image/pause">pause()</a>
+ *
+ * @method play
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
+ */
+p5.Image.prototype.play = function() {
+  if (this.gifProperties) {
+    this.gifProperties.playing = true;
+  }
+};
+
+/**
+ * Pauses an animated GIF.
+ *
+ * @method pause
+ * @example
+ * <div><code>
+ * let gif;
+ *
+ * function preload() {
+ *   gif = loadImage('assets/nancy-liang-wind-loop-forever.gif');
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gif, 0, 0);
+ * }
+ *
+ * function mousePressed() {
+ *   gif.pause();
+ * }
+ *
+ * function mouseReleased() {
+ *   gif.play();
+ * }
+ * </code></div>
+ * @alt
+ * An animated GIF of a drawing of small child with
+ * hair blowing in the wind, when you click the image
+ * freezes when you release it animates again
+ */
+p5.Image.prototype.pause = function() {
+  if (this.gifProperties) {
+    this.gifProperties.playing = false;
+  }
+};
+
+/**
+ * Changes the delay between frames in an animated GIF. There is an optional second parameter that
+ * indicates an index for a specific frame that should have its delay modified. If no index is given, all frames
+ * will have the new delay.
+ *
+ * @method delay
+ * @param {Number}    d the amount in milliseconds to delay between switching frames
+ * @param {Number}    [index] the index of the frame that should have the new delay value {optional}
+ * @example
+ * <div><code>
+ * let gifFast, gifSlow;
+ *
+ * function preload() {
+ *   gifFast = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ *   gifSlow = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ *
+ * function setup() {
+ *   gifFast.resize(width / 2, height / 2);
+ *   gifSlow.resize(width / 2, height / 2);
+ *
+ *   //Change the delay here
+ *   gifFast.delay(10);
+ *   gifSlow.delay(100);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   image(gifFast, 0, 0);
+ *   image(gifSlow, width / 2, 0);
+ * }
+ * </code></div>
+ * @alt
+ * Two animated gifs of cartoon eyes looking around
+ * The gif on the left animates quickly, on the right
+ * the animation is much slower
+ */
+p5.Image.prototype.delay = function(d, index) {
+  if (this.gifProperties) {
+    const props = this.gifProperties;
+    if (index < props.numFrames && index >= 0) {
+      props.frames[index].delay = d;
+    } else {
+      // change all frames
+      for (const frame of props.frames) {
+        frame.delay = d;
+      }
+    }
+  }
+};
+
+export default p5.Image;

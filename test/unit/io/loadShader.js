@@ -8,7 +8,7 @@ suite('loadShader', function() {
     try {
       await promisedSketch(function(sketch, resolve, reject) {
         sketch.preload = function() {
-          sketch.loadModel(invalidFile, reject, resolve);
+          sketch.loadShader(invalidFile, invalidFile, reject, resolve);
         };
       });
       expect(

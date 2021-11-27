@@ -1,0 +1,23 @@
+<!-- docs/_sidebar.md -->
+
+- [__기여방법 소개__](README.md)
+- __CONTRIBUTING DOCS__
+  - [문서 기여](contributing_documentation.md)
+  - [이슈라벨](issue_labels.md)
+- __CONTRIBUTING THOUGHTS__
+  - [토론](discussions.md)
+  - [디자인 원칙](design_principles.md)
+  - [로드맵](roadmap.md)
+  - [단체에 기여하는 법](organization.md)
+- __CONTRIBUTING CODE__
+  - [라이브러리 생성](creating_libraries.md)
+  - [풀리퀘스트 생성](preparing_a_pull_request.md)
+  - [인라인 문서](inline_documentation.md)
+  - [벤치마킹](benchmarking_p5.md)
+  - [단위 테스팅](unit_testing.md)
+  - [친절한 에러 시스템](friendly_error_system.md)
+  - [배포 절차](release_process.md)
+- __RELATED INFO__
+  - [WebGL 아키텍처](webgl_mode_architecture.md)
+  - [지원 브라우저](supported_browsers.md)
+  - [사용자 지정 빌드](custom_p5_build.md)

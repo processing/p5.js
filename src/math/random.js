@@ -5,45 +5,34 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
 
-var p5 = require('../core/main');
+// variables used for random number generators
+const randomStateProp = '_lcg_random_state';
+// Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+// m is basically chosen to be large (as it is the max period)
+// and for its relationships to a and c
+const m = 4294967296;
+// a - 1 should be divisible by m's prime factors
+const a = 1664525;
+// c and m should be co-prime
+const c = 1013904223;
+let y2 = 0;
 
-var seeded = false;
-var previous = false;
-var y2 = 0;
+// Linear Congruential Generator that stores its state at instance[stateProperty]
+p5.prototype._lcg = function(stateProperty) {
+  // define the recurrence relationship
+  this[stateProperty] = (a * this[stateProperty] + c) % m;
+  // return a float in [0, 1)
+  // we've just used % m, so / m is always < 1
+  return this[stateProperty] / m;
+};
 
-// Linear Congruential Generator
-// Variant of a Lehman Generator
-var lcg = (function() {
-  // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
-  // m is basically chosen to be large (as it is the max period)
-  // and for its relationships to a and c
-  var m = 4294967296,
-    // a - 1 should be divisible by m's prime factors
-    a = 1664525,
-    // c and m should be co-prime
-    c = 1013904223,
-    seed,
-    z;
-  return {
-    setSeed: function(val) {
-      // pick a random seed if val is undefined or null
-      // the >>> 0 casts the seed to an unsigned 32-bit integer
-      z = seed = (val == null ? Math.random() * m : val) >>> 0;
-    },
-    getSeed: function() {
-      return seed;
-    },
-    rand: function() {
-      // define the recurrence relationship
-      z = (a * z + c) % m;
-      // return a float in [0, 1)
-      // if z = m then z / m = 0 therefore (z % m) / m < 1 always
-      return z / m;
-    }
-  };
-})();
+p5.prototype._lcgSetSeed = function(stateProperty, val) {
+  // pick a random seed if val is undefined or null
+  // the >>> 0 casts the seed to an unsigned 32-bit integer
+  this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
+};
 
 /**
  * Sets the seed value for <a href="#/p5/random">random()</a>.
@@ -68,12 +57,10 @@ var lcg = (function() {
  *
  * @alt
  * many vertical lines drawn in white, black or grey.
- *
  */
 p5.prototype.randomSeed = function(seed) {
-  lcg.setSeed(seed);
-  seeded = true;
-  previous = false;
+  this._lcgSetSeed(randomStateProp, seed);
+  this._gaussian_previous = false;
 };
 
 /**
@@ -128,7 +115,6 @@ p5.prototype.randomSeed = function(seed) {
  * 100 horizontal lines from center canvas to right. size+fill change each time
  * 100 horizontal lines from center of canvas. height & side change each render
  * word displayed at random. Either apple, bear, cat, or dog
- *
  */
 /**
  * @method random
@@ -137,10 +123,11 @@ p5.prototype.randomSeed = function(seed) {
  * @example
  */
 p5.prototype.random = function(min, max) {
-  var rand;
+  p5._validateParameters('random', arguments);
+  let rand;
 
-  if (seeded) {
-    rand = lcg.rand();
+  if (this[randomStateProp] != null) {
+    rand = this._lcg(randomStateProp);
   } else {
     rand = Math.random();
   }
@@ -154,7 +141,7 @@ p5.prototype.random = function(min, max) {
     }
   } else {
     if (min > max) {
-      var tmp = min;
+      const tmp = min;
       min = max;
       max = tmp;
     }
@@ -171,15 +158,15 @@ p5.prototype.random = function(min, max) {
  * just a very low probability that values far from the mean will be
  * returned; and a higher probability that numbers near the mean will
  * be returned.
- * <br><br>
+ *
  * Takes either 0, 1 or 2 arguments.<br>
  * If no args, returns a mean of 0 and standard deviation of 1.<br>
  * If one arg, that arg is the mean (standard deviation is 1).<br>
  * If two args, first is mean, second is standard deviation.
  *
  * @method randomGaussian
- * @param  {Number} mean  the mean
- * @param  {Number} sd    the standard deviation
+ * @param  {Number} [mean]  the mean
+ * @param  {Number} [sd]    the standard deviation
  * @return {Number} the random number
  * @example
  * <div>
@@ -219,11 +206,11 @@ p5.prototype.random = function(min, max) {
  * 100 horizontal lines from center of canvas. height & side change each render
  * black lines radiate from center of canvas. size determined each render
  */
-p5.prototype.randomGaussian = function(mean, sd) {
-  var y1, x1, x2, w;
-  if (previous) {
+p5.prototype.randomGaussian = function(mean, sd = 1) {
+  let y1, x1, x2, w;
+  if (this._gaussian_previous) {
     y1 = y2;
-    previous = false;
+    this._gaussian_previous = false;
   } else {
     do {
       x1 = this.random(2) - 1;
@@ -233,12 +220,11 @@ p5.prototype.randomGaussian = function(mean, sd) {
     w = Math.sqrt(-2 * Math.log(w) / w);
     y1 = x1 * w;
     y2 = x2 * w;
-    previous = true;
+    this._gaussian_previous = true;
   }
 
-  var m = mean || 0;
-  var s = sd || 1;
-  return y1 * s + m;
+  const m = mean || 0;
+  return y1 * sd + m;
 };
 
-module.exports = p5;
+export default p5;

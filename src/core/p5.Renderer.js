@@ -4,15 +4,13 @@
  * @for p5
  */
 
-'use strict';
-
-var p5 = require('./main');
-var constants = require('../core/constants');
+import p5 from './main';
+import * as constants from '../core/constants';
 
 /**
  * Main graphics and rendering context, as well as the base API
  * implementation for p5.js "core". To be used as the superclass for
- * Renderer2D and Renderer3D classes, respecitvely.
+ * Renderer2D and Renderer3D classes, respectively.
  *
  * @class p5.Renderer
  * @constructor
@@ -46,6 +44,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textDescent = null;
   this._textAlign = constants.LEFT;
   this._textBaseline = constants.BASELINE;
+  this._textWrap = constants.WORD;
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -57,6 +56,7 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._doFill = true;
   this._strokeSet = false;
   this._fillSet = false;
+  this._leadingSet = false;
 };
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
@@ -76,10 +76,12 @@ p5.Renderer.prototype.push = function() {
       _ellipseMode: this._ellipseMode,
       _textFont: this._textFont,
       _textLeading: this._textLeading,
+      _leadingSet: this._leadingSet,
       _textSize: this._textSize,
       _textAlign: this._textAlign,
       _textBaseline: this._textBaseline,
-      _textStyle: this._textStyle
+      _textStyle: this._textStyle,
+      _textWrap: this._textWrap
     }
   };
 };
@@ -102,8 +104,8 @@ p5.Renderer.prototype.resize = function(w, h) {
   this.height = h;
   this.elt.width = w * this._pInst._pixelDensity;
   this.elt.height = h * this._pInst._pixelDensity;
-  this.elt.style.width = w + 'px';
-  this.elt.style.height = h + 'px';
+  this.elt.style.width = `${w}px`;
+  this.elt.style.height = `${h}px`;
   if (this._isMainCanvas) {
     this._pInst._setProperty('width', this.width);
     this._pInst._setProperty('height', this.height);
@@ -111,9 +113,9 @@ p5.Renderer.prototype.resize = function(w, h) {
 };
 
 p5.Renderer.prototype.get = function(x, y, w, h) {
-  var pixelsState = this._pixelsState;
-  var pd = pixelsState._pixelDensity;
-  var canvas = this.canvas;
+  const pixelsState = this._pixelsState;
+  const pd = pixelsState._pixelDensity;
+  const canvas = this.canvas;
 
   if (typeof x === 'undefined' && typeof y === 'undefined') {
     // get()
@@ -135,7 +137,7 @@ p5.Renderer.prototype.get = function(x, y, w, h) {
     // get(x,y,w,h)
   }
 
-  var region = new p5.Image(w, h);
+  const region = new p5.Image(w, h);
   region.canvas
     .getContext('2d')
     .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w, h);
@@ -145,6 +147,7 @@ p5.Renderer.prototype.get = function(x, y, w, h) {
 
 p5.Renderer.prototype.textLeading = function(l) {
   if (typeof l === 'number') {
+    this._setProperty('_leadingSet', true);
     this._setProperty('_textLeading', l);
     return this._pInst;
   }
@@ -155,7 +158,10 @@ p5.Renderer.prototype.textLeading = function(l) {
 p5.Renderer.prototype.textSize = function(s) {
   if (typeof s === 'number') {
     this._setProperty('_textSize', s);
-    this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+    if (!this._leadingSet) {
+      // only use a default value if not previously set (#5181)
+      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+    }
     return this._applyTextProperties();
   }
 
@@ -210,18 +216,23 @@ p5.Renderer.prototype.textAlign = function(h, v) {
   }
 };
 
+p5.Renderer.prototype.textWrap = function(wrapStyle) {
+  this._setProperty('_textWrap', wrapStyle);
+  return this._textWrap;
+};
+
 p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  var p = this._pInst,
-    cars,
-    n,
-    ii,
-    jj,
-    line,
-    testLine,
-    testWidth,
-    words,
-    totalHeight,
-    finalMaxHeight = Number.MAX_VALUE;
+  const p = this._pInst;
+  const textWrapStyle = this._textWrap;
+
+  let lines;
+  let line;
+  let testLine;
+  let testWidth;
+  let words;
+  let chars;
+  let shiftedY;
+  let finalMaxHeight = Number.MAX_VALUE;
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -233,29 +244,14 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     str = str.toString();
   }
 
+  // Replaces tabs with double-spaces and splits string on any line
+  // breaks present in the original string
   str = str.replace(/(\t)/g, '  ');
-  cars = str.split('\n');
+  lines = str.split('\n');
 
   if (typeof maxWidth !== 'undefined') {
-    totalHeight = 0;
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
-          line = words[n] + ' ';
-          totalHeight += p.textLeading();
-        } else {
-          line = testLine;
-        }
-      }
-    }
-
     if (this._rectMode === constants.CENTER) {
       x -= maxWidth / 2;
-      y -= maxHeight / 2;
     }
 
     switch (this._textAlign) {
@@ -267,14 +263,20 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         break;
     }
 
-    var baselineHacked = false;
+    let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
+      if (this._rectMode === constants.CENTER) {
+        y -= maxHeight / 2;
+      }
+
       switch (this._textBaseline) {
         case constants.BOTTOM:
-          y += maxHeight - totalHeight;
+          shiftedY = y + maxHeight;
+          y = Math.max(shiftedY, y);
           break;
         case constants.CENTER:
-          y += (maxHeight - totalHeight) / 2;
+          shiftedY = y + maxHeight / 2;
+          y = Math.max(shiftedY, y);
           break;
         case constants.BASELINE:
           baselineHacked = true;
@@ -286,22 +288,99 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       finalMaxHeight = y + maxHeight - p.textAscent();
     }
 
-    for (ii = 0; ii < cars.length; ii++) {
-      line = '';
-      words = cars[ii].split(' ');
-      for (n = 0; n < words.length; n++) {
-        testLine = line + words[n] + ' ';
-        testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y, finalMaxHeight);
-          line = words[n] + ' ';
-          y += p.textLeading();
-        } else {
-          line = testLine;
+    // Render lines of text according to settings of textWrap
+    // Splits lines at spaces, for loop adds one word + space
+    // at a time and tests length with next word added
+    if (textWrapStyle === constants.WORD) {
+      let nlines = [];
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          testLine = `${line + words[wordIndex]}` + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth && line.length > 0) {
+            nlines.push(line);
+            line = `${words[wordIndex]}` + ' ';
+          } else {
+            line = testLine;
+          }
+        }
+        nlines.push(line);
+      }
+
+      let offset = 0;
+      const vAlign = p.textAlign().vertical;
+      if (vAlign === constants.CENTER) {
+        offset = (nlines.length - 1) * p.textLeading() / 2;
+      } else if (vAlign === constants.BOTTOM) {
+        offset = (nlines.length - 1) * p.textLeading();
+      }
+
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        words = lines[lineIndex].split(' ');
+        for (let wordIndex = 0; wordIndex < words.length; wordIndex++) {
+          testLine = `${line + words[wordIndex]}` + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+            line = `${words[wordIndex]}` + ' ';
+            y += p.textLeading();
+          } else {
+            line = testLine;
+          }
+        }
+        this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+        y += p.textLeading();
+        if (baselineHacked) {
+          this._textBaseline = constants.BASELINE;
+        }
+      }
+    } else {
+      let nlines = [];
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        chars = lines[lineIndex].split('');
+        for (let charIndex = 0; charIndex < chars.length; charIndex++) {
+          testLine = `${line + chars[charIndex]}`;
+          testWidth = this.textWidth(testLine);
+          if (testWidth <= maxWidth) {
+            line += chars[charIndex];
+          } else if (testWidth > maxWidth && line.length > 0) {
+            nlines.push(line);
+            line = `${chars[charIndex]}`;
+          }
         }
       }
 
-      this._renderText(p, line, x, y, finalMaxHeight);
+      nlines.push(line);
+      let offset = 0;
+      const vAlign = p.textAlign().vertical;
+      if (vAlign === constants.CENTER) {
+        offset = (nlines.length - 1) * p.textLeading() / 2;
+      } else if (vAlign === constants.BOTTOM) {
+        offset = (nlines.length - 1) * p.textLeading();
+      }
+
+      // Splits lines at characters, for loop adds one char at a time
+      // and tests length with next char added
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        line = '';
+        chars = lines[lineIndex].split('');
+        for (let charIndex = 0; charIndex < chars.length; charIndex++) {
+          testLine = `${line + chars[charIndex]}`;
+          testWidth = this.textWidth(testLine);
+          if (testWidth <= maxWidth) {
+            line += chars[charIndex];
+          } else if (testWidth > maxWidth && line.length > 0) {
+            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+            y += p.textLeading();
+            line = `${chars[charIndex]}`;
+          }
+        }
+      }
+      this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
       y += p.textLeading();
 
       if (baselineHacked) {
@@ -311,16 +390,17 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   } else {
     // Offset to account for vertically centering multiple lines of text - no
     // need to adjust anything for vertical align top or baseline
-    var offset = 0,
-      vAlign = p.textAlign().vertical;
+    let offset = 0;
+    const vAlign = p.textAlign().vertical;
     if (vAlign === constants.CENTER) {
-      offset = (cars.length - 1) * p.textLeading() / 2;
+      offset = (lines.length - 1) * p.textLeading() / 2;
     } else if (vAlign === constants.BOTTOM) {
-      offset = (cars.length - 1) * p.textLeading();
+      offset = (lines.length - 1) * p.textLeading();
     }
 
-    for (jj = 0; jj < cars.length; jj++) {
-      this._renderText(p, cars[jj], x, y - offset, finalMaxHeight);
+    // Renders lines of text at any line breaks present in the original string
+    for (let i = 0; i < lines.length; i++) {
+      this._renderText(p, lines[i], x, y - offset, finalMaxHeight);
       y += p.textLeading();
     }
   }
@@ -333,10 +413,9 @@ p5.Renderer.prototype._applyDefaults = function() {
 };
 
 /**
- * Helper fxn to check font type (system or otf)
+ * Helper function to check font type (system or otf)
  */
-p5.Renderer.prototype._isOpenType = function(f) {
-  f = f || this._textFont;
+p5.Renderer.prototype._isOpenType = function(f = this._textFont) {
   return typeof f === 'object' && f.font && f.font.supported;
 };
 
@@ -348,17 +427,17 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   }
 
   // Adapted from http://stackoverflow.com/a/25355178
-  var text = document.createElement('span');
+  const text = document.createElement('span');
   text.style.fontFamily = this._textFont;
-  text.style.fontSize = this._textSize + 'px';
+  text.style.fontSize = `${this._textSize}px`;
   text.innerHTML = 'ABCjgq|';
 
-  var block = document.createElement('div');
+  const block = document.createElement('div');
   block.style.display = 'inline-block';
   block.style.width = '1px';
   block.style.height = '0px';
 
-  var container = document.createElement('div');
+  const container = document.createElement('div');
   container.appendChild(text);
   container.appendChild(block);
 
@@ -367,15 +446,15 @@ p5.Renderer.prototype._updateTextMetrics = function() {
   document.body.appendChild(container);
 
   block.style.verticalAlign = 'baseline';
-  var blockOffset = calculateOffset(block);
-  var textOffset = calculateOffset(text);
-  var ascent = blockOffset[1] - textOffset[1];
+  let blockOffset = calculateOffset(block);
+  let textOffset = calculateOffset(text);
+  const ascent = blockOffset[1] - textOffset[1];
 
   block.style.verticalAlign = 'bottom';
   blockOffset = calculateOffset(block);
   textOffset = calculateOffset(text);
-  var height = blockOffset[1] - textOffset[1];
-  var descent = height - ascent;
+  const height = blockOffset[1] - textOffset[1];
+  const descent = height - ascent;
 
   document.body.removeChild(container);
 
@@ -390,7 +469,7 @@ p5.Renderer.prototype._updateTextMetrics = function() {
  * Adapted from http://stackoverflow.com/a/25355178
  */
 function calculateOffset(object) {
-  var currentLeft = 0,
+  let currentLeft = 0,
     currentTop = 0;
   if (object.offsetParent) {
     do {
@@ -404,4 +483,4 @@ function calculateOffset(object) {
   return [currentLeft, currentTop];
 }
 
-module.exports = p5.Renderer;
+export default p5.Renderer;

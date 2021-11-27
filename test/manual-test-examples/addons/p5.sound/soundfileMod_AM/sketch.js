@@ -4,12 +4,12 @@
  * the carrier's amplitude.
  *
  * The carrier is typically set at an audible frequency (i.e. 440 Hz)
- * and connected to master output by default. The carrier.amp is
+ * and connected to main output by default. The carrier.amp is
  * set to zero because we will have the modulator control its amplitude.
  *
  * The modulator is typically set to a frequency that is lower than
  * humans can hear (i.e. 1 Hz, or one cycle every second). The modulator
- * is disconnected from master output. Instead, it is connected
+ * is disconnected from main output. Instead, it is connected
  * to the amplitude of the Carrier, like this: carrier.amp(modulator).
  *
  * MouseX controls the amplitude of the modulator from 0 to 1. When the
@@ -27,7 +27,7 @@ var modulator; // this oscillator will modulate the amplitude of the carrier
 var fft; // we'll visualize the waveform
 
 function preload() {
-  carrier = loadSound('../_files/Damscray_01.mp3'); // connects to master output by default
+  carrier = loadSound('../_files/Damscray_01.mp3'); // connects to main output by default
 }
 
 function setup() {
@@ -42,7 +42,7 @@ function setup() {
   carrier.loop();
 
   modulator = new p5.Oscillator('triangle');
-  modulator.disconnect(); // disconnect the modulator from master output
+  modulator.disconnect(); // disconnect the modulator from main output
   modulator.freq(5);
   modulator.amp(1);
   modulator.start();

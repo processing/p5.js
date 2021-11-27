@@ -8,13 +8,14 @@
 /* globals Request: false */
 /* globals Headers: false */
 
-'use strict';
-
-var p5 = require('../core/main');
-require('whatwg-fetch');
-require('es6-promise').polyfill();
-var fetchJsonp = require('fetch-jsonp');
-require('../core/error_helpers');
+import p5 from '../core/main';
+import 'whatwg-fetch';
+import 'es6-promise/auto';
+import fetchJsonp from 'fetch-jsonp';
+import fileSaver from 'file-saver';
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.
@@ -41,8 +42,8 @@ require('../core/error_helpers');
  * @return {Object|Array}             JSON data
  * @example
  *
- * <p>Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * Calling <a href="#/p5/loadJSON">loadJSON()</a> inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
  * // Examples use USGS Earthquake API:
@@ -71,9 +72,8 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  * <div><code>
  * function setup() {
  *   noLoop();
@@ -100,7 +100,6 @@ require('../core/error_helpers');
  * @alt
  * 50x50 ellipse that changes from black to white depending on the current humidity
  * 50x50 ellipse that changes from black to white depending on the current humidity
- *
  */
 /**
  * @method loadJSON
@@ -117,19 +116,19 @@ require('../core/error_helpers');
  * @param  {function}      [errorCallback]
  * @return {Object|Array}
  */
-p5.prototype.loadJSON = function() {
-  p5._validateParameters('loadJSON', arguments);
-  var path = arguments[0];
-  var callback;
-  var errorCallback;
-  var options;
+p5.prototype.loadJSON = function(...args) {
+  p5._validateParameters('loadJSON', args);
+  const path = args[0];
+  let callback;
+  let errorCallback;
+  let options;
 
-  var ret = {}; // object needed for preload
-  var t = 'json';
+  const ret = {}; // object needed for preload
+  let t = 'json';
 
   // check for explicit data type argument
-  for (var i = 1; i < arguments.length; i++) {
-    var arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'string') {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
@@ -150,14 +149,14 @@ p5.prototype.loadJSON = function() {
     }
   }
 
-  var self = this;
+  const self = this;
   this.httpDo(
     path,
     'GET',
     options,
     t,
-    function(resp) {
-      for (var k in resp) {
+    resp => {
+      for (const k in resp) {
         ret[k] = resp[k];
       }
       if (typeof callback !== 'undefined') {
@@ -166,7 +165,7 @@ p5.prototype.loadJSON = function() {
 
       self._decrementPreload();
     },
-    function(err) {
+    err => {
       // Error handling
       p5._friendlyFileLoadError(5, path);
 
@@ -185,12 +184,12 @@ p5.prototype.loadJSON = function() {
  * Reads the contents of a file and creates a String array of its individual
  * lines. If the name of the file is used as the parameter, as in the above
  * example, the file must be located in the sketch directory/folder.
- * <br><br>
+ *
  * Alternatively, the file maybe be loaded from anywhere on the local
  * computer using an absolute path (something that starts with / on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
- * <br><br>
+ *
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed.
  *
@@ -206,8 +205,8 @@ p5.prototype.loadJSON = function() {
  * @return {String[]}            Array of Strings
  * @example
  *
- * <p>Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
- * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * Calling loadStrings() inside <a href="#/p5/preload">preload()</a> guarantees to complete the
+ * operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
  * let result;
@@ -217,13 +216,12 @@ p5.prototype.loadJSON = function() {
 
  * function setup() {
  *   background(200);
- *   let ind = floor(random(result.length));
- *   text(result[ind], 10, 10, 80, 80);
+ *   text(random(result), 10, 10, 80, 80);
  * }
  * </code></div>
  *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  *
  * <div><code>
  * function setup() {
@@ -232,24 +230,22 @@ p5.prototype.loadJSON = function() {
  *
  * function pickString(result) {
  *   background(200);
- *   let ind = floor(random(result.length));
- *   text(result[ind], 10, 10, 80, 80);
+ *   text(random(result), 10, 10, 80, 80);
  * }
  * </code></div>
  *
  * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
- *
  */
-p5.prototype.loadStrings = function() {
-  p5._validateParameters('loadStrings', arguments);
+p5.prototype.loadStrings = function(...args) {
+  p5._validateParameters('loadStrings', args);
 
-  var ret = [];
-  var callback, errorCallback;
+  const ret = [];
+  let callback, errorCallback;
 
-  for (var i = 1; i < arguments.length; i++) {
-    var arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'function') {
       if (typeof callback === 'undefined') {
         callback = arg;
@@ -259,19 +255,29 @@ p5.prototype.loadStrings = function() {
     }
   }
 
-  var self = this;
+  const self = this;
   p5.prototype.httpDo.call(
     this,
-    arguments[0],
+    args[0],
     'GET',
     'text',
-    function(data) {
+    data => {
       // split lines handling mac/windows/linux endings
-      var lines = data
+      const lines = data
         .replace(/\r\n/g, '\r')
         .replace(/\n/g, '\r')
         .split(/\r/);
-      Array.prototype.push.apply(ret, lines);
+
+      // safe insert approach which will not blow up stack when inserting
+      // >100k lines, but still be faster than iterating line-by-line. based on
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply#Examples
+      const QUANTUM = 32768;
+      for (let i = 0, len = lines.length; i < len; i += QUANTUM) {
+        Array.prototype.push.apply(
+          ret,
+          lines.slice(i, Math.min(i + QUANTUM, len))
+        );
+      }
 
       if (typeof callback !== 'undefined') {
         callback(ret);
@@ -295,50 +301,33 @@ p5.prototype.loadStrings = function() {
 };
 
 /**
- * <p>Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
+ * Reads the contents of a file or URL and creates a <a href="#/p5.Table">p5.Table</a> object with
  * its values. If a file is specified, it must be located in the sketch's
  * "data" folder. The filename parameter can also be a URL to a file found
  * online. By default, the file is assumed to be comma-separated (in CSV
  * format). Table only looks for a header row if the 'header' option is
- * included.</p>
+ * included.
  *
- * <p>Possible options include:
- * <ul>
- * <li>csv - parse the table as comma-separated values</li>
- * <li>tsv - parse the table as tab-separated values</li>
- * <li>header - this table has a header (title) row</li>
- * </ul>
- * </p>
- *
- * <p>When passing in multiple options, pass them in as separate parameters,
- * seperated by commas. For example:
- * <br><br>
- * <code>
- * loadTable('my_csv_file.csv', 'csv', 'header');
- * </code>
- * </p>
- *
- * <p> All files loaded and saved use UTF-8 encoding.</p>
- *
- * <p>This method is asynchronous, meaning it may not finish before the next
+ * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling <a href="#/p5/loadTable">loadTable()</a> inside <a href="#/p5/preload">preload()</a>
  * guarantees to complete the operation before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.
- * <p>Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
- * object:</p>
- * </p>
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
+ * object:
  *
- * This method is suitable for fetching files up to size of 64MB.
+ * All files loaded and saved use UTF-8 encoding. This method is suitable for fetching files up to size of 64MB.
  * @method loadTable
- * @param  {String}         filename   name of the file or URL to load
- * @param  {String}         options  "header" "csv" "tsv"
- * @param  {function}       [callback] function to be executed after
- *                                     <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
- *                                     <a href="#/p5.Table">Table</a> object is passed in as the
- *                                     first argument.
- * @param  {function}  [errorCallback] function to be executed if
- *                                     there is an error, response is passed
- *                                     in as first argument
- * @return {Object}                    <a href="#/p5.Table">Table</a> object containing data
+ * @param  {String}         filename    name of the file or URL to load
+ * @param  {String}         [extension] parse the table by comma-separated values "csv", semicolon-separated
+ *                                      values "ssv", or tab-separated values "tsv"
+ * @param  {String}         [header]    "header" to indicate table has header row
+ * @param  {function}       [callback]  function to be executed after
+ *                                      <a href="#/p5/loadTable">loadTable()</a> completes. On success, the
+ *                                      <a href="#/p5.Table">Table</a> object is passed in as the
+ *                                      first argument.
+ * @param  {function}  [errorCallback]  function to be executed if
+ *                                      there is an error, response is passed
+ *                                      in as first argument
+ * @return {Object}                     <a href="#/p5.Table">Table</a> object containing data
  *
  * @example
  * <div class='norender'>
@@ -382,30 +371,25 @@ p5.prototype.loadStrings = function() {
  * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
- *
- */
-/**
- * @method loadTable
- * @param  {String}         filename
- * @param  {function}       [callback]
- * @param  {function}  [errorCallback]
- * @return {Object}
  */
 p5.prototype.loadTable = function(path) {
-  var callback;
-  var errorCallback;
-  var options = [];
-  var header = false;
-  var ext = path.substring(path.lastIndexOf('.') + 1, path.length);
-  var sep = ',';
-  var separatorSet = false;
+  // p5._validateParameters('loadTable', arguments);
+  let callback;
+  let errorCallback;
+  const options = [];
+  let header = false;
+  const ext = path.substring(path.lastIndexOf('.') + 1, path.length);
 
-  if (ext === 'tsv') {
-    //Only need to check extension is tsv because csv is default
+  let sep;
+  if (ext === 'csv') {
+    sep = ',';
+  } else if (ext === 'ssv') {
+    sep = ';';
+  } else if (ext === 'tsv') {
     sep = '\t';
   }
 
-  for (var i = 1; i < arguments.length; i++) {
+  for (let i = 1; i < arguments.length; i++) {
     if (typeof arguments[i] === 'function') {
       if (typeof callback === 'undefined') {
         callback = arguments[i];
@@ -418,65 +402,57 @@ p5.prototype.loadTable = function(path) {
         header = true;
       }
       if (arguments[i] === 'csv') {
-        if (separatorSet) {
-          throw new Error('Cannot set multiple separator types.');
-        } else {
-          sep = ',';
-          separatorSet = true;
-        }
+        sep = ',';
+      } else if (arguments[i] === 'ssv') {
+        sep = ';';
       } else if (arguments[i] === 'tsv') {
-        if (separatorSet) {
-          throw new Error('Cannot set multiple separator types.');
-        } else {
-          sep = '\t';
-          separatorSet = true;
-        }
+        sep = '\t';
       }
     }
   }
 
-  var t = new p5.Table();
+  const t = new p5.Table();
 
-  var self = this;
+  const self = this;
   this.httpDo(
     path,
     'GET',
     'table',
-    function(resp) {
-      var state = {};
+    resp => {
+      const state = {};
 
       // define constants
-      var PRE_TOKEN = 0,
+      const PRE_TOKEN = 0,
         MID_TOKEN = 1,
         POST_TOKEN = 2,
         POST_RECORD = 4;
 
-      var QUOTE = '"',
+      const QUOTE = '"',
         CR = '\r',
         LF = '\n';
 
-      var records = [];
-      var offset = 0;
-      var currentRecord = null;
-      var currentChar;
+      const records = [];
+      let offset = 0;
+      let currentRecord = null;
+      let currentChar;
 
-      var tokenBegin = function() {
+      const tokenBegin = () => {
         state.currentState = PRE_TOKEN;
         state.token = '';
       };
 
-      var tokenEnd = function() {
+      const tokenEnd = () => {
         currentRecord.push(state.token);
         tokenBegin();
       };
 
-      var recordBegin = function() {
+      const recordBegin = () => {
         state.escaped = false;
         currentRecord = [];
         tokenBegin();
       };
 
-      var recordEnd = function() {
+      const recordEnd = () => {
         state.currentState = POST_RECORD;
         records.push(currentRecord);
         currentRecord = null;
@@ -549,12 +525,12 @@ p5.prototype.loadTable = function(path) {
       if (header) {
         t.columns = records.shift();
       } else {
-        for (i = 0; i < records[0].length; i++) {
+        for (let i = 0; i < records[0].length; i++) {
           t.columns[i] = 'null';
         }
       }
-      var row;
-      for (i = 0; i < records.length; i++) {
+      let row;
+      for (let i = 0; i < records.length; i++) {
         //Handles row of 'undefined' at end of some CSVs
         if (records[i].length === 1) {
           if (records[i][0] === 'undefined' || records[i][0] === '') {
@@ -572,7 +548,7 @@ p5.prototype.loadTable = function(path) {
 
       self._decrementPreload();
     },
-    function(err) {
+    err => {
       // Error handling
       p5._friendlyFileLoadError(2, path);
 
@@ -589,16 +565,16 @@ p5.prototype.loadTable = function(path) {
 
 // helper function to turn a row into a JSON object
 function makeObject(row, headers) {
-  var ret = {};
+  const ret = {};
   headers = headers || [];
   if (typeof headers === 'undefined') {
-    for (var j = 0; j < row.length; j++) {
+    for (let j = 0; j < row.length; j++) {
       headers[j.toString()] = j;
     }
   }
-  for (var i = 0; i < headers.length; i++) {
-    var key = headers[i];
-    var val = row[i];
+  for (let i = 0; i < headers.length; i++) {
+    const key = headers[i];
+    const val = row[i];
     ret[key] = val;
   }
   return ret;
@@ -668,14 +644,13 @@ function makeObject(row, headers) {
  *
  * @alt
  * no image displayed
- *
  */
-p5.prototype.loadXML = function() {
-  var ret = new p5.XML();
-  var callback, errorCallback;
+p5.prototype.loadXML = function(...args) {
+  const ret = new p5.XML();
+  let callback, errorCallback;
 
-  for (var i = 1; i < arguments.length; i++) {
-    var arg = arguments[i];
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
     if (typeof arg === 'function') {
       if (typeof callback === 'undefined') {
         callback = arg;
@@ -685,13 +660,13 @@ p5.prototype.loadXML = function() {
     }
   }
 
-  var self = this;
+  const self = this;
   this.httpDo(
-    arguments[0],
+    args[0],
     'GET',
     'xml',
-    function(xml) {
-      for (var key in xml) {
+    xml => {
+      for (const key in xml) {
         ret[key] = xml[key];
       }
       if (typeof callback !== 'undefined') {
@@ -742,17 +717,16 @@ p5.prototype.loadXML = function() {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.loadBytes = function(file, callback, errorCallback) {
-  var ret = {};
+  const ret = {};
 
-  var self = this;
+  const self = this;
   this.httpDo(
     file,
     'GET',
     'arrayBuffer',
-    function(arrayBuffer) {
+    arrayBuffer => {
       ret.bytes = new Uint8Array(arrayBuffer);
 
       if (typeof callback === 'function') {
@@ -761,7 +735,7 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
 
       self._decrementPreload();
     },
-    function(err) {
+    err => {
       // Error handling
       p5._friendlyFileLoadError(6, file);
 
@@ -847,7 +821,7 @@ p5.prototype.loadBytes = function(file, callback, errorCallback) {
 p5.prototype.httpGet = function() {
   p5._validateParameters('httpGet', arguments);
 
-  var args = Array.prototype.slice.call(arguments);
+  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -878,44 +852,32 @@ p5.prototype.httpGet = function() {
  * // Examples use jsonplaceholder.typicode.com for a Mock Data API
  *
  * let url = 'https://jsonplaceholder.typicode.com/posts';
- * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *   background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
  *   httpPost(url, 'json', postData, function(result) {
  *     strokeWeight(2);
- *     stroke(r, g, b);
- *     fill(r, g, b, 127);
- *     ellipse(mouseX, mouseY, 200, 200);
  *     text(result.body, mouseX, mouseY);
  *   });
  * }
  * </code>
  * </div>
  *
- *
  * <div><code>
- * let url = 'https://invalidURL'; // A bad URL that will cause errors
- * let postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
+ * let postData = { title: 'p5 Clicked!', body: 'p5.js is very cool.' };
  *
  * function setup() {
- *   createCanvas(800, 800);
+ *   createCanvas(100, 100);
+ *   background(200);
  * }
  *
  * function mousePressed() {
- *   // Pick new random color values
- *   let r = random(255);
- *   let g = random(255);
- *   let b = random(255);
- *
  *   httpPost(
  *     url,
  *     'json',
@@ -925,14 +887,11 @@ p5.prototype.httpGet = function() {
  *     },
  *     function(error) {
  *       strokeWeight(2);
- *       stroke(r, g, b);
- *       fill(r, g, b, 127);
  *       text(error.toString(), mouseX, mouseY);
  *     }
  *   );
  * }
  * </code></div>
- *
  */
 /**
  * @method httpPost
@@ -952,7 +911,7 @@ p5.prototype.httpGet = function() {
 p5.prototype.httpPost = function() {
   p5._validateParameters('httpPost', arguments);
 
-  var args = Array.prototype.slice.call(arguments);
+  const args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   return p5.prototype.httpDo.apply(this, args);
 };
@@ -1038,42 +997,42 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  * @return {Promise}
  */
-p5.prototype.httpDo = function() {
-  var type;
-  var callback;
-  var errorCallback;
-  var request;
-  var promise;
-  var jsonpOptions = {};
-  var cbCount = 0;
-  var contentType = 'text/plain';
+p5.prototype.httpDo = function(...args) {
+  let type;
+  let callback;
+  let errorCallback;
+  let request;
+  let promise;
+  const jsonpOptions = {};
+  let cbCount = 0;
+  let contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
-  for (var i = arguments.length - 1; i > 0; i--) {
-    if (typeof arguments[i] === 'function') {
+  for (let i = args.length - 1; i > 0; i--) {
+    if (typeof args[i] === 'function') {
       cbCount++;
     } else {
       break;
     }
   }
   // The number of arguments minus callbacks
-  var argsCount = arguments.length - cbCount;
-  var path = arguments[0];
+  const argsCount = args.length - cbCount;
+  const path = args[0];
   if (
     argsCount === 2 &&
     typeof path === 'string' &&
-    typeof arguments[1] === 'object'
+    typeof args[1] === 'object'
   ) {
     // Intended for more advanced use, pass in Request parameters directly
-    request = new Request(path, arguments[1]);
-    callback = arguments[2];
-    errorCallback = arguments[3];
+    request = new Request(path, args[1]);
+    callback = args[2];
+    errorCallback = args[3];
   } else {
     // Provided with arguments
-    var method = 'GET';
-    var data;
+    let method = 'GET';
+    let data;
 
-    for (var j = 1; j < arguments.length; j++) {
-      var a = arguments[j];
+    for (let j = 1; j < args.length; j++) {
+      const a = args[j];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
@@ -1097,7 +1056,7 @@ p5.prototype.httpDo = function() {
           a.hasOwnProperty('jsonpCallback') ||
           a.hasOwnProperty('jsonpCallbackFunction')
         ) {
-          for (var attr in a) {
+          for (const attr in a) {
             jsonpOptions[attr] = a[attr];
           }
         } else if (a instanceof p5.XML) {
@@ -1116,20 +1075,23 @@ p5.prototype.httpDo = function() {
       }
     }
 
+    let headers =
+      method === 'GET'
+        ? new Headers()
+        : new Headers({ 'Content-Type': contentType });
+
     request = new Request(path, {
-      method: method,
+      method,
       mode: 'cors',
       body: data,
-      headers: new Headers({
-        'Content-Type': contentType
-      })
+      headers: headers
     });
   }
   // do some sort of smart type checking
   if (!type) {
-    if (path.indexOf('json') !== -1) {
+    if (path.includes('json')) {
       type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
+    } else if (path.includes('xml')) {
       type = 'xml';
     } else {
       type = 'text';
@@ -1141,14 +1103,14 @@ p5.prototype.httpDo = function() {
   } else {
     promise = fetch(request);
   }
-  promise = promise.then(function(res) {
+  promise = promise.then(res => {
     if (!res.ok) {
-      var err = new Error(res.body);
+      const err = new Error(res.body);
       err.status = res.status;
       err.ok = false;
       throw err;
     } else {
-      var fileSize = 0;
+      let fileSize = 0;
       if (type !== 'jsonp') {
         fileSize = res.headers.get('content-length');
       }
@@ -1164,9 +1126,9 @@ p5.prototype.httpDo = function() {
         case 'arrayBuffer':
           return res.arrayBuffer();
         case 'xml':
-          return res.text().then(function(text) {
-            var parser = new DOMParser();
-            var xml = parser.parseFromString(text, 'text/xml');
+          return res.text().then(text => {
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(text, 'text/xml');
             return new p5.XML(xml.documentElement);
           });
         default:
@@ -1174,7 +1136,7 @@ p5.prototype.httpDo = function() {
       }
     }
   });
-  promise.then(callback || function() {});
+  promise.then(callback || (() => {}));
   promise.catch(errorCallback || console.error);
   return promise;
 };
@@ -1206,7 +1168,7 @@ p5.prototype._pWriters = [];
  *
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
- *     var writer = createWriter('squares.txt');
+ *     const writer = createWriter('squares.txt');
  *     for (let i = 0; i < 10; i++) {
  *       writer.print(i * i);
  *     }
@@ -1218,9 +1180,9 @@ p5.prototype._pWriters = [];
  * </div>
  */
 p5.prototype.createWriter = function(name, extension) {
-  var newPW;
+  let newPW;
   // check that it doesn't already exist
-  for (var i in p5.prototype._pWriters) {
+  for (const i in p5.prototype._pWriters) {
     if (p5.prototype._pWriters[i].name === name) {
       // if a p5.PrintWriter w/ this name already exists...
       // return p5.prototype._pWriters[i]; // return it w/ contents intact.
@@ -1241,7 +1203,7 @@ p5.prototype.createWriter = function(name, extension) {
  *  @param  {String}     [extension]
  */
 p5.PrintWriter = function(filename, extension) {
-  var self = this;
+  let self = this;
   this.name = filename;
   this.content = '';
   //Changed to write because it was being overloaded by function below.
@@ -1281,6 +1243,25 @@ p5.PrintWriter = function(filename, extension) {
    * writer.close();
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   button = createButton('SAVE FILE');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
+   * }
+   *
+   * function createFile() {
+   *   // creates a file called 'newFile.txt'
+   *   let writer = createWriter('newFile.txt');
+   *   // write 'Hello world!'' to the file
+   *   writer.write(['Hello world!']);
+   *   // close the PrintWriter and save the file
+   *   writer.close();
+   * }
+   * </code>
+   * </div>
    */
   this.write = function(data) {
     this.content += data;
@@ -1314,19 +1295,17 @@ p5.PrintWriter = function(filename, extension) {
    * }
    *
    * function draw() {
-   *   // print all mouseX and mouseY coordinates to the stream
    *   writer.print([mouseX, mouseY]);
    * }
    *
    * function mouseClicked() {
-   *   // close the PrintWriter and save the file
    *   writer.close();
    * }
    * </code>
    * </div>
    */
   this.print = function(data) {
-    this.content += data + '\n';
+    this.content += `${data}\n`;
   };
   /**
    * Clears the data already written to the PrintWriter object
@@ -1341,6 +1320,22 @@ p5.PrintWriter = function(filename, extension) {
    * // close writer
    * writer.close();
    * </code></div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   button = createButton('CLEAR ME');
+   *   button.position(21, 40);
+   *   button.mousePressed(createFile);
+   * }
+   *
+   * function createFile() {
+   *   let writer = createWriter('newFile.txt');
+   *   writer.write(['clear me']);
+   *   writer.clear();
+   *   writer.close();
+   * }
+   * </code>
+   * </div>
    *
    */
   this.clear = function() {
@@ -1371,11 +1366,11 @@ p5.PrintWriter = function(filename, extension) {
    */
   this.close = function() {
     // convert String to Array for the writeFile Blob
-    var arr = [];
+    const arr = [];
     arr.push(this.content);
     p5.prototype.writeFile(arr, filename, extension);
     // remove from _pWriters array and delete self
-    for (var i in p5.prototype._pWriters) {
+    for (const i in p5.prototype._pWriters) {
       if (p5.prototype._pWriters[i].name === this.name) {
         // remove from _pWriters array
         p5.prototype._pWriters.splice(i, 1);
@@ -1396,44 +1391,65 @@ p5.PrintWriter = function(filename, extension) {
 // filename, [extension] [canvas] --> saveImage
 
 /**
- *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
- *  the client's computer. <b>Note that it is not recommended to call <a href="#/p5/save">save()</a>
- *  within draw if it's looping, as the <a href="#/p5/save">save()</a> function will open a new save
- *  dialog every frame.</b></p>
- *  <p>The default behavior is to save the canvas as an image. You can
- *  optionally specify a filename.
- *  For example:</p>
- * <pre class='language-javascript'><code>
- * save();
- * save('myCanvas.jpg'); // save a specific canvas with a filename
- * </code></pre>
+ *  Saves a given element(image, text, json, csv, wav, or html) to the client's
+ *  computer. The first parameter can be a pointer to element we want to save.
+ *  The element can be one of <a href="#/p5.Element">p5.Element</a>,an Array of
+ *  Strings, an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table
+ *  </a>, a <a href="#/p5.Image">p5.Image</a>, or a p5.SoundFile (requires
+ *  p5.sound). The second parameter is a filename (including extension).The
+ *  third parameter is for options specific to this type of object. This method
+ *  will save a file that fits the given parameters.
+ *  If it is called without specifying an element, by default it will save the
+ *  whole canvas as an image file. You can optionally specify a filename as
+ *  the first parameter in such a case.
+ *  **Note that it is not recommended to
+ *  call this method within draw, as it will open a new save dialog on every
+ *  render.**
  *
- *  <p>Alternately, the first parameter can be a pointer to a canvas
- *  <a href="#/p5.Element">p5.Element</a>, an Array of Strings,
- *  an Array of JSON, a JSON object, a <a href="#/p5.Table">p5.Table</a>, a <a href="#/p5.Image">p5.Image</a>, or a
- *  p5.SoundFile (requires p5.sound). The second parameter is a filename
- *  (including extension). The third parameter is for options specific
- *  to this type of object. This method will save a file that fits the
- *  given parameters. For example:</p>
+ * @method save
+ * @param  {Object|String} [objectOrFilename]  If filename is provided, will
+ *                                             save canvas as an image with
+ *                                             either png or jpg extension
+ *                                             depending on the filename.
+ *                                             If object is provided, will
+ *                                             save depending on the object
+ *                                             and filename (see examples
+ *                                             above).
+ * @param  {String} [filename] If an object is provided as the first
+ *                               parameter, then the second parameter
+ *                               indicates the filename,
+ *                               and should include an appropriate
+ *                               file extension (see examples above).
+ * @param  {Boolean|String} [options]  Additional options depend on
+ *                            filetype. For example, when saving JSON,
+ *                            <code>true</code> indicates that the
+ *                            output will be optimized for filesize,
+ *                            rather than readability.
  *
- * <pre class='language-javascript'><code>
- * // Saves canvas as an image
- * save('myCanvas.jpg');
- *
- * // Saves pImage as a png image
- * let img = createImage(10, 10);
- * save(img, 'my.png');
- *
- * // Saves canvas as an image
- * let cnv = createCanvas(100, 100);
+ * @example
+ * <div class="norender"><code>
+ * // Saves the canvas as an image
+ * cnv = createCanvas(300, 300);
  * save(cnv, 'myCanvas.jpg');
  *
+ * // Saves the canvas as an image by default
+ * save('myCanvas.jpg');
+ * </code></div>
+ *
+ *  <div class="norender"><code>
+ * // Saves p5.Image as an image
+ * img = createImage(10, 10);
+ * save(img, 'myImage.png');
+ * </code></div>
+ *
+ * <div class="norender"><code>
  * // Saves p5.Renderer object as an image
- * let gb = createGraphics(100, 100);
- * save(gb, 'myGraphics.jpg');
+ * obj = createGraphics(100, 100);
+ * save(obj, 'myObject.png');
+ * </code></div>
  *
+ * <div class="norender"><code>
  * let myTable = new p5.Table();
- *
  * // Saves table as html file
  * save(myTable, 'myTable.html');
  *
@@ -1442,7 +1458,9 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Tab Separated Values
  * save(myTable, 'myTable.tsv');
+ * </code></div>
  *
+ * <div class="norender"><code>
  * let myJSON = { a: 1, b: true };
  *
  * // Saves pretty JSON
@@ -1450,40 +1468,31 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Optimizes JSON filesize
  * save(myJSON, 'my.json', true);
+ * </code></div>
  *
- * // Saves array of strings to a text file with line breaks after each item
+ * <div class="norender"><code>
+ * // Saves array of strings to text file with line breaks after each item
  * let arrayOfStrings = ['a', 'b'];
  * save(arrayOfStrings, 'my.txt');
- * </code></pre>
+ * </code></div>
  *
- *  @method save
- *  @param  {Object|String} [objectOrFilename]  If filename is provided, will
- *                                             save canvas as an image with
- *                                             either png or jpg extension
- *                                             depending on the filename.
- *                                             If object is provided, will
- *                                             save depending on the object
- *                                             and filename (see examples
- *                                             above).
- *  @param  {String} [filename] If an object is provided as the first
- *                               parameter, then the second parameter
- *                               indicates the filename,
- *                               and should include an appropriate
- *                               file extension (see examples above).
- *  @param  {Boolean|String} [options]  Additional options depend on
- *                            filetype. For example, when saving JSON,
- *                            <code>true</code> indicates that the
- *                            output will be optimized for filesize,
- *                            rather than readability.
+ * @alt
+ * An example for saving a canvas as an image.
+ * An example for saving a p5.Image element as an image.
+ * An example for saving a p5.Renderer element.
+ * An example showing how to save a table in formats of HTML, CSV and TSV.
+ * An example for saving JSON to a txt file with some extra arguments.
+ * An example for saving an array of strings to text file with line breaks.
  */
+
 p5.prototype.save = function(object, _filename, _options) {
   // parse the arguments and figure out which things we are saving
-  var args = arguments;
+  const args = arguments;
   // =================================================
   // OPTION 1: saveCanvas...
 
   // if no arguments are provided, save canvas
-  var cnv = this._curElement ? this._curElement.elt : this.elt;
+  const cnv = this._curElement ? this._curElement.elt : this.elt;
   if (args.length === 0) {
     p5.prototype.saveCanvas(cnv);
     return;
@@ -1499,7 +1508,7 @@ p5.prototype.save = function(object, _filename, _options) {
   } else {
     // =================================================
     // OPTION 2: extension clarifies saveStrings vs. saveJSON
-    var extension = _checkFileExtension(args[1], args[2])[1];
+    const extension = _checkFileExtension(args[1], args[2])[1];
     switch (extension) {
       case 'json':
         p5.prototype.saveJSON(args[0], args[1], args[2]);
@@ -1565,11 +1574,10 @@ p5.prototype.save = function(object, _filename, _options) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.saveJSON = function(json, filename, opt) {
   p5._validateParameters('saveJSON', arguments);
-  var stringify;
+  let stringify;
   if (opt) {
     stringify = JSON.stringify(json);
   } else {
@@ -1590,6 +1598,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *  @param  {String[]} list   string array to be written
  *  @param  {String} filename filename for output
  *  @param  {String} [extension] the filename's extension
+ *  @param  {Boolean} [isCRLF] if true, change line-break to CRLF
  *  @example
  * <div><code>
  * let words = 'apple bear cat dog';
@@ -1619,18 +1628,13 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *
  * @alt
  * no image displayed
- *
  */
-p5.prototype.saveStrings = function(list, filename, extension) {
+p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
-  var ext = extension || 'txt';
-  var pWriter = this.createWriter(filename, ext);
-  for (var i = 0; i < list.length; i++) {
-    if (i < list.length - 1) {
-      pWriter.print(list[i]);
-    } else {
-      pWriter.print(list[i]);
-    }
+  const ext = extension || 'txt';
+  const pWriter = this.createWriter(filename, ext);
+  for (let i = 0; i < list.length; i++) {
+    isCRLF ? pWriter.write(list[i] + '\r\n') : pWriter.write(list[i] + '\n');
   }
   pWriter.close();
   pWriter.clear();
@@ -1687,28 +1691,27 @@ function escapeHelper(content) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.saveTable = function(table, filename, options) {
   p5._validateParameters('saveTable', arguments);
-  var ext;
+  let ext;
   if (options === undefined) {
     ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
   } else {
     ext = options;
   }
-  var pWriter = this.createWriter(filename, ext);
+  const pWriter = this.createWriter(filename, ext);
 
-  var header = table.columns;
+  const header = table.columns;
 
-  var sep = ','; // default to CSV
+  let sep = ','; // default to CSV
   if (ext === 'tsv') {
     sep = '\t';
   }
   if (ext !== 'html') {
     // make header if it has values
     if (header[0] !== '0') {
-      for (var h = 0; h < header.length; h++) {
+      for (let h = 0; h < header.length; h++) {
         if (h < header.length - 1) {
           pWriter.write(header[h] + sep);
         } else {
@@ -1719,15 +1722,23 @@ p5.prototype.saveTable = function(table, filename, options) {
     }
 
     // make rows
-    for (var i = 0; i < table.rows.length; i++) {
-      var j;
+    for (let i = 0; i < table.rows.length; i++) {
+      let j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
-          pWriter.write(table.rows[i].arr[j] + sep);
-        } else if (i < table.rows.length - 1) {
-          pWriter.write(table.rows[i].arr[j]);
+          //double quotes should be inserted in csv only if contains comma separated single value
+          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
+            pWriter.write('"' + table.rows[i].arr[j] + '"' + sep);
+          } else {
+            pWriter.write(table.rows[i].arr[j] + sep);
+          }
         } else {
-          pWriter.write(table.rows[i].arr[j]);
+          //double quotes should be inserted in csv only if contains comma separated single value
+          if (ext === 'csv' && String(table.rows[i].arr[j]).includes(',')) {
+            pWriter.write('"' + table.rows[i].arr[j] + '"');
+          } else {
+            pWriter.write(table.rows[i].arr[j]);
+          }
         }
       }
       pWriter.write('\n');
@@ -1736,7 +1747,7 @@ p5.prototype.saveTable = function(table, filename, options) {
     // otherwise, make HTML
     pWriter.print('<html>');
     pWriter.print('<head>');
-    var str = '  <meta http-equiv="content-type" content';
+    let str = '  <meta http-equiv="content-type" content';
     str += '="text/html;charset=utf-8" />';
     pWriter.print(str);
     pWriter.print('</head>');
@@ -1747,21 +1758,21 @@ p5.prototype.saveTable = function(table, filename, options) {
     // make header if it has values
     if (header[0] !== '0') {
       pWriter.print('    <tr>');
-      for (var k = 0; k < header.length; k++) {
-        var e = escapeHelper(header[k]);
-        pWriter.print('      <td>' + e);
+      for (let k = 0; k < header.length; k++) {
+        const e = escapeHelper(header[k]);
+        pWriter.print(`      <td>${e}`);
         pWriter.print('      </td>');
       }
       pWriter.print('    </tr>');
     }
 
     // make rows
-    for (var row = 0; row < table.rows.length; row++) {
+    for (let row = 0; row < table.rows.length; row++) {
       pWriter.print('    <tr>');
-      for (var col = 0; col < table.columns.length; col++) {
-        var entry = table.rows[row].getString(col);
-        var htmlEntry = escapeHelper(entry);
-        pWriter.print('      <td>' + htmlEntry);
+      for (let col = 0; col < table.columns.length; col++) {
+        const entry = table.rows[row].getString(col);
+        const htmlEntry = escapeHelper(entry);
+        pWriter.print(`      <td>${htmlEntry}`);
         pWriter.print('      </td>');
       }
       pWriter.print('    </tr>');
@@ -1787,12 +1798,12 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  @private
  */
 p5.prototype.writeFile = function(dataToDownload, filename, extension) {
-  var type = 'application/octet-stream';
+  let type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
     type = 'text/plain';
   }
-  var blob = new Blob(dataToDownload, {
-    type: type
+  const blob = new Blob(dataToDownload, {
+    type
   });
   p5.prototype.downloadFile(blob, filename, extension);
 };
@@ -1811,21 +1822,20 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  @param  {String} [extension]
  */
 p5.prototype.downloadFile = function(data, fName, extension) {
-  var fx = _checkFileExtension(fName, extension);
-  var filename = fx[0];
+  const fx = _checkFileExtension(fName, extension);
+  const filename = fx[0];
 
   if (data instanceof Blob) {
-    var fileSaver = require('file-saver');
     fileSaver.saveAs(data, filename);
     return;
   }
 
-  var a = document.createElement('a');
+  const a = document.createElement('a');
   a.href = data;
   a.download = filename;
 
   // Firefox requires the link to be added to the DOM before click()
-  a.onclick = function(e) {
+  a.onclick = e => {
     destroyClickedElement(e);
     e.stopPropagation();
   };
@@ -1835,10 +1845,10 @@ p5.prototype.downloadFile = function(data, fName, extension) {
 
   // Safari will open this file in the same page as a confusing Blob.
   if (p5.prototype._isSafari()) {
-    var aText = 'Hello, Safari user! To download this file...\n';
+    let aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += '3. Name it with this extension: ."' + fx[1] + '"';
+    aText += `3. Name it with this extension: ."${fx[1]}"`;
     alert(aText);
   }
   a.click();
@@ -1861,16 +1871,16 @@ function _checkFileExtension(filename, extension) {
   if (!filename) {
     filename = 'untitled';
   }
-  var ext = '';
+  let ext = '';
   // make sure the file will have a name, see if filename needs extension
-  if (filename && filename.indexOf('.') > -1) {
+  if (filename && filename.includes('.')) {
     ext = filename.split('.').pop();
   }
   // append extension if it doesn't exist
   if (extension) {
     if (ext !== extension) {
       ext = extension;
-      filename = filename + '.' + ext;
+      filename = `${filename}.${ext}`;
     }
   }
   return [filename, ext];
@@ -1885,7 +1895,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @private
  */
 p5.prototype._isSafari = function() {
-  var x = Object.prototype.toString.call(window.HTMLElement);
+  const x = Object.prototype.toString.call(window.HTMLElement);
   return x.indexOf('Constructor') > 0;
 };
 
@@ -1900,4 +1910,4 @@ function destroyClickedElement(event) {
   document.body.removeChild(event.target);
 }
 
-module.exports = p5;
+export default p5;

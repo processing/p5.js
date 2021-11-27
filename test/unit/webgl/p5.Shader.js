@@ -75,14 +75,27 @@ suite('p5.Shader', function() {
         'uPointLightCount',
         'uAmbientColor',
         'uLightingDirection',
-        'uDirectionalColor',
+        'uDirectionalDiffuseColors',
+        'uDirectionalSpecularColors',
         'uPointLightLocation',
-        'uPointLightColor',
+        'uPointLightDiffuseColors',
+        'uPointLightSpecularColors',
+        'uSpotLightCount',
+        'uSpotLightAngle',
+        'uSpotLightConc',
+        'uSpotLightDiffuseColors',
+        'uSpotLightSpecularColors',
+        'uSpotLightLocation',
+        'uSpotLightDirection',
         'uSpecular',
         'uShininess',
         'uMaterialColor',
         'uSampler',
-        'isTexture'
+        'isTexture',
+        'uEmissive',
+        'uConstantAttenuation',
+        'uLinearAttenuation',
+        'uQuadraticAttenuation'
       ];
 
       testShader(
@@ -206,6 +219,22 @@ suite('p5.Shader', function() {
         lightShader === selectedImmediateShader,
         "_renderer's immediate mode shader was not light shader " +
           'after call to specularMaterial()'
+      );
+    });
+    test('Light shader set after emissiveMaterial()', function() {
+      var lightShader = myp5._renderer._getLightShader();
+      myp5.emissiveMaterial(128);
+      var selectedRetainedShader = myp5._renderer._getRetainedFillShader();
+      var selectedImmediateShader = myp5._renderer._getImmediateFillShader();
+      assert(
+        lightShader === selectedRetainedShader,
+        "_renderer's retain mode shader was not light shader " +
+          'after call to emissiveMaterial()'
+      );
+      assert(
+        lightShader === selectedImmediateShader,
+        "_renderer's immediate mode shader was not light shader " +
+          'after call to emissiveMaterial()'
       );
     });
 

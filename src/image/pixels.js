@@ -5,11 +5,9 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
-var Filters = require('./filters');
-require('../color/p5.Color');
+import p5 from '../core/main';
+import Filters from './filters';
+import '../color/p5.Color';
 
 /**
  * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -23,7 +21,7 @@ require('../color/p5.Color');
  * pixelDensity^2).
  * For example, if the image is 100x100 pixels, there will be 40,000. On a
  * retina display, there will be 160,000.
- * <br><br>
+ *
  * The first four values (indices 0-3) in the array will be the R, G, B, A
  * values of the pixel at (0, 0). The second four values (indices 4-7) will
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
@@ -41,20 +39,20 @@ require('../color/p5.Color');
  *   }
  * }
  * ```
- * <p>While the above method is complex, it is flexible enough to work with
+ * While the above method is complex, it is flexible enough to work with
  * any pixelDensity. Note that <a href="#/p5/set">set()</a> will automatically take care of
  * setting all the appropriate values in <a href="#/p5/pixels">pixels[]</a> for a given (x, y) at
  * any pixelDensity, but the performance may not be as fast when lots of
  * modifications are made to the pixel array.
- * <br><br>
+ *
  * Before accessing this array, the data must loaded with the <a href="#/p5/loadPixels">loadPixels()</a>
  * function. After the array data has been modified, the <a href="#/p5/updatePixels">updatePixels()</a>
  * function must be run to update the changes.
- * <br><br>
+ *
  * Note that this is not a standard javascript array.  This means that
  * standard javascript functions such as <a href="#/p5/slice">slice()</a> or
  * <a href="#/p5/arrayCopy">arrayCopy()</a> do not
- * work.</p>
+ * work.
  *
  * @property {Number[]} pixels
  * @example
@@ -76,7 +74,6 @@ require('../color/p5.Color');
  *
  * @alt
  * top half of canvas pink, bottom grey
- *
  */
 p5.prototype.pixels = [];
 
@@ -151,7 +148,6 @@ p5.prototype.pixels = [];
  * image of rockies. Brickwall images on left and right. Right mortar transparent
  * image of rockies. Brickwall images on left and right. Right translucent
  *
- *
  */
 /**
  * @method blend
@@ -165,12 +161,12 @@ p5.prototype.pixels = [];
  * @param  {Integer} dh
  * @param  {Constant} blendMode
  */
-p5.prototype.blend = function() {
-  p5._validateParameters('blend', arguments);
+p5.prototype.blend = function(...args) {
+  p5._validateParameters('blend', args);
   if (this._renderer) {
-    this._renderer.blend.apply(this._renderer, arguments);
+    this._renderer.blend(...args);
   } else {
-    p5.Renderer2D.prototype.blend.apply(this, arguments);
+    p5.Renderer2D.prototype.blend.apply(this, args);
   }
 };
 
@@ -215,7 +211,6 @@ p5.prototype.blend = function() {
  * image of rocky mountains. Brick images on left and right. Right overexposed
  * image of rockies. Brickwall images on left and right. Right mortar transparent
  * image of rockies. Brickwall images on left and right. Right translucent
- *
  */
 /**
  * @method copy
@@ -228,55 +223,127 @@ p5.prototype.blend = function() {
  * @param  {Integer} dw
  * @param  {Integer} dh
  */
-p5.prototype.copy = function() {
-  p5._validateParameters('copy', arguments);
-  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
+p5.prototype.copy = function(...args) {
+  p5._validateParameters('copy', args);
+
+  let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  if (args.length === 9) {
+    srcImage = args[0];
+    sx = args[1];
+    sy = args[2];
+    sw = args[3];
+    sh = args[4];
+    dx = args[5];
+    dy = args[6];
+    dw = args[7];
+    dh = args[8];
+  } else if (args.length === 8) {
+    srcImage = this;
+    sx = args[0];
+    sy = args[1];
+    sw = args[2];
+    sh = args[3];
+    dx = args[4];
+    dy = args[5];
+    dw = args[6];
+    dh = args[7];
+  } else {
+    throw new Error('Signature not supported');
+  }
+
+  p5.prototype._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+};
+
+p5.prototype._copyHelper = (
+  dstImage,
+  srcImage,
+  sx,
+  sy,
+  sw,
+  sh,
+  dx,
+  dy,
+  dw,
+  dh
+) => {
+  srcImage.loadPixels();
+  const s = srcImage.canvas.width / srcImage.width;
+  // adjust coord system for 3D when renderer
+  // ie top-left = -width/2, -height/2
+  let sxMod = 0;
+  let syMod = 0;
+  if (srcImage._renderer && srcImage._renderer.isP3D) {
+    sxMod = srcImage.width / 2;
+    syMod = srcImage.height / 2;
+  }
+  if (dstImage._renderer && dstImage._renderer.isP3D) {
+    p5.RendererGL.prototype.image.call(
+      dstImage._renderer,
+      srcImage,
+      sx + sxMod,
+      sy + syMod,
+      sw,
+      sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  } else {
+    dstImage.drawingContext.drawImage(
+      srcImage.canvas,
+      s * (sx + sxMod),
+      s * (sy + syMod),
+      s * sw,
+      s * sh,
+      dx,
+      dy,
+      dw,
+      dh
+    );
+  }
 };
 
 /**
- * Applies a filter to the canvas.
- * <br><br>
- *
- * The presets options are:
- * <br><br>
+ * Applies a filter to the canvas. The presets options are:
  *
  * THRESHOLD
  * Converts the image to black and white pixels depending if they are above or
  * below the threshold defined by the level parameter. The parameter must be
  * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
- * <br><br>
  *
  * GRAY
  * Converts any colors in the image to grayscale equivalents. No parameter
  * is used.
- * <br><br>
  *
  * OPAQUE
  * Sets the alpha channel to entirely opaque. No parameter is used.
- * <br><br>
  *
  * INVERT
  * Sets each pixel to its inverse value. No parameter is used.
- * <br><br>
  *
  * POSTERIZE
  * Limits each channel of the image to the number of colors specified as the
  * parameter. The parameter can be set to values between 2 and 255, but
  * results are most noticeable in the lower ranges.
- * <br><br>
  *
  * BLUR
  * Executes a Gaussian blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
  * Gaussian blur of radius 1. Larger values increase the blur.
- * <br><br>
  *
  * ERODE
  * Reduces the light areas. No parameter is used.
- * <br><br>
  *
  * DILATE
  * Increases the light areas. No parameter is used.
+ *
+ * filter() does not work in WEBGL mode.
+ * A similar effect can be achieved in WEBGL mode using custom
+ * shaders. Adam Ferriss has written
+ * a <a href="https://github.com/aferriss/p5jsShaderExamples"
+ * target='_blank'>selection of shader examples</a> that contains many
+ * of the effects present in the filter examples.
  *
  * @method filter
  * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
@@ -401,7 +468,6 @@ p5.prototype.copy = function() {
  * blurry image of a brickwall
  * image of a brickwall
  * image of a brickwall with less detail
- *
  */
 p5.prototype.filter = function(operation, value) {
   p5._validateParameters('filter', arguments);
@@ -421,10 +487,7 @@ p5.prototype.filter = function(operation, value) {
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
- * <br><br>
- * To get the color components scaled according to the current color ranges
- * and taking into account <a href="#/p5/colorMode">colorMode</a>, use <a href="#/p5/getColor">getColor</a> instead of get.
- * <br><br>
+ *
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from <a href="#/p5/pixels">pixels[]</a>. The equivalent statement to
  * get(x, y) using <a href="#/p5/pixels">pixels[]</a> with pixel density d is
@@ -439,8 +502,6 @@ p5.prototype.filter = function(operation, value) {
  * ];
  * print(components);
  * ```
- * <br><br>
- *
  * See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
  * If you want to extract an array of colors or a subimage from an p5.Image object,
@@ -486,7 +547,6 @@ p5.prototype.filter = function(operation, value) {
  * @alt
  * 2 images of the rocky mountains, side-by-side
  * Image of the rocky mountains with 50x50 green rect in center of canvas
- *
  */
 /**
  * @method get
@@ -500,7 +560,7 @@ p5.prototype.filter = function(operation, value) {
  */
 p5.prototype.get = function(x, y, w, h) {
   p5._validateParameters('get', arguments);
-  return this._renderer.get.apply(this._renderer, arguments);
+  return this._renderer.get(...arguments);
 };
 
 /**
@@ -533,33 +593,30 @@ p5.prototype.get = function(x, y, w, h) {
  *
  * @alt
  * two images of the rocky mountains. one on top, one on bottom of canvas.
- *
  */
-p5.prototype.loadPixels = function() {
-  p5._validateParameters('loadPixels', arguments);
+p5.prototype.loadPixels = function(...args) {
+  p5._validateParameters('loadPixels', args);
   this._renderer.loadPixels();
 };
 
 /**
- * <p>Changes the color of any pixel, or writes an image directly to the
- * display window.</p>
- * <p>The x and y parameters specify the pixel to change and the c parameter
+ * Changes the color of any pixel, or writes an image directly to the
+ * display window.
+ * The x and y parameters specify the pixel to change and the c parameter
  * specifies the color value. This can be a <a href="#/p5.Color">p5.Color</a> object, or [R, G, B, A]
  * pixel array. It can also be a single grayscale value.
  * When setting an image, the x and y parameters define the coordinates for
  * the upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
- * </p>
- * <p>
+ *
  * After using <a href="#/p5/set">set()</a>, you must call <a href="#/p5/updatePixels">updatePixels()</a> for your changes to appear.
  * This should be called once all pixels have been set, and must be called before
  * calling .<a href="#/p5/get">get()</a> or drawing the image.
- * </p>
- * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
+ *
+ * Setting the color of a single pixel with set(x, y) is easy, but not as
  * fast as putting the data directly into <a href="#/p5/pixels">pixels[]</a>. Setting the <a href="#/p5/pixels">pixels[]</a>
  * values directly may be complicated when working with a retina display,
  * but will perform better when lots of pixels need to be set directly on
- * every loop.</p>
- * <p>See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.</p>
+ * every loop. See the reference for <a href="#/p5/pixels">pixels[]</a> for more information.
  *
  * @method set
  * @param {Number}              x x-coordinate of the pixel
@@ -662,4 +719,4 @@ p5.prototype.updatePixels = function(x, y, w, h) {
   this._renderer.updatePixels(x, y, w, h);
 };
 
-module.exports = p5;
+export default p5;

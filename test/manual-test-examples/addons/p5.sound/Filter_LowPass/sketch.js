@@ -27,7 +27,7 @@ function setup() {
 
   filter = new p5.LowPass();
 
-  // Disconnect soundfile from master output.
+  // Disconnect soundfile from main output.
   // Then, connect it to the filter, so that we only hear the filtered sound
   soundFile.disconnect();
   soundFile.connect(filter);

@@ -1,0 +1,26 @@
+name: Linting Examples
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Get node modules
+        run: npm ci
+        env:
+          CI: true
+      - name: Lint examples
+        run: npm run lint:samples

@@ -24,6 +24,12 @@ suite('Keyboard Events', function() {
       assert.strictEqual(myp5.keyIsPressed, true);
     });
 
+    test('keyIsPressed should be true on multiple key presses', function() {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Down' }));
+      assert.strictEqual(myp5.keyIsPressed, true);
+    });
+
     test('keyIsPressed should be false on key up', function() {
       window.dispatchEvent(new KeyboardEvent('keyup'));
       assert.strictEqual(myp5.keyIsPressed, false);
@@ -70,7 +76,7 @@ suite('Keyboard Events', function() {
 
   suite('p5.prototype.keyCode', function() {
     test('keyCode should be a number', function() {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 's' }));
+      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 65 }));
       assert.isNumber(myp5.keyCode);
     });
 
@@ -78,14 +84,19 @@ suite('Keyboard Events', function() {
       window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 65 }));
       assert.strictEqual(myp5.keyCode, 65);
     });
-
-    test('key should return the key pressed', function() {
-      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 20 }));
-      assert.strictEqual(myp5.keyCode, 20);
-    });
   });
 
   suite('keyPressed', function() {
+    test('keyPressed must run when key is pressed', function() {
+      let count = 0;
+      myp5.keyPressed = function() {
+        count += 1;
+      };
+      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 65 }));
+      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 35 }));
+      assert.strictEqual(count, 2);
+    });
+
     test('keyPressed functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
@@ -107,6 +118,15 @@ suite('Keyboard Events', function() {
   });
 
   suite('keyReleased', function() {
+    test('keyReleased must run when key is released', function() {
+      let count = 0;
+      myp5.keyReleased = function() {
+        count += 1;
+      };
+      window.dispatchEvent(new KeyboardEvent('keyup'));
+      assert.strictEqual(count, 1);
+    });
+
     test('keyReleased functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
@@ -129,6 +149,15 @@ suite('Keyboard Events', function() {
   });
 
   suite('keyTyped', function() {
+    test('keyTyped must run when key is pressed', function() {
+      let count = 0;
+      myp5.keyTyped = function() {
+        count += 1;
+      };
+      window.dispatchEvent(new KeyboardEvent('keypress'));
+      assert.strictEqual(count, 1);
+    });
+
     test('keyTyped functions on multiple instances must run once', async function() {
       let sketchFn = function(sketch, resolve, reject) {
         let count = 0;
@@ -146,6 +175,21 @@ suite('Keyboard Events', function() {
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times keyPressed was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]); //check if every keyPressed function was called once
+    });
+  });
+
+  suite('p5.prototype.keyIsDown', function() {
+    test('keyIsDown should return a boolean', function() {
+      assert.isBoolean(myp5.keyIsDown(65));
+    });
+
+    test('keyIsDown should return true if key is down', function() {
+      window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 35 }));
+      assert.strictEqual(myp5.keyIsDown(35), true);
+    });
+
+    test('keyIsDown should return false if key is not down', function() {
+      assert.strictEqual(myp5.keyIsDown(35), false);
     });
   });
 });

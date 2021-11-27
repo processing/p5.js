@@ -12,19 +12,12 @@
   "extends": ["eslint:recommended", "prettier"],
   "plugins": ["prettier"],
   "parserOptions": {
-    "ecmaVersion": 2017
+    "ecmaVersion": 2017,
+    "sourceType": "module"
   },
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true
-      }
-    ],
-    "no-cond-assign": [
-      2,
-      "except-parens"
-    ],
+    "prettier/prettier": ["error"],
+    "no-cond-assign": [2, "except-parens"],
     "eqeqeq": ["error", "smart"],
     "no-use-before-define": [
       2,
@@ -34,7 +27,7 @@
     ],
     "new-cap": 0,
     "no-caller": 2,
-    "no-undef": 2,
+    "no-undef": 0,
     "no-unused-vars": ["error", { "args": "none" }],
     "no-empty": ["error", { "allowEmptyCatch": true }],
     "no-console": "off"

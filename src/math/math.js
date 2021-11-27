@@ -1,13 +1,11 @@
 /**
  * @module Math
- * @submodule Math
+ * @submodule Vector
  * @for p5
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> (the datatype for storing vectors). This provides a
@@ -21,30 +19,33 @@ var p5 = require('../core/main');
  * @param {Number} [z] z component of the vector
  * @return {p5.Vector}
  * @example
- * <div modernizr='webgl'><code>
+ * <div><code>
+ * let v1;
  * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   fill(255, 102, 204);
+ *   createCanvas(100, 100);
+ *   stroke(255, 0, 255);
+ *   v1 = createVector(width / 2, height / 2);
  * }
  *
  * function draw() {
  *   background(255);
- *   pointLight(color(255), createVector(sin(millis() / 1000) * 20, -40, -10));
- *   scale(0.75);
- *   sphere();
+ *   line(v1.x, v1.y, mouseX, mouseY);
  * }
  * </code></div>
  *
  * @alt
- * a purple sphere lit by a point light oscillating horizontally
+ * draws a line from center of canvas to mouse pointer position.
  */
 p5.prototype.createVector = function(x, y, z) {
   if (this instanceof p5) {
-    return new p5.Vector(this, arguments);
+    return new p5.Vector(
+      this._fromRadians.bind(this),
+      this._toRadians.bind(this),
+      ...arguments
+    );
   } else {
     return new p5.Vector(x, y, z);
   }
 };
 
-module.exports = p5;
+export default p5;

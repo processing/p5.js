@@ -1,83 +1,68 @@
-/* Grunt Task to create and publish a p5.js release */
-/*
-MUST HAVES BEFOREHAND :
-* Logged in NPM CLI : Check if you are logged in by "npm whoami"
-* High Bandwidth : Lots of things to download and pull and push (~190 MB)
-* An environment variable named GITHUB_TOKEN with the value of your Access Token : Make one by going to your Settings->Personal Access Tokens-> New Token. Once you have it, in your shell, run "export GITHUB_TOKEN=<your token here>".
-*/
+// This file holds the "release" task. It spawns the menu in terminal to initiate the release process.
+// The release process includes:
+// 1. Creating the release archive (p5.js, p5.min.js, p5.sound.js, p5.sound.min.js, and p5.zip).
+// 2. Releasing to Bower via https://github.com/processing/p5.js-release (release-bower)
+
+const open = require('open');
+const spawn = require('child_process').spawnSync;
+const simpleGit = require('simple-git/promise');
 
 module.exports = function(grunt) {
-  // Options for this custom task
-  const opts = {
-    releaseIt: {
-      options: {
-        'non-interactive': true,
-        'dry-run': false,
-        pkgFiles: ['package.json'],
-        increment: '',
-        buildCommand: 'grunt yui && grunt build',
-        changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
-        src: {
-          commitMessage: 'Release v%s',
-          tagName: '%s',
-          tagAnnotation: 'Release v%s',
-          pushRepo: 'origin master'
-        },
-        dist: {
-          repo: false,
-          baseDir: false
-        },
-        npm: {
-          publish: true
-        }
-      }
-    },
-    compress: {
-      main: {
-        options: {
-          archive: 'p5.zip'
-        },
-        files: [{ cwd: 'lib/', src: ['**/*'], expand: true }]
-      }
-    }
-  };
-
   // Register the Release Task
   grunt.registerTask(
     'release-p5',
     'Drafts and Publishes a fresh release of p5.js',
-    function(args) {
-      // 0. Setup Config
+    async function(args) {
+      const done = this.async();
 
-      // Default increment is patch (x.y.z+1)
-      opts.releaseIt.options.increment = args;
-      // Uncomment to set dry run as true for testing
-      // opts.releaseIt.options['dry-run'] = true;
-      grunt.config.set('release-it', opts.releaseIt);
-      grunt.config.set('compress', opts.compress);
+      // Check we are currently on the 'main' branch, refuse to continue
+      // if not and preview is not true.
+      // This section should be removed once support for 'main' branch
+      // is added to np
+      const git = simpleGit();
+      const branches = await git.branchLocal();
+      if (branches.current !== 'main' && !grunt.option('preview')) {
+        console.log('Not on "main" branch, refusing to deploy.');
+        console.log('Preview the release step with the "--preview" flag.');
+        done();
+        return;
+      }
+
+      spawn(
+        'npx np',
+        grunt.option('preview')
+          ? ['--any-branch', '--preview']
+          : ['--any-branch'],
+        {
+          stdio: 'inherit',
+          shell: true
+        }
+      );
+
+      // 0. Setup Config
       // Keeping URLs as config vars, so that anyone can change
       // them to add their own, to test if release works or not.
-      grunt.config.set('bowerReleaser', 'lmccart');
-      grunt.config.set('docsReleaser', 'processing');
-      grunt.config.set('githubReleaser', 'processing');
+      grunt.config.set(
+        'bowerReleaser',
+        grunt.option('bowerReleaser') || 'processing'
+      );
+      grunt.config.set(
+        'docsReleaser',
+        grunt.option('docsReleaser') || 'processing'
+      );
 
-      // 1. Test Suite
-      grunt.task.run('test');
+      // 1. Zip the lib folder
+      grunt.task.run('clean');
+      grunt.task.run('compress');
+      grunt.task.run('copy:release');
 
-      // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
-      grunt.task.run('release-it');
+      // Open the folder of files to be uploaded for the release on github
+      open('release/');
 
-      // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // 2. Push the new lib files to the dist repo (to be referred as bower-repo here)
       grunt.task.run('release-bower');
 
-      // 4. Push the docs out to the website
-      grunt.task.run('release-docs');
-
-      // 5. Zip the lib folder
-      grunt.task.run('compress');
-
-      // 6. Draft a Release for GitHub
-      grunt.task.run('release-github');
+      done();
     }
   );
 };

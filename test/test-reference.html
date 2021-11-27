@@ -22,7 +22,6 @@
 
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
-  <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
   <script>
     // These tests fail. TODO: Work out why.
     if (Modernizr.webaudio)
@@ -48,7 +47,7 @@
   ];
 
   // TODO: This code has basically been harvested from
-  // https://github.com/processing/p5.js-website/blob/master/js/render.js.
+  // https://github.com/processing/p5.js-website/blob/main/js/render.js.
   // Ideally we should factor out this common code into a shared place
   // where we're not duplicating code.
   function createExampleSketch(exampleCode, cb) {

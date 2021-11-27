@@ -10,13 +10,13 @@ function setup() {
   function textAsWords(words, x, y) {
     var tw,
       spaceW = textWidth(' ');
-    console.log('space=' + spaceW);
+    //console.log('space=' + spaceW);
     for (var i = 0; i < words.length; i++) {
       fill(0);
       noStroke();
       text(words[i], x, y);
       x += textWidth(words[i]);
-      console.log(words[i] + '=' + x);
+      //console.log(words[i] + '=' + x);
 
       if (i < words.length - 1) {
         stroke(0);
@@ -36,7 +36,7 @@ function setup() {
 
   textSize(20); // Case 1: Default font
   noStroke();
-  console.log('default');
+  //console.log('default');
   text(words, 20, 50);
   textAsWords(words.split(' '), 20, 80);
 
@@ -45,7 +45,7 @@ function setup() {
 
   textFont(font, 20); // Case 2: OpenSans
   noStroke();
-  console.log('\np5/loaded');
+  //console.log('\np5/loaded');
   text(words, 20, 120);
 
   textAsWords(words.split(' '), 20, 150);
@@ -56,13 +56,13 @@ setTimeout(function() {
   function _textAsWords(ctx, font, text, x, y, fontSize) {
     var tw,
       spaceW = font.getAdvanceWidth(' ', fontSize);
-    console.log('space=' + spaceW);
+    //console.log('space=' + spaceW);
 
     for (var i = 0; i < text.length; i++) {
       var pth = font.getPath(text[i], x, y, fontSize);
       pth.draw(ctx);
       x += font.getAdvanceWidth(text[i], fontSize);
-      console.log(text[i] + '=' + x);
+      //console.log(text[i] + '=' + x);
       if (i < text.length - 1) {
         ctx.strokeRect(x, y + 5, spaceW, -25);
         x += spaceW;
@@ -79,7 +79,7 @@ setTimeout(function() {
     if (err) throw 'Font could not be loaded: ' + err;
     var ctx = document.getElementById('defaultCanvas0').getContext('2d');
     font.getPath(words, 20, 190, 20).draw(ctx);
-    console.log('\nopentype/loaded');
+    //console.log('\nopentype/loaded');
     _textAsWords(ctx, font, words.split(' '), 20, 220, 20);
   });
 }, 100);

@@ -1,84 +1,61 @@
 /* Grunt Task to Release the Library files on dist repo for Bower */
 
-// Using native exec instead of Grunt spawn so as to utilise Promises
-const exec = require('child_process').exec;
+const git = require('simple-git/promise');
 
 module.exports = function(grunt) {
   grunt.registerTask(
     'release-bower',
     'Publishes the new release of p5.js on Bower',
-    function() {
+    async function() {
       // Async Task
       const done = this.async();
-      // Keep the version handy
-      const version = require('../../package.json').version;
+
       // Keep the release-party ready
       const releaseParty = grunt.config.get('bowerReleaser');
-      // Avoiding Callback Hell and using Promises
-      new Promise((resolve, reject) => {
-        // Clone the repo. NEEDS TO BE QUIET. Took 3 hours to realise this.
-        // Otherwise the stdout screws up
+
+      // Avoiding Callback Hell and using async/await
+      try {
         console.log('Cloning the Release repo ...');
-        exec(
-          `rm -rf bower-repo/ && git clone -q \
-          https://github.com/${releaseParty}/p5.js-release.git \
-          bower-repo`,
-          (err, stdout, stderr) => {
-            if (err) {
-              reject(err);
-            }
-            if (stderr) {
-              reject(stderr);
-            }
-            resolve();
-          }
+        await git().clone(
+          `https://github.com/${releaseParty}/p5.js-release.git`,
+          'bower-repo'
         );
-      })
-        .then(function(resolve, reject) {
-          // Copy the lib to bower-repo.
-          // NOTE : Uses 'cp' of UNIX. Make sure it is unaliased in your .bashrc,
-          // otherwise it may prompt always for overwrite (not desirable)
-          console.log('Copying new files ...');
-          return new Promise((resolve, reject) => {
-            exec(
-              'cp -R lib/*.js lib/addons bower-repo/lib',
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                if (stderr) {
-                  reject(stderr);
-                }
-                resolve();
-              }
-            );
-          });
-        })
-        .then((resolve, reject) => {
-          // Git add, commit, push
-          console.log('Pushing out changes ...');
-          return new Promise(function(resolve, reject) {
-            exec(
-              `git add --all && git commit -am "${version}" && git push -q`,
-              { cwd: './bower-repo' },
-              (err, stdout, stderr) => {
-                if (err) {
-                  reject(err);
-                }
-                if (stderr) {
-                  reject(stderr);
-                }
-                console.log('Released on Bower!');
-                resolve();
-                done();
-              }
-            );
-          });
-        })
-        .catch(err => {
-          console.log('Failed to Release on Bower!');
-          throw new Error(err);
-        });
+
+        // Copy the lib to bower-repo.
+        console.log('Copying new files ...');
+        grunt.task.run('copy:bower');
+
+        if (!grunt.option('preview')) {
+          grunt.task.run('bower-push');
+        } else {
+          console.log('Preview: skipping push to Bower repository');
+        }
+
+        done();
+      } catch (err) {
+        console.log('Failed to Release on Bower!');
+        console.error(err);
+      }
     }
   );
+
+  grunt.registerTask('bower-push', async function() {
+    const done = this.async();
+
+    const version = require('../../package.json').version;
+
+    try {
+      // Git add, commit, push
+      console.log('Pushing out changes ...');
+      await git('bower-repo').add('.');
+      await git('bower-repo').commit(version);
+      await git('bower-repo').push('origin', 'master');
+
+      console.log('Released on Bower!');
+      done();
+    } catch (err) {
+      console.log('Failed to Release on Bower!');
+      console.error(err);
+    }
+  });
 };

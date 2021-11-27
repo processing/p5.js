@@ -14,59 +14,6 @@ suite('Structure', function() {
     myp5.remove();
   });
 
-  suite('p5.frameCount', function() {
-    test('starts at zero', function() {
-      return new Promise(function(resolve, reject) {
-        // Has to use a custom p5 to hook setup correctly
-        new p5(function(p) {
-          p.setup = function() {
-            if (p.frameCount !== 0) {
-              reject('frameCount is not 0 in setup');
-            }
-          };
-          p.draw = function() {
-            if (p.frameCount === 1) {
-              resolve();
-            }
-          };
-        });
-      });
-    });
-    test('matches draw calls', function() {
-      return new Promise(function(resolve, reject) {
-        var frames = myp5.frameCount;
-        var start = myp5.frameCount;
-        myp5.draw = function() {
-          try {
-            frames += 1;
-            assert.equal(myp5.frameCount, frames);
-            if (frames === start + 5) {
-              // Test 5 seperate redraws
-              myp5.noLoop();
-              setTimeout(myp5.redraw.bind(myp5), 10);
-              setTimeout(myp5.redraw.bind(myp5), 20);
-              setTimeout(myp5.redraw.bind(myp5), 30);
-              setTimeout(myp5.redraw.bind(myp5), 40);
-              setTimeout(myp5.redraw.bind(myp5), 50);
-            } else if (frames === start + 10) {
-              // Test loop resuming
-              myp5.loop();
-            } else if (frames === start + 15) {
-              // Test queuing multiple redraws
-              myp5.noLoop();
-              setTimeout(myp5.redraw.bind(myp5, 5), 10);
-            } else if (frames === start + 20) {
-              resolve();
-            }
-            assert.equal(myp5.frameCount, frames);
-          } catch (err) {
-            reject(err);
-          }
-        };
-      });
-    });
-  });
-
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
       return new Promise(function(resolve, reject) {
@@ -274,7 +221,7 @@ suite('Structure', function() {
           myp5.background(0);
           myp5.stroke(255);
           myp5.point(10, 10);
-          if (myp5.get(10, 10)[0] !== 255) {
+          if (myp5.get(10, 10)[0] === 0) {
             reject(new Error("Drawing matrix doesn't appear to be reset"));
           }
           myp5.rotate(10);

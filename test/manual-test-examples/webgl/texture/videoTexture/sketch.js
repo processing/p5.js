@@ -2,10 +2,15 @@ var img;
 var playing = false;
 var fingers, button;
 
+function preload() {
+  fingers = createVideo('../../../dom/fingers.mov', () => {
+    fingers.hide();
+    fingers.pause();
+  });
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  fingers = createVideo('../../../addons/p5.dom/fingers.mov');
-  fingers.hide();
   textureMode(NORMAL);
 }
 

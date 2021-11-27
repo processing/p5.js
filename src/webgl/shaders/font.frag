@@ -12,7 +12,7 @@ precision mediump float;
 
 #else
   // use native integer math
-	precision mediump int;
+	precision highp int;
 	#define INT(x) x
 
 	int ifloor(float v) { return int(v); }

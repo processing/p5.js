@@ -6,9 +6,7 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('./main');
+import p5 from './main';
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -27,7 +25,7 @@ var p5 = require('./main');
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Number} a numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number|Array} a numbers which define the 2x3 matrix to be multiplied, or an array of numbers
  * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
  * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
@@ -43,7 +41,7 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
+ *   let step = frameCount % 20;
  *   background(200);
  *   // Equivalent to translate(x, y);
  *   applyMatrix(1, 0, 0, 1, 40 + step, 50);
@@ -51,6 +49,7 @@ var p5 = require('./main');
  * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * function setup() {
@@ -59,7 +58,7 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
+ *   let step = frameCount % 20;
  *   background(200);
  *   translate(50, 50);
  *   // Equivalent to scale(x, y);
@@ -68,6 +67,7 @@ var p5 = require('./main');
  * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * function setup() {
@@ -76,10 +76,10 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
- *   var angle = map(step, 0, 20, 0, TWO_PI);
- *   var cos_a = cos(angle);
- *   var sin_a = sin(angle);
+ *   let step = frameCount % 20;
+ *   let angle = map(step, 0, 20, 0, TWO_PI);
+ *   let cos_a = cos(angle);
+ *   let sin_a = sin(angle);
  *   background(200);
  *   translate(50, 50);
  *   // Equivalent to rotate(angle);
@@ -88,6 +88,7 @@ var p5 = require('./main');
  * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * function setup() {
@@ -96,17 +97,18 @@ var p5 = require('./main');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20;
- *   var angle = map(step, 0, 20, -PI / 4, PI / 4);
+ *   let step = frameCount % 20;
+ *   let angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
  *   translate(50, 50);
  *   // equivalent to shearX(angle);
- *   var shear_factor = 1 / tan(PI / 2 - angle);
+ *   let shear_factor = 1 / tan(PI / 2 - angle);
  *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
  *   rect(0, 0, 50, 50);
  * }
  * </code>
  * </div>
+ *
  * <div modernizr='webgl'>
  * <code>
  * function setup() {
@@ -119,10 +121,10 @@ var p5 = require('./main');
  *   rotateY(PI / 6);
  *   stroke(153);
  *   box(35);
- *   var rad = millis() / 1000;
+ *   let rad = millis() / 1000;
  *   // Set rotation angles
- *   var ct = cos(rad);
- *   var st = sin(rad);
+ *   let ct = cos(rad);
+ *   let st = sin(rad);
  *   // Matrix for rotation around the Y axis
  *   // prettier-ignore
  *   applyMatrix(  ct, 0.0,  st,  0.0,
@@ -135,15 +137,31 @@ var p5 = require('./main');
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(200);
+ *   let testMatrix = [1, 0, 0, 1, 0, 0];
+ *   applyMatrix(testMatrix);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * A rectangle translating to the right
  * A rectangle shrinking to the center
  * A rectangle rotating clockwise about the center
  * A rectangle shearing
- *
+ * A rectangle in the upper left corner
  */
-p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
-  this._renderer.applyMatrix.apply(this._renderer, arguments);
+p5.prototype.applyMatrix = function() {
+  let isTypedArray = arguments[0] instanceof Object.getPrototypeOf(Uint8Array);
+  if (Array.isArray(arguments[0]) || isTypedArray) {
+    this._renderer.applyMatrix(...arguments[0]);
+  } else {
+    this._renderer.applyMatrix(...arguments);
+  }
   return this;
 };
 
@@ -165,8 +183,7 @@ p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
  * </div>
  *
  * @alt
- * A rotated retangle in the center with another at the top left corner
- *
+ * A rotated rectangle in the center with another at the top left corner
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -174,17 +191,17 @@ p5.prototype.resetMatrix = function() {
 };
 
 /**
- * Rotates a shape the amount specified by the angle parameter. This
- * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles can be entered in either
- * RADIANS or DEGREES.
- * <br><br>
+ * Rotates a shape by the amount specified by the angle parameter. This
+ * function accounts for <a href="#/p5/angleMode">angleMode</a>, so angles
+ * can be entered in either RADIANS or DEGREES.
+ *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
- * <br><br>
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
  * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
@@ -205,7 +222,6 @@ p5.prototype.resetMatrix = function() {
  *
  * @alt
  * white 52x52 rect with black outline at center rotated counter 45 degrees
- *
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
@@ -214,7 +230,13 @@ p5.prototype.rotate = function(angle, axis) {
 };
 
 /**
- * Rotates around X axis.
+ * Rotates a shape around X axis by the amount specified in angle parameter.
+ * The angles can be entered in either RADIANS or DEGREES.
+ *
+ * Objects are always rotated around their relative position to the
+ * origin and positive numbers rotate objects in a clockwise direction.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ *
  * @method  rotateX
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
@@ -244,7 +266,13 @@ p5.prototype.rotateX = function(angle) {
 };
 
 /**
- * Rotates around Y axis.
+ * Rotates a shape around Y axis by the amount specified in angle parameter.
+ * The angles can be entered in either RADIANS or DEGREES.
+ *
+ * Objects are always rotated around their relative position to the
+ * origin and positive numbers rotate objects in a clockwise direction.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ *
  * @method rotateY
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
@@ -274,7 +302,15 @@ p5.prototype.rotateY = function(angle) {
 };
 
 /**
- * Rotates around Z axis. Webgl mode only.
+ * Rotates a shape around Z axis by the amount specified in angle parameter.
+ * The angles can be entered in either RADIANS or DEGREES.
+ *
+ * This method works in WEBGL mode only.
+ *
+ * Objects are always rotated around their relative position to the
+ * origin and positive numbers rotate objects in a clockwise direction.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ *
  * @method rotateZ
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
@@ -304,17 +340,17 @@ p5.prototype.rotateZ = function(angle) {
 };
 
 /**
- * Increases or decreases the size of a shape by expanding and contracting
+ * Increases or decreases the size of a shape by expanding or contracting
  * vertices. Objects always scale from their relative origin to the
  * coordinate system. Scale values are specified as decimal percentages.
  * For example, the function call scale(2.0) increases the dimension of a
  * shape by 200%.
- * <br><br>
+ *
  * Transformations apply to everything that happens after and subsequent
  * calls to the function multiply the effect. For example, calling scale(2.0)
  * and then scale(1.5) is the same as scale(3.0). If <a href="#/p5/scale">scale()</a> is called
  * within <a href="#/p5/draw">draw()</a>, the transformation is reset when the loop begins again.
- * <br><br>
+ *
  * Using this function with the z parameter is only available in WEBGL mode.
  * This function can be further controlled with <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
@@ -346,7 +382,6 @@ p5.prototype.rotateZ = function(angle) {
  * @alt
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
- *
  */
 /**
  * @method scale
@@ -357,12 +392,12 @@ p5.prototype.scale = function(x, y, z) {
   p5._validateParameters('scale', arguments);
   // Only check for Vector argument type if Vector is available
   if (x instanceof p5.Vector) {
-    var v = x;
+    const v = x;
     x = v.x;
     y = v.y;
     z = v.z;
   } else if (x instanceof Array) {
-    var rg = x;
+    const rg = x;
     x = rg[0];
     y = rg[1];
     z = rg[2] || 1;
@@ -379,20 +414,20 @@ p5.prototype.scale = function(x, y, z) {
 };
 
 /**
- * Shears a shape around the x-axis the amount specified by the angle
+ * Shears a shape around the x-axis by the amount specified by the angle
  * parameter. Angles should be specified in the current angleMode.
  * Objects are always sheared around their relative position to the origin
  * and positive numbers shear objects in a clockwise direction.
- * <br><br>
+ *
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
- * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
- * the loop begins again.
- * <br><br>
- * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current transformation matrix by a
- * rotation matrix. This function can be further controlled by the
- * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
+ * If <a href="#/p5/shearX">shearX()</a> is called within the <a href="#/p5/draw">draw()</a>,
+ * the transformation is reset when the loop begins again.
+ *
+ * Technically, <a href="#/p5/shearX">shearX()</a> multiplies the current
+ * transformation matrix by a rotation matrix. This function can be further
+ * controlled by the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
  *
  * @method shearX
  * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -409,11 +444,10 @@ p5.prototype.scale = function(x, y, z) {
  *
  * @alt
  * white irregular quadrilateral with black outline at top middle.
- *
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
-  var rad = this._toRadians(angle);
+  const rad = this._toRadians(angle);
   this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
   return this;
 };
@@ -423,13 +457,13 @@ p5.prototype.shearX = function(angle) {
  * parameter. Angles should be specified in the current angleMode. Objects
  * are always sheared around their relative position to the origin and
  * positive numbers shear objects in a clockwise direction.
- * <br><br>
+ *
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
  * <a href="#/p5/shearY">shearY()</a> is called within the <a href="#/p5/draw">draw()</a>, the transformation is reset when
  * the loop begins again.
- * <br><br>
+ *
  * Technically, <a href="#/p5/shearY">shearY()</a> multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
  * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions.
@@ -449,11 +483,10 @@ p5.prototype.shearX = function(angle) {
  *
  * @alt
  * white irregular quadrilateral with black outline at middle bottom.
- *
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
-  var rad = this._toRadians(angle);
+  const rad = this._toRadians(angle);
   this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
   return this;
 };
@@ -462,7 +495,7 @@ p5.prototype.shearY = function(angle) {
  * Specifies an amount to displace objects within the display window.
  * The x parameter specifies left/right translation, the y parameter
  * specifies up/down translation.
- * <br><br>
+ *
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
  * calling translate(50, 0) and then translate(20, 0) is the same as
@@ -510,7 +543,6 @@ p5.prototype.shearY = function(angle) {
  * white 55x55 rect with black outline at center right.
  * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
  * a 20x20 white rect moving in a circle around the canvas
- *
  */
 /**
  * @method translate
@@ -527,4 +559,4 @@ p5.prototype.translate = function(x, y, z) {
   return this;
 };
 
-module.exports = p5;
+export default p5;

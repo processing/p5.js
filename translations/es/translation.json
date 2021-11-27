@@ -1,0 +1,72 @@
+{
+  "fes": {
+    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
+    "checkUserDefinedFns": "",
+    "fileLoadError": {
+      "bytes": "",
+      "font": "",
+      "gif": "",
+      "image": "",
+      "json": "",
+      "large": "",
+      "strings": "",
+      "suggestion": "",
+      "table": "",
+      "xml": ""
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "",
+      "type_TOO_FEW_ARGUMENTS": "",
+      "type_TOO_MANY_ARGUMENTS": "",
+      "type_WRONG_TYPE": ""
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "",
+        "notDefined": ""
+      },
+      "stackSubseq": "",
+      "stackTop": "",
+      "syntax": {
+        "badReturnOrYield": "",
+        "invalidToken": "",
+        "missingInitializer": "",
+        "redeclaredVariable": "",
+        "unexpectedToken": ""
+      },
+      "type": {
+        "constAssign": "",
+        "notfunc": "",
+        "notfuncObj": "",
+        "readFromNull": "",
+        "readFromUndefined": ""
+      }
+    },
+    "libraryError": "",
+    "location": "",
+    "misspelling": "",
+    "misspelling_plural": "",
+    "misusedTopLevel": "",
+    "positions": {
+      "p_1": "",
+      "p_10": "",
+      "p_11": "",
+      "p_12": "",
+      "p_2": "",
+      "p_3": "",
+      "p_4": "",
+      "p_5": "",
+      "p_6": "",
+      "p_7": "",
+      "p_8": "",
+      "p_9": ""
+    },
+    "pre": "🌸 p5.js dice: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "",
+      "reservedFunc": ""
+    },
+    "welcome": "",
+    "wrongPreload": ""
+  }
+}

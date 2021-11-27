@@ -1,23 +1,25 @@
 var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
-    p.textSize(18);
+    p.background(204);
+    p.textSize(19.5);
+    p.fill(255);
     p.text('Default Text', 10, 30);
     p.noStroke();
-    p.fill(0, 102, 153);
-    p.text('Blue No Stroke Text', 10, 60);
-    p.textStyle(p.ITALIC);
-    p.text('Blue No Stroke Text Italic', 10, 80);
-    p.textStyle(p.BOLD);
-    p.text('Blue No Stroke Text Bold', 10, 100);
+    p.fill(57, 112, 155);
+    p.text('Black No Stroke Text', 10, 60);
+    //p.textStyle(p.ITALIC);
+    //p.text('Blue No Stroke Text Italic', 10, 80);
+    //p.textStyle(p.BOLD);
+    //p.text('Blue No Stroke Text Bold', 10, 100);
     p
       .fill(120)
       .textStyle(p.NORMAL)
-      .textSize(12)
+      .textSize(13.5)
       .text(
         'Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
         10,
-        110,
+        92,
         220,
         60
       );

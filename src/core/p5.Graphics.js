@@ -4,10 +4,8 @@
  * @for p5
  */
 
-'use strict';
-
-var p5 = require('./main');
-var constants = require('./constants');
+import p5 from './main';
+import * as constants from './constants';
 
 /**
  * Thin wrapper around a renderer, to be used for creating a
@@ -17,6 +15,7 @@ var constants = require('./constants');
  * extensive, but mirror the normal drawing API for p5.
  *
  * @class p5.Graphics
+ * @constructor
  * @extends p5.Element
  * @param {Number} w            width
  * @param {Number} h            height
@@ -24,16 +23,16 @@ var constants = require('./constants');
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-  var r = renderer || constants.P2D;
+  const r = renderer || constants.P2D;
 
   this.canvas = document.createElement('canvas');
-  var node = pInst._userNode || document.body;
+  const node = pInst._userNode || document.body;
   node.appendChild(this.canvas);
 
   p5.Element.call(this, this.canvas, pInst);
 
   // bind methods and props of p5 to the new object
-  for (var p in p5.prototype) {
+  for (const p in p5.prototype) {
     if (!this[p]) {
       if (typeof p5.prototype[p] === 'function') {
         this[p] = p5.prototype[p].bind(this);
@@ -54,6 +53,12 @@ p5.Graphics = function(w, h, renderer, pInst) {
     this._renderer = new p5.Renderer2D(this.canvas, this, false);
   }
   pInst._elements.push(this);
+
+  Object.defineProperty(this, 'deltaTime', {
+    get: function() {
+      return this._pInst.deltaTime;
+    }
+  });
 
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
@@ -80,6 +85,7 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  *   pg.fill(0);
  *   frameRate(5);
  * }
+ *
  * function draw() {
  *   image(pg, width / 2, 0);
  *   pg.background(255);
@@ -105,7 +111,6 @@ p5.Graphics.prototype = Object.create(p5.Element.prototype);
  * A white line on a black background stays still on the top-left half.
  * A black line animates from top to bottom on a white background on the right half.
  * When clicked, the black line starts back over at the top.
- *
  */
 p5.Graphics.prototype.reset = function() {
   this._renderer.resetMatrix();
@@ -167,19 +172,18 @@ p5.Graphics.prototype.reset = function() {
  * @alt
  * no image
  * a multi-colored circle moving back and forth over a scrolling background.
- *
  */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
   }
-  var idx = this._pInst._elements.indexOf(this);
+  const idx = this._pInst._elements.indexOf(this);
   if (idx !== -1) {
     this._pInst._elements.splice(idx, 1);
   }
-  for (var elt_ev in this._events) {
+  for (const elt_ev in this._events) {
     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
   }
 };
 
-module.exports = p5.Graphics;
+export default p5.Graphics;

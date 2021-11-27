@@ -6,25 +6,23 @@
  * @requires constants
  */
 
-'use strict';
+import p5 from './main';
+import * as C from './constants';
 
-var p5 = require('./main');
-var C = require('./constants');
-
-var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
 p5.prototype._frameRate = 0;
 p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
-var _windowPrint = window.print;
+const _windowPrint = window.print;
 
 /**
- * The <a href="#/p5/print">print()</a> function writes to the console area of your browser.
- * This function is often helpful for looking at the data a program is
- * producing. This function creates a new line of text for each call to
- * the function. Individual elements can be
- * separated with quotes ("") and joined with the addition operator (+).
+ * The <a href="#/p5/print">print()</a> function writes to the console area of
+ * your browser. This function is often helpful for looking at the data a program
+ * is producing. This function creates a new line of text for each call to
+ * the function. Individual elements can be separated with quotes ("") and joined
+ * with the addition operator (+).
  *
  * Note that calling print() without any arguments invokes the window.print()
  * function which opens the browser's print dialog. To print a blank line
@@ -39,26 +37,28 @@ var _windowPrint = window.print;
  * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
+ *
  * @alt
  * default grey canvas
  */
-p5.prototype.print = function() {
-  if (!arguments.length) {
+p5.prototype.print = function(...args) {
+  if (!args.length) {
     _windowPrint();
   } else {
-    console.log.apply(console, arguments);
+    console.log(...args);
   }
 };
 
 /**
- * The system variable <a href="#/p5/frameCount">frameCount</a> contains the number of frames that have
- * been displayed since the program started. Inside <a href="#/p5/setup">setup()</a> the value is 0,
- * after the first iteration of draw it is 1, etc.
+ * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
+ * number of frames that have been displayed since the program started. Inside
+ * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
+ * of draw it is 1, etc.
  *
  * @property {Integer} frameCount
  * @readOnly
  * @example
- *   <div><code>
+ * <div><code>
  * function setup() {
  *   frameRate(30);
  *   textSize(30);
@@ -69,13 +69,62 @@ p5.prototype.print = function() {
  *   background(200);
  *   text(frameCount, width / 2, height / 2);
  * }
-</code></div>
+ * </code></div>
  *
  * @alt
  * numbers rapidly counting upward with frame count set to 30.
- *
  */
 p5.prototype.frameCount = 0;
+
+/**
+ * The system variable <a href="#/p5/deltaTime">deltaTime</a> contains the time
+ * difference between the beginning of the previous frame and the beginning
+ * of the current frame in milliseconds.
+ *
+ * This variable is useful for creating time sensitive animation or physics
+ * calculation that should stay constant regardless of frame rate.
+ *
+ * @property {Integer} deltaTime
+ * @readOnly
+ * @example
+ * <div><code>
+ * let rectX = 0;
+ * let fr = 30; //starting FPS
+ * let clr;
+ *
+ * function setup() {
+ *   background(200);
+ *   frameRate(fr); // Attempt to refresh at starting FPS
+ *   clr = color(255, 0, 0);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   rectX = rectX + 1 * (deltaTime / 50); // Move Rectangle in relation to deltaTime
+ *
+ *   if (rectX >= width) {
+ *     // If you go off screen.
+ *     if (fr === 30) {
+ *       clr = color(0, 0, 255);
+ *       fr = 10;
+ *       frameRate(fr); // make frameRate 10 FPS
+ *     } else {
+ *       clr = color(255, 0, 0);
+ *       fr = 30;
+ *       frameRate(fr); // make frameRate 30 FPS
+ *     }
+ *     rectX = 0;
+ *   }
+ *   fill(clr);
+ *   rect(rectX, 40, 20, 20);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * red rect moves left to right, followed by blue rect moving at the same speed
+ * with a lower frame rate. Loops.
+ */
+p5.prototype.deltaTime = 0;
 
 /**
  * Confirms if the window a p5.js program is in is "focused," meaning that
@@ -105,7 +154,6 @@ p5.prototype.frameCount = 0;
  *
  * @alt
  * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
- *
  */
 p5.prototype.focused = document.hasFocus();
 
@@ -136,7 +184,7 @@ p5.prototype.focused = document.hasFocus();
  *   } else if (mouseX > 50 && mouseY < 50) {
  *     cursor('progress');
  *   } else if (mouseX > 50 && mouseY > 50) {
- *     cursor('https://s3.amazonaws.com/mupublicdata/cursor.cur');
+ *     cursor('https://avatars0.githubusercontent.com/u/1617169?s=16');
  *   } else {
  *     cursor('grab');
  *   }
@@ -146,30 +194,29 @@ p5.prototype.focused = document.hasFocus();
  * @alt
  * canvas is divided into four quadrants. cursor on first is a cross, second is a progress,
  * third is a custom cursor using path to the cursor and fourth is a grab.
- *
  */
 p5.prototype.cursor = function(type, x, y) {
-  var cursor = 'auto';
-  var canvas = this._curElement.elt;
-  if (standardCursors.indexOf(type) > -1) {
+  let cursor = 'auto';
+  const canvas = this._curElement.elt;
+  if (standardCursors.includes(type)) {
     // Standard css cursor
     cursor = type;
   } else if (typeof type === 'string') {
-    var coords = '';
+    let coords = '';
     if (x && y && (typeof x === 'number' && typeof y === 'number')) {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-      coords = x + ' ' + y;
+      coords = `${x} ${y}`;
     }
     if (
       type.substring(0, 7) === 'http://' ||
       type.substring(0, 8) === 'https://'
     ) {
       // Image (absolute url)
-      cursor = 'url(' + type + ') ' + coords + ', auto';
+      cursor = `url(${type}) ${coords}, auto`;
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
       // Image file (relative path) - Separated for performance reasons
-      cursor = 'url(' + type + ') ' + coords + ', auto';
+      cursor = `url(${type}) ${coords}, auto`;
     } else {
       // Any valid string for the css cursor property
       cursor = type;
@@ -182,19 +229,19 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within <a href="#/p5/setup">setup()</a> is
- * recommended. The default frame rate is based on the frame rate of the display
- * (here also called "refresh rate"), which is set to 60 frames per second on most
- * computers. A frame rate of 24 frames per second (usual for movies) or above
- * will be enough for smooth animations
- * This is the same as setFrameRate(val).
- * <br><br>
- * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns the current framerate. The
- * draw function must run at least once before it will return a value. This
- * is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
- * <br><br>
- * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not of the type numbers
- * or are non positive also returns current framerate.
+ * frame rate will not be achieved. Setting the frame rate within 
+ * <a href="#/p5/setup">setup()</a> is recommended. The default frame rate is
+ * based on the frame rate of the display (here also called "refresh rate"), 
+ * which is set to 60 frames per second on most computers. A frame rate of 24
+ * frames per second (usual for movies) or above will be enough for smooth 
+ * animations. This is the same as setFrameRate(val).
+ * 
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
+ * the current framerate. The draw function must run at least once before it will
+ * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
+ *
+ * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
+ * of the type numbers or are non positive also returns current framerate.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -237,7 +284,6 @@ p5.prototype.cursor = function(type, x, y) {
  *
  * @alt
  * blue rect moves left to right, followed by red rect moving faster. Loops.
- *
  */
 /**
  * @method frameRate
@@ -249,9 +295,13 @@ p5.prototype.frameRate = function(fps) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
+    if (fps === 0) {
+      this._setProperty('_frameRate', fps);
+    }
     return this;
   }
 };
+
 /**
  * Returns the current framerate.
  *
@@ -294,10 +344,8 @@ p5.prototype.setFrameRate = function(fps) {
  * }
  * </code></div>
  *
- *
  * @alt
  * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
- *
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
@@ -317,8 +365,7 @@ p5.prototype.noCursor = function() {
  * </code></div>
  *
  * @alt
- * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
- *
+ * This example does not render anything.
  */
 p5.prototype.displayWidth = screen.width;
 
@@ -336,8 +383,7 @@ p5.prototype.displayWidth = screen.width;
  * </code></div>
  *
  * @alt
- * no display.
- *
+ * This example does not render anything.
  */
 p5.prototype.displayHeight = screen.height;
 
@@ -353,8 +399,7 @@ p5.prototype.displayHeight = screen.height;
  * </code></div>
  *
  * @alt
- * no display.
- *
+ * This example does not render anything.
  */
 p5.prototype.windowWidth = getWindowWidth();
 /**
@@ -367,18 +412,19 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
- *@alt
- * no display.
  *
+ * @alt
+ * This example does not render anything.
  */
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
- * The <a href="#/p5/windowResized">windowResized()</a> function is called once every time the browser window
- * is resized. This is a good place to resize the canvas or do any other
- * adjustments to accommodate the new window size.
+ * The <a href="#/p5/windowResized">windowResized()</a> function is called once
+ * every time the browser window is resized. This is a good place to resize the
+ * canvas or do any other adjustments to accommodate the new window size.
  *
  * @method windowResized
+ * @param {Object} [event] optional Event callback argument.
  * @example
  * <div class="norender"><code>
  * function setup() {
@@ -394,13 +440,13 @@ p5.prototype.windowHeight = getWindowHeight();
  * }
  * </code></div>
  * @alt
- * no display.
+ * This example does not render anything.
  */
 p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
-  var context = this._isGlobal ? window : this;
-  var executeDefault;
+  const context = this._isGlobal ? window : this;
+  let executeDefault;
   if (typeof context.windowResized === 'function') {
     executeDefault = context.windowResized(e);
     if (executeDefault !== undefined && !executeDefault) {
@@ -479,8 +525,7 @@ p5.prototype.height = 0;
  * </div>
  *
  * @alt
- * no display.
- *
+ * This example does not render anything.
  */
 p5.prototype.fullscreen = function(val) {
   p5._validateParameters('fullscreen', arguments);
@@ -522,6 +567,7 @@ p5.prototype.fullscreen = function(val) {
  * }
  * </code>
  * </div>
+ *
  * <div>
  * <code>
  * function setup() {
@@ -543,11 +589,10 @@ p5.prototype.fullscreen = function(val) {
  */
 p5.prototype.pixelDensity = function(val) {
   p5._validateParameters('pixelDensity', arguments);
-  var returnValue;
+  let returnValue;
   if (typeof val === 'number') {
     if (val !== this._pixelDensity) {
       this._pixelDensity = val;
-      this._pixelsDirty = true;
     }
     returnValue = this;
     this.resizeCanvas(this.width, this.height, true); // as a side effect, it will clear the canvas
@@ -578,12 +623,10 @@ p5.prototype.pixelDensity = function(val) {
  * @alt
  * 50x50 white ellipse with black outline in center of canvas.
  */
-p5.prototype.displayDensity = function() {
-  return window.devicePixelRatio;
-};
+p5.prototype.displayDensity = () => window.devicePixelRatio;
 
 function launchFullscreen(element) {
-  var enabled =
+  const enabled =
     document.fullscreenEnabled ||
     document.webkitFullscreenEnabled ||
     document.mozFullScreenEnabled ||
@@ -615,7 +658,10 @@ function exitFullscreen() {
 }
 
 /**
- * Gets the current URL.
+ * Gets the current URL. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using the editor's present or share URLs.
  * @method getURL
  * @return {String} url
  * @example
@@ -640,13 +686,13 @@ function exitFullscreen() {
  *
  * @alt
  * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
- *
  */
-p5.prototype.getURL = function() {
-  return location.href;
-};
+p5.prototype.getURL = () => location.href;
 /**
- * Gets the current URL path as an array.
+ * Gets the current URL path as an array. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using the editor's present or share URLs.
  * @method getURLPath
  * @return {String[]} path components
  * @example
@@ -660,16 +706,15 @@ p5.prototype.getURL = function() {
  * </code></div>
  *
  * @alt
- *no display
- *
+ * This example does not render anything.
  */
-p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v) {
-    return v !== '';
-  });
-};
+p5.prototype.getURLPath = () =>
+  location.pathname.split('/').filter(v => v !== '');
 /**
- * Gets the current URL params as an Object.
+ * Gets the current URL params as an Object. Note: when using the
+ * p5 Editor, this will return an empty object because the sketch
+ * is embedded in an iframe. It will work correctly if you view the
+ * sketch using the editor's present or share URLs.
  * @method getURLParams
  * @return {Object} URL params
  * @example
@@ -685,14 +730,14 @@ p5.prototype.getURLPath = function() {
  * }
  * </code>
  * </div>
- * @alt
- * no display.
  *
+ * @alt
+ * This example does not render anything.
  */
 p5.prototype.getURLParams = function() {
-  var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
-  var m;
-  var v = {};
+  const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+  let m;
+  const v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
@@ -702,4 +747,4 @@ p5.prototype.getURLParams = function() {
   return v;
 };
 
-module.exports = p5;
+export default p5;

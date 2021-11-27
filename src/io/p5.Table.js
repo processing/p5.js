@@ -4,25 +4,23 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  *  Table Options
- *  <p>Generic class for handling tabular data, typically from a
- *  CSV, TSV, or other sort of spreadsheet file.</p>
- *  <p>CSV files are
+ *  Generic class for handling tabular data, typically from a
+ *  CSV, TSV, or other sort of spreadsheet file.
+ *  CSV files are
  *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
  *  comma separated values</a>, often with the data in quotes. TSV
  *  files use tabs as separators, and usually don't bother with the
- *  quotes.</p>
- *  <p>File names should end with .csv if they're comma separated.</p>
- *  <p>A rough "spec" for CSV can be found
- *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
- *  <p>To load files, use the <a href="#/p5/loadTable">loadTable</a> method.</p>
- *  <p>To save tables to your computer, use the <a href="#/p5/save">save</a> method
- *   or the <a href="#/p5/saveTable">saveTable</a> method.</p>
+ *  quotes.
+ *  File names should end with .csv if they're comma separated.
+ *  A rough "spec" for CSV can be found
+ *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.
+ *  To load files, use the <a href="#/p5/loadTable">loadTable</a> method.
+ *  To save tables to your computer, use the <a href="#/p5/save">save</a> method
+ *   or the <a href="#/p5/saveTable">saveTable</a> method.
  *
  *  Possible options include:
  *  <ul>
@@ -43,12 +41,43 @@ var p5 = require('../core/main');
  */
 p5.Table = function(rows) {
   /**
-   *  @property columns {String[]}
+   * An array containing the names of the columns in the table, if the "header" the table is
+   * loaded with the "header" parameter.
+   * @property columns {String[]}
+   * @example
+   * <div class="norender">
+   * <code>
+   * // Given the CSV file "mammals.csv"
+   * // in the project's "assets" folder:
+   * //
+   * // id,species,name
+   * // 0,Capra hircus,Goat
+   * // 1,Panthera pardus,Leopard
+   * // 2,Equus zebra,Zebra
+   *
+   * let table;
+   *
+   * function preload() {
+   *   //my table is comma separated value "csv"
+   *   //and has a header specifying the columns labels
+   *   table = loadTable('assets/mammals.csv', 'csv', 'header');
+   * }
+   *
+   * function setup() {
+   *   //print the column names
+   *   for (let c = 0; c < table.getColumnCount(); c++) {
+   *     print('column ' + c + ' is named ' + table.columns[c]);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   this.columns = [];
 
   /**
-   *  @property rows {p5.TableRow[]}
+   * An array containing the <a href="#/p5.Table">p5.TableRow</a> objects that make up the
+   * rows of the table. The same result as calling <a href="#/p5/getRows">getRows()</a>
+   * @property rows {p5.TableRow[]}
    */
   this.rows = [];
 };
@@ -102,15 +131,14 @@ p5.Table = function(rows) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
-  var r = row || new p5.TableRow();
+  const r = row || new p5.TableRow();
 
   if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
     //r = new p5.prototype.TableRow(r);
-    throw new Error('invalid TableRow: ' + r);
+    throw new Error(`invalid TableRow: ${r}`);
   }
   r.table = this;
   this.rows.push(r);
@@ -156,11 +184,10 @@ p5.Table.prototype.addRow = function(row) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
-  var chunk = this.rows.splice(id + 1, this.rows.length);
+  const chunk = this.rows.splice(id + 1, this.rows.length);
   this.rows.pop();
   this.rows = this.rows.concat(chunk);
 };
@@ -205,7 +232,6 @@ p5.Table.prototype.removeRow = function(id) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
@@ -254,7 +280,6 @@ p5.Table.prototype.getRow = function(r) {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -303,19 +328,18 @@ p5.Table.prototype.getRows = function() {
  *
  * @alt
  * no image displayed
- *
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
   if (typeof column === 'string') {
-    for (var i = 0; i < this.rows.length; i++) {
+    for (let i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column] === value) {
         return this.rows[i];
       }
     }
   } else {
     // try the Array
-    for (var j = 0; j < this.rows.length; j++) {
+    for (let j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column] === value) {
         return this.rows[j];
       }
@@ -373,19 +397,18 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.findRows = function(value, column) {
-  var ret = [];
+  const ret = [];
   if (typeof column === 'string') {
-    for (var i = 0; i < this.rows.length; i++) {
+    for (let i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column] === value) {
         ret.push(this.rows[i]);
       }
     }
   } else {
     // try the Array
-    for (var j = 0; j < this.rows.length; j++) {
+    for (let j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column] === value) {
         ret.push(this.rows[j]);
       }
@@ -434,17 +457,16 @@ p5.Table.prototype.findRows = function(value, column) {
  * }
  * </code>
  * </div>
- *
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
   if (typeof column === 'number') {
-    for (var j = 0; j < this.rows.length; j++) {
+    for (let j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column].match(regexp)) {
         return this.rows[j];
       }
     }
   } else {
-    for (var i = 0; i < this.rows.length; i++) {
+    for (let i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column].match(regexp)) {
         return this.rows[i];
       }
@@ -503,15 +525,15 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  * </div>
  */
 p5.Table.prototype.matchRows = function(regexp, column) {
-  var ret = [];
+  const ret = [];
   if (typeof column === 'number') {
-    for (var j = 0; j < this.rows.length; j++) {
+    for (let j = 0; j < this.rows.length; j++) {
       if (this.rows[j].arr[column].match(regexp)) {
         ret.push(this.rows[j]);
       }
     }
   } else {
-    for (var i = 0; i < this.rows.length; i++) {
+    for (let i = 0; i < this.rows.length; i++) {
       if (this.rows[i].obj[column].match(regexp)) {
         ret.push(this.rows[i]);
       }
@@ -557,16 +579,15 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getColumn = function(value) {
-  var ret = [];
+  const ret = [];
   if (typeof value === 'string') {
-    for (var i = 0; i < this.rows.length; i++) {
+    for (let i = 0; i < this.rows.length; i++) {
       ret.push(this.rows[i].obj[value]);
     }
   } else {
-    for (var j = 0; j < this.rows.length; j++) {
+    for (let j = 0; j < this.rows.length; j++) {
       ret.push(this.rows[j].arr[value]);
     }
   }
@@ -608,7 +629,6 @@ p5.Table.prototype.getColumn = function(value) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -659,10 +679,9 @@ p5.Table.prototype.clearRows = function() {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.addColumn = function(title) {
-  var t = title || null;
+  const t = title || null;
   this.columns.push(t);
 };
 
@@ -739,11 +758,11 @@ p5.Table.prototype.getRowCount = function() {
 };
 
 /**
- *  <p>Removes any of the specified characters (or "tokens").</p>
+ *  Removes any of the specified characters (or "tokens").
  *
- *  <p>If no column is specified, then the values in all columns and
+ *  If no column is specified, then the values in all columns and
  *  rows are processed. A specific column may be referenced by
- *  either its ID or title.</p>
+ *  either its ID or title.
  *
  *  @method  removeTokens
  *  @param  {String} chars  String listing characters to be removed
@@ -776,35 +795,33 @@ p5.Table.prototype.getRowCount = function() {
  * </code></div>
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
-  var escape = function(s) {
-    return s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  };
-  var charArray = [];
-  for (var i = 0; i < chars.length; i++) {
+  const escape = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const charArray = [];
+  for (let i = 0; i < chars.length; i++) {
     charArray.push(escape(chars.charAt(i)));
   }
-  var regex = new RegExp(charArray.join('|'), 'g');
+  const regex = new RegExp(charArray.join('|'), 'g');
 
   if (typeof column === 'undefined') {
-    for (var c = 0; c < this.columns.length; c++) {
-      for (var d = 0; d < this.rows.length; d++) {
-        var s = this.rows[d].arr[c];
+    for (let c = 0; c < this.columns.length; c++) {
+      for (let d = 0; d < this.rows.length; d++) {
+        let s = this.rows[d].arr[c];
         s = s.replace(regex, '');
         this.rows[d].arr[c] = s;
         this.rows[d].obj[this.columns[c]] = s;
       }
     }
   } else if (typeof column === 'string') {
-    for (var j = 0; j < this.rows.length; j++) {
-      var val = this.rows[j].obj[column];
+    for (let j = 0; j < this.rows.length; j++) {
+      let val = this.rows[j].obj[column];
       val = val.replace(regex, '');
       this.rows[j].obj[column] = val;
-      var pos = this.columns.indexOf(column);
+      const pos = this.columns.indexOf(column);
       this.rows[j].arr[pos] = val;
     }
   } else {
-    for (var k = 0; k < this.rows.length; k++) {
-      var str = this.rows[k].arr[column];
+    for (let k = 0; k < this.rows.length; k++) {
+      let str = this.rows[k].arr[column];
       str = str.replace(regex, '');
       this.rows[k].arr[column] = str;
       this.rows[k].obj[this.columns[column]] = str;
@@ -847,28 +864,28 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  * </code></div>
  */
 p5.Table.prototype.trim = function(column) {
-  var regex = new RegExp(' ', 'g');
+  const regex = new RegExp(' ', 'g');
 
   if (typeof column === 'undefined') {
-    for (var c = 0; c < this.columns.length; c++) {
-      for (var d = 0; d < this.rows.length; d++) {
-        var s = this.rows[d].arr[c];
+    for (let c = 0; c < this.columns.length; c++) {
+      for (let d = 0; d < this.rows.length; d++) {
+        let s = this.rows[d].arr[c];
         s = s.replace(regex, '');
         this.rows[d].arr[c] = s;
         this.rows[d].obj[this.columns[c]] = s;
       }
     }
   } else if (typeof column === 'string') {
-    for (var j = 0; j < this.rows.length; j++) {
-      var val = this.rows[j].obj[column];
+    for (let j = 0; j < this.rows.length; j++) {
+      let val = this.rows[j].obj[column];
       val = val.replace(regex, '');
       this.rows[j].obj[column] = val;
-      var pos = this.columns.indexOf(column);
+      const pos = this.columns.indexOf(column);
       this.rows[j].arr[pos] = val;
     }
   } else {
-    for (var k = 0; k < this.rows.length; k++) {
-      var str = this.rows[k].arr[column];
+    for (let k = 0; k < this.rows.length; k++) {
+      let str = this.rows[k].arr[column];
       str = str.replace(regex, '');
       this.rows[k].arr[column] = str;
       this.rows[k].obj[this.columns[column]] = str;
@@ -914,11 +931,10 @@ p5.Table.prototype.trim = function(column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.removeColumn = function(c) {
-  var cString;
-  var cNumber;
+  let cString;
+  let cNumber;
   if (typeof c === 'string') {
     // find the position of c in the columns
     cString = c;
@@ -928,13 +944,13 @@ p5.Table.prototype.removeColumn = function(c) {
     cString = this.columns[c];
   }
 
-  var chunk = this.columns.splice(cNumber + 1, this.columns.length);
+  const chunk = this.columns.splice(cNumber + 1, this.columns.length);
   this.columns.pop();
   this.columns = this.columns.concat(chunk);
 
-  for (var i = 0; i < this.rows.length; i++) {
-    var tempR = this.rows[i].arr;
-    var chip = tempR.splice(cNumber + 1, tempR.length);
+  for (let i = 0; i < this.rows.length; i++) {
+    const tempR = this.rows[i].arr;
+    const chip = tempR.splice(cNumber + 1, tempR.length);
     tempR.pop();
     this.rows[i].arr = tempR.concat(chip);
     delete this.rows[i].obj[cString];
@@ -985,7 +1001,6 @@ p5.Table.prototype.removeColumn = function(c) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -1123,7 +1138,6 @@ p5.Table.prototype.setString = function(row, column, value) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -1168,7 +1182,6 @@ p5.Table.prototype.get = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1220,7 +1233,6 @@ p5.Table.prototype.getNum = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 
 p5.Table.prototype.getString = function(row, column) {
@@ -1267,13 +1279,12 @@ p5.Table.prototype.getString = function(row, column) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getObject = function(headerColumn) {
-  var tableObject = {};
-  var obj, cPos, index;
+  const tableObject = {};
+  let obj, cPos, index;
 
-  for (var i = 0; i < this.rows.length; i++) {
+  for (let i = 0; i < this.rows.length; i++) {
     obj = this.rows[i].obj;
 
     if (typeof headerColumn === 'string') {
@@ -1282,9 +1293,7 @@ p5.Table.prototype.getObject = function(headerColumn) {
         index = obj[headerColumn];
         tableObject[index] = obj;
       } else {
-        throw new Error(
-          'This table has no column named "' + headerColumn + '"'
-        );
+        throw new Error(`This table has no column named "${headerColumn}"`);
       }
     } else {
       tableObject[i] = this.rows[i].obj;
@@ -1329,14 +1338,13 @@ p5.Table.prototype.getObject = function(headerColumn) {
  *
  *@alt
  * no image displayed
- *
  */
 p5.Table.prototype.getArray = function() {
-  var tableArray = [];
-  for (var i = 0; i < this.rows.length; i++) {
+  const tableArray = [];
+  for (let i = 0; i < this.rows.length; i++) {
     tableArray.push(this.rows[i].arr);
   }
   return tableArray;
 };
 
-module.exports = p5;
+export default p5;

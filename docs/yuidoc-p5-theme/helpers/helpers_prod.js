@@ -6,8 +6,7 @@ var configHelpers = {};
 var config = {
   p5SiteRoot: '..',
   p5Lib: '../js/p5.min.js',
-  p5SoundLib: '../js/p5.sound.min.js',
-  p5DomLib: '../js/p5.dom.min.js'
+  p5SoundLib: '../js/p5.sound.min.js'
 };
 
 Object.keys(config).forEach(function(key) {
@@ -15,6 +14,5 @@ Object.keys(config).forEach(function(key) {
     return config[key];
   };
 });
-
 
 module.exports = configHelpers;

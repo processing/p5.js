@@ -1,196 +1,110 @@
 //Retained Mode. The default mode for rendering 3D primitives
 //in WEBGL.
-'use strict';
+import p5 from '../core/main';
+import './p5.RendererGL';
+import './p5.RenderBuffer';
 
-var p5 = require('../core/main');
-
-var hashCount = 0;
+let hashCount = 0;
 /**
  * _initBufferDefaults
  * @private
  * @description initializes buffer defaults. runs each time a new geometry is
  * registered
  * @param  {String} gId  key of the geometry object
+ * @returns {Object} a new buffer object
  */
 p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this._freeBuffers(gId);
 
-  //@TODO remove this limit on hashes in gHash
+  //@TODO remove this limit on hashes in retainedMode.geometry
   hashCount++;
   if (hashCount > 1000) {
-    var key = Object.keys(this.gHash)[0];
-    delete this.gHash[key];
+    const key = Object.keys(this.retainedMode.geometry)[0];
+    delete this.retainedMode.geometry[key];
     hashCount--;
   }
 
-  //create a new entry in our gHash
-  this.gHash[gId] = {};
+  //create a new entry in our retainedMode.geometry
+  return (this.retainedMode.geometry[gId] = {});
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-  var geometry = this.gHash[gId];
-  if (!geometry) {
+  const buffers = this.retainedMode.geometry[gId];
+  if (!buffers) {
     return;
   }
 
-  delete this.gHash[gId];
+  delete this.retainedMode.geometry[gId];
   hashCount--;
 
-  var gl = this.GL;
-  geometry.vertexBuffer && gl.deleteBuffer(geometry.vertexBuffer);
-  geometry.normalBuffer && gl.deleteBuffer(geometry.normalBuffer);
-  geometry.lineNormalBuffer && gl.deleteBuffer(geometry.lineNormalBuffer);
-  geometry.uvBuffer && gl.deleteBuffer(geometry.uvBuffer);
-  geometry.indexBuffer && gl.deleteBuffer(geometry.indexBuffer);
-  geometry.lineVertexBuffer && gl.deleteBuffer(geometry.lineVertexBuffer);
+  const gl = this.GL;
+  if (buffers.indexBuffer) {
+    gl.deleteBuffer(buffers.indexBuffer);
+  }
+
+  function freeBuffers(defs) {
+    for (const def of defs) {
+      if (buffers[def.dst]) {
+        gl.deleteBuffer(buffers[def.dst]);
+        buffers[def.dst] = null;
+      }
+    }
+  }
+
+  // free all the buffers
+  freeBuffers(this.retainedMode.buffers.stroke);
+  freeBuffers(this.retainedMode.buffers.fill);
 };
+
 /**
- * createBuffers description
+ * creates a buffers object that holds the WebGL render buffers
+ * for a geometry.
  * @private
  * @param  {String} gId    key of the geometry object
- * @param  {p5.Geometry}  obj contains geometry data
+ * @param  {p5.Geometry}  model contains geometry data
  */
-p5.RendererGL.prototype.createBuffers = function(gId, obj) {
-  var gl = this.GL;
+p5.RendererGL.prototype.createBuffers = function(gId, model) {
+  const gl = this.GL;
   //initialize the gl buffers for our geom groups
-  this._initBufferDefaults(gId);
+  const buffers = this._initBufferDefaults(gId);
+  buffers.model = model;
 
-  var geometry = this.gHash[gId];
+  let indexBuffer = buffers.indexBuffer;
 
-  geometry.numberOfItems = obj.faces.length * 3;
-  geometry.lineVertexCount = obj.lineVertices.length;
+  if (model.faces.length) {
+    // allocate space for faces
+    if (!indexBuffer) indexBuffer = buffers.indexBuffer = gl.createBuffer();
+    const vals = p5.RendererGL.prototype._flatten(model.faces);
 
-  var strokeShader = this._getRetainedStrokeShader();
-  strokeShader.bindShader();
+    // If any face references a vertex with an index greater than the maximum
+    // un-singed 16 bit integer, then we need to use a Uint32Array instead of a
+    // Uint32Array
+    const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
+    let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
+    this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
 
-  // initialize the stroke shader's 'aPosition' buffer, if used
-  if (strokeShader.attributes.aPosition) {
-    geometry.lineVertexBuffer = gl.createBuffer();
+    // If we're using a Uint32Array for our indexBuffer we will need to pass a
+    // different enum value to WebGL draw triangles. This happens in
+    // the _drawElements function.
+    buffers.indexBufferType = hasVertexIndicesOverMaxUInt16
+      ? gl.UNSIGNED_INT
+      : gl.UNSIGNED_SHORT;
 
-    this._bindBuffer(
-      geometry.lineVertexBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.lineVertices),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    strokeShader.enableAttrib(
-      strokeShader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    // the vertex count is based on the number of faces
+    buffers.vertexCount = model.faces.length * 3;
+  } else {
+    // the index buffer is unused, remove it
+    if (indexBuffer) {
+      gl.deleteBuffer(indexBuffer);
+      buffers.indexBuffer = null;
+    }
+    // the vertex count comes directly from the model
+    buffers.vertexCount = model.vertices ? model.vertices.length : 0;
   }
 
-  // initialize the stroke shader's 'aDirection' buffer, if used
-  if (strokeShader.attributes.aDirection) {
-    geometry.lineNormalBuffer = gl.createBuffer();
+  buffers.lineVertexCount = model.lineVertices ? model.lineVertices.length : 0;
 
-    this._bindBuffer(
-      geometry.lineNormalBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.lineNormals),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    strokeShader.enableAttrib(
-      strokeShader.attributes.aDirection.location,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-  strokeShader.unbindShader();
-
-  var fillShader = this._getRetainedFillShader();
-  fillShader.bindShader();
-
-  // initialize the fill shader's 'aPosition' buffer, if used
-  if (fillShader.attributes.aPosition) {
-    geometry.vertexBuffer = gl.createBuffer();
-
-    // allocate space for vertex positions
-    this._bindBuffer(
-      geometry.vertexBuffer,
-      gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertices),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    fillShader.enableAttrib(
-      fillShader.attributes.aPosition.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-
-  // allocate space for faces
-  geometry.indexBuffer = gl.createBuffer();
-  this._bindBuffer(
-    geometry.indexBuffer,
-    gl.ELEMENT_ARRAY_BUFFER,
-    this._flatten(obj.faces),
-    Uint16Array,
-    gl.STATIC_DRAW
-  );
-
-  // initialize the fill shader's 'aNormal' buffer, if used
-  if (fillShader.attributes.aNormal) {
-    geometry.normalBuffer = gl.createBuffer();
-
-    // allocate space for normals
-    this._bindBuffer(
-      geometry.normalBuffer,
-      gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertexNormals),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    fillShader.enableAttrib(
-      fillShader.attributes.aNormal.location,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-
-  // initialize the fill shader's 'aTexCoord' buffer, if used
-  if (fillShader.attributes.aTexCoord) {
-    geometry.uvBuffer = gl.createBuffer();
-
-    // tex coords
-    this._bindBuffer(
-      geometry.uvBuffer,
-      gl.ARRAY_BUFFER,
-      this._flatten(obj.uvs),
-      Float32Array,
-      gl.STATIC_DRAW
-    );
-
-    fillShader.enableAttrib(
-      fillShader.attributes.aTexCoord.location,
-      2,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
-  }
-  fillShader.unbindShader();
-  return geometry;
+  return buffers;
 };
 
 /**
@@ -200,94 +114,30 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
  * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
-  var gl = this.GL;
-  var geometry = this.gHash[gId];
+  const gl = this.GL;
+  const geometry = this.retainedMode.geometry[gId];
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
-    var strokeShader = this._getRetainedStrokeShader();
+    const strokeShader = this._getRetainedStrokeShader();
     this._setStrokeUniforms(strokeShader);
-
-    // bind the stroke shader's 'aPosition' buffer
-    if (geometry.lineVertexBuffer) {
-      this._bindBuffer(geometry.lineVertexBuffer, gl.ARRAY_BUFFER);
-      strokeShader.enableAttrib(
-        strokeShader.attributes.aPosition.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
+    for (const buff of this.retainedMode.buffers.stroke) {
+      buff._prepareBuffer(geometry, strokeShader);
     }
-
-    // bind the stroke shader's 'aDirection' buffer
-    if (geometry.lineNormalBuffer) {
-      this._bindBuffer(geometry.lineNormalBuffer, gl.ARRAY_BUFFER);
-      strokeShader.enableAttrib(
-        strokeShader.attributes.aDirection.location,
-        4,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     strokeShader.unbindShader();
   }
 
-  if (this._doFill !== false) {
-    var fillShader = this._getRetainedFillShader();
+  if (this._doFill) {
+    const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
-
-    // bind the fill shader's 'aPosition' buffer
-    if (geometry.vertexBuffer) {
-      //vertex position buffer
-      this._bindBuffer(geometry.vertexBuffer, gl.ARRAY_BUFFER);
-      fillShader.enableAttrib(
-        fillShader.attributes.aPosition.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
+    for (const buff of this.retainedMode.buffers.fill) {
+      buff._prepareBuffer(geometry, fillShader);
     }
-
     if (geometry.indexBuffer) {
       //vertex index buffer
       this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
     }
-
-    // bind the fill shader's 'aNormal' buffer
-    if (geometry.normalBuffer) {
-      this._bindBuffer(geometry.normalBuffer, gl.ARRAY_BUFFER);
-      fillShader.enableAttrib(
-        fillShader.attributes.aNormal.location,
-        3,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
-    // bind the fill shader's 'aTexCoord' buffer
-    if (geometry.uvBuffer) {
-      // uv buffer
-      this._bindBuffer(geometry.uvBuffer, gl.ARRAY_BUFFER);
-      fillShader.enableAttrib(
-        fillShader.attributes.aTexCoord.location,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-      );
-    }
-
     this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);
     fillShader.unbindShader();
@@ -316,7 +166,7 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleY,
   scaleZ
 ) {
-  var uMVMatrix = this.uMVMatrix.copy();
+  const uMVMatrix = this.uMVMatrix.copy();
   try {
     this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
     this.drawBuffers(gId);
@@ -326,24 +176,44 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
 };
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
-  this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
-  this._pixelsState._pixelsDirty = true;
+  this.GL.drawArrays(
+    drawMode,
+    0,
+    this.retainedMode.geometry[gId].lineVertexCount
+  );
   return this;
 };
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  this.GL.drawElements(
-    drawMode,
-    this.gHash[gId].numberOfItems,
-    this.GL.UNSIGNED_SHORT,
-    0
-  );
-  this._pixelsState._pixelsDirty = true;
+  const buffers = this.retainedMode.geometry[gId];
+  const gl = this.GL;
+  // render the fill
+  if (buffers.indexBuffer) {
+    // If this model is using a Uint32Array we need to ensure the
+    // OES_element_index_uint WebGL extension is enabled.
+    if (buffers.indexBufferType === gl.UNSIGNED_INT) {
+      if (!gl.getExtension('OES_element_index_uint')) {
+        throw new Error(
+          'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'
+        );
+      }
+    }
+    // we're drawing faces
+    gl.drawElements(
+      gl.TRIANGLES,
+      buffers.vertexCount,
+      buffers.indexBufferType,
+      0
+    );
+  } else {
+    // drawing vertices
+    gl.drawArrays(drawMode || gl.TRIANGLES, 0, buffers.vertexCount);
+  }
 };
 
 p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
-  var gl = this.GL;
-  var pointShader = this._getImmediatePointShader();
+  const gl = this.GL;
+  const pointShader = this._getImmediatePointShader();
   this._setPointUniforms(pointShader);
 
   this._bindBuffer(
@@ -354,19 +224,11 @@ p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
     gl.STATIC_DRAW
   );
 
-  pointShader.enableAttrib(
-    pointShader.attributes.aPosition.location,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
+  pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
 
   gl.drawArrays(gl.Points, 0, vertices.length);
 
   pointShader.unbindShader();
-  this._pixelsState._pixelsDirty = true;
 };
 
-module.exports = p5.RendererGL;
+export default p5.RendererGL;

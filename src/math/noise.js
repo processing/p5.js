@@ -9,7 +9,7 @@
 // someday we might consider using "improved noise"
 // http://mrl.nyu.edu/~perlin/paper445.pdf
 // See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/
-//      blob/master/introduction/Noise1D/noise.js
+//      blob/main/introduction/Noise1D/noise.js
 
 /**
  * @module Math
@@ -18,28 +18,24 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
 
-var p5 = require('../core/main');
+const PERLIN_YWRAPB = 4;
+const PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
+const PERLIN_ZWRAPB = 8;
+const PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
+const PERLIN_SIZE = 4095;
 
-var PERLIN_YWRAPB = 4;
-var PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
-var PERLIN_ZWRAPB = 8;
-var PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
-var PERLIN_SIZE = 4095;
+let perlin_octaves = 4; // default to medium smooth
+let perlin_amp_falloff = 0.5; // 50% reduction/octave
 
-var perlin_octaves = 4; // default to medium smooth
-var perlin_amp_falloff = 0.5; // 50% reduction/octave
+const scaled_cosine = i => 0.5 * (1.0 - Math.cos(i * Math.PI));
 
-var scaled_cosine = function(i) {
-  return 0.5 * (1.0 - Math.cos(i * Math.PI));
-};
-
-var perlin; // will be initialized lazily by noise() or noiseSeed()
+let perlin; // will be initialized lazily by noise() or noiseSeed()
 
 /**
  * Returns the Perlin noise value at specified coordinates. Perlin noise is
- * a random sequence generator producing a more natural ordered, harmonic
+ * a random sequence generator producing a more naturally ordered, harmonic
  * succession of numbers compared to the standard <b>random()</b> function.
  * It was invented by Ken Perlin in the 1980s and been used since in
  * graphical applications to produce procedural textures, natural motion,
@@ -63,7 +59,6 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  * loop). As a general rule the smaller the difference between coordinates,
  * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
  * work best for most applications, but this will differ depending on use.
- *
  *
  * @method noise
  * @param  {Number} x   x-coordinate in noise space
@@ -101,16 +96,12 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  * @alt
  * vertical line moves left to right with updating noise values.
  * horizontal wave pattern effected by mouse x-position & updating noise values.
- *
  */
 
-p5.prototype.noise = function(x, y, z) {
-  y = y || 0;
-  z = z || 0;
-
+p5.prototype.noise = function(x, y = 0, z = 0) {
   if (perlin == null) {
     perlin = new Array(PERLIN_SIZE + 1);
-    for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+    for (let i = 0; i < PERLIN_SIZE + 1; i++) {
       perlin[i] = Math.random();
     }
   }
@@ -125,21 +116,21 @@ p5.prototype.noise = function(x, y, z) {
     z = -z;
   }
 
-  var xi = Math.floor(x),
+  let xi = Math.floor(x),
     yi = Math.floor(y),
     zi = Math.floor(z);
-  var xf = x - xi;
-  var yf = y - yi;
-  var zf = z - zi;
-  var rxf, ryf;
+  let xf = x - xi;
+  let yf = y - yi;
+  let zf = z - zi;
+  let rxf, ryf;
 
-  var r = 0;
-  var ampl = 0.5;
+  let r = 0;
+  let ampl = 0.5;
 
-  var n1, n2, n3;
+  let n1, n2, n3;
 
-  for (var o = 0; o < perlin_octaves; o++) {
-    var of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
+  for (let o = 0; o < perlin_octaves; o++) {
+    let of = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
 
     rxf = scaled_cosine(xf);
     ryf = scaled_cosine(yf);
@@ -191,7 +182,7 @@ p5.prototype.noise = function(x, y, z) {
  * several octaves. Lower octaves contribute more to the output signal and
  * as such define the overall intensity of the noise, whereas higher octaves
  * create finer grained details in the noise sequence.
- * <br><br>
+ *
  * By default, noise is computed over 4 octaves with each octave contributing
  * exactly half than its predecessor, starting at 50% strength for the 1st
  * octave. This falloff amount can be changed by adding an additional function
@@ -199,7 +190,7 @@ p5.prototype.noise = function(x, y, z) {
  * 75% impact (25% less) of the previous lower octave. Any value between
  * 0.0 and 1.0 is valid, however note that values greater than 0.5 might
  * result in greater than 1.0 values returned by <b>noise()</b>.
- * <br><br>
+ *
  * By changing these parameters, the signal created by the <b>noise()</b>
  * function can be adapted to fit very specific needs and characteristics.
  *
@@ -239,7 +230,6 @@ p5.prototype.noise = function(x, y, z) {
  *
  * @alt
  * 2 vertical grey smokey patterns affected my mouse x-position and noise.
- *
  */
 p5.prototype.noiseDetail = function(lod, falloff) {
   if (lod > 0) {
@@ -277,31 +267,30 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  *
  * @alt
  * vertical grey lines drawing in pattern affected by noise.
- *
  */
 p5.prototype.noiseSeed = function(seed) {
   // Linear Congruential Generator
   // Variant of a Lehman Generator
-  var lcg = (function() {
+  const lcg = (() => {
     // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
     // m is basically chosen to be large (as it is the max period)
     // and for its relationships to a and c
-    var m = 4294967296;
+    const m = 4294967296;
     // a - 1 should be divisible by m's prime factors
-    var a = 1664525;
+    const a = 1664525;
     // c and m should be co-prime
-    var c = 1013904223;
-    var seed, z;
+    const c = 1013904223;
+    let seed, z;
     return {
-      setSeed: function(val) {
+      setSeed(val) {
         // pick a random seed if val is undefined or null
         // the >>> 0 casts the seed to an unsigned 32-bit integer
         z = seed = (val == null ? Math.random() * m : val) >>> 0;
       },
-      getSeed: function() {
+      getSeed() {
         return seed;
       },
-      rand: function() {
+      rand() {
         // define the recurrence relationship
         z = (a * z + c) % m;
         // return a float in [0, 1)
@@ -313,9 +302,9 @@ p5.prototype.noiseSeed = function(seed) {
 
   lcg.setSeed(seed);
   perlin = new Array(PERLIN_SIZE + 1);
-  for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+  for (let i = 0; i < PERLIN_SIZE + 1; i++) {
     perlin[i] = lcg.rand();
   }
 };
 
-module.exports = p5;
+export default p5;

@@ -420,6 +420,21 @@ suite('Calculation', function() {
       result = myp5.round(2.8);
       assert.equal(result, 3);
     });
+
+    test('should round two decimal places', function() {
+      result = myp5.round(12.31833, 2);
+      assert.equal(result, 12.32);
+    });
+
+    test('should round very small numbers to zero', function() {
+      result = myp5.round(1.234567e-14);
+      assert.equal(result, 0);
+    });
+
+    test('should round very small numbers to zero when decimal places are specified', function() {
+      result = myp5.round(1.234567e-14, 2);
+      assert.equal(result, 0);
+    });
   });
 
   suite('p5.prototype.sqrt', function() {

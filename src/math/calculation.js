@@ -5,9 +5,7 @@
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
@@ -29,7 +27,6 @@ var p5 = require('../core/main');
  *
  * @alt
  * no image displayed
- *
  */
 p5.prototype.abs = Math.abs;
 
@@ -69,7 +66,6 @@ p5.prototype.abs = Math.abs;
  *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
- *
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -111,7 +107,6 @@ p5.prototype.ceil = Math.ceil;
  *
  * @alt
  * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
- *
  */
 p5.prototype.constrain = function(n, low, high) {
   p5._validateParameters('constrain', arguments);
@@ -120,6 +115,7 @@ p5.prototype.constrain = function(n, low, high) {
 
 /**
  * Calculates the distance between two points, in either two or three dimensions.
+ * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">dist()</a>
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
@@ -147,7 +143,7 @@ p5.prototype.constrain = function(n, low, high) {
  *
  *   // d is the length of the line
  *   // the distance from point 1 to point 2.
- *   let d = int(dist(x1, y1, x2, y2));
+ *   let d = dist(x1, y1, x2, y2);
  *
  *   // Let's write d along the line we are drawing!
  *   push();
@@ -172,18 +168,14 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} z2 z-coordinate of the second point
  * @return {Number}    distance between the two points
  */
-p5.prototype.dist = function() {
-  p5._validateParameters('dist', arguments);
-  if (arguments.length === 4) {
+p5.prototype.dist = function(...args) {
+  p5._validateParameters('dist', args);
+  if (args.length === 4) {
     //2D
-    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
-  } else if (arguments.length === 6) {
+    return hypot(args[2] - args[0], args[3] - args[1]);
+  } else if (args.length === 6) {
     //3D
-    return hypot(
-      arguments[3] - arguments[0],
-      arguments[4] - arguments[1],
-      arguments[5] - arguments[2]
-    );
+    return hypot(args[3] - args[0], args[4] - args[1], args[5] - args[2]);
   }
 };
 
@@ -233,7 +225,6 @@ p5.prototype.dist = function() {
  *
  * @alt
  * ellipse moves along a curve with mouse x. e^n displayed.
- *
  */
 p5.prototype.exp = Math.exp;
 
@@ -272,7 +263,6 @@ p5.prototype.exp = Math.exp;
  *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
- *
  */
 p5.prototype.floor = Math.floor;
 
@@ -317,7 +307,6 @@ p5.prototype.floor = Math.floor;
  *
  * @alt
  * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
- *
  */
 p5.prototype.lerp = function(start, stop, amt) {
   p5._validateParameters('lerp', arguments);
@@ -376,7 +365,6 @@ p5.prototype.lerp = function(start, stop, amt) {
  *
  * @alt
  * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
- *
  */
 p5.prototype.log = Math.log;
 
@@ -412,7 +400,6 @@ p5.prototype.log = Math.log;
  *
  * @alt
  * 4 lines of different length radiate from top left of canvas.
- *
  */
 p5.prototype.mag = function(x, y) {
   p5._validateParameters('mag', arguments);
@@ -421,7 +408,7 @@ p5.prototype.mag = function(x, y) {
 
 /**
  * Re-maps a number from one range to another.
- * <br><br>
+ *
  * In the first example above, the number 25 is converted from a value in the
  * range of 0 to 100 into a value that ranges from the left edge of the
  * window (0) to the right edge (width).
@@ -460,11 +447,10 @@ p5.prototype.mag = function(x, y) {
  * @alt
  * 10 by 10 white ellipse with in mid left canvas
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
- *
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
-  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+  const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -509,19 +495,17 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  *
  * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
- *
  */
 /**
  * @method max
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = function() {
-  p5._validateParameters('max', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.max.apply(null, arguments[0]);
+p5.prototype.max = function(...args) {
+  if (args[0] instanceof Array) {
+    return Math.max.apply(null, args[0]);
   } else {
-    return Math.max.apply(null, arguments);
+    return Math.max.apply(null, args);
   }
 };
 
@@ -559,19 +543,17 @@ p5.prototype.max = function() {
  *
  * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
- *
  */
 /**
  * @method min
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = function() {
-  p5._validateParameters('min', arguments);
-  if (arguments[0] instanceof Array) {
-    return Math.min.apply(null, arguments[0]);
+p5.prototype.min = function(...args) {
+  if (args[0] instanceof Array) {
+    return Math.min.apply(null, args[0]);
   } else {
-    return Math.min.apply(null, arguments);
+    return Math.min.apply(null, args);
   }
 };
 
@@ -621,7 +603,6 @@ p5.prototype.min = function() {
  *
  * @alt
  * ellipse moves with mouse. 0 shown left & 100 right and updating values center
- *
  */
 p5.prototype.norm = function(n, start, stop) {
   p5._validateParameters('norm', arguments);
@@ -632,7 +613,8 @@ p5.prototype.norm = function(n, start, stop) {
  * Facilitates exponential expressions. The <a href="#/p5/pow">pow()</a> function is an efficient
  * way of multiplying numbers by themselves (or their reciprocals) in large
  * quantities. For example, pow(3, 5) is equivalent to the expression
- * 3*3*3*3*3 and pow(3, -5) is equivalent to 1 / 3*3*3*3*3. Maps to
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3 and pow(3, -5) is equivalent to 1 /
+ * 3 &times; 3 &times; 3 &times; 3 &times; 3. Maps to
  * Math.pow().
  *
  * @method pow
@@ -658,7 +640,6 @@ p5.prototype.norm = function(n, start, stop) {
  *
  * @alt
  * small to large ellipses radiating from top left of canvas
- *
  */
 p5.prototype.pow = Math.pow;
 
@@ -668,8 +649,17 @@ p5.prototype.pow = Math.pow;
  *
  * @method round
  * @param  {Number} n number to round
+ * @param  {Number} [decimals] number of decimal places to round to, default is 0
  * @return {Integer}  rounded number
  * @example
+ * <div><code>
+ * let x = round(3.7);
+ * text(x, width / 2, height / 2);
+ * </code></div>
+ * <div><code>
+ * let x = round(12.782383, 2);
+ * text(x, width / 2, height / 2);
+ * </code></div>
  * <div><code>
  * function draw() {
  *   background(200);
@@ -696,10 +686,17 @@ p5.prototype.pow = Math.pow;
  * </code></div>
  *
  * @alt
- * horizontal center line squared values displayed on top and regular on bottom.
- *
+ * "4" written in middle of canvas
+ * "12.78" written in middle of canvas
+ * two horizontal lines rounded values displayed on top.
  */
-p5.prototype.round = Math.round;
+p5.prototype.round = function(n, decimals) {
+  if (!decimals) {
+    return Math.round(n);
+  }
+  const multiplier = Math.pow(10, decimals);
+  return Math.round(n * multiplier) / multiplier;
+};
 
 /**
  * Squares a number (multiplies a number by itself). The result is always a
@@ -742,11 +739,8 @@ p5.prototype.round = Math.round;
  *
  * @alt
  * horizontal center line squared values displayed on top and regular on bottom.
- *
  */
-p5.prototype.sq = function(n) {
-  return n * n;
-};
+p5.prototype.sq = n => n * n;
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -790,7 +784,6 @@ p5.prototype.sq = function(n) {
  *
  * @alt
  * horizontal center line squareroot values displayed on top and regular on bottom.
- *
  */
 p5.prototype.sqrt = Math.sqrt;
 
@@ -805,11 +798,11 @@ function hypot(x, y, z) {
 
   // Otherwise use the V8 implementation
   // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
-  var length = arguments.length;
-  var args = [];
-  var max = 0;
-  for (var i = 0; i < length; i++) {
-    var n = arguments[i];
+  const length = arguments.length;
+  const args = [];
+  let max = 0;
+  for (let i = 0; i < length; i++) {
+    let n = arguments[i];
     n = +n;
     if (n === Infinity || n === -Infinity) {
       return Infinity;
@@ -824,16 +817,58 @@ function hypot(x, y, z) {
   if (max === 0) {
     max = 1;
   }
-  var sum = 0;
-  var compensation = 0;
-  for (var j = 0; j < length; j++) {
-    var m = args[j] / max;
-    var summand = m * m - compensation;
-    var preliminary = sum + summand;
+  let sum = 0;
+  let compensation = 0;
+  for (let j = 0; j < length; j++) {
+    const m = args[j] / max;
+    const summand = m * m - compensation;
+    const preliminary = sum + summand;
     compensation = preliminary - sum - summand;
     sum = preliminary;
   }
   return Math.sqrt(sum) * max;
 }
 
-module.exports = p5;
+/**
+ * Calculates the fractional part of a number.
+ *
+ * @method fract
+ * @param {Number} num Number whose fractional part needs to be found out
+ * @returns {Number} fractional part of x, i.e, {x}
+ * @example
+ * <div><code>
+ * text(7345.73472742, 10, 25);
+ * text(fract(7345.73472742), 10, 75);
+ * </code></div>
+ *
+ * <div><code>
+ * text(1.4215e-15, 10, 25);
+ * text(fract(1.4215e-15), 10, 75);
+ * </code></div>
+ *
+ * @alt
+ * first row having a number and the second having the fractional part of the number
+ * first row having a number expressed in scientific notation and the second having the fractional part of the number
+ */
+p5.prototype.fract = function(toConvert) {
+  p5._validateParameters('fract', arguments);
+  let sign = 0;
+  let num = Number(toConvert);
+  if (isNaN(num) || Math.abs(num) === Infinity) {
+    return num;
+  } else if (num < 0) {
+    num = -num;
+    sign = 1;
+  }
+  if (String(num).includes('.') && !String(num).includes('e')) {
+    let toFract = String(num);
+    toFract = Number('0' + toFract.slice(toFract.indexOf('.')));
+    return Math.abs(sign - toFract);
+  } else if (num < 1) {
+    return Math.abs(sign - num);
+  } else {
+    return 0;
+  }
+};
+
+export default p5;

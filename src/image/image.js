@@ -9,21 +9,14 @@
  * This module defines the p5 methods for the <a href="#/p5.Image">p5.Image</a> class
  * for drawing images to the main display canvas.
  */
-'use strict';
-
-var p5 = require('../core/main');
-// This is not global, but ESLint is not aware that
-// this module is implicitly enclosed with Browserify: this overrides the
-// redefined-global error and permits using the name "frames" for the array
-// of saved animation frames.
-
-/* global frames:true */ var frames = [];
+import p5 from '../core/main';
+import omggif from 'omggif';
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
  * width and height parameters.
- * <br><br>
+ *
  * .<a href="#/p5.Image/pixels">pixels</a> gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
@@ -31,7 +24,7 @@ var p5 = require('../core/main');
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. See .<a href="#/p5.Image/pixels">pixels</a> for
  * more info. It may also be simpler to use <a href="#/p5.Image/set">set()</a> or <a href="#/p5.Image/get">get()</a>.
- * <br><br>
+ *
  * Before accessing the pixels of an image, the data must loaded with the
  * <a href="#/p5.Image/loadPixels">loadPixels()</a> function. After the array data has been modified, the
  * <a href="#/p5.Image/updatePixels">updatePixels()</a> function must be run to update the changes.
@@ -92,7 +85,6 @@ var p5 = require('../core/main');
  * 66x66 dark turquoise rect in center of canvas.
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
  * no image displayed
- *
  */
 p5.prototype.createImage = function(width, height) {
   p5._validateParameters('createImage', arguments);
@@ -150,8 +142,8 @@ p5.prototype.saveCanvas = function() {
   p5._validateParameters('saveCanvas', arguments);
 
   // copy arguments to array
-  var args = [].slice.call(arguments);
-  var htmlCanvas, filename, extension;
+  const args = [].slice.call(arguments);
+  let htmlCanvas, filename, extension;
 
   if (arguments[0] instanceof HTMLCanvasElement) {
     htmlCanvas = arguments[0];
@@ -175,7 +167,7 @@ p5.prototype.saveCanvas = function() {
     p5.prototype._checkFileExtension(filename, extension)[1] ||
     'png';
 
-  var mimeType;
+  let mimeType;
   switch (extension) {
     default:
       //case 'png':
@@ -187,9 +179,235 @@ p5.prototype.saveCanvas = function() {
       break;
   }
 
-  htmlCanvas.toBlob(function(blob) {
+  htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
+};
+
+p5.prototype.saveGif = function(pImg, filename) {
+  const props = pImg.gifProperties;
+
+  //convert loopLimit back into Netscape Block formatting
+  let loopLimit = props.loopLimit;
+  if (loopLimit === 1) {
+    loopLimit = null;
+  } else if (loopLimit === null) {
+    loopLimit = 0;
+  }
+  const buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
+
+  const allFramesPixelColors = [];
+
+  // Used to determine the occurrence of unique palettes and the frames
+  // which use them
+  const paletteFreqsAndFrames = {};
+
+  // Pass 1:
+  //loop over frames and get the frequency of each palette
+  for (let i = 0; i < props.numFrames; i++) {
+    const paletteSet = new Set();
+    const data = props.frames[i].image.data;
+    const dataLength = data.length;
+    // The color for each pixel in this frame ( for easier lookup later )
+    const pixelColors = new Uint32Array(pImg.width * pImg.height);
+    for (let j = 0, k = 0; j < dataLength; j += 4, k++) {
+      const r = data[j + 0];
+      const g = data[j + 1];
+      const b = data[j + 2];
+      const color = (r << 16) | (g << 8) | (b << 0);
+      paletteSet.add(color);
+
+      // What color does this pixel have in this frame ?
+      pixelColors[k] = color;
+    }
+
+    // A way to put use the entire palette as an object key
+    const paletteStr = [...paletteSet].sort().toString();
+    if (paletteFreqsAndFrames[paletteStr] === undefined) {
+      paletteFreqsAndFrames[paletteStr] = { freq: 1, frames: [i] };
+    } else {
+      paletteFreqsAndFrames[paletteStr].freq += 1;
+      paletteFreqsAndFrames[paletteStr].frames.push(i);
+    }
+
+    allFramesPixelColors.push(pixelColors);
+  }
+
+  let framesUsingGlobalPalette = [];
+
+  // Now to build the global palette
+  // Sort all the unique palettes in descending order of their occurrence
+  const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(function(
+    a,
+    b
+  ) {
+    return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
+  });
+
+  // The initial global palette is the one with the most occurrence
+  const globalPalette = palettesSortedByFreq[0]
+    .split(',')
+    .map(a => parseInt(a));
+
+  framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+    paletteFreqsAndFrames[globalPalette].frames
+  );
+
+  const globalPaletteSet = new Set(globalPalette);
+
+  // Build a more complete global palette
+  // Iterate over the remaining palettes in the order of
+  // their occurrence and see if the colors in this palette which are
+  // not in the global palette can be added there, while keeping the length
+  // of the global palette <= 256
+  for (let i = 1; i < palettesSortedByFreq.length; i++) {
+    const palette = palettesSortedByFreq[i].split(',').map(a => parseInt(a));
+
+    const difference = palette.filter(x => !globalPaletteSet.has(x));
+    if (globalPalette.length + difference.length <= 256) {
+      for (let j = 0; j < difference.length; j++) {
+        globalPalette.push(difference[j]);
+        globalPaletteSet.add(difference[j]);
+      }
+
+      // All frames using this palette now use the global palette
+      framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+        paletteFreqsAndFrames[palettesSortedByFreq[i]].frames
+      );
+    }
+  }
+
+  framesUsingGlobalPalette = new Set(framesUsingGlobalPalette);
+
+  // Build a lookup table of the index of each color in the global palette
+  // Maps a color to its index
+  const globalIndicesLookup = {};
+  for (let i = 0; i < globalPalette.length; i++) {
+    if (!globalIndicesLookup[globalPalette[i]]) {
+      globalIndicesLookup[globalPalette[i]] = i;
+    }
+  }
+
+  // force palette to be power of 2
+  let powof2 = 1;
+  while (powof2 < globalPalette.length) {
+    powof2 <<= 1;
+  }
+  globalPalette.length = powof2;
+
+  // global opts
+  const opts = {
+    loop: loopLimit,
+    palette: new Uint32Array(globalPalette)
+  };
+  const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
+  let previousFrame = {};
+
+  // Pass 2
+  // Determine if the frame needs a local palette
+  // Also apply transparency optimization. This function will often blow up
+  // the size of a GIF if not for transparency. If a pixel in one frame has
+  // the same color in the previous frame, that pixel can be marked as
+  // transparent. We decide one particular color as transparent and make all
+  // transparent pixels take this color. This helps in later in compression.
+  for (let i = 0; i < props.numFrames; i++) {
+    const localPaletteRequired = !framesUsingGlobalPalette.has(i);
+    const palette = localPaletteRequired ? [] : globalPalette;
+    const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
+
+    // Lookup table mapping color to its indices
+    const colorIndicesLookup = {};
+
+    // All the colors that cannot be marked transparent in this frame
+    const cannotBeTransparent = new Set();
+
+    for (let k = 0; k < allFramesPixelColors[i].length; k++) {
+      const color = allFramesPixelColors[i][k];
+      if (localPaletteRequired) {
+        if (colorIndicesLookup[color] === undefined) {
+          colorIndicesLookup[color] = palette.length;
+          palette.push(color);
+        }
+        pixelPaletteIndex[k] = colorIndicesLookup[color];
+      } else {
+        pixelPaletteIndex[k] = globalIndicesLookup[color];
+      }
+
+      if (i > 0) {
+        // If even one pixel of this color has changed in this frame
+        // from the previous frame, we cannot mark it as transparent
+        if (allFramesPixelColors[i - 1][k] !== color) {
+          cannotBeTransparent.add(color);
+        }
+      }
+    }
+
+    const frameOpts = {};
+
+    // Transparency optimization
+    const canBeTransparent = palette.filter(a => !cannotBeTransparent.has(a));
+    if (canBeTransparent.length > 0) {
+      // Select a color to mark as transparent
+      const transparent = canBeTransparent[0];
+      const transparentIndex = localPaletteRequired
+        ? colorIndicesLookup[transparent]
+        : globalIndicesLookup[transparent];
+      if (i > 0) {
+        for (let k = 0; k < allFramesPixelColors[i].length; k++) {
+          // If this pixel in this frame has the same color in previous frame
+          if (allFramesPixelColors[i - 1][k] === allFramesPixelColors[i][k]) {
+            pixelPaletteIndex[k] = transparentIndex;
+          }
+        }
+        frameOpts.transparent = transparentIndex;
+        // If this frame has any transparency, do not dispose the previous frame
+        previousFrame.frameOpts.disposal = 1;
+      }
+    }
+    frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
+    if (localPaletteRequired) {
+      // force palette to be power of 2
+      let powof2 = 1;
+      while (powof2 < palette.length) {
+        powof2 <<= 1;
+      }
+      palette.length = powof2;
+      frameOpts.palette = new Uint32Array(palette);
+    }
+    if (i > 0) {
+      // add the frame that came before the current one
+      gifWriter.addFrame(
+        0,
+        0,
+        pImg.width,
+        pImg.height,
+        previousFrame.pixelPaletteIndex,
+        previousFrame.frameOpts
+      );
+    }
+    // previous frame object should now have details of this frame
+    previousFrame = {
+      pixelPaletteIndex,
+      frameOpts
+    };
+  }
+
+  previousFrame.frameOpts.disposal = 1;
+  // add the last frame
+  gifWriter.addFrame(
+    0,
+    0,
+    pImg.width,
+    pImg.height,
+    previousFrame.pixelPaletteIndex,
+    previousFrame.frameOpts
+  );
+
+  const extension = 'gif';
+  const blob = new Blob([buffer.slice(0, gifWriter.end())], {
+    type: 'image/gif'
+  });
+  p5.prototype.downloadFile(blob, filename, extension);
 };
 
 /**
@@ -233,31 +451,30 @@ p5.prototype.saveCanvas = function() {
  *
  * @alt
  * canvas background goes from light to dark with mouse x.
- *
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   p5._validateParameters('saveFrames', arguments);
-  var duration = _duration || 3;
+  let duration = _duration || 3;
   duration = p5.prototype.constrain(duration, 0, 15);
   duration = duration * 1000;
-  var fps = _fps || 15;
+  let fps = _fps || 15;
   fps = p5.prototype.constrain(fps, 0, 22);
-  var count = 0;
+  let count = 0;
 
-  var makeFrame = p5.prototype._makeFrame;
-  var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function() {
-    makeFrame(fName + count, ext, cnv);
+  const makeFrame = p5.prototype._makeFrame;
+  const cnv = this._curElement.elt;
+  let frames = [];
+  const frameFactory = setInterval(() => {
+    frames.push(makeFrame(fName + count, ext, cnv));
     count++;
   }, 1000 / fps);
 
-  setTimeout(function() {
+  setTimeout(() => {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
     } else {
-      for (var i = 0; i < frames.length; i++) {
-        var f = frames[i];
+      for (const f of frames) {
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
       }
     }
@@ -266,13 +483,13 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 };
 
 p5.prototype._makeFrame = function(filename, extension, _cnv) {
-  var cnv;
+  let cnv;
   if (this) {
     cnv = this._curElement.elt;
   } else {
     cnv = _cnv;
   }
-  var mimeType;
+  let mimeType;
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
@@ -292,15 +509,15 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
         break;
     }
   }
-  var downloadMime = 'image/octet-stream';
-  var imageData = cnv.toDataURL(mimeType);
+  const downloadMime = 'image/octet-stream';
+  let imageData = cnv.toDataURL(mimeType);
   imageData = imageData.replace(mimeType, downloadMime);
 
-  var thisFrame = {};
+  const thisFrame = {};
   thisFrame.imageData = imageData;
   thisFrame.filename = filename;
   thisFrame.ext = extension;
-  frames.push(thisFrame);
+  return thisFrame;
 };
 
-module.exports = p5;
+export default p5;

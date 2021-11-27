@@ -1,0 +1,30 @@
+<!DOCTYPE html>	
+<html>	
+<head>	
+  <meta charset="utf-8">	
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">	
+  <title></title>	
+  <link rel="stylesheet" href="../../styles.css">	
+  <script language="javascript" type="text/javascript" src="../../../../lib/p5.js"></script>	
+  <script language="javascript" type="text/javascript" src="sketch.js"></script>	
+  <script language="javascript" type="text/javascript" src="../stats.js"></script>	
+</head>	
+<body>	
+  <div id="gl-info">	
+    ROW:<br>	
+    1: Gray-red, TESTS: ambientMaterial(), ambientLight()<br>	
+    2: Gray-red, TESTS: emissiveMaterial()<br>	
+    3: Blue with soft pink/green highlights, TESTS: ambientLight(), pointLight(), specularMaterial(), shininess()<br>	
+    4: Blue with sharp pink/green highlights, TESTS: ambientLight(), pointLight(), specularMaterial(), shininess()<br>	
+    5: Green with soft blue highlights, TESTS: ambientLight(), pointLight(), lightFalloff()<br>	
+    6: Green with sharp blue highlights, TESTS: ambientLight(), pointLight(), lightFalloff()<br>	
+    7: Cat textured with red highlight, TESTS: ambientLight(), directionalLight(), texture()<br>	
+    8: Yellow lighting with red/green specular highlights, TESTS: pointLight(), specularColor(), specularMaterial()<br><br>
+    9: Green lighting with blue light from left TESTS: spotLight()<br><br>
+    9: White lighting with near invisible background, turns black at torus TESTS: noLights()<br><br>
+    GEOMETRY <em>left->right</em>:<br>	
+    plane(), box(), cylinder(), cone(), torus(), sphere(), rect()<br><br>	
+    <em>FPS should average higher than 45 FPS on modern laptop/desktop</em>	
+  </div>	
+</body>	
+</html>

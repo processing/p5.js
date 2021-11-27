@@ -6,9 +6,7 @@
  * @requires constants
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Sets the current alignment for drawing text. Accepts two
@@ -16,12 +14,12 @@ var p5 = require('../core/main');
  * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
  *
  * The horizAlign parameter is in reference to the x value
- * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter is
- * in reference to the y value.
+ * of the <a href="#/p5/text">text()</a> function, while the vertAlign parameter
+ * is in reference to the y value.
  *
  * So if you write textAlign(LEFT), you are aligning the left
- * edge of your text to the x value you give in <a href="#/p5/text">text()</a>. If you
- * write textAlign(RIGHT, TOP), you are aligning the right edge
+ * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
+ * If you write textAlign(RIGHT, TOP), you are aligning the right edge
  * of your text to the x value and the top of edge of the text
  * to the y value.
  *
@@ -68,9 +66,8 @@ var p5 = require('../core/main');
  * </div>
  *
  * @alt
- *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
- * The names of the four vertical alignments rendered each showing that alignment's placement relative to a horizontal line.
- *
+ * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
+ * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
  */
 /**
  * @method textAlign
@@ -78,12 +75,12 @@ var p5 = require('../core/main');
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
   p5._validateParameters('textAlign', arguments);
-  return this._renderer.textAlign.apply(this._renderer, arguments);
+  return this._renderer.textAlign(...arguments);
 };
 
 /**
- * Sets/gets the spacing, in pixels, between lines of text. This
- * setting will be used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
+ * Sets/gets the spacing, in pixels, between lines of text. This setting will be
+ * used in all subsequent calls to the <a href="#/p5/text">text()</a> function.
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
@@ -92,23 +89,22 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @example
  * <div>
  * <code>
- * // Text to display. The "\n" is a "new line" character
- * let lines = 'L1\nL2\nL3';
+ * let lines = 'L1\nL2\nL3'; // "\n" is a "new line" character
  * textSize(12);
  *
- * textLeading(10); // Set leading to 10
+ * textLeading(10);
  * text(lines, 10, 25);
  *
- * textLeading(20); // Set leading to 20
+ * textLeading(20);
  * text(lines, 40, 25);
  *
- * textLeading(30); // Set leading to 30
+ * textLeading(30);
  * text(lines, 70, 25);
  * </code>
  * </div>
  *
  * @alt
- *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
+ * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
  */
 /**
  * @method textLeading
@@ -116,7 +112,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  */
 p5.prototype.textLeading = function(theLeading) {
   p5._validateParameters('textLeading', arguments);
-  return this._renderer.textLeading.apply(this._renderer, arguments);
+  return this._renderer.textLeading(...arguments);
 };
 
 /**
@@ -140,7 +136,7 @@ p5.prototype.textLeading = function(theLeading) {
  * </div>
  *
  * @alt
- *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
+ * 'Font Size 12' displayed small, 'Font Size 14' medium & 'Font Size 16' large
  */
 /**
  * @method textSize
@@ -148,7 +144,7 @@ p5.prototype.textLeading = function(theLeading) {
  */
 p5.prototype.textSize = function(theSize) {
   p5._validateParameters('textSize', arguments);
-  return this._renderer.textSize.apply(this._renderer, arguments);
+  return this._renderer.textSize(...arguments);
 };
 
 /**
@@ -177,7 +173,7 @@ p5.prototype.textSize = function(theSize) {
  * </div>
  *
  * @alt
- *words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
+ * Words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
  */
 /**
  * @method textStyle
@@ -185,7 +181,7 @@ p5.prototype.textSize = function(theSize) {
  */
 p5.prototype.textStyle = function(theStyle) {
   p5._validateParameters('textStyle', arguments);
-  return this._renderer.textStyle.apply(this._renderer, arguments);
+  return this._renderer.textStyle(...arguments);
 };
 
 /**
@@ -193,7 +189,7 @@ p5.prototype.textStyle = function(theStyle) {
  *
  * @method textWidth
  * @param {String} theText the String of characters to measure
- * @return {Number}
+ * @return {Number} the calculated width
  * @example
  * <div>
  * <code>
@@ -212,15 +208,15 @@ p5.prototype.textStyle = function(theStyle) {
  * </div>
  *
  * @alt
- *Letter P and p5.js are displayed with vertical lines at end. P is wide
- *
+ * Letter P and p5.js are displayed with vertical lines at end.
  */
-p5.prototype.textWidth = function(theText) {
-  p5._validateParameters('textWidth', arguments);
-  if (theText.length === 0) {
+p5.prototype.textWidth = function(...args) {
+  args[0] += '';
+  p5._validateParameters('textWidth', args);
+  if (args[0].length === 0) {
     return 0;
   }
-  return this._renderer.textWidth.apply(this._renderer, arguments);
+  return this._renderer.textWidth(...args);
 };
 
 /**
@@ -247,8 +243,8 @@ p5.prototype.textWidth = function(theText) {
  * </code>
  * </div>
  */
-p5.prototype.textAscent = function() {
-  p5._validateParameters('textAscent', arguments);
+p5.prototype.textAscent = function(...args) {
+  p5._validateParameters('textAscent', args);
   return this._renderer.textAscent();
 };
 
@@ -265,19 +261,19 @@ p5.prototype.textAscent = function() {
  * let scalar = 0.8; // Different for each font
  *
  * textSize(32); // Set initial text size
- * let desc = textDescent() * scalar; // Calc ascent
+ * let desc = textDescent() * scalar; // Calc descent
  * line(0, base + desc, width, base + desc);
  * text('dp', 0, base); // Draw text on baseline
  *
  * textSize(64); // Increase text size
- * desc = textDescent() * scalar; // Recalc ascent
+ * desc = textDescent() * scalar; // Recalc descent
  * line(40, base + desc, width, base + desc);
  * text('dp', 40, base); // Draw text on baseline
  * </code>
  * </div>
  */
-p5.prototype.textDescent = function() {
-  p5._validateParameters('textDescent', arguments);
+p5.prototype.textDescent = function(...args) {
+  p5._validateParameters('textDescent', args);
   return this._renderer.textDescent();
 };
 
@@ -288,4 +284,73 @@ p5.prototype._updateTextMetrics = function() {
   return this._renderer._updateTextMetrics();
 };
 
-module.exports = p5;
+/**
+ * Specifies how lines of text are wrapped within a text box. This requires a max-width set on the text area, specified in <a href="#/p5/text">text()</a> as parameter `x2`.
+ *
+ * WORD wrap style only breaks lines at spaces. A single string without spaces that exceeds the boundaries of the canvas or text area is not truncated, and will overflow the desired area, disappearing at the canvas edge.
+ *
+ * CHAR wrap style breaks lines wherever needed to stay within the text box.
+ *
+ * WORD is the default wrap style, and both styles will still break lines at any line breaks (`\n`) specified in the original text. The text area max-height parameter (`y2`) also still applies to wrapped text in both styles, lines of text that do not fit within the text area will not be drawn to the screen.
+ *
+ * @method textWrap
+ * @param {Constant} wrapStyle text wrapping style, either WORD or CHAR
+ * @return {String} wrapStyle
+ * @example
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(WORD);
+ * text('Have a wonderful day', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(CHAR);
+ * text('Have a wonderful day', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * textSize(20);
+ * textWrap(CHAR);
+ * text('祝你有美好的一天', 0, 10, 100);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * const scream = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+ * textSize(20);
+ * textWrap(WORD);
+ * text(scream, 0, 0, 100);
+ * fill(0, 0, 0, 75);
+ * text(scream, 0, 20, 100);
+ * fill(0, 0, 0, 50);
+ * text(scream, 0, 40, 100);
+ * fill(0, 0, 0, 25);
+ * text(scream, 0, 60, 100);
+ * strokeWeight(2);
+ * ellipseMode(CENTER);
+ * fill(255);
+ * ellipse(15, 50, 15, 15);
+ * fill(0);
+ * ellipse(11, 47, 1, 1);
+ * ellipse(19, 47, 1, 1);
+ * ellipse(15, 52, 5, 5);
+ * line(15, 60, 15, 70);
+ * line(15, 65, 5, 55);
+ * line(15, 65, 25, 55);
+ * line(15, 70, 10, 80);
+ * line(15, 70, 20, 80);
+ * </code>
+ * </div>
+ */
+p5.prototype.textWrap = function(wrapStyle) {
+  if (wrapStyle !== 'WORD' && wrapStyle !== 'CHAR') {
+    throw 'Error: textWrap accepts only WORD or CHAR';
+  }
+  return this._renderer.textWrap(wrapStyle);
+};
+
+export default p5;

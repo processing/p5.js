@@ -5,20 +5,20 @@
  * @requires core
  */
 
-'use strict';
+import p5 from '../core/main';
+import * as constants from '../core/constants';
+import * as opentype from 'opentype.js';
 
-var p5 = require('../core/main');
-var constants = require('../core/constants');
-var opentype = require('opentype.js');
-
-require('../core/error_helpers');
+import '../core/friendly_errors/validate_params';
+import '../core/friendly_errors/file_errors';
+import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
  * is executed.
- * <br><br>
+ *
  * The path to the font should be relative to the HTML file
  * that links in your sketch. Loading fonts from a URL or other
  * remote location may be blocked due to your browser's built-in
@@ -33,8 +33,9 @@ require('../core/error_helpers');
  * @return {p5.Font}                  <a href="#/p5.Font">p5.Font</a> object
  * @example
  *
- * <p>Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees that the load
- * operation will have completed before <a href="#/p5/setup">setup()</a> and <a href="#/p5/draw">draw()</a> are called.</p>
+ * Calling loadFont() inside <a href="#/p5/preload">preload()</a> guarantees
+ * that the load operation will have completed before <a href="#/p5/setup">setup()</a>
+ * and <a href="#/p5/draw">draw()</a> are called.
  *
  * <div><code>
  * let myFont;
@@ -50,8 +51,8 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * Outside of <a href="#/p5/preload">preload()</a>, you may supply a callback function to handle the
- * object:
+ * Outside of <a href="#/p5/preload">preload()</a>, you may supply a
+ * callback function to handle the object:
  *
  * <div><code>
  * function setup() {
@@ -65,8 +66,8 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * <p>You can also use the font filename string (without the file extension) to style other HTML
- * elements.</p>
+ * You can also use the font filename string (without the file extension) to
+ * style other HTML elements.
  *
  * <div><code>
  * function preload() {
@@ -82,14 +83,13 @@ require('../core/error_helpers');
  * @alt
  * p5*js in p5's theme dark pink
  * p5*js in p5's theme dark pink
- *
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
   p5._validateParameters('loadFont', arguments);
-  var p5Font = new p5.Font(this);
+  const p5Font = new p5.Font(this);
 
-  var self = this;
-  opentype.load(path, function(err, font) {
+  const self = this;
+  opentype.load(path, (err, font) => {
     if (err) {
       p5._friendlyFileLoadError(4, path);
       if (typeof onError !== 'undefined') {
@@ -108,29 +108,26 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
-      fileNoPath = path
-        .split('\\')
-        .pop()
-        .split('/')
-        .pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'),
-      fontFamily,
-      newStyle,
-      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    const validFontTypes = ['ttf', 'otf', 'woff', 'woff2'];
 
-    // if so, add it to the DOM (name-only) for use with p5.dom
-    if (validFontTypes.indexOf(fileExt) > -1) {
+    const fileNoPath = path
+      .split('\\')
+      .pop()
+      .split('/')
+      .pop();
+
+    const lastDotIdx = fileNoPath.lastIndexOf('.');
+    let fontFamily;
+    let newStyle;
+    const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+
+    // if so, add it to the DOM (name-only) for use with DOM module
+    if (validFontTypes.includes(fileExt)) {
       fontFamily = fileNoPath.substr(0, lastDotIdx);
       newStyle = document.createElement('style');
       newStyle.appendChild(
         document.createTextNode(
-          '\n@font-face {' +
-            '\nfont-family: ' +
-            fontFamily +
-            ';\nsrc: url(' +
-            path +
-            ');\n}\n'
+          `\n@font-face {\nfont-family: ${fontFamily};\nsrc: url(${path});\n}\n`
         )
       );
       document.head.appendChild(newStyle);
@@ -144,24 +141,29 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * Draws text to the screen. Displays the information specified in the first
  * parameter on the screen in the position specified by the additional
  * parameters. A default font will be used unless a font is set with the
- * <a href="#/p5/textFont">textFont()</a> function and a default size will be used unless a font is set
- * with <a href="#/p5/textSize">textSize()</a>. Change the color of the text with the <a href="#/p5/fill">fill()</a> function.
- * Change the outline of the text with the <a href="#/p5/stroke">stroke()</a> and <a href="#/p5/strokeWeight">strokeWeight()</a>
- * functions.
- * <br><br>
- * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a> function, which gives the
- * option to draw to the left, right, and center of the coordinates.
- * <br><br>
+ * <a href="#/p5/textFont">textFont()</a> function and a default size will be
+ * used unless a font is set with <a href="#/p5/textSize">textSize()</a>. Change
+ * the color of the text with the <a href="#/p5/fill">fill()</a> function. Change
+ * the outline of the text with the <a href="#/p5/stroke">stroke()</a> and
+ * <a href="#/p5/strokeWeight">strokeWeight()</a> functions.
+ *
+ * The text displays in relation to the <a href="#/p5/textAlign">textAlign()</a>
+ * function, which gives the option to draw to the left, right, and center of the
+ * coordinates.
+ *
  * The x2 and y2 parameters define a rectangular area to display within and
  * may only be used with string data. When these parameters are specified,
- * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a> setting. Text that
- * does not fit completely within the rectangle specified will not be drawn
- * to the screen. If x2 and y2 are not specified, the baseline alignment is the
- * default, which means that the text will be drawn upwards from x and y.
- * <br><br>
- * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font using the
- * <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
+ * they are interpreted based on the current <a href="#/p5/rectMode">rectMode()</a>
+ * setting. Text that does not fit completely within the rectangle specified will
+ * not be drawn to the screen. If x2 and y2 are not specified, the baseline
+ * alignment is the default, which means that the text will be drawn upwards
+ * from x and y.
+ *
+ * <b>WEBGL</b>: Only opentype/truetype fonts are supported. You must load a font
+ * using the <a href="#/p5/loadFont">loadFont()</a> method (see the example above).
  * <a href="#/p5/stroke">stroke()</a> currently has no effect in webgl mode.
+ * Learn more about working with text in webgl mode on the
+ * <a href="https://github.com/processing/p5.js/wiki/Getting-started-with-WebGL-in-p5#text">wiki</a>.
  *
  * @method text
  * @param {String|Object|Array|Number|Boolean} str the alphanumeric
@@ -215,25 +217,27 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * </div>
  *
  * @alt
- *'word' displayed 3 times going from black, blue to translucent blue
- * The quick brown fox jumped over the lazy dog.
- * the text 'p5.js' spinning in 3d
- *
+ * 'word' displayed 3 times going from black, blue to translucent blue
+ * The text 'The quick brown fox jumped over the lazy dog' displayed.
+ * The text 'p5.js' spinning in 3d
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   p5._validateParameters('text', arguments);
   return !(this._renderer._doFill || this._renderer._doStroke)
     ? this
-    : this._renderer.text.apply(this._renderer, arguments);
+    : this._renderer.text(...arguments);
 };
 
 /**
  * Sets the current font that will be drawn with the <a href="#/p5/text">text()</a> function.
- * <br><br>
+ * If textFont() is called without any argument, it will return the current font if one has
+ * been set already. If not, it will return the name of the default font as a string.
+ * If textFont() is called with a font to use, it will return the p5 object.
+ *
  * <b>WEBGL</b>: Only fonts loaded via <a href="#/p5/loadFont">loadFont()</a> are supported.
  *
  * @method textFont
- * @return {Object} the current font
+ * @return {Object} the current font / p5 Object
  *
  * @example
  * <div>
@@ -270,13 +274,14 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * </div>
  *
  * @alt
- *words Font Style Normal displayed normally, Italic in italic and bold in bold
+ * word 'Georgia' displayed in font Georgia and 'Helvetica' in font Helvetica
+ * words Font Style Normal displayed normally, Italic in italic and bold in bold
  */
 /**
  * @method textFont
- * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>, or a String
- * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
- * that is generally available across all systems)
+ * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>,
+ * or a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>
+ * (a font that is generally available across all systems)
  * @param {Number} [size] the font size to use
  * @chainable
  */
@@ -291,10 +296,13 @@ p5.prototype.textFont = function(theFont, theSize) {
 
     if (theSize) {
       this._renderer._setProperty('_textSize', theSize);
-      this._renderer._setProperty(
-        '_textLeading',
-        theSize * constants._DEFAULT_LEADMULT
-      );
+      if (!this._renderer._leadingSet) {
+        // only use a default value if not previously set (#5181)
+        this._renderer._setProperty(
+          '_textLeading',
+          theSize * constants._DEFAULT_LEADMULT
+        );
+      }
     }
 
     return this._renderer._applyTextProperties();
@@ -303,4 +311,4 @@ p5.prototype.textFont = function(theFont, theSize) {
   return this._renderer._textFont;
 };
 
-module.exports = p5;
+export default p5;

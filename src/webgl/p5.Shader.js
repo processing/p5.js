@@ -1,18 +1,17 @@
 /**
  * This module defines the p5.Shader class
- * @module Lights, Camera
- * @submodule Shaders
+ * @module 3D
+ * @submodule Material
  * @for p5
  * @requires core
  */
 
-'use strict';
-
-var p5 = require('../core/main');
+import p5 from '../core/main';
 
 /**
  * Shader class for WEBGL Mode
  * @class p5.Shader
+ * @constructor
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Shader
  * @param {String} vertSrc source code for the vertex shader (as a string)
@@ -47,7 +46,7 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
  */
 p5.Shader.prototype.init = function() {
   if (this._glProgram === 0 /* or context is stale? */) {
-    var gl = this._renderer.GL;
+    const gl = this._renderer.GL;
 
     // @todo: once custom shading is allowed,
     // friendly error messages should be used here to share
@@ -64,8 +63,9 @@ p5.Shader.prototype.init = function() {
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
       console.error(
-        'Yikes! An error occurred compiling the vertex shader:' +
-          gl.getShaderInfoLog(this._vertShader)
+        `Yikes! An error occurred compiling the vertex shader:${gl.getShaderInfoLog(
+          this._vertShader
+        )}`
       );
       return null;
     }
@@ -77,8 +77,9 @@ p5.Shader.prototype.init = function() {
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
       console.error(
-        'Darn! An error occurred compiling the fragment shader:' +
-          gl.getShaderInfoLog(this._fragShader)
+        `Darn! An error occurred compiling the fragment shader:${gl.getShaderInfoLog(
+          this._fragShader
+        )}`
       );
       return null;
     }
@@ -89,8 +90,9 @@ p5.Shader.prototype.init = function() {
     gl.linkProgram(this._glProgram);
     if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
       console.error(
-        'Snap! Error linking shader program: ' +
-          gl.getProgramInfoLog(this._glProgram)
+        `Snap! Error linking shader program: ${gl.getProgramInfoLog(
+          this._glProgram
+        )}`
       );
     }
 
@@ -113,19 +115,20 @@ p5.Shader.prototype._loadAttributes = function() {
 
   this.attributes = {};
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
-  var numAttributes = gl.getProgramParameter(
+  const numAttributes = gl.getProgramParameter(
     this._glProgram,
     gl.ACTIVE_ATTRIBUTES
   );
-  for (var i = 0; i < numAttributes; ++i) {
-    var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
-    var name = attributeInfo.name;
-    var location = gl.getAttribLocation(this._glProgram, name);
-    var attribute = {};
+  for (let i = 0; i < numAttributes; ++i) {
+    const attributeInfo = gl.getActiveAttrib(this._glProgram, i);
+    const name = attributeInfo.name;
+    const location = gl.getAttribLocation(this._glProgram, name);
+    const attribute = {};
     attribute.name = name;
     attribute.location = location;
+    attribute.index = i;
     attribute.type = attributeInfo.type;
     attribute.size = attributeInfo.size;
     this.attributes[name] = attribute;
@@ -145,18 +148,21 @@ p5.Shader.prototype._loadUniforms = function() {
     return;
   }
 
-  var gl = this._renderer.GL;
+  const gl = this._renderer.GL;
 
   // Inspect shader and cache uniform info
-  var numUniforms = gl.getProgramParameter(this._glProgram, gl.ACTIVE_UNIFORMS);
+  const numUniforms = gl.getProgramParameter(
+    this._glProgram,
+    gl.ACTIVE_UNIFORMS
+  );
 
-  var samplerIndex = 0;
-  for (var i = 0; i < numUniforms; ++i) {
-    var uniformInfo = gl.getActiveUniform(this._glProgram, i);
-    var uniform = {};
+  let samplerIndex = 0;
+  for (let i = 0; i < numUniforms; ++i) {
+    const uniformInfo = gl.getActiveUniform(this._glProgram, i);
+    const uniform = {};
     uniform.location = gl.getUniformLocation(this._glProgram, uniformInfo.name);
     uniform.size = uniformInfo.size;
-    var uniformName = uniformInfo.name;
+    let uniformName = uniformInfo.name;
     //uniforms thats are arrays have their name returned as
     //someUniform[0] which is a bit silly so we trim it
     //off here. The size property tells us that its an array
@@ -166,11 +172,22 @@ p5.Shader.prototype._loadUniforms = function() {
     }
     uniform.name = uniformName;
     uniform.type = uniformInfo.type;
+    uniform._cachedData = undefined;
     if (uniform.type === gl.SAMPLER_2D) {
       uniform.samplerIndex = samplerIndex;
       samplerIndex++;
       this.samplers.push(uniform);
     }
+    uniform.isArray =
+      uniform.type === gl.FLOAT_MAT3 ||
+      uniform.type === gl.FLOAT_MAT4 ||
+      uniform.type === gl.FLOAT_VEC2 ||
+      uniform.type === gl.FLOAT_VEC3 ||
+      uniform.type === gl.FLOAT_VEC4 ||
+      uniform.type === gl.INT_VEC2 ||
+      uniform.type === gl.INT_VEC3 ||
+      uniform.type === gl.INT_VEC4;
+
     this.uniforms[uniformName] = uniform;
   }
   this._loadedUniforms = true;
@@ -212,10 +229,10 @@ p5.Shader.prototype.unbindShader = function() {
 };
 
 p5.Shader.prototype.bindTextures = function() {
-  var gl = this._renderer.GL;
-  for (var i = 0; i < this.samplers.length; i++) {
-    var uniform = this.samplers[i];
-    var tex = uniform.texture;
+  const gl = this._renderer.GL;
+
+  for (const uniform of this.samplers) {
+    let tex = uniform.texture;
     if (tex === undefined) {
       // user hasn't yet supplied a texture for this slot.
       // (or there may not be one--maybe just lighting),
@@ -230,9 +247,8 @@ p5.Shader.prototype.bindTextures = function() {
 };
 
 p5.Shader.prototype.updateTextures = function() {
-  for (var i = 0; i < this.samplers.length; i++) {
-    var uniform = this.samplers[i];
-    var tex = uniform.texture;
+  for (const uniform of this.samplers) {
+    const tex = uniform.texture;
     if (tex) {
       tex.update();
     }
@@ -246,6 +262,15 @@ p5.Shader.prototype.unbindTextures = function() {
 
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
+  if (this.isStrokeShader()) {
+    if (this._renderer._curCamera.cameraType === 'default') {
+      // strokes scale up as they approach camera, default
+      this.setUniform('uPerspective', 1);
+    } else {
+      // strokes have uniform scale regardless of distance from camera
+      this.setUniform('uPerspective', 0);
+    }
+  }
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
   this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
@@ -260,23 +285,30 @@ p5.Shader.prototype._setMatrixUniforms = function() {
  * @private
  */
 p5.Shader.prototype.useProgram = function() {
-  var gl = this._renderer.GL;
-  gl.useProgram(this._glProgram);
+  const gl = this._renderer.GL;
+  if (this._renderer._curShader !== this) {
+    gl.useProgram(this._glProgram);
+    this._renderer._curShader = this;
+  }
   return this;
 };
 
 /**
- * Wrapper around gl.uniform functions.
- * As we store uniform info in the shader we can use that
- * to do type checking on the supplied data and call
- * the appropriate function.
+ * Used to set the uniforms of a
+ * <a href="#/p5.Shader">p5.Shader</a> object.
+ *
+ * Uniforms are used as a way to provide shader programs
+ * (which run on the GPU) with values from a sketch
+ * (which runs on the CPU).
+ *
  * @method setUniform
  * @chainable
- * @param {String} uniformName the name of the uniform in the
- * shader program
- * @param {Object|Number|Boolean|Number[]} data the data to be associated
- * with that uniform; type varies (could be a single numerical value, array,
- * matrix, or texture / sampler reference)
+ * @param {String} uniformName the name of the uniform.
+ * Must correspond to the name used in the vertex and fragment shaders
+ * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement}
+ * data the data to associate with the uniform. The type can be
+ * a boolean (true/false), a number, an array of numbers, or
+ * an image (p5.Image, p5.Graphics, p5.MediaElement)
  *
  * @example
  * <div modernizr='webgl'>
@@ -328,16 +360,29 @@ p5.Shader.prototype.useProgram = function() {
  * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
-  //@todo update all current gl.uniformXX calls
-
-  var uniform = this.uniforms[uniformName];
+  const uniform = this.uniforms[uniformName];
   if (!uniform) {
     return;
   }
+  const gl = this._renderer.GL;
 
-  var location = uniform.location;
+  if (uniform.isArray) {
+    if (
+      uniform._cachedData &&
+      this._renderer._arraysEqual(uniform._cachedData, data)
+    ) {
+      return;
+    } else {
+      uniform._cachedData = data.slice(0);
+    }
+  } else if (uniform._cachedData && uniform._cachedData === data) {
+    return;
+  } else {
+    uniform._cachedData = data;
+  }
 
-  var gl = this._renderer.GL;
+  const location = uniform.location;
+
   this.useProgram();
 
   switch (uniform.type) {
@@ -438,12 +483,18 @@ p5.Shader.prototype.isLightShader = function() {
     this.uniforms.uDirectionalLightCount !== undefined ||
     this.uniforms.uPointLightCount !== undefined ||
     this.uniforms.uAmbientColor !== undefined ||
-    this.uniforms.uDirectionalColor !== undefined ||
+    this.uniforms.uDirectionalDiffuseColors !== undefined ||
+    this.uniforms.uDirectionalSpecularColors !== undefined ||
     this.uniforms.uPointLightLocation !== undefined ||
-    this.uniforms.uPointLightColor !== undefined ||
+    this.uniforms.uPointLightDiffuseColors !== undefined ||
+    this.uniforms.uPointLightSpecularColors !== undefined ||
     this.uniforms.uLightingDirection !== undefined ||
     this.uniforms.uSpecular !== undefined
   );
+};
+
+p5.Shader.prototype.isNormalShader = function() {
+  return this.attributes.aNormal !== undefined;
 };
 
 p5.Shader.prototype.isTextureShader = function() {
@@ -471,19 +522,42 @@ p5.Shader.prototype.isStrokeShader = function() {
  * @private
  */
 p5.Shader.prototype.enableAttrib = function(
-  loc,
+  attr,
   size,
   type,
   normalized,
   stride,
   offset
 ) {
-  var gl = this._renderer.GL;
-  if (loc !== -1) {
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
+  if (attr) {
+    if (
+      typeof IS_MINIFIED === 'undefined' &&
+      this.attributes[attr.name] !== attr
+    ) {
+      console.warn(
+        `The attribute "${
+          attr.name
+        }"passed to enableAttrib does not belong to this shader.`
+      );
+    }
+    const loc = attr.location;
+    if (loc !== -1) {
+      const gl = this._renderer.GL;
+      if (!attr.enabled) {
+        gl.enableVertexAttribArray(loc);
+        attr.enabled = true;
+      }
+      this._renderer.GL.vertexAttribPointer(
+        loc,
+        size,
+        type || gl.FLOAT,
+        normalized || false,
+        stride || 0,
+        offset || 0
+      );
+    }
   }
   return this;
 };
 
-module.exports = p5.Shader;
+export default p5.Shader;
