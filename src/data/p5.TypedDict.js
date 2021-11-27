@@ -13,7 +13,7 @@ import p5 from '../core/main';
 
 /**
  *
- * Creates a new instance of p5.StringDict using the key-value pair
+ * Creates a new instance of <a href="#/p5.StringDict">p5.StringDict</a> using the key-value pair
  * or the object you provide.
  *
  * @method createStringDict
@@ -81,8 +81,8 @@ p5.prototype.createNumberDict = function(key, value) {
 
 /**
  *
- * Base class for all p5.Dictionary types. Specifically
- * typed Dictionary classes inherit from this class.
+ * Base class for all <a href="#/p5.Dictionary">p5.Dictionary</a> types.
+ * Specifically, typed Dictionary classes inherit from this class.
  *
  * @class p5.TypedDict
  * @constructor
@@ -120,8 +120,8 @@ p5.TypedDict.prototype.size = function() {
 };
 
 /**
- * Returns true if the given key exists in the Dictionary,
- * otherwise returns false.
+ * Returns `true` if the given key exists in the Dictionary;
+ * otherwise returns `false`.
  *
  * @method hasKey
  * @param {Number|String} key that you want to look up
@@ -142,10 +142,10 @@ p5.TypedDict.prototype.hasKey = function(key) {
 };
 
 /**
- * Returns the value stored at the given key.
+ * Returns the value stored at the given `key`.
  *
  * @method get
- * @param {Number|String} the key you want to access
+ * @param {Number|String} key the key you want to access
  * @return {Number|String} the value stored at that key
  *
  * @example
@@ -168,7 +168,7 @@ p5.TypedDict.prototype.get = function(key) {
 };
 
 /**
- * Updates the value associated with the given key in case it already exists
+ * Updates the value associated with the given `key` in case it already exists
  * in the Dictionary. Otherwise a new key-value pair is added.
  *
  * @method set
@@ -196,7 +196,7 @@ p5.TypedDict.prototype.set = function(key, value) {
 
 /**
  * private helper function to handle the user passing in objects
- * during construction or calls to create()
+ * during construction or calls to `create()`
  */
 
 p5.TypedDict.prototype._addObj = function(obj) {
@@ -430,12 +430,12 @@ p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
 p5.NumberDict.prototype._validate = value => typeof value === 'number';
 
 /**
- * Add the given number to the value currently stored at the given key.
+ * Add the given `number` to the value currently stored at the given `key`.
  * The sum then replaces the value previously stored in the Dictionary.
  *
  * @method add
- * @param {Number} Key for the value you wish to add to
- * @param {Number} Number to add to the value
+ * @param {Number} key The key for the value you wish to add to
+ * @param {Number} number The number to add to the value
  * @example
  * <div class='norender'>
  * <code>
@@ -457,12 +457,12 @@ p5.NumberDict.prototype.add = function(key, amount) {
 };
 
 /**
- * Subtract the given number from the value currently stored at the given key.
+ * Subtract the given `number` from the value currently stored at the given `key`.
  * The difference then replaces the value previously stored in the Dictionary.
  *
  * @method sub
- * @param {Number} Key for the value you wish to subtract from
- * @param {Number} Number to subtract from the value
+ * @param {Number} key The key for the value you wish to subtract from
+ * @param {Number} number The number to subtract from the value
  * @example
  * <div class='norender'>
  * <code>
@@ -480,12 +480,12 @@ p5.NumberDict.prototype.sub = function(key, amount) {
 };
 
 /**
- * Multiply the given number with the value currently stored at the given key.
+ * Multiply the given number with the value currently stored at the given `key`.
  * The product then replaces the value previously stored in the Dictionary.
  *
  * @method mult
- * @param {Number} Key for value you wish to multiply
- * @param {Number} Amount to multiply the value by
+ * @param {Number} key The key for value you wish to multiply
+ * @param {Number} amount The number to multiply the value by
  * @example
  * <div class='norender'>
  * <code>
@@ -507,12 +507,12 @@ p5.NumberDict.prototype.mult = function(key, amount) {
 };
 
 /**
- * Divide the given number with the value currently stored at the given key.
+ * Divide the given number with the value currently stored at the given `key`.
  * The quotient then replaces the value previously stored in the Dictionary.
  *
  * @method div
- * @param {Number} Key for value you wish to divide
- * @param {Number} Amount to divide the value by
+ * @param {Number} key The key for value you wish to divide
+ * @param {Number} amount The amount to divide the value by
  * @example
  * <div class='norender'>
  * <code>
