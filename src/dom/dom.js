@@ -19,13 +19,13 @@
 import p5 from '../core/main';
 
 /**
- * Searches the page for the first element that matches the given CSS selector string (can be an
- * ID, class, tag name or a combination) and returns it as a <a href="#/p5.Element">p5.Element</a>.
- * The DOM node itself can be accessed with .elt.
- * Returns null if none found. You can also specify a container to search within.
+ * Searches the page for the first element that matches the given CSS selector string (can be an `#id`, a `.class`,
+ * a tag name, or a combination) and returns it as a <a href="#/p5.Element">p5.Element</a>.
+ * The DOM node itself can be accessed with `.elt`.
+ * Returns `null` if none found. You can also specify a `container` to search within.
  *
  * @method select
- * @param  {String} selectors CSS selector string of element to search for
+ * @param  {String} selector CSS selector string of element to search for
  * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
  *                                             HTML element to search within
  * @return {p5.Element|null} <a href="#/p5.Element">p5.Element</a> containing node found
@@ -66,17 +66,17 @@ p5.prototype.select = function(e, p) {
 };
 
 /**
- * Searches the page for elements that match the given CSS selector string (can be an ID a class,
- * tag name or a combination) and returns them as <a href="#/p5.Element">p5.Element</a>s in
+ * Searches the page for elements that match the given CSS selector string (can be an `#id`, a `.class`,
+ * a tag name, or a combination) and returns them as <a href="#/p5.Element">p5.Element</a>s in
  * an array.
- * The DOM node itself can be accessed with .elt.
+ * The DOM node itself can be accessed with `.elt`.
  * Returns an empty array if none found.
- * You can also specify a container to search within.
+ * You can also specify a `container` to search within.
  *
  * @method selectAll
- * @param  {String} selectors CSS selector string of elements to search for
- * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>
- *                                             , or HTML element to search within
+ * @param  {String} selector CSS selector string of elements to search for
+ * @param  {String|p5.Element|HTMLElement} [container] CSS selector string, <a href="#/p5.Element">p5.Element</a>, or
+ *                                          HTML element to search within
  * @return {p5.Element[]} Array of <a href="#/p5.Element">p5.Element</a>s containing nodes found
  * @example
  * <div><code>
@@ -125,7 +125,7 @@ p5.prototype.selectAll = function(e, p) {
 };
 
 /**
- * Helper function for select and selectAll
+ * Helper function for `select()` and `selectAll()`
  */
 p5.prototype._getContainer = function(p) {
   let container = document;
@@ -140,7 +140,7 @@ p5.prototype._getContainer = function(p) {
 };
 
 /**
- * Helper function for getElement and getElements.
+ * Helper function for `getElement()` and `getElements()`.
  */
 p5.prototype._wrapElement = function(elt) {
   const children = Array.prototype.slice.call(elt.children);
@@ -175,7 +175,7 @@ p5.prototype._wrapElement = function(elt) {
 
 /**
  * Removes all elements created by p5, except any canvas / graphics
- * elements created by <a href="#/p5/createCanvas">createCanvas</a> or <a href="#/p5/createGraphics">createGraphics</a>.
+ * elements created by <a href="#/p5/createCanvas">createCanvas()</a> or <a href="#/p5/createGraphics">createGraphics()</a>.
  * Event handlers are removed, and element is removed from the DOM.
  * @method removeElements
  * @example
@@ -207,9 +207,9 @@ p5.prototype.removeElements = function(e) {
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {Function|Boolean} fxn function to be fired when the value of
+ * @param  {Function|Boolean} fxn A function to be fired when the value of
  *                                an element changes.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -278,7 +278,7 @@ p5.Element.prototype.changed = function(fxn) {
  * @method input
  * @param  {Function|Boolean} fxn function to be fired when any user input is
  *                                detected within the element.
- *                                if `false` is passed instead, the previously
+ *                                If `false` is passed instead, the previously
  *                                firing function will no longer fire.
  * @chainable
  * @example
@@ -377,11 +377,11 @@ p5.prototype.createSpan = function(html = '') {
 };
 
 /**
- * Creates an `&lt;img&gt;` element in the DOM with given src and
- * alternate text.
+ * Creates an `&lt;img&gt;` element in the DOM with given `src` and
+ * `alt` alternate text.
  *
  * @method createImg
- * @param  {String} src src path or url for image
+ * @param  {String} src A src path or URL for image
  * @param  {String} alt <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Img#Attributes">alternate text</a> to be used if image does not load. You can use also an empty string (`""`) if that an image is not intended to be viewed.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
@@ -397,7 +397,7 @@ p5.prototype.createSpan = function(html = '') {
  * @method createImg
  * @param  {String} src
  * @param  {String} alt
- * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either 'anonymous' or 'use-credentials' to retrieve the image with cross-origin access (for later use with `canvas`. if an empty string(`""`) is passed, CORS is not used
+ * @param  {String} crossOrigin <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">crossOrigin property</a> of the `img` element; use either `'anonymous'` or `'use-credentials'` to retrieve the image with cross-origin access (for later use with `canvas`. If an empty string(`""`) is passed, CORS is not used.
  * @param  {Function} [successCallback] callback to be called once image data is loaded with the <a href="#/p5.Element">p5.Element</a> as argument
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  */
@@ -427,10 +427,10 @@ p5.prototype.createImg = function() {
  * Creates an `&lt;a&gt;&lt;/a&gt;` element in the DOM for including a hyperlink.
  *
  * @method createA
- * @param  {String} href       url of page to link to
- * @param  {String} html       inner html of link element to display
- * @param  {String} [target]   target where new link should open,
- *                             could be _blank, _self, _parent, _top.
+ * @param  {String} href       URL of page to link to
+ * @param  {String} html       inner HTML of link element to display
+ * @param  {String} [target]   target where new link should open;
+ *                             could be `_blank`, `_self`, `_parent`, or `_top`.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -451,13 +451,13 @@ p5.prototype.createA = function(href, html, target) {
 
 /**
  * Creates a slider `&lt;input&gt;&lt;/input&gt;` element in the DOM.
- * Use .size() to set the display length of the slider.
+ * Use .`size()` to set the display length of the slider.
  *
  * @method createSlider
  * @param  {Number} min minimum value of the slider
  * @param  {Number} max maximum value of the slider
  * @param  {Number} [value] default value of the slider
- * @param  {Number} [step] step size for each tick of the slider (if step is set to 0, the slider will move continuously from the minimum to the maximum value)
+ * @param  {Number} [step] step size for each tick of the slider (if step is set to `0`, the slider will move continuously from the minimum to the maximum value)
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -506,8 +506,8 @@ p5.prototype.createSlider = function(min, max, value, step) {
 
 /**
  * Creates a `&lt;button&gt;&lt;/button&gt;` element in the DOM.
- * Use .size() to set the display size of the button.
- * Use .mousePressed() to specify behavior on press.
+ * Use .`size()` to set the display size of the button.
+ * Use .`mousePressed()` to specify behavior on press.
  *
  * @method createButton
  * @param  {String} label label displayed on the button
@@ -540,11 +540,11 @@ p5.prototype.createButton = function(label, value) {
 
 /**
  * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element in the DOM.
- * Calling .checked() on a checkbox returns if it is checked or not
+ * Calling .`checked()` on a checkbox returns if it is checked or not.
  *
  * @method createCheckbox
  * @param  {String} [label] label displayed after checkbox
- * @param  {boolean} [value] value of the checkbox; checked is true, unchecked is false
+ * @param  {boolean} [value] value of the checkbox; checked is `true`, unchecked is `false`
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -609,15 +609,16 @@ p5.prototype.createCheckbox = function() {
 /**
  * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
  * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
- * - `.option(name, [value])` can be used to set options for the select after it is created.
- * - `.value()` will return the currently selected option.
- * - `.selected()` will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
- * - `.selected(value)` can be used to make given option selected by default when the page first loads.
- * - `.disable()` marks whole of dropdown element as disabled.
- * - `.disable(value)` marks given option as disabled
+ *
+ * - `.option(name, [value])` can be used to set options for the `&lt;select&gt;` after it is created
+ * - `.value()` will return the currently selected `&lt;option&gt;`
+ * - `.selected()` will return current dropdown element, which is an instance of <a href="#/p5.Element">p5.Element</a>
+ * - `.selected(value)` can be used to make given `&lt;option&gt;` selected by default when the page first loads
+ * - `.disable()` marks whole dropdown element as disabled
+ * - `.disable(value)` marks given `&lt;option&gt;` as disabled
  *
  * @method createSelect
- * @param {boolean} [multiple] true if dropdown should support multiple selections
+ * @param {boolean} [multiple] `true` if dropdown should support multiple selections
  * @return {p5.Element}
  * @example
  * <div><code>
@@ -755,21 +756,22 @@ p5.prototype.createSelect = function() {
 };
 
 /**
- * Creates a radio button element in the DOM.It also helps existing radio buttons
- * assign methods of <a href="#/p5.Element/">p5.Element</a>.
+ * Creates a radio button element in the DOM.
+ * It also helps existing radio buttons assign methods of <a href="#/p5.Element/">p5.Element</a>.
+ *
  * - `.option(value, [label])` can be used to create a new option for the
  *   element. If an option with a value already exists, it will be returned.
- *   Optionally, a label can be provided as second argument for the option.
+ *   Optionally, a `label` can be provided as second argument for the option.
  * - `.remove(value)` can be used to remove an option for the element.
  * - `.value()` method will return the currently selected value.
- * - `.selected()` method will return the currently selected input element.
+ * - `.selected()` method will return the currently selected `&lt;input&gt;` element.
  * - `.selected(value)` method will select the option and return it.
  * - `.disable(Boolean)` method will enable/disable the whole radio button element.
  *
  * @method createRadio
- * @param  {Object} containerElement An container HTML Element either a div
- * or span inside which all existing radio inputs will be considered as options.
- * @param {string} [name] A name parameter for each Input Element.
+ * @param  {Object} containerElement An container HTML Element either a `&lt;div&gt;`
+ * or `&lt;span&gt;`, inside which all existing radio inputs will be considered as options.
+ * @param {string} [name] A `name` attribute value for each `&lt;input&gt;` element.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -933,9 +935,9 @@ p5.prototype.createRadio = function() {
 };
 
 /**
- * Creates a colorPicker element in the DOM for color input.
- * The .value() method will return a hex string (#rrggbb) of the color.
- * The .color() method will return a p5.Color object with the current chosen color.
+ * Creates a color picker element in the DOM for color input.
+ * The .`value()` method will return a hex string (`#rrggbb`) of the color.
+ * The .`color()` method will return a <a href="#/p5.Color">p5.Color</a> object with the current chosen color.
  *
  * @method createColorPicker
  * @param {String|p5.Color} [value] default color of element
@@ -1025,9 +1027,9 @@ p5.prototype.createColorPicker = function(value) {
  * Use .<a href="#/p5.Element/size">size()</a> to set the display length of the box.
  *
  * @method createInput
- * @param {String} value default value of the input box
- * @param {String} [type] type of text, ie text, password etc. Defaults to text.
- *   Needs a value to be specified first.
+ * @param {String} value The default value of the `&lt;input&gt;`.
+ * @param {String} [type] The `type` attibute value of the `&lt;input&gt;` element (e.g., `text`, `password`, etc.) Defaults to `text`.
+ *   Needs a `value` to be specified first.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -1059,12 +1061,12 @@ p5.prototype.createInput = function(value = '', type = 'text') {
 };
 
 /**
- * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM of type 'file'.
+ * Creates an `&lt;input&gt;&lt;/input&gt;` element in the DOM of type `'file'`.
  * This allows users to select local files for use in a sketch.
  *
  * @method createFileInput
- * @param  {Function} callback callback function for when a file is loaded
- * @param  {Boolean} [multiple] optional, to allow multiple files to be selected
+ * @param  {Function} callback Callback function to run when a file is loaded
+ * @param  {Boolean} [multiple] (optional) Allow multiple files to be selected
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created DOM element
  * @example
  * <div><code>
@@ -1168,8 +1170,9 @@ function createMedia(pInst, type, src, callback) {
 /**
  * Creates an HTML5 `&lt;video&gt;` element in the DOM for simple playback
  * of audio/video. Shown by default, can be hidden with .<a href="#/p5.Element/hide">hide()</a>
- * and drawn into canvas using <a href="#/p5/image">image()</a>. The first parameter
- * can be either a single string path to a video file, or an array of string
+ * and drawn into canvas using <a href="#/p5/image">image()</a>.
+ *
+ * The first parameter can be either a single string path to a video file, or an array of string
  * paths to different formats of the same video. This is useful for ensuring
  * that your video can play across different browsers, as each supports
  * different formats. See <a href='https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats'>this
@@ -1178,12 +1181,12 @@ function createMedia(pInst, type, src, callback) {
  * @method createVideo
  * @param  {String|String[]} src path to a video file, or array of paths for
  *                             supporting different browsers
- * @param  {Function} [callback] callback function to be called upon
- *                             'canplaythrough' event fire, that is, when the
+ * @param  {Function} [callback] callback function to be called when the
+ *                             `canplaythrough` event fires (that is, when the
  *                             browser can play the media, and estimates that
  *                             enough data has been loaded to play the media
  *                             up to its end without having to stop for
- *                             further buffering of content
+ *                             further buffering of content)
  * @return {p5.MediaElement}   pointer to video <a href="#/p5.MediaElement">p5.MediaElement</a>
  * @example
  * <div><code>
@@ -1215,7 +1218,9 @@ p5.prototype.createVideo = function(src, callback) {
 
 /**
  * Creates a hidden HTML5 `&lt;audio&gt;` element in the DOM for simple audio
- * playback. The first parameter can be either a single string path to a
+ * playback.
+ *
+ * The first parameter can be either a single string path to a
  * audio file, or an array of string paths to different formats of the same
  * audio. This is useful for ensuring that your audio can play across
  * different browsers, as each supports different formats.
@@ -1225,12 +1230,12 @@ p5.prototype.createVideo = function(src, callback) {
  * @method createAudio
  * @param  {String|String[]} [src] path to an audio file, or array of paths
  *                             for supporting different browsers
- * @param  {Function} [callback] callback function to be called upon
- *                             'canplaythrough' event fire, that is, when the
+ * @param  {Function} [callback] callback function to be called when the
+ *                             `canplaythrough` event fires (that is, when the
  *                             browser can play the media, and estimates that
  *                             enough data has been loaded to play the media
  *                             up to its end without having to stop for
- *                             further buffering of content
+ *                             further buffering of content)
  * @return {p5.MediaElement}   pointer to audio <a href="#/p5.MediaElement">p5.MediaElement</a>
  * @example
  * <div><code>
@@ -1309,16 +1314,16 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
  * by all browsers.
  *
  * <em>Security note</em>: A new browser security specification requires that
- * getUserMedia, which is behind <a href="#/p5/createCapture">createCapture()</a>,
+ * `getUserMedia()`, which is behind <a href="#/p5/createCapture">createCapture()</a>,
  * only works when you're running the code locally, or on HTTPS. Learn more
  * <a href='http://stackoverflow.com/questions/34197653/getusermedia-in-chrome-47-without-using-https'>here</a>
  * and <a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia'>here</a>.
  *
  * @method createCapture
- * @param  {String|Constant|Object}   type type of capture, either VIDEO or
- *                                   AUDIO if none specified, default both,
- *                                   or a Constraints object
- * @param  {Function}                 [callback] function to be called once
+ * @param  {String|Constant|Object}   type The type of capture (either VIDEO or
+ *                                   AUDIO); if none specified, default both;
+ *                                   or, a Constraints object
+ * @param  {Function}                 [callback] A function to be called once
  *                                   stream has loaded
  * @return {p5.Element} capture video <a href="#/p5.Element">p5.Element</a>
  * @example
@@ -1433,11 +1438,11 @@ p5.prototype.createCapture = function() {
 };
 
 /**
- * Creates element with given tag in the DOM with given content.
+ * Creates element with given `tag` in the DOM with given content.
  *
  * @method createElement
- * @param  {String} tag tag for the new element
- * @param  {String} [content] html content to be inserted into the element
+ * @param  {String} tag The tag for the new element
+ * @param  {String} [content] HTML content to be inserted into the element
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
@@ -1460,7 +1465,7 @@ p5.prototype.createElement = function(tag, content) {
 // =============================================================================
 /**
  *
- * Adds specified class to the element.
+ * Adds specified `class` to the element.
  *
  * @for p5.Element
  * @method addClass
@@ -1485,7 +1490,7 @@ p5.Element.prototype.addClass = function(c) {
 
 /**
  *
- * Removes specified class from the element.
+ * Removes specified `class` from the element.
  *
  * @method removeClass
  * @param  {String} class name of class to remove
@@ -1516,11 +1521,11 @@ p5.Element.prototype.removeClass = function(c) {
 
 /**
  *
- * Checks if specified class already set to element
+ * Checks if specified `class` is already set on the element.
  *
  * @method hasClass
- * @returns {boolean} a boolean value if element has specified class
- * @param c {String} class name of class to check
+ * @param {String} c The `class` name to check
+ * @returns {boolean} a boolean indicating whether the element has the specified `class`
  * @example
  * <div class='norender'><code>
  * let div;
@@ -1545,10 +1550,10 @@ p5.Element.prototype.hasClass = function(c) {
 
 /**
  *
- * Toggles element class
+ * Toggle an element's `class`.
  *
  * @method toggleClass
- * @param c {String} class name to toggle
+ * @param {String} c class name to toggle
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -1578,7 +1583,7 @@ p5.Element.prototype.toggleClass = function(c) {
 
 /**
  *
- * Attaches the element  as a child to the parent specified.
+ * Attaches the element as a child to the parent specified.
  * Accepts either a string ID, DOM node, or <a href="#/p5.Element">p5.Element</a>.
  * If no argument is specified, an array of children DOM nodes is returned.
  *
@@ -1630,13 +1635,13 @@ p5.Element.prototype.child = function(childNode) {
 };
 
 /**
- * Centers a p5 Element either vertically, horizontally,
- * or both, relative to its parent or according to
- * the body if the Element has no parent. If no argument is passed
+ * Centers a p5 Element (either vertically, horizontally,
+ * or both) relative to its parent, or according to
+ * the `&lt;body&gt;` if the Element has no parent. If no argument is passed
  * the Element is aligned both vertically and horizontally.
  *
  * @method center
- * @param  {String} [align]       passing 'vertical', 'horizontal' aligns element accordingly
+ * @param  {String} [align]       passing `'vertical'`, `'horizontal'` aligns element accordingly
  * @chainable
  *
  * @example
@@ -1683,14 +1688,14 @@ p5.Element.prototype.center = function(align) {
 /**
  *
  * If an argument is given, sets the inner HTML of the element,
- * replacing any existing html. If true is included as a second
- * argument, html is appended instead of replacing existing html.
- * If no arguments are given, returns
- * the inner HTML of the element.
+ * replacing any existing HTML.
+ *
+ * If `true` is included as a second argument, then `html` is appended instead of replacing existing HTML.
+ * If no arguments are given, returns the `innerHTML` of the element.
  *
  * @for p5.Element
  * @method html
- * @returns {String} the inner HTML of the element
+ * @returns {String} The inner HTML of the element
  * @example
  * <div class='norender'><code>
  * let div = createDiv('').size(100, 100);
@@ -1703,8 +1708,8 @@ p5.Element.prototype.center = function(align) {
  */
 /**
  * @method html
- * @param  {String} [html] the HTML to be placed inside the element
- * @param  {boolean} [append] whether to append HTML to existing
+ * @param  {String} [html] The HTML to be placed inside the element
+ * @param  {boolean} [append] Whether to append HTML to existing
  * @chainable
  */
 p5.Element.prototype.html = function() {
@@ -1722,18 +1727,20 @@ p5.Element.prototype.html = function() {
 /**
  *
  * Sets the position of the element. If no position type argument is given, the
- * position will be relative to (0, 0) of the window.
- * Essentially, this sets position:absolute and left and top
- * properties of style. If an optional third argument specifying position type is given,
- * the x and y coordinates will be interpreted based on the <a target="_blank"
- * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
- * If no arguments given, the function returns the x and y position of the element.
+ * position will be relative to `(0, 0)` of the window.
+ * Essentially, this sets `position:absolute` and `left` and `top` properties of style.
  *
- * found documentation on how to be more specific with object type
+ * If an optional third argument specifying position type is given,
+ * the `x` and `y` coordinates will be interpreted based on the <a target="_blank"
+ * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
+ *
+ * If no arguments given, the function returns the `x` and `y` position of the element.
+ *
+ * Found documentation on how to be more specific with object type:
  * https://stackoverflow.com/questions/14714314/how-do-i-comment-object-literals-in-yuidoc
  *
  * @method position
- * @returns {Object} object of form { x: 0, y: 0 } containing the position of the element in an object
+ * @returns {Object} An object of form `{ x: 0, y: 0 }` containing the position of the element in an object
  * @example
  * <div><code class='norender'>
  * function setup() {
@@ -1756,7 +1763,7 @@ p5.Element.prototype.html = function() {
  * @method position
  * @param  {Number} [x] x-position relative to upper left of window (optional)
  * @param  {Number} [y] y-position relative to upper left of window (optional)
- * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
+ * @param  {String} positionType it can be `static`, `fixed`, `relative`, `sticky`, `initial`, or `inherit` (optional)
  * @chainable
  */
 p5.Element.prototype.position = function() {
@@ -1840,14 +1847,15 @@ p5.Element.prototype._rotate = function() {
 };
 
 /**
- * Sets the given style (css) property (1st arg) of the element with the
- * given value (2nd arg). If a single argument is given, .style()
- * returns the value of the given property; however, if the single argument
- * is given in css syntax ('text-align:center'), .style() sets the css
+ * Sets the given style (CSS) property (1st arg) of the element with the
+ * given value (2nd arg).
+ *
+ * If a single argument is given, .`style()` returns the value of the given property; however,
+ * if the single argument is given in CSS syntax (`text-align:center`), .`style()` sets the CSS
  * appropriately.
  *
  * @method style
- * @param  {String} property   property to be set
+ * @param  {String} property   The property to be set
  * @returns {String} value of property
  * @example
  * <div><code class='norender'>
@@ -1880,7 +1888,7 @@ p5.Element.prototype._rotate = function() {
 /**
  * @method style
  * @param  {String} property
- * @param  {String|p5.Color} value     value to assign to property
+ * @param  {String|p5.Color} value     The value to assign to `property`
  * @return {String} current value of property, if no value is given as second argument
  * @chainable
  */
@@ -1936,9 +1944,11 @@ p5.Element.prototype.style = function(prop, val) {
 
 /**
  *
- * Adds a new attribute or changes the value of an existing attribute
- * on the specified element. If no value is specified, returns the
- * value of the given attribute, or null if attribute is not set.
+ * Adds a new attribute, or changes the value of an existing attribute
+ * on the specified element.
+ *
+ * If no value is specified, returns the value of the given attribute, or
+ * `null` if `attr` is not set.
  *
  * @method attribute
  * @return {String} value of attribute
@@ -2071,7 +2081,7 @@ p5.Element.prototype.value = function() {
 
 /**
  *
- * Shows the current element. Essentially, setting display:block for the style.
+ * Shows the current element. Essentially, setting `display:block` for the style.
  *
  * @method show
  * @chainable
@@ -2088,7 +2098,7 @@ p5.Element.prototype.show = function() {
 };
 
 /**
- * Hides the current element. Essentially, setting display:none for the style.
+ * Hides the current element. Essentially, setting `display:none` for the style.
  *
  * @method hide
  * @chainable
@@ -2105,10 +2115,11 @@ p5.Element.prototype.hide = function() {
 
 /**
  *
- * Sets the width and height of the element. AUTO can be used to
- * only adjust one dimension at a time. If no arguments are given, it
- * returns the width and height of the element in an object. In case of
- * elements which need to be loaded, such as images, it is recommended
+ * Sets the `width` and `height` of the element. `AUTO` can be used to only adjust one dimension at a time.
+ *
+ * If no arguments are given, it returns the `width` and `height` of the element in an object.
+ *
+ * In case of elements which need to be loaded, such as images, it is recommended
  * to call the function after the element has finished loading.
  *
  * @method size
@@ -2129,8 +2140,8 @@ p5.Element.prototype.hide = function() {
  */
 /**
  * @method size
- * @param  {Number|Constant} w    width of the element, either AUTO, or a number
- * @param  {Number|Constant} [h] height of the element, either AUTO, or a number
+ * @param  {Number|Constant} w    width of the element, either a number, or `AUTO`
+ * @param  {Number|Constant} [h] height of the element, either a number, or `AUTO`
  * @chainable
  */
 p5.Element.prototype.size = function(w, h) {
@@ -2225,7 +2236,8 @@ p5.Element.prototype.remove = function() {
 /**
  * Registers a callback that gets called every time a file that is
  * dropped on the element has been loaded.
- * p5 will load every dropped file into memory and pass it as a p5.File object to the callback.
+ *
+ * p5 will load every dropped file into memory and pass it as a <a href=#/p5.File"">p5.File</a> object to the callback.
  * Multiple files dropped at the same time will result in multiple calls to the callback.
  *
  * You can optionally pass a second callback which will be registered to the raw
@@ -2237,7 +2249,7 @@ p5.Element.prototype.remove = function() {
  *
  * @method drop
  * @param  {Function} callback  callback to receive loaded file, called for each file dropped.
- * @param  {Function} [fxn]     callback triggered once when files are dropped with the drop event.
+ * @param  {Function} [fxn]     callback triggered once when files are dropped with the `drop` event.
  * @chainable
  * @example
  * <div><code>
@@ -2334,8 +2346,8 @@ p5.Element.prototype.drop = function(callback, fxn) {
 /**
  * Extends <a href="#/p5.Element">p5.Element</a> to handle audio and video. In addition to the methods
  * of <a href="#/p5.Element">p5.Element</a>, it also contains methods for controlling media. It is not
- * called directly, but <a href="#/p5.MediaElement">p5.MediaElement</a>s are created by calling <a href="#/p5/createVideo">createVideo</a>,
- * <a href="#/p5/createAudio">createAudio</a>, and <a href="#/p5/createCapture">createCapture</a>.
+ * called directly, but <a href="#/p5.MediaElement">p5.MediaElement</a>s are created by calling <a href="#/p5/createVideo">createVideo()</a>,
+ * <a href="#/p5/createAudio">createAudio()</a>, and <a href="#/p5/createCapture">createCapture()</a>.
  *
  * @class p5.MediaElement
  * @constructor
@@ -2485,7 +2497,7 @@ p5.MediaElement.prototype.play = function() {
 };
 
 /**
- * Stops an HTML5 media element (sets current time to zero).
+ * Stops an HTML5 media element (sets its `currentTime` to `0`).
  *
  * @method stop
  * @chainable
@@ -2611,7 +2623,7 @@ p5.MediaElement.prototype.pause = function() {
 };
 
 /**
- * Set 'loop' to true for an HTML5 media element, and starts playing.
+ * Set `loop` to `true` for an HTML5 media element, and starts playing.
  *
  * @method loop
  * @chainable
@@ -2667,7 +2679,7 @@ p5.MediaElement.prototype.loop = function() {
   return this;
 };
 /**
- * Set 'loop' to false for an HTML5 media element. Element will stop
+ * Set `loop` to `false` for an HTML5 media element. Element will stop
  * when it reaches the end.
  *
  * @method noLoop
@@ -2800,7 +2812,7 @@ p5.MediaElement.prototype.autoplay = function(val) {
 };
 
 /**
- * Sets volume for this HTML5 media element. If no argument is given,
+ * Sets `volume` for this HTML5 media element. If no argument is given,
  * returns the current volume.
  *
  * @method volume
@@ -2874,7 +2886,7 @@ p5.MediaElement.prototype.autoplay = function(val) {
  */
 /**
  * @method volume
- * @param {Number}            val volume between 0.0 and 1.0
+ * @param {Number}            val volume between `0.0` and `1.0`
  * @chainable
  */
 p5.MediaElement.prototype.volume = function(val) {
@@ -2887,10 +2899,10 @@ p5.MediaElement.prototype.volume = function(val) {
 
 /**
  * If no arguments are given, returns the current playback speed of the
- * element. The speed parameter sets the speed where 2.0 will play the
- * element twice as fast, 0.5 will play at half the speed, and -1 will play
- * the element in normal speed in reverse.(Note that not all browsers support
- * backward playback and even if they do, playback might not be smooth.)
+ * element. The `speed` parameter sets the speed where `2.0` will play the
+ * element twice as fast, `0.5` will play at half the speed, and `-1` will play
+ * the element at normal speed in reverse. (Note: Not all browsers support
+ * backward playback&mdash;and even if they do, playback might not be smooth.)
  *
  * @method speed
  * @return {Number} current playback speed of the element
@@ -2975,8 +2987,8 @@ p5.MediaElement.prototype.speed = function(val) {
 };
 
 /**
- * If no arguments are given, returns the current time of the element.
- * If an argument is given the current time of the element is set to it.
+ * If no arguments are given, returns the `currentTime` of the element.
+ * If an argument is given, the `currentTime` of the element is set to it.
  *
  * @method time
  * @return {Number} current time (in seconds)
@@ -3142,10 +3154,10 @@ p5.MediaElement.prototype.isModified = function() {
   return this._modified;
 };
 /**
- * helper method for web GL mode to indicate that an element has been
- * changed or unchanged since last upload. gl texture upload will
- * set this value to false after uploading the texture; or might set
- * it to true if metadata has become available but there is no actual
+ * Helper method for webGL mode to indicate that an element has been
+ * changed or unchanged since last upload. GL texture upload will
+ * set this value to `false` after uploading the texture; or might set
+ * it to `true` if metadata has become available, but there is no actual
  * texture data available yet..
  * @method setModified
  * @param {boolean} val sets whether or not the element has been
@@ -3159,7 +3171,7 @@ p5.MediaElement.prototype.setModified = function(value) {
  * Schedule an event to be called when the audio or video
  * element reaches the end. If the element is looping,
  * this will not be called. The element is passed in
- * as the argument to the onended callback.
+ * as the argument to the `onended` callback.
  *
  * @method  onended
  * @param  {Function} callback function to call when the
@@ -3189,16 +3201,16 @@ p5.MediaElement.prototype.onended = function(callback) {
 /*** CONNECT TO WEB AUDIO API / p5.sound.js ***/
 
 /**
- * Send the audio output of this element to a specified audioNode or
- * p5.sound object. If no element is provided, connects to p5's main
+ * Send the audio output of this element to a specified `audioNode` or
+ * <a href="#/libraries/p5.sound">p5.sound</a> object. If no element is provided, connects to p5's main
  * output. That connection is established when this method is first called.
- * All connections are removed by the .disconnect() method.
+ * All connections are removed by the .<a href="#/p5.SoundFile/disconnect">disconnect()</a> method.
  *
- * This method is meant to be used with the p5.sound.js addon library.
+ * This method is meant to be used with <a href="#/libraries/p5.sound">the p5.sound.js addon library</a>.
  *
  * @method  connect
- * @param  {AudioNode|Object} audioNode AudioNode from the Web Audio API,
- * or an object from the p5.sound library
+ * @param  {AudioNode|Object} audioNode An `AudioNode` from the Web Audio API,
+ * or an object from the <a href="#/libraries/p5.sound">p5.sound library</a>
  */
 p5.MediaElement.prototype.connect = function(obj) {
   let audioContext, mainOutput;
@@ -3255,7 +3267,7 @@ p5.MediaElement.prototype.disconnect = function() {
 /*** SHOW / HIDE CONTROLS ***/
 
 /**
- * Show the default MediaElement controls, as determined by the web browser.
+ * Show the default <a href="#/p5.MediaElement">p5.MediaElement</a> controls, as determined by the web browser.
  *
  * @method  showControls
  * @example
@@ -3286,7 +3298,7 @@ p5.MediaElement.prototype.showControls = function() {
 };
 
 /**
- * Hide the default mediaElement controls.
+ * Hide the default <a href="#/p5.MediaElement">p5.MediaElement</a> controls.
  * @method hideControls
  * @example
  * <div><code>
@@ -3326,31 +3338,31 @@ const Cue = function(callback, time, id, val) {
 };
 
 /**
- * Schedule events to trigger every time a MediaElement
+ * Schedule events to trigger every time a <a href="#/p5.MediaElement">p5.MediaElement</a>
  * (audio/video) reaches a playback cue point.
  *
  * Accepts a callback function, a time (in seconds) at which to trigger
  * the callback, and an optional parameter for the callback.
  *
- * Time will be passed as the first parameter to the callback function,
+ * `time` will be passed as the first parameter to the callback function,
  * and param will be the second parameter.
  *
  * @method  addCue
  * @param {Number}   time     Time in seconds, relative to this media
  *                             element's playback. For example, to trigger
  *                             an event every time playback reaches two
- *                             seconds, pass in the number 2. This will be
+ *                             seconds, pass in the number `2`. This will be
  *                             passed as the first parameter to
  *                             the callback function.
  * @param {Function} callback Name of a function that will be
  *                             called at the given time. The callback will
- *                             receive time and (optionally) param as its
+ *                             receive `time` and (optionally) `param` as its
  *                             two parameters.
  * @param {Object} [value]    An object to be passed as the
  *                             second parameter to the
  *                             callback function.
  * @return {Number} id ID of this cue,
- *                     useful for removeCue(id)
+ *                     useful for `removeCue(id)`
  * @example
  * <div><code>
  * //
@@ -3390,7 +3402,7 @@ p5.MediaElement.prototype.addCue = function(time, callback, val) {
 
 /**
  * Remove a callback based on its ID. The ID is returned by the
- * addCue method.
+ * <a href="#/p5.MediaElement/addCue">addCue()</a> method.
  * @method removeCue
  * @param  {Number} id ID of the cue, as returned by addCue
  * @example
@@ -3432,9 +3444,9 @@ p5.MediaElement.prototype.removeCue = function(id) {
 
 /**
  * Remove all of the callbacks that had originally been scheduled
- * via the addCue method.
+ * via the <a href="#/p5.MediaElement/addCue">addCue()</a> method.
  * @method  clearCues
- * @param  {Number} id ID of the cue, as returned by addCue
+ * @param  {Number} id ID of the cue, as returned by `addCue()`
  * @example
  * <div><code>
  * let audioEl;
@@ -3489,7 +3501,7 @@ p5.MediaElement.prototype._onTimeUpdate = function() {
 
 /**
  * Base class for a file.
- * Used for Element.drop and createFileInput.
+ * Used for <a href="#/p5.Element/drop">Element.drop()</a> and <a href="#/p5/createFileInput">createFileInput()</a>.
  *
  * @class p5.File
  * @constructor
