@@ -224,7 +224,7 @@ p5.Image = function(width, height) {
  */
 p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
-  const curTime = pInst._lastFrameTime + pInst.deltaTime;
+  const curTime = pInst._lastFrameTime;
   if (props.lastChangeTime === 0) {
     props.lastChangeTime = curTime;
   }
