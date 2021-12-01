@@ -351,4 +351,45 @@ p5.prototype.blendMode = function(mode) {
  * white ellipse with shadow blur effect around edges
  */
 
+/**
+ * Temporarily override the default p5 renderer.
+ *
+ * @method renderer
+ * @param  {p5.Renderer} new default renderer
+ * @return {p5.Renderer} the current default renderer
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(windowWidth, windowHeight, WEBGL);
+ *   background(0);
+ *
+ *   const pg = createGraphics(1920, 1080);
+ *   const og = renderer(pg._renderer);
+ *
+ *   // draw into pg by default
+ *   background(80);
+ *   fill(255, 0, 0);
+ *   rect(100, 100, 200, 200);
+ *   rect(300, 300, 200, 200);
+ *
+ *   // reset the canvas renderer
+ *   // and draw a small version of the pg
+ *   renderer(og);
+ *   image(pg, 100, 100, 160, 90);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Small red rectangles on a light gray background.
+ */
+p5.prototype.renderer = function(pg) {
+  p5._validateParameters('renderer', arguments);
+  const og = this._renderer;
+  this._renderer = pg;
+  return og;
+};
+
 export default p5;
