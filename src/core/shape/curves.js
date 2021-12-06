@@ -454,7 +454,7 @@ p5.prototype.curveTightness = function(t) {
  * @param {Number} c coordinate of second point
  * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
- * @return {Number} bezier value at position t
+ * @return {Number} Catmull-Rom value at position t
  * @example
  * <div>
  * <code>
