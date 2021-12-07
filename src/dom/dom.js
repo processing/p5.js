@@ -826,19 +826,32 @@ p5.prototype.createRadio = function() {
   // If already given with a containerEl, will search for all input[radio]
   // it, create a p5.Element out of it, add options to it and return the p5.Element.
 
+  let self;
   let radioElement;
   let name;
   const arg0 = arguments[0];
-  // If existing radio Element is provided as argument 0
-  if (arg0 instanceof HTMLDivElement || arg0 instanceof HTMLSpanElement) {
+  if (
+    arg0 instanceof p5.Element &&
+    (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
+  ) {
+    // If given argument is p5.Element of div/span type
+    self = arg0;
+    this.elt = arg0.elt;
+  } else if (
+    // If existing radio Element is provided as argument 0
+    arg0 instanceof HTMLDivElement ||
+    arg0 instanceof HTMLSpanElement
+  ) {
+    self = addElement(arg0, this);
+    this.elt = arg0;
     radioElement = arg0;
     if (typeof arguments[1] === 'string') name = arguments[1];
   } else {
     if (typeof arg0 === 'string') name = arg0;
     radioElement = document.createElement('div');
+    self = addElement(radioElement, this);
+    this.elt = radioElement;
   }
-  this.elt = radioElement;
-  let self = addElement(radioElement, this);
   self._name = name || 'radioOption';
 
   // setup member functions
