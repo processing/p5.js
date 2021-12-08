@@ -516,6 +516,8 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/katiejliu"><img src="https://avatars.githubusercontent.com/u/78124298?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Katie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=katiejliu" title="Code">💻</a></td>
     <td align="center"><a href="http://www.alura.com.br"><img src="https://avatars.githubusercontent.com/u/51391?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Guilherme Silveira</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=guilhermesilveira" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.camilleroux.com/"><img src="https://avatars.githubusercontent.com/u/25977?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Camille Roux</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=camilleroux" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/reejuBhattacharya"><img src="https://avatars.githubusercontent.com/u/40564575?v=4?s=100" width="100px;" alt=""/><br /><sub><b>reejuBhattacharya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reejuBhattacharya" title="Documentation">📖</a></td>
   </tr>
 </table>
 
