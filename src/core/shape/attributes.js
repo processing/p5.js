@@ -332,6 +332,9 @@ p5.prototype.strokeJoin = function(join) {
  * Sets the width of the stroke used for lines, points and the border around
  * shapes. All widths are set in units of pixels.
  *
+ * Note that it is affected by any transformation or scaling that has
+ * been applied previously.
+ *
  * @method strokeWeight
  * @param  {Number} weight the weight of the stroke (in pixels)
  * @chainable
@@ -348,8 +351,21 @@ p5.prototype.strokeJoin = function(join) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * //Example of stroke weights
+ * //after transformations
+ * strokeWeight(1); // Default
+ * line(20, 20, 80, 20);
+ * scale(5); // Adding scale transformation
+ * strokeWeight(1); // Resulting strokeweight is 5
+ * line(4, 8, 16, 8); // Coordinates adjusted for scaling
+ * </code>
+ * </div>
+ *
  * @alt
  * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+ * 2 horizontal black line. Top line: thin, botton line: 5 times thicker than top
  */
 p5.prototype.strokeWeight = function(w) {
   p5._validateParameters('strokeWeight', arguments);
