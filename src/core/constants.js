@@ -78,7 +78,7 @@ export const WAIT = 'wait';
  * </code></div>
  *
  * @alt
- * 80x80 white quarter-circle with curve toward bottom right of canvas.
+ * 80×80 white quarter-circle with curve toward bottom right of canvas.
  */
 export const HALF_PI = _PI / 2;
 /**
@@ -132,7 +132,7 @@ export const QUARTER_PI = _PI / 4;
  * </code></div>
  *
  * @alt
- * 80x80 white ellipse shape in center of canvas.
+ * 80×80 white ellipse shape in center of canvas.
  */
 export const TAU = _PI * 2;
 /**
@@ -150,7 +150,7 @@ export const TAU = _PI * 2;
  * </code></div>
  *
  * @alt
- * 80x80 white ellipse shape in center of canvas.
+ * 80×80 white ellipse shape in center of canvas.
  */
 export const TWO_PI = _PI * 2;
 /**

@@ -344,7 +344,7 @@ function _sAssign(sVal, iVal) {
  * function setup() {
  *   background(50);
  *   // Top-left corner of the img is at (10, 10)
- *   // Width and height are 50 x 50
+ *   // Width and height are 50×50
  *   image(img, 10, 10, 50, 50);
  * }
  * </code>
@@ -368,13 +368,13 @@ function _sAssign(sVal, iVal) {
  * function setup() {
  *   // 1. Background image
  *   // Top-left corner of the img is at (0, 0)
- *   // Width and height are the img's original width and height, 100 x 100
+ *   // Width and height are the img's original width and height, 100×100
  *   image(img, 0, 0);
  *   // 2. Top right image
  *   // Top-left corner of destination rectangle is at (50, 0)
- *   // Destination rectangle width and height are 40 x 20
+ *   // Destination rectangle width and height are 40×20
  *   // The next parameters are relative to the source image:
- *   // - Starting at position (50, 50) on the source image, capture a 50 x 50
+ *   // - Starting at position (50, 50) on the source image, capture a 50×50
  *   // subsection
  *   // - Draw this subsection to fill the dimensions of the destination rectangle
  *   image(img, 50, 0, 40, 20, 50, 50, 50, 50);

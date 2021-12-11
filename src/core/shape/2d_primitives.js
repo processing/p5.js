@@ -253,7 +253,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * </div>
  *
  * @alt
- *white ellipse with black outline in middle-right of canvas that is 55x55
+ *white ellipse with black outline in middle-right of canvas that is 55×55
  */
 
 /**
@@ -295,7 +295,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * </div>
  *
  * @alt
- * white circle with black outline in mid of canvas that is 55x55.
+ * white circle with black outline in mid of canvas that is 55×55.
  */
 p5.prototype.circle = function() {
   p5._validateParameters('circle', arguments);
@@ -595,9 +595,9 @@ p5.prototype.quad = function(...args) {
  * </div>
  *
  * @alt
- * 55x55 white rect with black outline in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges of different radii.
+ * 55×55 white rect with black outline in mid-right of canvas.
+ * 55×55 white rect with black outline and rounded edges in mid-right of canvas.
+ * 55×55 white rect with black outline and rounded edges of different radii.
  */
 
 /**
@@ -662,9 +662,9 @@ p5.prototype.rect = function() {
  * </div>
  *
  * @alt
- * 55x55 white square with black outline in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges in mid-right of canvas.
- * 55x55 white square with black outline and rounded edges of different radii.
+ * 55×55 white square with black outline in mid-right of canvas.
+ * 55×55 white square with black outline and rounded edges in mid-right of canvas.
+ * 55×55 white square with black outline and rounded edges of different radii.
  */
 p5.prototype.square = function(x, y, s, tl, tr, br, bl) {
   p5._validateParameters('square', arguments);

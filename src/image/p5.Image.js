@@ -157,7 +157,7 @@ p5.Image = function(width, height) {
    * left to right across each row, then down each column. Retina and other
    * high density displays may have more pixels (by a factor of
    * pixelDensity^2).
-   * For example, if the image is 100x100 pixels, there will be 40,000. With
+   * For example, if the image is 100×100 pixels, there will be 40,000. With
    * pixelDensity = 2, there will be 160,000. The first four values
    * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
    * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
@@ -212,8 +212,8 @@ p5.Image = function(width, height) {
    * </div>
    *
    * @alt
-   * 66x66 turquoise rect in center of canvas
-   * 66x66 pink rect in center of canvas
+   * 66×66 turquoise rect in center of canvas
+   * 66×66 pink rect in center of canvas
    *
    */
   this.pixels = [];
@@ -378,7 +378,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h) {
  * </code></div>
  *
  * @alt
- * image of rocky mountains with 50x50 green rect in front
+ * image of rocky mountains with 50×50 green rect in front
  */
 /**
  * @method get

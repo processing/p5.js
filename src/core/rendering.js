@@ -27,7 +27,7 @@ const defaultClass = 'p5Canvas';
  *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
- * window will be given a default size of 100x100 pixels.
+ * window will be given a default size of 100×100 pixels.
  *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>

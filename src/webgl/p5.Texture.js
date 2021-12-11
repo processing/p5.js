@@ -99,7 +99,7 @@ p5.Texture.prototype.init = function(data) {
     this.height === 0 ||
     (this.isSrcMediaElement && !this.src.loadedmetadata)
   ) {
-    // assign a 1x1 empty texture initially, because data is not yet ready,
+    // assign a 1×1 empty texture initially, because data is not yet ready,
     // so that no errors occur in gl console!
     const tmpdata = new Uint8Array([1, 1, 1, 1]);
     gl.texImage2D(

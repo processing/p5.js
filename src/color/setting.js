@@ -283,7 +283,7 @@ p5.prototype.clear = function() {
  *Green to red gradient from bottom L to top R. shading originates from top left.
  *Rainbow gradient from left to right. Brightness increasing to white at top.
  *unknown image.
- *50x50 ellipse at middle L & 40x40 ellipse at center. Translucent pink outlines.
+ *50×50 ellipse at middle L & 40×40 ellipse at center. Translucent pink outlines.
  */
 
 /**
@@ -444,17 +444,17 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * </div>
  *
  * @alt
- * 60x60 dark charcoal grey rect with black outline in center of canvas.
- * 60x60 yellow rect with black outline in center of canvas.
- * 60x60 royal blue rect with black outline in center of canvas.
- * 60x60 red rect with black outline in center of canvas.
- * 60x60 pink rect with black outline in center of canvas.
- * 60x60 black rect with black outline in center of canvas.
- * 60x60 light green rect with black outline in center of canvas.
- * 60x60 soft green rect with black outline in center of canvas.
- * 60x60 red rect with black outline in center of canvas.
- * 60x60 dark fuchsia rect with black outline in center of canvas.
- * 60x60 blue rect with black outline in center of canvas.
+ * 60×60 dark charcoal grey rect with black outline in center of canvas.
+ * 60×60 yellow rect with black outline in center of canvas.
+ * 60×60 royal blue rect with black outline in center of canvas.
+ * 60×60 red rect with black outline in center of canvas.
+ * 60×60 pink rect with black outline in center of canvas.
+ * 60×60 black rect with black outline in center of canvas.
+ * 60×60 light green rect with black outline in center of canvas.
+ * 60×60 soft green rect with black outline in center of canvas.
+ * 60×60 red rect with black outline in center of canvas.
+ * 60×60 dark fuchsia rect with black outline in center of canvas.
+ * 60×60 blue rect with black outline in center of canvas.
  */
 
 /**
@@ -522,7 +522,7 @@ p5.prototype.fill = function(...args) {
  * </div>
  *
  * @alt
- * white rect top middle and noFill rect center. Both 60x60 with black outlines.
+ * white rect top middle and noFill rect center. Both 60×60 with black outlines.
  * black canvas with purple cube wireframe spinning
  */
 p5.prototype.noFill = function() {
@@ -562,7 +562,7 @@ p5.prototype.noFill = function() {
  * </div>
  *
  * @alt
- * 60x60 white rect at center. no outline.
+ * 60×60 white rect at center. no outline.
  * black canvas with pink cube spinning
  */
 p5.prototype.noStroke = function() {
@@ -696,17 +696,17 @@ p5.prototype.noStroke = function() {
  * </div>
  *
  * @alt
- * 60x60 white rect at center. Dark charcoal grey outline.
- * 60x60 white rect at center. Yellow outline.
- * 60x60 white rect at center. Royal blue outline.
- * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Pink outline.
- * 60x60 white rect at center. Black outline.
- * 60x60 white rect at center. Bright green outline.
- * 60x60 white rect at center. Soft green outline.
- * 60x60 white rect at center. Red outline.
- * 60x60 white rect at center. Dark fuchsia outline.
- * 60x60 white rect at center. Blue outline.
+ * 60×60 white rect at center. Dark charcoal grey outline.
+ * 60×60 white rect at center. Yellow outline.
+ * 60×60 white rect at center. Royal blue outline.
+ * 60×60 white rect at center. Red outline.
+ * 60×60 white rect at center. Pink outline.
+ * 60×60 white rect at center. Black outline.
+ * 60×60 white rect at center. Bright green outline.
+ * 60×60 white rect at center. Soft green outline.
+ * 60×60 white rect at center. Red outline.
+ * 60×60 white rect at center. Dark fuchsia outline.
+ * 60×60 white rect at center. Blue outline.
  */
 
 /**
@@ -812,9 +812,9 @@ p5.prototype.stroke = function(...args) {
  * </div>
  *
  * @alt
- * 60x60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
- * 60x60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
- * 60x60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
+ * 60×60 centered pink rect, purple background. Elliptical area in top-left of rect is erased white.
+ * 60×60 centered purple rect, mint green background. Triangle in top-right is partially erased with fully erased outline.
+ * 60×60 centered teal sphere, yellow background. Torus rotating around sphere erases to reveal black text underneath.
  */
 p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);

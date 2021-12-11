@@ -98,8 +98,8 @@ import '../core/friendly_errors/fes_core';
  * </code></div>
  *
  * @alt
- * 50x50 ellipse that changes from black to white depending on the current humidity
- * 50x50 ellipse that changes from black to white depending on the current humidity
+ * 50×50 ellipse that changes from black to white depending on the current humidity
+ * 50×50 ellipse that changes from black to white depending on the current humidity
  */
 /**
  * @method loadJSON
