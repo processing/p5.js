@@ -261,7 +261,7 @@ p5.prototype.removeElements = function(e) {
  * </code></div>
  *
  * @alt
- * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
+ * dropdown: pear, kiwi, grape. When selected text "it's a" + selection shown.
  */
 p5.Element.prototype.changed = function(fxn) {
   p5.Element._adjustListener('change', fxn, this);
