@@ -914,7 +914,7 @@ p5.prototype.createRadio = function() {
       }
     } else {
       for (const option of self._getOptionsArray()) {
-        if (option.value === value) {
+        if (option.value === value.toString()) {
           option.setAttribute('checked', true);
           result = option;
         }
