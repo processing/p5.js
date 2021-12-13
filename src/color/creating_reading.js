@@ -105,8 +105,8 @@ p5.prototype.blue = function(c) {
  * </div>
  *
  * @alt
- * Left half of canvas salmon pink and the right half with it's brightness colored white.
- * Left half of canvas olive colored and the right half with it's brightness color gray.
+ * Left half of canvas salmon pink and the right half with its brightness colored white.
+ * Left half of canvas olive colored and the right half with its brightness color gray.
  */
 p5.prototype.brightness = function(c) {
   p5._validateParameters('brightness', arguments);
