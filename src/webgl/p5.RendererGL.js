@@ -901,7 +901,9 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _g = args[1] || 0;
   const _b = args[2] || 0;
   const _a = args[3] || 0;
+
   this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clearDepth(1);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 

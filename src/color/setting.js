@@ -186,6 +186,11 @@ p5.prototype.background = function(...args) {
  * or partially transparent. This function clears everything to make all of
  * the pixels 100% transparent.
  *
+ * Note: In WebGL mode, this function can be passed normalized RGBA color values in
+ * order to clear the screen to a specific color. In addition to color, it will also
+ * clear the depth buffer. If you are not using the webGL renderer
+ * these color values will have no effect.
+ *
  * @method clear
  * @chainable
  * @example
@@ -204,10 +209,19 @@ p5.prototype.background = function(...args) {
  *
  * @alt
  * small white ellipses are continually drawn at mouse's x and y coordinates.
+ *
+ * @param {Number} r normalized red val.
+ * @param {Number} g normalized green val.
+ * @param {Number} b normalized blue val.
+ * @param {Number} a normalized alpha val.
  */
+p5.prototype.clear = function(...args) {
+  const _r = args[0] || 0;
+  const _g = args[1] || 0;
+  const _b = args[2] || 0;
+  const _a = args[3] || 0;
 
-p5.prototype.clear = function() {
-  this._renderer.clear();
+  this._renderer.clear(_r, _g, _b, _a);
   return this;
 };
 
