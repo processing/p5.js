@@ -338,7 +338,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('clear color with rgba arguments', function(done) {
-      myp5.createCanvas(50, 50);
+      myp5.createCanvas(50, 50, myp5.WEBGL);
       myp5.clear(1, 0, 0, 1);
       pixel = myp5.get(0, 0);
       assert.deepEqual(pixel, [255, 0, 0, 255]);
