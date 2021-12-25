@@ -461,8 +461,9 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       break;
     case gl.SAMPLER_2D:
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      uniform.texture = this._renderer.getTexture(data);
-      gl.uniform1i(uniform.location, uniform.samplerIndex);
+      uniform.texture =
+        data instanceof p5.Texture ? data : this._renderer.getTexture(data);
+      gl.uniform1i(location, uniform.samplerIndex);
       break;
     //@todo complete all types
   }
