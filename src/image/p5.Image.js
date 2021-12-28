@@ -629,10 +629,6 @@ p5.Image.prototype.copy = function(...args) {
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  */
 // TODO: - Accept an array of alpha values.
-//       - Use other channels of an image. p5 uses the
-//       blue channel (which feels kind of arbitrary). Note: at the
-//       moment this method does not match native processing's original
-//       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
     p5Image = this;
@@ -657,7 +653,32 @@ p5.Image.prototype.mask = function(p5Image) {
   ];
 
   this.drawingContext.globalCompositeOperation = 'destination-in';
-  p5.Image.prototype.copy.apply(this, copyArgs);
+  if (this.gifProperties) {
+    const prevFrameData = this.drawingContext.getImageData(
+      0,
+      0,
+      this.width,
+      this.height
+    );
+    for (let i = 0; i < this.gifProperties.frames.length; i++) {
+      this.drawingContext.clearRect(0, 0, this.width, this.height);
+      this.drawingContext.putImageData(
+        this.gifProperties.frames[i].image,
+        0,
+        0
+      );
+      p5.Image.prototype.copy.apply(this, copyArgs);
+      this.gifProperties.frames[i].image = this.drawingContext.getImageData(
+        0,
+        0,
+        this.width,
+        this.height
+      );
+    }
+    this.drawingContext.putImageData(prevFrameData, 0, 0);
+  } else {
+    p5.Image.prototype.copy.apply(this, copyArgs);
+  }
   this.drawingContext.globalCompositeOperation = currBlend;
   this.setModified(true);
 };
