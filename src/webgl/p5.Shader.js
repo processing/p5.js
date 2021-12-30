@@ -502,7 +502,7 @@ p5.Shader.prototype.isNormalShader = function() {
 };
 
 p5.Shader.prototype.isTextureShader = function() {
-  return this.samplerIndex > 0;
+  return this.samplers.length > 0;
 };
 
 p5.Shader.prototype.isColorShader = function() {
