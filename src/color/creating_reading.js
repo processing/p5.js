@@ -248,7 +248,7 @@ p5.prototype.brightness = function(c) {
  * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80×80.
  * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
  * Two bright green rects on opposite sides of the canvas, both 45×80.
- * Four blue rects in each corner of the canvas, each are 35×x35.
+ * Four blue rects in each corner of the canvas, each are 35×35.
  * Bright sea green rect on left and darker rect on right of canvas, both 45×80.
  * Dark green rect on left and lighter green rect on right of canvas, both 45×80.
  * Dark blue rect on left and light teal rect on right of canvas, both 45×80.
