@@ -522,6 +522,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/IamEzio"><img src="https://avatars.githubusercontent.com/u/89375125?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anshuman Maurya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AIamEzio" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/Himanshu664"><img src="https://avatars.githubusercontent.com/u/76220055?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Himanshu Malviya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AHimanshu664" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/chosamuel"><img src="https://avatars.githubusercontent.com/u/26333602?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel Cho</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Achosamuel" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
