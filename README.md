@@ -519,6 +519,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://www.camilleroux.com/"><img src="https://avatars.githubusercontent.com/u/25977?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Camille Roux</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=camilleroux" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/reejuBhattacharya"><img src="https://avatars.githubusercontent.com/u/40564575?v=4?s=100" width="100px;" alt=""/><br /><sub><b>reejuBhattacharya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reejuBhattacharya" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/akshatnema"><img src="https://avatars.githubusercontent.com/u/76521428?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Akshat Nema</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akshatnema" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/IamEzio"><img src="https://avatars.githubusercontent.com/u/89375125?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anshuman Maurya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AIamEzio" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
