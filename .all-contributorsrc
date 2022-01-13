@@ -2886,6 +2886,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "frigorific44",
+      "name": "Derek Enlow",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28745080?v=4",
+      "profile": "http://derekenlow.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
