@@ -507,7 +507,9 @@
       "name": "Kevin Workman",
       "avatar_url": "https://avatars1.githubusercontent.com/u/6930986?v=4",
       "profile": "http://HappyCoding.io",
-      "contributions": []
+      "contributions": [
+        "doc"
+      ]
     },
     {
       "login": "gauini",
