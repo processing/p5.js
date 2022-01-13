@@ -1352,8 +1352,8 @@ p5.Vector.prototype.limit = function limit(max) {
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
+ * let v = createVector(3, 4, 0);
+ * // v has components [3.0, 4.0, 0.0]
  * v.setMag(10);
  * // v's components are set to [6.0, 8.0, 0.0]
  * </code>
