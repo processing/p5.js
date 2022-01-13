@@ -2822,6 +2822,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "j-stodd",
+      "name": "Jstodd",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65479705?v=4",
+      "profile": "https://github.com/j-stodd",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
