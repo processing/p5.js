@@ -177,7 +177,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://www.estebanalmiron.com"><img src="https://avatars1.githubusercontent.com/u/1040718?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taseenb</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tafsiri"><img src="https://avatars1.githubusercontent.com/u/26408?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yannick Assogba</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/johnpasquarello"><img src="https://avatars3.githubusercontent.com/u/2349625?v=4?s=100" width="100px;" alt=""/><br /><sub><b>John Pasquarello</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=johnpasquarello" title="Code">💻</a></td>
-    <td align="center"><a href="http://HappyCoding.io"><img src="https://avatars1.githubusercontent.com/u/6930986?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Workman</b></sub></a><br /></td>
+    <td align="center"><a href="http://HappyCoding.io"><img src="https://avatars1.githubusercontent.com/u/6930986?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Workman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KevinWorkman" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gauini"><img src="https://avatars1.githubusercontent.com/u/4229215?v=4?s=100" width="100px;" alt=""/><br /><sub><b>gauini</b></sub></a><br /></td>
   </tr>
   <tr>
