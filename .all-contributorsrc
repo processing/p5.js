@@ -2783,6 +2783,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "TOrfevres",
+      "name": "Théodore Orfèvres",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23334809?v=4",
+      "profile": "https://github.com/TOrfevres",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
