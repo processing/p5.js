@@ -2895,6 +2895,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "willmartian",
+      "name": "Will Martin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17113462?v=4",
+      "profile": "http://willmartian.com",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "repoType": "github",
