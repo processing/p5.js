@@ -536,6 +536,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/awelles"><img src="https://avatars.githubusercontent.com/u/115194?v=4?s=100" width="100px;" alt=""/><br /><sub><b>A Welles</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aawelles" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://superblob.studio/"><img src="https://avatars.githubusercontent.com/u/5208182?v=4?s=100" width="100px;" alt=""/><br /><sub><b>andrei antonescu</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aandreiantonescu" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/dipamsen"><img src="https://avatars.githubusercontent.com/u/59444569?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Fun Planet</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Adipamsen" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/stigmollerhansen"><img src="https://avatars.githubusercontent.com/u/6607966?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stig Møller Hansen</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Astigmollerhansen" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
