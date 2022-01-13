@@ -526,6 +526,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/chosamuel"><img src="https://avatars.githubusercontent.com/u/26333602?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel Cho</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Achosamuel" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/TOrfevres"><img src="https://avatars.githubusercontent.com/u/23334809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Théodore Orfèvres</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ATOrfevres" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/JaPatGitHub"><img src="https://avatars.githubusercontent.com/u/73636668?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jyotiraditya Pradhan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JaPatGitHub" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Zearin"><img src="https://avatars.githubusercontent.com/u/630124?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zearin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Zearin" title="Documentation">📖</a></td>
   </tr>
 </table>
 
