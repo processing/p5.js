@@ -2840,6 +2840,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "oleboleskole3",
+      "name": "oleboleskole3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43952813?v=4",
+      "profile": "https://github.com/oleboleskole3",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
