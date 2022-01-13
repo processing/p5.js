@@ -2811,6 +2811,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "pifragile",
+      "name": "pifragile",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14249275?v=4",
+      "profile": "https://github.com/pifragile",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
