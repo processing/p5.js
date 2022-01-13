@@ -531,6 +531,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/j-stodd"><img src="https://avatars.githubusercontent.com/u/65479705?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jstodd</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aj-stodd" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://racket-stories.com"><img src="https://avatars.githubusercontent.com/u/461765?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jens Axel Søgaard</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=soegaard" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/oleboleskole3"><img src="https://avatars.githubusercontent.com/u/43952813?v=4?s=100" width="100px;" alt=""/><br /><sub><b>oleboleskole3</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aoleboleskole3" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
