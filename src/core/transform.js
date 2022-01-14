@@ -25,12 +25,12 @@ import p5 from './main';
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Number|Array} a numbers which define the 2x3 matrix to be multiplied, or an array of numbers
- * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} e numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} f numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number|Array} a numbers which define the 2×3 matrix to be multiplied, or an array of numbers
+ * @param  {Number} b numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2×3 matrix to be multiplied
  * @chainable
  * @example
  * <div>
@@ -221,7 +221,7 @@ p5.prototype.resetMatrix = function() {
  * </div>
  *
  * @alt
- * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * white 52×52 rect with black outline at center rotated counter 45 degrees
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
@@ -380,8 +380,8 @@ p5.prototype.rotateZ = function(angle) {
  * </div>
  *
  * @alt
- * white 52x52 rect with black outline at center rotated counter 45 degrees
- * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
+ * white 52×52 rect with black outline at center rotated counter 45 degrees
+ * 2 white rects with black outline- 1 50×50 at center. other 25×65 bottom left
  */
 /**
  * @method scale
@@ -540,9 +540,9 @@ p5.prototype.shearY = function(angle) {
  * </div>
  *
  * @alt
- * white 55x55 rect with black outline at center right.
- * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
- * a 20x20 white rect moving in a circle around the canvas
+ * white 55×55 rect with black outline at center right.
+ * 3 white 55×55 rects with black outlines at top-l, center-r and bottom-r.
+ * a 20×20 white rect moving in a circle around the canvas
  */
 /**
  * @method translate

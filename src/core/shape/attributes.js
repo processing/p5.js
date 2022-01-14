@@ -62,8 +62,8 @@ import * as constants from '../constants';
  * </div>
  *
  * @alt
- * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
- * 60x60 white ellipse and 30x30 grey ellipse top-right with black outlines.
+ * 60×60 white ellipse and 30×30 grey ellipse with black outlines at center.
+ * 60×60 white ellipse and 30×30 grey ellipse top-right with black outlines.
  */
 p5.prototype.ellipseMode = function(m) {
   p5._validateParameters('ellipseMode', arguments);
@@ -100,7 +100,7 @@ p5.prototype.ellipseMode = function(m) {
  * </div>
  *
  * @alt
- * 2 pixelated 36x36 white ellipses to left & right of center, black background
+ * 2 pixelated 36×36 white ellipses to left & right of center, black background
  */
 p5.prototype.noSmooth = function() {
   this.setAttributes('antialias', false);
@@ -165,8 +165,8 @@ p5.prototype.noSmooth = function() {
  * </div>
  *
  * @alt
- * 50x50 white rect at center and 25x25 grey rect in the top left of the other.
- * 50x50 white rect at center and 25x25 grey rect in the center of the other.
+ * 50×50 white rect at center and 25×25 grey rect in the top left of the other.
+ * 50×50 white rect at center and 25×25 grey rect in the center of the other.
  */
 p5.prototype.rectMode = function(m) {
   p5._validateParameters('rectMode', arguments);
@@ -204,7 +204,7 @@ p5.prototype.rectMode = function(m) {
  * </div>
  *
  * @alt
- * 2 pixelated 36x36 white ellipses one left one right of center. On black.
+ * 2 pixelated 36×36 white ellipses one left one right of center. On black.
  */
 p5.prototype.smooth = function() {
   this.setAttributes('antialias', true);

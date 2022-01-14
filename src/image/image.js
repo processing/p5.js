@@ -82,7 +82,7 @@ import omggif from 'omggif';
  * </div>
  *
  * @alt
- * 66x66 dark turquoise rect in center of canvas.
+ * 66×66 dark turquoise rect in center of canvas.
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
  * no image displayed
  */

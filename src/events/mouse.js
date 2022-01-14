@@ -188,7 +188,7 @@ p5.prototype.pmouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
+ * 60×60 black rect center, fuchsia background. rect flickers on mouse movement
  */
 p5.prototype.pmouseY = 0;
 
@@ -226,7 +226,7 @@ p5.prototype.pmouseY = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
+ * 60×60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
  */
 p5.prototype.winMouseX = 0;
 
@@ -264,7 +264,7 @@ p5.prototype.winMouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
+ * 60×60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
  */
 p5.prototype.winMouseY = 0;
 
@@ -382,7 +382,7 @@ p5.prototype.pwinMouseY = 0;
  * </div>
  *
  * @alt
- * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
+ * 50×50 black ellipse appears on center of fuchsia canvas on mouse click/press.
  */
 p5.prototype.mouseButton = 0;
 
@@ -412,7 +412,7 @@ p5.prototype.mouseButton = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
+ * black 50×50 rect becomes ellipse with mouse click/press. fuchsia background.
  */
 p5.prototype.mouseIsPressed = false;
 
@@ -528,7 +528,7 @@ p5.prototype._setMouseButton = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect becomes lighter with mouse movements until white then resets
+ * black 50×50 rect becomes lighter with mouse movements until white then resets
  * no image displayed
  */
 
@@ -583,7 +583,7 @@ p5.prototype._setMouseButton = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns lighter with mouse click and drag until white, resets
+ * black 50×50 rect turns lighter with mouse click and drag until white, resets
  * no image displayed
  */
 p5.prototype._onmousemove = function(e) {
@@ -666,7 +666,7 @@ p5.prototype._onmousemove = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onmousedown = function(e) {
@@ -746,7 +746,7 @@ p5.prototype._onmousedown = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onmouseup = function(e) {
@@ -825,7 +825,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onclick = function(e) {
@@ -893,7 +893,7 @@ p5.prototype._onclick = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse doubleClick/press.
+ * black 50×50 rect turns white with mouse doubleClick/press.
  * no image displayed
  */
 
@@ -962,7 +962,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with vertical scroll. fuchsia background
+ * black 50×50 rect moves up and down with vertical scroll. fuchsia background
  */
 p5.prototype._onwheel = function(e) {
   const context = this._isGlobal ? window : this;

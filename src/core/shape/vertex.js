@@ -261,7 +261,7 @@ p5.prototype.beginContour = function() {
  * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
  * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
  * 4 interlocking white triangles in 45 degree rotated square-shape.
- * 2 white rectangle shapes in mid-right canvas. Both 20x55.
+ * 2 white rectangle shapes in mid-right canvas. Both 20×55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
  */

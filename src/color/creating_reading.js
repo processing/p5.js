@@ -245,13 +245,13 @@ p5.prototype.brightness = function(c) {
  *
  * @alt
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
- * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
+ * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80×80.
  * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
- * Two bright green rects on opposite sides of the canvas, both 45x80.
- * Four blue rects in each corner of the canvas, each are 35x35.
- * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
- * Dark green rect on left and lighter green rect on right of canvas, both 45x80.
- * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
+ * Two bright green rects on opposite sides of the canvas, both 45×80.
+ * Four blue rects in each corner of the canvas, each are 35×35.
+ * Bright sea green rect on left and darker rect on right of canvas, both 45×80.
+ * Dark green rect on left and lighter green rect on right of canvas, both 45×80.
+ * Dark blue rect on left and light teal rect on right of canvas, both 45×80.
  */
 
 /**
@@ -316,7 +316,7 @@ p5.prototype.color = function() {
  * </div>
  *
  * @alt
- * blue rect on left and green on right, both with black outlines & 35x60.
+ * blue rect on left and green on right, both with black outlines & 35×60.
  */
 p5.prototype.green = function(c) {
   p5._validateParameters('green', arguments);
@@ -351,7 +351,7 @@ p5.prototype.green = function(c) {
  * </div>
  *
  * @alt
- * salmon pink rect on left and black on right, both 35x60.
+ * salmon pink rect on left and black on right, both 35×60.
  */
 p5.prototype.hue = function(c) {
   p5._validateParameters('hue', arguments);
@@ -398,7 +398,7 @@ p5.prototype.hue = function(c) {
  * </div>
  *
  * @alt
- * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20x60
+ * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20×60
  */
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
@@ -472,7 +472,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * </div>
  *
  * @alt
- * light pastel green rect on left and dark grey rect on right, both 35x60.
+ * light pastel green rect on left and dark grey rect on right, both 35×60.
  */
 p5.prototype.lightness = function(c) {
   p5._validateParameters('lightness', arguments);
@@ -511,7 +511,7 @@ p5.prototype.lightness = function(c) {
  * </div>
  *
  * @alt
- * yellow rect on left and red rect on right, both with black outlines and 35x60.
+ * yellow rect on left and red rect on right, both with black outlines and 35×60.
  * grey canvas
  */
 p5.prototype.red = function(c) {
@@ -546,7 +546,7 @@ p5.prototype.red = function(c) {
  * </div>
  *
  * @alt
- *deep pink rect on left and grey rect on right, both 35x60.
+ *deep pink rect on left and grey rect on right, both 35×60.
  */
 p5.prototype.saturation = function(c) {
   p5._validateParameters('saturation', arguments);

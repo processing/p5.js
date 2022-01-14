@@ -17,12 +17,12 @@ if (typeof Float32Array !== 'undefined') {
 }
 
 /**
- * A class to describe a 4x4 matrix
+ * A class to describe a 4×4 matrix
  * for model and view matrix manipulation in the p5js webgl renderer.
  * @class p5.Matrix
  * @private
  * @constructor
- * @param {Array} [mat4] array literal of our 4x4 matrix
+ * @param {Array} [mat4] array literal of our 4×4 matrix
  */
 p5.Matrix = function() {
   const args = new Array(arguments.length);
@@ -284,7 +284,7 @@ p5.Matrix.prototype.invert = function(a) {
 };
 
 /**
- * Inverts a 3x3 matrix
+ * Inverts a 3×3 matrix
  * @method invert3x3
  * @chainable
  */
@@ -321,7 +321,7 @@ p5.Matrix.prototype.invert3x3 = function() {
 };
 
 /**
- * transposes a 3x3 p5.Matrix by a mat3
+ * transposes a 3×3 p5.Matrix by a mat3
  * @method transpose3x3
  * @param  {Number[]} mat3 1-dimensional array
  * @chainable
@@ -340,7 +340,7 @@ p5.Matrix.prototype.transpose3x3 = function(mat3) {
 };
 
 /**
- * converts a 4x4 matrix to its 3x3 inverse transform
+ * converts a 4×4 matrix to its 3×3 inverse transform
  * commonly used in MVMatrix to NMatrix conversions.
  * @method invertTranspose
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
@@ -379,7 +379,7 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
 /**
  * inspired by Toji's mat4 determinant
  * @method determinant
- * @return {Number} Determinant of our 4x4 matrix
+ * @return {Number} Determinant of our 4×4 matrix
  */
 p5.Matrix.prototype.determinant = function() {
   const d00 = this.mat4[0] * this.mat4[5] - this.mat4[1] * this.mat4[4],
