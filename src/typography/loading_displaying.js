@@ -15,9 +15,9 @@ import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a PFont Object. This method is asynchronous,
- * meaning it may not finish before the next line in your sketch
- * is executed.
+ * and returns a <a href="#/p5.Font">p5.Font</a> object. This function
+ * is asynchronous, meaning it may not finish before the next line in
+ * your sketch is executed.
  *
  * The path to the font should be relative to the HTML file
  * that links in your sketch. Loading fonts from a URL or other

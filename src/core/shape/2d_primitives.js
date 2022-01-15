@@ -240,8 +240,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * with the <a href="#/p5/ellipseMode">ellipseMode()</a> function.
  *
  * @method ellipse
- * @param  {Number} x x-coordinate of the center of ellipse.
- * @param  {Number} y y-coordinate of the center of ellipse.
+ * @param  {Number} x x-coordinate of the center of the ellipse.
+ * @param  {Number} y y-coordinate of the center of the ellipse.
  * @param  {Number} w width of the ellipse.
  * @param  {Number} [h] height of the ellipse.
  * @chainable
@@ -262,7 +262,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} [detail] optional parameter for WebGL mode only. This is to
+ * @param  {Integer} [detail] optional parameter for WEBGL mode only. This is to
  *                         specify the number of vertices that makes up the
  *                         perimeter of the ellipse. Default value is 25. Won't
  *                         draw a stroke for a detail of more than 50.
@@ -275,15 +275,16 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
 /**
  * Draws a circle to the screen. A circle is a simple closed shape. It is the set
  * of all points in a plane that are at a given distance from a given point,
- * the centre. This function is a special case of the ellipse() function, where
- * the width and height of the ellipse are the same. Height and width of the
- * ellipse correspond to the diameter of the circle. By default, the first two
- * parameters set the location of the centre of the circle, the third sets the
- * diameter of the circle.
+ * the center. This function is a special case of the
+ * <a href="#/p5/ellipse">ellipse()</a> function, where the width and height
+ * of the ellipse are the same. Height and width of the ellipse correspond to
+ * the diameter of the circle. By default, the first two parameters set the
+ * location of the center of the circle, the third sets the diameter of the
+ * circle.
  *
  * @method circle
- * @param  {Number} x  x-coordinate of the centre of the circle.
- * @param  {Number} y  y-coordinate of the centre of the circle.
+ * @param  {Number} x  x-coordinate of the center of the circle.
+ * @param  {Number} y  y-coordinate of the center of the circle.
  * @param  {Number} d  diameter of the circle.
  * @chainable
  * @example
@@ -476,7 +477,7 @@ p5.prototype.point = function(...args) {
 };
 
 /**
- * Draws a quad on the canvas. A quad is a quadrilateral, a four sided polygon. It is
+ * Draws a quad on the canvas. A quad is a quadrilateral, a four-sided polygon. It is
  * similar to a rectangle, but the angles between its edges are not
  * constrained to ninety degrees. The first pair of parameters (x1,y1)
  * sets the first vertex and the subsequent pairs should proceed
@@ -553,7 +554,7 @@ p5.prototype.quad = function(...args) {
  * Draws a rectangle on the canvas. A rectangle is a four-sided closed shape with
  * every angle at ninety degrees. By default, the first two parameters set
  * the location of the upper-left corner, the third sets the width, and the
- * fourth sets the height. The way these parameters are interpreted, may be
+ * fourth sets the height. The way these parameters are interpreted may be
  * changed with the <a href="#/p5/rectMode">rectMode()</a> function.
  *
  * The fifth, sixth, seventh and eighth parameters, if specified,

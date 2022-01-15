@@ -356,7 +356,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  *
- * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the fill color.
+ * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the fill color.
  *
  * @method fill
  * @param  {Number}        v1      red or hue value relative to
@@ -596,7 +596,7 @@ p5.prototype.noStroke = function() {
  * number value as a second argument is not supported, the RGBA form should be
  * used.
  *
- * A p5 <a href="#/p5.Color">Color</a> object can also be provided to set the stroke color.
+ * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the stroke color.
  *
  * @method stroke
  * @param  {Number}        v1      red or hue value relative to

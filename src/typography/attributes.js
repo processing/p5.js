@@ -20,7 +20,7 @@ import p5 from '../core/main';
  * So if you write textAlign(LEFT), you are aligning the left
  * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
  * If you write textAlign(RIGHT, TOP), you are aligning the right edge
- * of your text to the x value and the top of edge of the text
+ * of your text to the x value and the top edge of the text
  * to the y value.
  *
  * @method textAlign

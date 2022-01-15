@@ -538,7 +538,7 @@ p5.prototype._setMouseButton = function(e) {
  * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseDragged
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -620,7 +620,7 @@ p5.prototype._onmousemove = function(e) {
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mousePressed
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -699,7 +699,7 @@ p5.prototype._onmousedown = function(e) {
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseReleased
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -777,7 +777,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseClicked
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -929,7 +929,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel
  * have scrolled. The values can be positive or negative depending on the
- * scroll direction (on OS X with "natural" scrolling enabled, the signs
+ * scroll direction (on macOS with "natural" scrolling enabled, the signs
  * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add

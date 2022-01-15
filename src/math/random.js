@@ -160,9 +160,9 @@ p5.prototype.random = function(min, max) {
  * be returned.
  *
  * Takes either 0, 1 or 2 arguments.<br>
- * If no args, returns a mean of 0 and standard deviation of 1.<br>
- * If one arg, that arg is the mean (standard deviation is 1).<br>
- * If two args, first is mean, second is standard deviation.
+ * If no args, the mean is 0 and the standard deviation is 1.<br>
+ * If one arg, that arg is the mean and the standard deviation is 1.<br>
+ * If two args, the first arg is the mean and the second is the standard deviation.
  *
  * @method randomGaussian
  * @param  {Number} [mean]  the mean

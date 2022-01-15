@@ -198,13 +198,13 @@ p5.prototype.resetMatrix = function() {
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulates the effect. For example, calling
+ * calls to the function accumulate the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
  * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
- * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -506,7 +506,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
- * @param  {Number} [z] forward/backward translation (webgl only)
+ * @param  {Number} [z] forward/backward translation (WEBGL only)
  * @chainable
  * @example
  * <div>

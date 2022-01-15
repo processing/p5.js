@@ -115,7 +115,7 @@ p5.prototype.constrain = function(n, low, high) {
 
 /**
  * Calculates the distance between two points, in either two or three dimensions.
- * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">dist()</a>
+ * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">p5.Vector.dist()</a>
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
@@ -269,10 +269,10 @@ p5.prototype.floor = Math.floor;
 /**
  * Calculates a number between two numbers at a specific increment. The amt
  * parameter is the amount to interpolate between the two values where 0.0
- * equal to the first point, 0.1 is very near the first point, 0.5 is
+ * is equal to the first point, 0.1 is very near the first point, 0.5 is
  * half-way in between, and 1.0 is equal to the second point. If the
  * value of amt is more than 1.0 or less than 0.0, the number will be
- * calculated accordingly in the ratio of the two given numbers. The lerp
+ * calculated accordingly in the ratio of the two given numbers. The lerp()
  * function is convenient for creating motion along a straight
  * path and for drawing dotted lines.
  *
