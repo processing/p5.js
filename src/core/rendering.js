@@ -253,48 +253,72 @@ p5.prototype.createGraphics = function(w, h, renderer) {
 
 /**
  * Blends the pixels in the display window according to the defined mode.
- * There is a choice of the following modes to blend the source pixels (A)
- * with the ones of pixels already in the display window (B):
- * <ul>
- * <li><code>BLEND</code> - linear interpolation of colours: C =
- * A*factor + B. <b>This is the default blending mode.</b></li>
- * <li><code>ADD</code> - sum of A and B</li>
- * <li><code>DARKEST</code> - only the darkest colour succeeds: C =
- * min(A*factor, B).</li>
- * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C =
- * max(A*factor, B).</li>
- * <li><code>DIFFERENCE</code> - subtract colors from underlying image.</li>
- * <li><code>EXCLUSION</code> - similar to <code>DIFFERENCE</code>, but less
- * extreme.</li>
- * <li><code>MULTIPLY</code> - multiply the colors, result will always be
- * darker.</li>
- * <li><code>SCREEN</code> - opposite multiply, uses inverse values of the
- * colors.</li>
- * <li><code>REPLACE</code> - the pixels entirely replace the others and
- * don't utilize alpha (transparency) values.</li>
- * <li><code>REMOVE</code> - removes pixels from B with the alpha strength of A.</li>
- * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
- * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
- * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
- * gray, <code>MULTIPLY</code> when lower. <em>(2D)</em></li>
- * <li><code>SOFT_LIGHT</code> - mix of <code>DARKEST</code> and
- * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. <em>(2D)</em>
- * </li>
- * <li><code>DODGE</code> - lightens light tones and increases contrast,
- * ignores darks. <em>(2D)</em></li>
- * <li><code>BURN</code> - darker areas are applied, increasing contrast,
- * ignores lights. <em>(2D)</em></li>
- * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
- * </ul>
+ * There is a choice of the following modes to blend the source pixels (<var>A</var>)
+ * with the ones of pixels already in the display window (<var>B</var>):
  *
- * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
- * <em>(3D)</em> indicates that this blend mode <b>only</b> works in the WEBGL renderer.
+ * <dl>
+ *    <dt><a href="#/p5/BLEND">BLEND</a></dt>
+ *    <dd>Linear interpolation of colours: <var>C</var> = <var>A</var>*factor + <var>B</var>.
+ *    <strong>This is the default blending mode.</strong></dd>
+ *
+ *    <dt><a href="#/p5/ADD">ADD</a></dt>
+ *    <dd>Sum of <var>A</var> and <var>B</var>.</dd>
+ *
+ *    <dt><a href="#/p5/DARKEST">DARKEST</a></dt>
+ *    <dd>Only the darkest colour succeeds: <var>C</var> = min(<var>A</var>*factor, <var>B</var>).</dd>
+ *
+ *    <dt><a href="#/p5/LIGHTEST">LIGHTEST</a></dt>
+ *    <dd>Only the lightest colour succeeds: <var>C</var> = max(<var>A</var>*factor, <var>B</var>).</dd>
+ *
+ *    <dt><a href="#/p5/DIFFERENCE">DIFFERENCE</a></dt>
+ *    <dd>Subtract colors from underlying image.</dd>
+ *
+ *    <dt><a href="#/p5/EXCLUSION">EXCLUSION</a></dt>
+ *    <dd>Similar to <code>DIFFERENCE</code>, but less extreme.</dd>
+ *
+ *    <dt><a href="#/p5/MULTIPLY">MULTIPLY</a></dt>
+ *    <dd>Multiply the colors. Result will always be darker.</dd>
+ *
+ *    <dt><a href="#/p5/SCREEN">SCREEN</a></dt>
+ *    <dd>Opposite of multiply. Uses inverse values of the colors.</dd>
+ *
+ *    <dt><a href="#/p5/REPLACE">REPLACE</a></dt>
+ *    <dd>The pixels entirely replace the others and don't utilize alpha (transparency) values.</dd>
+ *
+ *    <dt><a href="#/p5/REMOVE">REMOVE</a></dt>
+ *    <dd>Removes pixels from B with the alpha strength of A.</dd>
+ *
+ *    <dt><a href="#/p5/OVERLAY">OVERLAY</a> <sup><em>(2D only)</em></sup></dt>
+ *    <dd>Mix of <code>MULTIPLY</code> and <code>SCREEN</code>.
+ *    Multiplies dark values, and screens light values.</dd>
+ *
+ *    <dt><a href="#/p5/HARD_LIGHT">HARD_LIGHT</a> <sup><em>(2D only)</em></sup></dt>
+ *    <dd><code>SCREEN</code> when greater than 50% gray,
+ *    <code>MULTIPLY</code> when lower.</dd>
+ *
+ *    <dt><a href="#/p5/SOFT_LIGHT">SOFT_LIGHT</a> <sup><em>(2D only)</em></sup></dt>
+ *    <dd>Mix of <code>DARKEST</code> and <code>LIGHTEST</code>.
+ *    Works like <code>OVERLAY</code>, but not as harsh.</dd>
+ *
+ *    <dt><a href="#/p5/DODGE">DODGE</a> <sup><em>(2D only)</em></sup></dt>
+ *    <dd>Lightens light tones and increases contrast. Ignores darks.</dd>
+ *
+ *    <dt><a href="#/p5/BURN">BURN</a> <sup><em>(2D only)</em></sup></dt>
+ *    <dd>Darker areas are applied, increasing contrast. Ignores lights.</dd>
+ *
+ *    <dt><a href="#/p5/SUBTRACT">SUBTRACT</a> <sup><em>(3D only)</em></sup></dt>
+ *    <dd>Remainder of <var>A</var> and <var>B</var>.</dd>
+ * </dl>
+ *
+ *  <sup><strong><em>2D only</em></strong></sup> indicates that this blend mode <em>only</em> works in the 2D renderer.<br>
+ *  <sup><strong><em>3D only</em></strong></sup> indicates that this blend mode <em>only</em> works in the WEBGL renderer.
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set for canvas.
+ * @param  {Constant} mode  Blend mode to set for canvas.
  *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
  *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
- *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE or SUBTRACT
+ *                SOFT_LIGHT, DODGE, BURN, ADD, REMOVE, or SUBTRACT.
+
  * @example
  * <div>
  * <code>
