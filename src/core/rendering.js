@@ -343,8 +343,8 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * </div>
  *
  * @alt
- * translucent image thick red & blue diagonal rounded lines intersecting center
- * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
+ * Translucent image thick red & blue diagonal rounded lines intersecting center
+ * Thick red & blue diagonal rounded lines intersecting center. Dark at overlap.
  */
 p5.prototype.blendMode = function(mode) {
   p5._validateParameters('blendMode', arguments);
