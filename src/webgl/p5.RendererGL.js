@@ -235,7 +235,7 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
-    alpha: true,
+    alpha: false,
     depth: true,
     stencil: true,
     antialias: applyAA,
@@ -345,7 +345,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is true
+ * default is false
  *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
