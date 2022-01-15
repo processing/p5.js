@@ -17,21 +17,42 @@ import * as constants from '../core/constants';
  * will provide the GL context for this new p5.Texture
  * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
  * object containing the image data to store in the texture.
+ * @param {Object} [settings] optional A javascript object containing texture
+ * settings.
  */
-p5.Texture = function(renderer, obj) {
+p5.Texture = function(renderer, obj, settings) {
   this._renderer = renderer;
 
   const gl = this._renderer.GL;
 
+  settings = settings || {};
+
+  if (settings.dataType === gl.FLOAT) {
+    const ext = gl.getExtension('OES_texture_float');
+    if (!ext) {
+      console.log(
+        "Oh no, your device doesn't support floating point textures!"
+      );
+    }
+
+    const linear = gl.getExtension('OES_texture_float_linear');
+    if (!linear) {
+      console.log(
+        "Ack! Your device doesn't support linear filtering for floating point textures"
+      );
+    }
+  }
+
   this.src = obj;
   this.glTex = undefined;
   this.glTarget = gl.TEXTURE_2D;
-  this.glFormat = gl.RGBA;
+  this.glFormat = settings.format || gl.RGBA;
   this.mipmaps = false;
-  this.glMinFilter = gl.LINEAR;
-  this.glMagFilter = gl.LINEAR;
-  this.glWrapS = gl.CLAMP_TO_EDGE;
-  this.glWrapT = gl.CLAMP_TO_EDGE;
+  this.glMinFilter = settings.minFilter || gl.LINEAR;
+  this.glMagFilter = settings.magFilter || gl.LINEAR;
+  this.glWrapS = settings.wrapS || gl.CLAMP_TO_EDGE;
+  this.glWrapT = settings.wrapT || gl.CLAMP_TO_EDGE;
+  this.glDataType = settings.dataType || gl.UNSIGNED_BYTE;
 
   // used to determine if this texture might need constant updating
   // because it is a video or gif.
@@ -110,7 +131,7 @@ p5.Texture.prototype.init = function(data) {
       1,
       0,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       tmpdata
     );
   } else {
@@ -120,7 +141,7 @@ p5.Texture.prototype.init = function(data) {
       0,
       this.glFormat,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       data
     );
   }
@@ -211,7 +232,7 @@ p5.Texture.prototype.update = function() {
       0,
       this.glFormat,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       textureData
     );
   }
