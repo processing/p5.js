@@ -55,20 +55,12 @@ body:
 
     3.
 
-    ### Snippet:
 
+    ### Snippet:
+    
     ```js
 
-      function setup() {
-
-
-      }
-
-
-      function draw() {
-
-
-      }
+      // Paste your code here :) 
 
     ```"
   validations:
