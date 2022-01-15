@@ -213,15 +213,15 @@ p5.prototype.noCanvas = function() {
 };
 
 /**
- * Creates and returns a new p5.Renderer object. Use this class if you need
- * to draw into an off-screen graphics buffer. The two parameters define the
- * width and height in pixels.
+ * Creates and returns a new <a href="#/p5.Renderer">p5.Renderer</a> object.
+ * Use this class if you need to draw into an off-screen graphics buffer.
+ * The `w` and `h` parameters define the width and height in pixels.
  *
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] either P2D or WEBGL
- *                               undefined defaults to p2d
+ *                               defaults to P2D
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
