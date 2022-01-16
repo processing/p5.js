@@ -540,6 +540,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://derekenlow.com"><img src="https://avatars.githubusercontent.com/u/28745080?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Derek Enlow</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frigorific44" title="Code">💻</a></td>
     <td align="center"><a href="http://willmartian.com"><img src="https://avatars.githubusercontent.com/u/17113462?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Will Martin</b></sub></a><br /><a href="#ideas-willmartian" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/unjust"><img src="https://avatars.githubusercontent.com/u/92090?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivy Feraco</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=unjust" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
