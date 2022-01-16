@@ -775,11 +775,11 @@ p5.prototype.createSelect = function() {
  *   It is recommended to use string values as input for `value`.
  *   Optionally, a label can be provided as second argument for the option.
  * - `.remove(value)` can be used to remove an option for the element. String
- *   literals recommended as input for `value`.
+ *   values recommended as input for `value`.
  * - `.value()` method will return the currently selected value.
  * - `.selected()` method will return the currently selected input element.
  * - `.selected(value)` method will select the option and return it. String
- *   literals recommended as input for `value`.
+ *   values recommended as input for `value`.
  * - `.disable(Boolean)` method will enable/disable the whole radio button element.
  *
  * @method createRadio
