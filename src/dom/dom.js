@@ -772,11 +772,14 @@ p5.prototype.createSelect = function() {
  * assign methods of <a href="#/p5.Element/">p5.Element</a>.
  * - `.option(value, [label])` can be used to create a new option for the
  *   element. If an option with a value already exists, it will be returned.
+ *   It is recommended to use string values as input for `value`.
  *   Optionally, a label can be provided as second argument for the option.
- * - `.remove(value)` can be used to remove an option for the element.
+ * - `.remove(value)` can be used to remove an option for the element. String
+ *   values recommended as input for `value`.
  * - `.value()` method will return the currently selected value.
  * - `.selected()` method will return the currently selected input element.
- * - `.selected(value)` method will select the option and return it.
+ * - `.selected(value)` method will select the option and return it. String
+ *   values recommended as input for `value`.
  * - `.disable(Boolean)` method will enable/disable the whole radio button element.
  *
  * @method createRadio
@@ -809,10 +812,11 @@ p5.prototype.createSelect = function() {
  *
  * function setup() {
  *   radio = createRadio();
- *   radio.option(1, 'apple');
- *   radio.option(2, 'bread');
- *   radio.option(3, 'juice');
+ *   radio.option('1', 'apple');
+ *   radio.option('2', 'bread');
+ *   radio.option('3', 'juice');
  *   radio.style('width', '30px');
+ *   radio.selected('2');
  *   textAlign(CENTER);
  * }
  *
