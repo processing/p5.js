@@ -420,7 +420,7 @@ p5.prototype.bezierVertex = function(...args) {
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  *
  * The first and last points in a series of curveVertex() lines will be used to
- * guide the beginning and end of a the curve. A minimum of four
+ * guide the beginning and end of the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
  * third points. Adding a fifth point with curveVertex() will draw
  * the curve between the second, third, and fourth points. The
