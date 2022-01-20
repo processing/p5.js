@@ -770,10 +770,10 @@ p5.prototype.createSelect = function() {
 /**
  * Creates a radio button element in the DOM.It also helps existing radio buttons
  * assign methods of <a href="#/p5.Element/">p5.Element</a>.
- * - `.option(value, [label])` can be used to create a new option for the
- *   element. If an option with a value already exists, it will be returned.
+ * - `.option(label, [value])` can be used to create a new option for the
+ *   element. If an option with a label already exists, it will be returned.
+ *   Optionally, a value can be provided as second argument for the option.
  *   It is recommended to use string values as input for `value`.
- *   Optionally, a label can be provided as second argument for the option.
  * - `.remove(value)` can be used to remove an option for the element. String
  *   values recommended as input for `value`.
  * - `.value()` method will return the currently selected value.
@@ -812,9 +812,9 @@ p5.prototype.createSelect = function() {
  *
  * function setup() {
  *   radio = createRadio();
- *   radio.option('1', 'apple');
- *   radio.option('2', 'bread');
- *   radio.option('3', 'juice');
+ *   radio.option('apple', '1');
+ *   radio.option('bread', '2');
+ *   radio.option('juice', '3');
  *   radio.style('width', '30px');
  *   radio.selected('2');
  *   textAlign(CENTER);
