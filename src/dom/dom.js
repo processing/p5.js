@@ -1799,7 +1799,7 @@ p5.Element.prototype.html = function() {
  * @method position
  * @param  {Number} [x] x-position relative to upper left of window (optional)
  * @param  {Number} [y] y-position relative to upper left of window (optional)
- * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
+ * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
 p5.Element.prototype.position = function() {
