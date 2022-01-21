@@ -770,7 +770,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
-
+  this._renderer._setProperty('_doFill', true);
   return this;
 };
 
