@@ -73,6 +73,7 @@ p5.Color = function(pInst, vals) {
  * text(myColor.toString(), 0, -5);
  * text(myColor.toString('#rrggbb'), 0, -30);
  * text(myColor.toString('rgba%'), 0, -55);
+ * describe('A canvas with 3 text representation of their color.');
  * </code>
  * </div>
  *
@@ -82,9 +83,6 @@ p5.Color = function(pInst, vals) {
  * text(myColor.toString('#rrggbb'), 25, 25);
  * </code>
  * </div>
- *
- * @alt
- * A canvas with 3 text representation of their color.
  */
 p5.Color.prototype.toString = function(format) {
   const a = this.levels;
@@ -271,11 +269,9 @@ p5.Color.prototype.toString = function(format) {
  *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
  * }
+ * describe('canvas with gradually changing background color');
  * </code>
  * </div>
- *
- * @alt
- * canvas with gradually changing background color
  */
 p5.Color.prototype.setRed = function(new_red) {
   this._array[0] = new_red / this.maxes[constants.RGB][0];
@@ -295,11 +291,10 @@ p5.Color.prototype.setRed = function(new_red) {
  *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
  * }
+ * describe('canvas with gradually changing background color');
  * </code>
  * </div>
  *
- * @alt
- * canvas with gradually changing background color
  **/
 p5.Color.prototype.setGreen = function(new_green) {
   this._array[1] = new_green / this.maxes[constants.RGB][1];
@@ -319,11 +314,10 @@ p5.Color.prototype.setGreen = function(new_green) {
  *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
  * }
+ * describe('canvas with gradually changing background color');
  * </code>
  * </div>
  *
- * @alt
- * canvas with gradually changing background color
  **/
 p5.Color.prototype.setBlue = function(new_blue) {
   this._array[2] = new_blue / this.maxes[constants.RGB][2];
@@ -346,11 +340,9 @@ p5.Color.prototype.setBlue = function(new_blue) {
  *   fill(squareColor);
  *   rect(13, 13, width - 26, height - 26);
  * }
+ * describe('a square with gradually changing opacity on a gray background');
  * </code>
  * </div>
- *
- * @alt
- * a square with gradually changing opacity on a gray background
  **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
@@ -777,11 +769,10 @@ const colorPatterns = {
  * <div>
  * <code>
  * // todo
+ * //
+ * // describe('');
  * </code>
  * </div>
- *
- * @alt
- * //todo
  */
 p5.Color._parseInputs = function(r, g, b, a) {
   const numArgs = arguments.length;
