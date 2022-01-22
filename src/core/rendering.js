@@ -273,18 +273,18 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * <li><code>REPLACE</code> - the pixels entirely replace the others and
  * don't utilize alpha (transparency) values.</li>
  * <li><code>REMOVE</code> - removes pixels from B with the alpha strength of A.</li>
- * <li><code>OVERLAY</code> - mix of <code>MULTIPLY</code> and <code>SCREEN
- * </code>. Multiplies dark values, and screens light values. <em>(2D)</em></li>
- * <li><code>HARD_LIGHT</code> - <code>SCREEN</code> when greater than 50%
- * gray, <code>MULTIPLY</code> when lower. <em>(2D)</em></li>
- * <li><code>SOFT_LIGHT</code> - mix of <code>DARKEST</code> and
- * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh. <em>(2D)</em>
+ * <li><code>OVERLAY</code> <em>(2D)</em> - mix of <code>MULTIPLY</code> and <code>SCREEN
+ * </code>. Multiplies dark values, and screens light values.</li>
+ * <li><code>HARD_LIGHT</code> <em>(2D)</em> - <code>SCREEN</code> when greater than 50%
+ * gray, <code>MULTIPLY</code> when lower.</li>
+ * <li><code>SOFT_LIGHT</code> <em>(2D)</em> - mix of <code>DARKEST</code> and
+ * <code>LIGHTEST</code>. Works like <code>OVERLAY</code>, but not as harsh.
  * </li>
- * <li><code>DODGE</code> - lightens light tones and increases contrast,
- * ignores darks. <em>(2D)</em></li>
- * <li><code>BURN</code> - darker areas are applied, increasing contrast,
- * ignores lights. <em>(2D)</em></li>
- * <li><code>SUBTRACT</code> - remainder of A and B <em>(3D)</em></li>
+ * <li><code>DODGE</code> <em>(2D)</em> - lightens light tones and increases contrast,
+ * ignores darks. </li>
+ * <li><code>BURN</code> <em>(2D)</em> - darker areas are applied, increasing contrast,
+ * ignores lights.</li>
+ * <li><code>SUBTRACT</code> <em>(3D)</em> - remainder of A and B.</li>
  * </ul>
  *
  * <em>(2D)</em> indicates that this blend mode <b>only</b> works in the 2D renderer.<br>
