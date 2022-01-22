@@ -962,6 +962,15 @@ p5.prototype.quadraticVertex = function(...args) {
  *                       Defaults to 0 if not specified.
  * @chainable
  */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z]
+ * @param  {Number} [u]   the vertex's texture u-coordinate
+ * @param  {Number} [v]   the vertex's texture v-coordinate
+ * @chainable
+ */
 p5.prototype.vertex = function(x, y, moveTo) {
   if (this._renderer.isP3D) {
     this._renderer.vertex(...arguments);
