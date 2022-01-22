@@ -19,6 +19,26 @@ import * as constants from '../core/constants';
  * object containing the image data to store in the texture.
  * @param {Object} [settings] optional A javascript object containing texture
  * settings.
+ * @param {Number} [settings.format] optional The internal color component
+ * format for the texture. Possible values for format include gl.RGBA,
+ * gl.RGB, gl.ALPHA, gl.LUMINANCE, gl.LUMINANCE_ALPHA. Defaults to gl.RBGA
+ * @param {Number} [settings.minFilter] optional The texture minification
+ * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+ * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+ * @param {Number} [settings.magFilter] optional The texture magnification
+ * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+ * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+ * @param {Number} [settings.wrapS] optional The texture wrap settings for
+ * the s coordinate, or x axis. Possible values are gl.CLAMP_TO_EDGE,
+ * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+ * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+ * @param {Number} [settings.wrapT] optional The texture wrap settings for
+ * the t coordinate, or y axis. Possible values are gl.CLAMP_TO_EDGE,
+ * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+ * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+ * @param {Number} [settings.dataType] optional The data type of the texel
+ * data. Possible values are gl.UNSIGNED_BYTE or gl.FLOAT. There are more
+ * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
  */
 p5.Texture = function(renderer, obj, settings) {
   this._renderer = renderer;
