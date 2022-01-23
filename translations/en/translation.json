@@ -25,8 +25,8 @@
         "cannotAccess": "\n{{location}} \"{{symbol}}\" is used before declaration. Make sure you have declared the variable before using it.\n\n+ More info: {{url}}",
         "notDefined": "\n{{location}} \"{{symbol}}\" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: {{url}}"
       },
-      "stackSubseq": "{{location}} Called from line {{line}} in \"{{func}}\" in {{file}} \n",
-      "stackTop": "{{location}} Error at line {{line}} in \"{{func}}\" in {{file}} \n",
+      "stackSubseq": "└[{{location}}] \n\t Called from line {{line}} in {{func}}()\n",
+      "stackTop": "┌[{{location}}] \n\t Error at line {{line}} in {{func}}()\n",
       "syntax": {
         "badReturnOrYield": "\nSyntax Error - return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\n\n+ More info: {{url}}",
         "invalidToken": "\nSyntax Error - Found a symbol that JavaScript doesn't recognize or didn't expect at it's place.\n\n+ More info: {{url}}",
@@ -43,7 +43,7 @@
       }
     },
     "libraryError": "{{location}} An error with message \"{{error}}\" occurred inside the p5js library when {{func}} was called. If not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
-    "location": "[{{file}}: line {{line}}]",
+    "location": "[{{file}}, line {{line}}]",
     "misspelling": "{{location}} It seems that you may have accidentally written \"{{name}}\" instead of \"{{actualName}}\". Please correct it to {{actualName}} if you wish to use the {{type}} from p5.js.",
     "misspelling_plural": "{{location}} It seems that you may have accidentally written \"{{name}}\".\nYou may have meant one of the following: \n{{suggestions}}",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\n+ More info: {{url}}",

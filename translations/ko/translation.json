@@ -15,18 +15,18 @@
       "xml": "XML 파일을 로드하는 중에 문제가 발생했습니다. {{suggestion}}"
     },
     "friendlyParamError": {
-      "type_EMPTY_VAR": "{{location}} {{formatType}} 타입 값을 받는 {{func}}}()의 {{position}} 매개변수(parameter)에 아무 값도 전달되지 않았습니다. 범위(scope)와 관련된 문제일 수 있습니다.\n\n+ 추가 정보: {{url}}",
+      "type_EMPTY_VAR": "{{location}} {{formatType}} 타입 값을 받는 {{func}}()의 {{position}} 매개변수(parameter)에 아무 값도 전달되지 않았습니다. 범위(scope)와 관련된 문제일 수 있습니다.\n\n+ 추가 정보: {{url}}",
       "type_TOO_FEW_ARGUMENTS": "{{location}} 최소 {{minParams}}개의 인수(argument)를 받는 함수 {{func}}()에 인수가 {{argCount}}개만 입력되었습니다.",
       "type_TOO_MANY_ARGUMENTS": "{{location}} 최대 {{maxParams}}개의 인수(argument)를 받는 함수 {{func}}()에 인수가 {{argCount}}개나 입력되었습니다.",
-      "type_WRONG_TYPE": "{{location}} {{formatType}} 타입의 값을 받는 {{func}}() {{position}} 매개변수(parameter)에 {{argType}} 타입의 값이 입력되었습니다."
+      "type_WRONG_TYPE": "{{location}} {{formatType}} 타입의 값을 받는 {{func}}()의 {{position}} 매개변수(parameter)에 {{argType}} 타입의 값이 입력되었습니다."
     },
     "globalErrors": {
       "reference": {
         "cannotAccess": "\n{{location}} \"{{symbol}}\"가 선언되지 않은 채 사용되었습니다. 변수를 사용하기 전, 먼저 선언했는지 확인해보세요.\n\n+ 추가 정보: {{url}}",
         "notDefined": "\n{{location}} \"{{symbol}}\"은 현재 범위(scope) 안에 정의되지 않았습니다. 만약 정의를 했다면, 해당 범위와 오탈자, 대소문자 등을 확인해보세요 (자바스크립트에서는 대소문자를 구분합니다).\n\n+ 추가 정보: {{url}}"
       },
-      "stackSubseq": "{{location}} {{file}}의 함수 \"{{func}}\"에 있는 {{line}} 줄에서 호출.\n",
-      "stackTop": "{{location}} {{file}}의 함수 \"{{func}}\"에 있는 {{line}} 줄에서 오류 발생.\n",
+      "stackSubseq": "└[{{location}}] \n\t {{func}}()에 있는 줄{{line}}에서 호출\n",
+      "stackTop": "┌[{{location}}] \n\t {{func}}()에 있는 줄{{line}}에서 오류 발생\n",
       "syntax": {
         "badReturnOrYield": "\n구문 오류 - 대괄호가 제대로 쓰였는지 확인해 본 후, return을 함수 안에 넣어주세요.\n\n+ 추가 정보: {{url}}",
         "invalidToken": "\n구문 오류 - 자바스크립트가 인식할 수 없거나, 적합하지 않은 기호나 문구가 입력되었습니다.\n\n+ 추가 정보: {{url}}",
@@ -43,7 +43,7 @@
       }
     },
     "libraryError": "{{location}} 함수 {{func}}가 호출되었을 때,  \"{{error}}\" 오류가 p5js 라이브러리 내에서 발생했습니다. 함수 {{func}}에 전달한 인수(argument)가 문제일 수 있습니다.",
-    "location": "[{{file}}: 줄{{line}}]",
+    "location": "[{{file}}, 줄{{line}}]",
     "misspelling": "{{location}} 혹시 p5.js의 {{type}}를 사용하시려면 \"{{name}}\"를 {{actualName}}로 고쳐 보세요.",
     "misspelling_plural": "{{location}} 혹시 p5.js의 {{type}}를 사용하시려면 \"{{name}}\"를 다음 중 하나로 고쳐보세요: \n{{suggestions}}",
     "misusedTopLevel": "{{location}} 혹시 p5.js의 {{symbolType}} 타입 {{symbolName}}을 사용하셨나요? 그렇다면 {{symbolName}}을 작성 중인 setup() 함수의 대괄호 안으로 옮겨보세요.\n\n+ 추가 정보: {{url}}",
