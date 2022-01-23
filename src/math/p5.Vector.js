@@ -137,9 +137,9 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * Sets the `x`, `y`, and `z` components of the vector using two or three separate
  * variables, the data from a <a href="#/p5.Vector">p5.Vector</a>, or the values from a float array.
  * @method set
- * @param {Number} [x] the x component of the vector
- * @param {Number} [y] the y component of the vector
- * @param {Number} [z] the z component of the vector
+ * @param {Number} [x] The x component of the vector
+ * @param {Number} [y] The y component of the vector
+ * @param {Number} [z] The z component of the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -194,7 +194,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  */
 /**
  * @method set
- * @param {p5.Vector|Number[]} value the vector to set
+ * @param {p5.Vector|Number[]} value The vector to set
  * @chainable
  */
 p5.Vector.prototype.set = function set(x, y, z) {
@@ -220,7 +220,7 @@ p5.Vector.prototype.set = function set(x, y, z) {
  * Gets a copy of the vector, returns a <a href="#/p5.Vector">p5.Vector</a> object.
  *
  * @method copy
- * @return {p5.Vector} the copy of the <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} A copy of the <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -253,9 +253,9 @@ p5.Vector.prototype.copy = function copy() {
  * See the examples for more context.
  *
  * @method add
- * @param  {Number} x   the x component of the vector to be added
- * @param  {Number} [y] the y component of the vector to be added
- * @param  {Number} [z] the z component of the vector to be added
+ * @param  {Number} x   The x component of the vector to be added
+ * @param  {Number} [y] The y component of the vector to be added
+ * @param  {Number} [z] The z component of the vector to be added
  * @chainable
  * @example
  * <div class="norender">
@@ -324,7 +324,7 @@ p5.Vector.prototype.copy = function copy() {
  */
 /**
  * @method add
- * @param  {p5.Vector|Number[]} value the vector to add
+ * @param  {p5.Vector|Number[]} value The vector to add
  * @chainable
  */
 p5.Vector.prototype.add = function add(x, y, z) {
@@ -374,9 +374,9 @@ const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
  * See examples for more context.
  *
  * @method rem
- * @param {Number} x the x component of divisor vector
- * @param {Number} y the y component of divisor vector
- * @param {Number} z the z component of divisor vector
+ * @param {Number} x The x component of divisor vector
+ * @param {Number} y The y component of divisor vector
+ * @param {Number} z The z component of divisor vector
  * @chainable
  * @example
  * <div class='norender'>
@@ -400,7 +400,7 @@ const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
  */
 /**
  * @method rem
- * @param {p5.Vector | Number[]}  value  divisor vector
+ * @param {p5.Vector | Number[]}  value  The divisor vector
  * @chainable
  */
 p5.Vector.prototype.rem = function rem(x, y, z) {
@@ -466,9 +466,9 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
  * See the examples for more context.
  *
  * @method sub
- * @param  {Number} x   the x component of the vector to subtract
- * @param  {Number} [y] the y component of the vector to subtract
- * @param  {Number} [z] the z component of the vector to subtract
+ * @param  {Number} x   The x component of the vector to subtract
+ * @param  {Number} [y] The y component of the vector to subtract
+ * @param  {Number} [z] The z component of the vector to subtract
  * @chainable
  * @example
  * <div class="norender">
@@ -962,7 +962,7 @@ p5.Vector.prototype.div = function div(x, y, z) {
  * a float. (This is simply the equation `sqrt(x*x + y*y + z*z)`.)
  *
  * @method mag
- * @return {Number} magnitude of the vector
+ * @return {Number} The magnitude of the vector
  * @example
  * <div>
  * <code>
@@ -1012,7 +1012,7 @@ p5.Vector.prototype.mag = function mag() {
  * case of comparing vectors, etc.
  *
  * @method magSq
- * @return {number} squared magnitude of the vector
+ * @return {number} The squared magnitude of the vector
  * @example
  * <div class="norender">
  * <code>
@@ -1065,10 +1065,10 @@ p5.Vector.prototype.magSq = function magSq() {
  * method. See the examples for more context.
  *
  * @method dot
- * @param  {Number} x   x component of the vector
- * @param  {Number} [y] y component of the vector
- * @param  {Number} [z] z component of the vector
- * @return {Number}       the dot product
+ * @param  {Number} x   The x component of the vector
+ * @param  {Number} [y] The y component of the vector
+ * @param  {Number} [z] The z component of the vector
+ * @return {Number}       The dot product
  *
  * @example
  * <div class="norender">
@@ -1149,8 +1149,8 @@ p5.Vector.prototype.cross = function cross(v) {
  * If you are looking to calculate distance with 2 points see <a href="#/p5/dist">dist()</a>
  *
  * @method dist
- * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}      the distance
+ * @param  {p5.Vector} v The x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
+ * @return {Number}      The distance
  * @example
  * <div class="norender">
  * <code>
@@ -1219,7 +1219,7 @@ p5.Vector.prototype.dist = function dist(v) {
  * Normalize the vector to length 1 (make it a unit vector).
  *
  * @method normalize
- * @return {p5.Vector} normalized <a href="#/p5.Vector">p5.Vector</a>
+ * @return {p5.Vector} The normalized <a href="#/p5.Vector">p5.Vector</a>
  * @example
  * <div class="norender">
  * <code>
@@ -1290,7 +1290,7 @@ p5.Vector.prototype.normalize = function normalize() {
  * parameter.
  *
  * @method limit
- * @param  {Number}    max the maximum magnitude for the vector
+ * @param  {Number}    max The maximum magnitude for the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -1348,7 +1348,7 @@ p5.Vector.prototype.limit = function limit(max) {
  * parameter.
  *
  * @method setMag
- * @param  {number}    len the new length for this vector
+ * @param  {number}    len The new length for this vector
  * @chainable
  * @example
  * <div class="norender">
@@ -1406,7 +1406,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * consideration, and give the angle in radians or degree accordingly.
  *
  * @method heading
- * @return {Number} the angle of rotation
+ * @return {Number} The angle of rotation
  * @example
  * <div class = "norender">
  * <code>
@@ -1476,7 +1476,7 @@ p5.Vector.prototype.heading = function heading() {
  * same
  *
  * @method setHeading
- * @param  {number}    angle the angle of rotation
+ * @param  {number}    angle The angle of rotation
  * @chainable
  * @example
  * <div class="norender">
@@ -1501,7 +1501,7 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  * same
  *
  * @method rotate
- * @param  {number}    angle the angle of rotation
+ * @param  {number}    angle The angle of rotation
  * @chainable
  * @example
  * <div class="norender">
@@ -1571,8 +1571,8 @@ p5.Vector.prototype.rotate = function rotate(a) {
  * give the angle in radians or degree accordingly.
  *
  * @method angleBetween
- * @param  {p5.Vector}    value the x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}       the angle between (in radians)
+ * @param  {p5.Vector}    value The x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
+ * @return {Number}       The angle between (in radians)
  * @example
  * <div class="norender">
  * <code>
@@ -1646,13 +1646,13 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   return angle;
 };
 /**
- * Linear interpolate the vector to another vector
+ * Linear interpolate the vector to another vector.
  *
  * @method lerp
- * @param  {Number}    x   the x component
- * @param  {Number}    y   the y component
- * @param  {Number}    z   the z component
- * @param  {Number}    amt the amount of interpolation; some value between 0.0
+ * @param  {Number}    x   The x component
+ * @param  {Number}    y   The y component
+ * @param  {Number}    z   The z component
+ * @param  {Number}    amt The amount of interpolation; some value between 0.0
  *                         (old vector) and 1.0 (new vector). 0.9 is very near
  *                         the new vector. 0.5 is halfway in between.
  * @chainable
@@ -1720,7 +1720,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  */
 /**
  * @method lerp
- * @param  {p5.Vector} v   the <a href="#/p5.Vector">p5.Vector</a> to lerp to
+ * @param  {p5.Vector} v   The <a href="#/p5.Vector">p5.Vector</a> to lerp to
  * @param  {Number}    amt
  * @chainable
  */
@@ -1739,7 +1739,7 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * This method acts on the vector directly
  *
  * @method reflect
- * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
+ * @param  {p5.Vector} surfaceNormal   The <a href="#/p5.Vector">p5.Vector</a> to reflect about; will be normalized by this method.
  * @chainable
  * @example
  * <div class="norender">
@@ -1796,7 +1796,7 @@ p5.Vector.prototype.reflect = function reflect(surfaceNormal) {
  * array.
  *
  * @method array
- * @return {Number[]} an Array with the 3 values
+ * @return {Number[]} An Array with the 3 values
  * @example
  * <div class = "norender">
  * <code>
@@ -1825,10 +1825,10 @@ p5.Vector.prototype.array = function array() {
  * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
  *
  * @method equals
- * @param {Number} [x] the x component of the vector
- * @param {Number} [y] the y component of the vector
- * @param {Number} [z] the z component of the vector
- * @return {Boolean} whether the vectors are equals
+ * @param {Number} [x] The x component of the vector
+ * @param {Number} [y] The y component of the vector
+ * @param {Number} [z] The z component of the vector
+ * @return {Boolean} Whether the vectors are equal
  * @example
  * <div class = "norender">
  * <code>
@@ -1853,7 +1853,7 @@ p5.Vector.prototype.array = function array() {
  */
 /**
  * @method equals
- * @param {p5.Vector|Array} value the vector to compare
+ * @param {p5.Vector|Array} value The vector to compare
  * @return {Boolean}
  */
 p5.Vector.prototype.equals = function equals(x, y, z) {
@@ -1881,9 +1881,9 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *
  * @method fromAngle
  * @static
- * @param {Number}     angle the desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
- * @param {Number}     [length] the length of the new vector (defaults to 1)
- * @return {p5.Vector}       the new <a href="#/p5.Vector">p5.Vector</a> object
+ * @param {Number}     angle The desired angle, in radians (unaffected by <a href="#/p5/angleMode">angleMode</a>)
+ * @param {Number}     [length] The length of the new vector (defaults to 1)
+ * @return {p5.Vector}       The new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div>
  * <code>
@@ -1932,11 +1932,11 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  *
  * @method fromAngles
  * @static
- * @param {Number}     theta    the polar angle, in radians (zero is up)
- * @param {Number}     phi      the azimuthal angle, in radians
+ * @param {Number}     theta    The polar angle, in radians (zero is up)
+ * @param {Number}     phi      The azimuthal angle, in radians
  *                               (zero is out of the screen)
- * @param {Number}     [length] the length of the new vector (defaults to 1)
- * @return {p5.Vector}          the new <a href="#/p5.Vector">p5.Vector</a> object
+ * @param {Number}     [length] The length of the new vector (defaults to 1)
+ * @return {p5.Vector}          A new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div modernizr='webgl'>
  * <code>
@@ -1981,7 +1981,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
  *
  * @method random2D
  * @static
- * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} A new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -2034,7 +2034,7 @@ p5.Vector.random2D = function random2D() {
  *
  * @method random3D
  * @static
- * @return {p5.Vector} the new <a href="#/p5.Vector">p5.Vector</a> object
+ * @return {p5.Vector} A new <a href="#/p5.Vector">p5.Vector</a> object
  * @example
  * <div class="norender">
  * <code>
@@ -2060,10 +2060,10 @@ p5.Vector.random3D = function random3D() {
 /**
  * @method add
  * @static
- * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to add
- * @param  {p5.Vector} [target] the vector to receive the result
- * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to add
+ * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to add
+ * @param  {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
 p5.Vector.add = function add(v1, v2, target) {
@@ -2086,15 +2086,15 @@ p5.Vector.add = function add(v1, v2, target) {
 /**
  * @method rem
  * @static
- * @param  {p5.Vector} v1 dividend <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 divisor <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v1 The dividend <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 The divisor <a href="#/p5.Vector">p5.Vector</a>
  */
 /**
  * @method rem
  * @static
  * @param  {p5.Vector} v1
  * @param  {p5.Vector} v2
- * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 p5.Vector.rem = function rem(v1, v2) {
   if (v1 instanceof p5.Vector && v2 instanceof p5.Vector) {
@@ -2111,10 +2111,10 @@ p5.Vector.rem = function rem(v1, v2) {
 /**
  * @method sub
  * @static
- * @param  {p5.Vector} v1 a <a href="#/p5.Vector">p5.Vector</a> to subtract from
- * @param  {p5.Vector} v2 a <a href="#/p5.Vector">p5.Vector</a> to subtract
- * @param  {p5.Vector} [target] the vector to receive the result
- * @return {p5.Vector} the resulting <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v1 A <a href="#/p5.Vector">p5.Vector</a> to subtract from
+ * @param  {p5.Vector} v2 A <a href="#/p5.Vector">p5.Vector</a> to subtract
+ * @param  {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector} The resulting <a href="#/p5.Vector">p5.Vector</a>
  */
 
 p5.Vector.sub = function sub(v1, v2, target) {
@@ -2194,7 +2194,7 @@ p5.Vector.mult = function mult(v, n, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number} angle
- * @param  {p5.Vector} [target] the vector to receive the result
+ * @param  {p5.Vector} [target] The vector to receive the result
  */
 p5.Vector.rotate = function rotate(v, a, target) {
   if (arguments.length === 2) {
@@ -2230,7 +2230,7 @@ p5.Vector.rotate = function rotate(v, a, target) {
  * @static
  * @param  {p5.Vector} v
  * @param  {Number}  n
- * @param  {p5.Vector} [target] the vector to receive the result
+ * @param  {p5.Vector} [target] The vector to receive the result
  */
 
 /**
@@ -2271,9 +2271,9 @@ p5.Vector.div = function div(v, n, target) {
 /**
  * @method dot
  * @static
- * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}     the dot product
+ * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
+ * @return {Number}     The dot product
  */
 p5.Vector.dot = function dot(v1, v2) {
   return v1.dot(v2);
@@ -2285,9 +2285,9 @@ p5.Vector.dot = function dot(v1, v2) {
 /**
  * @method cross
  * @static
- * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}     the cross product
+ * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
+ * @return {Number}     The cross product
  */
 p5.Vector.cross = function cross(v1, v2) {
   return v1.cross(v2);
@@ -2300,9 +2300,9 @@ p5.Vector.cross = function cross(v1, v2) {
 /**
  * @method dist
  * @static
- * @param  {p5.Vector} v1 the first <a href="#/p5.Vector">p5.Vector</a>
- * @param  {p5.Vector} v2 the second <a href="#/p5.Vector">p5.Vector</a>
- * @return {Number}     the distance
+ * @param  {p5.Vector} v1 The first <a href="#/p5.Vector">p5.Vector</a>
+ * @param  {p5.Vector} v2 The second <a href="#/p5.Vector">p5.Vector</a>
+ * @return {Number}     The distance
  */
 p5.Vector.dist = function dist(v1, v2) {
   return v1.dist(v2);
@@ -2318,8 +2318,8 @@ p5.Vector.dist = function dist(v1, v2) {
  * @param {p5.Vector} v1
  * @param {p5.Vector} v2
  * @param {Number} amt
- * @param {p5.Vector} [target] the vector to receive the result
- * @return {p5.Vector}      the lerped value
+ * @param {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector}      The lerped value
  */
 p5.Vector.lerp = function lerp(v1, v2, amt, target) {
   if (!target) {
@@ -2344,8 +2344,8 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
 /**
  * @method mag
  * @static
- * @param {p5.Vector} vecT the vector to return the magnitude of
- * @return {Number}        the magnitude of vecT
+ * @param {p5.Vector} vecT The vector to return the magnitude of
+ * @return {Number}        The magnitude of vecT
  */
 p5.Vector.mag = function mag(vecT) {
   const x = vecT.x,
@@ -2361,9 +2361,9 @@ p5.Vector.mag = function mag(vecT) {
 /**
  * @method normalize
  * @static
- * @param {p5.Vector} v  the vector to normalize
- * @param {p5.Vector} [target] the vector to receive the result
- * @return {p5.Vector}   v normalized to a length of 1
+ * @param {p5.Vector} v  The vector to normalize
+ * @param {p5.Vector} [target] The vector to receive the result
+ * @return {p5.Vector}   The vector v, normalized to a length of 1
  */
 p5.Vector.normalize = function normalize(v, target) {
   if (arguments.length < 2) {
