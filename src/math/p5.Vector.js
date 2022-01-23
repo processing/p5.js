@@ -1146,7 +1146,7 @@ p5.Vector.prototype.cross = function cross(v) {
 /**
  * Calculates the Euclidean distance between two points (considering a
  * point as a vector object).
- * If you are looking to calculate distance with 2 points see <a href="#/p5/dist">dist()</a>
+ * If you are looking to calculate distance with 2 points, see <a href="#/p5/dist">dist()</a>.
  *
  * @method dist
  * @param  {p5.Vector} v The x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
@@ -1400,7 +1400,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector(only 2D vectors).
+ * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
  * will take the current <a href="#/p5/angleMode">angleMode</a> into
  * consideration, and give the angle in radians or degree accordingly.
@@ -1472,8 +1472,8 @@ p5.Vector.prototype.heading = function heading() {
 };
 
 /**
- * Rotate the vector to a specific angle (only 2D vectors), magnitude remains the
- * same
+ * Rotate the vector to a specific angle (only 2D vectors); magnitude remains the
+ * same.
  *
  * @method setHeading
  * @param  {number}    angle The angle of rotation
@@ -1497,8 +1497,8 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
 };
 
 /**
- * Rotate the vector by an angle (only 2D vectors), magnitude remains the
- * same
+ * Rotate the vector by an angle (only 2D vectors); magnitude remains the
+ * same.
  *
  * @method rotate
  * @param  {number}    angle The angle of rotation
@@ -1735,8 +1735,8 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
- * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
- * This method acts on the vector directly
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D.
+ * This method acts on the vector directly.
  *
  * @method reflect
  * @param  {p5.Vector} surfaceNormal   The <a href="#/p5.Vector">p5.Vector</a> to reflect about; will be normalized by this method.
@@ -1822,7 +1822,7 @@ p5.Vector.prototype.array = function array() {
 };
 
 /**
- * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>.
  *
  * @method equals
  * @param {Number} [x] The x component of the vector
@@ -1877,7 +1877,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
 // Static Methods
 
 /**
- * Make a new 2D vector from an angle
+ * Make a new 2D vector from an angle.
  *
  * @method fromAngle
  * @static
@@ -1928,7 +1928,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
 };
 
 /**
- * Make a new 3D vector from a pair of ISO spherical angles
+ * Make a new 3D vector from a pair of ISO spherical angles.
  *
  * @method fromAngles
  * @static
@@ -1977,7 +1977,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
 };
 
 /**
- * Make a new 2D unit vector from a random angle
+ * Make a new 2D unit vector from a random angle.
  *
  * @method random2D
  * @static
@@ -2186,7 +2186,7 @@ p5.Vector.mult = function mult(v, n, target) {
 };
 
 /**
- * Rotates the vector (only 2D vectors) by the given angle, magnitude remains the same and returns a new vector.
+ * Rotates the vector (only 2D vectors) by the given angle; magnitude remains the same. Returns a new vector.
  */
 
 /**
