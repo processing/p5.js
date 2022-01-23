@@ -100,8 +100,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
             undefined
           ) {
             //if a p5.js function is used ie it is in the funcs array
+            let url = `https://p5js.org/reference/#/p5/${variableArray[i]}`;
             p5._friendlyError(
               translator('fes.sketchReaderErrors.reservedFunc', {
+                url: url,
                 symbol: variableArray[i]
               })
             );
@@ -330,8 +332,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
               p5Constructors[keyArray[k]].prototype[functionArray[i]] !==
               element
             ) {
+              let url = `https://p5js.org/reference/#/p5/${functionArray[i]}`;
               p5._friendlyError(
                 translator('fes.sketchReaderErrors.reservedFunc', {
+                  url: url,
                   symbol: functionArray[i]
                 })
               );

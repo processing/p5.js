@@ -558,7 +558,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             context: (errorObj.position + 1).toString(),
             defaultValue: (errorObj.position + 1).toString()
           }),
-          link: '[https://p5js.org/examples/data-variable-scope.html]'
+          url: 'https://p5js.org/examples/data-variable-scope.html'
         };
 
         break;

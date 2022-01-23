@@ -12,7 +12,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const fileLoadErrorCases = (num, filePath) => {
     const suggestion = translator('fes.fileLoadError.suggestion', {
       filePath,
-      link: 'https://github.com/processing/p5.js/wiki/Local-server'
+      url: 'https://github.com/processing/p5.js/wiki/Local-server'
     });
     switch (num) {
       case 0:
