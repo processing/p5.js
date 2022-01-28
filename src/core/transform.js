@@ -27,7 +27,6 @@ import p5 from './main';
  * @method applyMatrix
  * @param  {Array} arr an array of numbers
  * @chainable
- * 
  */
   
 /**
@@ -39,31 +38,28 @@ import p5 from './main';
  * @param  {Number} e_2x3 numbers which define the 2×3 matrix to be multiplied
  * @param  {Number} f_2x3 numbers which define the 2×3 matrix to be multiplied
  * @chainable
- * 
  */
   
 /**
-* @method applyMatrix
-* @param  {Number} a_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} b_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} c_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} d_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} e_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} f_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} g_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} h_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} i_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} j_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} k_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} l_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} m_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} n_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} o_4x4 numbers which define the 4x4 matrix to be multiplied
-* @param  {Number} p_4x4 numbers which define the 4x4 matrix to be multiplied
-* @chainable
-* 
-* @example
-* 
+ * @method applyMatrix
+ * @param  {Number} a_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} c_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} d_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} e_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} f_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} g_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} h_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} i_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} j_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} k_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} l_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} m_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} n_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} o_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} p_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @chainable
+ * @example
  * <div>
  * <code>
  * function setup() {
