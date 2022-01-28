@@ -27,7 +27,7 @@ import p5 from './main';
  * @method applyMatrix
  * @param  {Array} arr an array of numbers
  * @chainable
- */  
+ */
 /**
  * @method applyMatrix
  * @param  {Number} a_2x3 numbers which define the 2×3 matrix to be multiplied
@@ -37,7 +37,7 @@ import p5 from './main';
  * @param  {Number} e_2x3 numbers which define the 2×3 matrix to be multiplied
  * @param  {Number} f_2x3 numbers which define the 2×3 matrix to be multiplied
  * @chainable
- */  
+ */
 /**
  * @method applyMatrix
  * @param  {Number} a_4x4 numbers which define the 4x4 matrix to be multiplied
