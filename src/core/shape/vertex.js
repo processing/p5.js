@@ -971,7 +971,7 @@ p5.prototype.quadraticVertex = function(...args) {
  * @param  {Number} [v]   the vertex's texture v-coordinate
  * @chainable
  */
- p5.prototype.vertex = function(x, y, moveTo, u, v) {
+p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {
     this._renderer.vertex(...arguments);
   } else {
