@@ -268,8 +268,8 @@ p5.Color.prototype.toString = function(format) {
  * function draw() {
  *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
- * describe('canvas with gradually changing background color');
  * </code>
  * </div>
  */
@@ -290,8 +290,8 @@ p5.Color.prototype.setRed = function(new_red) {
  * function draw() {
  *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
- * describe('canvas with gradually changing background color');
  * </code>
  * </div>
  *
@@ -313,8 +313,8 @@ p5.Color.prototype.setGreen = function(new_green) {
  * function draw() {
  *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
- * describe('canvas with gradually changing background color');
  * </code>
  * </div>
  *
@@ -339,8 +339,8 @@ p5.Color.prototype.setBlue = function(new_blue) {
  *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
  *   fill(squareColor);
  *   rect(13, 13, width - 26, height - 26);
+ *   describe('a square with gradually changing opacity on a gray background');
  * }
- * describe('a square with gradually changing opacity on a gray background');
  * </code>
  * </div>
  **/

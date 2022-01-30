@@ -532,8 +532,8 @@ p5.prototype.fill = function(...args) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
+ *   describe('black canvas with purple cube wireframe spinning');
  * }
- * describe('black canvas with purple cube wireframe spinning');
  * </code>
  * </div>
  */
@@ -570,8 +570,8 @@ p5.prototype.noFill = function() {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(45, 45, 45);
+ *   describe('black canvas with pink cube spinning');
  * }
- * describe('black canvas with pink cube spinning');
  * </code>
  * </div>
  */
@@ -819,9 +819,9 @@ p5.prototype.stroke = function(...args) {
  *   translate(0, 0, 40);
  *   torus(15, 5);
  *   noErase();
+ *   describe(`60×60 centered teal sphere, yellow background.
+ *   Torus rotating around sphere erases to reveal black text underneath.`);
  * }
- * describe(`60×60 centered teal sphere, yellow background.
- * Torus rotating around sphere erases to reveal black text underneath.`);
  * </code>
  * </div>
  */
