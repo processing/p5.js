@@ -514,8 +514,8 @@ p5.prototype.fill = function(...args) {
  * rect(15, 10, 55, 55);
  * noFill();
  * rect(20, 20, 60, 60);
- * describe(`white rect top middle and noFill rect center.
- * Both 60×60 with black outlines.`);
+ * describe(`White rect at top middle and noFill rect center,
+ * both with black outlines.`);
  * </code>
  * </div>
  *
@@ -553,7 +553,7 @@ p5.prototype.noFill = function() {
  * <code>
  * noStroke();
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. no outline.');
+ * describe('White rect at center; no outline.');
  * </code>
  * </div>
  *
@@ -611,7 +611,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(51);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Dark charcoal grey outline.');
+ * describe('White rect at center with dark charcoal grey outline.');
  * </code>
  * </div>
  *
@@ -621,7 +621,7 @@ p5.prototype.noStroke = function() {
  * stroke(255, 204, 0);
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Yellow outline.');
+ * describe('White rect at center with yellow outline.');
  * </code>
  * </div>
  *
@@ -632,7 +632,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(255, 204, 100);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Royal blue outline.');
+ * describe('White rect at center with royal blue outline.');
  * </code>
  * </div>
  *
@@ -642,7 +642,7 @@ p5.prototype.noStroke = function() {
  * stroke('red');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Red outline.');
+ * describe('White rect at center with red outline.');
  * </code>
  * </div>
  *
@@ -652,7 +652,7 @@ p5.prototype.noStroke = function() {
  * stroke('#fae');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Pink outline.');
+ * describe('White rect at center with pink outline.');
  * </code>
  * </div>
  *
@@ -662,7 +662,7 @@ p5.prototype.noStroke = function() {
  * stroke('#222222');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Black outline.');
+ * describe('White rect at center with black outline.');
  * </code>
  * </div>
  *
@@ -672,7 +672,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(0,255,0)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Bright green outline.');
+ * describe('White rect at center with bright green outline.');
  * </code>
  * </div>
  *
@@ -682,7 +682,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(0,255,0,0.25)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Soft green outline.');
+ * describe('White rect at center with soft green outline.');
  * </code>
  * </div>
  *
@@ -692,7 +692,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(100%,0%,10%)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Red outline.');
+ * describe('White rect at center with red outline.');
  * </code>
  * </div>
  *
@@ -702,7 +702,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(100%,0%,100%,0.5)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Dark fuchsia outline.');
+ * describe('White rect at center with dark fuchsia outline.');
  * </code>
  * </div>
  *
@@ -712,7 +712,7 @@ p5.prototype.noStroke = function() {
  * stroke(color(0, 0, 255));
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60×60 white rect at center. Blue outline.');
+ * describe('White rect at center with blue outline.');
  * </code>
  * </div>
  */
