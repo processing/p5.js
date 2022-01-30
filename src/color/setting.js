@@ -197,13 +197,13 @@ p5.prototype.background = function(...args) {
  * // Clear the screen on mouse press.
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
+ *   describe(`small white ellipses are continually drawn at mouse’s x and y
+ *   coordinates.`);
  * }
  * function mousePressed() {
  *   clear();
  *   background(128);
  * }
- * describe(`small white ellipses are continually drawn at mouse’s x and y
- * coordinates.`);
  * </code>
  * </div>
  *
