@@ -812,12 +812,12 @@ suite('Global Error Handling', function() {
       assert.strictEqual(log.length, 2);
       let temp = log[1].split('\n');
       temp = temp.filter(e => e.trim().length > 0);
-      assert.strictEqual(temp.length, 2);
+      assert.strictEqual(temp.length, 4);
       assert.match(log[0], /"asdfg" is not defined/);
-      assert.match(temp[0], /Error at/);
-      assert.match(temp[0], /myfun/);
-      assert.match(temp[1], /Called from/);
-      assert.match(temp[1], /setup/);
+      assert.match(temp[1], /Error at/);
+      assert.match(temp[1], /myfun/);
+      assert.match(temp[3], /Called from/);
+      assert.match(temp[3], /setup/);
     });
   });
 
