@@ -558,7 +558,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             context: (errorObj.position + 1).toString(),
             defaultValue: (errorObj.position + 1).toString()
           }),
-          link: '[https://p5js.org/examples/data-variable-scope.html]'
+          url: 'https://p5js.org/examples/data-variable-scope.html'
         };
 
         break;
@@ -652,7 +652,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // i18next-extract-mark-context-next-line ["EMPTY_VAR", "TOO_MANY_ARGUMENTS", "TOO_FEW_ARGUMENTS", "WRONG_TYPE"]
       message = translator('fes.friendlyParamError.type', translationObj);
 
-      p5._friendlyError(`${message}.`, func, 3);
+      p5._friendlyError(`${message}`, func, 3);
     }
   };
 

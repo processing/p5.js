@@ -40,7 +40,7 @@ import './p5.Color';
  * <code>
  * // Grayscale integer value
  * background(51);
- * describe('canvas with darkest charcoal grey background.');
+ * describe('canvas with darkest charcoal grey background');
  * </code>
  * </div>
  *
@@ -48,7 +48,7 @@ import './p5.Color';
  * <code>
  * // R, G & B integer values
  * background(255, 204, 0);
- * describe('canvas with yellow background.');
+ * describe('canvas with yellow background');
  * </code>
  * </div>
  *
@@ -57,7 +57,7 @@ import './p5.Color';
  * // H, S & B integer values
  * colorMode(HSB);
  * background(255, 204, 100);
- * describe('canvas with royal blue background.');
+ * describe('canvas with royal blue background');
  * </code>
  * </div>
  *
@@ -65,7 +65,7 @@ import './p5.Color';
  * <code>
  * // Named SVG/CSS color string
  * background('red');
- * describe('canvas with red background.');
+ * describe('canvas with red background');
  * </code>
  * </div>
  *
@@ -73,7 +73,7 @@ import './p5.Color';
  * <code>
  * // three-digit hexadecimal RGB notation
  * background('#fae');
- * describe('canvas with pink background.');
+ * describe('canvas with pink background');
  * </code>
  * </div>
  *
@@ -81,7 +81,7 @@ import './p5.Color';
  * <code>
  * // six-digit hexadecimal RGB notation
  * background('#222222');
- * describe('canvas with black background.');
+ * describe('canvas with black background');
  * </code>
  * </div>
  *
@@ -89,7 +89,7 @@ import './p5.Color';
  * <code>
  * // integer RGB notation
  * background('rgb(0,255,0)');
- * describe('canvas with bright green background.');
+ * describe('canvas with bright green background');
  * </code>
  * </div>
  *
@@ -97,7 +97,7 @@ import './p5.Color';
  * <code>
  * // integer RGBA notation
  * background('rgba(0,255,0, 0.25)');
- * describe('canvas with soft green background.');
+ * describe('canvas with soft green background');
  * </code>
  * </div>
  *
@@ -105,7 +105,7 @@ import './p5.Color';
  * <code>
  * // percentage RGB notation
  * background('rgb(100%,0%,10%)');
- * describe('canvas with red background.');
+ * describe('canvas with red background');
  * </code>
  * </div>
  *
@@ -113,7 +113,7 @@ import './p5.Color';
  * <code>
  * // percentage RGBA notation
  * background('rgba(100%,0%,100%,0.5)');
- * describe('canvas with light purple background.');
+ * describe('canvas with light purple background');
  * </code>
  * </div>
  *
@@ -121,9 +121,10 @@ import './p5.Color';
  * <code>
  * // p5 Color object
  * background(color(0, 0, 255));
- * describe('canvas with blue background.');
+ * describe('canvas with blue background');
  * </code>
  * </div>
+ *
  */
 
 /**
@@ -203,10 +204,12 @@ p5.prototype.background = function(...args) {
  * function mousePressed() {
  *   clear();
  *   background(128);
+ *   describe(
+ *     'canvas is cleared, small white ellipse is drawn at mouse X and mouse Y'
+ *   );
  * }
  * </code>
  * </div>
- *
  *
  * @param {Number} r normalized red val.
  * @param {Number} g normalized green val.
@@ -253,8 +256,9 @@ p5.prototype.clear = function(...args) {
  *     point(i, j);
  *   }
  * }
- * describe(`Green to red gradient from bottom L to top R.
- * Shading originates from top left.`);
+ * describe(
+ *   'Green to red gradient from bottom left to top right with shading from top left'
+ * );
  * </code>
  * </div>
  *
@@ -280,7 +284,7 @@ p5.prototype.clear = function(...args) {
  * colorMode(RGB, 1);
  * let myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
- * describe('unknown image.');
+ * describe('value of color red 0.4980... written on canvas');
  * </code>
  * </div>
  *
@@ -293,11 +297,10 @@ p5.prototype.clear = function(...args) {
  * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
- * describe(`50×50 ellipse at middle L & 40×40 ellipse at center.
- * Translucent pink outlines.`);
+ * describe('two translucent pink ellipse outlines at middle left and at center');
  * </code>
  * </div>
-
+ *
  */
 
 /**
@@ -373,8 +376,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // Grayscale integer value
  * fill(51);
  * rect(20, 20, 60, 60);
- * describe(`60×60 dark charcoal grey rect with black outline in center
- * of canvas.`);
+ * describe('dark charcoal grey rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -383,7 +385,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // R, G & B integer values
  * fill(255, 204, 0);
  * rect(20, 20, 60, 60);
- * describe('60×60 yellow rect with black outline in center of canvas.');
+ * describe('yellow rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -393,7 +395,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * colorMode(HSB);
  * fill(255, 204, 100);
  * rect(20, 20, 60, 60);
- * describe('60×60 royal blue rect with black outline in center of canvas.');
+ * describe('royal blue rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -402,7 +404,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // Named SVG/CSS color string
  * fill('red');
  * rect(20, 20, 60, 60);
- * describe('60×60 red rect with black outline in center of canvas.');
+ * describe('red rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -411,7 +413,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // three-digit hexadecimal RGB notation
  * fill('#fae');
  * rect(20, 20, 60, 60);
- * describe('60×60 pink rect with black outline in center of canvas.');
+ * describe('pink rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -420,7 +422,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // six-digit hexadecimal RGB notation
  * fill('#222222');
  * rect(20, 20, 60, 60);
- * describe('60×60 black rect with black outline in center of canvas.');
+ * describe('black rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -429,7 +431,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // integer RGB notation
  * fill('rgb(0,255,0)');
  * rect(20, 20, 60, 60);
- * describe('60×60 light green rect with black outline in center of canvas.');
+ * describe('bright green rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -438,7 +440,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // integer RGBA notation
  * fill('rgba(0,255,0, 0.25)');
  * rect(20, 20, 60, 60);
- * describe('60×60 soft green rect with black outline in center of canvas.');
+ * describe('soft green rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -447,7 +449,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // percentage RGB notation
  * fill('rgb(100%,0%,10%)');
  * rect(20, 20, 60, 60);
- * describe('60×60 red rect with black outline in center of canvas.');
+ * describe('red rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -456,7 +458,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // percentage RGBA notation
  * fill('rgba(100%,0%,100%,0.5)');
  * rect(20, 20, 60, 60);
- * describe('60×60 dark fuchsia rect with black outline in center of canvas.');
+ * describe('dark fuchsia rect with black outline in center of canvas');
  * </code>
  * </div>
  *
@@ -465,7 +467,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * // p5 Color object
  * fill(color(0, 0, 255));
  * rect(20, 20, 60, 60);
- * describe('60×60 blue rect with black outline in center of canvas.');
+ * describe('blue rect with black outline in center of canvas');
  * </code>
  * </div>
  */
