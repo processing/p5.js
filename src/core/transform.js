@@ -25,37 +25,37 @@ import p5 from './main';
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Array} arr an array of numbers
+ * @param  {Array} arr an array of numbers - should be 6 or 16 length (2*3 or 4*4 matrix values)
  * @chainable
  */
 /**
  * @method applyMatrix
- * @param  {Number} a_2x3 numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} b_2x3 numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} c_2x3 numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} d_2x3 numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} e_2x3 numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} f_2x3 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a
+ * @param  {Number} b
+ * @param  {Number} c
+ * @param  {Number} d
+ * @param  {Number} e
+ * @param  {Number} f
  * @chainable
  */
 /**
  * @method applyMatrix
- * @param  {Number} a_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} b_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} c_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} d_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} e_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} f_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} g_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} h_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} i_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} j_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} k_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} l_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} m_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} n_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} o_4x4 numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} p_4x4 numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} a
+ * @param  {Number} b
+ * @param  {Number} c
+ * @param  {Number} d
+ * @param  {Number} e
+ * @param  {Number} f
+ * @param  {Number} g
+ * @param  {Number} h
+ * @param  {Number} i
+ * @param  {Number} j
+ * @param  {Number} k
+ * @param  {Number} l
+ * @param  {Number} m
+ * @param  {Number} n
+ * @param  {Number} o
+ * @param  {Number} p
  * @chainable
  * @example
  * <div>
