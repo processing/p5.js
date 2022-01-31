@@ -31,11 +31,9 @@ import '../core/friendly_errors/fes_core';
  * let value = alpha(c); // Sets 'value' to 102
  * fill(value);
  * rect(50, 15, 35, 70);
+ * describe('Left half of canvas light blue and right half light charcoal grey.');
  * </code>
  * </div>
- *
- * @alt
- * Left half of canvas light blue and right half light charcoal grey.
  */
 p5.prototype.alpha = function(c) {
   p5._validateParameters('alpha', arguments);
@@ -58,11 +56,10 @@ p5.prototype.alpha = function(c) {
  * let blueValue = blue(c);
  * fill(0, 0, blueValue);
  * rect(50, 20, 35, 60); // Draw right rectangle
+ * describe('Left half of canvas light purple and right half a royal blue.');
  * </code>
  * </div>
  *
- * @alt
- * Left half of canvas light purple and right half a royal blue.
  */
 p5.prototype.blue = function(c) {
   p5._validateParameters('blue', arguments);
@@ -88,6 +85,8 @@ p5.prototype.blue = function(c) {
  * let value = brightness(c); // Sets 'value' to 255
  * fill(value);
  * rect(50, 20, 35, 60);
+ * describe(`Left half of canvas salmon pink and the right half with its
+ * brightness colored white.`);
  * </code>
  * </div>
  *
@@ -101,12 +100,10 @@ p5.prototype.blue = function(c) {
  * let value = brightness(c); // A 'value' of 50% is 127.5
  * fill(value);
  * rect(50, 20, 35, 60);
+ * describe(`Left half of canvas olive colored and the right half with its
+ * brightness color gray.`);
  * </code>
  * </div>
- *
- * @alt
- * Left half of canvas salmon pink and the right half with its brightness colored white.
- * Left half of canvas olive colored and the right half with its brightness color gray.
  */
 p5.prototype.brightness = function(c) {
   p5._validateParameters('brightness', arguments);
@@ -144,6 +141,8 @@ p5.prototype.brightness = function(c) {
  * fill(c);
  * noStroke();
  * rect(30, 20, 55, 55);
+ * describe(`Yellow rect in middle right of canvas,
+ * with 55 pixel width and height.`);
  * </code>
  * </div>
  *
@@ -157,6 +156,8 @@ p5.prototype.brightness = function(c) {
  * c = color(65);
  * fill(c);
  * ellipse(75, 75, 80, 80);
+ * describe(`Yellow ellipse in top left of canvas, black ellipse in bottom
+ * right, both 80×80.`);
  * </code>
  * </div>
  *
@@ -167,6 +168,7 @@ p5.prototype.brightness = function(c) {
  * fill(c);
  * noStroke();
  * rect(20, 20, 60, 60);
+ * describe('Bright fuchsia rect in middle of canvas, 60 pixel width and height.');
  * </code>
  * </div>
  *
@@ -180,6 +182,7 @@ p5.prototype.brightness = function(c) {
  * c = color('#00ff00');
  * fill(c);
  * rect(55, 10, 45, 80);
+ * describe('Two bright green rects on opposite sides of the canvas, both 45×80.');
  * </code>
  * </div>
  *
@@ -201,6 +204,7 @@ p5.prototype.brightness = function(c) {
  * c = color('rgba(0%, 0%, 100%, 1)');
  * fill(c);
  * rect(55, 55, 35, 35); // Draw rectangle
+ * describe('Four blue rects in each corner of the canvas, each are 35×35.');
  * </code>
  * </div>
  *
@@ -214,6 +218,8 @@ p5.prototype.brightness = function(c) {
  * c = color('hsla(160, 100%, 50%, 0.5)');
  * fill(c);
  * rect(55, 10, 45, 80); // Draw rectangle
+ * describe(`Bright sea green rect on left and darker rect on right of canvas,
+ * both 45×80.`);
  * </code>
  * </div>
  *
@@ -227,6 +233,8 @@ p5.prototype.brightness = function(c) {
  * c = color('hsba(160, 100%, 50%, 0.5)');
  * fill(c);
  * rect(55, 10, 45, 80); // Draw rectangle
+ * describe(`Dark green rect on left and lighter green rect on right of canvas,
+ * both 45×80.`);
  * </code>
  * </div>
  *
@@ -240,18 +248,10 @@ p5.prototype.brightness = function(c) {
  * c = color(50, 55, 100);
  * fill(c);
  * rect(55, 10, 45, 80);
+ * describe(`Dark blue rect on left and light teal rect on right of canvas,
+ * both 45×80.`);
  * </code>
  * </div>
- *
- * @alt
- * Yellow rect in middle right of canvas, with 55 pixel width and height.
- * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80×80.
- * Bright fuchsia rect in middle of canvas, 60 pixel width and height.
- * Two bright green rects on opposite sides of the canvas, both 45×80.
- * Four blue rects in each corner of the canvas, each are 35×35.
- * Bright sea green rect on left and darker rect on right of canvas, both 45×80.
- * Dark green rect on left and lighter green rect on right of canvas, both 45×80.
- * Dark blue rect on left and light teal rect on right of canvas, both 45×80.
  */
 
 /**
@@ -312,11 +312,10 @@ p5.prototype.color = function() {
  * print(greenValue); // Print "75.0"
  * fill(0, greenValue, 0); // Use 'greenValue' in new fill
  * rect(50, 20, 35, 60); // Draw right rectangle
+ * describe(`blue rect on left and green on right, both with black outlines
+ * & 35×60.`);
  * </code>
  * </div>
- *
- * @alt
- * blue rect on left and green on right, both with black outlines & 35×60.
  */
 p5.prototype.green = function(c) {
   p5._validateParameters('green', arguments);
@@ -347,11 +346,10 @@ p5.prototype.green = function(c) {
  * let value = hue(c); // Sets 'value' to "0"
  * fill(value);
  * rect(50, 20, 35, 60);
+ * describe('salmon pink rect on left and black on right, both 35×60.');
  * </code>
  * </div>
  *
- * @alt
- * salmon pink rect on left and black on right, both 35×60.
  */
 p5.prototype.hue = function(c) {
   p5._validateParameters('hue', arguments);
@@ -394,11 +392,10 @@ p5.prototype.hue = function(c) {
  * rect(50, 20, 20, 60);
  * fill(to);
  * rect(70, 20, 20, 60);
+ * describe(`4 rects one tan, brown, brownish purple, purple, with white
+ * outlines & 20×60`);
  * </code>
  * </div>
- *
- * @alt
- * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20×60
  */
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
@@ -468,11 +465,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * let value = lightness(c); // Sets 'value' to 50
  * fill(value);
  * rect(50, 20, 35, 60);
+ * describe(`light pastel green rect on left and dark grey rect on right,
+ * both 35×60.`);
  * </code>
  * </div>
- *
- * @alt
- * light pastel green rect on left and dark grey rect on right, both 35×60.
  */
 p5.prototype.lightness = function(c) {
   p5._validateParameters('lightness', arguments);
@@ -497,6 +493,8 @@ p5.prototype.lightness = function(c) {
  * print(redValue); // Print "255.0"
  * fill(redValue, 0, 0); // Use 'redValue' in new fill
  * rect(50, 20, 35, 60); // Draw right rectangle
+ * describe(`yellow rect on left and red rect on right, both with black
+ * outlines and 35×60.`);
  * </code>
  * </div>
  *
@@ -507,12 +505,9 @@ p5.prototype.lightness = function(c) {
  * colorMode(RGB, 1); // Sets the range for red, green, and blue to 1
  * let myColor = red(c);
  * print(myColor); // 0.4980392156862745
+ * describe('grey canvas');
  * </code>
  * </div>
- *
- * @alt
- * yellow rect on left and red rect on right, both with black outlines and 35×60.
- * grey canvas
  */
 p5.prototype.red = function(c) {
   p5._validateParameters('red', arguments);
@@ -542,11 +537,9 @@ p5.prototype.red = function(c) {
  * let value = saturation(c); // Sets 'value' to 126
  * fill(value);
  * rect(50, 20, 35, 60);
+ * describe('deep pink rect on left and grey rect on right, both 35×60.');
  * </code>
  * </div>
- *
- * @alt
- *deep pink rect on left and grey rect on right, both 35×60.
  */
 p5.prototype.saturation = function(c) {
   p5._validateParameters('saturation', arguments);

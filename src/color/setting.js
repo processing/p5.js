@@ -198,9 +198,8 @@ p5.prototype.background = function(...args) {
  * // Clear the screen on mouse press.
  * function draw() {
  *   ellipse(mouseX, mouseY, 20, 20);
- *   describe(
- *     'small white ellipses are continually drawn at mouse x and y coordinates'
- *   );
+ *   describe(`small white ellipses are continually drawn at mouse’s x and y
+ *   coordinates.`);
  * }
  * function mousePressed() {
  *   clear();
@@ -258,7 +257,7 @@ p5.prototype.clear = function(...args) {
  *   }
  * }
  * describe(
- *   'Green to red gradient from bottom left to top red with shading from top left'
+ *   'Green to red gradient from bottom left to top right with shading from top left'
  * );
  * </code>
  * </div>
@@ -273,9 +272,8 @@ p5.prototype.clear = function(...args) {
  *     point(i, j);
  *   }
  * }
- * describe(
- *   'Rainbow gradient from left to right, brightness increasing to white at top'
- * );
+ * describe(`Rainbow gradient from left to right.
+ * Brightness increasing to white at top.`);
  * </code>
  * </div>
  *
@@ -472,7 +470,6 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * describe('blue rect with black outline in center of canvas');
  * </code>
  * </div>
- *
  */
 
 /**
@@ -519,7 +516,8 @@ p5.prototype.fill = function(...args) {
  * rect(15, 10, 55, 55);
  * noFill();
  * rect(20, 20, 60, 60);
- * describe('noFill rect center over white rect. Both 60x60 with black outlines');
+ * describe(`White rect at top middle and noFill rect center,
+ * both with black outlines.`);
  * </code>
  * </div>
  *
@@ -540,7 +538,6 @@ p5.prototype.fill = function(...args) {
  * }
  * </code>
  * </div>
- *
  */
 p5.prototype.noFill = function() {
   this._renderer._setProperty('_doFill', false);
@@ -558,7 +555,7 @@ p5.prototype.noFill = function() {
  * <code>
  * noStroke();
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. no outline');
+ * describe('White rect at center; no outline.');
  * </code>
  * </div>
  *
@@ -579,7 +576,6 @@ p5.prototype.noFill = function() {
  * }
  * </code>
  * </div>
- *
  */
 p5.prototype.noStroke = function() {
   this._renderer._setProperty('_doStroke', false);
@@ -617,7 +613,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(51);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Dark charcoal grey outline');
+ * describe('White rect at center with dark charcoal grey outline.');
  * </code>
  * </div>
  *
@@ -627,7 +623,7 @@ p5.prototype.noStroke = function() {
  * stroke(255, 204, 0);
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Yellow outline');
+ * describe('White rect at center with yellow outline.');
  * </code>
  * </div>
  *
@@ -638,7 +634,7 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * stroke(255, 204, 100);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Royal blue outline');
+ * describe('White rect at center with royal blue outline.');
  * </code>
  * </div>
  *
@@ -648,7 +644,7 @@ p5.prototype.noStroke = function() {
  * stroke('red');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Red outline');
+ * describe('White rect at center with red outline.');
  * </code>
  * </div>
  *
@@ -658,7 +654,7 @@ p5.prototype.noStroke = function() {
  * stroke('#fae');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Pink outline');
+ * describe('White rect at center with pink outline.');
  * </code>
  * </div>
  *
@@ -668,7 +664,7 @@ p5.prototype.noStroke = function() {
  * stroke('#222222');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Black outline');
+ * describe('White rect at center with black outline.');
  * </code>
  * </div>
  *
@@ -678,7 +674,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(0,255,0)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Bright green outline');
+ * describe('White rect at center with bright green outline.');
  * </code>
  * </div>
  *
@@ -688,7 +684,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(0,255,0,0.25)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Soft green outline');
+ * describe('White rect at center with soft green outline.');
  * </code>
  * </div>
  *
@@ -698,7 +694,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgb(100%,0%,10%)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Red outline');
+ * describe('White rect at center with red outline.');
  * </code>
  * </div>
  *
@@ -708,7 +704,7 @@ p5.prototype.noStroke = function() {
  * stroke('rgba(100%,0%,100%,0.5)');
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Dark fuchsia outline');
+ * describe('White rect at center with dark fuchsia outline.');
  * </code>
  * </div>
  *
@@ -718,10 +714,9 @@ p5.prototype.noStroke = function() {
  * stroke(color(0, 0, 255));
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
- * describe('60x60 white rect at center. Blue outline');
+ * describe('White rect at center with blue outline.');
  * </code>
  * </div>
- *
  */
 
 /**
@@ -784,9 +779,8 @@ p5.prototype.stroke = function(...args) {
  * erase();
  * ellipse(25, 30, 30);
  * noErase();
- * describe(
- *   'centered pink rect over purple background. Elliptical area in top-left of rect is erased white'
- * );
+ * describe(`60×60 centered pink rect, purple background.
+ * Elliptical area in top-left of rect is erased white.`);
  * </code>
  * </div>
  *
@@ -799,9 +793,8 @@ p5.prototype.stroke = function(...args) {
  * erase(150, 255);
  * triangle(50, 10, 70, 50, 90, 10);
  * noErase();
- * describe(
- *   'purple rect centered over mint green background. Triangle in top-right is partially erased with fully erased outline'
- * );
+ * describe(`60×60 centered purple rect, mint green background.
+ * Triangle in top-right is partially erased with fully erased outline.`);
  * </code>
  * </div>
  *
@@ -828,13 +821,11 @@ p5.prototype.stroke = function(...args) {
  *   translate(0, 0, 40);
  *   torus(15, 5);
  *   noErase();
- *   describe(
- *     'teal sphere centered over yellow background. Torus rotating around sphere erases to reveal black text underneath'
- *   );
+ *   describe(`60×60 centered teal sphere, yellow background.
+ *   Torus rotating around sphere erases to reveal black text underneath.`);
  * }
  * </code>
  * </div>
- *
  */
 p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
   this._renderer.erase(opacityFill, opacityStroke);
@@ -861,12 +852,10 @@ p5.prototype.erase = function(opacityFill = 255, opacityStroke = 255) {
  * ellipse(50, 50, 60);
  * noErase();
  * rect(70, 10, 10, 80);
- * describe(
- *   'Orange background, with two tall blue rectangles. A centered ellipse erased the first blue rect but not the second'
- * );
+ * describe(`Orange background, with two tall blue rectangles.
+ * A centered ellipse erased the first blue rect but not the second.`);
  * </code>
  * </div>
- *
  */
 
 p5.prototype.noErase = function() {
