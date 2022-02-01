@@ -24,6 +24,9 @@ import p5 from './main';
  * > <img style="max-width: 150px" src="assets/transformation-matrix.png"
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
+ * <img style="max-width: 150px" src="assets/transformation-matrix-4-4.png"
+ * alt="The transformation matrix used when applyMatrix is called with 4x4 matrix"/>
+ *
  * @method applyMatrix
  * @param  {Array} arr an array of numbers - should be 6 or 16 length (2*3 or 4*4 matrix values)
  * @chainable
