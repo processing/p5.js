@@ -76,20 +76,20 @@ This process is also covered [in a video by The Coding Train.](https://youtu.be/
 
 3. [Clone](https://help.github.com/articles/cloning-a-repository/) your new fork of the repository from GitHub onto your local computer.
 
-   ```
+   ```shell
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
 4. Navigate into the project folder and install all its necessary dependencies with npm.
 
-   ```
+   ```shell
    $ cd p5.js
    $ npm ci
    ```
 
 5. [Grunt](https://gruntjs.com/) should now be installed, and you can use it to build the library from the source code.
 
-   ```
+   ```shell
    $ npm run grunt
    ```
 
@@ -97,7 +97,7 @@ This process is also covered [in a video by The Coding Train.](https://youtu.be/
 
 6. Make some changes locally to the codebase and [commit](https://help.github.com/articles/github-glossary/#commit) them with Git.
 
-   ```
+   ```shell
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
@@ -106,7 +106,7 @@ This process is also covered [in a video by The Coding Train.](https://youtu.be/
 
 8. [Push](https://help.github.com/articles/github-glossary/#push) your new changes to your fork on GitHub.
 
-   ```
+   ```shell
    $ git push
    ```
 
@@ -124,13 +124,13 @@ p5.js requires clean and stylistically consistent code syntax, which it enforces
 
 To detect errors, run the following command in your terminal (do not type the `$` prompt):
 
-```
+```shell
 $ npm run lint
 ```
 
 Some syntax errors can be automatically fixed:
 
-```
+```shell
 $ npm run lint:fix
 ```
 
@@ -159,7 +159,7 @@ Unit tests are small pieces of code which are created as complements to the prim
 
 In order to run unit tests, you'll need to make sure you have installed the project's dependencies.
 
-```
+```shell
 $ npm ci
 ```
 
@@ -170,13 +170,13 @@ This will install *all* the dependencies for p5.js; briefly, the most important 
 
 Once the dependencies are installed, use Grunt to run the unit tests.
 
-```
+```shell
 $ grunt
 ```
 
 Sometimes it is useful to run the tests in the browser instead of on the command line. To do this, first start the [connect](https://github.com/gruntjs/grunt-contrib-connect) server:
 
-```
+```shell
 $ npm run dev
 ```
 
