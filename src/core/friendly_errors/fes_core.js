@@ -139,7 +139,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
-      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
+      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})`;
     }
     return msgWithReference;
   };
