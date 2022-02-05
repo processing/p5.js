@@ -39,6 +39,8 @@ import p5 from '../core/main';
  *   if (myText === null) {
  *     myText = '';
  *   }
+ *   describe(`When you type the key name is displayed as black text on white background.
+ *   If you reload the page, the last letter typed is still displaying.`);
  * }
  *
  * function draw() {
@@ -52,10 +54,6 @@ import p5 from '../core/main';
  *   storeItem('myText', myText);
  * }
  * </code></div>
- *
- * @alt
- * When you type the key name is displayed as black text on white background.
- * If you reload the page, the last letter typed is still displaying.
  */
 p5.prototype.storeItem = function(key, value) {
   if (typeof key !== 'string') {
@@ -127,6 +125,9 @@ p5.prototype.storeItem = function(key, value) {
  *   if (myColor !== null) {
  *     background(myColor);
  *   }
+ *   describe(`If you click, the canvas changes to a random color.·
+ *     If you reload the page, the canvas is still the color it was when the
+ *     page was previously loaded.`);
  * }
  *
  * function mousePressed() {
@@ -134,11 +135,6 @@ p5.prototype.storeItem = function(key, value) {
  *   storeItem('myColor', myColor);
  * }
  * </code></div>
- *
- * @alt
- * If you click, the canvas changes to a random color.
- * If you reload the page, the canvas is still the color it
- * was when the page was previously loaded.
  */
 p5.prototype.getItem = function(key) {
   let value = localStorage.getItem(key);
