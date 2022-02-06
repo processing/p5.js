@@ -23,12 +23,10 @@ import p5 from '../core/main';
  *     fill(255);
  *   }
  *   rect(25, 25, 50, 50);
+ *   describe('50×50 white rect that turns black on keypress.');
  * }
  * </code>
  * </div>
- *
- * @alt
- * 50×50 white rect that turns black on keypress.
  */
 p5.prototype.isKeyPressed = false;
 p5.prototype.keyIsPressed = false; // khan
@@ -53,11 +51,9 @@ p5.prototype.keyIsPressed = false; // khan
  * function draw() {
  *   background(200);
  *   text(key, 33, 65); // Display last key pressed.
+ *   describe('canvas displays any key value that is pressed in pink font.');
  * }
  * </code></div>
- *
- * @alt
- * canvas displays any key value that is pressed in pink font.
  */
 p5.prototype.key = '';
 
@@ -76,6 +72,8 @@ p5.prototype.key = '';
  * function draw() {
  *   fill(fillVal);
  *   rect(25, 25, 50, 50);
+ *   describe(`Grey rect center. turns white when up arrow pressed and black when down.
+ *     Display key pressed and its keyCode in a yellow box.`);
  * }
  *
  * function keyPressed() {
@@ -94,9 +92,6 @@ p5.prototype.key = '';
  *   print(key, ' ', keyCode);
  * }
  * </code></div>
- * @alt
- * Grey rect center. turns white when up arrow pressed and black when down
- * Display key pressed and its keyCode in a yellow box
  */
 p5.prototype.keyCode = 0;
 
@@ -130,6 +125,8 @@ p5.prototype.keyCode = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black rect center. turns white when key pressed and black
+ *     when released.`);
  * }
  * function keyPressed() {
  *   if (value === 0) {
@@ -146,6 +143,8 @@ p5.prototype.keyCode = 0;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black rect center. turns white when left arrow pressed and
+ *     black when right.`);
  * }
  * function keyPressed() {
  *   if (keyCode === LEFT_ARROW) {
@@ -164,10 +163,6 @@ p5.prototype.keyCode = 0;
  * }
  * </code>
  * </div>
- *
- * @alt
- * black rect center. turns white when key pressed and black when released
- * black rect center. turns white when left arrow pressed and black when right.
  */
 p5.prototype._onkeydown = function(e) {
   if (this._downKeys[e.which]) {
@@ -203,6 +198,8 @@ p5.prototype._onkeydown = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black rect center. turns white when key pressed and black
+ *     when pressed again`);
  * }
  * function keyReleased() {
  *   if (value === 0) {
@@ -214,9 +211,6 @@ p5.prototype._onkeydown = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black rect center. turns white when key pressed and black when pressed again
  */
 p5.prototype._onkeyup = function(e) {
   this._downKeys[e.which] = false;
@@ -263,6 +257,8 @@ p5.prototype._onkeyup = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`black rect center. turns white when 'a' key typed and
+ *     black when 'b' pressed`);
  * }
  * function keyTyped() {
  *   if (key === 'a') {
@@ -275,9 +271,6 @@ p5.prototype._onkeyup = function(e) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * black rect center. turns white when 'a' key typed and black when 'b' pressed
  */
 p5.prototype._onkeypress = function(e) {
   if (e.which === this._lastKeyCodeTyped) {
@@ -345,6 +338,8 @@ p5.prototype._onblur = function(e) {
  *
  *   clear();
  *   ellipse(x, y, 50, 50);
+ *   describe(`50×50 red ellipse moves left, right, up, and
+ *     down with arrow presses.`);
  * }
  * </code></div>
  *
@@ -369,12 +364,10 @@ p5.prototype._onblur = function(e) {
  *   clear();
  *   fill(255, 0, 0);
  *   ellipse(50, 50, diameter, diameter);
+ *   describe(`50×50 red ellipse gets bigger or smaller when
+ *     + or - are pressed.`);
  * }
  * </code></div>
- *
- * @alt
- * 50×50 red ellipse moves left, right, up and down with arrow presses.
- * 50×50 red ellipse gets bigger or smaller when + or - are pressed.
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);
