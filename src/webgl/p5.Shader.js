@@ -362,6 +362,10 @@ p5.Shader.prototype.useProgram = function() {
  *     grad.setUniform('offset', [0, sin(millis() / 2000) + 1]);
  *   }
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *
+ *   describe(`An circular gradient of orange on a blue background oscillates vertically.
+ *     Clicking the mouse toggles between the original gradient, and a
+ *     circular gradient of red and green oscillating horizontally.`);
  * }
  *
  * function mouseClicked() {
@@ -369,9 +373,6 @@ p5.Shader.prototype.useProgram = function() {
  * }
  * </code>
  * </div>
- *
- * @alt
- * canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   const uniform = this.uniforms[uniformName];

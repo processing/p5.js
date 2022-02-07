@@ -383,6 +383,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *   fill(0, 0, 0);
  *   box(50);
  *   pop();
+ *   describe(`A rotating view of a solid black cube.`);
  * }
  * </code>
  * </div>
@@ -405,6 +406,8 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *   fill(0, 0, 0);
  *   box(50);
  *   pop();
+ *   describe(`A rotating view of a solid black cube.
+ *     Its edges are smoother than the previous cube.`);
  * }
  * </code>
  * </div>
@@ -447,6 +450,11 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *   rotateY(t * 0.83);
  *   rotateZ(t * 0.91);
  *   torus(width * 0.3, width * 0.07, 24, 10);
+ *
+ *   describe(`A rotating view of a torus.
+ *     As it spins, its sides show a variety of colors.
+ *     While holding the mouse button down, the transitions
+ *     between the colors take on a more polygonal appearance.`);
  * }
  *
  * function mousePressed() {
@@ -461,8 +469,6 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * }
  * </code>
  * </div>
- *
- * @alt a rotating cube with smoother edges
  */
 /**
  * @method setAttributes
@@ -619,12 +625,10 @@ p5.RendererGL.prototype.background = function(...args) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(75, 75, 75);
+ *   describe(`black canvas with purple cube spinning`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * black canvas with purple cube spinning
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
@@ -658,12 +662,10 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(75, 75, 75);
+ *   describe(`black canvas with purple cube with pink outline spinning`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * black canvas with purple cube with pink outline spinning
  */
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   //@todo allow transparency in stroking currently doesn't have
@@ -771,13 +773,11 @@ p5.RendererGL.prototype.noErase = function() {
  *   rotateY(frameCount * 0.01);
  *   sphere(75);
  *   pop();
+ *   describe(`black canvas with two purple rotating spheres with
+ *     pink outlines the sphere on top has much heavier outlines.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * black canvas with two purple rotating spheres with pink
- * outlines the sphere on top has much heavier outlines,
  */
 p5.RendererGL.prototype.strokeWeight = function(w) {
   if (this.curStrokeWeight !== w) {

@@ -47,8 +47,6 @@ import * as constants from '../core/constants';
  * }
  * </code>
  * </div>
- * @alt
- * sphere with coral color under black light
  *
  * @example
  * <div>
@@ -66,8 +64,6 @@ import * as constants from '../core/constants';
  * }
  * </code>
  * </div>
- * @alt
- * sphere with coral color under white light
  */
 
 /**
@@ -147,7 +143,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
  *   describe(
- *     'Sphere with specular highlight. Clicking the mouse toggles the specular highlight color between red and the default white.'
+ *     `Sphere with specular highlight.
+ *      Clicking the mouse toggles the specular highlight color between
+ *      red and the default white.`
  *   );
  * }
  *
@@ -180,9 +178,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * </code>
  * </div>
  *
- * @alt
- * Sphere with specular highlight. Clicking the mouse toggles the
- * specular highlight color between red and the default white.
  */
 
 /**
@@ -262,7 +257,8 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   describe(
- *     'scene with sphere and directional light. The direction of the light is controlled with the mouse position.'
+ *     `Scene with sphere and directional light. The direction of
+ *      the light is controlled with the mouse position.`
  *   );
  * }
  * function draw() {
@@ -276,10 +272,6 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * scene with sphere and directional light. The direction of
- * the light is controlled with the mouse position.
  */
 
 /**
@@ -383,7 +375,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   describe(
- *     'scene with sphere and point light. The position of the light is controlled with the mouse position.'
+ *     `Scene with sphere and point light. The position of
+ *      the light is controlled with the mouse position.`
  *   );
  * }
  * function draw() {
@@ -404,10 +397,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * scene with sphere and point light. The position of
- * the light is controlled with the mouse position.
  */
 
 /**
@@ -492,7 +481,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   describe('the light is partially ambient and partially directional');
+ *   describe('The light is partially ambient and partially directional');
  * }
  * function draw() {
  *   background(0);
@@ -504,9 +493,6 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * }
  * </code>
  * </div>
- *
- * @alt
- * the light is partially ambient and partially directional
  */
 p5.prototype.lights = function() {
   this._assert3d('lights');
@@ -547,7 +533,7 @@ p5.prototype.lights = function() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
  *   describe(
- *     'Two spheres with different falloff values show different intensity of light'
+ *     'Two spheres with different falloff values show different intensities of light'
  *   );
  * }
  * function draw() {
@@ -574,9 +560,6 @@ p5.prototype.lights = function() {
  * }
  * </code>
  * </div>
- *
- * @alt
- * Two spheres with different falloff values show different intensity of light
  */
 p5.prototype.lightFalloff = function(
   constantAttenuation,
@@ -670,7 +653,8 @@ p5.prototype.lightFalloff = function(
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   describe(
- *     'scene with sphere and spot light. The position of the light is controlled with the mouse position.'
+ *     `Scene with sphere and spot light.
+ *      The position of the light is controlled with the mouse position.`
  *   );
  * }
  * function draw() {
@@ -692,10 +676,6 @@ p5.prototype.lightFalloff = function(
  * }
  * </code>
  * </div>
- *
- * @alt
- * scene with sphere and spot light. The position of
- * the light is controlled with the mouse position.
  */
 /**
  * @method spotLight
@@ -1028,10 +1008,6 @@ p5.prototype.spotLight = function(
  * }
  * </code>
  * </div>
- *
- * @alt
- * Three white spheres. Each appears as a different
- * color due to lighting.
  */
 p5.prototype.noLights = function() {
   this._assert3d('noLights');

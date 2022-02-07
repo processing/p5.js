@@ -58,12 +58,11 @@ import './p5.Geometry';
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   model(octahedron);
+ *   describe(`Vertically rotating 3-d octahedron.`);
  * }
  * </code>
  * </div>
  *
- * @alt
- * Vertically rotating 3-d octahedron.
  *
  * @example
  * <div>
@@ -88,12 +87,11 @@ import './p5.Geometry';
  *   rotateY(frameCount * 0.01);
  *   normalMaterial(); // For effect
  *   model(teapot);
+ *   describe(`Vertically rotating 3-d teapot with red, green, and
+ *     blue gradient.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * Vertically rotating 3-d teapot with red, green and blue gradient.
  */
 /**
  * @method loadModel
@@ -612,12 +610,10 @@ function parseASCIISTL(model, lines) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   model(octahedron);
+ *   describe(`Vertically rotating 3-d octahedron.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * Vertically rotating 3-d octahedron.
  */
 p5.prototype.model = function(model) {
   this._assert3d('model');

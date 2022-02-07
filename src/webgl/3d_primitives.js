@@ -33,18 +33,11 @@ import * as constants from '../core/constants';
  * function draw() {
  *   background(200);
  *   plane(50, 50);
+ *   describe(`A white plane (shaped like a square).
+ *     Black lines show that the plane is built from 2 triangles.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * Nothing displayed on canvas
- * Rotating interior view of a box with sides that change color.
- * 3d red and green gradient.
- * Rotating interior view of a cylinder with sides that change color.
- * Rotating view of a cylinder with sides that change color.
- * 3d red and green gradient.
- * rotating view of a multi-colored cylinder with concave sides.
  */
 p5.prototype.plane = function(width, height, detailX, detailY) {
   this._assert3d('plane');
@@ -121,6 +114,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   box(50);
+ *   describe(`Rotating view of a 3D box with sides of length 50.`);
  * }
  * </code>
  * </div>
@@ -239,6 +233,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * function draw() {
  *   background(205, 102, 94);
  *   sphere(40);
+ *   describe(`A white sphere with a diameter of 40.
+ *     Black lines on its surface show how the sphere is built out of
+ *     many small triangles.`);
  * }
  * </code>
  * </div>
@@ -262,6 +259,14 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   background(205, 105, 94);
  *   rotateY(millis() / 1000);
  *   sphere(40, detailX.value(), 16);
+ *   describe(`A white rotating sphere-like shape with a diameter of 40.
+ *     Its actual shape is similar to a clam shell.
+ *     Black lines on its surface show how the sphere is built out of
+ *     many small triangles.
+ *     When adjusting the slider below the drawing, the shape increases
+ *     the number of small triangles making up the sphere, making the
+ *     final shape increasingly round as the slider approaches its
+ *     maximum setting.`);
  * }
  * </code>
  * </div>
@@ -285,6 +290,15 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   background(205, 105, 94);
  *   rotateY(millis() / 1000);
  *   sphere(40, 16, detailY.value());
+ *   describe(`A white rotating sphere-like shape with a diameter of 40.
+ *     Its actual shape is like a cylinder with the top and bottom
+ *     surface protruding outward.
+ *     Black lines on its surface show how the sphere is built out of
+ *     many small triangles.
+ *     When adjusting the slider below the drawing, the shape increases
+ *     the number of small triangles making up the sphere, making the
+ *     final shape increasingly round as the slider approaches its
+ *     maximum setting.`);
  * }
  * </code>
  * </div>
@@ -458,6 +472,9 @@ const _truncatedCone = function(
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
  *   cylinder(20, 50);
+ *   describe(`A spinning view of a white cylinder.
+ *     Black lines on its surface show how the cylinder is built out of
+ *     many small triangles.`);
  * }
  * </code>
  * </div>
@@ -481,6 +498,11 @@ const _truncatedCone = function(
  *   background(205, 105, 94);
  *   rotateY(millis() / 1000);
  *   cylinder(20, 75, detailX.value(), 1);
+ *   describe(`A spinning view of what appears to be a white plane.
+ *     Black lines on its surface show how the shape is built out of
+ *     many small triangles.
+ *     As you increase the slider below the canvas, the shape gradually
+ *     becomes smoother and closer to a cylinder.`);
  * }
  * </code>
  * </div>
@@ -504,6 +526,12 @@ const _truncatedCone = function(
  *   background(205, 105, 94);
  *   rotateY(millis() / 1000);
  *   cylinder(20, 75, 16, detailY.value());
+ *   describe(`A spinning view of a white cylinder.
+ *     Black lines on its surface show how the shape is built out of
+ *     many small triangles.
+ *     As you increase the slider below the canvas, the shape increases
+ *     the number of triangles on the outer (round) surface, but the
+ *     smoothness of the shape remains the same.`);
  * }
  * </code>
  * </div>
