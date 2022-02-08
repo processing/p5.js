@@ -33,32 +33,32 @@ import p5 from './main';
  */
 /**
  * @method applyMatrix
- * @param  {Number} a
- * @param  {Number} b
- * @param  {Number} c
- * @param  {Number} d
- * @param  {Number} e
- * @param  {Number} f
+ * @param  {Number} a1 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a2 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a3 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a4 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a5 numbers which define the 2×3 matrix to be multiplied
+ * @param  {Number} a6 numbers which define the 2×3 matrix to be multiplied
  * @chainable
  */
 /**
  * @method applyMatrix
- * @param  {Number} a
- * @param  {Number} b
- * @param  {Number} c
- * @param  {Number} d
- * @param  {Number} e
- * @param  {Number} f
- * @param  {Number} g
- * @param  {Number} h
- * @param  {Number} i
- * @param  {Number} j
- * @param  {Number} k
- * @param  {Number} l
- * @param  {Number} m
- * @param  {Number} n
- * @param  {Number} o
- * @param  {Number} p
+ * @param  {Number} b1  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b2  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b3  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b4  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b5  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b6  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b7  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b8  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b9  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b10  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b11  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b12  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b13  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b14  numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} b15  numbers which define the 4x4 matrix to be multipliedo
+ * @param  {Number} b16  numbers which define the 4x4 matrix to be multiplied
  * @chainable
  * @example
  * <div>
