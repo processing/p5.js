@@ -31,7 +31,7 @@ p5 aspires to make its decision-making process as transparent and horizontal as 
 
 To propose a change, open an issue. If it is a large change or a change that necessitates significant design consideration, add a 'discussion' label to the issue. Interested community members will chime in with their thoughts. After a significant period has passed (30 days unless urgent), maintainers will try to discern whether there is significant interest and whether consensus has been reached about the best approach. At this point, maintainers will either request a vote, close the issue, or open up the issue for pull requests. Pull requests submitted before a discussion has concluded will be ignored.
 
-> In the future it would be great to automate the above organization and decision-making processes.
+> In the future, it would be great to automate the above organization and decision-making processes.
 
 > If you have an idea for how to automate any of the above with a bot or github action feel free to open an issue with your proposal!
 
@@ -41,6 +41,6 @@ To propose a change, open an issue. If it is a large change or a change that nec
 
 Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community.
 
-Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
+Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in active learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
 Once added, a steward's username will remain in the [stewards section of the readme](https://github.com/processing/p5.js#stewards) until they request to be removed. If a steward is unresponsive for an extended period of time, we may ping them to ask about their status. And you can always take a break as a steward and come back!
