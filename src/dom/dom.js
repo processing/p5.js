@@ -943,7 +943,6 @@ p5.prototype.createRadio = function() {
   };
 
   self.selected = function(value) {
-    // console.log('Hello');
     let result = null;
     if (value === undefined) {
       for (const option of self._getOptionsArray()) {
