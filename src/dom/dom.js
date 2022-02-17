@@ -954,12 +954,14 @@ p5.prototype.createRadio = function() {
     } else {
       // forEach loop to uncheck all radio buttons before
       // setting any one as checked.
-      self
-        ._getOptionsArray()
-        .forEach(option => option.removeAttribute('checked'));
+      self._getOptionsArray().forEach(option => {
+        option.removeAttribute('checked');
+        option.checked = false;
+      });
 
       for (const option of self._getOptionsArray()) {
         if (option.value === value) {
+          option.checked = true;
           option.setAttribute('checked', true);
           result = option;
         }
