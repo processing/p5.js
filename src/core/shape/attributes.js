@@ -123,7 +123,7 @@ p5.prototype.noSmooth = function() {
  * rectMode(CORNERS) interprets the first two parameters as the location of
  * one of the corners, and the third and fourth parameters as the location of
  * the diagonally opposite corner. Note, the rectangle is drawn between the
- * coordinates, so it is not neccesary that the first corner be the upper left
+ * coordinates, so it is not necessary that the first corner be the upper left
  * corner.
  *
  * rectMode(CENTER) interprets the first two parameters as the shape's center

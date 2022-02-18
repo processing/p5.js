@@ -53,7 +53,7 @@ p5.prototype.print = function(...args) {
  * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
  * number of frames that have been displayed since the program started. Inside
  * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
- * of draw it is 1, etc.
+ * of <a href="#/p5/draw">draw()</a> it is 1, etc.
  *
  * @property {Integer} frameCount
  * @readOnly
@@ -241,7 +241,7 @@ p5.prototype.cursor = function(type, x, y) {
  * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
  *
  * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
- * of the type numbers or are non positive also returns current framerate.
+ * of the type Number or are non-positive also returns current framerate.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -262,7 +262,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  * function draw() {
  *   background(200);
- *   rectX = rectX += 1; // Move Rectangle
+ *   rectX += 1; // Move Rectangle
  *
  *   if (rectX >= width) {
     // If you go off screen.

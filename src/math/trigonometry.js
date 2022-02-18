@@ -18,8 +18,8 @@ p5.prototype._angleMode = constants.RADIANS;
 /**
  * The inverse of <a href="#/p5/cos">cos()</a>, returns the arc cosine of a value.
  * This function expects the values in the range of -1 to 1 and values are returned in
- * the range 0 to PI (3.1415927) if the angleMode is RADIANS or 0 to 180 if the
- * angle mode is DEGREES.
+ * the range 0 to PI (3.1415927) if the <a href="#/p5/angleMode">angleMode()</a> is RADIANS
+ * or 0 to 180 if the <a href="#/p5/angleMode">angleMode()</a> is DEGREES.
  *
  * @method acos
  * @param  {Number} value the value whose arc cosine is to be returned
@@ -123,9 +123,10 @@ p5.prototype.atan = function(ratio) {
 /**
  * Calculates the angle (in radians) from a specified point to the coordinate
  * origin as measured from the positive x-axis. Values are returned as a
- * float in the range from PI to -PI if the angleMode is RADIANS or 180 to
- * -180 if the angleMode is DEGREES. The atan2<a href="#/p5/">()</a> function is
- * most often used for orienting geometry to the position of the cursor.
+ * float in the range from PI to -PI if the <a href="#/p5/angleMode">angleMode()</a>
+ * is RADIANS or 180 to -180 if the <a href="#/p5/angleMode">angleMode()</a> is DEGREES.
+ * The <a href="#/p5/">atan2()</a> function is most often used for orienting geometry
+ * to the position of the cursor.
  *
  * Note: The y-coordinate of the point is the first parameter, and the
  * x-coordinate is the second parameter, due the the structure of calculating
@@ -241,7 +242,7 @@ p5.prototype.tan = function(angle) {
  * Radians and degrees are two ways of measuring the same thing. There are
  * 360 degrees in a circle and 2*PI radians in a circle. For example,
  * 90° = PI/2 = 1.5707964. This function does not take into account the
- * current <a href="#/p5/angleMode">angleMode</a>.
+ * current <a href="#/p5/angleMode">angleMode()</a>.
  *
  * @method degrees
  * @param  {Number} radians the radians value to convert to degrees
@@ -283,7 +284,7 @@ p5.prototype.degrees = angle => angle * constants.RAD_TO_DEG;
 p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 
 /**
- * Sets the current mode of p5 to given mode. Default mode is RADIANS.
+ * Sets the current mode of p5 to the given mode. Default mode is RADIANS.
  *
  * @method angleMode
  * @param {Constant} mode either RADIANS or DEGREES
