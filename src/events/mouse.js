@@ -984,7 +984,10 @@ p5.prototype._onwheel = function(e) {
  * Note that not all browsers support this feature.
  * This enables you to create experiences that aren't limited by the mouse moving out of the screen
  * even if it is repeatedly moved into one direction.
- * For example, a first person perspective experience.
+ * For example, a first person perspective experience. It is recommended to
+ * use <a href="#/p5/requestPointerLock">requestPointerLock()</a> as a result
+ * of any user interaction, like <a href="#/p5/mouseClicked">mouseClicked()</a>
+ * or <a href="#/p5/keyPressed">keyPressed()</a>
  *
  * @method requestPointerLock
  * @example
@@ -993,7 +996,6 @@ p5.prototype._onwheel = function(e) {
  * let cam;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   requestPointerLock();
  *   cam = createCamera();
  * }
  *
@@ -1002,6 +1004,10 @@ p5.prototype._onwheel = function(e) {
  *   cam.pan(-movedX * 0.001);
  *   cam.tilt(movedY * 0.001);
  *   sphere(25);
+ * }
+ *
+ * function mouseClicked() {
+ *   requestPointerLock();
  * }
  * </code>
  * </div>
@@ -1024,8 +1030,8 @@ p5.prototype.requestPointerLock = function() {
 
 /**
  * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
- * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
- * for example to make ui elements usable etc
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>.
+ * For example, it might be used to make UI elements usable once again.
  *
  * @method exitPointerLock
  * @example
