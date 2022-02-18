@@ -16,7 +16,7 @@ You must specify one of these for the element to appear in the docs, with the na
 * When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21).
 * Here is [yuidoc's reference](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) for more syntax information.
 
-```
+```js
    /**
     * The x component of the vector
     * @property x
@@ -25,7 +25,7 @@ You must specify one of these for the element to appear in the docs, with the na
     this.x = x || 0;
 ```
 
-```
+```js
 
   /**
    * Draw an arc
@@ -45,7 +45,7 @@ You must specify one of these for the element to appear in the docs, with the na
    */
 ```
 
-```
+```js
   /**
    *
    * Calculates the magnitude (length) of the vector and returns the result
@@ -98,7 +98,7 @@ If the method returns the parent object, you can skip the `@return` and add this
 
 If a method has multiple possible parameter options, you can specify each individually. For example, see the examples for [background](http://p5js.org/reference/#p5/background) under "syntax". To do this, choose one version to list as the first signature using the guidelines above. At the end of the documentation block, you can add additional signatures, each in its own block, following the example below.
 
-```
+```js
 /**
  * @method background
  * @param {String} colorstring color string, possible formats include: integer
@@ -123,7 +123,7 @@ Notes:
 
 Use `@final` if a property or variable is a constant:
 
-```
+```js
     /**
      * PI is a mathematical constant with the value 3.14159265358979323846.
      * @property PI
@@ -135,7 +135,7 @@ Use `@final` if a property or variable is a constant:
 
 Use `@private` if a property or variable is a private variable (default is `@public` so no need to specify).
 
-```
+```js
     /**
      * _start calls preload() setup() and draw()
      * 
@@ -149,7 +149,7 @@ Use `@private` if a property or variable is a private variable (default is `@pub
 
 The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See [here](https://p5js.org/reference/#collection-list-nav) (the modules are COLOR, IMAGE, IO, PVECTOR, etc.). 
 
-```
+```js
 /**
  * @module image
  */
@@ -163,7 +163,7 @@ define(function (require) {
 
 Constructors are defined with `@class`. Each constructor should have the tag `@class` followed by the name of the class, as well as the tag `@constructor`, and any `@param` tags required.
 
-```
+```js
   /**
    * The p5 constructor function.
    * @class p5

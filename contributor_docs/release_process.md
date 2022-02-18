@@ -10,8 +10,8 @@
 * High Bandwidth : Lots of things to download/pull/push (\~190 MB total I presume)
 
 ## Usage
-```
-npm run release
+```shell
+$ npm run release
 ```
 
 * This will run the build steps and you should follow the prompt provided by `np` to finish the process.
