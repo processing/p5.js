@@ -30,11 +30,9 @@ import p5 from '../core/main';
  * function draw() {
  *   background(255);
  *   line(v1.x, v1.y, mouseX, mouseY);
+ *   describe(`draws a line from center of canvas to mouse pointer position.`);
  * }
  * </code></div>
- *
- * @alt
- * draws a line from center of canvas to mouse pointer position.
  */
 p5.prototype.createVector = function(x, y, z) {
   if (this instanceof p5) {

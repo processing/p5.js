@@ -41,11 +41,11 @@ import * as constants from '../core/constants';
  * ellipse(v2.x, v2.y, 50, 50);
  * v1.add(v2);
  * ellipse(v1.x, v1.y, 50, 50);
+ *
+ * describe(`2 white ellipses. One center-left the other
+ *   bottom right and off canvas`);
  * </code>
  * </div>
- *
- * @alt
- * 2 white ellipses. One center-left the other bottom right and off canvas
  */
 p5.Vector = function Vector() {
   let x, y, z;

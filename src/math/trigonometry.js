@@ -146,12 +146,10 @@ p5.prototype.atan = function(ratio) {
  *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
+ *   describe(`60×10 rect at center of canvas rotates with mouse movements`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 60 by 10 rect at center of canvas rotates with mouse movements
  */
 p5.prototype.atan2 = function(y, x) {
   return this._fromRadians(Math.atan2(y, x));
@@ -174,11 +172,10 @@ p5.prototype.atan2 = function(y, x) {
  *   line(i * 4, 50, i * 4, 50 + cos(a) * 40.0);
  *   a = a + inc;
  * }
+ * describe(`vertical black lines form wave patterns, extend-down on
+ *   left and right side`);
  * </code>
  * </div>
- *
- * @alt
- * vertical black lines form wave patterns, extend-down on left and right side
  */
 p5.prototype.cos = function(angle) {
   return Math.cos(this._toRadians(angle));
@@ -201,11 +198,10 @@ p5.prototype.cos = function(angle) {
  *   line(i * 4, 50, i * 4, 50 + sin(a) * 40.0);
  *   a = a + inc;
  * }
+ * describe(`vertical black lines extend down and up from center
+ *   to form wave pattern.`);
  * </code>
  * </div>
- *
- * @alt
- * vertical black lines extend down and up from center to form wave pattern
  */
 p5.prototype.sin = function(angle) {
   return Math.sin(this._toRadians(angle));
@@ -228,10 +224,9 @@ p5.prototype.sin = function(angle) {
  *   line(i, 50, i, 50 + tan(a) * 2.0);
  *   a = a + inc;
  * }
+ * describe(`vertical black lines end down and up from center to
+ *   form spike pattern.`);
  * </code>
- *
- * @alt
- * vertical black lines end down and up from center to form spike pattern
  */
 p5.prototype.tan = function(angle) {
   return Math.tan(this._toRadians(angle));
@@ -304,12 +299,11 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
  *   angleMode(RADIANS); // Change the mode to RADIANS
  *   rotate(a); // variable a stays the same
  *   rect(-40, -5, 20, 10); // Smaller rectangle is rotating in radians
+ *   describe(`40×10 rect in center rotates with mouse moves.
+ *     20×10 rect moves faster.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
  *
  */
 p5.prototype.angleMode = function(mode) {

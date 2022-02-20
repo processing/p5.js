@@ -76,6 +76,8 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *   xoff = xoff + 0.01;
  *   let n = noise(xoff) * width;
  *   line(n, 0, n, height);
+ *   describe(`vertical line moves left to right with updating
+ *     noise values.`);
  * }
  * </code>
  * </div>
@@ -89,13 +91,11 @@ let perlin; // will be initialized lazily by noise() or noiseSeed()
  *     stroke(noiseVal*255);
  *     line(x, mouseY+noiseVal*80, x, height);
  *   }
+ *   describe(`horizontal wave pattern effected by mouse x-position
+ *     & updating noise values.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * vertical line moves left to right with updating noise values.
- * horizontal wave pattern effected by mouse x-position & updating noise values.
  */
 
 p5.prototype.noise = function(x, y = 0, z = 0) {
@@ -224,12 +224,11 @@ p5.prototype.noise = function(x, y = 0, z = 0) {
  *       point(x + width / 2, y);
  *     }
  *   }
+ *   describe(`2 vertical grey smokey patterns affected by
+ *     mouse x-position and noise.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * 2 vertical grey smokey patterns affected my mouse x-position and noise.
  */
 p5.prototype.noiseDetail = function(lod, falloff) {
   if (lod > 0) {
@@ -261,12 +260,10 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  *   xoff = xoff + .01;
  *   let n = noise(xoff) * width;
  *   line(n, 0, n, height);
+ *   describe(`vertical grey lines drawing in pattern affected by noise.`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * vertical grey lines drawing in pattern affected by noise.
  */
 p5.prototype.noiseSeed = function(seed) {
   // Linear Congruential Generator
