@@ -188,7 +188,7 @@ p5.prototype.pmouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect center, fuchsia background. rect flickers on mouse movement
+ * 60×60 black rect center, fuchsia background. rect flickers on mouse movement
  */
 p5.prototype.pmouseY = 0;
 
@@ -226,7 +226,7 @@ p5.prototype.pmouseY = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
+ * 60×60 black rect y moves with mouse y and fuchsia canvas moves with mouse x
  */
 p5.prototype.winMouseX = 0;
 
@@ -264,7 +264,7 @@ p5.prototype.winMouseX = 0;
  * </div>
  *
  * @alt
- * 60x60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
+ * 60×60 black rect x moves with mouse x and fuchsia canvas y moves with mouse y
  */
 p5.prototype.winMouseY = 0;
 
@@ -364,7 +364,7 @@ p5.prototype.pwinMouseY = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     if (mouseButton === LEFT) {
  *       ellipse(50, 50, 50, 50);
  *     }
@@ -382,7 +382,7 @@ p5.prototype.pwinMouseY = 0;
  * </div>
  *
  * @alt
- * 50x50 black ellipse appears on center of fuchsia canvas on mouse click/press.
+ * 50×50 black ellipse appears on center of fuchsia canvas on mouse click/press.
  */
 p5.prototype.mouseButton = 0;
 
@@ -400,7 +400,7 @@ p5.prototype.mouseButton = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed) {
+ *   if (mouseIsPressed === true) {
  *     ellipse(50, 50, 50, 50);
  *   } else {
  *     rect(25, 25, 50, 50);
@@ -412,7 +412,7 @@ p5.prototype.mouseButton = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect becomes ellipse with mouse click/press. fuchsia background.
+ * black 50×50 rect becomes ellipse with mouse click/press. fuchsia background.
  */
 p5.prototype.mouseIsPressed = false;
 
@@ -528,7 +528,7 @@ p5.prototype._setMouseButton = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect becomes lighter with mouse movements until white then resets
+ * black 50×50 rect becomes lighter with mouse movements until white then resets
  * no image displayed
  */
 
@@ -538,7 +538,7 @@ p5.prototype._setMouseButton = function(e) {
  * <a href="#/p5/touchMoved">touchMoved()</a> function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseDragged
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -583,7 +583,7 @@ p5.prototype._setMouseButton = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns lighter with mouse click and drag until white, resets
+ * black 50×50 rect turns lighter with mouse click and drag until white, resets
  * no image displayed
  */
 p5.prototype._onmousemove = function(e) {
@@ -620,7 +620,7 @@ p5.prototype._onmousemove = function(e) {
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mousePressed
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -666,7 +666,7 @@ p5.prototype._onmousemove = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onmousedown = function(e) {
@@ -699,7 +699,7 @@ p5.prototype._onmousedown = function(e) {
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseReleased
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -746,7 +746,7 @@ p5.prototype._onmousedown = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onmouseup = function(e) {
@@ -777,7 +777,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * being pressed or released, see <a href="#/p5/mousePressed">mousePressed()</a> or <a href="#/p5/mouseReleased">mouseReleased()</a>.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method mouseClicked
  * @param  {Object} [event] optional MouseEvent callback argument.
@@ -825,7 +825,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse click/press.
+ * black 50×50 rect turns white with mouse click/press.
  * no image displayed
  */
 p5.prototype._onclick = function(e) {
@@ -893,7 +893,7 @@ p5.prototype._onclick = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse doubleClick/press.
+ * black 50×50 rect turns white with mouse doubleClick/press.
  * no image displayed
  */
 
@@ -929,7 +929,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel
  * have scrolled. The values can be positive or negative depending on the
- * scroll direction (on OS X with "natural" scrolling enabled, the signs
+ * scroll direction (on macOS with "natural" scrolling enabled, the signs
  * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add
@@ -962,7 +962,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  * </div>
  *
  * @alt
- * black 50x50 rect moves up and down with vertical scroll. fuchsia background
+ * black 50×50 rect moves up and down with vertical scroll. fuchsia background
  */
 p5.prototype._onwheel = function(e) {
   const context = this._isGlobal ? window : this;
@@ -984,7 +984,10 @@ p5.prototype._onwheel = function(e) {
  * Note that not all browsers support this feature.
  * This enables you to create experiences that aren't limited by the mouse moving out of the screen
  * even if it is repeatedly moved into one direction.
- * For example, a first person perspective experience.
+ * For example, a first person perspective experience. It is recommended to
+ * use <a href="#/p5/requestPointerLock">requestPointerLock()</a> as a result
+ * of any user interaction, like <a href="#/p5/mouseClicked">mouseClicked()</a>
+ * or <a href="#/p5/keyPressed">keyPressed()</a>
  *
  * @method requestPointerLock
  * @example
@@ -993,7 +996,6 @@ p5.prototype._onwheel = function(e) {
  * let cam;
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   requestPointerLock();
  *   cam = createCamera();
  * }
  *
@@ -1002,6 +1004,10 @@ p5.prototype._onwheel = function(e) {
  *   cam.pan(-movedX * 0.001);
  *   cam.tilt(movedY * 0.001);
  *   sphere(25);
+ * }
+ *
+ * function mouseClicked() {
+ *   requestPointerLock();
  * }
  * </code>
  * </div>
@@ -1024,8 +1030,8 @@ p5.prototype.requestPointerLock = function() {
 
 /**
  * The function <a href="#/p5/exitPointerLock">exitPointerLock()</a>
- * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>
- * for example to make ui elements usable etc
+ * exits a previously triggered <a href="#/p5/requestPointerLock">pointer Lock</a>.
+ * For example, it might be used to make UI elements usable once again.
  *
  * @method exitPointerLock
  * @example

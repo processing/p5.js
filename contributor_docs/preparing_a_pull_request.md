@@ -12,18 +12,18 @@ Pull-requests are easier when your code is up to date! You can use git rebase to
 ### Find out about changes
 Make sure you're tracking upstream p5.js repository.
 
-    git remote show upstream
+    $ git remote show upstream
 
 If you see an error, you'll need to start tracking the main p5.js repo as an "upstream" remote repository. You'll only need to do this once! But, no harm is done if you run it a second time.
 
-    git remote add upstream https://github.com/processing/p5.js
+    $ git remote add upstream https://github.com/processing/p5.js
 
 Then ask git about the latest changes.
 
-    git fetch upstream 
+    $ git fetch upstream 
 
 ### Just in case: make a copy of your changes in a new branch
-    git branch your-branch-name-backup 
+    $ git branch your-branch-name-backup 
 
 ### Apply changes from main branch, adds your changes *after* 
     git rebase upstream/main 
@@ -39,7 +39,7 @@ If it’s just lib/p5.js and lib/p5.min.js, it’s easy to fix. just build the p
 If you have conflicts in other files & you're not sure how to resolve them... ask for help!
 
 ### And finally, for great glory
-    git push origin
+    $ git push origin
 
 Here's a good reference on rebasing, in case you're intensely curious about the technical details. https://www.atlassian.com/git/tutorials/merging-vs-rebasing
 

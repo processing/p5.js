@@ -28,7 +28,7 @@ import p5 from '../core/main';
  * </div>
  *
  * @alt
- * 50x50 white rect that turns black on keypress.
+ * 50×50 white rect that turns black on keypress.
  */
 p5.prototype.isKeyPressed = false;
 p5.prototype.keyIsPressed = false; // khan
@@ -192,7 +192,7 @@ p5.prototype._onkeydown = function(e) {
  * See <a href="#/p5/key">key</a> and <a href="#/p5/keyCode">keyCode</a> for more information.<br><br>
  * Browsers may have different default
  * behaviors attached to various key events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * behavior for this event, add "return false" to the end of the function.
  *
  * @method keyReleased
  * @param  {Object} [event] optional KeyboardEvent callback argument.
@@ -252,7 +252,7 @@ p5.prototype._onkeyup = function(e) {
  * configured.<br><br>
  * Browsers may have different default behaviors attached to various key
  * events. To prevent any default behavior for this event, add "return false"
- * to the end of the method.
+ * to the end of the function.
  *
  * @method keyTyped
  * @param  {Object} [event] optional KeyboardEvent callback argument.
@@ -373,8 +373,8 @@ p5.prototype._onblur = function(e) {
  * </code></div>
  *
  * @alt
- * 50x50 red ellipse moves left, right, up and down with arrow presses.
- * 50x50 red ellipse gets bigger or smaller when + or - are pressed.
+ * 50×50 red ellipse moves left, right, up and down with arrow presses.
+ * 50×50 red ellipse gets bigger or smaller when + or - are pressed.
  */
 p5.prototype.keyIsDown = function(code) {
   p5._validateParameters('keyIsDown', arguments);

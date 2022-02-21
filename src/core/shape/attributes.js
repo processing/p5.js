@@ -62,8 +62,8 @@ import * as constants from '../constants';
  * </div>
  *
  * @alt
- * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
- * 60x60 white ellipse and 30x30 grey ellipse top-right with black outlines.
+ * 60×60 white ellipse and 30×30 grey ellipse with black outlines at center.
+ * 60×60 white ellipse and 30×30 grey ellipse top-right with black outlines.
  */
 p5.prototype.ellipseMode = function(m) {
   p5._validateParameters('ellipseMode', arguments);
@@ -100,7 +100,7 @@ p5.prototype.ellipseMode = function(m) {
  * </div>
  *
  * @alt
- * 2 pixelated 36x36 white ellipses to left & right of center, black background
+ * 2 pixelated 36×36 white ellipses to left & right of center, black background
  */
 p5.prototype.noSmooth = function() {
   this.setAttributes('antialias', false);
@@ -123,7 +123,7 @@ p5.prototype.noSmooth = function() {
  * rectMode(CORNERS) interprets the first two parameters as the location of
  * one of the corners, and the third and fourth parameters as the location of
  * the diagonally opposite corner. Note, the rectangle is drawn between the
- * coordinates, so it is not neccesary that the first corner be the upper left
+ * coordinates, so it is not necessary that the first corner be the upper left
  * corner.
  *
  * rectMode(CENTER) interprets the first two parameters as the shape's center
@@ -165,8 +165,8 @@ p5.prototype.noSmooth = function() {
  * </div>
  *
  * @alt
- * 50x50 white rect at center and 25x25 grey rect in the top left of the other.
- * 50x50 white rect at center and 25x25 grey rect in the center of the other.
+ * 50×50 white rect at center and 25×25 grey rect in the top left of the other.
+ * 50×50 white rect at center and 25×25 grey rect in the center of the other.
  */
 p5.prototype.rectMode = function(m) {
   p5._validateParameters('rectMode', arguments);
@@ -204,7 +204,7 @@ p5.prototype.rectMode = function(m) {
  * </div>
  *
  * @alt
- * 2 pixelated 36x36 white ellipses one left one right of center. On black.
+ * 2 pixelated 36×36 white ellipses one left one right of center. On black.
  */
 p5.prototype.smooth = function() {
   this.setAttributes('antialias', true);
@@ -332,6 +332,9 @@ p5.prototype.strokeJoin = function(join) {
  * Sets the width of the stroke used for lines, points and the border around
  * shapes. All widths are set in units of pixels.
  *
+ * Note that it is affected by any transformation or scaling that has
+ * been applied previously.
+ *
  * @method strokeWeight
  * @param  {Number} weight the weight of the stroke (in pixels)
  * @chainable
@@ -348,8 +351,21 @@ p5.prototype.strokeJoin = function(join) {
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * //Example of stroke weights
+ * //after transformations
+ * strokeWeight(1); // Default
+ * line(20, 20, 80, 20);
+ * scale(5); // Adding scale transformation
+ * strokeWeight(1); // Resulting strokeweight is 5
+ * line(4, 8, 16, 8); // Coordinates adjusted for scaling
+ * </code>
+ * </div>
+ *
  * @alt
  * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+ * 2 horizontal black line. Top line: thin, botton line: 5 times thicker than top
  */
 p5.prototype.strokeWeight = function(w) {
   p5._validateParameters('strokeWeight', arguments);

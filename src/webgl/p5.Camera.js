@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Camera
  * @requires core
  */
@@ -103,7 +103,7 @@ import p5 from '../core/main';
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting it's center.
+ * z axis and 3 sliders for shifting its center.
  */
 p5.prototype.camera = function(...args) {
   this._assert3d('camera');
@@ -1302,7 +1302,7 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
  * </div>
  * @alt
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting it's center.
+ * z axis and 3 sliders for shifting its center.
  */
 p5.Camera.prototype.camera = function(
   eyeX,

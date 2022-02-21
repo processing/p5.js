@@ -8,11 +8,11 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * A class to describe a two or three dimensional vector, specifically
+ * A class to describe a two or three-dimensional vector, specifically
  * a Euclidean (also known as geometric) vector. A vector is an entity
  * that has both magnitude and direction. The datatype, however, stores
  * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
- * and direction can be accessed via the methods <a href="#/p5.Vector/mag">mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
+ * and direction can be accessed via the methods <a href="#/p5.Vector/mag">p5.Vector.mag()</a> and <a href="#/p5.Vector/heading">heading()</a>.
  *
  * In many of the p5.js examples, you will see <a href="#/p5.Vector">p5.Vector</a> used to describe a
  * position, velocity, or acceleration. For example, if you consider a rectangle
@@ -41,21 +41,25 @@ import * as constants from '../core/constants';
  * ellipse(v2.x, v2.y, 50, 50);
  * v1.add(v2);
  * ellipse(v1.x, v1.y, 50, 50);
+ *
+ * describe(`2 white ellipses. One center-left the other
+ *   bottom right and off canvas`);
  * </code>
  * </div>
- *
- * @alt
- * 2 white ellipses. One center-left the other bottom right and off canvas
  */
 p5.Vector = function Vector() {
   let x, y, z;
+
   // This is how it comes in with createVector()
-  if (arguments[0] instanceof p5) {
-    // save reference to p5 if passed in
-    this.p5 = arguments[0];
-    x = arguments[1][0] || 0;
-    y = arguments[1][1] || 0;
-    z = arguments[1][2] || 0;
+  // This check if the first argument is a function
+  if ({}.toString.call(arguments[0]) === '[object Function]') {
+    // In this case the vector have an associated p5 instance
+    this.isPInst = true;
+    this._fromRadians = arguments[0];
+    this._toRadians = arguments[1];
+    x = arguments[2] || 0;
+    y = arguments[3] || 0;
+    z = arguments[4] || 0;
     // This is what we'll get with new p5.Vector()
   } else {
     x = arguments[0] || 0;
@@ -228,8 +232,14 @@ p5.Vector.prototype.set = function set(x, y, z) {
  * </div>
  */
 p5.Vector.prototype.copy = function copy() {
-  if (this.p5) {
-    return new p5.Vector(this.p5, [this.x, this.y, this.z]);
+  if (this.isPInst) {
+    return new p5.Vector(
+      this._fromRadians,
+      this._toRadians,
+      this.x,
+      this.y,
+      this.z
+    );
   } else {
     return new p5.Vector(this.x, this.y, this.z);
   }
@@ -239,7 +249,7 @@ p5.Vector.prototype.copy = function copy() {
  * Adds x, y, and z components to a vector, adds one vector to another, or
  * adds two independent vectors together. The version of the method that adds
  * two vectors together is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the others
- * acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * act directly on the vector. Additionally, you may provide arguments to this method as an array.
  * See the examples for more context.
  *
  * @method add
@@ -360,7 +370,7 @@ const calculateRemainder3D = function(xComponent, yComponent, zComponent) {
   return this;
 };
 /**
- * Gives remainder of a vector when it is divided by another vector.
+ * Gives the remainder of a vector when it is divided by another vector.
  * See examples for more context.
  *
  * @method rem
@@ -399,15 +409,20 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
       const xComponent = parseFloat(x.x);
       const yComponent = parseFloat(x.y);
       const zComponent = parseFloat(x.z);
-      calculateRemainder3D.call(this, xComponent, yComponent, zComponent);
+      return calculateRemainder3D.call(
+        this,
+        xComponent,
+        yComponent,
+        zComponent
+      );
     }
   } else if (x instanceof Array) {
     if (x.every(element => Number.isFinite(element))) {
       if (x.length === 2) {
-        calculateRemainder2D.call(this, x[0], x[1]);
+        return calculateRemainder2D.call(this, x[0], x[1]);
       }
       if (x.length === 3) {
-        calculateRemainder3D.call(this, x[0], x[1], x[2]);
+        return calculateRemainder3D.call(this, x[0], x[1], x[2]);
       }
     }
   } else if (arguments.length === 1) {
@@ -421,7 +436,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
     const vectorComponents = [...arguments];
     if (vectorComponents.every(element => Number.isFinite(element))) {
       if (vectorComponents.length === 2) {
-        calculateRemainder2D.call(
+        return calculateRemainder2D.call(
           this,
           vectorComponents[0],
           vectorComponents[1]
@@ -432,7 +447,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
     const vectorComponents = [...arguments];
     if (vectorComponents.every(element => Number.isFinite(element))) {
       if (vectorComponents.length === 3) {
-        calculateRemainder3D.call(
+        return calculateRemainder3D.call(
           this,
           vectorComponents[0],
           vectorComponents[1],
@@ -447,7 +462,7 @@ p5.Vector.prototype.rem = function rem(x, y, z) {
  * Subtracts x, y, and z components from a vector, subtracts one vector from
  * another, or subtracts two independent vectors. The version of the method
  * that subtracts two vectors is a static method and returns a <a href="#/p5.Vector">p5.Vector</a>, the
- * other acts directly on the vector. Additionally, you may provide arguments to this function as an array.
+ * others act directly on the vector. Additionally, you may provide arguments to this method as an array.
  * See the examples for more context.
  *
  * @method sub
@@ -550,8 +565,8 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * and z components of the vector are all multiplied by the scalar. When multiplying a vector by a vector,
  * the x, y, z components of both vectors are multiplied by each other
  * (for example, with two vectors a and b: a.x * b.x, a.y * b.y, a.z * b.z). The static version of this method
- * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector
- * directly. Additionally, you may provide arguments to this function as an array.
+ * creates a new <a href="#/p5.Vector">p5.Vector</a> while the non-static version acts on the vector
+ * directly. Additionally, you may provide arguments to this method as an array.
  * See the examples for more context.
  *
  * @method mult
@@ -741,10 +756,10 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * z components of two vectors against each other. When dividing a vector by a scalar, the x, y,
  * and z components of the vector are all divided by the scalar. When dividing a vector by a vector,
  * the x, y, z components of the source vector are treated as the dividend, and the x, y, z components
- * of the argument is treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
+ * of the argument are treated as the divisor (for example with two vectors a and b: a.x / b.x, a.y / b.y, a.z / b.z).
  * The static version of this method creates a
- * new <a href="#/p5.Vector">p5.Vector</a> while the non static version acts on the vector directly.
- * Additionally, you may provide arguments to this function as an array.
+ * new <a href="#/p5.Vector">p5.Vector</a> while the non-static version acts on the vector directly.
+ * Additionally, you may provide arguments to this method as an array.
  * See the examples for more context.
  *
  * @method div
@@ -1087,7 +1102,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
 
 /**
  * Calculates and returns a vector composed of the cross product between
- * two vectors. Both the static and non static methods return a new <a href="#/p5.Vector">p5.Vector</a>.
+ * two vectors. Both the static and non-static methods return a new <a href="#/p5.Vector">p5.Vector</a>.
  * See the examples for more context.
  *
  * @method cross
@@ -1120,8 +1135,8 @@ p5.Vector.prototype.cross = function cross(v) {
   const x = this.y * v.z - this.z * v.y;
   const y = this.z * v.x - this.x * v.z;
   const z = this.x * v.y - this.y * v.x;
-  if (this.p5) {
-    return new p5.Vector(this.p5, [x, y, z]);
+  if (this.isPInst) {
+    return new p5.Vector(this._fromRadians, this._toRadians, x, y, z);
   } else {
     return new p5.Vector(x, y, z);
   }
@@ -1130,7 +1145,7 @@ p5.Vector.prototype.cross = function cross(v) {
 /**
  * Calculates the Euclidean distance between two points (considering a
  * point as a vector object).
- * If you are looking to calculate distance with 2 points see <a href="#/p5/dist">dist()</a>
+ * If you are looking to calculate distance between 2 points see <a href="#/p5/dist">dist()</a>
  *
  * @method dist
  * @param  {p5.Vector} v the x, y, and z coordinates of a <a href="#/p5.Vector">p5.Vector</a>
@@ -1337,8 +1352,8 @@ p5.Vector.prototype.limit = function limit(max) {
  * @example
  * <div class="norender">
  * <code>
- * let v = createVector(10, 20, 2);
- * // v has components [10.0, 20.0, 2.0]
+ * let v = createVector(3, 4, 0);
+ * // v has components [3.0, 4.0, 0.0]
  * v.setMag(10);
  * // v's components are set to [6.0, 8.0, 0.0]
  * </code>
@@ -1384,9 +1399,9 @@ p5.Vector.prototype.setMag = function setMag(n) {
 };
 
 /**
- * Calculate the angle of rotation for this vector(only 2D vectors).
+ * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
- * will take the current <a href="#/p5/angleMode">angleMode</a> into
+ * will take the current <a href="#/p5/angleMode">angleMode()</a> into
  * consideration, and give the angle in radians or degree accordingly.
  *
  * @method heading
@@ -1451,13 +1466,13 @@ p5.Vector.prototype.setMag = function setMag(n) {
  */
 p5.Vector.prototype.heading = function heading() {
   const h = Math.atan2(this.y, this.x);
-  if (this.p5) return this.p5._fromRadians(h);
+  if (this.isPInst) return this._fromRadians(h);
   return h;
 };
 
 /**
  * Rotate the vector to a specific angle (only 2D vectors), magnitude remains the
- * same
+ * same.
  *
  * @method setHeading
  * @param  {number}    angle the angle of rotation
@@ -1482,7 +1497,7 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
 
 /**
  * Rotate the vector by an angle (only 2D vectors), magnitude remains the
- * same
+ * same.
  *
  * @method rotate
  * @param  {number}    angle the angle of rotation
@@ -1542,7 +1557,7 @@ p5.Vector.prototype.setHeading = function setHeading(a) {
  */
 p5.Vector.prototype.rotate = function rotate(a) {
   let newHeading = this.heading() + a;
-  if (this.p5) newHeading = this.p5._toRadians(newHeading);
+  if (this.isPInst) newHeading = this._toRadians(newHeading);
   const mag = this.mag();
   this.x = Math.cos(newHeading) * mag;
   this.y = Math.sin(newHeading) * mag;
@@ -1550,7 +1565,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
 };
 
 /**
- * Calculates and returns the angle between two vectors. This function will take
+ * Calculates and returns the angle between two vectors. This method will take
  * the current <a href="#/p5/angleMode">angleMode</a> into consideration, and
  * give the angle in radians or degree accordingly.
  *
@@ -1624,13 +1639,13 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
   let angle;
   angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
   angle = angle * Math.sign(this.cross(v).z || 1);
-  if (this.p5) {
-    angle = this.p5._fromRadians(angle);
+  if (this.isPInst) {
+    angle = this._fromRadians(angle);
   }
   return angle;
 };
 /**
- * Linear interpolate the vector to another vector
+ * Linear interpolate the vector to another vector.
  *
  * @method lerp
  * @param  {Number}    x   the x component
@@ -1719,8 +1734,8 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
 };
 
 /**
- * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D
- * This method acts on the vector directly
+ * Reflect the incoming vector about a normal to a line in 2D, or about a normal to a plane in 3D.
+ * This method acts on the vector directly.
  *
  * @method reflect
  * @param  {p5.Vector} surfaceNormal   the <a href="#/p5.Vector">p5.Vector</a> to reflect about, will be normalized by this method
@@ -1806,7 +1821,7 @@ p5.Vector.prototype.array = function array() {
 };
 
 /**
- * Equality check against a <a href="#/p5.Vector">p5.Vector</a>
+ * Equality check against a <a href="#/p5.Vector">p5.Vector</a>.
  *
  * @method equals
  * @param {Number} [x] the x component of the vector
@@ -1861,7 +1876,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
 // Static Methods
 
 /**
- * Make a new 2D vector from an angle
+ * Make a new 2D vector from an angle.
  *
  * @method fromAngle
  * @static
@@ -1912,7 +1927,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
 };
 
 /**
- * Make a new 3D vector from a pair of ISO spherical angles
+ * Make a new 3D vector from a pair of ISO spherical angles.
  *
  * @method fromAngles
  * @static
@@ -1961,7 +1976,7 @@ p5.Vector.fromAngles = function(theta, phi, length) {
 };
 
 /**
- * Make a new 2D unit vector from a random angle
+ * Make a new 2D unit vector from a random angle.
  *
  * @method random2D
  * @static

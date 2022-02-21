@@ -13,8 +13,8 @@ import p5 from '../core/main';
  * p5 Geometry class
  * @class p5.Geometry
  * @constructor
- * @param  {Integer} [detailX] number of vertices on horizontal surface
- * @param  {Integer} [detailY] number of vertices on horizontal surface
+ * @param  {Integer} [detailX] number of vertices along the x-axis.
+ * @param  {Integer} [detailY] number of vertices along the y-axis.
  * @param {function} [callback] function to call upon object instantiation.
  */
 p5.Geometry = function(detailX, detailY, callback) {

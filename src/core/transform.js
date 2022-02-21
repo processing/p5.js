@@ -24,13 +24,41 @@ import p5 from './main';
  * > <img style="max-width: 150px" src="assets/transformation-matrix.png"
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
+ * <img style="max-width: 300px" src="assets/transformation-matrix-4-4.png"
+ * alt="The transformation matrix used when applyMatrix is called with 4x4 matrix"/>
+ *
  * @method applyMatrix
- * @param  {Number|Array} a numbers which define the 2x3 matrix to be multiplied, or an array of numbers
- * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} e numbers which define the 2x3 matrix to be multiplied
- * @param  {Number} f numbers which define the 2x3 matrix to be multiplied
+ * @param  {Array} arr an array of numbers - should be 6 or 16 length (2*3 or 4*4 matrix values)
+ * @chainable
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} b numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @chainable
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a
+ * @param  {Number} b
+ * @param  {Number} c
+ * @param  {Number} d
+ * @param  {Number} e
+ * @param  {Number} f
+ * @param  {Number} g numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} h numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} i numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} j numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} k numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} l numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} m numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} n numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} o numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
  * @chainable
  * @example
  * <div>
@@ -183,7 +211,7 @@ p5.prototype.applyMatrix = function() {
  * </div>
  *
  * @alt
- * A rotated retangle in the center with another at the top left corner
+ * A rotated rectangle in the center with another at the top left corner
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -198,13 +226,13 @@ p5.prototype.resetMatrix = function() {
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulates the effect. For example, calling
+ * calls to the function accumulate the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
- * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -221,7 +249,7 @@ p5.prototype.resetMatrix = function() {
  * </div>
  *
  * @alt
- * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * white 52×52 rect with black outline at center rotated counter 45 degrees
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
@@ -235,7 +263,7 @@ p5.prototype.rotate = function(angle, axis) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method  rotateX
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -271,7 +299,7 @@ p5.prototype.rotateX = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateY
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -309,7 +337,7 @@ p5.prototype.rotateY = function(angle) {
  *
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
- * All tranformations are reset when <a href="#/p5/draw">draw()</a> begins again.
+ * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * @method rotateZ
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -380,8 +408,8 @@ p5.prototype.rotateZ = function(angle) {
  * </div>
  *
  * @alt
- * white 52x52 rect with black outline at center rotated counter 45 degrees
- * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
+ * white 52×52 rect with black outline at center rotated counter 45 degrees
+ * 2 white rects with black outline- 1 50×50 at center. other 25×65 bottom left
  */
 /**
  * @method scale
@@ -506,7 +534,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
- * @param  {Number} [z] forward/backward translation (webgl only)
+ * @param  {Number} [z] forward/backward translation (WEBGL only)
  * @chainable
  * @example
  * <div>
@@ -540,9 +568,9 @@ p5.prototype.shearY = function(angle) {
  * </div>
  *
  * @alt
- * white 55x55 rect with black outline at center right.
- * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
- * a 20x20 white rect moving in a circle around the canvas
+ * white 55×55 rect with black outline at center right.
+ * 3 white 55×55 rects with black outlines at top-l, center-r and bottom-r.
+ * a 20×20 white rect moving in a circle around the canvas
  */
 /**
  * @method translate

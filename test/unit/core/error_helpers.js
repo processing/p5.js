@@ -532,172 +532,142 @@ suite('Global Error Handling', function() {
     p5._fesLogger = null;
   });
 
-  testUnMinified(
-    'correctly identifies errors happenning internally',
-    function() {
-      return new Promise(function(resolve) {
-        // quite an unusual way to test, but the error listerner doesn't work
-        // under mocha. Also the stacktrace gets filled with mocha internal
-        // function calls. Using this method solves both of these problems.
-        // This method also allows us to test for SyntaxError without messing
-        // with flow of the other tests
-        iframe = createP5Iframe(
-          [
-            P5_SCRIPT_TAG,
-            WAIT_AND_RESOLVE,
-            '<script>',
-            'function setup() {',
-            'let cnv = createCanvas(400, 400);',
-            'cnv.mouseClicked();', // Error in p5 library as no callback passed
-            '}',
-            '</script>'
-          ].join('\n')
-        );
-        log = [];
-        iframe.elt.contentWindow.logger = logger;
-        iframe.elt.contentWindow.afterSetup = resolve;
-      }).then(function() {
-        assert.strictEqual(log.length, 1);
-        assert.match(log[0], /inside the p5js library/);
-        assert.match(log[0], /mouseClicked/);
-      });
-    }
-  );
+  const prepSyntaxTest = (arr, resolve) => {
+    iframe = createP5Iframe(
+      [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
+        '\n'
+      )
+    );
+    log = [];
+    iframe.elt.contentWindow.logger = logger;
+    iframe.elt.contentWindow.afterSetup = resolve;
+    return iframe;
+  };
 
-  testUnMinified('correctly identifies errors in preload', function() {
+  testUnMinified('identifies errors happenning internally', function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      // quite an unusual way to test, but the error listener doesn't work
+      // under mocha. Also the stacktrace gets filled with mocha internal
+      // function calls. Using this method solves both of these problems.
+      // This method also allows us to test for SyntaxError without messing
+      // with flow of the other tests
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
+          'function setup() {',
+          'let cnv = createCanvas(400, 400);',
+          'cnv.mouseClicked();', // Error in p5 library as no callback passed
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /inside the p5js library/);
+      assert.match(log[0], /mouseClicked/);
+    });
+  });
+
+  testUnMinified('identifies errors in preload', function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
           'function preload() {',
           'circle(5, 5, 2);', // error
           '}',
           'function setup() {',
           'createCanvas(10, 10);',
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /"circle" being called from preload/);
     });
   });
 
-  testUnMinified('correctly identifies errors in user code I', function() {
+  testUnMinified("identifies TypeError 'notDefined'", function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
           'function setup() {',
           'let x = asdfg + 5;', // ReferenceError: asdfg is not defined
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /asdfg/);
-      assert.match(log[0], /not being defined in the current scope/);
+      assert.match(log[0], /not defined in the current scope/);
     });
   });
 
-  testUnMinified('correctly identifies errors in user code II', function() {
-    return new Promise(function(resolve) {
-      iframe = createP5Iframe(
-        [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
-          'function setup() {',
-          'let x = “not a string”', // SyntaxError: Invalid or unexpected token
-          '}',
-          '</script>'
-        ].join('\n')
-      );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
-    }).then(function() {
-      assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
-      assert.match(log[0], /JavaScript doesn't recognize/);
-    });
-  });
+  testUnMinified(
+    "identifies SyntaxError 'Invalid or unexpected Token'",
+    function() {
+      return new Promise(function(resolve) {
+        prepSyntaxTest(
+          [
+            'function setup() {',
+            'let x = “not a string”', // SyntaxError: Invalid or unexpected token
+            '}'
+          ],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /Syntax Error/);
+        assert.match(log[0], /JavaScript doesn't recognize/);
+      });
+    }
+  );
 
-  testUnMinified('correctly identifies errors in user code III', function() {
+  testUnMinified("identifies SyntaxError 'unexpectedToken'", function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
           'function setup() {',
           'for (let i = 0; i < 5,; ++i) {}', // SyntaxError: Unexpected token
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
-      assert.match(log[0], /syntax error/);
+      assert.match(log[0], /Syntax Error/);
       assert.match(log[0], /typo/);
     });
   });
 
-  testUnMinified('correctly identifies errors in user code IV', function() {
+  testUnMinified("identifies TypeError 'notFunc'", function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
           'function setup() {',
           'let asdfg = 5',
           'asdfg()', // TypeError: asdfg is not a function
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /"asdfg" could not be called as a function/);
     });
   });
 
-  testUnMinified('correctly identifies errors in user code IV', function() {
+  testUnMinified("identifies TypeError 'notFuncObj'", function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
           'function setup() {',
           'let asdfg = {}',
           'asdfg.abcd()', // TypeError: abcd is not a function
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 1);
       assert.match(log[0], /"abcd" could not be called as a function/);
@@ -705,123 +675,302 @@ suite('Global Error Handling', function() {
     });
   });
 
-  testUnMinified('correctly builds friendlyStack', function() {
+  testUnMinified("identifies ReferenceError 'cannotAccess'", function() {
     return new Promise(function(resolve) {
-      iframe = createP5Iframe(
+      prepSyntaxTest(
         [
-          P5_SCRIPT_TAG,
-          WAIT_AND_RESOLVE,
-          '<script>',
+          'function setup() {',
+          'console.log(x)', // ReferenceError: Cannot access 'x' before initialization
+          'let x = 100',
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Error/);
+      assert.match(log[0], /used before declaration/);
+    });
+  });
+
+  testUnMinified("identifies SyntaxError 'badReturnOrYield'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        ['function setup() {', 'let x = 100;', '}', 'return;'],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Syntax Error/);
+      assert.match(log[0], /lies outside of a function/);
+    });
+  });
+
+  testUnMinified("identifies SyntaxError 'missingInitializer'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function setup() {',
+          'const x;', //SyntaxError: Missing initializer in const declaration
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Syntax Error/);
+      assert.match(log[0], /but not initialized/);
+    });
+  });
+
+  testUnMinified("identifies SyntaxError 'redeclaredVariable'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function setup() {',
+          'let x=100;',
+          'let x=99;', //SyntaxError: Identifier 'x' has already been declared
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Syntax Error/);
+      assert.match(log[0], /JavaScript doesn't allow/);
+    });
+  });
+
+  testUnMinified("identifies TypeError 'constAssign'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function setup() {',
+          'const x = 100;',
+          'x = 10;', //TypeError: Assignment to constant variable
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Error/);
+      assert.match(log[0], /const variable is being/);
+    });
+  });
+
+  testUnMinified("identifies TypeError 'readFromNull'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function setup() {',
+          'const x = null;',
+          'console.log(x.prop);', //TypeError: Cannot read property 'prop' of null
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Error/);
+      assert.match(log[0], /property of null/);
+    });
+  });
+
+  testUnMinified("identifies TypeError 'readFromUndefined'", function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function setup() {',
+          'const x = undefined;',
+          'console.log(x.prop);', //TypeError: Cannot read property 'prop' of undefined
+          '}'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /Error/);
+      assert.match(log[0], /property of undefined/);
+    });
+  });
+
+  testUnMinified('builds friendlyStack', function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
           'function myfun(){',
           'asdfg()', // ReferenceError
           '}',
           'function setup() {',
           'myfun()',
-          '}',
-          '</script>'
-        ].join('\n')
+          '}'
+        ],
+        resolve
       );
-      log = [];
-      iframe.elt.contentWindow.logger = logger;
-      iframe.elt.contentWindow.afterSetup = resolve;
     }).then(function() {
       assert.strictEqual(log.length, 2);
       let temp = log[1].split('\n');
       temp = temp.filter(e => e.trim().length > 0);
-      assert.strictEqual(temp.length, 2);
-      assert.match(log[0], /"asdfg" not being defined/);
-      assert.match(temp[0], /Error at/);
-      assert.match(temp[0], /myfun/);
-      assert.match(temp[1], /Called from/);
-      assert.match(temp[1], /setup/);
+      assert.strictEqual(temp.length, 4);
+      assert.match(log[0], /"asdfg" is not defined/);
+      assert.match(temp[1], /Error at/);
+      assert.match(temp[1], /myfun/);
+      assert.match(temp[3], /Called from/);
+      assert.match(temp[3], /setup/);
     });
   });
 
+  testUnMinified('indentifies internal error - instance mode', function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function sketch(p) {',
+          '  p.setup = function() {',
+          '    p.stroke();', // error
+          '  }',
+          '}',
+          'new p5(sketch);'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /stroke/);
+      assert.match(log[0], /inside the p5js library/);
+    });
+  });
+
+  testUnMinified('indentifies error in preload - instance mode', function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function sketch(p) {',
+          '  p.preload = function() {',
+          '    p.circle(2, 2, 2);', // error
+          '  }',
+          '  p.setup = function() {',
+          '    p.createCanvas(5, 5);',
+          '  }',
+          '}',
+          'new p5(sketch);'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /"circle" being called from preload/);
+    });
+  });
+
+  testUnMinified('indentifies error in user code - instance mode', function() {
+    return new Promise(function(resolve) {
+      prepSyntaxTest(
+        [
+          'function sketch(p) {',
+          '  p.setup = function() {',
+          '    myfun();', // ReferenceError: myfun is not defined
+          '  }',
+          '}',
+          'new p5(sketch);'
+        ],
+        resolve
+      );
+    }).then(function() {
+      assert.strictEqual(log.length, 1);
+      assert.match(log[0], /myfun/);
+      assert.match(log[0], /is not defined in the current scope/);
+    });
+  });
+});
+
+suite('Tests for p5.js sketch_reader', function() {
+  const WAIT_AND_RESOLVE = [
+    '<script>',
+    'p5._fesLogger = window.logger',
+    'let flag = false;',
+    'setInterval(() => {',
+    // just because the log has one element doesn't necessarily mean that the
+    // handler has finished its job. The flag allows it to take some more time
+    // after adding the first log message
+    '  if (window.logger.length > 0) {',
+    '    if (flag) window.afterSetup();',
+    '    flag = true;',
+    '  }',
+    '}, 50);',
+    '</script>'
+  ].join('\n');
+
+  let log;
+  const logger = function(err) {
+    log.push(err);
+  };
+
+  const prepSketchReaderTest = (arr, resolve) => {
+    iframe = createP5Iframe(
+      [P5_SCRIPT_TAG, WAIT_AND_RESOLVE, '<script>', ...arr, '</script>'].join(
+        '\n'
+      )
+    );
+    log = [];
+    iframe.elt.contentWindow.logger = logger;
+    iframe.elt.contentWindow.afterSetup = resolve;
+    return iframe;
+  };
+
   testUnMinified(
-    'correctly indentifies internal error - instance mode',
+    'detects reassignment of p5.js constant inside setup',
     function() {
       return new Promise(function(resolve) {
-        iframe = createP5Iframe(
-          [
-            P5_SCRIPT_TAG,
-            WAIT_AND_RESOLVE,
-            '<script>',
-            'function sketch(p) {',
-            '  p.setup = function() {',
-            '    p.stroke();', // error
-            '  }',
-            '}',
-            'new p5(sketch);',
-            '</script>'
-          ].join('\n')
+        prepSketchReaderTest(
+          ['function setup() {', 'let PI = 100', '}'],
+          resolve
         );
-        log = [];
-        iframe.elt.contentWindow.logger = logger;
-        iframe.elt.contentWindow.afterSetup = resolve;
       }).then(function() {
         assert.strictEqual(log.length, 1);
-        assert.match(log[0], /stroke/);
-        assert.match(log[0], /inside the p5js library/);
+        assert.match(log[0], /you have used a p5.js reserved variable/);
       });
     }
   );
 
   testUnMinified(
-    'correctly indentifies error in preload - instance mode',
+    'detects reassignment of p5.js function inside setup',
     function() {
       return new Promise(function(resolve) {
-        iframe = createP5Iframe(
-          [
-            P5_SCRIPT_TAG,
-            WAIT_AND_RESOLVE,
-            '<script>',
-            'function sketch(p) {',
-            '  p.preload = function() {',
-            '    p.circle(2, 2, 2);', // error
-            '  }',
-            '  p.setup = function() {',
-            '    p.createCanvas(5, 5);',
-            '  }',
-            '}',
-            'new p5(sketch);',
-            '</script>'
-          ].join('\n')
+        prepSketchReaderTest(
+          ['function setup() {', 'let text = 100', '}'],
+          resolve
         );
-        log = [];
-        iframe.elt.contentWindow.logger = logger;
-        iframe.elt.contentWindow.afterSetup = resolve;
       }).then(function() {
         assert.strictEqual(log.length, 1);
-        assert.match(log[0], /"circle" being called from preload/);
+        assert.match(log[0], /you have used a p5.js reserved function/);
       });
     }
   );
 
   testUnMinified(
-    'correctly indentifies error in user code - instance mode',
+    'detects reassignment of p5.js constant outside setup',
     function() {
       return new Promise(function(resolve) {
-        iframe = createP5Iframe(
-          [
-            P5_SCRIPT_TAG,
-            WAIT_AND_RESOLVE,
-            '<script>',
-            'function sketch(p) {',
-            '  p.setup = function() {',
-            '    myfun();', // ReferenceError: myfun is not defined
-            '  }',
-            '}',
-            'new p5(sketch);',
-            '</script>'
-          ].join('\n')
-        );
-        log = [];
-        iframe.elt.contentWindow.logger = logger;
-        iframe.elt.contentWindow.afterSetup = resolve;
+        prepSketchReaderTest(['let PI = 100', 'function setup() {}'], resolve);
       }).then(function() {
         assert.strictEqual(log.length, 1);
-        assert.match(log[0], /myfun/);
-        assert.match(log[0], /not being defined in the current scope/);
+        assert.match(log[0], /you have used a p5.js reserved variable/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js function outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['let text = 100', 'function setup() {}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
       });
     }
   );

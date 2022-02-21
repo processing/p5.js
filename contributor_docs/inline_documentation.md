@@ -16,7 +16,7 @@ You must specify one of these for the element to appear in the docs, with the na
 * When possible, link to other files when mentioning other function or variable names. For example, you can see the preload method linked in the description for [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21).
 * Here is [yuidoc's reference](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements) for more syntax information.
 
-```
+```js
    /**
     * The x component of the vector
     * @property x
@@ -25,7 +25,7 @@ You must specify one of these for the element to appear in the docs, with the na
     this.x = x || 0;
 ```
 
-```
+```js
 
   /**
    * Draw an arc
@@ -45,7 +45,7 @@ You must specify one of these for the element to appear in the docs, with the na
    */
 ```
 
-```
+```js
   /**
    *
    * Calculates the magnitude (length) of the vector and returns the result
@@ -98,7 +98,7 @@ If the method returns the parent object, you can skip the `@return` and add this
 
 If a method has multiple possible parameter options, you can specify each individually. For example, see the examples for [background](http://p5js.org/reference/#p5/background) under "syntax". To do this, choose one version to list as the first signature using the guidelines above. At the end of the documentation block, you can add additional signatures, each in its own block, following the example below.
 
-```
+```js
 /**
  * @method background
  * @param {String} colorstring color string, possible formats include: integer
@@ -123,7 +123,7 @@ Notes:
 
 Use `@final` if a property or variable is a constant:
 
-```
+```js
     /**
      * PI is a mathematical constant with the value 3.14159265358979323846.
      * @property PI
@@ -135,7 +135,7 @@ Use `@final` if a property or variable is a constant:
 
 Use `@private` if a property or variable is a private variable (default is `@public` so no need to specify).
 
-```
+```js
     /**
      * _start calls preload() setup() and draw()
      * 
@@ -149,7 +149,7 @@ Use `@private` if a property or variable is a private variable (default is `@pub
 
 The top of each *file* should contain a `@module` tag. Modules should correspond to JavaScript files (or require.js modules). They can work as groups in the lists of items. See [here](https://p5js.org/reference/#collection-list-nav) (the modules are COLOR, IMAGE, IO, PVECTOR, etc.). 
 
-```
+```js
 /**
  * @module image
  */
@@ -163,7 +163,7 @@ define(function (require) {
 
 Constructors are defined with `@class`. Each constructor should have the tag `@class` followed by the name of the class, as well as the tag `@constructor`, and any `@param` tags required.
 
-```
+```js
   /**
    * The p5 constructor function.
    * @class p5
@@ -189,6 +189,7 @@ noFill();
 arc(50, 55, 60, 60, HALF_PI, PI);
 arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
 arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
+describe('shattered outline of ellipse created using four arcs');
 </code>
 </div>
 ```
@@ -200,11 +201,17 @@ by a line break.
 ```
 @example
 <div>
-<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);</code>
+<code>
+arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+describe('ellipse created using arc with its top right open');
+</code>
 </div>
 
 <div>
-<code>arc(50, 50, 80, 80, 0, PI, OPEN);</code>
+<code>
+arc(50, 50, 80, 80, 0, PI, OPEN);
+describe('bottom half of an ellipse created using arc');
+</code>
 </div>
 ```
 
@@ -212,7 +219,10 @@ If you do not want the example to execute your code (i.e. you just want the code
 ```
 @example
 <div class="norender">
-<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);</code>
+<code>
+arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+describe('ellipse created using arc with its top right open');
+</code>
 </div>
 ```
 
@@ -230,8 +240,42 @@ function setup() {
 
 If you need to link to external asset files, put them in [/docs/yuidoc-p5-theme/assets](https://github.com/processing/p5.js/tree/main/docs/yuidoc-p5-theme/assets) and then link to them with "assets/filename.ext" in the code. See the [tint example](http://p5js.org/reference/#/p5/tint).
 
-### Adding alt-text
-Finally, for every example you add, please add [alt-text](https://moz.com/learn/seo/alt-text) so visually impaired users can understand what the example is showing on the screen. This can be added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), add a line break to separate the descriptions for multiple examples.
+### Add a canvas description using describe()
+Finally, for every example you add, you are required to use the p5.js function `describe()` in the example to create a screen-reader accessible description for the canvas. Include only one parameter: a string with a brief description of what is happening on the canvas. Do NOT add a second parameter.
+```
+@example
+<div>
+<code>
+let xoff = 0.0;
+function draw() {
+  background(204);
+  xoff = xoff + 0.01;
+  let n = noise(xoff) * width;
+  line(n, 0, n, height);
+  decribe('vertical line moves left to right with updating noise values');
+}
+</code>
+</div>
+
+<div>
+<code>
+let noiseScale=0.02;
+function draw() {
+  background(0);
+  for (let x=0; x < width; x++) {
+    let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+    stroke(noiseVal*255);
+    line(x, mouseY+noiseVal*80, x, height);
+  }
+  describe('horizontal wave pattern effected by mouse x-position & updating noise values');
+}
+</code>
+</div>
+
+```
+For more on `describe()` visit the [web accessibility contributor docs](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions).
+
+Previous documentation guidelines required adding [alt-text](https://moz.com/learn/seo/alt-text) to create screen-reader accessible canvas description. THIS IS NO LONGER RECOMMENDED. ALWAYS USE `describe()`. Previously, alt-text was added with the tag `@alt` at the end of all of the examples for a given function (not an individual `@alt` tag under each), and an added a line break to separate the descriptions for multiple examples. 
 ```
 @example
 <div>

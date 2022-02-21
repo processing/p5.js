@@ -1,5 +1,5 @@
 /**
- * @module Lights, Camera
+ * @module 3D
  * @submodule Material
  * @for p5
  * @requires core
@@ -10,13 +10,13 @@ import * as constants from '../core/constants';
 import './p5.Texture';
 
 /**
- * Loads a custom shader from the provided vertex and fragment
- * shader paths. The shader files are loaded asynchronously in the
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader files.
+ *
+ * The shader files are loaded asynchronously in the
  * background, so this method should be used in <a href="#/p5/preload">preload()</a>.
  *
- * For now, there are three main types of shaders. p5 will automatically
- * supply appropriate vertices, normals, colors, and lighting attributes
- * if the parameters defined in the shader match the names.
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method loadShader
  * @param {String} vertFilename path to file containing vertex shader
@@ -24,7 +24,7 @@ import './p5.Texture';
  * @param {String} fragFilename path to file containing fragment shader
  * source code
  * @param {function} [callback] callback to be executed after loadShader
- * completes. On success, the Shader object is passed as the first argument.
+ * completes. On success, the p5.Shader object is passed as the first argument.
  * @param {function} [errorCallback] callback to be executed when an error
  * occurs inside loadShader. On error, the error is passed as the first
  * argument.
@@ -109,6 +109,11 @@ p5.prototype.loadShader = function(
 };
 
 /**
+ * Creates a new <a href="#/p5.Shader">p5.Shader</a> object
+ * from the provided vertex and fragment shader code.
+ *
+ * Note, shaders can only be used in WEBGL mode.
+ *
  * @method createShader
  * @param {String} vertSrc source code for the vertex shader
  * @param {String} fragSrc source code for the fragment shader
@@ -177,15 +182,22 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
 };
 
 /**
- * The <a href="#/p5/shader">shader()</a> function lets the user provide a custom shader
- * to fill in shapes in WEBGL mode. Users can create their
- * own shaders by loading vertex and fragment shaders with
- * <a href="#/p5/loadShader">loadShader()</a>.
+ * Sets the <a href="#/p5.Shader">p5.Shader</a> object to
+ * be used to render subsequent shapes.
+ *
+ * Custom shaders can be created using the
+ * <a href="#/p5/createShader">createShader()</a> and
+ * <a href="#/p5/loadShader">loadShader()</a> functions.
+ *
+ * Use <a href="#/p5/resetShader">resetShader()</a> to
+ * restore the default shaders.
+ *
+ * Note, shaders can only be used in WEBGL mode.
  *
  * @method shader
  * @chainable
- * @param {p5.Shader} [s] the desired <a href="#/p5.Shader">p5.Shader</a> to use for rendering
- * shapes.
+ * @param {p5.Shader} s the <a href="#/p5.Shader">p5.Shader</a> object
+ * to use for rendering shapes.
  *
  * @example
  * <div modernizr='webgl'>
@@ -268,12 +280,85 @@ p5.prototype.shader = function(s) {
 };
 
 /**
- * This function restores the default shaders in WEBGL mode. Code that runs
- * after resetShader() will not be affected by previously defined
- * shaders. Should be run after <a href="#/p5/shader">shader()</a>.
+ * Restores the default shaders. Code that runs after resetShader()
+ * will not be affected by the shader previously set by
+ * <a href="#/p5/shader">shader()</a>
  *
  * @method resetShader
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * // This variable will hold our shader object
+ * let shaderProgram;
+ *
+ * // This variable will hold our vertex shader source code
+ * let vertSrc = `
+ *    attribute vec3 aPosition;
+ *    attribute vec2 aTexCoord;
+ *    uniform mat4 uProjectionMatrix;
+ *    uniform mat4 uModelViewMatrix;
+ *    varying vec2 vTexCoord;
+ *
+ *    void main() {
+ *      vTexCoord = aTexCoord;
+ *      vec4 position = vec4(aPosition, 1.0);
+ *      gl_Position = uProjectionMatrix * uModelViewMatrix * position;
+ *    }
+ * `;
+ *
+ * // This variable will hold our fragment shader source code
+ * let fragSrc = `
+ *    precision mediump float;
+ *
+ *    varying vec2 vTexCoord;
+ *
+ *    void main() {
+ *      vec2 uv = vTexCoord;
+ *      vec3 color = vec3(uv.x, uv.y, min(uv.x + uv.y, 1.0));
+ *      gl_FragColor = vec4(color, 1.0);
+ *    }
+ * `;
+ *
+ * function setup() {
+ *   // Shaders require WEBGL mode to work
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // Create our shader
+ *   shaderProgram = createShader(vertSrc, fragSrc);
+ * }
+ *
+ * // prettier-ignore
+ * function draw() {
+ *   // Clear the scene
+ *   background(200);
+ *
+ *   // Draw a box using our shader
+ *     // shader() sets the active shader with our shader
+ *     shader(shaderProgram);
+ *     push();
+ *     translate(-width / 4, 0, 0);
+ *     rotateX(millis() * 0.00025);
+ *     rotateY(millis() * 0.0005);
+ *     box(width / 4);
+ *     pop();
+ *
+ *   // Draw a box using the default fill shader
+ *     // resetShader() restores the default fill shader
+ *     resetShader();
+ *     fill(255, 0, 0);
+ *     push();
+ *     translate(width / 4, 0, 0);
+ *     rotateX(millis() * 0.00025);
+ *     rotateY(millis() * 0.0005);
+ *     box(width / 4);
+ *     pop();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * Two rotating cubes. The left one is painted using a custom (user-defined) shader,
+ * while the right one is painted using the default fill shader.
  */
 p5.prototype.resetShader = function() {
   this._renderer.userFillShader = this._renderer.userStrokeShader = null;
@@ -281,11 +366,21 @@ p5.prototype.resetShader = function() {
 };
 
 /**
- * Texture for geometry.  You can view other possible materials in this
+ * Sets the texture that will be used to render subsequent shapes.
+ *
+ * A texture is like a "skin" that wraps around a 3D geometry. Currently
+ * supported textures are images, video, and offscreen renders.
+ *
+ * To texture a geometry created with <a href="#/p5/beginShape">beginShape()</a>,
+ * you will need to specify uv coordinates in <a href="#/p5/vertex">vertex()</a>.
+ *
+ * Note, texture() can only be used in WEBGL mode.
+ *
+ * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics} tex 2-dimensional graphics
- *                    to render as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture} tex  image to use as texture
  * @chainable
  * @example
  * <div>
@@ -310,7 +405,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * spinning cube with a texture from an image
  *
+ * @example
  * <div>
  * <code>
  * let pg;
@@ -333,7 +431,10 @@ p5.prototype.resetShader = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * plane with a texture from an image created by createGraphics()
  *
+ * @example
  * <div>
  * <code>
  * let vid;
@@ -359,9 +460,36 @@ p5.prototype.resetShader = function() {
  * </div>
  *
  * @alt
- * Rotating view of many images umbrella and grid roof on a 3d plane
- * black canvas
- * black canvas
+ * rectangle with video as texture
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   texture(img);
+ *   textureMode(NORMAL);
+ *   beginShape();
+ *   vertex(-40, -40, 0, 0);
+ *   vertex(40, -40, 1, 0);
+ *   vertex(40, 40, 1, 1);
+ *   vertex(-40, 40, 0, 1);
+ *   endShape();
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * quad with a texture, mapped using normalized coordinates
  */
 p5.prototype.texture = function(tex) {
   this._assert3d('texture');
@@ -384,9 +512,8 @@ p5.prototype.texture = function(tex) {
  * Sets the coordinate space for texture mapping. The default mode is IMAGE
  * which refers to the actual coordinates of the image.
  * NORMAL refers to a normalized space of values ranging from 0 to 1.
- * This function only works in WEBGL mode.
  *
- * With IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire
+ * With IMAGE, if an image is 100×200 pixels, mapping the image onto the entire
  * size of a quad would require the points (0,0) (100, 0) (100,200) (0,200).
  * The same mapping in NORMAL is (0,0) (1,0) (1,1) (0,1).
  * @method  textureMode
@@ -416,10 +543,10 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture, mapped using normalized coordinates
  *
+ * @example
  * <div>
  * <code>
  * let img;
@@ -434,7 +561,7 @@ p5.prototype.texture = function(tex) {
  *
  * function draw() {
  *   texture(img);
- *   textureMode(NORMAL);
+ *   textureMode(IMAGE);
  *   beginShape();
  *   vertex(-50, -50, 0, 0);
  *   vertex(50, -50, img.width, 0);
@@ -444,9 +571,8 @@ p5.prototype.texture = function(tex) {
  * }
  * </code>
  * </div>
- *
  * @alt
- * the underside of a white umbrella and gridded ceiling above
+ * quad with a texture, mapped using image coordinates
  */
 p5.prototype.textureMode = function(mode) {
   if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
@@ -460,18 +586,18 @@ p5.prototype.textureMode = function(mode) {
 
 /**
  * Sets the global texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 - 1 range. There are three options:
+ * when their uv's go outside of the 0 to 1 range. There are three options:
  * CLAMP, REPEAT, and MIRROR.
  *
- * CLAMP causes the pixels at the edge of the texture to extend to the bounds
- * REPEAT causes the texture to tile repeatedly until reaching the bounds
- * MIRROR works similarly to REPEAT but it flips the texture with every new tile
+ * CLAMP causes the pixels at the edge of the texture to extend to the bounds.
+ * REPEAT causes the texture to tile repeatedly until reaching the bounds.
+ * MIRROR works similarly to REPEAT but it flips the texture with every new tile.
  *
  * REPEAT & MIRROR are only available if the texture
  * is a power of two size (128, 256, 512, 1024, etc.).
  *
  * This method will affect all textures in your sketch until a subsequent
- * textureWrap call is made.
+ * textureWrap() call is made.
  *
  * If only one argument is provided, it will be applied to both the
  * horizontal and vertical axes.
@@ -531,11 +657,17 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
 };
 
 /**
- * Normal material for geometry is a material that is not affected by light.
- * It is not reflective and is a placeholder material often used for debugging.
- * Surfaces facing the X-axis, become red, those facing the Y-axis, become green and those facing the Z-axis, become blue.
- * You can view all possible materials in this
+ * Sets the current material as a normal material.
+ *
+ * A normal material is not affected by light. It is often used as
+ * a placeholder material when debugging.
+ *
+ * Surfaces facing the X-axis become red, those facing the Y-axis
+ * become green, and those facing the Z-axis become blue.
+ *
+ * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
  * @method normalMaterial
  * @chainable
  * @example
@@ -553,7 +685,7 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * </code>
  * </div>
  * @alt
- * Red, green and blue gradient.
+ * Sphere with normal material
  */
 p5.prototype.normalMaterial = function(...args) {
   this._assert3d('normalMaterial');
@@ -569,14 +701,30 @@ p5.prototype.normalMaterial = function(...args) {
 };
 
 /**
- * Ambient material for geometry with a given color. Ambient material defines the color the object reflects under any lighting.
- * For example, if the ambient material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
- * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
- * @method  ambientMaterial
- * @param  {Number} v1  gray value, red or hue value
- *                         (depending on the current color mode),
- * @param  {Number} [v2] green or saturation value
- * @param  {Number} [v3] blue or brightness value
+ * Sets the current material as an ambient material of the given color.
+ *
+ * The ambientMaterial() color is the color the object will reflect
+ * under **any** lighting.
+ *
+ * Consider an ambientMaterial() with the color yellow (255, 255, 0).
+ * If the light emits the color white (255, 255, 255), then the object
+ * will appear yellow as it will reflect the red and green components
+ * of the light. If the light emits the color red (255, 0, 0), then
+ * the object will appear red as it will reflect the red component
+ * of the light. If the light emits the color blue (0, 0, 255),
+ * then the object will appear black, as there is no component of
+ * the light that it can reflect.
+ *
+ * You can view more materials in this
+ * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
+ * @method ambientMaterial
+ * @param  {Number} v1  red or hue value relative to the current
+ *                       color range
+ * @param  {Number} v2  green or saturation value relative to the
+ *                       current color range
+ * @param  {Number} v3  blue or brightness value relative to the
+ *                       current color range
  * @chainable
  * @example
  * <div>
@@ -587,12 +735,16 @@ p5.prototype.normalMaterial = function(...args) {
  * function draw() {
  *   background(0);
  *   noStroke();
- *   ambientLight(200);
+ *   ambientLight(255);
  *   ambientMaterial(70, 130, 230);
  *   sphere(40);
  * }
  * </code>
  * </div>
+ * @alt
+ * sphere reflecting red, blue, and green light
+ *
+ * @example
  * <div>
  * <code>
  * // ambientLight is both red and blue (magenta),
@@ -602,12 +754,16 @@ p5.prototype.normalMaterial = function(...args) {
  * }
  * function draw() {
  *   background(70);
- *   ambientLight(100); // white light
- *   ambientMaterial(255, 0, 255); // pink material
+ *   ambientLight(255, 0, 255); // magenta light
+ *   ambientMaterial(255); // white material
  *   box(30);
  * }
  * </code>
  * </div>
+ * @alt
+ * box reflecting only red and blue light
+ *
+ * @example
  * <div>
  * <code>
  * // ambientLight is green. Since object does not contain
@@ -618,19 +774,27 @@ p5.prototype.normalMaterial = function(...args) {
  * function draw() {
  *   background(70);
  *   ambientLight(0, 255, 0); // green light
- *   ambientMaterial(255, 0, 255); // pink material
+ *   ambientMaterial(255, 0, 255); // magenta material
  *   box(30);
  * }
  * </code>
  * </div>
  * @alt
- * radiating light source from top right of canvas
- * box reflecting only red and blue light
  * box reflecting no light
  */
+
 /**
- * @method  ambientMaterial
- * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+ * @method ambientMaterial
+ * @param  {Number} gray  number specifying value between
+ *                         white and black
+ * @chainable
+ */
+
+/**
+ * @method ambientMaterial
+ * @param  {p5.Color|Number[]|String} color
+ *           color as a <a href="#/p5.Color">p5.Color</a>,
+ *            as an array, or as a CSS string
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -644,22 +808,33 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
-
+  this._renderer._setProperty('_doFill', true);
   return this;
 };
 
 /**
- * Sets the emissive color of the material used for geometry drawn to
- * the screen. This is a misnomer in the sense that the material does not
- * actually emit light that effects surrounding polygons. Instead,
- * it gives the appearance that the object is glowing. An emissive material
- * will display at full strength even if there is no light for it to reflect.
+ * Sets the current material as an emissive material of
+ * the given color.
+ *
+ * An emissive material will display the emissive color at
+ * full strength regardless of lighting. This can give the
+ * appearance that the object is glowing.
+ *
+ * Note, "emissive" is a misnomer in the sense that the material
+ * does not actually emit light that will affect surrounding objects.
+ *
+ * You can view more materials in this
+ * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
+ *
  * @method emissiveMaterial
- * @param  {Number} v1  gray value, red or hue value
- *                         (depending on the current color mode),
- * @param  {Number} [v2] green or saturation value
- * @param  {Number} [v3] blue or brightness value
- * @param  {Number} [a]  opacity
+ * @param  {Number} v1       red or hue value relative to the current
+ *                            color range
+ * @param  {Number} v2       green or saturation value relative to the
+ *                            current color range
+ * @param  {Number} v3       blue or brightness value relative to the
+ *                            current color range
+ * @param  {Number} [alpha]  alpha value relative to current color
+ *                            range (default is 0-255)
  * @chainable
  * @example
  * <div>
@@ -678,11 +853,21 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
  * </div>
  *
  * @alt
- * radiating light source from top right of canvas
+ * sphere with green emissive material
  */
+
 /**
- * @method  emissiveMaterial
- * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+ * @method emissiveMaterial
+ * @param  {Number} gray  number specifying value between
+ *                         white and black
+ * @chainable
+ */
+
+/**
+ * @method emissiveMaterial
+ * @param  {p5.Color|Number[]|String} color
+ *           color as a <a href="#/p5.Color">p5.Color</a>,
+ *            as an array, or as a CSS string
  * @chainable
  */
 p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
@@ -701,17 +886,56 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Specular material for geometry with a given color. Specular material is a shiny reflective material.
- * Like ambient material it also defines the color the object reflects under ambient lighting.
- * For example, if the specular material of an object is pure red, but the ambient lighting only contains green, the object will not reflect any light.
- * For all other types of light like point and directional light, a specular material will reflect the color of the light source to the viewer.
- * Here's an <a href="https://p5js.org/examples/3d-materials.html">example containing all possible materials</a>.
+ * Sets the current material as a specular material of the given color.
+ *
+ * A specular material is reflective (shiny). The shininess can be
+ * controlled by the <a href="#/p5/shininess">shininess()</a> function.
+ *
+ * Like <a href="#/p5/ambientMaterial">ambientMaterial()</a>,
+ * the specularMaterial() color is the color the object will reflect
+ * under <a href="#/p5/ambientLight">ambientLight()</a>.
+ * However unlike ambientMaterial(), for all other types of lights
+ * (<a href="#/p5/directionalLight">directionalLight()</a>,
+ * <a href="#/p5/pointLight">pointLight()</a>,
+ * <a href="#/p5/spotLight">spotLight()</a>),
+ * a specular material will reflect the **color of the light source**.
+ * This is what gives it its "shiny" appearance.
+ *
+ * You can view more materials in this
+ * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  *
  * @method specularMaterial
  * @param  {Number} gray number specifying value between white and black.
  * @param  {Number} [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular material
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *
+ *   specularMaterial(250);
+ *   shininess(50);
+ *   torus(30, 10, 64, 64);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * torus with specular material
  */
 
 /**
@@ -724,29 +948,13 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   ambientLight(50);
- *   pointLight(250, 250, 250, 100, 100, 30);
- *   specularMaterial(250);
- *   sphere(40);
- * }
- * </code>
- * </div>
- * @alt
- * diffused radiating light source from top right of canvas
  */
 
 /**
  * @method specularMaterial
- * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
+ * @param  {p5.Color|Number[]|String} color
+ *           color as a <a href="#/p5.Color">p5.Color</a>,
+ *            as an array, or as a CSS string
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
@@ -765,12 +973,13 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
 };
 
 /**
- * Sets the amount of gloss in the surface of shapes.
- * Used in combination with specularMaterial() in setting
- * the material properties of shapes. The default and minimum value is 1.
+ * Sets the amount of gloss ("shininess") of a
+ * <a href="#/p5/specularMaterial">specularMaterial()</a>.
+ *
+ * The default and minimum value is 1.
+ *
  * @method shininess
- * @param {Number} shine Degree of Shininess.
- *                       Defaults to 1.
+ * @param {Number} shine  degree of shininess
  * @chainable
  * @example
  * <div>
@@ -796,7 +1005,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
  * </code>
  * </div>
  * @alt
- * Shininess on Camera changes position with mouse
+ * two spheres, one more shiny than the other
  */
 p5.prototype.shininess = function(shine) {
   this._assert3d('shininess');

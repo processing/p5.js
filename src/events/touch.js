@@ -120,7 +120,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * </div>
  *
  * @alt
- * 50x50 black rect turns white with touch event.
+ * 50×50 black rect turns white with touch event.
  * no image displayed
  */
 p5.prototype._ontouchstart = function(e) {
@@ -199,7 +199,7 @@ p5.prototype._ontouchstart = function(e) {
  * </div>
  *
  * @alt
- * 50x50 black rect turns lighter with touch until white. resets
+ * 50×50 black rect turns lighter with touch until white. resets
  * no image displayed
  */
 p5.prototype._ontouchmove = function(e) {
@@ -272,7 +272,7 @@ p5.prototype._ontouchmove = function(e) {
  * </div>
  *
  * @alt
- * 50x50 black rect turns white with touch.
+ * 50×50 black rect turns white with touch.
  * no image displayed
  */
 p5.prototype._ontouchend = function(e) {

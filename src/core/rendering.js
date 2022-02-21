@@ -13,11 +13,11 @@ let defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 const defaultClass = 'p5Canvas';
 
 /**
- * Creates a canvas element in the document, and sets the dimensions of it
- * in pixels. This method should be called only once at the start of setup.
+ * Creates a canvas element in the document and sets its dimensions
+ * in pixels. This method should be called only once at the start of <a href="#/p5/setup">setup()</a>.
  * Calling <a href="#/p5/createCanvas">createCanvas</a> more than once in a
  * sketch will result in very unpredictable behavior. If you want more than
- * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics</a>
+ * one drawing canvas you could use <a href="#/p5/createGraphics">createGraphics()</a>
  * (hidden by default but it can be shown).
  *
  * Important note: in 2D mode (i.e. when `p5.Renderer` is not set) the origin (0,0)
@@ -27,7 +27,7 @@ const defaultClass = 'p5Canvas';
  *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
- * window will be given a default size of 100x100 pixels.
+ * window will be given a default size of 100×100 pixels.
  *
  * For more ways to position the canvas, see the
  * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
@@ -37,7 +37,7 @@ const defaultClass = 'p5Canvas';
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] either P2D or WEBGL
- * @return {p5.Renderer}
+ * @return {p5.Renderer} pointer to p5.Renderer holding canvas
  * @example
  * <div>
  * <code>

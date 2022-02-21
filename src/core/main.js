@@ -377,7 +377,7 @@ class p5 {
         !this._loop ||
         time_since_last >= target_time_between_frames - epsilon
       ) {
-        //mandatory update values(matrixs and stack)
+        //mandatory update values(matrixes and stack)
         this.redraw();
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
         this.deltaTime = now - this._lastFrameTime;
@@ -691,8 +691,15 @@ class p5 {
 p5.instance = null;
 
 /**
- * Allows for the friendly error system (FES) to be turned off when creating a sketch,
- * which can give a significant boost to performance when needed.
+ * Turn off some features of the friendly error system (FES), which can give
+ * a significant boost to performance when needed.
+ *
+ * Note that this will disable the parts of the FES that cause performance
+ * slowdown (like argument checking). Friendly errors that have no performance
+ * cost (like giving an descriptive error if a file load fails, or warning you
+ * if you try to override p5.js functions in the global space),
+ * will remain in place.
+ *
  * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
  * disabling the friendly error system</a>.
  *
@@ -712,6 +719,10 @@ p5.disableFriendlyErrors = false;
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
+
+// makes the `VERSION` constant available on the p5 object
+// in instance mode, even if it hasn't been instatiated yet
+p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)

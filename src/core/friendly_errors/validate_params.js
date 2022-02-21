@@ -1,9 +1,6 @@
 /**
  * @for p5
  * @requires core
- *
- * This file contains the part of the FES responsible for validating function
- * parameters
  */
 import p5 from '../main';
 import * as constants from '../constants';
@@ -93,9 +90,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // before and so scoring can be skipped. This also prevents logging multiple
   // validation messages for the same thing.
 
-  // These two functions would be called repeatedly over and over again,
-  // so they need to be as optimized for performance as possible
-
+  /**
+   * Query type and return the result as an object
+   *
+   * This would be called repeatedly over and over again,
+   * so it needs to be as optimized for performance as possible
+   * @method addType
+   * @private
+   */
   const addType = (value, obj, func) => {
     let type = typeof value;
     if (basicTypes[type]) {
@@ -157,6 +159,15 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     return obj;
   };
+
+  /**
+   * Build the argument type tree, argumentTree
+   *
+   * This would be called repeatedly over and over again,
+   * so it needs to be as optimized for performance as possible
+   * @method buildArgTypeCache
+   * @private
+   */
   const buildArgTypeCache = (func, arr) => {
     // get the if an argument tree for current function already exists
     let obj = argumentTree[func];
@@ -183,8 +194,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return obj;
   };
 
-  // validateParameters() helper functions:
-  // lookupParamDoc() for querying data.json
+  /**
+   * Query data.json
+   * This is a helper function for validateParameters()
+   * @method lookupParamDoc
+   * @private
+   */
   const lookupParamDoc = func => {
     // look for the docs in the `data.json` datastructure
 
@@ -318,6 +333,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
     };
   };
 
+  /**
+   * Checks whether input type is Number
+   * This is a helper function for validateParameters()
+   * @method isNumber
+   * @private
+   *
+   * @returns {String} a string indicating the type
+   */
   const isNumber = param => {
     switch (typeof param) {
       case 'number':
@@ -329,6 +352,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     }
   };
 
+  /**
+   * Test type for non-object type parameter validation
+   * @method testParamType
+   * @private
+   */
   const testParamType = (param, type) => {
     const isArray = param instanceof Array;
     let matches = true;
@@ -373,7 +401,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return matches ? 0 : 1;
   };
 
-  // testType() for non-object type parameter validation
+  /**
+   * Test type for multiple parameters
+   * @method testParamTypes
+   * @private
+   */
   const testParamTypes = (param, types) => {
     let minScore = 9999;
     for (let i = 0; minScore > 0 && i < types.length; i++) {
@@ -383,8 +415,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return minScore;
   };
 
-  // generate a score (higher is worse) for applying these args to
-  // this overload.
+  /**
+   * generate a score (higher is worse) for applying these args to
+   * this overload.
+   * @method scoreOverload
+   * @private
+   */
   const scoreOverload = (args, argCount, overload, minScore) => {
     let score = 0;
     const formats = overload.formats;
@@ -416,7 +452,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return score;
   };
 
-  // gets a list of errors for this overload
+  /**
+   * Gets a list of errors for this overload
+   * @method getOverloadErrors
+   * @private
+   */
   const getOverloadErrors = (args, argCount, overload) => {
     const formats = overload.formats;
     const minParams = overload.minParams;
@@ -467,8 +507,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return errorArray;
   };
 
-  // a custom error type, used by the mocha
-  // tests when expecting validation errors
+  /**
+   * a custom error type, used by the mocha
+   * tests when expecting validation errors
+   * @method ValidationError
+   * @private
+   */
   p5.ValidationError = (name => {
     class err extends Error {
       constructor(message, func, type) {
@@ -485,7 +529,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return err;
   })('ValidationError');
 
-  // function for generating console.log() msg
+  /**
+   * Prints a friendly msg after parameter validation
+   * @method _friendlyParamError
+   * @private
+   */
   p5._friendlyParamError = function(errorObj, func) {
     let message;
     let translationObj;
@@ -510,7 +558,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             context: (errorObj.position + 1).toString(),
             defaultValue: (errorObj.position + 1).toString()
           }),
-          link: '[https://p5js.org/examples/data-variable-scope.html]'
+          url: 'https://p5js.org/examples/data-variable-scope.html'
         };
 
         break;
@@ -604,14 +652,22 @@ if (typeof IS_MINIFIED !== 'undefined') {
       // i18next-extract-mark-context-next-line ["EMPTY_VAR", "TOO_MANY_ARGUMENTS", "TOO_FEW_ARGUMENTS", "WRONG_TYPE"]
       message = translator('fes.friendlyParamError.type', translationObj);
 
-      p5._friendlyError(`${message}.`, func, 3);
+      p5._friendlyError(`${message}`, func, 3);
     }
   };
 
-  // if a function is called with some set of wrong arguments, and then called
-  // again with the same set of arguments, the messages due to the second call
-  // will be supressed. If two tests test on the same wrong arguments, the
-  // second test won't see the validationError. clearing argumentTree solves it
+  /**
+   * Clears cache to avoid having multiple FES messages for the same set of
+   * parameters.
+   *
+   * If a function is called with some set of wrong arguments, and then called
+   * again with the same set of arguments, the messages due to the second call
+   * will be supressed. If two tests test on the same wrong arguments, the
+   * second test won't see the validationError. clearing argumentTree solves it
+   *
+   * @method _clearValidateParamsCache
+   * @private
+   */
   p5._clearValidateParamsCache = function clearValidateParamsCache() {
     for (let key of Object.keys(argumentTree)) {
       delete argumentTree[key];
@@ -624,17 +680,23 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   /**
-   * Validates parameters
-   * param  {String}               func    the name of the function
-   * param  {Array}                args    user input arguments
+   * Runs parameter validation by matching the input parameters with information
+   * from `docs/reference/data.json`.
+   * Generates and prints a friendly error message using key:
+   * "fes.friendlyParamError.[*]".
    *
-   * example:
+   * @method _validateParameters
+   * @private
+   * @param  {String}   func    Name of the function
+   * @param  {Array}    args    User input arguments
+   *
+   * @example:
    *  const a;
    *  ellipse(10,10,a,5);
    * console ouput:
    *  "It looks like ellipse received an empty variable in spot #2."
    *
-   * example:
+   * @example:
    *  ellipse(10,"foo",5,5);
    * console output:
    *  "ellipse was expecting a number for parameter #1,

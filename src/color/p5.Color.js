@@ -12,7 +12,7 @@ import * as constants from '../core/constants';
 import color_conversion from './color_conversion';
 
 /**
- * Each color stores the color mode and level maxes that was applied at the
+ * Each color stores the color mode and level maxes that were applied at the
  * time of its construction. These are used to interpret the input arguments
  * (at construction and later for that instance of color) and to format the
  * output e.g. when <a href="#/p5/saturation">saturation()</a> is requested.
@@ -21,7 +21,7 @@ import color_conversion from './color_conversion';
  * point form, normalized from 0 to 1. From this we calculate the closest
  * screen color (RGBA levels from 0 to 255) and expose this to the renderer.
  *
- * We also cache normalized, floating point components of the color in various
+ * We also cache normalized, floating-point components of the color in various
  * representations as they are calculated. This is done to prevent repeating a
  * conversion that has already been performed.
  *
@@ -49,7 +49,7 @@ p5.Color = function(pInst, vals) {
 };
 
 /**
- * This function returns the color formatted as a string. This can be useful
+ * This method returns the color formatted as a string. This can be useful
  * for debugging, or for using p5.js with other libraries.
  *
  * @method toString
@@ -73,6 +73,7 @@ p5.Color = function(pInst, vals) {
  * text(myColor.toString(), 0, -5);
  * text(myColor.toString('#rrggbb'), 0, -30);
  * text(myColor.toString('rgba%'), 0, -55);
+ * describe('A canvas with 3 text representation of their color.');
  * </code>
  * </div>
  *
@@ -82,9 +83,6 @@ p5.Color = function(pInst, vals) {
  * text(myColor.toString('#rrggbb'), 25, 25);
  * </code>
  * </div>
- *
- * @alt
- * A canvas with 3 text representation of their color.
  */
 p5.Color.prototype.toString = function(format) {
   const a = this.levels;
@@ -254,7 +252,7 @@ p5.Color.prototype.toString = function(format) {
 };
 
 /**
- * The setRed function sets the red component of a color.
+ * The setRed method sets the red component of a color.
  * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setRed
  * @param {Number} red the new red value
@@ -270,12 +268,10 @@ p5.Color.prototype.toString = function(format) {
  * function draw() {
  *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
  * </code>
  * </div>
- *
- * @alt
- * canvas with gradually changing background color
  */
 p5.Color.prototype.setRed = function(new_red) {
   this._array[0] = new_red / this.maxes[constants.RGB][0];
@@ -283,7 +279,7 @@ p5.Color.prototype.setRed = function(new_red) {
 };
 
 /**
- * The setGreen function sets the green component of a color.
+ * The setGreen method sets the green component of a color.
  * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setGreen
  * @param {Number} green the new green value
@@ -294,12 +290,11 @@ p5.Color.prototype.setRed = function(new_red) {
  * function draw() {
  *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
  * </code>
  * </div>
  *
- * @alt
- * canvas with gradually changing background color
  **/
 p5.Color.prototype.setGreen = function(new_green) {
   this._array[1] = new_green / this.maxes[constants.RGB][1];
@@ -307,7 +302,7 @@ p5.Color.prototype.setGreen = function(new_green) {
 };
 
 /**
- * The setBlue function sets the blue component of a color.
+ * The setBlue method sets the blue component of a color.
  * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setBlue
  * @param {Number} blue the new blue value
@@ -318,12 +313,11 @@ p5.Color.prototype.setGreen = function(new_green) {
  * function draw() {
  *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
  *   background(backgroundColor);
+ *   describe('canvas with gradually changing background color');
  * }
  * </code>
  * </div>
  *
- * @alt
- * canvas with gradually changing background color
  **/
 p5.Color.prototype.setBlue = function(new_blue) {
   this._array[2] = new_blue / this.maxes[constants.RGB][2];
@@ -331,7 +325,7 @@ p5.Color.prototype.setBlue = function(new_blue) {
 };
 
 /**
- * The setAlpha function sets the transparency (alpha) value of a color.
+ * The setAlpha method sets the transparency (alpha) value of a color.
  * The range depends on your color mode, in the default RGB mode it's between 0 and 255.
  * @method setAlpha
  * @param {Number} alpha the new alpha value
@@ -345,12 +339,10 @@ p5.Color.prototype.setBlue = function(new_blue) {
  *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
  *   fill(squareColor);
  *   rect(13, 13, width - 26, height - 26);
+ *   describe('a square with gradually changing opacity on a gray background');
  * }
  * </code>
  * </div>
- *
- * @alt
- * a square with gradually changing opacity on a gray background
  **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
@@ -777,11 +769,10 @@ const colorPatterns = {
  * <div>
  * <code>
  * // todo
+ * //
+ * // describe('');
  * </code>
  * </div>
- *
- * @alt
- * //todo
  */
 p5.Color._parseInputs = function(r, g, b, a) {
   const numArgs = arguments.length;

@@ -12,21 +12,21 @@
 ### परिवर्तनों के बारे में जानें
 सुनिश्चित करें कि आप अपस्ट्रीम p5.js रिपॉजिटरी को ट्रैक कर रहे हैं।
 
-    git remote show upstream
+    $ git remote show upstream
 
 यदि आपको कोई त्रुटि दिखाई देती है, तो आपको "upstream" रिमोट रिपॉजिटरी के रूप में मुख्य p5.js रेपो को ट्रैक करना शुरू करना होगा। आपको केवल एक बार ऐसा करने की आवश्यकता होगी! लेकिन, अगर आप इसे दूसरी बार चलाते हैं तो कोई नुकसान नहीं होता है।
 
-    git remote add upstream https://github.com/processing/p5.js
+    $ git remote add upstream https://github.com/processing/p5.js
 
 फिर नवीनतम परिवर्तनों के बारे में पूछें।
 
-    git fetch upstream 
+    $ git fetch upstream 
 
 ### शायद ज़रुरत पड़े- एक नई शाखा में अपने परिवर्तनों की एक प्रति बनाएँ
-    git branch your-branch-name-backup 
+    $ git branch your-branch-name-backup 
 
 ### मुख्य शाखा से परिवर्तन लागू करता है, *बाद में* अपने परिवर्तन जोड़ता है
-    git rebase upstream/main 
+    $ git rebase upstream/main 
 
 ### विवादों का समाधान
 आपकी शाखा में कुछ उलझनें हो सकती हैं!
@@ -39,7 +39,7 @@
 यदि आपके पास अन्य फ़ाइलों में विरोध है और आप सुनिश्चित नहीं हैं कि उन्हें कैसे हल किया जाए ... मदद के लिए पूछें!
 
 ### और अंत में, महान गौरव के लिए
-    git push origin
+    $ git push origin
 
 यदि आप तकनीकी विवरणों के बारे में गहन जानकारी प्राप्त कर रहे हैं, तो रेबेसिंग पर एक अच्छा संदर्भ है। https://www.atlassian.com/git/tutorials/merging-vs-rebasing
 
