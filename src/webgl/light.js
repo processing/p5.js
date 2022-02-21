@@ -352,16 +352,16 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * }
  * function draw() {
  *   background(0);
- *   //move your mouse to change light position
+ *   // move your mouse to change light position
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
  *   // to set the light position,
  *   // think of the world's coordinate as:
- *   // -width/2,-height/2 -------- width/2,-height/2
- *   //                |            |
- *   //                |     0,0    |
- *   //                |            |
- *   // -width/2,height/2--------width/2,height/2
+ *   // -width/2,-height/2 ----------- width/2,-height/2
+ *   //                   |           |
+ *   //                   |    0,0    |
+ *   //                   |           |
+ *   //  -width/2,height/2 ----------- width/2,height/2
  *   pointLight(250, 250, 250, locX, locY, 50);
  *   noStroke();
  *   sphere(40);
@@ -632,16 +632,16 @@ p5.prototype.lightFalloff = function(
  * }
  * function draw() {
  *   background(0);
- *   //move your mouse to change light position
+ *   // move your mouse to change light position
  *   let locX = mouseX - width / 2;
  *   let locY = mouseY - height / 2;
  *   // to set the light position,
  *   // think of the world's coordinate as:
- *   // -width/2,-height/2 -------- width/2,-height/2
- *   //                |            |
- *   //                |     0,0    |
- *   //                |            |
- *   // -width/2,height/2--------width/2,height/2
+ *   // -width/2,-height/2 ----------- width/2,-height/2
+ *   //                   |           |
+ *   //                   |    0,0    |
+ *   //                   |           |
+ *   //  -width/2,height/2 ----------- width/2,height/2
  *   ambientLight(50);
  *   spotLight(0, 250, 0, locX, locY, 100, 0, 0, -1, Math.PI / 16);
  *   noStroke();
