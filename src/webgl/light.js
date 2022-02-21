@@ -34,10 +34,16 @@ import * as constants from '../core/constants';
  * @example
  * <div>
  * <code>
- * createCanvas(100, 100, WEBGL);
- * ambientLight(0); // black light (no light)
- * ambientMaterial(255, 127, 80); // coral material
- * sphere(40);
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ * }
+ * function draw() {
+ *   background(100);
+ *   ambientLight(0); // black light (no light)
+ *   ambientMaterial(255, 127, 80); // coral material
+ *   sphere(40);
+ * }
  * </code>
  * </div>
  * @alt
@@ -48,12 +54,13 @@ import * as constants from '../core/constants';
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
  * }
  * function draw() {
- *   background(51);
+ *   background(100);
  *   ambientLight(255); // white light
  *   ambientMaterial(255, 127, 80); // coral material
- *   box(30);
+ *   sphere(40);
  * }
  * </code>
  * </div>
