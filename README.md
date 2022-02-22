@@ -542,6 +542,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/beaumu"><img src="https://avatars.githubusercontent.com/u/25036955?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Beau Muylle</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=beaumu" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/unjust"><img src="https://avatars.githubusercontent.com/u/92090?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivy Feraco</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aunjust" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
