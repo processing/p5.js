@@ -2922,6 +2922,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "Gaweph",
+      "name": "Gareth Williams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6419944?v=4",
+      "profile": "http://RandomSyntax.Net",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
