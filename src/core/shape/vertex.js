@@ -781,7 +781,7 @@ p5.prototype.endShape = function(mode) {
  * </div>
  *
  * @alt
- * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+ * backwards s-shaped black line with the same s-shaped line in positive z-axis.
  */
 p5.prototype.quadraticVertex = function(...args) {
   p5._validateParameters('quadraticVertex', args);
