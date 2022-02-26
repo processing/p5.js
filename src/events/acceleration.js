@@ -392,9 +392,9 @@ p5.prototype._updatePRotations = function() {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device turns`);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when x-axis turns`);
  * }
  * function deviceTurned() {
@@ -435,7 +435,7 @@ let shake_threshold = 30;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device moves`);
  * }
  * function deviceMoved() {
@@ -477,7 +477,7 @@ p5.prototype.setMoveThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device is being shaked`);
  * }
  * function deviceMoved() {
@@ -515,7 +515,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device moves`);
  * }
  * function deviceMoved() {
@@ -548,7 +548,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device turns`);
  * }
  * function deviceTurned() {
@@ -570,7 +570,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when x-axis turns`);
  * }
  * function deviceTurned() {
@@ -603,7 +603,7 @@ p5.prototype.setShakeThreshold = function(val) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect in center of canvas.
+ *   describe(`50-by-50 black rect in center of canvas.
  *     turns white on mobile when device shakes`);
  * }
  * function deviceShaken() {

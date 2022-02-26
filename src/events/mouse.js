@@ -178,7 +178,7 @@ p5.prototype.pmouseX = 0;
  *   }
  *
  *   print(pmouseY + ' -> ' + mouseY);
- *   describe(`60×60 black rect center, fuchsia background.
+ *   describe(`60-by-60 black rect center, fuchsia background.
  *     rect flickers on mouse movement`);
  * }
  * </code>
@@ -215,7 +215,7 @@ p5.prototype.pmouseY = 0;
  *
  *   //the y of the square is relative to the canvas
  *   rect(20, mouseY, 60, 60);
- *   describe(`60×60 black rect y moves with mouse y and fuchsia
+ *   describe(`60-by-60 black rect y moves with mouse y and fuchsia
  *     canvas moves with mouse x`);
  * }
  * </code>
@@ -252,7 +252,7 @@ p5.prototype.winMouseX = 0;
  *
  *   //the x of the square is relative to the canvas
  *   rect(mouseX, 20, 60, 60);
- *   describe(`60×60 black rect x moves with mouse x and
+ *   describe(`60-by-60 black rect x moves with mouse x and
  *     fuchsia canvas y moves with mouse y`);
  * }
  * </code>
@@ -367,7 +367,7 @@ p5.prototype.pwinMouseY = 0;
  *   }
  *
  *   print(mouseButton);
- *   describe(`50×50 black ellipse appears on center of fuchsia
+ *   describe(`50-by-50 black ellipse appears on center of fuchsia
  *     canvas on mouse click/press.`);
  * }
  * </code>
@@ -396,7 +396,7 @@ p5.prototype.mouseButton = 0;
  *   }
  *
  *   print(mouseIsPressed);
- *   describe(`black 50×50 rect becomes ellipse with mouse click/press.
+ *   describe(`black 50-by-50 rect becomes ellipse with mouse click/press.
  *     fuchsia background.`);
  * }
  * </code>
@@ -485,7 +485,7 @@ p5.prototype._setMouseButton = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect becomes lighter with mouse movements until
+ *   describe(`black 50-by-50 rect becomes lighter with mouse movements until
  *   white then resets no image displayed`);
  * }
  * function mouseMoved() {
@@ -538,7 +538,7 @@ p5.prototype._setMouseButton = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect turns lighter with mouse click and
+ *   describe(`black 50-by-50 rect turns lighter with mouse click and
  *     drag until white, resets`);
  * }
  * function mouseDragged() {
@@ -618,7 +618,7 @@ p5.prototype._onmousemove = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect turns white with mouse click/press.`);
+ *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
  * }
  * function mousePressed() {
  *   if (value === 0) {
@@ -695,7 +695,7 @@ p5.prototype._onmousedown = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect turns white with mouse click/press.`);
+ *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
  * }
  * function mouseReleased() {
  *   if (value === 0) {
@@ -770,7 +770,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect turns white with mouse click/press.`);
+ *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
  * }
  *
  * function mouseClicked() {
@@ -835,7 +835,7 @@ p5.prototype._onclick = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50×50 rect turns white with mouse doubleClick/press.`);
+ *   describe(`black 50-by-50 rect turns white with mouse doubleClick/press.`);
  * }
  *
  * function doubleClicked() {
@@ -921,7 +921,7 @@ p5.prototype._pmouseWheelDeltaY = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *   rect(25, pos, 50, 50);
- *   describe(`black 50×50 rect moves up and down with vertical scroll.
+ *   describe(`black 50-by-50 rect moves up and down with vertical scroll.
  *     fuchsia background`);
  * }
  *

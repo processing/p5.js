@@ -87,7 +87,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect turns white with touch event.`);
+ *   describe(`50-by-50 black rect turns white with touch event.`);
  * }
  * function touchStarted() {
  *   if (value === 0) {
@@ -166,7 +166,7 @@ p5.prototype._ontouchstart = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect turns lighter with touch until white. resets`);
+ *   describe(`50-by-50 black rect turns lighter with touch until white. resets`);
  * }
  * function touchMoved() {
  *   value = value + 5;
@@ -237,7 +237,7 @@ p5.prototype._ontouchmove = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`50×50 black rect turns white with touch.`);
+ *   describe(`50-by-50 black rect turns white with touch.`);
  * }
  * function touchEnded() {
  *   if (value === 0) {

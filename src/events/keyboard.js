@@ -23,7 +23,7 @@ import p5 from '../core/main';
  *     fill(255);
  *   }
  *   rect(25, 25, 50, 50);
- *   describe('50×50 white rect that turns black on keypress.');
+ *   describe('50-by-50 white rect that turns black on keypress.');
  * }
  * </code>
  * </div>
@@ -338,7 +338,7 @@ p5.prototype._onblur = function(e) {
  *
  *   clear();
  *   ellipse(x, y, 50, 50);
- *   describe(`50×50 red ellipse moves left, right, up, and
+ *   describe(`50-by-50 red ellipse moves left, right, up, and
  *     down with arrow presses.`);
  * }
  * </code></div>
@@ -364,7 +364,7 @@ p5.prototype._onblur = function(e) {
  *   clear();
  *   fill(255, 0, 0);
  *   ellipse(50, 50, diameter, diameter);
- *   describe(`50×50 red ellipse gets bigger or smaller when
+ *   describe(`50-by-50 red ellipse gets bigger or smaller when
  *     + or - are pressed.`);
  * }
  * </code></div>
