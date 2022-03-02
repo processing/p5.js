@@ -154,8 +154,8 @@ export const TAU = _PI * 2;
  */
 export const TWO_PI = _PI * 2;
 /**
- * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprets and calculates angles (either DEGREES or RADIANS).
+ * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode in
+ * which p5.js interprets and calculates angles (either DEGREES or RADIANS).
  * @property {String} DEGREES
  * @final
  *
@@ -168,8 +168,8 @@ export const TWO_PI = _PI * 2;
  */
 export const DEGREES = 'degrees';
 /**
- * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprets and calculates angles (either RADIANS or DEGREES).
+ * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode
+ * in which p5.js interprets and calculates angles (either RADIANS or DEGREES).
  * @property {String} RADIANS
  * @final
  *

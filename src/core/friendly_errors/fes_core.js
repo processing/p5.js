@@ -208,7 +208,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5._friendlyAutoplayError = function(src) {
     const message = translator('fes.autoplay', {
       src,
-      link: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
+      url: 'https://developer.mozilla.org/docs/Web/Media/Autoplay_guide'
     });
     console.log(translator('fes.pre', { message }));
   };
@@ -760,13 +760,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
             // if the flow gets this far, this is likely not a misspelling
             // of a p5 property/function
-            let url1 = 'https://p5js.org/examples/data-variable-scope.html';
-            let url2 =
-              'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Not_Defined#What_went_wrong';
+            let url = 'https://p5js.org/examples/data-variable-scope.html';
             p5._friendlyError(
               translator('fes.globalErrors.reference.notDefined', {
-                url1,
-                url2,
+                url,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
@@ -842,14 +839,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
             //let a = null;
             //console.log(a.property); -> a is null
             let errSym = matchedError.match[1];
-            let url1 =
+            let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-            let url2 =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';
+            /*let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null';*/
             p5._friendlyError(
               translator('fes.globalErrors.type.readFromNull', {
-                url1,
-                url2,
+                url,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
@@ -865,14 +861,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
             //let a; -> default value of a is undefined
             //console.log(a.property); -> a is undefined
             let errSym = matchedError.match[1];
-            let url1 =
+            let url =
               'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-            let url2 =
-              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';
+            /*let url2 =
+              'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined#description';*/
             p5._friendlyError(
               translator('fes.globalErrors.type.readFromUndefined', {
-                url1,
-                url2,
+                url,
                 symbol: errSym,
                 location: locationObj
                   ? translator('fes.location', locationObj)
@@ -1063,7 +1058,7 @@ const helpForMisusedAtTopLevelCode = (e, log) => {
           translator('fes.misusedTopLevel', {
             symbolName,
             symbolType: symbol.type,
-            link: FAQ_URL
+            url: FAQ_URL
           })
         );
       }

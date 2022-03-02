@@ -89,12 +89,12 @@ p5.prototype.beginContour = function() {
  * Draw a series of connected triangles in strip fashion
  *
  * QUADS
- * Draw a series of separate quad
+ * Draw a series of separate quads
  *
  * QUAD_STRIP
  * Draw quad strip using adjacent edges to form the next quad
  *
- * TESS (WebGl only)
+ * TESS (WEBGL only)
  * Handle irregular polygon for filling curve by explicit tessellation
  *
  * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
@@ -582,9 +582,9 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
- * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
- * buffer. The constant CLOSE as the value for the MODE parameter to close
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
+ * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
+ * buffer. The constant CLOSE as the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
  *
  * @method endShape
@@ -781,7 +781,7 @@ p5.prototype.endShape = function(mode) {
  * </div>
  *
  * @alt
- * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+ * backwards s-shaped black line with the same s-shaped line in positive z-axis.
  */
 p5.prototype.quadraticVertex = function(...args) {
   p5._validateParameters('quadraticVertex', args);
@@ -958,7 +958,7 @@ p5.prototype.quadraticVertex = function(...args) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex.
+ * @param  {Number} [z]   z-coordinate of the vertex.
  *                       Defaults to 0 if not specified.
  * @chainable
  */
@@ -967,8 +967,8 @@ p5.prototype.quadraticVertex = function(...args) {
  * @param  {Number} x
  * @param  {Number} y
  * @param  {Number} [z]
- * @param  {Number} u   the vertex's texture u-coordinate
- * @param  {Number} v   the vertex's texture v-coordinate
+ * @param  {Number} [u]   the vertex's texture u-coordinate
+ * @param  {Number} [v]   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {

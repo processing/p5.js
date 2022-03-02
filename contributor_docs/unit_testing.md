@@ -11,7 +11,7 @@ Here's a [good, quick intro to unit testing](https://codeburst.io/javascript-uni
 In the repo root, use the following command in your terminal
 
 ```shellsession
-npm test
+$ npm test
 ```
 
 ## Test Coverage
@@ -91,7 +91,7 @@ Now you can think of various tests against this expected behaviour. Possible tes
 
 We can create a test suite for `p5.prototype.keyIsPressed` and start creating tests for it. We will use mocha for structuring our unit tests.
 
-```
+```js
 suite('p5.prototype.keyIsPressed', function() {
   test('keyIsPressed is a boolean', function() {
     //write test here
@@ -110,7 +110,7 @@ suite('p5.prototype.keyIsPressed', function() {
 We have structured out tests but we haven't written the tests yet. We will be using chai's assert for that.
 Consider the following:
 
-```
+```js
 test('keyIsPressed is a boolean', function() {
   assert.isBoolean(myp5.keyIsPressed); //Asserts that value is a boolean.
 });

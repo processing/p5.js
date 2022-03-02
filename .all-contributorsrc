@@ -2913,6 +2913,33 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "unjust",
+      "name": "Ivy Feraco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92090?v=4",
+      "profile": "https://github.com/unjust",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Gaweph",
+      "name": "Gareth Williams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6419944?v=4",
+      "profile": "http://RandomSyntax.Net",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "eltociear",
+      "name": "Ikko Ashimine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22633385?v=4",
+      "profile": "https://bandism.net/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

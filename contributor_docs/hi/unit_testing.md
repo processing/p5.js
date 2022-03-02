@@ -9,8 +9,8 @@
 
 ### सभी यूनिट टेस्ट को चलाना
 रेपो रूट में, अपने टर्मिनल में निम्न कमांड का उपयोग करें
-```
-npm test
+```shell
+$ npm test
 ```
 
 ### परीक्षण कवरेज
@@ -25,7 +25,7 @@ npm test
 ### एक उदाहरण
 
 केवल "p5.ColorConversion" परीक्षणों का सूट चलाने के लिए, आप पढ़ने के लिए ```test/unit/color/color_conversion.js``` की पहली पंक्ति को बदल देंगे-
-```
+```js
 suite.only('color/p5.ColorConversion', function() {
 ```
 
@@ -80,7 +80,7 @@ Node.js परीक्षणों के लिए सेटअप सभी `
 
 हम ```p5.prototype.isKeyPressed``` के लिए एक परीक्षण सूट बना सकते हैं और इसके लिए परीक्षण बनाना शुरू कर सकते हैं। हम अपने यूनिट परीक्षणों की संरचना के लिए Mocha का उपयोग करेंगे।
 
-```
+```js
 suite('p5.prototype.keyIsPressed', function() {
   test('keyIsPressed is a boolean', function() {
     //परीक्षण यहाँ लिखें
@@ -98,7 +98,7 @@ suite('p5.prototype.keyIsPressed', function() {
 
 हमने परीक्षणों की संरचना की है, लेकिन हमने अभी तक परीक्षण नहीं लिखे हैं। हम इसके लिए ची के दावे का उपयोग करेंगे। निम्नलिखित को धयान मे रखते हुए-
 
-```
+```js
 test('keyIsPressed is a boolean', function() {
   assert.isBoolean(myp5.keyIsPressed); //दावा करता है कि मूल्य एक बूलियन है।
 });
