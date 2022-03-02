@@ -138,6 +138,7 @@ p5.prototype.loop = function() {
  * isLooping() returns the current state for use within custom event handlers.
  *
  * @method isLooping
+ * @returns {boolean}
  * @example
  * <div>
  * <code>
