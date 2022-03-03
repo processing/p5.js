@@ -2940,6 +2940,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "0xJonas",
+      "name": "Jonas Rinke",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24874041?v=4",
+      "profile": "https://github.com/0xJonas",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
