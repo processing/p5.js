@@ -2994,6 +2994,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "cas-c4ta",
+      "name": "Coding for the Arts",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88927553?v=4",
+      "profile": "https://www.zhdk.ch/weiterbildung/weiterbildung-design/cas-coding-for-the-arts",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
