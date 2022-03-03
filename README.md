@@ -549,6 +549,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://www.gakuin.otsuma.ac.jp/english/"><img src="https://avatars.githubusercontent.com/u/14014568?v=4?s=100" width="100px;" alt=""/><br /><sub><b>MATSUDA, Kouichi</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AKouichiMatsuda" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/stampyzfanz"><img src="https://avatars.githubusercontent.com/u/34364128?v=4?s=100" width="100px;" alt=""/><br /><sub><b>stampyzfanz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stampyzfanz" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/taejs"><img src="https://avatars.githubusercontent.com/u/41318449?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tae</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ataejs" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
