@@ -545,6 +545,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/unjust"><img src="https://avatars.githubusercontent.com/u/92090?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivy Feraco</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aunjust" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://RandomSyntax.Net"><img src="https://avatars.githubusercontent.com/u/6419944?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gareth Williams</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Gaweph" title="Code">💻</a></td>
     <td align="center"><a href="https://bandism.net/"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ikko Ashimine</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=eltociear" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/0xJonas"><img src="https://avatars.githubusercontent.com/u/24874041?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonas Rinke</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3A0xJonas" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
