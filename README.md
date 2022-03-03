@@ -551,6 +551,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/taejs"><img src="https://avatars.githubusercontent.com/u/41318449?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tae</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ataejs" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/Divyansh013"><img src="https://avatars.githubusercontent.com/u/85135469?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Divyansh013</b></sub></a><br /><a href="#translation-Divyansh013" title="Translation">🌍</a></td>
   </tr>
 </table>
 
