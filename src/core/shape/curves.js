@@ -454,7 +454,7 @@ p5.prototype.curveTightness = function(t) {
  * @param {Number} c coordinate of second point
  * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
- * @return {Number} Catmull-Rom value at position t
+ * @return {Number} <a href="#/p5/curve">Curve()</a> value at position t
  * @example
  * <div>
  * <code>
