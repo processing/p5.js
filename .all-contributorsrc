@@ -3012,6 +3012,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "liz-peng",
+      "name": "Liz Peng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8376256?v=4",
+      "profile": "https://github.com/liz-peng",
+      "contributions": [
+        "design",
+        "code",
+        "tool"
+      ]
     }
   ],
   "repoType": "github",
