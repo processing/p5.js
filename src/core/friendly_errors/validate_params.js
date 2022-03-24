@@ -204,8 +204,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     // look for the docs in the `data.json` datastructure
 
     const ichDot = func.lastIndexOf('.');
-    const funcName = func.substr(ichDot + 1);
-    const funcClass = func.substr(0, ichDot) || 'p5';
+    const funcName = func.slice(ichDot + 1);
+    const funcClass = func.slice(0, ichDot !== -1 ? ichDot : 0) || 'p5';
 
     const classitems = arrDoc;
     let queryResult = classitems[funcClass][funcName];
@@ -247,10 +247,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // split this parameter's types
         format.types = format.type.split('|').map(function ct(type) {
           // array
-          if (type.substr(type.length - 2, 2) === '[]') {
+          if (type.slice(-2) === '[]') {
             return {
               name: type,
-              array: ct(type.substr(0, type.length - 2))
+              array: ct(type.slice(0, -2))
             };
           }
 
@@ -298,7 +298,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           }
 
           // function
-          if (lowerType.substr(0, 'function'.length) === 'function') {
+          if (lowerType.slice(0, 'function'.length) === 'function') {
             lowerType = 'function';
           }
           // builtin

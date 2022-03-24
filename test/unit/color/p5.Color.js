@@ -986,7 +986,7 @@ suite('p5.Color', function() {
     test('should generate (r,g,b,a) color string with 0-1 normalized alpha', function() {
       // Will not exactly equal 0.5 due to math: test "0.5" substr of
       // 'rgba(128,0,128,0.5...' instead of checking the entire string
-      assert.equal(colorStr.substr(15, 3), '0.5');
+      assert.equal(colorStr.slice(15, 18), '0.5');
     });
 
     test('should consistently generate the same output', function() {

@@ -10,7 +10,7 @@ function smokeTestMethods(data) {
 
       if (
         classitem.access !== 'private' &&
-        classitem.file.substr(0, 3) === 'src' &&
+        classitem.file.slice(0, 3) === 'src' &&
         classitem.name &&
         !classitem.example
       ) {
