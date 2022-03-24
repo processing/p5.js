@@ -272,7 +272,7 @@ function preload() {
 }
 ````
 FES will generate the following message in the console:
-> 🌸 p5.js says: An error with message "Cannot read property 'background' of undefined" occured inside the p5js library when "background" was called (on line 4 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:4:3]).
+> 🌸 p5.js says: An error with message "Cannot read property 'background' of undefined" occurred inside the p5js library when "background" was called (on line 4 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:4:3]).
 //If not stated otherwise, it might be due to "background" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function. (http://p5js.org/reference/#/p5/preload)
 
 <ins>Internal Error Example 2</ins>
@@ -283,7 +283,7 @@ function setup() {
 }
 ````
 FES will generate the following message in the console:
-> 🌸 p5.js says: An error with message "Cannot read property 'bind' of undefined" occured inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7]) If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
+> 🌸 p5.js says: An error with message "Cannot read property 'bind' of undefined" occurred inside the p5js library when mouseClicked was called (on line 3 in sketch.js [http://localhost:8000/lib/empty-example/sketch.js:3:7]) If not stated otherwise, it might be an issue with the arguments passed to mouseClicked. (http://p5js.org/reference/#/p5/mouseClicked)
 
 <ins>Example of an Error in User's Sketch (Scope)</ins>
 ````JavaScript
