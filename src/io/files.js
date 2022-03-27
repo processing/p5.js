@@ -823,10 +823,10 @@ p5.prototype.httpGet = function() {
 
   const args = Array.prototype.slice.call(arguments);
   const path = args[0];
-  let datatype; // String
-  let data; // Object|Boolean
-  let callback; // Function
-  let errorCallback; // Function
+  let datatype;
+  let data;
+  let callback;
+  let errorCallback;
 
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
@@ -842,12 +842,6 @@ p5.prototype.httpGet = function() {
       }
     }
   }
-
-  // args.splice(1, 0, 'GET');
-  // const argsArray = [path, 'GET', datatype];
-  // if (data) argsArray.push(data);
-  // if (callback) argsArray.push(callback);
-  // if (errorCallback) argsArray.push(err);
 
   return this.httpDo(
     path,
@@ -870,8 +864,6 @@ p5.prototype.httpGet = function() {
       }
     }
   );
-
-  // return p5.prototype.httpDo.apply(this, argsArray);
 };
 
 /**
