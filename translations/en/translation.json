@@ -5,6 +5,7 @@
     "fileLoadError": {
       "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
       "font": "It looks like there was a problem loading your font. {{suggestion}}",
+      "get": "It looks like there was a problem completing your GET request. {{suggestion}}",
       "gif": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
       "image": "It looks like there was a problem loading your image. {{suggestion}}",
       "json": "It looks like there was a problem loading your JSON file. {{suggestion}}",
