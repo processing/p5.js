@@ -3023,10 +3023,20 @@
         "code",
         "tool"
       ]
+    },
+    {
+      "login": "Dmkk01",
+      "name": "Dominik Łasiński",
+      "avatar_url": "https://avatars.githubusercontent.com/u/76247450?v=4",
+      "profile": "https://www.dominik-lasinski.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "none"
 }

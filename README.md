@@ -556,6 +556,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://www.zhdk.ch/weiterbildung/weiterbildung-design/cas-coding-for-the-arts"><img src="https://avatars.githubusercontent.com/u/88927553?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Coding for the Arts</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acas-c4ta" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://danieljamesross.github.io"><img src="https://avatars.githubusercontent.com/u/28922296?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Adanieljamesross" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/liz-peng"><img src="https://avatars.githubusercontent.com/u/8376256?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Liz Peng</b></sub></a><br /><a href="#design-liz-peng" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=liz-peng" title="Code">💻</a> <a href="#tool-liz-peng" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://www.dominik-lasinski.com/"><img src="https://avatars.githubusercontent.com/u/76247450?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dominik Łasiński</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Dmkk01" title="Documentation">📖</a></td>
   </tr>
 </table>
 
