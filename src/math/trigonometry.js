@@ -129,7 +129,7 @@ p5.prototype.atan = function(ratio) {
  * to the position of the cursor.
  *
  * Note: The y-coordinate of the point is the first parameter, and the
- * x-coordinate is the second parameter, due the the structure of calculating
+ * x-coordinate is the second parameter, due to the structure of calculating
  * the tangent.
  *
  * @method atan2
