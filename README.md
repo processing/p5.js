@@ -558,6 +558,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/liz-peng"><img src="https://avatars.githubusercontent.com/u/8376256?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Liz Peng</b></sub></a><br /><a href="#design-liz-peng" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=liz-peng" title="Code">💻</a> <a href="#tool-liz-peng" title="Tools">🔧</a></td>
     <td align="center"><a href="https://github.com/koolaidkrusade"><img src="https://avatars.githubusercontent.com/u/95722198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>koolaidkrusade</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=koolaidkrusade" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/smilee"><img src="https://avatars.githubusercontent.com/u/5793796?v=4?s=100" width="100px;" alt=""/><br /><sub><b>smilee</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=smilee" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

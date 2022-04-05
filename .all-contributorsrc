@@ -3032,6 +3032,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "smilee",
+      "name": "smilee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5793796?v=4",
+      "profile": "https://github.com/smilee",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
