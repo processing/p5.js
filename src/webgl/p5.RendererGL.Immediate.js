@@ -49,7 +49,7 @@ p5.RendererGL.prototype.beginShape = function(mode) {
 p5.RendererGL.prototype.vertex = function(x, y) {
   let z, u, v;
 
-  // default to (x, y) mode: all other arugments assumed to be 0.
+  // default to (x, y) mode: all other arguments assumed to be 0.
   z = u = v = 0;
 
   if (arguments.length === 3) {
