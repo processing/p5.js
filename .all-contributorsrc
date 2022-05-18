@@ -3050,6 +3050,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "processprocess",
+      "name": "Philip Bell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3860311?v=4",
+      "profile": "http://philipbell.org",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
