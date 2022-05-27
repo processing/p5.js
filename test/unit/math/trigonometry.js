@@ -60,6 +60,16 @@ suite('Trigonometry', function() {
       myp5.angleMode('wtflolzkk');
       assert.equal(myp5._angleMode, 'radians');
     });
+
+    test('should return radians', function() {
+      myp5.angleMode(RADIANS);
+      assert.equal(myp5.angleMode(), 'radians');
+    });
+
+    test('should return degrees', function() {
+      myp5.angleMode(DEGREES);
+      assert.equal(myp5.angleMode(), 'degrees');
+    });
   });
 
   suite('p5.prototype.degrees', function() {

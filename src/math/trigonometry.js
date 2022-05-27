@@ -281,9 +281,10 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 /**
  * Sets the current mode of p5 to the given mode. Default mode is RADIANS.
  *
+ * Calling <a href="#/p5/angleMode">angleMode()</a> with no arguments returns current anglemode.
  * @method angleMode
  * @param {Constant} mode either RADIANS or DEGREES
- *
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -306,10 +307,18 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
  * </div>
  *
  */
+/**
+ * @method angleMode
+ * @return {Constant} mode either RADIANS or DEGREES
+ */
 p5.prototype.angleMode = function(mode) {
-  if (mode === constants.DEGREES || mode === constants.RADIANS) {
+  p5._validateParameters('angleMode', arguments);
+  if (typeof mode === 'undefined') {
+    return this._angleMode;
+  } else if (mode === constants.DEGREES || mode === constants.RADIANS) {
     this._angleMode = mode;
   }
+  return this;
 };
 
 /**
