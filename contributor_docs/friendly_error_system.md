@@ -6,15 +6,24 @@ The Friendly Error System (FES, 🌸) aims to help new programmers by providing 
 
 The FES prints messages in the console window, as seen in the [p5.js Web Editor] and your browser JavaScript console. The single minified file of p5 (p5.min.js) omits the FES.
 
- *We have an ongoing survey!* Please take a moment to fill out this 5-minute survey to help us improve the FES: [🌸 SURVEY 🌸]
-
 [p5.js Web Editor]: https://editor.p5js.org/
-[🌸 SURVEY 🌸]: https://bit.ly/p5fesSurvey
 
+## Lowering the Barriers to Debugging
+The design of a tool should match the need of the people who will use it. As a tool that aims to lower the barriers to debugging, the design of FES is no exception.
+
+The best way to evaluate our existing design is to hear directly from people using p5.js. We ran a community survey in 2021 to gather feedback and future wishes for Friendly Errors.
+
+We believe the insights from our community members will be helpful for our contributors. You can see the results through the summary comic or the full report:
+* [21-22 FES Survey Report Comic]
+* [21-22 FES Survey Full Report]
+
+
+[21-22 FES Survey Report Comic]: https://almchung.github.io/p5jsFESsurvey/
+[21-22 FES Survey Full Report]: https://observablehq.com/@almchung/p5-fes-21-survey
 
 ## Writing Friendly Error Messages
 
-In this section, we will describe how you can contribute to the p5.js library by writing and translating error messages.
+How to contribute to the p5.js library by writing and translating error messages?
 
 The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of the p5.js.
 
