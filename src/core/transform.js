@@ -24,13 +24,41 @@ import p5 from './main';
  * > <img style="max-width: 150px" src="assets/transformation-matrix.png"
  * alt="The transformation matrix used when applyMatrix is called"/>
  *
+ * <img style="max-width: 300px" src="assets/transformation-matrix-4-4.png"
+ * alt="The transformation matrix used when applyMatrix is called with 4x4 matrix"/>
+ *
  * @method applyMatrix
- * @param  {Number|Array} a numbers which define the 2×3 matrix to be multiplied, or an array of numbers
- * @param  {Number} b numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} c numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} d numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} e numbers which define the 2×3 matrix to be multiplied
- * @param  {Number} f numbers which define the 2×3 matrix to be multiplied
+ * @param  {Array} arr an array of numbers - should be 6 or 16 length (2*3 or 4*4 matrix values)
+ * @chainable
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} b numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @chainable
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a
+ * @param  {Number} b
+ * @param  {Number} c
+ * @param  {Number} d
+ * @param  {Number} e
+ * @param  {Number} f
+ * @param  {Number} g numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} h numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} i numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} j numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} k numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} l numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} m numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} n numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} o numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
  * @chainable
  * @example
  * <div>
@@ -198,13 +226,13 @@ p5.prototype.resetMatrix = function() {
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
- * calls to the function accumulates the effect. For example, calling
+ * calls to the function accumulate the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
  * All transformations are reset when <a href="#/p5/draw">draw()</a> begins again.
  *
  * Technically, <a href="#/p5/rotate">rotate()</a> multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
- * the <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+ * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
  *
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
@@ -506,7 +534,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
- * @param  {Number} [z] forward/backward translation (webgl only)
+ * @param  {Number} [z] forward/backward translation (WEBGL only)
  * @chainable
  * @example
  * <div>

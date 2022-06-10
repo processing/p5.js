@@ -305,7 +305,7 @@ p5.Image.prototype.loadPixels = function() {
  *                              underlying canvas
  * @param {Integer} y y-offset of the target update area for the
  *                              underlying canvas
- * @param {Integer} w height of the target update area for the
+ * @param {Integer} w width of the target update area for the
  *                              underlying canvas
  * @param {Integer} h height of the target update area for the
  *                              underlying canvas
@@ -603,7 +603,7 @@ p5.Image.prototype.copy = function(...args) {
 /**
  * Masks part of an image from displaying by loading another
  * image and using its alpha channel as an alpha channel for
- * this image. Masks are cumulative, one applied to an image
+ * this image. Masks are cumulative, once applied to an image
  * object, they cannot be removed.
  *
  * @method mask

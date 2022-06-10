@@ -93,7 +93,7 @@ p5.js 레파지토리에서 풀리퀘스트를 오픈하면, 자동으로 [테�
 
 `p5.prototype.isKeyPressed`를 위한 테스트 스위트를 생성하고, 테스트를 작성할 수 잇습니다. 단위테스트를 구성하기 위해 mocha를 사용할 것입니다.
 
-```
+```js
 suite('p5.prototype.keyIsPressed', function() {
   test('keyIsPressed is a boolean', function() {
     //이곳에서 테스트 작성
@@ -113,7 +113,7 @@ suite('p5.prototype.keyIsPressed', function() {
 
 다음을 고려해 보세요:
 
-```
+```js
 test('keyIsPressed is a boolean', function() {
   assert.isBoolean(myp5.keyIsPressed); //해당 값이 boolean인지 확인
 });

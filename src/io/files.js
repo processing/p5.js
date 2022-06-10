@@ -69,6 +69,8 @@ import '../core/friendly_errors/fes_core';
  *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
  *   textAlign(CENTER);
  *   text(earthquakeName, 0, height - 30, width, 30);
+ *   describe(`50×50 ellipse that changes from black to white
+ *     depending on the current humidity`);
  * }
  * </code></div>
  *
@@ -85,6 +87,8 @@ import '../core/friendly_errors/fes_core';
  *
  * function draw() {
  *   background(200);
+ *   describe(`50×50 ellipse that changes from black to white
+ *     depending on the current humidity`);
  * }
  *
  * function drawEarthquake(earthquakes) {
@@ -96,10 +100,6 @@ import '../core/friendly_errors/fes_core';
  *   text(earthquakeName, 0, height - 30, width, 30);
  * }
  * </code></div>
- *
- * @alt
- * 50×50 ellipse that changes from black to white depending on the current humidity
- * 50×50 ellipse that changes from black to white depending on the current humidity
  */
 /**
  * @method loadJSON
@@ -217,6 +217,8 @@ p5.prototype.loadJSON = function(...args) {
  * function setup() {
  *   background(200);
  *   text(random(result), 10, 10, 80, 80);
+ *   describe(`randomly generated text from a file,
+ *     for example "i smell like butter"`);
  * }
  * </code></div>
  *
@@ -226,6 +228,8 @@ p5.prototype.loadJSON = function(...args) {
  * <div><code>
  * function setup() {
  *   loadStrings('assets/test.txt', pickString);
+ *   describe(`randomly generated text from a file,
+ *     for example "i have three feet"`);
  * }
  *
  * function pickString(result) {
@@ -233,10 +237,6 @@ p5.prototype.loadJSON = function(...args) {
  *   text(random(result), 10, 10, 80, 80);
  * }
  * </code></div>
- *
- * @alt
- * randomly generated text from a file, for example "i smell like butter"
- * randomly generated text from a file, for example "i have three feet"
  */
 p5.prototype.loadStrings = function(...args) {
   p5._validateParameters('loadStrings', args);
@@ -364,13 +364,11 @@ p5.prototype.loadStrings = function(...args) {
  *     for (let c = 0; c < table.getColumnCount(); c++) {
  *       print(table.getString(r, c));
  *     }
+ *   describe(`randomly generated text from a file,
+ *     for example "i smell like butter"`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * randomly generated text from a file, for example "i smell like butter"
- * randomly generated text from a file, for example "i have three feet"
  */
 p5.prototype.loadTable = function(path) {
   // p5._validateParameters('loadTable', arguments);
@@ -634,6 +632,7 @@ function makeObject(row, headers) {
  *     let name = children[i].getContent();
  *     print(id + ', ' + coloring + ', ' + name);
  *   }
+ *   describe(`no image displayed`);
  * }
  *
  * // Sketch prints:
@@ -641,9 +640,6 @@ function makeObject(row, headers) {
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.loadXML = function(...args) {
   const ret = new p5.XML();
@@ -712,11 +708,9 @@ p5.prototype.loadXML = function(...args) {
  *   for (let i = 0; i < 5; i++) {
  *     console.log(data.bytes[i].toString(16));
  *   }
+ *   describe(`no image displayed`);
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.loadBytes = function(file, callback, errorCallback) {
   const ret = {};
@@ -1434,18 +1428,21 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Saves the canvas as an image by default
  * save('myCanvas.jpg');
+ * describe(`An example for saving a canvas as an image.`);
  * </code></div>
  *
- *  <div class="norender"><code>
+ * <div class="norender"><code>
  * // Saves p5.Image as an image
  * img = createImage(10, 10);
  * save(img, 'myImage.png');
+ * describe(`An example for saving a p5.Image element as an image.`);
  * </code></div>
  *
  * <div class="norender"><code>
  * // Saves p5.Renderer object as an image
  * obj = createGraphics(100, 100);
  * save(obj, 'myObject.png');
+ * describe(`An example for saving a p5.Renderer element.`);
  * </code></div>
  *
  * <div class="norender"><code>
@@ -1458,6 +1455,9 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Tab Separated Values
  * save(myTable, 'myTable.tsv');
+ *
+ * describe(`An example showing how to save a table in formats of
+ *   HTML, CSV and TSV.`);
  * </code></div>
  *
  * <div class="norender"><code>
@@ -1468,21 +1468,17 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Optimizes JSON filesize
  * save(myJSON, 'my.json', true);
+ *
+ * describe(`An example for saving JSON to a txt file with some extra arguments.`);
  * </code></div>
  *
  * <div class="norender"><code>
  * // Saves array of strings to text file with line breaks after each item
  * let arrayOfStrings = ['a', 'b'];
  * save(arrayOfStrings, 'my.txt');
+ * describe(`An example for saving an array of strings to text file
+ *   with line breaks.`);
  * </code></div>
- *
- * @alt
- * An example for saving a canvas as an image.
- * An example for saving a p5.Image element as an image.
- * An example for saving a p5.Renderer element.
- * An example showing how to save a table in formats of HTML, CSV and TSV.
- * An example for saving JSON to a txt file with some extra arguments.
- * An example for saving an array of strings to text file with line breaks.
  */
 
 p5.prototype.save = function(object, _filename, _options) {
@@ -1556,6 +1552,7 @@ p5.prototype.save = function(object, _filename, _options) {
  *   createCanvas(100, 100);
  *   background(200);
  *   text('click here to save', 10, 10, 70, 80);
+ *   describe(`no image displayed`);
  * }
  *
  * function mousePressed() {
@@ -1571,9 +1568,6 @@ p5.prototype.save = function(object, _filename, _options) {
  * //   "name": "Lion"
  * // }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.saveJSON = function(json, filename, opt) {
   p5._validateParameters('saveJSON', arguments);
@@ -1610,6 +1604,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *   createCanvas(100, 100);
  *   background(200);
  *   text('click here to save', 10, 10, 70, 80);
+ *   describe(`no image displayed`);
  * }
  *
  * function mousePressed() {
@@ -1625,9 +1620,6 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  * // cat
  * // dog
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.saveStrings = function(list, filename, extension, isCRLF) {
   p5._validateParameters('saveStrings', arguments);
@@ -1682,15 +1674,14 @@ function escapeHelper(content) {
  *
  *   // To save, un-comment next line then click 'run'
  *   // saveTable(table, 'new.csv');
+ *
+ *   describe(`no image displayed`);
  * }
  *
  * // Saves the following to a file called 'new.csv':
  * // id,species,name
  * // 0,Panthera leo,Lion
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.saveTable = function(table, filename, options) {
   p5._validateParameters('saveTable', arguments);

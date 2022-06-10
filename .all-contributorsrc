@@ -2913,6 +2913,152 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "unjust",
+      "name": "Ivy Feraco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92090?v=4",
+      "profile": "https://github.com/unjust",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Gaweph",
+      "name": "Gareth Williams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6419944?v=4",
+      "profile": "http://RandomSyntax.Net",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "eltociear",
+      "name": "Ikko Ashimine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22633385?v=4",
+      "profile": "https://bandism.net/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "0xJonas",
+      "name": "Jonas Rinke",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24874041?v=4",
+      "profile": "https://github.com/0xJonas",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "KouichiMatsuda",
+      "name": "MATSUDA, Kouichi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14014568?v=4",
+      "profile": "http://www.gakuin.otsuma.ac.jp/english/",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "stampyzfanz",
+      "name": "stampyzfanz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34364128?v=4",
+      "profile": "https://github.com/stampyzfanz",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "taejs",
+      "name": "tae",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41318449?v=4",
+      "profile": "https://github.com/taejs",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Divyansh013",
+      "name": "Divyansh013",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85135469?v=4",
+      "profile": "https://github.com/Divyansh013",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "rinkydevi",
+      "name": "rinkydevi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82359874?v=4",
+      "profile": "https://github.com/rinkydevi",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "cas-c4ta",
+      "name": "Coding for the Arts",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88927553?v=4",
+      "profile": "https://www.zhdk.ch/weiterbildung/weiterbildung-design/cas-coding-for-the-arts",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "danieljamesross",
+      "name": "Dan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28922296?v=4",
+      "profile": "http://danieljamesross.github.io",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "liz-peng",
+      "name": "Liz Peng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8376256?v=4",
+      "profile": "https://github.com/liz-peng",
+      "contributions": [
+        "design",
+        "code",
+        "tool"
+      ]
+    },
+    {
+      "login": "koolaidkrusade",
+      "name": "koolaidkrusade",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95722198?v=4",
+      "profile": "https://github.com/koolaidkrusade",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "smilee",
+      "name": "smilee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5793796?v=4",
+      "profile": "https://github.com/smilee",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "CommanderRoot",
+      "name": "CommanderRoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4395417?v=4",
+      "profile": "https://github.com/CommanderRoot",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "processprocess",
+      "name": "Philip Bell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3860311?v=4",
+      "profile": "http://philipbell.org",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

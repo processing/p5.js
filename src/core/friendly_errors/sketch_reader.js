@@ -235,8 +235,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
     //create a new string which don't have multiline comments
     while (start !== -1 && end !== -1) {
       if (start === 0) {
-        code = code.substr(end + 2);
-      } else code = code.substr(0, start) + code.substr(end + 2);
+        code = code.slice(end + 2);
+      } else code = code.slice(0, start) + code.slice(end + 2);
 
       start = code.indexOf('/*');
       end = code.indexOf('*/');

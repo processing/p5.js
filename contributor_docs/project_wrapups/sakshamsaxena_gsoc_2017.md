@@ -20,8 +20,8 @@ Some helpful comments are added alongside to make the experience of reporting an
 This task was inspired by [Issue #94](https://github.com/processing/p5.js/issues/94). The goal was to implement such a functionality which enables users to select the desired components/modules which they want to use, and only those components would be bundled then itself to generate a custom build of p5.js.
 
 Currently, the usage is through invoking a Grunt task manually from the command line :
-```
-grunt combineModules:module_a[:module_b][:module_c]
+```shell
+$ grunt combineModules:module_a[:module_b][:module_c]
 ```
 where `module_X` refers to the name of the _*folder*_ of the desired component, viz. :
 ```

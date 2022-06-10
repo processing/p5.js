@@ -29,12 +29,11 @@ import p5 from '../core/main';
  *   clear();
  *   let display = touches.length + ' touches';
  *   text(display, 5, 10);
+ *   describe(`Number of touches currently registered are displayed
+ *     on the canvas`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * Number of touches currently registered are displayed on the canvas
  */
 p5.prototype.touches = [];
 
@@ -88,6 +87,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect turns white with touch event.`);
  * }
  * function touchStarted() {
  *   if (value === 0) {
@@ -106,6 +106,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  *   // prevent default
  *   return false;
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
  *
@@ -116,12 +117,9 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
  * function touchStarted(event) {
  *   console.log(event);
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
- *
- * @alt
- * 50×50 black rect turns white with touch event.
- * no image displayed
  */
 p5.prototype._ontouchstart = function(e) {
   const context = this._isGlobal ? window : this;
@@ -168,6 +166,7 @@ p5.prototype._ontouchstart = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect turns lighter with touch until white. resets`);
  * }
  * function touchMoved() {
  *   value = value + 5;
@@ -185,6 +184,7 @@ p5.prototype._ontouchstart = function(e) {
  *   // prevent default
  *   return false;
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
  *
@@ -195,12 +195,9 @@ p5.prototype._ontouchstart = function(e) {
  * function touchMoved(event) {
  *   console.log(event);
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
- *
- * @alt
- * 50×50 black rect turns lighter with touch until white. resets
- * no image displayed
  */
 p5.prototype._ontouchmove = function(e) {
   const context = this._isGlobal ? window : this;
@@ -240,6 +237,7 @@ p5.prototype._ontouchmove = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
+ *   describe(`50-by-50 black rect turns white with touch.`);
  * }
  * function touchEnded() {
  *   if (value === 0) {
@@ -258,6 +256,7 @@ p5.prototype._ontouchmove = function(e) {
  *   // prevent default
  *   return false;
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
  *
@@ -268,12 +267,9 @@ p5.prototype._ontouchmove = function(e) {
  * function touchEnded(event) {
  *   console.log(event);
  * }
+ * describe('no image displayed');
  * </code>
  * </div>
- *
- * @alt
- * 50×50 black rect turns white with touch.
- * no image displayed
  */
 p5.prototype._ontouchend = function(e) {
   this._setProperty('mouseIsPressed', false);

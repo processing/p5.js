@@ -16,7 +16,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
 * 가능하면 다른 함수나 변수명을 언급 할 때 다른 파일을 링크해주세요. 예를 들면, [loadImage](https://github.com/processing/p5.js/blob/main/src/image/loading_displaying.js#L21)에 대한 설명과 링크가 추가된 사전로드 방법을 살펴볼 수 있습니다.
 * 더 많은 구문 정보를 살펴보려면 [yuidoc의 레퍼런스](http://yui.github.io/yuidoc/syntax/index.html#basic-requirements)를 참조해주세요.
 
-```
+```js
    /**
     * The x component of the vector
     * @property x
@@ -25,7 +25,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
     this.x = x || 0;
 ```
 
-```
+```js
 
   /**
    * Draw an arc
@@ -45,7 +45,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
    */
 ```
 
-```
+```js
   /**
    *
    * Calculates the magnitude (length) of the vector and returns the result
@@ -97,7 +97,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
 
 메서드에 여러개의 가능한 매개 변수 옵션이 있을 경우 각각을 개별적으로 지정할 수 있습니다. 예를 들면 "syntax" 아래에 [background](http://p5js.org/reference/#p5/background)의 예제를 참조해주세요. 이렇게 하기 위해서 위의 지침에 따라 첫 번째로 표기하여 나열 할 버전 하나를 선택해주세요. 문서 블록의 끝에서 다음 예제에 따라 자체 블록에 추가 표기를 할 수 있습니다.
 
-```
+```js
 /**
  * @method background
  * @param {String} colorstring color string, possible formats include: integer
@@ -122,7 +122,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
 
 프로퍼티 또는 변수가 상수 인 경우 `@final` 사용합니다:
 
-```
+```js
     /**
      * PI is a mathematical constant with the value 3.14159265358979323846.
      * @property PI
@@ -135,7 +135,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
 
 프로퍼티 또는 변수가 private 변수 인 경우 `@private`를 사용합니다 (기본값은 `@public`이므로 지정할 필요가 없음).
 
-```
+```js
     /**
      * _start calls preload() setup() and draw()
      * 
@@ -149,7 +149,7 @@ __[필요한 예제 목록](https://github.com/processing/p5.js/issues/1954) (gr
 
 각 *파일* 상단에는 `@module` 태그가 있어야합니다. 모듈은 JavaScript 파일 (또는 require.js 모듈)과 일치해야 하며, 항목리스트에서 그룹으로 작업할 수 있습니다. 여기를 참조해주세요: http://p5js.org/api/#methods(모듈은 COLOR, IMAGE, PVECTOR 등이 있습니다.)
 
-```
+```js
 /**
  * @module image
  */
@@ -163,7 +163,7 @@ define(function (require) {
 
 생성자는 `@class`로 정의됩니다. 각 생성자는 `@class` 태그와 클래스명, `@constructor` 태그 및 필요한 모든 `@param` 태그를 가지고 있어야 합니다.
 
-```
+```js
   /**
    * The p5 constructor function.
    * @class p5

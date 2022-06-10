@@ -696,7 +696,7 @@ p5.instance = null;
  *
  * Note that this will disable the parts of the FES that cause performance
  * slowdown (like argument checking). Friendly errors that have no performance
- * cost (like giving an descriptive error if a file load fails, or warning you
+ * cost (like giving a descriptive error if a file load fails, or warning you
  * if you try to override p5.js functions in the global space),
  * will remain in place.
  *

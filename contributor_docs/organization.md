@@ -19,7 +19,7 @@ Helping with organization can be a great way to contribute. If a bug report is m
 ## Pull Requests
 - **All pull requests should be associated with an issue**
   - If you want to fix a bug or add a feature, start by opening an issue so the community can discuss it.
-  - If a pull request is opened without an associated issue, comment and ask the contributor to open a pull request.
+  - If a pull request is opened without an associated issue, comment and ask the contributor to open an issue.
 
 
 
