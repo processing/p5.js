@@ -35,21 +35,24 @@ We welcome contributions from all around the world! 🌐
 
 #### Writing Best Practices
 
-FES message writers should prioritize lowering the barrier of understanding error messages and debugging.
+FES message writers should prioritize lowering the barrier of understanding error messages and increasing the accessibility of debugging process.
 
-Here are some highlights from our upcoming best-practice doc:
+[Friendly Errors i18n Book] discusses challenges and best practices for writing friendly error messages within the cross-cultural i18n context. Here are some points from the book:
 
-* Use simple sentences. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
-* Keep the language friendly and inclusive. Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
-* Avoid using figures of speech. Prioritize cross-cultural communication.
-* Try to spot possible "[expert blind spots]" in an error message and its related docs.
-* Introduce one technical concept or term at a time—link one external resource written in a beginner-friendly language with plenty of short, practical examples.
+* Understand your audience: do not make assumptions about the audience of our error messages. Try to learn who is using our library and how they use it.
+* Keep language inclusive. We strive to make error messages "friendly," what does it mean for you? Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
+* Use simple sentences whenever possible. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
+* Prioritize cross-cultural communication and provide a great experience across languages. Avoid using figures of speech.
+* Introduce one technical concept or technical term at a time. Keep consistency in technical writing. Try to link one external resource written in a beginner-friendly language with plenty of short, practical examples.
 
+[Friendly Errors i18n Book]: https://almchung.github.io/p5-fes-i18n-book/
 [interpolation]: https://www.i18next.com/translation-function/interpolation
 [p5.js Code of Conduct]: https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md#p5js-code-of-conduct
 [expert blind spots]: https://tilt.colostate.edu/TipsAndGuides/Tip/181
 
+[Friendly Errors i18n Book] is a public project, and you can contribute to the book through this separate [repo].
 
+[repo]: https://github.com/almchung/p5-fes-i18n-book
 #### Location of Translation Files
 
 `translator()` is based on i18next and imported from `src/core/internationalization.js`. It generates messages by looking up text data from a JSON translation file:
