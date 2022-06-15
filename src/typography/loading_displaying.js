@@ -280,7 +280,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 /**
  * @method textFont
  * @param {Object|String} font a font loaded via <a href="#/p5/loadFont">loadFont()</a>,
- * or a String representing a <a href="https://mzl.la/2dOw8WD">web safe font</a>
+ * or a String representing a <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Fundamentals#web_safe_fonts">web safe font</a>
  * (a font that is generally available across all systems)
  * @param {Number} [size] the font size to use
  * @chainable
