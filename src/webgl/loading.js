@@ -58,6 +58,8 @@ import './p5.Geometry';
  *   rotateY(frameCount * 0.01);
  *   model(octahedron);
  * }
+ *
+ * describe('Vertically rotating 3-d octahedron.');
  * </code>
  * </div>
  *
@@ -87,6 +89,8 @@ import './p5.Geometry';
  *   normalMaterial(); // For effect
  *   model(teapot);
  * }
+ *
+ * describe('Vertically rotating 3-d teapot with red, green and blue gradient.');
  * </code>
  * </div>
  *
@@ -610,6 +614,8 @@ function parseASCIISTL(model, lines) {
  *   rotateY(frameCount * 0.01);
  *   model(octahedron);
  * }
+ *
+ * describe('Vertically rotating 3-d octahedron.');
  * </code>
  * </div>
  *

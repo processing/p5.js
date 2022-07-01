@@ -52,6 +52,7 @@ import p5 from '../core/main';
  *   camera(0, 0, 20 + sin(frameCount * 0.01) * 10, 0, 0, 0, 0, 1, 0);
  *   plane(10, 10);
  * }
+ * describe('a square moving closer and then away from the camera.');
  * </code>
  * </div>
  *
@@ -98,6 +99,10 @@ import p5 from '../core/main';
  *   fill(255, 102, 94);
  *   box(85);
  * }
+ *
+ * describe(
+ *   'White square repeatedly grows to fill canvas and then shrinks. An interactive example of a red cube with 3 sliders for moving it across x, y, z axis and 3 sliders for shifting its center.'
+ * );
  * </code>
  * </div>
  * @alt
@@ -160,6 +165,9 @@ p5.prototype.camera = function(...args) {
  *   box(30);
  *   pop();
  * }
+ * describe(
+ *   'two colored 3D boxes move back and forth, rotating as mouse is dragged.'
+ * );
  * </code>
  * </div>
  *
@@ -220,6 +228,9 @@ p5.prototype.perspective = function(...args) {
  *   box(30);
  *   pop();
  * }
+ * describe(
+ *   'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
+ * );
  * </code>
  * </div>
  *
@@ -283,6 +294,9 @@ p5.prototype.ortho = function(...args) {
  *   box(30);
  *   pop();
  * }
+ * describe(
+ *   'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
+ * );
  * </code>
  * </div>
  *
@@ -335,6 +349,8 @@ p5.prototype.frustum = function(...args) {
  *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
  *   box(20);
  * }
+ *
+ * describe('An example that creates a camera and moves it around the box.');
  * </code></div>
  *
  * @alt
@@ -427,6 +443,10 @@ p5.prototype.createCamera = function() {
  *   translate(35, 0, 0);
  *   box(20);
  * }
+ *
+ * describe(
+ *   'camera view pans left and right across a series of rotating 3D boxes.'
+ * );
  * </code>
  * </div>
  *
@@ -462,6 +482,8 @@ p5.Camera = function(renderer) {
  *   box(10);
  *   div.html('eyeX = ' + cam.eyeX);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -489,6 +511,8 @@ p5.Camera = function(renderer) {
  *   box(10);
  *   div.html('eyeY = ' + cam.eyeY);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -516,6 +540,8 @@ p5.Camera = function(renderer) {
  *   box(10);
  *   div.html('eyeZ = ' + cam.eyeZ);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -544,6 +570,8 @@ p5.Camera = function(renderer) {
  *   orbitControl();
  *   box(10);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -572,6 +600,8 @@ p5.Camera = function(renderer) {
  *   orbitControl();
  *   box(10);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -600,6 +630,8 @@ p5.Camera = function(renderer) {
  *   orbitControl();
  *   box(10);
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -623,6 +655,8 @@ p5.Camera = function(renderer) {
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -646,6 +680,8 @@ p5.Camera = function(renderer) {
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -669,6 +705,8 @@ p5.Camera = function(renderer) {
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
  * }
+ *
+ * describe('An example showing the use of camera object properties');
  * </code></div>
  *
  * @alt
@@ -1784,6 +1822,10 @@ p5.Camera.prototype._isActive = function() {
  *   translate(35, 0, 0);
  *   box(20);
  * }
+ *
+ * describe(
+ *   'Canvas switches between two camera views, each showing a series of spinning 3D boxes.'
+ * );
  * </code>
  * </div>
  *

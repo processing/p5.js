@@ -363,6 +363,10 @@ p5.Shader.prototype.useProgram = function() {
  * function mouseClicked() {
  *   showRedGreen = !showRedGreen;
  * }
+ *
+ * describe(
+ *   'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ * );
  * </code>
  * </div>
  *

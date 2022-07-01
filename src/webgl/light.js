@@ -44,6 +44,7 @@ import * as constants from '../core/constants';
  *   ambientMaterial(255, 127, 80); // coral material
  *   sphere(40);
  * }
+ * describe('sphere with coral color under black light');
  * </code>
  * </div>
  * @alt
@@ -62,6 +63,7 @@ import * as constants from '../core/constants';
  *   ambientMaterial(255, 127, 80); // coral material
  *   sphere(40);
  * }
+ * describe('sphere with coral color under white light');
  * </code>
  * </div>
  * @alt
@@ -172,6 +174,10 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * function mouseClicked() {
  *   setRedSpecularColor = !setRedSpecularColor;
  * }
+ *
+ * describe(
+ *   'Sphere with specular highlight. Clicking the mouse toggles the specular highlight color between red and the default white.'
+ * );
  * </code>
  * </div>
  *
@@ -266,6 +272,9 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  *   noStroke();
  *   sphere(40);
  * }
+ * describe(
+ *   'scene with sphere and directional light. The direction of the light is controlled with the mouse position.'
+ * );
  * </code>
  * </div>
  *
@@ -391,6 +400,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  *   noStroke();
  *   sphere(40);
  * }
+ * describe(
+ *   'scene with sphere and point light. The position of the light is controlled with the mouse position.'
+ * );
  * </code>
  * </div>
  *
@@ -490,6 +502,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   rotateZ(millis() / 1000);
  *   box();
  * }
+ * describe('the light is partially ambient and partially directional');
  * </code>
  * </div>
  *
@@ -557,6 +570,9 @@ p5.prototype.lights = function() {
  *   sphere(20);
  *   pop();
  * }
+ * describe(
+ *   'Two spheres with different falloff values show different intensity of light'
+ * );
  * </code>
  * </div>
  *
@@ -672,6 +688,9 @@ p5.prototype.lightFalloff = function(
  *   noStroke();
  *   sphere(40);
  * }
+ * describe(
+ *   'scene with sphere and spot light. The position of the light is controlled with the mouse position.'
+ * );
  * </code>
  * </div>
  *
@@ -1005,6 +1024,9 @@ p5.prototype.spotLight = function(
  *   ambientMaterial(255);
  *   sphere(13);
  * }
+ * describe(
+ *   'Three white spheres. Each appears as a different color due to lighting.'
+ * );
  * </code>
  * </div>
  *

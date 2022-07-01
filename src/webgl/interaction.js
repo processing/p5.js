@@ -37,6 +37,7 @@ import * as constants from '../core/constants';
  *   rotateY(0.5);
  *   box(30, 50);
  * }
+ * describe('Camera orbits around a box when mouse is hold-clicked & then moved.');
  * </code>
  * </div>
  *
@@ -178,6 +179,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *     noDebugMode();
  *   }
  * }
+ * describe(
+ *   'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ * );
  * </code>
  * </div>
  * @alt
@@ -201,6 +205,8 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   orbitControl();
  *   box(15, 30);
  * }
+ *
+ * describe('a 3D box is centered on a grid in a 3D sketch.');
  * </code>
  * </div>
  * @alt
@@ -221,6 +227,10 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   orbitControl();
  *   box(15, 30);
  * }
+ *
+ * describe(
+ *   'a 3D box is centered in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ * );
  * </code>
  * </div>
  * @alt
@@ -243,6 +253,8 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   orbitControl();
  *   box(15, 30);
  * }
+ *
+ * describe('a 3D box is centered on a grid in a 3D sketch');
  * </code>
  * </div>
  * @alt
@@ -267,6 +279,10 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   stroke(255, 0, 150);
  *   strokeWeight(0.8);
  * }
+ *
+ * describe(
+ *   'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ * );
  * </code>
  * </div>
  * @alt
@@ -372,6 +388,10 @@ p5.prototype.debugMode = function(...args) {
  *     noDebugMode();
  *   }
  * }
+ *
+ * describe(
+ *   'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ * );
  * </code>
  * </div>
  * @alt

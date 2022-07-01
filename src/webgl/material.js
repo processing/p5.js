@@ -51,6 +51,8 @@ import './p5.Texture';
  *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
  * }
+ *
+ * describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
  * </code>
  * </div>
  *
@@ -169,6 +171,8 @@ p5.prototype.loadShader = function(
  *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
  *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
  * }
+ *
+ * describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
  * </code>
  * </div>
  *
@@ -253,6 +257,10 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  * function mouseClicked() {
  *   showRedGreen = !showRedGreen;
  * }
+ *
+ * describe(
+ *   'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ * );
  * </code>
  * </div>
  *
@@ -354,6 +362,10 @@ p5.prototype.shader = function(s) {
  *     box(width / 4);
  *     pop();
  * }
+ *
+ * describe(
+ *   'Two rotating cubes. The left one is painted using a custom (user-defined) shader, while the right one is painted using the default fill shader.'
+ * );
  * </code>
  * </div>
  * @alt
@@ -403,6 +415,8 @@ p5.prototype.resetShader = function() {
  *   texture(img);
  *   box(width / 2);
  * }
+ *
+ * describe('spinning cube with a texture from an image');
  * </code>
  * </div>
  * @alt
@@ -429,6 +443,8 @@ p5.prototype.resetShader = function() {
  *   noStroke();
  *   plane(50);
  * }
+ *
+ * describe('plane with a texture from an image created by createGraphics()');
  * </code>
  * </div>
  * @alt
@@ -456,6 +472,8 @@ p5.prototype.resetShader = function() {
  * function mousePressed() {
  *   vid.loop();
  * }
+ *
+ * describe('rectangle with video as texture');
  * </code>
  * </div>
  *
@@ -486,6 +504,8 @@ p5.prototype.resetShader = function() {
  *   vertex(-40, 40, 0, 1);
  *   endShape();
  * }
+ *
+ * describe('quad with a texture, mapped using normalized coordinates');
  * </code>
  * </div>
  * @alt
@@ -541,6 +561,8 @@ p5.prototype.texture = function(tex) {
  *   vertex(-50, 50, 0, 1);
  *   endShape();
  * }
+ *
+ * describe('quad with a texture, mapped using normalized coordinates');
  * </code>
  * </div>
  * @alt
@@ -569,6 +591,8 @@ p5.prototype.texture = function(tex) {
  *   vertex(-50, 50, 0, img.height);
  *   endShape();
  * }
+ *
+ * describe('quad with a texture, mapped using image coordinates');
  * </code>
  * </div>
  * @alt
@@ -640,6 +664,8 @@ p5.prototype.textureMode = function(mode) {
  *   vertex(-1, -1, 0, 0, 0);
  *   endShape();
  * }
+ *
+ * describe('an image of the rocky mountains repeated in mirrored tiles');
  * </code>
  * </div>
  *
@@ -682,6 +708,8 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  *   normalMaterial();
  *   sphere(40);
  * }
+ *
+ * describe('Sphere with normal material');
  * </code>
  * </div>
  * @alt
@@ -739,6 +767,7 @@ p5.prototype.normalMaterial = function(...args) {
  *   ambientMaterial(70, 130, 230);
  *   sphere(40);
  * }
+ * describe('sphere reflecting red, blue, and green light');
  * </code>
  * </div>
  * @alt
@@ -758,6 +787,7 @@ p5.prototype.normalMaterial = function(...args) {
  *   ambientMaterial(255); // white material
  *   box(30);
  * }
+ * describe('box reflecting only red and blue light');
  * </code>
  * </div>
  * @alt
@@ -777,6 +807,7 @@ p5.prototype.normalMaterial = function(...args) {
  *   ambientMaterial(255, 0, 255); // magenta material
  *   box(30);
  * }
+ * describe('box reflecting no light');
  * </code>
  * </div>
  * @alt
@@ -849,6 +880,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
  *   emissiveMaterial(130, 230, 0);
  *   sphere(40);
  * }
+ * describe('sphere with green emissive material');
  * </code>
  * </div>
  *
@@ -932,6 +964,8 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  *   shininess(50);
  *   torus(30, 10, 64, 64);
  * }
+ *
+ * describe('torus with specular material');
  * </code>
  * </div>
  * @alt
@@ -1002,6 +1036,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
  *   shininess(20);
  *   sphere(20);
  * }
+ * describe('two spheres, one more shiny than the other');
  * </code>
  * </div>
  * @alt

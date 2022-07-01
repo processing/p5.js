@@ -33,6 +33,8 @@ import * as constants from '../core/constants';
  *   background(200);
  *   plane(50, 50);
  * }
+ *
+ * describe('a white plane with black wireframe lines');
  * </code>
  * </div>
  *
@@ -120,6 +122,8 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  *   rotateY(frameCount * 0.01);
  *   box(50);
  * }
+ *
+ * describe('a white box rotating in 3D space');
  * </code>
  * </div>
  */
@@ -237,6 +241,8 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   background(205, 102, 94);
  *   sphere(40);
  * }
+ *
+ * describe('a white sphere with black wireframe lines');
  * </code>
  * </div>
  *
@@ -257,6 +263,10 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   rotateY(millis() / 1000);
  *   sphere(40, detailX.value(), 16);
  * }
+ *
+ * describe(
+ *   'a white sphere with low detail on the x-axis, including a slider to adjust detailX'
+ * );
  * </code>
  * </div>
  *
@@ -277,6 +287,10 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   rotateY(millis() / 1000);
  *   sphere(40, 16, detailY.value());
  * }
+ *
+ * describe(
+ *   'a white sphere with low detail on the y-axis, including a slider to adjust detailY'
+ * );
  * </code>
  * </div>
  */
@@ -449,6 +463,8 @@ const _truncatedCone = function(
  *   rotateZ(frameCount * 0.01);
  *   cylinder(20, 50);
  * }
+ *
+ * describe('a rotating white cylinder');
  * </code>
  * </div>
  *
@@ -469,6 +485,10 @@ const _truncatedCone = function(
  *   rotateY(millis() / 1000);
  *   cylinder(20, 75, detailX.value(), 1);
  * }
+ *
+ * describe(
+ *   'a rotating white cylinder with limited X detail, with a slider that adjusts detailX'
+ * );
  * </code>
  * </div>
  *
@@ -489,6 +509,10 @@ const _truncatedCone = function(
  *   rotateY(millis() / 1000);
  *   cylinder(20, 75, 16, detailY.value());
  * }
+ *
+ * describe(
+ *   'a rotating white cylinder with limited Y detail, with a slider that adjusts detailY'
+ * );
  * </code>
  * </div>
  */
@@ -584,6 +608,8 @@ p5.prototype.cylinder = function(
  *   rotateZ(frameCount * 0.01);
  *   cone(40, 70);
  * }
+ *
+ * describe('a rotating white cone');
  * </code>
  * </div>
  *
@@ -604,6 +630,10 @@ p5.prototype.cylinder = function(
  *   rotateY(millis() / 1000);
  *   cone(30, 65, detailX.value(), 16);
  * }
+ *
+ * describe(
+ *   'a rotating white cone with limited X detail, with a slider that adjusts detailX'
+ * );
  * </code>
  * </div>
  *
@@ -624,6 +654,10 @@ p5.prototype.cylinder = function(
  *   rotateY(millis() / 1000);
  *   cone(30, 65, 16, detailY.value());
  * }
+ *
+ * describe(
+ *   'a rotating white cone with limited Y detail, with a slider that adjusts detailY'
+ * );
  * </code>
  * </div>
  */
@@ -698,6 +732,8 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  *   background(205, 105, 94);
  *   ellipsoid(30, 40, 40);
  * }
+ *
+ * describe('a white 3d ellipsoid');
  * </code>
  * </div>
  *
@@ -718,6 +754,10 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  *   rotateY(millis() / 1000);
  *   ellipsoid(30, 40, 40, detailX.value(), 8);
  * }
+ *
+ * describe(
+ *   'a rotating white ellipsoid with limited X detail, with a slider that adjusts detailX'
+ * );
  * </code>
  * </div>
  *
@@ -738,6 +778,10 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  *   rotateY(millis() / 1000);
  *   ellipsoid(30, 40, 40, 12, detailY.value());
  * }
+ *
+ * describe(
+ *   'a rotating white ellipsoid with limited Y detail, with a slider that adjusts detailY'
+ * );
  * </code>
  * </div>
  */
@@ -834,6 +878,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   rotateY(frameCount * 0.01);
  *   torus(30, 15);
  * }
+ *
+ * describe('a rotating white torus');
  * </code>
  * </div>
  *
@@ -854,6 +900,10 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   rotateY(millis() / 1000);
  *   torus(30, 15, detailX.value(), 12);
  * }
+ *
+ * describe(
+ *   'a rotating white torus with limited X detail, with a slider that adjusts detailX'
+ * );
  * </code>
  * </div>
  *
@@ -874,6 +924,10 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   rotateY(millis() / 1000);
  *   torus(30, 15, 16, detailY.value());
  * }
+ *
+ * describe(
+ *   'a rotating white torus with limited Y detail, with a slider that adjusts detailY'
+ * );
  * </code>
  * </div>
  */
