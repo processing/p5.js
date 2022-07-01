@@ -46,4 +46,9 @@ p5.prototype.createVector = function(x, y, z) {
   }
 };
 
+p5.prototype._isNegative = function(value) {
+  let string = value.toString();
+  return string[0] == '-';
+}
+
 export default p5;
