@@ -562,6 +562,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/smilee"><img src="https://avatars.githubusercontent.com/u/5793796?v=4?s=100" width="100px;" alt=""/><br /><sub><b>smilee</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=smilee" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/CommanderRoot"><img src="https://avatars.githubusercontent.com/u/4395417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CommanderRoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=CommanderRoot" title="Code">💻</a></td>
     <td align="center"><a href="http://philipbell.org"><img src="https://avatars.githubusercontent.com/u/3860311?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philip Bell</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=processprocess" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/tapioca24"><img src="https://avatars.githubusercontent.com/u/12683107?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tapioca24</b></sub></a><br /><a href="#plugin-tapioca24" title="Plugin/utility libraries">🔌</a></td>
   </tr>
 </table>
 

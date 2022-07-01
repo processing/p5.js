@@ -3059,6 +3059,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "tapioca24",
+      "name": "tapioca24",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12683107?v=4",
+      "profile": "https://github.com/tapioca24",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",
