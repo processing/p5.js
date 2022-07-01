@@ -420,8 +420,7 @@ p5.prototype.saveGif = function(pImg, filename) {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
- *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 seconds of an animation.
- *  The arguments `duration` and `framerate` are constrained to be less or equal 15 and 22, respectively, which means you
+ *  The arguments `duration` and `framerate` are constrained to be less or equal to 15 and 22, respectively, which means you
  *  can only download a maximum of 15 seconds worth of frames at 22 frames per second, adding up to 330 frames.
  *  This is done in order to avoid memory problems since a large enough canvas can fill up the memory in your computer
  *  very easily and crash your program or even your browser.
