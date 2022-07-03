@@ -159,8 +159,9 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   return pImg;
 };
 
-p5.prototype.createGif = function(...args) {
+p5.prototype.saveGif = function(...args) {
   // process args
+  //
 
   let fileName;
   let seconds;
@@ -184,11 +185,6 @@ p5.prototype.createGif = function(...args) {
       callback = args[3];
   }
 
-  //   const makeFrame = p5.prototype._makeFrame;
-  //   const cnv = this._curElement.elt;
-
-  //   let ext = 'png';
-
   if (!delay) {
     delay = 0;
   }
@@ -201,21 +197,14 @@ p5.prototype.createGif = function(...args) {
   var count = nFramesDelay;
   this.frameCount = count;
 
-  //   var frameBuffer = new Uint8Array(this.width * this.height * 4 * nFrames);
-  var pImg = new p5.Image(this.width, this.height, this);
+  // width * height * (r,g,b,a) * frames
+  //   var frameBuffer = new Uint8ClampedArray(
+  //     this.width * this.height * 4 * nFrames
+  //   );
+  let frames = [];
+  let pImg = new p5.Image(this.width, this.height, this);
 
   noLoop();
-
-  //   var loopLimit = 0; //loops forever
-  //   pImg.gifProperties = {
-  //     displayIndex: 0,
-  //     loopLimit,
-  //     loopCount: 0,
-  //     nFrames,
-  //     playing: true,
-  //     timeDisplayed: 0,
-  //     lastChangeTime: 0
-  //   };
 
   while (count < nFrames + nFramesDelay) {
     /* 
@@ -225,29 +214,42 @@ p5.prototype.createGif = function(...args) {
       to be drawn and immediately save it to a buffer and continue
       */
     redraw();
-    // frameBuffer.push(makeFrame(fileName + count, ext, cnv));
-    // frameBuffer;
-    let framePixels = this.drawingContext.getImageData(
+
+    let frameData = this.drawingContext.getImageData(
       0,
       0,
       this.width,
       this.height
-    ).data;
-    print(framePixels);
-    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
-    pImg.drawingContext.putImageData(imageData, 0, 0);
+    );
+
+    pImg.drawingContext.putImageData(frameData, 0, 0);
+
+    frames.push({
+      image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
+      delay: 10 * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+    });
 
     count++;
+
     print('Processing frame: ' + count);
     print('Frame count: ' + this.frameCount);
   }
 
-  print(pImg);
-  saveGif(pImg, fileName);
+  pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+  pImg.gifProperties = {
+    displayIndex: 0,
+    loopLimit: 0, // let it loop indefinitely
+    loopCount: 0,
+    frames: frames,
+    numFrames: nFrames,
+    playing: true,
+    timeDisplayed: 0,
+    lastChangeTime: 0
+  };
 
-  print('No loop');
-  noLoop();
-  frameBuffer = [];
+  p5.prototype.encodeAndDownloadGif(pImg, fileName);
+
+  frames = [];
 };
 
 /**
