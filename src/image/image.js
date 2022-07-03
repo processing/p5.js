@@ -217,11 +217,11 @@ p5.prototype.createGif = function(...args) {
   if (!delay) {
     delay = 0;
   }
-  print(fileName, seconds, delay);
 
   let frameRate = this._frameRate || this._targetFrameRate || 60;
-  let nFrames = seconds * frameRate;
-  let nFramesDelay = delay * frameRate;
+  let nFrames = ceil(seconds * frameRate);
+  let nFramesDelay = ceil(delay * frameRate);
+  print(frameRate, nFrames, nFramesDelay);
 
   // TODO: check if delay and nFrames are correct
   /*
@@ -235,7 +235,7 @@ p5.prototype.createGif = function(...args) {
   var frameBuffer = [];
   noLoop();
 
-  while (count < nFrames) {
+  while (count < nFrames + nFramesDelay) {
     /* we draw the next frame. this is important, since 
         busy sketches or low end devices might take longer
         to render the frame. So we just wait for the frame
@@ -244,11 +244,9 @@ p5.prototype.createGif = function(...args) {
     redraw();
     frameBuffer.push(makeFrame(fileName + count, ext, cnv));
     count++;
-    console.log(frameCount);
-    console.log('Processing frame ' + count);
   }
   print(frameBuffer);
-  _createGif();
+  //   _createGif();
 
   //   if (callback) {
   //     callback(frameBuffer);
@@ -261,12 +259,12 @@ p5.prototype.createGif = function(...args) {
 
   //   const extension = 'gif';
   //   const blob = new Blob([frameBuffer], {
-  //     type: 'image/gif',
+  //     type: 'image/gif'
   //   });
-  //   let pImg = new p5.Image(frameBuffer);
-  //   print(pImg);
-  //   let gif = p5.prototype.saveGif(blob, fileName);
-  //   print(gif);
+  let pImg = new p5.Image(frameBuffer);
+  print(pImg);
+  let gif = p5.prototype.saveGif(blob, fileName);
+  print(gif);
 
   print('No loop');
   noLoop();
