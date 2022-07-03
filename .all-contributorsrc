@@ -3068,6 +3068,20 @@
       "contributions": [
         "plugin"
       ]
+    },
+    {
+      "login": "Qianqianye",
+      "name": "Qianqian Ye",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18587130?v=4",
+      "profile": "http://qianqian-ye.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc",
+        "eventOrganizing",
+        "review",
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
