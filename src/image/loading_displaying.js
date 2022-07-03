@@ -195,7 +195,7 @@ p5.prototype.saveGif = function(...args) {
   print(frameRate, nFrames, nFramesDelay);
 
   var count = nFramesDelay;
-  this.frameCount = count;
+  //   this.frameCount = count;
 
   // width * height * (r,g,b,a) * frames
   //   var frameBuffer = new Uint8ClampedArray(
@@ -226,7 +226,7 @@ p5.prototype.saveGif = function(...args) {
 
     frames.push({
       image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-      delay: 10 * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+      delay: 2 / 100 //GIF stores delay in one-hundredth of a second, shift to ms
     });
 
     count++;
