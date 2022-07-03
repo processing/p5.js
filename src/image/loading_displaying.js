@@ -159,6 +159,97 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   return pImg;
 };
 
+p5.prototype.createGif = function(...args) {
+  // process args
+
+  let fileName;
+  let seconds;
+  let delay;
+  //   let callback;
+
+  switch (args.length) {
+    case 2:
+      fileName = args[0];
+      seconds = args[1];
+      break;
+    case 3:
+      fileName = args[0];
+      seconds = args[1];
+      delay = args[2];
+      break;
+    default:
+      fileName = args[0];
+      seconds = args[1];
+      delay = args[2];
+      callback = args[3];
+  }
+
+  //   const makeFrame = p5.prototype._makeFrame;
+  //   const cnv = this._curElement.elt;
+
+  //   let ext = 'png';
+
+  if (!delay) {
+    delay = 0;
+  }
+
+  let frameRate = this._frameRate || this._targetFrameRate || 60;
+  let nFrames = ceil(seconds * frameRate);
+  let nFramesDelay = ceil(delay * frameRate);
+  print(frameRate, nFrames, nFramesDelay);
+
+  var count = nFramesDelay;
+  this.frameCount = count;
+
+  //   var frameBuffer = new Uint8Array(this.width * this.height * 4 * nFrames);
+  var pImg = new p5.Image(this.width, this.height, this);
+
+  noLoop();
+
+  //   var loopLimit = 0; //loops forever
+  //   pImg.gifProperties = {
+  //     displayIndex: 0,
+  //     loopLimit,
+  //     loopCount: 0,
+  //     nFrames,
+  //     playing: true,
+  //     timeDisplayed: 0,
+  //     lastChangeTime: 0
+  //   };
+
+  while (count < nFrames + nFramesDelay) {
+    /* 
+      we draw the next frame. this is important, since 
+      busy sketches or low end devices might take longer
+      to render the frame. So we just wait for the frame
+      to be drawn and immediately save it to a buffer and continue
+      */
+    redraw();
+    // frameBuffer.push(makeFrame(fileName + count, ext, cnv));
+    // frameBuffer;
+    let framePixels = this.drawingContext.getImageData(
+      0,
+      0,
+      this.width,
+      this.height
+    ).data;
+    print(framePixels);
+    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
+    pImg.drawingContext.putImageData(imageData, 0, 0);
+
+    count++;
+    print('Processing frame: ' + count);
+    print('Frame count: ' + this.frameCount);
+  }
+
+  print(pImg);
+  saveGif(pImg, fileName);
+
+  print('No loop');
+  noLoop();
+  frameBuffer = [];
+};
+
 /**
  * Helper function for loading GIF-based images
  */
