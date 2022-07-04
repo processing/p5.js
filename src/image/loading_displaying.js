@@ -159,6 +159,54 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   return pImg;
 };
 
+/**
+ * Generates a gif of your current animation and downloads it to your computer!
+ *
+ * The duration argument specifies how many seconds you want to record from your animation.
+ * This value is then converted to the necessary number of frames to generate it.
+ *
+ * With the delay argument, you can tell the function to skip the first `delay` seconds
+ * of the animation, and then download the `duration` next seconds. This means that regardless
+ * of the value of `delay`, your gif will always be `duration` seconds long.
+ *
+ * @method saveGif
+ * @param  {String} filename File name of your gif
+ * @param  {String} duration Duration in seconds that you wish to capture from your sketch
+ * @param  {String} delay Duration in seconds that you wish wait before starting to capture
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   colorMode(HSL);
+ * }
+
+ * function draw() {
+ *   // create some cool dynamic background
+ *   let hue = map(sin(frameCount / 100), -1, 1, 0, 100);
+ *   background(hue, 40, 60);
+
+ *   // create a circle that moves diagonally
+ *   circle(
+ *     100 * sin(frameCount / 10) + width / 2,
+ *     100 * sin(frameCount / 10) + height / 2,
+ *     10
+ *   );
+ * }
+
+ * // you can put it in the mousePressed function,
+ * // or keyPressed for example
+ * function mousePressed() {
+ *   // this will download the first two seconds of my animation!
+ *   saveGif('mySketch', 2);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * image of the underside of a white umbrella and grided ceililng above
+ */
 p5.prototype.saveGif = function(...args) {
   // process args
   //
@@ -166,7 +214,6 @@ p5.prototype.saveGif = function(...args) {
   let fileName;
   let seconds;
   let delay;
-  //   let callback;
 
   switch (args.length) {
     case 2:
@@ -178,33 +225,27 @@ p5.prototype.saveGif = function(...args) {
       seconds = args[1];
       delay = args[2];
       break;
-    default:
-      fileName = args[0];
-      seconds = args[1];
-      delay = args[2];
-      callback = args[3];
   }
 
   if (!delay) {
     delay = 0;
   }
 
-  let frameRate = this._frameRate || this._targetFrameRate || 60;
-  let nFrames = ceil(seconds * frameRate);
-  let nFramesDelay = ceil(delay * frameRate);
-  print(frameRate, nFrames, nFramesDelay);
+  let _frameRate = this._frameRate || this._targetFrameRate || 60;
+  let nFrames = Math.ceil(seconds * _frameRate);
+  let nFramesDelay = Math.ceil(delay * _frameRate);
+  print(_frameRate, nFrames, nFramesDelay);
 
   var count = nFramesDelay;
-  //   this.frameCount = count;
 
-  // width * height * (r,g,b,a) * frames
-  //   var frameBuffer = new Uint8ClampedArray(
-  //     this.width * this.height * 4 * nFrames
-  //   );
   let frames = [];
   let pImg = new p5.Image(this.width, this.height, this);
 
   noLoop();
+
+  console.log(
+    'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
+  );
 
   while (count < nFrames + nFramesDelay) {
     /* 
@@ -225,14 +266,11 @@ p5.prototype.saveGif = function(...args) {
     pImg.drawingContext.putImageData(frameData, 0, 0);
 
     frames.push({
-      image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-      delay: 2 / 100 //GIF stores delay in one-hundredth of a second, shift to ms
+      image: pImg.drawingContext.getImageData(0, 0, this.width, this.height),
+      delay: 100 //GIF stores delay in one-hundredth of a second, shift to ms
     });
 
     count++;
-
-    print('Processing frame: ' + count);
-    print('Frame count: ' + this.frameCount);
   }
 
   pImg.drawingContext.putImageData(frames[0].image, 0, 0);
@@ -247,7 +285,11 @@ p5.prototype.saveGif = function(...args) {
     lastChangeTime: 0
   };
 
+  console.info('Frames processed, encoding gif. This may take a while...');
+
   p5.prototype.encodeAndDownloadGif(pImg, fileName);
+
+  loop();
 
   frames = [];
 };
