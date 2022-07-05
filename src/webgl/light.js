@@ -37,6 +37,7 @@ import * as constants from '../core/constants';
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
+ *   describe('sphere with coral color under black light');
  * }
  * function draw() {
  *   background(100);
@@ -44,7 +45,6 @@ import * as constants from '../core/constants';
  *   ambientMaterial(255, 127, 80); // coral material
  *   sphere(40);
  * }
- * describe('sphere with coral color under black light');
  * </code>
  * </div>
  * @alt
@@ -56,6 +56,7 @@ import * as constants from '../core/constants';
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
+ *   describe('sphere with coral color under white light');
  * }
  * function draw() {
  *   background(100);
@@ -63,7 +64,6 @@ import * as constants from '../core/constants';
  *   ambientMaterial(255, 127, 80); // coral material
  *   sphere(40);
  * }
- * describe('sphere with coral color under white light');
  * </code>
  * </div>
  * @alt
@@ -146,6 +146,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
+ *   describe(
+ *     'Sphere with specular highlight. Clicking the mouse toggles the specular highlight color between red and the default white.'
+ *   );
  * }
  *
  * function draw() {
@@ -174,10 +177,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * function mouseClicked() {
  *   setRedSpecularColor = !setRedSpecularColor;
  * }
- *
- * describe(
- *   'Sphere with specular highlight. Clicking the mouse toggles the specular highlight color between red and the default white.'
- * );
  * </code>
  * </div>
  *
@@ -262,6 +261,9 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe(
+ *     'scene with sphere and directional light. The direction of the light is controlled with the mouse position.'
+ *   );
  * }
  * function draw() {
  *   background(0);
@@ -272,9 +274,6 @@ p5.prototype.specularColor = function(v1, v2, v3) {
  *   noStroke();
  *   sphere(40);
  * }
- * describe(
- *   'scene with sphere and directional light. The direction of the light is controlled with the mouse position.'
- * );
  * </code>
  * </div>
  *
@@ -383,6 +382,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe(
+ *     'scene with sphere and point light. The position of the light is controlled with the mouse position.'
+ *   );
  * }
  * function draw() {
  *   background(0);
@@ -400,9 +402,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  *   noStroke();
  *   sphere(40);
  * }
- * describe(
- *   'scene with sphere and point light. The position of the light is controlled with the mouse position.'
- * );
  * </code>
  * </div>
  *
@@ -493,6 +492,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('the light is partially ambient and partially directional');
  * }
  * function draw() {
  *   background(0);
@@ -502,7 +502,6 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
  *   rotateZ(millis() / 1000);
  *   box();
  * }
- * describe('the light is partially ambient and partially directional');
  * </code>
  * </div>
  *
@@ -547,6 +546,9 @@ p5.prototype.lights = function() {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
+ *   describe(
+ *     'Two spheres with different falloff values show different intensity of light'
+ *   );
  * }
  * function draw() {
  *   ortho();
@@ -570,9 +572,6 @@ p5.prototype.lights = function() {
  *   sphere(20);
  *   pop();
  * }
- * describe(
- *   'Two spheres with different falloff values show different intensity of light'
- * );
  * </code>
  * </div>
  *
@@ -670,6 +669,9 @@ p5.prototype.lightFalloff = function(
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe(
+ *     'scene with sphere and spot light. The position of the light is controlled with the mouse position.'
+ *   );
  * }
  * function draw() {
  *   background(0);
@@ -688,9 +690,6 @@ p5.prototype.lightFalloff = function(
  *   noStroke();
  *   sphere(40);
  * }
- * describe(
- *   'scene with sphere and spot light. The position of the light is controlled with the mouse position.'
- * );
  * </code>
  * </div>
  *
@@ -1004,6 +1003,9 @@ p5.prototype.spotLight = function(
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe(
+ *     'Three white spheres. Each appears as a different color due to lighting.'
+ *   );
  * }
  * function draw() {
  *   background(200);
@@ -1024,9 +1026,6 @@ p5.prototype.spotLight = function(
  *   ambientMaterial(255);
  *   sphere(13);
  * }
- * describe(
- *   'Three white spheres. Each appears as a different color due to lighting.'
- * );
  * </code>
  * </div>
  *
