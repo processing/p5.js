@@ -341,6 +341,10 @@ p5.Shader.prototype.useProgram = function() {
  *   createCanvas(100, 100, WEBGL);
  *   shader(grad);
  *   noStroke();
+ *
+ *   describe(
+ *     'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ *   );
  * }
  *
  * function draw() {

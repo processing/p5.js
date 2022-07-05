@@ -45,6 +45,7 @@ import './p5.Texture';
  *   shader(mandel);
  *   noStroke();
  *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *   describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
  * }
  *
  * function draw() {
@@ -162,6 +163,7 @@ p5.prototype.loadShader = function(
  *
  *   // 'p' is the center point of the Mandelbrot image
  *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ *   describe('zooming Mandelbrot set. a colorful, infinitely detailed fractal.');
  * }
  *
  * function draw() {
@@ -233,6 +235,10 @@ p5.prototype.createShader = function(vertSrc, fragSrc) {
  *   orangeBlue.setUniform('colorBackground', [0.226, 0.0, 0.615]);
  *
  *   noStroke();
+ *
+ *   describe(
+ *     'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ *   );
  * }
  *
  * function draw() {
@@ -326,6 +332,10 @@ p5.prototype.shader = function(s) {
  *
  *   // Create our shader
  *   shaderProgram = createShader(vertSrc, fragSrc);
+ *
+ *   describe(
+ *     'Two rotating cubes. The left one is painted using a custom (user-defined) shader, while the right one is painted using the default fill shader.'
+ *   );
  * }
  *
  * // prettier-ignore
@@ -392,6 +402,7 @@ p5.prototype.resetShader = function() {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('spinning cube with a texture from an image');
  * }
  *
  * function draw() {
@@ -417,6 +428,7 @@ p5.prototype.resetShader = function() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
  *   pg.textSize(75);
+ *   describe('plane with a texture from an image created by createGraphics()');
  * }
  *
  * function draw() {
@@ -444,6 +456,7 @@ p5.prototype.resetShader = function() {
  * }
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('rectangle with video as texture');
  * }
  *
  * function draw() {
@@ -473,6 +486,7 @@ p5.prototype.resetShader = function() {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('quad with a texture, mapped using normalized coordinates');
  * }
  *
  * function draw() {
@@ -529,6 +543,7 @@ p5.prototype.texture = function(tex) {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('quad with a texture, mapped using normalized coordinates');
  * }
  *
  * function draw() {
@@ -557,6 +572,7 @@ p5.prototype.texture = function(tex) {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('quad with a texture, mapped using image coordinates');
  * }
  *
  * function draw() {
@@ -615,6 +631,7 @@ p5.prototype.textureMode = function(mode) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   textureWrap(MIRROR);
+ *   describe('an image of the rocky mountains repeated in mirrored tiles');
  * }
  *
  * function draw() {
@@ -675,6 +692,7 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Sphere with normal material');
  * }
  *
  * function draw() {
@@ -731,6 +749,7 @@ p5.prototype.normalMaterial = function(...args) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('sphere reflecting red, blue, and green light');
  * }
  * function draw() {
  *   background(0);
@@ -751,6 +770,7 @@ p5.prototype.normalMaterial = function(...args) {
  * // so object only reflects it's red and blue components
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('box reflecting only red and blue light');
  * }
  * function draw() {
  *   background(70);
@@ -770,6 +790,7 @@ p5.prototype.normalMaterial = function(...args) {
  * // green, it does not reflect any light
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('box reflecting no light');
  * }
  * function draw() {
  *   background(70);
@@ -841,6 +862,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('sphere with green emissive material');
  * }
  * function draw() {
  *   background(0);
@@ -916,6 +938,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
+ *   describe('torus with specular material');
  * }
  *
  * function draw() {
@@ -986,6 +1009,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('two spheres, one more shiny than the other');
  * }
  * function draw() {
  *   background(0);
