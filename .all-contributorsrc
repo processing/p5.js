@@ -3082,6 +3082,15 @@
         "review",
         "translation"
       ]
+    },
+    {
+      "login": "adarrssh",
+      "name": "Adarsh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85433137?v=4",
+      "profile": "https://github.com/adarrssh",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
