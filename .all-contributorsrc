@@ -3101,6 +3101,15 @@
         "design",
         "eventOrganizing"
       ]
+    },
+    {
+      "login": "Guirdo",
+      "name": "Seb Méndez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21044700?v=4",
+      "profile": "https://www.guirdo.xyz/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
