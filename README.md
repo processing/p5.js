@@ -54,8 +54,8 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* [@outofambit](https://github.com/outofambit) - project co-lead
-* [@qianqianye](https://github.com/qianqianye) - project co-lead
+* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
+* [@outofambit](https://github.com/outofambit) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
@@ -65,12 +65,12 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
-| Accessibility (Web Accessibility) | outofambit                                   |
-| Color                             | outofambit                                   |
-| Core/Environment/Rendering        | outofambit<br/>limzykenneth                  |
+| Accessibility (Web Accessibility) |                                              |
+| Color                             |                                              |
+| Core/Environment/Rendering        | limzykenneth                                 |
 | Data                              |                                              |
 | DOM                               | outofambit                                   |
-| Events                            | outofambit<br/>limzykenneth                  |
+| Events                            | limzykenneth                                 |
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
