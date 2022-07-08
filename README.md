@@ -567,6 +567,9 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/adarrssh"><img src="https://avatars.githubusercontent.com/u/85433137?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adarsh</b></sub></a><br /><a href="#translation-adarrssh" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/kaabe1"><img src="https://avatars.githubusercontent.com/u/78185255?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kaabe1</b></sub></a><br /><a href="#design-kaabe1" title="Design">🎨</a> <a href="#eventOrganizing-kaabe1" title="Event Organizing">📋</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://www.guirdo.xyz/"><img src="https://avatars.githubusercontent.com/u/21044700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seb Méndez</b></sub></a><br /><a href="#translation-Guirdo" title="Translation">🌍</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
