@@ -302,7 +302,6 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   };
   const gifWriter = new omggif.GifWriter(buffer, pImg.width, pImg.height, opts);
   let previousFrame = {};
-
   // Pass 2
   // Determine if the frame needs a local palette
   // Also apply transparency optimization. This function will often blow up

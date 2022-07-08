@@ -231,7 +231,10 @@ p5.prototype.saveGif = function(...args) {
     delay = 0;
   }
 
-  let _frameRate = this._frameRate || this._targetFrameRate || 60;
+  let _frameRate = this._frameRate || this._targetFrameRate;
+  if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    _frameRate = 60;
+  }
   let nFrames = Math.ceil(seconds * _frameRate);
   let nFramesDelay = Math.ceil(delay * _frameRate);
   print(_frameRate, nFrames, nFramesDelay);
@@ -259,21 +262,21 @@ p5.prototype.saveGif = function(...args) {
     let frameData = this.drawingContext.getImageData(
       0,
       0,
-      this.width,
-      this.height
+      this.width * 2,
+      this.height * 2
     );
 
-    pImg.drawingContext.putImageData(frameData, 0, 0);
+    // pImg.drawingContext.putImageData(frameData, 0, 0);
 
     frames.push({
-      image: pImg.drawingContext.getImageData(0, 0, this.width, this.height),
+      image: frameData,
       delay: 100 //GIF stores delay in one-hundredth of a second, shift to ms
     });
 
     count++;
   }
 
-  pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+  //   pImg.drawingContext.putImageData(frames[0].image, 0, 0);
   pImg.gifProperties = {
     displayIndex: 0,
     loopLimit: 0, // let it loop indefinitely
