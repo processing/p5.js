@@ -3110,6 +3110,17 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "3ru",
+      "name": "Ryuya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69892552?v=4",
+      "profile": "https://github.com/3ru",
+      "contributions": [
+        "bug",
+        "review",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
