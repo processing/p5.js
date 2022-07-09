@@ -569,6 +569,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   </tr>
   <tr>
     <td align="center"><a href="https://www.guirdo.xyz/"><img src="https://avatars.githubusercontent.com/u/21044700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seb Méndez</b></sub></a><br /><a href="#translation-Guirdo" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/3ru"><img src="https://avatars.githubusercontent.com/u/69892552?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryuya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3A3ru" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3A3ru" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/processing/p5.js/commits?author=3ru" title="Code">💻</a></td>
   </tr>
 </table>
 
