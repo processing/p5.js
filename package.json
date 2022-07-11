@@ -32,7 +32,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.4.0",
+  "version": "1.4.1",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
@@ -73,7 +73,7 @@
     "i18next-browser-languagedetector": "^4.0.1",
     "libtess": "^1.2.2",
     "lint-staged": "^4.3.0",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "mocha": "^6.2.2",
     "np": "^5.2.1",
     "omggif": "^1.0.10",
@@ -84,7 +84,7 @@
     "puppeteer": "^10.2.0",
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
-    "simple-git": "^1.132.0",
+    "simple-git": "^3.3.0",
     "whatwg-fetch": "^2.0.4"
   },
   "license": "LGPL-2.1",

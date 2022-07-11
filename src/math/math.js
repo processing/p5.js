@@ -9,7 +9,7 @@ import p5 from '../core/main';
 
 /**
  * Creates a new <a href="#/p5.Vector">p5.Vector</a> (the datatype for storing vectors). This provides a
- * two or three dimensional vector, specifically a Euclidean (also known as
+ * two or three-dimensional vector, specifically a Euclidean (also known as
  * geometric) vector. A vector is an entity that has both magnitude and
  * direction.
  *
@@ -30,15 +30,17 @@ import p5 from '../core/main';
  * function draw() {
  *   background(255);
  *   line(v1.x, v1.y, mouseX, mouseY);
+ *   describe(`draws a line from center of canvas to mouse pointer position.`);
  * }
  * </code></div>
- *
- * @alt
- * draws a line from center of canvas to mouse pointer position.
  */
 p5.prototype.createVector = function(x, y, z) {
   if (this instanceof p5) {
-    return new p5.Vector(this, arguments);
+    return new p5.Vector(
+      this._fromRadians.bind(this),
+      this._toRadians.bind(this),
+      ...arguments
+    );
   } else {
     return new p5.Vector(x, y, z);
   }

@@ -17,21 +17,62 @@ import * as constants from '../core/constants';
  * will provide the GL context for this new p5.Texture
  * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
  * object containing the image data to store in the texture.
+ * @param {Object} [settings] optional A javascript object containing texture
+ * settings.
+ * @param {Number} [settings.format] optional The internal color component
+ * format for the texture. Possible values for format include gl.RGBA,
+ * gl.RGB, gl.ALPHA, gl.LUMINANCE, gl.LUMINANCE_ALPHA. Defaults to gl.RBGA
+ * @param {Number} [settings.minFilter] optional The texture minification
+ * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+ * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+ * @param {Number} [settings.magFilter] optional The texture magnification
+ * filter setting. Possible values are gl.NEAREST or gl.LINEAR. Defaults
+ * to gl.LINEAR. Note, Mipmaps are not implemented in p5.
+ * @param {Number} [settings.wrapS] optional The texture wrap settings for
+ * the s coordinate, or x axis. Possible values are gl.CLAMP_TO_EDGE,
+ * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+ * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+ * @param {Number} [settings.wrapT] optional The texture wrap settings for
+ * the t coordinate, or y axis. Possible values are gl.CLAMP_TO_EDGE,
+ * gl.REPEAT, and gl.MIRRORED_REPEAT. The mirror settings are only available
+ * when using a power of two sized texture. Defaults to gl.CLAMP_TO_EDGE
+ * @param {Number} [settings.dataType] optional The data type of the texel
+ * data. Possible values are gl.UNSIGNED_BYTE or gl.FLOAT. There are more
+ * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
  */
-p5.Texture = function(renderer, obj) {
+p5.Texture = function(renderer, obj, settings) {
   this._renderer = renderer;
 
   const gl = this._renderer.GL;
 
+  settings = settings || {};
+
+  if (settings.dataType === gl.FLOAT) {
+    const ext = gl.getExtension('OES_texture_float');
+    if (!ext) {
+      console.log(
+        "Oh no, your device doesn't support floating point textures!"
+      );
+    }
+
+    const linear = gl.getExtension('OES_texture_float_linear');
+    if (!linear) {
+      console.log(
+        "Ack! Your device doesn't support linear filtering for floating point textures"
+      );
+    }
+  }
+
   this.src = obj;
   this.glTex = undefined;
   this.glTarget = gl.TEXTURE_2D;
-  this.glFormat = gl.RGBA;
+  this.glFormat = settings.format || gl.RGBA;
   this.mipmaps = false;
-  this.glMinFilter = gl.LINEAR;
-  this.glMagFilter = gl.LINEAR;
-  this.glWrapS = gl.CLAMP_TO_EDGE;
-  this.glWrapT = gl.CLAMP_TO_EDGE;
+  this.glMinFilter = settings.minFilter || gl.LINEAR;
+  this.glMagFilter = settings.magFilter || gl.LINEAR;
+  this.glWrapS = settings.wrapS || gl.CLAMP_TO_EDGE;
+  this.glWrapT = settings.wrapT || gl.CLAMP_TO_EDGE;
+  this.glDataType = settings.dataType || gl.UNSIGNED_BYTE;
 
   // used to determine if this texture might need constant updating
   // because it is a video or gif.
@@ -99,7 +140,7 @@ p5.Texture.prototype.init = function(data) {
     this.height === 0 ||
     (this.isSrcMediaElement && !this.src.loadedmetadata)
   ) {
-    // assign a 1x1 empty texture initially, because data is not yet ready,
+    // assign a 1×1 empty texture initially, because data is not yet ready,
     // so that no errors occur in gl console!
     const tmpdata = new Uint8Array([1, 1, 1, 1]);
     gl.texImage2D(
@@ -110,7 +151,7 @@ p5.Texture.prototype.init = function(data) {
       1,
       0,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       tmpdata
     );
   } else {
@@ -120,7 +161,7 @@ p5.Texture.prototype.init = function(data) {
       0,
       this.glFormat,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       data
     );
   }
@@ -211,7 +252,7 @@ p5.Texture.prototype.update = function() {
       0,
       this.glFormat,
       this.glFormat,
-      gl.UNSIGNED_BYTE,
+      this.glDataType,
       textureData
     );
   }

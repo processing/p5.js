@@ -78,7 +78,7 @@ export const WAIT = 'wait';
  * </code></div>
  *
  * @alt
- * 80x80 white quarter-circle with curve toward bottom right of canvas.
+ * 80×80 white quarter-circle with curve toward bottom right of canvas.
  */
 export const HALF_PI = _PI / 2;
 /**
@@ -132,7 +132,7 @@ export const QUARTER_PI = _PI / 4;
  * </code></div>
  *
  * @alt
- * 80x80 white ellipse shape in center of canvas.
+ * 80×80 white ellipse shape in center of canvas.
  */
 export const TAU = _PI * 2;
 /**
@@ -150,12 +150,12 @@ export const TAU = _PI * 2;
  * </code></div>
  *
  * @alt
- * 80x80 white ellipse shape in center of canvas.
+ * 80×80 white ellipse shape in center of canvas.
  */
 export const TWO_PI = _PI * 2;
 /**
- * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprets and calculates angles (either DEGREES or RADIANS).
+ * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode in
+ * which p5.js interprets and calculates angles (either DEGREES or RADIANS).
  * @property {String} DEGREES
  * @final
  *
@@ -168,8 +168,8 @@ export const TWO_PI = _PI * 2;
  */
 export const DEGREES = 'degrees';
 /**
- * Constant to be used with <a href="#/p5/angleMode">angleMode()</a> function, to set the mode which
- * p5.js interprets and calculates angles (either RADIANS or DEGREES).
+ * Constant to be used with the <a href="#/p5/angleMode">angleMode()</a> function, to set the mode
+ * in which p5.js interprets and calculates angles (either RADIANS or DEGREES).
  * @property {String} RADIANS
  * @final
  *

@@ -15,9 +15,9 @@ import '../core/friendly_errors/fes_core';
 
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a PFont Object. This method is asynchronous,
- * meaning it may not finish before the next line in your sketch
- * is executed.
+ * and returns a <a href="#/p5.Font">p5.Font</a> object. This function
+ * is asynchronous, meaning it may not finish before the next line in
+ * your sketch is executed.
  *
  * The path to the font should be relative to the HTML file
  * that links in your sketch. Loading fonts from a URL or other
@@ -119,11 +119,11 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     const lastDotIdx = fileNoPath.lastIndexOf('.');
     let fontFamily;
     let newStyle;
-    const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    const fileExt = lastDotIdx < 1 ? null : fileNoPath.slice(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with DOM module
     if (validFontTypes.includes(fileExt)) {
-      fontFamily = fileNoPath.substr(0, lastDotIdx);
+      fontFamily = fileNoPath.slice(0, lastDotIdx !== -1 ? lastDotIdx : 0);
       newStyle = document.createElement('style');
       newStyle.appendChild(
         document.createTextNode(

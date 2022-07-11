@@ -125,12 +125,11 @@ p5.Table = function(rows) {
  *   for (let r = 0; r < table.getRowCount(); r++)
  *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * no image displayed
  */
 p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
@@ -178,12 +177,11 @@ p5.Table.prototype.addRow = function(row) {
  *   for (let r = 0; r < table.getRowCount(); r++)
  *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * no image displayed
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
@@ -226,12 +224,11 @@ p5.Table.prototype.removeRow = function(id) {
  *   for (let c = 0; c < table.getColumnCount(); c++) {
  *     print(row.getString(c));
  *   }
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
@@ -274,12 +271,11 @@ p5.Table.prototype.getRow = function(r) {
  *   for (let r = 0; r < table.getRowCount(); r++)
  *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * no image displayed
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -322,12 +318,10 @@ p5.Table.prototype.getRows = function() {
  *   let row = table.findRow('Zebra', 'name');
  *   //find the corresponding species
  *   print(row.getString('species'));
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- * @alt
- * no image displayed
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
@@ -391,12 +385,10 @@ p5.Table.prototype.findRow = function(value, column) {
  *   //find the rows containing animals named Goat
  *   let rows = table.findRows('Goat', 'name');
  *   print(rows.length + ' Goats found');
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.findRows = function(value, column) {
   const ret = [];
@@ -573,12 +565,10 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  *   //getColumn returns an array that can be printed directly
  *   print(table.getColumn('species'));
  *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.getColumn = function(value) {
   const ret = [];
@@ -623,12 +613,10 @@ p5.Table.prototype.getColumn = function(value) {
  *   table.clearRows();
  *   print(table.getRowCount() + ' total rows in table');
  *   print(table.getColumnCount() + ' total columns in table');
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -673,12 +661,11 @@ p5.Table.prototype.clearRows = function() {
  *   for (let r = 0; r < table.getRowCount(); r++)
  *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.addColumn = function(title) {
   const t = title || null;
@@ -925,12 +912,10 @@ p5.Table.prototype.trim = function(column) {
  * function setup() {
  *   table.removeColumn('id');
  *   print(table.getColumnCount());
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.removeColumn = function(c) {
   let cString;
@@ -995,12 +980,11 @@ p5.Table.prototype.removeColumn = function(c) {
  *   for (let r = 0; r < table.getRowCount(); r++)
  *     for (let c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -1041,12 +1025,11 @@ p5.Table.prototype.set = function(row, column, value) {
  *
  *   print(table.getColumn(0));
  *   //["0", 1, "2"]
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.setNum = function(row, column, value) {
   this.rows[row].setNum(column, value);
@@ -1087,11 +1070,10 @@ p5.Table.prototype.setNum = function(row, column, value) {
  *   newRow.setString('name', 'Wolf');
  *
  *   print(table.getArray());
+ *
+ *   describe(`no image displayed`);
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.Table.prototype.setString = function(row, column, value) {
   this.rows[row].setString(column, value);
@@ -1132,12 +1114,10 @@ p5.Table.prototype.setString = function(row, column, value) {
  *   //Capra hircus
  *   print(table.get(0, 'species'));
  *   //Capra hircus
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -1176,12 +1156,10 @@ p5.Table.prototype.get = function(row, column) {
  * function setup() {
  *   print(table.getNum(1, 0) + 100);
  *   //id 1 + 100 = 101
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1227,12 +1205,10 @@ p5.Table.prototype.getNum = function(row, column) {
  *   print(table.getString(2, 0)); // 2
  *   print(table.getString(2, 1)); // Equus zebra
  *   print(table.getString(2, 2)); // Zebra
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 
 p5.Table.prototype.getString = function(row, column) {
@@ -1273,12 +1249,11 @@ p5.Table.prototype.getString = function(row, column) {
  *
  *   print(tableObject);
  *   //outputs an object
+ *
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.getObject = function(headerColumn) {
   const tableObject = {};
@@ -1332,12 +1307,10 @@ p5.Table.prototype.getObject = function(headerColumn) {
  *   for (let i = 0; i < tableArray.length; i++) {
  *     print(tableArray[i]);
  *   }
+ *   describe(`no image displayed`);
  * }
  * </code>
  * </div>
- *
- *@alt
- * no image displayed
  */
 p5.Table.prototype.getArray = function() {
   const tableArray = [];

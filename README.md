@@ -54,8 +54,8 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* [@outofambit](https://github.com/outofambit) - project co-lead
-* [@qianqianye](https://github.com/qianqianye) - project co-lead
+* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
+* [@outofambit](https://github.com/outofambit) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
@@ -65,12 +65,12 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 
 | Area                              | Steward(s)                                   |
 | :-------------------------------- | :------------------------------------------- |
-| Accessibility (Web Accessibility) | outofambit                                   |
-| Color                             | outofambit                                   |
-| Core/Environment/Rendering        | outofambit<br/>limzykenneth                  |
+| Accessibility (Web Accessibility) |                                              |
+| Color                             |                                              |
+| Core/Environment/Rendering        | limzykenneth                                 |
 | Data                              |                                              |
 | DOM                               | outofambit                                   |
-| Events                            | outofambit<br/>limzykenneth                  |
+| Events                            | limzykenneth                                 |
 | Image                             | stalgiag                                     |
 | IO                                | limzykenneth                                 |
 | Math                              | limzykenneth                                 |
@@ -177,7 +177,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="http://www.estebanalmiron.com"><img src="https://avatars1.githubusercontent.com/u/1040718?v=4?s=100" width="100px;" alt=""/><br /><sub><b>taseenb</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tafsiri"><img src="https://avatars1.githubusercontent.com/u/26408?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yannick Assogba</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/johnpasquarello"><img src="https://avatars3.githubusercontent.com/u/2349625?v=4?s=100" width="100px;" alt=""/><br /><sub><b>John Pasquarello</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=johnpasquarello" title="Code">💻</a></td>
-    <td align="center"><a href="http://HappyCoding.io"><img src="https://avatars1.githubusercontent.com/u/6930986?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Workman</b></sub></a><br /></td>
+    <td align="center"><a href="http://HappyCoding.io"><img src="https://avatars1.githubusercontent.com/u/6930986?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Workman</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KevinWorkman" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gauini"><img src="https://avatars1.githubusercontent.com/u/4229215?v=4?s=100" width="100px;" alt=""/><br /><sub><b>gauini</b></sub></a><br /></td>
   </tr>
   <tr>
@@ -516,6 +516,60 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://github.com/katiejliu"><img src="https://avatars.githubusercontent.com/u/78124298?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Katie</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=katiejliu" title="Code">💻</a></td>
     <td align="center"><a href="http://www.alura.com.br"><img src="https://avatars.githubusercontent.com/u/51391?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Guilherme Silveira</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=guilhermesilveira" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.camilleroux.com/"><img src="https://avatars.githubusercontent.com/u/25977?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Camille Roux</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=camilleroux" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/reejuBhattacharya"><img src="https://avatars.githubusercontent.com/u/40564575?v=4?s=100" width="100px;" alt=""/><br /><sub><b>reejuBhattacharya</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=reejuBhattacharya" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=reejuBhattacharya" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/akshatnema"><img src="https://avatars.githubusercontent.com/u/76521428?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Akshat Nema</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=akshatnema" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/IamEzio"><img src="https://avatars.githubusercontent.com/u/89375125?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anshuman Maurya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AIamEzio" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/Himanshu664"><img src="https://avatars.githubusercontent.com/u/76220055?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Himanshu Malviya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AHimanshu664" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/chosamuel"><img src="https://avatars.githubusercontent.com/u/26333602?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel Cho</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Achosamuel" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/TOrfevres"><img src="https://avatars.githubusercontent.com/u/23334809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Théodore Orfèvres</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3ATOrfevres" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/JaPatGitHub"><img src="https://avatars.githubusercontent.com/u/73636668?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jyotiraditya Pradhan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=JaPatGitHub" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Zearin"><img src="https://avatars.githubusercontent.com/u/630124?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zearin</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Zearin" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/pifragile"><img src="https://avatars.githubusercontent.com/u/14249275?v=4?s=100" width="100px;" alt=""/><br /><sub><b>pifragile</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Apifragile" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/j-stodd"><img src="https://avatars.githubusercontent.com/u/65479705?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jstodd</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aj-stodd" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://racket-stories.com"><img src="https://avatars.githubusercontent.com/u/461765?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jens Axel Søgaard</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=soegaard" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Asoegaard" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/oleboleskole3"><img src="https://avatars.githubusercontent.com/u/43952813?v=4?s=100" width="100px;" alt=""/><br /><sub><b>oleboleskole3</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aoleboleskole3" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/awelles"><img src="https://avatars.githubusercontent.com/u/115194?v=4?s=100" width="100px;" alt=""/><br /><sub><b>A Welles</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aawelles" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://superblob.studio/"><img src="https://avatars.githubusercontent.com/u/5208182?v=4?s=100" width="100px;" alt=""/><br /><sub><b>andrei antonescu</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aandreiantonescu" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/dipamsen"><img src="https://avatars.githubusercontent.com/u/59444569?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Fun Planet</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Adipamsen" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/stigmollerhansen"><img src="https://avatars.githubusercontent.com/u/6607966?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stig Møller Hansen</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Astigmollerhansen" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://derekenlow.com"><img src="https://avatars.githubusercontent.com/u/28745080?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Derek Enlow</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=frigorific44" title="Code">💻</a></td>
+    <td align="center"><a href="http://willmartian.com"><img src="https://avatars.githubusercontent.com/u/17113462?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Will Martin</b></sub></a><br /><a href="#ideas-willmartian" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/beaumu"><img src="https://avatars.githubusercontent.com/u/25036955?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Beau Muylle</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=beaumu" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/unjust"><img src="https://avatars.githubusercontent.com/u/92090?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivy Feraco</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aunjust" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://RandomSyntax.Net"><img src="https://avatars.githubusercontent.com/u/6419944?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gareth Williams</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Gaweph" title="Code">💻</a></td>
+    <td align="center"><a href="https://bandism.net/"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ikko Ashimine</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=eltociear" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/0xJonas"><img src="https://avatars.githubusercontent.com/u/24874041?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jonas Rinke</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3A0xJonas" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://www.gakuin.otsuma.ac.jp/english/"><img src="https://avatars.githubusercontent.com/u/14014568?v=4?s=100" width="100px;" alt=""/><br /><sub><b>MATSUDA, Kouichi</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AKouichiMatsuda" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/stampyzfanz"><img src="https://avatars.githubusercontent.com/u/34364128?v=4?s=100" width="100px;" alt=""/><br /><sub><b>stampyzfanz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=stampyzfanz" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/taejs"><img src="https://avatars.githubusercontent.com/u/41318449?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tae</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ataejs" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/Divyansh013"><img src="https://avatars.githubusercontent.com/u/85135469?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Divyansh013</b></sub></a><br /><a href="#translation-Divyansh013" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/rinkydevi"><img src="https://avatars.githubusercontent.com/u/82359874?v=4?s=100" width="100px;" alt=""/><br /><sub><b>rinkydevi</b></sub></a><br /><a href="#translation-rinkydevi" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://www.zhdk.ch/weiterbildung/weiterbildung-design/cas-coding-for-the-arts"><img src="https://avatars.githubusercontent.com/u/88927553?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Coding for the Arts</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Acas-c4ta" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://danieljamesross.github.io"><img src="https://avatars.githubusercontent.com/u/28922296?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Adanieljamesross" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/liz-peng"><img src="https://avatars.githubusercontent.com/u/8376256?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Liz Peng</b></sub></a><br /><a href="#design-liz-peng" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=liz-peng" title="Code">💻</a> <a href="#tool-liz-peng" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/koolaidkrusade"><img src="https://avatars.githubusercontent.com/u/95722198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>koolaidkrusade</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=koolaidkrusade" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/smilee"><img src="https://avatars.githubusercontent.com/u/5793796?v=4?s=100" width="100px;" alt=""/><br /><sub><b>smilee</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=smilee" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/CommanderRoot"><img src="https://avatars.githubusercontent.com/u/4395417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CommanderRoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=CommanderRoot" title="Code">💻</a></td>
+    <td align="center"><a href="http://philipbell.org"><img src="https://avatars.githubusercontent.com/u/3860311?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philip Bell</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=processprocess" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/tapioca24"><img src="https://avatars.githubusercontent.com/u/12683107?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tapioca24</b></sub></a><br /><a href="#plugin-tapioca24" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="http://qianqian-ye.com"><img src="https://avatars.githubusercontent.com/u/18587130?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Qianqian Ye</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Qianqianye" title="Code">💻</a> <a href="#design-Qianqianye" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=Qianqianye" title="Documentation">📖</a> <a href="#eventOrganizing-Qianqianye" title="Event Organizing">📋</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AQianqianye" title="Reviewed Pull Requests">👀</a> <a href="#translation-Qianqianye" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/adarrssh"><img src="https://avatars.githubusercontent.com/u/85433137?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adarsh</b></sub></a><br /><a href="#translation-adarrssh" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/kaabe1"><img src="https://avatars.githubusercontent.com/u/78185255?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kaabe1</b></sub></a><br /><a href="#design-kaabe1" title="Design">🎨</a> <a href="#eventOrganizing-kaabe1" title="Event Organizing">📋</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.guirdo.xyz/"><img src="https://avatars.githubusercontent.com/u/21044700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seb Méndez</b></sub></a><br /><a href="#translation-Guirdo" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/3ru"><img src="https://avatars.githubusercontent.com/u/69892552?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryuya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3A3ru" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3A3ru" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/processing/p5.js/commits?author=3ru" title="Code">💻</a></td>
   </tr>
 </table>
 

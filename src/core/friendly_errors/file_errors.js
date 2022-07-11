@@ -1,9 +1,6 @@
 /**
  * @for p5
  * @requires core
- *
- * This file contains the part of the FES responsible for dealing with
- * file load errors
  */
 import p5 from '../main';
 import { translator } from '../internationalization';
@@ -15,7 +12,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const fileLoadErrorCases = (num, filePath) => {
     const suggestion = translator('fes.fileLoadError.suggestion', {
       filePath,
-      link: 'https://github.com/processing/p5.js/wiki/Local-server'
+      url: 'https://github.com/processing/p5.js/wiki/Local-server'
     });
     switch (num) {
       case 0:
@@ -79,14 +76,16 @@ if (typeof IS_MINIFIED !== 'undefined') {
         };
     }
   };
-
   /**
-   * This is called internally if there is a error during file loading.
+   * Called internally if there is an error during file loading.
+   *
+   * Generates and prints a friendly error message using key:
+   * "fes.fileLoadError.[*]".
    *
    * @method _friendlyFileLoadError
    * @private
-   * @param  {Number} errorType
-   * @param  {String} filePath
+   * @param  {Number} errorType   Number of file load error type
+   * @param  {String} filePath    Path to file caused the error
    */
   p5._friendlyFileLoadError = function(errorType, filePath) {
     const { message, method } = fileLoadErrorCases(errorType, filePath);

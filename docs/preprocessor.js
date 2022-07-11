@@ -10,7 +10,7 @@ function smokeTestMethods(data) {
 
       if (
         classitem.access !== 'private' &&
-        classitem.file.substr(0, 3) === 'src' &&
+        classitem.file.slice(0, 3) === 'src' &&
         classitem.name &&
         !classitem.example
       ) {
@@ -271,7 +271,7 @@ function buildParamDocs(docs) {
 function renderItemDescriptionsAsMarkdown(item) {
   if (item.description) {
     const entities = new Entities();
-    item.description = entities.decode(marked(item.description));
+    item.description = entities.decode(marked.parse(item.description));
   }
   if (item.params) {
     item.params.forEach(renderItemDescriptionsAsMarkdown);

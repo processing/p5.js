@@ -53,7 +53,7 @@ p5.prototype.print = function(...args) {
  * The system variable <a href="#/p5/frameCount">frameCount</a> contains the
  * number of frames that have been displayed since the program started. Inside
  * <a href="#/p5/setup">setup()</a> the value is 0, after the first iteration
- * of draw it is 1, etc.
+ * of <a href="#/p5/draw">draw()</a> it is 1, etc.
  *
  * @property {Integer} frameCount
  * @readOnly
@@ -153,14 +153,14 @@ p5.prototype.deltaTime = 0;
  * </code></div>
  *
  * @alt
- * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
+ * green 50×50 ellipse at top left. Red X covers canvas when page focus changes
  */
 p5.prototype.focused = document.hasFocus();
 
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
  * if already hidden. If you are trying to set an image as the cursor, the
- * recommended size is 16x16 or 32x32 pixels. The values for parameters x and y
+ * recommended size is 16×16 or 32×32 pixels. The values for parameters x and y
  * must be less than the dimensions of the image.
  *
  * @method cursor
@@ -229,19 +229,19 @@ p5.prototype.cursor = function(type, x, y) {
  * Specifies the number of frames to be displayed every second. For example,
  * the function call frameRate(30) will attempt to refresh 30 times a second.
  * If the processor is not fast enough to maintain the specified rate, the
- * frame rate will not be achieved. Setting the frame rate within 
+ * frame rate will not be achieved. Setting the frame rate within
  * <a href="#/p5/setup">setup()</a> is recommended. The default frame rate is
- * based on the frame rate of the display (here also called "refresh rate"), 
+ * based on the frame rate of the display (here also called "refresh rate"),
  * which is set to 60 frames per second on most computers. A frame rate of 24
- * frames per second (usual for movies) or above will be enough for smooth 
+ * frames per second (usual for movies) or above will be enough for smooth
  * animations. This is the same as setFrameRate(val).
- * 
+ *
  * Calling <a href="#/p5/frameRate">frameRate()</a> with no arguments returns
  * the current framerate. The draw function must run at least once before it will
  * return a value. This is the same as <a href="#/p5/getFrameRate">getFrameRate()</a>.
  *
  * Calling <a href="#/p5/frameRate">frameRate()</a> with arguments that are not
- * of the type numbers or are non positive also returns current framerate.
+ * of the type Number or are non-positive also returns current framerate.
  *
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
@@ -262,7 +262,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  * function draw() {
  *   background(200);
- *   rectX = rectX += 1; // Move Rectangle
+ *   rectX += 1; // Move Rectangle
  *
  *   if (rectX >= width) {
     // If you go off screen.
@@ -345,7 +345,7 @@ p5.prototype.setFrameRate = function(fps) {
  * </code></div>
  *
  * @alt
- * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ * cursor becomes 10×10 white ellipse the moves with mouse x and y.
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
@@ -580,8 +580,8 @@ p5.prototype.fullscreen = function(val) {
  * </div>
  *
  * @alt
- * fuzzy 50x50 white ellipse with black outline in center of canvas.
- * sharp 50x50 white ellipse with black outline in center of canvas.
+ * fuzzy 50×50 white ellipse with black outline in center of canvas.
+ * sharp 50×50 white ellipse with black outline in center of canvas.
  */
 /**
  * @method pixelDensity
@@ -621,7 +621,7 @@ p5.prototype.pixelDensity = function(val) {
  * </div>
  *
  * @alt
- * 50x50 white ellipse with black outline in center of canvas.
+ * 50×50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.displayDensity = () => window.devicePixelRatio;
 

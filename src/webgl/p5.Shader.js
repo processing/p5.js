@@ -178,15 +178,17 @@ p5.Shader.prototype._loadUniforms = function() {
       samplerIndex++;
       this.samplers.push(uniform);
     }
+
     uniform.isArray =
+      uniformInfo.size > 1 ||
       uniform.type === gl.FLOAT_MAT3 ||
       uniform.type === gl.FLOAT_MAT4 ||
       uniform.type === gl.FLOAT_VEC2 ||
       uniform.type === gl.FLOAT_VEC3 ||
       uniform.type === gl.FLOAT_VEC4 ||
       uniform.type === gl.INT_VEC2 ||
-      uniform.type === gl.INT_VEC3 ||
-      uniform.type === gl.INT_VEC4;
+      uniform.type === gl.INT_VEC4 ||
+      uniform.type === gl.INT_VEC3;
 
     this.uniforms[uniformName] = uniform;
   }
@@ -261,7 +263,13 @@ p5.Shader.prototype.unbindTextures = function() {
 };
 
 p5.Shader.prototype._setMatrixUniforms = function() {
-  this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
+  const viewMatrix = this._renderer._curCamera.cameraMatrix;
+  const projectionMatrix = this._renderer.uPMatrix;
+  const modelViewMatrix = this._renderer.uMVMatrix;
+
+  const modelViewProjectionMatrix = modelViewMatrix.copy();
+  modelViewProjectionMatrix.mult(projectionMatrix);
+
   if (this.isStrokeShader()) {
     if (this._renderer._curCamera.cameraType === 'default') {
       // strokes scale up as they approach camera, default
@@ -271,8 +279,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
       this.setUniform('uPerspective', 0);
     }
   }
-  this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
-  this.setUniform('uViewMatrix', this._renderer._curCamera.cameraMatrix.mat4);
+  this.setUniform('uViewMatrix', viewMatrix.mat4);
+  this.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+  this.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
+  this.setUniform('uModelViewProjectionMatrix', modelViewProjectionMatrix.mat4);
   if (this.uniforms.uNormalMatrix) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
@@ -305,10 +315,10 @@ p5.Shader.prototype.useProgram = function() {
  * @chainable
  * @param {String} uniformName the name of the uniform.
  * Must correspond to the name used in the vertex and fragment shaders
- * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement}
+ * @param {Boolean|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture}
  * data the data to associate with the uniform. The type can be
  * a boolean (true/false), a number, an array of numbers, or
- * an image (p5.Image, p5.Graphics, p5.MediaElement)
+ * an image (p5.Image, p5.Graphics, p5.MediaElement, p5.Texture)
  *
  * @example
  * <div modernizr='webgl'>
@@ -331,6 +341,10 @@ p5.Shader.prototype.useProgram = function() {
  *   createCanvas(100, 100, WEBGL);
  *   shader(grad);
  *   noStroke();
+ *
+ *   describe(
+ *     'canvas toggles between a circular gradient of orange and blue vertically. and a circular gradient of red and green moving horizontally when mouse is clicked/pressed.'
+ *   );
  * }
  *
  * function draw() {
@@ -378,7 +392,11 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
   } else if (uniform._cachedData && uniform._cachedData === data) {
     return;
   } else {
-    uniform._cachedData = data;
+    if (Array.isArray(data)) {
+      uniform._cachedData = data.slice(0);
+    } else {
+      uniform._cachedData = data;
+    }
   }
 
   const location = uniform.location;
@@ -457,8 +475,9 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       break;
     case gl.SAMPLER_2D:
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      uniform.texture = this._renderer.getTexture(data);
-      gl.uniform1i(uniform.location, uniform.samplerIndex);
+      uniform.texture =
+        data instanceof p5.Texture ? data : this._renderer.getTexture(data);
+      gl.uniform1i(location, uniform.samplerIndex);
       break;
     //@todo complete all types
   }
@@ -498,7 +517,7 @@ p5.Shader.prototype.isNormalShader = function() {
 };
 
 p5.Shader.prototype.isTextureShader = function() {
-  return this.samplerIndex > 0;
+  return this.samplers.length > 0;
 };
 
 p5.Shader.prototype.isColorShader = function() {

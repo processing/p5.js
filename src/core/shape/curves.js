@@ -454,7 +454,7 @@ p5.prototype.curveTightness = function(t) {
  * @param {Number} c coordinate of second point
  * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
- * @return {Number} bezier value at position t
+ * @return {Number} <a href="#/p5/curve">Curve</a> value at position t
  * @example
  * <div>
  * <code>
@@ -476,7 +476,7 @@ p5.prototype.curveTightness = function(t) {
  * </code>
  * </div>
  *
- *line hooking down to right-bottom with 13 5x5 white ellipse points
+ *line hooking down to right-bottom with 13 5×5 white ellipse points
  */
 p5.prototype.curvePoint = function(a, b, c, d, t) {
   p5._validateParameters('curvePoint', arguments);

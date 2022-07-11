@@ -333,7 +333,19 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 255, 255, 255]);
+      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      done();
+    });
+
+    test('clear color with rgba arguments', function(done) {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.clear(1, 0, 0, 1);
+      pixel = myp5.get(0, 0);
+      assert.deepEqual(pixel, [255, 0, 0, 255]);
+      pg = myp5.createGraphics(50, 50, myp5.WEBGL);
+      pg.clear(1, 0, 0, 1);
+      pixel = pg.get(0, 0);
+      assert.deepEqual(pixel, [255, 0, 0, 255]);
       done();
     });
 
@@ -344,7 +356,7 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [39, 194, 194, 194]);
+      assert.deepEqual(pixel, [100, 100, 100, 255]);
       done();
     });
 
@@ -366,7 +378,7 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 255, 255, 255]);
+      assert.deepEqual(pixel, [0, 0, 0, 255]);
       done();
     });
 
@@ -377,7 +389,7 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [39, 194, 194, 255]);
+      assert.deepEqual(pixel, [100, 100, 100, 255]);
       done();
     });
   });
@@ -425,8 +437,8 @@ suite('p5.RendererGL', function() {
     test('blendModes change pixel colors as expected', function(done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
-      assert.deepEqual([133, 69, 191, 158], mixAndReturn(myp5.ADD, 255));
-      assert.deepEqual([0, 0, 255, 122], mixAndReturn(myp5.REPLACE, 255));
+      assert.deepEqual([133, 69, 191, 255], mixAndReturn(myp5.ADD, 255));
+      assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
       assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
       assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
       assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));

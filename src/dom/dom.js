@@ -261,7 +261,7 @@ p5.prototype.removeElements = function(e) {
  * </code></div>
  *
  * @alt
- * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
+ * dropdown: pear, kiwi, grape. When selected text "it's a" + selection shown.
  */
 p5.Element.prototype.changed = function(fxn) {
   p5.Element._adjustListener('change', fxn, this);
@@ -458,7 +458,7 @@ p5.prototype.createA = function(href, html, target) {
  * @param  {Number} max maximum value of the slider
  * @param  {Number} [value] default value of the slider
  * @param  {Number} [step] step size for each tick of the slider (if step is set to 0, the slider will move continuously from the minimum to the maximum value)
- * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding the created node
  * @example
  * <div><code>
  * let slider;
@@ -540,7 +540,8 @@ p5.prototype.createButton = function(label, value) {
 
 /**
  * Creates a checkbox `&lt;input&gt;&lt;/input&gt;` element in the DOM.
- * Calling .checked() on a checkbox returns if it is checked or not
+ * Calling .checked() on a checkbox returns a boolean indicating whether
+ * it is checked or not.
  *
  * @method createCheckbox
  * @param  {String} [label] label displayed after checkbox
@@ -556,7 +557,7 @@ p5.prototype.createButton = function(label, value) {
  * }
  *
  * function myCheckedEvent() {
- *   if (this.checked()) {
+ *   if (checkbox.checked()) {
  *     console.log('Checking!');
  *   } else {
  *     console.log('Unchecking!');
@@ -566,14 +567,26 @@ p5.prototype.createButton = function(label, value) {
  */
 p5.prototype.createCheckbox = function() {
   p5._validateParameters('createCheckbox', arguments);
+
+  // Create a container element
   const elt = document.createElement('div');
+
+  // Create checkbox type input element
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  elt.appendChild(checkbox);
+
+  // Create label element and wrap it around checkbox
+  const label = document.createElement('label');
+  label.appendChild(checkbox);
+
+  // Append label element inside the container
+  elt.appendChild(label);
+
   //checkbox must be wrapped in p5.Element before label so that label appears after
   const self = addElement(elt, this);
+
   self.checked = function() {
-    const cb = self.elt.getElementsByTagName('input')[0];
+    const cb = self.elt.firstElementChild.getElementsByTagName('input')[0];
     if (cb) {
       if (arguments.length === 0) {
         return cb.checked;
@@ -585,24 +598,25 @@ p5.prototype.createCheckbox = function() {
     }
     return self;
   };
+
   this.value = function(val) {
     self.value = val;
     return this;
   };
+
+  // Set the span element innerHTML as the label value if passed
   if (arguments[0]) {
-    const ran = Math.random()
-      .toString(36)
-      .slice(2);
-    const label = document.createElement('label');
-    checkbox.setAttribute('id', ran);
-    label.htmlFor = ran;
     self.value(arguments[0]);
-    label.appendChild(document.createTextNode(arguments[0]));
-    elt.appendChild(label);
+    const span = document.createElement('span');
+    span.innerHTML = arguments[0];
+    label.appendChild(span);
   }
+
+  // Set the checked value of checkbox if passed
   if (arguments[1]) {
     checkbox.checked = true;
   }
+
   return self;
 };
 
@@ -611,14 +625,14 @@ p5.prototype.createCheckbox = function() {
  * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
  * - `.option(name, [value])` can be used to set options for the select after it is created.
  * - `.value()` will return the currently selected option.
- * - `.selected()` will return current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>
+ * - `.selected()` will return the current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>.
  * - `.selected(value)` can be used to make given option selected by default when the page first loads.
- * - `.disable()` marks whole of dropdown element as disabled.
- * - `.disable(value)` marks given option as disabled
+ * - `.disable()` marks the whole dropdown element as disabled.
+ * - `.disable(value)` marks a given option as disabled.
  *
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
- * @return {p5.Element}
+ * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
  * let sel;
@@ -755,20 +769,23 @@ p5.prototype.createSelect = function() {
 };
 
 /**
- * Creates a radio button element in the DOM.It also helps existing radio buttons
+ * Creates a radio button element in the DOM. It also helps existing radio buttons
  * assign methods of <a href="#/p5.Element/">p5.Element</a>.
  * - `.option(value, [label])` can be used to create a new option for the
  *   element. If an option with a value already exists, it will be returned.
+ *   It is recommended to use string values as input for `value`.
  *   Optionally, a label can be provided as second argument for the option.
- * - `.remove(value)` can be used to remove an option for the element.
+ * - `.remove(value)` can be used to remove an option for the element. String
+ *   values recommended as input for `value`.
  * - `.value()` method will return the currently selected value.
  * - `.selected()` method will return the currently selected input element.
- * - `.selected(value)` method will select the option and return it.
+ * - `.selected(value)` method will select the option and return it. String
+ *   values recommended as input for `value`.
  * - `.disable(Boolean)` method will enable/disable the whole radio button element.
  *
  * @method createRadio
- * @param  {Object} containerElement An container HTML Element either a div
- * or span inside which all existing radio inputs will be considered as options.
+ * @param  {Object} containerElement A container HTML Element, either a div
+ * or span, inside which all existing radio inputs will be considered as options.
  * @param {string} [name] A name parameter for each Input Element.
  * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
@@ -796,10 +813,11 @@ p5.prototype.createSelect = function() {
  *
  * function setup() {
  *   radio = createRadio();
- *   radio.option(1, 'apple');
- *   radio.option(2, 'bread');
- *   radio.option(3, 'juice');
+ *   radio.option('1', 'apple');
+ *   radio.option('2', 'bread');
+ *   radio.option('3', 'juice');
  *   radio.style('width', '30px');
+ *   radio.selected('2');
  *   textAlign(CENTER);
  * }
  *
@@ -844,10 +862,17 @@ p5.prototype.createRadio = function() {
   // setup member functions
   const isRadioInput = el =>
     el instanceof HTMLInputElement && el.type === 'radio';
-  const isNextLabel = el => el.nextElementSibling instanceof HTMLLabelElement;
+  const isLabelElement = el => el instanceof HTMLLabelElement;
+  const isSpanElement = el => el instanceof HTMLSpanElement;
 
   self._getOptionsArray = function() {
-    return Array.from(this.elt.children).filter(isRadioInput);
+    return Array.from(this.elt.children)
+      .filter(
+        el =>
+          isRadioInput(el) ||
+          (isLabelElement(el) && isRadioInput(el.firstElementChild))
+      )
+      .map(el => (isRadioInput(el) ? el : el.firstElementChild));
   };
 
   self.option = function(value, label) {
@@ -865,28 +890,47 @@ p5.prototype.createRadio = function() {
       optionEl = document.createElement('input');
       optionEl.setAttribute('type', 'radio');
       optionEl.setAttribute('value', value);
-      this.elt.appendChild(optionEl);
     }
+    optionEl.setAttribute('name', self._name);
 
     // Check if label element exists, else create it
     let labelElement;
-    if (!isNextLabel(optionEl)) {
+    if (!isLabelElement(optionEl.parentElement)) {
       labelElement = document.createElement('label');
-      optionEl.insertAdjacentElement('afterend', labelElement);
+      labelElement.insertAdjacentElement('afterbegin', optionEl);
     } else {
-      labelElement = optionEl.nextElementSibling;
+      labelElement = optionEl.parentElement;
     }
 
-    labelElement.innerHTML = label === undefined ? value : label;
-    optionEl.setAttribute('name', self._name);
+    // Check if span element exists, else create it
+    let spanElement;
+    if (!isSpanElement(labelElement.lastElementChild)) {
+      spanElement = document.createElement('span');
+      optionEl.insertAdjacentElement('afterend', spanElement);
+    } else {
+      spanElement = labelElement.lastElementChild;
+    }
+
+    // Set the innerHTML of span element as the label text
+    spanElement.innerHTML = label === undefined ? value : label;
+
+    // Append the label element, which includes option element and
+    // span element to the radio container element
+    this.elt.appendChild(labelElement);
+
     return optionEl;
   };
 
   self.remove = function(value) {
     for (const optionEl of self._getOptionsArray()) {
       if (optionEl.value === value) {
-        if (isNextLabel(optionEl)) optionEl.nextElementSibling.remove();
-        optionEl.remove();
+        if (isLabelElement(optionEl.parentElement)) {
+          // Remove parent label which also removes children elements
+          optionEl.parentElement.remove();
+        } else {
+          // Remove the option input if parent label does not exist
+          optionEl.remove();
+        }
         return;
       }
     }
@@ -913,9 +957,17 @@ p5.prototype.createRadio = function() {
         }
       }
     } else {
+      // forEach loop to uncheck all radio buttons before
+      // setting any one as checked.
+      self._getOptionsArray().forEach(option => {
+        option.checked = false;
+        option.removeAttribute('checked');
+      });
+
       for (const option of self._getOptionsArray()) {
         if (option.value === value) {
           option.setAttribute('checked', true);
+          option.checked = true;
           result = option;
         }
       }
@@ -935,7 +987,8 @@ p5.prototype.createRadio = function() {
 /**
  * Creates a colorPicker element in the DOM for color input.
  * The .value() method will return a hex string (#rrggbb) of the color.
- * The .color() method will return a p5.Color object with the current chosen color.
+ * The .color() method will return a <a href="#/p5.Color">p5.Color</a>
+ * object with the current chosen color.
  *
  * @method createColorPicker
  * @param {String|p5.Color} [value] default color of element
@@ -1516,7 +1569,7 @@ p5.Element.prototype.removeClass = function(c) {
 
 /**
  *
- * Checks if specified class already set to element
+ * Checks if specified class is already applied to element.
  *
  * @method hasClass
  * @returns {boolean} a boolean value if element has specified class
@@ -1545,7 +1598,7 @@ p5.Element.prototype.hasClass = function(c) {
 
 /**
  *
- * Toggles element class
+ * Toggles element class.
  *
  * @method toggleClass
  * @param c {String} class name to toggle
@@ -1630,10 +1683,10 @@ p5.Element.prototype.child = function(childNode) {
 };
 
 /**
- * Centers a p5 Element either vertically, horizontally,
+ * Centers a p5.Element either vertically, horizontally,
  * or both, relative to its parent or according to
- * the body if the Element has no parent. If no argument is passed
- * the Element is aligned both vertically and horizontally.
+ * the body if the p5.Element has no parent. If no argument is passed
+ * the p5.Element is aligned both vertically and horizontally.
  *
  * @method center
  * @param  {String} [align]       passing 'vertical', 'horizontal' aligns element accordingly
@@ -1683,8 +1736,8 @@ p5.Element.prototype.center = function(align) {
 /**
  *
  * If an argument is given, sets the inner HTML of the element,
- * replacing any existing html. If true is included as a second
- * argument, html is appended instead of replacing existing html.
+ * replacing any existing HTML. If true is included as a second
+ * argument, HTML is appended instead of replacing existing HTML.
  * If no arguments are given, returns
  * the inner HTML of the element.
  *
@@ -1725,7 +1778,7 @@ p5.Element.prototype.html = function() {
  * position will be relative to (0, 0) of the window.
  * Essentially, this sets position:absolute and left and top
  * properties of style. If an optional third argument specifying position type is given,
- * the x and y coordinates will be interpreted based on the <a target="_blank"
+ * the x and y-coordinates will be interpreted based on the <a target="_blank"
  * href="https://developer.mozilla.org/en-US/docs/Web/CSS/position">positioning scheme</a>.
  * If no arguments given, the function returns the x and y position of the element.
  *
@@ -1756,7 +1809,7 @@ p5.Element.prototype.html = function() {
  * @method position
  * @param  {Number} [x] x-position relative to upper left of window (optional)
  * @param  {Number} [y] y-position relative to upper left of window (optional)
- * @param  {String} positionType it can be static, fixed, relative, sticky, initial or inherit (optional)
+ * @param  {String} [positionType] it can be static, fixed, relative, sticky, initial or inherit (optional)
  * @chainable
  */
 p5.Element.prototype.position = function() {
@@ -1840,10 +1893,10 @@ p5.Element.prototype._rotate = function() {
 };
 
 /**
- * Sets the given style (css) property (1st arg) of the element with the
+ * Sets the given style (CSS) property (1st arg) of the element with the
  * given value (2nd arg). If a single argument is given, .style()
- * returns the value of the given property; however, if the single argument
- * is given in css syntax ('text-align:center'), .style() sets the css
+ * returns the value of the given property; however, if a single argument
+ * is given in CSS syntax ('text-align:center'), .style() sets the CSS
  * appropriately.
  *
  * @method style
@@ -1938,7 +1991,7 @@ p5.Element.prototype.style = function(prop, val) {
  *
  * Adds a new attribute or changes the value of an existing attribute
  * on the specified element. If no value is specified, returns the
- * value of the given attribute, or null if attribute is not set.
+ * value of the given attribute, or null if the attribute is not set.
  *
  * @method attribute
  * @return {String} value of attribute
@@ -2107,8 +2160,8 @@ p5.Element.prototype.hide = function() {
  *
  * Sets the width and height of the element. AUTO can be used to
  * only adjust one dimension at a time. If no arguments are given, it
- * returns the width and height of the element in an object. In case of
- * elements which need to be loaded, such as images, it is recommended
+ * returns the width and height of the element in an Object. In the case of
+ * elements that need to be loaded, such as images, it is recommended
  * to call the function after the element has finished loading.
  *
  * @method size
@@ -2761,7 +2814,7 @@ p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
  *   videoElement = createVideo(['assets/small.mp4'], onVideoLoad);
  * }
  * function onVideoLoad() {
- *   // The media will not play untill some explicitly triggered.
+ *   // The media will not play until some explicitly triggered.
  *   videoElement.autoplay(false);
  *   videoElement.volume(0);
  *   videoElement.size(100, 100);
