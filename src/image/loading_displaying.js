@@ -262,15 +262,15 @@ p5.prototype.saveGif = function(...args) {
     let frameData = this.drawingContext.getImageData(
       0,
       0,
-      this.width * 2,
-      this.height * 2
+      this.width,
+      this.height
     );
 
     // pImg.drawingContext.putImageData(frameData, 0, 0);
 
     frames.push({
       image: frameData,
-      delay: 100 //GIF stores delay in one-hundredth of a second, shift to ms
+      delay: 20 // 20 (which will then be converted to 2 inside the decoding function) is the minimum value that will work
     });
 
     count++;
