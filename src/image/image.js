@@ -310,6 +310,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   // transparent. We decide one particular color as transparent and make all
   // transparent pixels take this color. This helps in later in compression.
   for (let i = 0; i < props.numFrames; i++) {
+    print('FRAME:' + i.toString());
     const localPaletteRequired = !framesUsingGlobalPalette.has(i);
     const palette = localPaletteRequired ? [] : globalPalette;
     const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
@@ -323,7 +324,8 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     for (let k = 0; k < allFramesPixelColors[i].length; k++) {
       const color = allFramesPixelColors[i][k];
       if (localPaletteRequired) {
-        if (colorIndicesLookup[color] === undefined) {
+        // local palette cannot be greater than 256 colors
+        if (colorIndicesLookup[color] === undefined && palette.length <= 256) {
           colorIndicesLookup[color] = palette.length;
           palette.push(color);
         }
@@ -345,12 +347,15 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 
     // Transparency optimization
     const canBeTransparent = palette.filter(a => !cannotBeTransparent.has(a));
+    print(canBeTransparent, canBeTransparent.length > 0);
     if (canBeTransparent.length > 0) {
       // Select a color to mark as transparent
       const transparent = canBeTransparent[0];
+      print(localPaletteRequired ? 'local' : 'global');
       const transparentIndex = localPaletteRequired
         ? colorIndicesLookup[transparent]
         : globalIndicesLookup[transparent];
+      print(transparent, transparentIndex);
       if (i > 0) {
         for (let k = 0; k < allFramesPixelColors[i].length; k++) {
           // If this pixel in this frame has the same color in previous frame
@@ -358,11 +363,13 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
             pixelPaletteIndex[k] = transparentIndex;
           }
         }
+
         frameOpts.transparent = transparentIndex;
         // If this frame has any transparency, do not dispose the previous frame
         previousFrame.frameOpts.disposal = 1;
       }
     }
+
     frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
     if (localPaletteRequired) {
       // force palette to be power of 2
@@ -375,6 +382,10 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     }
     if (i > 0) {
       // add the frame that came before the current one
+      //   print('FRAME: ' + i.toString());
+      print(previousFrame.frameOpts);
+      //   print('');
+      //   print('');
       gifWriter.addFrame(
         0,
         0,
