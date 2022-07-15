@@ -172,7 +172,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @method saveGif
  * @param  {String} filename File name of your gif
  * @param  {String} duration Duration in seconds that you wish to capture from your sketch
- * @param  {String} delay Duration in seconds that you wish wait before starting to capture
+ * @param  {String} delay Duration in seconds that you wish to wait before starting to capture
  *
  * @example
  * <div>
@@ -209,12 +209,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  */
 p5.prototype.saveGif = function(...args) {
   // process args
-  //
 
   let fileName;
   let seconds;
   let delay;
 
+  //   this section takes care of parsing and processing
+  //   the arguments in the correct format
   switch (args.length) {
     case 2:
       fileName = args[0];
@@ -231,20 +232,26 @@ p5.prototype.saveGif = function(...args) {
     delay = 0;
   }
 
+  // get the project's framerate
+  // if it is undefined or some non useful value, assume it's 60
   let _frameRate = this._frameRate || this._targetFrameRate;
   if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
     _frameRate = 60;
   }
+
+  // because the input was in seconds, we now calculate
+  // how many frames those seconds translate to
   let nFrames = Math.ceil(seconds * _frameRate);
   let nFramesDelay = Math.ceil(delay * _frameRate);
-  print(_frameRate, nFrames, nFramesDelay);
 
+  //   initialize variables for the frames processing
   var count = nFramesDelay;
-
   let frames = [];
   let pImg = new p5.Image(this.width, this.height, this);
 
   noLoop();
+  // we start on the frame set by the delay argument
+  frameCount = nFramesDelay;
 
   console.log(
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
@@ -254,7 +261,7 @@ p5.prototype.saveGif = function(...args) {
     /* 
       we draw the next frame. this is important, since 
       busy sketches or low end devices might take longer
-      to render the frame. So we just wait for the frame
+      to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
       */
     redraw();
@@ -266,17 +273,17 @@ p5.prototype.saveGif = function(...args) {
       this.height
     );
 
-    // pImg.drawingContext.putImageData(frameData, 0, 0);
-
     frames.push({
       image: frameData,
-      delay: 20 // 20 (which will then be converted to 2 inside the decoding function) is the minimum value that will work
+      delay: 20
+      // 20 (which will then be converted to 2 inside the decoding function)
+      // is the minimum value that will work. Browsers will simply ignore
+      // values of 1. This is the smoothest GIF possible.
     });
 
     count++;
   }
 
-  //   pImg.drawingContext.putImageData(frames[0].image, 0, 0);
   pImg.gifProperties = {
     displayIndex: 0,
     loopLimit: 0, // let it loop indefinitely
@@ -292,9 +299,9 @@ p5.prototype.saveGif = function(...args) {
 
   p5.prototype.encodeAndDownloadGif(pImg, fileName);
 
-  loop();
-
   frames = [];
+
+  loop();
 };
 
 /**
