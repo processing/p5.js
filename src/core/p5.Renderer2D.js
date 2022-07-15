@@ -47,7 +47,14 @@ p5.Renderer2D.prototype.background = function(...args) {
   this.resetMatrix();
 
   if (args[0] instanceof p5.Image) {
-    this._pInst.image(args[0], 0, 0, this.width, this.height);
+    if (args[1] >= 0) {
+      // set transparency of background
+      const img = args[0];
+      this.drawingContext.globalAlpha = args[1] / 255;
+      this._pInst.image(img, 0, 0, this.width, this.height);
+    } else {
+      this._pInst.image(args[0], 0, 0, this.width, this.height);
+    }
   } else {
     const curFill = this._getFill();
     // create background rect
