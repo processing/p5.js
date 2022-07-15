@@ -205,7 +205,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * </div>
  *
  * @alt
- * image of the underside of a white umbrella and grided ceililng above
+ * animation of a circle moving smoothly diagonally
  */
 p5.prototype.saveGif = function(...args) {
   // process args
@@ -234,7 +234,7 @@ p5.prototype.saveGif = function(...args) {
 
   // get the project's framerate
   // if it is undefined or some non useful value, assume it's 60
-  let _frameRate = this._frameRate || this._targetFrameRate;
+  let _frameRate = this._targetFrameRate;
   if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
     _frameRate = 60;
   }
@@ -247,7 +247,7 @@ p5.prototype.saveGif = function(...args) {
   //   initialize variables for the frames processing
   var count = nFramesDelay;
   let frames = [];
-  let pImg = new p5.Image(this.width, this.height, this);
+  let pImg = new p5.Image(this.width, this.height);
 
   noLoop();
   // we start on the frame set by the delay argument
@@ -256,6 +256,8 @@ p5.prototype.saveGif = function(...args) {
   console.log(
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
   );
+
+  let framePixels = new Uint8ClampedArray(this.width * this.height * 4);
 
   while (count < nFrames + nFramesDelay) {
     /* 
@@ -266,23 +268,34 @@ p5.prototype.saveGif = function(...args) {
       */
     redraw();
 
-    let frameData = this.drawingContext.getImageData(
+    const prevFrameData = this.drawingContext.getImageData(
       0,
       0,
       this.width,
       this.height
     );
+    framePixels = prevFrameData.data;
+
+    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
+    pImg.drawingContext.putImageData(imageData, 0, 0);
 
     frames.push({
-      image: frameData,
+      image: prevFrameData,
       delay: 20
-      // 20 (which will then be converted to 2 inside the decoding function)
-      // is the minimum value that will work. Browsers will simply ignore
-      // values of 1. This is the smoothest GIF possible.
     });
+
+    // frames.push({
+    //   image: framePixels,
+    //   delay: 20
+    //   // 20 (which will then be converted to 2 inside the decoding function)
+    //   // is the minimum value that will work. Browsers will simply ignore
+    //   // values of 1. This is the smoothest GIF possible.
+    // });
 
     count++;
   }
+
+  print(frames[1]);
 
   pImg.gifProperties = {
     displayIndex: 0,
@@ -297,11 +310,9 @@ p5.prototype.saveGif = function(...args) {
 
   console.info('Frames processed, encoding gif. This may take a while...');
 
-  p5.prototype.encodeAndDownloadGif(pImg, fileName);
-
   frames = [];
-
   loop();
+  p5.prototype.encodeAndDownloadGif(pImg, fileName);
 };
 
 /**
