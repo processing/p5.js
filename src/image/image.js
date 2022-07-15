@@ -325,7 +325,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
       const color = allFramesPixelColors[i][k];
       if (localPaletteRequired) {
         // local palette cannot be greater than 256 colors
-        if (colorIndicesLookup[color] === undefined && palette.length <= 256) {
+        if (colorIndicesLookup[color] === undefined && palette.length <= 255) {
           colorIndicesLookup[color] = palette.length;
           palette.push(color);
         }
