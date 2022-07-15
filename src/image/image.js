@@ -293,7 +293,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   while (powof2 < globalPalette.length) {
     powof2 <<= 1;
   }
-  globalPalette.length = powof2;
+  globalPalette.length = constrain(powof2, 2, 256);
 
   // global opts
   const opts = {
@@ -370,7 +370,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
       while (powof2 < palette.length) {
         powof2 <<= 1;
       }
-      palette.length = powof2;
+      palette.length = constrain(powof2, 2, 256);
       frameOpts.palette = new Uint32Array(palette);
     }
     if (i > 0) {
