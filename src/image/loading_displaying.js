@@ -247,7 +247,6 @@ p5.prototype.saveGif = function(...args) {
   //   initialize variables for the frames processing
   var count = nFramesDelay;
   let frames = [];
-  let pImg = new p5.Image(this.width, this.height);
 
   noLoop();
   // we start on the frame set by the delay argument
@@ -257,7 +256,10 @@ p5.prototype.saveGif = function(...args) {
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
   );
 
-  let framePixels = new Uint8ClampedArray(this.width * this.height * 4);
+  const pd = this._pixelDensity;
+  const width_pd = this.width * pd;
+  const height_pd = this.height * pd;
+  let pImg = new p5.Image(width_pd, height_pd);
 
   while (count < nFrames + nFramesDelay) {
     /* 
@@ -271,26 +273,14 @@ p5.prototype.saveGif = function(...args) {
     const prevFrameData = this.drawingContext.getImageData(
       0,
       0,
-      this.width,
-      this.height
+      width_pd,
+      height_pd
     );
-    framePixels = prevFrameData.data;
-
-    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
-    pImg.drawingContext.putImageData(imageData, 0, 0);
 
     frames.push({
       image: prevFrameData,
       delay: 20
     });
-
-    // frames.push({
-    //   image: framePixels,
-    //   delay: 20
-    //   // 20 (which will then be converted to 2 inside the decoding function)
-    //   // is the minimum value that will work. Browsers will simply ignore
-    //   // values of 1. This is the smoothest GIF possible.
-    // });
 
     count++;
   }
