@@ -3139,6 +3139,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "KevinGrajeda",
+      "name": "Kevin Grajeda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60023139?v=4",
+      "profile": "https://github.com/KevinGrajeda",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
