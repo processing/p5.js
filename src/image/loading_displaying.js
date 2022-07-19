@@ -256,6 +256,7 @@ p5.prototype.saveGif = function(...args) {
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
   );
 
+  pixelDensity(1);
   const pd = this._pixelDensity;
   const width_pd = this.width * pd;
   const height_pd = this.height * pd;
@@ -284,8 +285,6 @@ p5.prototype.saveGif = function(...args) {
 
     count++;
   }
-
-  print(frames[1]);
 
   pImg.gifProperties = {
     displayIndex: 0,

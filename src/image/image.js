@@ -265,10 +265,13 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 
     const difference = palette.filter(x => !globalPaletteSet.has(x));
     if (globalPalette.length + difference.length <= 256) {
-      for (let j = 0; j < difference.length; j++) {
-        globalPalette.push(difference[j]);
-        globalPaletteSet.add(difference[j]);
-      }
+      print(globalPalette.length);
+      globalPalette.concat(difference);
+      difference.forEach(v => globalPaletteSet.add(v));
+      //   for (let j = 0; j < difference.length; j++) {
+      //     // globalPalette.push(difference[j]);
+      //     globalPaletteSet.add(difference[j]);
+      //   }
 
       // All frames using this palette now use the global palette
       framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
@@ -310,7 +313,6 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   // transparent. We decide one particular color as transparent and make all
   // transparent pixels take this color. This helps in later in compression.
   for (let i = 0; i < props.numFrames; i++) {
-    print('FRAME:' + i.toString());
     const localPaletteRequired = !framesUsingGlobalPalette.has(i);
     const palette = localPaletteRequired ? [] : globalPalette;
     const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
@@ -347,15 +349,12 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 
     // Transparency optimization
     const canBeTransparent = palette.filter(a => !cannotBeTransparent.has(a));
-    print(canBeTransparent, canBeTransparent.length > 0);
     if (canBeTransparent.length > 0) {
       // Select a color to mark as transparent
       const transparent = canBeTransparent[0];
-      print(localPaletteRequired ? 'local' : 'global');
       const transparentIndex = localPaletteRequired
         ? colorIndicesLookup[transparent]
         : globalIndicesLookup[transparent];
-      print(transparent, transparentIndex);
       if (i > 0) {
         for (let k = 0; k < allFramesPixelColors[i].length; k++) {
           // If this pixel in this frame has the same color in previous frame
@@ -383,7 +382,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     if (i > 0) {
       // add the frame that came before the current one
       //   print('FRAME: ' + i.toString());
-      print(previousFrame.frameOpts);
+      //   print(previousFrame.frameOpts);
       //   print('');
       //   print('');
       gifWriter.addFrame(
