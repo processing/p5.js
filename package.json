@@ -85,7 +85,8 @@
     "regenerator-runtime": "^0.13.3",
     "request": "^2.88.0",
     "simple-git": "^3.3.0",
-    "whatwg-fetch": "^2.0.4"
+    "whatwg-fetch": "^2.0.4",
+    "gifenc": "^1.0.3"
   },
   "license": "LGPL-2.1",
   "main": "./lib/p5.min.js",

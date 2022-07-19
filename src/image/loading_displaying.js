@@ -10,6 +10,7 @@ import Filters from './filters';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
+import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
@@ -207,7 +208,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = function(...args) {
+p5.prototype.saveGif = async function(...args) {
   // process args
 
   let fileName;
@@ -246,13 +247,12 @@ p5.prototype.saveGif = function(...args) {
 
   //   initialize variables for the frames processing
   var count = nFramesDelay;
-  let frames = [];
 
   noLoop();
   // we start on the frame set by the delay argument
   frameCount = nFramesDelay;
 
-  console.log(
+  console.info(
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
   );
 
@@ -260,8 +260,11 @@ p5.prototype.saveGif = function(...args) {
   const pd = this._pixelDensity;
   const width_pd = this.width * pd;
   const height_pd = this.height * pd;
-  let pImg = new p5.Image(width_pd, height_pd);
 
+  const gif = GIFEncoder();
+  const format = 'rgba4444';
+
+  let p = createP('Frames processed: ');
   while (count < nFrames + nFramesDelay) {
     /* 
       we draw the next frame. this is important, since 
@@ -271,37 +274,36 @@ p5.prototype.saveGif = function(...args) {
       */
     redraw();
 
-    const prevFrameData = this.drawingContext.getImageData(
-      0,
-      0,
-      width_pd,
-      height_pd
-    );
+    const data = this.drawingContext.getImageData(0, 0, width_pd, height_pd)
+      .data;
 
-    frames.push({
-      image: prevFrameData,
-      delay: 20
-    });
+    const palette = quantize(data, 256, { format });
 
+    // Apply palette to RGBA data to get an indexed bitmap
+    const index = applyPalette(data, palette, format);
+
+    // Write frame into GIF
+    gif.writeFrame(index, width, height, { palette, delay: 20 });
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+    p.text = 'Frames processed: ' + (count - nFramesDelay).toString();
     count++;
   }
 
-  pImg.gifProperties = {
-    displayIndex: 0,
-    loopLimit: 0, // let it loop indefinitely
-    loopCount: 0,
-    frames: frames,
-    numFrames: nFrames,
-    playing: true,
-    timeDisplayed: 0,
-    lastChangeTime: 0
-  };
-
   console.info('Frames processed, encoding gif. This may take a while...');
 
-  frames = [];
+  gif.finish();
+
   loop();
-  p5.prototype.encodeAndDownloadGif(pImg, fileName);
+
+  // Get a direct typed array view into the buffer to avoid copying it
+  const buffer = gif.bytesView();
+  const extension = 'gif';
+  const blob = new Blob([buffer], {
+    type: 'image/gif'
+  });
+
+  p5.prototype.downloadFile(blob, fileName, extension);
 };
 
 /**
