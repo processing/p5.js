@@ -208,7 +208,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = async function(...args) {
+p5.prototype.saveGif = function(...args) {
   // process args
 
   let fileName;
@@ -264,7 +264,8 @@ p5.prototype.saveGif = async function(...args) {
   const gif = GIFEncoder();
   const format = 'rgba4444';
 
-  let p = createP('Frames processed: ');
+  //   let p = createP('Frames processed: ');
+
   while (count < nFrames + nFramesDelay) {
     /* 
       we draw the next frame. this is important, since 
@@ -285,8 +286,8 @@ p5.prototype.saveGif = async function(...args) {
     // Write frame into GIF
     gif.writeFrame(index, width, height, { palette, delay: 20 });
 
-    await new Promise(resolve => setTimeout(resolve, 0));
-    p.text = 'Frames processed: ' + (count - nFramesDelay).toString();
+    // await new Promise(resolve => setTimeout(resolve, 0));
+    // p.text = 'Frames processed: ' + (count - nFramesDelay).toString();
     count++;
   }
 

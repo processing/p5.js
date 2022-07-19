@@ -185,7 +185,7 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.encodeAndDownloadGif = async function(pImg, filename) {
+p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   const frames = pImg.gifProperties.frames;
 
   // Setup an encoder that we will write frames into
@@ -210,7 +210,7 @@ p5.prototype.encodeAndDownloadGif = async function(pImg, filename) {
     gif.writeFrame(index, width, height, { palette, delay: frames[i].delay });
 
     // Wait a tick so that we don't lock up browser
-    await new Promise(resolve => setTimeout(resolve, 0));
+    // await new Promise(resolve => setTimeout(resolve, 0));
   }
 
   // Finalize stream
