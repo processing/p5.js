@@ -264,11 +264,9 @@ p5.prototype.saveGif = function(...args) {
   const gif = GIFEncoder();
   const format = 'rgba4444';
 
-  //   let p = createP('Frames processed: ');
-
   while (count < nFrames + nFramesDelay) {
-    /* 
-      we draw the next frame. this is important, since 
+    /*
+      we draw the next frame. this is important, since
       busy sketches or low end devices might take longer
       to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
@@ -286,14 +284,12 @@ p5.prototype.saveGif = function(...args) {
     // Write frame into GIF
     gif.writeFrame(index, width, height, { palette, delay: 20 });
 
-    // await new Promise(resolve => setTimeout(resolve, 0));
-    // p.text = 'Frames processed: ' + (count - nFramesDelay).toString();
     count++;
   }
 
   console.info('Frames processed, encoding gif. This may take a while...');
 
-  gif.finish();
+  //   gif.finish();
 
   loop();
 

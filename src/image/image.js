@@ -11,7 +11,6 @@
  */
 import p5 from '../core/main';
 // import omggif from 'omggif';
-import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
@@ -183,46 +182,6 @@ p5.prototype.saveCanvas = function() {
   htmlCanvas.toBlob(blob => {
     p5.prototype.downloadFile(blob, filename, extension);
   }, mimeType);
-};
-
-p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
-  const frames = pImg.gifProperties.frames;
-
-  // Setup an encoder that we will write frames into
-  const gif = GIFEncoder();
-
-  // We use for 'of' to loop with async await
-  for (let i = 0; i < frames.length; i++) {
-    console.info('Processing frame ' + i.toString());
-    // Get RGBA data from canvas
-    const data = frames[i].image.data;
-
-    // Choose a pixel format: rgba4444, rgb444, rgb565
-    const format = 'rgba4444';
-
-    // If necessary, quantize your colors to a reduced palette
-    const palette = quantize(data, 256, { format, clearAlpha: false });
-
-    // Apply palette to RGBA data to get an indexed bitmap
-    const index = applyPalette(data, palette, format);
-
-    // Write frame into GIF
-    gif.writeFrame(index, width, height, { palette, delay: frames[i].delay });
-
-    // Wait a tick so that we don't lock up browser
-    // await new Promise(resolve => setTimeout(resolve, 0));
-  }
-
-  // Finalize stream
-  gif.finish();
-
-  // Get a direct typed array view into the buffer to avoid copying it
-  const buffer = gif.bytesView();
-  const extension = 'gif';
-  const blob = new Blob([buffer], {
-    type: 'image/gif'
-  });
-  p5.prototype.downloadFile(blob, filename, extension);
 };
 
 /**
