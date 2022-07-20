@@ -574,6 +574,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/LEMIBANDDEXARI"><img src="https://avatars.githubusercontent.com/u/70129787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>LEMIBANDDEXARI</b></sub></a><br /><a href="#translation-LEMIBANDDEXARI" title="Translation">🌍</a></td>
     <td align="center"><a href="https://linktr.ee/probablyvivek"><img src="https://avatars.githubusercontent.com/u/25459353?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vivek Tiwari</b></sub></a><br /><a href="#translation-probablyvivek" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/KevinGrajeda"><img src="https://avatars.githubusercontent.com/u/60023139?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Grajeda</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KevinGrajeda" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/anniezhengg"><img src="https://avatars.githubusercontent.com/u/78184655?v=4?s=100" width="100px;" alt=""/><br /><sub><b>anniezhengg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=anniezhengg" title="Code">💻</a> <a href="#design-anniezhengg" title="Design">🎨</a></td>
   </tr>
 </table>
 
