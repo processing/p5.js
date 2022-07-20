@@ -258,12 +258,13 @@ p5.prototype.saveGif = function(...args) {
 
   pixelDensity(1);
   const pd = this._pixelDensity;
+
+  // width and height based on (p)ixel (d)ensity
   const width_pd = this.width * pd;
   const height_pd = this.height * pd;
 
-  const gif = GIFEncoder();
-  const format = 'rgba4444';
-
+  // We first take every frame that we are going to use for the animation
+  let frames = [];
   while (count < nFrames + nFramesDelay) {
     /*
       we draw the next frame. this is important, since
@@ -276,20 +277,33 @@ p5.prototype.saveGif = function(...args) {
     const data = this.drawingContext.getImageData(0, 0, width_pd, height_pd)
       .data;
 
-    const palette = quantize(data, 256, { format });
-
-    // Apply palette to RGBA data to get an indexed bitmap
-    const index = applyPalette(data, palette, format);
-
-    // Write frame into GIF
-    gif.writeFrame(index, width, height, { palette, delay: 20 });
-
+    frames.push(data);
     count++;
   }
-
   console.info('Frames processed, encoding gif. This may take a while...');
 
-  //   gif.finish();
+  // create the gif encoder and the colorspace format
+  const gif = GIFEncoder();
+  const format = 'rgba4444';
+
+  // first generate an optimal palette for the whole animation
+  const palette = quantize(frames[0], 256, { format });
+  for (let i = 0; i < frames.length; i++) {
+    // Apply palette to RGBA data to get an indexed bitmap
+    const index = applyPalette(frames[i], palette, format);
+
+    // Write frame into the encoder
+
+    //if it's the first frame, also add what will be the global palette
+    if (i === 0) {
+      gif.writeFrame(index, width_pd, height_pd, { palette, delay: 20 });
+    }
+
+    // all subsequent frames will just use the global palette
+    gif.writeFrame(index, width_pd, height_pd, { delay: 20 });
+  }
+
+  gif.finish();
 
   loop();
 
