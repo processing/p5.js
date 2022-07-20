@@ -266,12 +266,10 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     const difference = palette.filter(x => !globalPaletteSet.has(x));
     if (globalPalette.length + difference.length <= 256) {
       print(globalPalette.length);
-      globalPalette.concat(difference);
-      difference.forEach(v => globalPaletteSet.add(v));
-      //   for (let j = 0; j < difference.length; j++) {
-      //     // globalPalette.push(difference[j]);
-      //     globalPaletteSet.add(difference[j]);
-      //   }
+      for (let j = 0; j < difference.length; j++) {
+        globalPalette.push(difference[j]);
+        globalPaletteSet.add(difference[j]);
+      }
 
       // All frames using this palette now use the global palette
       framesUsingGlobalPalette = framesUsingGlobalPalette.concat(

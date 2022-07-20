@@ -248,15 +248,14 @@ p5.prototype.saveGif = function(...args) {
   var count = nFramesDelay;
   let frames = [];
 
-  noLoop();
+  this.noLoop();
   // we start on the frame set by the delay argument
-  frameCount = nFramesDelay;
-
+  this.frameCount = nFramesDelay;
   console.log(
     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
   );
 
-  pixelDensity(1);
+  this.pixelDensity(1);
   const pd = this._pixelDensity;
   const width_pd = this.width * pd;
   const height_pd = this.height * pd;
@@ -269,7 +268,7 @@ p5.prototype.saveGif = function(...args) {
       to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
       */
-    redraw();
+    this.redraw();
 
     const prevFrameData = this.drawingContext.getImageData(
       0,
@@ -300,7 +299,7 @@ p5.prototype.saveGif = function(...args) {
   console.info('Frames processed, encoding gif. This may take a while...');
 
   frames = [];
-  loop();
+  this.loop();
   p5.prototype.encodeAndDownloadGif(pImg, fileName);
 };
 
