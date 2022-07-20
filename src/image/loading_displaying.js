@@ -287,16 +287,41 @@ p5.prototype.saveGif = function(...args) {
   const format = 'rgba4444';
 
   // first generate an optimal palette for the whole animation
-  const palette = quantize(frames[0], 256, { format });
+
+  let colorFreq = {};
+  for (let f of frames) {
+    let currPalette = quantize(f, 256, { format });
+    for (let color of currPalette) {
+      color = color.toString();
+      if (colorFreq[color] === undefined) {
+        colorFreq[color] = { count: 1 };
+      } else {
+        colorFreq[color].count += 1;
+      }
+    }
+  }
+
+  let colorsSortedByFreq = Object.keys(colorFreq)
+    .sort((a, b) => {
+      return colorFreq[b].count - colorFreq[a].count;
+    })
+    .map(c => c.split(',').map(x => parseInt(x)));
+
+  const globalPalette = colorsSortedByFreq.splice(0, 256);
+  print(globalPalette);
+
   for (let i = 0; i < frames.length; i++) {
     // Apply palette to RGBA data to get an indexed bitmap
-    const index = applyPalette(frames[i], palette, format);
+    const index = applyPalette(frames[i], globalPalette, format);
 
     // Write frame into the encoder
 
     //if it's the first frame, also add what will be the global palette
     if (i === 0) {
-      gif.writeFrame(index, width_pd, height_pd, { palette, delay: 20 });
+      gif.writeFrame(index, width_pd, height_pd, {
+        palette: globalPalette,
+        delay: 20
+      });
     }
 
     // all subsequent frames will just use the global palette
