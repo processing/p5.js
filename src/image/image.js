@@ -265,7 +265,6 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 
     const difference = palette.filter(x => !globalPaletteSet.has(x));
     if (globalPalette.length + difference.length <= 256) {
-      print(globalPalette.length);
       for (let j = 0; j < difference.length; j++) {
         globalPalette.push(difference[j]);
         globalPaletteSet.add(difference[j]);
@@ -378,11 +377,6 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
       frameOpts.palette = new Uint32Array(palette);
     }
     if (i > 0) {
-      // add the frame that came before the current one
-      //   print('FRAME: ' + i.toString());
-      //   print(previousFrame.frameOpts);
-      //   print('');
-      //   print('');
       gifWriter.addFrame(
         0,
         0,
