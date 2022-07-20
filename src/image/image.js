@@ -197,6 +197,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   const buffer = new Uint8Array(pImg.width * pImg.height * props.numFrames);
 
   const allFramesPixelColors = [];
+  const allColorsFreq = {};
 
   // Used to determine the occurrence of unique palettes and the frames
   // which use them
@@ -219,6 +220,12 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
 
       // What color does this pixel have in this frame ?
       pixelColors[k] = color;
+
+      if (allColorsFreq[color] === undefined) {
+        allColorsFreq[color] = { count: 1 };
+      } else {
+        allColorsFreq[color].count += 1;
+      }
     }
 
     // A way to put use the entire palette as an object key
@@ -244,14 +251,18 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
   });
 
-  // The initial global palette is the one with the most occurrence
-  const globalPalette = palettesSortedByFreq[0]
-    .split(',')
+  const allColorsSortedByFreq = Object.keys(allColorsFreq).sort((a, b) => {
+    return allColorsFreq[b].count - allColorsFreq[a].count;
+  });
+
+  // Take the top 256 colors
+  const globalPalette = allColorsSortedByFreq
+    .slice(0, 256)
     .map(a => parseInt(a));
 
-  framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
-    paletteFreqsAndFrames[globalPalette].frames
-  );
+  //   framesUsingGlobalPalette = framesUsingGlobalPalette.concat(
+  //     paletteFreqsAndFrames[globalPalette].frames
+  //   );
 
   const globalPaletteSet = new Set(globalPalette);
 
@@ -310,7 +321,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   // transparent. We decide one particular color as transparent and make all
   // transparent pixels take this color. This helps in later in compression.
   for (let i = 0; i < props.numFrames; i++) {
-    const localPaletteRequired = !framesUsingGlobalPalette.has(i);
+    const localPaletteRequired = false;
     const palette = localPaletteRequired ? [] : globalPalette;
     const pixelPaletteIndex = new Uint8Array(pImg.width * pImg.height);
 
@@ -324,7 +335,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
       const color = allFramesPixelColors[i][k];
       if (localPaletteRequired) {
         // local palette cannot be greater than 256 colors
-        if (colorIndicesLookup[color] === undefined && palette.length <= 255) {
+        if (colorIndicesLookup[color] === undefined && palette.length < 256) {
           colorIndicesLookup[color] = palette.length;
           palette.push(color);
         }
@@ -367,15 +378,20 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     }
 
     frameOpts.delay = props.frames[i].delay / 10; // Move timing back into GIF formatting
-    if (localPaletteRequired) {
-      // force palette to be power of 2
-      let powof2 = 1;
-      while (powof2 < palette.length) {
-        powof2 <<= 1;
-      }
-      palette.length = constrain(powof2, 2, 256);
-      frameOpts.palette = new Uint32Array(palette);
+    // write the global palette with the first frame.
+    // subsequent frames will also use the global palette
+    if (i === 0) {
+      frameOpts.palette = new Uint32Array(globalPalette);
     }
+    // if (localPaletteRequired) {
+    //   // force palette to be power of 2
+    //   let powof2 = 1;
+    //   while (powof2 < palette.length) {
+    //     powof2 <<= 1;
+    //   }
+    //   palette.length = constrain(powof2, 2, 256);
+    //   frameOpts.palette = new Uint32Array(palette);
+    // }
     if (i > 0) {
       gifWriter.addFrame(
         0,
