@@ -208,7 +208,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = function(...args) {
+p5.prototype.saveGif = async function(...args) {
   // process args
 
   let fileName;
@@ -286,46 +286,69 @@ p5.prototype.saveGif = function(...args) {
   const gif = GIFEncoder();
   const format = 'rgba4444';
 
-  // first generate an optimal palette for the whole animation
+  // calculate the global palette for this set of frames
+  const globalPalette = generateGlobalPalette(frames, format);
 
-  let colorFreq = {};
-  for (let f of frames) {
-    let currPalette = quantize(f, 256, { format });
-    for (let color of currPalette) {
-      color = color.toString();
-      if (colorFreq[color] === undefined) {
-        colorFreq[color] = { count: 1 };
-      } else {
-        colorFreq[color].count += 1;
+  // we are going to iterate the frames in pairs, n-1 and n
+  for (let i = 0; i < frames.length; i++) {
+    let currFramePixels = frames[i];
+    let lastFramePixels = frames[i - 1];
+
+    //matching pixels between frames can be set to full transparency,
+    // kinda digging a "hole" into the frame to see the pixels that where behind it
+    // (which would be the exact same, so not noticeable changes)
+    // this helps make the file smaller
+    let matchingPixelsInFrames = [];
+    if (i > 0) {
+      for (let p = 0; p < currFramePixels.length; p += 4) {
+        let currPixel = [
+          currFramePixels[p],
+          currFramePixels[p + 1],
+          currFramePixels[p + 2],
+          currFramePixels[p + 3]
+        ];
+        let lastPixel = [
+          lastFramePixels[p],
+          lastFramePixels[p + 1],
+          lastFramePixels[p + 2],
+          lastFramePixels[p + 3]
+        ];
+        if (pixelEquals(currPixel, lastPixel)) {
+          matchingPixelsInFrames.push(parseInt(p / 4));
+        }
       }
     }
-  }
 
-  let colorsSortedByFreq = Object.keys(colorFreq)
-    .sort((a, b) => {
-      return colorFreq[b].count - colorFreq[a].count;
-    })
-    .map(c => c.split(',').map(x => parseInt(x)));
-
-  const globalPalette = colorsSortedByFreq.splice(0, 256);
-  print(globalPalette);
-
-  for (let i = 0; i < frames.length; i++) {
+    // we decide on one of this colors to be fully transparent
+    const transparentIndex = matchingPixelsInFrames[0];
     // Apply palette to RGBA data to get an indexed bitmap
-    const index = applyPalette(frames[i], globalPalette, format);
+    const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+
+    for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
+      let samePixelIndex = matchingPixelsInFrames[mp];
+      indexedFrame[samePixelIndex] = transparentIndex;
+    }
 
     // Write frame into the encoder
 
-    //if it's the first frame, also add what will be the global palette
+    // if it's the first frame, also add what will be the global palette
     if (i === 0) {
-      gif.writeFrame(index, width_pd, height_pd, {
+      gif.writeFrame(indexedFrame, width_pd, height_pd, {
         palette: globalPalette,
-        delay: 20
+        delay: 20,
+        dispose: 1
       });
     }
 
     // all subsequent frames will just use the global palette
-    gif.writeFrame(index, width_pd, height_pd, { delay: 20 });
+    gif.writeFrame(indexedFrame, width_pd, height_pd, {
+      delay: 20,
+      transparent: true,
+      transparentIndex: transparentIndex,
+      dispose: 1
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 0));
   }
 
   gif.finish();
@@ -341,6 +364,53 @@ p5.prototype.saveGif = function(...args) {
 
   p5.prototype.downloadFile(blob, fileName, extension);
 };
+
+function generateGlobalPalette(frames, format) {
+  // for each frame, we'll keep track of the count of
+  // every unique color. that is: how many times does
+  // this particular color appear in every frame?
+  // Then we'll sort the colors and pick the top 256!
+
+  // calculate the frequency table for the colors
+  let colorFreq = {};
+  for (let f of frames) {
+    let currPalette = quantize(f, 256, { format });
+    for (let color of currPalette) {
+      // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
+      // we'll convert the array to its string representation so it can be used as an index!
+      color = color.toString();
+      if (colorFreq[color] === undefined) {
+        colorFreq[color] = { count: 1 };
+      } else {
+        colorFreq[color].count += 1;
+      }
+    }
+  }
+
+  // at this point colorFreq is a dict with {color: count},
+  // telling us how many times each color appears in the whole animation
+
+  // we process it undoing the string operation coverting that into
+  // an array of strings (['255', '127', '45', '255']) and then we convert
+  // that again to an array of integers
+  let colorsSortedByFreq = Object.keys(colorFreq)
+    .sort((a, b) => {
+      return colorFreq[b].count - colorFreq[a].count;
+    })
+    .map(c => c.split(',').map(x => parseInt(x)));
+
+  // now we simply extract the top 256 colors!
+  return colorsSortedByFreq.splice(0, 256);
+}
+
+function pixelEquals(a, b) {
+  return (
+    Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index])
+  );
+}
 
 /**
  * Helper function for loading GIF-based images
