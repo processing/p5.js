@@ -32,7 +32,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.4.1",
+  "version": "1.4.2",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
