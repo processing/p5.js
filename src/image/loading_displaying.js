@@ -291,15 +291,24 @@ p5.prototype.saveGif = async function(...args) {
 
   // we are going to iterate the frames in pairs, n-1 and n
   for (let i = 0; i < frames.length; i++) {
-    let currFramePixels = frames[i];
-    let lastFramePixels = frames[i - 1];
+    if (i === 0) {
+      const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+      gif.writeFrame(indexedFrame, width_pd, height_pd, {
+        palette: globalPalette,
+        delay: 20,
+        dispose: 1
+      });
+      continue;
+    }
 
-    //matching pixels between frames can be set to full transparency,
+    // matching pixels between frames can be set to full transparency,
     // kinda digging a "hole" into the frame to see the pixels that where behind it
     // (which would be the exact same, so not noticeable changes)
     // this helps make the file smaller
-    let matchingPixelsInFrames = [];
     if (i > 0) {
+      let currFramePixels = frames[i];
+      let lastFramePixels = frames[i - 1];
+      let matchingPixelsInFrames = [];
       for (let p = 0; p < currFramePixels.length; p += 4) {
         let currPixel = [
           currFramePixels[p],
@@ -317,37 +326,34 @@ p5.prototype.saveGif = async function(...args) {
           matchingPixelsInFrames.push(parseInt(p / 4));
         }
       }
-    }
+      // we decide on one of this colors to be fully transparent
+      const transparentIndex = matchingPixelsInFrames[0];
+      // Apply palette to RGBA data to get an indexed bitmap
+      const indexedFrame = applyPalette(frames[i], globalPalette, { format });
 
-    // we decide on one of this colors to be fully transparent
-    const transparentIndex = matchingPixelsInFrames[0];
-    // Apply palette to RGBA data to get an indexed bitmap
-    const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+      for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
+        let samePixelIndex = matchingPixelsInFrames[mp];
+        // here, we overwrite whatever color this pixel was assigned to
+        // with the color that we decided we are going to use as transparent.
+        // down in writeFrame we are going to tell the encoder that whenever
+        // it runs into "transparentIndex", just dig a hole there allowing to
+        // see through what was in the frame before it.
+        indexedFrame[samePixelIndex] = transparentIndex;
+      }
+      // Write frame into the encoder
+      // if it's the first frame, also add what will be the global palette
 
-    for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
-      let samePixelIndex = matchingPixelsInFrames[mp];
-      indexedFrame[samePixelIndex] = transparentIndex;
-    }
-
-    // Write frame into the encoder
-
-    // if it's the first frame, also add what will be the global palette
-    if (i === 0) {
+      // all subsequent frames will just use the global palette
       gif.writeFrame(indexedFrame, width_pd, height_pd, {
-        palette: globalPalette,
         delay: 20,
+        transparent: true,
+        transparentIndex: transparentIndex,
         dispose: 1
       });
     }
 
-    // all subsequent frames will just use the global palette
-    gif.writeFrame(indexedFrame, width_pd, height_pd, {
-      delay: 20,
-      transparent: true,
-      transparentIndex: transparentIndex,
-      dispose: 1
-    });
-
+    // this just makes the process asynchronous, preventing
+    // that the encoding locks up the browser
     await new Promise(resolve => setTimeout(resolve, 0));
   }
 
