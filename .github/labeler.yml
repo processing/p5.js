@@ -1,10 +1,10 @@
 "area:Accessibility":
   - '\[X\] Accessibility \(Web Accessibility\)'
-"area:Build Process":
+"Build Process":
   - '\[X\] Build tools and processes'
 "area:Color":
   - '\[X\] Color'
-"area:Core/Environment/Rendering":
+"area:Core":
   - '\[X\] Core'
 "area:Data":
   - '\[X\] Data'
@@ -12,7 +12,7 @@
   - '\[X\] DOM'
 "area:Events":
   - '\[X\] Events'
-"area:Friendly-Errors":
+"Friendly-Errors":
   - '\[X\] Friendly error system'
 "area:Image":
   - '\[X\] Image'
@@ -22,7 +22,7 @@
   - '\[X\] Localization'
 "area:Math":
   - '\[X\] Math'
-"area:Unit Testing":
+"Unit Testing":
   - '\[X\] Unit Testing'
 "area:Typography":
   - '\[X\] Typography'
