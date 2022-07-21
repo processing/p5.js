@@ -3158,6 +3158,15 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "SNP0301",
+      "name": "Seung-Gi Kim(David)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68281918?v=4",
+      "profile": "https://github.com/SNP0301",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
