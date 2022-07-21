@@ -1,32 +1,32 @@
-"area:Accessibility":
+"Area:Accessibility":
   - '\[X\] Accessibility \(Web Accessibility\)'
+"Area:Color":
+  - '\[X\] Color'
+"Area:Core":
+  - '\[X\] Core'
+"Area:Data":
+  - '\[X\] Data'
+"Area:DOM":
+  - '\[X\] DOM'
+"Area:Events":
+  - '\[X\] Events'
+"Area:Image":
+  - '\[X\] Image'
+"Area:IO":
+  - '\[X\] IO \(Input/Output\)'
+"Area:Math":
+  - '\[X\] Math'
+"Area:Typography":
+  - '\[X\] Typography'
+"Area:Utilities":
+  - '\[X\] Utilities'
+"Area:WebGL":
+  - '\[X\] WebGL'
 "Build Process":
   - '\[X\] Build tools and processes'
-"area:Color":
-  - '\[X\] Color'
-"area:Core":
-  - '\[X\] Core'
-"area:Data":
-  - '\[X\] Data'
-"area:DOM":
-  - '\[X\] DOM'
-"area:Events":
-  - '\[X\] Events'
-"Friendly-Errors":
-  - '\[X\] Friendly error system'
-"area:Image":
-  - '\[X\] Image'
-"area:IO":
-  - '\[X\] IO \(Input/Output\)'
-"Localization":
-  - '\[X\] Localization'
-"area:Math":
-  - '\[X\] Math'
 "Unit Testing":
   - '\[X\] Unit Testing'
-"area:Typography":
-  - '\[X\] Typography'
-"area:Utilities":
-  - '\[X\] Utilities'
-"area:WebGL":
-  - '\[X\] WebGL'
+"Localization":
+  - '\[X\] Localization'
+"Friendly Errors":
+  - '\[X\] Friendly error system'
