@@ -284,7 +284,7 @@ p5.prototype.saveGif = async function(...args) {
 
   // create the gif encoder and the colorspace format
   const gif = GIFEncoder();
-  const format = 'rgba4444';
+  const format = 'rgb444';
 
   // calculate the global palette for this set of frames
   const globalPalette = generateGlobalPalette(frames, format);
@@ -351,6 +351,7 @@ p5.prototype.saveGif = async function(...args) {
         dispose: 1
       });
     }
+    print('Frame: ' + i.toString());
 
     // this just makes the process asynchronous, preventing
     // that the encoding locks up the browser
@@ -380,7 +381,7 @@ function generateGlobalPalette(frames, format) {
   // calculate the frequency table for the colors
   let colorFreq = {};
   for (let f of frames) {
-    let currPalette = quantize(f, 256, { format });
+    let currPalette = quantize(f, 1024, { format });
     for (let color of currPalette) {
       // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
       // we'll convert the array to its string representation so it can be used as an index!
