@@ -279,6 +279,8 @@ p5.prototype.saveGif = async function(...args) {
 
     frames.push(data);
     count++;
+
+    await new Promise(resolve => setTimeout(resolve, 0));
   }
   console.info('Frames processed, encoding gif. This may take a while...');
 
@@ -305,54 +307,50 @@ p5.prototype.saveGif = async function(...args) {
     // kinda digging a "hole" into the frame to see the pixels that where behind it
     // (which would be the exact same, so not noticeable changes)
     // this helps make the file smaller
-    if (i > 0) {
-      let currFramePixels = frames[i];
-      let lastFramePixels = frames[i - 1];
-      let matchingPixelsInFrames = [];
-      for (let p = 0; p < currFramePixels.length; p += 4) {
-        let currPixel = [
-          currFramePixels[p],
-          currFramePixels[p + 1],
-          currFramePixels[p + 2],
-          currFramePixels[p + 3]
-        ];
-        let lastPixel = [
-          lastFramePixels[p],
-          lastFramePixels[p + 1],
-          lastFramePixels[p + 2],
-          lastFramePixels[p + 3]
-        ];
-        if (pixelEquals(currPixel, lastPixel)) {
-          matchingPixelsInFrames.push(parseInt(p / 4));
-        }
+    let currFramePixels = frames[i];
+    let lastFramePixels = frames[i - 1];
+    let matchingPixelsInFrames = [];
+    for (let p = 0; p < currFramePixels.length; p += 4) {
+      let currPixel = [
+        currFramePixels[p],
+        currFramePixels[p + 1],
+        currFramePixels[p + 2],
+        currFramePixels[p + 3]
+      ];
+      let lastPixel = [
+        lastFramePixels[p],
+        lastFramePixels[p + 1],
+        lastFramePixels[p + 2],
+        lastFramePixels[p + 3]
+      ];
+      if (pixelEquals(currPixel, lastPixel)) {
+        matchingPixelsInFrames.push(parseInt(p / 4));
       }
-      // we decide on one of this colors to be fully transparent
-      const transparentIndex = currFramePixels[matchingPixelsInFrames[0]];
-      // Apply palette to RGBA data to get an indexed bitmap
-      const indexedFrame = applyPalette(currFramePixels, globalPalette, {
-        format
-      });
-
-      for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
-        let samePixelIndex = matchingPixelsInFrames[mp];
-        // here, we overwrite whatever color this pixel was assigned to
-        // with the color that we decided we are going to use as transparent.
-        // down in writeFrame we are going to tell the encoder that whenever
-        // it runs into "transparentIndex", just dig a hole there allowing to
-        // see through what was in the frame before it.
-        indexedFrame[samePixelIndex] = transparentIndex;
-      }
-      // Write frame into the encoder
-      // if it's the first frame, also add what will be the global palette
-
-      // all subsequent frames will just use the global palette
-      gif.writeFrame(indexedFrame, width_pd, height_pd, {
-        delay: 20,
-        transparent: true,
-        transparentIndex: transparentIndex,
-        dispose: 1
-      });
     }
+    // we decide on one of this colors to be fully transparent
+    // Apply palette to RGBA data to get an indexed bitmap
+    const indexedFrame = applyPalette(currFramePixels, globalPalette, {
+      format
+    });
+    const transparentIndex = indexedFrame[matchingPixelsInFrames[0]];
+
+    for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
+      let samePixelIndex = matchingPixelsInFrames[mp];
+      // here, we overwrite whatever color this pixel was assigned to
+      // with the color that we decided we are going to use as transparent.
+      // down in writeFrame we are going to tell the encoder that whenever
+      // it runs into "transparentIndex", just dig a hole there allowing to
+      // see through what was in the frame before it.
+      indexedFrame[samePixelIndex] = transparentIndex;
+    }
+    // Write frame into the encoder
+
+    gif.writeFrame(indexedFrame, width_pd, height_pd, {
+      delay: 20,
+      transparent: true,
+      transparentIndex: transparentIndex,
+      dispose: 1
+    });
     print('Frame: ' + i.toString());
 
     // this just makes the process asynchronous, preventing
