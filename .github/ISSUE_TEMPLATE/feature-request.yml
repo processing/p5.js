@@ -14,22 +14,22 @@ body:
       label: Most appropriate sub-area of p5.js?
       description: You may select more than one.
       options:
-        - label: Accessibility (Web Accessibility)
+        - label: Accessibility
         - label: Color
         - label: Core/Environment/Rendering
         - label: Data
         - label: DOM
         - label: Events
         - label: Image
-        - label: IO (Input/Output)
+        - label: IO
         - label: Math
         - label: Typography
         - label: Utilities
         - label: WebGL
-        - label: Build tools and processes
+        - label: Build Process
         - label: Unit Testing
-        - label: Friendly error system
-        - label: Localization
+        - label: Localization Tools
+        - label: Friendly Errors
         - label: Other (specify if possible)
   - type: textarea
     attributes:
