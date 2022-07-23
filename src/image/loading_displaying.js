@@ -327,9 +327,11 @@ p5.prototype.saveGif = async function(...args) {
         }
       }
       // we decide on one of this colors to be fully transparent
-      const transparentIndex = matchingPixelsInFrames[0];
+      const transparentIndex = currFramePixels[matchingPixelsInFrames[0]];
       // Apply palette to RGBA data to get an indexed bitmap
-      const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+      const indexedFrame = applyPalette(currFramePixels, globalPalette, {
+        format
+      });
 
       for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
         let samePixelIndex = matchingPixelsInFrames[mp];
