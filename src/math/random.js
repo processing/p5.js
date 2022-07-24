@@ -110,7 +110,7 @@ p5.prototype.randomSeed = function(seed) {
  * let words = ['apple', 'bear', 'cat', 'dog'];
  * let word = random(words); // select random word
  * text(word, 10, 50); // draw the word
- * describe(`word displayed at random. Either apple, bear, cat, or dog.`);
+ * describe(`word displayed at random(Note: this is not true random number generator this is a sudo-random). Either apple, bear, cat, or dog.`);
  * </code>
  * </div>
  */
