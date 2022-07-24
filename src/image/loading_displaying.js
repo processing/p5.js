@@ -271,7 +271,7 @@ p5.prototype.saveGif = async function(...args) {
       busy sketches or low end devices might take longer
       to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
-      */
+    */
     redraw();
 
     const data = this.drawingContext.getImageData(0, 0, width_pd, height_pd)
@@ -289,7 +289,7 @@ p5.prototype.saveGif = async function(...args) {
   const format = 'rgb444';
 
   // calculate the global palette for this set of frames
-  const globalPalette = generateGlobalPalette(frames, format);
+  const globalPalette = _generateGlobalPalette(frames, format);
 
   // we are going to iterate the frames in pairs, n-1 and n
   for (let i = 0; i < frames.length; i++) {
@@ -323,7 +323,7 @@ p5.prototype.saveGif = async function(...args) {
         lastFramePixels[p + 2],
         lastFramePixels[p + 3]
       ];
-      if (pixelEquals(currPixel, lastPixel)) {
+      if (_pixelEquals(currPixel, lastPixel)) {
         matchingPixelsInFrames.push(parseInt(p / 4));
       }
     }
@@ -372,7 +372,7 @@ p5.prototype.saveGif = async function(...args) {
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
-function generateGlobalPalette(frames, format) {
+function _generateGlobalPalette(frames, format) {
   // for each frame, we'll keep track of the count of
   // every unique color. that is: how many times does
   // this particular color appear in every frame?
@@ -410,7 +410,7 @@ function generateGlobalPalette(frames, format) {
   return colorsSortedByFreq.splice(0, 256);
 }
 
-function pixelEquals(a, b) {
+function _pixelEquals(a, b) {
   return (
     Array.isArray(a) &&
     Array.isArray(b) &&
