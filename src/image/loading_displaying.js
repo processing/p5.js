@@ -265,6 +265,19 @@ p5.prototype.saveGif = async function(...args) {
 
   // We first take every frame that we are going to use for the animation
   let frames = [];
+
+  let p = undefined;
+  if (document.getElementById('progressBar') !== null)
+    document.getElementById('progressBar').remove();
+
+  p = createP('');
+  p.id('progressBar');
+
+  p.style('font-size', '16px');
+  p.style('font-family', 'Montserrat');
+  p.style('background-color', '#ffffffa0');
+  p.position(0, 0);
+
   while (count < nFrames + nFramesDelay) {
     /*
       we draw the next frame. this is important, since
@@ -280,6 +293,12 @@ p5.prototype.saveGif = async function(...args) {
     frames.push(data);
     count++;
 
+    p.html(
+      'Saved frame <b>' +
+        frames.length.toString() +
+        '</b> out of ' +
+        nFrames.toString()
+    );
     await new Promise(resolve => setTimeout(resolve, 0));
   }
   console.info('Frames processed, encoding gif. This may take a while...');
@@ -332,16 +351,15 @@ p5.prototype.saveGif = async function(...args) {
     const indexedFrame = applyPalette(currFramePixels, globalPalette, {
       format
     });
-    const transparentIndex = indexedFrame[matchingPixelsInFrames[0]];
+    const transparentIndex = currFramePixels[matchingPixelsInFrames[0]];
 
-    for (let mp = 0; mp < matchingPixelsInFrames.length; mp++) {
-      let samePixelIndex = matchingPixelsInFrames[mp];
+    for (let mp of matchingPixelsInFrames) {
       // here, we overwrite whatever color this pixel was assigned to
       // with the color that we decided we are going to use as transparent.
       // down in writeFrame we are going to tell the encoder that whenever
       // it runs into "transparentIndex", just dig a hole there allowing to
       // see through what was in the frame before it.
-      indexedFrame[samePixelIndex] = transparentIndex;
+      indexedFrame[mp] = transparentIndex;
     }
     // Write frame into the encoder
 
@@ -351,7 +369,10 @@ p5.prototype.saveGif = async function(...args) {
       transparentIndex: transparentIndex,
       dispose: 1
     });
-    print('Frame: ' + i.toString());
+
+    p.html(
+      'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
+    );
 
     // this just makes the process asynchronous, preventing
     // that the encoding locks up the browser
@@ -369,6 +390,7 @@ p5.prototype.saveGif = async function(...args) {
     type: 'image/gif'
   });
 
+  p.html('Done. Downloading!🌸');
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
