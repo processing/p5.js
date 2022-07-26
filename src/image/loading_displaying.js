@@ -252,10 +252,11 @@ p5.prototype.saveGif = async function(...args) {
   // we start on the frame set by the delay argument
   frameCount = nFramesDelay;
 
-  console.info(
-    'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
-  );
+  //   console.info(
+  //     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
+  //   );
 
+  const lastPixelDensity = this._pixelDensity;
   pixelDensity(1);
   const pd = this._pixelDensity;
 
@@ -266,11 +267,10 @@ p5.prototype.saveGif = async function(...args) {
   // We first take every frame that we are going to use for the animation
   let frames = [];
 
-  let p = undefined;
   if (document.getElementById('progressBar') !== null)
     document.getElementById('progressBar').remove();
 
-  p = createP('');
+  let p = createP('');
   p.id('progressBar');
 
   p.style('font-size', '16px');
@@ -301,7 +301,11 @@ p5.prototype.saveGif = async function(...args) {
     );
     await new Promise(resolve => setTimeout(resolve, 0));
   }
-  console.info('Frames processed, encoding gif. This may take a while...');
+  //   console.info('Frames processed, encoding gif. This may take a while...');
+  p.html('Frames processed, encoding gif. This may take a while...');
+
+  loop();
+  pixelDensity(lastPixelDensity);
 
   // create the gif encoder and the colorspace format
   const gif = GIFEncoder();
@@ -381,8 +385,6 @@ p5.prototype.saveGif = async function(...args) {
 
   gif.finish();
 
-  loop();
-
   // Get a direct typed array view into the buffer to avoid copying it
   const buffer = gif.bytesView();
   const extension = 'gif';
@@ -403,7 +405,7 @@ function _generateGlobalPalette(frames, format) {
   // calculate the frequency table for the colors
   let colorFreq = {};
   for (let f of frames) {
-    let currPalette = quantize(f, 1024, { format });
+    let currPalette = quantize(f, 64, { format });
     for (let color of currPalette) {
       // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
       // we'll convert the array to its string representation so it can be used as an index!
