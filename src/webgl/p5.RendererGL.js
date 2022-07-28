@@ -1337,7 +1337,12 @@ p5.RendererGL.prototype._bindBuffer = function(
   if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    const data = new (type || Float32Array)(values);
+    let data;
+    if (ArrayBuffer.isView(values)) {
+      data = values;
+    } else {
+      data = new (type || Float32Array)(values);
+    }
     this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
   }
 };
