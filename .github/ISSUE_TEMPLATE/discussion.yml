@@ -1,6 +1,6 @@
 name: 💭 Discussion
 description: This template is for starting a discussion.
-labels: [discussion]
+labels: [Discussion]
 body:
 - type: textarea
   attributes:
