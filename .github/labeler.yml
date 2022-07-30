@@ -1,32 +1,32 @@
 "Area:Accessibility":
-  - '\[X\] Accessibility'
+  - '\[[xX]\]\s*Accessibility'
 "Area:Color":
-  - '\[X\] Color'
+  - '\[[xX]\]\s*Color'
 "Area:Core":
-  - '\[X\] Core'
+  - '\[[xX]\]\s*Core'
 "Area:Data":
-  - '\[X\] Data'
+  - '\[[xX]\]\s*Data'
 "Area:DOM":
-  - '\[X\] DOM'
+  - '\[[xX]\]\s*DOM'
 "Area:Events":
-  - '\[X\] Events'
+  - '\[[xX]\]\s*Events'
 "Area:Image":
-  - '\[X\] Image'
+  - '\[[xX]\]\s*Image'
 "Area:IO":
-  - '\[X\] IO'
+  - '\[[xX]\]\s*IO'
 "Area:Math":
-  - '\[X\] Math'
+  - '\[[xX]\]\s*Math'
 "Area:Typography":
-  - '\[X\] Typography'
+  - '\[[xX]\]\s*Typography'
 "Area:Utilities":
-  - '\[X\] Utilities'
+  - '\[[xX]\]\s*Utilities'
 "Area:WebGL":
-  - '\[X\] WebGL'
+  - '\[[xX]\]\s*WebGL'
 "Build Process":
-  - '\[X\] Build Process'
+  - '\[[xX]\]\s*Build Process'
 "Unit Testing":
-  - '\[X\] Unit Testing'
+  - '\[[xX]\]\s*Unit Testing'
 "Localization":
-  - '\[X\] Localization Tools'
+  - '\[[xX]\]\s*Localization Tools'
 "Friendly Errors":
-  - '\[X\] Friendly Errors'
+  - '\[[xX]\]\s*Friendly Errors'
