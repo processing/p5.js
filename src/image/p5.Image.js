@@ -654,14 +654,7 @@ p5.Image.prototype.mask = function(p5Image) {
 
   this.drawingContext.globalCompositeOperation = 'destination-in';
   if (this.gifProperties) {
-    const prevFrameData = this.drawingContext.getImageData(
-      0,
-      0,
-      this.width,
-      this.height
-    );
     for (let i = 0; i < this.gifProperties.frames.length; i++) {
-      this.drawingContext.clearRect(0, 0, this.width, this.height);
       this.drawingContext.putImageData(
         this.gifProperties.frames[i].image,
         0,
@@ -675,7 +668,11 @@ p5.Image.prototype.mask = function(p5Image) {
         this.height
       );
     }
-    this.drawingContext.putImageData(prevFrameData, 0, 0);
+    this.drawingContext.putImageData(
+      this.gifProperties.frames[this.gifProperties.displayIndex].image,
+      0,
+      0
+    );
   } else {
     p5.Image.prototype.copy.apply(this, copyArgs);
   }

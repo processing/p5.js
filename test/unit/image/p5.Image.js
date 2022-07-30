@@ -91,13 +91,20 @@ suite('p5.Image', function() {
         mask.loadPixels();
         for (let i = 0; i < mask.width; i++) {
           for (let j = 0; j < mask.height; j++) {
-            const alpha = j < img.height < 2 ? 255 : 0;
+            const alpha = j < img.height / 2 ? 255 : 0;
             mask.set(i, j, myp5.color(0, 0, 0, alpha));
           }
         }
         mask.updatePixels();
 
         img.mask(mask);
+        img.loadPixels();
+        for (let i = 0; i < img.width; i++) {
+          for (let j = 0; j < img.height; j++) {
+            const alpha = j < img.height / 2 ? 255 : 0;
+            assert.strictEqual(img.get(i, j)[3], alpha);
+          }
+        }
         for (
           frameIndex = 0;
           frameIndex < img.gifProperties.numFrames;
@@ -107,7 +114,7 @@ suite('p5.Image', function() {
           for (let i = 0; i < img.width; i++) {
             for (let j = 0; j < img.height; j++) {
               const index = 4 * (i + j * img.width) + 3;
-              const alpha = j < img.height < 2 ? 255 : 0;
+              const alpha = j < img.height / 2 ? 255 : 0;
               assert.strictEqual(frameData[index], alpha);
             }
           }
