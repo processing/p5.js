@@ -3167,6 +3167,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "IkeB108",
+      "name": "Ike Bischof",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56776763?v=4",
+      "profile": "https://ikebot108.weebly.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
