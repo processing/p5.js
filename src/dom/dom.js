@@ -1993,8 +1993,8 @@ p5.Element.prototype.style = function(prop, val) {
     ) {
       let styles = window.getComputedStyle(self.elt);
       let styleVal = styles.getPropertyValue(prop);
-      let numVal = styleVal.replace(/\D+/g, '');
-      this[prop] = parseInt(numVal, 10);
+      let numVal = styleVal.replace(/[^\d.]/g, '');
+      this[prop] = Math.round(parseFloat(numVal, 10));
     }
   }
   return this;
