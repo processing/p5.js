@@ -99,7 +99,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * Draw a box with given width, height and depth
  * @method  box
  * @param  {Number} [width]     width of the box
- * @param  {Number} [Height]    height of the box
+ * @param  {Number} [height]    height of the box
  * @param  {Number} [depth]     depth of the box
  * @param {Integer} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
