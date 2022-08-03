@@ -580,6 +580,7 @@ We recognize all types of contributions. This project follows the [all-contribut
   <tr>
     <td align="center"><a href="https://ikebot108.weebly.com/"><img src="https://avatars.githubusercontent.com/u/56776763?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ike Bischof</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=IkeB108" title="Code">💻</a></td>
     <td align="center"><a href="https://ongzz.ml"><img src="https://avatars.githubusercontent.com/u/47311100?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ong Zhi Zheng</b></sub></a><br /><a href="#plugin-ongzzzzzz" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="https://github.com/bsubbaraman"><img src="https://avatars.githubusercontent.com/u/11969085?v=4?s=100" width="100px;" alt=""/><br /><sub><b>bsubbaraman</b></sub></a><br /><a href="#plugin-bsubbaraman" title="Plugin/utility libraries">🔌</a></td>
   </tr>
 </table>
 
