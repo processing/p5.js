@@ -10,7 +10,7 @@
  * for drawing images to the main display canvas.
  */
 import p5 from '../core/main';
-// import omggif from 'omggif';
+import omggif from 'omggif';
 
 /**
  * Creates a new <a href="#/p5.Image">p5.Image</a> (the datatype for storing images). This provides a
