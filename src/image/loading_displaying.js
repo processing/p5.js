@@ -10,6 +10,7 @@ import Filters from './filters';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
+import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
@@ -207,7 +208,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = function(...args) {
+p5.prototype.saveGif = async function(...args) {
   // process args
 
   let fileName;
@@ -246,62 +247,203 @@ p5.prototype.saveGif = function(...args) {
 
   //   initialize variables for the frames processing
   var count = nFramesDelay;
-  let frames = [];
 
   this.noLoop();
   // we start on the frame set by the delay argument
-  this.frameCount = nFramesDelay;
-  console.log(
-    'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
-  );
+  frameCount = nFramesDelay;
 
-  this.pixelDensity(1);
+  //   console.info(
+  //     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
+  //   );
+
+  const lastPixelDensity = this._pixelDensity;
+  pixelDensity(1);
   const pd = this._pixelDensity;
+
+  // width and height based on (p)ixel (d)ensity
   const width_pd = this.width * pd;
   const height_pd = this.height * pd;
-  let pImg = new p5.Image(width_pd, height_pd);
+
+  // We first take every frame that we are going to use for the animation
+  let frames = [];
+
+  if (document.getElementById('progressBar') !== null)
+    document.getElementById('progressBar').remove();
+
+  let p = createP('');
+  p.id('progressBar');
+
+  p.style('font-size', '16px');
+  p.style('font-family', 'Montserrat');
+  p.style('background-color', '#ffffffa0');
+  p.position(0, 0);
 
   while (count < nFrames + nFramesDelay) {
-    /* 
-      we draw the next frame. this is important, since 
+    /*
+      we draw the next frame. this is important, since
       busy sketches or low end devices might take longer
       to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
       */
     this.redraw();
 
-    const prevFrameData = this.drawingContext.getImageData(
-      0,
-      0,
-      width_pd,
-      height_pd
-    );
+    const data = this.drawingContext.getImageData(0, 0, width_pd, height_pd)
+      .data;
 
-    frames.push({
-      image: prevFrameData,
-      delay: 20
+    frames.push(data);
+    count++;
+
+    p.html(
+      'Saved frame <b>' +
+        frames.length.toString() +
+        '</b> out of ' +
+        nFrames.toString()
+    );
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+  //   console.info('Frames processed, encoding gif. This may take a while...');
+  p.html('Frames processed, encoding gif. This may take a while...');
+
+  loop();
+  pixelDensity(lastPixelDensity);
+
+  // create the gif encoder and the colorspace format
+  const gif = GIFEncoder();
+  const format = 'rgb444';
+
+  // calculate the global palette for this set of frames
+  const globalPalette = _generateGlobalPalette(frames, format);
+
+  // we are going to iterate the frames in pairs, n-1 and n
+  for (let i = 0; i < frames.length; i++) {
+    if (i === 0) {
+      const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+      gif.writeFrame(indexedFrame, width_pd, height_pd, {
+        palette: globalPalette,
+        delay: 20,
+        dispose: 1
+      });
+      continue;
+    }
+
+    // matching pixels between frames can be set to full transparency,
+    // kinda digging a "hole" into the frame to see the pixels that where behind it
+    // (which would be the exact same, so not noticeable changes)
+    // this helps make the file smaller
+    let currFramePixels = frames[i];
+    let lastFramePixels = frames[i - 1];
+    let matchingPixelsInFrames = [];
+    for (let p = 0; p < currFramePixels.length; p += 4) {
+      let currPixel = [
+        currFramePixels[p],
+        currFramePixels[p + 1],
+        currFramePixels[p + 2],
+        currFramePixels[p + 3]
+      ];
+      let lastPixel = [
+        lastFramePixels[p],
+        lastFramePixels[p + 1],
+        lastFramePixels[p + 2],
+        lastFramePixels[p + 3]
+      ];
+      if (_pixelEquals(currPixel, lastPixel)) {
+        matchingPixelsInFrames.push(parseInt(p / 4));
+      }
+    }
+    // we decide on one of this colors to be fully transparent
+    // Apply palette to RGBA data to get an indexed bitmap
+    const indexedFrame = applyPalette(currFramePixels, globalPalette, {
+      format
+    });
+    const transparentIndex = currFramePixels[matchingPixelsInFrames[0]];
+
+    for (let mp of matchingPixelsInFrames) {
+      // here, we overwrite whatever color this pixel was assigned to
+      // with the color that we decided we are going to use as transparent.
+      // down in writeFrame we are going to tell the encoder that whenever
+      // it runs into "transparentIndex", just dig a hole there allowing to
+      // see through what was in the frame before it.
+      indexedFrame[mp] = transparentIndex;
+    }
+    // Write frame into the encoder
+
+    gif.writeFrame(indexedFrame, width_pd, height_pd, {
+      delay: 20,
+      transparent: true,
+      transparentIndex: transparentIndex,
+      dispose: 1
     });
 
-    count++;
+    p.html(
+      'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
+    );
+
+    // this just makes the process asynchronous, preventing
+    // that the encoding locks up the browser
+    await new Promise(resolve => setTimeout(resolve, 0));
   }
 
-  pImg.gifProperties = {
-    displayIndex: 0,
-    loopLimit: 0, // let it loop indefinitely
-    loopCount: 0,
-    frames: frames,
-    numFrames: nFrames,
-    playing: true,
-    timeDisplayed: 0,
-    lastChangeTime: 0
-  };
+  gif.finish();
 
-  console.info('Frames processed, encoding gif. This may take a while...');
+  // Get a direct typed array view into the buffer to avoid copying it
+  const buffer = gif.bytesView();
+  const extension = 'gif';
+  const blob = new Blob([buffer], {
+    type: 'image/gif'
+  });
 
   frames = [];
   this.loop();
-  p5.prototype.encodeAndDownloadGif(pImg, fileName);
+  p.html('Done. Downloading!🌸');
+  p5.prototype.downloadFile(blob, fileName, extension);
 };
+
+function _generateGlobalPalette(frames, format) {
+  // for each frame, we'll keep track of the count of
+  // every unique color. that is: how many times does
+  // this particular color appear in every frame?
+  // Then we'll sort the colors and pick the top 256!
+
+  // calculate the frequency table for the colors
+  let colorFreq = {};
+  for (let f of frames) {
+    let currPalette = quantize(f, 64, { format });
+    for (let color of currPalette) {
+      // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
+      // we'll convert the array to its string representation so it can be used as an index!
+      color = color.toString();
+      if (colorFreq[color] === undefined) {
+        colorFreq[color] = { count: 1 };
+      } else {
+        colorFreq[color].count += 1;
+      }
+    }
+  }
+
+  // at this point colorFreq is a dict with {color: count},
+  // telling us how many times each color appears in the whole animation
+
+  // we process it undoing the string operation coverting that into
+  // an array of strings (['255', '127', '45', '255']) and then we convert
+  // that again to an array of integers
+  let colorsSortedByFreq = Object.keys(colorFreq)
+    .sort((a, b) => {
+      return colorFreq[b].count - colorFreq[a].count;
+    })
+    .map(c => c.split(',').map(x => parseInt(x)));
+
+  // now we simply extract the top 256 colors!
+  return colorsSortedByFreq.splice(0, 256);
+}
+
+function _pixelEquals(a, b) {
+  return (
+    Array.isArray(a) &&
+    Array.isArray(b) &&
+    a.length === b.length &&
+    a.every((val, index) => val === b[index])
+  );
+}
 
 /**
  * Helper function for loading GIF-based images
