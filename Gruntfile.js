@@ -150,7 +150,7 @@ module.exports = grunt => {
       source: {
         options: {
           parserOptions: {
-            ecmaVersion: 5
+            ecmaVersion: 8
           }
         },
         src: ['src/**/*.js']
@@ -163,7 +163,7 @@ module.exports = grunt => {
     'eslint-samples': {
       options: {
         parserOptions: {
-          ecmaVersion: 6
+          ecmaVersion: 8
         },
         format: 'unix'
       },

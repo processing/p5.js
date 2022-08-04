@@ -256,7 +256,7 @@ p5.prototype.saveGif = async function(...args) {
   //   );
 
   const lastPixelDensity = this._pixelDensity;
-  pixelDensity(1);
+  this.pixelDensity(1);
   const pd = this._pixelDensity;
 
   // width and height based on (p)ixel (d)ensity
@@ -269,7 +269,7 @@ p5.prototype.saveGif = async function(...args) {
   if (document.getElementById('progressBar') !== null)
     document.getElementById('progressBar').remove();
 
-  let p = createP('');
+  let p = this.createP('');
   p.id('progressBar');
 
   p.style('font-size', '16px');
@@ -303,8 +303,8 @@ p5.prototype.saveGif = async function(...args) {
   //   console.info('Frames processed, encoding gif. This may take a while...');
   p.html('Frames processed, encoding gif. This may take a while...');
 
-  loop();
-  pixelDensity(lastPixelDensity);
+  this.loop();
+  this.pixelDensity(lastPixelDensity);
 
   // create the gif encoder and the colorspace format
   const gif = GIFEncoder();
@@ -393,6 +393,7 @@ p5.prototype.saveGif = async function(...args) {
 
   frames = [];
   this.loop();
+
   p.html('Done. Downloading!🌸');
   p5.prototype.downloadFile(blob, fileName, extension);
 };
