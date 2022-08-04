@@ -27,6 +27,7 @@ import * as constants from '../core/constants';
  * // with width 50 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a white plane with black wireframe lines');
  * }
  *
  * function draw() {
@@ -98,7 +99,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * Draw a box with given width, height and depth
  * @method  box
  * @param  {Number} [width]     width of the box
- * @param  {Number} [Height]    height of the box
+ * @param  {Number} [height]    height of the box
  * @param  {Number} [depth]     depth of the box
  * @param {Integer} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
@@ -112,6 +113,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  * // with width, height and depth of 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a white box rotating in 3D space');
  * }
  *
  * function draw() {
@@ -231,6 +233,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * // draw a sphere with radius 40
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a white sphere with black wireframe lines');
  * }
  *
  * function draw() {
@@ -250,6 +253,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   detailX = createSlider(3, 24, 3);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
+ *   describe(
+ *     'a white sphere with low detail on the x-axis, including a slider to adjust detailX'
+ *   );
  * }
  *
  * function draw() {
@@ -270,6 +276,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   detailY = createSlider(3, 16, 3);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');
+ *   describe(
+ *     'a white sphere with low detail on the y-axis, including a slider to adjust detailY'
+ *   );
  * }
  *
  * function draw() {
@@ -441,6 +450,7 @@ const _truncatedCone = function(
  * // with radius 20 and height 50
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a rotating white cylinder');
  * }
  *
  * function draw() {
@@ -462,6 +472,9 @@ const _truncatedCone = function(
  *   detailX = createSlider(3, 24, 3);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
+ *   describe(
+ *     'a rotating white cylinder with limited X detail, with a slider that adjusts detailX'
+ *   );
  * }
  *
  * function draw() {
@@ -482,6 +495,9 @@ const _truncatedCone = function(
  *   detailY = createSlider(1, 16, 1);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');
+ *   describe(
+ *     'a rotating white cylinder with limited Y detail, with a slider that adjusts detailY'
+ *   );
  * }
  *
  * function draw() {
@@ -576,6 +592,7 @@ p5.prototype.cylinder = function(
  * // with radius 40 and height 70
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a rotating white cone');
  * }
  *
  * function draw() {
@@ -597,6 +614,9 @@ p5.prototype.cylinder = function(
  *   detailX = createSlider(3, 16, 3);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
+ *   describe(
+ *     'a rotating white cone with limited X detail, with a slider that adjusts detailX'
+ *   );
  * }
  *
  * function draw() {
@@ -617,6 +637,9 @@ p5.prototype.cylinder = function(
  *   detailY = createSlider(3, 16, 3);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');
+ *   describe(
+ *     'a rotating white cone with limited Y detail, with a slider that adjusts detailY'
+ *   );
  * }
  *
  * function draw() {
@@ -692,6 +715,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  * // with radius 30, 40 and 40.
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a white 3d ellipsoid');
  * }
  *
  * function draw() {
@@ -711,6 +735,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  *   detailX = createSlider(2, 24, 12);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
+ *   describe(
+ *     'a rotating white ellipsoid with limited X detail, with a slider that adjusts detailX'
+ *   );
  * }
  *
  * function draw() {
@@ -731,6 +758,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY, cap) {
  *   detailY = createSlider(2, 24, 6);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');
+ *   describe(
+ *     'a rotating white ellipsoid with limited Y detail, with a slider that adjusts detailY'
+ *   );
  * }
  *
  * function draw() {
@@ -826,6 +856,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * // with ring radius 30 and tube radius 15
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a rotating white torus');
  * }
  *
  * function draw() {
@@ -847,6 +878,9 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   detailX = createSlider(3, 24, 3);
  *   detailX.position(10, height + 5);
  *   detailX.style('width', '80px');
+ *   describe(
+ *     'a rotating white torus with limited X detail, with a slider that adjusts detailX'
+ *   );
  * }
  *
  * function draw() {
@@ -867,6 +901,9 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   detailY = createSlider(3, 16, 3);
  *   detailY.position(10, height + 5);
  *   detailY.style('width', '80px');
+ *   describe(
+ *     'a rotating white torus with limited Y detail, with a slider that adjusts detailY'
+ *   );
  * }
  *
  * function draw() {

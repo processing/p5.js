@@ -1,6 +1,5 @@
 import p5 from './main';
 import * as constants from './constants';
-import filters from '../image/filters';
 
 import './p5.Renderer';
 
@@ -47,7 +46,14 @@ p5.Renderer2D.prototype.background = function(...args) {
   this.resetMatrix();
 
   if (args[0] instanceof p5.Image) {
-    this._pInst.image(args[0], 0, 0, this.width, this.height);
+    if (args[1] >= 0) {
+      // set transparency of background
+      const img = args[0];
+      this.drawingContext.globalAlpha = args[1] / 255;
+      this._pInst.image(img, 0, 0, this.width, this.height);
+    } else {
+      this._pInst.image(args[0], 0, 0, this.width, this.height);
+    }
   } else {
     const curFill = this._getFill();
     // create background rect
@@ -155,13 +161,8 @@ p5.Renderer2D.prototype.image = function(
   }
 
   try {
-    if (this._tint) {
-      if (p5.MediaElement && img instanceof p5.MediaElement) {
-        img.loadPixels();
-      }
-      if (img.canvas) {
-        cnv = this._getTintedImageCanvas(img);
-      }
+    if (this._tint && img.canvas) {
+      cnv = this._getTintedImageCanvas(img);
     }
     if (!cnv) {
       cnv = img.canvas || img.elt;
@@ -198,25 +199,66 @@ p5.Renderer2D.prototype._getTintedImageCanvas = function(img) {
   if (!img.canvas) {
     return img;
   }
-  const pixels = filters._toPixels(img.canvas);
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = img.canvas.width;
-  tmpCanvas.height = img.canvas.height;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  const newPixels = id.data;
-  for (let i = 0; i < pixels.length; i += 4) {
-    const r = pixels[i];
-    const g = pixels[i + 1];
-    const b = pixels[i + 2];
-    const a = pixels[i + 3];
-    newPixels[i] = r * this._tint[0] / 255;
-    newPixels[i + 1] = g * this._tint[1] / 255;
-    newPixels[i + 2] = b * this._tint[2] / 255;
-    newPixels[i + 3] = a * this._tint[3] / 255;
+
+  if (!img.tintCanvas) {
+    // Once an image has been tinted, keep its tint canvas
+    // around so we don't need to re-incur the cost of
+    // creating a new one for each tint
+    img.tintCanvas = document.createElement('canvas');
   }
-  tmpCtx.putImageData(id, 0, 0);
-  return tmpCanvas;
+
+  // Keep the size of the tint canvas up-to-date
+  if (img.tintCanvas.width !== img.canvas.width) {
+    img.tintCanvas.width = img.canvas.width;
+  }
+  if (img.tintCanvas.height !== img.canvas.height) {
+    img.tintCanvas.height = img.canvas.height;
+  }
+
+  // Goal: multiply the r,g,b,a values of the source by
+  // the r,g,b,a values of the tint color
+  const ctx = img.tintCanvas.getContext('2d');
+
+  ctx.save();
+  ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
+
+  if (this._tint[0] < 255 || this._tint[1] < 255 || this._tint[2] < 255) {
+    // Color tint: we need to use the multiply blend mode to change the colors.
+    // However, the canvas implementation of this destroys the alpha channel of
+    // the image. To accommodate, we first get a version of the image with full
+    // opacity everywhere, tint using multiply, and then use the destination-in
+    // blend mode to restore the alpha channel again.
+
+    // Start with the original image
+    ctx.drawImage(img.canvas, 0, 0);
+
+    // This blend mode makes everything opaque but forces the luma to match
+    // the original image again
+    ctx.globalCompositeOperation = 'luminosity';
+    ctx.drawImage(img.canvas, 0, 0);
+
+    // This blend mode forces the hue and chroma to match the original image.
+    // After this we should have the original again, but with full opacity.
+    ctx.globalCompositeOperation = 'color';
+    ctx.drawImage(img.canvas, 0, 0);
+
+    // Apply color tint
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = `rgb(${this._tint.slice(0, 3).join(', ')})`;
+    ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
+
+    // Replace the alpha channel with the original alpha * the alpha tint
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.globalAlpha = this._tint[3] / 255;
+    ctx.drawImage(img.canvas, 0, 0);
+  } else {
+    // If we only need to change the alpha, we can skip all the extra work!
+    ctx.globalAlpha = this._tint[3] / 255;
+    ctx.drawImage(img.canvas, 0, 0);
+  }
+
+  ctx.restore();
+  return img.tintCanvas;
 };
 
 //////////////////////////////////////////////

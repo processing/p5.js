@@ -4,8 +4,7 @@
 
 # Comment to be posted to on first time issues
 newIssueWelcomeComment: >
-  Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, be sure to follow the issue template if you haven't already.
-
+  Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, please make sure to fill out the inputs in the issue forms. Thank you!
 # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
 
 # Comment to be posted to on PRs from first time contributors in your repository

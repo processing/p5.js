@@ -6,7 +6,6 @@
  */
 
 import p5 from '../core/main';
-import Filters from './filters';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
@@ -888,33 +887,8 @@ p5.prototype.noTint = function() {
  * @param {p5.Image} The image to be tinted
  * @return {canvas} The resulting tinted canvas
  */
-p5.prototype._getTintedImageCanvas = function(img) {
-  if (!img.canvas) {
-    return img;
-  }
-  const pixels = Filters._toPixels(img.canvas);
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = img.canvas.width;
-  tmpCanvas.height = img.canvas.height;
-  const tmpCtx = tmpCanvas.getContext('2d');
-  const id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
-  const newPixels = id.data;
-
-  for (let i = 0; i < pixels.length; i += 4) {
-    const r = pixels[i];
-    const g = pixels[i + 1];
-    const b = pixels[i + 2];
-    const a = pixels[i + 3];
-
-    newPixels[i] = r * this._renderer._tint[0] / 255;
-    newPixels[i + 1] = g * this._renderer._tint[1] / 255;
-    newPixels[i + 2] = b * this._renderer._tint[2] / 255;
-    newPixels[i + 3] = a * this._renderer._tint[3] / 255;
-  }
-
-  tmpCtx.putImageData(id, 0, 0);
-  return tmpCanvas;
-};
+p5.prototype._getTintedImageCanvas =
+  p5.Renderer2D.prototype._getTintedImageCanvas;
 
 /**
  * Set image mode. Modifies the location from which images are drawn by

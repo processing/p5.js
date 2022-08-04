@@ -375,7 +375,19 @@ module.exports = grunt => {
         options: {
           archive: 'release/p5.zip'
         },
-        files: [{ cwd: 'lib/', src: ['**/*'], expand: true }]
+        files: [
+          {
+            cwd: 'lib/',
+            src: [
+              'p5.js',
+              'p5.min.js',
+              'addons/*',
+              'empty-example/*',
+              'README.txt'
+            ],
+            expand: true
+          }
+        ]
       }
     },
 

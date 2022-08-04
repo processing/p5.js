@@ -1490,6 +1490,7 @@ p5.Vector.prototype.heading = function heading() {
  */
 
 p5.Vector.prototype.setHeading = function setHeading(a) {
+  if (this.isPInst) a = this._toRadians(a);
   let m = this.mag();
   this.x = m * Math.cos(a);
   this.y = m * Math.sin(a);

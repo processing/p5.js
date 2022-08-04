@@ -54,8 +54,8 @@ Stewards are contributors that are particularly involved, familiar, or responsiv
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating. If you’re familiar with one or more parts of this project, open an issue to volunteer as a steward!
 
-* [@outofambit](https://github.com/outofambit) - project co-lead
-* [@qianqianye](https://github.com/qianqianye) - project co-lead
+* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
+* [@outofambit](https://github.com/outofambit) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)
 * [@limzykenneth](https://github.com/limzykenneth)
 * [@stalgiag](https://github.com/stalgiag)
@@ -63,24 +63,25 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@dhowe](https://github.com/dhowe)
 * [@rahulm2310](https://github.com/rahulm2310)
 
-| Area                              | Steward(s)                                   |
-| :-------------------------------- | :------------------------------------------- |
-| Accessibility (Web Accessibility) | outofambit                                   |
-| Color                             | outofambit                                   |
-| Core/Environment/Rendering        | outofambit<br/>limzykenneth                  |
-| Data                              |                                              |
-| DOM                               | outofambit                                   |
-| Events                            | outofambit<br/>limzykenneth                  |
-| Image                             | stalgiag                                     |
-| IO                                | limzykenneth                                 |
-| Math                              | limzykenneth                                 |
-| Typography                        | dhowe                                        |
-| Utilities                         |                                              |
-| WebGL                             | stalgiag                                     |
-| Build Process/Unit Testing        | outofambit                                   |
-| Localization Tools                | outofambit                                   |
-| Friendly Errors                   | outofambit                                   |
-| [Website](https://github.com/processing/p5.js-website) | limzykenneth<br/>rahulm2310             |
+| Area                                                                                 | Steward(s)                                                                                                               |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Overall                                                                              | [@qianqianye](https://github.com/qianqianye)                                                                                                             |
+| [Accessibility](https://github.com/processing/p5.js/tree/main/src/accessibility)     | [@kungfuchicken](https://github.com/kungfuchicken), [@cosmicbhejafry](https://github.com/cosmicbhejafry)                                     |
+| [Color](https://github.com/processing/p5.js/tree/main/src/color)                     | [@KleoP](https://github.com/KleoP), [@murilopolese](https://github.com/murilopolese), [@aahdee](https://github.com/aahdee)            |
+| [Core](https://github.com/processing/p5.js/tree/main/src/core)/Environment/Rendering | [@limzykenneth](https://github.com/limzykenneth), [@davepagurek](https://github.com/davepagurek), [@jeffawang](https://github.com/jeffawang)                            |
+| [Data](https://github.com/processing/p5.js/tree/main/src/data)                       | [@kungfuchicken](https://github.com/kungfuchicken), [@cosmicbhejafry](https://github.com/cosmicbhejafry)                                             |
+| [DOM](https://github.com/processing/p5.js/tree/main/src/dom)                         | [@outofambit](https://github.com/outofambit), [@SarveshLimaye](https://github.com/SarveshLimaye), [@SamirDhoke](https://github.com/SamirDhoke)                   |
+| [Events](https://github.com/processing/p5.js/tree/main/src/events)                   | [@limzykenneth](https://github.com/limzykenneth)                                                                                                            |
+| [Image](https://github.com/processing/p5.js/tree/main/src/image)                     | [@stalgiag](https://github.com/stalgiag), [@cgusb](https://github.com/cgusb), [@photon-niko](https://github.com/photon-niko), [@KleoP](https://github.com/KleoP)
+| [IO](https://github.com/processing/p5.js/tree/main/src/io)                           | [@limzykenneth](https://github.com/limzykenneth)                                                                                                            |
+| [Math](https://github.com/processing/p5.js/tree/main/src/math)                       | [@limzykenneth](https://github.com/limzykenneth), [@jeffawang](https://github.com/jeffawang), [@AdilRabbani](https://github.com/AdilRabbani)       |
+| [Typography](https://github.com/processing/p5.js/tree/main/src/typography)           | [@dhowe](https://github.com/dhowe), [@SarveshLimaye](https://github.com/SarveshLimaye)                                                                                                                  |
+| [Utilities](https://github.com/processing/p5.js/tree/main/src/utilities)             | [@kungfuchicken](https://github.com/kungfuchicken), [@cosmicbhejafry](https://github.com/cosmicbhejafry)                                  |
+| [WebGL](https://github.com/processing/p5.js/tree/main/src/webgl)                     | [@stalgiag](https://github.com/stalgiag); GSoC 2022: [@aceslowman](https://github.com/aceslowman)(Contributor), [@kjhollen](https://github.com/kjhollen)(Mentor); [@ShenpaiSharma](https://github.com/ShenpaiSharma)(Contributor), [@calebfoss](https://github.com/calebfoss)(Mentor); [@davepagurek](https://github.com/davepagurek); [@jeffawang](https://github.com/jeffawang); [@AdilRabbani](https://github.com/AdilRabbani)  |
+| Build Process/Unit Testing                                                           | [@outofambit](https://github.com/outofambit), [@kungfuchicken](https://github.com/kungfuchicken)                                                                                                               |
+| Localization Tools                                                                   | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                           |
+| Friendly Errors                                                                      | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                                                                                                              |
+| [Contributor Docs](https://github.com/processing/p5.js/tree/main/contributor_docs)   | [SoD 2022](https://github.com/processing/p5.js/wiki/Season-of-Docs-2022-Organization-Application---p5.js): [@limzykenneth](https://github.com/limzykenneth) |
 
 ## Contributors
 
@@ -563,6 +564,24 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/CommanderRoot"><img src="https://avatars.githubusercontent.com/u/4395417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>CommanderRoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=CommanderRoot" title="Code">💻</a></td>
     <td align="center"><a href="http://philipbell.org"><img src="https://avatars.githubusercontent.com/u/3860311?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philip Bell</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=processprocess" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/tapioca24"><img src="https://avatars.githubusercontent.com/u/12683107?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tapioca24</b></sub></a><br /><a href="#plugin-tapioca24" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="http://qianqian-ye.com"><img src="https://avatars.githubusercontent.com/u/18587130?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Qianqian Ye</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Qianqianye" title="Code">💻</a> <a href="#design-Qianqianye" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=Qianqianye" title="Documentation">📖</a> <a href="#eventOrganizing-Qianqianye" title="Event Organizing">📋</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3AQianqianye" title="Reviewed Pull Requests">👀</a> <a href="#translation-Qianqianye" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/adarrssh"><img src="https://avatars.githubusercontent.com/u/85433137?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adarsh</b></sub></a><br /><a href="#translation-adarrssh" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/kaabe1"><img src="https://avatars.githubusercontent.com/u/78185255?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kaabe1</b></sub></a><br /><a href="#design-kaabe1" title="Design">🎨</a> <a href="#eventOrganizing-kaabe1" title="Event Organizing">📋</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.guirdo.xyz/"><img src="https://avatars.githubusercontent.com/u/21044700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seb Méndez</b></sub></a><br /><a href="#translation-Guirdo" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/3ru"><img src="https://avatars.githubusercontent.com/u/69892552?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ryuya</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3A3ru" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3A3ru" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/processing/p5.js/commits?author=3ru" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/LEMIBANDDEXARI"><img src="https://avatars.githubusercontent.com/u/70129787?v=4?s=100" width="100px;" alt=""/><br /><sub><b>LEMIBANDDEXARI</b></sub></a><br /><a href="#translation-LEMIBANDDEXARI" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://linktr.ee/probablyvivek"><img src="https://avatars.githubusercontent.com/u/25459353?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vivek Tiwari</b></sub></a><br /><a href="#translation-probablyvivek" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/KevinGrajeda"><img src="https://avatars.githubusercontent.com/u/60023139?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Grajeda</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KevinGrajeda" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/anniezhengg"><img src="https://avatars.githubusercontent.com/u/78184655?v=4?s=100" width="100px;" alt=""/><br /><sub><b>anniezhengg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=anniezhengg" title="Code">💻</a> <a href="#design-anniezhengg" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/SNP0301"><img src="https://avatars.githubusercontent.com/u/68281918?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seung-Gi Kim(David)</b></sub></a><br /><a href="#translation-SNP0301" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://ikebot108.weebly.com/"><img src="https://avatars.githubusercontent.com/u/56776763?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ike Bischof</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=IkeB108" title="Code">💻</a></td>
+    <td align="center"><a href="https://ongzz.ml"><img src="https://avatars.githubusercontent.com/u/47311100?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ong Zhi Zheng</b></sub></a><br /><a href="#plugin-ongzzzzzz" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="https://github.com/bsubbaraman"><img src="https://avatars.githubusercontent.com/u/11969085?v=4?s=100" width="100px;" alt=""/><br /><sub><b>bsubbaraman</b></sub></a><br /><a href="#plugin-bsubbaraman" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="http://jdeboi.com"><img src="https://avatars.githubusercontent.com/u/1548679?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jenna deBoisblanc</b></sub></a><br /><a href="#plugin-jdeboi" title="Plugin/utility libraries">🔌</a></td>
   </tr>
 </table>
 
