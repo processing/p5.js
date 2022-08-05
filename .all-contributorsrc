@@ -3167,6 +3167,42 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "IkeB108",
+      "name": "Ike Bischof",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56776763?v=4",
+      "profile": "https://ikebot108.weebly.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ongzzzzzz",
+      "name": "Ong Zhi Zheng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47311100?v=4",
+      "profile": "https://ongzz.ml",
+      "contributions": [
+        "plugin"
+      ]
+    },
+    {
+      "login": "bsubbaraman",
+      "name": "bsubbaraman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11969085?v=4",
+      "profile": "https://github.com/bsubbaraman",
+      "contributions": [
+        "plugin"
+      ]
+    },
+    {
+      "login": "jdeboi",
+      "name": "Jenna deBoisblanc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1548679?v=4",
+      "profile": "http://jdeboi.com",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",

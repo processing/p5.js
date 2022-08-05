@@ -79,7 +79,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | [Utilities](https://github.com/processing/p5.js/tree/main/src/utilities)             | [@kungfuchicken](https://github.com/kungfuchicken), [@cosmicbhejafry](https://github.com/cosmicbhejafry)                                  |
 | [WebGL](https://github.com/processing/p5.js/tree/main/src/webgl)                     | [@stalgiag](https://github.com/stalgiag); GSoC 2022: [@aceslowman](https://github.com/aceslowman)(Contributor), [@kjhollen](https://github.com/kjhollen)(Mentor); [@ShenpaiSharma](https://github.com/ShenpaiSharma)(Contributor), [@calebfoss](https://github.com/calebfoss)(Mentor); [@davepagurek](https://github.com/davepagurek); [@jeffawang](https://github.com/jeffawang); [@AdilRabbani](https://github.com/AdilRabbani)  |
 | Build Process/Unit Testing                                                           | [@outofambit](https://github.com/outofambit), [@kungfuchicken](https://github.com/kungfuchicken)                                                                                                               |
-| Localization Tools                                                                   | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                           |
+| Internalization                                                                  | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                           |
 | Friendly Errors                                                                      | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                                                                                                              |
 | [Contributor Docs](https://github.com/processing/p5.js/tree/main/contributor_docs)   | [SoD 2022](https://github.com/processing/p5.js/wiki/Season-of-Docs-2022-Organization-Application---p5.js): [@limzykenneth](https://github.com/limzykenneth) |
 
@@ -576,6 +576,12 @@ We recognize all types of contributions. This project follows the [all-contribut
     <td align="center"><a href="https://github.com/KevinGrajeda"><img src="https://avatars.githubusercontent.com/u/60023139?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kevin Grajeda</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=KevinGrajeda" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/anniezhengg"><img src="https://avatars.githubusercontent.com/u/78184655?v=4?s=100" width="100px;" alt=""/><br /><sub><b>anniezhengg</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=anniezhengg" title="Code">💻</a> <a href="#design-anniezhengg" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/SNP0301"><img src="https://avatars.githubusercontent.com/u/68281918?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Seung-Gi Kim(David)</b></sub></a><br /><a href="#translation-SNP0301" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://ikebot108.weebly.com/"><img src="https://avatars.githubusercontent.com/u/56776763?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ike Bischof</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=IkeB108" title="Code">💻</a></td>
+    <td align="center"><a href="https://ongzz.ml"><img src="https://avatars.githubusercontent.com/u/47311100?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ong Zhi Zheng</b></sub></a><br /><a href="#plugin-ongzzzzzz" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="https://github.com/bsubbaraman"><img src="https://avatars.githubusercontent.com/u/11969085?v=4?s=100" width="100px;" alt=""/><br /><sub><b>bsubbaraman</b></sub></a><br /><a href="#plugin-bsubbaraman" title="Plugin/utility libraries">🔌</a></td>
+    <td align="center"><a href="http://jdeboi.com"><img src="https://avatars.githubusercontent.com/u/1548679?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jenna deBoisblanc</b></sub></a><br /><a href="#plugin-jdeboi" title="Plugin/utility libraries">🔌</a></td>
   </tr>
 </table>
 
