@@ -41,7 +41,7 @@ All the Area labels are now coordinated with the  [src folder](https://github.co
 All the labels below are coordinated with the rest of the steward [focus areas](https://github.com/processing/p5.js#stewards).
 * Build Process
 * Unit Testing
-* Localization Tools
+* Internalization
 * Friendly Errors
 * Documentation
 
