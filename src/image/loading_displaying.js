@@ -251,17 +251,8 @@ p5.prototype.saveGif = async function(...args) {
   // we start on the frame set by the delay argument
   frameCount = nFramesDelay;
 
-  //   console.info(
-  //     'Processing ' + nFrames + ' frames with ' + delay + ' seconds of delay...'
-  //   );
-
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
-  const pd = this._pixelDensity;
-
-  // width and height based on (p)ixel (d)ensity
-  const width_pd = this.width * pd;
-  const height_pd = this.height * pd;
 
   // We first take every frame that we are going to use for the animation
   let frames = [];
@@ -286,7 +277,7 @@ p5.prototype.saveGif = async function(...args) {
       */
     this.redraw();
 
-    const data = this.drawingContext.getImageData(0, 0, width_pd, height_pd)
+    const data = this.drawingContext.getImageData(0, 0, this.width, this.height)
       .data;
 
     frames.push(data);
@@ -300,7 +291,6 @@ p5.prototype.saveGif = async function(...args) {
     );
     await new Promise(resolve => setTimeout(resolve, 0));
   }
-  //   console.info('Frames processed, encoding gif. This may take a while...');
   p.html('Frames processed, encoding gif. This may take a while...');
 
   this.loop();
@@ -317,7 +307,7 @@ p5.prototype.saveGif = async function(...args) {
   for (let i = 0; i < frames.length; i++) {
     if (i === 0) {
       const indexedFrame = applyPalette(frames[i], globalPalette, { format });
-      gif.writeFrame(indexedFrame, width_pd, height_pd, {
+      gif.writeFrame(indexedFrame, this.width, this.height, {
         palette: globalPalette,
         delay: 20,
         dispose: 1
@@ -354,7 +344,7 @@ p5.prototype.saveGif = async function(...args) {
     const indexedFrame = applyPalette(currFramePixels, globalPalette, {
       format
     });
-    const transparentIndex = currFramePixels[matchingPixelsInFrames[0]];
+    const transparentIndex = indexedFrame[matchingPixelsInFrames[0]];
 
     for (let mp of matchingPixelsInFrames) {
       // here, we overwrite whatever color this pixel was assigned to
@@ -366,7 +356,7 @@ p5.prototype.saveGif = async function(...args) {
     }
     // Write frame into the encoder
 
-    gif.writeFrame(indexedFrame, width_pd, height_pd, {
+    gif.writeFrame(indexedFrame, this.width, this.height, {
       delay: 20,
       transparent: true,
       transparentIndex: transparentIndex,

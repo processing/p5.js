@@ -185,6 +185,8 @@ p5.prototype.saveCanvas = function() {
 };
 
 // this is the old saveGif, left here for compatibility purposes
+// the only place I found it being used was on image/p5.Image.js, on the
+// save function. that has been changed to use this function.
 p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   const props = pImg.gifProperties;
 

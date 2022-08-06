@@ -890,7 +890,7 @@ p5.Image.prototype.isModified = function() {
  */
 p5.Image.prototype.save = function(filename, extension) {
   if (this.gifProperties) {
-    p5.prototype.saveGif(this, filename);
+    p5.prototype.encodeAndDownloadGif(this, filename);
   } else {
     p5.prototype.saveCanvas(this.canvas, filename, extension);
   }
