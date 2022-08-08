@@ -32,16 +32,16 @@ suite('downloading animated gifs', function() {
     });
   });
 
-  suite('p5.prototype.saveGif', function() {
+  suite('p5.prototype.encodeAndDownloadGif', function() {
     test('should be a function', function() {
-      assert.ok(myp5.saveGif);
-      assert.typeOf(myp5.saveGif, 'function');
+      assert.ok(myp5.encodeAndDownloadGif);
+      assert.typeOf(myp5.encodeAndDownloadGif, 'function');
     });
     test('should not throw an error', function() {
-      myp5.saveGif(myGif);
+      myp5.encodeAndDownloadGif(myGif);
     });
     testWithDownload('should download a gif', function(blobContainer) {
-      myp5.saveGif(myGif);
+      myp5.encodeAndDownloadGif(myGif);
       let gifBlob = blobContainer.blob;
       assert.strictEqual(gifBlob.type, 'image/gif');
     });
