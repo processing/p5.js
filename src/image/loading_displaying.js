@@ -270,6 +270,15 @@ p5.prototype.saveGif = async function(...args) {
   p.style('border-radius', '10px');
   p.position(0, 0);
 
+  let pixels;
+  let gl;
+  if (this.drawingContext instanceof WebGLRenderingContext) {
+    // if we have a WEBGL context, initialize the pixels array
+    // and the gl context to use them inside the loop
+    gl = document.getElementById('defaultCanvas0').getContext('webgl');
+    pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+  }
+
   while (count < nFrames + nFramesDelay) {
     /*
       we draw the next frame. this is important, since
@@ -279,8 +288,29 @@ p5.prototype.saveGif = async function(...args) {
       */
     this.redraw();
 
-    const data = this.drawingContext.getImageData(0, 0, this.width, this.height)
-      .data;
+    // depending on the context we'll extract the pixels one way
+    // or another
+    let data = undefined;
+
+    if (this.drawingContext instanceof WebGLRenderingContext) {
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
+      gl.readPixels(
+        0,
+        0,
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        pixels
+      );
+
+      data = _flipPixels(pixels);
+    } else {
+      data = this.drawingContext.getImageData(0, 0, this.width, this.height)
+        .data;
+    }
 
     frames.push(data);
     count++;
@@ -391,6 +421,34 @@ p5.prototype.saveGif = async function(...args) {
   p.html('Done. Downloading your gif!🌸');
   p5.prototype.downloadFile(blob, fileName, extension);
 };
+
+function _flipPixels(pixels) {
+  // extracting the pixels using readPixels returns
+  // an upside down image. we have to flip it back
+  // first. this solution is proposed by gman on
+  // this stack overflow answer:
+  // https://stackoverflow.com/questions/41969562/how-can-i-flip-the-result-of-webglrenderingcontext-readpixels
+
+  var halfHeight = parseInt(height / 2);
+  var bytesPerRow = width * 4;
+
+  // make a temp buffer to hold one row
+  var temp = new Uint8Array(width * 4);
+  for (var y = 0; y < halfHeight; ++y) {
+    var topOffset = y * bytesPerRow;
+    var bottomOffset = (height - y - 1) * bytesPerRow;
+
+    // make copy of a row on the top half
+    temp.set(pixels.subarray(topOffset, topOffset + bytesPerRow));
+
+    // copy a row from the bottom half to the top
+    pixels.copyWithin(topOffset, bottomOffset, bottomOffset + bytesPerRow);
+
+    // copy the copy of the top half row to the bottom half
+    pixels.set(temp, bottomOffset);
+  }
+  return pixels;
+}
 
 function _generateGlobalPalette(frames, format) {
   // for each frame, we'll keep track of the count of
