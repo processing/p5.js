@@ -302,6 +302,7 @@ p5.prototype.saveGif = async function(...args) {
 
   // calculate the global palette for this set of frames
   const globalPalette = _generateGlobalPalette(frames, format);
+  const transparentIndex = globalPalette.length - 1;
 
   // we are going to iterate the frames in pairs, n-1 and n
   for (let i = 0; i < frames.length; i++) {
@@ -344,7 +345,8 @@ p5.prototype.saveGif = async function(...args) {
     const indexedFrame = applyPalette(currFramePixels, globalPalette, {
       format
     });
-    const transparentIndex = indexedFrame[matchingPixelsInFrames[0]];
+
+    // console.log(transparentIndex, globalPalette[transparentIndex]);
 
     for (let mp of matchingPixelsInFrames) {
       // here, we overwrite whatever color this pixel was assigned to
@@ -384,7 +386,7 @@ p5.prototype.saveGif = async function(...args) {
   frames = [];
   this.loop();
 
-  p.html('Done. Downloading!🌸');
+  p.html('Done. Downloading your gif!🌸');
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
@@ -396,16 +398,30 @@ function _generateGlobalPalette(frames, format) {
 
   // calculate the frequency table for the colors
   let colorFreq = {};
-  for (let f of frames) {
-    let currPalette = quantize(f, 64, { format });
-    for (let color of currPalette) {
+  for (let f = 0; f < frames.length; f++) {
+    /**
+     * here, we use the quantize function in a rather unusual way.
+     * the quantize function will return a subset of colors for
+     * the given array of pixels. this is kinda like a "sum up" of
+     * the most important colors in the image, which will prevent us
+     * from exhaustively analyzing every pixel from every frame.
+     *
+     * in this case, we can just analyze the subset of the most
+     * important colors from each frame, which is actually more
+     * than enough for it to work properly.
+     */
+    let currPalette = quantize(frames[f], 256, { format });
+
+    for (let c = 0; c < currPalette.length; c++) {
       // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
       // we'll convert the array to its string representation so it can be used as an index!
-      color = color.toString();
-      if (colorFreq[color] === undefined) {
-        colorFreq[color] = { count: 1 };
+
+      let colorStr = currPalette[c].toString();
+
+      if (colorFreq[colorStr] === undefined) {
+        colorFreq[colorStr] = 1;
       } else {
-        colorFreq[color].count += 1;
+        colorFreq[colorStr] = colorFreq[colorStr] + 1;
       }
     }
   }
@@ -413,14 +429,24 @@ function _generateGlobalPalette(frames, format) {
   // at this point colorFreq is a dict with {color: count},
   // telling us how many times each color appears in the whole animation
 
+  // we create a new view into the dictionary as an array, in the form
+  // ['color', count]
+  let dictItems = Object.keys(colorFreq).map(function(key) {
+    return [key, colorFreq[key]];
+  });
+
+  // with that view, we can now properly sort the array based
+  // on the second component of each element
+  dictItems.sort(function(first, second) {
+    return second[1] - first[1];
+  });
+
   // we process it undoing the string operation coverting that into
-  // an array of strings (['255', '127', '45', '255']) and then we convert
+  // an array of strings (['255', '127', '45']) and then we convert
   // that again to an array of integers
-  let colorsSortedByFreq = Object.keys(colorFreq)
-    .sort((a, b) => {
-      return colorFreq[b].count - colorFreq[a].count;
-    })
-    .map(c => c.split(',').map(x => parseInt(x)));
+  let colorsSortedByFreq = dictItems.map(i =>
+    i[0].split(',').map(n => parseInt(n))
+  );
 
   // now we simply extract the top 256 colors!
   return colorsSortedByFreq.splice(0, 256);
