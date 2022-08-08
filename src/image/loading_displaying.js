@@ -266,6 +266,8 @@ p5.prototype.saveGif = async function(...args) {
   p.style('font-size', '16px');
   p.style('font-family', 'Montserrat');
   p.style('background-color', '#ffffffa0');
+  p.style('padding', '8px');
+  p.style('border-radius', '10px');
   p.position(0, 0);
 
   while (count < nFrames + nFramesDelay) {
