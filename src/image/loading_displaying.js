@@ -334,6 +334,8 @@ p5.prototype.saveGif = async function(...args) {
 
   // calculate the global palette for this set of frames
   const globalPalette = _generateGlobalPalette(frames, format);
+  //   const globalPalette2 = _generateGlobalPalette2(frames, format);
+  console.log(globalPalette);
   const transparentIndex = globalPalette.length - 1;
 
   // we are going to iterate the frames in pairs, n-1 and n
@@ -392,8 +394,8 @@ p5.prototype.saveGif = async function(...args) {
 
     gif.writeFrame(indexedFrame, this.width, this.height, {
       delay: 20,
-      transparent: true,
-      transparentIndex: transparentIndex,
+      //   transparent: true,
+      //   transparentIndex: transparentIndex,
       dispose: 1
     });
 
@@ -449,6 +451,24 @@ function _flipPixels(pixels) {
   }
   return pixels;
 }
+
+// function _generateGlobalPalette2(frames, format) {
+//   // make an array the size of every possible color in every possible frame
+//   // that is: width * height * frames.
+//   let allColors = new Uint8Array(frames.length * frames[0].length);
+
+//   // put every frame one after the other in sequence.
+//   // this array will hold absolutely every pixel from the animation.
+//   // the set function on the Uint8Array works super fast tho!
+//   for (let f = 0; f < frames.length; f++) {
+//     allColors.set(frames[0], f * frames[0].length);
+//   }
+
+//   // quantize this massive array into 256 colors and return it!
+//   let colorPalette = quantize(allColors, 255, { format });
+//   colorPalette.push([-1, -1, -1]);
+//   return colorPalette;
+// }
 
 function _generateGlobalPalette(frames, format) {
   // for each frame, we'll keep track of the count of
@@ -508,6 +528,7 @@ function _generateGlobalPalette(frames, format) {
     i[0].split(',').map(n => parseInt(n))
   );
 
+  console.log(colorsSortedByFreq.splice(0, 256));
   // now we simply extract the top 256 colors!
   return colorsSortedByFreq.splice(0, 256);
 }
