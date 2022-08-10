@@ -323,25 +323,26 @@ p5.prototype.saveGif = async function(...args) {
     );
     await new Promise(resolve => setTimeout(resolve, 0));
   }
-  p.html('Frames processed, encoding gif. This may take a while...');
+  p.html('Frames processed, generating color palette...');
 
   this.loop();
   this.pixelDensity(lastPixelDensity);
 
   // create the gif encoder and the colorspace format
   const gif = GIFEncoder();
-  const format = 'rgb444';
 
   // calculate the global palette for this set of frames
-  const globalPalette = _generateGlobalPalette(frames, format);
-  //   const globalPalette2 = _generateGlobalPalette2(frames, format);
-  console.log(globalPalette);
+  const globalPalette = _generateGlobalPalette(frames);
+
+  // the way we designed the palette means we always take the last index for transparency
   const transparentIndex = globalPalette.length - 1;
 
   // we are going to iterate the frames in pairs, n-1 and n
   for (let i = 0; i < frames.length; i++) {
     if (i === 0) {
-      const indexedFrame = applyPalette(frames[i], globalPalette, { format });
+      const indexedFrame = applyPalette(frames[i], globalPalette, {
+        format: 'rgba4444'
+      });
       gif.writeFrame(indexedFrame, this.width, this.height, {
         palette: globalPalette,
         delay: 20,
@@ -353,7 +354,7 @@ p5.prototype.saveGif = async function(...args) {
     // matching pixels between frames can be set to full transparency,
     // kinda digging a "hole" into the frame to see the pixels that where behind it
     // (which would be the exact same, so not noticeable changes)
-    // this helps make the file smaller
+    // this helps make the file quite smaller
     let currFramePixels = frames[i];
     let lastFramePixels = frames[i - 1];
     let matchingPixelsInFrames = [];
@@ -370,6 +371,8 @@ p5.prototype.saveGif = async function(...args) {
         lastFramePixels[p + 2],
         lastFramePixels[p + 3]
       ];
+
+      // if the pixels are equal, save this index to be used later
       if (_pixelEquals(currPixel, lastPixel)) {
         matchingPixelsInFrames.push(parseInt(p / 4));
       }
@@ -377,25 +380,24 @@ p5.prototype.saveGif = async function(...args) {
     // we decide on one of this colors to be fully transparent
     // Apply palette to RGBA data to get an indexed bitmap
     const indexedFrame = applyPalette(currFramePixels, globalPalette, {
-      format
+      format: 'rgba4444'
     });
 
-    // console.log(transparentIndex, globalPalette[transparentIndex]);
-
-    for (let mp of matchingPixelsInFrames) {
+    for (let i = 0; i < matchingPixelsInFrames.length; i++) {
       // here, we overwrite whatever color this pixel was assigned to
       // with the color that we decided we are going to use as transparent.
       // down in writeFrame we are going to tell the encoder that whenever
       // it runs into "transparentIndex", just dig a hole there allowing to
       // see through what was in the frame before it.
-      indexedFrame[mp] = transparentIndex;
+      let pixelIndex = matchingPixelsInFrames[i];
+      indexedFrame[pixelIndex] = transparentIndex;
     }
-    // Write frame into the encoder
 
+    // Write frame into the encoder
     gif.writeFrame(indexedFrame, this.width, this.height, {
       delay: 20,
-      //   transparent: true,
-      //   transparentIndex: transparentIndex,
+      transparent: true,
+      transparentIndex: transparentIndex,
       dispose: 1
     });
 
@@ -452,85 +454,49 @@ function _flipPixels(pixels) {
   return pixels;
 }
 
-// function _generateGlobalPalette2(frames, format) {
-//   // make an array the size of every possible color in every possible frame
-//   // that is: width * height * frames.
-//   let allColors = new Uint8Array(frames.length * frames[0].length);
+function _generateGlobalPalette(frames) {
+  // make an array the size of every possible color in every possible frame
+  // that is: width * height * frames.
+  let allColors = new Uint8Array(frames.length * frames[0].length);
 
-//   // put every frame one after the other in sequence.
-//   // this array will hold absolutely every pixel from the animation.
-//   // the set function on the Uint8Array works super fast tho!
-//   for (let f = 0; f < frames.length; f++) {
-//     allColors.set(frames[0], f * frames[0].length);
-//   }
-
-//   // quantize this massive array into 256 colors and return it!
-//   let colorPalette = quantize(allColors, 255, { format });
-//   colorPalette.push([-1, -1, -1]);
-//   return colorPalette;
-// }
-
-function _generateGlobalPalette(frames, format) {
-  // for each frame, we'll keep track of the count of
-  // every unique color. that is: how many times does
-  // this particular color appear in every frame?
-  // Then we'll sort the colors and pick the top 256!
-
-  // calculate the frequency table for the colors
-  let colorFreq = {};
+  // put every frame one after the other in sequence.
+  // this array will hold absolutely every pixel from the animation.
+  // the set function on the Uint8Array works super fast tho!
   for (let f = 0; f < frames.length; f++) {
-    /**
-     * here, we use the quantize function in a rather unusual way.
-     * the quantize function will return a subset of colors for
-     * the given array of pixels. this is kinda like a "sum up" of
-     * the most important colors in the image, which will prevent us
-     * from exhaustively analyzing every pixel from every frame.
-     *
-     * in this case, we can just analyze the subset of the most
-     * important colors from each frame, which is actually more
-     * than enough for it to work properly.
-     */
-    let currPalette = quantize(frames[f], 256, { format });
-
-    for (let c = 0; c < currPalette.length; c++) {
-      // colors are in the format [r, g, b, (a)], as in [255, 127, 45, 255]
-      // we'll convert the array to its string representation so it can be used as an index!
-
-      let colorStr = currPalette[c].toString();
-
-      if (colorFreq[colorStr] === undefined) {
-        colorFreq[colorStr] = 1;
-      } else {
-        colorFreq[colorStr] = colorFreq[colorStr] + 1;
-      }
-    }
+    allColors.set(frames[0], f * frames[0].length);
   }
 
-  // at this point colorFreq is a dict with {color: count},
-  // telling us how many times each color appears in the whole animation
-
-  // we create a new view into the dictionary as an array, in the form
-  // ['color', count]
-  let dictItems = Object.keys(colorFreq).map(function(key) {
-    return [key, colorFreq[key]];
+  // quantize this massive array into 256 colors and return it!
+  let colorPalette = quantize(allColors, 256, {
+    format: 'rgba444',
+    oneBitAlpha: true
   });
 
-  // with that view, we can now properly sort the array based
-  // on the second component of each element
-  dictItems.sort(function(first, second) {
-    return second[1] - first[1];
-  });
+  // when generating the palette, we have to leave space for 1 of the
+  // indices to be a random color that does not appear anywhere in our
+  // animation to use for transparency purposes. So, if the palette is full
+  // (has 256 colors), we overwrite the last one with a random, fully transparent
+  // color. Otherwise, we just push a new color into the palette the same way.
 
-  // we process it undoing the string operation coverting that into
-  // an array of strings (['255', '127', '45']) and then we convert
-  // that again to an array of integers
-  let colorsSortedByFreq = dictItems.map(i =>
-    i[0].split(',').map(n => parseInt(n))
-  );
-
-  console.log(colorsSortedByFreq.splice(0, 256));
-  // now we simply extract the top 256 colors!
-  return colorsSortedByFreq.splice(0, 256);
+  // this guarantees that when using the transparency index, there are no matches
+  // between some colors of the animation and the "holes" we want to dig on them,
+  // which would cause pieces of some frames to be transparent and thus look glitchy.
+  if (colorPalette.length === 256) {
+    colorPalette[colorPalette.length - 1] = [
+      Math.random() * 255,
+      Math.random() * 255,
+      Math.random() * 255,
+      0
+    ];
+  } else {
+    colorPalette.push([
+      Math.random() * 255,
+      Math.random() * 255,
+      Math.random() * 255,
+      0
+    ]);
+  }
+  return colorPalette;
 }
 
 function _pixelEquals(a, b) {
