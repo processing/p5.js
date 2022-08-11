@@ -320,3 +320,33 @@ suite('p5.prototype.saveFrames', function() {
     });
   });
 });
+
+suite('p5.prototype.saveGif', function() {
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        p.createCanvas(10, 10);
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
+  test('should be a function', function() {
+    assert.ok(myp5.saveGif);
+    assert.typeOf(myp5.saveGif, 'function');
+  });
+  test('should not throw an error', function() {
+    myp5.saveGif('myGif', 3, 2);
+  });
+  testWithDownload('should download a GIF', async function(blobContainer) {
+    myp5.saveGif(myGif, 3, 2);
+    await waitForBlob(blobContainer);
+    let gifBlob = blobContainer.blob;
+    assert.strictEqual(gifBlob.type, 'image/gif');
+  });
+});
