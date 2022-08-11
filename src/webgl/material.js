@@ -803,7 +803,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
 
   const color = p5.prototype.color.apply(this, arguments);
   this._renderer.curFillColor = color._array;
-  this._renderer._useSpecularMaterial = false;
+  this._renderer._useAmbientMaterial = true;
+  // this._renderer._useSpecularMaterial = false;
   this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
@@ -962,7 +963,12 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   p5._validateParameters('specularMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
+  // this._renderer.curFillColor = color._array;
+  if (!this._renderer._useAmbientMaterial) {
+    this._renderer.curFillColor = color._array;
+  } else {
+    this._renderer.curFillColor = color._array;
+  }
   this._renderer._useSpecularMaterial = true;
   this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
