@@ -116,8 +116,43 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   //these regex are used to perform variable extraction
   //visit https://regexr.com/ for the detailed view
-  const varName = /(?:(?:let|const|var)\s+)?([\w$]+)/;
-  const varNameWithComma = /(?:(?:let|const|var)\s+)?([\w$,]+)/;
+  const optionalVarKeyword = /(?:(?:let|const|var)\s+)?/;
+
+  // Bracketed expressions start with an opening bracket, some amount of non
+  // bracket characters, then a closing bracket. Note that this won't properly
+  // parse nested brackets: `constrain(millis(), 0, 1000)` will match
+  // `constrain(millis()` only, but will still fail gracefully and not try to
+  // mistakenly read any subsequent code as assignment expressions.
+  const roundBracketedExpr = /(?:\([^)]*\))/;
+  const squareBracketedExpr = /(?:\[[^\]]*\])/;
+  const curlyBracketedExpr = /(?:\{[^}]*\})/;
+  const bracketedExpr = new RegExp(
+    [roundBracketedExpr, squareBracketedExpr, curlyBracketedExpr]
+      .map(regex => regex.source)
+      .join('|')
+  );
+
+  // In an a = b expression, `b` can be any character up to a newline or comma,
+  // unless the comma is inside of a bracketed expression of some kind (to make
+  // sure we parse function calls with multiple arguments properly.)
+  const rightHandSide = new RegExp('(?:' + bracketedExpr.source + '|[^\\n,])+');
+
+  const leftHandSide = /([\w$]+)/;
+  const assignmentOperator = /\s*=\s*/;
+  const singleAssignment = new RegExp(
+    leftHandSide.source + assignmentOperator.source + rightHandSide.source
+  );
+  const listSeparator = /,\s*/;
+  const oneOrMoreAssignments = new RegExp(
+    '(?:' +
+      singleAssignment.source +
+      listSeparator.source +
+      ')*' +
+      singleAssignment.source
+  );
+  const assignmentStatement = new RegExp(
+    '^' + optionalVarKeyword.source + oneOrMoreAssignments.source
+  );
   const letConstName = /(?:(?:let|const)\s+)([\w$]+)/;
 
   /**
@@ -133,27 +168,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
     //extract variable names from the user's code
     let matches = [];
     linesArray.forEach(ele => {
-      if (ele.includes(',')) {
-        matches.push(
-          ...ele.split(',').flatMap(s => {
-            //below RegExps extract a, b, c from let/const a=10, b=20, c;
-            //visit https://regexr.com/ for the detailed view.
-            let match;
-            if (s.includes('=')) {
-              match = s.match(/(\w+)\s*(?==)/i);
-              if (match !== null) return match[1];
-            } else if (!s.match(new RegExp('[[]{}]'))) {
-              let m = s.match(varName);
-              if (m !== null) return s.match(varNameWithComma)[1];
-            } else return [];
-          })
-        );
-      } else {
-        //extract a from let/const a=10;
-        //visit https://regexr.com/ for the detailed view.
-        const match = ele.match(letConstName);
-        if (match !== null) matches.push(match[1]);
-      }
+      // Match 0 is the part of the line of code that the regex looked at.
+      // Matches 1 and onward will be only the variable names on the left hand
+      // side of assignment expressions.
+      const match = ele.match(assignmentStatement);
+      if (!match) return;
+      matches.push(...match.slice(1).filter(group => group !== undefined));
     });
     //check if the obtained variables are a part of p5.js or not
     checkForConstsAndFuncs(matches);

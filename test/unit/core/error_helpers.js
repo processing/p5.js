@@ -974,4 +974,97 @@ suite('Tests for p5.js sketch_reader', function() {
       });
     }
   );
+
+  testUnMinified(
+    'detects reassignment of p5.js functions in declaration lists',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['function setup() {', 'let x = 2, text = 2;', '}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js functions in declaration lists after function calls',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          [
+            'function setup() {',
+            'let x = constrain(frameCount, 0, 1000), text = 2;',
+            '}'
+          ],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'ignores p5.js functions used in the right hand side of assignment expressions',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          // This will still log an error, as `text` isn't being used correctly
+          // here, but the important part is that it doesn't say that we're
+          // trying to reassign a reserved function.
+          ['function draw() {', 'let x = constrain(100, 0, text);', '}'],
+          resolve
+        );
+      }).then(function() {
+        assert.ok(
+          !log.some(line =>
+            line.match(/you have used a p5.js reserved function/)
+          )
+        );
+      });
+    }
+  );
+
+  testUnMinified(
+    'ignores p5.js function names used as function arguments',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['function draw() {', 'let myLog = (text) => print(text);', '}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 0);
+      });
+    }
+  );
+
+  testUnMinified(
+    'fails gracefully on inputs too complicated to parse',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          // This technically is redefining text, but it should stop parsing
+          // after the double nested brackets rather than try and possibly
+          // give a false positive error. This particular assignment will get
+          // caught at runtime regardless by
+          // `_createFriendlyGlobalFunctionBinder`.
+          [
+            'function draw() {',
+            'let x = constrain(millis(), 0, text = 100)',
+            '}'
+          ],
+          resolve
+        );
+      }).then(function() {
+        console.log(log);
+        assert.strictEqual(log.length, 0);
+      });
+    }
+  );
 });
