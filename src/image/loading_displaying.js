@@ -207,37 +207,21 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = async function(...args) {
-  // process args
-
-  let fileName;
-  let seconds;
-  let delay;
-
-  //   this section takes care of parsing and processing
-  //   the arguments in the correct format
-  switch (args.length) {
-    case 2:
-      fileName = args[0];
-      seconds = args[1];
-      break;
-    case 3:
-      fileName = args[0];
-      seconds = args[1];
-      delay = args[2];
-      break;
-  }
-
-  if (!delay) {
-    delay = 0;
-  }
-
+p5.prototype.saveGif = async function(fileName, seconds = 3, delay = 0) {
   // get the project's framerate
   // if it is undefined or some non useful value, assume it's 60
   let _frameRate = this._targetFrameRate;
   if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
     _frameRate = 60;
   }
+
+  // calculate delay based on frameRate
+  let gifFrameDelay = 1 / _frameRate * 1000;
+
+  // constrain it to be always greater than 20,
+  // otherwise it won't work in some browsers and systems
+  // reference: https://stackoverflow.com/questions/64473278/gif-frame-duration-seems-slower-than-expected
+  gifFrameDelay = gifFrameDelay < 20 ? 20 : gifFrameDelay;
 
   // because the input was in seconds, we now calculate
   // how many frames those seconds translate to
@@ -345,7 +329,7 @@ p5.prototype.saveGif = async function(...args) {
       });
       gif.writeFrame(indexedFrame, this.width, this.height, {
         palette: globalPalette,
-        delay: 20,
+        delay: gifFrameDelay,
         dispose: 1
       });
       continue;
@@ -395,7 +379,7 @@ p5.prototype.saveGif = async function(...args) {
 
     // Write frame into the encoder
     gif.writeFrame(indexedFrame, this.width, this.height, {
-      delay: 20,
+      delay: gifFrameDelay,
       transparent: true,
       transparentIndex: transparentIndex,
       dispose: 1
