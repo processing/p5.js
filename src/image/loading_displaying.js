@@ -171,8 +171,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  *
  * @method saveGif
  * @param  {String} filename File name of your gif
- * @param  {String} duration Duration in seconds that you wish to capture from your sketch
- * @param  {String} delay Duration in seconds that you wish to wait before starting to capture
+ * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
+ * @param  {Number} delay Duration in seconds that you wish to wait before starting to capture
  *
  * @example
  * <div>
