@@ -231,7 +231,7 @@ p5.prototype.saveGif = async function(fileName, seconds = 3, delay = 0) {
   let nFramesDelay = Math.ceil(delay * _frameRate);
 
   //   initialize variables for the frames processing
-  var count = nFramesDelay;
+  let count = nFramesDelay;
 
   this.noLoop();
   // we start on the frame set by the delay argument
@@ -360,7 +360,7 @@ p5.prototype.saveGif = async function(fileName, seconds = 3, delay = 0) {
 
       // if the pixels are equal, save this index to be used later
       if (_pixelEquals(currPixel, lastPixel)) {
-        matchingPixelsInFrames.push(parseInt(p / 4));
+        matchingPixelsInFrames.push(p / 4);
       }
     }
     // we decide on one of this colors to be fully transparent
