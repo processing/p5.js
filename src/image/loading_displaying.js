@@ -207,9 +207,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = async function(fileName, seconds = 3, delay = 0) {
+p5.prototype.saveGif = async function(fileName, seconds, delay) {
   // validate parameters
   p5._validateParameters('saveGif', arguments);
+
   // get the project's framerate
   // if it is undefined or some non useful value, assume it's 60
   let _frameRate = this._targetFrameRate;
