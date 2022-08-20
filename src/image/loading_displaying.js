@@ -402,6 +402,9 @@ function _sAssign(sVal, iVal) {
  *                           rectangle
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
+ * @param {String} [fit] fitst the thing
+ * @param {String} [xAlign] align
+ * @param {String} [yAlign] yalign
  */
 p5.prototype.image = function(
   img,
@@ -412,7 +415,10 @@ p5.prototype.image = function(
   sx,
   sy,
   sWidth,
-  sHeight
+  sHeight,
+  fit,
+  xAlign,
+  yAlign
 ) {
   // set defaults per spec: https://goo.gl/3ykfOq
 
@@ -420,6 +426,8 @@ p5.prototype.image = function(
 
   let defW = img.width;
   let defH = img.height;
+  yAlign = yAlign || 'center';
+  xAlign = xAlign || 'center';
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -427,10 +435,10 @@ p5.prototype.image = function(
     defH = img.elt.videoHeight;
   }
 
-  const _dx = dx;
-  const _dy = dy;
-  const _dw = dWidth || defW;
-  const _dh = dHeight || defH;
+  let _dx = dx;
+  let _dy = dy;
+  let _dw = dWidth || defW;
+  let _dh = dHeight || defH;
   let _sx = sx || 0;
   let _sy = sy || 0;
   let _sw = sWidth || defW;
@@ -460,6 +468,29 @@ p5.prototype.image = function(
   _sy *= pd;
   _sh *= pd;
   _sw *= pd;
+
+  if (fit && fit === 'shrink') {
+    let biggerRatio = Math.max(img.width / _dw, img.height / _dh);
+    const r = Math.max(biggerRatio, 1);
+
+    const adjusted_dw = img.width / r;
+    const adjusted_dh = img.height / r;
+
+    if (xAlign === 'center') {
+      _dx = (_dw - img.width / r) / 2;
+    } else if (xAlign === 'right') {
+      _dx = _dw - adjusted_dw;
+    }
+
+    if (yAlign === 'center') {
+      _dy = (_dh - img.height / r) / 2;
+    } else if (yAlign === 'bottom') {
+      _dy = _dh - adjusted_dh;
+    }
+
+    _dw = adjusted_dw;
+    _dh = adjusted_dh;
+  }
 
   const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
