@@ -163,16 +163,26 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * Generates a gif of your current animation and downloads it to your computer!
  *
  * The duration argument specifies how many seconds you want to record from your animation.
- * This value is then converted to the necessary number of frames to generate it.
+ * This value is then converted to the necessary number of frames to generate it, depending
+ * on the value of units. More on that on the next paragraph.
  *
- * With the delay argument, you can tell the function to skip the first `delay` seconds
- * of the animation, and then download the `duration` next seconds. This means that regardless
- * of the value of `delay`, your gif will always be `duration` seconds long.
+ * An optional object that can contain two more arguments: delay (number) and units (string).
+ * 
+ * `delay`, specifying how much time we should wait before recording
+ * 
+ * `units`, a string that can be either 'seconds' or 'frames'. By default it's 'seconds'. 
+ * 
+ * `units` specifies how the duration and delay arguments will behave.
+ * If 'seconds', these arguments will correspond to seconds, meaning that 3 seconds worth of animation 
+ * will be created. If 'frames', the arguments now correspond to the number of frames you want your
+ * animation to be, if you are very sure of this number.
  *
  * @method saveGif
  * @param  {String} filename File name of your gif
  * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
- * @param  {Number} delay Duration in seconds that you wish to wait before starting to capture
+ * @param  {Object} options An optional object that can contain two more arguments: delay, specifying 
+ * how much time we should wait before recording, and units, a string that can be either 'seconds' or 
+ * 'frames'. By default it's 'seconds'. 
  *
  * @example
  * <div>
@@ -207,18 +217,47 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @alt
  * animation of a circle moving smoothly diagonally
  */
-p5.prototype.saveGif = async function(fileName, seconds, delay) {
-  // validate parameters
+p5.prototype.saveGif = async function(
+  fileName,
+  duration,
+  { delay = 0, units = 'seconds' }
+) {
+  // validate parameters to throw friendly error
   p5._validateParameters('saveGif', arguments);
 
+  // throwing exception for tests
+  let delayOption = arguments[2].delay;
+  let unitsOption = arguments[2].units;
+
+  if (typeof fileName !== String)
+    throw TypeError('saveGif(): First argument should be a string');
+  if (typeof duration !== Number)
+    throw TypeError('saveGif(): Second argument should be a number');
+  if (typeof arguments[2] !== Object)
+    throw TypeError('saveGif(): Third argument should be an object');
+  if (typeof delayOption !== Number) {
+    throw TypeError(
+      'saveGif() options: first option "delay" should be a number'
+    );
+  }
+  if (unitsOption !== 'seconds' || unitsOption !== 'frames') {
+    throw TypeError(
+      'saveGif() options: second option "units" should either be "seconds" or "frames"'
+    );
+  }
+
   // get the project's framerate
-  // if it is undefined or some non useful value, assume it's 60
   let _frameRate = this._targetFrameRate;
+  // if it is undefined or some non useful value, assume it's 60
   if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
     _frameRate = 60;
   }
 
-  // calculate delay based on frameRate
+  // calculate frame delay based on frameRate
+
+  // this delay has nothing to do with the
+  // delay in options, but rather is the delay
+  // we have to specify to the gif encoder between frames.
   let gifFrameDelay = 1 / _frameRate * 1000;
 
   // constrain it to be always greater than 20,
@@ -226,15 +265,14 @@ p5.prototype.saveGif = async function(fileName, seconds, delay) {
   // reference: https://stackoverflow.com/questions/64473278/gif-frame-duration-seems-slower-than-expected
   gifFrameDelay = gifFrameDelay < 20 ? 20 : gifFrameDelay;
 
-  // because the input was in seconds, we now calculate
-  // how many frames those seconds translate to
-  let nFrames = Math.ceil(seconds * _frameRate);
-  let nFramesDelay = Math.ceil(delay * _frameRate);
+  // check the mode we are in and how many frames
+  // that duration translates to
+  const nFrames = units === 'seconds' ? duration * _frameRate : duration;
+  const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
 
-  //   initialize variables for the frames processing
+  // initialize variables for the frames processing
   let count = nFramesDelay;
 
-  this.noLoop();
   // we start on the frame set by the delay argument
   frameCount = nFramesDelay;
 
@@ -265,6 +303,9 @@ p5.prototype.saveGif = async function(fileName, seconds, delay) {
     gl = document.getElementById('defaultCanvas0').getContext('webgl');
     pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   }
+
+  // stop the loop since we are going to manually redraw
+  this.noLoop();
 
   while (count < nFrames + nFramesDelay) {
     /*
@@ -402,6 +443,7 @@ p5.prototype.saveGif = async function(fileName, seconds, delay) {
   // Get a direct typed array view into the buffer to avoid copying it
   const buffer = gif.bytesView();
   const extension = 'gif';
+
   const blob = new Blob([buffer], {
     type: 'image/gif'
   });
