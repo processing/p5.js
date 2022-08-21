@@ -340,9 +340,36 @@ suite('p5.prototype.saveGif', function() {
     assert.ok(myp5.saveGif);
     assert.typeOf(myp5.saveGif, 'function');
   });
+
   test('should not throw an error', function() {
-    myp5.saveGif('myGif', 3, 2);
+    myp5.saveGif('myGif', 3);
   });
+
+  test('should not throw an error', function() {
+    myp5.saveGif('myGif', 3, { delay: 2, frames: 'seconds' });
+  });
+
+  test('wrong parameter type #0', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif(2, 2);
+      done();
+    });
+  });
+
+  test('wrong parameter type #1', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif('mySketch', '2');
+      done();
+    });
+  });
+
+  test('wrong parameter type #2', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif('mySketch', 2, 'delay');
+      done();
+    });
+  });
+
   testWithDownload('should download a GIF', async function(blobContainer) {
     myp5.saveGif(myGif, 3, 2);
     await waitForBlob(blobContainer);
