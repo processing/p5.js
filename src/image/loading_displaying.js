@@ -248,12 +248,10 @@ p5.prototype.saveGif = async function(
   // that duration translates to
   const nFrames = units === 'seconds' ? duration * _frameRate : duration;
   const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
+  const totalNumberOfFrames = nFrames + nFramesDelay;
 
   // initialize variables for the frames processing
-  let count = nFramesDelay;
-
-  // we start on the frame set by the delay argument
-  //   frameCount = nFramesDelay;
+  let frameIterator = nFramesDelay;
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
@@ -261,8 +259,9 @@ p5.prototype.saveGif = async function(
   // We first take every frame that we are going to use for the animation
   let frames = [];
 
-  if (document.getElementById('progressBar') !== null)
-    document.getElementById('progressBar').remove();
+  let progressBarIdName = 'p5.gif.progressBar';
+  if (document.getElementById(progressBarIdName) !== null)
+    document.getElementById(progressBarIdName).remove();
 
   let p = this.createP('');
   p.id('progressBar');
@@ -286,13 +285,13 @@ p5.prototype.saveGif = async function(
   // stop the loop since we are going to manually redraw
   this.noLoop();
 
-  while (count < nFrames + nFramesDelay) {
+  while (frameIterator < totalNumberOfFrames) {
     /*
       we draw the next frame. this is important, since
       busy sketches or low end devices might take longer
       to render some frames. So we just wait for the frame
       to be drawn and immediately save it to a buffer and continue
-      */
+    */
     this.redraw();
 
     // depending on the context we'll extract the pixels one way
@@ -320,7 +319,7 @@ p5.prototype.saveGif = async function(
     }
 
     frames.push(data);
-    count++;
+    frameIterator++;
 
     p.html(
       'Saved frame <b>' +
