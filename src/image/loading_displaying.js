@@ -209,7 +209,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * // or keyPressed for example
  * function mousePressed() {
  *   // this will download the first two seconds of my animation!
- *   saveGif('mySketch', 2, {units: 'seconds', delay: 0});
+ *   saveGif('mySketch', 2, { units: 'seconds', delay: 0 });
  * }
  * </code>
  * </div>
