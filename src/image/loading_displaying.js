@@ -209,7 +209,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * // or keyPressed for example
  * function mousePressed() {
  *   // this will download the first two seconds of my animation!
- *   saveGif('mySketch', 2);
+ *   saveGif('mySketch', 2, {units: 'seconds', delay: 0});
  * }
  * </code>
  * </div>
@@ -224,27 +224,6 @@ p5.prototype.saveGif = async function(
 ) {
   // validate parameters to throw friendly error
   p5._validateParameters('saveGif', arguments);
-
-  // throwing exception for tests
-  let delayOption = arguments[2].delay;
-  let unitsOption = arguments[2].units;
-
-  if (typeof fileName !== String)
-    throw TypeError('saveGif(): First argument should be a string');
-  if (typeof duration !== Number)
-    throw TypeError('saveGif(): Second argument should be a number');
-  if (typeof arguments[2] !== Object)
-    throw TypeError('saveGif(): Third argument should be an object');
-  if (typeof delayOption !== Number) {
-    throw TypeError(
-      'saveGif() options: first option "delay" should be a number'
-    );
-  }
-  if (unitsOption !== 'seconds' || unitsOption !== 'frames') {
-    throw TypeError(
-      'saveGif() options: second option "units" should either be "seconds" or "frames"'
-    );
-  }
 
   // get the project's framerate
   let _frameRate = this._targetFrameRate;
@@ -274,7 +253,7 @@ p5.prototype.saveGif = async function(
   let count = nFramesDelay;
 
   // we start on the frame set by the delay argument
-  frameCount = nFramesDelay;
+  //   frameCount = nFramesDelay;
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
