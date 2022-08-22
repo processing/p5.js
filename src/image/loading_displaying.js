@@ -220,21 +220,29 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 p5.prototype.saveGif = async function(
   fileName,
   duration,
-  { delay = 0, units = 'seconds' }
+  options = { delay: 0, units: 'seconds' }
 ) {
-  // validate parameters to throw friendly error
-  p5._validateParameters('saveGif', arguments);
-
-  let optionsArg = arguments[arguments.length - 1];
-
+  // validate parameters
+  if (typeof fileName !== 'string') {
+    throw TypeError('fileName parameter must be a string');
+  }
+  if (typeof duration !== 'number') {
+    throw TypeError('Duration parameter must be a number');
+  }
   // if arguments in the options object are not correct, cancel operation
-  if (typeof optionsArg.delay !== 'number') {
-    console.log(optionsArg.delay, typeof optionsArg.delay);
+  if (typeof options.delay !== 'number') {
     throw TypeError('Delay parameter must be a number');
   }
-  if (optionsArg.units !== 'seconds' || optionsArg.units !== 'frames') {
+  // if units is not seconds nor frames, throw error
+  if (options.units !== 'seconds' && options.units !== 'frames') {
     throw TypeError('Units parameter must be either "frames" or "seconds"');
   }
+
+  // extract variables for more comfortable use
+  let units = options.units;
+  let delay = options.delay;
+
+  //   console.log(options);
 
   // get the project's framerate
   let _frameRate = this._targetFrameRate;
