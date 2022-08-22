@@ -167,49 +167,54 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * on the value of units. More on that on the next paragraph.
  *
  * An optional object that can contain two more arguments: delay (number) and units (string).
- * 
+ *
  * `delay`, specifying how much time we should wait before recording
- * 
- * `units`, a string that can be either 'seconds' or 'frames'. By default it's 'seconds'. 
- * 
+ *
+ * `units`, a string that can be either 'seconds' or 'frames'. By default it's 'seconds'.
+ *
  * `units` specifies how the duration and delay arguments will behave.
- * If 'seconds', these arguments will correspond to seconds, meaning that 3 seconds worth of animation 
+ * If 'seconds', these arguments will correspond to seconds, meaning that 3 seconds worth of animation
  * will be created. If 'frames', the arguments now correspond to the number of frames you want your
  * animation to be, if you are very sure of this number.
  *
  * @method saveGif
  * @param  {String} filename File name of your gif
  * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
- * @param  {Object} options An optional object that can contain two more arguments: delay, specifying 
- * how much time we should wait before recording, and units, a string that can be either 'seconds' or 
- * 'frames'. By default it's 'seconds'. 
+ * @param  {Object} options An optional object that can contain two more arguments: delay, specifying
+ * how much time we should wait before recording, and units, a string that can be either 'seconds' or
+ * 'frames'. By default it's 'seconds'.
  *
  * @example
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(100, 100);
- *   colorMode(HSL);
+ *   createCanvas(100,100);
  * }
-
+ *
  * function draw() {
- *   // create some cool dynamic background
- *   let hue = map(sin(frameCount / 100), -1, 1, 0, 100);
- *   background(hue, 40, 60);
-
- *   // create a circle that moves diagonally
- *   circle(
- *     100 * sin(frameCount / 10) + width / 2,
- *     100 * sin(frameCount / 10) + height / 2,
- *     10
- *   );
+ *   colorMode(RGB);
+ *   background(30);
+ *
+ *   // create a bunch of circles that move in... circles!
+ *   for (let i = 0; i < 10; i++) {
+ *     let opacity = map(i, 0, 10, 0, 255);
+ *     noStroke();
+ *     fill(230, 250, 90, opacity);
+ *     circle(
+ *       30 * sin(frameCount / (30 - i)) + width / 2,
+ *       30 * cos(frameCount / (30 - i)) + height / 2,
+ *       10
+ *     );
+ *   }
  * }
-
+ *
  * // you can put it in the mousePressed function,
  * // or keyPressed for example
- * function mousePressed() {
- *   // this will download the first two seconds of my animation!
- *   saveGif('mySketch', 2, { units: 'seconds', delay: 0 });
+ * function keyPressed() {
+ *   // this will download the first 5 seconds of the animation!
+ *   if (key === 's') {
+ *     saveGif('mySketch', 5);
+ *   }
  * }
  * </code>
  * </div>
@@ -271,6 +276,7 @@ p5.prototype.saveGif = async function(
 
   // initialize variables for the frames processing
   let frameIterator = nFramesDelay;
+  frameCount = frameIterator;
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
