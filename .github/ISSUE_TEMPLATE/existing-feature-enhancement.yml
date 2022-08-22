@@ -28,7 +28,7 @@ body:
         - label: WebGL
         - label: Build Process
         - label: Unit Testing
-        - label: Localization Tools
+        - label: Internalization
         - label: Friendly Errors
         - label: Other (specify if possible)
   - type: textarea
