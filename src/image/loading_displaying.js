@@ -225,6 +225,17 @@ p5.prototype.saveGif = async function(
   // validate parameters to throw friendly error
   p5._validateParameters('saveGif', arguments);
 
+  let optionsArg = arguments[arguments.length - 1];
+
+  // if arguments in the options object are not correct, cancel operation
+  if (typeof optionsArg.delay !== 'number') {
+    console.log(optionsArg.delay, typeof optionsArg.delay);
+    throw TypeError('Delay parameter must be a number');
+  }
+  if (optionsArg.units !== 'seconds' || optionsArg.units !== 'frames') {
+    throw TypeError('Units parameter must be either "frames" or "seconds"');
+  }
+
   // get the project's framerate
   let _frameRate = this._targetFrameRate;
   // if it is undefined or some non useful value, assume it's 60
