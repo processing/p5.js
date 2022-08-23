@@ -4,6 +4,7 @@ precision highp int;
 
 uniform vec4 uSpecularMatColor;
 uniform vec4 uAmbientMatColor;
+uniform vec4 uEmissiveMatColor;
 
 uniform vec4 uMaterialColor;
 uniform vec4 uTint;
@@ -22,19 +23,27 @@ void main(void) {
   vec3 specular;
   totalLight(vViewPosition, normalize(vNormal), diffuse, specular);
 
+  // Calculating final color as result of all lights (plus emissive term).
+  // Transparency is determined exclusively by the diffuse component.
+
   if(uEmissive && !isTexture) {
-    gl_FragColor = uMaterialColor;
+    gl_FragColor = vec4(diffuse, 1) * uMaterialColor + 
+                   vec4(vAmbientColor, 0) * uAmbientMatColor + 
+                   vec4(specular, 0) * uSpecularMatColor + 
+                   vec4(uEmissiveMatColor.rgb, 0);
   }
   else {
     if(isTexture) {
       gl_FragColor = texture2D(uSampler, vTexCoord) * (uTint / vec4(255, 255, 255, 255));
       gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + vAmbientColor) + specular;
     } else {
+
+      // Calculating final color as result of all lights.
+      // Transparency is determined exclusively by the diffuse component.
+
       gl_FragColor = vec4(diffuse, 1) * uMaterialColor + 
                      vec4(vAmbientColor, 0) * uAmbientMatColor + 
                      vec4(specular, 0) * uSpecularMatColor;
     }
-    // gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) * (uTint / vec4(255, 255, 255, 255)) : uMaterialColor;
-    // gl_FragColor.rgb = gl_FragColor.rgb * diffuse + (vAmbientColor, 1.0) * uAmbientMatColor + specular * uSpecularMatColor;
   }
 }

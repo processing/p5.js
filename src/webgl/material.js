@@ -804,7 +804,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   const color = p5.prototype.color.apply(this, arguments);
   // this._renderer.curFillColor = color._array;
   this._renderer.curAmbientColor = color._array;
-  this._renderer._useAmbientMaterial = true;
+  // this._renderer._useAmbientMaterial = true;
   // this._renderer._useSpecularMaterial = false;
   // this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
@@ -877,9 +877,9 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   p5._validateParameters('emissiveMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  // this._renderer.curEmissiveColor = color._array;
-  this._renderer.curFillColor = color._array;
-  this._renderer._useSpecularMaterial = false;
+  this._renderer.curEmissiveColor = color._array;
+  // this._renderer.curFillColor = color._array;
+  // this._renderer._useSpecularMaterial = false;
   this._renderer._useEmissiveMaterial = true;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
