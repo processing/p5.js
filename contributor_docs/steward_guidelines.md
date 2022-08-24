@@ -14,7 +14,7 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 	- [Dependabot](#dependabot)
 - [Build Process](#build-process)
 - [Release Process](#release-process)
-- [Tips & Tricks](#tips-tricks)
+- [Tips & Tricks](#tips--tricks)
 
 ---
 
