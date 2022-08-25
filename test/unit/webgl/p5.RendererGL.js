@@ -522,4 +522,84 @@ suite('p5.RendererGL', function() {
       });
     });
   });
+
+  suite('beginShape() in WEBGL mode', function() {
+    test('QUADS mode converts into triangles', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.beginShape(myp5.QUADS);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, 1);
+      renderer.vertex(1, 0);
+      renderer.vertex(1, 1);
+
+      renderer.vertex(2, 0);
+      renderer.vertex(2, 1);
+      renderer.vertex(3, 0);
+      renderer.vertex(3, 1);
+      renderer.endShape();
+
+      const expected = [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+
+        [1, 0],
+        [0, 1],
+        [1, 1],
+
+        [2, 0],
+        [2, 1],
+        [3, 0],
+
+        [3, 0],
+        [2, 1],
+        [3, 1]
+      ];
+      assert.equal(
+        renderer.immediateMode.geometry.vertices.length,
+        expected.length
+      );
+      expected.forEach(function([x, y], i) {
+        assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
+        assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
+      });
+      done();
+    });
+
+    test('QUADS mode makes edges for quad outlines', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.beginShape(myp5.QUADS);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, 1);
+      renderer.vertex(1, 0);
+      renderer.vertex(1, 1);
+
+      renderer.vertex(2, 0);
+      renderer.vertex(2, 1);
+      renderer.vertex(3, 0);
+      renderer.vertex(3, 1);
+      renderer.endShape();
+
+      assert.equal(renderer.immediateMode.geometry.edges.length, 8);
+      done();
+    });
+
+    test('QUAD_STRIP mode makes edges for strip outlines', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.beginShape(myp5.QUAD_STRIP);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, 1);
+      renderer.vertex(1, 0);
+      renderer.vertex(1, 1);
+      renderer.vertex(2, 0);
+      renderer.vertex(2, 1);
+      renderer.vertex(3, 0);
+      renderer.vertex(3, 1);
+      renderer.endShape();
+
+      // Two full quads (2 * 4) plus two edges connecting them
+      assert.equal(renderer.immediateMode.geometry.edges.length, 10);
+      done();
+    });
+  });
 });
