@@ -526,19 +526,63 @@ suite('p5.RendererGL', function() {
   suite('beginShape() in WEBGL mode', function() {
     test('QUADS mode converts into triangles', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.textureMode(myp5.NORMAL);
       renderer.beginShape(myp5.QUADS);
-      renderer.vertex(0, 0);
-      renderer.vertex(0, 1);
-      renderer.vertex(1, 0);
-      renderer.vertex(1, 1);
+      renderer.fill(255, 0, 0);
+      renderer.normal(0, 1, 2);
+      renderer.vertex(0, 0, 0, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(3, 4, 5);
+      renderer.vertex(0, 1, 1, 0, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(6, 7, 8);
+      renderer.vertex(1, 0, 2, 1, 0);
+      renderer.fill(255, 0, 255);
+      renderer.normal(9, 10, 11);
+      renderer.vertex(1, 1, 3, 1, 1);
 
-      renderer.vertex(2, 0);
-      renderer.vertex(2, 1);
-      renderer.vertex(3, 0);
-      renderer.vertex(3, 1);
+      renderer.fill(255, 0, 0);
+      renderer.normal(12, 13, 14);
+      renderer.vertex(2, 0, 4, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(15, 16, 17);
+      renderer.vertex(2, 1, 5, 0, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(18, 19, 20);
+      renderer.vertex(3, 0, 6, 1, 0);
+      renderer.fill(255, 0, 255);
+      renderer.normal(21, 22, 23);
+      renderer.vertex(3, 1, 7, 1, 1);
       renderer.endShape();
 
-      const expected = [
+      const expectedVerts = [
+        [0, 0, 0],
+        [0, 1, 1],
+        [1, 0, 2],
+
+        [1, 0, 2],
+        [0, 1, 1],
+        [1, 1, 3],
+
+        [2, 0, 4],
+        [2, 1, 5],
+        [3, 0, 6],
+
+        [3, 0, 6],
+        [2, 1, 5],
+        [3, 1, 7]
+      ];
+      assert.equal(
+        renderer.immediateMode.geometry.vertices.length,
+        expectedVerts.length
+      );
+      expectedVerts.forEach(function([x, y, z], i) {
+        assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
+        assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
+        assert.equal(renderer.immediateMode.geometry.vertices[i].z, z);
+      });
+
+      const expectedUVs = [
         [0, 0],
         [0, 1],
         [1, 0],
@@ -547,22 +591,65 @@ suite('p5.RendererGL', function() {
         [0, 1],
         [1, 1],
 
-        [2, 0],
-        [2, 1],
-        [3, 0],
+        [0, 0],
+        [0, 1],
+        [1, 0],
 
-        [3, 0],
-        [2, 1],
-        [3, 1]
+        [1, 0],
+        [0, 1],
+        [1, 1]
+      ].flat();
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, expectedUVs);
+
+      const expectedColors = [
+        [1, 0, 0, 1],
+        [0, 1, 0, 1],
+        [0, 0, 1, 1],
+
+        [0, 0, 1, 1],
+        [0, 1, 0, 1],
+        [1, 0, 1, 1],
+
+        [1, 0, 0, 1],
+        [0, 1, 0, 1],
+        [0, 0, 1, 1],
+
+        [0, 0, 1, 1],
+        [0, 1, 0, 1],
+        [1, 0, 1, 1]
+      ].flat();
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexColors,
+        expectedColors
+      );
+
+      const expectedNormals = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+
+        [6, 7, 8],
+        [3, 4, 5],
+        [9, 10, 11],
+
+        [12, 13, 14],
+        [15, 16, 17],
+        [18, 19, 20],
+
+        [18, 19, 20],
+        [15, 16, 17],
+        [21, 22, 23]
       ];
       assert.equal(
-        renderer.immediateMode.geometry.vertices.length,
-        expected.length
+        renderer.immediateMode.geometry.vertexNormals.length,
+        expectedNormals.length
       );
-      expected.forEach(function([x, y], i) {
-        assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
-        assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
+      expectedNormals.forEach(function([x, y, z], i) {
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].x, x);
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].y, y);
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].z, z);
       });
+
       done();
     });
 
