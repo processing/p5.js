@@ -26,7 +26,7 @@ import './p5.RenderBuffer';
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
- *                       TRIANGLE_STRIP, TRIANGLE_FAN, QUADS,, QUAD_STRIP,
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN, QUADS, QUAD_STRIP,
  *                       and TESS(WEBGL only)
  * @chainable
  */
