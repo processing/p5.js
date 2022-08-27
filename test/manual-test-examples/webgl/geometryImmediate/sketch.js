@@ -1,6 +1,7 @@
 let angle, px, py;
 let img;
 const sz = 25;
+let stripColors = [];
 
 function preload() {
   img = loadImage('../assets/UV_Grid_Sm.jpg');
@@ -12,18 +13,56 @@ function setup() {
   textureMode(NORMAL);
   fill(63, 81, 181);
   strokeWeight(2);
+
+  for (let i = 0; i < 12; i++) {
+    stripColors.push([random(255), random(255), random(255)]);
+  }
 }
 
 function draw() {
   background(250);
 
-  line(-width / 2, -180, 0, width / 2, -180, 0);
+  // Reference: TRIANGLE_STRIP
+  push();
+  translate(-width / 3, -240);
+  drawStrip(TRIANGLE_STRIP);
+  pop();
+
+  // Test 1: QUADS
+  push();
+  translate(0, -240);
+  drawStrip(QUADS);
+  pop();
+
+  // Test 2: QUAD_STRIP
+  push();
+  translate(width / 3, -240);
+  drawStrip(QUAD_STRIP);
+  pop();
+
+  line(-width / 2, -160, 0, width / 2, -160, 0);
 
   ngon(5, -200, 0, 120);
   ngon(8, 0, 0, 120);
   ngon(11, 200, 0, 120);
 
   drawQuads(180);
+}
+
+function drawStrip(mode) {
+  rotate(PI / 2);
+  scale(0.3);
+  translate(0, -250);
+  beginShape(mode);
+  let vertexIndex = 0;
+  for (let y = 0; y <= 500; y += 100) {
+    for (const side of [-1, 1]) {
+      fill(...stripColors[vertexIndex]);
+      vertex(side * 40, y);
+      vertexIndex++;
+    }
+  }
+  endShape();
 }
 
 function ngon(n, x, y, d) {
