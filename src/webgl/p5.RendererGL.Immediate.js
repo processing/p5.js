@@ -62,17 +62,20 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   if (this.immediateMode.shapeMode === constants.QUADS) {
     // A finished quad turned into triangles should leave 6 vertices in the
     // buffer:
-    // 0--2     0--2   3
-    // |  | --> | /  / |
-    // 1--3     1   4--5
+    // 0--3     0   3--5
+    // |  | --> | \  \ |
+    // 1--2     1--2   4
     // When vertex index 3 is being added, add the necessary duplicates.
     if (this.immediateMode.geometry.vertices.length % 6 === 3) {
       for (const key in immediateBufferStrides) {
         const stride = immediateBufferStrides[key];
         const buffer = this.immediateMode.geometry[key];
         buffer.push(
-          ...buffer.slice(buffer.length - stride, buffer.length),
-          ...buffer.slice(buffer.length - 2 * stride, buffer.length - stride)
+          ...buffer.slice(
+            buffer.length - 3 * stride,
+            buffer.length - 2 * stride
+          ),
+          ...buffer.slice(buffer.length - stride, buffer.length)
         );
       }
     }
@@ -266,14 +269,14 @@ p5.RendererGL.prototype._calculateEdges = function(
       break;
     case constants.QUADS:
       // Quads have been broken up into two triangles by `vertex()`:
-      // 0---2  3
-      // | /  / |
-      // 1  4---5
+      // 0   3--5
+      // | \  \ |
+      // 1--2   4
       for (i = 0; i < verts.length - 5; i += 6) {
         res.push([i, i + 1]);
-        res.push([i, i + 2]);
-        res.push([i + 4, i + 5]);
+        res.push([i + 1, i + 2]);
         res.push([i + 3, i + 5]);
+        res.push([i + 4, i + 5]);
       }
       break;
     case constants.QUAD_STRIP:
