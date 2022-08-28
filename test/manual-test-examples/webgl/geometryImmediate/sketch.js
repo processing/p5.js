@@ -56,7 +56,23 @@ function drawStrip(mode) {
   beginShape(mode);
   let vertexIndex = 0;
   for (let y = 0; y <= 500; y += 100) {
-    for (const side of [-1, 1]) {
+    let sides = [-1, 1];
+    if (mode === QUADS && y % 200 !== 0) {
+      // QUAD_STRIP and TRIANGLE_STRIP need the vertices of each shared side
+      // ordered in the same way:
+      // 0--2--4--6
+      // |  |  |  | ⬇️
+      // 1--3--5--7
+      //
+      // ...but QUADS orders vertices in a consisten CCW or CW manner around
+      // each quad, meaning each side will be in the reverse order of the
+      // previous:
+      // 0--3  4--7
+      // |  |  |  | 🔄
+      // 1--2  5--6
+      sides.reverse();
+    }
+    for (const side of sides) {
       fill(...stripColors[vertexIndex]);
       vertex(side * 40, y);
       vertexIndex++;
