@@ -105,7 +105,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.blendExt = this.GL.getExtension('EXT_blend_minmax');
   this._isBlending = false;
 
-  // this._useAmbientMaterial = false;
   this._useSpecularMaterial = false;
   this._useEmissiveMaterial = false;
   this._useNormalMaterial = false;
