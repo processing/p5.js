@@ -1025,7 +1025,6 @@ p5.RendererGL.prototype.push = function() {
   properties.curSpecularColor = this.curSpecularColor;
   properties.curEmissiveColor = this.curEmissiveColor;
 
-  // properties._useAmbientMaterial = this._useAmbientMaterial;
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useEmissiveMaterial = this._useEmissiveMaterial;
   properties._useShininess = this._useShininess;
@@ -1264,7 +1263,6 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   }
   fillShader.setUniform('uTint', this._tint);
 
-  // fillShader.setUniform('uAmbient', this._useAmbientMaterial);
   fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
   fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
   fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
