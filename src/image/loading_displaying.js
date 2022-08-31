@@ -220,7 +220,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * </div>
  *
  * @alt
- * animation of a circle moving smoothly diagonally
+ * animation of a group of yellow circles moving in circles over a dark background
  */
 p5.prototype.saveGif = async function(
   fileName,
@@ -276,7 +276,7 @@ p5.prototype.saveGif = async function(
 
   // initialize variables for the frames processing
   let frameIterator = nFramesDelay;
-  frameCount = frameIterator;
+  this.frameCount = frameIterator;
 
   const lastPixelDensity = this._pixelDensity;
   this.pixelDensity(1);
