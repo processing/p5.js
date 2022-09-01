@@ -65,7 +65,13 @@ import '../core/friendly_errors/fes_core';
  * image of the underside of a white umbrella and grided ceililng above
  * image of the underside of a white umbrella and grided ceililng above
  */
-p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+p5.prototype.loadImage = function(
+  path,
+  successCallback,
+  failureCallback,
+  width,
+  height
+) {
   p5._validateParameters('loadImage', arguments);
   const pImg = new p5.Image(1, 1, this);
   const self = this;
@@ -113,11 +119,11 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
         const img = new Image();
 
         img.onload = () => {
-          pImg.width = pImg.canvas.width = img.width;
-          pImg.height = pImg.canvas.height = img.height;
+          pImg.width = pImg.canvas.width = width ? width : img.width;
+          pImg.height = pImg.canvas.height = height ? height : img.height;
 
           // Draw the image into the backing canvas of the p5.Image
-          pImg.drawingContext.drawImage(img, 0, 0);
+          pImg.drawingContext.drawImage(img, 0, 0, pImg.width, pImg.height);
           pImg.modified = true;
           if (typeof successCallback === 'function') {
             successCallback(pImg);
