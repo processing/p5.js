@@ -705,7 +705,7 @@ p5.prototype.createSelect = function() {
     }
     //see if there is already an option with this name
     for (let i = 0; i < this.elt.length; i += 1) {
-      if (this.elt[i].innerHTML === name) {
+      if (this.elt[i].textContent === name) {
         index = i;
         break;
       }
@@ -722,7 +722,7 @@ p5.prototype.createSelect = function() {
     } else {
       //if it doesn't exist create it
       const opt = document.createElement('option');
-      opt.innerHTML = name;
+      opt.textContent = name;
       opt.value = value === undefined ? name : value;
       this.elt.appendChild(opt);
       this._pInst._elements.push(opt);
