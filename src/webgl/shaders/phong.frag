@@ -23,11 +23,10 @@ void main(void) {
   totalLight(vViewPosition, normalize(vNormal), diffuse, specular);
 
   // Calculating final color as result of all lights (plus emissive term).
-  // Transparency is determined exclusively by the diffuse component.
 
   gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) * (uTint / vec4(255, 255, 255, 255)) : uMaterialColor;
   gl_FragColor.rgb = diffuse * gl_FragColor.rgb + 
-                   vAmbientColor * uAmbientMatColor.rgb + 
-                   specular * uSpecularMatColor.rgb + 
-                   uEmissiveMatColor.rgb;
+                    vAmbientColor * uAmbientMatColor.rgb + 
+                    specular * uSpecularMatColor.rgb + 
+                    uEmissiveMatColor.rgb;
 }
