@@ -177,6 +177,10 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * will be created. If 'frames', the arguments now correspond to the number of frames you want your
  * animation to be, if you are very sure of this number.
  *
+ * It is not recommended to write this function inside setup, since it won't work properly.
+ * The recommended use can be seen in the example, where we use it inside an event function,
+ * like keyPressed or mousePressed.
+ *
  * @method saveGif
  * @param  {String} filename File name of your gif
  * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
