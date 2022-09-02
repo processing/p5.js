@@ -281,6 +281,81 @@ function _createGif(
 }
 
 /**
+ * @private
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+
+function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
+  const r = Math.max(sw / dw, sh / dh, 1);
+  const [adjusted_dw, adjusted_dh] = [sw / r, sh / r];
+
+  let x = dx;
+  let y = dy;
+
+  if (xAlign === constants.CENTER) {
+    x = (dw - adjusted_dw) / 2;
+  } else if (xAlign === constants.RIGHT) {
+    x = dw - adjusted_dw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y = (dh - adjusted_dh) / 2;
+  } else if (yAlign === constants.BOTTOM) {
+    y = dh - adjusted_dh;
+  }
+
+  console.log({ adjusted_dw, adjusted_dh, sw, sh });
+  return { x, y, w: adjusted_dw, h: adjusted_dh };
+}
+/**
+ * @private
+ * @param {p5.Image|p5.Element|p5.Texture} img the image to draw
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+
+function _imageCover(img, xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
+  const r = Math.max(dw / sw, dh / sh, 1);
+  img.resize(img.width * r, img.height * r);
+
+  let x = sx;
+  let y = sy;
+
+  if (xAlign === constants.CENTER) {
+    x = sx * r + (sw * r - dw) / 2;
+  } else if (xAlign === constants.LEFT) {
+    x *= r;
+  } else if (xAlign === constants.RIGHT) {
+    x = sw * r - dw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y = sy * r + (sh * r - dh) / 2;
+  } else if (yAlign === constants.TOP) {
+    y *= r;
+  } else if (yAlign === constants.BOTTOM) {
+    y = sh * r - dh;
+  }
+
+  return { x, y, w: dw, h: dh };
+}
+
+/**
  * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
  * negative or greater than image intrinsic width and height
  * @private
@@ -402,7 +477,7 @@ function _sAssign(sVal, iVal) {
  *                           rectangle
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
- * @param {Constant} [fit] either COTAIN or COVER
+ * @param {Constant} [fit] either CONTAIN or COVER
  * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER
  * @param {Constant} [yAlign] either LEFT, RIGHT or CENTER
  */
@@ -426,8 +501,8 @@ p5.prototype.image = function(
 
   let defW = img.width;
   let defH = img.height;
-  yAlign = yAlign || 'center';
-  xAlign = xAlign || 'center';
+  yAlign = yAlign || constants.CENTER;
+  xAlign = xAlign || constants.CENTER;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -469,7 +544,43 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  let vals = { x: _dx, y: _dy, h: _dh, w: _dw };
+  if (fit) {
+    if (fit === constants.COVER) {
+      const { x, y, w, h } = _imageCover(
+        img,
+        xAlign,
+        yAlign,
+        _dw,
+        _dh,
+        _sx,
+        _sy,
+        _sw,
+        _sh
+      );
+      _sx = x;
+      _sy = y;
+      _sw = w;
+      _sh = h;
+    } else if (fit === constants.CONTAIN) {
+      const { x, y, w, h } = _imageContain(
+        xAlign,
+        yAlign,
+        _dx,
+        _dy,
+        _dw,
+        _dh,
+        _sw,
+        _sh
+      );
+      vals.x = x;
+      vals.y = y;
+      vals.w = w;
+      vals.h = h;
+    }
+  } else {
+    vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  }
 
   // tint the image if there is a tint
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
