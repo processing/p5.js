@@ -311,8 +311,6 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
   } else if (yAlign === constants.BOTTOM) {
     y = dh - adjusted_dh;
   }
-
-  console.log({ adjusted_dw, adjusted_dh, sw, sh });
   return { x, y, w: adjusted_dw, h: adjusted_dh };
 }
 /**
