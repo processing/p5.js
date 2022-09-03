@@ -477,7 +477,7 @@ function _sAssign(sVal, iVal) {
  *                            source image to draw into the destination rectangle
  * @param {Constant} [fit] either CONTAIN or COVER
  * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER
- * @param {Constant} [yAlign] either LEFT, RIGHT or CENTER
+ * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER
  */
 p5.prototype.image = function(
   img,
