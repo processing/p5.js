@@ -301,21 +301,20 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
   let y = dy;
 
   if (xAlign === constants.CENTER) {
-    x = (dw - adjusted_dw) / 2;
+    x += (dw - adjusted_dw) / 2;
   } else if (xAlign === constants.RIGHT) {
-    x = dw - adjusted_dw;
+    x += dw - adjusted_dw;
   }
 
   if (yAlign === constants.CENTER) {
-    y = (dh - adjusted_dh) / 2;
+    y += (dh - adjusted_dh) / 2;
   } else if (yAlign === constants.BOTTOM) {
-    y = dh - adjusted_dh;
+    y += dh - adjusted_dh;
   }
   return { x, y, w: adjusted_dw, h: adjusted_dh };
 }
 /**
  * @private
- * @param {p5.Image|p5.Element|p5.Texture} img the image to draw
  * @param {Constant} xAlign either LEFT, RIGHT or CENTER
  * @param {Constant} yAlign either TOP, BOTTOM or CENTER
  * @param {Number} dw
@@ -327,30 +326,26 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
  * @returns {Object}
  */
 
-function _imageCover(img, xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
+function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
   const r = Math.max(dw / sw, dh / sh, 1);
-  img.resize(img.width * r, img.height * r);
+  const [adjusted_sw, adjusted_sh] = [dw / r, dh / r];
 
   let x = sx;
   let y = sy;
 
   if (xAlign === constants.CENTER) {
-    x = sx * r + (sw * r - dw) / 2;
-  } else if (xAlign === constants.LEFT) {
-    x *= r;
+    x += (sw - adjusted_sw) / 2;
   } else if (xAlign === constants.RIGHT) {
-    x = sw * r - dw;
+    x += sw - adjusted_sw;
   }
 
   if (yAlign === constants.CENTER) {
-    y = sy * r + (sh * r - dh) / 2;
-  } else if (yAlign === constants.TOP) {
-    y *= r;
+    y += (sh - adjusted_sh) / 2;
   } else if (yAlign === constants.BOTTOM) {
-    y = sh * r - dh;
+    y += sh - adjusted_sh;
   }
 
-  return { x, y, w: dw, h: dh };
+  return { x, y, w: adjusted_sw, h: adjusted_sh };
 }
 
 /**
@@ -546,7 +541,6 @@ p5.prototype.image = function(
   if (fit) {
     if (fit === constants.COVER) {
       const { x, y, w, h } = _imageCover(
-        img,
         xAlign,
         yAlign,
         _dw,
