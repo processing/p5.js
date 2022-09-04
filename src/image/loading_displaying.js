@@ -294,7 +294,7 @@ function _createGif(
  */
 
 function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
-  const r = Math.max(sw / dw, sh / dh, 1);
+  const r = Math.max(sw / dw, sh / dh);
   const [adjusted_dw, adjusted_dh] = [sw / r, sh / r];
 
   let x = dx;
