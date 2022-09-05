@@ -150,7 +150,7 @@ module.exports = grunt => {
       source: {
         options: {
           parserOptions: {
-            ecmaVersion: 5
+            ecmaVersion: 8
           }
         },
         src: ['src/**/*.js']
@@ -163,7 +163,7 @@ module.exports = grunt => {
     'eslint-samples': {
       options: {
         parserOptions: {
-          ecmaVersion: 6
+          ecmaVersion: 8
         },
         format: 'unix'
       },
@@ -259,6 +259,16 @@ module.exports = grunt => {
         }
       }
     },
+    babel: {
+      options: {
+        presets: ['@babel/preset-env']
+      },
+      dist: {
+        files: {
+          'lib/p5.pre-min.js': 'lib/p5.js'
+        }
+      }
+    },
 
     // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
@@ -274,8 +284,8 @@ module.exports = grunt => {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.pre-min.js',
-          'lib/modules/p5Custom.min.js': 'lib/modules/p5Custom.pre-min.js'
+          'lib/p5.min.js': ['lib/p5.pre-min.js'],
+          'lib/modules/p5Custom.min.js': ['lib/modules/p5Custom.pre-min.js']
         }
       }
     },
@@ -523,10 +533,14 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
 
+  //this library converts the ES6 JS to ES5 so it can be properly minified
+  grunt.loadNpmTasks('grunt-babel');
+
   // Create the multitasks.
   grunt.registerTask('build', [
     'browserify',
     'browserify:min',
+    'babel',
     'uglify',
     'browserify:test'
   ]);

@@ -32,16 +32,16 @@ suite('downloading animated gifs', function() {
     });
   });
 
-  suite('p5.prototype.saveGif', function() {
+  suite('p5.prototype.encodeAndDownloadGif', function() {
     test('should be a function', function() {
-      assert.ok(myp5.saveGif);
-      assert.typeOf(myp5.saveGif, 'function');
+      assert.ok(myp5.encodeAndDownloadGif);
+      assert.typeOf(myp5.encodeAndDownloadGif, 'function');
     });
     test('should not throw an error', function() {
-      myp5.saveGif(myGif);
+      myp5.encodeAndDownloadGif(myGif);
     });
     testWithDownload('should download a gif', function(blobContainer) {
-      myp5.saveGif(myGif);
+      myp5.encodeAndDownloadGif(myGif);
       let gifBlob = blobContainer.blob;
       assert.strictEqual(gifBlob.type, 'image/gif');
     });
@@ -318,5 +318,62 @@ suite('p5.prototype.saveFrames', function() {
       }
       done();
     });
+  });
+});
+
+suite('p5.prototype.saveGif', function() {
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        p.createCanvas(10, 10);
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
+  test('should be a function', function() {
+    assert.ok(myp5.saveGif);
+    assert.typeOf(myp5.saveGif, 'function');
+  });
+
+  test('should not throw an error', function() {
+    myp5.saveGif('myGif', 3);
+  });
+
+  test('should not throw an error', function() {
+    myp5.saveGif('myGif', 3, { delay: 2, frames: 'seconds' });
+  });
+
+  test('wrong parameter type #0', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif(2, 2);
+      done();
+    });
+  });
+
+  test('wrong parameter type #1', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif('mySketch', '2');
+      done();
+    });
+  });
+
+  test('wrong parameter type #2', function(done) {
+    assert.validationError(function() {
+      myp5.saveGif('mySketch', 2, 'delay');
+      done();
+    });
+  });
+
+  testWithDownload('should download a GIF', async function(blobContainer) {
+    myp5.saveGif(myGif, 3, 2);
+    await waitForBlob(blobContainer);
+    let gifBlob = blobContainer.blob;
+    assert.strictEqual(gifBlob.type, 'image/gif');
   });
 });

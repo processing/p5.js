@@ -184,7 +184,10 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.saveGif = function(pImg, filename) {
+// this is the old saveGif, left here for compatibility purposes
+// the only place I found it being used was on image/p5.Image.js, on the
+// save function. that has been changed to use this function.
+p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
