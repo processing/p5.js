@@ -6,7 +6,7 @@
  *  There are three main tasks:
  *
  *  grunt             - This is the default task, which builds the code, tests it
- *                      using both jslint and mocha, and then minifies it.
+ *                      using both eslint and mocha, and then minifies it.
  *
  *  grunt yui         - This will build the inline documentation for p5.js.
  *                      The generated documentation is assumed to be
@@ -14,22 +14,19 @@
  *                      website (https://github.com/processing/p5.js-website).
  *
  *  grunt test        - This rebuilds the source and runs the automated tests on
- *                     both the minified and unminified code. If you need to debug
- *                     a test suite in a browser, `grunt test --keepalive` will
- *                     start the connect server and leave it running; the tests
- *                     can then be opened at localhost:9001/test/test.html
- *
- *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
- *                     each time a change to the source is detected. You can preview
- *                     the reference at localhost:9001/docs/reference/
+ *                     both the minified and unminified code.
  *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
  *  a lot of time when authoring test specs without making any build changes.
  *
+ *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
+ *                     each time a change to the source is detected. You can preview
+ *                     the reference at localhost:9001/docs/reference/
+ *
  *  And there are several secondary tasks:
  *
- * grunt watch       - This watches the source for changes and rebuilds on
+ *  grunt watch       - This watches the source for changes and rebuilds on
  *                      every file change, running the linter and tests.
  *
  *  grunt watch:main  - This watches the source for changes and rebuilds on
@@ -53,74 +50,37 @@
 require('regenerator-runtime/runtime');
 require('@babel/register');
 
-function getYuidocOptions() {
-  const BASE_YUIDOC_OPTIONS = {
-    name: '<%= pkg.name %>',
-    description: '<%= pkg.description %>',
-    version: '<%= pkg.version %>',
-    url: '<%= pkg.homepage %>',
-    options: {
-      paths: ['src/', 'lib/addons/'],
-      themedir: 'docs/yuidoc-p5-theme/',
-      helpers: [],
-      preprocessor: './docs/preprocessor.js',
-      outdir: 'docs/reference/'
-    }
-  };
-
-  // note dev is no longer used, prod is used to build both testing and production ready docs
-
-  const o = {
-    prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
-    dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
-  };
-
-  o.prod.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_prod.js');
-  o.dev.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_dev.js');
-
-  return o;
-}
-
 module.exports = grunt => {
-  // Specify what reporter we'd like to use for Mocha
-  const quietReport = process.env.GITHUB_ACTIONS || grunt.option('quiet');
-  const reporter = quietReport ? 'spec' : 'Nyan';
-
-  // For the static server used in running tests, configure the keepalive.
-  // (might not be useful at all.)
-  let keepalive = false;
-  if (grunt.option('keepalive')) {
-    keepalive = true;
-  }
-
-  const mochaConfig = {
-    yui: {
+  const connectConfig = open => {
+    return {
       options: {
-        urls: ['http://localhost:9001/test/test-reference.html'],
-        reporter: reporter,
-        run: false,
-        log: true,
-        logErrors: true,
-        growlOnSuccess: false
+        directory: {
+          path: './',
+          options: {
+            icons: true
+          }
+        },
+        port: 9001,
+        open,
+        middleware: function(connect, options, middlewares) {
+          middlewares.unshift(
+            require('connect-modrewrite')([
+              '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+              '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
+            ]),
+            function(req, res, next) {
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', '*');
+              return next();
+            }
+          );
+          return middlewares;
+        }
       }
-    },
-    test: {
-      options: {
-        urls: [
-          'http://localhost:9001/test/test.html',
-          'http://localhost:9001/test/test-minified.html'
-        ],
-        reporter: reporter,
-        run: true,
-        log: true,
-        logErrors: true,
-        timeout: 100000,
-        growlOnSuccess: false
-      }
-    }
+    };
   };
 
-  let gruntConfig = {
+  const gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
@@ -137,16 +97,6 @@ module.exports = grunt => {
           'tasks/**/*.js'
         ]
       },
-      fix: {
-        // src: is calculated below...
-        options: {
-          rules: {
-            'no-undef': 0,
-            'no-unused-vars': 0
-          },
-          fix: true
-        }
-      },
       source: {
         options: {
           parserOptions: {
@@ -157,6 +107,16 @@ module.exports = grunt => {
       },
       test: {
         src: ['test/**/*.js', '!test/js/*.js']
+      },
+      fix: {
+        // src: is calculated below...
+        options: {
+          rules: {
+            'no-undef': 0,
+            'no-unused-vars': 0
+          },
+          fix: true
+        }
       }
     },
 
@@ -212,7 +172,7 @@ module.exports = grunt => {
         }
       },
       // Watch the codebase for doc updates
-      // launch with 'grunt requirejs connect watch:yui'
+      // launch with 'grunt yui connect:yui watch:yui'
       yui: {
         files: [
           'src/**/*.js',
@@ -240,7 +200,7 @@ module.exports = grunt => {
       test: {
         src: ['test/node/**/*.js'],
         options: {
-          reporter: reporter,
+          reporter: 'spec',
           require: '@babel/register',
           ui: 'tdd'
         }
@@ -248,9 +208,21 @@ module.exports = grunt => {
     },
 
     // Set up the mocha task, used for running the automated tests.
-    mocha: mochaConfig,
-
-    mochaChrome: mochaConfig,
+    mochaChrome: {
+      yui: {
+        options: {
+          urls: ['http://localhost:9001/test/test-reference.html']
+        }
+      },
+      test: {
+        options: {
+          urls: [
+            'http://localhost:9001/test/test.html',
+            'http://localhost:9001/test/test-minified.html'
+          ]
+        }
+      }
+    },
 
     nyc: {
       report: {
@@ -291,7 +263,21 @@ module.exports = grunt => {
     },
 
     // this builds the documentation for the codebase.
-    yuidoc: getYuidocOptions(),
+    yuidoc: {
+      prod: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: ['src/', 'lib/addons/'],
+          themedir: 'docs/yuidoc-p5-theme/',
+          helpers: ['docs/yuidoc-p5-theme/helpers/helpers_prod.js'],
+          preprocessor: './docs/preprocessor.js',
+          outdir: 'docs/reference/'
+        }
+      }
+    },
 
     clean: {
       // Clean up unused files generated by yuidoc
@@ -304,16 +290,12 @@ module.exports = grunt => {
           'docs/reference/api.js'
         ]
       },
-
       // Clean up files generated by release build
       release: {
         src: ['release/']
       },
       bower: {
         src: ['bower-repo/']
-      },
-      website: {
-        src: ['p5-website/']
       }
     },
 
@@ -341,28 +323,6 @@ module.exports = grunt => {
             expand: true,
             src: 'lib/addons/*',
             dest: 'bower-repo/'
-          }
-        ]
-      },
-      docs: {
-        files: [
-          {
-            expand: true,
-            src: ['docs/reference/data.json', 'docs/reference/data.min.json'],
-            dest: 'p5-website/src/templates/pages/reference/',
-            flatten: true
-          },
-          {
-            expand: true,
-            cwd: 'docs/reference/assets/',
-            src: '**',
-            dest: 'p5-website/src/templates/pages/reference/assets'
-          },
-          {
-            expand: true,
-            src: ['lib/p5.min.js', 'lib/addons/p5.sound.min.js'],
-            dest: 'p5-website/src/assets/js/',
-            flatten: true
           }
         ]
       }
@@ -395,86 +355,8 @@ module.exports = grunt => {
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
     connect: {
-      server: {
-        options: {
-          directory: {
-            path: './',
-            options: {
-              icons: true
-            }
-          },
-          port: 9001,
-          keepalive: keepalive,
-          middleware: function(connect, options, middlewares) {
-            middlewares.unshift(
-              require('connect-modrewrite')([
-                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
-              ]),
-              function(req, res, next) {
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', '*');
-                return next();
-              }
-            );
-            return middlewares;
-          }
-        }
-      },
-      yui: {
-        options: {
-          directory: {
-            path: './',
-            options: {
-              icons: true
-            }
-          },
-          port: 9001,
-          open: 'http://127.0.0.1:9001/docs/reference/',
-          keepalive: keepalive,
-          middleware: function(connect, options, middlewares) {
-            middlewares.unshift(
-              require('connect-modrewrite')([
-                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
-              ]),
-              function(req, res, next) {
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', '*');
-                return next();
-              }
-            );
-            return middlewares;
-          }
-        }
-      },
-      test: {
-        options: {
-          directory: {
-            path: './',
-            options: {
-              icons: true
-            }
-          },
-          port: 9001,
-          open: 'http://127.0.0.1:9001/test/',
-          keepalive: keepalive,
-          middleware: function(connect, options, middlewares) {
-            middlewares.unshift(
-              require('connect-modrewrite')([
-                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
-                '^/assets/js/p5\\.(sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
-              ]),
-              function(req, res, next) {
-                res.setHeader('Access-Control-Allow-Origin', '*');
-                res.setHeader('Access-Control-Allow-Methods', '*');
-                return next();
-              }
-            );
-            return middlewares;
-          }
-        }
-      }
+      server: connectConfig(),
+      yui: connectConfig('http://127.0.0.1:9001/docs/reference/')
     },
 
     // This minifies the data.json file created from the inline reference
@@ -488,10 +370,15 @@ module.exports = grunt => {
   };
 
   // eslint fixes everything it checks:
-  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
-    .map(s => gruntConfig.eslint[s].src)
-    .reduce((a, b) => a.concat(b), [])
-    .filter(a => a);
+  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint).reduce(
+    (acc, key) => {
+      if (gruntConfig.eslint[key].src) {
+        acc.push(...gruntConfig.eslint[key].src);
+      }
+      return acc;
+    },
+    []
+  );
 
   /* not yet
   gruntConfig['eslint-samples'].fix.src = Object.keys(
@@ -544,16 +431,13 @@ module.exports = grunt => {
     'uglify',
     'browserify:test'
   ]);
-  grunt.registerTask('lint-no-fix', [
-    'lint-no-fix:source',
-    'lint-no-fix:samples'
-  ]);
-  grunt.registerTask('lint-no-fix:source', [
+  grunt.registerTask('lint', ['lint:source', 'lint:samples']);
+  grunt.registerTask('lint:source', [
     'eslint:build',
     'eslint:source',
     'eslint:test'
   ]);
-  grunt.registerTask('lint-no-fix:samples', [
+  grunt.registerTask('lint:samples', [
     'yui', // required for eslint-samples
     'eslint-samples:source'
   ]);
@@ -573,25 +457,13 @@ module.exports = grunt => {
     'nyc:report'
   ]);
   grunt.registerTask('yui', ['yuidoc:prod', 'clean:reference', 'minjson']);
-  grunt.registerTask('yui:test', [
-    'yuidoc:prod',
-    'clean:reference',
-    'connect:yui',
-    'mochaChrome:yui'
-  ]);
-  grunt.registerTask('yui:dev', [
-    'yui:prod',
-    'clean:reference',
-    'build',
-    'connect:yui',
-    'watch:yui'
-  ]);
-  grunt.registerTask('yui:build', ['yui']);
+  grunt.registerTask('yui:test', ['yui', 'connect:yui', 'mochaChrome:yui']);
+  grunt.registerTask('yui:dev', ['yui', 'build', 'connect:yui', 'watch:yui']);
 
   // This is called by the "prepublishOnly" script in package.json to build the
   // documentation and the library after np bumps up the version number so that
   // the newly built files with the updated version number can be published.
   grunt.registerTask('prerelease', ['yui', 'build']);
 
-  grunt.registerTask('default', ['lint-no-fix', 'test']);
+  grunt.registerTask('default', ['lint', 'test']);
 };

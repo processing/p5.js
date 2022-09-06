@@ -30,9 +30,7 @@ module.exports = function(grunt) {
 
       spawn(
         'npx np',
-        grunt.option('preview')
-          ? ['--any-branch', '--preview']
-          : ['--any-branch'],
+        grunt.option('preview') ? ['--any-branch', '--preview'] : [],
         {
           stdio: 'inherit',
           shell: true
@@ -46,10 +44,6 @@ module.exports = function(grunt) {
         'bowerReleaser',
         grunt.option('bowerReleaser') || 'processing'
       );
-      grunt.config.set(
-        'docsReleaser',
-        grunt.option('docsReleaser') || 'processing'
-      );
 
       // 1. Zip the lib folder
       grunt.task.run('clean');
@@ -59,7 +53,7 @@ module.exports = function(grunt) {
       // Open the folder of files to be uploaded for the release on github
       open('release/');
 
-      // 2. Push the new lib files to the dist repo (to be referred as bower-repo here)
+      // 2. Push the new lib files to the bower-repo
       grunt.task.run('release-bower');
 
       done();
