@@ -1190,9 +1190,9 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   return p;
 };
 
-p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
-  if (y >= maxY) {
-    return; // don't render lines beyond our maxY position
+p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY, minY) {
+  if (y < minY || y >= maxY) {
+    return; // don't render lines beyond our minY/maxY bounds (see #5785)
   }
 
   p.push(); // fix to #803
