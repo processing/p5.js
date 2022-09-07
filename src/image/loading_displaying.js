@@ -296,7 +296,7 @@ function _createGif(
 function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
   const r = Math.max(sw / dw, sh / dh);
   const [adjusted_dw, adjusted_dh] = [sw / r, sh / r];
-
+  console.log({ r, adjusted_dw, adjusted_dh, sw, sh });
   let x = dx;
   let y = dy;
 
@@ -539,6 +539,17 @@ p5.prototype.image = function(
 
   let vals = { x: _dx, y: _dy, h: _dh, w: _dw };
   if (fit) {
+    switch (this._renderer._imageMode) {
+      case constants.CENTER:
+        _sx += _sw * 0.5;
+        _sy += _sh * 0.5;
+        break;
+      case constants.CORNERS:
+        _sw -= _sx;
+        _sh -= _sy;
+        break;
+    }
+
     if (fit === constants.COVER) {
       const { x, y, w, h } = _imageCover(
         xAlign,
