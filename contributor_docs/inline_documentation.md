@@ -4,7 +4,7 @@ By adding inline documentation in the p5.js source code, a reference can be auto
 
 See below for the basics, more specifics about yuidoc style [here](http://yui.github.io/yuidoc/syntax/index.html). __Please limit line length to 80 columns, starting new lines when it runs over.__
 
-__[List of examples needed](https://github.com/processing/p5.js/issues/1954) (you can also view the most up to date list by building the library with grunt and looking at the log messages)__
+__[List of examples needed](https://github.com/processing/p5.js/issues/2865) (you can also view the most up to date list by building the library with grunt and looking at the log messages)__
 
 ## Specify element type and description
 
