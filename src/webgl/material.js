@@ -1054,7 +1054,10 @@ p5.RendererGL.prototype._applyColorBlend = function(colors) {
 
   const isTexture = this.drawMode === constants.TEXTURE;
   const doBlend =
-    isTexture || colors[colors.length - 1] < 1.0 || this._isErasing;
+    isTexture ||
+    this.curBlendMode !== constants.BLEND ||
+    colors[colors.length - 1] < 1.0 ||
+    this._isErasing;
 
   if (doBlend !== this._isBlending) {
     if (
@@ -1085,9 +1088,12 @@ p5.RendererGL.prototype._applyBlendMode = function() {
   const gl = this.GL;
   switch (this.curBlendMode) {
     case constants.BLEND:
-    case constants.ADD:
       gl.blendEquation(gl.FUNC_ADD);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case constants.ADD:
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
       break;
     case constants.REMOVE:
       gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
