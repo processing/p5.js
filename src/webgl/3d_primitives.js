@@ -1336,6 +1336,14 @@ p5.RendererGL.prototype.rect = function(args) {
     } else {
       this.vertex(x1, y1);
     }
+
+    this.immediateMode.geometry.uvs.length = 0;
+    for (const vert of this.immediateMode.geometry.vertices) {
+      const u = (vert.x - x1) / width;
+      const v = (vert.y - y1) / height;
+      this.immediateMode.geometry.uvs.push(u, v);
+    }
+
     this.endShape(constants.CLOSE);
   }
   return this;
