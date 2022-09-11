@@ -62,6 +62,6 @@ https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-
 
 
 # Acknowledgements
-Under the mentorship of Stalgia Grigg, I have learned invaluable methods of development and technical communication. This is my first time contributing to open source, and my first time interfacing with the WebXR API. At present, WebXR adoption is still growing, and the lack of best practices make development complex for new open source contributors. Stalgia has a unique ability to elucidate complex processes, and has fostered my interest on how to remove technical barriers to VR development. p5.js has shaped me as an artist, a developer, and an educator-- it is the basis on which I have built my technical skill. The opportunity to engage with how this library approaches VR is an honor. Thank you for this mentorship.
+Under the mentorship of Stalgia Grigg, I have learned invaluable methods of development and technical communication. This is my first time contributing to open source, and my first time interfacing with the WebXR API. At present, WebXR adoption is still growing, and the lack of best practices make development complex for new open source contributors. Stalgia has a unique ability to elucidate complex processes, and has fostered my interest on how to remove technical barriers to VR development. p5.js has shaped me as an artist, a developer, and an educator-- it is the basis on which I have built my technical skill. The opportunity to engage with how this library approaches VR is an honor. Thank you for this mentorship and opportunity.
 
 
