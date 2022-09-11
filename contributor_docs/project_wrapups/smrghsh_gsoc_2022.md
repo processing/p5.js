@@ -40,7 +40,7 @@ One challenge that I struggled with was dealing with resetting the [reference sp
 [https://github.com/stalgiag/p5.xr/pull/171](https://github.com/stalgiag/p5.xr/pull/171)
 
 # Controller API Update
-![Video of Controller API update](https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-b950-fecd9eb41ce2.mp4)
+https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-b950-fecd9eb41ce2.mp4
 
 - Including the [Quaternion.js](https://github.com/infusion/Quaternion.js/) library as a dependency.
 - Exposing the rotation as Euler angles (while respecting the `angleMode`) for progress for [Controller Input Rotation Data #158](https://github.com/stalgiag/p5.xr/issues/158). There is some gimbal-locking type behavior that is persisting.
