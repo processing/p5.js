@@ -1,4 +1,6 @@
-# p5.xr Enter VR button, and controller API update
+# GSOC 22 Work Summary
+To quickly view contributions please visit this link:
+[https://github.com/stalgiag/p5.xr/commits?author=smrghsh](https://github.com/stalgiag/p5.xr/commits?author=smrghsh)
 
 
 # Enter VR button -- Immersive Session Process Update
