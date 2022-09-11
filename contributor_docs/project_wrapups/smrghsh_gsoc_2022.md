@@ -36,9 +36,7 @@ p5xr accounted for this, but creating a process diagram revealed opportunities t
 ### Challenges with implementation
 One challenge that I struggled with was dealing with resetting the [reference space](https://immersive-web.github.io/webxr/spatial-tracking-explainer.html) in between launching a VR experience for the user and returning to an inline session in an HMD’s 2D web browser. This is needed because the physical space that a user navigates in an HMD is different than how they would interact in 2D. During this reset it’s necessary to set this, as well as a particular subset of  `XR` properties to `null` in order to completely clear this, Examining a [similar issue with Aframe’s development](https://github.com/aframevr/aframe/issues/4406) helped in the solution. 
 
-I also usually work with WebXR on a higher level, so I am really grateful for technical guidance through mentorship for working with WebXR at this lower level. This is invaluable information whose complexity was distilled for me throughout this process. It sparked many ideas for how we remove these technical barriers for VR development in arts and education. There is a complex history to WebXR devices as the specification is built for all the devices that are yet to come.
 **View the pull request:**
-
 [https://github.com/stalgiag/p5.xr/pull/171](https://github.com/stalgiag/p5.xr/pull/171)
 
 # Controller API Update
