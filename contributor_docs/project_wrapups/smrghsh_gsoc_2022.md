@@ -52,7 +52,7 @@ https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-
 
 
 ## Minor Contributions
-- Small note to help Windows users with development, suggesting Git Bash to prevent errors with launching a local development server. Stalgia taught many git techniques and development norms.
+- Small note to help Windows users with development, suggesting Git Bash to prevent errors with launching a local development server. Through this commit, Stalgia taught me contribution norms.
 
 [https://github.com/stalgiag/p5.xr/pull/168](https://github.com/stalgiag/p5.xr/pull/168)
 
@@ -63,3 +63,4 @@ https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-
 
 # Acknowledgements
 Under the mentorship of Stalgia Grigg, I have learned invaluable methods of development and technical communication. At present, WebXR adoption is still growing, and the lack of best practices make development complex for new open source contributors. Stalgia has a unique ability to elucidate complex processes, and has fostered my interest on how to remove technical barriers to VR development.
+
