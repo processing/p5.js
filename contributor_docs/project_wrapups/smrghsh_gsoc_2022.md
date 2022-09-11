@@ -48,7 +48,6 @@ https://user-images.githubusercontent.com/22751315/186528906-cf60441d-1cab-431e-
 - Added notice about gimbal locking to documentation
 
 **View the pull request**
-
 [https://github.com/stalgiag/p5.xr/pull/181](https://github.com/stalgiag/p5.xr/pull/181)
 
 
