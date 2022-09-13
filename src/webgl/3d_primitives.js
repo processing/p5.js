@@ -1271,8 +1271,9 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-// prettier-ignore
+/* eslint-disable max-len */
 p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
+/* eslint-enable max-len */
   if (typeof detailX === 'undefined') {
     detailX = 2;
   }
@@ -1282,7 +1283,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
-  
+
   if (!this.geometryInHash(gId)) {
     const quadGeom = new p5.Geometry(detailX, detailY, function() {
       //algorithm adapted from c++ to js
@@ -1310,7 +1311,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
         }
       }
     });
-    
+
     quadGeom.faces = [];
     for(let y = 0; y < detailY-1; y++){
       for(let x = 0; x < detailX-1; x++){

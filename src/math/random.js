@@ -52,7 +52,7 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  *   stroke(r);
  *   line(i, 0, i, 100);
  * }
- * describe(`many vertical lines drawn in white, black, or grey.`);
+ * describe('many vertical lines drawn in white, black, or grey.');
  * </code>
  * </div>
  */
@@ -110,7 +110,7 @@ p5.prototype.randomSeed = function(seed) {
  * let words = ['apple', 'bear', 'cat', 'dog'];
  * let word = random(words); // select random word
  * text(word, 10, 50); // draw the word
- * describe(`word displayed at random. Either apple, bear, cat, or dog.`);
+ * describe('word displayed at random. Either apple, bear, cat, or dog.');
  * </code>
  * </div>
  */

@@ -427,7 +427,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
  *  can only download a maximum of 15 seconds worth of frames at 22 frames per second, adding up to 330 frames.
  *  This is done in order to avoid memory problems since a large enough canvas can fill up the memory in your computer
  *  very easily and crash your program or even your browser.
- * 
+ *
  *  To export longer animations, you might look into a library like
  *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
  *

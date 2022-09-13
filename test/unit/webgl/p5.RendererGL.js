@@ -64,9 +64,12 @@ suite('p5.RendererGL', function() {
     test('push/pop and directionalLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
-      var dirDiffuseColors = myp5._renderer.directionalLightDiffuseColors.slice();
-      var dirSpecularColors = myp5._renderer.directionalLightSpecularColors.slice();
-      var dirLightDirections = myp5._renderer.directionalLightDirections.slice();
+      var dirDiffuseColors =
+        myp5._renderer.directionalLightDiffuseColors.slice();
+      var dirSpecularColors =
+        myp5._renderer.directionalLightSpecularColors.slice();
+      var dirLightDirections =
+        myp5._renderer.directionalLightDirections.slice();
       myp5.push();
       myp5.directionalLight(0, 0, 255, 0, 10, 5);
       assert.notEqual(
@@ -155,8 +158,10 @@ suite('p5.RendererGL', function() {
     test('push/pop and spotLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
-      let spotLightDiffuseColors = myp5._renderer.spotLightDiffuseColors.slice();
-      let spotLightSpecularColors = myp5._renderer.spotLightSpecularColors.slice();
+      let spotLightDiffuseColors =
+        myp5._renderer.spotLightDiffuseColors.slice();
+      let spotLightSpecularColors =
+        myp5._renderer.spotLightSpecularColors.slice();
       let spotLightPositions = myp5._renderer.spotLightPositions.slice();
       let spotLightDirections = myp5._renderer.spotLightDirections.slice();
       let spotLightAngle = myp5._renderer.spotLightAngle.slice();

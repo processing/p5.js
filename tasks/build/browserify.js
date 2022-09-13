@@ -79,8 +79,8 @@ module.exports = function(grunt) {
         })
         .on('end', function() {
           code = code.replace(
-            `'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'`,
-            grunt.template.process(`'<%= pkg.version %>'`)
+            "'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'",
+            grunt.template.process("'<%= pkg.version %>'")
           );
 
           // "code" is complete: create the distributable UMD build by running
