@@ -184,7 +184,10 @@ p5.prototype.saveCanvas = function() {
   }, mimeType);
 };
 
-p5.prototype.saveGif = function(pImg, filename) {
+// this is the old saveGif, left here for compatibility purposes
+// the only place I found it being used was on image/p5.Image.js, on the
+// save function. that has been changed to use this function.
+p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
   const props = pImg.gifProperties;
 
   //convert loopLimit back into Netscape Block formatting
@@ -420,15 +423,19 @@ p5.prototype.saveGif = function(pImg, filename) {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
- *  Note that <a href="#/p5.Image/saveFrames">saveFrames()</a> will only save the first 15 frames of an animation.
+ *  The arguments `duration` and `framerate` are constrained to be less or equal to 15 and 22, respectively, which means you
+ *  can only download a maximum of 15 seconds worth of frames at 22 frames per second, adding up to 330 frames.
+ *  This is done in order to avoid memory problems since a large enough canvas can fill up the memory in your computer
+ *  very easily and crash your program or even your browser.
+ * 
  *  To export longer animations, you might look into a library like
  *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
  *
  *  @method saveFrames
  *  @param  {String}   filename
  *  @param  {String}   extension 'jpg' or 'png'
- *  @param  {Number}   duration  Duration in seconds to save the frames for.
- *  @param  {Number}   framerate  Framerate to save the frames in.
+ *  @param  {Number}   duration  Duration in seconds to save the frames for. This parameter will be constrained to be less or equal to 15.
+ *  @param  {Number}   framerate  Framerate to save the frames in. This parameter will be constrained to be less or equal to 22.
  *  @param  {function(Array)} [callback] A callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The

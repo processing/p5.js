@@ -103,11 +103,12 @@ p5.prototype.ellipseMode = function(m) {
  * 2 pixelated 36×36 white ellipses to left & right of center, black background
  */
 p5.prototype.noSmooth = function() {
-  this.setAttributes('antialias', false);
   if (!this._renderer.isP3D) {
     if ('imageSmoothingEnabled' in this.drawingContext) {
       this.drawingContext.imageSmoothingEnabled = false;
     }
+  } else {
+    this.setAttributes('antialias', false);
   }
   return this;
 };

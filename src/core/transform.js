@@ -30,36 +30,6 @@ import p5 from './main';
  * @method applyMatrix
  * @param  {Array} arr an array of numbers - should be 6 or 16 length (2*3 or 4*4 matrix values)
  * @chainable
- */
-/**
- * @method applyMatrix
- * @param  {Number} a numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} b numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} c numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} d numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} e numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} f numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @chainable
- */
-/**
- * @method applyMatrix
- * @param  {Number} a
- * @param  {Number} b
- * @param  {Number} c
- * @param  {Number} d
- * @param  {Number} e
- * @param  {Number} f
- * @param  {Number} g numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} h numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} i numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} j numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} k numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} l numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} m numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} n numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} o numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
- * @chainable
  * @example
  * <div>
  * <code>
@@ -182,6 +152,36 @@ import p5 from './main';
  * A rectangle rotating clockwise about the center
  * A rectangle shearing
  * A rectangle in the upper left corner
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} b numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @chainable
+ */
+/**
+ * @method applyMatrix
+ * @param  {Number} a
+ * @param  {Number} b
+ * @param  {Number} c
+ * @param  {Number} d
+ * @param  {Number} e
+ * @param  {Number} f
+ * @param  {Number} g numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} h numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} i numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} j numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} k numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} l numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} m numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} n numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} o numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
+ * @chainable
  */
 p5.prototype.applyMatrix = function() {
   let isTypedArray = arguments[0] instanceof Object.getPrototypeOf(Uint8Array);

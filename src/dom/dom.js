@@ -622,8 +622,8 @@ p5.prototype.createCheckbox = function() {
 
 /**
  * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
- * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
- * - `.option(name, [value])` can be used to set options for the select after it is created.
+ * It also assigns select-related methods to <a href="#/p5.Element">p5.Element</a> when selecting an existing select box. Options in the menu are unique by `name` (the display text).
+ * - `.option(name, [value])` can be used to add an option with `name` (the display text) and `value` to the select element. If an option with `name` already exists within the select element, this method will change its value to `value`.
  * - `.value()` will return the currently selected option.
  * - `.selected()` will return the current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>.
  * - `.selected(value)` can be used to make given option selected by default when the page first loads.
@@ -844,19 +844,32 @@ p5.prototype.createRadio = function() {
   // If already given with a containerEl, will search for all input[radio]
   // it, create a p5.Element out of it, add options to it and return the p5.Element.
 
+  let self;
   let radioElement;
   let name;
   const arg0 = arguments[0];
-  // If existing radio Element is provided as argument 0
-  if (arg0 instanceof HTMLDivElement || arg0 instanceof HTMLSpanElement) {
+  if (
+    arg0 instanceof p5.Element &&
+    (arg0.elt instanceof HTMLDivElement || arg0.elt instanceof HTMLSpanElement)
+  ) {
+    // If given argument is p5.Element of div/span type
+    self = arg0;
+    this.elt = arg0.elt;
+  } else if (
+    // If existing radio Element is provided as argument 0
+    arg0 instanceof HTMLDivElement ||
+    arg0 instanceof HTMLSpanElement
+  ) {
+    self = addElement(arg0, this);
+    this.elt = arg0;
     radioElement = arg0;
     if (typeof arguments[1] === 'string') name = arguments[1];
   } else {
     if (typeof arg0 === 'string') name = arg0;
     radioElement = document.createElement('div');
+    self = addElement(radioElement, this);
+    this.elt = radioElement;
   }
-  this.elt = radioElement;
-  let self = addElement(radioElement, this);
   self._name = name || 'radioOption';
 
   // setup member functions
@@ -1305,17 +1318,8 @@ p5.prototype.createAudio = function(src, callback) {
 
 /** CAMERA STUFF **/
 
-/**
- * @property {String} VIDEO
- * @final
- * @category Constants
- */
 p5.prototype.VIDEO = 'video';
-/**
- * @property {String} AUDIO
- * @final
- * @category Constants
- */
+
 p5.prototype.AUDIO = 'audio';
 
 // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -1980,8 +1984,8 @@ p5.Element.prototype.style = function(prop, val) {
     ) {
       let styles = window.getComputedStyle(self.elt);
       let styleVal = styles.getPropertyValue(prop);
-      let numVal = styleVal.replace(/\D+/g, '');
-      this[prop] = parseInt(numVal, 10);
+      let numVal = styleVal.replace(/[^\d.]/g, '');
+      this[prop] = Math.round(parseFloat(numVal, 10));
     }
   }
   return this;

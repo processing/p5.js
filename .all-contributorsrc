@@ -3059,6 +3059,150 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "tapioca24",
+      "name": "tapioca24",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12683107?v=4",
+      "profile": "https://github.com/tapioca24",
+      "contributions": [
+        "plugin"
+      ]
+    },
+    {
+      "login": "Qianqianye",
+      "name": "Qianqian Ye",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18587130?v=4",
+      "profile": "http://qianqian-ye.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc",
+        "eventOrganizing",
+        "review",
+        "translation"
+      ]
+    },
+    {
+      "login": "adarrssh",
+      "name": "Adarsh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85433137?v=4",
+      "profile": "https://github.com/adarrssh",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "kaabe1",
+      "name": "kaabe1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78185255?v=4",
+      "profile": "https://github.com/kaabe1",
+      "contributions": [
+        "design",
+        "eventOrganizing"
+      ]
+    },
+    {
+      "login": "Guirdo",
+      "name": "Seb Méndez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21044700?v=4",
+      "profile": "https://www.guirdo.xyz/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "3ru",
+      "name": "Ryuya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69892552?v=4",
+      "profile": "https://github.com/3ru",
+      "contributions": [
+        "bug",
+        "review",
+        "code"
+      ]
+    },
+    {
+      "login": "LEMIBANDDEXARI",
+      "name": "LEMIBANDDEXARI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70129787?v=4",
+      "profile": "https://github.com/LEMIBANDDEXARI",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "probablyvivek",
+      "name": "Vivek Tiwari",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25459353?v=4",
+      "profile": "https://linktr.ee/probablyvivek",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "KevinGrajeda",
+      "name": "Kevin Grajeda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60023139?v=4",
+      "profile": "https://github.com/KevinGrajeda",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "anniezhengg",
+      "name": "anniezhengg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78184655?v=4",
+      "profile": "https://github.com/anniezhengg",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "SNP0301",
+      "name": "Seung-Gi Kim(David)",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68281918?v=4",
+      "profile": "https://github.com/SNP0301",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "IkeB108",
+      "name": "Ike Bischof",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56776763?v=4",
+      "profile": "https://ikebot108.weebly.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ongzzzzzz",
+      "name": "Ong Zhi Zheng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47311100?v=4",
+      "profile": "https://ongzz.ml",
+      "contributions": [
+        "plugin"
+      ]
+    },
+    {
+      "login": "bsubbaraman",
+      "name": "bsubbaraman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11969085?v=4",
+      "profile": "https://github.com/bsubbaraman",
+      "contributions": [
+        "plugin"
+      ]
+    },
+    {
+      "login": "jdeboi",
+      "name": "Jenna deBoisblanc",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1548679?v=4",
+      "profile": "http://jdeboi.com",
+      "contributions": [
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",

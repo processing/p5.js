@@ -370,7 +370,7 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * stroke(255);
  * line(85, 75, 30, 75);
  * describe(
- *   '3 lines of various stroke sizes. Form top, bottom and right sides of a square'
+ *   '3 lines of various stroke colors. Form top, bottom and right sides of a square'
  * );
  * </code>
  * </div>

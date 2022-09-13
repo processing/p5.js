@@ -1032,6 +1032,7 @@ p5.RendererGL.prototype.push = function() {
   properties.drawMode = this.drawMode;
 
   properties._currentNormal = this._currentNormal;
+  properties.curBlendMode = this.curBlendMode;
 
   return style;
 };
