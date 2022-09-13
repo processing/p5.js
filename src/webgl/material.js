@@ -701,7 +701,7 @@ p5.prototype.normalMaterial = function(...args) {
 };
 
 /**
- * Sets the current material as an ambient material of the given color.
+ * Sets the ambient color of the material.
  *
  * The ambientMaterial() color is the color the object will reflect
  * under **any** lighting.
@@ -811,8 +811,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
 };
 
 /**
- * Sets the current material as an emissive material of
- * the given color.
+ * Sets the emissive color of the material.
  *
  * An emissive material will display the emissive color at
  * full strength regardless of lighting. This can give the
@@ -883,7 +882,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Sets the current material as a specular material of the given color.
+ * Sets the specular color of the material.
  *
  * A specular material is reflective (shiny). The shininess can be
  * controlled by the <a href="#/p5/shininess">shininess()</a> function.
