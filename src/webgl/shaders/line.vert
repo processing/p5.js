@@ -18,34 +18,79 @@
 
 #define PROCESSING_LINE_SHADER
 
+precision mediump float;
+precision mediump int;
+
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
 uniform vec4 uViewport;
 uniform int uPerspective;
+uniform int uStrokeJoin;
 
 attribute vec4 aPosition;
-attribute vec4 aDirection;
-  
+attribute vec3 aTangentIn;
+attribute vec3 aTangentOut;
+attribute float aSide;
+
+varying vec2 vTangent;
+varying vec2 vCenter;
+varying vec2 vPosition;
+varying float vMaxDist;
+varying float vCap;
+varying float vJoin;
+
+vec2 lineIntersection(vec2 aFrom, vec2 aDir, vec2 bFrom, vec2 bDir) {
+  // Rotate and translate so a starts at the origin and goes out to the right
+  bFrom -= aFrom;
+  vec2 rotatedBFrom = vec2(
+    bFrom.x*aDir.x + bFrom.y*aDir.y,
+    bFrom.y*aDir.x - bFrom.x*aDir.y
+  );
+  vec2 bTo = bFrom + bDir;
+  vec2 rotatedBTo = vec2(
+    bTo.x*aDir.x + bTo.y*aDir.y,
+    bTo.y*aDir.x - bTo.x*aDir.y
+  );
+  float intersectionDistance =
+    rotatedBTo.x + (rotatedBFrom.x - rotatedBTo.x) * rotatedBTo.y /
+    (rotatedBTo.y - rotatedBFrom.y);
+  return aFrom + aDir * intersectionDistance;
+}
+
 void main() {
   // using a scale <1 moves the lines towards the camera
   // in order to prevent popping effects due to half of
   // the line disappearing behind the geometry faces.
   vec3 scale = vec3(0.9995);
 
+  // Caps have one of either the in or out tangent set to 0
+  vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
+    ? 1. : 0.;
+
+  // Joins have two unique, defined tangents
+  vJoin = aTangentIn != vec3(0.) && aTangentOut != vec3(0.) && (
+    aTangentIn != aTangentOut || abs(aSide) > 1.
+  )
+    ? 1. : 0.;
+
   vec4 posp = uModelViewMatrix * aPosition;
-  vec4 posq = uModelViewMatrix * (aPosition + vec4(aDirection.xyz, 0));
+  vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
+  vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
 
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   posp.xyz = posp.xyz * scale;
-  posq.xyz = posq.xyz * scale;
+  posqIn.xyz = posqIn.xyz * scale;
+  posqOut.xyz = posqOut.xyz * scale;
 
   vec4 p = uProjectionMatrix * posp;
-  vec4 q = uProjectionMatrix * posq;
+  vec4 qIn = uProjectionMatrix * posqIn;
+  vec4 qOut = uProjectionMatrix * posqOut;
+  vCenter = p.xy;
 
   // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
   // screen_p = (p.xy/p.w + <1,1>) * 0.5 * uViewport.zw
@@ -69,16 +114,10 @@ void main() {
   //  and corrects for aspect ratio, see https://github.com/processing/processing/issues/5181)
   // t = +- normalize( (q.xy*p.w - p.xy*q.w) * uViewport.zw )
 
-  vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * uViewport.zw);
-
-  // flip tangent to normal (it's already normalized)
-  vec2 normal = vec2(-tangent.y, tangent.x);
-
-  float thickness = aDirection.w * uStrokeWeight;
-  vec2 offset = normal * thickness / 2.0;
+  vec2 tangentIn = normalize((qIn.xy*p.w - p.xy*qIn.w) * uViewport.zw);
+  vec2 tangentOut = normalize((qOut.xy*p.w - p.xy*qOut.w) * uViewport.zw);
 
   vec2 curPerspScale;
-
   if(uPerspective == 1) {
     // Perspective ---
     // convert from world to clip by multiplying with projection scaling factor
@@ -92,6 +131,53 @@ void main() {
     curPerspScale = p.w / (0.5 * uViewport.zw);
   }
 
-  gl_Position.xy = p.xy + offset.xy * curPerspScale;
+  vec2 offset;
+  if (tangentOut != vec2(0.) && vJoin > 0.) {
+    vTangent = normalize(tangentIn + tangentOut);
+    //vec2 avgNormal = vec2(-vTangent.y, vTangent.x);
+    vec2 normalIn = vec2(-tangentIn.y, tangentIn.x);
+    vec2 normalOut = vec2(-tangentOut.y, tangentOut.x);
+    float side = sign(aSide);
+    float sideEnum = abs(aSide);
+    if (sign(dot(tangentOut, vec2(-tangentIn.y, tangentIn.x))) != side) {
+      if (sideEnum > 1. && sideEnum < 3.) {
+        vec2 c = (posp.xy/posp.w + vec2(1.,1.)) * 0.5 * uViewport.zw;
+        vec2 intersection = lineIntersection(
+          c + (side * normalIn * uStrokeWeight / 2.) * curPerspScale,
+          tangentIn,
+          c + (side * normalOut * uStrokeWeight / 2.) * curPerspScale,
+          tangentOut
+        );
+        offset = (intersection - c);
+        float mag = length(offset);
+        float maxMag = 3. * uStrokeWeight;
+        if (mag > maxMag) {
+          offset *= maxMag / mag;
+        }
+      } else if (sideEnum == 1.) {
+        offset = side * normalIn * curPerspScale * uStrokeWeight / 2.;
+      } else if (sideEnum == 3.) {
+        offset = side * normalOut * curPerspScale * uStrokeWeight / 2.;
+      }
+    }
+    if (uStrokeJoin == STROKE_JOIN_BEVEL) {
+      vec2 avgNormal = vec2(-vTangent.y, vTangent.x);
+      vMaxDist = abs(dot(avgNormal, normalIn * uStrokeWeight / 2.));
+    } else {
+      vMaxDist = uStrokeWeight / 2.;
+    }
+  } else {
+    vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
+    vTangent = tangent;
+    vec2 normal = vec2(-tangent.y, tangent.x);
+    float normalThickness = sign(aSide);
+    float tangentThickness = abs(aSide) - 1.;
+    offset = (normal * normalThickness + tangent * tangentThickness) * uStrokeWeight / 2.
+       * curPerspScale;
+    vMaxDist = uStrokeWeight / 2.;
+  }
+  vPosition = vCenter + offset / curPerspScale;
+
+  gl_Position.xy = p.xy + offset.xy;
   gl_Position.zw = p.zw;
 }
