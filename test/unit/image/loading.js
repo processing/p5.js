@@ -482,17 +482,19 @@ suite('displaying images that use fit mode', function() {
     let src = myp5.createImage(400, 1000);
     sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.COVER);
+    const r = Math.max(300 / 400, 400 / 1000);
     assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 300); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400); // sh
+    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
+    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
   });
 
   test('COVER when source image is smaller than destination', function() {
     let src = myp5.createImage(20, 100);
     sinon.spy(myp5._renderer, 'image');
     myp5.image(src, 0, 0, 300, 400, 0, 0, 20, 100, myp5.COVER);
+    const r = Math.max(300 / 20, 400 / 100);
     assert(myp5._renderer.image.calledOnce);
-    assert.equal(myp5._renderer.image.getCall(0).args[3], 20); //  sw
-    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / 15); // sh
+    assert.equal(myp5._renderer.image.getCall(0).args[3], 300 / r); //  sw
+    assert.equal(myp5._renderer.image.getCall(0).args[4], 400 / r); // sh
   });
 });

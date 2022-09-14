@@ -326,7 +326,7 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
  */
 
 function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
-  const r = Math.max(dw / sw, dh / sh, 1);
+  const r = Math.max(dw / sw, dh / sh);
   const [adjusted_sw, adjusted_sh] = [dw / r, dh / r];
 
   let x = sx;
@@ -345,6 +345,49 @@ function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
   }
 
   return { x, y, w: adjusted_sw, h: adjusted_sh };
+}
+
+/**
+ * @private
+ * @param {Constant} [fit] either CONTAIN or COVER
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
+  if (fit === constants.COVER) {
+    const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+    sx = x;
+    sy = y;
+    sw = w;
+    sh = h;
+  }
+
+  if (fit === constants.CONTAIN) {
+    const { x, y, w, h } = _imageContain(
+      xAlign,
+      yAlign,
+      dx,
+      dy,
+      dw,
+      dh,
+      sw,
+      sh
+    );
+    dx = x;
+    dy = y;
+    dw = w;
+    dh = h;
+  }
+  return { sx, sy, sw, sh, dx, dy, dw, dh };
 }
 
 /**
@@ -536,56 +579,33 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  let vals = { x: _dx, y: _dy, h: _dh, w: _dw };
-  if (fit) {
-    switch (this._renderer._imageMode) {
-      case constants.CENTER:
-        _sx += _sw * 0.5;
-        _sy += _sh * 0.5;
-        break;
-      case constants.CORNERS:
-        _sw -= _sx;
-        _sh -= _sy;
-        break;
-    }
-
-    if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(
-        xAlign,
-        yAlign,
-        _dw,
-        _dh,
-        _sx,
-        _sy,
-        _sw,
-        _sh
-      );
-      _sx = x;
-      _sy = y;
-      _sw = w;
-      _sh = h;
-    } else if (fit === constants.CONTAIN) {
-      const { x, y, w, h } = _imageContain(
-        xAlign,
-        yAlign,
-        _dx,
-        _dy,
-        _dw,
-        _dh,
-        _sw,
-        _sh
-      );
-      vals.x = x;
-      vals.y = y;
-      vals.w = w;
-      vals.h = h;
-    }
-  } else {
-    vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
-  }
+  let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  vals = _imageFit(
+    fit,
+    xAlign,
+    yAlign,
+    vals.x,
+    vals.y,
+    vals.w,
+    vals.h,
+    _sx,
+    _sy,
+    _sw,
+    _sh
+  );
 
   // tint the image if there is a tint
-  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+  this._renderer.image(
+    img,
+    vals.sx,
+    vals.sy,
+    vals.sw,
+    vals.sh,
+    vals.dx,
+    vals.dy,
+    vals.dw,
+    vals.dh
+  );
 };
 
 /**
