@@ -420,14 +420,10 @@ module.exports = grunt => {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-simple-nyc');
 
-  //this library converts the ES6 JS to ES5 so it can be properly minified
-  grunt.loadNpmTasks('grunt-babel');
-
   // Create the multitasks.
   grunt.registerTask('build', [
     'browserify',
     'browserify:min',
-    'babel',
     'uglify',
     'browserify:test'
   ]);

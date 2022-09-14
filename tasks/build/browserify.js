@@ -61,13 +61,16 @@ module.exports = function(grunt) {
         browserified = browserified.exclude('../../translations/dev');
       }
 
-      const babelifyOpts = { plugins: ['static-fs'] };
+      const babelifyOpts = { global: true };
 
       if (isTest) {
         babelifyOpts.envName = 'test';
       }
 
-      const bundle = browserified.transform('babelify', babelifyOpts).bundle();
+      const bundle = browserified
+        .transform('brfs-babel')
+        .transform('babelify', babelifyOpts)
+        .bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
