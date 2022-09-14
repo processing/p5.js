@@ -5,9 +5,6 @@
  * @requires core
  */
 
-/* globals Request: false */
-/* globals Headers: false */
-
 import p5 from '../core/main';
 import 'whatwg-fetch';
 import 'es6-promise/auto';
