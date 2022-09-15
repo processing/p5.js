@@ -667,6 +667,116 @@ function _createGif(
 }
 
 /**
+ * @private
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+
+function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
+  const r = Math.max(sw / dw, sh / dh);
+  const [adjusted_dw, adjusted_dh] = [sw / r, sh / r];
+  let x = dx;
+  let y = dy;
+
+  if (xAlign === constants.CENTER) {
+    x += (dw - adjusted_dw) / 2;
+  } else if (xAlign === constants.RIGHT) {
+    x += dw - adjusted_dw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y += (dh - adjusted_dh) / 2;
+  } else if (yAlign === constants.BOTTOM) {
+    y += dh - adjusted_dh;
+  }
+  return { x, y, w: adjusted_dw, h: adjusted_dh };
+}
+/**
+ * @private
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+
+function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
+  const r = Math.max(dw / sw, dh / sh);
+  const [adjusted_sw, adjusted_sh] = [dw / r, dh / r];
+
+  let x = sx;
+  let y = sy;
+
+  if (xAlign === constants.CENTER) {
+    x += (sw - adjusted_sw) / 2;
+  } else if (xAlign === constants.RIGHT) {
+    x += sw - adjusted_sw;
+  }
+
+  if (yAlign === constants.CENTER) {
+    y += (sh - adjusted_sh) / 2;
+  } else if (yAlign === constants.BOTTOM) {
+    y += sh - adjusted_sh;
+  }
+
+  return { x, y, w: adjusted_sw, h: adjusted_sh };
+}
+
+/**
+ * @private
+ * @param {Constant} [fit] either CONTAIN or COVER
+ * @param {Constant} xAlign either LEFT, RIGHT or CENTER
+ * @param {Constant} yAlign either TOP, BOTTOM or CENTER
+ * @param {Number} dx
+ * @param {Number} dy
+ * @param {Number} dw
+ * @param {Number} dh
+ * @param {Number} sx
+ * @param {Number} sy
+ * @param {Number} sw
+ * @param {Number} sh
+ * @returns {Object}
+ */
+function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
+  if (fit === constants.COVER) {
+    const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+    sx = x;
+    sy = y;
+    sw = w;
+    sh = h;
+  }
+
+  if (fit === constants.CONTAIN) {
+    const { x, y, w, h } = _imageContain(
+      xAlign,
+      yAlign,
+      dx,
+      dy,
+      dw,
+      dh,
+      sw,
+      sh
+    );
+    dx = x;
+    dy = y;
+    dw = w;
+    dh = h;
+  }
+  return { sx, sy, sw, sh, dx, dy, dw, dh };
+}
+
+/**
  * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
  * negative or greater than image intrinsic width and height
  * @private
@@ -691,7 +801,7 @@ function _sAssign(sVal, iVal) {
  * the position of the image. Two more parameters can optionally be added to
  * specify the width and height of the image.
  *
- * This function can also be used with all eight Number parameters. To
+ * This function can also be used with eight Number parameters. To
  * differentiate between all these parameters, p5.js uses the language of
  * "destination rectangle" (which corresponds to "dx", "dy", etc.) and "source
  * image" (which corresponds to "sx", "sy", etc.) below. Specifying the
@@ -699,6 +809,14 @@ function _sAssign(sVal, iVal) {
  * subsection of the source image instead of the whole thing. Here's a diagram
  * to explain further:
  * <img src="assets/drawImage.png"></img>
+ *
+ * This function can also be used to draw images without distorting the orginal aspect ratio,
+ * by adding 9th parameter, fit, which can either be COVER or CONTAIN.
+ * CONTAIN, as the name suggests, contains the whole image within the specified destination box
+ * without distorting the image ratio.
+ * COVER covers the entire destination box.
+ *
+ *
  *
  * @method image
  * @param  {p5.Image|p5.Element|p5.Texture} img    the image to display
@@ -766,6 +884,37 @@ function _sAssign(sVal, iVal) {
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   // dimensions of image are 780 x 440
+ *   // dimensions of canvas are 100 x 100
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ * function setup() {
+ *   // CONTAIN the whole image without distorting the image's aspect ratio
+ *   // CONTAIN the image within the specified destination box and display at LEFT,CENTER position
+ *   background(color('green'));
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN, LEFT);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/laDefense50.png'); // dimensions of image are 50 x 50
+ * }
+ * function setup() {
+ *   // COVER the whole destination box without distorting the image's aspect ratio
+ *   // COVER the specified destination box which is of dimension 100 x 100
+ *   // Without specifying xAlign or yAlign, the image will be
+ *   // centered in the destination box in both axes
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
+ * }
+ * </code>
+ * </div>
  * @alt
  * image of the underside of a white umbrella and gridded ceiling above
  * image of the underside of a white umbrella and gridded ceiling above
@@ -788,6 +937,9 @@ function _sAssign(sVal, iVal) {
  *                           rectangle
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
+ * @param {Constant} [fit] either CONTAIN or COVER
+ * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER default is CENTER
+ * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER default is CENTER
  */
 p5.prototype.image = function(
   img,
@@ -798,7 +950,10 @@ p5.prototype.image = function(
   sx,
   sy,
   sWidth,
-  sHeight
+  sHeight,
+  fit,
+  xAlign,
+  yAlign
 ) {
   // set defaults per spec: https://goo.gl/3ykfOq
 
@@ -806,6 +961,8 @@ p5.prototype.image = function(
 
   let defW = img.width;
   let defH = img.height;
+  yAlign = yAlign || constants.CENTER;
+  xAlign = xAlign || constants.CENTER;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) {
     // video no canvas
@@ -813,10 +970,10 @@ p5.prototype.image = function(
     defH = img.elt.videoHeight;
   }
 
-  const _dx = dx;
-  const _dy = dy;
-  const _dw = dWidth || defW;
-  const _dh = dHeight || defH;
+  let _dx = dx;
+  let _dy = dy;
+  let _dw = dWidth || defW;
+  let _dh = dHeight || defH;
   let _sx = sx || 0;
   let _sy = sy || 0;
   let _sw = sWidth || defW;
@@ -847,10 +1004,33 @@ p5.prototype.image = function(
   _sh *= pd;
   _sw *= pd;
 
-  const vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  vals = _imageFit(
+    fit,
+    xAlign,
+    yAlign,
+    vals.x,
+    vals.y,
+    vals.w,
+    vals.h,
+    _sx,
+    _sy,
+    _sw,
+    _sh
+  );
 
   // tint the image if there is a tint
-  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+  this._renderer.image(
+    img,
+    vals.sx,
+    vals.sy,
+    vals.sw,
+    vals.sh,
+    vals.dx,
+    vals.dy,
+    vals.dw,
+    vals.dh
+  );
 };
 
 /**
