@@ -1,4 +1,3 @@
-/* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
     /**

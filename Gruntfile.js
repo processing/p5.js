@@ -98,11 +98,11 @@ module.exports = grunt => {
         ]
       },
       source: {
-        options: {
-          parserOptions: {
-            ecmaVersion: 8
-          }
-        },
+        // options: {
+        //   parserOptions: {
+        //     ecmaVersion: 8
+        //   }
+        // },
         src: ['src/**/*.js']
       },
       test: {

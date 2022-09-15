@@ -47,6 +47,8 @@
     "object-curly-spacing": ["error", "always"],
     "arrow-parens": ["error", "as-needed"],
     "linebreak-style": ["error", "unix"],
-    "no-trailing-spaces": ["error"]
+    "no-trailing-spaces": ["error"],
+    "no-prototype-builtins": "off",
+    "no-async-promise-executor": "off"
   }
 }
