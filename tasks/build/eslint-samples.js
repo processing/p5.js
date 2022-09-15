@@ -46,7 +46,6 @@ module.exports = grunt => {
         );
       }
 
-      // return report.errorCount === 0;
       done(report.errorCount === 0);
     }
   );

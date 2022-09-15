@@ -4,7 +4,6 @@
 
 import { resolve } from 'path';
 import browserify from 'browserify';
-import { format } from 'prettier';
 import derequire from 'derequire';
 
 const bannerTemplate =
@@ -61,7 +60,9 @@ module.exports = function(grunt) {
         browserified = browserified.exclude('../../translations/dev');
       }
 
-      const babelifyOpts = { global: true };
+      const babelifyOpts = {
+        global: true
+      };
 
       if (isTest) {
         babelifyOpts.envName = 'test';
@@ -95,10 +96,11 @@ module.exports = function(grunt) {
 
           // and prettify the code
           if (!isMin) {
-            code = format(code, {
-              singleQuote: true,
-              printWidth: 80 + 12
-            });
+            const prettyFast = require('pretty-fast');
+            code = prettyFast(code, {
+              url: '(anonymous)',
+              indent: '  '
+            }).code;
           }
 
           // finally, write it to disk

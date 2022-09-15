@@ -77,7 +77,7 @@
     "omggif": "^1.0.10",
     "open": "^7.0.3",
     "opentype.js": "^0.9.0",
-    "prettier": "^1.7.4",
+    "pretty-fast": "^0.2.7",
     "promise-map-series": "^0.2.3",
     "puppeteer": "^10.2.0",
     "regenerator-runtime": "^0.13.3",
@@ -128,9 +128,6 @@
         }
       ]
     ],
-    "generatorOpts": {
-      "retainLines": true
-    },
     "env": {
       "test": {
         "plugins": [
