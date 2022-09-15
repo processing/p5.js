@@ -425,8 +425,8 @@ function _sAssign(sVal, iVal) {
  * <img src="assets/drawImage.png"></img>
  *
  * This function can also be used to draw images without distorting the orginal aspect ratio,
- * by adding 9th parameter fit which can either be COVER or CONTAIN.
- * CONTAIN as the name suggests contains the whole image within the specified destination box
+ * by adding 9th parameter, fit, which can either be COVER or CONTAIN.
+ * CONTAIN, as the name suggests, contains the whole image within the specified destination box
  * without distorting the image ratio.
  * COVER covers the entire destination box.
  *
@@ -523,7 +523,8 @@ function _sAssign(sVal, iVal) {
  * function setup() {
  *   // COVER the whole destination box without distorting the image's aspect ratio
  *   // COVER the specified destination box which is of dimension 100 x 100
- *   // Display the CENTER part of the image for both LEFT and TOP corner
+ *   // Without specifying xAlign or yAlign, the image will be
+ *   // centereed in the destination box in both axes
  *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
  * }
  * </code>
