@@ -415,7 +415,7 @@ function _sAssign(sVal, iVal) {
  * the position of the image. Two more parameters can optionally be added to
  * specify the width and height of the image.
  *
- * This function can also be used with all eight Number parameters. To
+ * This function can also be used with eight Number parameters. To
  * differentiate between all these parameters, p5.js uses the language of
  * "destination rectangle" (which corresponds to "dx", "dy", etc.) and "source
  * image" (which corresponds to "sx", "sy", etc.) below. Specifying the
@@ -423,6 +423,14 @@ function _sAssign(sVal, iVal) {
  * subsection of the source image instead of the whole thing. Here's a diagram
  * to explain further:
  * <img src="assets/drawImage.png"></img>
+ *
+ * This function can also be used to draw images without distorting the orginal aspect ratio,
+ * by adding 9th parameter fit which can either be COVER or CONTAIN.
+ * CONTAIN as the name suggests contains the whole image within the specified destination box
+ * without distorting the image ratio.
+ * COVER covers the entire destination box.
+ *
+ *
  *
  * @method image
  * @param  {p5.Image|p5.Element|p5.Texture} img    the image to display
@@ -490,6 +498,36 @@ function _sAssign(sVal, iVal) {
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   // dimensions of image are 780 x 440
+ *   // dimensions of canvas are 100 x 100
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ * function setup() {
+ *   // CONTAIN the whole image without distorting the image's aspect ratio
+ *   // CONTAIN the image within the specified destination box and display at LEFT,CENTER position
+ *   background(color('green'));
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, CONTAIN, LEFT);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/laDefense50.png'); // dimensions of image are 50 x 50
+ * }
+ * function setup() {
+ *   // COVER the whole destination box without distorting the image's aspect ratio
+ *   // COVER the specified destination box which is of dimension 100 x 100
+ *   // Display the CENTER part of the image for both LEFT and TOP corner
+ *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
+ * }
+ * </code>
+ * </div>
  * @alt
  * image of the underside of a white umbrella and gridded ceiling above
  * image of the underside of a white umbrella and gridded ceiling above
@@ -513,8 +551,8 @@ function _sAssign(sVal, iVal) {
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
  * @param {Constant} [fit] either CONTAIN or COVER
- * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER
- * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER
+ * @param {Constant} [xAlign] either LEFT, RIGHT or CENTER default is CENTER
+ * @param {Constant} [yAlign] either TOP, BOTTOM or CENTER default is CENTER
  */
 p5.prototype.image = function(
   img,
