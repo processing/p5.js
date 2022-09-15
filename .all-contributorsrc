@@ -3203,6 +3203,17 @@
       "contributions": [
         "plugin"
       ]
+    },
+    {
+      "login": "Manpreet-Singh001",
+      "name": "manpreet",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93985396?v=4",
+      "profile": "https://github.com/Manpreet-Singh001",
+      "contributions": [
+        "doc",
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
