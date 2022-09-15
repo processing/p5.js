@@ -463,12 +463,19 @@ suite('p5.RendererGL', function() {
       assert.isDefined(buffers.indexBuffer);
       assert.isDefined(buffers.indexBufferType);
       assert.isDefined(buffers.vertexBuffer);
-      assert.isDefined(buffers.lineNormalBuffer);
-      assert.isDefined(buffers.lineVertexBuffer);
+      assert.isDefined(buffers.lineVerticesBuffer);
+      assert.isDefined(buffers.lineSidesBuffer);
+      assert.isDefined(buffers.lineTangentsInBuffer);
+      assert.isDefined(buffers.lineTangentsOutBuffer);
       assert.isDefined(buffers.vertexBuffer);
 
       assert.equal(buffers.vertexCount, 3);
-      assert.equal(buffers.lineVertexCount, 18);
+
+      //   6 verts per line segment x3 (each is a quad made of 2 triangles)
+      // + 12 verts per join x3 (2 quads each, 1 is discarded in the shader)
+      // + 6 verts per line cap x0 (1 quad each)
+      // = 54
+      assert.equal(buffers.lineVertexCount, 54);
 
       done();
     });

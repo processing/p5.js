@@ -276,14 +276,9 @@ p5.Geometry.prototype._edgesToVertices = function() {
       .sub(begin)
       .normalize();
     const dirOK = dir.magSq() > 0;
-    const a = begin.array();
-    const b = end.array();
-    const dirArr = dir.array();
-    this.lineSides.push(1, -1, 1, 1, -1, -1);
-    for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
-      tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
+    if (dirOK) {
+      this._addSegment(begin, end, dir);
     }
-    this.lineVertices.push(a, a, b, b, a, b);
 
     if (i > 0 && prevEdge[1] === currEdge[0]) {
       // Add a join if this segment shares a vertex with the previous. Skip
@@ -329,6 +324,34 @@ p5.Geometry.prototype._edgesToVertices = function() {
       lastValidDir = dir;
     }
   }
+  return this;
+};
+
+/**
+ * Adds the vertices and vertex attributes for two triangles making a rectangle
+ * for a straight line segment. A vertex shader is responsible for picking
+ * proper coordinates on the screen given the centerline positions, the tangent,
+ * and the side of the centerline each vertex belongs to. Sides follow the
+ * following scheme:
+ *
+ *  -1            -1
+ *   o-------------o
+ *   |             |
+ *   o-------------o
+ *   1             1
+ *
+ * @private
+ * @chainable
+ */
+p5.Geometry.prototype._addSegment = function(begin, end, dir) {
+  const a = begin.array();
+  const b = end.array();
+  const dirArr = dir.array();
+  this.lineSides.push(1, -1, 1, 1, -1, -1);
+  for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
+    tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
+  }
+  this.lineVertices.push(a, a, b, b, a, b);
   return this;
 };
 
