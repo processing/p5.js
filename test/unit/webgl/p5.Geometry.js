@@ -47,6 +47,21 @@ suite('p5.Geometry', function() {
       assert.equal(geom._addJoin.callCount, 2);
     });
 
+    test('straight line', function() {
+      geom.vertices.push(
+        myp5.createVector(0, 0),
+        myp5.createVector(0, 100),
+        myp5.createVector(0, 200)
+      );
+      geom.edges.push([0, 1], [1, 2]);
+      geom._edgesToVertices();
+
+      assert.equal(geom._addSegment.callCount, 2);
+      assert.equal(geom._addCap.callCount, 2);
+      // No joins since the directions of each segment are the same
+      assert.equal(geom._addJoin.callCount, 0);
+    });
+
     test('two disconnected polylines', function() {
       geom.vertices.push(
         myp5.createVector(0, 0),

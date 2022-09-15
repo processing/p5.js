@@ -284,7 +284,10 @@ p5.Geometry.prototype._edgesToVertices = function() {
       // Add a join if this segment shares a vertex with the previous. Skip
       // actually adding join vertices if either the previous segment or this
       // one has a length of 0.
-      if (lastValidDir && dirOK) {
+      //
+      // Don't add a join if the tangents point in the same direction, which
+      // would mean the edges line up exactly, and there is no need for a join.
+      if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
         this._addJoin(begin, lastValidDir, dir);
       }
       if (dirOK && !addedStartingCap && !closed) {
@@ -388,9 +391,9 @@ p5.Geometry.prototype._addCap = function(point, tangent) {
  * Adds the vertices and vertex attributes for four triangles representing a
  * join between two adjacent line segments. This creates a quad on either side
  * of the shared vertex of the two line segments, with each quad perpendicular
- * to the lines. A vertex shader will discard the quad in the "elbow" of the
- * join, and a fragment shader will display the appropriate join style within
- * the remaining quad.
+ * to the lines. A vertex shader will discard all but the quad in the "elbow" of
+ * the join, and a fragment shader will display the appropriate join style
+ * within the remaining quad.
  *
  * The lineSides buffer will include the following values for the points on
  * the join rectangles:

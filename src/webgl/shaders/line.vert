@@ -41,14 +41,14 @@ varying float vMaxDist;
 varying float vCap;
 varying float vJoin;
 
-vec2 lineIntersection(vec2 aFrom, vec2 aDir, vec2 bFrom, vec2 bDir) {
+vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
   // Rotate and translate so a starts at the origin and goes out to the right
-  bFrom -= aFrom;
+  bPoint -= aPoint;
   vec2 rotatedBFrom = vec2(
-    bFrom.x*aDir.x + bFrom.y*aDir.y,
-    bFrom.y*aDir.x - bFrom.x*aDir.y
+    bPoint.x*aDir.x + bPoint.y*aDir.y,
+    bPoint.y*aDir.x - bPoint.x*aDir.y
   );
-  vec2 bTo = bFrom + bDir;
+  vec2 bTo = bPoint + bDir;
   vec2 rotatedBTo = vec2(
     bTo.x*aDir.x + bTo.y*aDir.y,
     bTo.y*aDir.x - bTo.x*aDir.y
@@ -56,7 +56,7 @@ vec2 lineIntersection(vec2 aFrom, vec2 aDir, vec2 bFrom, vec2 bDir) {
   float intersectionDistance =
     rotatedBTo.x + (rotatedBFrom.x - rotatedBTo.x) * rotatedBTo.y /
     (rotatedBTo.y - rotatedBFrom.y);
-  return aFrom + aDir * intersectionDistance;
+  return aPoint + aDir * intersectionDistance;
 }
 
 void main() {
@@ -70,10 +70,11 @@ void main() {
     ? 1. : 0.;
 
   // Joins have two unique, defined tangents
-  vJoin = aTangentIn != vec3(0.) && aTangentOut != vec3(0.) && (
-    aTangentIn != aTangentOut || abs(aSide) > 1.
-  )
-    ? 1. : 0.;
+  vJoin = (
+    aTangentIn != vec3(0.) &&
+    aTangentOut != vec3(0.) &&
+    aTangentIn != aTangentOut
+  ) ? 1. : 0.;
 
   vec4 posp = uModelViewMatrix * aPosition;
   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
@@ -132,15 +133,25 @@ void main() {
   }
 
   vec2 offset;
-  if (tangentOut != vec2(0.) && vJoin > 0.) {
+  if (vJoin == 1.) {
     vTangent = normalize(tangentIn + tangentOut);
-    //vec2 avgNormal = vec2(-vTangent.y, vTangent.x);
     vec2 normalIn = vec2(-tangentIn.y, tangentIn.x);
     vec2 normalOut = vec2(-tangentOut.y, tangentOut.x);
     float side = sign(aSide);
     float sideEnum = abs(aSide);
+
+    // We generate vertices for joins on either side of the centerline, but
+    // the "elbow" side is the only one needing a join. By not setting the
+    // offset for the other side, all its vertices will end up in the same
+    // spot and not render, effectively discarding it.
     if (sign(dot(tangentOut, vec2(-tangentIn.y, tangentIn.x))) != side) {
-      if (sideEnum > 1. && sideEnum < 3.) {
+      // Side enums:
+      //   1: the side going into the join
+      //   2: the middle of the join
+      //   3: the side going out of the join
+      if (sideEnum == 2.) {
+        // Calculate the position + tangent on either side of the join, and
+        // find where the lines intersect to find the elbow of the join
         vec2 c = (posp.xy/posp.w + vec2(1.,1.)) * 0.5 * uViewport.zw;
         vec2 intersection = lineIntersection(
           c + (side * normalIn * uStrokeWeight / 2.) * curPerspScale,
@@ -149,6 +160,11 @@ void main() {
           tangentOut
         );
         offset = (intersection - c);
+
+        // When lines are thick and the angle of the join approaches 180, the
+        // elbow might be really far from the center. We'll apply a limit to
+        // the magnitude to avoid lines going across the whole screen when this
+        // happens.
         float mag = length(offset);
         float maxMag = 3. * uStrokeWeight;
         if (mag > maxMag) {
@@ -170,10 +186,13 @@ void main() {
     vec2 tangent = aTangentIn == vec3(0.) ? tangentOut : tangentIn;
     vTangent = tangent;
     vec2 normal = vec2(-tangent.y, tangent.x);
-    float normalThickness = sign(aSide);
-    float tangentThickness = abs(aSide) - 1.;
-    offset = (normal * normalThickness + tangent * tangentThickness) * uStrokeWeight / 2.
-       * curPerspScale;
+
+    float normalOffset = sign(aSide);
+    // Caps will have side values of -2 or 2 on the edge of the cap that
+    // extends out from the line
+    float tangentOffset = abs(aSide) - 1.;
+    offset = (normal * normalOffset + tangent * tangentOffset) *
+      uStrokeWeight * 0.5 * curPerspScale;
     vMaxDist = uStrokeWeight / 2.;
   }
   vPosition = vCenter + offset / curPerspScale;
