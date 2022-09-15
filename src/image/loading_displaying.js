@@ -524,7 +524,7 @@ function _sAssign(sVal, iVal) {
  *   // COVER the whole destination box without distorting the image's aspect ratio
  *   // COVER the specified destination box which is of dimension 100 x 100
  *   // Without specifying xAlign or yAlign, the image will be
- *   // centereed in the destination box in both axes
+ *   // centered in the destination box in both axes
  *   image(img, 0, 0, width, height, 0, 0, img.width, img.height, COVER);
  * }
  * </code>
