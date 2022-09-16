@@ -584,6 +584,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center"><a href="https://github.com/bsubbaraman"><img src="https://avatars.githubusercontent.com/u/11969085?v=4?s=100" width="100px;" alt=""/><br /><sub><b>bsubbaraman</b></sub></a><br /><a href="#plugin-bsubbaraman" title="Plugin/utility libraries">🔌</a></td>
       <td align="center"><a href="http://jdeboi.com"><img src="https://avatars.githubusercontent.com/u/1548679?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jenna deBoisblanc</b></sub></a><br /><a href="#plugin-jdeboi" title="Plugin/utility libraries">🔌</a></td>
       <td align="center"><a href="https://github.com/Manpreet-Singh001"><img src="https://avatars.githubusercontent.com/u/93985396?v=4?s=100" width="100px;" alt=""/><br /><sub><b>manpreet</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Manpreet-Singh001" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=Manpreet-Singh001" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=Manpreet-Singh001" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/TetroGem"><img src="https://avatars.githubusercontent.com/u/19498453?v=4?s=100" width="100px;" alt=""/><br /><sub><b>TetroGem</b></sub></a><br /><a href="#ideas-TetroGem" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
