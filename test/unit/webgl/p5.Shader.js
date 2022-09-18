@@ -92,7 +92,6 @@ suite('p5.Shader', function() {
         'uMaterialColor',
         'uSampler',
         'isTexture',
-        'uEmissive',
         'uConstantAttenuation',
         'uLinearAttenuation',
         'uQuadraticAttenuation'

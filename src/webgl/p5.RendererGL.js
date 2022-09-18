@@ -95,6 +95,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.drawMode = constants.FILL;
 
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curAmbientColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
   this.curBlendMode = constants.BLEND;
@@ -1017,6 +1020,9 @@ p5.RendererGL.prototype.push = function() {
   properties.curStrokeWeight = this.curStrokeWeight;
   properties.curStrokeColor = this.curStrokeColor;
   properties.curFillColor = this.curFillColor;
+  properties.curAmbientColor = this.curAmbientColor;
+  properties.curSpecularColor = this.curSpecularColor;
+  properties.curEmissiveColor = this.curEmissiveColor;
 
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useEmissiveMaterial = this._useEmissiveMaterial;
@@ -1257,6 +1263,9 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   }
   fillShader.setUniform('uTint', this._tint);
 
+  fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
+  fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
+  fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
   fillShader.setUniform('uShininess', this._useShininess);

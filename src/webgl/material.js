@@ -719,7 +719,7 @@ p5.prototype.normalMaterial = function(...args) {
 };
 
 /**
- * Sets the current material as an ambient material of the given color.
+ * Sets the ambient color of the material.
  *
  * The ambientMaterial() color is the color the object will reflect
  * under **any** lighting.
@@ -823,9 +823,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   p5._validateParameters('ambientMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
+  this._renderer.curAmbientColor = color._array;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
@@ -834,8 +832,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
 };
 
 /**
- * Sets the current material as an emissive material of
- * the given color.
+ * Sets the emissive color of the material.
  *
  * An emissive material will display the emissive color at
  * full strength regardless of lighting. This can give the
@@ -897,8 +894,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   p5._validateParameters('emissiveMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
-  this._renderer._useSpecularMaterial = false;
+  this._renderer.curEmissiveColor = color._array;
   this._renderer._useEmissiveMaterial = true;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
@@ -908,7 +904,7 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Sets the current material as a specular material of the given color.
+ * Sets the specular color of the material.
  *
  * A specular material is reflective (shiny). The shininess can be
  * controlled by the <a href="#/p5/shininess">shininess()</a> function.
@@ -985,9 +981,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   p5._validateParameters('specularMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
-  this._renderer.curFillColor = color._array;
+  this._renderer.curSpecularColor = color._array;
   this._renderer._useSpecularMaterial = true;
-  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
   this._renderer._tex = null;
