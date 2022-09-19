@@ -1067,7 +1067,6 @@ p5.RendererGL.prototype.triangle = function(args) {
   // origin appropriately.
   const uMVMatrix = this.uMVMatrix.copy();
   try {
-    // prettier-ignore
     const mult = new p5.Matrix([
       x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis

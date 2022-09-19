@@ -105,7 +105,6 @@ suite('Rendering', function() {
     });
   });
 
-  // prettier-ignore
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'frustum', 'orbitControl',
