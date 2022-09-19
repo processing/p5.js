@@ -271,7 +271,7 @@ horizontal wave pattern effected by mouse x-position & updating noise values.
 
 ## 문서 생성
 
-* 먼저 `npm run grunt yui:build`를 한 번 실행하여 필요한 모든 로컬 파일과 소스 코드의 참조 사본을 생성합니다. yuidoc 레퍼런스 페이지 뒤에서 코어 JS 파일을 변경할 때마다 다시 실행해주세요. 이는 src의 인라인 문서 변경이 아니라 yuidoc-p5-theme-src 폴더에있는 파일에 대한 변경 사항입니다.
+* 먼저 `npm run docs`를 한 번 실행하여 필요한 모든 로컬 파일과 소스 코드의 참조 사본을 생성합니다. yuidoc 레퍼런스 페이지 뒤에서 코어 JS 파일을 변경할 때마다 다시 실행해주세요. 이는 src의 인라인 문서 변경이 아니라 yuidoc-p5-theme-src 폴더에있는 파일에 대한 변경 사항입니다.
 * 소스 코드만 변경했다면 `npm run grunt yui`만 실행할 수 있지만 `npm run grunt yui:build`도 사용할 수 있습니다.
 * `npm run docs:dev`를 실행하여 변경할 때마다 업데이트되는 사이트의 실시간 미리보기를 할 수 있습니다.(변경 한 후 페이지를 새로고침해야 표시됩니다.)
 

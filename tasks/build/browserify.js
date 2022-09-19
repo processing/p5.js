@@ -4,7 +4,6 @@
 
 import { resolve } from 'path';
 import browserify from 'browserify';
-import { format } from 'prettier';
 import derequire from 'derequire';
 
 const bannerTemplate =
@@ -61,13 +60,18 @@ module.exports = function(grunt) {
         browserified = browserified.exclude('../../translations/dev');
       }
 
-      const babelifyOpts = { plugins: ['static-fs'] };
+      const babelifyOpts = {
+        global: true
+      };
 
       if (isTest) {
         babelifyOpts.envName = 'test';
       }
 
-      const bundle = browserified.transform('babelify', babelifyOpts).bundle();
+      const bundle = browserified
+        .transform('brfs-babel')
+        .transform('babelify', babelifyOpts)
+        .bundle();
 
       // Start the generated output with the banner comment,
       let code = banner + '\n';
@@ -79,8 +83,8 @@ module.exports = function(grunt) {
         })
         .on('end', function() {
           code = code.replace(
-            `'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'`,
-            grunt.template.process(`'<%= pkg.version %>'`)
+            "'VERSION_CONST_WILL_BE_REPLACED_BY_BROWSERIFY_BUILD_PROCESS'",
+            grunt.template.process("'<%= pkg.version %>'")
           );
 
           // "code" is complete: create the distributable UMD build by running
@@ -92,10 +96,11 @@ module.exports = function(grunt) {
 
           // and prettify the code
           if (!isMin) {
-            code = format(code, {
-              singleQuote: true,
-              printWidth: 80 + 12
-            });
+            const prettyFast = require('pretty-fast');
+            code = prettyFast(code, {
+              url: '(anonymous)',
+              indent: '  '
+            }).code;
           }
 
           // finally, write it to disk

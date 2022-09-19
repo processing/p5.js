@@ -317,7 +317,7 @@ Here is an example for a well-documented method. To create a new method, you can
 
 ## Generating documentation
 
-* Run `npm run grunt yui:build` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme folder, NOT inline documentation changes to src.
+* Run `npm run docs` once first to generate all local files needed, as well as a copy of the reference from the source code. Run it again anytime you make changes to the core JS files behind the yuidoc reference page. These are changes in files located in the yuidoc-p5-theme folder, NOT inline documentation changes to src.
 * If you only made changes to the source code, you can just run `npm run grunt yui`, though `npm run grunt yui:build` will also do the trick. 
 * You can run `npm run docs:dev` to launch a live preview of the site that will update each time you make changes. (You will need to refresh the page after making changes to see them appear.)
 

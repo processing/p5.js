@@ -1,25 +1,24 @@
-// prettier-ignore
+/* eslint-disable indent */
 var mat4 = [
    1,  2,  3,  4,
    5,  6,  7,  8,
    9, 10, 11, 12,
-  13, 14, 15, 16,
+  13, 14, 15, 16
 ];
 
-// prettier-ignore
 var other = [
   1,  5,  9, 13,
   2,  6, 10, 14,
   3,  7, 11, 15,
-  4,  8, 12, 16,
+  4,  8, 12, 16
 ];
 
-// prettier-ignore
 var mat3 = [
   1, 2, 3,
   4, 5, 6,
-  7, 8, 9,
+  7, 8, 9
 ];
+/* eslint-enable indent */
 
 suite('p5.Matrix', function() {
   var myp5;
@@ -42,13 +41,14 @@ suite('p5.Matrix', function() {
       var m = new p5.Matrix();
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
-      // prettier-ignore
+      /* eslint-disable indent */
       assert.deepEqual([].slice.call(m.mat4), [
-				1, 0, 0, 0, 
+				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
-				0, 0, 0, 1,
+				0, 0, 0, 1
 			]);
+      /* eslint-enable indent */
     });
 
     test('new p5.Matrix(array)', function() {
@@ -69,13 +69,14 @@ suite('p5.Matrix', function() {
       var m = p5.Matrix.identity();
       assert.instanceOf(m, p5.Matrix);
       assert.isUndefined(m.mat3);
-      // prettier-ignore
+      /* eslint-disable indent */
       assert.deepEqual([].slice.call(m.mat4), [
-				1, 0, 0, 0, 
+				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
-				0, 0, 0, 1,
+				0, 0, 0, 1
 			]);
+      /* eslint-enable indent */
     });
   });
 
@@ -117,24 +118,26 @@ suite('p5.Matrix', function() {
   });
 
   suite('mult', function() {
-    // prettier-ignore
+    /* eslint-disable indent */
     var mm = [
        30,  70, 110, 150,
        70, 174, 278, 382,
       110, 278, 446, 614,
-      150, 382, 614, 846,
+      150, 382, 614, 846
     ];
+    /* eslint-enable indent */
 
     test('self', function() {
       var m = new p5.Matrix(mat4.slice());
       m.mult(m);
-      // prettier-ignore
+      /* eslint-disable indent */
       assert.deepEqual([].slice.call(m.mat4), [
-        90, 100, 110, 120,
-       202, 228, 254, 280,
-       314, 356, 398, 440,
-       426, 484, 542, 600,
-     ]);
+         90, 100, 110, 120,
+        202, 228, 254, 280,
+        314, 356, 398, 440,
+        426, 484, 542, 600
+      ]);
+      /* eslint-enable indent */
     });
 
     test('p5.Matrix', function() {
@@ -158,24 +161,26 @@ suite('p5.Matrix', function() {
   });
 
   suite('apply', function() {
-    // prettier-ignore
+    /* eslint-disable indent */
     var am = [
       276, 304, 332, 360,
       304, 336, 368, 400,
       332, 368, 404, 440,
-      360, 400, 440, 480,
+      360, 400, 440, 480
     ];
+    /* eslint-enable indent */
 
     test('self', function() {
       var m = new p5.Matrix(mat4.slice());
       m.apply(m);
-      // prettier-ignore
+      /* eslint-disable indent */
       assert.deepEqual([].slice.call(m.mat4), [
-        90, 100, 110, 120,
-       202, 228, 254, 280,
-       314, 356, 398, 440,
-       426, 484, 542, 600,
-     ]);
+         90, 100, 110, 120,
+        202, 228, 254, 280,
+        314, 356, 398, 440,
+        426, 484, 542, 600
+      ]);
+      /* eslint-enable indent */
     });
 
     test('p5.Matrix', function() {
@@ -199,13 +204,14 @@ suite('p5.Matrix', function() {
   });
 
   suite('scale', function() {
-    // prettier-ignore
+    /* eslint-disable indent */
     var sm = [
        2,  4,  6,  8,
       15, 18, 21, 24,
       45, 50, 55, 60,
-      13, 14, 15, 16,
+      13, 14, 15, 16
     ];
+    /* eslint-enable indent */
 
     test('p5.Vector', function() {
       var m = new p5.Matrix(mat4.slice());
@@ -231,13 +237,14 @@ suite('p5.Matrix', function() {
   });
 
   suite('rotate', function() {
-    // prettier-ignore
+    /* eslint-disable max-len */
     var rm = [
-      1.433447866601989, 2.5241247073503885, 3.6148015480987885, 4.7054783888471885, 
-      6.460371405020393, 7.054586073938033,  7.648800742855675,  8.243015411773316, 
-      7.950398010346969, 9.157598472697025, 10.36479893504708,  11.571999397397136, 
-      13, 14, 15, 16, 
+      1.433447866601989, 2.5241247073503885, 3.6148015480987885, 4.7054783888471885,
+      6.460371405020393, 7.054586073938033,  7.648800742855675,  8.243015411773316,
+      7.950398010346969, 9.157598472697025, 10.36479893504708,  11.571999397397136,
+      13, 14, 15, 16
     ];
+    /* eslint-enable max-len */
 
     test('p5.Vector', function() {
       var m = new p5.Matrix(mat4.slice());

@@ -939,7 +939,7 @@ p5.prototype.spotLight = function(
     default:
       console.warn(
         `Sorry, input for spotlight() is not in prescribed format. Too ${
-          length < 3 ? `few` : `many`
+          length < 3 ? 'few' : 'many'
         } arguments were provided`
       );
       return this;

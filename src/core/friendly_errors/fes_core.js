@@ -39,7 +39,10 @@ const EDIT_DIST_THRESHOLD = 2;
 const ENABLE_FES_STYLING = false;
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._friendlyError = p5._checkForUserDefinedFunctions = p5._fesErrorMonitor = () => {};
+  p5._friendlyError =
+    p5._checkForUserDefinedFunctions =
+    p5._fesErrorMonitor =
+    () => {};
 } else {
   let doFriendlyWelcome = false; // TEMP until we get it all working LM
 

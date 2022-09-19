@@ -338,31 +338,30 @@ p5.prototype.shader = function(s) {
  *   );
  * }
  *
- * // prettier-ignore
  * function draw() {
  *   // Clear the scene
  *   background(200);
  *
  *   // Draw a box using our shader
- *     // shader() sets the active shader with our shader
- *     shader(shaderProgram);
- *     push();
- *     translate(-width / 4, 0, 0);
- *     rotateX(millis() * 0.00025);
- *     rotateY(millis() * 0.0005);
- *     box(width / 4);
- *     pop();
+ *   // shader() sets the active shader with our shader
+ *   shader(shaderProgram);
+ *   push();
+ *   translate(-width / 4, 0, 0);
+ *   rotateX(millis() * 0.00025);
+ *   rotateY(millis() * 0.0005);
+ *   box(width / 4);
+ *   pop();
  *
  *   // Draw a box using the default fill shader
- *     // resetShader() restores the default fill shader
- *     resetShader();
- *     fill(255, 0, 0);
- *     push();
- *     translate(width / 4, 0, 0);
- *     rotateX(millis() * 0.00025);
- *     rotateY(millis() * 0.0005);
- *     box(width / 4);
- *     pop();
+ *   // resetShader() restores the default fill shader
+ *   resetShader();
+ *   fill(255, 0, 0);
+ *   push();
+ *   translate(width / 4, 0, 0);
+ *   rotateX(millis() * 0.00025);
+ *   rotateY(millis() * 0.0005);
+ *   box(width / 4);
+ *   pop();
  * }
  * </code>
  * </div>

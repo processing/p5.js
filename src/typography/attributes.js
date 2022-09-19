@@ -209,7 +209,7 @@ p5.prototype.textStyle = function(theStyle) {
  * text(aString, 0, 85);
  * line(sWidth, 50, sWidth, 100);
  *
- * describe(`Letter P and p5.js are displayed with vertical lines at end.`);
+ * describe('Letter P and p5.js are displayed with vertical lines at end.');
  * </code>
  * </div>
  */

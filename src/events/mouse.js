@@ -94,7 +94,7 @@ p5.prototype._hasMouseInteracted = false;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, 0, mouseX, 100);
- *   describe(`horizontal black line moves left and right with mouse x-position`);
+ *   describe('horizontal black line moves left and right with mouse x-position');
  * }
  * </code>
  * </div>
@@ -118,7 +118,7 @@ p5.prototype.mouseX = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(0, mouseY, 100, mouseY);
- *   describe(`vertical black line moves up and down with mouse y-position`);
+ *   describe('vertical black line moves up and down with mouse y-position');
  * }
  * </code>
  * </div>
@@ -618,7 +618,7 @@ p5.prototype._onmousemove = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mousePressed() {
  *   if (value === 0) {
@@ -695,7 +695,7 @@ p5.prototype._onmousedown = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mouseReleased() {
  *   if (value === 0) {
@@ -770,7 +770,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect turns white with mouse click/press.`);
+ *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  *
  * function mouseClicked() {
@@ -835,7 +835,7 @@ p5.prototype._onclick = function(e) {
  * function draw() {
  *   fill(value);
  *   rect(25, 25, 50, 50);
- *   describe(`black 50-by-50 rect turns white with mouse doubleClick/press.`);
+ *   describe('black 50-by-50 rect turns white with mouse doubleClick/press.');
  * }
  *
  * function doubleClicked() {
@@ -1006,7 +1006,7 @@ p5.prototype.requestPointerLock = function() {
  * let locked = false;
  * function draw() {
  *   background(237, 34, 93);
- *   describe(`cursor gets locked / unlocked on mouse-click`);
+ *   describe('cursor gets locked / unlocked on mouse-click');
  * }
  * function mouseClicked() {
  *   if (!locked) {

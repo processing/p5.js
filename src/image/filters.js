@@ -1,5 +1,3 @@
-/*global ImageData:false */
-
 /**
  * This module defines the filters for use with image buffers.
  *
