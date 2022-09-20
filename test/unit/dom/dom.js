@@ -1,4 +1,3 @@
-/* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
     /**
@@ -79,7 +78,7 @@ suite('DOM', function() {
       // Creates 2 similar elements and tests if it selects only one.
       const testButton = generateButton('Button 1');
       generateButton('Button 2');
-      const result = myp5.select(`button`);
+      const result = myp5.select('button');
       assert.deepEqual(result.elt, testButton.elt);
     });
 
@@ -91,7 +90,7 @@ suite('DOM', function() {
       const testDiv = myp5.createDiv();
       testButton.parent(testDiv);
 
-      const result = myp5.select(`button`, testDiv);
+      const result = myp5.select('button', testDiv);
       assert.deepEqual(result.elt, testButton.elt);
     });
 

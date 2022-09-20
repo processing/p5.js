@@ -109,11 +109,12 @@ p5.prototype.bezier = function(...args) {
  *
  * function draw() {
  *   background(200);
- *   // prettier-ignore
- *   bezier(-40, -40, 0,
- *           90, -40, 0,
- *          -90,  40, 0,
- *           40,  40, 0);
+ *   bezier(
+ *     -40, -40, 0,
+ *     90, -40, 0,
+ *     -90,  40, 0,
+ *     40,  40, 0
+ *   );
  * }
  * </code>
  * </div>

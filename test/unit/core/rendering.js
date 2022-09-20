@@ -105,7 +105,6 @@ suite('Rendering', function() {
     });
   });
 
-  // prettier-ignore
   var webglMethods = [
     'rotateX', 'rotateY', 'rotateZ',
     'camera', 'perspective', 'ortho', 'frustum', 'orbitControl',
@@ -114,7 +113,7 @@ suite('Rendering', function() {
     'createShader', 'shader',
     'normalMaterial', 'texture', 'ambientMaterial', 'emissiveMaterial', 'specularMaterial',
     'shininess', 'lightFalloff',
-    'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus',
+    'plane', 'box', 'sphere', 'cylinder', 'cone', 'ellipsoid', 'torus'
   ];
 
   suite('webgl assertions', function() {

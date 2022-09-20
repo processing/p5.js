@@ -1067,7 +1067,6 @@ p5.RendererGL.prototype.triangle = function(args) {
   // origin appropriately.
   const uMVMatrix = this.uMVMatrix.copy();
   try {
-    // prettier-ignore
     const mult = new p5.Matrix([
       x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
@@ -1336,13 +1335,22 @@ p5.RendererGL.prototype.rect = function(args) {
     } else {
       this.vertex(x1, y1);
     }
+
+    this.immediateMode.geometry.uvs.length = 0;
+    for (const vert of this.immediateMode.geometry.vertices) {
+      const u = (vert.x - x1) / width;
+      const v = (vert.y - y1) / height;
+      this.immediateMode.geometry.uvs.push(u, v);
+    }
+
     this.endShape(constants.CLOSE);
   }
   return this;
 };
 
-// prettier-ignore
+/* eslint-disable max-len */
 p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
+/* eslint-enable max-len */
   if (typeof detailX === 'undefined') {
     detailX = 2;
   }
@@ -1352,7 +1360,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
-  
+
   if (!this.geometryInHash(gId)) {
     const quadGeom = new p5.Geometry(detailX, detailY, function() {
       //algorithm adapted from c++ to js
@@ -1380,7 +1388,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
         }
       }
     });
-    
+
     quadGeom.faces = [];
     for(let y = 0; y < detailY-1; y++){
       for(let x = 0; x < detailX-1; x++){

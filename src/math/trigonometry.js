@@ -146,7 +146,7 @@ p5.prototype.atan = function(ratio) {
  *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
- *   describe(`60×10 rect at center of canvas rotates with mouse movements`);
+ *   describe('60×10 rect at center of canvas rotates with mouse movements');
  * }
  * </code>
  * </div>

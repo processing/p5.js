@@ -124,11 +124,12 @@ import p5 from './main';
  *   let ct = cos(rad);
  *   let st = sin(rad);
  *   // Matrix for rotation around the Y axis
- *   // prettier-ignore
- *   applyMatrix(  ct, 0.0,  st,  0.0,
- *                0.0, 1.0, 0.0,  0.0,
- *                -st, 0.0,  ct,  0.0,
- *                0.0, 0.0, 0.0,  1.0);
+ *   applyMatrix(
+ *     ct, 0.0,  st,  0.0,
+ *     0.0, 1.0, 0.0,  0.0,
+ *     -st, 0.0,  ct,  0.0,
+ *     0.0, 0.0, 0.0,  1.0
+ *   );
  *   stroke(255);
  *   box(50);
  * }

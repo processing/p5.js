@@ -23,7 +23,7 @@ import p5 from '../core/main';
  *   print(x); // -3
  *   print(y); // 3
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -220,7 +220,7 @@ p5.prototype.dist = function(...args) {
  *   line(0, 0, 0, height);
  *   line(0, height - 1, width, height - 1);
  *
- *   describe(`ellipse moves along a curve with mouse x. e^n displayed.`);
+ *   describe('ellipse moves along a curve with mouse x. e^n displayed.');
  * }
  * </code></div>
  */
@@ -394,7 +394,7 @@ p5.prototype.log = Math.log;
  *   line(0, 0, x2, y2);
  *   print(mag(x2, y2)); // Prints "106.3014581273465"
  *
- *   describe(`4 lines of different length radiate from top left of canvas.`);
+ *   describe('4 lines of different length radiate from top left of canvas.');
  * }
  * </code></div>
  */
@@ -423,7 +423,7 @@ p5.prototype.mag = function(x, y) {
  * let value = 25;
  * let m = map(value, 0, 100, 0, width);
  * ellipse(m, 50, 10, 10);
- * describe(`10×10 white ellipse with in mid left canvas`);
+ * describe('10×10 white ellipse with in mid left canvas');
 </code></div>
  *
  *   <div><code>
@@ -633,7 +633,7 @@ p5.prototype.norm = function(n, start, stop) {
  *
  *   ellipse(eLoc * 8, eLoc * 8, pow(eSize, 4), pow(eSize, 4));
  *
- *   describe(`small to large ellipses radiating from top left of canvas`);
+ *   describe('small to large ellipses radiating from top left of canvas');
  * }
  * </code></div>
  */
@@ -651,12 +651,12 @@ p5.prototype.pow = Math.pow;
  * <div><code>
  * let x = round(3.7);
  * text(x, width / 2, height / 2);
- * describe(`"4" written in middle of canvas`);
+ * describe('"4" written in middle of canvas');
  * </code></div>
  * <div><code>
  * let x = round(12.782383, 2);
  * text(x, width / 2, height / 2);
- * describe(`"12.78" written in middle of canvas`);
+ * describe('"12.78" written in middle of canvas');
  * </code></div>
  * <div><code>
  * function draw() {
@@ -681,7 +681,7 @@ p5.prototype.pow = Math.pow;
  *   text(nfc(ax, 2), ax, ay - 5);
  *   text(nfc(bx, 1), bx, by - 5);
  *
- *   describe(`two horizontal lines rounded values displayed on top.`);
+ *   describe('two horizontal lines rounded values displayed on top.');
  * }
  * </code></div>
  */

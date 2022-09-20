@@ -252,7 +252,8 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * min(A*factor, B).</li>
  * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C =
  * max(A*factor, B).</li>
- * <li><code>DIFFERENCE</code> - subtract colors from underlying image.</li>
+ * <li><code>DIFFERENCE</code> - subtract colors from underlying image.
+ * <em>(2D)</em></li>
  * <li><code>EXCLUSION</code> - similar to <code>DIFFERENCE</code>, but less
  * extreme.</li>
  * <li><code>MULTIPLY</code> - multiply the colors, result will always be

@@ -71,13 +71,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, -0, 0.8414710164070129, 0,
         0, 1, 0, 0,
         -0.8414710164070129, 0, 0.5403022766113281, 0,
         72.87352752685547, 0, -46.79154968261719, 1
-        ]);
+      ]);
 
       myCam.pan(1);
 
@@ -96,12 +95,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, 0, -0.8414710164070129, 0,
-         -0, 1, 0, 0,
-         0.8414710164070129, 0, 0.5403022766113281, 0,
-         -72.87352752685547, 0, -46.79154968261719, 1]);
+        -0, 1, 0, 0,
+        0.8414710164070129, 0, 0.5403022766113281, 0,
+        -72.87352752685547, 0, -46.79154968261719, 1
+      ]);
 
       myCam.pan(-1);
 
@@ -118,7 +117,6 @@ suite('p5.Camera', function() {
     test('Pan(0) sets correct matrix w/o changing eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -142,12 +140,12 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
-      var expectedMatrix = new Float32Array(
-        [1, 0, 0, 0,
-          0, 0.07073719799518585, -0.9974949955940247, 0,
-          -0, 0.9974949955940247, 0.07073719799518585, 0,
-          0, -86.3855972290039, -6.126020908355713, 1]);
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 0.07073719799518585, -0.9974949955940247, 0,
+        -0, 0.9974949955940247, 0.07073719799518585, 0,
+        0, -86.3855972290039, -6.126020908355713, 1
+      ]);
 
       myCam.tilt(1.5);
 
@@ -162,12 +160,12 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 0.07073719799518585, 0.9974949955940247, 0,
-          0, -0.9974949955940247, 0.07073719799518585, 0,
-          0, 86.3855972290039, -6.126020908355713, 1]);
+        1, 0, 0, 0,
+        0, 0.07073719799518585, 0.9974949955940247, 0,
+        0, -0.9974949955940247, 0.07073719799518585, 0,
+        0, 86.3855972290039, -6.126020908355713, 1
+      ]);
 
       myCam.tilt(-1.5);
 
@@ -180,12 +178,12 @@ suite('p5.Camera', function() {
     test('Tilt(0) sets correct matrix w/o changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, -86.6025390625, 1]);
+        0, 0, -86.6025390625, 1
+      ]);
 
       myCam.tilt(0);
 
@@ -230,13 +228,12 @@ suite('p5.Camera', function() {
      eyeXYZ or upXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         0.5403022766113281, -0, 0.8414710164070129, 0,
         0, 1, 0, 0,
         -0.8414710164070129, 0, 0.5403022766113281, 0,
         72.87352752685547, 0, -46.79154968261719, 1
-        ]);
+      ]);
 
       myCam.pan(1 * 180 / Math.PI);
 
@@ -255,7 +252,6 @@ suite('p5.Camera', function() {
     changing eyeXYZ', function() {
       var orig = getVals(myCam);
 
-      //prettier-ignore
       var expectedMatrix = new Float32Array(
         [1, 0, 0, 0,
           0, 0.07073719799518585, -0.9974949955940247, 0,
@@ -309,45 +305,42 @@ suite('p5.Camera', function() {
     });
 
     test('Move() with positive parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-                        1, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1, 0,
-                        -1, -2, -89.6025390625, 1
-                      ]);
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        -1, -2, -89.6025390625, 1
+      ]);
 
       myCam.move(1, 2, 3);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('Move() with negative parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-                      1, 0, 0, 0,
-                      0, 1, 0, 0,
-                      0, 0, 1, 0,
-                      1, 2, -83.6025390625, 1
-                    ]);
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        1, 2, -83.6025390625, 1
+      ]);
 
       myCam.move(-1, -2, -3);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('Move(0,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, -86.6025390625, 1]);
+        0, 0, -86.6025390625, 1
+      ]);
 
       myCam.move(0, 0, 0);
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
 
     test('SetPosition() with positive parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -360,7 +353,6 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('SetPosition() with negative parameters sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -373,12 +365,12 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('SetPosition(0,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        0, 0, 0, 1]);
+        0, 0, 0, 1
+      ]);
 
       myCam.setPosition(0, 0, 0);
 
@@ -386,59 +378,54 @@ suite('p5.Camera', function() {
     });
 
     test('_orbit(1,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
-          0, 1, 6.123234262925839e-17, 0,
-          -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
-          8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
-        ]);
+        0.5403022766113281, -5.1525235865883254e-17, 0.8414709568023682, 0,
+        0, 1, 6.123234262925839e-17, 0,
+        -0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+        8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+      ]);
 
       myCam._orbit(1, 0, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,1,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 0.5403022766113281, -0.8414709568023682, 0,
-          -0, 0.8414709568023682, 0.5403022766113281, 0,
-          0, -8.216248374992574e-7, -86.6025390625, 1
-        ]);
+        1, 0, 0, 0,
+        0, 0.5403022766113281, -0.8414709568023682, 0,
+        -0, 0.8414709568023682, 0.5403022766113281, 0,
+        0, -8.216248374992574e-7, -86.6025390625, 1
+      ]);
 
       myCam._orbit(0, 1, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,0,1) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          1, 0, 0, 0,
-          0, 1, 6.123234262925839e-17, 0,
-          0, -6.123234262925839e-17, 1, 0,
-          0, 2.3406442117928995e-22, -87.6025390625, 1
-        ]);
+        1, 0, 0, 0,
+        0, 1, 6.123234262925839e-17, 0,
+        0, -6.123234262925839e-17, 1, 0,
+        0, 2.3406442117928995e-22, -87.6025390625, 1
+      ]);
 
       myCam._orbit(0, 0, 1);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(-1,0,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
-          0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
-          -0, 1, 6.123234262925839e-17, 0,
-          0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
-          -8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
-        ]);
+        0.5403022766113281, 5.1525235865883254e-17, -0.8414709568023682, 0,
+        -0, 1, 6.123234262925839e-17, 0,
+        0.8414709568023682, -3.3083975336675e-17, 0.5403022766113281, 0,
+        -8.216248374992574e-7, -7.180680227154989e-23, -86.6025390625, 1
+      ]);
 
       myCam._orbit(-1, 0, 0);
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,-1,0) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 0.5403022766113281, 0.8414709568023682, 0,
@@ -451,7 +438,6 @@ suite('p5.Camera', function() {
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
     test('_orbit(0,0,-1) sets correct matrix', function() {
-      //prettier-ignore
       var expectedMatrix = new Float32Array([
         1, 0, 0, 0,
         0, 1, 6.123234262925839e-17, 0,
@@ -505,12 +491,14 @@ suite('p5.Camera', function() {
       test('ortho() sets projection matrix correctly', function() {
         // expectedMatrix array needs to match Float32Array type of
         // p5.Camera projMatrix's mat4 array for deepEqual to work
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [1,  0,  0, 0,
-                       0, -1,  0, 0,
-                       0,  0, -1, 0,
-                      -0, -0, -1, 1]);
+        /* eslint-disable indent */
+        var expectedMatrix = new Float32Array([
+           1,  0,  0,  0,
+           0, -1,  0,  0,
+           0,  0, -1,  0,
+          -0, -0, -1,  1
+        ]);
+        /* eslint-enable indent */
 
         myCam.ortho(-1, 1, -1, 1, 0, 2);
 
@@ -518,7 +506,6 @@ suite('p5.Camera', function() {
       });
 
       test('ortho() with no parameters specified (sets default)', function() {
-        //prettier-ignore
         var expectedMatrix = new Float32Array([
           0.019999999552965164, 0, 0, 0,
           0, -0.019999999552965164, 0,0,
@@ -541,12 +528,12 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
       });
       test('perspective() sets projection matrix correctly', function() {
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [1,  0,   0,  0,
-                       0, -1,   0,  0,
-                       0,  0,  -3, -1,
-                       0,  0, -40,  0]);
+        var expectedMatrix = new Float32Array([
+          1,  0,   0,  0,
+          0, -1,   0,  0,
+          0,  0,  -3, -1,
+          0,  0, -40,  0
+        ]);
 
         myCam.perspective(Math.PI / 2, 1, 10, 20);
 
@@ -554,7 +541,6 @@ suite('p5.Camera', function() {
       });
 
       test('perspective() with no parameters specified (sets default)', function() {
-        // prettier-ignore
         var expectedMatrix = new Float32Array([
           1.7320507764816284,0,0,0,
           0,-1.7320507764816284,0,0,
@@ -579,12 +565,14 @@ suite('p5.Camera', function() {
         assert.deepEqual(myCam.projMatrix.mat4, myp5._renderer.uPMatrix.mat4);
       });
       test('frustum() sets projection matrix correctly', function() {
-        //prettier-ignore
-        var expectedMatrix = new Float32Array(
-                      [ -2,  0,  0,  0,
-                         0, -2,  0,  0,
-                         0,  0, -0, -1,
-                         0,  0,  2,  0]);
+        /* eslint-disable indent */
+        var expectedMatrix = new Float32Array([
+          -2,  0,  0,  0,
+           0, -2,  0,  0,
+           0,  0, -0, -1,
+           0,  0,  2,  0
+        ]);
+        /* eslint-enable indent */
 
         myCam.frustum(-1, 1, -1, 1, -2, 2);
 
@@ -592,11 +580,10 @@ suite('p5.Camera', function() {
       });
 
       test('frustum() with no parameters specified (sets default)', function() {
-        // prettier-ignore
         var expectedMatrix = new Float32Array([
           0, 0,  0,  0,
-          0, 0,  0,  0, 
-          0, 0, -1, -1, 
+          0, 0,  0,  0,
+          0, 0, -1, -1,
           0, 0, -0,  0
         ]);
 

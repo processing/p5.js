@@ -7,7 +7,8 @@ module.exports = grunt => {
   grunt.registerMultiTask(
     'eslint-samples',
     'Validate samples with ESLint',
-    function() {
+    async function() {
+      const done = this.async();
       const opts = this.options({
         outputFile: false,
         quiet: false,
@@ -26,7 +27,7 @@ module.exports = grunt => {
       // get loaded after the data file has been created by a
       // prior grunt task
       const sampleLinter = require('../../utils/sample-linter.js');
-      const result = sampleLinter.eslintFiles(opts, this.filesSrc);
+      const result = await sampleLinter.eslintFiles(opts, this.filesSrc);
       const report = result.report;
       const output = result.output;
 
@@ -45,7 +46,7 @@ module.exports = grunt => {
         );
       }
 
-      return report.errorCount === 0;
+      done(report.errorCount === 0);
     }
   );
 };
