@@ -5,14 +5,16 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 - [Issues](#issues)
 	- [Bug report](#bug-report)
 	- [Feature request](#feature-request)
-	- [Feature enhancement](#feature-enchancement)
+	- [Feature enhancement](#feature-enhancement)
 	- [Discussion](#discussion)
 - [Pull Requests](#pull-requests)
 	- [Simple fix](#simple-fix)
 	- [Bug fix](#bug-fix)
-	- [New feature/feature enchancement](#new-feature-feature-enchancement)
+	- [New feature/feature enhancement](#new-feature-feature-enhancement)
 	- [Dependabot](#dependabot)
 - [Build Process](#build-process)
+	- [Main build task](#main-build-task)
+	- [Miscellaneous tasks](#miscellaneous-tasks)
 - [Release Process](#release-process)
 - [Tips & Tricks](#tips--tricks)
 
@@ -64,16 +66,16 @@ For feature request issues, they should be using the "New Feature Request" issue
 		- Will it conflict with typical sketches already written for p5.js?
 		- Features that are likely to break the above should be considered breaking changes and without a major version release, we should not make breaking changes to p5.js.
 	- Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native Javascript code, or existing easy to use libraries?
-		- Eg. instead of prividing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native Javascript `["Hello", "world!"].join()` should be preferred instead.
+		- Eg. instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native Javascript `["Hello", "world!"].join()` should be preferred instead.
 3. Provided the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin towards a PR. The PR review process for new features is documented below.
 
-## Feature enchancement
-For feature enchancement issues, they should be using the "Existing Feature Enhancement" issue template. The process here very similar to new feature request. The difference between new feature request and feature enchancement can be blurred however feature enchancement mainly deals with existing functions of p5.js while new feature request could be requesting entirely new functions to be added.
+## Feature enhancement
+For feature enhancement issues, they should be using the "Existing Feature Enhancement" issue template. The process here very similar to new feature request. The difference between new feature request and feature enhancement can be blurred however feature enhancement mainly deals with existing functions of p5.js while new feature request could be requesting entirely new functions to be added.
 
-1. Similar to new feature request, feature enchancement should only be accepted if they increases access of p5.js. Please see point 1 of [section above](#feature-request)
-2. Inclusion criterias for feature enchancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
+1. Similar to new feature request, feature enhancement should only be accepted if they increases access of p5.js. Please see point 1 of [section above](#feature-request)
+2. Inclusion criterias for feature enhancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
 	- If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
-3. Feature enchancements must be approved by at least one steward or maintainer before work should begin towards a PR. The PR review process for feature enchancement is documented below.
+3. Feature enhancements must be approved by at least one steward or maintainer before work should begin towards a PR. The PR review process for feature enhancement is documented below.
 
 ## Discussion
 This type of issue has a minimal template ("Discussion") and should be use only if a particular discussion doesn't fall under the other three existing templates or be better suited to the forum or Discord.
@@ -91,7 +93,7 @@ Almost all code contribution to the p5.js repositories happens through pull requ
 - Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
 	- The only instance where this does not apply are very minor typo fixes, which does not require an opened issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
 	- While this exception exist, we will apply it in practice only but contributors are usually encouraged to open new issues. In other words, if in doubt about whether this exception applies, just open an issue anyway.
-- If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resovles #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when this PR is merged.
+- If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when this PR is merged.
 
 ## Simple fix
 Simple fix such as small typo fix can be merged directly by anyone with merge access with a quick check on the PR "Files Changed" tab and that automated CI test passes.
@@ -116,10 +118,10 @@ Simple fix such as small typo fix can be merged directly by anyone with merge ac
 @all-contributors please add @[github handle] for [contribution type]
 ```
 
-## New feature/feature enchancement
+## New feature/feature enhancement
 The process for new feature or feature enhancement PR is similar to bug fixes with just one notable difference.
 
-- A new feature/feature enchancement PR must be reviewed and approved by at least two stewards or maintainer before it can be merged.
+- A new feature/feature enhancement PR must be reviewed and approved by at least two stewards or maintainer before it can be merged.
 	- This can be the same two stewards or maintainer that approved the original issue or not.
 
 ## Dependabot
@@ -133,10 +135,103 @@ Dependabot PRs are usually only visible to repo admins so if this does not apply
 ---
 
 # Build process
+This section will not cover the general build setup nor commands but rather details about what's happening behind the scenes. For the above, please see the [contributors guidelines](./contributor_guidelines.md#working-on-p5js-codebase).
+
+The Gruntfile.js document contains the main build definitions for p5.js and more. Among the different tools used to build the library and documentation includes but not limited to Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify, and Mocha. It may be helpful for us to start with the `default` task and work backwards from there.
+
+## Main build task
+
+```js
+grunt.registerTask('default', ['lint', 'test']);
+```
+When we run `grunt` or the npm script `npm test`, we run the default task consisting of `lint` then `test`.
+
+```js
+grunt.registerTask('lint', ['lint:source', 'lint:samples']);
+```
+The `lint` task consist of two sub tasks `lint:source` and `lint:samples`. `lint:source` is further subdivided into three more sub tasks `eslint:build`, `eslint:source`, and `eslint:test`, which uses ESLint to check the build scripts, the source code, and the test scripts.
+
+The `lint:samples` task will first run the `yui` task which itself consists of `yuidoc:prod`, `clean:reference`, and `minjson`, which extract the documentation from the source code into a JSON document, remove unused files from the previous step, and minify the generated JSON file into `data.min.json` respectively. Next in `lint:samples` is `eslint-samples:source` which is a custom written task whose definition is in [./tasks/build/eslint-samples.js](./tasks/build/eslint-samples.js), and it will run ESLint to check the documentation example code to make sure they follow the same coding convention as the rest of p5.js (`yui` is run first here because we need the JSON file to be built first before we can lint the examples).
+
+```js
+grunt.registerTask('test', [
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
+]);
+```
+First let's look at the `build` task under `test`.
+```js
+grunt.registerTask('build', [
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
+]);
+```
+Tasks that start with `browserify` are defined in [./tasks/build/browserify.js](./tasks/build/browserify.js). They are all essentially running the same steps with just minor differences. These are the main steps to build the full p5.js library from its many source code files into one, `browserify` builds p5.js while `browserify:min` builds an intermediate file to be minified in the next step. The difference between `browserify` and `browserify:min` is that `browserify:min` does not contain data needed for FES to function. `uglify` takes the output file of `browserify:min` and minify it into the final p5.min.js (configuration of this step is in the main Gruntfile.js). `browserify:test` is building a version identical to the full p5.js except for added code that is used for test code coverage reporting (using Istanbul).
+
+In the browserify steps, in addition to bundling the various files into one, a few more steps are also performed here. First, uses of `fs.readFileSync()` node.js specific code is replaced with the file's actual content using `brfs-babel`. This is used mainly by WebGL code to inline shader code while having them as separate files.
+
+Next, the source code including all dependencies from node_modules are transpiled using Babel to match the Browserslist requirement defined in package.json as well as to make the ES6 import statements into CommonJS `require()` that browserify understands. This also enables to use newer syntax available in ES6 and beyond without worrying about browser compatibility much.
+
+After bundling but before the bundled code is written to file, the code is passed through `pretty-fast`, if it is not meant to be minified, to be cleaned up so the final formatting is a bit more consistent (we anticipate the p5.js source code can be read and inspected if desired).
+
+A few small detailed steps are left out here, you can checkout the browserify build definition file linked above to have a closer look at everything.
+
+```
+connect:server
+```
+This step spins up a local server hosting the test files and built source code files so that automated tests can be run in Chrome.
+
+```
+mochaChrome
+```
+This step is defined in [./tasks/test/mocha-chrome.js](./tasks/test/mocha-chrome.js). It uses Puppeteer to spin up a headless version of Chrome that can be remote controlled and runs the tests associated with the HTML files in the `./test` folder, which includes testing the unminified and minified version of the library against the unit test suites as well as testing all reference examples.
+
+```
+mochaTest
+```
+This step differs from `mochaChrome` in that it is run in node.js instead of in Chrome and only test a small subset of features in the library. Most features in p5.js will require a browser environment so this set of tests should only be expanded if the new tests really don't need a browser environment.
+
+```
+nyc:report
+```
+Finally after all build and tests are complete, this step will gather the test coverage report while `mochaChrome` was testing the full version of the library and print the test coverage data to the console. Test coverage for p5.js is mainly for monitoring and having some additional data points, having 100% test coverage is not a goal for us.
+
+And that covers the default task in the Gruntfile.js configuration!
+
+## Miscellaneous tasks
+All of the steps, sub-steps, sub-sub-steps can all be run directly with `npx grunt [step]` if wished to although for some it may not make much sense to do so when it depends on the earlier steps in this chain. There are also a few tasks that are not covered above but could be useful in certain cases.
+
+```
+grunt yui:dev
+```
+This task will run the documentation and library builds described above followed by spinning up a web server that serves a functionally similar version of the reference page you will find on the website on [http://localhost:9001/docs/reference/](http://localhost:9001/docs/reference/). It will then monitor the source code for changes and rebuild the documentation and library.
+
+This is useful when you are working on the reference in the inline documentation because you don't have to move built files from the p5.js repository to a local p5.js-website repository and rebuild the website each time you make a change, and you can just preview your changes with this slightly simplified version of the reference in your browser. This way you can also be more confident that changes you made are likely to show up correctly on the website. Note that this is only meant for modifications to the inline documentation, changes to the reference page itself including styling and layout should be made and testing on the website repository.
+
+```
+grunt watch
+grunt watch:main
+grunt watch:quick
+```
+The watch tasks will watch a series of files for changes and run associated tasks to build the reference or the library according to what files have changed. These tasks all do the same thing with the only difference being the scope.
+
+The `watch` task will run all builds and tests similar to running the full default task on detecting changes in the source code.
+
+The `watch:main` task will run the library build and tests but not rebuild the reference on detecting changes in the soruce code.
+
+The `watch:quick` task will run the library build only on detecting changes in the source code.
+
+Depending on what you are working on, choosing the most minimal watch task here can save you having the manually run a rebuild whenever you want to make some changes.
 
 ---
 
 # Release process
+Please see [release_process.md](./release_process.md).
 
 ---
 
