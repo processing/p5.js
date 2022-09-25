@@ -5,9 +5,6 @@
  * @requires core
  */
 
-/* globals Request: false */
-/* globals Headers: false */
-
 import p5 from '../core/main';
 import 'whatwg-fetch';
 import 'es6-promise/auto';
@@ -632,7 +629,7 @@ function makeObject(row, headers) {
  *     let name = children[i].getContent();
  *     print(id + ', ' + coloring + ', ' + name);
  *   }
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  *
  * // Sketch prints:
@@ -708,7 +705,7 @@ p5.prototype.loadXML = function(...args) {
  *   for (let i = 0; i < 5; i++) {
  *     console.log(data.bytes[i].toString(16));
  *   }
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -1428,21 +1425,21 @@ p5.PrintWriter = function(filename, extension) {
  *
  * // Saves the canvas as an image by default
  * save('myCanvas.jpg');
- * describe(`An example for saving a canvas as an image.`);
+ * describe('An example for saving a canvas as an image.');
  * </code></div>
  *
  * <div class="norender"><code>
  * // Saves p5.Image as an image
  * img = createImage(10, 10);
  * save(img, 'myImage.png');
- * describe(`An example for saving a p5.Image element as an image.`);
+ * describe('An example for saving a p5.Image element as an image.');
  * </code></div>
  *
  * <div class="norender"><code>
  * // Saves p5.Renderer object as an image
  * obj = createGraphics(100, 100);
  * save(obj, 'myObject.png');
- * describe(`An example for saving a p5.Renderer element.`);
+ * describe('An example for saving a p5.Renderer element.');
  * </code></div>
  *
  * <div class="norender"><code>
@@ -1469,7 +1466,7 @@ p5.PrintWriter = function(filename, extension) {
  * // Optimizes JSON filesize
  * save(myJSON, 'my.json', true);
  *
- * describe(`An example for saving JSON to a txt file with some extra arguments.`);
+ * describe('An example for saving JSON to a txt file with some extra arguments.');
  * </code></div>
  *
  * <div class="norender"><code>
@@ -1552,7 +1549,7 @@ p5.prototype.save = function(object, _filename, _options) {
  *   createCanvas(100, 100);
  *   background(200);
  *   text('click here to save', 10, 10, 70, 80);
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  *
  * function mousePressed() {
@@ -1604,7 +1601,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *   createCanvas(100, 100);
  *   background(200);
  *   text('click here to save', 10, 10, 70, 80);
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  *
  * function mousePressed() {
@@ -1675,7 +1672,7 @@ function escapeHelper(content) {
  *   // To save, un-comment next line then click 'run'
  *   // saveTable(table, 'new.csv');
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  *
  * // Saves the following to a file called 'new.csv':

@@ -509,10 +509,11 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
       if (index === 0) {
         ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
       }
-      // prettier-ignore
+      /* eslint-disable indent */
       ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
-                          x + curve.cx * rx, y + curve.cy * ry,
-                          x + curve.dx * rx, y + curve.dy * ry);
+                        x + curve.cx * rx, y + curve.cy * ry,
+                        x + curve.dx * rx, y + curve.dy * ry);
+      /* eslint-enable indent */
     });
     if (mode === constants.PIE || mode == null) {
       ctx.lineTo(x, y);
@@ -528,10 +529,11 @@ p5.Renderer2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
       if (index === 0) {
         ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
       }
-      // prettier-ignore
+      /* eslint-disable indent */
       ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
-                          x + curve.cx * rx, y + curve.cy * ry,
-                          x + curve.dx * rx, y + curve.dy * ry);
+                        x + curve.cx * rx, y + curve.cy * ry,
+                        x + curve.dx * rx, y + curve.dy * ry);
+      /* eslint-enable indent */
     });
     if (mode === constants.PIE) {
       ctx.lineTo(x, y);
@@ -1190,9 +1192,9 @@ p5.Renderer2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   return p;
 };
 
-p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
-  if (y >= maxY) {
-    return; // don't render lines beyond our maxY position
+p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY, minY) {
+  if (y < minY || y >= maxY) {
+    return; // don't render lines beyond our minY/maxY bounds (see #5785)
   }
 
   p.push(); // fix to #803

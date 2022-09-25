@@ -622,8 +622,8 @@ p5.prototype.createCheckbox = function() {
 
 /**
  * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
- * It also helps to assign select-box methods to <a href="#/p5.Element">p5.Element</a> when selecting existing select box.
- * - `.option(name, [value])` can be used to set options for the select after it is created.
+ * It also assigns select-related methods to <a href="#/p5.Element">p5.Element</a> when selecting an existing select box. Options in the menu are unique by `name` (the display text).
+ * - `.option(name, [value])` can be used to add an option with `name` (the display text) and `value` to the select element. If an option with `name` already exists within the select element, this method will change its value to `value`.
  * - `.value()` will return the currently selected option.
  * - `.selected()` will return the current dropdown element which is an instance of <a href="#/p5.Element">p5.Element</a>.
  * - `.selected(value)` can be used to make given option selected by default when the page first loads.
@@ -1318,17 +1318,8 @@ p5.prototype.createAudio = function(src, callback) {
 
 /** CAMERA STUFF **/
 
-/**
- * @property {String} VIDEO
- * @final
- * @category Constants
- */
 p5.prototype.VIDEO = 'video';
-/**
- * @property {String} AUDIO
- * @final
- * @category Constants
- */
+
 p5.prototype.AUDIO = 'audio';
 
 // from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia

@@ -5,6 +5,11 @@ This folder contains wrap-up reports from p5.js related [Google Summer of Code](
 
 ## Google Summer of Code
 
+### Google Summer of Code 2022
+* [p5 /teach reorganize & update](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/graciazhang_gsoc_2022.md) by Gracia Zhang, 2022
+* [p5xr Immersive Session Process and Controller API update](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/smrghsh_gsoc_2022.md) by Samir Ghosh, 2022
+* [Improving p5.js WebGL functionality](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/shubham_sharma_gsoc_2022.md) by Shubham Kumar Sharma, 2022
+
 ### Google Summer of Code 2021
 * [Adding Alt Text to the p5.js Website](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/katiejliu_gsoc_2021.md) by Katie Liu, 2021
 * [Adding to p5.js Friendly Error System](https://github.com/processing/p5.js/blob/main/contributor_docs/project_wrapups/shantanuKaushik_gsoc_2021.md) by Shantanu Kaushik, 2021

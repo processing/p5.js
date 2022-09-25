@@ -518,7 +518,6 @@ p5.Image.prototype.resize = function(width, height) {
     }
   }
 
-  // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
     0, 0, this.canvas.width, this.canvas.height,
@@ -530,8 +529,6 @@ p5.Image.prototype.resize = function(width, height) {
   this.canvas.height = this.height = height;
 
   //Copy the image back
-
-  // prettier-ignore
   this.drawingContext.drawImage(
     tempCanvas,
     0, 0, width, height,
@@ -629,10 +626,6 @@ p5.Image.prototype.copy = function(...args) {
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  */
 // TODO: - Accept an array of alpha values.
-//       - Use other channels of an image. p5 uses the
-//       blue channel (which feels kind of arbitrary). Note: at the
-//       moment this method does not match native processing's original
-//       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if (p5Image === undefined) {
     p5Image = this;
@@ -657,7 +650,29 @@ p5.Image.prototype.mask = function(p5Image) {
   ];
 
   this.drawingContext.globalCompositeOperation = 'destination-in';
-  p5.Image.prototype.copy.apply(this, copyArgs);
+  if (this.gifProperties) {
+    for (let i = 0; i < this.gifProperties.frames.length; i++) {
+      this.drawingContext.putImageData(
+        this.gifProperties.frames[i].image,
+        0,
+        0
+      );
+      p5.Image.prototype.copy.apply(this, copyArgs);
+      this.gifProperties.frames[i].image = this.drawingContext.getImageData(
+        0,
+        0,
+        this.width,
+        this.height
+      );
+    }
+    this.drawingContext.putImageData(
+      this.gifProperties.frames[this.gifProperties.displayIndex].image,
+      0,
+      0
+    );
+  } else {
+    p5.Image.prototype.copy.apply(this, copyArgs);
+  }
   this.drawingContext.globalCompositeOperation = currBlend;
   this.setModified(true);
 };
@@ -890,7 +905,7 @@ p5.Image.prototype.isModified = function() {
  */
 p5.Image.prototype.save = function(filename, extension) {
   if (this.gifProperties) {
-    p5.prototype.saveGif(this, filename);
+    p5.prototype.encodeAndDownloadGif(this, filename);
   } else {
     p5.prototype.saveCanvas(this.canvas, filename, extension);
   }

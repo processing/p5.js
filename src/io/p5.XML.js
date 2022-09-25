@@ -40,7 +40,7 @@ import p5 from '../core/main';
  *     print(id + ', ' + coloring + ', ' + name);
  *   }
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  *
  * // Sketch prints:

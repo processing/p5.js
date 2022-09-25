@@ -1067,7 +1067,6 @@ p5.RendererGL.prototype.triangle = function(args) {
   // origin appropriately.
   const uMVMatrix = this.uMVMatrix.copy();
   try {
-    // prettier-ignore
     const mult = new p5.Matrix([
       x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
       x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
@@ -1217,62 +1216,141 @@ p5.RendererGL.prototype.arc = function(args) {
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
   const x = args[0];
   const y = args[1];
   const width = args[2];
   const height = args[3];
-  const detailX = args[4] || (perPixelLighting ? 1 : 24);
-  const detailY = args[5] || (perPixelLighting ? 1 : 16);
-  const gId = `rect|${detailX}|${detailY}`;
-  if (!this.geometryInHash(gId)) {
-    const _rect = function() {
-      for (let i = 0; i <= this.detailY; i++) {
-        const v = i / this.detailY;
-        for (let j = 0; j <= this.detailX; j++) {
-          const u = j / this.detailX;
-          const p = new p5.Vector(u, v, 0);
-          this.vertices.push(p);
-          this.uvs.push(u, v);
+
+  if (typeof args[4] === 'undefined') {
+    // Use the retained mode for drawing rectangle,
+    // if args for rounding rectangle is not provided by user.
+    const perPixelLighting = this._pInst._glAttributes.perPixelLighting;
+    const detailX = args[4] || (perPixelLighting ? 1 : 24);
+    const detailY = args[5] || (perPixelLighting ? 1 : 16);
+    const gId = `rect|${detailX}|${detailY}`;
+    if (!this.geometryInHash(gId)) {
+      const _rect = function() {
+        for (let i = 0; i <= this.detailY; i++) {
+          const v = i / this.detailY;
+          for (let j = 0; j <= this.detailX; j++) {
+            const u = j / this.detailX;
+            const p = new p5.Vector(u, v, 0);
+            this.vertices.push(p);
+            this.uvs.push(u, v);
+          }
         }
-      }
-      // using stroke indices to avoid stroke over face(s) of rectangle
-      if (detailX > 0 && detailY > 0) {
-        this.strokeIndices = [
-          [0, detailX],
-          [detailX, (detailX + 1) * (detailY + 1) - 1],
-          [(detailX + 1) * (detailY + 1) - 1, (detailX + 1) * detailY],
-          [(detailX + 1) * detailY, 0]
-        ];
-      }
-    };
-    const rectGeom = new p5.Geometry(detailX, detailY, _rect);
-    rectGeom
-      .computeFaces()
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
-    this.createBuffers(gId, rectGeom);
-  }
+        // using stroke indices to avoid stroke over face(s) of rectangle
+        if (detailX > 0 && detailY > 0) {
+          this.strokeIndices = [
+            [0, detailX],
+            [detailX, (detailX + 1) * (detailY + 1) - 1],
+            [(detailX + 1) * (detailY + 1) - 1, (detailX + 1) * detailY],
+            [(detailX + 1) * detailY, 0]
+          ];
+        }
+      };
+      const rectGeom = new p5.Geometry(detailX, detailY, _rect);
+      rectGeom
+        .computeFaces()
+        .computeNormals()
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+      this.createBuffers(gId, rectGeom);
+    }
 
-  // only a single rectangle (of a given detail) is cached: a square with
-  // opposite corners at (0,0) & (1,1).
-  //
-  // before rendering, this square is scaled & moved to the required location.
-  const uMVMatrix = this.uMVMatrix.copy();
-  try {
-    this.uMVMatrix.translate([x, y, 0]);
-    this.uMVMatrix.scale(width, height, 1);
+    // only a single rectangle (of a given detail) is cached: a square with
+    // opposite corners at (0,0) & (1,1).
+    //
+    // before rendering, this square is scaled & moved to the required location.
+    const uMVMatrix = this.uMVMatrix.copy();
+    try {
+      this.uMVMatrix.translate([x, y, 0]);
+      this.uMVMatrix.scale(width, height, 1);
 
-    this.drawBuffers(gId);
-  } finally {
-    this.uMVMatrix = uMVMatrix;
+      this.drawBuffers(gId);
+    } finally {
+      this.uMVMatrix = uMVMatrix;
+    }
+  } else {
+    // Use Immediate mode to round the rectangle corner,
+    // if args for rounding corners is provided by user
+    let tl = args[4];
+    let tr = typeof args[5] === 'undefined' ? tl : args[5];
+    let br = typeof args[6] === 'undefined' ? tr : args[6];
+    let bl = typeof args[7] === 'undefined' ? br : args[7];
+
+    let a = x;
+    let b = y;
+    let c = width;
+    let d = height;
+
+    c += a;
+    d += b;
+
+    if (a > c) {
+      const temp = a;
+      a = c;
+      c = temp;
+    }
+
+    if (b > d) {
+      const temp = b;
+      b = d;
+      d = temp;
+    }
+
+    const maxRounding = Math.min((c - a) / 2, (d - b) / 2);
+    if (tl > maxRounding) tl = maxRounding;
+    if (tr > maxRounding) tr = maxRounding;
+    if (br > maxRounding) br = maxRounding;
+    if (bl > maxRounding) bl = maxRounding;
+
+    let x1 = a;
+    let y1 = b;
+    let x2 = c;
+    let y2 = d;
+
+    this.beginShape();
+    if (tr !== 0) {
+      this.vertex(x2 - tr, y1);
+      this.quadraticVertex(x2, y1, x2, y1 + tr);
+    } else {
+      this.vertex(x2, y1);
+    }
+    if (br !== 0) {
+      this.vertex(x2, y2 - br);
+      this.quadraticVertex(x2, y2, x2 - br, y2);
+    } else {
+      this.vertex(x2, y2);
+    }
+    if (bl !== 0) {
+      this.vertex(x1 + bl, y2);
+      this.quadraticVertex(x1, y2, x1, y2 - bl);
+    } else {
+      this.vertex(x1, y2);
+    }
+    if (tl !== 0) {
+      this.vertex(x1, y1 + tl);
+      this.quadraticVertex(x1, y1, x1 + tl, y1);
+    } else {
+      this.vertex(x1, y1);
+    }
+
+    this.immediateMode.geometry.uvs.length = 0;
+    for (const vert of this.immediateMode.geometry.vertices) {
+      const u = (vert.x - x1) / width;
+      const v = (vert.y - y1) / height;
+      this.immediateMode.geometry.uvs.push(u, v);
+    }
+
+    this.endShape(constants.CLOSE);
   }
   return this;
 };
 
-// prettier-ignore
+/* eslint-disable max-len */
 p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, detailX, detailY) {
+/* eslint-enable max-len */
   if (typeof detailX === 'undefined') {
     detailX = 2;
   }
@@ -1282,7 +1360,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
 
   const gId =
     `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
-  
+
   if (!this.geometryInHash(gId)) {
     const quadGeom = new p5.Geometry(detailX, detailY, function() {
       //algorithm adapted from c++ to js
@@ -1310,7 +1388,7 @@ p5.RendererGL.prototype.quad = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, 
         }
       }
     });
-    
+
     quadGeom.faces = [];
     for(let y = 0; y < detailY-1; y++){
       for(let x = 0; x < detailX-1; x++){

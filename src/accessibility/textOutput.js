@@ -109,7 +109,7 @@ function _shapeList(idT, ingredients) {
         if (x !== 'point') {
           _line = _line + `, covering ${ingredients[x][y].area}% of the canvas`;
         }
-        _line = _line + `.</li>`;
+        _line = _line + '.</li>';
       }
       shapeList = shapeList + _line;
       shapeNumber++;
