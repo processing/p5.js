@@ -3382,8 +3382,6 @@ p5.MediaElement.prototype.hideControls = function() {
 
 /*** SCHEDULE EVENTS ***/
 
-// Cue inspired by JavaScript setTimeout, and the
-// Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
 const Cue = function(callback, time, id, val) {
   this.callback = callback;
   this.time = time;
@@ -3391,6 +3389,13 @@ const Cue = function(callback, time, id, val) {
   this.val = val;
 };
 
+// The following license will be preserved in the minified JS file
+/*!
+ * @license MIT
+ * @author Votam Mann
+ * Cue inspired by JavaScript setTimeout, and the
+ * Tone.js Transport Timeline Event, 2015 tonejs.org
+ */
 /**
  * Schedule events to trigger every time a MediaElement
  * (audio/video) reaches a playback cue point.

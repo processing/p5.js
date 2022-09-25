@@ -269,6 +269,10 @@ module.exports = grunt => {
             IS_MINIFIED: true
           }
         },
+        output: {
+          comments: 'some',
+          indent_level: 0
+        },
         banner:
           '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
       },

@@ -607,7 +607,12 @@ function areaTriangle(a, b, c) {
   return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
 }
 
-// Portions of below code copyright 2008 Dmitry Baranovskiy (via MIT license)
+// The following license will be preserved in the minified JS file
+/*!
+ * @license MIT
+ * @author Dmitry Baranovskiy
+ * portions of below code copyright 2008
+ */
 
 function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
   const t1 = 1 - t;
