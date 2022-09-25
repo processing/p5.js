@@ -8,8 +8,8 @@ import p5 from '../main';
 /*!
  * Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
  * minor modifications. The license for the same and the code is included below
- * 
- * @license 
+ *
+ * @license
  * @copyright (c) 2017 Eric Wendelin and other contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
