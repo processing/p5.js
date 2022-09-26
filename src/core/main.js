@@ -167,6 +167,7 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
+    this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     this._userNode = node;
@@ -292,7 +293,7 @@ class p5 {
 
     this._decrementPreload = function() {
       const context = this._isGlobal ? window : this;
-      if (typeof context.preload === 'function') {
+      if (!context._preloadDone && typeof context.preload === 'function') {
         context._setProperty('_preloadCount', context._preloadCount - 1);
         context._runIfPreloadsAreDone();
       }
@@ -309,6 +310,8 @@ class p5 {
 
     this._incrementPreload = function() {
       const context = this._isGlobal ? window : this;
+      // Do nothing if we tried to increment preloads outside of `preload`
+      if (context._preloadDone) return;
       context._setProperty('_preloadCount', context._preloadCount + 1);
     };
 
@@ -335,6 +338,8 @@ class p5 {
 
       // Record the time when sketch starts
       this._millisStart = window.performance.now();
+
+      context._preloadDone = true;
 
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
