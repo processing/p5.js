@@ -295,11 +295,16 @@
       "contributions": []
     },
     {
-      "login": "joecridge",
-      "name": "Joe Cridge",
+      "login": "ecridge",
+      "name": "Eden Cridge",
       "avatar_url": "https://avatars2.githubusercontent.com/u/11491479?v=4",
-      "profile": "https://www.joecridge.me/",
-      "contributions": []
+      "profile": "https://ecridge.com/",
+      "contributions": [
+        "code",
+        "bug",
+        "review",
+        "test"
+      ]
     },
     {
       "login": "mikewesthad",

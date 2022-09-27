@@ -446,7 +446,7 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
  * angle `size` radians, beginning `start` radians above the x-axis. Up to
  * four of these curves are combined to make a full arc.
  *
- * See www.joecridge.me/bezier.pdf for an explanation of the method.
+ * See ecridge.com/bezier.pdf for an explanation of the method.
  */
 p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   start,
