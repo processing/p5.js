@@ -142,7 +142,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center"><a href="http://fromjia.com/"><img src="https://avatars1.githubusercontent.com/u/6025418?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jiashan Wu</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/futuremarc"><img src="https://avatars3.githubusercontent.com/u/8646752?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marc Abbey</b></sub></a><br /></td>
       <td align="center"><a href="http://www.kadamwhite.com"><img src="https://avatars1.githubusercontent.com/u/442115?v=4?s=100" width="100px;" alt=""/><br /><sub><b>K.Adam White</b></sub></a><br /></td>
-      <td align="center"><a href="https://www.joecridge.me/"><img src="https://avatars2.githubusercontent.com/u/11491479?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joe Cridge</b></sub></a><br /></td>
+      <td align="center"><a href="https://ecridge.com/"><img src="https://avatars2.githubusercontent.com/u/11491479?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eden Cridge</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ecridge" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aecridge" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Aecridge" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/processing/p5.js/commits?author=ecridge" title="Tests">⚠️</a></td>
       <td align="center"><a href="http://mikewesthad.com"><img src="https://avatars1.githubusercontent.com/u/1131802?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Hadley</b></sub></a><br /></td>
     </tr>
     <tr>
