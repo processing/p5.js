@@ -807,6 +807,15 @@ suite('DOM', function() {
       }
     });
 
+    test('should update select value when HTML special characters are in the name', function() {
+      testElement = myp5.createSelect(true);
+      testElement.option('&', 'foo');
+      assert.equal(testElement.elt.options.length, 1);
+      assert.equal(testElement.elt.options[0].value, 'foo');
+      testElement.option('&', 'bar');
+      assert.equal(testElement.elt.options[0].value, 'bar');
+    });
+
     test('calling selected(value) should updated selectedIndex', function() {
       testElement = myp5.createSelect(true);
       options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
