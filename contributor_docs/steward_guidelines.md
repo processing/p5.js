@@ -17,6 +17,9 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 	- [Miscellaneous tasks](#miscellaneous-tasks)
 - [Release Process](#release-process)
 - [Tips & Tricks](#tips--tricks)
+	- [Reply templates](#reply-templates)
+	- [Github CLI](#github-cli)
+	- [Managing notifications](#managing-notifications)
 
 ---
 
@@ -236,3 +239,52 @@ Please see [release_process.md](./release_process.md).
 ---
 
 # Tips & tricks
+Sometimes the amount of issues and PR that require review can get a bit overwhelming, while we try to put in place processes that make things easier, there are some tips and tricks that you can utilize to help with reviewing issues and PRs.
+
+## Reply templates
+A handy GitHub feature that you can use is the [Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies) feature available to use when authoring a reply to issues or pull requests. Some of the workflow describe above may require responding to issues or PRs with identical or very similar replies (redirecting question to forum, accepting an issue for fixing, etc) and using Saved Replies can just ever so slightly make this more efficient.
+
+Below are some of the Saved Replies that are being used by p5.js maintainers, you can use them for yourself or create your own!
+
+#### Closing: Can’t Reproduce
+> We're not able to reproduce this but please feel free to reopen if you can provide a code sample that demonstrates the issue. Thanks!
+
+#### Closing: Need Snippet
+> I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
+
+#### Closing: Use the Forum!
+> The github issues here are a good place for bugs and issues with the p5.js library itself. for questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
+
+#### Closing: GSOC
+> Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
+
+#### Closing: Access
+> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
+
+> We are not seeing a further explanation of how this issue [expands access](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
+
+#### Closing: Addon
+> I think this function is beyond the scope of the p5.js API (we try to keep as minimal as possible) but it could be a great starting point for an addon library. see the docs here for how to create an addon: https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
+
+#### Closing PR: Need Issue First
+> Thank you. As a reminder, issues need to be opened before pull requests are opened and tagged with the issue. This is necessary for tracking development and keeping discussion clear. Thanks!
+
+#### Approve issue for fixing
+You can go ahead with a fix. Thanks.
+
+#### Merged PR
+Looks good. Thanks!
+
+## Github CLI
+Reviewing a complex PR can be difficult with seemingly arcane git commands required to get the PR's version of code locally for you to test. Fortunately the [GitHub CLI](https://cli.github.com/) tool can help greatly with this process and more.
+
+After installing the CLI and logging in, reviewing a PR locally can be done by just running the command `gh pr checkout [pull_request_id]` and the process of fetching remote fork, creating a branch, and checking out the branch are all done automatically for you. Going back to the main branch will just be the same as switching a branch by running `git checkout main`. You can even leave a comment in the PR from the CLI without needing to visit the webpage at all!
+
+There are many other commands available in the GitHub CLI as well that you may or may not find useful, but it is a good tool to have around in any case.
+
+## Managing notifications
+Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name. By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notification to your [notification page](https://github.com/notifications) where they can be marked as read or dismissed much like an email inbox.
+
+In some cases you may received emails from GitHub about events in repo you are watching as well and you can customize these (including unsubcribe from them completely) from your [notifications settings page](https://github.com/settings/notifications).
+
+Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set to only receive email on "Participating, @mentions and custom".
