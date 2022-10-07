@@ -297,6 +297,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
       document.body.appendChild(c);
     }
     this._pInst.canvas = c;
+    this.canvas = c;
   }
 
   const renderer = new p5.RendererGL(
