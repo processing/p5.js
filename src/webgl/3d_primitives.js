@@ -259,14 +259,12 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *   background(205, 105, 94);
  *   rotateY(millis() / 1000);
  *   sphere(40, detailX.value(), 16);
- *   describe(`A white rotating sphere-like shape with a diameter of 40.
- *     Its actual shape is similar to a clam shell.
- *     Black lines on its surface show how the sphere is built out of
- *     many small triangles.
- *     When adjusting the slider below the drawing, the shape increases
- *     the number of small triangles making up the sphere, making the
- *     final shape increasingly round as the slider approaches its
- *     maximum setting.`);
+ *   describe(`A rotating shape, resembling a clam shell or
+ *    “flattened” sphere, with white surface and a diameter of 40.
+ *    The shape is built from many small triangles, which each have
+ *    a black stroke to visually isolate.
+ *    Below the drawing is a slider. Increasing it adds more
+ *    triangles, such that the overall shape becomes rounder as the slider approaches its maximum.`);
  * }
  * </code>
  * </div>
