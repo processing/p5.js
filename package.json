@@ -79,7 +79,7 @@
     "opentype.js": "^0.9.0",
     "pretty-fast": "^0.2.7",
     "promise-map-series": "^0.2.3",
-    "puppeteer": "^10.2.0",
+    "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
     "simple-git": "^3.3.0",
     "whatwg-fetch": "^2.0.4"
