@@ -756,4 +756,15 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
+
+  suite('setAttributes', function() {
+    test('It leaves a reference to the correct canvas', function(done) {
+      const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      assert.equal(myp5.canvas, renderer.canvas);
+
+      myp5.setAttributes({ alpha: true });
+      assert.equal(myp5.canvas, renderer.canvas);
+      done();
+    });
+  });
 });
