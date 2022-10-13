@@ -1454,6 +1454,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
     const result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let i = 0; i < weight.length; i++) {
       for (let j = 0; j < result.length; j++) {
+        if (weight[i] === 0 || !data[i]) continue;
         result[j] += data[i][j] * weight[i];
       }
     }
