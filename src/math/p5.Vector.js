@@ -877,13 +877,16 @@ p5.Vector.prototype.div = function div(x, y, z) {
       typeof x.y === 'number' &&
       typeof x.z === 'number'
     ) {
-      if (x.x === 0 || x.y === 0 || x.z === 0) {
+      const isLikely2D = x.z === 0 && this.z === 0;
+      if (x.x === 0 || x.y === 0 || (!isLikely2D && x.z === 0)) {
         console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
       this.x /= x.x;
       this.y /= x.y;
-      this.z /= x.z;
+      if (!isLikely2D) {
+        this.z /= x.z;
+      }
     } else {
       console.warn(
         'p5.Vector.prototype.div:',
