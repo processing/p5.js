@@ -755,6 +755,200 @@ suite('p5.RendererGL', function() {
       assert.equal(renderer.immediateMode.geometry.edges.length, 10);
       done();
     });
+
+    test('TESS preserves vertex data', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, 10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, 1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        1, 0, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 0, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        1, 0,
+        0, 1,
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1
+      ]);
+
+      done();
+    });
+
+    test('TESS interpolates vertex data at intersections', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      // Hourglass shape:
+      //
+      // 1     3
+      // o     o
+      // | \ / |
+      // | / \ |
+      // o     o
+      // 4     2
+      //
+      // Tessy will add a vertex in the middle
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, -10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, -1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        0.5, 0.5, 0.5, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 1, 0, 1,
+        0.5, 0.5, 0.5, 1,
+        1, 0, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        0.5, 0.5,
+        0, 1,
+        0, 0,
+        1, 1,
+        0.5, 0.5,
+        1, 0
+      ]);
+
+      done();
+    });
   });
 
   suite('setAttributes', function() {
