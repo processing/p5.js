@@ -13,6 +13,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     name: Release
+    env:
+      INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       # 1. Setup
       - uses: actions/checkout@v3
