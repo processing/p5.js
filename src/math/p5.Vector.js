@@ -757,7 +757,9 @@ p5.Vector.prototype.mult = function mult(x, y, z) {
  * and `z` components of the vector are all divided by the scalar. When dividing a vector by a vector,
  * the `x`, `y`, `z` components of the source vector are treated as the dividend, and the `x`, `y`, `z` components
  * of the argument is treated as the divisor. (For example, with two vectors
- * `a` and `b`: `a.x / b.x`, `a.y / b.y`, `a.z / b.z`.)
+ * `a` and `b`: `a.x / b.x`, `a.y / b.y`, `a.z / b.z`.) If any component of the second vector is 0, a division by 0
+ * error will be logged, unless both two vectors have 0 in their `z` components, in which case only the `x` and `y`
+ * components will be divided.
  * The static version of this method creates a
  * new <a href="#/p5.Vector">p5.Vector</a> while the non-static version acts on the vector directly.
  * Additionally, you may provide arguments to this method as an array.
