@@ -1,6 +1,9 @@
 name: New p5.js release
 # Requires secrets `NPM_TOKEN` and `ACCESS_TOKEN` to be set
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
