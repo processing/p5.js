@@ -329,14 +329,13 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
- * Returns the current targetFrameRate.
+ * Returns the current _targetFrameRate.
  * @private
- * @return {Number} current targetFrameRate
+ * @return {Number} current _targetFrameRate
  */
 p5.prototype.getTargetFrameRate = function() {
   return this._targetFrameRate;
 };
-
 
 /**
  * Hides the cursor from view.
