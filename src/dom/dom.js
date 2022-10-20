@@ -2531,7 +2531,11 @@ p5.MediaElement.prototype.play = function() {
     promise.catch(e => {
       // if it's an autoplay failure error
       if (e.name === 'NotAllowedError') {
-        p5._friendlyAutoplayError(this.src);
+        if (typeof IS_MINIFIED === 'undefined') {
+          p5._friendlyAutoplayError(this.src);
+        } else {
+          console.error(e);
+        }
       } else {
         // any other kind of error
         console.error('Media play method encountered an unexpected error', e);
@@ -2782,7 +2786,13 @@ p5.MediaElement.prototype.noLoop = function() {
  * @private
  */
 p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
-  const timeout = setTimeout(() => p5._friendlyAutoplayError(this.src), 500);
+  const timeout = setTimeout(() => {
+    if (typeof IS_MINIFIED === 'undefined') {
+      p5._friendlyAutoplayError(this.src);
+    } else {
+      console.error(e);
+    }
+  }, 500);
   this.elt.addEventListener('play', () => clearTimeout(timeout), {
     passive: true,
     once: true
