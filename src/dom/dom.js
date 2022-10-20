@@ -2531,7 +2531,7 @@ p5.MediaElement.prototype.play = function() {
     promise.catch(e => {
       // if it's an autoplay failure error
       if (e.name === 'NotAllowedError') {
-        if (p5._friendlyAutoplayError) {
+        if (typeof IS_MINIFIED === 'undefined') {
           p5._friendlyAutoplayError(this.src);
         } else {
           console.error(e);
@@ -2787,7 +2787,7 @@ p5.MediaElement.prototype.noLoop = function() {
  */
 p5.MediaElement.prototype._setupAutoplayFailDetection = function() {
   const timeout = setTimeout(() => {
-    if (p5._friendlyAutoplayError) {
+    if (typeof IS_MINIFIED === 'undefined') {
       p5._friendlyAutoplayError(this.src);
     } else {
       console.error(e);
