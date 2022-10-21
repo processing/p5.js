@@ -329,9 +329,17 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
- * Returns the current _targetFrameRate.
- * @private
+ * Returns the current _targetFrameRate variable.
+ * @method getTargetFrameRate
  * @return {Number} current _targetFrameRate
+ * @example
+ * <div><code>
+ * function draw() {
+ *   frameRate(20);
+ *   console.log("frameRate: ", frameRate())
+ *   console.log("targetFrameRate: ", getTargetFrameRate());
+ * }
+ * </code></div>
  */
 p5.prototype.getTargetFrameRate = function() {
   return this._targetFrameRate;
