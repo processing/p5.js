@@ -285,6 +285,7 @@ class p5 {
         }
         if (!this._setupDone) {
           this._lastFrameTime = window.performance.now();
+          this._deltaFrame = window.performance.now();
           context._setup();
           context._draw();
         }
@@ -358,6 +359,7 @@ class p5 {
       }
 
       this._lastFrameTime = window.performance.now();
+      this._deltaFrame = window.performance.now();
       this._setupDone = true;
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
@@ -385,9 +387,10 @@ class p5 {
         //mandatory update values(matrixes and stack)
         this.redraw();
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
-        this.deltaTime = now - this._lastFrameTime;
+        this.deltaTime = now - _this._deltaFrame;
         this._setProperty('deltaTime', this.deltaTime);
-        this._lastFrameTime = _this._lastFrameTime + target_time_between_frames;
+        this._lastFrameTime = max.Math(_this._lastFrameTime + target_time_between_frames, now);
+        this._deltaFrame = now;
 
         // If the user is actually using mouse module, then update
         // coordinates, otherwise skip. We can test this by simply
