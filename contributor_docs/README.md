@@ -58,7 +58,7 @@ The overarching p5.js project includes some repositories other than this one:
 - **[p5.js](https://github.com/processing/p5.js)**: This repository contains the source code for the p5.js library. The [user-facing p5.js reference manual](https://p5js.org/reference/) is also generated from the [JSDoc](https://jsdoc.app/) comments included in this source code. It is maintained by [Qianqian Ye](https://github.com/qianqianye) and a group of [stewards](https://github.com/processing/p5.js#stewards).
 - **[p5.js-website](https://github.com/processing/p5.js-website)**: This repository contains most of the code for the [p5.js website](http://p5js.org), with the exception of the reference manual. It is maintained by [Qianqian Ye](https://github.com/qianqianye), [Kenneth Lim](https://github.com/limzykenneth), and a group of [stewards](https://github.com/processing/p5.js-website#stewards).
 - **[p5.js-sound](https://github.com/processing/p5.js-sound)**: This repository contains the p5.sound.js library. It is maintained by [Jason Sigal](https://github.com/therewasaguy).
-- **[p5.js-web-editor](https://github.com/processing/p5.js-web-editor)**: This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is maintained by [Cassie Tarakajian](https://github.com/catarak).
+- **[p5.js-web-editor](https://github.com/processing/p5.js-web-editor)**: This repository contains the source code for the [p5.js web editor](https://editor.p5js.org). It is created by [Cassie Tarakajian](https://github.com/catarak) and currently maintained by [Rachel Lim](https://github.com/raclim).
 - Other add-on libraries not listed above usually have their own repository and maintainers and are not maintained by the p5.js project directly.
 
 
