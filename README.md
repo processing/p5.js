@@ -56,12 +56,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 
 * [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
 * [@outofambit](https://github.com/outofambit) - p5.js Mentor
-* [@lmccart](https://github.com/lmccart)
-* [@limzykenneth](https://github.com/limzykenneth)
-* [@stalgiag](https://github.com/stalgiag)
-* [@montoyamoraga](https://github.com/montoyamoraga)
-* [@dhowe](https://github.com/dhowe)
-* [@rahulm2310](https://github.com/rahulm2310)
+* [@lmccart](https://github.com/lmccart)- p5.js Creator
 
 | Area                                                                                 | Steward(s)                                                                                                               |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
