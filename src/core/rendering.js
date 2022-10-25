@@ -127,9 +127,10 @@ p5.prototype.createCanvas = function(w, h, renderer) {
       writable: false
     });
     }
-    //createCanvas runs twice when called. The first call sets the renderer to 2D
-    //even if WEBGL is specified in the arguments. There only on the
-    //second call does createCanvas check, set and lock isWebGL 
+    //createCanvas runs twice. The first call sets the renderer to
+    //2D even if WEBGL is specified in the arguments, on the second call it
+    //uses the correct renderer. Therefore only on the second call does 
+    //createCanvas check, set and lock isWebGL 
     if (this.isWebGL === undefined) {
       this.isWebGL = 1;
     }
