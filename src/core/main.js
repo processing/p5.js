@@ -389,7 +389,7 @@ class p5 {
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
         this.deltaTime = now - _this._deltaFrame;
         this._setProperty('deltaTime', this.deltaTime);
-        this._lastFrameTime = max.Math(_this._lastFrameTime 
+        this._lastFrameTime = max.Math(_this._lastFrameTime
           + target_time_between_frames, now);
         this._deltaFrame = now;
 
