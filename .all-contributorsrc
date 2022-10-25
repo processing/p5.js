@@ -3237,10 +3237,20 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "raclim",
+      "name": "raclim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43053081?v=4",
+      "profile": "https://github.com/raclim",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
