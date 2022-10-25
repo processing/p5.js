@@ -582,10 +582,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center"><a href="https://github.com/TetroGem"><img src="https://avatars.githubusercontent.com/u/19498453?v=4?s=100" width="100px;" alt="TetroGem"/><br /><sub><b>TetroGem</b></sub></a><br /><a href="#ideas-TetroGem" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center"><a href="https://ggorlen.github.io/"><img src="https://avatars.githubusercontent.com/u/17895165?v=4?s=100" width="100px;" alt="ggorlen"/><br /><sub><b>ggorlen</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ggorlen" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/raclim"><img src="https://avatars.githubusercontent.com/u/43053081?v=4?s=100" width="100px;" alt="raclim"/><br /><sub><b>raclim</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=raclim" title="Code">💻</a></td>
+    </tr>
   </tbody>
-  <tfoot>
-    
-  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
