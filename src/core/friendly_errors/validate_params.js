@@ -346,7 +346,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'number':
         return isFinite(param);
       case 'string':
-        return !isNaN(param);
+        return !(isNaN(param) || param == "null");
       default:
         return false;
     }
