@@ -121,7 +121,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   this._renderer._applyDefaults();
 
   //isWebGL flag is set and made read-only
-  if (this.isWebGL == 1) {
+  if (this.isWebGL == false) {
     Object.defineProperty(this,"isWebGL" , {
       value: this._renderer.drawingContext instanceof WebGLRenderingContext,
       writable: false
@@ -132,7 +132,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     //uses the correct renderer. Therefore only on the second call does 
     //createCanvas check, set and lock isWebGL 
     if (this.isWebGL === undefined) {
-      this.isWebGL = 1;
+      this.isWebGL = false;
     }
 
   return this._renderer;
