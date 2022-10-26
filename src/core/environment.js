@@ -329,15 +329,16 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
- * Returns the current _targetFrameRate variable.
+ * Returns _targetFrameRate variable. The default _targetFrameRate is set to 60.
+ * This could be changed by calling frameRate() and setting it to the desired
+ * value. When getTargetFrameRate() is called, it should return the value that was set.
  * @method getTargetFrameRate
- * @return {Number} current _targetFrameRate
+ * @return {Number} _targetFrameRate
  * @example
  * <div><code>
  * function draw() {
  *   frameRate(20);
- *   console.log("frameRate: ", frameRate())
- *   console.log("targetFrameRate: ", getTargetFrameRate());
+ *   text(getTargetFrameRate(), width / 2, height / 2);
  * }
  * </code></div>
  */
