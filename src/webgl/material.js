@@ -1095,7 +1095,12 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       break;
     case constants.MULTIPLY:
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-      gl.blendFuncSeparate(gl.ZERO, gl.SRC_COLOR, gl.ONE, gl.ONE);
+      gl.blendFuncSeparate(
+        gl.DST_COLOR,
+        gl.ONE_MINUS_SRC_ALPHA,
+        gl.ONE,
+        gl.ONE_MINUS_SRC_ALPHA
+      );
       break;
     case constants.SCREEN:
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
