@@ -95,7 +95,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.drawMode = constants.FILL;
 
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-  this.curAmbientColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
   this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
