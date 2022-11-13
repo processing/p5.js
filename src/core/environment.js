@@ -329,6 +329,24 @@ p5.prototype.setFrameRate = function(fps) {
 };
 
 /**
+ * Returns _targetFrameRate variable. The default _targetFrameRate is set to 60.
+ * This could be changed by calling frameRate() and setting it to the desired
+ * value. When getTargetFrameRate() is called, it should return the value that was set.
+ * @method getTargetFrameRate
+ * @return {Number} _targetFrameRate
+ * @example
+ * <div><code>
+ * function draw() {
+ *   frameRate(20);
+ *   text(getTargetFrameRate(), width / 2, height / 2);
+ * }
+ * </code></div>
+ */
+p5.prototype.getTargetFrameRate = function() {
+  return this._targetFrameRate;
+};
+
+/**
  * Hides the cursor from view.
  *
  * @method noCursor
