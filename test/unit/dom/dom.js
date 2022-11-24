@@ -1296,6 +1296,32 @@ suite('DOM', function() {
         };
       }
     );
+
+    test('should work with tint()', function(done) {
+      const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
+      testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
+        // Workaround for headless tests, where the video data isn't loading
+        // correctly: mock the video element using an image for this test
+        const prevElt = testElement.elt;
+        testElement.elt = imgElt.elt;
+
+        myp5.background(255);
+        myp5.tint(255, 0, 0);
+        myp5.image(testElement, 0, 0);
+
+        testElement.elt = prevElt;
+        imgElt.remove();
+
+        myp5.loadPixels();
+        testElement.loadPixels();
+        console.log(testElement.pixels.slice(0, 3));
+        console.log(myp5.pixels.slice(0, 3));
+        assert.equal(myp5.pixels[0], testElement.pixels[0]);
+        assert.equal(myp5.pixels[1], 0);
+        assert.equal(myp5.pixels[2], 0);
+        done();
+      });
+    });
   });
 
   suite('p5.prototype.createAudio', function() {
