@@ -1296,6 +1296,21 @@ suite('DOM', function() {
         };
       }
     );
+
+    test('should work with tint()', function(done) {
+      testElement = myp5.createVideo('/test/unit/assets/cat.mp4', () => {
+        myp5.background(255);
+        myp5.tint(255, 0, 0);
+        myp5.image(testElement, 0, 0);
+
+        myp5.loadPixels();
+        testElement.loadPixels();
+        assert.equal(myp5.pixels[0], testElement.pixels[0]);
+        assert.equal(myp5.pixels[1], 0);
+        assert.equal(myp5.pixels[2], 0);
+        done();
+      });
+    });
   });
 
   suite('p5.prototype.createAudio', function() {
