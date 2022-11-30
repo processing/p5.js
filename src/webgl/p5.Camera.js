@@ -345,6 +345,7 @@ p5.prototype.frustum = function(...args) {
  * }
  *
  * function draw() {
+ *   background(0);
  *   // The camera will automatically
  *   // rotate to look at [0, 0, 0].
  *   camera.lookAt(0, 0, 0);
