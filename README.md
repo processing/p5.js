@@ -1,5 +1,8 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
+Node Version required: v14
+Incompatible with Node v16 and NPM v8
+
 # [p5.js](https://p5js.org)
 
  Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
