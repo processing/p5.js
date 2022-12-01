@@ -10,6 +10,10 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 ```
 You can find relevant contribution type [here](https://allcontributors.org/docs/en/emoji-key). Although we will usually automatically add you to the contributor list using the bot after merging your PR. The contributor docs are published on p5.js [website](https://p5js.org/contributor-docs/#/), and hosted on p5.js [GitHub repository](https://github.com/processing/p5.js/tree/main/contributor_docs).
 
+#Important requirement!
+Node Version 14 or lower must be used in order to install the dependencies needed in this project. NPM version cannot be 8 otherwise module installations will fail!
+
+
 # Before Contributing
 Contributing to p5.js should be a stress free experience and we welcome contributions of all levels, whether you are just fixing a small typo in the documentation or refactoring complex 3D rendering functionalities. However there are just a few things you should be familiar with before starting your contribution.
 
