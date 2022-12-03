@@ -1,6 +1,8 @@
 <!-- docs/_sidebar.md -->
 
 - [__CONTRIBUTORS INTRO__](README.md)
+- [__CONTRIBUTOR GUIDELINES__](contributor_guidelines.md)
+- [__STEWARD_GUIDELINES__](steward_guidelines.md)
 - __CONTRIBUTING DOCS__
   - [Contributing Documentation](contributing_documentation.md)
   - [Issue Labels](issue_labels.md)
@@ -9,13 +11,13 @@
   - [How Contributions are Organized](organization.md)
 - __CONTRIBUTING CODE__
   - [Creating Libraries](creating_libraries.md)
-  - [Opening a Pull Request](preparing_a_pull_request.md)
   - [Inline Documentation](inline_documentation.md)
   - [Unit Testing](unit_testing.md)
   - [Friendly-Error System](friendly_error_system.md)
-  - [Release Process](release_process.md)
 - __RELATED INFO__
+  - [Repository Structure](repo_structure.md)
   - [WebGL Architecture](webgl_mode_architecture.md)
   - [Supported Browsers](supported_browsers.md)
-  - [Custom Builds](custom_p5_build.md)
   - [Web Accessibility](web_accessibility.md)
+  - [Custom Builds](custom_p5_build.md)
+  - [Release Process](release_process.md)
