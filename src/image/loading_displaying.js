@@ -369,6 +369,11 @@ p5.prototype.saveGif = async function(
   // calculate the global palette for this set of frames
   const globalPalette = _generateGlobalPalette(frames);
 
+  // Rather than using applyPalette() from the gifenc library, we use our
+  // own function to map frame pixels to a palette color. This way, we can
+  // cache palette color mappings between frames for extra performance, and
+  // use our own caching mechanism to avoid flickering colors from cache
+  // key collisions.
   const paletteCache = {};
   const getIndexedFrame = frame => {
     const length = frame.length / 4;
@@ -399,7 +404,7 @@ p5.prototype.saveGif = async function(
     //const indexedFrame = applyPalette(frames[i], globalPaletteWithoutAlpha, 'rgba565');
     const indexedFrame = getIndexedFrame(frames[i]);
 
-    // Make a copy of the palette-applied frame before edit the original
+    // Make a copy of the palette-applied frame before editing the original
     // to use transparent pixels
     const originalIndexedFrame = indexedFrame.slice();
 
