@@ -267,7 +267,8 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
     if (typeof maxHeight !== 'undefined') {
       if (this._rectMode === constants.CENTER) {
-        y -= maxHeight / 2; finalMinHeight -= maxHeight / 2;
+        y -= maxHeight / 2;
+        finalMinHeight -= maxHeight / 2;
       }
 
       let originalY = y;
