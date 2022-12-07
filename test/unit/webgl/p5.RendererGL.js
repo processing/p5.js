@@ -399,6 +399,46 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('background()', function() {
+    function assertAllPixelsAreColor(target, r, g, b, a) {
+      target.loadPixels();
+      const expectedPixels = [];
+      for (let i = 0; i < target.width * target.height; i++) {
+        expectedPixels.push(r, g, b, a);
+      }
+      assert.deepEqual([ ...target.pixels ], expectedPixels);
+    }
+
+    function testDepthGetsCleared(target) {
+      target.pixelDensity(1);
+      target.noStroke();
+      target.fill(255, 0, 0);
+      target.plane(target.width, target.height);
+      assertAllPixelsAreColor(target, 255, 0, 0, 255);
+
+      target.background(255);
+      target.push();
+      target.translate(0, 0, -10); // Move farther away
+      target.fill(0, 0, 255);
+      // expanded to fill the screen
+      target.plane(target.width * 4, target.height * 4);
+      target.pop();
+      // The farther-away plane should not be occluded because we cleared
+      // the screen with background()
+      assertAllPixelsAreColor(target, 0, 0, 255, 255);
+    }
+
+    test('background() resets the depth buffer of the main canvas', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(myp5);
+    });
+
+    test('background() resets the depth buffer of p5.Graphics', function() {
+      const graphics = myp5.createGraphics(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(graphics);
+    });
+  });
+
   suite('blendMode()', function() {
     var testBlend = function(mode, intended) {
       myp5.blendMode(mode);
