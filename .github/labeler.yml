@@ -1,12 +1,32 @@
-# Number of labels to fetch (optional). Defaults to 20
-numLabels: 20
-# These labels will not be used even if the issue contains them
-excludeLabels:
-  - bug
-  - can't reproduce
-  - known issue
-  - more info needed
-  - will not fix
-  - severity:critical
-  - severity:major
-  - severity:minor
+"Area:Accessibility":
+  - '\[[xX]\]\s*Accessibility'
+"Area:Color":
+  - '\[[xX]\]\s*Color'
+"Area:Core":
+  - '\[[xX]\]\s*Core'
+"Area:Data":
+  - '\[[xX]\]\s*Data'
+"Area:DOM":
+  - '\[[xX]\]\s*DOM'
+"Area:Events":
+  - '\[[xX]\]\s*Events'
+"Area:Image":
+  - '\[[xX]\]\s*Image'
+"Area:IO":
+  - '\[[xX]\]\s*IO'
+"Area:Math":
+  - '\[[xX]\]\s*Math'
+"Area:Typography":
+  - '\[[xX]\]\s*Typography'
+"Area:Utilities":
+  - '\[[xX]\]\s*Utilities'
+"Area:WebGL":
+  - '\[[xX]\]\s*WebGL'
+"Build Process":
+  - '\[[xX]\]\s*Build Process'
+"Unit Testing":
+  - '\[[xX]\]\s*Unit Testing'
+"Internalization":
+  - '\[[xX]\]\s*Internalization'
+"Friendly Errors":
+  - '\[[xX]\]\s*Friendly Errors'

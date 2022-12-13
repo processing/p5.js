@@ -233,6 +233,8 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   let chars;
   let shiftedY;
   let finalMaxHeight = Number.MAX_VALUE;
+  // fix for #5785 (top of bounding box)
+  let finalMinHeight = y;
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -263,29 +265,49 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
         break;
     }
 
-    let baselineHacked = false;
     if (typeof maxHeight !== 'undefined') {
       if (this._rectMode === constants.CENTER) {
         y -= maxHeight / 2;
+        finalMinHeight -= maxHeight / 2;
       }
+
+      let originalY = y;
+      let ascent = p.textAscent();
 
       switch (this._textBaseline) {
         case constants.BOTTOM:
           shiftedY = y + maxHeight;
           y = Math.max(shiftedY, y);
+          // fix for #5785 (top of bounding box)
+          finalMinHeight += ascent;
           break;
         case constants.CENTER:
           shiftedY = y + maxHeight / 2;
           y = Math.max(shiftedY, y);
-          break;
-        case constants.BASELINE:
-          baselineHacked = true;
-          this._textBaseline = constants.TOP;
+          // fix for #5785 (top of bounding box)
+          finalMinHeight += ascent / 2;
           break;
       }
 
       // remember the max-allowed y-position for any line (fix to #928)
-      finalMaxHeight = y + maxHeight - p.textAscent();
+      finalMaxHeight = y + maxHeight - ascent;
+
+      // fix for #5785 (bottom of bounding box)
+      if (this._textBaseline === constants.CENTER) {
+        finalMaxHeight = originalY + maxHeight - ascent / 2;
+      }
+    } else {
+      // no text-height specified, show warning for BOTTOM / CENTER
+      if (this._textBaseline === constants.BOTTOM) {
+        return console.warn(
+          'textAlign(*, BOTTOM) requires x, y, width and height'
+        );
+      }
+      if (this._textBaseline === constants.CENTER) {
+        return console.warn(
+          'textAlign(*, CENTER) requires x, y, width and height'
+        );
+      }
     }
 
     // Render lines of text according to settings of textWrap
@@ -310,10 +332,9 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       }
 
       let offset = 0;
-      const vAlign = p.textAlign().vertical;
-      if (vAlign === constants.CENTER) {
+      if (this._textBaseline === constants.CENTER) {
         offset = (nlines.length - 1) * p.textLeading() / 2;
-      } else if (vAlign === constants.BOTTOM) {
+      } else if (this._textBaseline === constants.BOTTOM) {
         offset = (nlines.length - 1) * p.textLeading();
       }
 
@@ -324,18 +345,29 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           testLine = `${line + words[wordIndex]}` + ' ';
           testWidth = this.textWidth(testLine);
           if (testWidth > maxWidth && line.length > 0) {
-            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+            this._renderText(
+              p,
+              line.trim(),
+              x,
+              y - offset,
+              finalMaxHeight,
+              finalMinHeight
+            );
             line = `${words[wordIndex]}` + ' ';
             y += p.textLeading();
           } else {
             line = testLine;
           }
         }
-        this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+        this._renderText(
+          p,
+          line.trim(),
+          x,
+          y - offset,
+          finalMaxHeight,
+          finalMinHeight
+        );
         y += p.textLeading();
-        if (baselineHacked) {
-          this._textBaseline = constants.BASELINE;
-        }
       }
     } else {
       let nlines = [];
@@ -356,10 +388,9 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
       nlines.push(line);
       let offset = 0;
-      const vAlign = p.textAlign().vertical;
-      if (vAlign === constants.CENTER) {
+      if (this._textBaseline === constants.CENTER) {
         offset = (nlines.length - 1) * p.textLeading() / 2;
-      } else if (vAlign === constants.BOTTOM) {
+      } else if (this._textBaseline === constants.BOTTOM) {
         offset = (nlines.length - 1) * p.textLeading();
       }
 
@@ -374,33 +405,49 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
           if (testWidth <= maxWidth) {
             line += chars[charIndex];
           } else if (testWidth > maxWidth && line.length > 0) {
-            this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+            this._renderText(
+              p,
+              line.trim(),
+              x,
+              y - offset,
+              finalMaxHeight,
+              finalMinHeight
+            );
             y += p.textLeading();
             line = `${chars[charIndex]}`;
           }
         }
       }
-      this._renderText(p, line.trim(), x, y - offset, finalMaxHeight);
+      this._renderText(
+        p,
+        line.trim(),
+        x,
+        y - offset,
+        finalMaxHeight,
+        finalMinHeight
+      );
       y += p.textLeading();
-
-      if (baselineHacked) {
-        this._textBaseline = constants.BASELINE;
-      }
     }
   } else {
     // Offset to account for vertically centering multiple lines of text - no
     // need to adjust anything for vertical align top or baseline
     let offset = 0;
-    const vAlign = p.textAlign().vertical;
-    if (vAlign === constants.CENTER) {
+    if (this._textBaseline === constants.CENTER) {
       offset = (lines.length - 1) * p.textLeading() / 2;
-    } else if (vAlign === constants.BOTTOM) {
+    } else if (this._textBaseline === constants.BOTTOM) {
       offset = (lines.length - 1) * p.textLeading();
     }
 
     // Renders lines of text at any line breaks present in the original string
     for (let i = 0; i < lines.length; i++) {
-      this._renderText(p, lines[i], x, y - offset, finalMaxHeight);
+      this._renderText(
+        p,
+        lines[i],
+        x,
+        y - offset,
+        finalMaxHeight,
+        finalMinHeight - offset
+      );
       y += p.textLeading();
     }
   }

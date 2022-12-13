@@ -64,9 +64,12 @@ suite('p5.RendererGL', function() {
     test('push/pop and directionalLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.directionalLight(255, 0, 0, 0, 0, 0);
-      var dirDiffuseColors = myp5._renderer.directionalLightDiffuseColors.slice();
-      var dirSpecularColors = myp5._renderer.directionalLightSpecularColors.slice();
-      var dirLightDirections = myp5._renderer.directionalLightDirections.slice();
+      var dirDiffuseColors =
+        myp5._renderer.directionalLightDiffuseColors.slice();
+      var dirSpecularColors =
+        myp5._renderer.directionalLightSpecularColors.slice();
+      var dirLightDirections =
+        myp5._renderer.directionalLightDirections.slice();
       myp5.push();
       myp5.directionalLight(0, 0, 255, 0, 10, 5);
       assert.notEqual(
@@ -155,8 +158,10 @@ suite('p5.RendererGL', function() {
     test('push/pop and spotLight() works', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0, Math.PI / 4, 7);
-      let spotLightDiffuseColors = myp5._renderer.spotLightDiffuseColors.slice();
-      let spotLightSpecularColors = myp5._renderer.spotLightSpecularColors.slice();
+      let spotLightDiffuseColors =
+        myp5._renderer.spotLightDiffuseColors.slice();
+      let spotLightSpecularColors =
+        myp5._renderer.spotLightSpecularColors.slice();
       let spotLightPositions = myp5._renderer.spotLightPositions.slice();
       let spotLightDirections = myp5._renderer.spotLightDirections.slice();
       let spotLightAngle = myp5._renderer.spotLightAngle.slice();
@@ -394,6 +399,46 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('background()', function() {
+    function assertAllPixelsAreColor(target, r, g, b, a) {
+      target.loadPixels();
+      const expectedPixels = [];
+      for (let i = 0; i < target.width * target.height; i++) {
+        expectedPixels.push(r, g, b, a);
+      }
+      assert.deepEqual([ ...target.pixels ], expectedPixels);
+    }
+
+    function testDepthGetsCleared(target) {
+      target.pixelDensity(1);
+      target.noStroke();
+      target.fill(255, 0, 0);
+      target.plane(target.width, target.height);
+      assertAllPixelsAreColor(target, 255, 0, 0, 255);
+
+      target.background(255);
+      target.push();
+      target.translate(0, 0, -10); // Move farther away
+      target.fill(0, 0, 255);
+      // expanded to fill the screen
+      target.plane(target.width * 4, target.height * 4);
+      target.pop();
+      // The farther-away plane should not be occluded because we cleared
+      // the screen with background()
+      assertAllPixelsAreColor(target, 0, 0, 255, 255);
+    }
+
+    test('background() resets the depth buffer of the main canvas', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(myp5);
+    });
+
+    test('background() resets the depth buffer of p5.Graphics', function() {
+      const graphics = myp5.createGraphics(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(graphics);
+    });
+  });
+
   suite('blendMode()', function() {
     var testBlend = function(mode, intended) {
       myp5.blendMode(mode);
@@ -437,14 +482,82 @@ suite('p5.RendererGL', function() {
     test('blendModes change pixel colors as expected', function(done) {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
-      assert.deepEqual([133, 69, 191, 255], mixAndReturn(myp5.ADD, 255));
+      assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.ADD, 0));
       assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
       assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
       assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
       assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));
-      assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.MULTIPLY, 255));
+      // Note that in 2D mode, this would just return black, because 2D mode
+      // ignores alpha in this case.
+      assert.deepEqual([133, 69, 202, 255], mixAndReturn(myp5.MULTIPLY, 255));
       assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.LIGHTEST, 0));
       assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.DARKEST, 255));
+      done();
+    });
+
+    test('blendModes match 2D mode', function(done) {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.setAttributes({ alpha: true });
+      const ref = myp5.createGraphics(myp5.width, myp5.height);
+      ref.translate(ref.width / 2, ref.height / 2); // Match WebGL mode
+
+      const testBlend = function(target, colorA, colorB, mode) {
+        target.clear();
+        target.push();
+        target.background(colorA);
+        target.blendMode(mode);
+        target.noStroke();
+        target.fill(colorB);
+        target.rectMode(target.CENTER);
+        target.rect(0, 0, target.width, target.height);
+        target.pop();
+        return target.get(0, 0);
+      };
+
+      const assertSameIn2D = function(colorA, colorB, mode) {
+        const refColor = testBlend(myp5, colorA, colorB, mode);
+        const webglColor = testBlend(ref, colorA, colorB, mode);
+        if (refColor[3] === 0) {
+          assert.equal(webglColor[3], 0);
+        } else {
+          assert.deepEqual(
+            refColor,
+            webglColor,
+            `Blending ${colorA} with ${colorB} using ${mode}`
+          );
+        }
+      };
+
+      for (const alpha of [255, 200]) {
+        const red = myp5.color('#F53');
+        const blue = myp5.color('#13F');
+        red.setAlpha(alpha);
+        blue.setAlpha(alpha);
+        assertSameIn2D(red, blue, myp5.BLEND);
+        assertSameIn2D(red, blue, myp5.ADD);
+        assertSameIn2D(red, blue, myp5.DARKEST);
+        assertSameIn2D(red, blue, myp5.LIGHTEST);
+        assertSameIn2D(red, blue, myp5.EXCLUSION);
+        assertSameIn2D(red, blue, myp5.MULTIPLY);
+        assertSameIn2D(red, blue, myp5.SCREEN);
+        assertSameIn2D(red, blue, myp5.REPLACE);
+        assertSameIn2D(red, blue, myp5.REMOVE);
+        done();
+      }
+    });
+
+    test('blendModes are included in push/pop', function(done) {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.blendMode(myp5.MULTIPLY);
+      myp5.push();
+      myp5.blendMode(myp5.ADD);
+      assert.equal(myp5._renderer.curBlendMode, myp5.ADD, 'Changed to ADD');
+      myp5.pop();
+      assert.equal(
+        myp5._renderer.curBlendMode,
+        myp5.MULTIPLY,
+        'Resets to MULTIPLY'
+      );
       done();
     });
   });
@@ -520,6 +633,378 @@ suite('p5.RendererGL', function() {
       }).then(function(_tint) {
         assert.deepEqual(_tint, [255, 255, 255, 255]);
       });
+    });
+  });
+
+  suite('beginShape() in WEBGL mode', function() {
+    test('QUADS mode converts into triangles', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.QUADS);
+      renderer.fill(255, 0, 0);
+      renderer.normal(0, 1, 2);
+      renderer.vertex(0, 0, 0, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(3, 4, 5);
+      renderer.vertex(0, 1, 1, 0, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(6, 7, 8);
+      renderer.vertex(1, 0, 2, 1, 0);
+      renderer.fill(255, 0, 255);
+      renderer.normal(9, 10, 11);
+      renderer.vertex(1, 1, 3, 1, 1);
+
+      renderer.fill(255, 0, 0);
+      renderer.normal(12, 13, 14);
+      renderer.vertex(2, 0, 4, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(15, 16, 17);
+      renderer.vertex(2, 1, 5, 0, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(18, 19, 20);
+      renderer.vertex(3, 0, 6, 1, 0);
+      renderer.fill(255, 0, 255);
+      renderer.normal(21, 22, 23);
+      renderer.vertex(3, 1, 7, 1, 1);
+      renderer.endShape();
+
+      const expectedVerts = [
+        [0, 0, 0],
+        [0, 1, 1],
+        [1, 0, 2],
+
+        [0, 0, 0],
+        [1, 0, 2],
+        [1, 1, 3],
+
+        [2, 0, 4],
+        [2, 1, 5],
+        [3, 0, 6],
+
+        [2, 0, 4],
+        [3, 0, 6],
+        [3, 1, 7]
+      ];
+      assert.equal(
+        renderer.immediateMode.geometry.vertices.length,
+        expectedVerts.length
+      );
+      expectedVerts.forEach(function([x, y, z], i) {
+        assert.equal(renderer.immediateMode.geometry.vertices[i].x, x);
+        assert.equal(renderer.immediateMode.geometry.vertices[i].y, y);
+        assert.equal(renderer.immediateMode.geometry.vertices[i].z, z);
+      });
+
+      const expectedUVs = [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+
+        [0, 0],
+        [1, 0],
+        [1, 1],
+
+        [0, 0],
+        [0, 1],
+        [1, 0],
+
+        [0, 0],
+        [1, 0],
+        [1, 1]
+      ].flat();
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, expectedUVs);
+
+      const expectedColors = [
+        [1, 0, 0, 1],
+        [0, 1, 0, 1],
+        [0, 0, 1, 1],
+
+        [1, 0, 0, 1],
+        [0, 0, 1, 1],
+        [1, 0, 1, 1],
+
+        [1, 0, 0, 1],
+        [0, 1, 0, 1],
+        [0, 0, 1, 1],
+
+        [1, 0, 0, 1],
+        [0, 0, 1, 1],
+        [1, 0, 1, 1]
+      ].flat();
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexColors,
+        expectedColors
+      );
+
+      const expectedNormals = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+
+        [0, 1, 2],
+        [6, 7, 8],
+        [9, 10, 11],
+
+        [12, 13, 14],
+        [15, 16, 17],
+        [18, 19, 20],
+
+        [12, 13, 14],
+        [18, 19, 20],
+        [21, 22, 23]
+      ];
+      assert.equal(
+        renderer.immediateMode.geometry.vertexNormals.length,
+        expectedNormals.length
+      );
+      expectedNormals.forEach(function([x, y, z], i) {
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].x, x);
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].y, y);
+        assert.equal(renderer.immediateMode.geometry.vertexNormals[i].z, z);
+      });
+
+      done();
+    });
+
+    test('QUADS mode makes edges for quad outlines', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.beginShape(myp5.QUADS);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, 1);
+      renderer.vertex(1, 0);
+      renderer.vertex(1, 1);
+
+      renderer.vertex(2, 0);
+      renderer.vertex(2, 1);
+      renderer.vertex(3, 0);
+      renderer.vertex(3, 1);
+      renderer.endShape();
+
+      assert.equal(renderer.immediateMode.geometry.edges.length, 8);
+      done();
+    });
+
+    test('QUAD_STRIP mode makes edges for strip outlines', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      renderer.beginShape(myp5.QUAD_STRIP);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, 1);
+      renderer.vertex(1, 0);
+      renderer.vertex(1, 1);
+      renderer.vertex(2, 0);
+      renderer.vertex(2, 1);
+      renderer.vertex(3, 0);
+      renderer.vertex(3, 1);
+      renderer.endShape();
+
+      // Two full quads (2 * 4) plus two edges connecting them
+      assert.equal(renderer.immediateMode.geometry.edges.length, 10);
+      done();
+    });
+
+    test('TESS preserves vertex data', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, 10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, 1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        1, 0, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 0, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        1, 0,
+        0, 1,
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1
+      ]);
+
+      done();
+    });
+
+    test('TESS interpolates vertex data at intersections', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      // Hourglass shape:
+      //
+      // 1     3
+      // o     o
+      // | \ / |
+      // | / \ |
+      // o     o
+      // 4     2
+      //
+      // Tessy will add a vertex in the middle
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, -10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, -1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        0.5, 0.5, 0.5, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 1, 0, 1,
+        0.5, 0.5, 0.5, 1,
+        1, 0, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        0.5, 0.5,
+        0, 1,
+        0, 0,
+        1, 1,
+        0.5, 0.5,
+        1, 0
+      ]);
+
+      done();
+    });
+  });
+
+  suite('setAttributes', function() {
+    test('It leaves a reference to the correct canvas', function(done) {
+      const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      assert.equal(myp5.canvas, renderer.canvas);
+
+      myp5.setAttributes({ alpha: true });
+      assert.equal(myp5.canvas, renderer.canvas);
+      done();
     });
   });
 });

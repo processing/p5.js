@@ -10,6 +10,6 @@
       requestAnimationFrame(loop);
     });
   };
-  script.src = 'http://rawgit.com/mrdoob/stats.js/main/build/stats.min.js';
+  script.src = 'http://rawgit.com/mrdoob/stats.js/9d23c79/build/stats.min.js';
   document.head.appendChild(script);
 })();

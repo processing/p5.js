@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const browserify = require('browserify');
 const derequire = require('derequire');
-const { format } = require('prettier');
 
 module.exports = function(grunt) {
   const tempFilePath = path.resolve('./src/customApp.js');
@@ -86,10 +85,11 @@ module.exports = function(grunt) {
 
           // and prettify the code
           if (!isMin) {
-            code = format(code, {
-              singleQuote: true,
-              printWidth: 80 + 12
-            });
+            const prettyFast = require('pretty-fast');
+            code = prettyFast(code, {
+              url: '(anonymous)',
+              indent: '  '
+            }).code;
           }
 
           // finally, write it to disk and remove the temp file

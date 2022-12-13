@@ -18,15 +18,28 @@ suite('p5.Vector', function() {
   });
   var v;
 
-  suite('setHeading', function() {
+  suite('p5.prototype.setHeading() RADIANS', function() {
     setup(function() {
+      myp5.angleMode(RADIANS);
       v = myp5.createVector(1, 1);
       v.setHeading(1);
     });
-    test('should have heading() value of 1', function() {
+    test('should have heading() value of 1 (RADIANS)', function() {
       assert.closeTo(v.heading(), 1, 0.001);
     });
   });
+
+  suite('p5.prototype.setHeading() DEGREES', function() {
+    setup(function() {
+      myp5.angleMode(DEGREES);
+      v = myp5.createVector(1, 1);
+      v.setHeading(1);
+    });
+    test('should have heading() value of 1 (DEGREES)', function() {
+      assert.closeTo(v.heading(), 1, 0.001);
+    });
+  });
+
   suite('p5.prototype.createVector()', function() {
     setup(function() {
       v = myp5.createVector();
@@ -671,11 +684,38 @@ suite('p5.Vector', function() {
         expect(v0.z).to.eql(3);
       });
 
-      test('should not change x, y, z if v3 contains 0', function() {
+      test('should not change x, y, z if v3 is all 0', function() {
         v2.div(v3);
         expect(v2.x).to.eql(1);
         expect(v2.y).to.eql(1);
         expect(v2.z).to.eql(1);
+      });
+
+      test('should work on 2D vectors', function() {
+        const v = new p5.Vector(1, 1);
+        const divisor = new p5.Vector(2, 2);
+        v.div(divisor);
+        expect(v.x).to.eql(0.5);
+        expect(v.y).to.eql(0.5);
+        expect(v.z).to.eql(0);
+      });
+
+      test('should work when the dividend has 0', function() {
+        const v = new p5.Vector(1, 0);
+        const divisor = new p5.Vector(2, 2);
+        v.div(divisor);
+        expect(v.x).to.eql(0.5);
+        expect(v.y).to.eql(0);
+        expect(v.z).to.eql(0);
+      });
+
+      test('should do nothing when the divisor has 0', function() {
+        const v = new p5.Vector(1, 1);
+        const divisor = new p5.Vector(0, 2);
+        v.div(divisor);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(0);
       });
     });
 

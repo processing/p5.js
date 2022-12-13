@@ -72,7 +72,7 @@ p5.TableRow = function(str, separator) {
  *   //print the results
  *   print(table.getArray());
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -132,7 +132,7 @@ p5.TableRow.prototype.set = function(column, value) {
  *
  *   print(table.getArray());
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -176,7 +176,7 @@ p5.TableRow.prototype.setNum = function(column, value) {
  *
  *   print(table.getArray());
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -220,7 +220,7 @@ p5.TableRow.prototype.setString = function(column, value) {
  *
  *   print(names);
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -268,7 +268,7 @@ p5.TableRow.prototype.get = function(column) {
  *     maxId = min(maxId, id);
  *   }
  *   print('minimum id = ' + minId + ', maximum id = ' + maxId);
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */
@@ -324,7 +324,7 @@ p5.TableRow.prototype.getNum = function(column) {
  *
  *   print('longest: ' + longest);
  *
- *   describe(`no image displayed`);
+ *   describe('no image displayed');
  * }
  * </code></div>
  */

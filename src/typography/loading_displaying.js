@@ -119,11 +119,11 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     const lastDotIdx = fileNoPath.lastIndexOf('.');
     let fontFamily;
     let newStyle;
-    const fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+    const fileExt = lastDotIdx < 1 ? null : fileNoPath.slice(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with DOM module
     if (validFontTypes.includes(fileExt)) {
-      fontFamily = fileNoPath.substr(0, lastDotIdx);
+      fontFamily = fileNoPath.slice(0, lastDotIdx !== -1 ? lastDotIdx : 0);
       newStyle = document.createElement('style');
       newStyle.appendChild(
         document.createTextNode(

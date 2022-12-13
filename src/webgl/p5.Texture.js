@@ -82,9 +82,11 @@ p5.Texture = function(renderer, obj, settings) {
   this.isSrcHTMLElement =
     typeof p5.Element !== 'undefined' &&
     obj instanceof p5.Element &&
-    !(obj instanceof p5.Graphics);
+    !(obj instanceof p5.Graphics) &&
+    !(obj instanceof p5.Renderer);
   this.isSrcP5Image = obj instanceof p5.Image;
   this.isSrcP5Graphics = obj instanceof p5.Graphics;
+  this.isSrcP5Renderer = obj instanceof p5.Renderer;
   this.isImageData =
     typeof ImageData !== 'undefined' && obj instanceof ImageData;
 
@@ -104,6 +106,7 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
   } else if (
     this.isSrcMediaElement ||
     this.isSrcP5Graphics ||
+    this.isSrcP5Renderer ||
     this.isSrcHTMLElement
   ) {
     // if param is a video HTML element

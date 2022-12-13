@@ -105,7 +105,7 @@ p5.js 代码库附带的开发人员工具在某些方面特意非常严格。�
 
 ## 代码语法
 
-p5.js 要求整齐且在风格上一致的代码语法，它使用称为 [Prettier](https://prettier.io/) 和 [ESlint](https://eslint.org/) 的工具帮助检查代码。提交前这些工具会检查某些样式规则，但是您也可以为代码编辑器安装 [ESlint 插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入代码后立即显示错误。总的来说，在代码风格方面我们会趋向选择灵活性，以减少参与和贡献的阻碍。
+p5.js 要求整齐且在风格上一致的代码语法，它使用 [ESlint](https://eslint.org/) 帮助检查代码。提交前这些工具会检查某些样式规则，但是您也可以为代码编辑器安装 [ESlint 插件](https://eslint.org/docs/user-guide/integrations#editors)，以在键入代码后立即显示错误。总的来说，在代码风格方面我们会趋向选择灵活性，以减少参与和贡献的阻碍。
 
 要检查错误，在命令行输入以下指令（不要键入 `$` 提示符）：
 

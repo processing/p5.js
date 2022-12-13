@@ -1,4 +1,3 @@
-/* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
     /**
@@ -79,7 +78,7 @@ suite('DOM', function() {
       // Creates 2 similar elements and tests if it selects only one.
       const testButton = generateButton('Button 1');
       generateButton('Button 2');
-      const result = myp5.select(`button`);
+      const result = myp5.select('button');
       assert.deepEqual(result.elt, testButton.elt);
     });
 
@@ -91,7 +90,7 @@ suite('DOM', function() {
       const testDiv = myp5.createDiv();
       testButton.parent(testDiv);
 
-      const result = myp5.select(`button`, testDiv);
+      const result = myp5.select('button', testDiv);
       assert.deepEqual(result.elt, testButton.elt);
     });
 
@@ -808,6 +807,15 @@ suite('DOM', function() {
       }
     });
 
+    test('should update select value when HTML special characters are in the name', function() {
+      testElement = myp5.createSelect(true);
+      testElement.option('&', 'foo');
+      assert.equal(testElement.elt.options.length, 1);
+      assert.equal(testElement.elt.options[0].value, 'foo');
+      testElement.option('&', 'bar');
+      assert.equal(testElement.elt.options[0].value, 'bar');
+    });
+
     test('calling selected(value) should updated selectedIndex', function() {
       testElement = myp5.createSelect(true);
       options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
@@ -1288,6 +1296,32 @@ suite('DOM', function() {
         };
       }
     );
+
+    test('should work with tint()', function(done) {
+      const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
+      testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
+        // Workaround for headless tests, where the video data isn't loading
+        // correctly: mock the video element using an image for this test
+        const prevElt = testElement.elt;
+        testElement.elt = imgElt.elt;
+
+        myp5.background(255);
+        myp5.tint(255, 0, 0);
+        myp5.image(testElement, 0, 0);
+
+        testElement.elt = prevElt;
+        imgElt.remove();
+
+        myp5.loadPixels();
+        testElement.loadPixels();
+        console.log(testElement.pixels.slice(0, 3));
+        console.log(myp5.pixels.slice(0, 3));
+        assert.equal(myp5.pixels[0], testElement.pixels[0]);
+        assert.equal(myp5.pixels[1], 0);
+        assert.equal(myp5.pixels[2], 0);
+        done();
+      });
+    });
   });
 
   suite('p5.prototype.createAudio', function() {

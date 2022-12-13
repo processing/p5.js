@@ -725,3 +725,15 @@ export const LABEL = 'label';
  * @final
  */
 export const FALLBACK = 'fallback';
+
+/**
+ * @property {String} CONTAIN
+ * @final
+ */
+export const CONTAIN = 'contain';
+
+/**
+ * @property {String} COVER
+ * @final
+ */
+export const COVER = 'cover';

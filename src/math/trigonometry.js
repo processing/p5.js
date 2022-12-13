@@ -129,7 +129,7 @@ p5.prototype.atan = function(ratio) {
  * to the position of the cursor.
  *
  * Note: The y-coordinate of the point is the first parameter, and the
- * x-coordinate is the second parameter, due the the structure of calculating
+ * x-coordinate is the second parameter, due to the structure of calculating
  * the tangent.
  *
  * @method atan2
@@ -146,7 +146,7 @@ p5.prototype.atan = function(ratio) {
  *   let a = atan2(mouseY - height / 2, mouseX - width / 2);
  *   rotate(a);
  *   rect(-30, -5, 60, 10);
- *   describe(`60×10 rect at center of canvas rotates with mouse movements`);
+ *   describe('60×10 rect at center of canvas rotates with mouse movements');
  * }
  * </code>
  * </div>
@@ -281,9 +281,9 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
 /**
  * Sets the current mode of p5 to the given mode. Default mode is RADIANS.
  *
+ * Calling <a href="#/p5/angleMode">angleMode()</a> with no arguments returns current anglemode.
  * @method angleMode
  * @param {Constant} mode either RADIANS or DEGREES
- *
  * @example
  * <div>
  * <code>
@@ -306,8 +306,15 @@ p5.prototype.radians = angle => angle * constants.DEG_TO_RAD;
  * </div>
  *
  */
+/**
+ * @method angleMode
+ * @return {Constant} mode either RADIANS or DEGREES
+ */
 p5.prototype.angleMode = function(mode) {
-  if (mode === constants.DEGREES || mode === constants.RADIANS) {
+  p5._validateParameters('angleMode', arguments);
+  if (typeof mode === 'undefined') {
+    return this._angleMode;
+  } else if (mode === constants.DEGREES || mode === constants.RADIANS) {
     this._angleMode = mode;
   }
 };

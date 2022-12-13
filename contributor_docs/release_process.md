@@ -3,42 +3,52 @@
 ## Approach
 * We follow the [semver](https://semver.org/) versioning pattern, which means we follow this versioning pattern: `MAJOR:MINOR:PATCH`.
 
-
 ## Requirements
-* Git, node.js (v10+) and NPM installed on your system
-* Logged in NPM CLI : Check if you are logged in by `npm whoami`
-* High Bandwidth : Lots of things to download/pull/push (\~190 MB total I presume)
+* Git, node.js and NPM installed on your system
+* You are able to build the library and have push access to the remote repository
+* Secret `NPM_TOKEN` value is set on the remote repository
+* Secret `ACCESS_TOKEN` value is set on the remote repository
 
 ## Usage
-```shell
-$ npm run release
+```sh
+$ git checkout main
+$ npm version [major|minor|patch] # Choose the appropriate version tag
+$ git push origin main
+$ git push origin v1.4.2 # Replace the version number with the one just created above
 ```
+The actual release steps are all run on Github Actions CI. After the action has finished running, you may want to view the release on Github and modify the release note if required (eg. separate all-contributor bot commits with other commits).
 
-* This will run the build steps and you should follow the prompt provided by `np` to finish the process.
-* The build step then proceed to the grunt task of creating a zip version of the library as well as releasing on bower and releasing the reference on the website.
+## Security tokens
+For the release steps to run fully, two [repository secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) must be set as below.
+
+* `NPM_TOKEN` can be created by following the steps [here](https://docs.npmjs.com/creating-and-viewing-access-tokens) to create a read and publish token. The user the token belongs to must have publish access to the project on NPM.
+* `ACCESS_TOKEN` is a personal access token for a user that has access to `p5.js`, `p5.js-website`, and `p5.js-release` repositories. The token can be generated using the steps [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and for scopes, choose only `public_repo`. It is recommended to use an organization specific account for this (ie. not from a personal account) and limit the account's write access to only the required repositories.
 
 ## What's actually happening
-* `npm run release` is an alias of `grunt release-p5` which will first spawn a child process running [`np`](https://www.npmjs.com/package/np).
-* `np` will start by checking your local repository and settings are ready for you to create a release. You will need to have no uncommitted changes in the local repository in order to continue.
-* `np` will then reinstall `node_modules` then run tests with `npm test`.
-* `np` will bump the version according to what was selected at the beginning.
-* If any step prior to this failed, the repo will be reverted to its initial state before running `npm run release`.
-* The task mentioned in `prepublishOnly` in `package.json` will run ( `grunt prerelease` ) to build the documentation and the library with the updated version number
-* The NPM package is published.
-	* Release on NPM : __Only__ the files mentioned in `files` in `package.json` are published.
-* Tags and local commits are pushed to the git remote.
-* A draft release is created on github.com with changelogs that can be edited.
-* Create a Zip file `p5.zip` of `lib` folder (now includes the empty example), which should be uploaded in the GitHub Release draft created above.
-	* After this process completes a window pointing at `release/` will open and it will contain all the files that should be uploaded as part of the Github Release.
-* Push the newly built library to [p5.js-release](https://github.com/processing/p5.js-release) repo for Bower.
-* Push the newly built reference to [p5.js-website](https://github.com/processing/p5.js-website)
+The Github Action ["New p5.js release"](../.github/workflows/release.yml) is triggered on a tag that matches the pattern `v*.*.*` which is created by the `npm version ___` command.
+
+Once triggered, it will run the following steps:
+
+1. Clone the repository, setup node.js, extract version number, install dependencies with `npm`, and run test with `npm test`.
+2. Create the release files that will be uploaded to Github releases.
+3. Create a release on Github and publish latest version on NPM.
+4. Update website files
+	1. Clone the website repository
+	2. Copy `data.json` and `data.min.json` to the right location
+	3. Copy `p5.min.js` and `p5.sound.min.js` to the right location
+	4. Update `data.yml` file with latest version number
+	5. Update `en.json` file based on `data.min.json`
+	6. Commit and push the changes back to the website repository
+5. Update Bower files
+	1. Clone the Bower release repository
+	2. Copy all libraries files to the right location
+	3. Commit and push the changes back to the website repository
+
+In principle, we try to concentrate as many steps as possible to be run in one place, ie. in the CI environment. If a new step that is only run on release is required, it should probably be defined in the CI workflow and not as part of the build configuration.
 
 ## Testing
-In the case where you have push access to the repositories:
-* You can run `npm run release -- --preview` to do a dry run of the release process. No git tracked files will be changed by running this step and no push will be made to any of the remotes.
+As the release steps are run in CI, testing them can be difficult. Using [act](https://github.com/nektos/act) to test running of the steps locally is possible (and was how they were tested while being developed) but require some temporary modifications to the workflow definition, we'll roughly document here as the precise steps will likely change over time.
 
-In the case where you don't have push access to the repositories:
-* You will need to edit the `name` field of `package.json` to a namespaced version, eg. `@username/p5` and commit this change into git before running `npm run release -- --preview` as usual. When prompted just choose not to publish the package to the namespaced packaged on NPM, nothing will be published online.
-* You can do a full test run of the release with `npm run release` provided you have edited the `name` field of `package.json`. To choose where to clone and push the Bower release and website repositories from, you can set them by specifying additional arguments like so: `npm run release -- --bowerReleaser=username --docsReleaser=username`.
+The test steps will not run because not all system requirements are present to run the mocha Chrome tests. Some system dependencies will likely be needed to be installed with `apt` before setting up the rest of the environment. Keep an eye on the error messages which should give some information on what packages are missing.
 
-__NOTE:__ `np` (`6.2.0`) currently has a [bug](https://github.com/sindresorhus/np/issues/508) that prevents release to namespaced package name, you can revert to `5.2.1` if you must test this otherwise it will fail at the publish step.
+The steps concerning pushing changes to remote repositories should be commented out to avoid accidentally pushing unintended changes.

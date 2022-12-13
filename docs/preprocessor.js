@@ -10,7 +10,7 @@ function smokeTestMethods(data) {
 
       if (
         classitem.access !== 'private' &&
-        classitem.file.substr(0, 3) === 'src' &&
+        classitem.file.slice(0, 3) === 'src' &&
         classitem.name &&
         !classitem.example
       ) {
@@ -27,16 +27,6 @@ function smokeTestMethods(data) {
             ' missing example'
         );
       }
-    }
-  });
-}
-
-function cleanExamples(data) {
-  data.classitems.forEach(function(classitem) {
-    if (classitem.itemtype === 'method' && classitem.example) {
-      classitem.example = classitem.example.map(i =>
-        i.replace(/[^\n]*\/\/\s*prettier-ignore.*\r?\n/g, '')
-      );
     }
   });
 }
@@ -306,7 +296,6 @@ module.exports = (data, options) => {
   renderDescriptionsAsMarkdown(data);
   mergeOverloadedMethods(data);
   smokeTestMethods(data);
-  cleanExamples(data);
   buildParamDocs(JSON.parse(JSON.stringify(data)));
 };
 

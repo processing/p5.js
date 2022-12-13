@@ -754,7 +754,7 @@ p5.prototype.stroke = function(...args) {
 
 /**
  * All drawing that follows <a href="#/p5/erase">erase()</a> will subtract from
- * the canvas.Erased areas will reveal the web page underneath the canvas.Erasing
+ * the canvas. Erased areas will reveal the web page underneath the canvas. Erasing
  * can be canceled with <a href="#/p5/noErase">noErase()</a>.
  *
  * Drawing done with <a href="#/p5/image">image()</a> and <a href="#/p5/background">

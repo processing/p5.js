@@ -1,3 +1,5 @@
+# Contributing Documentation
+
 Documentation is essential for new learners and experienced programmers alike. It helps make our community inclusive by extending a friendly hand to those who are less familiar with p5.js. It also helps us find the bugs and issues with the code itself, because we test and try things out as we document.
 
 There are several ways to contribute to documentation:
@@ -31,6 +33,3 @@ While the examples in the reference are meant to be very simplistic snippets of 
 * All discussion happens on github issues, so there's no slack/gitter/etc channel you need to join.
 * Add your name to the [contributors list](https://github.com/processing/p5.js#contributors) in the readme.md file! Instructions [here](https://github.com/processing/p5.js/issues/2309).
 * And of course, if you're more of a bug fixer kind of person, feel free to jump into any of the [issues](https://github.com/processing/p5.js/issues)!
-
-Welcome! We're so glad you're here!
-❤️ the p5.js community

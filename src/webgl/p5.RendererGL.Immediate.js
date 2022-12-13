@@ -26,7 +26,8 @@ import './p5.RenderBuffer';
  * @param  {Number} mode webgl primitives mode.  beginShape supports the
  *                       following modes:
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
- *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
+ *                       TRIANGLE_STRIP, TRIANGLE_FAN, QUADS, QUAD_STRIP,
+ *                       and TESS(WEBGL only)
  * @chainable
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
@@ -34,6 +35,13 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     mode !== undefined ? mode : constants.TRIANGLE_FAN;
   this.immediateMode.geometry.reset();
   return this;
+};
+
+const immediateBufferStrides = {
+  vertices: 1,
+  vertexNormals: 1,
+  vertexColors: 4,
+  uvs: 2
 };
 
 /**
@@ -47,9 +55,35 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @TODO implement handling of <a href="#/p5.Vector">p5.Vector</a> args
  */
 p5.RendererGL.prototype.vertex = function(x, y) {
+  // WebGL 1 doesn't support QUADS or QUAD_STRIP, so we duplicate data to turn
+  // QUADS into TRIANGLES and QUAD_STRIP into TRIANGLE_STRIP. (There is no extra
+  // work to convert QUAD_STRIP here, since the only difference is in how edges
+  // are rendered.)
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    // A finished quad turned into triangles should leave 6 vertices in the
+    // buffer:
+    // 0--3     0   3--5
+    // |  | --> | \  \ |
+    // 1--2     1--2   4
+    // When vertex index 3 is being added, add the necessary duplicates.
+    if (this.immediateMode.geometry.vertices.length % 6 === 3) {
+      for (const key in immediateBufferStrides) {
+        const stride = immediateBufferStrides[key];
+        const buffer = this.immediateMode.geometry[key];
+        buffer.push(
+          ...buffer.slice(
+            buffer.length - 3 * stride,
+            buffer.length - 2 * stride
+          ),
+          ...buffer.slice(buffer.length - stride, buffer.length)
+        );
+      }
+    }
+  }
+
   let z, u, v;
 
-  // default to (x, y) mode: all other arugments assumed to be 0.
+  // default to (x, y) mode: all other arguments assumed to be 0.
   z = u = v = 0;
 
   if (arguments.length === 3) {
@@ -233,6 +267,29 @@ p5.RendererGL.prototype._calculateEdges = function(
         res.push([i, i + 1]);
       }
       break;
+    case constants.QUADS:
+      // Quads have been broken up into two triangles by `vertex()`:
+      // 0   3--5
+      // | \  \ |
+      // 1--2   4
+      for (i = 0; i < verts.length - 5; i += 6) {
+        res.push([i, i + 1]);
+        res.push([i + 1, i + 2]);
+        res.push([i + 3, i + 5]);
+        res.push([i + 4, i + 5]);
+      }
+      break;
+    case constants.QUAD_STRIP:
+      // 0---2---4
+      // |   |   |
+      // 1---3---5
+      for (i = 0; i < verts.length - 2; i += 2) {
+        res.push([i, i + 1]);
+        res.push([i, i + 2]);
+        res.push([i + 1, i + 3]);
+      }
+      res.push([i, i + 1]);
+      break;
     default:
       for (i = 0; i < verts.length - 1; i++) {
         res.push([i, i + 1]);
@@ -252,17 +309,36 @@ p5.RendererGL.prototype._calculateEdges = function(
 p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [
-    new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
+    this._flatten(this.immediateMode.geometry.vertices.map((vert, i) => [
+      vert.x,
+      vert.y,
+      vert.z,
+      this.immediateMode.geometry.uvs[i * 2],
+      this.immediateMode.geometry.uvs[i * 2 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4],
+      this.immediateMode.geometry.vertexColors[i * 4 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4 + 2],
+      this.immediateMode.geometry.vertexColors[i * 4 + 3],
+      this.immediateMode.geometry.vertexNormals[i].x,
+      this.immediateMode.geometry.vertexNormals[i].y,
+      this.immediateMode.geometry.vertexNormals[i].z
+    ]))
   ];
   const polyTriangles = this._triangulate(contours);
   this.immediateMode.geometry.vertices = [];
+  this.immediateMode.geometry.vertexNormals = [];
+  this.immediateMode.geometry.uvs = [];
+  const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 3
+    j = j + 12
   ) {
-    this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+    colors.push(...polyTriangles.slice(j + 5, j + 9));
+    this.normal(...polyTriangles.slice(j + 9, j + 12));
+    this.vertex(...polyTriangles.slice(j, j + 5));
   }
+  this.immediateMode.geometry.vertexColors = colors;
 };
 
 /**
@@ -287,6 +363,15 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
     this.immediateMode.shapeMode === constants.LINES
   ) {
     this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+  }
+
+  // WebGL 1 doesn't support the QUADS and QUAD_STRIP modes, so we
+  // need to convert them to a supported format. In `vertex()`, we reformat
+  // the input data into the formats specified below.
+  if (this.immediateMode.shapeMode === constants.QUADS) {
+    this.immediateMode.shapeMode = constants.TRIANGLES;
+  } else if (this.immediateMode.shapeMode === constants.QUAD_STRIP) {
+    this.immediateMode.shapeMode = constants.TRIANGLE_STRIP;
   }
 
   this._applyColorBlend(this.curFillColor);

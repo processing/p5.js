@@ -370,7 +370,7 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
  * stroke(255);
  * line(85, 75, 30, 75);
  * describe(
- *   '3 lines of various stroke sizes. Form top, bottom and right sides of a square'
+ *   '3 lines of various stroke colors. Form top, bottom and right sides of a square'
  * );
  * </code>
  * </div>
@@ -534,7 +534,6 @@ p5.prototype.quad = function(...args) {
   if (this._renderer._doStroke || this._renderer._doFill) {
     if (this._renderer.isP3D && args.length <= 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
-      // prettier-ignore
       this._renderer.quad.call(
         this._renderer,
         args[0], args[1], 0,
