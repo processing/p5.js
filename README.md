@@ -591,6 +591,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center"><a href="https://github.com/UnityOfFairfax"><img src="https://avatars.githubusercontent.com/u/46071997?v=4?s=100" width="100px;" alt="UnityOfFairfax"/><br /><sub><b>UnityOfFairfax</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=UnityOfFairfax" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/inaridarkfox4231"><img src="https://avatars.githubusercontent.com/u/39549290?v=4?s=100" width="100px;" alt="INARI_DARKFOX"/><br /><sub><b>INARI_DARKFOX</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=inaridarkfox4231" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center"><a href="http://jwilliamdunn.com"><img src="https://avatars.githubusercontent.com/u/4262131?v=4?s=100" width="100px;" alt="James Dunn"/><br /><sub><b>James Dunn</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajwdunn1" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=jwdunn1" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
