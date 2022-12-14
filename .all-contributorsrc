@@ -3304,6 +3304,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jwdunn1",
+      "name": "James Dunn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4262131?v=4",
+      "profile": "http://jwilliamdunn.com",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
