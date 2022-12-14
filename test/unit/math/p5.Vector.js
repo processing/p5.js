@@ -71,7 +71,7 @@ suite('p5.Vector', function() {
     setup(function() {
       v = new p5.Vector();
     });
-    test('should set constant to DEGREES', function() {
+    test('should create instance of p5.Vector', function() {
       assert.instanceOf(v, p5.Vector);
     });
 
@@ -1326,6 +1326,31 @@ suite('p5.Vector', function() {
         Math.abs(z_normal.angleBetween(z_bounce_outgoing.mult(-1))),
         0.01
       );
+    });
+  });
+
+  suite('toString', function() {
+    let v, vString;
+
+    setup(function() {
+      v = new p5.Vector(0, -1, 1);
+      vString = 'p5.Vector Object : [0, -1, 1]';
+    });
+
+    suite('p5.Vector.prototype.toString() [INSTANCE]', function() {
+      test('v.toString() should return "p5.Vector Object : [0, -1, 1]"', function() {
+        expect(v.toString()).to.equal(vString);
+      });
+
+      test('String(v) should return "p5.Vector Object : [0, -1, 1]"', function() {
+        expect(String(v)).to.equal(vString);
+      });
+    });
+
+    suite('p5.Vector.toString() [CLASS]', function() {
+      test('p5.Vector.toString(v) should return "p5.Vector Object : [0, -1, 1]"', function() {
+        expect(p5.Vector.toString(v)).to.equal(vString);
+      });
     });
   });
 });
