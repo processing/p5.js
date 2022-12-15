@@ -1047,7 +1047,7 @@ p5.RendererGL.prototype.resetMatrix = function() {
     this._curCamera.cameraMatrix.mat4[9],
     this._curCamera.cameraMatrix.mat4[10],
     this._curCamera.cameraMatrix.mat4[11],
-    this._curCamera.cameraMatrix.mat4[12], 
+    this._curCamera.cameraMatrix.mat4[12],
     this._curCamera.cameraMatrix.mat4[13],
     this._curCamera.cameraMatrix.mat4[14],
     this._curCamera.cameraMatrix.mat4[15]
