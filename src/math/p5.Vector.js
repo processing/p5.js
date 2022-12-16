@@ -1387,7 +1387,7 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
  * will take the current <a href="#/p5/angleMode">angleMode</a> into
- * consideration, and give the angle in radians or degree accordingly.
+ * consideration, and give the angle in radians or degrees accordingly.
  *
  * @method heading
  * @return {Number} the angle of rotation
@@ -1552,7 +1552,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
 /**
  * Calculates and returns the angle between two vectors. This function will take
  * the current <a href="#/p5/angleMode">angleMode</a> into consideration, and
- * give the angle in radians or degree accordingly.
+ * give the angle in radians or degrees accordingly.
  *
  * @method angleBetween
  * @param  {p5.Vector}    v the <a href="#/p5.Vector">p5.Vector</a> to compare the angle of
@@ -2448,7 +2448,7 @@ p5.Vector.setMag = function setMag(v, len, target) {
  * Calculate the angle of rotation for this vector (only 2D vectors).
  * p5.Vectors created using <a href="#/p5/createVector">createVector()</a>
  * will take the current <a href="#/p5/angleMode">angleMode</a> into
- * consideration, and give the angle in radians or degree accordingly.
+ * consideration, and give the angle in radians or degrees accordingly.
  */
 /**
  * @method heading
@@ -2463,7 +2463,7 @@ p5.Vector.heading = function heading(v) {
 /**
  * Calculates and returns the angle between two vectors. This function will take
  * the <a href="#/p5/angleMode">angleMode</a> on v1 into consideration, and
- * give the angle in radians or degree accordingly.
+ * give the angle in radians or degrees accordingly.
  */
 /**
  * @method angleBetween
