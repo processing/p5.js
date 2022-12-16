@@ -19,7 +19,7 @@ function setup() {
       strokeWidth: 2,
       stroke: 'green'
     });
-    console.log(pathTag);
+    //console.log(pathTag);
 
     // hit detection for canvas Path2D (cursor changes)
     canvas.onmousemove = function(e) {

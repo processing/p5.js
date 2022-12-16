@@ -167,6 +167,7 @@ class p5 {
     //////////////////////////////////////////////
 
     this._setupDone = false;
+    this._preloadDone = false;
     // for handling hidpi
     this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     this._userNode = node;
@@ -292,7 +293,7 @@ class p5 {
 
     this._decrementPreload = function() {
       const context = this._isGlobal ? window : this;
-      if (typeof context.preload === 'function') {
+      if (!context._preloadDone && typeof context.preload === 'function') {
         context._setProperty('_preloadCount', context._preloadCount - 1);
         context._runIfPreloadsAreDone();
       }
@@ -309,6 +310,8 @@ class p5 {
 
     this._incrementPreload = function() {
       const context = this._isGlobal ? window : this;
+      // Do nothing if we tried to increment preloads outside of `preload`
+      if (context._preloadDone) return;
       context._setProperty('_preloadCount', context._preloadCount + 1);
     };
 
@@ -335,6 +338,8 @@ class p5 {
 
       // Record the time when sketch starts
       this._millisStart = window.performance.now();
+
+      context._preloadDone = true;
 
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
@@ -691,8 +696,15 @@ class p5 {
 p5.instance = null;
 
 /**
- * Allows for the friendly error system (FES) to be turned off when creating a sketch,
- * which can give a significant boost to performance when needed.
+ * Turn off some features of the friendly error system (FES), which can give
+ * a significant boost to performance when needed.
+ *
+ * Note that this will disable the parts of the FES that cause performance
+ * slowdown (like argument checking). Friendly errors that have no performance
+ * cost (like giving a descriptive error if a file load fails, or warning you
+ * if you try to override p5.js functions in the global space),
+ * will remain in place.
+ *
  * See <a href='https://github.com/processing/p5.js/wiki/Optimizing-p5.js-Code-for-Performance#disable-the-friendly-error-system-fes'>
  * disabling the friendly error system</a>.
  *
@@ -712,6 +724,10 @@ p5.disableFriendlyErrors = false;
 for (const k in constants) {
   p5.prototype[k] = constants[k];
 }
+
+// makes the `VERSION` constant available on the p5 object
+// in instance mode, even if it hasn't been instatiated yet
+p5.VERSION = constants.VERSION;
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)

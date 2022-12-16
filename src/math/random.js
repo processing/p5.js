@@ -52,11 +52,9 @@ p5.prototype._lcgSetSeed = function(stateProperty, val) {
  *   stroke(r);
  *   line(i, 0, i, 100);
  * }
+ * describe('many vertical lines drawn in white, black, or grey.');
  * </code>
  * </div>
- *
- * @alt
- * many vertical lines drawn in white, black or grey.
  */
 p5.prototype.randomSeed = function(seed) {
   this._lcgSetSeed(randomStateProp, seed);
@@ -92,6 +90,8 @@ p5.prototype.randomSeed = function(seed) {
  *   stroke(r * 5);
  *   line(50, i, 50 + r, i);
  * }
+ * describe(`100 horizontal lines from center canvas to right.
+ *   The size and fill change each time.`);
  * </code>
  * </div>
  * <div>
@@ -100,6 +100,8 @@ p5.prototype.randomSeed = function(seed) {
  *   let r = random(-50, 50);
  *   line(50, i, 50 + r, i);
  * }
+ * describe(`100 horizontal lines from center of canvas.
+ *   The height & side change each render.`);
  * </code>
  * </div>
  * <div>
@@ -108,13 +110,9 @@ p5.prototype.randomSeed = function(seed) {
  * let words = ['apple', 'bear', 'cat', 'dog'];
  * let word = random(words); // select random word
  * text(word, 10, 50); // draw the word
+ * describe('word displayed at random. Either apple, bear, cat, or dog.');
  * </code>
  * </div>
- *
- * @alt
- * 100 horizontal lines from center canvas to right. size+fill change each time
- * 100 horizontal lines from center of canvas. height & side change each render
- * word displayed at random. Either apple, bear, cat, or dog
  */
 /**
  * @method random
@@ -160,9 +158,9 @@ p5.prototype.random = function(min, max) {
  * be returned.
  *
  * Takes either 0, 1 or 2 arguments.<br>
- * If no args, returns a mean of 0 and standard deviation of 1.<br>
- * If one arg, that arg is the mean (standard deviation is 1).<br>
- * If two args, first is mean, second is standard deviation.
+ * If no args, the mean is 0 and the standard deviation is 1.<br>
+ * If one arg, that arg is the mean and the standard deviation is 1.<br>
+ * If two args, the first arg is the mean and the second is the standard deviation.
  *
  * @method randomGaussian
  * @param  {Number} [mean]  the mean
@@ -175,6 +173,8 @@ p5.prototype.random = function(min, max) {
  *   let x = randomGaussian(50, 15);
  *   line(50, y, x, y);
  * }
+ * describe(`100 horizontal lines from center of canvas.
+ *   The height & side change each render.`);
  * </code>
  * </div>
  * <div>
@@ -199,12 +199,12 @@ p5.prototype.random = function(min, max) {
  *     let dist = abs(distribution[i]);
  *     line(0, 0, dist, 0);
  *   }
+ *
+ *   describe(`black lines radiate from center of canvas.
+ *     The size changes each render.`);
  * }
  * </code>
  * </div>
- * @alt
- * 100 horizontal lines from center of canvas. height & side change each render
- * black lines radiate from center of canvas. size determined each render
  */
 p5.prototype.randomGaussian = function(mean, sd = 1) {
   let y1, x1, x2, w;

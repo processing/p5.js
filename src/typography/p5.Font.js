@@ -64,12 +64,12 @@ p5.Font = function(p) {
  *   textFont(font);
  *   textSize(12);
  *   text(textString, 10, 30);
+ *
+ *   describe(`Words “Lorem ipsum dol” go off canvas and
+ *     contained by white bounding box`);
  * }
  * </code>
  * </div>
- *
- * @alt
- *words Lorem ipsum dol go off canvas and contained by white bounding box
  */
 p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
   // Check cache for existing bounds. Take into consideration the text alignment
@@ -238,8 +238,8 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
   function isSpace(i) {
     return (
       (glyphs[i].name && glyphs[i].name === 'space') ||
-      (txt.length === glyphs.length && txt[i] === ' ') ||
-      (glyphs[i].index && glyphs[i].index === 3)
+      (txt.length === glyphs.length && txt[i] === ' ') //||
+      //(glyphs[i].index && glyphs[i].index === 3)
     );
   }
 
@@ -656,16 +656,16 @@ function getPointAtSegmentLength(
   return length == null
     ? bezlen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y)
     : findDotsAtSegment(
-        p1x,
-        p1y,
-        c1x,
-        c1y,
-        c2x,
-        c2y,
-        p2x,
-        p2y,
-        getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length)
-      );
+      p1x,
+      p1y,
+      c1x,
+      c1y,
+      c2x,
+      c2y,
+      p2x,
+      p2y,
+      getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length)
+    );
 }
 
 function pointAtLength(path, length, istotal) {

@@ -75,20 +75,20 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 3. 포크 된 깃허브 저장소를 로컬 컴퓨터에 [클론](https://help.github.com/articles/cloning-a-repository/) 하십시오.
 
-   ```
+   ```shell
    $ git clone https://github.com/YOUR_USERNAME/p5.js.git
    ```
 
 4. 프로젝트 폴더로 들어가 npm에 필요한 모든 디펜던시를 설치하십시오.
 
-   ```
+   ```shell
    $ cd p5.js
    $ npm ci
    ```
 
 5. 이제 [Grunt](https://gruntjs.com/)가 설치되었을텐데, 소스 코드로부터 라이브러리를 빌드하기 위해 이를 이용할 수 있습니다.
 
-   ```
+   ```shell
    $ npm run grunt
    ```
 
@@ -96,7 +96,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 6. 로컬에서 코드 베이스를 변경하고, 깃(Git)으로 [커밋](https://help.github.com/articles/github-glossary/#commit) 하십시오.
 
-   ```
+   ```shell
    $ git add -u
    $ git commit -m "YOUR COMMIT MESSAGE"
    ```
@@ -105,7 +105,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 8. 변경 사항을 여러분의 깃허브 포크에 [푸시](https://help.github.com/articles/github-glossary/#push) 하십시오.
 
-   ```
+   ```shell
    $ git push
    ```
    
@@ -123,13 +123,13 @@ p5.js는 깔끔하고 일관성 있는 스타일의 코드 문법을 요구하�
 
 에러를 포착하기 위해서는 터미널에서 다음 명령어를 실행하세요(`$` 프롬프트는 입력하지 마십시오):
 
-```
+```shell
 $ npm run lint
 ```
 
 어떤 문법 오류는 자동적으로 고쳐질 수도 있습니다:
 
-```
+```shell
 $ npm run lint:fix
 ```
 
@@ -158,7 +158,7 @@ $ npm run lint:fix
 
 유닛 테스트를 돌리기 위해서는 프로젝트의 디펜던시들을 반드시 설치해야 합니다.
 
-```
+```shell
 $ npm ci
 ```
 
@@ -169,13 +169,13 @@ $ npm ci
 
 디펜던시들이 설치되면, Grunt를 이용해 유닛 테스트를 돌리십시오.
 
-```
+```shell
 $ grunt
 ```
 
 때론 커맨드 라인 대신 브라우저에서 테스트를 돌리는 것도 유용합니다. 이를 위해선, 먼저 서버 [연결](https://github.com/gruntjs/grunt-contrib-connect)을 시작하십시오:
 
-```
+```shell
 $ npm run dev
 ```
 

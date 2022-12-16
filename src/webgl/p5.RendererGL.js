@@ -95,6 +95,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.drawMode = constants.FILL;
 
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
+  this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
   this.curBlendMode = constants.BLEND;
@@ -145,21 +148,18 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.retainedMode = {
     geometry: {},
     buffers: {
-      // prettier-ignore
       stroke: [
         new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
         new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
-      // prettier-ignore
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aMaterialColor', this),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
         new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
         //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
-      // prettier-ignore
       text: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
@@ -176,18 +176,16 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     _quadraticVertex: [],
     _curveVertex: [],
     buffers: {
-      // prettier-ignore
       fill: [
-      new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-      new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-      new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-      new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-      new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
-      // prettier-ignore
       stroke: [
-      new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
-      new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
       point: this.GL.createBuffer()
     }
@@ -235,7 +233,7 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
-    alpha: true,
+    alpha: false,
     depth: true,
     stencil: true,
     antialias: applyAA,
@@ -252,23 +250,19 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
 };
 
 p5.RendererGL.prototype._initContext = function() {
-  try {
-    this.drawingContext =
-      this.canvas.getContext('webgl', this._pInst._glAttributes) ||
-      this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
-    if (this.drawingContext === null) {
-      throw new Error('Error creating webgl context');
-    } else {
-      const gl = this.drawingContext;
-      gl.enable(gl.DEPTH_TEST);
-      gl.depthFunc(gl.LEQUAL);
-      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-      this._viewport = this.drawingContext.getParameter(
-        this.drawingContext.VIEWPORT
-      );
-    }
-  } catch (er) {
-    throw er;
+  this.drawingContext =
+    this.canvas.getContext('webgl', this._pInst._glAttributes) ||
+    this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
+  if (this.drawingContext === null) {
+    throw new Error('Error creating webgl context');
+  } else {
+    const gl = this.drawingContext;
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    this._viewport = this.drawingContext.getParameter(
+      this.drawingContext.VIEWPORT
+    );
   }
 };
 
@@ -303,6 +297,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
       document.body.appendChild(c);
     }
     this._pInst.canvas = c;
+    this.canvas = c;
   }
 
   const renderer = new p5.RendererGL(
@@ -345,7 +340,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is true
+ * default is false
  *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -592,9 +587,7 @@ p5.RendererGL.prototype.background = function(...args) {
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
-  this.GL.clearColor(_r, _g, _b, _a);
-
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
+  this.clear(_r, _g, _b, _a);
 };
 
 //////////////////////////////////////////////
@@ -796,12 +789,11 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 p5.RendererGL.prototype._getPixel = function(x, y) {
   let imageData, index;
   imageData = new Uint8Array(4);
-  // prettier-ignore
   this.drawingContext.readPixels(
-      x, y, 1, 1,
-      this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
-      imageData
-    );
+    x, y, 1, 1,
+    this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
+    imageData
+  );
   index = 0;
   return [
     imageData[index + 0],
@@ -841,7 +833,6 @@ p5.RendererGL.prototype.loadPixels = function() {
   }
 
   const pd = this._pInst._pixelDensity;
-  // prettier-ignore
   this.GL.readPixels(
     0, 0, this.width * pd, this.height * pd,
     this.GL.RGBA, this.GL.UNSIGNED_BYTE,
@@ -901,7 +892,9 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _g = args[1] || 0;
   const _b = args[2] || 0;
   const _a = args[3] || 0;
+
   this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clearDepth(1);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
@@ -909,12 +902,11 @@ p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
   if (arguments.length === 16) {
     p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
   } else {
-    // prettier-ignore
     this.uMVMatrix.apply([
       a, b, 0, 0,
       c, d, 0, 0,
       0, 0, 1, 0,
-      e, f, 0, 1,
+      e, f, 0, 1
     ]);
   }
 };
@@ -992,9 +984,12 @@ p5.RendererGL.prototype.push = function() {
   properties.ambientLightColors = this.ambientLightColors.slice();
   properties.specularColors = this.specularColors.slice();
 
-  properties.directionalLightDirections = this.directionalLightDirections.slice();
-  properties.directionalLightDiffuseColors = this.directionalLightDiffuseColors.slice();
-  properties.directionalLightSpecularColors = this.directionalLightSpecularColors.slice();
+  properties.directionalLightDirections =
+    this.directionalLightDirections.slice();
+  properties.directionalLightDiffuseColors =
+    this.directionalLightDiffuseColors.slice();
+  properties.directionalLightSpecularColors =
+    this.directionalLightSpecularColors.slice();
 
   properties.pointLightPositions = this.pointLightPositions.slice();
   properties.pointLightDiffuseColors = this.pointLightDiffuseColors.slice();
@@ -1015,6 +1010,9 @@ p5.RendererGL.prototype.push = function() {
   properties.curStrokeWeight = this.curStrokeWeight;
   properties.curStrokeColor = this.curStrokeColor;
   properties.curFillColor = this.curFillColor;
+  properties.curAmbientColor = this.curAmbientColor;
+  properties.curSpecularColor = this.curSpecularColor;
+  properties.curEmissiveColor = this.curEmissiveColor;
 
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useEmissiveMaterial = this._useEmissiveMaterial;
@@ -1030,6 +1028,7 @@ p5.RendererGL.prototype.push = function() {
   properties.drawMode = this.drawMode;
 
   properties._currentNormal = this._currentNormal;
+  properties.curBlendMode = this.curBlendMode;
 
   return style;
 };
@@ -1254,6 +1253,9 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   }
   fillShader.setUniform('uTint', this._tint);
 
+  fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
+  fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
+  fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);
   fillShader.setUniform('uSpecular', this._useSpecularMaterial);
   fillShader.setUniform('uEmissive', this._useEmissiveMaterial);
   fillShader.setUniform('uShininess', this._useShininess);
@@ -1431,9 +1433,9 @@ p5.prototype._assert3d = function(name) {
 p5.RendererGL.prototype._initTessy = function initTesselator() {
   // function called for each vertex of tesselator output
   function vertexCallback(data, polyVertArray) {
-    polyVertArray[polyVertArray.length] = data[0];
-    polyVertArray[polyVertArray.length] = data[1];
-    polyVertArray[polyVertArray.length] = data[2];
+    for (let i = 0; i < data.length; i++) {
+      polyVertArray[polyVertArray.length] = data[i];
+    }
   }
 
   function begincallback(type) {
@@ -1448,7 +1450,14 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   }
   // callback for when segments intersect and must be split
   function combinecallback(coords, data, weight) {
-    return [coords[0], coords[1], coords[2]];
+    const result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < weight.length; i++) {
+      for (let j = 0; j < result.length; j++) {
+        if (weight[i] === 0 || !data[i]) continue;
+        result[j] += data[i][j] * weight[i];
+      }
+    }
+    return result;
   }
 
   function edgeCallback(flag) {
@@ -1478,8 +1487,8 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
     const contour = contours[i];
-    for (let j = 0; j < contour.length; j += 3) {
-      const coords = [contour[j], contour[j + 1], contour[j + 2]];
+    for (let j = 0; j < contour.length; j += 12) {
+      const coords = contour.slice(j, j + 12);
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();

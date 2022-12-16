@@ -1,30 +1,15 @@
-#### This page is out of date. Help us update it! See our stated goal below.
-
 # Supported browsers
 
-## Our stated goal:
+## Our stated goal
+p5.js uses [browserslist](https://browsersl.ist/) and [Babel](https://babeljs.io/) to provide support for older browsers. The browserslist configuration in use is [`last 2 versions, not dead`](https://browserslist.dev/?q=bGFzdCAyIHZlcnNpb25zLCBub3QgZGVhZA%3D%3D). `last 2 versions` means the last two releases of any browsers, `not dead` means browsers that had official support or updates in the past 24 months. Both of these conditions must be true for a browser to be supported.
 
-We support the current version of the browser, plus the previous major release of the browser. Exceptions: Internet Explorer, which has not had a new major release since 2013, we support only the most recent major release (v.11); Safari, which has not had a new major release since 2015, we support only the most recent major release (v.11)
+In practice, you can still use most of the latest features available in Javascript because Babel will likely be able to transpile or polyfill them to something matching the required compatibility list. Some features such as [Web API](https://developer.mozilla.org/en-US/docs/Web/API), [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API), or similar features not part of the core Javascript language cannot be handled by Babel and will need to be assessed on a case by case basis.
 
-## Potential issues:
+Good places to check if a feature is available are [caniuse.com](https://caniuse.com/) and [MDN](https://developer.mozilla.org/en-US/).
 
-* We are using webGL, which has limited support in IE 10, Firefox, and the Android browser.
-* We are using typed arrays, which does not have support for Uint8ClampedArray in IE 10 and IE Mobile 10/11.
-* Canvas blend modes are not supported in IE.
-* WebAudio is not supported in IE or the Android Browser.
+## Where does this apply
+The supported browsers requirement will apply to the p5.js source code, all examples (both website examples page and documentation), and all official tutorials. Third party add-on libraries does not have to adhere to the same requirement but are encouraged to do so.
 
+In many cases browsers not officially supported will likely still work with p5.js but we provide no guarantee for this case.
 
-As of September 2018, this means that we support:
-
-|Browser            |  Current Version  | Previous Version|  Notes                    
-|-------------------|------------------:|----------------:|--------------
-|Internet Explorer  |             v. 11 |  Not supported  | No support for WebAudio
-|Microsoft Edge     |             v. 42 |  v. 41          |
-|Chrome             |             v. 68 |  v. 67          |
-|Chrome for Android |             v. 68 |  v. 67          |
-|Firefox            |             v. 61 |  v. 60          | 
-|Safari             |             v. 11 |  Not supported  |
-|iOS Safari         |           v. 11.4 |  v. 11.2        |
-|Opera              |             v. 54 |  v. 53          |
-
-We will try to list all known problems across the different browsers here but for a complete list of supported feature on a browser visit [caniuse.com](http://caniuse.com) and search for specific features (ie. [WebGL](http://caniuse.com/#search=webgl))
+Stewards of each section will be responsible for ensuring PR involving code changes adhere to this requirement.

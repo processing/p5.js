@@ -1,0 +1,70 @@
+name: 🐛 Found a Bug
+description: This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
+labels: [Bug]
+body:
+- type: checkboxes
+  id: sub-area
+  attributes:
+    label: Most appropriate sub-area of p5.js?
+    description: You may select more than one.
+    options:
+        - label: Accessibility
+        - label: Color
+        - label: Core/Environment/Rendering
+        - label: Data
+        - label: DOM
+        - label: Events
+        - label: Image
+        - label: IO
+        - label: Math
+        - label: Typography
+        - label: Utilities
+        - label: WebGL
+        - label: Build Process
+        - label: Unit Testing
+        - label: Internalization
+        - label: Friendly Errors
+        - label: Other (specify if possible)
+- type: input
+  attributes:
+    label: p5.js version 
+    description: You can find this in the first line of the p5.js file.
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Web browser and version 
+    description: In the address bar, on Chrome enter "chrome://version", on Firefox enter "about:support". On Safari, use "About Safari".
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Operating System 
+    description: "Ex: Windows/MacOSX/Linux/Android/iOS along with version"
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Steps to reproduce this 
+    description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
+    value: "### Steps:
+    
+    1.
+
+    2.
+
+    3.
+
+
+    ### Snippet:
+    
+
+    ```js
+
+
+      // Paste your code here :) 
+
+
+    ```"
+  validations:
+    required: true

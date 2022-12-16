@@ -45,6 +45,7 @@ import p5 from '../core/main';
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('a square moving closer and then away from the camera.');
  * }
  * function draw() {
  *   background(204);
@@ -82,6 +83,9 @@ import p5 from '../core/main';
  *     sliderGroup[i].position(10, height + h);
  *     sliderGroup[i].style('width', '80px');
  *   }
+ *   describe(
+ *     'White square repeatedly grows to fill canvas and then shrinks. An interactive example of a red cube with 3 sliders for moving it across x, y, z axis and 3 sliders for shifting its center.'
+ *   );
  * }
  *
  * function draw() {
@@ -103,7 +107,7 @@ import p5 from '../core/main';
  * @alt
  * White square repeatedly grows to fill canvas and then shrinks.
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting it's center.
+ * z axis and 3 sliders for shifting its center.
  */
 p5.prototype.camera = function(...args) {
   this._assert3d('camera');
@@ -141,6 +145,9 @@ p5.prototype.camera = function(...args) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   perspective(PI / 3.0, width / height, 0.1, 500);
+ *   describe(
+ *     'two colored 3D boxes move back and forth, rotating as mouse is dragged.'
+ *   );
  * }
  * function draw() {
  *   background(200);
@@ -203,6 +210,9 @@ p5.prototype.perspective = function(...args) {
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
+ *   describe(
+ *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
+ *   );
  * }
  * function draw() {
  *   background(200);
@@ -266,6 +276,9 @@ p5.prototype.ortho = function(...args) {
  *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
  *   frustum(-0.1, 0.1, -0.1, 0.1, 0.1, 200);
+ *   describe(
+ *     'two 3D boxes move back and forth along same plane, rotating as mouse is dragged.'
+ *   );
  * }
  * function draw() {
  *   background(200);
@@ -328,12 +341,26 @@ p5.prototype.frustum = function(...args) {
  *   createCanvas(100, 100, WEBGL);
  *   background(0);
  *   camera = createCamera();
+ *   describe('An example that creates a camera and moves it around the box.');
  * }
  *
  * function draw() {
+ *   background(0);
+ *   // The camera will automatically
+ *   // rotate to look at [0, 0, 0].
  *   camera.lookAt(0, 0, 0);
+ *
+ *   // The camera will move on the
+ *   // x axis.
  *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
  *   box(20);
+ *
+ *   // A 'ground' box to give the viewer
+ *   // a better idea of where the camera
+ *   // is looking.
+ *   translate(0, 50, 0);
+ *   rotateX(HALF_PI);
+ *   box(150, 150, 20);
  * }
  * </code></div>
  *
@@ -398,6 +425,9 @@ p5.prototype.createCamera = function() {
  *   cam = createCamera();
  *   // set initial pan angle
  *   cam.pan(-0.8);
+ *   describe(
+ *     'camera view pans left and right across a series of rotating 3D boxes.'
+ *   );
  * }
  *
  * function draw() {
@@ -455,6 +485,7 @@ p5.Camera = function(renderer) {
  *   cam = createCamera();
  *   div = createDiv();
  *   div.position(0, 0);
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -482,6 +513,7 @@ p5.Camera = function(renderer) {
  *   cam = createCamera();
  *   div = createDiv();
  *   div.position(0, 0);
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -509,6 +541,7 @@ p5.Camera = function(renderer) {
  *   cam = createCamera();
  *   div = createDiv();
  *   div.position(0, 0);
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -538,6 +571,7 @@ p5.Camera = function(renderer) {
  *   div = createDiv('centerX = ' + cam.centerX);
  *   div.position(0, 0);
  *   div.style('color', 'white');
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -566,6 +600,7 @@ p5.Camera = function(renderer) {
  *   div = createDiv('centerY = ' + cam.centerY);
  *   div.position(0, 0);
  *   div.style('color', 'white');
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -594,6 +629,7 @@ p5.Camera = function(renderer) {
  *   div = createDiv('centerZ = ' + cam.centerZ);
  *   div.position(0, 0);
  *   div.style('color', 'white');
+ *   describe('An example showing the use of camera object properties');
  * }
  *
  * function draw() {
@@ -622,6 +658,7 @@ p5.Camera = function(renderer) {
  *   div.position(0, 0);
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
+ *   describe('An example showing the use of camera object properties');
  * }
  * </code></div>
  *
@@ -645,6 +682,7 @@ p5.Camera = function(renderer) {
  *   div.position(0, 0);
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
+ *   describe('An example showing the use of camera object properties');
  * }
  * </code></div>
  *
@@ -668,6 +706,7 @@ p5.Camera = function(renderer) {
  *   div.position(0, 0);
  *   div.style('color', 'blue');
  *   div.style('font-size', '18px');
+ *   describe('An example showing the use of camera object properties');
  * }
  * </code></div>
  *
@@ -770,11 +809,12 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
   const f = 1.0 / Math.tan(this.cameraFOV / 2);
   const nf = 1.0 / (this.cameraNear - this.cameraFar);
 
-  // prettier-ignore
+  /* eslint-disable indent */
   this.projMatrix.set(f / aspect,  0,                     0,  0,
                       0,          -f,                     0,  0,
                       0,           0,     (far + near) * nf, -1,
                       0,           0, (2 * far * near) * nf,  0);
+  /* eslint-enable indent */
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(
@@ -864,11 +904,12 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
 
   this.projMatrix = p5.Matrix.identity();
 
-  // prettier-ignore
+  /* eslint-disable indent */
   this.projMatrix.set(  x,  0,  0,  0,
                         0, -y,  0,  0,
                         0,  0,  z,  0,
                         tx, ty, tz,  1);
+  /* eslint-enable indent */
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(
@@ -959,11 +1000,12 @@ p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
 
   this.projMatrix = p5.Matrix.identity();
 
-  // prettier-ignore
+  /* eslint-disable indent */
   this.projMatrix.set(  x,  0,  0,  0,
                         0,  y,  0,  0,
                        tx, ty, tz, -1,
                         0,  0,  z,  0);
+  /* eslint-enable indent */
 
   if (this._isActive()) {
     this._renderer.uPMatrix.set(
@@ -1012,12 +1054,13 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
   const rotation = p5.Matrix.identity(this._renderer._pInst);
   rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
-  // prettier-ignore
+  /* eslint-disable max-len */
   const rotatedCenter = [
-    centerX * rotation.mat4[0]+ centerY * rotation.mat4[4]+ centerZ * rotation.mat4[8],
-    centerX * rotation.mat4[1]+ centerY * rotation.mat4[5]+ centerZ * rotation.mat4[9],
-    centerX * rotation.mat4[2]+ centerY * rotation.mat4[6]+ centerZ * rotation.mat4[10]
+    centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
+    centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
+    centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]
   ];
+  /* eslint-enable max-len */
 
   // add eye position back into center
   rotatedCenter[0] += this.eyeX;
@@ -1302,7 +1345,7 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
  * </div>
  * @alt
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
- * z axis and 3 sliders for shifting it's center.
+ * z axis and 3 sliders for shifting its center.
  */
 p5.Camera.prototype.camera = function(
   eyeX,
@@ -1348,11 +1391,12 @@ p5.Camera.prototype.camera = function(
   // the camera affects the model view matrix, insofar as it
   // inverse translates the world to the eye position of the camera
   // and rotates it.
-  // prettier-ignore
+  /* eslint-disable indent */
   this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
                         local.x[1], local.y[1], local.z[1], 0,
                         local.x[2], local.y[2], local.z[2], 0,
                                  0,          0,          0, 1);
+  /* eslint-enable indent */
 
   const tx = -eyeX;
   const ty = -eyeY;
@@ -1744,6 +1788,10 @@ p5.Camera.prototype._isActive = function() {
  *
  *   // set variable for previously active camera:
  *   currentCamera = 1;
+ *
+ *   describe(
+ *     'Canvas switches between two camera views, each showing a series of spinning 3D boxes.'
+ *   );
  * }
  *
  * function draw() {

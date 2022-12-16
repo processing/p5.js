@@ -28,7 +28,7 @@ import p5 from './main';
  * has been specified. Otherwise, the sketch would enter an odd state until
  * <a href="#/p5/loop">loop()</a> was called.
  *
- * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check the current state of <a href="#/p5/loop">loop()</a>.
  *
  * @method noLoop
  * @example
@@ -88,7 +88,7 @@ p5.prototype.noLoop = function() {
  *
  * Avoid calling loop() from inside setup().
  *
- * Use <a href="#/p5/isLooping">isLooping()</a> to check current state of loop().
+ * Use <a href="#/p5/isLooping">isLooping()</a> to check the current state of <a href="#/p5/loop">loop()</a>.
  *
  * @method loop
  * @example
@@ -138,6 +138,7 @@ p5.prototype.loop = function() {
  * isLooping() returns the current state for use within custom event handlers.
  *
  * @method isLooping
+ * @returns {boolean}
  * @example
  * <div>
  * <code>

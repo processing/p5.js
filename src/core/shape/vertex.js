@@ -89,12 +89,12 @@ p5.prototype.beginContour = function() {
  * Draw a series of connected triangles in strip fashion
  *
  * QUADS
- * Draw a series of seperate quad
+ * Draw a series of separate quads
  *
  * QUAD_STRIP
  * Draw quad strip using adjacent edges to form the next quad
  *
- * TESS (WebGl only)
+ * TESS (WEBGL only)
  * Handle irregular polygon for filling curve by explicit tessellation
  *
  * After calling the <a href="#/p5/beginShape">beginShape()</a> function, a series of <a href="#/p5/vertex">vertex()</a> commands must follow. To stop
@@ -261,7 +261,7 @@ p5.prototype.beginContour = function() {
  * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
  * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
  * 4 interlocking white triangles in 45 degree rotated square-shape.
- * 2 white rectangle shapes in mid-right canvas. Both 20x55.
+ * 2 white rectangle shapes in mid-right canvas. Both 20×55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
  */
@@ -420,7 +420,7 @@ p5.prototype.bezierVertex = function(...args) {
  * 2D mode expects 2 parameters, while 3D mode expects 3 parameters.
  *
  * The first and last points in a series of curveVertex() lines will be used to
- * guide the beginning and end of a the curve. A minimum of four
+ * guide the beginning and end of the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
  * third points. Adding a fifth point with curveVertex() will draw
  * the curve between the second, third, and fourth points. The
@@ -582,9 +582,9 @@ p5.prototype.endContour = function() {
 
 /**
  * The <a href="#/p5/endShape">endShape()</a> function is the companion to <a href="#/p5/beginShape">beginShape()</a> and may only be
- * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of image data
- * defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
- * buffer. The constant CLOSE as the value for the MODE parameter to close
+ * called after <a href="#/p5/beginShape">beginShape()</a>. When <a href="#/p5/endshape">endShape()</a> is called, all of the image
+ * data defined since the previous call to <a href="#/p5/beginShape">beginShape()</a> is written into the image
+ * buffer. The constant CLOSE as the value for the `mode` parameter to close
  * the shape (to connect the beginning and the end).
  *
  * @method endShape
@@ -781,7 +781,7 @@ p5.prototype.endShape = function(mode) {
  * </div>
  *
  * @alt
- * backwards s-shaped black line with the same s-shaped line in postive z-axis.
+ * backwards s-shaped black line with the same s-shaped line in positive z-axis.
  */
 p5.prototype.quadraticVertex = function(...args) {
   p5._validateParameters('quadraticVertex', args);
@@ -958,7 +958,7 @@ p5.prototype.quadraticVertex = function(...args) {
  * @method vertex
  * @param  {Number} x
  * @param  {Number} y
- * @param  {Number} z   z-coordinate of the vertex.
+ * @param  {Number} [z]   z-coordinate of the vertex.
  *                       Defaults to 0 if not specified.
  * @chainable
  */
@@ -967,8 +967,8 @@ p5.prototype.quadraticVertex = function(...args) {
  * @param  {Number} x
  * @param  {Number} y
  * @param  {Number} [z]
- * @param  {Number} u   the vertex's texture u-coordinate
- * @param  {Number} v   the vertex's texture v-coordinate
+ * @param  {Number} [u]   the vertex's texture u-coordinate
+ * @param  {Number} [v]   the vertex's texture v-coordinate
  * @chainable
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {

@@ -1,4 +1,3 @@
-/* global testSketchWithPromise */
 suite('DOM', function() {
   suite('p5.prototype.select', function() {
     /**
@@ -79,7 +78,7 @@ suite('DOM', function() {
       // Creates 2 similar elements and tests if it selects only one.
       const testButton = generateButton('Button 1');
       generateButton('Button 2');
-      const result = myp5.select(`button`);
+      const result = myp5.select('button');
       assert.deepEqual(result.elt, testButton.elt);
     });
 
@@ -91,7 +90,7 @@ suite('DOM', function() {
       const testDiv = myp5.createDiv();
       testButton.parent(testDiv);
 
-      const result = myp5.select(`button`, testDiv);
+      const result = myp5.select('button', testDiv);
       assert.deepEqual(result.elt, testButton.elt);
     });
 
@@ -626,7 +625,89 @@ suite('DOM', function() {
     );
   });
 
-  // Tests for createCheckBox
+  // Tests for createCheckbox
+  suite('p5.prototype.createCheckbox', function() {
+    let myp5;
+    let testElement;
+
+    setup(function(done) {
+      new p5(function(p) {
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+    teardown(function() {
+      myp5.remove();
+      if (testElement && testElement.parentNode) {
+        testElement.parentNode.removeChild(testElement);
+      }
+      testElement = null;
+    });
+
+    // helper functions
+    const getSpanElement = el =>
+      el.elt.firstElementChild.getElementsByTagName('span').length
+        ? el.elt.firstElementChild.getElementsByTagName('span')[0]
+        : null;
+
+    const getCheckboxElement = el =>
+      el.elt.firstElementChild.getElementsByTagName('input').length
+        ? el.elt.firstElementChild.getElementsByTagName('input')[0]
+        : null;
+
+    test('should be a function', function() {
+      assert.isFunction(myp5.createCheckbox);
+    });
+
+    test('should return a p5.Element with checkbox as descendant', function() {
+      testElement = myp5.createCheckbox();
+      const checkboxElement = getCheckboxElement(testElement);
+
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(checkboxElement, HTMLInputElement);
+    });
+
+    test('calling createCheckbox(label) should create checkbox and set its label', function() {
+      const labelValue = 'label';
+      testElement = myp5.createCheckbox(labelValue);
+      const spanElement = getSpanElement(testElement);
+      const testElementLabelValue = getSpanElement(testElement)
+        ? getSpanElement(testElement).innerHTML
+        : '';
+
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(spanElement, HTMLSpanElement);
+      assert.deepEqual(testElementLabelValue, labelValue);
+    });
+
+    test('calling createCheckbox(label, true) should create a checked checkbox and set its label', function() {
+      const labelValue = 'label';
+      testElement = myp5.createCheckbox(labelValue, true);
+
+      const spanElement = getSpanElement(testElement);
+      const testElementLabelValue = getSpanElement(testElement)
+        ? getSpanElement(testElement).innerHTML
+        : '';
+
+      assert.instanceOf(testElement, p5.Element);
+      assert.instanceOf(spanElement, HTMLSpanElement);
+      assert.deepEqual(testElementLabelValue, labelValue);
+      assert.isTrue(testElement.checked());
+    });
+
+    test('calling checked() should return checked value of checkbox', function() {
+      testElement = myp5.createCheckbox('', true);
+      assert.isTrue(testElement.checked());
+    });
+
+    test('calling checked(true) should set checked value of checkbox', function() {
+      testElement = myp5.createCheckbox('', false);
+      testElement.checked(true);
+      assert.isTrue(testElement.checked());
+    });
+  });
 
   suite('p5.prototype.createSelect', function() {
     let myp5;
@@ -726,6 +807,15 @@ suite('DOM', function() {
       }
     });
 
+    test('should update select value when HTML special characters are in the name', function() {
+      testElement = myp5.createSelect(true);
+      testElement.option('&', 'foo');
+      assert.equal(testElement.elt.options.length, 1);
+      assert.equal(testElement.elt.options[0].value, 'foo');
+      testElement.option('&', 'bar');
+      assert.equal(testElement.elt.options[0].value, 'bar');
+    });
+
     test('calling selected(value) should updated selectedIndex', function() {
       testElement = myp5.createSelect(true);
       options = ['Sunday', 'Monday', 'Tuesday', 'Friday'];
@@ -792,8 +882,18 @@ suite('DOM', function() {
       return radioEl;
     };
 
+    const isRadioInput = el =>
+      el instanceof HTMLInputElement && el.type === 'radio';
+    const isLabelElement = el => el instanceof HTMLLabelElement;
+
     const getChildren = radioEl =>
-      Array.from(radioEl.children).filter(el => el instanceof HTMLInputElement);
+      Array.from(radioEl.children)
+        .filter(
+          el =>
+            isRadioInput(el) ||
+            (isLabelElement(el) && isRadioInput(el.firstElementChild))
+        )
+        .map(el => (isRadioInput(el) ? el : el.firstElementChild));
 
     test('should be a function', function() {
       assert.isFunction(myp5.createRadio);
@@ -811,10 +911,6 @@ suite('DOM', function() {
       testElement = myp5.createRadio(radioElement);
 
       assert.deepEqual(testElement.elt, radioElement);
-      for (const radioEl of getChildren(radioElement)) {
-        const optionEl = testElement.option(radioEl.value);
-        assert.deepEqual(optionEl, radioEl);
-      }
     });
 
     test('calling option(value) should return existing radio element', function() {
@@ -839,8 +935,8 @@ suite('DOM', function() {
         assert.deepEqual(optionEl.type, 'radio');
         assert.deepEqual(optionEl.value, option);
         assert.deepEqual(optionEl.name, testName);
-        // Double , one for input and one for label
-        count += 2;
+        // Increment by one for every label element
+        count += 1;
 
         assert.deepEqual(testElement.elt.childElementCount, count);
       }
@@ -855,8 +951,8 @@ suite('DOM', function() {
         const optionEl = testElement.option(option, optionLabel);
         assert.deepEqual(optionEl.value, option);
         assert.deepEqual(optionEl.name, testName);
-        const labelEl = optionEl.nextElementSibling;
-        assert.deepEqual(labelEl.innerHTML, optionLabel);
+        const spanEl = optionEl.nextElementSibling;
+        assert.deepEqual(spanEl.innerHTML, optionLabel);
       }
     });
 
@@ -882,7 +978,7 @@ suite('DOM', function() {
       options.splice(options.indexOf(testValue), 1);
       testElement.remove(testValue);
       // Verify remaining options
-      const remainingOptions = Array.from(testElement.elt.children).map(
+      const remainingOptions = Array.from(getChildren(testElement.elt)).map(
         el => el.value
       );
       assert.deepEqual(options, remainingOptions);
@@ -1200,6 +1296,32 @@ suite('DOM', function() {
         };
       }
     );
+
+    test('should work with tint()', function(done) {
+      const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
+      testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
+        // Workaround for headless tests, where the video data isn't loading
+        // correctly: mock the video element using an image for this test
+        const prevElt = testElement.elt;
+        testElement.elt = imgElt.elt;
+
+        myp5.background(255);
+        myp5.tint(255, 0, 0);
+        myp5.image(testElement, 0, 0);
+
+        testElement.elt = prevElt;
+        imgElt.remove();
+
+        myp5.loadPixels();
+        testElement.loadPixels();
+        console.log(testElement.pixels.slice(0, 3));
+        console.log(myp5.pixels.slice(0, 3));
+        assert.equal(myp5.pixels[0], testElement.pixels[0]);
+        assert.equal(myp5.pixels[1], 0);
+        assert.equal(myp5.pixels[2], 0);
+        done();
+      });
+    });
   });
 
   suite('p5.prototype.createAudio', function() {

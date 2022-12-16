@@ -1,16 +1,16 @@
 // Adapting Wilm Thoben's Envelope example from the Processing Handbook ex2
 
 /*
-This sketch shows how to use envelopes and oscillators. Envelopes are pre-defined amplitude 
-distribution over time. The sound library provides an ASR envelope which stands for attach, 
-sustain, release. The amplitude rises then sustains at the maximum level and decays slowly 
+This sketch shows how to use envelopes and oscillators. Envelopes are pre-defined amplitude
+distribution over time. The sound library provides an ASR envelope which stands for attach,
+sustain, release. The amplitude rises then sustains at the maximum level and decays slowly
 depending on pre defined time segments.
 
       .________
      .          ---
-    .              --- 
+    .              ---
    .                  ---
-   A       S        R 
+   A       S        R
 
 */
 

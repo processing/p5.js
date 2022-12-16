@@ -6,7 +6,7 @@ import en from './en/translation';
 /**
  * Here, we define a default/fallback language which we can use without internet.
  * You won't have to change this when adding a new language.
- * 
+ *
  * `translation` is the namespace we are using for our initial set of strings
  */
 export default {
@@ -18,10 +18,11 @@ export default {
 /**
  * This is a list of languages that we have added so far.
  * If you have just added a new language (yay!), add its key to the list below
- * (`en` is english, `es` es español). Also add its export to 
+ * (`en` is english, `es` es español). Also add its export to
  * dev.js, which is another file in this folder.
  */
 export const languages = [
   'en',
-  'es'
+  'es',
+  'ko'
 ];

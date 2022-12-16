@@ -10,8 +10,8 @@
 * 높은 대역폭: 다운로드/풀/푸쉬 할것이 많습니다. (총 \~190MB 예상)
 
 ## 사용법
-```
-npm run release
+```shell
+$ npm run release
 ```
 
 * 빌드 단계가 실행되며 프로세스를 마치려면 `np`에서 제공하는 프롬프트를 따라야합니다.
@@ -42,6 +42,6 @@ npm run release
 저장소에 대한 푸시 액세스 권한이 없는 경우:
 * `package.json`의 `name` 필드를 네임스페이스 버전으로 편집해야합니다. 예를 들면, 평소처럼 `npm run release---preview`를 실행하기 전에 `@username/p5`을 입력하고 이러한 번경사항을 git에 커밋합니다. NPM에 패키지된 네임스페이스에 패키지를 게시하지 않도록 선택하라는 메시지가 표시되면, 온라인에는 아무 것도 게시되지 않습니다.
 * `package.json`의 `name` 필드를 편집 한 경우 `npm run release`로 릴리스의 전체 테스트를 실행할 수 잇습니다. Bower 릴리스와 웹 사이트에 복제하고 푸시할 위치를 선택하려며, 다음과 같이 추가 인수를 지정 할 수 있습니다:
-`npm run release -- --bowerReleaser=username --docsReleaser=username`.
+`npm run release -- --bowerReleaser=username`.
 
 __참고:__  `np` (`6.2.0`)에는 현재 네임스페이스 패키지 이름으로 릴리스를 막는 [bug](https://github.com/sindresorhus/np/issues/508)가 존재하며, 이것을 테스트해야하는 경우 `5.2.1`로 되돌릴 수 있습니다. 그렇지 않으면 릴리즈 단계에서 실패합니다.

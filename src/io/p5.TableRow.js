@@ -71,11 +71,10 @@ p5.TableRow = function(str, separator) {
  *
  *   //print the results
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.set = function(column, value) {
   // if typeof column is string, use .obj
@@ -132,11 +131,10 @@ p5.TableRow.prototype.set = function(column, value) {
  *   }
  *
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.setNum = function(column, value) {
   const floatVal = parseFloat(value);
@@ -177,11 +175,10 @@ p5.TableRow.prototype.setNum = function(column, value) {
  *   }
  *
  *   print(table.getArray());
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.setString = function(column, value) {
   const stringVal = value.toString();
@@ -222,11 +219,10 @@ p5.TableRow.prototype.setString = function(column, value) {
  *   }
  *
  *   print(names);
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.get = function(column) {
   if (typeof column === 'string') {
@@ -272,11 +268,9 @@ p5.TableRow.prototype.get = function(column) {
  *     maxId = min(maxId, id);
  *   }
  *   print('minimum id = ' + minId + ', maximum id = ' + maxId);
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.getNum = function(column) {
   let ret;
@@ -329,11 +323,10 @@ p5.TableRow.prototype.getNum = function(column) {
  *   }
  *
  *   print('longest: ' + longest);
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.TableRow.prototype.getString = function(column) {
   if (typeof column === 'string') {

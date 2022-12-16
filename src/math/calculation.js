@@ -22,11 +22,10 @@ import p5 from '../core/main';
  *
  *   print(x); // -3
  *   print(y); // 3
+ *
+ *   describe('no image displayed');
  * }
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.prototype.abs = Math.abs;
 
@@ -61,11 +60,11 @@ p5.prototype.abs = Math.abs;
  *   noStroke();
  *   text(nfc(ax, 2), ax, ay - 5);
  *   text(nfc(bx, 1), bx, by - 5);
+ *
+ *   describe(`2 horizontal lines & number sets. increase with
+ *     mouse x. bottom to 2 decimals`);
  * }
  * </code></div>
- *
- * @alt
- * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -102,11 +101,11 @@ p5.prototype.ceil = Math.ceil;
  *   ellipse(xm, 33, 9, 9); // Not Constrained
  *   fill(0);
  *   ellipse(xc, 66, 9, 9); // Constrained
+ *
+ *   describe(`2 vertical lines. 2 ellipses move with mouse X,
+ *     1 does not move past lines`);
  * }
  * </code></div>
- *
- * @alt
- * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
  */
 p5.prototype.constrain = function(n, low, high) {
   p5._validateParameters('constrain', arguments);
@@ -115,7 +114,7 @@ p5.prototype.constrain = function(n, low, high) {
 
 /**
  * Calculates the distance between two points, in either two or three dimensions.
- * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">dist()</a>
+ * If you looking for distance between two vectors see <a herf="#/p5.Vector/dist">p5.Vector.dist()</a>
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
@@ -152,11 +151,11 @@ p5.prototype.constrain = function(n, low, high) {
  *   text(nfc(d, 1), 0, -5);
  *   pop();
  *   // Fancy!
+ *
+ *   describe(`2 ellipses joined by line. 1 ellipse moves with
+ *     mouse X&Y. Distance displayed.`);
  * }
  * </code></div>
- *
- * @alt
- * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
  */
 /**
  * @method dist
@@ -220,11 +219,10 @@ p5.prototype.dist = function(...args) {
  *   endShape();
  *   line(0, 0, 0, height);
  *   line(0, height - 1, width, height - 1);
+ *
+ *   describe('ellipse moves along a curve with mouse x. e^n displayed.');
  * }
  * </code></div>
- *
- * @alt
- * ellipse moves along a curve with mouse x. e^n displayed.
  */
 p5.prototype.exp = Math.exp;
 
@@ -258,21 +256,21 @@ p5.prototype.exp = Math.exp;
  *   noStroke();
  *   text(nfc(ax, 2), ax, ay - 5);
  *   text(nfc(bx, 1), bx, by - 5);
+ *
+ *   describe(`2 horizontal lines & number sets.
+ *     increase with mouse x. bottom to 2 decimals`);
  * }
  * </code></div>
- *
- * @alt
- * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  */
 p5.prototype.floor = Math.floor;
 
 /**
  * Calculates a number between two numbers at a specific increment. The amt
  * parameter is the amount to interpolate between the two values where 0.0
- * equal to the first point, 0.1 is very near the first point, 0.5 is
+ * is equal to the first point, 0.1 is very near the first point, 0.5 is
  * half-way in between, and 1.0 is equal to the second point. If the
  * value of amt is more than 1.0 or less than 0.0, the number will be
- * calculated accordingly in the ratio of the two given numbers. The lerp
+ * calculated accordingly in the ratio of the two given numbers. The lerp()
  * function is convenient for creating motion along a straight
  * path and for drawing dotted lines.
  *
@@ -302,11 +300,11 @@ p5.prototype.floor = Math.floor;
  *   point(c, y);
  *   point(d, y);
  *   point(e, y);
+ *
+ *   describe(`5 points horizontally staggered mid-canvas.
+ *     mid 3 are grey, outer black`);
  * }
  * </code></div>
- *
- * @alt
- * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
  */
 p5.prototype.lerp = function(start, stop, amt) {
   p5._validateParameters('lerp', arguments);
@@ -360,11 +358,11 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   endShape();
  *   line(0, 0, 0, height);
  *   line(0, height / 2, width, height / 2);
+ *
+ *   describe(`ellipse moves along a curve with mouse x.
+ *     natural logarithm of n displayed.`);
  * }
  * </code></div>
- *
- * @alt
- * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
  */
 p5.prototype.log = Math.log;
 
@@ -395,11 +393,10 @@ p5.prototype.log = Math.log;
  *   print(mag(x1, y2)); // Prints "72.80109889280519"
  *   line(0, 0, x2, y2);
  *   print(mag(x2, y2)); // Prints "106.3014581273465"
+ *
+ *   describe('4 lines of different length radiate from top left of canvas.');
  * }
  * </code></div>
- *
- * @alt
- * 4 lines of different length radiate from top left of canvas.
  */
 p5.prototype.mag = function(x, y) {
   p5._validateParameters('mag', arguments);
@@ -426,6 +423,7 @@ p5.prototype.mag = function(x, y) {
  * let value = 25;
  * let m = map(value, 0, 100, 0, width);
  * ellipse(m, 50, 10, 10);
+ * describe('10×10 white ellipse with in mid left canvas');
 </code></div>
  *
  *   <div><code>
@@ -441,12 +439,11 @@ p5.prototype.mag = function(x, y) {
  *   //after setting withinBounds to true
  *   let x2 = map(mouseX, 0, width, 0, 100, true);
  *   ellipse(x2, 75, 25, 25);
+ *
+ *   describe(`Two 25×25 white ellipses move with mouse x.
+ *     Bottom has more range from X`);
  * }
 </code></div>
- *
- * @alt
- * 10 by 10 white ellipse with in mid left canvas
- * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
@@ -490,11 +487,11 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  *   // Draw the Maximum value in the array.
  *   textSize(32);
  *   text(max(numArray), maxX, maxY);
+ *
+ *   describe(`Small text at top reads: Array Elements 2 1 5 4 8 9.
+ *     Large text at center: 9`);
  * }
  * </code></div>
- *
- * @alt
- * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
  */
 /**
  * @method max
@@ -538,11 +535,11 @@ p5.prototype.max = function(...args) {
  *   // Draw the Minimum value in the array.
  *   textSize(32);
  *   text(min(numArray), maxX, maxY);
+ *
+ *   describe(`Small text at top reads: Array Elements 2 1 5 4 8 9.
+ *     Large text at center: 1`);
  * }
  * </code></div>
- *
- * @alt
- * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
  */
 /**
  * @method min
@@ -598,11 +595,11 @@ p5.prototype.min = function(...args) {
  *   let normalY = 40;
  *   let normalX = 20;
  *   text(normalized, normalX, normalY);
+ *
+ *   describe(`ellipse moves with mouse. 0 shown left, 100 right,
+ *     and updating values center`);
  * }
  * </code></div>
- *
- * @alt
- * ellipse moves with mouse. 0 shown left & 100 right and updating values center
  */
 p5.prototype.norm = function(n, start, stop) {
   p5._validateParameters('norm', arguments);
@@ -635,11 +632,10 @@ p5.prototype.norm = function(n, start, stop) {
  *   ellipse(eLoc * 4, eLoc * 4, pow(eSize, 3), pow(eSize, 3));
  *
  *   ellipse(eLoc * 8, eLoc * 8, pow(eSize, 4), pow(eSize, 4));
+ *
+ *   describe('small to large ellipses radiating from top left of canvas');
  * }
  * </code></div>
- *
- * @alt
- * small to large ellipses radiating from top left of canvas
  */
 p5.prototype.pow = Math.pow;
 
@@ -655,10 +651,12 @@ p5.prototype.pow = Math.pow;
  * <div><code>
  * let x = round(3.7);
  * text(x, width / 2, height / 2);
+ * describe('"4" written in middle of canvas');
  * </code></div>
  * <div><code>
  * let x = round(12.782383, 2);
  * text(x, width / 2, height / 2);
+ * describe('"12.78" written in middle of canvas');
  * </code></div>
  * <div><code>
  * function draw() {
@@ -682,13 +680,10 @@ p5.prototype.pow = Math.pow;
  *   noStroke();
  *   text(nfc(ax, 2), ax, ay - 5);
  *   text(nfc(bx, 1), bx, by - 5);
+ *
+ *   describe('two horizontal lines rounded values displayed on top.');
  * }
  * </code></div>
- *
- * @alt
- * "4" written in middle of canvas
- * "12.78" written in middle of canvas
- * two horizontal lines rounded values displayed on top.
  */
 p5.prototype.round = function(n, decimals) {
   if (!decimals) {
@@ -734,11 +729,11 @@ p5.prototype.round = function(n, decimals) {
  *   fill(0);
  *   text('x = ' + x1, 0, y1 + spacing);
  *   text('sq(x) = ' + x2, 0, y2 + spacing);
+ *
+ *   describe(`horizontal center line squared values displayed on
+ *     top and regular on bottom.`);
  * }
  * </code></div>
- *
- * @alt
- * horizontal center line squared values displayed on top and regular on bottom.
  */
 p5.prototype.sq = n => n * n;
 
@@ -779,11 +774,11 @@ p5.prototype.sq = n => n * n;
  *   let spacing = 15;
  *   text('x = ' + x1, 0, y1 + spacing);
  *   text('sqrt(x) = ' + x2, 0, y2 + spacing);
+ *
+ *   describe(`horizontal center line squareroot values displayed on
+ *     top and regular on bottom.`);
  * }
  * </code></div>
- *
- * @alt
- * horizontal center line squareroot values displayed on top and regular on bottom.
  */
 p5.prototype.sqrt = Math.sqrt;
 
@@ -839,16 +834,16 @@ function hypot(x, y, z) {
  * <div><code>
  * text(7345.73472742, 10, 25);
  * text(fract(7345.73472742), 10, 75);
+ * describe(`first row having a number and the second having
+ *   the fractional part of the number`);
  * </code></div>
  *
  * <div><code>
  * text(1.4215e-15, 10, 25);
  * text(fract(1.4215e-15), 10, 75);
+ * describe(`first row having a number expressed in scientific
+ *   notation and the second having the fractional part of the number`);
  * </code></div>
- *
- * @alt
- * first row having a number and the second having the fractional part of the number
- * first row having a number expressed in scientific notation and the second having the fractional part of the number
  */
 p5.prototype.fract = function(toConvert) {
   p5._validateParameters('fract', arguments);

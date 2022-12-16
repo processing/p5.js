@@ -20,7 +20,7 @@ import p5 from '../core/main';
  * So if you write textAlign(LEFT), you are aligning the left
  * edge of your text to the x value you give in <a href="#/p5/text">text()</a>.
  * If you write textAlign(RIGHT, TOP), you are aligning the right edge
- * of your text to the x value and the top of edge of the text
+ * of your text to the x value and the top edge of the text
  * to the y value.
  *
  * @method textAlign
@@ -39,6 +39,8 @@ import p5 from '../core/main';
  * text('EFGH', 50, 50);
  * textAlign(LEFT);
  * text('IJKL', 50, 70);
+ * describe(`Letters ABCD displayed at top left, EFGH at center, and
+ *   IJKL at bottom right.`);
  * </code>
  * </div>
  *
@@ -62,12 +64,12 @@ import p5 from '../core/main';
  * line(0, 87, width, 87);
  * textAlign(CENTER, BOTTOM);
  * text('BOTTOM', 0, 87, width);
+ *
+ * describe(`The names of the four vertical alignments (TOP, CENTER, BASELINE,
+ *   and BOTTOM) rendered each showing that alignment's placement relative to a
+ *   horizontal line.`);
  * </code>
  * </div>
- *
- * @alt
- * Letters ABCD displayed at top left, EFGH at center and IJKL at bottom right.
- * The names of the four vertical alignments (TOP, CENTER, BASELINE & BOTTOM) rendered each showing that alignment's placement relative to a horizontal line.
  */
 /**
  * @method textAlign
@@ -100,11 +102,11 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * textLeading(30);
  * text(lines, 70, 25);
+ *
+ * describe(`A set of L1, L2, and L3, displayed vertically 3 times.
+ *   Spacing increases for each set.`);
  * </code>
  * </div>
- *
- * @alt
- * A set of L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
  */
 /**
  * @method textLeading
@@ -132,11 +134,12 @@ p5.prototype.textLeading = function(theLeading) {
  * text('Font Size 14', 10, 60);
  * textSize(16);
  * text('Font Size 16', 10, 90);
+ *
+ * describe(`'Font Size 12' displayed small,
+ *   'Font Size 14' medium, and
+ *   'Font Size 16' large`);
  * </code>
  * </div>
- *
- * @alt
- * 'Font Size 12' displayed small, 'Font Size 14' medium & 'Font Size 16' large
  */
 /**
  * @method textSize
@@ -169,11 +172,12 @@ p5.prototype.textSize = function(theSize) {
  * text('Font Style Bold', 10, 65);
  * textStyle(BOLDITALIC);
  * text('Font Style Bold Italic', 10, 90);
+ * describe(`The words “Font Style Normal” displayed normally,
+ *   “Font Style Italic” in italic,
+ *   “Font Style Bold” in bold, and
+ *   “Font Style Bold Italic” in bold italics.`);
  * </code>
  * </div>
- *
- * @alt
- * Words Font Style Normal displayed normally, Italic in italic, bold in bold and bold italic in bold italics.
  */
 /**
  * @method textStyle
@@ -204,11 +208,10 @@ p5.prototype.textStyle = function(theStyle) {
  * let sWidth = textWidth(aString);
  * text(aString, 0, 85);
  * line(sWidth, 50, sWidth, 100);
+ *
+ * describe('Letter P and p5.js are displayed with vertical lines at end.');
  * </code>
  * </div>
- *
- * @alt
- * Letter P and p5.js are displayed with vertical lines at end.
  */
 p5.prototype.textWidth = function(...args) {
   args[0] += '';

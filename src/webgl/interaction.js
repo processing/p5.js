@@ -30,6 +30,9 @@ import * as constants from '../core/constants';
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   normalMaterial();
+ *   describe(
+ *     'Camera orbits around a box when mouse is hold-clicked & then moved.'
+ *   );
  * }
  * function draw() {
  *   background(200);
@@ -167,6 +170,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode();
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ *   );
  * }
  *
  * function draw() {
@@ -194,6 +200,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(GRID);
+ *   describe('a 3D box is centered on a grid in a 3D sketch.');
  * }
  *
  * function draw() {
@@ -214,6 +221,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(AXES);
+ *   describe(
+ *     'a 3D box is centered in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ *   );
  * }
  *
  * function draw() {
@@ -236,6 +246,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(GRID, 100, 10, 0, 0, 0);
+ *   describe('a 3D box is centered on a grid in a 3D sketch');
  * }
  *
  * function draw() {
@@ -256,6 +267,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode(100, 10, 0, 0, 0, 20, 0, -40, 0);
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z.'
+ *   );
  * }
  *
  * function draw() {
@@ -361,6 +375,9 @@ p5.prototype.debugMode = function(...args) {
  *   camera(0, -30, 100, 0, 0, 0, 0, 1, 0);
  *   normalMaterial();
  *   debugMode();
+ *   describe(
+ *     'a 3D box is centered on a grid in a 3D sketch. an icon indicates the direction of each axis: a red line points +X, a green line +Y, and a blue line +Z. the grid and icon disappear when the spacebar is pressed.'
+ *   );
  * }
  *
  * function draw() {

@@ -50,6 +50,7 @@ import './p5.Geometry';
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d octahedron.');
  * }
  *
  * function draw() {
@@ -77,6 +78,7 @@ import './p5.Geometry';
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d teapot with red, green and blue gradient.');
  * }
  *
  * function draw() {
@@ -602,6 +604,7 @@ function parseASCIISTL(model, lines) {
  *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
+ *   describe('Vertically rotating 3-d octahedron.');
  * }
  *
  * function draw() {

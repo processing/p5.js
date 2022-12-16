@@ -39,6 +39,8 @@ import p5 from '../core/main';
  *     let name = children[i].getContent();
  *     print(id + ', ' + coloring + ', ' + name);
  *   }
+ *
+ *   describe('no image displayed');
  * }
  *
  * // Sketch prints:
@@ -46,9 +48,6 @@ import p5 from '../core/main';
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
- *
- * @alt
- * no image displayed
  */
 p5.XML = function(DOM) {
   if (!DOM) {

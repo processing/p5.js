@@ -109,11 +109,12 @@ p5.prototype.bezier = function(...args) {
  *
  * function draw() {
  *   background(200);
- *   // prettier-ignore
- *   bezier(-40, -40, 0,
- *           90, -40, 0,
- *          -90,  40, 0,
- *           40,  40, 0);
+ *   bezier(
+ *     -40, -40, 0,
+ *     90, -40, 0,
+ *     -90,  40, 0,
+ *     40,  40, 0
+ *   );
  * }
  * </code>
  * </div>
@@ -454,7 +455,7 @@ p5.prototype.curveTightness = function(t) {
  * @param {Number} c coordinate of second point
  * @param {Number} d coordinate of second control point
  * @param {Number} t value between 0 and 1
- * @return {Number} bezier value at position t
+ * @return {Number} <a href="#/p5/curve">Curve</a> value at position t
  * @example
  * <div>
  * <code>
@@ -476,17 +477,17 @@ p5.prototype.curveTightness = function(t) {
  * </code>
  * </div>
  *
- *line hooking down to right-bottom with 13 5x5 white ellipse points
+ *line hooking down to right-bottom with 13 5×5 white ellipse points
  */
 p5.prototype.curvePoint = function(a, b, c, d, t) {
   p5._validateParameters('curvePoint', arguments);
-
-  const t3 = t * t * t,
+  const s = this._renderer._curveTightness,
+    t3 = t * t * t,
     t2 = t * t,
-    f1 = -0.5 * t3 + t2 - 0.5 * t,
-    f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
-    f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * t,
-    f4 = 0.5 * t3 - 0.5 * t2;
+    f1 = (s - 1) / 2 * t3 + (1 - s) * t2 + (s - 1) / 2 * t,
+    f2 = (s + 3) / 2 * t3 + (-5 - s) / 2 * t2 + 1.0,
+    f3 = (-3 - s) / 2 * t3 + (s + 2) * t2 + (1 - s) / 2 * t,
+    f4 = (1 - s) / 2 * t3 + (s - 1) / 2 * t2;
   return a * f1 + b * f2 + c * f3 + d * f4;
 };
 
@@ -528,11 +529,13 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 p5.prototype.curveTangent = function(a, b, c, d, t) {
   p5._validateParameters('curveTangent', arguments);
 
-  const t2 = t * t,
-    f1 = -3 * t2 / 2 + 2 * t - 0.5,
-    f2 = 9 * t2 / 2 - 5 * t,
-    f3 = -9 * t2 / 2 + 4 * t + 0.5,
-    f4 = 3 * t2 / 2 - t;
+  const s = this._renderer._curveTightness,
+    tt3 = t * t * 3,
+    t2 = t * 2,
+    f1 = (s - 1) / 2 * tt3 + (1 - s) * t2 + (s - 1) / 2,
+    f2 = (s + 3) / 2 * tt3 + (-5 - s) / 2 * t2,
+    f3 = (-3 - s) / 2 * tt3 + (s + 2) * t2 + (1 - s) / 2,
+    f4 = (1 - s) / 2 * tt3 + (s - 1) / 2 * t2;
   return a * f1 + b * f2 + c * f3 + d * f4;
 };
 
