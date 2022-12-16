@@ -802,6 +802,25 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TRIANGLE_FAN mode makes edges for each triangle', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      //    x
+      //    | \
+      // x--x--x
+      //  \ | /
+      //    x
+      renderer.beginShape(myp5.TRIANGLE_FAN);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, -5);
+      renderer.vertex(5, 0);
+      renderer.vertex(0, 5);
+      renderer.vertex(-5, 0);
+      renderer.endShape();
+
+      assert.equal(renderer.immediateMode.geometry.edges.length, 7);
+      done();
+    });
+
     test('TESS preserves vertex data', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
