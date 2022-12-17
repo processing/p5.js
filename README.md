@@ -594,6 +594,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center"><a href="http://jwilliamdunn.com"><img src="https://avatars.githubusercontent.com/u/4262131?v=4?s=100" width="100px;" alt="James Dunn"/><br /><sub><b>James Dunn</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ajwdunn1" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=jwdunn1" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/Malayvasa"><img src="https://avatars.githubusercontent.com/u/22751053?v=4?s=100" width="100px;" alt="Malay Vasa"/><br /><sub><b>Malay Vasa</b></sub></a><br /><a href="#design-Malayvasa" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=Malayvasa" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/wagedu"><img src="https://avatars.githubusercontent.com/u/1332848?v=4?s=100" width="100px;" alt="wagedu"/><br /><sub><b>wagedu</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Awagedu" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
