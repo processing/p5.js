@@ -3333,6 +3333,16 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "weslord",
+      "name": "Wes Lord",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1022948?v=4",
+      "profile": "https://weslord.com",
+      "contributions": [
+        "doc",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
