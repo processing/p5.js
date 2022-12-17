@@ -72,7 +72,7 @@ void main() {
   vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * uViewport.zw);
 
   // flip tangent to normal (it's already normalized)
-  vec2 normal = vec2(-tangent.y, tangent.x);
+  vec2 normal = vec2(tangent.y, -tangent.x);
 
   float thickness = aDirection.w * uStrokeWeight;
   vec2 offset = normal * thickness / 2.0;
