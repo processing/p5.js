@@ -162,4 +162,15 @@ suite('loadShader', function() {
     });
     assert.instanceOf(model, p5.Shader);
   });
+
+  test('does not run setup after complete when called outside of preload', async function() {
+    let setupCallCount = 0;
+    await promisedSketch(function(sketch, resolve, reject) {
+      sketch.setup = function() {
+        setupCallCount++;
+        sketch.loadShader(vertFile, fragFile, resolve, reject);
+      };
+    });
+    assert.equal(setupCallCount, 1);
+  });
 });

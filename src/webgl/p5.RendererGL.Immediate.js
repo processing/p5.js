@@ -255,6 +255,13 @@ p5.RendererGL.prototype._calculateEdges = function(
       }
       res.push([i, i + 1]);
       break;
+    case constants.TRIANGLE_FAN:
+      for (i = 1; i < verts.length - 1; i++) {
+        res.push([0, i]);
+        res.push([i, i + 1]);
+      }
+      res.push([0, verts.length - 1]);
+      break;
     case constants.TRIANGLES:
       for (i = 0; i < verts.length - 2; i = i + 3) {
         res.push([i, i + 1]);
@@ -309,17 +316,36 @@ p5.RendererGL.prototype._calculateEdges = function(
 p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [
-    new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
+    this._flatten(this.immediateMode.geometry.vertices.map((vert, i) => [
+      vert.x,
+      vert.y,
+      vert.z,
+      this.immediateMode.geometry.uvs[i * 2],
+      this.immediateMode.geometry.uvs[i * 2 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4],
+      this.immediateMode.geometry.vertexColors[i * 4 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4 + 2],
+      this.immediateMode.geometry.vertexColors[i * 4 + 3],
+      this.immediateMode.geometry.vertexNormals[i].x,
+      this.immediateMode.geometry.vertexNormals[i].y,
+      this.immediateMode.geometry.vertexNormals[i].z
+    ]))
   ];
   const polyTriangles = this._triangulate(contours);
   this.immediateMode.geometry.vertices = [];
+  this.immediateMode.geometry.vertexNormals = [];
+  this.immediateMode.geometry.uvs = [];
+  const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 3
+    j = j + 12
   ) {
-    this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+    colors.push(...polyTriangles.slice(j + 5, j + 9));
+    this.normal(...polyTriangles.slice(j + 9, j + 12));
+    this.vertex(...polyTriangles.slice(j, j + 5));
   }
+  this.immediateMode.geometry.vertexColors = colors;
 };
 
 /**

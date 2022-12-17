@@ -161,6 +161,9 @@ p5.Renderer2D.prototype.image = function(
   }
 
   try {
+    if (p5.MediaElement && img instanceof p5.MediaElement) {
+      img._ensureCanvas();
+    }
     if (this._tint && img.canvas) {
       cnv = this._getTintedImageCanvas(img);
     }
@@ -446,7 +449,7 @@ p5.Renderer2D.prototype.updatePixels = function(x, y, w, h) {
  * angle `size` radians, beginning `start` radians above the x-axis. Up to
  * four of these curves are combined to make a full arc.
  *
- * See www.joecridge.me/bezier.pdf for an explanation of the method.
+ * See ecridge.com/bezier.pdf for an explanation of the method.
  */
 p5.Renderer2D.prototype._acuteArcToBezier = function _acuteArcToBezier(
   start,

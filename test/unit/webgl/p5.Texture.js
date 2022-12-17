@@ -2,6 +2,7 @@ suite('p5.Texture', function() {
   var myp5;
   var texImg1;
   var texImg2;
+  var canvas;
 
   if (!window.Modernizr.webgl) {
     //assert(false, 'could not run gl tests');
@@ -17,7 +18,7 @@ suite('p5.Texture', function() {
         //p.box(70, 70, 70);
       };
       p.setup = function() {
-        p.createCanvas(100, 100, p.WEBGL);
+        canvas = p.createCanvas(100, 100, p.WEBGL);
         texImg1 = p.createGraphics(2, 2, p.WEBGL);
         p.texture(texImg1);
         done();
@@ -120,6 +121,33 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex1.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex2.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex2.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+    });
+    test('Handles changes to p5.Image size', function() {
+      const tex = myp5._renderer.getTexture(texImg2);
+      expect(tex.width).to.equal(texImg2.width);
+      expect(tex.height).to.equal(texImg2.height);
+      texImg2.resize(texImg2.width * 2, texImg2.height * 2);
+      tex.update();
+      expect(tex.width).to.equal(texImg2.width);
+      expect(tex.height).to.equal(texImg2.height);
+    });
+    test('Handles changes to p5.Graphics size', function() {
+      const tex = myp5._renderer.getTexture(texImg1);
+      expect(tex.width).to.equal(texImg1.width);
+      expect(tex.height).to.equal(texImg1.height);
+      texImg1.resizeCanvas(texImg1.width * 2, texImg1.height * 2);
+      tex.update();
+      expect(tex.width).to.equal(texImg1.width);
+      expect(tex.height).to.equal(texImg1.height);
+    });
+    test('Handles changes to p5.Renderer size', function() {
+      const tex = texImg1._renderer.getTexture(canvas);
+      expect(tex.width).to.equal(canvas.width);
+      expect(tex.height).to.equal(canvas.height);
+      myp5.resizeCanvas(canvas.width / 2, canvas.height / 2);
+      tex.update();
+      expect(tex.width).to.equal(canvas.width);
+      expect(tex.height).to.equal(canvas.height);
     });
   });
 });

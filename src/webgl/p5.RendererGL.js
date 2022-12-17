@@ -118,7 +118,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.drawMode = constants.FILL;
 
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-  this.curAmbientColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
   this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
@@ -326,6 +326,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
       document.body.appendChild(c);
     }
     this._pInst.canvas = c;
+    this.canvas = c;
   }
 
   const renderer = new p5.RendererGL(
@@ -615,9 +616,7 @@ p5.RendererGL.prototype.background = function(...args) {
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
-  this.GL.clearColor(_r, _g, _b, _a);
-
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
+  this.clear(_r, _g, _b, _a);
 };
 
 //////////////////////////////////////////////
@@ -1061,7 +1060,24 @@ p5.RendererGL.prototype.push = function() {
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity(this._pInst);
+  this.uMVMatrix.set(
+    this._curCamera.cameraMatrix.mat4[0],
+    this._curCamera.cameraMatrix.mat4[1],
+    this._curCamera.cameraMatrix.mat4[2],
+    this._curCamera.cameraMatrix.mat4[3],
+    this._curCamera.cameraMatrix.mat4[4],
+    this._curCamera.cameraMatrix.mat4[5],
+    this._curCamera.cameraMatrix.mat4[6],
+    this._curCamera.cameraMatrix.mat4[7],
+    this._curCamera.cameraMatrix.mat4[8],
+    this._curCamera.cameraMatrix.mat4[9],
+    this._curCamera.cameraMatrix.mat4[10],
+    this._curCamera.cameraMatrix.mat4[11],
+    this._curCamera.cameraMatrix.mat4[12],
+    this._curCamera.cameraMatrix.mat4[13],
+    this._curCamera.cameraMatrix.mat4[14],
+    this._curCamera.cameraMatrix.mat4[15]
+  );
   return this;
 };
 
@@ -1462,9 +1478,9 @@ p5.prototype._assert3d = function(name) {
 p5.RendererGL.prototype._initTessy = function initTesselator() {
   // function called for each vertex of tesselator output
   function vertexCallback(data, polyVertArray) {
-    polyVertArray[polyVertArray.length] = data[0];
-    polyVertArray[polyVertArray.length] = data[1];
-    polyVertArray[polyVertArray.length] = data[2];
+    for (let i = 0; i < data.length; i++) {
+      polyVertArray[polyVertArray.length] = data[i];
+    }
   }
 
   function begincallback(type) {
@@ -1479,7 +1495,14 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   }
   // callback for when segments intersect and must be split
   function combinecallback(coords, data, weight) {
-    return [coords[0], coords[1], coords[2]];
+    const result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < weight.length; i++) {
+      for (let j = 0; j < result.length; j++) {
+        if (weight[i] === 0 || !data[i]) continue;
+        result[j] += data[i][j] * weight[i];
+      }
+    }
+    return result;
   }
 
   function edgeCallback(flag) {
@@ -1509,8 +1532,8 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
     const contour = contours[i];
-    for (let j = 0; j < contour.length; j += 3) {
-      const coords = [contour[j], contour[j + 1], contour[j + 2]];
+    for (let j = 0; j < contour.length; j += 12) {
+      const coords = contour.slice(j, j + 12);
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();
