@@ -255,6 +255,13 @@ p5.RendererGL.prototype._calculateEdges = function(
       }
       res.push([i, i + 1]);
       break;
+    case constants.TRIANGLE_FAN:
+      for (i = 1; i < verts.length - 1; i++) {
+        res.push([0, i]);
+        res.push([i, i + 1]);
+      }
+      res.push([0, verts.length - 1]);
+      break;
     case constants.TRIANGLES:
       for (i = 0; i < verts.length - 2; i = i + 3) {
         res.push([i, i + 1]);
