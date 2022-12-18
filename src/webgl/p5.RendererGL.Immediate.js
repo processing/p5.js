@@ -32,7 +32,7 @@ import './p5.RenderBuffer';
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
-    mode !== undefined ? mode : constants.TRIANGLE_FAN;
+    mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
   return this;
 };
