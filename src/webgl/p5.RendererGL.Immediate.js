@@ -116,7 +116,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
-    } else if (this._tex === null && arguments.length >= 4) {
+    } else if (
+      !this.isProcessingVertices &&
+      this._tex === null &&
+      arguments.length >= 4
+    ) {
       // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +
@@ -179,7 +183,9 @@ p5.RendererGL.prototype.endShape = function(
     );
     return this;
   }
+  this.isProcessingVertices = true;
   this._processVertices(...arguments);
+  this.isProcessingVertices = false;
   if (this._doFill) {
     if (this.immediateMode.geometry.vertices.length > 1) {
       this._drawImmediateFill();
