@@ -214,6 +214,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // current curveDetail in the Quadratic lookUpTable
   this._lutQuadraticDetail = 0;
 
+  // Used to distinguish between user calls to vertex() and internal calls
+  this.isProcessingVertices = false;
   this._tessy = this._initTessy();
 
   this.fontInfos = {};
