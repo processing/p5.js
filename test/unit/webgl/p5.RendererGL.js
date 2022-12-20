@@ -1015,7 +1015,7 @@ suite('p5.RendererGL', function() {
       done();
     });
 
-    test('TESS interpolates vertex data perpendicular to the camera', function(done) {
+    test('TESS handles vertex data perpendicular to the camera', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
       myp5.textureMode(myp5.NORMAL);
