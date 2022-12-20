@@ -1494,11 +1494,27 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
 };
 
 p5.RendererGL.prototype._triangulate = function(contours) {
-  // libtess will take 3d verts and flatten to a plane for tesselation
-  // since only doing 2d tesselation here, provide z=1 normal to skip
-  // iterating over verts only to get the same answer.
-  // comment out to test normal-generation code
-  this._tessy.gluTessNormal(0, 0, 1);
+  // libtess will take 3d verts and flatten to a plane for tesselation.
+  // libtess is capable of calculating a plane to tesselate on, but
+  // if all of the vertices have the same z values, we'll just
+  // assume the face is facing the camera, letting us skip any performance
+  // issues or bugs in libtess's automatic calculation.
+  const z = contours[0] ? contours[0][2] : undefined;
+  let allSameZ = true;
+  for (const contour of contours) {
+    for (let j = 0; j < contour.length; j += 12) {
+      if (contour[j + 2] !== z) {
+        allSameZ = false;
+        break;
+      }
+    }
+  }
+  if (allSameZ) {
+    this._tessy.gluTessNormal(0, 0, 1);
+  } else {
+    // Let libtess pick a plane for us
+    this._tessy.gluTessNormal(0, 0, 0);
+  }
 
   const triangleVerts = [];
   this._tessy.gluTessBeginPolygon(triangleVerts);
