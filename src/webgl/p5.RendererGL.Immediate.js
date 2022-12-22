@@ -109,6 +109,13 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[2],
     vertexColor[3]
   );
+  var lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  this.immediateMode.geometry.lineVertexColors.push(
+    lineVertexColor[0],
+    lineVertexColor[1],
+    lineVertexColor[2],
+    lineVertexColor[3]
+  );
 
   if (this.textureMode === constants.IMAGE) {
     if (this._tex !== null) {
@@ -405,6 +412,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
   const shader = this._getImmediateStrokeShader();
+  this._useLineColor = (this.immediateMode.geometry.lineVertexColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
