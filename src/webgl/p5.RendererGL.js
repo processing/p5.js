@@ -589,7 +589,7 @@ p5.RendererGL.prototype.background = function(...args) {
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
-  this.clear(_r * _a, _g * _a, _b * _a, _a);
+  this.clear(_r, _g, _b, _a);
 };
 
 //////////////////////////////////////////////
@@ -895,7 +895,7 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _b = args[2] || 0;
   const _a = args[3] || 0;
 
-  this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clearColor(_r * _a, _g * _a, _b * _a, _a);
   this.GL.clearDepth(1);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
