@@ -210,6 +210,6 @@ void main() {
   float distance = max(weight.x + weight.y, minDistance); // manhattan approx.
   float antialias = abs(dot(coverage, weight) / distance);
   float cover = min(abs(coverage.x), abs(coverage.y));
-  gl_FragColor = uMaterialColor;
-  gl_FragColor.a *= saturate(max(antialias, cover));
+  gl_FragColor = vec4(uMaterialColor.rgb, 1.) * uMaterialColor.a;
+  gl_FragColor *= saturate(max(antialias, cover));
 }

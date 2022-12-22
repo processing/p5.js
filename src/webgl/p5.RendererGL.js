@@ -235,11 +235,11 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
-    alpha: false,
+    alpha: true,
     depth: true,
     stencil: true,
     antialias: applyAA,
-    premultipliedAlpha: false,
+    premultipliedAlpha: true,
     preserveDrawingBuffer: true,
     perPixelLighting: true
   };
@@ -589,7 +589,7 @@ p5.RendererGL.prototype.background = function(...args) {
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
-  this.clear(_r, _g, _b, _a);
+  this.clear(_r * _a, _g * _a, _b * _a, _a);
 };
 
 //////////////////////////////////////////////
