@@ -412,7 +412,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
   const shader = this._getImmediateStrokeShader();
-  this._useLineColor　=
+  this._useLineColor =
     (this.immediateMode.geometry.lineVertexColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
