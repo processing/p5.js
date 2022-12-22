@@ -45,6 +45,7 @@ p5.Geometry = function(detailX, detailY, callback) {
   //based on faces for most objects;
   this.edges = [];
   this.vertexColors = [];
+  this.lineVertexColors = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
   this.dirtyFlags = {};
@@ -62,6 +63,7 @@ p5.Geometry.prototype.reset = function() {
   this.vertices.length = 0;
   this.edges.length = 0;
   this.vertexColors.length = 0;
+  this.lineVertexColors.length = 0;
   this.vertexNormals.length = 0;
   this.uvs.length = 0;
 
@@ -238,12 +240,16 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * @chainable
  */
 p5.Geometry.prototype._edgesToVertices = function() {
+  const data = this.lineVertexColors.slice();
+  this.lineVertexColors.length = 0;
   this.lineVertices.length = 0;
   this.lineNormals.length = 0;
 
   for (let i = 0; i < this.edges.length; i++) {
-    const begin = this.vertices[this.edges[i][0]];
-    const end = this.vertices[this.edges[i][1]];
+    const e0 = this.edges[i][0];
+    const e1 = this.edges[i][1];
+    var begin = this.vertices[e0];
+    var end = this.vertices[e1];
     const dir = end
       .copy()
       .sub(begin)
@@ -260,6 +266,13 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirSub.push(-1);
     this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
     this.lineVertices.push(a, b, c, c, b, d);
+    if(data.length > 0){
+      var beginColor = [data[4*e0], data[4*e0+1], data[4*e0+2], data[4*e0+3]];
+      var endColor = [data[4*e1], data[4*e1+1], data[4*e1+2], data[4*e1+3]];
+      this.lineVertexColors.push(
+        beginColor, beginColor, endColor, endColor, beginColor, endColor
+      );
+    }
   }
   return this;
 };
