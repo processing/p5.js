@@ -342,7 +342,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is false
+ * default is true
  *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -355,7 +355,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
- * default is false
+ * default is true
  *
  * preserveDrawingBuffer - if true the buffers will not be cleared and
  * and will preserve their values until cleared or overwritten by author
