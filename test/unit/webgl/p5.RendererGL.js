@@ -1010,6 +1010,46 @@ suite('p5.RendererGL', function() {
 
       done();
     });
+
+    test('TESS handles vertex data perpendicular to the camera', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.vertex(-10, 0, -10);
+      renderer.vertex(10, 0, -10);
+      renderer.vertex(10, 0, 10);
+      renderer.vertex(-10, 0, 10);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [-10, 0, 10]
+      );
+
+      done();
+    });
   });
 
   suite('setAttributes', function() {
