@@ -235,11 +235,11 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
-    alpha: false,
+    alpha: true,
     depth: true,
     stencil: true,
     antialias: applyAA,
-    premultipliedAlpha: false,
+    premultipliedAlpha: true,
     preserveDrawingBuffer: true,
     perPixelLighting: true
   };
@@ -342,7 +342,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is false
+ * default is true
  *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -355,7 +355,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
- * default is false
+ * default is true
  *
  * preserveDrawingBuffer - if true the buffers will not be cleared and
  * and will preserve their values until cleared or overwritten by author
@@ -895,7 +895,7 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _b = args[2] || 0;
   const _a = args[3] || 0;
 
-  this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clearColor(_r * _a, _g * _a, _b * _a, _a);
   this.GL.clearDepth(1);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
