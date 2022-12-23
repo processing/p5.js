@@ -266,7 +266,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirSub.push(-1);
     this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
     this.lineVertices.push(a, b, c, c, b, d);
-    if (data.length > 0) {
+    if (lineColorData.length > 0) {
       const offset0 = 4*endIndex0;
       const offset1 = 4*endIndex1;
       var beginColor = [lineColorData[offset0], lineColorData[offset0+1],
