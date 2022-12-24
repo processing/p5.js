@@ -1086,28 +1086,23 @@ p5.RendererGL.prototype._applyBlendMode = function() {
   switch (this.curBlendMode) {
     case constants.BLEND:
       gl.blendEquation(gl.FUNC_ADD);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       break;
     case constants.ADD:
       gl.blendEquation(gl.FUNC_ADD);
-      gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+      gl.blendFunc(gl.ONE, gl.ONE);
       break;
     case constants.REMOVE:
-      gl.blendEquation(gl.FUNC_REVERSE_SUBTRACT);
-      gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA);
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
       break;
     case constants.MULTIPLY:
-      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-      gl.blendFuncSeparate(
-        gl.DST_COLOR,
-        gl.ONE_MINUS_SRC_ALPHA,
-        gl.ONE,
-        gl.ONE_MINUS_SRC_ALPHA
-      );
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA);
       break;
     case constants.SCREEN:
-      gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
-      gl.blendFuncSeparate(gl.ONE_MINUS_DST_COLOR, gl.ONE, gl.ONE, gl.ONE);
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_COLOR);
       break;
     case constants.EXCLUSION:
       gl.blendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD);
@@ -1124,7 +1119,7 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       break;
     case constants.SUBTRACT:
       gl.blendEquationSeparate(gl.FUNC_REVERSE_SUBTRACT, gl.FUNC_ADD);
-      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
+      gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       break;
     case constants.DARKEST:
       if (this.blendExt) {
