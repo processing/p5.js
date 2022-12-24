@@ -240,8 +240,7 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * @chainable
  */
 p5.Geometry.prototype._edgesToVertices = function() {
-  const lineColorData = this.lineVertexColors.slice();
-  this.lineVertexColors.length = 0;
+  const lineColorData = [];
   this.lineVertices.length = 0;
   this.lineNormals.length = 0;
 
@@ -266,18 +265,25 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirSub.push(-1);
     this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
     this.lineVertices.push(a, b, c, c, b, d);
-    if (lineColorData.length > 0) {
-      const offset0 = 4*endIndex0;
-      const offset1 = 4*endIndex1;
-      var beginColor = [lineColorData[offset0], lineColorData[offset0+1],
-        lineColorData[offset0+2], lineColorData[offset0+3]];
-      var endColor = [lineColorData[offset1], lineColorData[offset1+1],
-        lineColorData[offset1+2], lineColorData[offset1+3]];
-      this.lineVertexColors.push(
+    if (this.lineVertexColors.length > 0) {
+      var beginColor = [
+        this.lineVertexColors[4*endIndex0],
+        this.lineVertexColors[4*endIndex0+1],
+        this.lineVertexColors[4*endIndex0+2],
+        this.lineVertexColors[4*endIndex0+3]
+      ];
+      var endColor = [
+        this.lineVertexColors[4*endIndex1],
+        this.lineVertexColors[4*endIndex1+1],
+        this.lineVertexColors[4*endIndex1+2],
+        this.lineVertexColors[4*endIndex1+3]
+      ];
+      lineColorData.push(
         beginColor, beginColor, endColor, endColor, beginColor, endColor
       );
     }
   }
+  this.lineVertexColors = lineColorData;
   return this;
 };
 
