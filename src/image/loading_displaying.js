@@ -104,6 +104,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
+              self._decrementPreload();
             } else {
               console.error(e);
             }
@@ -130,6 +131,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           p5._friendlyFileLoadError(0, img.src);
           if (typeof failureCallback === 'function') {
             failureCallback(e);
+            self._decrementPreload();
           } else {
             console.error(e);
           }
@@ -152,6 +154,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
+        self._decrementPreload();
       } else {
         console.error(e);
       }
