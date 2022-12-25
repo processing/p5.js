@@ -221,6 +221,49 @@ suite('loading images', function() {
     };
   };
   new p5(mySketch, null, false);
+
+  // Test loading image failure in preload() without failure callback
+  mySketch = function(this_p5) {
+    this_p5.preload = function() {
+      this_p5.loadImage('', function() {
+        throw new Error('Should not be called');
+      });
+    };
+
+    this_p5.setup = function() {
+      throw new Error('Should not be called');
+    };
+  };
+  new p5(mySketch, null, false);
+
+  // Test loading image failure in preload() with failure callback
+  mySketch = function(this_p5) {
+    var myImage;
+    this_p5.preload = function() {
+      suite('Test loading image failure in preload() with failure callback', function() {
+        test('Load fail and use failure callback', function(done) {
+          myImage = this_p5.loadImage('', function() {
+            assert.fail();
+            done();
+          }, function() {
+            assert.ok(myImage);
+            done();
+          });
+        });
+      });
+    };
+
+    this_p5.setup = function() {
+      suite('setup() after preload() failure with failure callback', function() {
+        test('should be loaded now preload() finished', function(done) {
+          assert.isTrue(myImage instanceof p5.Image);
+          assert.isTrue(myImage.width === 1 && myImage.height === 1);
+          done();
+        });
+      });
+    };
+  };
+  new p5(mySketch, null, false);
 });
 
 suite('loading animated gif images', function() {
