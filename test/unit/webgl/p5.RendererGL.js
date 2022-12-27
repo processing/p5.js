@@ -1050,6 +1050,27 @@ suite('p5.RendererGL', function() {
 
       done();
     });
+    test('strokes should interpolate colors between vertices', function(done) {
+      const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
+
+      // far left color: (242, 236, 40)
+      // far right color: (42, 36, 240)
+      // expected middle color: (142, 136, 140)
+
+      renderer.strokeWeight(4);
+      renderer.beginShape();
+      renderer.stroke(242, 236, 40);
+      renderer.vertex(-256, 0);
+      renderer.stroke(42, 36, 240);
+      renderer.vertex(256, 0);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(0, 2), [242, 236, 40, 255]);
+      assert.deepEqual(myp5.get(256, 2), [142, 136, 140, 255]);
+      assert.deepEqual(myp5.get(511, 2), [42, 36, 240, 255]);
+
+      done();
+    });
   });
 
   suite('setAttributes', function() {
