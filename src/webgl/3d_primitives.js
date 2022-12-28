@@ -1605,9 +1605,18 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       w_x = [this.immediateMode._bezierVertex[0], args[0], args[2], args[4]];
       w_y = [this.immediateMode._bezierVertex[1], args[1], args[3], args[5]];
       // calCalculate intermediate colors
-      let d0 = sqrt(pow(w_x[0]-w_x[1],2) + pow(w_y[0]-w_y[1],2));
-      let d1 = sqrt(pow(w_x[1]-w_x[2],2) + pow(w_y[1]-w_y[2],2));
-      let d2 = sqrt(pow(w_x[2]-w_x[3],2) + pow(w_y[2]-w_y[3],2));
+      let d0 = Math.sqrt(
+        Math.pow(w_x[0]-w_x[1],2) +
+        Math.pow(w_y[0]-w_y[1],2)
+      );
+      let d1 = Math.sqrt(
+        Math.pow(w_x[1]-w_x[2],2) +
+        Math.pow(w_y[1]-w_y[2],2)
+      );
+      let d2 = Math.sqrt(
+        Math.pow(w_x[2]-w_x[3],2) +
+        Math.pow(w_y[2]-w_y[3],2)
+      );
       const totalLength = d0 + d1 + d2;
       d0 /= totalLength;
       d2 /= totalLength;
@@ -1657,18 +1666,21 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       w_y = [this.immediateMode._bezierVertex[1], args[1], args[4], args[7]];
       w_z = [this.immediateMode._bezierVertex[2], args[2], args[5], args[8]];
       // Calculate intermediate colors
-      let d0 = sqrt(
-        pow(w_x[0]-w_x[1],2) +
-        pow(w_y[0]-w_y[1],2) +
-        pow(w_z[0]-w_z[1],2));
-      let d1 = sqrt(
-        pow(w_x[1]-w_x[2],2) +
-        pow(w_y[1]-w_y[2],2) +
-        pow(w_z[1]-w_z[2],2));
-      let d2 = sqrt(
-        pow(w_x[2]-w_x[3],2) +
-        pow(w_y[2]-w_y[3],2) +
-        pow(w_z[2]-w_z[3],2));
+      let d0 = Math.sqrt(
+        Math.pow(w_x[0]-w_x[1],2) +
+        Math.pow(w_y[0]-w_y[1],2) +
+        Math.pow(w_z[0]-w_z[1],2)
+      );
+      let d1 = Math.sqrt(
+        Math.pow(w_x[1]-w_x[2],2) +
+        Math.pow(w_y[1]-w_y[2],2) +
+        Math.pow(w_z[1]-w_z[2],2)
+      );
+      let d2 = Math.sqrt(
+        Math.pow(w_x[2]-w_x[3],2) +
+        Math.pow(w_y[2]-w_y[3],2) +
+        Math.pow(w_z[2]-w_z[3],2)
+      );
       const totalLength = d0 + d1 + d2;
       d0 /= totalLength;
       d2 /= totalLength;
@@ -1777,8 +1789,14 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       w_y = [this.immediateMode._quadraticVertex[1], args[1], args[3]];
 
       // calCalculate intermediate colors
-      let d0 = sqrt(pow(w_x[0]-w_x[1],2) + pow(w_y[0]-w_y[1],2));
-      let d1 = sqrt(pow(w_x[1]-w_x[2],2) + pow(w_y[1]-w_y[2],2));
+      let d0 = Math.sqrt(
+        Math.pow(w_x[0]-w_x[1],2) +
+        Math.pow(w_y[0]-w_y[1],2)
+      );
+      let d1 = Math.sqrt(
+        Math.pow(w_x[1]-w_x[2],2) +
+        Math.pow(w_y[1]-w_y[2],2)
+      );
       const totalLength = d0 + d1;
       d0 /= totalLength;
       const middleFillColor = [];
@@ -1821,14 +1839,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       w_z = [this.immediateMode._quadraticVertex[2], args[2], args[5]];
 
       // calCalculate intermediate colors
-      let d0 = sqrt(
-        pow(w_x[0]-w_x[1],2) +
-        pow(w_y[0]-w_y[1],2) +
-        pow(w_z[0]-w_z[1],2));
-      let d1 = sqrt(
-        pow(w_x[1]-w_x[2],2) +
-        pow(w_y[1]-w_y[2],2) +
-        pow(w_z[1]-w_z[2],2));
+      let d0 = Math.sqrt(
+        Math.pow(w_x[0]-w_x[1],2) +
+        Math.pow(w_y[0]-w_y[1],2) +
+        Math.pow(w_z[0]-w_z[1],2)
+      );
+      let d1 = Math.sqrt(
+        Math.pow(w_x[1]-w_x[2],2) +
+        Math.pow(w_y[1]-w_y[2],2) +
+        Math.pow(w_z[1]-w_z[2],2)
+      );
       const totalLength = d0 + d1;
       d0 /= totalLength;
       const middleFillColor = [];
