@@ -110,6 +110,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useNormalMaterial = false;
   this._useShininess = 1;
 
+  this._useLineColor = false;
+
   this._tint = [255, 255, 255, 255];
 
   // lightFalloff variables
@@ -149,6 +151,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     geometry: {},
     buffers: {
       stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
         new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
         new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
@@ -184,6 +187,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
       stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
         new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
         new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
@@ -1257,6 +1261,7 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.bindShader();
 
   // set the uniform values
+  strokeShader.setUniform('uUseLineColor', this._useLineColor);
   strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
   strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
 };

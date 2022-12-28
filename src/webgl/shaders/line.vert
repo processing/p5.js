@@ -22,12 +22,18 @@ uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
+uniform bool uUseLineColor;
+uniform vec4 uMaterialColor;
+
 uniform vec4 uViewport;
 uniform int uPerspective;
 
 attribute vec4 aPosition;
 attribute vec4 aDirection;
-  
+attribute vec4 aVertexColor;
+
+varying vec4 vColor;
+
 void main() {
   // using a scale <1 moves the lines towards the camera
   // in order to prevent popping effects due to half of
@@ -94,4 +100,6 @@ void main() {
 
   gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
+  
+  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
 }
