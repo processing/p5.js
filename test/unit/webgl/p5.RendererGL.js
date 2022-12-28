@@ -338,7 +338,7 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
       done();
     });
 
@@ -361,7 +361,7 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [100, 100, 100, 255]);
+      assert.deepEqual(pixel, [39, 194, 194, 255]);
       done();
     });
 
@@ -383,7 +383,7 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
       done();
     });
 
@@ -394,8 +394,48 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [100, 100, 100, 255]);
+      assert.deepEqual(pixel, [39, 194, 194, 255]);
       done();
+    });
+  });
+
+  suite('background()', function() {
+    function assertAllPixelsAreColor(target, r, g, b, a) {
+      target.loadPixels();
+      const expectedPixels = [];
+      for (let i = 0; i < target.width * target.height; i++) {
+        expectedPixels.push(r, g, b, a);
+      }
+      assert.deepEqual([ ...target.pixels ], expectedPixels);
+    }
+
+    function testDepthGetsCleared(target) {
+      target.pixelDensity(1);
+      target.noStroke();
+      target.fill(255, 0, 0);
+      target.plane(target.width, target.height);
+      assertAllPixelsAreColor(target, 255, 0, 0, 255);
+
+      target.background(255);
+      target.push();
+      target.translate(0, 0, -10); // Move farther away
+      target.fill(0, 0, 255);
+      // expanded to fill the screen
+      target.plane(target.width * 4, target.height * 4);
+      target.pop();
+      // The farther-away plane should not be occluded because we cleared
+      // the screen with background()
+      assertAllPixelsAreColor(target, 0, 0, 255, 255);
+    }
+
+    test('background() resets the depth buffer of the main canvas', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(myp5);
+    });
+
+    test('background() resets the depth buffer of p5.Graphics', function() {
+      const graphics = myp5.createGraphics(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(graphics);
     });
   });
 
@@ -443,12 +483,14 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
       assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.ADD, 0));
-      assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
+      assert.deepEqual([0, 0, 122, 122], mixAndReturn(myp5.REPLACE, 255));
       assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
-      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
-      assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));
-      assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.MULTIPLY, 255));
-      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.LIGHTEST, 0));
+      assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.SCREEN, 0));
+      assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.EXCLUSION, 255));
+      // Note that in 2D mode, this would just return black, because 2D mode
+      // ignores alpha in this case.
+      assert.deepEqual([133, 69, 133, 255], mixAndReturn(myp5.MULTIPLY, 255));
+      assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.LIGHTEST, 0));
       assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.DARKEST, 255));
       done();
     });
@@ -475,29 +517,29 @@ suite('p5.RendererGL', function() {
       const assertSameIn2D = function(colorA, colorB, mode) {
         const refColor = testBlend(myp5, colorA, colorB, mode);
         const webglColor = testBlend(ref, colorA, colorB, mode);
-        if (refColor[3] === 0) {
-          assert.equal(webglColor[3], 0);
-        } else {
-          assert.deepEqual(
-            refColor,
-            webglColor,
-            `Blending ${colorA} with ${colorB} using ${mode}`
-          );
-        }
+        assert.deepEqual(
+          refColor,
+          webglColor,
+          `Blending ${colorA} with ${colorB} using ${mode}`
+        );
       };
 
-      const red = '#F53';
-      const blue = '#13F';
-      assertSameIn2D(red, blue, myp5.BLEND);
-      assertSameIn2D(red, blue, myp5.ADD);
-      assertSameIn2D(red, blue, myp5.DARKEST);
-      assertSameIn2D(red, blue, myp5.LIGHTEST);
-      assertSameIn2D(red, blue, myp5.EXCLUSION);
-      assertSameIn2D(red, blue, myp5.MULTIPLY);
-      assertSameIn2D(red, blue, myp5.SCREEN);
-      assertSameIn2D(red, blue, myp5.REPLACE);
-      assertSameIn2D(red, blue, myp5.REMOVE);
-      done();
+      for (const alpha of [255, 200]) {
+        const red = myp5.color('#F53');
+        const blue = myp5.color('#13F');
+        red.setAlpha(alpha);
+        blue.setAlpha(alpha);
+        assertSameIn2D(red, blue, myp5.BLEND);
+        assertSameIn2D(red, blue, myp5.ADD);
+        assertSameIn2D(red, blue, myp5.DARKEST);
+        assertSameIn2D(red, blue, myp5.LIGHTEST);
+        assertSameIn2D(red, blue, myp5.EXCLUSION);
+        assertSameIn2D(red, blue, myp5.MULTIPLY);
+        assertSameIn2D(red, blue, myp5.SCREEN);
+        assertSameIn2D(red, blue, myp5.REPLACE);
+        assertSameIn2D(red, blue, myp5.REMOVE);
+        done();
+      }
     });
 
     test('blendModes are included in push/pop', function(done) {
@@ -753,6 +795,291 @@ suite('p5.RendererGL', function() {
 
       // Two full quads (2 * 4) plus two edges connecting them
       assert.equal(renderer.immediateMode.geometry.edges.length, 10);
+      done();
+    });
+
+    test('TRIANGLE_FAN mode makes edges for each triangle', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      //    x
+      //    | \
+      // x--x--x
+      //  \ | /
+      //    x
+      renderer.beginShape(myp5.TRIANGLE_FAN);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, -5);
+      renderer.vertex(5, 0);
+      renderer.vertex(0, 5);
+      renderer.vertex(-5, 0);
+      renderer.endShape();
+
+      assert.equal(renderer.immediateMode.geometry.edges.length, 7);
+      done();
+    });
+
+    test('TESS preserves vertex data', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, 10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, 1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        1, 0, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 0, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        1, 0,
+        0, 1,
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1
+      ]);
+
+      done();
+    });
+
+    test('TESS interpolates vertex data at intersections', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      // Hourglass shape:
+      //
+      // 1     3
+      // o     o
+      // | \ / |
+      // | / \ |
+      // o     o
+      // 4     2
+      //
+      // Tessy will add a vertex in the middle
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.fill(255, 255, 255);
+      renderer.normal(-1, -1, 1);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.fill(0, 255, 0);
+      renderer.normal(1, 1, 1);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.fill(255, 0, 0);
+      renderer.normal(1, -1, 1);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.fill(0, 0, 255);
+      renderer.normal(-1, 1, 1);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [-10, -10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [10, 10, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [0, 0, 0]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [10, -10, 0]
+      );
+
+      assert.equal(renderer.immediateMode.geometry.vertexNormals.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[0].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[1].array(),
+        [-1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[2].array(),
+        [-1, -1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[3].array(),
+        [1, 1, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[4].array(),
+        [0, 0, 1]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertexNormals[5].array(),
+        [1, -1, 1]
+      );
+
+      assert.deepEqual(renderer.immediateMode.geometry.vertexColors, [
+        0.5, 0.5, 0.5, 1,
+        0, 0, 1, 1,
+        1, 1, 1, 1,
+        0, 1, 0, 1,
+        0.5, 0.5, 0.5, 1,
+        1, 0, 0, 1
+      ]);
+
+      assert.deepEqual(renderer.immediateMode.geometry.uvs, [
+        0.5, 0.5,
+        0, 1,
+        0, 0,
+        1, 1,
+        0.5, 0.5,
+        1, 0
+      ]);
+
+      done();
+    });
+
+    test('TESS handles vertex data perpendicular to the camera', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.vertex(-10, 0, -10);
+      renderer.vertex(10, 0, -10);
+      renderer.vertex(10, 0, 10);
+      renderer.vertex(-10, 0, 10);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [-10, 0, 10]
+      );
+
+      done();
+    });
+    test('strokes should interpolate colors between vertices', function(done) {
+      const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
+
+      // far left color: (242, 236, 40)
+      // far right color: (42, 36, 240)
+      // expected middle color: (142, 136, 140)
+
+      renderer.strokeWeight(4);
+      renderer.beginShape();
+      renderer.stroke(242, 236, 40);
+      renderer.vertex(-256, 0);
+      renderer.stroke(42, 36, 240);
+      renderer.vertex(256, 0);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(0, 2), [242, 236, 40, 255]);
+      assert.deepEqual(myp5.get(256, 2), [142, 136, 140, 255]);
+      assert.deepEqual(myp5.get(511, 2), [42, 36, 240, 255]);
+
+      done();
+    });
+  });
+
+  suite('setAttributes', function() {
+    test('It leaves a reference to the correct canvas', function(done) {
+      const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      assert.equal(myp5.canvas, renderer.canvas);
+
+      myp5.setAttributes({ alpha: true });
+      assert.equal(myp5.canvas, renderer.canvas);
       done();
     });
   });

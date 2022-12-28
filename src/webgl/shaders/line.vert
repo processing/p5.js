@@ -22,12 +22,18 @@ uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
+uniform bool uUseLineColor;
+uniform vec4 uMaterialColor;
+
 uniform vec4 uViewport;
 uniform int uPerspective;
 
 attribute vec4 aPosition;
 attribute vec4 aDirection;
-  
+attribute vec4 aVertexColor;
+
+varying vec4 vColor;
+
 void main() {
   // using a scale <1 moves the lines towards the camera
   // in order to prevent popping effects due to half of
@@ -72,7 +78,7 @@ void main() {
   vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * uViewport.zw);
 
   // flip tangent to normal (it's already normalized)
-  vec2 normal = vec2(-tangent.y, tangent.x);
+  vec2 normal = vec2(tangent.y, -tangent.x);
 
   float thickness = aDirection.w * uStrokeWeight;
   vec2 offset = normal * thickness / 2.0;
@@ -94,4 +100,6 @@ void main() {
 
   gl_Position.xy = p.xy + offset.xy * curPerspScale;
   gl_Position.zw = p.zw;
+  
+  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
 }

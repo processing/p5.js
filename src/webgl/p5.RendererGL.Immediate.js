@@ -32,7 +32,7 @@ import './p5.RenderBuffer';
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
-    mode !== undefined ? mode : constants.TRIANGLE_FAN;
+    mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
   return this;
 };
@@ -109,6 +109,13 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[2],
     vertexColor[3]
   );
+  var lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  this.immediateMode.geometry.lineVertexColors.push(
+    lineVertexColor[0],
+    lineVertexColor[1],
+    lineVertexColor[2],
+    lineVertexColor[3]
+  );
 
   if (this.textureMode === constants.IMAGE) {
     if (this._tex !== null) {
@@ -116,7 +123,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
-    } else if (this._tex === null && arguments.length >= 4) {
+    } else if (
+      !this.isProcessingVertices &&
+      this._tex === null &&
+      arguments.length >= 4
+    ) {
       // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +
@@ -179,7 +190,9 @@ p5.RendererGL.prototype.endShape = function(
     );
     return this;
   }
+  this.isProcessingVertices = true;
   this._processVertices(...arguments);
+  this.isProcessingVertices = false;
   if (this._doFill) {
     if (this.immediateMode.geometry.vertices.length > 1) {
       this._drawImmediateFill();
@@ -255,6 +268,13 @@ p5.RendererGL.prototype._calculateEdges = function(
       }
       res.push([i, i + 1]);
       break;
+    case constants.TRIANGLE_FAN:
+      for (i = 1; i < verts.length - 1; i++) {
+        res.push([0, i]);
+        res.push([i, i + 1]);
+      }
+      res.push([0, verts.length - 1]);
+      break;
     case constants.TRIANGLES:
       for (i = 0; i < verts.length - 2; i = i + 3) {
         res.push([i, i + 1]);
@@ -309,17 +329,36 @@ p5.RendererGL.prototype._calculateEdges = function(
 p5.RendererGL.prototype._tesselateShape = function() {
   this.immediateMode.shapeMode = constants.TRIANGLES;
   const contours = [
-    new Float32Array(this._vToNArray(this.immediateMode.geometry.vertices))
+    this._flatten(this.immediateMode.geometry.vertices.map((vert, i) => [
+      vert.x,
+      vert.y,
+      vert.z,
+      this.immediateMode.geometry.uvs[i * 2],
+      this.immediateMode.geometry.uvs[i * 2 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4],
+      this.immediateMode.geometry.vertexColors[i * 4 + 1],
+      this.immediateMode.geometry.vertexColors[i * 4 + 2],
+      this.immediateMode.geometry.vertexColors[i * 4 + 3],
+      this.immediateMode.geometry.vertexNormals[i].x,
+      this.immediateMode.geometry.vertexNormals[i].y,
+      this.immediateMode.geometry.vertexNormals[i].z
+    ]))
   ];
   const polyTriangles = this._triangulate(contours);
   this.immediateMode.geometry.vertices = [];
+  this.immediateMode.geometry.vertexNormals = [];
+  this.immediateMode.geometry.uvs = [];
+  const colors = [];
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 3
+    j = j + 12
   ) {
-    this.vertex(polyTriangles[j], polyTriangles[j + 1], polyTriangles[j + 2]);
+    colors.push(...polyTriangles.slice(j + 5, j + 9));
+    this.normal(...polyTriangles.slice(j + 9, j + 12));
+    this.vertex(...polyTriangles.slice(j, j + 5));
   }
+  this.immediateMode.geometry.vertexColors = colors;
 };
 
 /**
@@ -373,6 +412,8 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
   const shader = this._getImmediateStrokeShader();
+  this._useLineColor =
+    (this.immediateMode.geometry.lineVertexColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);

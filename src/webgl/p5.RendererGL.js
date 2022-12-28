@@ -95,7 +95,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.drawMode = constants.FILL;
 
   this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-  this.curAmbientColor = this._cachedFillStyle = [0, 0, 0, 0];
+  this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
   this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
   this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
@@ -109,6 +109,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useEmissiveMaterial = false;
   this._useNormalMaterial = false;
   this._useShininess = 1;
+
+  this._useLineColor = false;
 
   this._tint = [255, 255, 255, 255];
 
@@ -149,6 +151,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     geometry: {},
     buffers: {
       stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
         new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
         new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
@@ -184,6 +187,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
       stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
         new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
         new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
       ],
@@ -214,6 +218,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // current curveDetail in the Quadratic lookUpTable
   this._lutQuadraticDetail = 0;
 
+  // Used to distinguish between user calls to vertex() and internal calls
+  this.isProcessingVertices = false;
   this._tessy = this._initTessy();
 
   this.fontInfos = {};
@@ -233,11 +239,11 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
-    alpha: false,
+    alpha: true,
     depth: true,
     stencil: true,
     antialias: applyAA,
-    premultipliedAlpha: false,
+    premultipliedAlpha: true,
     preserveDrawingBuffer: true,
     perPixelLighting: true
   };
@@ -297,6 +303,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
       document.body.appendChild(c);
     }
     this._pInst.canvas = c;
+    this.canvas = c;
   }
 
   const renderer = new p5.RendererGL(
@@ -339,7 +346,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * The available attributes are:
  * <br>
  * alpha - indicates if the canvas contains an alpha buffer
- * default is false
+ * default is true
  *
  * depth - indicates whether the drawing buffer has a depth buffer
  * of at least 16 bits - default is true
@@ -352,7 +359,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  *
  * premultipliedAlpha - indicates that the page compositor will assume
  * the drawing buffer contains colors with pre-multiplied alpha
- * default is false
+ * default is true
  *
  * preserveDrawingBuffer - if true the buffers will not be cleared and
  * and will preserve their values until cleared or overwritten by author
@@ -586,9 +593,7 @@ p5.RendererGL.prototype.background = function(...args) {
   const _g = _col.levels[1] / 255;
   const _b = _col.levels[2] / 255;
   const _a = _col.levels[3] / 255;
-  this.GL.clearColor(_r, _g, _b, _a);
-
-  this.GL.clear(this.GL.COLOR_BUFFER_BIT);
+  this.clear(_r, _g, _b, _a);
 };
 
 //////////////////////////////////////////////
@@ -894,7 +899,7 @@ p5.RendererGL.prototype.clear = function(...args) {
   const _b = args[2] || 0;
   const _a = args[3] || 0;
 
-  this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clearColor(_r * _a, _g * _a, _b * _a, _a);
   this.GL.clearDepth(1);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
@@ -1035,7 +1040,24 @@ p5.RendererGL.prototype.push = function() {
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity(this._pInst);
+  this.uMVMatrix.set(
+    this._curCamera.cameraMatrix.mat4[0],
+    this._curCamera.cameraMatrix.mat4[1],
+    this._curCamera.cameraMatrix.mat4[2],
+    this._curCamera.cameraMatrix.mat4[3],
+    this._curCamera.cameraMatrix.mat4[4],
+    this._curCamera.cameraMatrix.mat4[5],
+    this._curCamera.cameraMatrix.mat4[6],
+    this._curCamera.cameraMatrix.mat4[7],
+    this._curCamera.cameraMatrix.mat4[8],
+    this._curCamera.cameraMatrix.mat4[9],
+    this._curCamera.cameraMatrix.mat4[10],
+    this._curCamera.cameraMatrix.mat4[11],
+    this._curCamera.cameraMatrix.mat4[12],
+    this._curCamera.cameraMatrix.mat4[13],
+    this._curCamera.cameraMatrix.mat4[14],
+    this._curCamera.cameraMatrix.mat4[15]
+  );
   return this;
 };
 
@@ -1239,6 +1261,7 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.bindShader();
 
   // set the uniform values
+  strokeShader.setUniform('uUseLineColor', this._useLineColor);
   strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
   strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
 };
@@ -1434,9 +1457,9 @@ p5.prototype._assert3d = function(name) {
 p5.RendererGL.prototype._initTessy = function initTesselator() {
   // function called for each vertex of tesselator output
   function vertexCallback(data, polyVertArray) {
-    polyVertArray[polyVertArray.length] = data[0];
-    polyVertArray[polyVertArray.length] = data[1];
-    polyVertArray[polyVertArray.length] = data[2];
+    for (let i = 0; i < data.length; i++) {
+      polyVertArray[polyVertArray.length] = data[i];
+    }
   }
 
   function begincallback(type) {
@@ -1451,7 +1474,14 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   }
   // callback for when segments intersect and must be split
   function combinecallback(coords, data, weight) {
-    return [coords[0], coords[1], coords[2]];
+    const result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < weight.length; i++) {
+      for (let j = 0; j < result.length; j++) {
+        if (weight[i] === 0 || !data[i]) continue;
+        result[j] += data[i][j] * weight[i];
+      }
+    }
+    return result;
   }
 
   function edgeCallback(flag) {
@@ -1469,11 +1499,27 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
 };
 
 p5.RendererGL.prototype._triangulate = function(contours) {
-  // libtess will take 3d verts and flatten to a plane for tesselation
-  // since only doing 2d tesselation here, provide z=1 normal to skip
-  // iterating over verts only to get the same answer.
-  // comment out to test normal-generation code
-  this._tessy.gluTessNormal(0, 0, 1);
+  // libtess will take 3d verts and flatten to a plane for tesselation.
+  // libtess is capable of calculating a plane to tesselate on, but
+  // if all of the vertices have the same z values, we'll just
+  // assume the face is facing the camera, letting us skip any performance
+  // issues or bugs in libtess's automatic calculation.
+  const z = contours[0] ? contours[0][2] : undefined;
+  let allSameZ = true;
+  for (const contour of contours) {
+    for (let j = 0; j < contour.length; j += 12) {
+      if (contour[j + 2] !== z) {
+        allSameZ = false;
+        break;
+      }
+    }
+  }
+  if (allSameZ) {
+    this._tessy.gluTessNormal(0, 0, 1);
+  } else {
+    // Let libtess pick a plane for us
+    this._tessy.gluTessNormal(0, 0, 0);
+  }
 
   const triangleVerts = [];
   this._tessy.gluTessBeginPolygon(triangleVerts);
@@ -1481,8 +1527,8 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
     const contour = contours[i];
-    for (let j = 0; j < contour.length; j += 3) {
-      const coords = [contour[j], contour[j + 1], contour[j + 2]];
+    for (let j = 0; j < contour.length; j += 12) {
+      const coords = contour.slice(j, j + 12);
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();

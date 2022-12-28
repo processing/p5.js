@@ -532,7 +532,7 @@ p5.prototype.quad = function(...args) {
   p5._validateParameters('quad', args);
 
   if (this._renderer._doStroke || this._renderer._doFill) {
-    if (this._renderer.isP3D && args.length <= 12) {
+    if (this._renderer.isP3D && args.length < 12) {
       // if 3D and we weren't passed 12 args, assume Z is 0
       this._renderer.quad.call(
         this._renderer,

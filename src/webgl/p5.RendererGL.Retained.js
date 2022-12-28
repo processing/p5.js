@@ -78,7 +78,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
 
     // If any face references a vertex with an index greater than the maximum
     // un-singed 16 bit integer, then we need to use a Uint32Array instead of a
-    // Uint32Array
+    // Uint16Array
     const hasVertexIndicesOverMaxUInt16 = vals.some(v => v > 65535);
     let type = hasVertexIndicesOverMaxUInt16 ? Uint32Array : Uint16Array;
     this._bindBuffer(indexBuffer, gl.ELEMENT_ARRAY_BUFFER, vals, type);
@@ -119,6 +119,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
     const strokeShader = this._getRetainedStrokeShader();
+    this._useLineColor = (geometry.model.lineVertexColors.length > 0);
     this._setStrokeUniforms(strokeShader);
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);

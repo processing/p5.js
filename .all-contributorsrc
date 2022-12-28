@@ -295,11 +295,16 @@
       "contributions": []
     },
     {
-      "login": "joecridge",
-      "name": "Joe Cridge",
+      "login": "ecridge",
+      "name": "Eden Cridge",
       "avatar_url": "https://avatars2.githubusercontent.com/u/11491479?v=4",
-      "profile": "https://www.joecridge.me/",
-      "contributions": []
+      "profile": "https://ecridge.com/",
+      "contributions": [
+        "code",
+        "bug",
+        "review",
+        "test"
+      ]
     },
     {
       "login": "mikewesthad",
@@ -3014,6 +3019,15 @@
       ]
     },
     {
+      "login": "sparshg",
+      "name": "sparshg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43041139?v=4",
+      "profile": "https://sparshg.github.io",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
       "login": "liz-peng",
       "name": "Liz Peng",
       "avatar_url": "https://avatars.githubusercontent.com/u/8376256?v=4",
@@ -3223,10 +3237,117 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "ggorlen",
+      "name": "ggorlen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17895165?v=4",
+      "profile": "https://ggorlen.github.io/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "raclim",
+      "name": "raclim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43053081?v=4",
+      "profile": "https://github.com/raclim",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "dwight9339",
+      "name": "David White",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25517492?v=4",
+      "profile": "https://github.com/dwight9339",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lf32",
+      "name": "Akhil Raj",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96695352?v=4",
+      "profile": "https://lf32.github.io/Blog",
+      "contributions": [
+        "bug",
+        "doc",
+        "translation",
+        "design",
+        "code"
+      ]
+    },
+    {
+      "login": "Brahvim",
+      "name": "Brahvim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69293652?v=4",
+      "profile": "http://brahvim.github.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "UnityOfFairfax",
+      "name": "UnityOfFairfax",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46071997?v=4",
+      "profile": "https://github.com/UnityOfFairfax",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "inaridarkfox4231",
+      "name": "INARI_DARKFOX",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39549290?v=4",
+      "profile": "https://github.com/inaridarkfox4231",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jwdunn1",
+      "name": "James Dunn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4262131?v=4",
+      "profile": "http://jwilliamdunn.com",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "Malayvasa",
+      "name": "Malay Vasa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22751053?v=4",
+      "profile": "https://github.com/Malayvasa",
+      "contributions": [
+        "design",
+        "code"
+      ]
+    },
+    {
+      "login": "wagedu",
+      "name": "wagedu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1332848?v=4",
+      "profile": "https://github.com/wagedu",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "weslord",
+      "name": "Wes Lord",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1022948?v=4",
+      "profile": "https://weslord.com",
+      "contributions": [
+        "doc",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
