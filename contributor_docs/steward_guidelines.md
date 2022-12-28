@@ -24,7 +24,7 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 ---
 
 # Issues
-We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [Github issue templates](./.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
+We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [Github issue templates](../.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
 
 ## Bug report
 For bug report issues, they should be using the "Found a bug" issue template.
@@ -95,7 +95,7 @@ Almost all code contribution to the p5.js repositories happens through pull requ
 - Pull request template can be found [here](../.github/PULL_REQUEST_TEMPLATE.md).
 - Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
 	- The only instance where this does not apply are very minor typo fixes, which does not require an opened issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
-	- While this exception exist, we will apply it in practice only but contributors are usually encouraged to open new issues. In other words, if in doubt about whether this exception applies, just open an issue anyway.
+	- While this exception exist, we will apply it in practice only while contributors are usually encouraged to open new issues. In other words, if in doubt about whether this exception applies, just open an issue anyway.
 - If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when this PR is merged.
 
 ## Simple fix
@@ -115,7 +115,7 @@ Simple fix such as small typo fix can be merged directly by anyone with merge ac
 	- A suggestion block can also be used to suggest specific changes
 	- If there are multiple changes that are required, instead of adding single line comments many times, follow the procedure documented [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) to make multiple line comments and single request for changes
 	- If line comments are just for clarification or discussion and not changes are requested yet, in the previous step instead of choosing "Request changes", choose "Comment" instead.
-5. Once the PR has been reviewed and no additional changes are required, a steward and mark the PR as "Approved" by choosing the "Approve" option in the previous step (instead of "Comment" or "Request changes") with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, or merge the PR if they have merge access or a maintainer will merge the approved PR.
+5. Once the PR has been reviewed and no additional changes are required, a steward can mark the PR as "Approved" by choosing the "Approve" option in the previous step (instead of "Comment" or "Request changes") with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, or merge the PR if they have merge access or a maintainer will merge the approved PR.
 6. @all-contributors bot should be called to add any new contributors to the list of contributors in the README.md file.
 ```
 @all-contributors please add @[github handle] for [contribution type]
