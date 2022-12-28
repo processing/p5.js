@@ -1783,7 +1783,9 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       d0 /= totalLength;
       const middleFillColor = [];
       for (k = 0; k < 4; k++) {
-        middleFillColor.push(lastFillColor[k] * (1-d0) + finalFillColor[k] * d0);
+        middleFillColor.push(
+          lastFillColor[k] * (1-d0) + finalFillColor[k] * d0
+        );
       }
 
       for (i = 0; i < LUTLength; i++) {
@@ -1831,7 +1833,9 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       d0 /= totalLength;
       const middleFillColor = [];
       for (k = 0; k < 4; k++) {
-        middleFillColor.push(lastFillColor[k] * (1-d0) + finalFillColor[k] * d0);
+        middleFillColor.push(
+          lastFillColor[k] * (1-d0) + finalFillColor[k] * d0
+        );
       }
 
       for (i = 0; i < LUTLength; i++) {
