@@ -1587,7 +1587,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     }
 
     const LUTLength = this._lookUpTableBezier.length;
-    
+
     // Get the last fill color
     const _vertexColors = this.immediateMode.geometry.vertexColors;
     const _vertexColorSize = _vertexColors.length;
@@ -1614,18 +1614,26 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       const firstFillColor = [];
       const secondFillColor = [];
       for (k = 0; k < 4; k++) {
-        firstFillColor.push(lastFillColor[k] * (1-d0) + finalFillColor[k] * d0);
-        secondFillColor.push(lastFillColor[k] * d2 + finalFillColor[k] * (1-d2));
+        firstFillColor.push(
+          lastFillColor[k] * (1-d0) + finalFillColor[k] * d0
+        );
+        secondFillColor.push(
+          lastFillColor[k] * d2 + finalFillColor[k] * (1-d2)
+        );
       }
 
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
         for (k = 0; k < 4; k++) {
-          this.curFillColor[k] += this._lookUpTableBezier[i][0] * lastFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][1] * firstFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][2] * secondFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][3] * finalFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][0] * lastFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][1] * firstFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][2] * secondFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][3] * finalFillColor[k];
         }
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
@@ -1639,7 +1647,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           w_y[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y);
       }
-      this.curFillColor = finalFillColor; // Set curFillColor back to finalFillColor
+      this.curFillColor = finalFillColor; // Set curFillColor to finalFillColor
       this.immediateMode._bezierVertex[0] = args[4];
       this.immediateMode._bezierVertex[1] = args[5];
     } else if (argLength === 9) {
@@ -1649,26 +1657,43 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       w_y = [this.immediateMode._bezierVertex[1], args[1], args[4], args[7]];
       w_z = [this.immediateMode._bezierVertex[2], args[2], args[5], args[8]];
       // Calculate intermediate colors
-      let d0 = sqrt(pow(w_x[0]-w_x[1],2) + pow(w_y[0]-w_y[1],2) + pow(w_z[0]-w_z[1],2));
-      let d1 = sqrt(pow(w_x[1]-w_x[2],2) + pow(w_y[1]-w_y[2],2) + pow(w_z[1]-w_z[2],2));
-      let d2 = sqrt(pow(w_x[2]-w_x[3],2) + pow(w_y[2]-w_y[3],2) + pow(w_z[2]-w_z[3],2));
+      let d0 = sqrt(
+        pow(w_x[0]-w_x[1],2) +
+        pow(w_y[0]-w_y[1],2) +
+        pow(w_z[0]-w_z[1],2));
+      let d1 = sqrt(
+        pow(w_x[1]-w_x[2],2) +
+        pow(w_y[1]-w_y[2],2) +
+        pow(w_z[1]-w_z[2],2));
+      let d2 = sqrt(
+        pow(w_x[2]-w_x[3],2) +
+        pow(w_y[2]-w_y[3],2) +
+        pow(w_z[2]-w_z[3],2));
       const totalLength = d0 + d1 + d2;
       d0 /= totalLength;
       d2 /= totalLength;
       const firstFillColor = [];
       const secondFillColor = [];
       for (k = 0; k < 4; k++) {
-        firstFillColor.push(lastFillColor[k] * (1-d0) + finalFillColor[k] * d0);
-        secondFillColor.push(lastFillColor[k] * d2 + finalFillColor[k] * (1-d2));
+        firstFillColor.push(
+          lastFillColor[k] * (1-d0) + finalFillColor[k] * d0
+        );
+        secondFillColor.push(
+          lastFillColor[k] * d2 + finalFillColor[k] * (1-d2)
+        );
       }
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
         for (k = 0; k < 4; k++) {
-          this.curFillColor[k] += this._lookUpTableBezier[i][0] * lastFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][1] * firstFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][2] * secondFillColor[k];
-          this.curFillColor[k] += this._lookUpTableBezier[i][3] * finalFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][0] * lastFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][1] * firstFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][2] * secondFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableBezier[i][3] * finalFillColor[k];
         }
         _x =
           w_x[0] * this._lookUpTableBezier[i][0] +
@@ -1687,7 +1712,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
           w_z[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y, _z);
       }
-      this.curFillColor = finalFillColor; // Set curFillColor back to finalFillColor
+      this.curFillColor = finalFillColor; // Set curFillColor to finalFillColor
       this.immediateMode._bezierVertex[0] = args[6];
       this.immediateMode._bezierVertex[1] = args[7];
       this.immediateMode._bezierVertex[2] = args[8];
@@ -1733,7 +1758,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     }
 
     const LUTLength = this._lookUpTableQuadratic.length;
-    
+
     // Get the last fill color
     const _vertexColors = this.immediateMode.geometry.vertexColors;
     const _vertexColorSize = _vertexColors.length;
@@ -1750,7 +1775,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
 
       w_x = [this.immediateMode._quadraticVertex[0], args[0], args[2]];
       w_y = [this.immediateMode._quadraticVertex[1], args[1], args[3]];
-      
+
       // calCalculate intermediate colors
       let d0 = sqrt(pow(w_x[0]-w_x[1],2) + pow(w_y[0]-w_y[1],2));
       let d1 = sqrt(pow(w_x[1]-w_x[2],2) + pow(w_y[1]-w_y[2],2));
@@ -1765,9 +1790,12 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
         for (k = 0; k < 4; k++) {
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][0] * lastFillColor[k];
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][1] * middleFillColor[k];
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][2] * finalFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][0] * lastFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][1] * middleFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][2] * finalFillColor[k];
         }
         _x =
           w_x[0] * this._lookUpTableQuadratic[i][0] +
@@ -1780,7 +1808,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         this.vertex(_x, _y);
       }
 
-      this.curFillColor = finalFillColor; // Set curFillColor back to finalFillColor
+      this.curFillColor = finalFillColor; // Set curFillColor to finalFillColor
       this.immediateMode._quadraticVertex[0] = args[2];
       this.immediateMode._quadraticVertex[1] = args[3];
     } else if (argLength === 6) {
@@ -1789,10 +1817,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       w_x = [this.immediateMode._quadraticVertex[0], args[0], args[3]];
       w_y = [this.immediateMode._quadraticVertex[1], args[1], args[4]];
       w_z = [this.immediateMode._quadraticVertex[2], args[2], args[5]];
-      
+
       // calCalculate intermediate colors
-      let d0 = sqrt(pow(w_x[0]-w_x[1],2) + pow(w_y[0]-w_y[1],2) + pow(w_z[0]-w_z[1],2));
-      let d1 = sqrt(pow(w_x[1]-w_x[2],2) + pow(w_y[1]-w_y[2],2) + pow(w_z[1]-w_z[2],2));
+      let d0 = sqrt(
+        pow(w_x[0]-w_x[1],2) +
+        pow(w_y[0]-w_y[1],2) +
+        pow(w_z[0]-w_z[1],2));
+      let d1 = sqrt(
+        pow(w_x[1]-w_x[2],2) +
+        pow(w_y[1]-w_y[2],2) +
+        pow(w_z[1]-w_z[2],2));
       const totalLength = d0 + d1;
       d0 /= totalLength;
       const middleFillColor = [];
@@ -1804,9 +1838,12 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
         for (k = 0; k < 4; k++) {
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][0] * lastFillColor[k];
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][1] * middleFillColor[k];
-          this.curFillColor[k] += this._lookUpTableQuadratic[i][2] * finalFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][0] * lastFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][1] * middleFillColor[k];
+          this.curFillColor[k] +=
+            this._lookUpTableQuadratic[i][2] * finalFillColor[k];
         }
         _x =
           w_x[0] * this._lookUpTableQuadratic[i][0] +
@@ -1823,7 +1860,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
         this.vertex(_x, _y, _z);
       }
 
-      this.curFillColor = finalFillColor; // Set curFillColor back to finalFillColor
+      this.curFillColor = finalFillColor; // Set curFillColor to finalFillColor
       this.immediateMode._quadraticVertex[0] = args[3];
       this.immediateMode._quadraticVertex[1] = args[4];
       this.immediateMode._quadraticVertex[2] = args[5];
