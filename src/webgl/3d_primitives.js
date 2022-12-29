@@ -1753,8 +1753,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       w_x = [this.immediateMode._quadraticVertex[0], args[0], args[2]];
       w_y = [this.immediateMode._quadraticVertex[1], args[1], args[3]];
 
-      // The ratio of the distance between the start point, the two control-
-      // points, and the end point determines the intermediate color.
+      // The ratio of the distance between the start point, the control-
+      // point, and the end point determines the intermediate color.
       let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1]);
       let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2]);
       const totalLength = d0 + d1;
@@ -1796,8 +1796,8 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       w_y = [this.immediateMode._quadraticVertex[1], args[1], args[4]];
       w_z = [this.immediateMode._quadraticVertex[2], args[2], args[5]];
 
-      // The ratio of the distance between the start point, the two control-
-      // points, and the end point determines the intermediate color.
+      // The ratio of the distance between the start point, the control-
+      // point, and the end point determines the intermediate color.
       let d0 = Math.hypot(w_x[0]-w_x[1], w_y[0]-w_y[1], w_z[0]-w_z[1]);
       let d1 = Math.hypot(w_x[1]-w_x[2], w_y[1]-w_y[2], w_z[1]-w_z[2]);
       const totalLength = d0 + d1;
