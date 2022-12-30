@@ -1078,7 +1078,6 @@ suite('p5.RendererGL', function() {
       // end color: (255, 0, 0)
       // Intermediate values are expected to be approximately half the value.
 
-      renderer.noStroke();
       renderer.beginShape();
       renderer.fill(255);
       renderer.vertex(-128, -128);
@@ -1097,7 +1096,6 @@ suite('p5.RendererGL', function() {
       // end color: (255, 0, 0)
       // Intermediate values are expected to be approximately half the value.
 
-      renderer.noStroke();
       renderer.beginShape();
       renderer.fill(255);
       renderer.vertex(-128, -128);
