@@ -1557,6 +1557,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     let w_y = [];
     let w_z = [];
     let t, _x, _y, _z, i, k, m;
+    // variable i for bezierPoints, k for components, and m for anchor points.
     const argLength = args.length;
 
     t = 0;
@@ -1589,7 +1590,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     const LUTLength = this._lookUpTableBezier.length;
 
     // fillColors[0]: start point color
-    // fillColors[1],[2]: intermediate point color
+    // fillColors[1],[2]: control point color
     // fillColors[3]: end point color
     const fillColors = [];
     for (m = 0; m < 4; m++) fillColors.push([]);
@@ -1621,22 +1622,15 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
+        _x = _y = 0;
         for (m = 0; m < 4; m++) {
           for (k = 0; k < 4; k++) {
             this.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
           }
+          _x += w_x[m] * this._lookUpTableBezier[i][m];
+          _y += w_y[m] * this._lookUpTableBezier[i][m];
         }
-        _x =
-          w_x[0] * this._lookUpTableBezier[i][0] +
-          w_x[1] * this._lookUpTableBezier[i][1] +
-          w_x[2] * this._lookUpTableBezier[i][2] +
-          w_x[3] * this._lookUpTableBezier[i][3];
-        _y =
-          w_y[0] * this._lookUpTableBezier[i][0] +
-          w_y[1] * this._lookUpTableBezier[i][1] +
-          w_y[2] * this._lookUpTableBezier[i][2] +
-          w_y[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y);
       }
       // so that we leave curFillColor with the last value the user set it to
@@ -1668,27 +1662,16 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
+        _x = _y = _z = 0;
         for (m = 0; m < 4; m++) {
           for (k = 0; k < 4; k++) {
             this.curFillColor[k] +=
               this._lookUpTableBezier[i][m] * fillColors[m][k];
           }
+          _x += w_x[m] * this._lookUpTableBezier[i][m];
+          _y += w_y[m] * this._lookUpTableBezier[i][m];
+          _z += w_z[m] * this._lookUpTableBezier[i][m];
         }
-        _x =
-          w_x[0] * this._lookUpTableBezier[i][0] +
-          w_x[1] * this._lookUpTableBezier[i][1] +
-          w_x[2] * this._lookUpTableBezier[i][2] +
-          w_x[3] * this._lookUpTableBezier[i][3];
-        _y =
-          w_y[0] * this._lookUpTableBezier[i][0] +
-          w_y[1] * this._lookUpTableBezier[i][1] +
-          w_y[2] * this._lookUpTableBezier[i][2] +
-          w_y[3] * this._lookUpTableBezier[i][3];
-        _z =
-          w_z[0] * this._lookUpTableBezier[i][0] +
-          w_z[1] * this._lookUpTableBezier[i][1] +
-          w_z[2] * this._lookUpTableBezier[i][2] +
-          w_z[3] * this._lookUpTableBezier[i][3];
         this.vertex(_x, _y, _z);
       }
       // so that we leave curFillColor with the last value the user set it to
@@ -1708,6 +1691,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     let w_y = [];
     let w_z = [];
     let t, _x, _y, _z, i, k, m;
+    // variable i for bezierPoints, k for components, and m for anchor points.
     const argLength = args.length;
 
     t = 0;
@@ -1740,7 +1724,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     const LUTLength = this._lookUpTableQuadratic.length;
 
     // fillColors[0]: start point color
-    // fillColors[1]: intermediate point color
+    // fillColors[1]: control point color
     // fillColors[2]: end point color
     const fillColors = [];
     for (m = 0; m < 3; m++) fillColors.push([]);
@@ -1768,20 +1752,15 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
+        _x = _y = 0;
         for (m = 0; m < 3; m++) {
           for (k = 0; k < 4; k++) {
             this.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
           }
+          _x += w_x[m] * this._lookUpTableQuadratic[i][m];
+          _y += w_y[m] * this._lookUpTableQuadratic[i][m];
         }
-        _x =
-          w_x[0] * this._lookUpTableQuadratic[i][0] +
-          w_x[1] * this._lookUpTableQuadratic[i][1] +
-          w_x[2] * this._lookUpTableQuadratic[i][2];
-        _y =
-          w_y[0] * this._lookUpTableQuadratic[i][0] +
-          w_y[1] * this._lookUpTableQuadratic[i][1] +
-          w_y[2] * this._lookUpTableQuadratic[i][2];
         this.vertex(_x, _y);
       }
 
@@ -1811,24 +1790,16 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
       for (i = 0; i < LUTLength; i++) {
         // Interpolate colors using control points
         this.curFillColor = [0, 0, 0, 0];
+        _x = _y = _z = 0;
         for (m = 0; m < 3; m++) {
           for (k = 0; k < 4; k++) {
             this.curFillColor[k] +=
               this._lookUpTableQuadratic[i][m] * fillColors[m][k];
           }
+          _x += w_x[m] * this._lookUpTableQuadratic[i][m];
+          _y += w_y[m] * this._lookUpTableQuadratic[i][m];
+          _z += w_z[m] * this._lookUpTableQuadratic[i][m];
         }
-        _x =
-          w_x[0] * this._lookUpTableQuadratic[i][0] +
-          w_x[1] * this._lookUpTableQuadratic[i][1] +
-          w_x[2] * this._lookUpTableQuadratic[i][2];
-        _y =
-          w_y[0] * this._lookUpTableQuadratic[i][0] +
-          w_y[1] * this._lookUpTableQuadratic[i][1] +
-          w_y[2] * this._lookUpTableQuadratic[i][2];
-        _z =
-          w_z[0] * this._lookUpTableQuadratic[i][0] +
-          w_z[1] * this._lookUpTableQuadratic[i][1] +
-          w_z[2] * this._lookUpTableQuadratic[i][2];
         this.vertex(_x, _y, _z);
       }
 
