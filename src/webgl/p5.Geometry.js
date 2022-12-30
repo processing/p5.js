@@ -53,6 +53,13 @@ p5.Geometry = function(detailX, detailY, callback) {
   //based on faces for most objects;
   this.edges = [];
   this.vertexColors = [];
+
+  // One color per vertex representing the stroke color at that vertex
+  this.vertexStrokeColors = [];
+
+  // One color per line vertex, generated automatically based on
+  // vertexStrokeColors in _edgesToVertices()
+  this.lineVertexColors = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
   this.dirtyFlags = {};
@@ -72,6 +79,8 @@ p5.Geometry.prototype.reset = function() {
   this.vertices.length = 0;
   this.edges.length = 0;
   this.vertexColors.length = 0;
+  this.vertexStrokeColors.length = 0;
+  this.lineVertexColors.length = 0;
   this.vertexNormals.length = 0;
   this.uvs.length = 0;
 
@@ -271,13 +280,25 @@ p5.Geometry.prototype._edgesToVertices = function() {
     const currEdge = this.edges[i];
     const begin = this.vertices[currEdge[0]];
     const end = this.vertices[currEdge[1]];
+    const fromColor = this.vertexStrokeColors.length > 0
+      ? this.vertexStrokeColors.slice(
+        currEdge[0] * 4,
+        (currEdge[0] + 1) * 4
+      )
+      : [0, 0, 0, 0];
+    const toColor = this.vertexStrokeColors.length > 0
+      ? this.vertexStrokeColors.slice(
+        currEdge[1] * 4,
+        (currEdge[1] + 1) * 4
+      )
+      : [0, 0, 0, 0];
     const dir = end
       .copy()
       .sub(begin)
       .normalize();
     const dirOK = dir.magSq() > 0;
     if (dirOK) {
-      this._addSegment(begin, end, dir);
+      this._addSegment(begin, end, fromColor, toColor, dir);
     }
 
     if (i > 0 && prevEdge[1] === currEdge[0]) {
@@ -288,22 +309,22 @@ p5.Geometry.prototype._edgesToVertices = function() {
       // Don't add a join if the tangents point in the same direction, which
       // would mean the edges line up exactly, and there is no need for a join.
       if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
-        this._addJoin(begin, lastValidDir, dir);
+        this._addJoin(begin, lastValidDir, dir, fromColor);
       }
       if (dirOK && !addedStartingCap && !closed) {
-        this._addCap(begin, dir.copy().mult(-1));
+        this._addCap(begin, dir.copy().mult(-1), fromColor);
         addedStartingCap = true;
       }
     } else {
       addedStartingCap = false;
       // Start a new line
       if (dirOK && (!closed || i > 0)) {
-        this._addCap(begin, dir.copy().mult(-1));
+        this._addCap(begin, dir.copy().mult(-1), fromColor);
         addedStartingCap = true;
       }
       if (lastValidDir && (!closed || i < this.edges.length - 1)) {
         // Close off the last segment with a cap
-        this._addCap(this.vertices[prevEdge[1]], lastValidDir);
+        this._addCap(this.vertices[prevEdge[1]], lastValidDir, fromColor);
         lastValidDir = undefined;
       }
     }
@@ -316,10 +337,11 @@ p5.Geometry.prototype._edgesToVertices = function() {
           this.vertices[this.edges[0][1]]
             .copy()
             .sub(end)
-            .normalize()
+            .normalize(),
+          toColor
         );
       } else {
-        this._addCap(end, dir);
+        this._addCap(end, dir, toColor);
       }
     }
 
@@ -346,7 +368,13 @@ p5.Geometry.prototype._edgesToVertices = function() {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addSegment = function(begin, end, dir) {
+p5.Geometry.prototype._addSegment = function(
+  begin,
+  end,
+  fromColor,
+  toColor,
+  dir
+) {
   const a = begin.array();
   const b = end.array();
   const dirArr = dir.array();
@@ -355,6 +383,14 @@ p5.Geometry.prototype._addSegment = function(begin, end, dir) {
     tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
   }
   this.lineVertices.push(a, a, b, b, a, b);
+  this.lineVertexColors.push(
+    fromColor,
+    fromColor,
+    toColor,
+    toColor,
+    fromColor,
+    toColor
+  );
   return this;
 };
 
@@ -374,7 +410,7 @@ p5.Geometry.prototype._addSegment = function(begin, end, dir) {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addCap = function(point, tangent) {
+p5.Geometry.prototype._addCap = function(point, tangent, color) {
   const ptArray = point.array();
   const tanInArray = tangent.array();
   const tanOutArray = [0, 0, 0];
@@ -382,6 +418,7 @@ p5.Geometry.prototype._addCap = function(point, tangent) {
     this.lineVertices.push(ptArray);
     this.lineTangentsIn.push(tanInArray);
     this.lineTangentsOut.push(tanOutArray);
+    this.lineVertexColors.push(color);
   }
   this.lineSides.push(-1, -2, 2, 2, 1, -1);
   return this;
@@ -410,7 +447,12 @@ p5.Geometry.prototype._addCap = function(point, tangent) {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addJoin = function(point, fromTangent, toTangent) {
+p5.Geometry.prototype._addJoin = function(
+  point,
+  fromTangent,
+  toTangent,
+  color
+) {
   const ptArray = point.array();
   const tanInArray = fromTangent.array();
   const tanOutArray = toTangent.array();
@@ -418,6 +460,7 @@ p5.Geometry.prototype._addJoin = function(point, fromTangent, toTangent) {
     this.lineVertices.push(ptArray);
     this.lineTangentsIn.push(tanInArray);
     this.lineTangentsOut.push(tanOutArray);
+    this.lineVertexColors.push(color);
   }
   for (const side of [-1, 1]) {
     this.lineSides.push(side, 2 * side, 3 * side, side, 3 * side, 0);

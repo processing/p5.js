@@ -6,6 +6,7 @@ uniform int uStrokeCap;
 uniform int uStrokeJoin;
 uniform float uStrokeWeight;
 
+varying vec4 vColor;
 varying vec2 vTangent;
 varying vec2 vCenter;
 varying vec2 vPosition;
@@ -46,5 +47,5 @@ void main() {
     }
     // Use full area for MITER
   }
-  gl_FragColor = uMaterialColor;
+  gl_FragColor = vec4(vColor.rgb, 1.) * vColor.a;
 }

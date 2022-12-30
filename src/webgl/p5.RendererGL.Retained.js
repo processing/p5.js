@@ -122,6 +122,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     // Prevent strokes from getting removed by culling
     gl.disable(gl.CULL_FACE);
     const strokeShader = this._getRetainedStrokeShader();
+    this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     this._setStrokeUniforms(strokeShader);
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);

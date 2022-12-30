@@ -25,6 +25,9 @@ uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform float uStrokeWeight;
 
+uniform bool uUseLineColor;
+uniform vec4 uMaterialColor;
+
 uniform vec4 uViewport;
 uniform int uPerspective;
 uniform int uStrokeJoin;
@@ -33,7 +36,9 @@ attribute vec4 aPosition;
 attribute vec3 aTangentIn;
 attribute vec3 aTangentOut;
 attribute float aSide;
+attribute vec4 aVertexColor;
 
+varying vec4 vColor;
 varying vec2 vTangent;
 varying vec2 vCenter;
 varying vec2 vPosition;
@@ -199,4 +204,6 @@ void main() {
 
   gl_Position.xy = p.xy + offset.xy;
   gl_Position.zw = p.zw;
+  
+  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
 }
