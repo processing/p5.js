@@ -258,8 +258,9 @@ p5.Shader.prototype.updateTextures = function() {
 };
 
 p5.Shader.prototype.unbindTextures = function() {
-  // TODO: migrate stuff from material.js here
-  // - OR - have material.js define this function
+  for (const uniform of this.samplers) {
+    this.setUniform(uniform.name, this._renderer._getEmptyTexture());
+  }
 };
 
 p5.Shader.prototype._setMatrixUniforms = function() {
