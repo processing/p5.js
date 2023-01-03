@@ -1071,6 +1071,42 @@ suite('p5.RendererGL', function() {
 
       done();
     });
+    test('bezierVertex() should interpolate curFillColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.beginShape();
+      renderer.fill(255);
+      renderer.vertex(-128, -128);
+      renderer.fill(255, 0, 0);
+      renderer.bezierVertex(128, -128, 128, 128, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(128, 128), [255, 129, 129, 255]);
+
+      done();
+    });
+    test('quadraticVertex() should interpolate curFillColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.beginShape();
+      renderer.fill(255);
+      renderer.vertex(-128, -128);
+      renderer.fill(255, 0, 0);
+      renderer.quadraticVertex(256, 0, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(128, 128), [255, 128, 128, 255]);
+
+      done();
+    });
   });
 
   suite('setAttributes', function() {
