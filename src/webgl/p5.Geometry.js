@@ -45,6 +45,12 @@ p5.Geometry = function(detailX, detailY, callback) {
   //based on faces for most objects;
   this.edges = [];
   this.vertexColors = [];
+
+  // One color per vertex representing the stroke color at that vertex
+  this.vertexStrokeColors = [];
+
+  // One color per line vertex, generated automatically based on
+  // vertexStrokeColors in _edgesToVertices()
   this.lineVertexColors = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
@@ -63,6 +69,7 @@ p5.Geometry.prototype.reset = function() {
   this.vertices.length = 0;
   this.edges.length = 0;
   this.vertexColors.length = 0;
+  this.vertexStrokeColors.length = 0;
   this.lineVertexColors.length = 0;
   this.vertexNormals.length = 0;
   this.uvs.length = 0;
@@ -247,8 +254,20 @@ p5.Geometry.prototype._edgesToVertices = function() {
   for (let i = 0; i < this.edges.length; i++) {
     const endIndex0 = this.edges[i][0];
     const endIndex1 = this.edges[i][1];
-    var begin = this.vertices[endIndex0];
-    var end = this.vertices[endIndex1];
+    const begin = this.vertices[endIndex0];
+    const end = this.vertices[endIndex1];
+    const fromColor = this.vertexStrokeColors.length > 0
+      ? this.vertexStrokeColors.slice(
+        endIndex0 * 4,
+        (endIndex0 + 1) * 4
+      )
+      : [0, 0, 0, 0];
+    const toColor = this.vertexStrokeColors.length > 0
+      ? this.vertexStrokeColors.slice(
+        endIndex1 * 4,
+        (endIndex1 + 1) * 4
+      )
+      : [0, 0, 0, 0];
     const dir = end
       .copy()
       .sub(begin)
@@ -265,23 +284,9 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirSub.push(-1);
     this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
     this.lineVertices.push(a, b, c, c, b, d);
-    if (this.lineVertexColors.length > 0) {
-      var beginColor = [
-        this.lineVertexColors[4*endIndex0],
-        this.lineVertexColors[4*endIndex0+1],
-        this.lineVertexColors[4*endIndex0+2],
-        this.lineVertexColors[4*endIndex0+3]
-      ];
-      var endColor = [
-        this.lineVertexColors[4*endIndex1],
-        this.lineVertexColors[4*endIndex1+1],
-        this.lineVertexColors[4*endIndex1+2],
-        this.lineVertexColors[4*endIndex1+3]
-      ];
-      lineColorData.push(
-        beginColor, beginColor, endColor, endColor, beginColor, endColor
-      );
-    }
+    lineColorData.push(
+      fromColor, fromColor, toColor, toColor, fromColor, toColor
+    );
   }
   this.lineVertexColors = lineColorData;
   return this;

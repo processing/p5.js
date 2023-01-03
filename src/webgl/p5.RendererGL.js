@@ -1454,6 +1454,7 @@ p5.prototype._assert3d = function(name) {
 
 // function to initialize GLU Tesselator
 
+p5.RendererGL.prototype.tessyVertexSize = 12;
 p5.RendererGL.prototype._initTessy = function initTesselator() {
   // function called for each vertex of tesselator output
   function vertexCallback(data, polyVertArray) {
@@ -1474,7 +1475,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   }
   // callback for when segments intersect and must be split
   function combinecallback(coords, data, weight) {
-    const result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
     for (let i = 0; i < weight.length; i++) {
       for (let j = 0; j < result.length; j++) {
         if (weight[i] === 0 || !data[i]) continue;
@@ -1507,7 +1508,11 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   const z = contours[0] ? contours[0][2] : undefined;
   let allSameZ = true;
   for (const contour of contours) {
-    for (let j = 0; j < contour.length; j += 12) {
+    for (
+      let j = 0;
+      j < contour.length;
+      j += p5.RendererGL.prototype.tessyVertexSize
+    ) {
       if (contour[j + 2] !== z) {
         allSameZ = false;
         break;
@@ -1527,8 +1532,15 @@ p5.RendererGL.prototype._triangulate = function(contours) {
   for (let i = 0; i < contours.length; i++) {
     this._tessy.gluTessBeginContour();
     const contour = contours[i];
-    for (let j = 0; j < contour.length; j += 12) {
-      const coords = contour.slice(j, j + 12);
+    for (
+      let j = 0;
+      j < contour.length;
+      j += p5.RendererGL.prototype.tessyVertexSize
+    ) {
+      const coords = contour.slice(
+        j,
+        j + p5.RendererGL.prototype.tessyVertexSize
+      );
       this._tessy.gluTessVertex(coords, coords);
     }
     this._tessy.gluTessEndContour();

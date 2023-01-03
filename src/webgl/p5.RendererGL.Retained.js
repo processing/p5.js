@@ -119,7 +119,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
     const strokeShader = this._getRetainedStrokeShader();
-    this._useLineColor = (geometry.model.lineVertexColors.length > 0);
+    this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     this._setStrokeUniforms(strokeShader);
     for (const buff of this.retainedMode.buffers.stroke) {
       buff._prepareBuffer(geometry, strokeShader);

@@ -41,6 +41,7 @@ const immediateBufferStrides = {
   vertices: 1,
   vertexNormals: 1,
   vertexColors: 4,
+  vertexStrokeColors: 4,
   uvs: 2
 };
 
@@ -110,7 +111,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[3]
   );
   var lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
-  this.immediateMode.geometry.lineVertexColors.push(
+  this.immediateMode.geometry.vertexStrokeColors.push(
     lineVertexColor[0],
     lineVertexColor[1],
     lineVertexColor[2],
@@ -239,6 +240,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
+    this._doFill &&
     (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
     this.immediateMode.shapeMode !== constants.LINES;
 
@@ -352,7 +354,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 12
+    j = j + p5.RendererGL.prototype.tessyVertexSize
   ) {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
@@ -413,7 +415,7 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
   const shader = this._getImmediateStrokeShader();
   this._useLineColor =
-    (this.immediateMode.geometry.lineVertexColors.length > 0);
+    (this.immediateMode.geometry.vertexStrokeColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);

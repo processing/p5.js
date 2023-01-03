@@ -909,6 +909,33 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TESS does not affect stroke colors', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      myp5.noFill();
+      renderer.stroke(255, 255, 255);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.stroke(255, 0, 0);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.stroke(0, 255, 0);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.stroke(0, 0, 255);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      // Vertex colors are not run through tessy
+      assert.deepEqual(renderer.immediateMode.geometry.vertexStrokeColors, [
+        1, 1, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1
+      ]);
+
+      done();
+    });
+
     test('TESS interpolates vertex data at intersections', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
