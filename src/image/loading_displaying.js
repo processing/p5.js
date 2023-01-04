@@ -240,8 +240,8 @@ p5.prototype.saveGif = async function(
   }
 
   // extract variables for more comfortable use
-  const delay = (options && options.delay) || 0  // in seconds
-  const units = (options && options.units) || 'seconds'  // either 'seconds' or 'frames'
+  const delay = (options && options.delay) || 0  // in seconds;
+  const units = (options && options.units) || 'seconds'  // either 'seconds' or 'frames';
 
   //   console.log(options);
 
