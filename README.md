@@ -596,6 +596,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center"><a href="https://github.com/Malayvasa"><img src="https://avatars.githubusercontent.com/u/22751053?v=4?s=100" width="100px;" alt="Malay Vasa"/><br /><sub><b>Malay Vasa</b></sub></a><br /><a href="#design-Malayvasa" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=Malayvasa" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/wagedu"><img src="https://avatars.githubusercontent.com/u/1332848?v=4?s=100" width="100px;" alt="wagedu"/><br /><sub><b>wagedu</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Awagedu" title="Bug reports">🐛</a></td>
       <td align="center"><a href="https://weslord.com"><img src="https://avatars.githubusercontent.com/u/1022948?v=4?s=100" width="100px;" alt="Wes Lord"/><br /><sub><b>Wes Lord</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=weslord" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=weslord" title="Tests">⚠️</a></td>
+      <td align="center"><a href="https://github.com/pinky-pig"><img src="https://avatars.githubusercontent.com/u/42307398?v=4?s=100" width="100px;" alt="pinky-pig"/><br /><sub><b>pinky-pig</b></sub></a><br /><a href="#translation-pinky-pig" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
