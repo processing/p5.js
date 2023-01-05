@@ -1,0 +1,72 @@
+{
+  "fes": {
+    "autoplay": "Le média a essayé de se jouer automatiquement (avec la source '{{src}}') mais l'autoplay a été bloqué par le navigateur.\n\n+ Plus d'informations: {{url}}",
+    "checkUserDefinedFns": "Il semble que vous ayez accidentellement écrit {{name}} au lieu de {{actualName}}. Veuillez le corriger si ce n'est pas intentionnel.",
+    "fileLoadError": {
+      "bytes": "Il semble qu'il y ait eu un problème de chargement de votre fichier. {{suggestion}}",
+      "font": "Il semble qu'il y ait eu un problème de chargement de votre police. {{suggestion}}",
+      "gif": "Il y a eu des problèmes pour charger votre GIF. Assurez-vous que votre GIF utilise l'encodage 87a ou 89a.",
+      "image": "Il semble qu'il y ait eu un problème pour charger votre image. {{suggestion}}",
+      "json": "Il semble qu'il y ait eu un problème pour charger votre fichier JSON. {{suggestion}}",
+      "large": "Si votre fichier volumineux n'est pas récupéré avec succès, nous vous recommandons de le diviser en segments plus petits et de les récupérer.",
+      "strings": "Il semble qu'il y ait eu un problème de chargement de votre fichier texte. {{suggestion}}",
+      "suggestion": "Essayez de vérifier si le chemin d'accès au fichier ({{filePath}}) est correct, d'héberger le fichier en ligne ou d'exécuter un serveur local.\n\n+ Plus d'informations: {{url}}",
+      "table": "Il semble qu'il y ait eu un problème pour charger votre fichier de table. {{suggestion}}",
+      "xml": "Il semble qu'il y ait eu un problème de chargement de votre fichier XML. {{suggestion}}"
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{location}} {{func}}() attendait {{formatType}} pour le paramètre {{position}}, a reçu une variable vide à la place. Si ce n'est pas intentionnel, il s'agit souvent d'un problème de portée.\n\n+ Plus d'informations: {{url}}",
+      "type_TOO_FEW_ARGUMENTS": "{{location}} {{func}}() was expecting at least {{minParams}} arguments, but received only {{argCount}}.",
+      "type_TOO_MANY_ARGUMENTS": "{{location}} {{func}}() was expecting no more than {{maxParams}} arguments, but received {{argCount}}.",
+      "type_WRONG_TYPE": "{{location}} {{func}}() attendait {{formatType}} pour le paramètre {{position}}, mais a reçu {{argType}} à la place."
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "\n{{location}} \"{{symbol}}\" est utilisé avant la déclaration. Assurez-vous d'avoir déclaré la variable avant de l'utiliser.\n\n+ Plus d'informations: {{url}}",
+        "notDefined": "\n{{location}} \"{{symbol}}\" n'est pas défini dans la portée actuelle. Si vous l'avez défini dans votre code, vous devez vérifier sa portée, son orthographe et sa casse (JavaScript est sensible à la casse).\n\n+ Plus d'informations: {{url}}"
+      },
+      "stackSubseq": "└[{{location}}] \n\t Appelé depuis la ligne {{ligne}} dans {{func}}()\n",
+      "stackTop": "┌[{location}] \n\t Erreur à la ligne {{line}} dans {{func}}()\n",
+      "syntax": {
+        "badReturnOrYield": "\nErreur de syntaxe - return se trouve à l'extérieur d'une fonction. Assurez-vous qu'il ne manque pas de parenthèses pour que return se trouve à l'intérieur d'une fonction.\n\n+ Plus d'informations: {{url}}",
+        "invalidToken": "\nErreur de syntaxe - Un symbole que JavaScript ne reconnaît pas ou, n'est pas à sa place a été trouvé.\n\n+ Plus d'informations: {{url}}",
+        "missingInitializer": "\nErreur de syntaxe - Une variable const est déclarée mais n'est pas initialisée. En JavaScript, un initialisateur pour une const est requis. Une valeur doit être spécifiée dans la même instruction que celle dans laquelle la variable est déclarée. Vérifiez le numéro de ligne dans l'erreur et attribuez une valeur à la variable const.\n\n+ Plus d'informations: {{url}}",
+        "redeclaredVariable": "\nErreur de syntaxe - \"{{symbol}}\" est en train d'être redéclaré. JavaScript ne permet pas de déclarer une variable plus d'une fois. Vérifiez le numéro de la ligne en erreur pour la redéclaration de la variable.\n\n+ Plus d'informations: {{url}}",
+        "unexpectedToken": "\nErreur de syntaxe - Le symbole est présent à un endroit qui n'était pas prévu. Généralement, cela est dû à une faute de frappe. Vérifiez le numéro de ligne dans l'erreur pour voir s'il manque quelque chose.\n\n+ Plus d'informations: {{url}}"
+      },
+      "type": {
+        "constAssign": "\n{{location}} Une variable const est en train d'être réassignée. En javascript, la réaffectation d'une valeur à une constante n'est pas autorisée. Si vous voulez réassigner de nouvelles valeurs à une variable, assurez-vous qu'elle est déclarée comme var ou let.\n\n+ Plus d'informations: {{url}}",
+        "notfunc": "\n{{location}} \"{{symbol}}\" n'a pas pu être appelé comme une fonction. Vérifiez l'orthographe, la casse (JavaScript est sensible à la casse) et son type.\n\n+ Plus d'informations: {{url}}",
+        "notfuncObj": "\n{{location}} \"{{symbol}}\" n'a pas pu être appelé en tant que fonction. Vérifiez si \"{{obj}}\" contient \"{{symbol}}\" et vérifiez l'orthographe, la casse (JavaScript est sensible à la casse) et son type.\n\n+ Plus d'informations: {{url}}",
+        "readFromNull": "\n{{location}} La propriété null ne peut pas être lue. En javascript, la valeur null indique qu'un objet n'a pas de valeur.\n\n+ Plus d'informations: {{url}}",
+        "readFromUndefined": "\n{{location}} Impossible de lire la propriété undefined. Vérifiez le numéro de la ligne en erreur et assurez-vous que la variable utilisée n'est pas indéfinie.\n\n+ Plus d'informations: {{url}}"
+      }
+    },
+    "libraryError": "{{location}} An error with message \"{{error}}\" occurred inside the p5js library when {{func}} was called. If not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
+    "location": "[{{file}}, ligne {{line}}].",
+    "misspelling": "{{location}} Il semble que vous ayez accidentellement écrit \"{{name}}\" au lieu de \"{{actualName}}\". Veuillez le corriger en {{actualName}} si vous souhaitez utiliser le {{type}} de p5.js.",
+    "misspelling_plural": "{{location}} Il semble que vous ayez écrit accidentellement \"{{name}}\".\nVous avez peut-être voulu dire l'une des choses suivantes : \n{{suggestions}}",
+    "misusedTopLevel": "Avez-vous essayé d'utiliser le {{symbolName}} de p5.js ? {{symbolType}} ? Si c'est le cas, vous pouvez le déplacer dans la fonction setup() de votre sketch.\n\n+ Plus d'informations: {{url}}",
+    "positions": {
+      "p_1": "premier",
+      "p_10": "dixième",
+      "p_11": "onzième",
+      "p_12": "douzième",
+      "p_2": "deuxième",
+      "p_3": "troisième",
+      "p_4": "quatrième",
+      "p_5": "cinquième",
+      "p_6": "sixième",
+      "p_7": "septième",
+      "p_8": "huitième",
+      "p_9": "neuvième"
+    },
+    "pre": "\n🌸 p5.js indique: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "Vous avez utilisé une variable réservée de p5.js \"{{symbol}}\" assurez-vous de changer le nom de la variable en quelque chose d'autre.\n\n+ Plus d'informations: {{url}}",
+      "reservedFunc": "Vous avez utilisé une fonction réservée de p5.js \"{{symbol}}\" assurez-vous de changer le nom de la fonction en quelque chose d'autre.\n\n+ Plus d'informations: {{url}}"
+    },
+    "welcome": "Bienvenue ! Ceci est votre débogueur amical. Pour me désactiver, passez à l'utilisation de p5.min.js.",
+    "wrongPreload": "{{location}} Une erreur avec le message \"{{error}}\" s'est produite dans la bibliothèque p5js lors de l'appel de \"{{func}}\". Si rien d'autre n'est indiqué, cela peut être dû à l'appel de \"{{func}}\" depuis le préchargement. Rien d'autre que les appels de chargement (loadImage, loadJSON, loadFont, loadStrings, etc.) ne devrait se trouver dans la fonction de préchargement."
+  }
+}

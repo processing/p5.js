@@ -11,8 +11,8 @@ import en from './en/translation';
  */
 export default {
   en: {
-    translation: en
-  }
+    translation: en,
+  },
 };
 
 /**
@@ -21,8 +21,4 @@ export default {
  * (`en` is english, `es` es español). Also add its export to
  * dev.js, which is another file in this folder.
  */
-export const languages = [
-  'en',
-  'es',
-  'ko'
-];
+export const languages = ['en', 'es', 'ko', 'fr'];

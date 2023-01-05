@@ -1,6 +1,7 @@
 export { default as en_translation } from './en/translation';
 export { default as es_translation } from './es/translation';
 export { default as ko_translation } from './ko/translation';
+export { default as fr_translation } from './fr/translation';
 
 /**
  * When adding a new language, add a new "export" statement above this.
@@ -13,4 +14,4 @@ export { default as ko_translation } from './ko/translation';
  *
  * "es_MX" is the language key whereas "translation" is the filename
  * ( translation.json ) or the namespace
-*/
+ */
