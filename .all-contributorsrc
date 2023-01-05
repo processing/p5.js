@@ -3343,6 +3343,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "pinky-pig",
+      "name": "pinky-pig",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42307398?v=4",
+      "profile": "https://github.com/pinky-pig",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
