@@ -368,6 +368,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  */
 p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
+  this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
   const shader = this._getImmediateFillShader();
 
   this._setFillUniforms(shader);
