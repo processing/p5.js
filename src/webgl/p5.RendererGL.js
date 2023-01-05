@@ -111,6 +111,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useShininess = 1;
 
   this._useLineColor = false;
+  this._useVertexColor = false;
 
   this._tint = [255, 255, 255, 255];
 
@@ -139,6 +140,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
+  this._defaultVertexColorShader = undefined;
   this._defaultPointShader = undefined;
 
   this.userFillShader = undefined;
@@ -1197,6 +1199,14 @@ p5.RendererGL.prototype._getColorShader = function() {
     );
   }
 
+  if (!this._defaultVertexColorShader) {
+    this._defaultVertexColorShader = new p5.Shader(
+      this,
+      defaultShaders.vertexColorVert,
+      defaultShaders.vertexColorFrag
+    );
+  }
+  if (this._useVertexColor) return this._defaultVertexColorShader;
   return this._defaultColorShader;
 };
 
@@ -1270,6 +1280,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.bindShader();
 
   // TODO: optimize
+  fillShader.setUniform('uUseVertexColor', this._useVertexColor);
   fillShader.setUniform('uMaterialColor', this.curFillColor);
   fillShader.setUniform('isTexture', !!this._tex);
   if (this._tex) {
