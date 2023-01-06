@@ -140,7 +140,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
-  this._defaultVertexColorShader = undefined;
   this._defaultPointShader = undefined;
 
   this.userFillShader = undefined;
@@ -1198,15 +1197,6 @@ p5.RendererGL.prototype._getColorShader = function() {
       defaultShaders.basicFrag
     );
   }
-
-  if (!this._defaultVertexColorShader) {
-    this._defaultVertexColorShader = new p5.Shader(
-      this,
-      defaultShaders.vertexColorVert,
-      defaultShaders.vertexColorFrag
-    );
-  }
-  if (this._useVertexColor) return this._defaultVertexColorShader;
   return this._defaultColorShader;
 };
 
