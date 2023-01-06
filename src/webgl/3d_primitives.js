@@ -1600,7 +1600,7 @@ p5.RendererGL.prototype.bezierVertex = function(...args) {
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 4; m++) strokeColors.push([]);
-    strokeColors[0] = this.immediateMode.geometry.lineVertexColors.slice(-4);
+    strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
     strokeColors[3] = this.curStrokeColor.slice();
 
     if (argLength === 6) {
@@ -1760,7 +1760,7 @@ p5.RendererGL.prototype.quadraticVertex = function(...args) {
     // Do the same for strokeColor.
     const strokeColors = [];
     for (m = 0; m < 3; m++) strokeColors.push([]);
-    strokeColors[0] = this.immediateMode.geometry.lineVertexColors.slice(-4);
+    strokeColors[0] = this.immediateMode.geometry.vertexStrokeColors.slice(-4);
     strokeColors[2] = this.curStrokeColor.slice();
 
     if (argLength === 4) {
