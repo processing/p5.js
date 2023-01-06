@@ -244,7 +244,7 @@ p5.prototype.saveGif = async function(
   const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
 
   // if arguments in the options object are not correct, cancel operation
-  if (typeof delay !== 'number' && delay !== null) {
+  if (typeof delay !== 'number') {
     throw TypeError('Delay parameter must be a number');
   }
   // if units is not seconds nor frames, throw error
