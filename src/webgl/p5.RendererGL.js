@@ -1197,6 +1197,7 @@ p5.RendererGL.prototype._getColorShader = function() {
       defaultShaders.basicFrag
     );
   }
+
   return this._defaultColorShader;
 };
 
