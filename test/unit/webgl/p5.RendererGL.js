@@ -1111,7 +1111,7 @@ suite('p5.RendererGL', function() {
 
   suite('interpolation of vertex colors', function(){
     test('immediate mode uses vertex colors (noLight)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // upper color: (200, 0, 0, 255);
       // lower color: (0, 0, 200, 255);
@@ -1134,7 +1134,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('immediate mode uses vertex colors (light)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       myp5.directionalLight(255, 255, 255, 0, 0, -1);
       // diffuseFactor:0.73
@@ -1157,7 +1157,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('geom without vertex colors use curFillCol (noLight)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // expected center color is curFillColor.
 
@@ -1171,9 +1171,9 @@ suite('p5.RendererGL', function() {
     });
 
     test('geom without vertex colors use curFillCol (light)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
-      directionalLight(255, 255, 255, 0, 0, -1);
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
       // diffuseFactor:0.73
       // so, expected color is (146, 0, 146, 255).
 
@@ -1187,7 +1187,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('geom with vertex colors use their color (noLight)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       // upper color: (200, 0, 0, 255);
       // lower color: (0, 0, 200, 255);
@@ -1219,7 +1219,7 @@ suite('p5.RendererGL', function() {
     });
 
     test('geom with vertex colors use their color (light)', function(done) {
-      const renderer = createCanvas(256, 256, myp5.WEBGL);
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
 
       const myGeom = new p5.Geometry(1, 1, function() {
         this.gid = 'vertexColorTestWithLighs';
