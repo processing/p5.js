@@ -241,18 +241,19 @@ p5.prototype.saveGif = async function(
   if (typeof duration !== 'number') {
     throw TypeError('Duration parameter must be a number');
   }
+
+  // extract variables for more comfortable use
+  const delay = (options && options.delay) || 0;  // in seconds
+  const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
+
   // if arguments in the options object are not correct, cancel operation
-  if (typeof options.delay !== 'number') {
+  if (typeof delay !== 'number') {
     throw TypeError('Delay parameter must be a number');
   }
   // if units is not seconds nor frames, throw error
-  if (options.units !== 'seconds' && options.units !== 'frames') {
+  if (units !== 'seconds' && units !== 'frames') {
     throw TypeError('Units parameter must be either "frames" or "seconds"');
   }
-
-  // extract variables for more comfortable use
-  let units = options.units;
-  let delay = options.delay;
 
   //   console.log(options);
 
