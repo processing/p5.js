@@ -1108,6 +1108,147 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
+  
+  suite('interpolation of vertex colors', function(){
+    test('immediate mode uses vertex colors (noLight)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      // upper color: (200, 0, 0, 255);
+      // lower color: (0, 0, 200, 255);
+      // expected center color: (100, 0, 100, 255);
+
+      myp5.beginShape();
+      myp5.fill(200, 0, 0);
+      myp5.vertex(-128, -128);
+      myp5.fill(200, 0, 0);
+      myp5.vertex(128, -128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(128, 128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(-128, 128);
+      myp5.endShape(myp5.CLOSE);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+      done();
+    });
+
+    test('immediate mode uses vertex colors (light)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (73, 0, 73, 255).
+
+      myp5.beginShape();
+      myp5.fill(200, 0, 0);
+      myp5.vertex(-128, -128);
+      myp5.fill(200, 0, 0);
+      myp5.vertex(128, -128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(128, 128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(-128, 128);
+      myp5.endShape(myp5.CLOSE);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [73, 0, 73, 255]);
+      done();
+    });
+    
+    test('geom without vertex colors use curFillCol (noLight)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      // expected center color is curFillColor.
+
+      myp5.fill(200, 0, 200);
+      myp5.rectMode(myp5.CENTER);
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      assert.equal(renderer._useVertexColor, false);
+      assert.deepEqual(myp5.get(128, 128), [200, 0, 200, 255]);
+      done();
+    });
+
+    test('geom without vertex colors use curFillCol (light)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (146, 0, 146, 255).
+
+      myp5.fill(200, 0, 200);
+      myp5.rectMode(myp5.CENTER);
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      assert.equal(renderer._useVertexColor, false);
+      assert.deepEqual(myp5.get(128, 128), [146, 0, 146, 255]);
+      done();
+    });
+    
+    test('geom with vertex colors use their color (noLight)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      // upper color: (200, 0, 0, 255);
+      // lower color: (0, 0, 200, 255);
+      // expected center color: (100, 0, 100, 255);
+
+      const myGeom = new p5.Geometry(1, 1, function() {
+        this.gid = 'vertexColorTestWithNoLights';
+        this.vertices.push(myp5.createVector(-128, -128));
+        this.vertices.push(myp5.createVector(128, -128));
+        this.vertices.push(myp5.createVector(128, 128));
+        this.vertices.push(myp5.createVector(-128, 128));
+        this.faces.push([0, 1, 2]);
+        this.faces.push([0, 2, 3]);
+        this.vertexColors.push(
+          200/255, 0, 0, 1,
+          200/255, 0, 0, 1,
+          0, 0, 200/255, 1,
+          0, 0, 200/255, 1
+        );
+        this.computeNormals();
+      });
+
+      myp5.noStroke();
+      myp5.model(myGeom);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+      done();
+    });
+    
+    test('geom with vertex colors use their color (light)', function(done) {
+      const renderer = createCanvas(256, 256, myp5.WEBGL);
+
+      const myGeom = new p5.Geometry(1, 1, function() {
+        this.gid = 'vertexColorTestWithLighs';
+        this.vertices.push(myp5.createVector(-128, -128));
+        this.vertices.push(myp5.createVector(128, -128));
+        this.vertices.push(myp5.createVector(128, 128));
+        this.vertices.push(myp5.createVector(-128, 128));
+        this.faces.push([0, 1, 2]);
+        this.faces.push([0, 2, 3]);
+        this.vertexColors.push(
+          200/255, 0, 0, 1,
+          200/255, 0, 0, 1,
+          0, 0, 200/255, 1,
+          0, 0, 200/255, 1
+        );
+        this.computeNormals();
+      });
+
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (73, 0, 73, 255).
+      myp5.noStroke();
+      myp5.model(myGeom);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [73, 0, 73, 255]);
+      done();
+    });
+  });
 
   suite('setAttributes', function() {
     test('It leaves a reference to the correct canvas', function(done) {
