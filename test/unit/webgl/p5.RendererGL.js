@@ -1108,7 +1108,7 @@ suite('p5.RendererGL', function() {
       done();
     });
   });
-  
+
   suite('interpolation of vertex colors', function(){
     test('immediate mode uses vertex colors (noLight)', function(done) {
       const renderer = createCanvas(256, 256, myp5.WEBGL);
@@ -1155,7 +1155,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(128, 128), [73, 0, 73, 255]);
       done();
     });
-    
+
     test('geom without vertex colors use curFillCol (noLight)', function(done) {
       const renderer = createCanvas(256, 256, myp5.WEBGL);
 
@@ -1185,7 +1185,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(128, 128), [146, 0, 146, 255]);
       done();
     });
-    
+
     test('geom with vertex colors use their color (noLight)', function(done) {
       const renderer = createCanvas(256, 256, myp5.WEBGL);
 
@@ -1217,7 +1217,7 @@ suite('p5.RendererGL', function() {
       assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
       done();
     });
-    
+
     test('geom with vertex colors use their color (light)', function(done) {
       const renderer = createCanvas(256, 256, myp5.WEBGL);
 
