@@ -130,6 +130,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   }
 
   if (this._doFill) {
+    this._useVertexColor = (geometry.model.vertexColors.length > 0);
     const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
     for (const buff of this.retainedMode.buffers.fill) {

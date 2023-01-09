@@ -111,6 +111,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useShininess = 1;
 
   this._useLineColor = false;
+  this._useVertexColor = false;
 
   this._tint = [255, 255, 255, 255];
 
@@ -1270,6 +1271,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.bindShader();
 
   // TODO: optimize
+  fillShader.setUniform('uUseVertexColor', this._useVertexColor);
   fillShader.setUniform('uMaterialColor', this.curFillColor);
   fillShader.setUniform('isTexture', !!this._tex);
   if (this._tex) {
