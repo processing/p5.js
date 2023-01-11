@@ -1640,6 +1640,7 @@ p5.Camera.prototype.copy = function() {
   _cam.cameraMatrix = this.cameraMatrix.copy();
   _cam.projMatrix = this.projMatrix.copy();
 
+  _cam._computeCameraDefaultSettings();
   return _cam;
 };
 
