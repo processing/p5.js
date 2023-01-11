@@ -2018,12 +2018,18 @@ p5.RendererGL.prototype.image = function(
     v1 = (sy + sHeight) / img.height;
   }
 
+  const gl = this.GL;
+  gl.disable(gl.DEPTH_TEST);
+  this._curCamera._setDefaultCamera();
+
   this.beginShape();
   this.vertex(dx, dy, 0, u0, v0);
   this.vertex(dx + dWidth, dy, 0, u1, v0);
   this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
   this.vertex(dx, dy + dHeight, 0, u0, v1);
   this.endShape(constants.CLOSE);
+
+  gl.enable(gl.DEPTH_TEST);
 
   this._pInst.pop();
 
