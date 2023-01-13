@@ -76,7 +76,7 @@ For feature request issues, they should be using the "New Feature Request" issue
 For feature enhancement issues, they should be using the "Existing Feature Enhancement" issue template. The process here very similar to new feature request. The difference between new feature request and feature enhancement can be blurred however feature enhancement mainly deals with existing functions of p5.js while new feature request could be requesting entirely new functions to be added.
 
 1. Similar to new feature request, feature enhancement should only be accepted if they increases access of p5.js. Please see point 1 of [section above](#feature-request)
-2. Inclusion criterias for feature enhancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
+2. Inclusion criteria for feature enhancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
 	- If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
 3. Feature enhancements must be approved by at least one steward or maintainer before work should begin towards a PR. The PR review process for feature enhancement is documented below.
 
@@ -285,6 +285,6 @@ There are many other commands available in the GitHub CLI as well that you may o
 ## Managing notifications
 Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name. By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notification to your [notification page](https://github.com/notifications) where they can be marked as read or dismissed much like an email inbox.
 
-In some cases you may received emails from GitHub about events in repo you are watching as well and you can customize these (including unsubcribe from them completely) from your [notifications settings page](https://github.com/settings/notifications).
+In some cases you may received emails from GitHub about events in repo you are watching as well and you can customize these (including unsubscribe from them completely) from your [notifications settings page](https://github.com/settings/notifications).
 
 Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set to only receive email on "Participating, @mentions and custom".
