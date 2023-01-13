@@ -2019,7 +2019,11 @@ p5.RendererGL.prototype.image = function(
   }
 
   const gl = this.GL;
+  const depthTestIsEnable = gl.getParameter(gl.DEPTH_TEST);
+  const cullFaceIsEnable = gl.getParameter(gl.CULL_FACE);
   gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.CULL_FACE);
+
   this._curCamera._setDefaultCamera();
 
   this.beginShape();
@@ -2029,7 +2033,8 @@ p5.RendererGL.prototype.image = function(
   this.vertex(dx, dy + dHeight, 0, u0, v1);
   this.endShape(constants.CLOSE);
 
-  gl.enable(gl.DEPTH_TEST);
+  if (depthTestIsEnable) { gl.enable(gl.DEPTH_TEST); }
+  if (cullFaceIsEnable) { gl.enable(gl.CULL_FACE); }
 
   this._pInst.pop();
 
