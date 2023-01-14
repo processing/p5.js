@@ -1841,6 +1841,7 @@ p5.Camera.prototype._isActive = function() {
  */
 p5.prototype.setCamera = function(cam) {
   this._renderer._curCamera = cam;
+  this._renderer.resetMatrix();
 
   // set the projection matrix (which is not normally updated each frame)
   this._renderer.uPMatrix.set(
