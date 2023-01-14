@@ -1493,9 +1493,9 @@ p5.Camera.prototype.move = function(x, y, z) {
     this.centerX + dx[0] + dy[0] + dz[0],
     this.centerY + dx[1] + dy[1] + dz[1],
     this.centerZ + dx[2] + dy[2] + dz[2],
-    0,
-    1,
-    0
+    this.upX,
+    this.upY,
+    this.upZ
   );
 };
 
@@ -1555,9 +1555,9 @@ p5.Camera.prototype.setPosition = function(x, y, z) {
     this.centerX + diffX,
     this.centerY + diffY,
     this.centerZ + diffZ,
-    0,
-    1,
-    0
+    this.upX,
+    this.upY,
+    this.upZ
   );
 };
 
