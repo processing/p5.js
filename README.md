@@ -598,6 +598,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://weslord.com"><img src="https://avatars.githubusercontent.com/u/1022948?v=4?s=100" width="100px;" alt="Wes Lord"/><br /><sub><b>Wes Lord</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=weslord" title="Documentation">📖</a> <a href="https://github.com/processing/p5.js/commits?author=weslord" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/pinky-pig"><img src="https://avatars.githubusercontent.com/u/42307398?v=4?s=100" width="100px;" alt="pinky-pig"/><br /><sub><b>pinky-pig</b></sub></a><br /><a href="#translation-pinky-pig" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ChinmayKadam172"><img src="https://avatars.githubusercontent.com/u/57569079?v=4?s=100" width="100px;" alt="Chinmay Kadam"/><br /><sub><b>Chinmay Kadam</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ChinmayKadam172" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Prateek462003"><img src="https://avatars.githubusercontent.com/u/90177794?v=4?s=100" width="100px;" alt="Prateekgit"/><br /><sub><b>Prateekgit</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Prateek462003" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
