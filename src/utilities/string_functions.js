@@ -213,7 +213,7 @@ function doNf(num, left, right) {
       decimal = '.';
     }
     if (decPart.length > right) {
-      decPart = decPart.substring(0, right);
+      decPart = roundOffDecPart(decPart, right);
     }
     for (let i = 0; i < left - intPart.length; i++) {
       str += '0';
@@ -231,6 +231,22 @@ function doNf(num, left, right) {
     }
     str += n;
     return str;
+  }
+
+  function roundOffDecPart(decPart, right) {
+    if (decPart[right] >= 5) {
+      let i = right - 1;
+      while (i >= 0) {
+        if (decPart[i] === '9') {
+          decPart = decPart.substring(0, i) + '0' + decPart.substring(i + 1);
+          i--;
+        } else {
+          decPart = decPart.substring(0, i) + (parseInt(decPart[i], 10) + 1).toString();
+          break;
+        }
+      }
+    }
+    return decPart.substring(0, right);
   }
 }
 
