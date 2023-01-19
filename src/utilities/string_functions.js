@@ -233,6 +233,25 @@ function doNf(num, left, right) {
     return str;
   }
 
+  /**
+  * Utility function for rounding off decimal part of a number.
+  * To be used by doNf() function.
+  * Does not returns the trucated value, but returns the decimal part
+  * with appropriate last digit of the left after truncation.
+  *
+  * @example
+  * input:
+  *    console.log(nf(Math.PI,1,4))
+  * output:
+  *    3.141692653589793
+  *    3.1416 after truncation
+  *    decPart = 141592.. is changed to 141692..
+  *
+  *@method nf
+  * @param {Array}        nums     the Numbers to format
+  * @param {Integer|String}      [right]  the decimal part of the number
+  * @return {String[]}                formatted Strings
+  */
   function roundOffDecPart(decPart, right) {
     if (decPart[right] >= 5) {
       let i = right - 1;
