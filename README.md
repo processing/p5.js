@@ -600,6 +600,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ChinmayKadam172"><img src="https://avatars.githubusercontent.com/u/57569079?v=4?s=100" width="100px;" alt="Chinmay Kadam"/><br /><sub><b>Chinmay Kadam</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ChinmayKadam172" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Prateek462003"><img src="https://avatars.githubusercontent.com/u/90177794?v=4?s=100" width="100px;" alt="Prateekgit"/><br /><sub><b>Prateekgit</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Prateek462003" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://adityashrivastav.tech"><img src="https://avatars.githubusercontent.com/u/81470938?v=4?s=100" width="100px;" alt="Aditya Shrivastav"/><br /><sub><b>Aditya Shrivastav</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aaditya-shrivastavv" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=aditya-shrivastavv" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=aditya-shrivastavv" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
