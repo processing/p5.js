@@ -112,7 +112,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this._useLineColor = false;
   this._useVertexColor = false;
-  
+
   this.registerEnabled = [];
 
   this._tint = [255, 255, 255, 255];
