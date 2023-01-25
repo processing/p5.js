@@ -561,9 +561,12 @@ p5.Shader.prototype.enableAttrib = function(
       );
     }
     const loc = attr.location;
+    // Get register availability
+    const registerIsEnabled = this._renderer.registerEnabled[loc];
     if (loc !== -1) {
       const gl = this._renderer.GL;
-      if (!attr.enabled) {
+      // Enable register even if it is disabled
+      if (!attr.enabled || !registerIsEnabled) {
         gl.enableVertexAttribArray(loc);
         // Record register availability
         this._renderer.registerEnabled[loc] = true;
