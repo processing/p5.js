@@ -63,7 +63,6 @@ p5.RenderBuffer.prototype._prepareBuffer = function(geometry, shader) {
     if (loc === -1 || !this._renderer.registerEnabled[loc]) { return; }
     // Disable register corresponding to unused attribute
     gl.disableVertexAttribArray(loc);
-    attr.enabled = false;
     // Record register availability
     this._renderer.registerEnabled[loc] = false;
   }
