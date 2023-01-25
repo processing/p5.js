@@ -1399,10 +1399,10 @@ suite('p5.RendererGL', function() {
       // geometry without aTexCoord.
       const myGeom = new p5.Geometry(1, 1, function() {
         this.gid = 'registerEnabledTest';
-        this.vertices.push(createVector(-8, -8));
-        this.vertices.push(createVector(8, -8));
-        this.vertices.push(createVector(8, 8));
-        this.vertices.push(createVector(-8, 8));
+        this.vertices.push(myp5.createVector(-8, -8));
+        this.vertices.push(myp5.createVector(8, -8));
+        this.vertices.push(myp5.createVector(8, 8));
+        this.vertices.push(myp5.createVector(-8, 8));
         this.faces.push([0, 1, 2]);
         this.faces.push([0, 2, 3]);
         this.computeNormals();
