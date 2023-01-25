@@ -8,6 +8,27 @@ import './p5.Matrix';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
+const STROKE_CAP_ENUM = {};
+const STROKE_JOIN_ENUM = {};
+let lineDefs = '';
+const defineStrokeCapEnum = function(key, val) {
+  lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
+  STROKE_CAP_ENUM[constants[key]] = val;
+};
+const defineStrokeJoinEnum = function(key, val) {
+  lineDefs += `#define STROKE_JOIN_${key} ${val}\n`;
+  STROKE_JOIN_ENUM[constants[key]] = val;
+};
+
+// Define constants in line shaders for each type of cap/join, and also record
+// the values in JS objects
+defineStrokeCapEnum('ROUND', 0);
+defineStrokeCapEnum('PROJECT', 1);
+defineStrokeCapEnum('SQUARE', 2);
+defineStrokeJoinEnum('ROUND', 0);
+defineStrokeJoinEnum('MITER', 1);
+defineStrokeJoinEnum('BEVEL', 2);
+
 const lightingShader = readFileSync(
   join(__dirname, '/shaders/lighting.glsl'),
   'utf-8'
@@ -42,8 +63,10 @@ const defaultShaders = {
     readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
   fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
   fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
-  lineVert: readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
-  lineFrag: readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
+  lineVert:
+    lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
+  lineFrag:
+    lineDefs + readFileSync(join(__dirname, '/shaders/line.frag'), 'utf-8'),
   pointVert: readFileSync(join(__dirname, '/shaders/point.vert'), 'utf-8'),
   pointFrag: readFileSync(join(__dirname, '/shaders/point.frag'), 'utf-8')
 };
@@ -153,8 +176,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     buffers: {
       stroke: [
         new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
       ],
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
@@ -189,8 +214,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
       ],
       stroke: [
         new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVertexBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(4, 'lineNormals', 'lineNormalBuffer', 'aDirection', this, this._flatten)
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
       ],
       point: this.GL.createBuffer()
     }
@@ -198,6 +225,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.pointSize = 5.0; //default point size
   this.curStrokeWeight = 1;
+  this.curStrokeCap = constants.ROUND;
+  this.curStrokeJoin = constants.ROUND;
 
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
@@ -680,14 +709,11 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 };
 
 p5.RendererGL.prototype.strokeCap = function(cap) {
-  // @TODO : to be implemented
-  console.error('Sorry, strokeCap() is not yet implemented in WEBGL mode');
+  this.curStrokeCap = cap;
 };
 
 p5.RendererGL.prototype.strokeJoin = function(join) {
-  // @TODO : to be implemented
-  // https://processing.org/reference/strokeJoin_.html
-  console.error('Sorry, strokeJoin() is not yet implemented in WEBGL mode');
+  this.curStrokeJoin = join;
 };
 
 p5.RendererGL.prototype.filter = function(filterType) {
@@ -1265,6 +1291,8 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.setUniform('uUseLineColor', this._useLineColor);
   strokeShader.setUniform('uMaterialColor', this.curStrokeColor);
   strokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
+  strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
 };
 
 p5.RendererGL.prototype._setFillUniforms = function(fillShader) {

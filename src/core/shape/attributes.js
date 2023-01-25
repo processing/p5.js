@@ -269,7 +269,7 @@ p5.prototype.strokeCap = function(cap) {
  * Sets the style of the joints which connect line segments. These joints
  * are either mitered, beveled, or rounded and specified with the
  * corresponding parameters: `MITER`, `BEVEL`, or `ROUND`. The default joint is
- * `MITER`.
+ * `MITER` in 2D mode and `ROUND` in WebGL mode.
  *
  * The parameter to this method must be written in ALL CAPS because they are
  * predefined as constants in ALL CAPS and Javascript is a case-sensitive language.

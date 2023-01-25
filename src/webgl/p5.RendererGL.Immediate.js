@@ -414,6 +414,11 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
  */
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
+
+  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
+  // Prevent strokes from getting removed by culling
+  gl.disable(gl.CULL_FACE);
+
   const shader = this._getImmediateStrokeShader();
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
@@ -427,6 +432,9 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     0,
     this.immediateMode.geometry.lineVertices.length
   );
+  if (faceCullingEnabled) {
+    gl.enable(gl.CULL_FACE);
+  }
   shader.unbindShader();
 };
 

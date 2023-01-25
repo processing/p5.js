@@ -118,6 +118,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   const geometry = this.retainedMode.geometry[gId];
 
   if (this._doStroke && geometry.lineVertexCount > 0) {
+    const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
+    // Prevent strokes from getting removed by culling
+    gl.disable(gl.CULL_FACE);
     const strokeShader = this._getRetainedStrokeShader();
     this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     this._setStrokeUniforms(strokeShader);
@@ -126,6 +129,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     }
     this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
+    if (faceCullingEnabled) {
+      gl.enable(gl.CULL_FACE);
+    }
     strokeShader.unbindShader();
   }
 
