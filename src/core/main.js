@@ -386,7 +386,7 @@ class p5 {
       ) {
         //mandatory update values(matrixes and stack)
         this.redraw();
-        this._frameRate = 1000.0 / (now - this._lastTargetFrameTime);
+        this._frameRate = 1000.0 / (now - this._lastRealFrameTime);
         this.deltaTime = now - this._lastRealFrameTime;
         this._setProperty('deltaTime', this.deltaTime);
         this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
