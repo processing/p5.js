@@ -3381,6 +3381,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "davidbmx",
+      "name": "David",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12814631?v=4",
+      "profile": "https://github.com/davidbmx",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",
