@@ -345,9 +345,22 @@ p5.prototype.frustum = function(...args) {
  * }
  *
  * function draw() {
+ *   background(0);
+ *   // The camera will automatically
+ *   // rotate to look at [0, 0, 0].
  *   camera.lookAt(0, 0, 0);
+ *
+ *   // The camera will move on the
+ *   // x axis.
  *   camera.setPosition(sin(frameCount / 60) * 200, 0, 100);
  *   box(20);
+ *
+ *   // A 'ground' box to give the viewer
+ *   // a better idea of where the camera
+ *   // is looking.
+ *   translate(0, 50, 0);
+ *   rotateX(HALF_PI);
+ *   box(150, 150, 20);
  * }
  * </code></div>
  *
@@ -1480,9 +1493,9 @@ p5.Camera.prototype.move = function(x, y, z) {
     this.centerX + dx[0] + dy[0] + dz[0],
     this.centerY + dx[1] + dy[1] + dz[1],
     this.centerZ + dx[2] + dy[2] + dz[2],
-    0,
-    1,
-    0
+    this.upX,
+    this.upY,
+    this.upZ
   );
 };
 
@@ -1542,9 +1555,9 @@ p5.Camera.prototype.setPosition = function(x, y, z) {
     this.centerX + diffX,
     this.centerY + diffY,
     this.centerZ + diffZ,
-    0,
-    1,
-    0
+    this.upX,
+    this.upY,
+    this.upZ
   );
 };
 

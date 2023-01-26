@@ -122,6 +122,18 @@ suite('Environment', function() {
     });
   });
 
+  suite('p5.prototype.getTargetFrameRate', function() {
+    test('returns 60 on the first call', function() {
+      assert.strictEqual(myp5.getTargetFrameRate(), 60);
+    });
+
+    test('returns set value of randomize integer', function() {
+      let randVal = Math.floor(Math.random()*120);
+      myp5.frameRate(randVal);
+      assert.strictEqual(myp5.getTargetFrameRate(), randVal);
+    });
+  });
+
   suite('Canvas dimensions', function() {
     test('p5.prototype.width', function() {
       myp5.createCanvas(20, 30);

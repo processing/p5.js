@@ -1,42 +1,6 @@
 /**
- *  This is the Gruntfile for p5.js. Grunt is a task runner/builder
- *  which is what p5.js uses to build the source code into the library
- *  and handle other housekeeping tasks.
- *
- *  There are three main tasks:
- *
- *  grunt             - This is the default task, which builds the code, tests it
- *                      using both eslint and mocha, and then minifies it.
- *
- *  grunt yui         - This will build the inline documentation for p5.js.
- *                      The generated documentation is assumed to be
- *                      served from the /reference/ folder of the p5js
- *                      website (https://github.com/processing/p5.js-website).
- *
- *  grunt test        - This rebuilds the source and runs the automated tests on
- *                     both the minified and unminified code.
- *
- *  Note: `grunt test:nobuild` will skip the build step when running the tests,
- *  and only runs the test files themselves through the linter: this can save
- *  a lot of time when authoring test specs without making any build changes.
- *
- *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
- *                     each time a change to the source is detected. You can preview
- *                     the reference at localhost:9001/docs/reference/
- *
- *  And there are several secondary tasks:
- *
- *  grunt watch       - This watches the source for changes and rebuilds on
- *                      every file change, running the linter and tests.
- *
- *  grunt watch:main  - This watches the source for changes and rebuilds on
- *                      every file change, but does not rebuild the docs.
- *                      It's faster than the default watch.
- *
- *  grunt watch:quick - This watches the source for changes and rebuilds
- *                      p5.js on every file change, but does not rebuild
- *                      docs, and does not perform linting, minification,
- *                      or run tests. It's faster than watch:main.
+ *  Please see the contributor docs for usage of the build steps.
+ *  This header will only describe some of the more obscure tasks.
  *
  *  Contributors list can be updated using all-contributors-cli:
  *  https://www.npmjs.com/package/all-contributors-cli

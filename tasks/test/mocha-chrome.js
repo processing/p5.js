@@ -35,7 +35,7 @@ module.exports = function(grunt) {
               if (typeof mocha !== 'undefined') {
                 const _mochaRun = mocha.run.bind(mocha);
                 mocha.reporter('spec');
-                mocha.useColors(true);
+                mocha.color(true);
                 mocha.run = function(fn) {
                   debugger;
                   var runner = _mochaRun(function(stats) {

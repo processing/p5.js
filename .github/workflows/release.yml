@@ -43,7 +43,7 @@ jobs:
         with:
           type: zip
           filename: release/p5.zip
-          path: ./lib
+          path: ./lib/*
       - name: Copy release files
         run: cp lib/p5.js lib/p5.min.js lib/addons/p5.sound.js lib/addons/p5.sound.min.js release/
 

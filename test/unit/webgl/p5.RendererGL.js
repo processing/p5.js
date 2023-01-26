@@ -338,7 +338,7 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
       done();
     });
 
@@ -361,7 +361,7 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, -myp5.width / 2, -myp5.height / 2);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [100, 100, 100, 255]);
+      assert.deepEqual(pixel, [39, 194, 194, 255]);
       done();
     });
 
@@ -383,7 +383,7 @@ suite('p5.RendererGL', function() {
       pg.clear();
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [0, 0, 0, 255]);
+      assert.deepEqual(pixel, [0, 255, 255, 255]);
       done();
     });
 
@@ -394,8 +394,48 @@ suite('p5.RendererGL', function() {
       pg.background(100, 100, 100, 100);
       myp5.image(pg, 0, 0);
       pixel = myp5.get(0, 0);
-      assert.deepEqual(pixel, [100, 100, 100, 255]);
+      assert.deepEqual(pixel, [39, 194, 194, 255]);
       done();
+    });
+  });
+
+  suite('background()', function() {
+    function assertAllPixelsAreColor(target, r, g, b, a) {
+      target.loadPixels();
+      const expectedPixels = [];
+      for (let i = 0; i < target.width * target.height; i++) {
+        expectedPixels.push(r, g, b, a);
+      }
+      assert.deepEqual([ ...target.pixels ], expectedPixels);
+    }
+
+    function testDepthGetsCleared(target) {
+      target.pixelDensity(1);
+      target.noStroke();
+      target.fill(255, 0, 0);
+      target.plane(target.width, target.height);
+      assertAllPixelsAreColor(target, 255, 0, 0, 255);
+
+      target.background(255);
+      target.push();
+      target.translate(0, 0, -10); // Move farther away
+      target.fill(0, 0, 255);
+      // expanded to fill the screen
+      target.plane(target.width * 4, target.height * 4);
+      target.pop();
+      // The farther-away plane should not be occluded because we cleared
+      // the screen with background()
+      assertAllPixelsAreColor(target, 0, 0, 255, 255);
+    }
+
+    test('background() resets the depth buffer of the main canvas', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(myp5);
+    });
+
+    test('background() resets the depth buffer of p5.Graphics', function() {
+      const graphics = myp5.createGraphics(10, 10, myp5.WEBGL);
+      testDepthGetsCleared(graphics);
     });
   });
 
@@ -443,12 +483,14 @@ suite('p5.RendererGL', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.noStroke();
       assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.ADD, 0));
-      assert.deepEqual([0, 0, 255, 255], mixAndReturn(myp5.REPLACE, 255));
+      assert.deepEqual([0, 0, 122, 122], mixAndReturn(myp5.REPLACE, 255));
       assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.SUBTRACT, 255));
-      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.SCREEN, 0));
-      assert.deepEqual([0, 255, 0, 255], mixAndReturn(myp5.EXCLUSION, 255));
-      assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.MULTIPLY, 255));
-      assert.deepEqual([255, 0, 255, 255], mixAndReturn(myp5.LIGHTEST, 0));
+      assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.SCREEN, 0));
+      assert.deepEqual([133, 255, 133, 255], mixAndReturn(myp5.EXCLUSION, 255));
+      // Note that in 2D mode, this would just return black, because 2D mode
+      // ignores alpha in this case.
+      assert.deepEqual([133, 69, 133, 255], mixAndReturn(myp5.MULTIPLY, 255));
+      assert.deepEqual([122, 0, 122, 255], mixAndReturn(myp5.LIGHTEST, 0));
       assert.deepEqual([0, 0, 0, 255], mixAndReturn(myp5.DARKEST, 255));
       done();
     });
@@ -475,29 +517,29 @@ suite('p5.RendererGL', function() {
       const assertSameIn2D = function(colorA, colorB, mode) {
         const refColor = testBlend(myp5, colorA, colorB, mode);
         const webglColor = testBlend(ref, colorA, colorB, mode);
-        if (refColor[3] === 0) {
-          assert.equal(webglColor[3], 0);
-        } else {
-          assert.deepEqual(
-            refColor,
-            webglColor,
-            `Blending ${colorA} with ${colorB} using ${mode}`
-          );
-        }
+        assert.deepEqual(
+          refColor,
+          webglColor,
+          `Blending ${colorA} with ${colorB} using ${mode}`
+        );
       };
 
-      const red = '#F53';
-      const blue = '#13F';
-      assertSameIn2D(red, blue, myp5.BLEND);
-      assertSameIn2D(red, blue, myp5.ADD);
-      assertSameIn2D(red, blue, myp5.DARKEST);
-      assertSameIn2D(red, blue, myp5.LIGHTEST);
-      assertSameIn2D(red, blue, myp5.EXCLUSION);
-      assertSameIn2D(red, blue, myp5.MULTIPLY);
-      assertSameIn2D(red, blue, myp5.SCREEN);
-      assertSameIn2D(red, blue, myp5.REPLACE);
-      assertSameIn2D(red, blue, myp5.REMOVE);
-      done();
+      for (const alpha of [255, 200]) {
+        const red = myp5.color('#F53');
+        const blue = myp5.color('#13F');
+        red.setAlpha(alpha);
+        blue.setAlpha(alpha);
+        assertSameIn2D(red, blue, myp5.BLEND);
+        assertSameIn2D(red, blue, myp5.ADD);
+        assertSameIn2D(red, blue, myp5.DARKEST);
+        assertSameIn2D(red, blue, myp5.LIGHTEST);
+        assertSameIn2D(red, blue, myp5.EXCLUSION);
+        assertSameIn2D(red, blue, myp5.MULTIPLY);
+        assertSameIn2D(red, blue, myp5.SCREEN);
+        assertSameIn2D(red, blue, myp5.REPLACE);
+        assertSameIn2D(red, blue, myp5.REMOVE);
+        done();
+      }
     });
 
     test('blendModes are included in push/pop', function(done) {
@@ -530,12 +572,19 @@ suite('p5.RendererGL', function() {
       assert.isDefined(buffers.indexBuffer);
       assert.isDefined(buffers.indexBufferType);
       assert.isDefined(buffers.vertexBuffer);
-      assert.isDefined(buffers.lineNormalBuffer);
-      assert.isDefined(buffers.lineVertexBuffer);
+      assert.isDefined(buffers.lineVerticesBuffer);
+      assert.isDefined(buffers.lineSidesBuffer);
+      assert.isDefined(buffers.lineTangentsInBuffer);
+      assert.isDefined(buffers.lineTangentsOutBuffer);
       assert.isDefined(buffers.vertexBuffer);
 
       assert.equal(buffers.vertexCount, 3);
-      assert.equal(buffers.lineVertexCount, 18);
+
+      //   6 verts per line segment x3 (each is a quad made of 2 triangles)
+      // + 12 verts per join x3 (2 quads each, 1 is discarded in the shader)
+      // + 6 verts per line cap x0 (1 quad each)
+      // = 54
+      assert.equal(buffers.lineVertexCount, 54);
 
       done();
     });
@@ -756,6 +805,25 @@ suite('p5.RendererGL', function() {
       done();
     });
 
+    test('TRIANGLE_FAN mode makes edges for each triangle', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+      //    x
+      //    | \
+      // x--x--x
+      //  \ | /
+      //    x
+      renderer.beginShape(myp5.TRIANGLE_FAN);
+      renderer.vertex(0, 0);
+      renderer.vertex(0, -5);
+      renderer.vertex(5, 0);
+      renderer.vertex(0, 5);
+      renderer.vertex(-5, 0);
+      renderer.endShape();
+
+      assert.equal(renderer.immediateMode.geometry.edges.length, 7);
+      done();
+    });
+
     test('TESS preserves vertex data', function(done) {
       var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
 
@@ -843,6 +911,33 @@ suite('p5.RendererGL', function() {
         0, 1,
         1, 0,
         1, 1
+      ]);
+
+      done();
+    });
+
+    test('TESS does not affect stroke colors', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      myp5.noFill();
+      renderer.stroke(255, 255, 255);
+      renderer.vertex(-10, -10, 0, 0);
+      renderer.stroke(255, 0, 0);
+      renderer.vertex(10, -10, 1, 0);
+      renderer.stroke(0, 255, 0);
+      renderer.vertex(10, 10, 1, 1);
+      renderer.stroke(0, 0, 255);
+      renderer.vertex(-10, 10, 0, 1);
+      renderer.endShape(myp5.CLOSE);
+
+      // Vertex colors are not run through tessy
+      assert.deepEqual(renderer.immediateMode.geometry.vertexStrokeColors, [
+        1, 1, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1
       ]);
 
       done();
@@ -947,6 +1042,359 @@ suite('p5.RendererGL', function() {
         1, 0
       ]);
 
+      done();
+    });
+
+    test('TESS handles vertex data perpendicular to the camera', function(done) {
+      var renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      myp5.textureMode(myp5.NORMAL);
+      renderer.beginShape(myp5.TESS);
+      renderer.vertex(-10, 0, -10);
+      renderer.vertex(10, 0, -10);
+      renderer.vertex(10, 0, 10);
+      renderer.vertex(-10, 0, 10);
+      renderer.endShape(myp5.CLOSE);
+
+      assert.equal(renderer.immediateMode.geometry.vertices.length, 6);
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[0].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[1].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[2].array(),
+        [10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[3].array(),
+        [-10, 0, -10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[4].array(),
+        [10, 0, 10]
+      );
+      assert.deepEqual(
+        renderer.immediateMode.geometry.vertices[5].array(),
+        [-10, 0, 10]
+      );
+
+      done();
+    });
+  });
+
+  suite('color interpolation', function() {
+    test('strokes should interpolate colors between vertices', function(done) {
+      const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
+
+      // far left color: (242, 236, 40)
+      // far right color: (42, 36, 240)
+      // expected middle color: (142, 136, 140)
+
+      renderer.strokeWeight(4);
+      renderer.beginShape();
+      renderer.stroke(242, 236, 40);
+      renderer.vertex(-256, 0);
+      renderer.stroke(42, 36, 240);
+      renderer.vertex(256, 0);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(0, 2), [242, 236, 40, 255]);
+      assert.deepEqual(myp5.get(256, 2), [142, 136, 140, 255]);
+      assert.deepEqual(myp5.get(511, 2), [42, 36, 240, 255]);
+
+      done();
+    });
+
+    test('bezierVertex() should interpolate curFillColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.beginShape();
+      renderer.fill(255);
+      renderer.vertex(-128, -128);
+      renderer.fill(255, 0, 0);
+      renderer.bezierVertex(128, -128, 128, 128, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(128, 128), [255, 129, 129, 255]);
+
+      done();
+    });
+
+    test('bezierVertex() should interpolate curStrokeColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.strokeWeight(5);
+      renderer.beginShape();
+      myp5.noFill();
+      renderer.stroke(255);
+      renderer.vertex(-128, -128);
+      renderer.stroke(255, 0, 0);
+      renderer.bezierVertex(128, -128, 128, 128, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+
+      done();
+    });
+
+    test('quadraticVertex() should interpolate curFillColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.beginShape();
+      renderer.fill(255);
+      renderer.vertex(-128, -128);
+      renderer.fill(255, 0, 0);
+      renderer.quadraticVertex(256, 0, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(128, 128), [255, 128, 128, 255]);
+
+      done();
+    });
+
+    test('quadraticVertex() should interpolate curStrokeColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // start color: (255, 255, 255)
+      // end color: (255, 0, 0)
+      // Intermediate values are expected to be approximately half the value.
+
+      renderer.strokeWeight(5);
+      renderer.beginShape();
+      myp5.noFill();
+      renderer.stroke(255);
+      renderer.vertex(-128, -128);
+      renderer.stroke(255, 0, 0);
+      renderer.quadraticVertex(256, 0, -128, 128);
+      renderer.endShape();
+
+      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+
+      done();
+    });
+
+    test('geometry without stroke colors use curStrokeColor', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+      myp5.background(255);
+      myp5.fill(255);
+      myp5.stroke(0);
+      myp5.strokeWeight(4);
+      myp5.rectMode(myp5.CENTER);
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      assert.equal(renderer._useLineColor, false);
+      assert.deepEqual(myp5.get(128, 0), [0, 0, 0, 255]);
+      done();
+    });
+
+    test('geometry with stroke colors use their colors', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+      const myGeom = new p5.Geometry(1, 1, function() {
+        this.gid = 'strokeColorTest';
+        this.vertices.push(myp5.createVector(-128, -128));
+        this.vertices.push(myp5.createVector(-128, 128));
+        this.vertices.push(myp5.createVector(128, 128));
+        this.vertices.push(myp5.createVector(128, -128));
+        this.faces.push([0, 1, 2]);
+        this.faces.push([0, 2, 3]);
+        this.edges.push([0, 1]);
+        this.edges.push([1, 2]);
+        this.edges.push([2, 3]);
+        this.edges.push([3, 0]);
+        this.vertexStrokeColors.push(
+          0, 0, 0, 1,
+          1, 0, 0, 1,
+          0, 0, 1, 1,
+          0, 1, 0, 1
+        );
+        this._edgesToVertices();
+      });
+      myp5.background(255);
+      myp5.fill(255);
+      myp5.strokeWeight(4);
+      myp5.stroke(0);
+      myp5.model(myGeom);
+
+      assert.equal(renderer._useLineColor, true);
+      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      done();
+    });
+
+    test('immediate mode uses stroke colors', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+      myp5.background(255);
+      myp5.fill(255);
+      myp5.strokeWeight(4);
+      myp5.beginShape();
+      myp5.stroke(0);
+      myp5.vertex(-128, -128);
+      myp5.stroke(255, 0, 0);
+      myp5.vertex(-128, 128);
+      myp5.stroke(0, 0, 255);
+      myp5.vertex(128, 128);
+      myp5.stroke(0, 255, 0);
+      myp5.vertex(128, -128);
+      myp5.endShape(myp5.CLOSE);
+
+      assert.equal(renderer._useLineColor, true);
+      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      done();
+    });
+  });
+
+  suite('interpolation of vertex colors', function(){
+    test('immediate mode uses vertex colors (noLight)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // upper color: (200, 0, 0, 255);
+      // lower color: (0, 0, 200, 255);
+      // expected center color: (100, 0, 100, 255);
+
+      myp5.beginShape();
+      myp5.fill(200, 0, 0);
+      myp5.vertex(-128, -128);
+      myp5.fill(200, 0, 0);
+      myp5.vertex(128, -128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(128, 128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(-128, 128);
+      myp5.endShape(myp5.CLOSE);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+      done();
+    });
+
+    test('immediate mode uses vertex colors (light)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (73, 0, 73, 255).
+
+      myp5.beginShape();
+      myp5.fill(200, 0, 0);
+      myp5.vertex(-128, -128);
+      myp5.fill(200, 0, 0);
+      myp5.vertex(128, -128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(128, 128);
+      myp5.fill(0, 0, 200);
+      myp5.vertex(-128, 128);
+      myp5.endShape(myp5.CLOSE);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [73, 0, 73, 255]);
+      done();
+    });
+
+    test('geom without vertex colors use curFillCol (noLight)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // expected center color is curFillColor.
+
+      myp5.fill(200, 0, 200);
+      myp5.rectMode(myp5.CENTER);
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      assert.equal(renderer._useVertexColor, false);
+      assert.deepEqual(myp5.get(128, 128), [200, 0, 200, 255]);
+      done();
+    });
+
+    test('geom without vertex colors use curFillCol (light)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (146, 0, 146, 255).
+
+      myp5.fill(200, 0, 200);
+      myp5.rectMode(myp5.CENTER);
+      myp5.rect(0, 0, myp5.width, myp5.height);
+
+      assert.equal(renderer._useVertexColor, false);
+      assert.deepEqual(myp5.get(128, 128), [146, 0, 146, 255]);
+      done();
+    });
+
+    test('geom with vertex colors use their color (noLight)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      // upper color: (200, 0, 0, 255);
+      // lower color: (0, 0, 200, 255);
+      // expected center color: (100, 0, 100, 255);
+
+      const myGeom = new p5.Geometry(1, 1, function() {
+        this.gid = 'vertexColorTestWithNoLights';
+        this.vertices.push(myp5.createVector(-128, -128));
+        this.vertices.push(myp5.createVector(128, -128));
+        this.vertices.push(myp5.createVector(128, 128));
+        this.vertices.push(myp5.createVector(-128, 128));
+        this.faces.push([0, 1, 2]);
+        this.faces.push([0, 2, 3]);
+        this.vertexColors.push(
+          200/255, 0, 0, 1,
+          200/255, 0, 0, 1,
+          0, 0, 200/255, 1,
+          0, 0, 200/255, 1
+        );
+        this.computeNormals();
+      });
+
+      myp5.noStroke();
+      myp5.model(myGeom);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
+      done();
+    });
+
+    test('geom with vertex colors use their color (light)', function(done) {
+      const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
+
+      const myGeom = new p5.Geometry(1, 1, function() {
+        this.gid = 'vertexColorTestWithLighs';
+        this.vertices.push(myp5.createVector(-128, -128));
+        this.vertices.push(myp5.createVector(128, -128));
+        this.vertices.push(myp5.createVector(128, 128));
+        this.vertices.push(myp5.createVector(-128, 128));
+        this.faces.push([0, 1, 2]);
+        this.faces.push([0, 2, 3]);
+        this.vertexColors.push(
+          200/255, 0, 0, 1,
+          200/255, 0, 0, 1,
+          0, 0, 200/255, 1,
+          0, 0, 200/255, 1
+        );
+        this.computeNormals();
+      });
+
+      myp5.directionalLight(255, 255, 255, 0, 0, -1);
+      // diffuseFactor:0.73
+      // so, expected color is (73, 0, 73, 255).
+      myp5.noStroke();
+      myp5.model(myGeom);
+
+      assert.equal(renderer._useVertexColor, true);
+      assert.deepEqual(myp5.get(128, 128), [73, 0, 73, 255]);
       done();
     });
   });

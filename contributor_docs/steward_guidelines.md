@@ -24,7 +24,7 @@ Whether you have just joined us as a steward, a seasoned maintainer of p5.js, or
 ---
 
 # Issues
-We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [Github issue templates](./.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
+We encourage most source code contributions to start with an issue and as such issues are the place where most of the discussions will take place. The steps you can take when reviewing an issue will depend on what kind of issue it is. The repo uses [Github issue templates](../.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue author to provide all relevant information about their problem. The first step in reviewing the issue will often be looking through the filled out template and determine if you need additional information (either because some fields weren't filled in or the incorrect template was used).
 
 ## Bug report
 For bug report issues, they should be using the "Found a bug" issue template.
@@ -76,7 +76,7 @@ For feature request issues, they should be using the "New Feature Request" issue
 For feature enhancement issues, they should be using the "Existing Feature Enhancement" issue template. The process here very similar to new feature request. The difference between new feature request and feature enhancement can be blurred however feature enhancement mainly deals with existing functions of p5.js while new feature request could be requesting entirely new functions to be added.
 
 1. Similar to new feature request, feature enhancement should only be accepted if they increases access of p5.js. Please see point 1 of [section above](#feature-request)
-2. Inclusion criterias for feature enhancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
+2. Inclusion criteria for feature enhancement are similar to those for feature request above but particular attention should be paid to potential breaking changes.
 	- If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
 3. Feature enhancements must be approved by at least one steward or maintainer before work should begin towards a PR. The PR review process for feature enhancement is documented below.
 
@@ -95,7 +95,7 @@ Almost all code contribution to the p5.js repositories happens through pull requ
 - Pull request template can be found [here](../.github/PULL_REQUEST_TEMPLATE.md).
 - Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
 	- The only instance where this does not apply are very minor typo fixes, which does not require an opened issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
-	- While this exception exist, we will apply it in practice only but contributors are usually encouraged to open new issues. In other words, if in doubt about whether this exception applies, just open an issue anyway.
+	- While this exception exist, we will apply it in practice only while contributors are usually encouraged to open new issues. In other words, if in doubt about whether this exception applies, just open an issue anyway.
 - If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when this PR is merged.
 
 ## Simple fix
@@ -115,7 +115,7 @@ Simple fix such as small typo fix can be merged directly by anyone with merge ac
 	- A suggestion block can also be used to suggest specific changes
 	- If there are multiple changes that are required, instead of adding single line comments many times, follow the procedure documented [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) to make multiple line comments and single request for changes
 	- If line comments are just for clarification or discussion and not changes are requested yet, in the previous step instead of choosing "Request changes", choose "Comment" instead.
-5. Once the PR has been reviewed and no additional changes are required, a steward and mark the PR as "Approved" by choosing the "Approve" option in the previous step (instead of "Comment" or "Request changes") with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, or merge the PR if they have merge access or a maintainer will merge the approved PR.
+5. Once the PR has been reviewed and no additional changes are required, a steward can mark the PR as "Approved" by choosing the "Approve" option in the previous step (instead of "Comment" or "Request changes") with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, or merge the PR if they have merge access or a maintainer will merge the approved PR.
 6. @all-contributors bot should be called to add any new contributors to the list of contributors in the README.md file.
 ```
 @all-contributors please add @[github handle] for [contribution type]
@@ -285,6 +285,6 @@ There are many other commands available in the GitHub CLI as well that you may o
 ## Managing notifications
 Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name. By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notification to your [notification page](https://github.com/notifications) where they can be marked as read or dismissed much like an email inbox.
 
-In some cases you may received emails from GitHub about events in repo you are watching as well and you can customize these (including unsubcribe from them completely) from your [notifications settings page](https://github.com/settings/notifications).
+In some cases you may received emails from GitHub about events in repo you are watching as well and you can customize these (including unsubscribe from them completely) from your [notifications settings page](https://github.com/settings/notifications).
 
 Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set to only receive email on "Participating, @mentions and custom".

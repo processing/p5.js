@@ -9,7 +9,7 @@ import p5 from '../core/main';
 import canvas from '../core/helpers';
 import * as constants from '../core/constants';
 import omggif from 'omggif';
-import { GIFEncoder, quantize, applyPalette } from 'gifenc';
+import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
 import '../core/friendly_errors/validate_params';
 import '../core/friendly_errors/file_errors';
@@ -104,6 +104,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           e => {
             if (typeof failureCallback === 'function') {
               failureCallback(e);
+              self._decrementPreload();
             } else {
               console.error(e);
             }
@@ -130,6 +131,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
           p5._friendlyFileLoadError(0, img.src);
           if (typeof failureCallback === 'function') {
             failureCallback(e);
+            self._decrementPreload();
           } else {
             console.error(e);
           }
@@ -152,6 +154,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
       p5._friendlyFileLoadError(0, path);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
+        self._decrementPreload();
       } else {
         console.error(e);
       }
@@ -238,18 +241,19 @@ p5.prototype.saveGif = async function(
   if (typeof duration !== 'number') {
     throw TypeError('Duration parameter must be a number');
   }
+
+  // extract variables for more comfortable use
+  const delay = (options && options.delay) || 0;  // in seconds
+  const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
+
   // if arguments in the options object are not correct, cancel operation
-  if (typeof options.delay !== 'number') {
+  if (typeof delay !== 'number') {
     throw TypeError('Delay parameter must be a number');
   }
   // if units is not seconds nor frames, throw error
-  if (options.units !== 'seconds' && options.units !== 'frames') {
+  if (units !== 'seconds' && units !== 'frames') {
     throw TypeError('Units parameter must be either "frames" or "seconds"');
   }
-
-  // extract variables for more comfortable use
-  let units = options.units;
-  let delay = options.delay;
 
   //   console.log(options);
 
@@ -369,72 +373,72 @@ p5.prototype.saveGif = async function(
   // calculate the global palette for this set of frames
   const globalPalette = _generateGlobalPalette(frames);
 
+  // Rather than using applyPalette() from the gifenc library, we use our
+  // own function to map frame pixels to a palette color. This way, we can
+  // cache palette color mappings between frames for extra performance, and
+  // use our own caching mechanism to avoid flickering colors from cache
+  // key collisions.
+  const paletteCache = {};
+  const getIndexedFrame = frame => {
+    const length = frame.length / 4;
+    const index = new Uint8Array(length);
+    for (let i = 0; i < length; i++) {
+      const key =
+        (frame[i * 4] << 24) |
+        (frame[i * 4 + 1] << 16) |
+        (frame[i * 4 + 2] << 8) |
+        frame[i * 4 + 3];
+      if (paletteCache[key] === undefined) {
+        paletteCache[key] = nearestColorIndex(
+          globalPalette,
+          frame.slice(i * 4, (i + 1) * 4)
+        );
+      }
+      index[i] = paletteCache[key];
+    }
+    return index;
+  };
+
   // the way we designed the palette means we always take the last index for transparency
   const transparentIndex = globalPalette.length - 1;
 
   // we are going to iterate the frames in pairs, n-1 and n
+  let prevIndexedFrame = [];
   for (let i = 0; i < frames.length; i++) {
+    //const indexedFrame = applyPalette(frames[i], globalPaletteWithoutAlpha, 'rgba565');
+    const indexedFrame = getIndexedFrame(frames[i]);
+
+    // Make a copy of the palette-applied frame before editing the original
+    // to use transparent pixels
+    const originalIndexedFrame = indexedFrame.slice();
+
     if (i === 0) {
-      const indexedFrame = applyPalette(frames[i], globalPalette, {
-        format: 'rgba4444'
-      });
       gif.writeFrame(indexedFrame, this.width, this.height, {
         palette: globalPalette,
         delay: gifFrameDelay,
         dispose: 1
       });
-      continue;
-    }
-
-    // matching pixels between frames can be set to full transparency,
-    // kinda digging a "hole" into the frame to see the pixels that where behind it
-    // (which would be the exact same, so not noticeable changes)
-    // this helps make the file quite smaller
-    let currFramePixels = frames[i];
-    let lastFramePixels = frames[i - 1];
-    let matchingPixelsInFrames = [];
-    for (let p = 0; p < currFramePixels.length; p += 4) {
-      let currPixel = [
-        currFramePixels[p],
-        currFramePixels[p + 1],
-        currFramePixels[p + 2],
-        currFramePixels[p + 3]
-      ];
-      let lastPixel = [
-        lastFramePixels[p],
-        lastFramePixels[p + 1],
-        lastFramePixels[p + 2],
-        lastFramePixels[p + 3]
-      ];
-
-      // if the pixels are equal, save this index to be used later
-      if (_pixelEquals(currPixel, lastPixel)) {
-        matchingPixelsInFrames.push(p / 4);
+    } else {
+      // Matching pixels between frames can be set to full transparency,
+      // allowing the previous frame's pixels to show through. We only do
+      // this for pixels that get mapped to the same quantized color so that
+      // the resulting image would be the same.
+      for (let i = 0; i < indexedFrame.length; i++) {
+        if (indexedFrame[i] === prevIndexedFrame[i]) {
+          indexedFrame[i] = transparentIndex;
+        }
       }
-    }
-    // we decide on one of this colors to be fully transparent
-    // Apply palette to RGBA data to get an indexed bitmap
-    const indexedFrame = applyPalette(currFramePixels, globalPalette, {
-      format: 'rgba4444'
-    });
 
-    for (let i = 0; i < matchingPixelsInFrames.length; i++) {
-      // here, we overwrite whatever color this pixel was assigned to
-      // with the color that we decided we are going to use as transparent.
-      // down in writeFrame we are going to tell the encoder that whenever
-      // it runs into "transparentIndex", just dig a hole there allowing to
-      // see through what was in the frame before it.
-      let pixelIndex = matchingPixelsInFrames[i];
-      indexedFrame[pixelIndex] = transparentIndex;
+      // Write frame into the encoder
+      gif.writeFrame(indexedFrame, this.width, this.height, {
+        delay: gifFrameDelay,
+        transparent: true,
+        transparentIndex: transparentIndex,
+        dispose: 1
+      });
     }
 
-    // Write frame into the encoder
-    gif.writeFrame(indexedFrame, this.width, this.height, {
-      delay: gifFrameDelay,
-      transparent: true,
-      transparentIndex: transparentIndex,
-      dispose: 1
-    });
+    prevIndexedFrame = originalIndexedFrame;
 
     p.html(
       'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
@@ -499,12 +503,12 @@ function _generateGlobalPalette(frames) {
   // this array will hold absolutely every pixel from the animation.
   // the set function on the Uint8Array works super fast tho!
   for (let f = 0; f < frames.length; f++) {
-    allColors.set(frames[0], f * frames[0].length);
+    allColors.set(frames[f], f * frames[0].length);
   }
 
   // quantize this massive array into 256 colors and return it!
   let colorPalette = quantize(allColors, 256, {
-    format: 'rgba444',
+    format: 'rgba4444',
     oneBitAlpha: true
   });
 
@@ -533,15 +537,6 @@ function _generateGlobalPalette(frames) {
     ]);
   }
   return colorPalette;
-}
-
-function _pixelEquals(a, b) {
-  return (
-    Array.isArray(a) &&
-    Array.isArray(b) &&
-    a.length === b.length &&
-    a.every((val, index) => val === b[index])
-  );
 }
 
 /**

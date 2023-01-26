@@ -32,7 +32,7 @@ import './p5.RenderBuffer';
  */
 p5.RendererGL.prototype.beginShape = function(mode) {
   this.immediateMode.shapeMode =
-    mode !== undefined ? mode : constants.TRIANGLE_FAN;
+    mode !== undefined ? mode : constants.TESS;
   this.immediateMode.geometry.reset();
   return this;
 };
@@ -41,6 +41,7 @@ const immediateBufferStrides = {
   vertices: 1,
   vertexNormals: 1,
   vertexColors: 4,
+  vertexStrokeColors: 4,
   uvs: 2
 };
 
@@ -109,6 +110,13 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[2],
     vertexColor[3]
   );
+  var lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  this.immediateMode.geometry.vertexStrokeColors.push(
+    lineVertexColor[0],
+    lineVertexColor[1],
+    lineVertexColor[2],
+    lineVertexColor[3]
+  );
 
   if (this.textureMode === constants.IMAGE) {
     if (this._tex !== null) {
@@ -116,7 +124,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
         u /= this._tex.width;
         v /= this._tex.height;
       }
-    } else if (this._tex === null && arguments.length >= 4) {
+    } else if (
+      !this.isProcessingVertices &&
+      this._tex === null &&
+      arguments.length >= 4
+    ) {
       // Only throw this warning if custom uv's have  been provided
       console.warn(
         'You must first call texture() before using' +
@@ -179,7 +191,9 @@ p5.RendererGL.prototype.endShape = function(
     );
     return this;
   }
+  this.isProcessingVertices = true;
   this._processVertices(...arguments);
+  this.isProcessingVertices = false;
   if (this._doFill) {
     if (this.immediateMode.geometry.vertices.length > 1) {
       this._drawImmediateFill();
@@ -226,6 +240,7 @@ p5.RendererGL.prototype._processVertices = function(mode) {
   const convexShape = this.immediateMode.shapeMode === constants.TESS;
   // We tesselate when drawing curves or convex shapes
   const shouldTess =
+    this._doFill &&
     (this.isBezier || this.isQuadratic || this.isCurve || convexShape) &&
     this.immediateMode.shapeMode !== constants.LINES;
 
@@ -254,6 +269,13 @@ p5.RendererGL.prototype._calculateEdges = function(
         res.push([i, i + 2]);
       }
       res.push([i, i + 1]);
+      break;
+    case constants.TRIANGLE_FAN:
+      for (i = 1; i < verts.length - 1; i++) {
+        res.push([0, i]);
+        res.push([i, i + 1]);
+      }
+      res.push([0, verts.length - 1]);
       break;
     case constants.TRIANGLES:
       for (i = 0; i < verts.length - 2; i = i + 3) {
@@ -332,7 +354,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
   for (
     let j = 0, polyTriLength = polyTriangles.length;
     j < polyTriLength;
-    j = j + 12
+    j = j + p5.RendererGL.prototype.tessyVertexSize
   ) {
     colors.push(...polyTriangles.slice(j + 5, j + 9));
     this.normal(...polyTriangles.slice(j + 9, j + 12));
@@ -348,6 +370,7 @@ p5.RendererGL.prototype._tesselateShape = function() {
  */
 p5.RendererGL.prototype._drawImmediateFill = function() {
   const gl = this.GL;
+  this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
   const shader = this._getImmediateFillShader();
 
   this._setFillUniforms(shader);
@@ -391,7 +414,14 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
  */
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
+
+  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
+  // Prevent strokes from getting removed by culling
+  gl.disable(gl.CULL_FACE);
+
   const shader = this._getImmediateStrokeShader();
+  this._useLineColor =
+    (this.immediateMode.geometry.vertexStrokeColors.length > 0);
   this._setStrokeUniforms(shader);
   for (const buff of this.immediateMode.buffers.stroke) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
@@ -402,6 +432,9 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     0,
     this.immediateMode.geometry.lineVertices.length
   );
+  if (faceCullingEnabled) {
+    gl.enable(gl.CULL_FACE);
+  }
   shader.unbindShader();
 };
 

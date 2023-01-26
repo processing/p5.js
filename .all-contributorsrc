@@ -3019,6 +3019,15 @@
       ]
     },
     {
+      "login": "sparshg",
+      "name": "sparshg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43041139?v=4",
+      "profile": "https://sparshg.github.io",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
       "login": "liz-peng",
       "name": "Liz Peng",
       "avatar_url": "https://avatars.githubusercontent.com/u/8376256?v=4",
@@ -3237,10 +3246,146 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "raclim",
+      "name": "raclim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43053081?v=4",
+      "profile": "https://github.com/raclim",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "dwight9339",
+      "name": "David White",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25517492?v=4",
+      "profile": "https://github.com/dwight9339",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lf32",
+      "name": "Akhil Raj",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96695352?v=4",
+      "profile": "https://lf32.github.io/Blog",
+      "contributions": [
+        "bug",
+        "doc",
+        "translation",
+        "design",
+        "code"
+      ]
+    },
+    {
+      "login": "Brahvim",
+      "name": "Brahvim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69293652?v=4",
+      "profile": "http://brahvim.github.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "UnityOfFairfax",
+      "name": "UnityOfFairfax",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46071997?v=4",
+      "profile": "https://github.com/UnityOfFairfax",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "inaridarkfox4231",
+      "name": "INARI_DARKFOX",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39549290?v=4",
+      "profile": "https://github.com/inaridarkfox4231",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jwdunn1",
+      "name": "James Dunn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4262131?v=4",
+      "profile": "http://jwilliamdunn.com",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "Malayvasa",
+      "name": "Malay Vasa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22751053?v=4",
+      "profile": "https://github.com/Malayvasa",
+      "contributions": [
+        "design",
+        "code"
+      ]
+    },
+    {
+      "login": "wagedu",
+      "name": "wagedu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1332848?v=4",
+      "profile": "https://github.com/wagedu",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "weslord",
+      "name": "Wes Lord",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1022948?v=4",
+      "profile": "https://weslord.com",
+      "contributions": [
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "pinky-pig",
+      "name": "pinky-pig",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42307398?v=4",
+      "profile": "https://github.com/pinky-pig",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "ChinmayKadam172",
+      "name": "Chinmay Kadam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57569079?v=4",
+      "profile": "https://github.com/ChinmayKadam172",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Prateek462003",
+      "name": "Prateekgit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90177794?v=4",
+      "profile": "https://github.com/Prateek462003",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "aditya-shrivastavv",
+      "name": "Aditya Shrivastav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81470938?v=4",
+      "profile": "http://adityashrivastav.tech",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }

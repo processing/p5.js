@@ -217,17 +217,33 @@ const FontInfo = function(font) {
         return { min, max };
       }
 
+      // Expand the bounding box of the glyph by the number of cells below
+      // before rounding. Curves only partially through a cell won't be added
+      // to adjacent cells, but ones that are close will be. This helps fix
+      // small visual glitches that occur when curves are close to grid cell
+      // boundaries.
+      const cellOffset = 0.5;
+
       // loop through the rows & columns that the curve intersects
       // adding the curve to those slices
       const mmX = minMax(xs, 1, 0);
-      const ixMin = Math.max(Math.floor(mmX.min * charGridWidth), 0);
-      const ixMax = Math.min(Math.ceil(mmX.max * charGridWidth), charGridWidth);
+      const ixMin = Math.max(
+        Math.floor(mmX.min * charGridWidth - cellOffset),
+        0
+      );
+      const ixMax = Math.min(
+        Math.ceil(mmX.max * charGridWidth + cellOffset),
+        charGridWidth
+      );
       for (let iCol = ixMin; iCol < ixMax; ++iCol) cols[iCol].push(index);
 
       const mmY = minMax(ys, 1, 0);
-      const iyMin = Math.max(Math.floor(mmY.min * charGridHeight), 0);
+      const iyMin = Math.max(
+        Math.floor(mmY.min * charGridHeight - cellOffset),
+        0
+      );
       const iyMax = Math.min(
-        Math.ceil(mmY.max * charGridHeight),
+        Math.ceil(mmY.max * charGridHeight + cellOffset),
         charGridHeight
       );
       for (let iRow = iyMin; iRow < iyMax; ++iRow) rows[iRow].push(index);

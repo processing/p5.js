@@ -161,6 +161,9 @@ p5.Renderer2D.prototype.image = function(
   }
 
   try {
+    if (p5.MediaElement && img instanceof p5.MediaElement) {
+      img._ensureCanvas();
+    }
     if (this._tint && img.canvas) {
       cnv = this._getTintedImageCanvas(img);
     }
