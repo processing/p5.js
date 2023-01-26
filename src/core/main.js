@@ -284,8 +284,8 @@ class p5 {
           loadingScreen.parentNode.removeChild(loadingScreen);
         }
         if (!this._setupDone) {
-          this._lastFrameTime = window.performance.now();
-          this._deltaFrame = window.performance.now();
+          this._lastTargetFrameTime = window.performance.now();
+          this._lastRealFrameTime = window.performance.now();
           context._setup();
           context._draw();
         }
@@ -358,8 +358,8 @@ class p5 {
         }
       }
 
-      this._lastFrameTime = window.performance.now();
-      this._deltaFrame = window.performance.now();
+      this._lastTargetFrameTime = window.performance.now();
+      this._lastRealFrameTime = window.performance.now();
       this._setupDone = true;
       if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
         this._updateAccsOutput();
@@ -368,7 +368,7 @@ class p5 {
 
     this._draw = () => {
       const now = window.performance.now();
-      const time_since_last = now - this._lastFrameTime;
+      const time_since_last = now - this._lastTargetFrameTime;
       const target_time_between_frames = 1000 / this._targetFrameRate;
 
       // only draw if we really need to; don't overextend the browser.
@@ -386,12 +386,12 @@ class p5 {
       ) {
         //mandatory update values(matrixes and stack)
         this.redraw();
-        this._frameRate = 1000.0 / (now - this._lastFrameTime);
-        this.deltaTime = now - _this._deltaFrame;
+        this._frameRate = 1000.0 / (now - this._lastTargetFrameTime);
+        this.deltaTime = now - this._lastRealFrameTime;
         this._setProperty('deltaTime', this.deltaTime);
-        this._lastFrameTime = max.Math(_this._lastFrameTime
+        this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
           + target_time_between_frames, now);
-        this._deltaFrame = now;
+        this._lastRealFrameTime = now;
 
         // If the user is actually using mouse module, then update
         // coordinates, otherwise skip. We can test this by simply
