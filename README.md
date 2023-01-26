@@ -602,6 +602,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://adityashrivastav.tech"><img src="https://avatars.githubusercontent.com/u/81470938?v=4?s=100" width="100px;" alt="Aditya Shrivastav"/><br /><sub><b>Aditya Shrivastav</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aaditya-shrivastavv" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=aditya-shrivastavv" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=aditya-shrivastavv" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/davidbmx"><img src="https://avatars.githubusercontent.com/u/12814631?v=4?s=100" width="100px;" alt="David"/><br /><sub><b>David</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Adavidbmx" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=davidbmx" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
