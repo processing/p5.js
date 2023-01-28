@@ -825,7 +825,7 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
   let imageData, index;
   imageData = new Uint8Array(4);
   this.drawingContext.readPixels(
-    x, y, 1, 1,
+    x, this.GL.drawingBufferHeight - y - 1, 1, 1,
     this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
     imageData
   );
@@ -873,6 +873,20 @@ p5.RendererGL.prototype.loadPixels = function() {
     this.GL.RGBA, this.GL.UNSIGNED_BYTE,
     pixels
   );
+
+  // WebGL pixels are inverted compared to 2D pixels, so we have to flip
+  // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
+  const width = this.GL.drawingBufferWidth;
+  const height = this.GL.drawingBufferHeight;
+  const halfHeight = Math.floor(height / 2);
+  const tmpRow = new Uint8Array(width * 4);
+  for (let y = 0; y < halfHeight; y++) {
+    const topOffset = y * width * 4;
+    const bottomOffset = (height - y - 1) * width * 4;
+    tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
+    pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
+    pixels.set(tmpRow, bottomOffset);
+  }
 };
 
 //////////////////////////////////////////////

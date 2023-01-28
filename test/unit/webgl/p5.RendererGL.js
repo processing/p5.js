@@ -46,6 +46,31 @@ suite('p5.RendererGL', function() {
       );
       done();
     });
+
+    test('coplanar strokes match 2D', function(done) {
+      const getColors = function(mode) {
+        myp5.createCanvas(20, 20, mode);
+        myp5.pixelDensity(1);
+        myp5.background(255);
+        myp5.strokeCap(myp5.SQUARE);
+        myp5.strokeJoin(myp5.MITER);
+        if (mode === myp5.WEBGL) {
+          myp5.translate(-myp5.width/2, -myp5.height/2);
+        }
+        myp5.stroke('black');
+        myp5.strokeWeight(4);
+        myp5.fill('red');
+        myp5.rect(10, 10, 15, 15);
+        myp5.fill('blue');
+        myp5.rect(0, 0, 15, 15);
+        myp5.loadPixels();
+        console.log([...myp5.pixels]);
+        return [...myp5.pixels];
+      };
+
+      assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+      done();
+    });
   });
 
   suite('push() and pop() work in WEBGL Mode', function() {
@@ -1123,7 +1148,7 @@ suite('p5.RendererGL', function() {
       renderer.bezierVertex(128, -128, 128, 128, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(128, 128), [255, 129, 129, 255]);
+      assert.deepEqual(myp5.get(128, 127), [255, 129, 129, 255]);
 
       done();
     });
@@ -1144,7 +1169,7 @@ suite('p5.RendererGL', function() {
       renderer.bezierVertex(128, -128, 128, 128, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1163,7 +1188,7 @@ suite('p5.RendererGL', function() {
       renderer.quadraticVertex(256, 0, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(128, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(128, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1184,7 +1209,7 @@ suite('p5.RendererGL', function() {
       renderer.quadraticVertex(256, 0, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1232,7 +1257,7 @@ suite('p5.RendererGL', function() {
       myp5.model(myGeom);
 
       assert.equal(renderer._useLineColor, true);
-      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      assert.deepEqual(myp5.get(128, 255), [127, 0, 128, 255]);
       done();
     });
 
@@ -1253,7 +1278,7 @@ suite('p5.RendererGL', function() {
       myp5.endShape(myp5.CLOSE);
 
       assert.equal(renderer._useLineColor, true);
-      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      assert.deepEqual(myp5.get(128, 255), [127, 0, 128, 255]);
       done();
     });
   });
@@ -1416,6 +1441,7 @@ suite('p5.RendererGL', function() {
       });
 
       myp5.fill(255);
+      myp5.noStroke();
       myp5.directionalLight(255, 255, 255, 0, 0, -1);
 
       myp5.triangle(-8, -8, 8, -8, 8, 8);
