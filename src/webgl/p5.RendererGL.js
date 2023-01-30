@@ -707,8 +707,6 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   // any impact and causes problems with specularMaterial
   if(arguments[3]===undefined){
     arguments[3] = 255;
-    console.warn(
-      'Default opaque stroke is used if not the optional fourth argument is not specified in stroke method');
   }
   // arguments[3]=255;
   const color = p5.prototype.color.apply(this._pInst, arguments);
