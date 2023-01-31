@@ -703,9 +703,9 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
  * black canvas with purple cube with pink outline spinning
  */
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
-  //@todo allow transparency in stroking currently doesn't have
-  //any impact and causes problems with specularMaterial
-  arguments[3] = 255;
+  if(arguments[3] === undefined){
+    arguments[3] = 255;
+  }
   const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
 };
