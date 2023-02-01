@@ -3413,6 +3413,15 @@
         "tutorial",
         "example"
       ]
+    },
+    {
+      "login": "ltciro",
+      "name": "Laura Ciro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26748227?v=4",
+      "profile": "https://github.com/ltciro",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
