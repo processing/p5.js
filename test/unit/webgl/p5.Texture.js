@@ -2,6 +2,9 @@ suite('p5.Texture', function() {
   var myp5;
   var texImg1;
   var texImg2;
+  var texImg3;
+  var imgElementNotPowerOfTwo;
+  var imgElementPowerOfTwo;
   var canvas;
 
   if (!window.Modernizr.webgl) {
@@ -12,8 +15,10 @@ suite('p5.Texture', function() {
   setup(function(done) {
     myp5 = new p5(function(p) {
       p.preload = function() {
+        // texImg2 must have powerOfTwo dimensions
         texImg2 = p.loadImage('unit/assets/target.gif');
-
+        // texImg3 must NOT have powerOfTwo dimensions
+        texImg3 = p.loadImage('unit/assets/nyan_cat.gif');
         // texture object isn't created until it's used for something:
         //p.box(70, 70, 70);
       };
@@ -21,6 +26,16 @@ suite('p5.Texture', function() {
         canvas = p.createCanvas(100, 100, p.WEBGL);
         texImg1 = p.createGraphics(2, 2, p.WEBGL);
         p.texture(texImg1);
+        p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
+          el.size(50, 50);
+          imgElementPowerOfTwo = el;
+          p.texture(imgElementPowerOfTwo);
+        });
+        p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
+          el.size(50, 50);
+          imgElementNotPowerOfTwo = el;
+          p.texture(imgElementNotPowerOfTwo);
+        });
         done();
       };
     });
@@ -86,6 +101,18 @@ suite('p5.Texture', function() {
       tex.setWrapMode(myp5.MIRROR, myp5.MIRROR);
       assert.deepEqual(tex.glWrapS, myp5._renderer.GL.MIRRORED_REPEAT);
       assert.deepEqual(tex.glWrapT, myp5._renderer.GL.MIRRORED_REPEAT);
+    });
+    test('Set wrap mode REPEAT if src dimensions is powerOfTwo', function() {
+      const tex = myp5._renderer.getTexture(imgElementPowerOfTwo);
+      tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
+    });
+    test('Set default wrap mode CLAMP if src dimensions != powerOfTwo', function() {
+      const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
+      tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
     });
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
