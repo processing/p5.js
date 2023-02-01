@@ -476,10 +476,10 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       break;
     case gl.SAMPLER_2D:
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      uniform.texture = data instanceof p5.Texture  ?
+      uniform.texture = data instanceof p5.Texture ?
         data : this._renderer.getTexture(data);
       gl.uniform1i(location, uniform.samplerIndex);
-      if (uniform.texture.src.gifProperties){
+      if (uniform.texture.src.gifProperties) {
         uniform.texture.src._animateGif(this._renderer._pInst);
       }
       break;
