@@ -3400,6 +3400,19 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "alptugan",
+      "name": "Alp Tuğan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/315287?v=4",
+      "profile": "https://github.com/alptugan",
+      "contributions": [
+        "code",
+        "plugin",
+        "tool",
+        "tutorial",
+        "example"
+      ]
     }
   ],
   "repoType": "github",
