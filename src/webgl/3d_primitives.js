@@ -1995,6 +1995,7 @@ p5.RendererGL.prototype.image = function(
 
   this._pInst.noLights();
 
+  noStroke();
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
