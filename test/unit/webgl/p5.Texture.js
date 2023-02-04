@@ -25,18 +25,24 @@ suite('p5.Texture', function() {
       p.setup = function() {
         canvas = p.createCanvas(100, 100, p.WEBGL);
         texImg1 = p.createGraphics(2, 2, p.WEBGL);
-        p.texture(texImg1);
-        p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
-          el.size(50, 50);
-          imgElementPowerOfTwo = el;
-          p.texture(imgElementPowerOfTwo);
+        new Promise(resolve => {
+          p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
+            el.size(50, 50);
+            imgElementPowerOfTwo = el;
+            p.texture(imgElementPowerOfTwo);
+            resolve();
+          });
+        }).then(() => new Promise(resolve => {
+          p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
+            el.size(50, 50);
+            imgElementNotPowerOfTwo = el;
+            p.texture(imgElementNotPowerOfTwo);
+            resolve();
+          });
+        })).then(() => {
+          p.texture(texImg1);
+          done();
         });
-        p.createImg(texImg3.canvas.toDataURL(), '', 'anonymous', el => {
-          el.size(50, 50);
-          imgElementNotPowerOfTwo = el;
-          p.texture(imgElementNotPowerOfTwo);
-        });
-        done();
       };
     });
   });
