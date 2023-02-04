@@ -180,8 +180,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * will be created. If 'frames', the arguments now correspond to the number of frames you want your
  * animation to be, if you are very sure of this number.
  *
- * It is not recommended to write this function inside setup, since it won't work properly.
- * The recommended use can be seen in the example, where we use it inside an event function,
+ * This may be called in setup, or, like in the example below, inside an event function,
  * like keyPressed or mousePressed.
  *
  * @method saveGif
@@ -255,7 +254,7 @@ p5.prototype.saveGif = async function(
     throw TypeError('Units parameter must be either "frames" or "seconds"');
   }
 
-  //   console.log(options);
+  this._recording = true;
 
   // get the project's framerate
   let _frameRate = this._targetFrameRate;
@@ -460,6 +459,7 @@ p5.prototype.saveGif = async function(
   });
 
   frames = [];
+  this._recording = false;
   this.loop();
 
   p.html('Done. Downloading your gif!🌸');
