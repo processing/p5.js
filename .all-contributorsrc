@@ -3422,6 +3422,17 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "kate-grant",
+      "name": "Kate Grant",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61399166?v=4",
+      "profile": "https://www.linkedin.com/in/kate-grant-dev/",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
