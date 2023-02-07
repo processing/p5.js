@@ -334,9 +334,21 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   // if it isn't we will set the wrap mode to CLAMP
   // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
   const isPowerOfTwo = x => (x & (x - 1)) === 0;
+  const textureData = this._getTextureDataFromSource();
 
-  const widthPowerOfTwo = isPowerOfTwo(this.width);
-  const heightPowerOfTwo = isPowerOfTwo(this.height);
+  let wrapWidth;
+  let wrapHeight;
+
+  if (textureData.naturalWidth && textureData.naturalHeight) {
+    wrapWidth = textureData.naturalWidth;
+    wrapHeight = textureData.naturalHeight;
+  } else {
+    wrapWidth = this.width;
+    wrapHeight = this.height;
+  }
+
+  const widthPowerOfTwo = isPowerOfTwo(wrapWidth);
+  const heightPowerOfTwo = isPowerOfTwo(wrapHeight);
 
   if (wrapX === constants.REPEAT) {
     if (widthPowerOfTwo && heightPowerOfTwo) {
