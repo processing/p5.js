@@ -3433,6 +3433,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "yogitheboss",
+      "name": "Yograj Rajput",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91418287?v=4",
+      "profile": "https://github.com/yogitheboss",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "repoType": "github",
