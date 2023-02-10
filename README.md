@@ -609,6 +609,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/kate-grant-dev/"><img src="https://avatars.githubusercontent.com/u/61399166?v=4?s=100" width="100px;" alt="Kate Grant"/><br /><sub><b>Kate Grant</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Akate-grant" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=kate-grant" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=kate-grant" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/yogitheboss"><img src="https://avatars.githubusercontent.com/u/91418287?v=4?s=100" width="100px;" alt="Yograj Rajput"/><br /><sub><b>Yograj Rajput</b></sub></a><br /><a href="#example-yogitheboss" title="Examples">💡</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.holomorfo.com"><img src="https://avatars.githubusercontent.com/u/9595617?v=4?s=100" width="100px;" alt="Dr. Holomorfo"/><br /><sub><b>Dr. Holomorfo</b></sub></a><br /><a href="#translation-holomorfo" title="Translation">🌍</a></td>
+    </tr>
   </tbody>
 </table>
 
