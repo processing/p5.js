@@ -3442,6 +3442,15 @@
       "contributions": [
         "example"
       ]
+    },
+    {
+      "login": "holomorfo",
+      "name": "Dr. Holomorfo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9595617?v=4",
+      "profile": "http://www.holomorfo.com",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
