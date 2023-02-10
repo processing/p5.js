@@ -449,7 +449,6 @@ suite('p5.Camera', function() {
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
-
     test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi <= 0', function() {
       // the following should produce the upY with inverted direction(from 1 to -1)
       // when camPhi changes from positive to negative or zero
@@ -458,7 +457,6 @@ suite('p5.Camera', function() {
       // myCam.upY should be -1
       assert(myCam.upY === -1);
     });
-
     test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi <= 0', function() {
       // the following should produce the upY with inverted direction(from -1 to 1)
       // when camPhi changes from negative to positive or zero
@@ -468,7 +466,6 @@ suite('p5.Camera', function() {
       // myCam.upY should be 1
       assert(myCam.upY === 1);
     });
-
     test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi >= PI', function() {
       // the following should produce the upY with inverted direction(from 1 to -1)
       // when camPhi reaches PI
@@ -477,7 +474,6 @@ suite('p5.Camera', function() {
       // myCam.upY should be -1
       assert(myCam.upY === -1);
     });
-
     test('_orbit() ensures myCam.upY switches direction (from -1 to 1) at camPhi >= PI', function() {
       // the following should produce the upY with inverted direction(from -1 to 1)
       // when camPhi reaches PI
@@ -487,7 +483,6 @@ suite('p5.Camera', function() {
       // myCam.upY should be 1
       assert(myCam.upY === 1);
     });
-
     test('_orbit() ensures camera can do multiple continuous 360deg rotations', function() {
       // the following should produce same values as myCam does a 360deg rotation twice
       var myCamCopy = myCam.copy();
@@ -495,27 +490,6 @@ suite('p5.Camera', function() {
       // upY should switch from 1 to -1, then to 1 again
       assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
     });
-    /*
-    test('_orbit() ensures altitude phi <= PI', function() {
-      var myCamCopy = myCam.copy();
-
-      // the following should produce the same values because phi is capped at PI
-      myCamCopy._orbit(0, 10, 0);
-      myCam._orbit(0, 20, 0);
-
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
-    });
-    test('_orbit() ensures altitude phi > 0', function() {
-      var myCamCopy = myCam.copy();
-
-      // the following should produce the same values because phi is restricted
-      // to > 0
-      myCamCopy._orbit(0, -10, 0);
-      myCam._orbit(0, -20, 0);
-
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
-    });
-    */
     test('_orbit() ensures radius > 0', function() {
       var myCamCopy = myCam.copy();
 

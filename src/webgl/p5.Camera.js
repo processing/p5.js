@@ -1733,9 +1733,6 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   if (camRadius < 0) {
     camRadius = 0.1;
   }
-
-  // prevent rotation over the zenith / under bottom
-
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
   const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
   const _y = Math.cos(camPhi) * camRadius;
