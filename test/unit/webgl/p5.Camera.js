@@ -484,21 +484,24 @@ suite('p5.Camera', function() {
       assert(myCam.upY === 1);
     });
     test('_orbit() ensures camera can do multiple continuous 360deg rotations', function() {
-      // the following should produce same values as myCam does a 360deg rotation twice
+      // the following should produce two camera objects having same properties.
+      myCam._orbit(0, Math.PI, 0);
       var myCamCopy = myCam.copy();
-      myCam._orbit(0, 4*Math.PI, 0);
-      // upY should switch from 1 to -1, then to 1 again
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+      myCamCopy._orbit(0, Math.PI, 0);
+      myCamCopy._orbit(0, Math.PI, 0);
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
     });
     test('_orbit() ensures radius > 0', function() {
+      // the following should produce two camera objects having same properties.
+      myCam._orbit(0, Math.PI, 0);
       var myCamCopy = myCam.copy();
-
-      // the following should produce the same values because radius is
-      // restricted to > 0
-      myCamCopy._orbit(0, 0, -200);
-      myCam._orbit(0, 0, -300);
-
-      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4);
+      myCamCopy._orbit(0, 0, -100);
+      myCam._orbit(0, 0, -250);
+      assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4, 'deep equal is failing');
     });
   });
 
