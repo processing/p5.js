@@ -208,7 +208,7 @@ function doNf(num, left, right) {
   if (typeof right === 'undefined') {
     let [leftPart, rightPart] = numStr.split('.');
     leftPart = leftPart.padStart(left, '0');
-    return right ? leftPart + '.' + rightPart : leftPart;
+    return rightPart ? leftPart + '.' + rightPart : leftPart;
   } else {
     let RoundedOff = parseFloat(numStr).toFixed(right);
     let [leftPart, rightPart] = RoundedOff.split('.');
