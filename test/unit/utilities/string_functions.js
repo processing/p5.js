@@ -79,7 +79,7 @@ suite('String functions', function() {
     test('should return correct string', function() {
       var num = 3.141516e-7;
       result = myp5.nf(num, '3'); // automatic conversion?
-      assert.equal(result, '000');
+      assert.equal(result, '000.0000003141516');
     });
 
     test('should return correct string', function() {
