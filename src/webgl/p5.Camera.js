@@ -1720,12 +1720,14 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   let camTheta = Math.atan2(diffX, diffZ); // equatorial angle
   let camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
-  // add change according to the direction of this.upY
-  let directionflag = this.upY > 0 ? 1 : -1;
-  camTheta += directionflag*dTheta;
-  camPhi += directionflag*dPhi;
-  if (camPhi <= 0 || camPhi>=Math.PI) {
-    directionflag *= -1;
+  let newUpY = this.upY > 0 ? 1 : -1;
+  // add change according to the direction of newupY
+  camTheta += newUpY * dTheta;
+  camPhi += newUpY * dPhi;
+  // if camPhi becomes >= PI or <= 0,
+  // upY of camera need to be flipped to the other side
+  if (camPhi <= 0 || camPhi >= Math.PI) {
+    newUpY *= -1;
   }
 
   camRadius += dRadius;
@@ -1746,7 +1748,7 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     this.centerY,
     this.centerZ,
     0,
-    directionflag,
+    newUpY,
     0
   );
 };
