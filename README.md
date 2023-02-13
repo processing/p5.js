@@ -611,6 +611,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.holomorfo.com"><img src="https://avatars.githubusercontent.com/u/9595617?v=4?s=100" width="100px;" alt="Dr. Holomorfo"/><br /><sub><b>Dr. Holomorfo</b></sub></a><br /><a href="#translation-holomorfo" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://p5play.org"><img src="https://avatars.githubusercontent.com/u/20031683?v=4?s=100" width="100px;" alt="Quinton Ashley"/><br /><sub><b>Quinton Ashley</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=quinton-ashley" title="Code">💻</a> <a href="https://github.com/processing/p5.js/issues?q=author%3Aquinton-ashley" title="Bug reports">🐛</a> <a href="#plugin-quinton-ashley" title="Plugin/utility libraries">🔌</a></td>
     </tr>
   </tbody>
 </table>
