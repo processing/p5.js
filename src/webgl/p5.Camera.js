@@ -1720,23 +1720,21 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   let camTheta = Math.atan2(diffX, diffZ); // equatorial angle
   let camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
 
-  // add change
-  camTheta += dTheta;
-  camPhi += dPhi;
-  camRadius += dRadius;
+  let newUpY = this.upY > 0 ? 1 : -1;
+  // add change according to the direction of newupY
+  camTheta += newUpY * dTheta;
+  camPhi += newUpY * dPhi;
+  // if camPhi becomes >= PI or <= 0,
+  // upY of camera need to be flipped to the other side
+  if (camPhi <= 0 || camPhi >= Math.PI) {
+    newUpY *= -1;
+  }
 
+  camRadius += dRadius;
   // prevent zooming through the center:
   if (camRadius < 0) {
     camRadius = 0.1;
   }
-
-  // prevent rotation over the zenith / under bottom
-  if (camPhi > Math.PI) {
-    camPhi = Math.PI;
-  } else if (camPhi <= 0) {
-    camPhi = 0.001;
-  }
-
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
   const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
   const _y = Math.cos(camPhi) * camRadius;
@@ -1750,7 +1748,7 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     this.centerY,
     this.centerZ,
     0,
-    1,
+    newUpY,
     0
   );
 };
