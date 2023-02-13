@@ -75,6 +75,24 @@ suite('String functions', function() {
       result = myp5.nf(num, '2', '2'); // automatic conversion?
       assert.equal(result, '03.14');
     });
+
+    test('should return correct string', function() {
+      var num = 3.141516e-7;
+      result = myp5.nf(num, '3'); // automatic conversion?
+      assert.equal(result, '000');
+    });
+
+    test('should return correct string', function() {
+      var num = 3.141516e-2;
+      result = myp5.nf(num, '3', '4'); // automatic conversion?
+      assert.equal(result, '000.0314');
+    });
+
+    test('should return correct string', function() {
+      var num = 3.141516e7;
+      result = myp5.nf(num, '3', '4'); // automatic conversion?
+      assert.equal(result, '31415160.0000');
+    });
   });
 
   suite('p5.prototype.nfc', function() {
