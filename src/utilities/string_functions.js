@@ -200,25 +200,38 @@ p5.prototype.nf = function(nums, left, right) {
   }
 };
 
+function convertToDecimal(n) {
+  var sign = +n < 0 ? '-' : '',
+    toStr = n.toString();
+  if (!/e/i.test(toStr)) {
+    return n;
+  }
+  var [lead, decimal, pow] = n.toString()
+    .replace(/^-/, '')
+    .replace(/^([0-9]+)(e.*)/, '$1.$2')
+    .split(/e|\./);
+  return +pow < 0 ?
+    (sign + '0.' + '0'.repeat(Math.max(Math.abs(pow) - 1 || 0, 0)) + lead + decimal
+    ) : (sign + lead + (+pow >= decimal.length) ?
+      (decimal + '0'.repeat(Math.max(+pow - decimal.length || 0, 0))
+      ) : (decimal.slice(0, +pow) + '.' + decimal.slice(+pow)));
+}
+
 function doNf(num, left, right) {
   let numStr = num.toString();
-  const numArray = numStr.split('.');
-  let leftPart = numArray[0];
-  const timesToLoop = left - leftPart.length;
-
-  if (typeof right === 'undefined') {
-    for (let i = 0; i < timesToLoop; i++) {
-      numStr = '0' + numStr;
-    }
-    return numStr;
-  } else {
-    let rightRounded = num.toFixed(right);
-    numStr = rightRounded.toString();
-    for (let i = 0; i < timesToLoop; i++) {
-      numStr = '0' + numStr;
-    }
+  if (numStr.includes('e')) {
+    numStr = convertToDecimal(num);
   }
-  return numStr;
+  if (typeof right === 'undefined') {
+    let [leftPart, rightPart] = numStr.split('.');
+    leftPart = leftPart.padStart(left, '0');
+    return right ? leftPart + '.' + rightPart : leftPart;
+  } else {
+    let RoundedOff = parseFloat(numStr).toFixed(right);
+    let [leftPart, rightPart] = RoundedOff.split('.');
+    leftPart = leftPart.padStart(left, '0');
+    return leftPart + '.' + rightPart;
+  }
 }
 
 /**
