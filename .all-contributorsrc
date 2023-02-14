@@ -3451,6 +3451,17 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "quinton-ashley",
+      "name": "Quinton Ashley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20031683?v=4",
+      "profile": "http://p5play.org",
+      "contributions": [
+        "code",
+        "bug",
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",
