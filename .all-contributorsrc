@@ -3433,6 +3433,24 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "yogitheboss",
+      "name": "Yograj Rajput",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91418287?v=4",
+      "profile": "https://github.com/yogitheboss",
+      "contributions": [
+        "example"
+      ]
+    },
+    {
+      "login": "holomorfo",
+      "name": "Dr. Holomorfo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9595617?v=4",
+      "profile": "http://www.holomorfo.com",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",

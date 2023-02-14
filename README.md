@@ -607,6 +607,10 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://alptugan.com"><img src="https://avatars.githubusercontent.com/u/315287?v=4?s=100" width="100px;" alt="alp tuğan"/><br /><sub><b>alp tuğan</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=alptugan" title="Code">💻</a> <a href="#plugin-alptugan" title="Plugin/utility libraries">🔌</a> <a href="#tool-alptugan" title="Tools">🔧</a> <a href="#tutorial-alptugan" title="Tutorials">✅</a> <a href="#example-alptugan" title="Examples">💡</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ltciro"><img src="https://avatars.githubusercontent.com/u/26748227?v=4?s=100" width="100px;" alt="Laura Ciro"/><br /><sub><b>Laura Ciro</b></sub></a><br /><a href="#translation-ltciro" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/kate-grant-dev/"><img src="https://avatars.githubusercontent.com/u/61399166?v=4?s=100" width="100px;" alt="Kate Grant"/><br /><sub><b>Kate Grant</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Akate-grant" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=kate-grant" title="Code">💻</a> <a href="https://github.com/processing/p5.js/commits?author=kate-grant" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/yogitheboss"><img src="https://avatars.githubusercontent.com/u/91418287?v=4?s=100" width="100px;" alt="Yograj Rajput"/><br /><sub><b>Yograj Rajput</b></sub></a><br /><a href="#example-yogitheboss" title="Examples">💡</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.holomorfo.com"><img src="https://avatars.githubusercontent.com/u/9595617?v=4?s=100" width="100px;" alt="Dr. Holomorfo"/><br /><sub><b>Dr. Holomorfo</b></sub></a><br /><a href="#translation-holomorfo" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
