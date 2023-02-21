@@ -616,6 +616,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://www.hernanivillasenor.com"><img src="https://avatars.githubusercontent.com/u/8923320?v=4?s=100" width="100px;" alt="hvillase"/><br /><sub><b>hvillase</b></sub></a><br /><a href="#translation-hvillase" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://shivanshsharma13.github.io/"><img src="https://avatars.githubusercontent.com/u/68982304?v=4?s=100" width="100px;" alt="Shivansh Sharma"/><br /><sub><b>Shivansh Sharma</b></sub></a><br /><a href="#translation-shivanshsharma13" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Elliot-Hernandez"><img src="https://avatars.githubusercontent.com/u/86040553?v=4?s=100" width="100px;" alt="Elliot-Hernandez"/><br /><sub><b>Elliot-Hernandez</b></sub></a><br /><a href="#translation-Elliot-Hernandez" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hunahpu18"><img src="https://avatars.githubusercontent.com/u/101674270?v=4?s=100" width="100px;" alt="hunahpu18"/><br /><sub><b>hunahpu18</b></sub></a><br /><a href="#translation-hunahpu18" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
