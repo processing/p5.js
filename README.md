@@ -618,6 +618,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Elliot-Hernandez"><img src="https://avatars.githubusercontent.com/u/86040553?v=4?s=100" width="100px;" alt="Elliot-Hernandez"/><br /><sub><b>Elliot-Hernandez</b></sub></a><br /><a href="#translation-Elliot-Hernandez" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hunahpu18"><img src="https://avatars.githubusercontent.com/u/101674270?v=4?s=100" width="100px;" alt="hunahpu18"/><br /><sub><b>hunahpu18</b></sub></a><br /><a href="#translation-hunahpu18" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://dewanshthakur.vercel.app"><img src="https://avatars.githubusercontent.com/u/71703033?v=4?s=100" width="100px;" alt="Dewansh Thakur"/><br /><sub><b>Dewansh Thakur</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AdewanshDT" title="Bug reports">🐛</a></td>
+    </tr>
   </tbody>
 </table>
 
