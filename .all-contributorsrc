@@ -3507,6 +3507,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "dewanshDT",
+      "name": "Dewansh Thakur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71703033?v=4",
+      "profile": "http://dewanshthakur.vercel.app",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
