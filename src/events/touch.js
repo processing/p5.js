@@ -13,7 +13,8 @@ import p5 from '../core/main';
  * unique touch as it moves. Each element in the array is an object with x, y,
  * and id properties.
  *
- * The touches[] array is not supported in IE on touch-based devices.
+ * The touches[] array is not supported on Safari and IE on touch-based
+ * desktops (laptops).
  *
  * @property {Object[]} touches
  * @readOnly
