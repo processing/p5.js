@@ -390,10 +390,10 @@ class p5 {
         time_since_last >= target_time_between_frames - epsilon
       ) {
         //mandatory update values(matrixes and stack)
-        this.redraw();
-        this._frameRate = 1000.0 / (now - this._lastRealFrameTime);
         this.deltaTime = now - this._lastRealFrameTime;
         this._setProperty('deltaTime', this.deltaTime);
+        this._frameRate = 1000.0 / this.deltaTime;
+        this.redraw();
         this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
           + target_time_between_frames, now);
         this._lastRealFrameTime = now;
