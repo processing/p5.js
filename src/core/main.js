@@ -729,6 +729,36 @@ p5.instance = null;
  */
 p5.disableFriendlyErrors = false;
 
+/**
+ * Normally, p5 will try to create a WebGL2 context when using either
+ * `createCanvas(width, height, WEBGL)` or `createCanvas(width, height, WEBGL)`,
+ * and will fall back to a WebGL1 context if WebGL2 is not available. If you
+ * want to always use a WebGL1 context, you can set `p5.disableWebGL2 = true`.
+ *
+ * @property {Boolean} disableWebGL2
+ * @example
+ * <div><code>
+ * // Comment this out to use WebGL 2
+ * p5.disableWebGL2 = true;
+ *
+ * let myFont;
+ * function preload() {
+ *   myFont = loadFont('assets/inconsolata.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 50, WEBGL);
+ *   textFont(myFont);
+ *   fill(0);
+ *   text('WebGL' + (webglVersion === WEBGL2 ? 2 : 1), 0, 0);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * This writes 'WebGL1' on the canvas, indicating that WebGL1 mode
+ * is being used instead of WebGL2.
+ */
+p5.disableWebGL2 = false;
+
 // attach constants to p5 prototype
 for (const k in constants) {
   p5.prototype[k] = constants[k];

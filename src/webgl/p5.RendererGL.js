@@ -33,6 +33,10 @@ const lightingShader = readFileSync(
   join(__dirname, '/shaders/lighting.glsl'),
   'utf-8'
 );
+const webgl2CompatibilityShader = readFileSync(
+  join(__dirname, '/shaders/webgl2Compatibility.glsl'),
+  'utf-8'
+);
 
 const defaultShaders = {
   immediateVert: readFileSync(
@@ -61,8 +65,10 @@ const defaultShaders = {
   phongFrag:
     lightingShader +
     readFileSync(join(__dirname, '/shaders/phong.frag'), 'utf-8'),
-  fontVert: readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
-  fontFrag: readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
+  fontVert: webgl2CompatibilityShader +
+    readFileSync(join(__dirname, '/shaders/font.vert'), 'utf-8'),
+  fontFrag: webgl2CompatibilityShader +
+    readFileSync(join(__dirname, '/shaders/font.frag'), 'utf-8'),
   lineVert:
     lineDefs + readFileSync(join(__dirname, '/shaders/line.vert'), 'utf-8'),
   lineFrag:
@@ -125,7 +131,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   this.curBlendMode = constants.BLEND;
   this._cachedBlendMode = undefined;
-  this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+  if (this.webglVersion === constants.WEBGL2) {
+    this.blendExt = this.GL;
+  } else {
+    this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+  }
   this._isBlending = false;
 
   this._useSpecularMaterial = false;
@@ -288,9 +298,24 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
 };
 
 p5.RendererGL.prototype._initContext = function() {
-  this.drawingContext =
-    this.canvas.getContext('webgl', this._pInst._glAttributes) ||
-    this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
+  if (!p5.disableWebGL2) {
+    // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
+    this.drawingContext =
+      this.canvas.getContext('webgl2', this._pInst._glAttributes);
+  }
+  this.webglVersion = this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
+  if (this._isMainCanvas) {
+    // If this is the main canvas, make sure the global `webglVersion` is set
+    this._pInst._setProperty('webglVersion', this.webglVersion);
+  }
+  if (!this.drawingContext) {
+    // If we were unable to create a WebGL2 context (either because it was
+    // disabled via `p5.disableWebGL2` or because the device doesn't support
+    // it), fall back to a WebGL1 context
+    this.drawingContext =
+      this.canvas.getContext('webgl', this._pInst._glAttributes) ||
+      this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
+  }
   if (this.drawingContext === null) {
     throw new Error('Error creating webgl context');
   } else {
@@ -1251,14 +1276,37 @@ p5.RendererGL.prototype._getLineShader = function() {
 
 p5.RendererGL.prototype._getFontShader = function() {
   if (!this._defaultFontShader) {
-    this.GL.getExtension('OES_standard_derivatives');
+    if (this.webglVersion === constants.WEBGL) {
+      this.GL.getExtension('OES_standard_derivatives');
+    }
     this._defaultFontShader = new p5.Shader(
       this,
-      defaultShaders.fontVert,
-      defaultShaders.fontFrag
+      this._webGL2CompatibilityPrefix('vert', 'mediump') +
+        defaultShaders.fontVert,
+      this._webGL2CompatibilityPrefix('frag', 'mediump') +
+        defaultShaders.fontFrag
     );
   }
   return this._defaultFontShader;
+};
+
+p5.RendererGL.prototype._webGL2CompatibilityPrefix = function(
+  shaderType,
+  floatPrecision
+) {
+  let code = '';
+  if (this.webglVersion === constants.WEBGL2) {
+    code += '#version 300 es\n#define WEBGL2\n';
+  }
+  if (shaderType === 'vert') {
+    code += '#define VERTEX_SHADER\n';
+  } else if (shaderType === 'frag') {
+    code += '#define FRAGMENT_SHADER\n';
+  }
+  if (floatPrecision) {
+    code += `precision ${floatPrecision} float;\n`;
+  }
+  return code;
 };
 
 p5.RendererGL.prototype._getEmptyTexture = function() {

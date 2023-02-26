@@ -370,6 +370,35 @@ p5.prototype.noCursor = function() {
 };
 
 /**
+ * If the was created in WebGL mode, then `weglVersion` will indicate which
+ * version of WebGL it is using. It will try to create a WebGL2 canvas unless
+ * you have set `p5.disableWebGL2 = true`, and will fall back to WebGL1 if
+ * WebGL2 is not available.
+ *
+ * `webglVersion` will always be either `WEBGL2` or `WEBGL`.
+ * @property {String} webglVersion
+ * @readOnly
+ * @example
+ * <div><code>
+ * let myFont;
+ * function preload() {
+ *   myFont = loadFont('assets/inconsolata.otf');
+ * }
+ * function setup() {
+ *   createCanvas(100, 50, WEBGL);
+ *   textFont(myFont);
+ *   fill(0);
+ *   text('WebGL' + (webglVersion === WEBGL2 ? 2 : 1), 0, 0);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * This example writes either 'WebGL1' or 'WebGL2' on the canvas, depending on
+ * the capabilities of the device it runs on.
+ */
+p5.prototype.webglVersion = C.WEBGL2;
+
+/**
  * System variable that stores the width of the screen display according to The
  * default <a href="#/p5/pixelDensity">pixelDensity</a>. This is used to run a
  * full-screen program on any display size. To return actual screen size,
