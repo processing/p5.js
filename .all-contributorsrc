@@ -3462,6 +3462,69 @@
         "bug",
         "plugin"
       ]
+    },
+    {
+      "login": "ninioArtillero",
+      "name": "Xavier Góngora",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64996634?v=4",
+      "profile": "https://github.com/ninioArtillero",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "hvillase",
+      "name": "hvillase",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8923320?v=4",
+      "profile": "http://www.hernanivillasenor.com",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "shivanshsharma13",
+      "name": "Shivansh Sharma",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68982304?v=4",
+      "profile": "http://shivanshsharma13.github.io/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Elliot-Hernandez",
+      "name": "Elliot-Hernandez",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86040553?v=4",
+      "profile": "https://github.com/Elliot-Hernandez",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "hunahpu18",
+      "name": "hunahpu18",
+      "avatar_url": "https://avatars.githubusercontent.com/u/101674270?v=4",
+      "profile": "https://github.com/hunahpu18",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "dewanshDT",
+      "name": "Dewansh Thakur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71703033?v=4",
+      "profile": "http://dewanshthakur.vercel.app",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "konstantinstanmeyer",
+      "name": "konstantinstanmeyer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/78387837?v=4",
+      "profile": "https://github.com/konstantinstanmeyer",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

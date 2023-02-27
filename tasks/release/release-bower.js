@@ -1,6 +1,6 @@
 /* Grunt Task to Release the Library files on dist repo for Bower */
 
-const git = require('simple-git/promise');
+const git = require('simple-git');
 
 module.exports = function(grunt) {
   grunt.registerTask(
