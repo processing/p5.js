@@ -620,6 +620,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://dewanshthakur.vercel.app"><img src="https://avatars.githubusercontent.com/u/71703033?v=4?s=100" width="100px;" alt="Dewansh Thakur"/><br /><sub><b>Dewansh Thakur</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AdewanshDT" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/konstantinstanmeyer"><img src="https://avatars.githubusercontent.com/u/78387837?v=4?s=100" width="100px;" alt="konstantinstanmeyer"/><br /><sub><b>konstantinstanmeyer</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=konstantinstanmeyer" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
