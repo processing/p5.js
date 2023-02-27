@@ -5,7 +5,7 @@
 
 const open = require('open');
 const spawn = require('child_process').spawnSync;
-const simpleGit = require('simple-git/promise');
+const simpleGit = require('simple-git');
 
 module.exports = function(grunt) {
   // Register the Release Task
