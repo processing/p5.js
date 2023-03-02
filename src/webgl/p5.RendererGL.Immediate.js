@@ -45,6 +45,17 @@ const immediateBufferStrides = {
   uvs: 2
 };
 
+p5.RendererGL.prototype.beginContour = function() {
+  this.immediateMode.isContour = true;
+  this.immediateMode.isFirstContour = true;
+  this.immediateMode.geometry.contourVertices = [];
+  return this;
+};
+
+p5.RendererGL.prototype.endContour = function() {
+  return this.immediateMode.geometry.contourVertices;
+};
+
 /**
  * adds a vertex to be drawn in a custom Shape.
  * @private
@@ -101,7 +112,11 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     v = arguments[4];
   }
   const vert = new p5.Vector(x, y, z);
-  this.immediateMode.geometry.vertices.push(vert);
+  if (this.immediateMode.isContour) {
+    this.immediateMode.geometry.contourVertices.push(vert);
+  } else {
+    this.immediateMode.geometry.vertices.push(vert);
+  }
   this.immediateMode.geometry.vertexNormals.push(this._currentNormal);
   const vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.geometry.vertexColors.push(
@@ -187,6 +202,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.shapeMode === constants.POINTS) {
     this._drawPoints(
       this.immediateMode.geometry.vertices,
+      this.immediateMode.geometry.contourVertices,
       this.immediateMode.buffers.point
     );
     return this;
@@ -224,14 +240,16 @@ p5.RendererGL.prototype.endShape = function(
  *                       TRIANGLE_STRIP, TRIANGLE_FAN and TESS(WEBGL only)
  */
 p5.RendererGL.prototype._processVertices = function(mode) {
-  if (this.immediateMode.geometry.vertices.length === 0) return;
+  if (this.immediateMode.geometry.vertices.length === 0 ||
+    this.immediateMode.geometry.contourVertices === 0) return;
 
   const calculateStroke = this._doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
     this.immediateMode.geometry.edges = this._calculateEdges(
       this.immediateMode.shapeMode,
-      this.immediateMode.geometry.vertices,
+      [this.immediateMode.geometry.vertices,
+        this.immediateMode.geometry.contourVertices],
       shouldClose
     );
     this.immediateMode.geometry._edgesToVertices();
@@ -262,64 +280,70 @@ p5.RendererGL.prototype._calculateEdges = function(
 ) {
   const res = [];
   let i = 0;
-  switch (shapeMode) {
-    case constants.TRIANGLE_STRIP:
-      for (i = 0; i < verts.length - 2; i++) {
-        res.push([i, i + 1]);
-        res.push([i, i + 2]);
-      }
-      res.push([i, i + 1]);
-      break;
-    case constants.TRIANGLE_FAN:
-      for (i = 1; i < verts.length - 1; i++) {
-        res.push([0, i]);
-        res.push([i, i + 1]);
-      }
-      res.push([0, verts.length - 1]);
-      break;
-    case constants.TRIANGLES:
-      for (i = 0; i < verts.length - 2; i = i + 3) {
-        res.push([i, i + 1]);
-        res.push([i + 1, i + 2]);
-        res.push([i + 2, i]);
-      }
-      break;
-    case constants.LINES:
-      for (i = 0; i < verts.length - 1; i = i + 2) {
-        res.push([i, i + 1]);
-      }
-      break;
-    case constants.QUADS:
-      // Quads have been broken up into two triangles by `vertex()`:
-      // 0   3--5
-      // | \  \ |
-      // 1--2   4
-      for (i = 0; i < verts.length - 5; i += 6) {
-        res.push([i, i + 1]);
-        res.push([i + 1, i + 2]);
-        res.push([i + 3, i + 5]);
-        res.push([i + 4, i + 5]);
-      }
-      break;
-    case constants.QUAD_STRIP:
-      // 0---2---4
-      // |   |   |
-      // 1---3---5
-      for (i = 0; i < verts.length - 2; i += 2) {
-        res.push([i, i + 1]);
-        res.push([i, i + 2]);
-        res.push([i + 1, i + 3]);
-      }
-      res.push([i, i + 1]);
-      break;
-    default:
-      for (i = 0; i < verts.length - 1; i++) {
-        res.push([i, i + 1]);
-      }
-      break;
-  }
-  if (shouldClose) {
-    res.push([verts.length - 1, 0]);
+  let j = 0;
+  while (j < 2) {
+    let part = [];
+    switch (shapeMode) {
+      case constants.TRIANGLE_STRIP:
+        for (i = 0; i < verts[j].length - 2; i++) {
+          part.push([i, i + 1]);
+          part.push([i, i + 2]);
+        }
+        part.push([i, i + 1]);
+        break;
+      case constants.TRIANGLE_FAN:
+        for (i = 1; i < verts[j].length - 1; i++) {
+          part.push([0, i]);
+          part.push([i, i + 1]);
+        }
+        part.push([0, verts[j].length - 1]);
+        break;
+      case constants.TRIANGLES:
+        for (i = 0; i < verts[j].length - 2; i = i + 3) {
+          part.push([i, i + 1]);
+          part.push([i + 1, i + 2]);
+          part.push([i + 2, i]);
+        }
+        break;
+      case constants.LINES:
+        for (i = 0; i < verts[j].length - 1; i = i + 2) {
+          part.push([i, i + 1]);
+        }
+        break;
+      case constants.QUADS:
+        // Quads have been broken up into two triangles by `vertex()`:
+        // 0   3--5
+        // | \  \ |
+        // 1--2   4
+        for (i = 0; i < verts[j].length - 5; i += 6) {
+          part.push([i, i + 1]);
+          part.push([i + 1, i + 2]);
+          part.push([i + 3, i + 5]);
+          part.push([i + 4, i + 5]);
+        }
+        break;
+      case constants.QUAD_STRIP:
+        // 0---2---4
+        // |   |   |
+        // 1---3---5
+        for (i = 0; i < verts[j].length - 2; i += 2) {
+          part.push([i, i + 1]);
+          part.push([i, i + 2]);
+          part.push([i + 1, i + 3]);
+        }
+        part.push([i, i + 1]);
+        break;
+      default:
+        for (i = 0; i < verts[j].length - 1; i++) {
+          part.push([i, i + 1]);
+        }
+        break;
+    }
+    if (shouldClose) {
+      part.push([verts[j].length - 1, 0]);
+    }
+    res.push(part);
+    j++;
   }
   return res;
 };
