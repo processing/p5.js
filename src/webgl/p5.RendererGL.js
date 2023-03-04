@@ -311,8 +311,8 @@ p5.RendererGL.prototype._initContext = function() {
   }
   if (!this.drawingContext) {
     // If we were unable to create a WebGL2 context (either because it was
-    // disabled via `p5.disableWebGL2` or because the device doesn't support
-    // it), fall back to a WebGL1 context
+    // disabled via `setAttributes({ version: 1 })` or because the device
+    // doesn't support it), fall back to a WebGL1 context
     this.drawingContext =
       this.canvas.getContext('webgl', this._pInst._glAttributes) ||
       this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
