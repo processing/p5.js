@@ -1314,13 +1314,69 @@ suite('DOM', function() {
 
         myp5.loadPixels();
         testElement.loadPixels();
-        console.log(testElement.pixels.slice(0, 3));
-        console.log(myp5.pixels.slice(0, 3));
         assert.equal(myp5.pixels[0], testElement.pixels[0]);
         assert.equal(myp5.pixels[1], 0);
         assert.equal(myp5.pixels[2], 0);
         done();
       });
+    });
+
+    test('should work with updatePixels()', function(done) {
+      let loaded = false;
+      let prevElt;
+      const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
+      testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
+        loaded = true;
+        // Workaround for headless tests, where the video data isn't loading
+        // correctly: mock the video element using an image for this test
+        prevElt = testElement.elt;
+        testElement.elt = imgElt.elt;
+      });
+
+      let drewUpdatedPixels = false;
+      myp5.draw = function() {
+        if (!loaded) return;
+        myp5.background(255);
+
+        if (!drewUpdatedPixels) {
+          // First, update pixels and check that it draws the updated
+          // pixels correctly
+          testElement.loadPixels();
+          for (let i = 0; i < testElement.pixels.length; i += 4) {
+            // Set every pixel to red
+            testElement.pixels[i] = 255;
+            testElement.pixels[i + 1] = 0;
+            testElement.pixels[i + 2] = 0;
+            testElement.pixels[i + 3] = 255;
+          }
+          testElement.updatePixels();
+          myp5.image(testElement, 0, 0);
+
+          // The element should have drawn using the updated red pixels
+          myp5.loadPixels();
+          assert.deepEqual([...myp5.pixels.slice(0, 4)], [255, 0, 0, 255]);
+
+          // Mark that we've done the first check so we can see whether
+          // the video still updates on the next frame
+          drewUpdatedPixels = true;
+        } else {
+          // Next, make sure it still updates with the real pixels from
+          // the next frame of the video on the next frame of animation
+          myp5.image(testElement, 0, 0);
+
+          myp5.loadPixels();
+          testElement.loadPixels();
+          expect([...testElement.pixels.slice(0, 4)])
+            .to.not.deep.equal([255, 0, 0, 255]);
+          assert.deepEqual(
+            [...myp5.pixels.slice(0, 4)],
+            [...testElement.pixels.slice(0, 4)]
+          );
+          testElement.elt = prevElt;
+          imgElt.remove();
+          done();
+        }
+      };
     });
   });
 
