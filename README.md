@@ -621,6 +621,8 @@ We recognize all types of contributions. This project follows the [all-contribut
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://dewanshthakur.vercel.app"><img src="https://avatars.githubusercontent.com/u/71703033?v=4?s=100" width="100px;" alt="Dewansh Thakur"/><br /><sub><b>Dewansh Thakur</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3AdewanshDT" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/konstantinstanmeyer"><img src="https://avatars.githubusercontent.com/u/78387837?v=4?s=100" width="100px;" alt="konstantinstanmeyer"/><br /><sub><b>konstantinstanmeyer</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=konstantinstanmeyer" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/al6862"><img src="https://avatars.githubusercontent.com/u/120232244?v=4?s=100" width="100px;" alt="al6862"/><br /><sub><b>al6862</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aal6862" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=al6862" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/monmon2003"><img src="https://avatars.githubusercontent.com/u/122162780?v=4?s=100" width="100px;" alt="Monalisa Maity"/><br /><sub><b>Monalisa Maity</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=monmon2003" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
