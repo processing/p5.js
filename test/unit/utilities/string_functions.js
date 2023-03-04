@@ -65,8 +65,26 @@ suite('String functions', function() {
     });
 
     test('should return correct string', function() {
+      var num = 1234;
+      result = myp5.nf(num, 3);
+      assert.equal(result, '1234');
+    });
+
+    test('should return correct string', function() {
+      var num = 1234;
+      result = myp5.nf(num, 5);
+      assert.equal(result, '01234');
+    });
+
+    test('should return correct string', function() {
+      var num = 1234;
+      result = myp5.nf(num, 3, 3);
+      assert.equal(result, '1234.000');
+    });
+
+    test('should return correct string', function() {
       var num = 3.141516;
-      result = myp5.nf(num, 2);
+      result = myp5.nf(num, '2'); // automatic conversion?
       assert.equal(result, '03.141516');
     });
 
@@ -74,6 +92,18 @@ suite('String functions', function() {
       var num = 3.141516;
       result = myp5.nf(num, '2', '2'); // automatic conversion?
       assert.equal(result, '03.14');
+    });
+
+    test('should return correct string', function() {
+      var num = 3.141516e-2;
+      result = myp5.nf(num, '3', '4'); // automatic conversion?
+      assert.equal(result, '000.0314');
+    });
+
+    test('should return correct string', function() {
+      var num = 3.141516e7;
+      result = myp5.nf(num, '3', '4'); // automatic conversion?
+      assert.equal(result, '31415160.0000');
     });
   });
 
