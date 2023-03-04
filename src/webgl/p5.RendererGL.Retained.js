@@ -3,6 +3,7 @@
 import p5 from '../core/main';
 import './p5.RendererGL';
 import './p5.RenderBuffer';
+import * as constants from '../core/constants';
 
 let hashCount = 0;
 /**
@@ -199,7 +200,10 @@ p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   if (buffers.indexBuffer) {
     // If this model is using a Uint32Array we need to ensure the
     // OES_element_index_uint WebGL extension is enabled.
-    if (buffers.indexBufferType === gl.UNSIGNED_INT) {
+    if (
+      this._pInst.webglVersion !== constants.WEBGL2 &&
+      buffers.indexBufferType === gl.UNSIGNED_INT
+    ) {
       if (!gl.getExtension('OES_element_index_uint')) {
         throw new Error(
           'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'

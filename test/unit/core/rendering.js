@@ -14,6 +14,13 @@ suite('Rendering', function() {
     myp5.remove();
   });
 
+  suite('p5.prototype.webglVersion', function() {
+    test('should return P2D if not using WebGL at all', function() {
+      myp5.createCanvas(10, 10);
+      assert.equal(myp5.webglVersion, myp5.P2D);
+    });
+  });
+
   suite('p5.prototype.createCanvas', function() {
     test('should have correct initial colors', function() {
       var white = myp5.color(255, 255, 255).levels;

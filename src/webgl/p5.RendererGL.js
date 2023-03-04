@@ -287,7 +287,8 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
     antialias: applyAA,
     premultipliedAlpha: true,
     preserveDrawingBuffer: true,
-    perPixelLighting: true
+    perPixelLighting: true,
+    version: 2
   };
   if (pInst._glAttributes === null) {
     pInst._glAttributes = defaults;
@@ -298,7 +299,7 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
 };
 
 p5.RendererGL.prototype._initContext = function() {
-  if (!p5.disableWebGL2) {
+  if (this._pInst._glAttributes.version !== 1) {
     // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
     this.drawingContext =
       this.canvas.getContext('webgl2', this._pInst._glAttributes);
@@ -426,6 +427,11 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * perPixelLighting - if true, per-pixel lighting will be used in the
  * lighting shader otherwise per-vertex lighting is used.
  * default is true.
+ *
+ * version - either 1 or 2, to specify which WebGL version to ask for. By
+ * default, WebGL 2 will be requested. If WebGL2 is not available, it will
+ * fall back to WebGL 1. You can check what version is used with by looking at
+ * the global `webglVersion` property.
  *
  * @method setAttributes
  * @for p5

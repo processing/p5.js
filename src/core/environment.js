@@ -372,10 +372,11 @@ p5.prototype.noCursor = function() {
 /**
  * If the was created in WebGL mode, then `weglVersion` will indicate which
  * version of WebGL it is using. It will try to create a WebGL2 canvas unless
- * you have set `p5.disableWebGL2 = true`, and will fall back to WebGL1 if
- * WebGL2 is not available.
+ * you have requested WebGL1 via `setAttributes({ version: 1 })`, and will fall
+ * back to WebGL1 if WebGL2 is not available.
  *
- * `webglVersion` will always be either `WEBGL2` or `WEBGL`.
+ * `webglVersion` will always be either `WEBGL2`, `WEBGL`, or `P2D` if not in
+ * WebGL mode.
  * @property {String} webglVersion
  * @readOnly
  * @example
@@ -396,7 +397,7 @@ p5.prototype.noCursor = function() {
  * This example writes either 'WebGL1' or 'WebGL2' on the canvas, depending on
  * the capabilities of the device it runs on.
  */
-p5.prototype.webglVersion = C.WEBGL2;
+p5.prototype.webglVersion = C.P2D;
 
 /**
  * System variable that stores the width of the screen display according to The
