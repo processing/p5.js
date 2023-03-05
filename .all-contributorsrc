@@ -3544,6 +3544,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kr-2003",
+      "name": "Abhinav Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96587705?v=4",
+      "profile": "https://github.com/kr-2003",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
