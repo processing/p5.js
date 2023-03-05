@@ -68,6 +68,35 @@ import * as constants from '../core/constants';
  * </div>
  * @alt
  * sphere with coral color under white light
+ * 
+ * @example
+ * <div>
+ * <code>
+ * // Creates a camera object and animates it around a box.
+ * let cam
+ * function setup() {
+ * createCanvas(100, 100, WEBGL);
+ * // The camera will automatically rotate
+ * 
+ * cam = createCamera()
+ * 
+ * // The camera will move on the
+ * camera(0, -100, 300)
+ * }
+
+ * function draw() {
+ *	background(230);
+ *	let ls = 255
+ *	ambientMaterial(0, 255, 0) //Green Material
+ *	directionalLight(ls, ls, ls, 0, -100, -300) //White Light
+ *	rotateY(millis()/2000)
+ *	box(100)
+}
+
+ * </code>
+ * </div>
+ * @alt
+ * cube with only grayscale visible on 3D shapes under directional white light
  */
 
 /**
