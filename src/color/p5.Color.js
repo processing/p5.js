@@ -27,15 +27,15 @@ import color_conversion from './color_conversion';
  * 
  * <a href="#/p5/color">color()</a> is the recommended way to create an instance
  * of this class. However, one can also create a color instace from the constructor 
- * using the parameters below. 
+ * using the parameters below.
  *
  * @class p5.Color
  * @constructor
  * @param {p5} [pInst]                      pointer to p5 instance.
- *                                 
+ *
  * @param {Number[]|String} vals            an array containing the color values
  *                                          for red, green, blue and alpha channel
- *                                          or CSS color.                                
+ *                                          or CSS color.
  */
 p5.Color = function(pInst, vals) {
   // Record color mode and maxes at time of construction.
