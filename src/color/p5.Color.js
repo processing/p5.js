@@ -24,9 +24,9 @@ import color_conversion from './color_conversion';
  * We also cache normalized, floating-point components of the color in various
  * representations as they are calculated. This is done to prevent repeating a
  * conversion that has already been performed.
- * 
+ *
  * <a href="#/p5/color">color()</a> is the recommended way to create an instance
- * of this class. However, one can also create a color instace from the constructor 
+ * of this class. However, one can also create a color instace from the constructor
  * using the parameters below.
  *
  * @class p5.Color
