@@ -3544,6 +3544,34 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kr-2003",
+      "name": "Abhinav Kumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96587705?v=4",
+      "profile": "https://github.com/kr-2003",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "nown1ne",
+      "name": "Abhinav Srinivas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25835195?v=4",
+      "profile": "https://nownine.vercel.app",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "sawaisinghh",
+      "name": "Sawai Singh Rajpurohit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49401909?v=4",
+      "profile": "https://github.com/sawaisinghh",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
