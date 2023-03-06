@@ -319,12 +319,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
       }
     }
     const keyArray = Object.keys(p5Constructors);
+    const globalFunctions = ['Renderer', 'Renderer2D', 'RendererGL'];
     let functionArray = [];
     //get the names of all p5.js functions
-    for (let i = 0; i < keyArray.length; i++) {
-      functionArray.push(...Object.keys(p5Constructors[keyArray[i]].prototype));
+    for (let i = 0; i < globalFunctions.length; i++) {
+      functionArray.push(...Object.keys(
+        p5Constructors[globalFunctions[i]].prototype
+      ));
     }
-    functionArray = functionArray.filter(ele => !ele.includes('_'));
 
     //we have p5.js function names with us so we will check
     //if they have been declared or not.
