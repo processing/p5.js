@@ -3572,6 +3572,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "anpanring",
+      "name": "Jack Dempsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48136223?v=4",
+      "profile": "https://github.com/anpanring",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
