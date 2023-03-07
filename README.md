@@ -627,6 +627,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://nownine.vercel.app"><img src="https://avatars.githubusercontent.com/u/25835195?v=4?s=100" width="100px;" alt="Abhinav Srinivas"/><br /><sub><b>Abhinav Srinivas</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Anown1ne" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=nown1ne" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sawaisinghh"><img src="https://avatars.githubusercontent.com/u/49401909?v=4?s=100" width="100px;" alt="Sawai Singh Rajpurohit"/><br /><sub><b>Sawai Singh Rajpurohit</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=sawaisinghh" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anpanring"><img src="https://avatars.githubusercontent.com/u/48136223?v=4?s=100" width="100px;" alt="Jack Dempsey"/><br /><sub><b>Jack Dempsey</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aanpanring" title="Bug reports">🐛</a></td>
+    </tr>
   </tbody>
 </table>
 
