@@ -83,7 +83,7 @@ import * as constants from '../core/constants';
  * // The camera will move on the
  * camera(0, -100, 300)
  * }
-
+ *
  * function draw() {
  *	background(230);
  *	let ls = 255
@@ -91,8 +91,8 @@ import * as constants from '../core/constants';
  *	directionalLight(ls, ls, ls, 0, -100, -300) //White Light
  *	rotateY(millis()/2000)
  *	box(100)
-}
-
+ * }
+ *
  * </code>
  * </div>
  * @alt
