@@ -68,7 +68,7 @@ import * as constants from '../core/constants';
  * </div>
  * @alt
  * sphere with coral color under white light
- * 
+ *
  * @example
  * <div>
  * <code>
@@ -77,9 +77,9 @@ import * as constants from '../core/constants';
  * function setup() {
  * createCanvas(100, 100, WEBGL);
  * // The camera will automatically rotate
- * 
+ *
  * cam = createCamera()
- * 
+ *
  * // The camera will move on the
  * camera(0, -100, 300)
  * }
