@@ -56,7 +56,6 @@ suite('p5.RendererGL', function() {
 
       test('should return WEBGL1', function() {
         myp5.createCanvas(10, 10, myp5.WEBGL);
-        myp5.setAttributes({ version: 1 });
         assert.equal(myp5.webglVersion, myp5.WEBGL);
       });
     });
@@ -89,7 +88,7 @@ suite('p5.RendererGL', function() {
 
   suite('text shader', function() {
     test('rendering looks the same in WebGL1 and 2', function(done) {
-      myp5.loadFont('unit/assets/inconsolata.otf', function(font) {
+      myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
         const webgl2 = myp5.createGraphics(100, 20, myp5.WEBGL);
         const webgl1 = myp5.createGraphics(100, 20, myp5.WEBGL);
         webgl1.setAttributes({ version: 1 });
