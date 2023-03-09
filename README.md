@@ -631,6 +631,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/anpanring"><img src="https://avatars.githubusercontent.com/u/48136223?v=4?s=100" width="100px;" alt="Jack Dempsey"/><br /><sub><b>Jack Dempsey</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aanpanring" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aryan1982"><img src="https://avatars.githubusercontent.com/u/62349184?v=4?s=100" width="100px;" alt="Aryan Thakor"/><br /><sub><b>Aryan Thakor</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aryan1982" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MostafaEwis"><img src="https://avatars.githubusercontent.com/u/64862002?v=4?s=100" width="100px;" alt="Mostafa Ewis"/><br /><sub><b>Mostafa Ewis</b></sub></a><br /><a href="#translation-MostafaEwis" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nabilhassein"><img src="https://avatars.githubusercontent.com/u/693744?v=4?s=100" width="100px;" alt="Nabil Hassein"/><br /><sub><b>Nabil Hassein</b></sub></a><br /><a href="#translation-nabilhassein" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
