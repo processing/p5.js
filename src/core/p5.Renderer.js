@@ -309,7 +309,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
             finalMinHeight += ascent / 2;
             break;
         }
-     }
+      }
     }
 
     // Render lines of text according to settings of textWrap
