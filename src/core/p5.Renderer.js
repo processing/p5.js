@@ -296,18 +296,20 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       if (this._textBaseline === constants.CENTER) {
         finalMaxHeight = originalY + maxHeight - ascent / 2;
       }
-    } else {
-      // no text-height specified, show warning for BOTTOM / CENTER
-      if (this._textBaseline === constants.BOTTOM) {
-        return console.warn(
-          'textAlign(*, BOTTOM) requires x, y, width and height'
-        );
-      }
-      if (this._textBaseline === constants.CENTER) {
-        return console.warn(
-          'textAlign(*, CENTER) requires x, y, width and height'
-        );
-      }
+      // fix for #5933 (when MaxHeight not defined)
+      else if (typeof maxHeight === 'undefined') {
+        let ascent = p.textAscent();
+        switch (this._textBaseline) {
+          case constants.BOTTOM:
+            y -= ascent;
+            finalMinHeight += ascent;
+            break;
+          case constants.CENTER:
+            y -= ascent / 2;
+            finalMinHeight += ascent / 2;
+            break;
+        }
+     }
     }
 
     // Render lines of text according to settings of textWrap
