@@ -25,6 +25,11 @@ const defaultClass = 'p5Canvas';
  * is set to `WEBGL`), the origin is positioned at the center of the canvas.
  * See [this issue](https://github.com/processing/p5.js/issues/1545) for more information.
  *
+ * A WebGL canvas will use a WebGL2 context if it is supported by the browser.
+ * Check the <a href="#/p5/webglVersion">webglVersion</a> property to check what
+ * version is being used, or call <a href="#/p5/setAttributes">setAttributes({ version: 1 })</a>
+ * to create a WebGL1 context.
+ *
  * The system variables width and height are set by the parameters passed to this
  * function. If <a href="#/p5/createCanvas">createCanvas()</a> is not used, the
  * window will be given a default size of 100×100 pixels.
@@ -202,9 +207,14 @@ p5.prototype.noCanvas = function() {
 };
 
 /**
- * Creates and returns a new p5.Renderer object. Use this class if you need
+ * Creates and returns a new p5.Graphics object. Use this class if you need
  * to draw into an off-screen graphics buffer. The two parameters define the
  * width and height in pixels.
+ *
+ * A WebGL p5.Graphics will use a WebGL2 context if it is supported by the browser.
+ * Check the <a href="#/p5/webglVersion">pg.webglVersion</a> property of the renderer
+ * to check what version is being used, or call <a href="#/p5/setAttributes">pg.setAttributes({ version: 1 })</a>
+ * to create a WebGL1 context.
  *
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer

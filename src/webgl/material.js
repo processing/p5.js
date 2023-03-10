@@ -1123,7 +1123,10 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       break;
     case constants.DARKEST:
       if (this.blendExt) {
-        gl.blendEquationSeparate(this.blendExt.MIN_EXT, gl.FUNC_ADD);
+        gl.blendEquationSeparate(
+          this.blendExt.MIN || this.blendExt.MIN_EXT,
+          gl.FUNC_ADD
+        );
         gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
       } else {
         console.warn(
@@ -1133,7 +1136,10 @@ p5.RendererGL.prototype._applyBlendMode = function() {
       break;
     case constants.LIGHTEST:
       if (this.blendExt) {
-        gl.blendEquationSeparate(this.blendExt.MAX_EXT, gl.FUNC_ADD);
+        gl.blendEquationSeparate(
+          this.blendExt.MAX || this.blendExt.MAX_EXT,
+          gl.FUNC_ADD
+        );
         gl.blendFuncSeparate(gl.ONE, gl.ONE, gl.ONE, gl.ONE);
       } else {
         console.warn(

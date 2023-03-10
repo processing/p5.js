@@ -23,6 +23,44 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('webglVersion', function() {
+    test('should return WEBGL2 by default', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      assert.equal(myp5.webglVersion, myp5.WEBGL2);
+    });
+
+    test('should return WEBGL1 after setAttributes', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.setAttributes({ version: 1 });
+      assert.equal(myp5.webglVersion, myp5.WEBGL);
+    });
+
+    suite('when WebGL2 is unavailable', function() {
+      let prevGetContext;
+      setup(function() {
+        prevGetContext = HTMLCanvasElement.prototype.getContext;
+        // Mock WebGL2 being unavailable
+        HTMLCanvasElement.prototype.getContext = function(type, attrs) {
+          if (type === 'webgl2') {
+            return undefined;
+          } else {
+            return prevGetContext.call(this, type, attrs);
+          }
+        };
+      });
+
+      teardown(function() {
+        // Put back the actual implementation
+        HTMLCanvasElement.prototype.getContext = prevGetContext;
+      });
+
+      test('should return WEBGL1', function() {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        assert.equal(myp5.webglVersion, myp5.WEBGL);
+      });
+    });
+  });
+
   suite('default stroke shader', function() {
     test('check activate and deactivating fill and stroke', function(done) {
       myp5.noStroke();
@@ -45,6 +83,34 @@ suite('p5.RendererGL', function() {
         'fill shader still active after noFill()'
       );
       done();
+    });
+  });
+
+  suite('text shader', function() {
+    test('rendering looks the same in WebGL1 and 2', function(done) {
+      myp5.loadFont('manual-test-examples/p5.Font/Inconsolata-Bold.ttf', function(font) {
+        const webgl2 = myp5.createGraphics(100, 20, myp5.WEBGL);
+        const webgl1 = myp5.createGraphics(100, 20, myp5.WEBGL);
+        webgl1.setAttributes({ version: 1 });
+
+        for (const graphic of [webgl1, webgl2]) {
+          graphic.background(255);
+          graphic.fill(0);
+          graphic.textFont(font);
+          graphic.textAlign(myp5.CENTER, myp5.CENTER);
+          graphic.text(
+            'Hello!',
+            -graphic.width / 2,
+            -graphic.height / 2,
+            graphic.width,
+            graphic.height
+          );
+          graphic.loadPixels();
+        }
+
+        assert.deepEqual(webgl1.pixels, webgl2.pixels);
+        done();
+      });
     });
   });
 

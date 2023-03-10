@@ -47,7 +47,10 @@ p5.Texture = function(renderer, obj, settings) {
 
   settings = settings || {};
 
-  if (settings.dataType === gl.FLOAT) {
+  if (
+    settings.dataType === gl.FLOAT &&
+    this._renderer._pInst.webglVersion !== constants.WEBGL2
+  ) {
     const ext = gl.getExtension('OES_texture_float');
     if (!ext) {
       console.log(
@@ -351,7 +354,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   const heightPowerOfTwo = isPowerOfTwo(wrapHeight);
 
   if (wrapX === constants.REPEAT) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapS = gl.REPEAT;
     } else {
       console.warn(
@@ -360,7 +366,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
       this.glWrapS = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapX === constants.MIRROR) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapS = gl.MIRRORED_REPEAT;
     } else {
       console.warn(
@@ -374,7 +383,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   }
 
   if (wrapY === constants.REPEAT) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapT = gl.REPEAT;
     } else {
       console.warn(
@@ -383,7 +395,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
       this.glWrapT = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapY === constants.MIRROR) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapT = gl.MIRRORED_REPEAT;
     } else {
       console.warn(

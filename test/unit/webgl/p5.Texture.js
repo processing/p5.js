@@ -114,12 +114,25 @@ suite('p5.Texture', function() {
       assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
       assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
     });
-    test('Set default wrap mode CLAMP if src dimensions != powerOfTwo', function() {
-      const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
-      tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
-      assert.deepEqual(tex.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
-      assert.deepEqual(tex.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
-    });
+    test(
+      'Set default wrap mode REPEAT if WEBGL2 and src dimensions != powerOfTwo',
+      function() {
+        const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
+        tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+        assert.deepEqual(tex.glWrapS, myp5._renderer.GL.REPEAT);
+        assert.deepEqual(tex.glWrapT, myp5._renderer.GL.REPEAT);
+      }
+    );
+    test(
+      'Set default wrap mode CLAMP if WEBGL1 and src dimensions != powerOfTwo',
+      function() {
+        myp5.setAttributes({ version: 1 });
+        const tex = myp5._renderer.getTexture(imgElementNotPowerOfTwo);
+        tex.setWrapMode(myp5.REPEAT, myp5.REPEAT);
+        assert.deepEqual(tex.glWrapS, myp5._renderer.GL.CLAMP_TO_EDGE);
+        assert.deepEqual(tex.glWrapT, myp5._renderer.GL.CLAMP_TO_EDGE);
+      }
+    );
     test('Set textureMode to NORMAL', function() {
       myp5.textureMode(myp5.NORMAL);
       assert.deepEqual(myp5._renderer.textureMode, myp5.NORMAL);
