@@ -387,15 +387,43 @@ p5.prototype.noCursor = function() {
  * }
  * function setup() {
  *   createCanvas(100, 50, WEBGL);
+ *   // Uncomment the following line to see the behavior change in WebGL 1:
+ *   // setAttributes({ version: 1 })
+ *
+ *   const graphic = createGraphics(30, 30);
+ *   graphic.background(255);
+ *   graphic.noStroke();
+ *   graphic.fill(200);
+ *   graphic.rect(0, 0, graphic.width/2, graphic.height/2);
+ *   graphic.rect(
+ *     graphic.width/2, graphic.height/2,
+ *     graphic.width/2, graphic.height/2
+ *   );
+ *
+ *   noStroke();
+ *   translate(-width/2, -height/2);
+ *   textureWrap(REPEAT);
+ *   texture(graphic);
+ *   beginShape(QUADS);
+ *   vertex(0, 0, 0, 0, 0);
+ *   vertex(width, 0, 0, width, 0);
+ *   vertex(width, height, 0, width, height);
+ *   vertex(0, height, 0, 0, height);
+ *   endShape();
+ *
  *   textFont(myFont);
+ *   textAlign(CENTER, CENTER);
+ *   textSize(30);
  *   fill(0);
- *   text('WebGL' + (webglVersion === WEBGL2 ? 2 : 1), 0, 0);
+ *   text('WebGL' + (webglVersion === WEBGL2 ? 2 : 1), 0, 0, width, height);
  * }
  * </code></div>
  *
  * @alt
  * This example writes either 'WebGL1' or 'WebGL2' on the canvas, depending on
- * the capabilities of the device it runs on.
+ * the capabilities of the device it runs on. If it says WebGL2, the background
+ * will be checkered. Otherwise, the background will have just one checker tile
+ * with colors stretched to the edges of the canvas.
  */
 p5.prototype.webglVersion = C.P2D;
 
