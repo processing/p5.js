@@ -50,7 +50,7 @@ import p5 from '../core/main';
  * strokeWeight(0.5);
  *
  * line(0, 12, width, 12);
- * textAlign(CENTER, TOP);
+ * textAlign(CENTER, [TOP]);
  * text('TOP', 0, 12, width);
  *
  * line(0, 37, width, 37);
@@ -58,7 +58,7 @@ import p5 from '../core/main';
  * text('CENTER', 0, 37, width);
  *
  * line(0, 62, width, 62);
- * textAlign(CENTER, BASELINE);
+ * textAlign(CENTER, [BASELINE]);
  * text('BASELINE', 0, 62, width);
  *
  * line(0, 97, width, 97);
