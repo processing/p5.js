@@ -614,17 +614,17 @@ p5.prototype._onmousemove = function(e) {
  * // Click anywhere in the webpage to change
  * // the color value of the rectangle
  *
- * let color_value = 0;
+ * let colorValue = 0;
  * function draw() {
- *   fill(color_value);
+ *   fill(colorValue);
  *   rect(25, 25, 50, 50);
  *   describe('black 50-by-50 rect turns white with mouse click/press.');
  * }
  * function mousePressed() {
  *   if (value === 0) {
- *     color_value = 255;
+ *     colorValue = 255;
  *   } else {
- *     color_value = 0;
+ *     colorValue = 0;
  *   }
  * }
  * </code>
