@@ -296,19 +296,14 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       if (this._textBaseline === constants.CENTER) {
         finalMaxHeight = originalY + maxHeight - ascent / 2;
       }
-      // fix for #5933 (when MaxHeight not defined)
-      else if (typeof maxHeight === 'undefined') {
-        let ascent = p.textAscent();
-        switch (this._textBaseline) {
-          case constants.BOTTOM:
-            y -= ascent;
-            finalMinHeight += ascent;
-            break;
-          case constants.CENTER:
-            y -= ascent / 2;
-            finalMinHeight += ascent / 2;
-            break;
-        }
+    } else {
+      // no text-height specified, show warning for BOTTOM / CENTER
+      if (this._textBaseline === constants.BOTTOM ||
+        this._textBaseline === constants.CENTER) {
+        // use rectHeight as an approximation for text height
+        let rectHeight = p.textSize() * (this._textLeading || 1.25);
+        finalMinHeight = y - rectHeight / 2;
+        finalMaxHeight = y + rectHeight / 2;
       }
     }
 
