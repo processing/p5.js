@@ -301,7 +301,7 @@ p5.Renderer.prototype.text = function(str, x, y, maxWidth, maxHeight) {
       if (this._textBaseline === constants.BOTTOM ||
         this._textBaseline === constants.CENTER) {
         // use rectHeight as an approximation for text height
-        let rectHeight = p.textSize() * (this._textLeading);
+        let rectHeight = p.textSize() * this._textLeading;
         finalMinHeight = y - rectHeight / 2;
         finalMaxHeight = y + rectHeight / 2;
       }
