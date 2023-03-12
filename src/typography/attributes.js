@@ -61,9 +61,9 @@ import p5 from '../core/main';
  * textAlign(CENTER, BASELINE);
  * text('BASELINE', 0, 62, width);
  *
- * line(0, 87, width, 87);
+ * line(0, 97, width, 97);
  * textAlign(CENTER, BOTTOM);
- * text('BOTTOM', 0, 87, width);
+ * text('BOTTOM', 0, 97, width);
  *
  * describe(`The names of the four vertical alignments (TOP, CENTER, BASELINE,
  *   and BOTTOM) rendered each showing that alignment's placement relative to a
