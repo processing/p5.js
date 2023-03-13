@@ -622,6 +622,19 @@ suite('p5.RendererGL', function() {
       );
       done();
     });
+
+    test('blendModes are applied to point drawing', function(done) {
+      myp5.createCanvas(32, 32, myp5.WEBGL);
+      myp5.background(0);
+      myp5.blendMode(myp5.ADD);
+      myp5.strokeWeight(32);
+      myp5.stroke(255, 0, 0);
+      myp5.point(0, 0, 0);
+      myp5.stroke(0, 0, 255);
+      myp5.point(0, 0, 0);
+      assert.deepEqual(myp5.get(16, 16), [255, 0, 255, 255]);
+      done();
+    });
   });
 
   suite('BufferDef', function() {
