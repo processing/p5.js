@@ -633,6 +633,7 @@ suite('p5.RendererGL', function() {
       myp5.stroke(0, 0, 255);
       myp5.point(0, 0, 0);
       assert.deepEqual(myp5.get(16, 16), [255, 0, 255, 255]);
+      done();
     });
   });
 
