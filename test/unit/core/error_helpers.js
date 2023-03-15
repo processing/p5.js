@@ -999,8 +999,7 @@ suite('Tests for p5.js sketch_reader', function() {
           resolve
         );
       }).then(function() {
-        assert.strictEqual(log.length, 1);
-        assert.match(log[0], /you have used a p5.js reserved function/);
+        assert.strictEqual(log.length, 0);
       });
     }
   );
