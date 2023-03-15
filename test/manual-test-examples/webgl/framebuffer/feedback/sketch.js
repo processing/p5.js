@@ -1,15 +1,57 @@
+let fboPrev, fboNext;
+let canvas;
+
 function setup() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
-  frustum(-1.5, 1.5, -0.3, 0.3, 0.5, 1000);
-  setAttributes('antialias', true);
+  canvas = createCanvas(400, 400, WEBGL);
+
+  // Try changing `float` to `unsigned_byte` to see it leave a trail
+  options = { format: FLOAT, antialias: true };
+  fboPrev = createFramebuffer(options);
+  fboNext = createFramebuffer(options);
+  imageMode(CENTER);
+  rectMode(CENTER);
+  noStroke();
 }
 
 function draw() {
-  background(200);
-  rotateX(map(mouseY, 0, height, 0, TWO_PI));
-  rotateY(map(mouseX, 0, width, 0, TWO_PI));
-  noFill();
-  strokeWeight(10);
-  stroke(0, 0, 255);
-  box(500);
+  // Swap prev and next so that we can use the previous frame as a texture
+  // when drawing the current frame
+  [fboPrev, fboNext] = [fboNext, fboPrev];
+
+  // Draw to the Framebuffer
+  fboNext.draw(() => {
+    clear();
+
+    background(255);
+
+    push();
+    //scale(1.003);
+    texture(fboPrev);
+    plane(width, -height);
+    pop();
+
+    push();
+    // Fade to white slowly. This will leave a permanent trail if you don't
+    // use floating point textures.
+    fill(255, 2);
+    rect(0, 0, width, height);
+    pop();
+
+    push();
+    // Clear the depth buffer so the cube doesn't intersect with the background
+    // plane behind it
+    drawingContext.clear(drawingContext.DEPTH_BUFFER_BIT);
+    normalMaterial();
+    translate(100*sin(frameCount * 0.014), 100*sin(frameCount * 0.02), 0);
+    rotateX(frameCount * 0.01);
+    rotateY(frameCount * 0.01);
+    box(50);
+    pop();
+  });
+
+  clear();
+  push();
+  texture(fboNext);
+  plane(width, -height);
+  pop();
 }

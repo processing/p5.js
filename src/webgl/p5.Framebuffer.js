@@ -65,7 +65,9 @@ class Framebuffer {
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
-      target._renderer._glAttributes.alpha ? constants.RGBA : constants.RGB
+      target._renderer._pInst._glAttributes.alpha
+        ? constants.RGBA
+        : constants.RGB
     );
     this.depthFormat = settings.depthFormat || (
       this.format === constants.UNSIGNED_BYTE
@@ -74,7 +76,7 @@ class Framebuffer {
     );
     this.antialias = (
       settings.antialias === undefined
-        ? target._renderer._glAttributes.antialias
+        ? target._pInst._glAttributes.antialias
         : settings.antialias
     );
     if (this.antialias && target.webglVersion !== constants.WEBGL2) {
@@ -330,7 +332,7 @@ class Framebuffer {
         magFilter: gl.NEAREST
       }
     );
-    this.target._renderer.textures.set(this.color, depthP5Texture);
+    this.target._renderer.textures.set(this.depth, depthP5Texture);
 
     this.color = new FramebufferTexture(this, 'colorTexture');
     const colorP5Texture = new p5.Texture(

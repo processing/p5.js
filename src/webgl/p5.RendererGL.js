@@ -1346,7 +1346,7 @@ p5.RendererGL.prototype.getTexture = function(input) {
   }
 
   const tex = new p5.Texture(this, src);
-  textures.set(src, tex);
+  this.textures.set(src, tex);
   return tex;
 };
 
