@@ -389,7 +389,7 @@ p5.prototype.resetShader = function() {
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture} tex  image to use as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex  image to use as texture
  * @chainable
  * @example
  * <div>

@@ -15,7 +15,7 @@ import * as constants from '../core/constants';
  * @class p5.Texture
  * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Texture
- * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|ImageData} [obj] the
+ * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement|p5.Framebuffer|p5.FramebufferTexture|ImageData} [obj] the
  * object containing the image data to store in the texture.
  * @param {Object} [settings] optional A javascript object containing texture
  * settings.
@@ -47,25 +47,6 @@ p5.Texture = function(renderer, obj, settings) {
 
   settings = settings || {};
 
-  if (
-    settings.dataType === gl.FLOAT &&
-    this._renderer._pInst.webglVersion !== constants.WEBGL2
-  ) {
-    const ext = gl.getExtension('OES_texture_float');
-    if (!ext) {
-      console.log(
-        "Oh no, your device doesn't support floating point textures!"
-      );
-    }
-
-    const linear = gl.getExtension('OES_texture_float_linear');
-    if (!linear) {
-      console.log(
-        "Ack! Your device doesn't support linear filtering for floating point textures"
-      );
-    }
-  }
-
   this.src = obj;
   this.glTex = undefined;
   this.glTarget = gl.TEXTURE_2D;
@@ -76,6 +57,34 @@ p5.Texture = function(renderer, obj, settings) {
   this.glWrapS = settings.wrapS || gl.CLAMP_TO_EDGE;
   this.glWrapT = settings.wrapT || gl.CLAMP_TO_EDGE;
   this.glDataType = settings.dataType || gl.UNSIGNED_BYTE;
+
+  const support = checkWebGLCapabilities(renderer);
+  if (this.glFormat === gl.HALF_FLOAT && !support.halfFloat) {
+    console.log('This device does not support dataType HALF_FLOAT. Falling back to FLOAT.');
+    this.glDataType = gl.FLOAT;
+  }
+  if (
+    this.glFormat === gl.HALF_FLOAT &&
+    (this.glMinFilter === gl.LINEAR || this.glMagFilter === gl.LINEAR) &&
+    !support.halfFloatLinear
+  ) {
+    console.log('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.');
+    if (this.glMinFilter === gl.LINEAR) this.glMinFilter = gl.NEAREST;
+    if (this.glMagFilter === gl.LINEAR) this.glMagFilter = gl.NEAREST;
+  }
+  if (this.glFormat === gl.FLOAT && !support.float) {
+    console.log('This device does not support dataType FLOAT. Falling back to UNSIGNED_BYTE.');
+    this.glDataType = gl.UNSIGNED_BYTE;
+  }
+  if (
+    this.glFormat === gl.FLOAT &&
+    (this.glMinFilter === gl.LINEAR || this.glMagFilter === gl.LINEAR) &&
+    !support.floatLinear
+  ) {
+    console.log('This device does not support linear filtering for dataType FLOAT. Falling back to NEAREST.');
+    if (this.glMinFilter === gl.LINEAR) this.glMinFilter = gl.NEAREST;
+    if (this.glMagFilter === gl.LINEAR) this.glMagFilter = gl.NEAREST;
+  }
 
   // used to determine if this texture might need constant updating
   // because it is a video or gif.
@@ -92,6 +101,7 @@ p5.Texture = function(renderer, obj, settings) {
   this.isSrcP5Renderer = obj instanceof p5.Renderer;
   this.isImageData =
     typeof ImageData !== 'undefined' && obj instanceof ImageData;
+  this.isFramebufferTexture = obj instanceof p5.FramebufferTexture;
 
   const textureData = this._getTextureDataFromSource();
   this.width = textureData.width;
@@ -103,7 +113,9 @@ p5.Texture = function(renderer, obj, settings) {
 
 p5.Texture.prototype._getTextureDataFromSource = function() {
   let textureData;
-  if (this.isSrcP5Image) {
+  if (this.isFramebufferTexture) {
+    textureData = this.src.rawTexture();
+  } else if (this.isSrcP5Image) {
     // param is a p5.Image
     textureData = this.src.canvas;
   } else if (
@@ -129,7 +141,9 @@ p5.Texture.prototype._getTextureDataFromSource = function() {
  */
 p5.Texture.prototype.init = function(data) {
   const gl = this._renderer.GL;
-  this.glTex = gl.createTexture();
+  if (!this.isFramebufferTexture) {
+    this.glTex = gl.createTexture();
+  }
 
   this.glWrapS = this._renderer.textureWrapX;
   this.glWrapT = this._renderer.textureWrapY;
@@ -141,7 +155,9 @@ p5.Texture.prototype.init = function(data) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
 
-  if (
+  if (this.isFramebufferTexture) {
+    // Do nothing, the framebuffer manages its own content
+  } else if (
     this.width === 0 ||
     this.height === 0 ||
     (this.isSrcMediaElement && !this.src.loadedmetadata)
@@ -173,6 +189,14 @@ p5.Texture.prototype.init = function(data) {
   }
 };
 
+p5.Texture.prototype.getTexture = function() {
+  if (this.isFramebufferTexture) {
+    return this.src.rawTexture();
+  } else {
+    return this.glTex;
+  }
+};
+
 /**
  * Checks if the source data for this texture has changed (if it's
  * easy to do so) and reuploads the texture if necessary. If it's not
@@ -186,6 +210,12 @@ p5.Texture.prototype.update = function() {
     return false; // nothing to do!
   }
 
+  // FramebufferTexture instances wrap raw WebGL textures already, which
+  // don't need any extra updating, as they already live on the GPU
+  if (this.isFramebufferTexture) {
+    return false;
+  }
+
   const textureData = this._getTextureDataFromSource();
   let updated = false;
 
@@ -196,8 +226,8 @@ p5.Texture.prototype.update = function() {
 
     // make sure that if the width and height of this.src have changed
     // for some reason, we update our metadata and upload the texture again
-    this.width = textureData.width;
-    this.height = textureData.height;
+    this.width = textureData.width || data.width;
+    this.height = textureData.height || data.height;
 
     if (this.isSrcP5Image) {
       data.setModified(false);
@@ -274,7 +304,7 @@ p5.Texture.prototype.bindTexture = function() {
   // bind texture using gl context + glTarget and
   // generated gl texture object
   const gl = this._renderer.GL;
-  gl.bindTexture(this.glTarget, this.glTex);
+  gl.bindTexture(this.glTarget, this.getTexture());
 
   return this;
 };
@@ -416,5 +446,25 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
   this.unbindTexture();
 };
+
+export function checkWebGLCapabilities(renderer) {
+  const gl = renderer.GL;
+  const supportsFloat = renderer.webglVersion === constants.WEBGL2
+    ? gl.getExtension('EXT_color_buffer_float')
+    : gl.getExtension('OES_texture_float');
+  const supportsFloatLinear = supportsFloat &&
+    gl.getExtension('OES_texture_float_linear');
+  const supportsHalfFloat = renderer.webglVersion === constants.WEBGL2
+    ? gl.getExtension('EXT_color_buffer_float')
+    : gl.getExtension('OES_texture_half_float');
+  const supportsHalfFloatLinear = supportsHalfFloat &&
+    gl.getExtension('OES_texture_half_float_linear');
+  return {
+    float: supportsFloat,
+    floatLinear: supportsFloatLinear,
+    halfFloat: supportsHalfFloat,
+    halfFloatLinear: supportsHalfFloatLinear
+  };
+}
 
 export default p5.Texture;

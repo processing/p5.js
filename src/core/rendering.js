@@ -250,6 +250,10 @@ p5.prototype.createGraphics = function(w, h, renderer) {
   return new p5.Graphics(w, h, renderer, this);
 };
 
+p5.prototype.createFramebuffer = function(options) {
+  return new p5.Framebuffer(this, options);
+};
+
 /**
  * Blends the pixels in the display window according to the defined mode.
  * There is a choice of the following modes to blend the source pixels (A)

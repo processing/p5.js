@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <link rel="stylesheet" href="../../../styles.css">
+  <script language="javascript" type="text/javascript" src="../../../../../lib/p5.js"></script>
+</head>
+
+<body>
+  <div id="controls">
+    <select id="webglVersion">
+      <option value="2" selected>WebGL 2</option>
+      <option value="1">WebGL 1</option>
+    </select>
+
+    <select id="alpha">
+      <option value="alpha" selected>Alpha</option>
+      <option value="noAlpha">No Alpha</option>
+    </select>
+
+    <select id="antialias">
+      <option value="antialias" selected>Antialiased</option>
+      <option value="noAntialias">No antialiasing</option>
+    </select>
+
+    <select id="format">
+      <option value="unsigned-byte" selected>Unsigned Byte Textures</option>
+      <option value="half-float">Half Float Textures</option>
+      <option value="float">Float Textures</option>
+    </select>
+  </div>
+
+  <div id="sketch"></div>
+
+  <pre id="errors">
+  </pre>
+
+  <script language="javascript" type="text/javascript" src="sketch.js"></script>
+</body>
+
+</html>
