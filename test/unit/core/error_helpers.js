@@ -976,11 +976,11 @@ suite('Tests for p5.js sketch_reader', function() {
   );
 
   testUnMinified(
-    'detects reassignment of p5.js function (size from TypedDict or Dom) outside setup',
+    'detects reassignment of p5.js function (textSize from Typography) outside setup',
     function() {
       return new Promise(function(resolve) {
         prepSketchReaderTest(
-          ['let size = 100', 'function setup() {}'],
+          ['let textSize = 100', 'function setup() {}'],
           resolve
         );
       }).then(function() {
@@ -991,11 +991,11 @@ suite('Tests for p5.js sketch_reader', function() {
   );
 
   testUnMinified(
-    'detects reassignment of p5.js function (textSize from Typography) outside setup',
+    'detects reassignment of p5.js function (size from TypedDict or Dom) outside setup',
     function() {
       return new Promise(function(resolve) {
         prepSketchReaderTest(
-          ['let textSize = 100', 'function setup() {}'],
+          ['let size = 100', 'function setup() {}'],
           resolve
         );
       }).then(function() {
