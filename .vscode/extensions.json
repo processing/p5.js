@@ -6,8 +6,7 @@
   "recommendations": [
     "eg2.vscode-npm-script",
     "yzhang.markdown-all-in-one",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "dbaeumer.vscode-eslint"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
