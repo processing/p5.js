@@ -250,6 +250,22 @@ p5.prototype.createGraphics = function(w, h, renderer) {
   return new p5.Graphics(w, h, renderer, this);
 };
 
+/**
+ * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>, a
+ * high-performance WebGL object that you can draw to and then use as a texture.
+ *
+ * Options can include:
+ * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
+ * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
+ * - `depthFormat`: The data format for depth information, either `UNSIGNED_BYTE` or `FLOAT`. The default is `UNSIGNED_BYTE` if `format` is that as well, or `FLOAT` otherwise.
+ * - `antialias`: Boolean, whether or not to render with antialiased edges. Defaults to whether or not the main canvas is antialiased. Antialiasing is only supported when WebGL 2 is available.
+ * - `width`: The width of the texture. Defaults to matching the main canvas. If unspecified, the framebuffer will resize when the main canvas resizes.
+ * - `height`: The height of the texture. Defaults to matching the main canvas. If unspecified, the framebuffer will resize when the main canvas resizes.
+ * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
+ *
+ * @method createFramebuffer
+ * @param {Object} [options] An optional object with configuration
+ */
 p5.prototype.createFramebuffer = function(options) {
   return new p5.Framebuffer(this, options);
 };

@@ -56,8 +56,10 @@ p5.FramebufferTexture = FramebufferTexture;
 
 class Framebuffer {
   /**
-   * @param target A p5 global instance of p5.Graphics
-   * @param settings An optional settings object
+   * @class p5.Framebuffer
+   * @constructor
+   * @param {p5.Graphics|p5} target A p5 global instance or p5.Graphics
+   * @param {Object} [settings] A settings object
    */
   constructor(target, settings = {}) {
     this.target = target;

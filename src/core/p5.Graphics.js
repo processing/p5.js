@@ -186,4 +186,8 @@ p5.Graphics.prototype.remove = function() {
   }
 };
 
+p5.Graphics.prototype.createFramebuffer = function(options) {
+  return new p5.Framebuffer(this, options);
+};
+
 export default p5.Graphics;
