@@ -991,7 +991,7 @@ suite('Tests for p5.js sketch_reader', function() {
   );
 
   testUnMinified(
-    'detects reassignment of p5.js function (size from TypedDict or Dom) outside setup',
+    'does not detect reassignment of p5.js function (size from TypedDict or Dom) outside setup',
     function() {
       return new Promise(function(resolve) {
         prepSketchReaderTest(
