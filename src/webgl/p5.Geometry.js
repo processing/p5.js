@@ -17,239 +17,240 @@ import p5 from '../core/main';
  * @param  {Integer} [detailY] number of vertices along the y-axis.
  * @param {function} [callback] function to call upon object instantiation.
  */
-p5.Geometry = function(detailX, detailY, callback) {
+p5.Geometry = class  {
+  constructor(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
-  this.vertices = [];
+    this.vertices = [];
 
-  //an array containing every vertex for stroke drawing
-  this.lineVertices = [];
+    //an array containing every vertex for stroke drawing
+    this.lineVertices = [];
 
-  // The tangents going into or out of a vertex on a line. Along a straight
-  // line segment, both should be equal. At an endpoint, one or the other
-  // will not exist and will be all 0. In joins between line segments, they
-  // may be different, as they will be the tangents on either side of the join.
-  this.lineTangentsIn = [];
-  this.lineTangentsOut = [];
+    // The tangents going into or out of a vertex on a line. Along a straight
+    // line segment, both should be equal. At an endpoint, one or the other
+    // will not exist and will be all 0. In joins between line segments, they
+    // may be different, as they will be the tangents on either side of the join.
+    this.lineTangentsIn = [];
+    this.lineTangentsOut = [];
 
-  // When drawing lines with thickness, entries in this buffer represent which
-  // side of the centerline the vertex will be placed. The sign of the number
-  // will represent the side of the centerline, and the absolute value will be
-  // used as an enum to determine which part of the cap or join each vertex
-  // represents. See the doc comments for _addCap and _addJoin for diagrams.
-  this.lineSides = [];
+    // When drawing lines with thickness, entries in this buffer represent which
+    // side of the centerline the vertex will be placed. The sign of the number
+    // will represent the side of the centerline, and the absolute value will be
+    // used as an enum to determine which part of the cap or join each vertex
+    // represents. See the doc comments for _addCap and _addJoin for diagrams.
+    this.lineSides = [];
 
-  //an array containing 1 normal per vertex
-  //@type [p5.Vector]
-  //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
-  this.vertexNormals = [];
-  //an array containing each three vertex indices that form a face
-  //[[0, 1, 2], [2, 1, 3], ...]
-  this.faces = [];
-  //a 2D array containing uvs for every vertex
-  //[[0.0,0.0],[1.0,0.0], ...]
-  this.uvs = [];
-  // a 2D array containing edge connectivity pattern for create line vertices
-  //based on faces for most objects;
-  this.edges = [];
-  this.vertexColors = [];
+    //an array containing 1 normal per vertex
+    //@type [p5.Vector]
+    //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
+    this.vertexNormals = [];
+    //an array containing each three vertex indices that form a face
+    //[[0, 1, 2], [2, 1, 3], ...]
+    this.faces = [];
+    //a 2D array containing uvs for every vertex
+    //[[0.0,0.0],[1.0,0.0], ...]
+    this.uvs = [];
+    // a 2D array containing edge connectivity pattern for create line vertices
+    //based on faces for most objects;
+    this.edges = [];
+    this.vertexColors = [];
 
-  // One color per vertex representing the stroke color at that vertex
-  this.vertexStrokeColors = [];
+    // One color per vertex representing the stroke color at that vertex
+    this.vertexStrokeColors = [];
 
-  // One color per line vertex, generated automatically based on
-  // vertexStrokeColors in _edgesToVertices()
-  this.lineVertexColors = [];
-  this.detailX = detailX !== undefined ? detailX : 1;
-  this.detailY = detailY !== undefined ? detailY : 1;
-  this.dirtyFlags = {};
+    // One color per line vertex, generated automatically based on
+    // vertexStrokeColors in _edgesToVertices()
+    this.lineVertexColors = [];
+    this.detailX = detailX !== undefined ? detailX : 1;
+    this.detailY = detailY !== undefined ? detailY : 1;
+    this.dirtyFlags = {};
 
-  if (callback instanceof Function) {
-    callback.call(this);
+    if (callback instanceof Function) {
+      callback.call(this);
+    }
+    return this; // TODO: is this a constructor?
   }
-  return this; // TODO: is this a constructor?
-};
 
-p5.Geometry.prototype.reset = function() {
-  this.lineVertices.length = 0;
-  this.lineTangentsIn.length = 0;
-  this.lineTangentsOut.length = 0;
-  this.lineSides.length = 0;
+  reset() {
+    this.lineVertices.length = 0;
+    this.lineTangentsIn.length = 0;
+    this.lineTangentsOut.length = 0;
+    this.lineSides.length = 0;
 
-  this.vertices.length = 0;
-  this.edges.length = 0;
-  this.vertexColors.length = 0;
-  this.vertexStrokeColors.length = 0;
-  this.lineVertexColors.length = 0;
-  this.vertexNormals.length = 0;
-  this.uvs.length = 0;
+    this.vertices.length = 0;
+    this.edges.length = 0;
+    this.vertexColors.length = 0;
+    this.vertexStrokeColors.length = 0;
+    this.lineVertexColors.length = 0;
+    this.vertexNormals.length = 0;
+    this.uvs.length = 0;
 
-  this.dirtyFlags = {};
-};
+    this.dirtyFlags = {};
+  }
 
-/**
+  /**
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
  * @chainable
  */
-p5.Geometry.prototype.computeFaces = function() {
-  this.faces.length = 0;
-  const sliceCount = this.detailX + 1;
-  let a, b, c, d;
-  for (let i = 0; i < this.detailY; i++) {
-    for (let j = 0; j < this.detailX; j++) {
-      a = i * sliceCount + j; // + offset;
-      b = i * sliceCount + j + 1; // + offset;
-      c = (i + 1) * sliceCount + j + 1; // + offset;
-      d = (i + 1) * sliceCount + j; // + offset;
-      this.faces.push([a, b, d]);
-      this.faces.push([d, b, c]);
+  computeFaces() {
+    this.faces.length = 0;
+    const sliceCount = this.detailX + 1;
+    let a, b, c, d;
+    for (let i = 0; i < this.detailY; i++) {
+      for (let j = 0; j < this.detailX; j++) {
+        a = i * sliceCount + j; // + offset;
+        b = i * sliceCount + j + 1; // + offset;
+        c = (i + 1) * sliceCount + j + 1; // + offset;
+        d = (i + 1) * sliceCount + j; // + offset;
+        this.faces.push([a, b, d]);
+        this.faces.push([d, b, c]);
+      }
     }
+    return this;
   }
-  return this;
-};
 
-p5.Geometry.prototype._getFaceNormal = function(faceId) {
+  _getFaceNormal(faceId) {
   //This assumes that vA->vB->vC is a counter-clockwise ordering
-  const face = this.faces[faceId];
-  const vA = this.vertices[face[0]];
-  const vB = this.vertices[face[1]];
-  const vC = this.vertices[face[2]];
-  const ab = p5.Vector.sub(vB, vA);
-  const ac = p5.Vector.sub(vC, vA);
-  const n = p5.Vector.cross(ab, ac);
-  const ln = p5.Vector.mag(n);
-  let sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
-  if (sinAlpha === 0 || isNaN(sinAlpha)) {
-    console.warn(
-      'p5.Geometry.prototype._getFaceNormal:',
-      'face has colinear sides or a repeated vertex'
-    );
-    return n;
+    const face = this.faces[faceId];
+    const vA = this.vertices[face[0]];
+    const vB = this.vertices[face[1]];
+    const vC = this.vertices[face[2]];
+    const ab = p5.Vector.sub(vB, vA);
+    const ac = p5.Vector.sub(vC, vA);
+    const n = p5.Vector.cross(ab, ac);
+    const ln = p5.Vector.mag(n);
+    let sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
+    if (sinAlpha === 0 || isNaN(sinAlpha)) {
+      console.warn(
+        'p5.Geometry.prototype._getFaceNormal:',
+        'face has colinear sides or a repeated vertex'
+      );
+      return n;
+    }
+    if (sinAlpha > 1) sinAlpha = 1; // handle float rounding error
+    return n.mult(Math.asin(sinAlpha) / ln);
   }
-  if (sinAlpha > 1) sinAlpha = 1; // handle float rounding error
-  return n.mult(Math.asin(sinAlpha) / ln);
-};
-/**
+  /**
  * computes smooth normals per vertex as an average of each
  * face.
  * @method computeNormals
  * @chainable
  */
-p5.Geometry.prototype.computeNormals = function() {
-  const vertexNormals = this.vertexNormals;
-  const vertices = this.vertices;
-  const faces = this.faces;
-  let iv;
+  computeNormals() {
+    const vertexNormals = this.vertexNormals;
+    const vertices = this.vertices;
+    const faces = this.faces;
+    let iv;
 
-  // initialize the vertexNormals array with empty vectors
-  vertexNormals.length = 0;
-  for (iv = 0; iv < vertices.length; ++iv) {
-    vertexNormals.push(new p5.Vector());
-  }
-
-  // loop through all the faces adding its normal to the normal
-  // of each of its vertices
-  for (let f = 0; f < faces.length; ++f) {
-    const face = faces[f];
-    const faceNormal = this._getFaceNormal(f);
-
-    // all three vertices get the normal added
-    for (let fv = 0; fv < 3; ++fv) {
-      const vertexIndex = face[fv];
-      vertexNormals[vertexIndex].add(faceNormal);
+    // initialize the vertexNormals array with empty vectors
+    vertexNormals.length = 0;
+    for (iv = 0; iv < vertices.length; ++iv) {
+      vertexNormals.push(new p5.Vector());
     }
+
+    // loop through all the faces adding its normal to the normal
+    // of each of its vertices
+    for (let f = 0; f < faces.length; ++f) {
+      const face = faces[f];
+      const faceNormal = this._getFaceNormal(f);
+
+      // all three vertices get the normal added
+      for (let fv = 0; fv < 3; ++fv) {
+        const vertexIndex = face[fv];
+        vertexNormals[vertexIndex].add(faceNormal);
+      }
+    }
+
+    // normalize the normals
+    for (iv = 0; iv < vertices.length; ++iv) {
+      vertexNormals[iv].normalize();
+    }
+
+    return this;
   }
 
-  // normalize the normals
-  for (iv = 0; iv < vertices.length; ++iv) {
-    vertexNormals[iv].normalize();
-  }
-
-  return this;
-};
-
-/**
+  /**
  * Averages the vertex normals. Used in curved
  * surfaces
  * @method averageNormals
  * @chainable
  */
-p5.Geometry.prototype.averageNormals = function() {
-  for (let i = 0; i <= this.detailY; i++) {
-    const offset = this.detailX + 1;
-    let temp = p5.Vector.add(
-      this.vertexNormals[i * offset],
-      this.vertexNormals[i * offset + this.detailX]
-    );
+  averageNormals() {
+    for (let i = 0; i <= this.detailY; i++) {
+      const offset = this.detailX + 1;
+      let temp = p5.Vector.add(
+        this.vertexNormals[i * offset],
+        this.vertexNormals[i * offset + this.detailX]
+      );
 
-    temp = p5.Vector.div(temp, 2);
-    this.vertexNormals[i * offset] = temp;
-    this.vertexNormals[i * offset + this.detailX] = temp;
+      temp = p5.Vector.div(temp, 2);
+      this.vertexNormals[i * offset] = temp;
+      this.vertexNormals[i * offset + this.detailX] = temp;
+    }
+    return this;
   }
-  return this;
-};
 
-/**
+  /**
  * Averages pole normals.  Used in spherical primitives
  * @method averagePoleNormals
  * @chainable
  */
-p5.Geometry.prototype.averagePoleNormals = function() {
+  averagePoleNormals() {
   //average the north pole
-  let sum = new p5.Vector(0, 0, 0);
-  for (let i = 0; i < this.detailX; i++) {
-    sum.add(this.vertexNormals[i]);
-  }
-  sum = p5.Vector.div(sum, this.detailX);
+    let sum = new p5.Vector(0, 0, 0);
+    for (let i = 0; i < this.detailX; i++) {
+      sum.add(this.vertexNormals[i]);
+    }
+    sum = p5.Vector.div(sum, this.detailX);
 
-  for (let i = 0; i < this.detailX; i++) {
-    this.vertexNormals[i] = sum;
+    for (let i = 0; i < this.detailX; i++) {
+      this.vertexNormals[i] = sum;
+    }
+
+    //average the south pole
+    sum = new p5.Vector(0, 0, 0);
+    for (
+      let i = this.vertices.length - 1;
+      i > this.vertices.length - 1 - this.detailX;
+      i--
+    ) {
+      sum.add(this.vertexNormals[i]);
+    }
+    sum = p5.Vector.div(sum, this.detailX);
+
+    for (
+      let i = this.vertices.length - 1;
+      i > this.vertices.length - 1 - this.detailX;
+      i--
+    ) {
+      this.vertexNormals[i] = sum;
+    }
+    return this;
   }
 
-  //average the south pole
-  sum = new p5.Vector(0, 0, 0);
-  for (
-    let i = this.vertices.length - 1;
-    i > this.vertices.length - 1 - this.detailX;
-    i--
-  ) {
-    sum.add(this.vertexNormals[i]);
-  }
-  sum = p5.Vector.div(sum, this.detailX);
-
-  for (
-    let i = this.vertices.length - 1;
-    i > this.vertices.length - 1 - this.detailX;
-    i--
-  ) {
-    this.vertexNormals[i] = sum;
-  }
-  return this;
-};
-
-/**
+  /**
  * Create a 2D array for establishing stroke connections
  * @private
  * @chainable
  */
-p5.Geometry.prototype._makeTriangleEdges = function() {
-  this.edges.length = 0;
-  if (Array.isArray(this.strokeIndices)) {
-    for (let i = 0, max = this.strokeIndices.length; i < max; i++) {
-      this.edges.push(this.strokeIndices[i]);
+  _makeTriangleEdges() {
+    this.edges.length = 0;
+    if (Array.isArray(this.strokeIndices)) {
+      for (let i = 0, max = this.strokeIndices.length; i < max; i++) {
+        this.edges.push(this.strokeIndices[i]);
+      }
+    } else {
+      for (let j = 0; j < this.faces.length; j++) {
+        this.edges.push([this.faces[j][0], this.faces[j][1]]);
+        this.edges.push([this.faces[j][1], this.faces[j][2]]);
+        this.edges.push([this.faces[j][2], this.faces[j][0]]);
+      }
     }
-  } else {
-    for (let j = 0; j < this.faces.length; j++) {
-      this.edges.push([this.faces[j][0], this.faces[j][1]]);
-      this.edges.push([this.faces[j][1], this.faces[j][2]]);
-      this.edges.push([this.faces[j][2], this.faces[j][0]]);
-    }
+    return this;
   }
-  return this;
-};
 
-/**
+  /**
  * Converts each line segment into the vertices and vertex attributes needed
  * to turn the line into a polygon on screen. This will include:
  * - Two triangles line segment to create a rectangle
@@ -264,95 +265,95 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._edgesToVertices = function() {
-  this.lineVertices.length = 0;
-  this.lineTangentsIn.length = 0;
-  this.lineTangentsOut.length = 0;
-  this.lineSides.length = 0;
+  _edgesToVertices() {
+    this.lineVertices.length = 0;
+    this.lineTangentsIn.length = 0;
+    this.lineTangentsOut.length = 0;
+    this.lineSides.length = 0;
 
-  const closed =
+    const closed =
     this.edges.length > 1 &&
     this.edges[0][0] === this.edges[this.edges.length - 1][1];
-  let addedStartingCap = false;
-  let lastValidDir;
-  for (let i = 0; i < this.edges.length; i++) {
-    const prevEdge = this.edges[i - 1];
-    const currEdge = this.edges[i];
-    const begin = this.vertices[currEdge[0]];
-    const end = this.vertices[currEdge[1]];
-    const fromColor = this.vertexStrokeColors.length > 0
-      ? this.vertexStrokeColors.slice(
-        currEdge[0] * 4,
-        (currEdge[0] + 1) * 4
-      )
-      : [0, 0, 0, 0];
-    const toColor = this.vertexStrokeColors.length > 0
-      ? this.vertexStrokeColors.slice(
-        currEdge[1] * 4,
-        (currEdge[1] + 1) * 4
-      )
-      : [0, 0, 0, 0];
-    const dir = end
-      .copy()
-      .sub(begin)
-      .normalize();
-    const dirOK = dir.magSq() > 0;
-    if (dirOK) {
-      this._addSegment(begin, end, fromColor, toColor, dir);
-    }
+    let addedStartingCap = false;
+    let lastValidDir;
+    for (let i = 0; i < this.edges.length; i++) {
+      const prevEdge = this.edges[i - 1];
+      const currEdge = this.edges[i];
+      const begin = this.vertices[currEdge[0]];
+      const end = this.vertices[currEdge[1]];
+      const fromColor = this.vertexStrokeColors.length > 0
+        ? this.vertexStrokeColors.slice(
+          currEdge[0] * 4,
+          (currEdge[0] + 1) * 4
+        )
+        : [0, 0, 0, 0];
+      const toColor = this.vertexStrokeColors.length > 0
+        ? this.vertexStrokeColors.slice(
+          currEdge[1] * 4,
+          (currEdge[1] + 1) * 4
+        )
+        : [0, 0, 0, 0];
+      const dir = end
+        .copy()
+        .sub(begin)
+        .normalize();
+      const dirOK = dir.magSq() > 0;
+      if (dirOK) {
+        this._addSegment(begin, end, fromColor, toColor, dir);
+      }
 
-    if (i > 0 && prevEdge[1] === currEdge[0]) {
+      if (i > 0 && prevEdge[1] === currEdge[0]) {
       // Add a join if this segment shares a vertex with the previous. Skip
       // actually adding join vertices if either the previous segment or this
       // one has a length of 0.
       //
       // Don't add a join if the tangents point in the same direction, which
       // would mean the edges line up exactly, and there is no need for a join.
-      if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
-        this._addJoin(begin, lastValidDir, dir, fromColor);
-      }
-      if (dirOK && !addedStartingCap && !closed) {
-        this._addCap(begin, dir.copy().mult(-1), fromColor);
-        addedStartingCap = true;
-      }
-    } else {
-      addedStartingCap = false;
-      // Start a new line
-      if (dirOK && (!closed || i > 0)) {
-        this._addCap(begin, dir.copy().mult(-1), fromColor);
-        addedStartingCap = true;
-      }
-      if (lastValidDir && (!closed || i < this.edges.length - 1)) {
-        // Close off the last segment with a cap
-        this._addCap(this.vertices[prevEdge[1]], lastValidDir, fromColor);
-        lastValidDir = undefined;
-      }
-    }
-
-    if (i === this.edges.length - 1) {
-      if (closed) {
-        this._addJoin(
-          end,
-          dir,
-          this.vertices[this.edges[0][1]]
-            .copy()
-            .sub(end)
-            .normalize(),
-          toColor
-        );
+        if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
+          this._addJoin(begin, lastValidDir, dir, fromColor);
+        }
+        if (dirOK && !addedStartingCap && !closed) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          addedStartingCap = true;
+        }
       } else {
-        this._addCap(end, dir, toColor);
+        addedStartingCap = false;
+        // Start a new line
+        if (dirOK && (!closed || i > 0)) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          addedStartingCap = true;
+        }
+        if (lastValidDir && (!closed || i < this.edges.length - 1)) {
+        // Close off the last segment with a cap
+          this._addCap(this.vertices[prevEdge[1]], lastValidDir, fromColor);
+          lastValidDir = undefined;
+        }
+      }
+
+      if (i === this.edges.length - 1) {
+        if (closed) {
+          this._addJoin(
+            end,
+            dir,
+            this.vertices[this.edges[0][1]]
+              .copy()
+              .sub(end)
+              .normalize(),
+            toColor
+          );
+        } else {
+          this._addCap(end, dir, toColor);
+        }
+      }
+
+      if (dirOK) {
+        lastValidDir = dir;
       }
     }
-
-    if (dirOK) {
-      lastValidDir = dir;
-    }
+    return this;
   }
-  return this;
-};
 
-/**
+  /**
  * Adds the vertices and vertex attributes for two triangles making a rectangle
  * for a straight line segment. A vertex shader is responsible for picking
  * proper coordinates on the screen given the centerline positions, the tangent,
@@ -368,33 +369,33 @@ p5.Geometry.prototype._edgesToVertices = function() {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addSegment = function(
-  begin,
-  end,
-  fromColor,
-  toColor,
-  dir
-) {
-  const a = begin.array();
-  const b = end.array();
-  const dirArr = dir.array();
-  this.lineSides.push(1, -1, 1, 1, -1, -1);
-  for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
-    tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
+  _addSegment(
+    begin,
+    end,
+    fromColor,
+    toColor,
+    dir
+  ) {
+    const a = begin.array();
+    const b = end.array();
+    const dirArr = dir.array();
+    this.lineSides.push(1, -1, 1, 1, -1, -1);
+    for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
+      tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
+    }
+    this.lineVertices.push(a, a, b, b, a, b);
+    this.lineVertexColors.push(
+      fromColor,
+      fromColor,
+      toColor,
+      toColor,
+      fromColor,
+      toColor
+    );
+    return this;
   }
-  this.lineVertices.push(a, a, b, b, a, b);
-  this.lineVertexColors.push(
-    fromColor,
-    fromColor,
-    toColor,
-    toColor,
-    fromColor,
-    toColor
-  );
-  return this;
-};
 
-/**
+  /**
  * Adds the vertices and vertex attributes for two triangles representing the
  * stroke cap of a line. A fragment shader is responsible for displaying the
  * appropriate cap style within the rectangle they make.
@@ -410,21 +411,21 @@ p5.Geometry.prototype._addSegment = function(
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addCap = function(point, tangent, color) {
-  const ptArray = point.array();
-  const tanInArray = tangent.array();
-  const tanOutArray = [0, 0, 0];
-  for (let i = 0; i < 6; i++) {
-    this.lineVertices.push(ptArray);
-    this.lineTangentsIn.push(tanInArray);
-    this.lineTangentsOut.push(tanOutArray);
-    this.lineVertexColors.push(color);
+  _addCap(point, tangent, color) {
+    const ptArray = point.array();
+    const tanInArray = tangent.array();
+    const tanOutArray = [0, 0, 0];
+    for (let i = 0; i < 6; i++) {
+      this.lineVertices.push(ptArray);
+      this.lineTangentsIn.push(tanInArray);
+      this.lineTangentsOut.push(tanOutArray);
+      this.lineVertexColors.push(color);
+    }
+    this.lineSides.push(-1, -2, 2, 2, 1, -1);
+    return this;
   }
-  this.lineSides.push(-1, -2, 2, 2, 1, -1);
-  return this;
-};
 
-/**
+  /**
  * Adds the vertices and vertex attributes for four triangles representing a
  * join between two adjacent line segments. This creates a quad on either side
  * of the shared vertex of the two line segments, with each quad perpendicular
@@ -447,58 +448,58 @@ p5.Geometry.prototype._addCap = function(point, tangent, color) {
  * @private
  * @chainable
  */
-p5.Geometry.prototype._addJoin = function(
-  point,
-  fromTangent,
-  toTangent,
-  color
-) {
-  const ptArray = point.array();
-  const tanInArray = fromTangent.array();
-  const tanOutArray = toTangent.array();
-  for (let i = 0; i < 12; i++) {
-    this.lineVertices.push(ptArray);
-    this.lineTangentsIn.push(tanInArray);
-    this.lineTangentsOut.push(tanOutArray);
-    this.lineVertexColors.push(color);
+  _addJoin(
+    point,
+    fromTangent,
+    toTangent,
+    color
+  ) {
+    const ptArray = point.array();
+    const tanInArray = fromTangent.array();
+    const tanOutArray = toTangent.array();
+    for (let i = 0; i < 12; i++) {
+      this.lineVertices.push(ptArray);
+      this.lineTangentsIn.push(tanInArray);
+      this.lineTangentsOut.push(tanOutArray);
+      this.lineVertexColors.push(color);
+    }
+    for (const side of [-1, 1]) {
+      this.lineSides.push(side, 2 * side, 3 * side, side, 3 * side, 0);
+    }
+    return this;
   }
-  for (const side of [-1, 1]) {
-    this.lineSides.push(side, 2 * side, 3 * side, side, 3 * side, 0);
-  }
-  return this;
-};
 
-/**
+  /**
  * Modifies all vertices to be centered within the range -100 to 100.
  * @method normalize
  * @chainable
  */
-p5.Geometry.prototype.normalize = function() {
-  if (this.vertices.length > 0) {
+  normalize() {
+    if (this.vertices.length > 0) {
     // Find the corners of our bounding box
-    const maxPosition = this.vertices[0].copy();
-    const minPosition = this.vertices[0].copy();
+      const maxPosition = this.vertices[0].copy();
+      const minPosition = this.vertices[0].copy();
 
-    for (let i = 0; i < this.vertices.length; i++) {
-      maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
-      minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
-      maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
-      minPosition.y = Math.min(minPosition.y, this.vertices[i].y);
-      maxPosition.z = Math.max(maxPosition.z, this.vertices[i].z);
-      minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
+      for (let i = 0; i < this.vertices.length; i++) {
+        maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
+        minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
+        maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
+        minPosition.y = Math.min(minPosition.y, this.vertices[i].y);
+        maxPosition.z = Math.max(maxPosition.z, this.vertices[i].z);
+        minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
+      }
+
+      const center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
+      const dist = p5.Vector.sub(maxPosition, minPosition);
+      const longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
+      const scale = 200 / longestDist;
+
+      for (let i = 0; i < this.vertices.length; i++) {
+        this.vertices[i].sub(center);
+        this.vertices[i].mult(scale);
+      }
     }
-
-    const center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
-    const dist = p5.Vector.sub(maxPosition, minPosition);
-    const longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
-    const scale = 200 / longestDist;
-
-    for (let i = 0; i < this.vertices.length; i++) {
-      this.vertices[i].sub(center);
-      this.vertices[i].mult(scale);
-    }
+    return this;
   }
-  return this;
 };
-
 export default p5.Geometry;
