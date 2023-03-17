@@ -28,6 +28,14 @@ export const P2D = 'p2d';
  * @final
  */
 export const WEBGL = 'webgl';
+/**
+ * One of the two possible values of a WebGL canvas (either WEBGL or WEBGL2),
+ * which can be used to determine what capabilities the rendering environment
+ * has.
+ * @property {String} WEBGL2
+ * @final
+ */
+export const WEBGL2 = 'webgl2';
 
 // ENVIRONMENT
 /**

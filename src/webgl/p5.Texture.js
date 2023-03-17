@@ -47,7 +47,10 @@ p5.Texture = function(renderer, obj, settings) {
 
   settings = settings || {};
 
-  if (settings.dataType === gl.FLOAT) {
+  if (
+    settings.dataType === gl.FLOAT &&
+    this._renderer._pInst.webglVersion !== constants.WEBGL2
+  ) {
     const ext = gl.getExtension('OES_texture_float');
     if (!ext) {
       console.log(
@@ -334,12 +337,27 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   // if it isn't we will set the wrap mode to CLAMP
   // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
   const isPowerOfTwo = x => (x & (x - 1)) === 0;
+  const textureData = this._getTextureDataFromSource();
 
-  const widthPowerOfTwo = isPowerOfTwo(this.width);
-  const heightPowerOfTwo = isPowerOfTwo(this.height);
+  let wrapWidth;
+  let wrapHeight;
+
+  if (textureData.naturalWidth && textureData.naturalHeight) {
+    wrapWidth = textureData.naturalWidth;
+    wrapHeight = textureData.naturalHeight;
+  } else {
+    wrapWidth = this.width;
+    wrapHeight = this.height;
+  }
+
+  const widthPowerOfTwo = isPowerOfTwo(wrapWidth);
+  const heightPowerOfTwo = isPowerOfTwo(wrapHeight);
 
   if (wrapX === constants.REPEAT) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapS = gl.REPEAT;
     } else {
       console.warn(
@@ -348,7 +366,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
       this.glWrapS = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapX === constants.MIRROR) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapS = gl.MIRRORED_REPEAT;
     } else {
       console.warn(
@@ -362,7 +383,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
   }
 
   if (wrapY === constants.REPEAT) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapT = gl.REPEAT;
     } else {
       console.warn(
@@ -371,7 +395,10 @@ p5.Texture.prototype.setWrapMode = function(wrapX, wrapY) {
       this.glWrapT = gl.CLAMP_TO_EDGE;
     }
   } else if (wrapY === constants.MIRROR) {
-    if (widthPowerOfTwo && heightPowerOfTwo) {
+    if (
+      this._renderer.webglVersion === constants.WEBGL2 ||
+      (widthPowerOfTwo && heightPowerOfTwo)
+    ) {
       this.glWrapT = gl.MIRRORED_REPEAT;
     } else {
       console.warn(

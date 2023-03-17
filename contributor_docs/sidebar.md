@@ -2,7 +2,7 @@
 
 - [__CONTRIBUTORS INTRO__](README.md)
 - [__CONTRIBUTOR GUIDELINES__](contributor_guidelines.md)
-- [__STEWARD_GUIDELINES__](steward_guidelines.md)
+- [__STEWARD GUIDELINES__](steward_guidelines.md)
 - __CONTRIBUTING DOCS__
   - [Contributing Documentation](contributing_documentation.md)
   - [Issue Labels](issue_labels.md)

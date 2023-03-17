@@ -31,7 +31,7 @@
       "node --require @babel/register ./utils/sample-linter.js"
     ]
   },
-  "version": "1.5.0",
+  "version": "1.6.0",
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.10.2",
@@ -81,7 +81,7 @@
     "promise-map-series": "^0.2.3",
     "puppeteer": "^18.2.1",
     "regenerator-runtime": "^0.13.3",
-    "simple-git": "^3.3.0",
+    "simple-git": "^3.16.1",
     "whatwg-fetch": "^2.0.4"
   },
   "license": "LGPL-2.1",

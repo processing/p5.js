@@ -204,6 +204,7 @@ class p5 {
       blur: null
     };
     this._millisStart = -1;
+    this._recording = false;
 
     // States used in the custom random generators
     this._lcg_random_state = null;
@@ -272,7 +273,9 @@ class p5 {
         this._runIfPreloadsAreDone();
       } else {
         this._setup();
-        this._draw();
+        if (!this._recording) {
+          this._draw();
+        }
       }
     };
 
@@ -287,7 +290,9 @@ class p5 {
           this._lastTargetFrameTime = window.performance.now();
           this._lastRealFrameTime = window.performance.now();
           context._setup();
-          context._draw();
+          if (!this._recording) {
+            context._draw();
+          }
         }
       }
     };
@@ -385,10 +390,10 @@ class p5 {
         time_since_last >= target_time_between_frames - epsilon
       ) {
         //mandatory update values(matrixes and stack)
-        this.redraw();
-        this._frameRate = 1000.0 / (now - this._lastRealFrameTime);
         this.deltaTime = now - this._lastRealFrameTime;
         this._setProperty('deltaTime', this.deltaTime);
+        this._frameRate = 1000.0 / this.deltaTime;
+        this.redraw();
         this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
           + target_time_between_frames, now);
         this._lastRealFrameTime = now;

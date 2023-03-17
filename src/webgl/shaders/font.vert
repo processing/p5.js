@@ -1,15 +1,13 @@
-precision mediump float;
-
-attribute vec3 aPosition;
-attribute vec2 aTexCoord;
+IN vec3 aPosition;
+IN vec2 aTexCoord;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 
 uniform vec4 uGlyphRect;
 uniform float uGlyphOffset;
 
-varying vec2 vTexCoord;
-varying float w;
+OUT vec2 vTexCoord;
+OUT float w;
 
 void main() {
   vec4 positionVec4 = vec4(aPosition, 1.0);

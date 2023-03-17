@@ -61,7 +61,7 @@ p5.prototype.movedX = 0;
  *   y += floor(movedY / 5);
  *   background(237, 34, 93);
  *   fill(0);
- *   rect(y, 50, 50, 50);
+ *   rect(50, y, 50, 50);
  *   describe(`box moves up and down according to mouse movement then
  *     slowly back towards the center`);
  * }

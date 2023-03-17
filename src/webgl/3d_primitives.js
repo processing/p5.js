@@ -1046,12 +1046,12 @@ p5.RendererGL.prototype.triangle = function(args) {
     const _triangle = function() {
       const vertices = [];
       vertices.push(new p5.Vector(0, 0, 0));
-      vertices.push(new p5.Vector(0, 1, 0));
       vertices.push(new p5.Vector(1, 0, 0));
+      vertices.push(new p5.Vector(0, 1, 0));
       this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
       this.faces = [[0, 1, 2]];
-      this.uvs = [0, 0, 0, 1, 1, 1];
+      this.uvs = [0, 0, 1, 0, 1, 1];
     };
     const triGeom = new p5.Geometry(1, 1, _triangle);
     triGeom._makeTriangleEdges()._edgesToVertices();
@@ -1994,6 +1994,7 @@ p5.RendererGL.prototype.image = function(
   this._pInst.push();
 
   this._pInst.noLights();
+  this._pInst.noStroke();
 
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);

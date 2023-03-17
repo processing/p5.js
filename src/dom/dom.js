@@ -2411,6 +2411,13 @@ p5.MediaElement = function(elt, pInst) {
   this._pixelDensity = 1;
   this._modified = false;
 
+  // Media has an internal canvas that is used when drawing it to the main
+  // canvas. It will need to be updated each frame as the video itself plays.
+  // We don't want to update it every time we draw, however, in case the user
+  // has used load/updatePixels. To handle this, we record the frame drawn to
+  // the internal canvas so we only update it if the frame has changed.
+  this._frameOnCanvas = -1;
+
   /**
    * Path to the media element source.
    *
@@ -3138,7 +3145,11 @@ p5.MediaElement.prototype._ensureCanvas = function() {
     this.drawingContext = this.canvas.getContext('2d');
     this.setModified(true);
   }
-  if (this.loadedmetadata) {
+
+  // Don't update the canvas again if we have already updated the canvas with
+  // the current frame
+  const needsRedraw = this._frameOnCanvas !== this._pInst.frameCount;
+  if (this.loadedmetadata && needsRedraw) {
     // wait for metadata for w/h
     if (this.canvas.width !== this.elt.width) {
       this.canvas.width = this.elt.width;
@@ -3155,6 +3166,7 @@ p5.MediaElement.prototype._ensureCanvas = function() {
       this.canvas.height
     );
     this.setModified(true);
+    this._frameOnCanvas = this._pInst.frameCount;
   }
 };
 p5.MediaElement.prototype.loadPixels = function() {

@@ -226,7 +226,7 @@ p5.RendererGL.prototype.endShape = function(
 p5.RendererGL.prototype._processVertices = function(mode) {
   if (this.immediateMode.geometry.vertices.length === 0) return;
 
-  const calculateStroke = this._doStroke && this.drawMode !== constants.TEXTURE;
+  const calculateStroke = this._doStroke;
   const shouldClose = mode === constants.CLOSE;
   if (calculateStroke) {
     this.immediateMode.geometry.edges = this._calculateEdges(
