@@ -47,40 +47,39 @@ import * as constants from '../core/constants';
  * </code>
  * </div>
  */
-p5.Vector = function Vector() {
-  let x, y, z;
-
+p5.Vector = class {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
-  if ({}.toString.call(arguments[0]) === '[object Function]') {
-    // In this case the vector have an associated p5 instance
-    this.isPInst = true;
-    this._fromRadians = arguments[0];
-    this._toRadians = arguments[1];
-    x = arguments[2] || 0;
-    y = arguments[3] || 0;
-    z = arguments[4] || 0;
-    // This is what we'll get with new p5.Vector()
-  } else {
-    x = arguments[0] || 0;
-    y = arguments[1] || 0;
-    z = arguments[2] || 0;
+  constructor(...args) {
+    if (typeof args[0] === 'function') {
+      this.isPInst = true;
+      this._fromRadians = args[0];
+      this._toRadians = args[1];
+      x = args[2] || 0;
+      y = args[3] || 0;
+      z = args[4] || 0;
+      // This is what we'll get with new p5.Vector()
+    } else {
+      x = args[0] || 0;
+      y = args[1] || 0;
+      z = args[2] || 0;
+    }
+    /**
+     * The x component of the vector
+     * @property x {Number}
+     */
+    this.x = x;
+    /**
+     * The y component of the vector
+     * @property y {Number}
+     */
+    this.y = y;
+    /**
+     * The z component of the vector
+     * @property z {Number}
+     */
+    this.z = z;
   }
-  /**
-   * The x component of the vector
-   * @property x {Number}
-   */
-  this.x = x;
-  /**
-   * The y component of the vector
-   * @property y {Number}
-   */
-  this.y = y;
-  /**
-   * The z component of the vector
-   * @property z {Number}
-   */
-  this.z = z;
 };
 
 /**
