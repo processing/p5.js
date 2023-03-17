@@ -49,16 +49,17 @@ import p5 from '../core/main';
  * // 2, Equus zebra, Zebra
  * </code></div>
  */
-p5.XML = function(DOM) {
-  if (!DOM) {
-    const xmlDoc = document.implementation.createDocument(null, 'doc');
-    this.DOM = xmlDoc.createElement('root');
-  } else {
-    this.DOM = DOM;
+p5.XML = class  {
+  constructor(DOM){
+    if (!DOM) {
+      const xmlDoc = document.implementation.createDocument(null, 'doc');
+      this.DOM = xmlDoc.createElement('root');
+    } else {
+      this.DOM = DOM;
+    }
   }
-};
 
-/**
+  /**
  * Gets a copy of the element's parent. Returns the parent as another
  * <a href="#/p5.XML">p5.XML</a> object.
  *
@@ -92,11 +93,11 @@ p5.XML = function(DOM) {
  * // mammals
  * </code></div>
  */
-p5.XML.prototype.getParent = function() {
-  return new p5.XML(this.DOM.parentElement);
-};
+  getParent() {
+    return new p5.XML(this.DOM.parentElement);
+  }
 
-/**
+  /**
  *  Gets the element's full name, which is returned as a String.
  *
  * @method getName
@@ -127,11 +128,11 @@ p5.XML.prototype.getParent = function() {
  * // mammals
  * </code></div>
  */
-p5.XML.prototype.getName = function() {
-  return this.DOM.tagName;
-};
+  getName() {
+    return this.DOM.tagName;
+  }
 
-/**
+  /**
  * Sets the element's name, which is specified as a String.
  *
  * @method setName
@@ -165,19 +166,19 @@ p5.XML.prototype.getName = function() {
  * // fish
  * </code></div>
  */
-p5.XML.prototype.setName = function(name) {
-  const content = this.DOM.innerHTML;
-  const attributes = this.DOM.attributes;
-  const xmlDoc = document.implementation.createDocument(null, 'default');
-  const newDOM = xmlDoc.createElement(name);
-  newDOM.innerHTML = content;
-  for (let i = 0; i < attributes.length; i++) {
-    newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+  setName(name) {
+    const content = this.DOM.innerHTML;
+    const attributes = this.DOM.attributes;
+    const xmlDoc = document.implementation.createDocument(null, 'default');
+    const newDOM = xmlDoc.createElement(name);
+    newDOM.innerHTML = content;
+    for (let i = 0; i < attributes.length; i++) {
+      newDOM.setAttribute(attributes[i].nodeName, attributes.nodeValue);
+    }
+    this.DOM = newDOM;
   }
-  this.DOM = newDOM;
-};
 
-/**
+  /**
  * Checks whether or not the element has any children, and returns the result
  * as a boolean.
  *
@@ -209,11 +210,11 @@ p5.XML.prototype.setName = function(name) {
  * // true
  * </code></div>
  */
-p5.XML.prototype.hasChildren = function() {
-  return this.DOM.children.length > 0;
-};
+  hasChildren() {
+    return this.DOM.children.length > 0;
+  }
 
-/**
+  /**
  * Get the names of all of the element's children, and returns the names as an
  * array of Strings. This is the same as looping through and calling <a href="#/p5.XML/getName">getName()</a>
  * on each child element individually.
@@ -246,15 +247,15 @@ p5.XML.prototype.hasChildren = function() {
  * // ["animal", "animal", "animal"]
  * </code></div>
  */
-p5.XML.prototype.listChildren = function() {
-  const arr = [];
-  for (let i = 0; i < this.DOM.childNodes.length; i++) {
-    arr.push(this.DOM.childNodes[i].nodeName);
+  listChildren() {
+    const arr = [];
+    for (let i = 0; i < this.DOM.childNodes.length; i++) {
+      arr.push(this.DOM.childNodes[i].nodeName);
+    }
+    return arr;
   }
-  return arr;
-};
 
-/**
+  /**
  * Returns all of the element's children as an array of <a href="#/p5.XML">p5.XML</a> objects. When
  * the name parameter is specified, then it will return all children that match
  * that name.
@@ -294,23 +295,17 @@ p5.XML.prototype.listChildren = function() {
  * // "Zebra"
  * </code></div>
  */
-p5.XML.prototype.getChildren = function(param) {
-  if (param) {
-    return elementsToP5XML(this.DOM.getElementsByTagName(param));
-  } else {
-    return elementsToP5XML(this.DOM.children);
+  getChildren(param) {
+    if (param) {
+      return elementsToP5XML(this.DOM.getElementsByTagName(param));
+    } else {
+      return elementsToP5XML(this.DOM.children);
+    }
   }
-};
 
-function elementsToP5XML(elements) {
-  const arr = [];
-  for (let i = 0; i < elements.length; i++) {
-    arr.push(new p5.XML(elements[i]));
-  }
-  return arr;
-}
 
-/**
+
+  /**
  * Returns the first of the element's children that matches the name parameter
  * or the child of the given index.It returns undefined if no matching
  * child is found.
@@ -360,17 +355,17 @@ function elementsToP5XML(elements) {
  * // "Leopard"
  * </code></div>
  */
-p5.XML.prototype.getChild = function(param) {
-  if (typeof param === 'string') {
-    for (const child of this.DOM.children) {
-      if (child.tagName === param) return new p5.XML(child);
+  getChild(param) {
+    if (typeof param === 'string') {
+      for (const child of this.DOM.children) {
+        if (child.tagName === param) return new p5.XML(child);
+      }
+    } else {
+      return new p5.XML(this.DOM.children[param]);
     }
-  } else {
-    return new p5.XML(this.DOM.children[param]);
   }
-};
 
-/**
+  /**
  * Appends a new child to the element. The child can be specified with
  * either a String, which will be used as the new tag's name, or as a
  * reference to an existing <a href="#/p5.XML">p5.XML</a> object.
@@ -414,15 +409,15 @@ p5.XML.prototype.getChild = function(param) {
  * // "Zebra"
  * </code></div>
  */
-p5.XML.prototype.addChild = function(node) {
-  if (node instanceof p5.XML) {
-    this.DOM.appendChild(node.DOM);
-  } else {
+  addChild(node) {
+    if (node instanceof p5.XML) {
+      this.DOM.appendChild(node.DOM);
+    } else {
     // PEND
+    }
   }
-};
 
-/**
+  /**
  * Removes the element specified by name or index.
  *
  * @method removeChild
@@ -477,24 +472,24 @@ p5.XML.prototype.addChild = function(node) {
  * // "Zebra"
  * </code></div>
  */
-p5.XML.prototype.removeChild = function(param) {
-  let ind = -1;
-  if (typeof param === 'string') {
-    for (let i = 0; i < this.DOM.children.length; i++) {
-      if (this.DOM.children[i].tagName === param) {
-        ind = i;
-        break;
+  removeChild(param) {
+    let ind = -1;
+    if (typeof param === 'string') {
+      for (let i = 0; i < this.DOM.children.length; i++) {
+        if (this.DOM.children[i].tagName === param) {
+          ind = i;
+          break;
+        }
       }
+    } else {
+      ind = param;
     }
-  } else {
-    ind = param;
+    if (ind !== -1) {
+      this.DOM.removeChild(this.DOM.children[ind]);
+    }
   }
-  if (ind !== -1) {
-    this.DOM.removeChild(this.DOM.children[ind]);
-  }
-};
 
-/**
+  /**
  * Counts the specified element's number of attributes, returned as an Number.
  *
  * @method getAttributeCount
@@ -526,11 +521,11 @@ p5.XML.prototype.removeChild = function(param) {
  * // 2
  * </code></div>
  */
-p5.XML.prototype.getAttributeCount = function() {
-  return this.DOM.attributes.length;
-};
+  getAttributeCount() {
+    return this.DOM.attributes.length;
+  }
 
-/**
+  /**
  * Gets all of the specified element's attributes, and returns them as an
  * array of Strings.
  *
@@ -563,17 +558,17 @@ p5.XML.prototype.getAttributeCount = function() {
  * // ["id", "species"]
  * </code></div>
  */
-p5.XML.prototype.listAttributes = function() {
-  const arr = [];
+  listAttributes() {
+    const arr = [];
 
-  for (const attribute of this.DOM.attributes) {
-    arr.push(attribute.nodeName);
+    for (const attribute of this.DOM.attributes) {
+      arr.push(attribute.nodeName);
+    }
+
+    return arr;
   }
 
-  return arr;
-};
-
-/**
+  /**
  *  Checks whether or not an element has the specified attribute.
  *
  * @method hasAttribute
@@ -608,17 +603,17 @@ p5.XML.prototype.listAttributes = function() {
  * // false
  * </code></div>
  */
-p5.XML.prototype.hasAttribute = function(name) {
-  const obj = {};
+  hasAttribute(name) {
+    const obj = {};
 
-  for (const attribute of this.DOM.attributes) {
-    obj[attribute.nodeName] = attribute.nodeValue;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
+    }
+
+    return obj[name] ? true : false;
   }
 
-  return obj[name] ? true : false;
-};
-
-/**
+  /**
  * Returns an attribute value of the element as an Number. If the defaultValue
  * parameter is specified and the attribute doesn't exist, then defaultValue
  * is returned. If no defaultValue is specified and the attribute doesn't
@@ -655,17 +650,17 @@ p5.XML.prototype.hasAttribute = function(name) {
  * // 0
  * </code></div>
  */
-p5.XML.prototype.getNum = function(name, defaultValue) {
-  const obj = {};
+  getNum(name, defaultValue) {
+    const obj = {};
 
-  for (const attribute of this.DOM.attributes) {
-    obj[attribute.nodeName] = attribute.nodeValue;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
+    }
+
+    return Number(obj[name]) || defaultValue || 0;
   }
 
-  return Number(obj[name]) || defaultValue || 0;
-};
-
-/**
+  /**
  * Returns an attribute value of the element as an String. If the defaultValue
  * parameter is specified and the attribute doesn't exist, then defaultValue
  * is returned. If no defaultValue is specified and the attribute doesn't
@@ -702,17 +697,17 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * // "Capra hircus"
  * </code></div>
  */
-p5.XML.prototype.getString = function(name, defaultValue) {
-  const obj = {};
+  getString(name, defaultValue) {
+    const obj = {};
 
-  for (const attribute of this.DOM.attributes) {
-    obj[attribute.nodeName] = attribute.nodeValue;
+    for (const attribute of this.DOM.attributes) {
+      obj[attribute.nodeName] = attribute.nodeValue;
+    }
+
+    return obj[name] ? String(obj[name]) : defaultValue || null;
   }
 
-  return obj[name] ? String(obj[name]) : defaultValue || null;
-};
-
-/**
+  /**
  * Sets the content of an element's attribute. The first parameter specifies
  * the attribute name, while the second specifies the new content.
  *
@@ -749,11 +744,11 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  * // "Jamides zebra"
  * </code></div>
  */
-p5.XML.prototype.setAttribute = function(name, value) {
-  this.DOM.setAttribute(name, value);
-};
+  setAttribute(name, value) {
+    this.DOM.setAttribute(name, value);
+  }
 
-/**
+  /**
  * Returns the content of an element. If there is no such content,
  * defaultValue is returned if specified, otherwise null is returned.
  *
@@ -787,14 +782,14 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * // "Goat"
  * </code></div>
  */
-p5.XML.prototype.getContent = function(defaultValue) {
-  let str;
-  str = this.DOM.textContent;
-  str = str.replace(/\s\s+/g, ',');
-  return str || defaultValue || null;
-};
+  getContent(defaultValue) {
+    let str;
+    str = this.DOM.textContent;
+    str = str.replace(/\s\s+/g, ',');
+    return str || defaultValue || null;
+  }
 
-/**
+  /**
  * Sets the element's content.
  *
  * @method setContent
@@ -829,13 +824,13 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * // "Mountain Goat"
  * </code></div>
  */
-p5.XML.prototype.setContent = function(content) {
-  if (!this.DOM.children.length) {
-    this.DOM.textContent = content;
+  setContent(content) {
+    if (!this.DOM.children.length) {
+      this.DOM.textContent = content;
+    }
   }
-};
 
-/**
+  /**
  * Serializes the element into a string. This function is useful for preparing
  * the content to be sent over a http request or saved to file.
  *
@@ -861,9 +856,18 @@ p5.XML.prototype.setContent = function(content) {
  * // </mammals>
  * </code></div>
  */
-p5.XML.prototype.serialize = function() {
-  const xmlSerializer = new XMLSerializer();
-  return xmlSerializer.serializeToString(this.DOM);
+  serialize() {
+    const xmlSerializer = new XMLSerializer();
+    return xmlSerializer.serializeToString(this.DOM);
+  }
 };
+
+function elementsToP5XML(elements) {
+  const arr = [];
+  for (let i = 0; i < elements.length; i++) {
+    arr.push(new p5.XML(elements[i]));
+  }
+  return arr;
+}
 
 export default p5;
