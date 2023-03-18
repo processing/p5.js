@@ -72,31 +72,24 @@ import * as constants from '../core/constants';
  * @example
  * <div>
  * <code>
- * // Creates a camera object and animates it around a box.
- * let cam
- * function setup() {
- * createCanvas(100, 100, WEBGL);
- * // The camera will automatically rotate
- *
- * cam = createCamera()
- *
- * // The camera will move on the
- * camera(0, -100, 300)
+ * 
+ * function setup(){
+ *   createCanvas(100,100,WEBGL);
+ *   camera(0,-100,300);
  * }
- *
- * function draw() {
- *	background(230);
- *	let ls = 255
- *	ambientMaterial(0, 255, 0) //Green Material
- *	directionalLight(ls, ls, ls, 0, -100, -300) //White Light
- *	rotateY(millis()/2000)
- *	box(100)
+ *   function draw(){
+ *   background(230);
+ *   ambientMaterial(237,34,93); //Pink Material
+ *   ambientLight(mouseY); 
+ *   //As you move the mouse up to down it changes from no ambient light to full ambient light.
+ *   rotateY(millis()/2000);
+ *   box(100);
  * }
  *
  * </code>
  * </div>
  * @alt
- * cube with only grayscale visible on 3D shapes under directional white light
+ * pink ambient material cube under the ambient light
  */
 
 /**
