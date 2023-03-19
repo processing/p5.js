@@ -108,6 +108,7 @@ class Framebuffer {
         ? constants.RGBA
         : constants.RGB
     );
+    this.useDepth = settings.depth === undefined ? true : settings.depth;
     this.depthFormat = settings.depthFormat || (
       this.format === constants.UNSIGNED_BYTE
         ? constants.UNSIGNED_BYTE
@@ -127,6 +128,13 @@ class Framebuffer {
       this.height = settings.height;
       this.autoSized = false;
     } else {
+      if ((settings.width === undefined) !== (settings.height !== undefined)) {
+        console.warn(
+          'Please supply both width and height for a framebuffer to give it a ' +
+            'size. Only one was given, so the framebuffer will match the size ' +
+            'of its canvas.'
+        );
+      }
       this.width = target.width;
       this.height = target.height;
       this.autoSized = true;
@@ -145,7 +153,7 @@ class Framebuffer {
     if (this.antialias) {
       this.aaFramebuffer = gl.createFramebuffer();
       if (!this.aaFramebuffer) {
-        throw new Error('Unable to create a framebuffer');
+        throw new Error('Unable to create a framebuffer for antialiasing');
       }
     }
 
@@ -224,13 +232,19 @@ class Framebuffer {
     const gl = this.gl;
 
     if (
+      this.useDepth &&
       this.target.webglVersion === constants.WEBGL &&
       !gl.getExtension('WEBGL_depth_texture')
     ) {
-      throw new Error('Unable to create depth textures in this environment');
+      console.warn(
+        'Unable to create depth textures in this environment. Falling back ' +
+          'to a framebuffer without depth.'
+      );
+      this.useDepth = false;
     }
 
     if (
+      this.useDepth &&
       this.target.webglVersion === constants.WEBGL &&
       this.depthFormat === constants.FLOAT
     ) {
@@ -253,7 +267,7 @@ class Framebuffer {
       );
       this.format = constants.UNSIGNED_BYTE;
     }
-    if (![
+    if (this.useDepth && ![
       constants.UNSIGNED_BYTE,
       constants.FLOAT
     ].includes(this.depthFormat)) {
@@ -272,7 +286,11 @@ class Framebuffer {
       );
       this.format = constants.UNSIGNED_BYTE;
     }
-    if (!support.float && this.depthFormat === constants.FLOAT) {
+    if (
+      this.useDepth &&
+      !support.float &&
+      this.depthFormat === constants.FLOAT
+    ) {
       console.warn(
         'This environment does not support FLOAT depth textures. ' +
           'Falling back to UNSIGNED_BYTE.'
@@ -330,41 +348,45 @@ class Framebuffer {
       colorFormat.type,
       null
     );
+    this.colorTexture = colorTexture;
 
-    // Create the depth texture
-    const depthTexture = gl.createTexture();
-    if (!depthTexture) {
-      throw new Error('Unable to create depth texture');
+    if (this.useDepth) {
+      // Create the depth texture
+      const depthTexture = gl.createTexture();
+      if (!depthTexture) {
+        throw new Error('Unable to create depth texture');
+      }
+      const depthFormat = this._glDepthFormat();
+      gl.bindTexture(gl.TEXTURE_2D, depthTexture);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        depthFormat.internalFormat,
+        this.width * this.density,
+        this.height * this.density,
+        0,
+        depthFormat.format,
+        depthFormat.type,
+        null
+      );
+
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        colorTexture,
+        0
+      );
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.DEPTH_ATTACHMENT,
+        gl.TEXTURE_2D,
+        depthTexture,
+        0
+      );
+      this.depthTexture = depthTexture;
     }
-    const depthFormat = this._glDepthFormat();
-    gl.bindTexture(gl.TEXTURE_2D, depthTexture);
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      depthFormat.internalFormat,
-      this.width * this.density,
-      this.height * this.density,
-      0,
-      depthFormat.format,
-      depthFormat.type,
-      null
-    );
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    gl.framebufferTexture2D(
-      gl.FRAMEBUFFER,
-      gl.COLOR_ATTACHMENT0,
-      gl.TEXTURE_2D,
-      colorTexture,
-      0
-    );
-    gl.framebufferTexture2D(
-      gl.FRAMEBUFFER,
-      gl.DEPTH_ATTACHMENT,
-      gl.TEXTURE_2D,
-      depthTexture,
-      0
-    );
 
     // Create separate framebuffer for antialiasing
     if (this.antialias) {
@@ -378,15 +400,17 @@ class Framebuffer {
         this.height * this.density
       );
 
-      this.depthRenderbuffer = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
-      gl.renderbufferStorageMultisample(
-        gl.RENDERBUFFER,
-        Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
-        depthFormat.internalFormat,
-        this.width * this.density,
-        this.height * this.density
-      );
+      if (this.useDepth) {
+        this.depthRenderbuffer = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
+        gl.renderbufferStorageMultisample(
+          gl.RENDERBUFFER,
+          Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
+          depthFormat.internalFormat,
+          this.width * this.density,
+          this.height * this.density
+        );
+      }
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.aaFramebuffer);
       gl.framebufferRenderbuffer(
@@ -395,27 +419,28 @@ class Framebuffer {
         gl.RENDERBUFFER,
         this.colorRenderbuffer
       );
-      gl.framebufferRenderbuffer(
-        gl.FRAMEBUFFER,
-        gl.DEPTH_ATTACHMENT,
-        gl.RENDERBUFFER,
-        this.depthRenderbuffer
-      );
+      if (this.useDepth) {
+        gl.framebufferRenderbuffer(
+          gl.FRAMEBUFFER,
+          gl.DEPTH_ATTACHMENT,
+          gl.RENDERBUFFER,
+          this.depthRenderbuffer
+        );
+      }
     }
 
-    this.depthTexture = depthTexture;
-    this.colorTexture = colorTexture;
-
-    this.depth = new FramebufferTexture(this, 'depthTexture');
-    this.depthP5Texture = new p5.Texture(
-      this.target._renderer,
-      this.depth,
-      {
-        minFilter: gl.NEAREST,
-        magFilter: gl.NEAREST
-      }
-    );
-    this.target._renderer.textures.set(this.depth, this.depthP5Texture);
+    if (this.useDepth) {
+      this.depth = new FramebufferTexture(this, 'depthTexture');
+      this.depthP5Texture = new p5.Texture(
+        this.target._renderer,
+        this.depth,
+        {
+          minFilter: gl.NEAREST,
+          magFilter: gl.NEAREST
+        }
+      );
+      this.target._renderer.textures.set(this.depth, this.depthP5Texture);
+    }
 
     this.color = new FramebufferTexture(this, 'colorTexture');
     this.colorP5Texture = new p5.Texture(
@@ -578,7 +603,7 @@ class Framebuffer {
     this._recreateTextures();
 
     this._deleteTexture(oldColor);
-    this._deleteTexture(oldDepth);
+    if (oldDepth) this._deleteTexture(oldDepth);
     const gl = this.gl;
     if (oldColorRenderbuffer) gl.deleteRenderbuffer(oldColorRenderbuffer);
     if (oldDepthRenderbuffer) gl.deleteRenderbuffer(oldDepthRenderbuffer);
@@ -623,7 +648,7 @@ class Framebuffer {
   remove() {
     const gl = this.gl;
     this._deleteTexture(this.color);
-    this._deleteTexture(this.depth);
+    if (this.depth) this._deleteTexture(this.depth);
     gl.deleteFramebuffer(this.framebuffer);
     if (this.aaFramebuffer) {
       gl.deleteFramebuffer(this.aaFramebuffer);
@@ -705,10 +730,15 @@ class Framebuffer {
     if (this.antialias) {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
-      for (const [flag, filter] of [
-        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
-        [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
-      ]) {
+      const partsToCopy = [
+        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
+      ];
+      if (this.useDepth) {
+        partsToCopy.push(
+          [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
+        );
+      }
+      for (const [flag, filter] of partsToCopy) {
         gl.blitFramebuffer(
           0, 0,
           this.width * this.density, this.height * this.density,
