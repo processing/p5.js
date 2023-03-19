@@ -946,7 +946,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
   for (const framebuffer of this.framebuffers) {
     // Notify framebuffers of the resize so that any auto-sized framebuffers
     // can also update their size
-    framebuffer._handleResize();
+    framebuffer._canvasSizeChanged();
   }
 };
 

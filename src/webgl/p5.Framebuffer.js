@@ -1,11 +1,26 @@
+/**
+ * @module Rendering
+ * @requires constants
+ */
+
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import { checkWebGLCapabilities } from './p5.Texture';
 
 class FramebufferCamera extends p5.Camera {
-  constructor(fbo) {
-    super(fbo.target._renderer);
-    this.fbo = fbo;
+  /**
+   * A <a href="#/p5.Camera">p5.Camera</a> attached to a
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+   *
+   * @class p5.FramebufferCamera
+   * @constructor
+   * @param {p5.Framebuffer} framebuffer The framebuffer this camera is
+   * attached to
+   * @private
+   */
+  constructor(framebuffer) {
+    super(framebuffer.target._renderer);
+    this.fbo = framebuffer;
   }
 
   _computeCameraDefaultSettings() {
@@ -17,6 +32,12 @@ class FramebufferCamera extends p5.Camera {
     this.defaultCameraFar = this.defaultEyeZ * 10;
   }
 
+  /**
+   * Resets the camera to a default perspective camera sized to match
+   * the p5.Framebuffer it is attached to.
+   *
+   * @method resize
+   */
   resize() {
     // If we're using the default camera, update the aspect ratio
     if (this.cameraType === 'default') {
@@ -34,6 +55,17 @@ class FramebufferCamera extends p5.Camera {
 p5.FramebufferCamera = FramebufferCamera;
 
 class FramebufferTexture {
+  /**
+   * A <a href="#/p5.Texture">p5.Texture</a> corresponding to a property of a
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
+   *
+   * @class p5.FramebufferTexture
+   * @param {p5.Framebuffer} framebuffer The framebuffer represented by this
+   * texture
+   * @param {String} property The property of the framebuffer represented by
+   * this texture, either `color` or `depth`
+   * @private
+   */
   constructor(framebuffer, property) {
     this.framebuffer = framebuffer;
     this.property = property;
@@ -56,6 +88,11 @@ p5.FramebufferTexture = FramebufferTexture;
 
 class Framebuffer {
   /**
+   * An object that one can draw to and then read as a texture. While similar
+   * to a p5.Graphics, using a p5.Framebuffer as a texture will generally run
+   * much faster, as it lives within the same WebGL context as the canvas it
+   * is created on. It only works in WebGL mode.
+   *
    * @class p5.Framebuffer
    * @constructor
    * @param {p5.Graphics|p5} target A p5 global instance or p5.Graphics
@@ -119,13 +156,32 @@ class Framebuffer {
     this.target._renderer._curCamera = prevCam;
   }
 
-  resizeCanvas(width, height) {
+  /**
+   * Resizes the framebuffer to the given width and height.
+   *
+   * @method resize
+   * @param {Number} width
+   * @param {Number} height
+   */
+  resize(width, height) {
     this.autoSized = false;
     this.width = width;
     this.height = height;
     this._handleResize();
   }
 
+  /**
+   * Gets or sets the pixel scaling for high pixel density displays. By
+   * default, the density will match that of the canvas the framebuffer was
+   * created on, which will match the display density.
+   *
+   * Call this method with no arguments to get the current density, or pass
+   * in a number to set the density.
+   *
+   * @method pixelDensity
+   * @param {Number} [density] A scaling factor for the number of pixels per
+   * side of the framebuffer
+   */
   pixelDensity(density) {
     if (density) {
       this.autoSized = false;
@@ -136,6 +192,17 @@ class Framebuffer {
     }
   }
 
+  /**
+   * Gets or sets whether or not this framebuffer will automatically resize
+   * along with the canvas it's attached to in order to match its size.
+   *
+   * Call this method with no arguments to see if it is currently auto-sized,
+   * or pass in a boolean to set this property.
+   *
+   * @method autoSized
+   * @param {Boolean} [autoSized] Whether or not the framebuffer should resize
+   * along with the canvas it's attached to
+   */
   autoSized(autoSized) {
     if (autoSized === undefined) {
       return this.autoSized;
@@ -145,6 +212,14 @@ class Framebuffer {
     }
   }
 
+  /**
+   * Checks the capabilities of the current WebGL environment to see if the
+   * settings supplied by the user are capable of being fulfilled. If they
+   * are not, warnings will be logged and the settings will be changed to
+   * something close that can be fulfilled.
+   *
+   * @private
+   */
   _checkIfFormatsAvailable() {
     const gl = this.gl;
 
@@ -224,6 +299,12 @@ class Framebuffer {
     }
   }
 
+  /**
+   * Creates new textures and renderbuffers given the current size of the
+   * framebuffer.
+   *
+   * @private
+   */
   _recreateTextures() {
     const gl = this.gl;
 
@@ -291,7 +372,7 @@ class Framebuffer {
       gl.bindRenderbuffer(gl.RENDERBUFFER, this.colorRenderbuffer);
       gl.renderbufferStorageMultisample(
         gl.RENDERBUFFER,
-        Math.min(4, gl.getParameter(gl.MAX_SAMPLES)),
+        Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
         colorFormat.internalFormat,
         this.width * this.density,
         this.height * this.density
@@ -301,7 +382,7 @@ class Framebuffer {
       gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
       gl.renderbufferStorageMultisample(
         gl.RENDERBUFFER,
-        Math.min(4, gl.getParameter(gl.MAX_SAMPLES)),
+        Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
         depthFormat.internalFormat,
         this.width * this.density,
         this.height * this.density
@@ -326,7 +407,7 @@ class Framebuffer {
     this.colorTexture = colorTexture;
 
     this.depth = new FramebufferTexture(this, 'depthTexture');
-    const depthP5Texture = new p5.Texture(
+    this.depthP5Texture = new p5.Texture(
       this.target._renderer,
       this.depth,
       {
@@ -334,10 +415,10 @@ class Framebuffer {
         magFilter: gl.NEAREST
       }
     );
-    this.target._renderer.textures.set(this.depth, depthP5Texture);
+    this.target._renderer.textures.set(this.depth, this.depthP5Texture);
 
     this.color = new FramebufferTexture(this, 'colorTexture');
-    const colorP5Texture = new p5.Texture(
+    this.colorP5Texture = new p5.Texture(
       this.target._renderer,
       this.color,
       {
@@ -345,12 +426,27 @@ class Framebuffer {
         glMagFilter: gl.LINEAR
       }
     );
-    this.target._renderer.textures.set(this.color, colorP5Texture);
+    this.target._renderer.textures.set(this.color, this.colorP5Texture);
 
     gl.bindTexture(gl.TEXTURE_2D, prevBoundTexture);
     gl.bindFramebuffer(gl.FRAMEBUFFER, prevBoundFramebuffer);
   }
 
+  /**
+   * To create a WebGL texture, one needs to supply three pieces of information:
+   * the type (the data type each channel will be stored as, e.g. int or float),
+   * the format (the color channels that will each be stored in the previously
+   * specified type, e.g. rgb or rgba), and the internal format (the specifics
+   * of how data for each channel, in the aforementioned type, will be packed
+   * together, such as how many bits to use, e.g. RGBA32F or RGB565.)
+   *
+   * The format and channels asked for by the user hint at what these values
+   * need to be, and the WebGL version affects what options are avaiable.
+   * This method returns the values for these three properties, given the
+   * framebuffer's settings.
+   *
+   * @private
+   */
   _glColorFormat() {
     let type, format, internalFormat;
     const gl = this.gl;
@@ -397,6 +493,20 @@ class Framebuffer {
     return { internalFormat, format, type };
   }
 
+  /**
+   * To create a WebGL texture, one needs to supply three pieces of information:
+   * the type (the data type each channel will be stored as, e.g. int or float),
+   * the format (the color channels that will each be stored in the previously
+   * specified type, e.g. rgb or rgba), and the internal format (the specifics
+   * of how data for each channel, in the aforementioned type, will be packed
+   * together, such as how many bits to use, e.g. RGBA32F or RGB565.)
+   *
+   * This method takes into account the settings asked for by the user and
+   * returns values for these three properties that can be used for the
+   * texture storing depth information.
+   *
+   * @private
+   */
   _glDepthFormat() {
     let type, format, internalFormat;
     const gl = this.gl;
@@ -422,6 +532,12 @@ class Framebuffer {
     return { internalFormat, format, type };
   }
 
+  /**
+   * A method that will be called when recreating textures. If the framebuffer
+   * is auto-sized, it will update its width, height, and density properties.
+   *
+   * @private
+   */
   _updateSize() {
     if (this.autoSized) {
       this.width = this.target.width;
@@ -430,15 +546,36 @@ class Framebuffer {
     }
   }
 
+  /**
+   * Called when the canvas that the framebuffer is attached to resizes. If the
+   * framebuffer is auto-sized, it will update its textures to match the new
+   * size.
+   *
+   * @private
+   */
+  _canvasSizeChanged() {
+    if (this.autoSized) {
+      this._handleResize();
+    }
+  }
+
+  /**
+   * Called when the size of the framebuffer has changed (either by being
+   * manually updated or from auto-size updates when its canvas changes size.)
+   * Old textures and renderbuffers will be deleted, and then recreated with the
+   * new size.
+   *
+   * @private
+   */
   _handleResize() {
-    this.cam.resize();
+    this.defaultCamera.resize();
 
     const oldColor = this.color;
     const oldDepth = this.depth;
     const oldColorRenderbuffer = this.colorRenderbuffer;
     const oldDepthRenderbuffer = this.depthRenderbuffer;
 
-    this.recreateTextures();
+    this._recreateTextures();
 
     this._deleteTexture(oldColor);
     this._deleteTexture(oldDepth);
@@ -447,6 +584,15 @@ class Framebuffer {
     if (oldDepthRenderbuffer) gl.deleteRenderbuffer(oldDepthRenderbuffer);
   }
 
+  /**
+   * Creates and returns a new
+   * <a href="#/p5.FramebufferCamera">p5.FramebufferCamera</a> to be used
+   * while drawing to this framebuffer. The camera will be set as the
+   * currently active camera.
+   *
+   * @method createCamera
+   * @returns {p5.Camera} A new camera
+   */
   createCamera() {
     const cam = new FramebufferCamera(this);
     cam._computeCameraDefaultSettings();
@@ -455,6 +601,13 @@ class Framebuffer {
     return cam;
   }
 
+  /**
+   * Given a raw texture wrapper, delete its stored texture from WebGL memory,
+   * and remove it from p5's list of active textures.
+   *
+   * @param {p5.FramebufferTexture} texture
+   * @private
+   */
   _deleteTexture(texture) {
     const gl = this.gl;
     gl.deleteTexture(texture.rawTexture());
@@ -462,6 +615,11 @@ class Framebuffer {
     this.target._renderer.textures.delete(texture);
   }
 
+  /**
+   * Removes the framebuffer and frees its resources.
+   *
+   * @method remove
+   */
   remove() {
     const gl = this.gl;
     this._deleteTexture(this.color);
@@ -479,10 +637,23 @@ class Framebuffer {
     this.target._renderer.framebuffers.delete(this);
   }
 
+  /**
+   * Begin drawing to this framebuffer. Subsequent drawing functions to the
+   * canvas the framebuffer is attached to will not be immediately visible, and
+   * will instead be drawn to the framebuffer's texture. Call
+   * <a href="#/p5.Framebuffer/end">end()</a> when finished to make draw
+   * functions go right to the canvas again and to be able to read the
+   * contents of the framebuffer's texture.
+   *
+   * @method begin
+   */
   begin() {
     const gl = this.gl;
     this.prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
     if (this.antialias) {
+      // If antialiasing, draw to an antialiased renderbuffer rather
+      // than directly to the texture. In end() we will copy from the
+      // renderbuffer to the texture.
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.aaFramebuffer);
     } else {
       gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
@@ -495,6 +666,10 @@ class Framebuffer {
       this.height * this.density
     );
     this.target.push();
+
+    // Apply the framebuffer's camera. This does almost what
+    // RendererGL.reset() does, but this does not try to clear any buffers;
+    // it only sets the camera.
     this.target.setCamera(this.defaultCamera);
     this.target._renderer.uMVMatrix.set(
       this.target._renderer._curCamera.cameraMatrix.mat4[0],
@@ -516,14 +691,23 @@ class Framebuffer {
     );
   }
 
+  /**
+   * After having previously called
+   * <a href="#/p5.Framebuffer/begin">begin()</a>, this method stops drawing
+   * functions from going to the framebuffer's texture, allowing them to go
+   * right to the canvas again. After this, one can read from the framebuffer's
+   * texture.
+   *
+   * @method end
+   */
   end() {
     const gl = this.gl;
     if (this.antialias) {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
       for (const [flag, filter] of [
-        [gl.COLOR_BUFFER_BIT, gl.LINEAR],
-        [gl.DEPTH_BUFFER_BIT, gl.NEAREST]
+        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter],
+        [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
       ]) {
         gl.blitFramebuffer(
           0, 0,
@@ -540,6 +724,17 @@ class Framebuffer {
     this.target.pop();
   }
 
+  /**
+   * Run a function while drawing to the framebuffer rather than to its canvas.
+   * This is equivalent to calling `framebuffer.begin()`, running the function,
+   * and then calling `framebuffer.end()`, but ensures that one never
+   * accidentally forgets `begin` or `end`.
+   *
+   * @method draw
+   * @param {Function} callback A function to run that draws to the canvas. The
+   * function will immediately be run, but it will draw to the framebuffer
+   * instead of the canvas.
+   */
   draw(callback) {
     this.begin();
     callback();

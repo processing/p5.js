@@ -23,7 +23,6 @@ function makeSketch(p5) {
     try {
       p5.createCanvas(400, 400, p5.WEBGL).parent('sketch');
       p5.setAttributes({ version: webglVersion.value === '1' ? 1 : 2 });
-      console.log(p5.webglVersion);
       fbo = p5.createFramebuffer({
         format: format.value,
         antialias: antialias.value === 'antialias',

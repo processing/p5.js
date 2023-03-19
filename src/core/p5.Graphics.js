@@ -186,6 +186,15 @@ p5.Graphics.prototype.remove = function() {
   }
 };
 
+/**
+ * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>
+ * inside a p5.Graphics WebGL context.
+ *
+ * This takes the same parameters as the <a href="#/p5/createFramebuffer">global
+ * createFramebuffer function.</a>
+ *
+ * @method createFramebuffer
+ */
 p5.Graphics.prototype.createFramebuffer = function(options) {
   return new p5.Framebuffer(this, options);
 };

@@ -259,9 +259,14 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
  * - `depthFormat`: The data format for depth information, either `UNSIGNED_BYTE` or `FLOAT`. The default is `UNSIGNED_BYTE` if `format` is that as well, or `FLOAT` otherwise.
  * - `antialias`: Boolean, whether or not to render with antialiased edges. Defaults to whether or not the main canvas is antialiased. Antialiasing is only supported when WebGL 2 is available.
- * - `width`: The width of the texture. Defaults to matching the main canvas. If unspecified, the framebuffer will resize when the main canvas resizes.
- * - `height`: The height of the texture. Defaults to matching the main canvas. If unspecified, the framebuffer will resize when the main canvas resizes.
+ * - `width`: The width of the texture. Defaults to matching the main canvas.
+ * - `height`: The height of the texture. Defaults to matching the main canvas.
  * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
+ *
+ * If `width`, `height`, or `density` are specified, then the framebuffer will
+ * keep that size until manually changed. Otherwise, it will be autosized, and
+ * it will update to match the main canvas's size and density when the main
+ * canvas changes.
  *
  * @method createFramebuffer
  * @param {Object} [options] An optional object with configuration
