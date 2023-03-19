@@ -114,11 +114,16 @@ class Framebuffer {
         ? constants.UNSIGNED_BYTE
         : constants.FLOAT
     );
-    this.antialias = (
-      settings.antialias === undefined
-        ? target._pInst._glAttributes.antialias
-        : settings.antialias
-    );
+    if (settings.antialias === undefined) {
+      this.antialiasSamples = target._pInst._glAttributes.antialias
+        ? 2
+        : 0;
+    } else if (typeof settings.antialias === 'number') {
+      this.antialiasSamples = settings.antialias;
+    } else {
+      this.antialiasSamples = settings.antialias ? 2 : 0;
+    }
+    this.antialias = this.antialiasSamples > 0;
     if (this.antialias && target.webglVersion !== constants.WEBGL2) {
       console.warn('Antialiasing is unsupported in a WebGL 1 context');
       this.antialias = false;
@@ -394,7 +399,7 @@ class Framebuffer {
       gl.bindRenderbuffer(gl.RENDERBUFFER, this.colorRenderbuffer);
       gl.renderbufferStorageMultisample(
         gl.RENDERBUFFER,
-        Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
+        Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES)),
         colorFormat.internalFormat,
         this.width * this.density,
         this.height * this.density
@@ -405,7 +410,7 @@ class Framebuffer {
         gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
         gl.renderbufferStorageMultisample(
           gl.RENDERBUFFER,
-          Math.min(2, gl.getParameter(gl.MAX_SAMPLES)),
+          Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES)),
           depthFormat.internalFormat,
           this.width * this.density,
           this.height * this.density

@@ -259,7 +259,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
  * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
  * - `depthFormat`: The data format for depth information, either `UNSIGNED_BYTE` or `FLOAT`. The default is `UNSIGNED_BYTE` if `format` is that as well, or `FLOAT` otherwise.
- * - `antialias`: Boolean, whether or not to render with antialiased edges. Defaults to whether or not the main canvas is antialiased. Antialiasing is only supported when WebGL 2 is available.
+ * - `antialias`: Boolean or Number, whether or not to render with antialiased edges, and if so, optionally the number of samples to use. Defaults to whether or not the main canvas is antialiased. Antialiasing is only supported when WebGL 2 is available.
  * - `width`: The width of the texture. Defaults to matching the main canvas.
  * - `height`: The height of the texture. Defaults to matching the main canvas.
  * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
