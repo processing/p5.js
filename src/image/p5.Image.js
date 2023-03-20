@@ -988,7 +988,7 @@ p5.Image.prototype.getCurrentFrame = function() {
  * Sets the index of the frame that is currently visible in an animated GIF
  *
  * @method setFrame
- * @param {Number}       index the index for the frame that should be displayed
+ * @param {Number}       [index] the index for the frame that should be displayed
  * @example
  * <div><code>
  * let gif;
