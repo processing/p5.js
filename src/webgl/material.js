@@ -666,9 +666,8 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
   this._renderer.textureWrapY = wrapY;
 
-  const textures = this._renderer.textures;
-  for (let i = 0; i < textures.length; i++) {
-    textures[i].setWrapMode(wrapX, wrapY);
+  for (const texture of this._renderer.textures.values()) {
+    texture.setWrapMode(wrapX, wrapY);
   }
 };
 

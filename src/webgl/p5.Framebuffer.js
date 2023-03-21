@@ -114,6 +114,8 @@ class Framebuffer {
         ? constants.UNSIGNED_BYTE
         : constants.FLOAT
     );
+    this.textureSmoothing = settings.textureSmoothing || true;
+    this.depthTextureSmoothing = settings.depthTextureSmoothing || false;
     if (settings.antialias === undefined) {
       this.antialiasSamples = target._pInst._glAttributes.antialias
         ? 2
@@ -399,7 +401,10 @@ class Framebuffer {
       gl.bindRenderbuffer(gl.RENDERBUFFER, this.colorRenderbuffer);
       gl.renderbufferStorageMultisample(
         gl.RENDERBUFFER,
-        Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES)),
+        Math.max(
+          0,
+          Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
+        ),
         colorFormat.internalFormat,
         this.width * this.density,
         this.height * this.density
@@ -410,7 +415,10 @@ class Framebuffer {
         gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
         gl.renderbufferStorageMultisample(
           gl.RENDERBUFFER,
-          Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES)),
+          Math.max(
+            0,
+            Math.min(this.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
+          ),
           depthFormat.internalFormat,
           this.width * this.density,
           this.height * this.density
@@ -436,24 +444,26 @@ class Framebuffer {
 
     if (this.useDepth) {
       this.depth = new FramebufferTexture(this, 'depthTexture');
+      const depthFilter = this.depthTextureSmoothing ? gl.LINEAR : gl.NEAREST;
       this.depthP5Texture = new p5.Texture(
         this.target._renderer,
         this.depth,
         {
-          minFilter: gl.NEAREST,
-          magFilter: gl.NEAREST
+          minFilter: depthFilter,
+          magFilter: depthFilter
         }
       );
       this.target._renderer.textures.set(this.depth, this.depthP5Texture);
     }
 
     this.color = new FramebufferTexture(this, 'colorTexture');
+    const filter = this.textureSmoothing ? gl.LINEAR : gl.NEAREST;
     this.colorP5Texture = new p5.Texture(
       this.target._renderer,
       this.color,
       {
-        glMinFilter: gl.LINEAR,
-        glMagFilter: gl.LINEAR
+        glMinFilter: filter,
+        glMagFilter: filter
       }
     );
     this.target._renderer.textures.set(this.color, this.colorP5Texture);
