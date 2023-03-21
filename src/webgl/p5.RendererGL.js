@@ -308,10 +308,8 @@ p5.RendererGL.prototype._initContext = function() {
       this.canvas.getContext('webgl2', this._pInst._glAttributes);
   }
   this.webglVersion = this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
-  if (this._isMainCanvas) {
-    // If this is the main canvas, make sure the global `webglVersion` is set
-    this._pInst._setProperty('webglVersion', this.webglVersion);
-  }
+  // If this is the main canvas, make sure the global `webglVersion` is set
+  this._pInst._setProperty('webglVersion', this.webglVersion);
   if (!this.drawingContext) {
     // If we were unable to create a WebGL2 context (either because it was
     // disabled via `setAttributes({ version: 1 })` or because the device

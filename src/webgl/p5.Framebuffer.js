@@ -117,7 +117,7 @@ class Framebuffer {
     this.textureSmoothing = settings.textureSmoothing || true;
     this.depthTextureSmoothing = settings.depthTextureSmoothing || false;
     if (settings.antialias === undefined) {
-      this.antialiasSamples = target._pInst._glAttributes.antialias
+      this.antialiasSamples = target._renderer._pInst._glAttributes.antialias
         ? 2
         : 0;
     } else if (typeof settings.antialias === 'number') {
@@ -135,7 +135,7 @@ class Framebuffer {
       this.height = settings.height;
       this.autoSized = false;
     } else {
-      if ((settings.width === undefined) !== (settings.height !== undefined)) {
+      if ((settings.width === undefined) !== (settings.height === undefined)) {
         console.warn(
           'Please supply both width and height for a framebuffer to give it a ' +
             'size. Only one was given, so the framebuffer will match the size ' +
@@ -356,6 +356,14 @@ class Framebuffer {
       null
     );
     this.colorTexture = colorTexture;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    gl.framebufferTexture2D(
+      gl.FRAMEBUFFER,
+      gl.COLOR_ATTACHMENT0,
+      gl.TEXTURE_2D,
+      colorTexture,
+      0
+    );
 
     if (this.useDepth) {
       // Create the depth texture
@@ -377,14 +385,6 @@ class Framebuffer {
         null
       );
 
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-      gl.framebufferTexture2D(
-        gl.FRAMEBUFFER,
-        gl.COLOR_ATTACHMENT0,
-        gl.TEXTURE_2D,
-        colorTexture,
-        0
-      );
       gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
         gl.DEPTH_ATTACHMENT,
@@ -411,6 +411,7 @@ class Framebuffer {
       );
 
       if (this.useDepth) {
+        const depthFormat = this._glDepthFormat();
         this.depthRenderbuffer = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, this.depthRenderbuffer);
         gl.renderbufferStorageMultisample(
@@ -729,6 +730,11 @@ class Framebuffer {
       this.target._renderer._curCamera.cameraMatrix.mat4[14],
       this.target._renderer._curCamera.cameraMatrix.mat4[15]
     );
+
+    if (!this.useDepth) {
+      this.prevDepth = gl.isEnabled(gl.DEPTH_TEST);
+      gl.disable(gl.DEPTH_TEST);
+    }
   }
 
   /**
@@ -742,6 +748,9 @@ class Framebuffer {
    */
   end() {
     const gl = this.gl;
+    if (!this.useDepth && this.prevDepth) {
+      gl.enable(gl.DEPTH_TEST);
+    }
     if (this.antialias) {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
