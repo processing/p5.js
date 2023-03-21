@@ -264,7 +264,6 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * - `height`: The height of the texture. Defaults to matching the main canvas.
  * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
  * - `textureSmoothing`: A boolean, whether or not to interpolate between nearby pixels when reading values from the color texture. Generally, turn this on when using the texture as an image, and turn it off if reading the texture as data. Defaults to true.
- * - `depthTextureSmoothing`: A boolean, whether or not to interpolate between nearby pixels when reading values from the depth texture. Generally, turn this on when using the texture as an image, and turn it off if reading the texture as data. Defaults to false.
  *
  * If `width`, `height`, or `density` are specified, then the framebuffer will
  * keep that size until manually changed. Otherwise, it will be autosized, and
@@ -273,6 +272,58 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  *
  * @method createFramebuffer
  * @param {Object} [options] An optional object with configuration
+ *
+ * @example
+ * <div>
+ * <code>
+ * let prev, next, cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   prev = createFramebuffer({ format: FLOAT });
+ *   next = createFramebuffer({ format: FLOAT });
+ *   cam = createCamera();
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Swap prev and next so that we can use the previous
+ *   // frame as a texture when drawing the current frame
+ *   [prev, next] = [next, prev];
+ *
+ *   // Draw to the framebuffer
+ *   next.begin();
+ *   background(255);
+ *
+ *   push();
+ *   // Draw the previous texture farther away, but scaled
+ *   // up to fill the screen, plus a bit extra scale so it grows
+ *   translate(0, 0, -200);
+ *   scale(1.001 * (200 + cam.eyeZ) / cam.eyeZ);
+ *   texture(prev);
+ *   tint(255, 253);
+ *   plane(width, -height);
+ *   pop();
+ *
+ *   push();
+ *   normalMaterial();
+ *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(12);
+ *   pop();
+ *   next.end();
+ *
+ *   push();
+ *   texture(next);
+ *   plane(width, -height);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A red, green, and blue box (using normalMaterial) moves and rotates around
+ * the canvas, leaving a trail behind it that slowly grows and fades away.
  */
 p5.prototype.createFramebuffer = function(options) {
   return new p5.Framebuffer(this, options);

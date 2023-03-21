@@ -114,8 +114,9 @@ class Framebuffer {
         ? constants.UNSIGNED_BYTE
         : constants.FLOAT
     );
-    this.textureSmoothing = settings.textureSmoothing || true;
-    this.depthTextureSmoothing = settings.depthTextureSmoothing || false;
+    this.textureSmoothing = settings.textureSmoothing === undefined
+      ? true
+      : settings.textureSmoothing;
     if (settings.antialias === undefined) {
       this.antialiasSamples = target._renderer._pInst._glAttributes.antialias
         ? 2
@@ -177,6 +178,50 @@ class Framebuffer {
    * @method resize
    * @param {Number} width
    * @param {Number} height
+   *
+   * @example
+   * <div>
+   * <code>
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   *   noStroke();
+   * }
+   *
+   * function mouseMoved() {
+   *   framebuffer.resize(
+   *     max(20, mouseX),
+   *     max(20, mouseY)
+   *   );
+   * }
+   *
+   * function draw() {
+   *   // Draw to the framebuffer
+   *   framebuffer.begin();
+   *   background(255);
+   *   normalMaterial();
+   *   sphere(20);
+   *   framebuffer.end();
+   *
+   *   background(100);
+   *   // Draw the framebuffer to the main canvas
+   *   push();
+   *   translate(
+   *     -width / 2 + framebuffer.width / 2,
+   *     -height / 2 + framebuffer.height / 2
+   *   );
+   *   texture(framebuffer);
+   *   plane(framebuffer.width, -framebuffer.height);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A red, green, and blue sphere is drawn in the middle of a white rectangle
+   * which starts in the top left of the canvas and whose bottom right is at
+   * the user's mouse
    */
   resize(width, height) {
     this.autoSized = false;
@@ -445,7 +490,7 @@ class Framebuffer {
 
     if (this.useDepth) {
       this.depth = new FramebufferTexture(this, 'depthTexture');
-      const depthFilter = this.depthTextureSmoothing ? gl.LINEAR : gl.NEAREST;
+      const depthFilter = gl.NEAREST;
       this.depthP5Texture = new p5.Texture(
         this.target._renderer,
         this.depth,
@@ -609,20 +654,19 @@ class Framebuffer {
    * @private
    */
   _handleResize() {
-    this.defaultCamera.resize();
-
     const oldColor = this.color;
     const oldDepth = this.depth;
     const oldColorRenderbuffer = this.colorRenderbuffer;
     const oldDepthRenderbuffer = this.depthRenderbuffer;
-
-    this._recreateTextures();
 
     this._deleteTexture(oldColor);
     if (oldDepth) this._deleteTexture(oldDepth);
     const gl = this.gl;
     if (oldColorRenderbuffer) gl.deleteRenderbuffer(oldColorRenderbuffer);
     if (oldDepthRenderbuffer) gl.deleteRenderbuffer(oldDepthRenderbuffer);
+
+    this._recreateTextures();
+    this.defaultCamera.resize();
   }
 
   /**
@@ -687,6 +731,46 @@ class Framebuffer {
    * contents of the framebuffer's texture.
    *
    * @method begin
+   *
+   * @example
+   * <div>
+   * <code>
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   *   noStroke();
+   * }
+   *
+   * function draw() {
+   *   // Draw to the framebuffer
+   *   framebuffer.begin();
+   *   background(255);
+   *   translate(0, 10*sin(frameCount * 0.01), 0);
+   *   rotateX(frameCount * 0.01);
+   *   rotateY(frameCount * 0.01);
+   *   fill(255, 0, 0);
+   *   box(50);
+   *   framebuffer.end();
+   *
+   *   background(100);
+   *   // Draw the framebuffer to the main canvas
+   *   texture(framebuffer);
+   *   push();
+   *   translate(-25, -25);
+   *   plane(25, 25);
+   *   pop();
+   *   push();
+   *   translate(15, 15);
+   *   plane(35, 35);
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A video of a floating and rotating red cube is pasted twice on the
+   * canvas: once in the top left, and again, larger, in the bottom right.
    */
   begin() {
     const gl = this.gl;
@@ -730,11 +814,6 @@ class Framebuffer {
       this.target._renderer._curCamera.cameraMatrix.mat4[14],
       this.target._renderer._curCamera.cameraMatrix.mat4[15]
     );
-
-    if (!this.useDepth) {
-      this.prevDepth = gl.isEnabled(gl.DEPTH_TEST);
-      gl.disable(gl.DEPTH_TEST);
-    }
   }
 
   /**
@@ -748,9 +827,6 @@ class Framebuffer {
    */
   end() {
     const gl = this.gl;
-    if (!this.useDepth && this.prevDepth) {
-      gl.enable(gl.DEPTH_TEST);
-    }
     if (this.antialias) {
       gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.aaFramebuffer);
       gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.framebuffer);
@@ -788,6 +864,48 @@ class Framebuffer {
    * @param {Function} callback A function to run that draws to the canvas. The
    * function will immediately be run, but it will draw to the framebuffer
    * instead of the canvas.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   *   noStroke();
+   * }
+   *
+   * function draw() {
+   *   // Draw to the framebuffer
+   *   framebuffer.draw(function() {
+   *     background(255);
+   *     translate(0, 10*sin(frameCount * 0.01), 0);
+   *     rotateX(frameCount * 0.01);
+   *     rotateY(frameCount * 0.01);
+   *     fill(255, 0, 0);
+   *     box(50);
+   *   });
+   *
+   *   background(100);
+   *   // Draw the framebuffer to the main canvas
+   *   push();
+   *   texture(framebuffer);
+   *   push();
+   *   translate(-25, -25);
+   *   plane(25, 25);
+   *   pop();
+   *   push();
+   *   translate(15, 15);
+   *   plane(35, 35);
+   *   pop();
+   *   pop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A video of a floating and rotating red cube is pasted twice on the
+   * canvas: once in the top left, and again, larger, in the bottom right.
    */
   draw(callback) {
     this.begin();
@@ -795,6 +913,130 @@ class Framebuffer {
     this.end();
   }
 }
+
+/**
+ * A texture with the color information of the framebuffer. Pass this (or the
+ * framebuffer itself) to <a href="#/p5/texture">texture()</a> to draw it to
+ * the canvas, or pass it to a shader with
+ * <a href="#/p5.Shader/setUniform">setUniform()</a> to read its data.
+ *
+ * Since Framebuffers are controlled by WebGL, their y coordinates are stored
+ * flipped compared to images and videos. When texturing with a framebuffer
+ * texture, you may want to flip vertically, e.g. with
+ * `plane(framebuffer.width, -framebuffer.height)`.
+ *
+ * @property {p5.FramebufferTexture} color
+ * @for p5.Framebuffer
+ *
+ * @example
+ * <div>
+ * <code>
+ * let framebuffer;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   framebuffer = createFramebuffer();
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Draw to the framebuffer
+ *   framebuffer.begin();
+ *   background(255);
+ *   normalMaterial();
+ *   sphere(20);
+ *   framebuffer.end();
+ *
+ *   // Draw the framebuffer to the main canvas
+ *   push();
+ *   texture(framebuffer.color); // or texture(framebuffer)
+ *   plane(framebuffer.width, -framebuffer.height);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A red, green, and blue sphere in the middle of the canvas
+ */
+
+/**
+ * A texture with the depth information of the framebuffer. If the framebuffer
+ * was created with `{ depth: false }` in its settings, then this property will
+ * be undefined. Pass this to <a href="#/p5/texture">texture()</a> to draw it to
+ * the canvas, or pass it to a shader with
+ * <a href="#/p5.Shader/setUniform">setUniform()</a> to read its data.
+ *
+ * Since Framebuffers are controlled by WebGL, their y coordinates are stored
+ * flipped compared to images and videos. When texturing with a framebuffer
+ * texture, you may want to flip vertically, e.g. with
+ * `plane(framebuffer.width, -framebuffer.height)`.
+ *
+ * @property {p5.FramebufferTexture|undefined} depth
+ * @for p5.Framebuffer
+ *
+ * @example
+ * <div>
+ * <code>
+ * let framebuffer;
+ * let depthShader;
+ *
+ * const vert = `
+ * precision highp float;
+ * attribute vec3 aPosition;
+ * attribute vec2 aTexCoord;
+ * uniform mat4 uModelViewMatrix;
+ * uniform mat4 uProjectionMatrix;
+ * varying vec2 vTexCoord;
+ * void main() {
+ *   vec4 viewModelPosition = uModelViewMatrix * vec4(aPosition, 1.0);
+ *   gl_Position = uProjectionMatrix * viewModelPosition;
+ *   vTexCoord = aTexCoord;
+ * }
+ * `;
+ *
+ * const frag = `
+ * precision highp float;
+ * varying vec2 vTexCoord;
+ * uniform sampler2D depth;
+ * void main() {
+ *   float depthVal = texture2D(depth, vTexCoord).r;
+ *   gl_FragColor = mix(
+ *     vec4(1., 1., 0., 1.), // yellow
+ *     vec4(0., 0., 1., 1.), // blue
+ *     pow(depthVal, 6.)
+ *   );
+ * }
+ * `;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   framebuffer = createFramebuffer();
+ *   depthShader = createShader(vert, frag);
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Draw to the framebuffer
+ *   framebuffer.begin();
+ *   background(255);
+ *   rotateX(frameCount * 0.01);
+ *   box(20, 20, 100);
+ *   framebuffer.end();
+ *
+ *   push();
+ *   shader(depthShader);
+ *   depthShader.setUniform('depth', framebuffer.depth);
+ *   plane(framebuffer.width, -framebuffer.height);
+ *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A video of a rectangular prism rotating, with parts closest to the camera
+ * appearing yellow and colors getting progressively more blue the farther
+ * from the camera they go
+ */
 
 p5.Framebuffer = Framebuffer;
 
