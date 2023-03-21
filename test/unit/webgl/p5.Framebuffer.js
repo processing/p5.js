@@ -274,4 +274,47 @@ suite('p5.Framebuffer', function() {
       }
     );
   });
+
+  suite('defaultCamera', function() {
+    let fbo;
+    setup(function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(1);
+      fbo = myp5.createFramebuffer({ width: 5, height: 15 });
+    });
+
+    suite('the default camera', function() {
+      test('it uses the aspect ratio of the framebuffer', function() {
+        expect(fbo.defaultCamera.aspectRatio).to.equal(5 / 15);
+        const z = -fbo.height / 2.0 / Math.tan(Math.PI / 3 / 2);
+        const expectedCameraMatrix = [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, z, 1
+        ];
+        for (let i = 0; i < expectedCameraMatrix.length; i++) {
+          expect(fbo.defaultCamera.cameraMatrix.mat4[i])
+            .to.be.closeTo(expectedCameraMatrix[i], 0.01);
+        }
+      });
+
+      test('it updates the aspect ratio after resizing', function() {
+        fbo.resize(20, 10);
+        expect(fbo.defaultCamera.aspectRatio).to.equal(2);
+
+        const z = -fbo.height / 2.0 / Math.tan(Math.PI / 3 / 2);
+        const expectedCameraMatrix = [
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, z, 1
+        ];
+        for (let i = 0; i < expectedCameraMatrix.length; i++) {
+          expect(fbo.defaultCamera.cameraMatrix.mat4[i])
+            .to.be.closeTo(expectedCameraMatrix[i], 0.01);
+        }
+      });
+    });
+  });
 });
