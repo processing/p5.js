@@ -263,7 +263,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * - `width`: The width of the texture. Defaults to matching the main canvas.
  * - `height`: The height of the texture. Defaults to matching the main canvas.
  * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
- * - `textureSmoothing`: A boolean, whether or not to interpolate between nearby pixels when reading values from the color texture. Generally, turn this on when using the texture as an image, and turn it off if reading the texture as data. Defaults to true.
+ * - `textureFiltering`: A boolean, whether or not to interpolate between nearby pixels when reading values from the color texture. Generally, turn this on when using the texture as an image, and turn it off if reading the texture as data. Defaults to true.
  *
  * If `width`, `height`, or `density` are specified, then the framebuffer will
  * keep that size until manually changed. Otherwise, it will be autosized, and

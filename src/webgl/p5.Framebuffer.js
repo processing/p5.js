@@ -37,8 +37,9 @@ class FramebufferCamera extends p5.Camera {
    * the p5.Framebuffer it is attached to.
    *
    * @method resize
+   * @private
    */
-  resize() {
+  _resize() {
     // If we're using the default camera, update the aspect ratio
     if (this.cameraType === 'default') {
       this._computeCameraDefaultSettings();
@@ -114,9 +115,9 @@ class Framebuffer {
         ? constants.UNSIGNED_BYTE
         : constants.FLOAT
     );
-    this.textureSmoothing = settings.textureSmoothing === undefined
+    this.textureFiltering = settings.textureFiltering === undefined
       ? true
-      : settings.textureSmoothing;
+      : settings.textureFiltering;
     if (settings.antialias === undefined) {
       this.antialiasSamples = target._renderer._pInst._glAttributes.antialias
         ? 2
@@ -503,7 +504,7 @@ class Framebuffer {
     }
 
     this.color = new FramebufferTexture(this, 'colorTexture');
-    const filter = this.textureSmoothing ? gl.LINEAR : gl.NEAREST;
+    const filter = this.textureFiltering ? gl.LINEAR : gl.NEAREST;
     this.colorP5Texture = new p5.Texture(
       this.target._renderer,
       this.color,
@@ -666,7 +667,7 @@ class Framebuffer {
     if (oldDepthRenderbuffer) gl.deleteRenderbuffer(oldDepthRenderbuffer);
 
     this._recreateTextures();
-    this.defaultCamera.resize();
+    this.defaultCamera._resize();
   }
 
   /**
