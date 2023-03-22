@@ -79,7 +79,7 @@ import * as constants from '../core/constants';
  * function draw() {
  *   background(230);
  *   ambientMaterial(237,34,93); //Pink Material
- *   ambientLight(mouseY); 
+ *   ambientLight(mouseY);
  *   //As you move the mouse up to down it changes from no ambient light to full ambient light.
  *   rotateY(millis()/2000);
  *   box(100);
