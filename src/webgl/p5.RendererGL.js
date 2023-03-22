@@ -325,6 +325,10 @@ p5.RendererGL.prototype._initContext = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    // Make sure all images are loaded into the canvas premultiplied so that
+    // they match the way we render colors. This will make framebuffer textures
+    // be encoded the same way as textures from everything else.
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     this._viewport = this.drawingContext.getParameter(
       this.drawingContext.VIEWPORT
     );

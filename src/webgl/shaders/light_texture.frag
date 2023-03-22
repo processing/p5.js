@@ -15,7 +15,9 @@ void main(void) {
     gl_FragColor = vColor;
   }
   else {
-    vec4 baseColor = isTexture ? texture2D(uSampler, vVertTexCoord) * (uTint / vec4(255, 255, 255, 255)) : vColor;
-    gl_FragColor = vec4(gl_FragColor.rgb * vDiffuseColor + vSpecularColor, 1.) * baseColor.a;
+    vec4 baseColor = isTexture
+      ? texture2D(uSampler, vVertTexCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
+      : vec4(vColor.rgb * vColor.a, vColor.a);
+    gl_FragColor = vec4(baseColor.rgb * vDiffuseColor + vSpecularColor, baseColor.a);
   }
 }

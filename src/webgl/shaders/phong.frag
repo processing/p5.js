@@ -24,9 +24,11 @@ void main(void) {
 
   // Calculating final color as result of all lights (plus emissive term).
 
-  vec4 baseColor = isTexture ? texture2D(uSampler, vTexCoord) * (uTint / vec4(255, 255, 255, 255)) : vColor;
+  vec4 baseColor = isTexture
+    ? texture2D(uSampler, vTexCoord) * vec4(uTint.rgb/255., 1.) * (uTint.a/255.)
+    : vec4(vColor.rgb * vColor.a, vColor.a);
   gl_FragColor = vec4(diffuse * baseColor.rgb + 
                     vAmbientColor * uAmbientMatColor.rgb + 
                     specular * uSpecularMatColor.rgb + 
-                    uEmissiveMatColor.rgb, 1.) * baseColor.a;
+                    uEmissiveMatColor.rgb, baseColor.a);
 }
