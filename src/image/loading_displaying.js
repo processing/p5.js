@@ -463,6 +463,7 @@ p5.prototype.saveGif = async function(
   this.loop();
 
   p.html('Done. Downloading your gif!🌸');
+  setTimeout(()=> p.remove(),5000);
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
