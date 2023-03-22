@@ -40,7 +40,7 @@ import * as constants from '../core/constants';
  * data. Possible values are gl.UNSIGNED_BYTE or gl.FLOAT. There are more
  * formats that are not implemented in p5. Defaults to gl.UNSIGNED_BYTE.
  */
-p5.Texture = class{
+p5.Texture = class Texture {
   constructor (renderer, obj, settings) {
     this._renderer = renderer;
 
@@ -191,12 +191,12 @@ p5.Texture = class{
   }
 
   /**
- * Checks if the source data for this texture has changed (if it's
- * easy to do so) and reuploads the texture if necessary. If it's not
- * possible or to expensive to do a calculation to determine wheter or
- * not the data has occurred, this method simply re-uploads the texture.
- * @method update
- */
+   * Checks if the source data for this texture has changed (if it's
+   * easy to do so) and reuploads the texture if necessary. If it's not
+   * possible or to expensive to do a calculation to determine wheter or
+   * not the data has occurred, this method simply re-uploads the texture.
+   * @method update
+   */
   update () {
     const data = this.src;
     if (data.width === 0 || data.height === 0) {
@@ -214,8 +214,10 @@ p5.Texture = class{
 
     const gl = this._renderer.GL;
     // pull texture from data, make sure width & height are appropriate
-    if (textureData.width !== this.width ||
-       textureData.height !== this.height) {
+    if (
+      textureData.width !== this.width ||
+      textureData.height !== this.height
+    ) {
       updated = true;
 
       // make sure that if the width and height of this.src have changed
@@ -226,39 +228,39 @@ p5.Texture = class{
       if (this.isSrcP5Image) {
         data.setModified(false);
       } else if (this.isSrcMediaElement || this.isSrcHTMLElement) {
-      // on the first frame the metadata comes in, the size will be changed
-      // from 0 to actual size, but pixels may not be available.
-      // flag for update in a future frame.
-      // if we don't do this, a paused video, for example, may not
-      // send the first frame to texture memory.
+        // on the first frame the metadata comes in, the size will be changed
+        // from 0 to actual size, but pixels may not be available.
+        // flag for update in a future frame.
+        // if we don't do this, a paused video, for example, may not
+        // send the first frame to texture memory.
         data.setModified(true);
       }
     } else if (this.isSrcP5Image) {
-    // for an image, we only update if the modified field has been set,
-    // for example, by a call to p5.Image.set
+      // for an image, we only update if the modified field has been set,
+      // for example, by a call to p5.Image.set
       if (data.isModified()) {
         updated = true;
         data.setModified(false);
       }
     } else if (this.isSrcMediaElement) {
-    // for a media element (video), we'll check if the current time in
-    // the video frame matches the last time. if it doesn't match, the
-    // video has advanced or otherwise been taken to a new frame,
-    // and we need to upload it.
+      // for a media element (video), we'll check if the current time in
+      // the video frame matches the last time. if it doesn't match, the
+      // video has advanced or otherwise been taken to a new frame,
+      // and we need to upload it.
       if (data.isModified()) {
-      // p5.MediaElement may have also had set/updatePixels, etc. called
-      // on it and should be updated, or may have been set for the first
-      // time!
+        // p5.MediaElement may have also had set/updatePixels, etc. called
+        // on it and should be updated, or may have been set for the first
+        // time!
         updated = true;
         data.setModified(false);
       } else if (data.loadedmetadata) {
-      // if the meta data has been loaded, we can ask the video
-      // what it's current position (in time) is.
+        // if the meta data has been loaded, we can ask the video
+        // what it's current position (in time) is.
         if (this._videoPrevUpdateTime !== data.time()) {
-        // update the texture in gpu mem only if the current
-        // video timestamp does not match the timestamp of the last
-        // time we uploaded this texture (and update the time we
-        // last uploaded, too)
+          // update the texture in gpu mem only if the current
+          // video timestamp does not match the timestamp of the last
+          // time we uploaded this texture (and update the time we
+          // last uploaded, too)
           this._videoPrevUpdateTime = data.time();
           updated = true;
         }
@@ -269,9 +271,9 @@ p5.Texture = class{
         updated = true;
       }
     } else {
-    /* data instanceof p5.Graphics, probably */
-    // there is not enough information to tell if the texture can be
-    // conditionally updated; so to be safe, we just go ahead and upload it.
+      /* data instanceof p5.Graphics, probably */
+      // there is not enough information to tell if the texture can be
+      // conditionally updated; so to be safe, we just go ahead and upload it.
       updated = true;
     }
 
@@ -291,12 +293,12 @@ p5.Texture = class{
   }
 
   /**
- * Binds the texture to the appropriate GL target.
- * @method bindTexture
- */
+   * Binds the texture to the appropriate GL target.
+   * @method bindTexture
+   */
   bindTexture () {
-  // bind texture using gl context + glTarget and
-  // generated gl texture object
+    // bind texture using gl context + glTarget and
+    // generated gl texture object
     const gl = this._renderer.GL;
     gl.bindTexture(this.glTarget, this.getTexture());
 
@@ -304,11 +306,11 @@ p5.Texture = class{
   }
 
   /**
- * Unbinds the texture from the appropriate GL target.
- * @method unbindTexture
- */
+   * Unbinds the texture from the appropriate GL target.
+   * @method unbindTexture
+   */
   unbindTexture () {
-  // unbind per above, disable texturing on glTarget
+    // unbind per above, disable texturing on glTarget
     const gl = this._renderer.GL;
     gl.bindTexture(this.glTarget, null);
   }
@@ -322,16 +324,16 @@ p5.Texture = class{
   }
 
   /**
- * Sets how a texture is be interpolated when upscaled or downscaled.
- * Nearest filtering uses nearest neighbor scaling when interpolating
- * Linear filtering uses WebGL's linear scaling when interpolating
- * @method setInterpolation
- * @param {String} downScale Specifies the texture filtering when
- *                           textures are shrunk. Options are LINEAR or NEAREST
- * @param {String} upScale Specifies the texture filtering when
- *                         textures are magnified. Options are LINEAR or NEAREST
- * @todo implement mipmapping filters
- */
+   * Sets how a texture is be interpolated when upscaled or downscaled.
+   * Nearest filtering uses nearest neighbor scaling when interpolating
+   * Linear filtering uses WebGL's linear scaling when interpolating
+   * @method setInterpolation
+   * @param {String} downScale Specifies the texture filtering when
+   *                           textures are shrunk. Options are LINEAR or NEAREST
+   * @param {String} upScale Specifies the texture filtering when
+   *                         textures are magnified. Options are LINEAR or NEAREST
+   * @todo implement mipmapping filters
+   */
   setInterpolation (downScale, upScale) {
     const gl = this._renderer.GL;
 
@@ -354,14 +356,14 @@ p5.Texture = class{
   }
 
   /**
- * Sets the texture wrapping mode. This controls how textures behave
- * when their uv's go outside of the 0 - 1 range. There are three options:
- * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
- * is a power of two size (128, 256, 512, 1024, etc.).
- * @method setWrapMode
- * @param {String} wrapX Controls the horizontal texture wrapping behavior
- * @param {String} wrapY Controls the vertical texture wrapping behavior
- */
+   * Sets the texture wrapping mode. This controls how textures behave
+   * when their uv's go outside of the 0 - 1 range. There are three options:
+   * CLAMP, REPEAT, and MIRROR. REPEAT & MIRROR are only available if the texture
+   * is a power of two size (128, 256, 512, 1024, etc.).
+   * @method setWrapMode
+   * @param {String} wrapX Controls the horizontal texture wrapping behavior
+   * @param {String} wrapY Controls the vertical texture wrapping behavior
+   */
   setWrapMode (wrapX, wrapY) {
     const gl = this._renderer.GL;
 
@@ -410,7 +412,7 @@ p5.Texture = class{
         this.glWrapS = gl.CLAMP_TO_EDGE;
       }
     } else {
-    // falling back to default if didn't get a proper mode
+      // falling back to default if didn't get a proper mode
       this.glWrapS = gl.CLAMP_TO_EDGE;
     }
 
@@ -439,7 +441,7 @@ p5.Texture = class{
         this.glWrapT = gl.CLAMP_TO_EDGE;
       }
     } else {
-    // falling back to default if didn't get a proper mode
+      // falling back to default if didn't get a proper mode
       this.glWrapT = gl.CLAMP_TO_EDGE;
     }
 

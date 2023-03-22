@@ -131,8 +131,8 @@ suite('loading images', function() {
       // After 100ms has elapsed, the display index should
       // increment when we draw the image. We'll wait a little
       // longer to make sure p5 knows it should be on the next
-      // image.
-      return wait(110);
+      // image (and reduce test flakiness)
+      return wait(150);
     }).then(function() {
       myp5.image(img, 0, 0);
       assert.equal(img.gifProperties.displayIndex, 1);
