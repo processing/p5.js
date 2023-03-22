@@ -16,19 +16,20 @@ import * as constants from '../core/constants';
  * @constructor
  * @param {p5} [pInst] pointer to p5 instance
  */
-p5.Font = function(p) {
-  this.parent = p;
+p5.Font = class {
+  constructor(p){
+    this.parent = p;
 
-  this.cache = {};
+    this.cache = {};
 
-  /**
+    /**
    * Underlying opentype font implementation
    * @property font
    */
-  this.font = undefined;
-};
+    this.font = undefined;
+  }
 
-/**
+  /**
  * Returns a tight bounding box for the given text string using this
  * font
  *
@@ -71,108 +72,108 @@ p5.Font = function(p) {
  * </code>
  * </div>
  */
-p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
+  textBounds(str, x = 0, y = 0, fontSize, opts) {
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
-  const p = (opts && opts.renderer && opts.renderer._pInst) || this.parent;
+    const p = (opts && opts.renderer && opts.renderer._pInst) || this.parent;
 
-  const ctx = p._renderer.drawingContext;
-  const alignment = ctx.textAlign || constants.LEFT;
-  const baseline = ctx.textBaseline || constants.BASELINE;
-  const cacheResults = false;
-  let result;
-  let key;
+    const ctx = p._renderer.drawingContext;
+    const alignment = ctx.textAlign || constants.LEFT;
+    const baseline = ctx.textBaseline || constants.BASELINE;
+    const cacheResults = false;
+    let result;
+    let key;
 
-  fontSize = fontSize || p._renderer._textSize;
+    fontSize = fontSize || p._renderer._textSize;
 
-  // NOTE: cache disabled for now pending further discussion of #3436
-  if (cacheResults) {
-    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline);
-    result = this.cache[key];
-  }
+    // NOTE: cache disabled for now pending further discussion of #3436
+    if (cacheResults) {
+      key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline);
+      result = this.cache[key];
+    }
 
-  if (!result) {
-    let minX = [];
-    let minY;
-    let maxX = [];
-    let maxY;
-    let pos;
-    const xCoords = [];
-    xCoords[0] = [];
-    const yCoords = [];
-    const scale = this._scale(fontSize);
-    const lineHeight = p._renderer.textLeading();
-    let lineCount = 0;
+    if (!result) {
+      let minX = [];
+      let minY;
+      let maxX = [];
+      let maxY;
+      let pos;
+      const xCoords = [];
+      xCoords[0] = [];
+      const yCoords = [];
+      const scale = this._scale(fontSize);
+      const lineHeight = p._renderer.textLeading();
+      let lineCount = 0;
 
-    this.font.forEachGlyph(
-      str,
-      x,
-      y,
-      fontSize,
-      opts,
-      (glyph, gX, gY, gFontSize) => {
-        const gm = glyph.getMetrics();
-        if (glyph.index === 0 || glyph.index === 10) {
-          lineCount += 1;
-          xCoords[lineCount] = [];
-        } else {
-          xCoords[lineCount].push(gX + gm.xMin * scale);
-          xCoords[lineCount].push(gX + gm.xMax * scale);
-          yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
-          yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+      this.font.forEachGlyph(
+        str,
+        x,
+        y,
+        fontSize,
+        opts,
+        (glyph, gX, gY, gFontSize) => {
+          const gm = glyph.getMetrics();
+          if (glyph.index === 0 || glyph.index === 10) {
+            lineCount += 1;
+            xCoords[lineCount] = [];
+          } else {
+            xCoords[lineCount].push(gX + gm.xMin * scale);
+            xCoords[lineCount].push(gX + gm.xMax * scale);
+            yCoords.push(gY + lineCount * lineHeight + -gm.yMin * scale);
+            yCoords.push(gY + lineCount * lineHeight + -gm.yMax * scale);
+          }
+        }
+      );
+
+      if (xCoords[lineCount].length > 0) {
+        minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
+        maxX[lineCount] = Math.max.apply(null, xCoords[lineCount]);
+      }
+
+      let finalMaxX = 0;
+      for (let i = 0; i <= lineCount; i++) {
+        minX[i] = Math.min.apply(null, xCoords[i]);
+        maxX[i] = Math.max.apply(null, xCoords[i]);
+        const lineLength = maxX[i] - minX[i];
+        if (lineLength > finalMaxX) {
+          finalMaxX = lineLength;
         }
       }
-    );
 
-    if (xCoords[lineCount].length > 0) {
-      minX[lineCount] = Math.min.apply(null, xCoords[lineCount]);
-      maxX[lineCount] = Math.max.apply(null, xCoords[lineCount]);
-    }
+      const finalMinX = Math.min.apply(null, minX);
+      minY = Math.min.apply(null, yCoords);
+      maxY = Math.max.apply(null, yCoords);
 
-    let finalMaxX = 0;
-    for (let i = 0; i <= lineCount; i++) {
-      minX[i] = Math.min.apply(null, xCoords[i]);
-      maxX[i] = Math.max.apply(null, xCoords[i]);
-      const lineLength = maxX[i] - minX[i];
-      if (lineLength > finalMaxX) {
-        finalMaxX = lineLength;
+      result = {
+        x: finalMinX,
+        y: minY,
+        h: maxY - minY,
+        w: finalMaxX,
+        advance: finalMinX - x
+      };
+
+      // Bounds are now calculated, so shift the x & y to match alignment settings
+      pos = this._handleAlignment(
+        p._renderer,
+        str,
+        result.x,
+        result.y,
+        result.w + result.advance
+      );
+
+      result.x = pos.x;
+      result.y = pos.y;
+
+      if (cacheResults) {
+        this.cache[key] = result;
       }
     }
 
-    const finalMinX = Math.min.apply(null, minX);
-    minY = Math.min.apply(null, yCoords);
-    maxY = Math.max.apply(null, yCoords);
-
-    result = {
-      x: finalMinX,
-      y: minY,
-      h: maxY - minY,
-      w: finalMaxX,
-      advance: finalMinX - x
-    };
-
-    // Bounds are now calculated, so shift the x & y to match alignment settings
-    pos = this._handleAlignment(
-      p._renderer,
-      str,
-      result.x,
-      result.y,
-      result.w + result.advance
-    );
-
-    result.x = pos.x;
-    result.y = pos.y;
-
-    if (cacheResults) {
-      this.cache[key] = result;
-    }
+    return result;
   }
 
-  return result;
-};
-
-/**
+  /**
  * Computes an array of points following the path for specified text
  *
  * @method textToPoints
@@ -230,47 +231,47 @@ p5.Font.prototype.textBounds = function(str, x = 0, y = 0, fontSize, opts) {
  * </code>
  * </div>
  */
-p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
-  let xoff = 0;
-  const result = [];
-  const glyphs = this._getGlyphs(txt);
+  textToPoints(txt, x, y, fontSize, options) {
+    let xoff = 0;
+    const result = [];
+    const glyphs = this._getGlyphs(txt);
 
-  function isSpace(i) {
-    return (
-      (glyphs[i].name && glyphs[i].name === 'space') ||
+    function isSpace(i) {
+      return (
+        (glyphs[i].name && glyphs[i].name === 'space') ||
       (txt.length === glyphs.length && txt[i] === ' ') //||
       //(glyphs[i].index && glyphs[i].index === 3)
-    );
-  }
-
-  fontSize = fontSize || this.parent._renderer._textSize;
-
-  for (let i = 0; i < glyphs.length; i++) {
-    if (!isSpace(i)) {
-      // fix to #1817, #2069
-
-      const gpath = glyphs[i].getPath(x, y, fontSize),
-        paths = splitPaths(gpath.commands);
-
-      for (let j = 0; j < paths.length; j++) {
-        const pts = pathToPoints(paths[j], options);
-
-        for (let k = 0; k < pts.length; k++) {
-          pts[k].x += xoff;
-          result.push(pts[k]);
-        }
-      }
+      );
     }
 
-    xoff += glyphs[i].advanceWidth * this._scale(fontSize);
+    fontSize = fontSize || this.parent._renderer._textSize;
+
+    for (let i = 0; i < glyphs.length; i++) {
+      if (!isSpace(i)) {
+      // fix to #1817, #2069
+
+        const gpath = glyphs[i].getPath(x, y, fontSize),
+          paths = splitPaths(gpath.commands);
+
+        for (let j = 0; j < paths.length; j++) {
+          const pts = pathToPoints(paths[j], options);
+
+          for (let k = 0; k < pts.length; k++) {
+            pts[k].x += xoff;
+            result.push(pts[k]);
+          }
+        }
+      }
+
+      xoff += glyphs[i].advanceWidth * this._scale(fontSize);
+    }
+
+    return result;
   }
 
-  return result;
-};
+  // ----------------------------- End API ------------------------------
 
-// ----------------------------- End API ------------------------------
-
-/**
+  /**
  * Returns the set of opentype glyphs for the supplied string.
  *
  * Note that there is not a strict one-to-one mapping between characters
@@ -281,11 +282,11 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  * @param  {String} str the string to be converted
  * @return {Array}     the opentype glyphs
  */
-p5.Font.prototype._getGlyphs = function(str) {
-  return this.font.stringToGlyphs(str);
-};
+  _getGlyphs(str) {
+    return this.font.stringToGlyphs(str);
+  }
 
-/**
+  /**
  * Returns an opentype path for the supplied string and position.
  *
  * @private
@@ -295,16 +296,16 @@ p5.Font.prototype._getGlyphs = function(str) {
  * @param  {Object} options opentype options (optional)
  * @return {Object}     the opentype path
  */
-p5.Font.prototype._getPath = function(line, x, y, options) {
-  const p =
+  _getPath(line, x, y, options) {
+    const p =
       (options && options.renderer && options.renderer._pInst) || this.parent,
-    renderer = p._renderer,
-    pos = this._handleAlignment(renderer, line, x, y);
+      renderer = p._renderer,
+      pos = this._handleAlignment(renderer, line, x, y);
 
-  return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
-};
+    return this.font.getPath(line, pos.x, pos.y, renderer._textSize, options);
+  }
 
-/*
+  /*
  * Creates an SVG-formatted path-data string
  * (See http://www.w3.org/TR/SVG/paths.html#PathData)
  * from the given opentype path or string/position
@@ -319,26 +320,26 @@ p5.Font.prototype._getPath = function(line, x, y, options) {
  *
  * @return {Object}     this p5.Font object
  */
-p5.Font.prototype._getPathData = function(line, x, y, options) {
-  let decimals = 3;
+  _getPathData(line, x, y, options) {
+    let decimals = 3;
 
-  // create path from string/position
-  if (typeof line === 'string' && arguments.length > 2) {
-    line = this._getPath(line, x, y, options);
-  } else if (typeof x === 'object') {
+    // create path from string/position
+    if (typeof line === 'string' && arguments.length > 2) {
+      line = this._getPath(line, x, y, options);
+    } else if (typeof x === 'object') {
     // handle options specified in 2nd arg
-    options = x;
+      options = x;
+    }
+
+    // handle svg arguments
+    if (options && typeof options.decimals === 'number') {
+      decimals = options.decimals;
+    }
+
+    return line.toPathData(decimals);
   }
 
-  // handle svg arguments
-  if (options && typeof options.decimals === 'number') {
-    decimals = options.decimals;
-  }
-
-  return line.toPathData(decimals);
-};
-
-/*
+  /*
  * Creates an SVG <path> element, as a string,
  * from the given opentype path or string/position
  *
@@ -355,37 +356,37 @@ p5.Font.prototype._getPathData = function(line, x, y, options) {
  *
  * @return {Object}     this p5.Font object
  */
-p5.Font.prototype._getSVG = function(line, x, y, options) {
-  let decimals = 3;
+  _getSVG(line, x, y, options) {
+    let decimals = 3;
 
-  // create path from string/position
-  if (typeof line === 'string' && arguments.length > 2) {
-    line = this._getPath(line, x, y, options);
-  } else if (typeof x === 'object') {
+    // create path from string/position
+    if (typeof line === 'string' && arguments.length > 2) {
+      line = this._getPath(line, x, y, options);
+    } else if (typeof x === 'object') {
     // handle options specified in 2nd arg
-    options = x;
+      options = x;
+    }
+
+    // handle svg arguments
+    if (options) {
+      if (typeof options.decimals === 'number') {
+        decimals = options.decimals;
+      }
+      if (typeof options.strokeWidth === 'number') {
+        line.strokeWidth = options.strokeWidth;
+      }
+      if (typeof options.fill !== 'undefined') {
+        line.fill = options.fill;
+      }
+      if (typeof options.stroke !== 'undefined') {
+        line.stroke = options.stroke;
+      }
+    }
+
+    return line.toSVG(decimals);
   }
 
-  // handle svg arguments
-  if (options) {
-    if (typeof options.decimals === 'number') {
-      decimals = options.decimals;
-    }
-    if (typeof options.strokeWidth === 'number') {
-      line.strokeWidth = options.strokeWidth;
-    }
-    if (typeof options.fill !== 'undefined') {
-      line.fill = options.fill;
-    }
-    if (typeof options.stroke !== 'undefined') {
-      line.stroke = options.stroke;
-    }
-  }
-
-  return line.toSVG(decimals);
-};
-
-/*
+  /*
  * Renders an opentype path or string/position
  * to the current graphics context
  *
@@ -398,99 +399,99 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  *
  * @return {p5.Font}     this p5.Font object
  */
-p5.Font.prototype._renderPath = function(line, x, y, options) {
-  let pdata;
-  const pg = (options && options.renderer) || this.parent._renderer;
-  const ctx = pg.drawingContext;
+  _renderPath(line, x, y, options) {
+    let pdata;
+    const pg = (options && options.renderer) || this.parent._renderer;
+    const ctx = pg.drawingContext;
 
-  if (typeof line === 'object' && line.commands) {
-    pdata = line.commands;
-  } else {
+    if (typeof line === 'object' && line.commands) {
+      pdata = line.commands;
+    } else {
     //pos = handleAlignment(p, ctx, line, x, y);
-    pdata = this._getPath(line, x, y, options).commands;
-  }
-
-  ctx.beginPath();
-
-  for (const cmd of pdata) {
-    if (cmd.type === 'M') {
-      ctx.moveTo(cmd.x, cmd.y);
-    } else if (cmd.type === 'L') {
-      ctx.lineTo(cmd.x, cmd.y);
-    } else if (cmd.type === 'C') {
-      ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
-    } else if (cmd.type === 'Q') {
-      ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
-    } else if (cmd.type === 'Z') {
-      ctx.closePath();
+      pdata = this._getPath(line, x, y, options).commands;
     }
-  }
 
-  // only draw stroke if manually set by user
-  if (pg._doStroke && pg._strokeSet) {
-    ctx.stroke();
-  }
+    ctx.beginPath();
 
-  if (pg._doFill) {
+    for (const cmd of pdata) {
+      if (cmd.type === 'M') {
+        ctx.moveTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'L') {
+        ctx.lineTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'C') {
+        ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+      } else if (cmd.type === 'Q') {
+        ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+      } else if (cmd.type === 'Z') {
+        ctx.closePath();
+      }
+    }
+
+    // only draw stroke if manually set by user
+    if (pg._doStroke && pg._strokeSet) {
+      ctx.stroke();
+    }
+
+    if (pg._doFill) {
     // if fill hasn't been set by user, use default-text-fill
-    if (!pg._fillSet) {
-      pg._setFill(constants._DEFAULT_TEXT_FILL);
+      if (!pg._fillSet) {
+        pg._setFill(constants._DEFAULT_TEXT_FILL);
+      }
+      ctx.fill();
     }
-    ctx.fill();
+
+    return this;
   }
 
-  return this;
-};
-
-p5.Font.prototype._textWidth = function(str, fontSize) {
-  return this.font.getAdvanceWidth(str, fontSize);
-};
-
-p5.Font.prototype._textAscent = function(fontSize) {
-  return this.font.ascender * this._scale(fontSize);
-};
-
-p5.Font.prototype._textDescent = function(fontSize) {
-  return -this.font.descender * this._scale(fontSize);
-};
-
-p5.Font.prototype._scale = function(fontSize) {
-  return (
-    1 / this.font.unitsPerEm * (fontSize || this.parent._renderer._textSize)
-  );
-};
-
-p5.Font.prototype._handleAlignment = function(renderer, line, x, y, textWidth) {
-  const fontSize = renderer._textSize;
-
-  if (typeof textWidth === 'undefined') {
-    textWidth = this._textWidth(line, fontSize);
+  _textWidth(str, fontSize) {
+    return this.font.getAdvanceWidth(str, fontSize);
   }
 
-  switch (renderer._textAlign) {
-    case constants.CENTER:
-      x -= textWidth / 2;
-      break;
-    case constants.RIGHT:
-      x -= textWidth;
-      break;
+  _textAscent(fontSize) {
+    return this.font.ascender * this._scale(fontSize);
   }
 
-  switch (renderer._textBaseline) {
-    case constants.TOP:
-      y += this._textAscent(fontSize);
-      break;
-    case constants.CENTER:
-      y += this._textAscent(fontSize) / 2;
-      break;
-    case constants.BOTTOM:
-      y -= this._textDescent(fontSize);
-      break;
+  _textDescent(fontSize) {
+    return -this.font.descender * this._scale(fontSize);
   }
 
-  return { x, y };
+  _scale(fontSize) {
+    return (
+      1 / this.font.unitsPerEm * (fontSize || this.parent._renderer._textSize)
+    );
+  }
+
+  _handleAlignment(renderer, line, x, y, textWidth) {
+    const fontSize = renderer._textSize;
+
+    if (typeof textWidth === 'undefined') {
+      textWidth = this._textWidth(line, fontSize);
+    }
+
+    switch (renderer._textAlign) {
+      case constants.CENTER:
+        x -= textWidth / 2;
+        break;
+      case constants.RIGHT:
+        x -= textWidth;
+        break;
+    }
+
+    switch (renderer._textBaseline) {
+      case constants.TOP:
+        y += this._textAscent(fontSize);
+        break;
+      case constants.CENTER:
+        y += this._textAscent(fontSize) / 2;
+        break;
+      case constants.BOTTOM:
+        y -= this._textDescent(fontSize);
+        break;
+    }
+
+    return { x, y };
+  }
 };
-
 // path-utils
 
 function pathToPoints(cmds, options) {

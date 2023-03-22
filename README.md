@@ -632,6 +632,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aryan1982"><img src="https://avatars.githubusercontent.com/u/62349184?v=4?s=100" width="100px;" alt="Aryan Thakor"/><br /><sub><b>Aryan Thakor</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Aryan1982" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MostafaEwis"><img src="https://avatars.githubusercontent.com/u/64862002?v=4?s=100" width="100px;" alt="Mostafa Ewis"/><br /><sub><b>Mostafa Ewis</b></sub></a><br /><a href="#translation-MostafaEwis" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nabilhassein"><img src="https://avatars.githubusercontent.com/u/693744?v=4?s=100" width="100px;" alt="Nabil Hassein"/><br /><sub><b>Nabil Hassein</b></sub></a><br /><a href="#translation-nabilhassein" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://asukaminato.notion.site/Blog-3c0df75d3d8b471ab67e97ecc82e10a4"><img src="https://avatars.githubusercontent.com/u/30024051?v=4?s=100" width="100px;" alt="AsukaMinato"/><br /><sub><b>AsukaMinato</b></sub></a><br /><a href="#translation-wuyudi" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>

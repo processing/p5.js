@@ -238,6 +238,8 @@ p5.RendererGL.prototype._drawPoints = function(vertices, vertexBuffer) {
 
   pointShader.enableAttrib(pointShader.attributes.aPosition, 3);
 
+  this._applyColorBlend(this.curStrokeColor);
+
   gl.drawArrays(gl.Points, 0, vertices.length);
 
   pointShader.unbindShader();

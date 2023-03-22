@@ -34,6 +34,10 @@ suite('loading images', function() {
         myp5 = p;
         done();
       };
+
+      // Make sure draw() exists so timing functions still run each frame
+      // and we can test gif animation
+      p.draw = function() {};
     });
   });
 
@@ -107,6 +111,31 @@ suite('loading images', function() {
       myp5.loadImage('unit/assets/white_black.gif', resolve, reject);
     }).then(function(img) {
       assert.deepEqual(img.get(0, 0), [255, 255, 255, 255]);
+    });
+  });
+
+  test('animated gifs animate correctly', function() {
+    const wait = function(ms) {
+      return new Promise(function(resolve) {
+        setTimeout(resolve, ms);
+      });
+    };
+    let img;
+    return new Promise(function(resolve, reject) {
+      img = myp5.loadImage('unit/assets/nyan_cat.gif', resolve, reject);
+    }).then(function() {
+      assert.equal(img.gifProperties.displayIndex, 0);
+      myp5.image(img, 0, 0);
+
+      // This gif has frames that are around for 100ms each.
+      // After 100ms has elapsed, the display index should
+      // increment when we draw the image. We'll wait a little
+      // longer to make sure p5 knows it should be on the next
+      // image.
+      return wait(110);
+    }).then(function() {
+      myp5.image(img, 0, 0);
+      assert.equal(img.gifProperties.displayIndex, 1);
     });
   });
 

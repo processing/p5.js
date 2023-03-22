@@ -961,11 +961,55 @@ suite('Tests for p5.js sketch_reader', function() {
   );
 
   testUnMinified(
-    'detects reassignment of p5.js function outside setup',
+    'detects reassignment of p5.js function (text) outside setup',
     function() {
       return new Promise(function(resolve) {
         prepSketchReaderTest(
           ['let text = 100', 'function setup() {}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js function (textSize from Typography) outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['let textSize = 100', 'function setup() {}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 1);
+        assert.match(log[0], /you have used a p5.js reserved function/);
+      });
+    }
+  );
+
+  testUnMinified(
+    'does not detect reassignment of p5.js function (size from TypedDict or Dom) outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['let size = 100', 'function setup() {}'],
+          resolve
+        );
+      }).then(function() {
+        assert.strictEqual(log.length, 0);
+      });
+    }
+  );
+
+  testUnMinified(
+    'detects reassignment of p5.js function (point from shape) outside setup',
+    function() {
+      return new Promise(function(resolve) {
+        prepSketchReaderTest(
+          ['let point = 100', 'function setup() {}'],
           resolve
         );
       }).then(function() {
