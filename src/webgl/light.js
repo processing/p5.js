@@ -72,12 +72,11 @@ import * as constants from '../core/constants';
  * @example
  * <div>
  * <code>
- * 
- * function setup(){
+ * function setup() {
  *   createCanvas(100,100,WEBGL);
  *   camera(0,-100,300);
  * }
- *   function draw(){
+ * function draw() {
  *   background(230);
  *   ambientMaterial(237,34,93); //Pink Material
  *   ambientLight(mouseY); 
@@ -85,7 +84,6 @@ import * as constants from '../core/constants';
  *   rotateY(millis()/2000);
  *   box(100);
  * }
- *
  * </code>
  * </div>
  * @alt
