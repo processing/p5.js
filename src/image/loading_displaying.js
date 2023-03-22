@@ -317,6 +317,14 @@ p5.prototype.saveGif = async function(
   // stop the loop since we are going to manually redraw
   this.noLoop();
 
+  // Defer execution until the rest of the call stack finishes, allowing the
+  // rest of `setup` to be called (and, importantly, canvases hidden in setup
+  // to be unhidden.)
+  //
+  // Waiting on this empty promise means we'll continue as soon as setup
+  // finishes without waiting for another frame.
+  await Promise.resolve();
+
   while (frameIterator < totalNumberOfFrames) {
     /*
       we draw the next frame. this is important, since
