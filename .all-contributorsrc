@@ -3619,6 +3619,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "agrshch",
+      "name": "agrshch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/98658900?v=4",
+      "profile": "https://github.com/agrshch",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
