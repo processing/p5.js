@@ -68,6 +68,26 @@ import * as constants from '../core/constants';
  * </div>
  * @alt
  * sphere with coral color under white light
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100,100,WEBGL);
+ *   camera(0,-100,300);
+ * }
+ * function draw() {
+ *   background(230);
+ *   ambientMaterial(237,34,93); //Pink Material
+ *   ambientLight(mouseY);
+ *   //As you move the mouse up to down it changes from no ambient light to full ambient light.
+ *   rotateY(millis()/2000);
+ *   box(100);
+ * }
+ * </code>
+ * </div>
+ * @alt
+ * pink ambient material cube under the ambient light
  */
 
 /**
