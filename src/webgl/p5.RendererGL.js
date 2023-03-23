@@ -86,192 +86,191 @@ const defaultShaders = {
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
-  p5.Renderer.call(this, elt, pInst, isMainCanvas);
-  this._setAttributeDefaults(pInst);
-  this._initContext();
-  this.isP3D = true; //lets us know we're in 3d mode
+p5.RendererGL = class extends p5.Renderer  {
+  constructor(elt, pInst, isMainCanvas, attr){
+    super(elt, pInst, isMainCanvas);
+    this._setAttributeDefaults(pInst);
+    this._initContext();
+    this.isP3D = true; //lets us know we're in 3d mode
 
-  // This redundant property is useful in reminding you that you are
-  // interacting with WebGLRenderingContext, still worth considering future removal
-  this.GL = this.drawingContext;
-  this._pInst._setProperty('drawingContext', this.drawingContext);
+    // This redundant property is useful in reminding you that you are
+    // interacting with WebGLRenderingContext, still worth considering future removal
+    this.GL = this.drawingContext;
+    this._pInst._setProperty('drawingContext', this.drawingContext);
 
-  // erasing
-  this._isErasing = false;
+    // erasing
+    this._isErasing = false;
 
-  // lights
-  this._enableLighting = false;
+    // lights
+    this._enableLighting = false;
 
-  this.ambientLightColors = [];
-  this.specularColors = [1, 1, 1];
+    this.ambientLightColors = [];
+    this.specularColors = [1, 1, 1];
 
-  this.directionalLightDirections = [];
-  this.directionalLightDiffuseColors = [];
-  this.directionalLightSpecularColors = [];
+    this.directionalLightDirections = [];
+    this.directionalLightDiffuseColors = [];
+    this.directionalLightSpecularColors = [];
 
-  this.pointLightPositions = [];
-  this.pointLightDiffuseColors = [];
-  this.pointLightSpecularColors = [];
+    this.pointLightPositions = [];
+    this.pointLightDiffuseColors = [];
+    this.pointLightSpecularColors = [];
 
-  this.spotLightPositions = [];
-  this.spotLightDirections = [];
-  this.spotLightDiffuseColors = [];
-  this.spotLightSpecularColors = [];
-  this.spotLightAngle = [];
-  this.spotLightConc = [];
+    this.spotLightPositions = [];
+    this.spotLightDirections = [];
+    this.spotLightDiffuseColors = [];
+    this.spotLightSpecularColors = [];
+    this.spotLightAngle = [];
+    this.spotLightConc = [];
 
-  this.drawMode = constants.FILL;
+    this.drawMode = constants.FILL;
 
-  this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
-  this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
-  this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
-  this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
-  this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
+    this.curFillColor = this._cachedFillStyle = [1, 1, 1, 1];
+    this.curAmbientColor = this._cachedFillStyle = [1, 1, 1, 1];
+    this.curSpecularColor = this._cachedFillStyle = [0, 0, 0, 0];
+    this.curEmissiveColor = this._cachedFillStyle = [0, 0, 0, 0];
+    this.curStrokeColor = this._cachedStrokeStyle = [0, 0, 0, 1];
 
-  this.curBlendMode = constants.BLEND;
-  this._cachedBlendMode = undefined;
-  if (this.webglVersion === constants.WEBGL2) {
-    this.blendExt = this.GL;
-  } else {
-    this.blendExt = this.GL.getExtension('EXT_blend_minmax');
-  }
-  this._isBlending = false;
+    this.curBlendMode = constants.BLEND;
+    this._cachedBlendMode = undefined;
+    if (this.webglVersion === constants.WEBGL2) {
+      this.blendExt = this.GL;
+    } else {
+      this.blendExt = this.GL.getExtension('EXT_blend_minmax');
+    }
+    this._isBlending = false;
 
-  this._useSpecularMaterial = false;
-  this._useEmissiveMaterial = false;
-  this._useNormalMaterial = false;
-  this._useShininess = 1;
+    this._useSpecularMaterial = false;
+    this._useEmissiveMaterial = false;
+    this._useNormalMaterial = false;
+    this._useShininess = 1;
 
-  this._useLineColor = false;
-  this._useVertexColor = false;
+    this._useLineColor = false;
+    this._useVertexColor = false;
 
-  this.registerEnabled = [];
+    this.registerEnabled = [];
 
-  this._tint = [255, 255, 255, 255];
+    this._tint = [255, 255, 255, 255];
 
-  // lightFalloff variables
-  this.constantAttenuation = 1;
-  this.linearAttenuation = 0;
-  this.quadraticAttenuation = 0;
+    // lightFalloff variables
+    this.constantAttenuation = 1;
+    this.linearAttenuation = 0;
+    this.quadraticAttenuation = 0;
 
-  /**
+    /**
    * model view, projection, & normal
    * matrices
    */
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix('mat3');
+    this.uMVMatrix = new p5.Matrix();
+    this.uPMatrix = new p5.Matrix();
+    this.uNMatrix = new p5.Matrix('mat3');
 
-  // Current vertex normal
-  this._currentNormal = new p5.Vector(0, 0, 1);
+    // Current vertex normal
+    this._currentNormal = new p5.Vector(0, 0, 1);
 
-  // Camera
-  this._curCamera = new p5.Camera(this);
-  this._curCamera._computeCameraDefaultSettings();
-  this._curCamera._setDefaultCamera();
+    // Camera
+    this._curCamera = new p5.Camera(this);
+    this._curCamera._computeCameraDefaultSettings();
+    this._curCamera._setDefaultCamera();
 
-  this._defaultLightShader = undefined;
-  this._defaultImmediateModeShader = undefined;
-  this._defaultNormalShader = undefined;
-  this._defaultColorShader = undefined;
-  this._defaultPointShader = undefined;
+    this._defaultLightShader = undefined;
+    this._defaultImmediateModeShader = undefined;
+    this._defaultNormalShader = undefined;
+    this._defaultColorShader = undefined;
+    this._defaultPointShader = undefined;
 
-  this.userFillShader = undefined;
-  this.userStrokeShader = undefined;
-  this.userPointShader = undefined;
+    this.userFillShader = undefined;
+    this.userStrokeShader = undefined;
+    this.userPointShader = undefined;
 
-  // Default drawing is done in Retained Mode
-  // Geometry and Material hashes stored here
-  this.retainedMode = {
-    geometry: {},
-    buffers: {
-      stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-      ],
-      fill: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-      ],
-      text: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
-        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-      ]
-    }
-  };
+    // Default drawing is done in Retained Mode
+    // Geometry and Material hashes stored here
+    this.retainedMode = {
+      geometry: {},
+      buffers: {
+        stroke: [
+          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+        ],
+        fill: [
+          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        ],
+        text: [
+          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        ]
+      }
+    };
 
-  // Immediate Mode
-  // Geometry and Material hashes stored here
-  this.immediateMode = {
-    geometry: new p5.Geometry(),
-    shapeMode: constants.TRIANGLE_FAN,
-    _bezierVertex: [],
-    _quadraticVertex: [],
-    _curveVertex: [],
-    buffers: {
-      fill: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-      ],
-      stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-      ],
-      point: this.GL.createBuffer()
-    }
-  };
+    // Immediate Mode
+    // Geometry and Material hashes stored here
+    this.immediateMode = {
+      geometry: new p5.Geometry(),
+      shapeMode: constants.TRIANGLE_FAN,
+      _bezierVertex: [],
+      _quadraticVertex: [],
+      _curveVertex: [],
+      buffers: {
+        fill: [
+          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+        ],
+        stroke: [
+          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+        ],
+        point: this.GL.createBuffer()
+      }
+    };
 
-  this.pointSize = 5.0; //default point size
-  this.curStrokeWeight = 1;
-  this.curStrokeCap = constants.ROUND;
-  this.curStrokeJoin = constants.ROUND;
+    this.pointSize = 5.0; //default point size
+    this.curStrokeWeight = 1;
+    this.curStrokeCap = constants.ROUND;
+    this.curStrokeJoin = constants.ROUND;
 
-  // array of textures created in this gl context via this.getTexture(src)
-  this.textures = [];
+    // array of textures created in this gl context via this.getTexture(src)
+    this.textures = [];
 
-  this.textureMode = constants.IMAGE;
-  // default wrap settings
-  this.textureWrapX = constants.CLAMP;
-  this.textureWrapY = constants.CLAMP;
-  this._tex = null;
-  this._curveTightness = 6;
+    this.textureMode = constants.IMAGE;
+    // default wrap settings
+    this.textureWrapX = constants.CLAMP;
+    this.textureWrapY = constants.CLAMP;
+    this._tex = null;
+    this._curveTightness = 6;
 
-  // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
-  this._lookUpTableBezier = [];
-  // lookUpTable for coefficients needed to be calculated for quadraticVertex
-  this._lookUpTableQuadratic = [];
+    // lookUpTable for coefficients needed to be calculated for bezierVertex, same are used for curveVertex
+    this._lookUpTableBezier = [];
+    // lookUpTable for coefficients needed to be calculated for quadraticVertex
+    this._lookUpTableQuadratic = [];
 
-  // current curveDetail in the Bezier lookUpTable
-  this._lutBezierDetail = 0;
-  // current curveDetail in the Quadratic lookUpTable
-  this._lutQuadraticDetail = 0;
+    // current curveDetail in the Bezier lookUpTable
+    this._lutBezierDetail = 0;
+    // current curveDetail in the Quadratic lookUpTable
+    this._lutQuadraticDetail = 0;
 
-  // Used to distinguish between user calls to vertex() and internal calls
-  this.isProcessingVertices = false;
-  this._tessy = this._initTessy();
+    // Used to distinguish between user calls to vertex() and internal calls
+    this.isProcessingVertices = false;
+    this._tessy = this._initTessy();
 
-  this.fontInfos = {};
+    this.fontInfos = {};
 
-  this._curShader = undefined;
+    this._curShader = undefined;
 
-  return this;
-};
-
-p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
+    return this;
+  }};
 
 //////////////////////////////////////////////
 // Setting
