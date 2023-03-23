@@ -37,24 +37,26 @@ import color_conversion from './color_conversion';
  *                                          for red, green, blue and alpha channel
  *                                          or CSS color.
  */
-p5.Color = function(pInst, vals) {
+p5.Color = class {
+  constructor(pInst, vals){
   // Record color mode and maxes at time of construction.
-  this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
+    this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
 
-  // Calculate normalized RGBA values.
-  if (
-    this.mode !== constants.RGB &&
+    // Calculate normalized RGBA values.
+    if (
+      this.mode !== constants.RGB &&
     this.mode !== constants.HSL &&
     this.mode !== constants.HSB
-  ) {
-    throw new Error(`${this.mode} is an invalid colorMode.`);
-  } else {
-    this._array = p5.Color._parseInputs.apply(this, vals);
-  }
+    ) {
+      throw new Error(`${this.mode} is an invalid colorMode.`);
+    } else {
+      this._array = p5.Color._parseInputs.apply(this, vals);
+    }
 
-  // Expose closest screen color.
-  this._calculateLevels();
-  return this;
+    // Expose closest screen color.
+    this._calculateLevels();
+    return this;
+  }
 };
 
 /**

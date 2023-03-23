@@ -11,14 +11,14 @@ import './p5.Renderer';
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
-p5.Renderer2D = function(elt, pInst, isMainCanvas) {
-  p5.Renderer.call(this, elt, pInst, isMainCanvas);
-  this.drawingContext = this.canvas.getContext('2d');
-  this._pInst._setProperty('drawingContext', this.drawingContext);
-  return this;
+p5.Renderer2D = class extends p5.Renderer {
+  constructor(elt, pInst, isMainCanvas) {
+    super(elt, pInst, isMainCanvas);
+    this.drawingContext = this.canvas.getContext('2d');
+    this._pInst._setProperty('drawingContext', this.drawingContext);
+    return this;
+  }
 };
-
-p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
   this._cachedFillStyle = this._cachedStrokeStyle = undefined;
