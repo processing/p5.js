@@ -129,10 +129,12 @@ suite('loading images', function() {
 
       // This gif has frames that are around for 100ms each.
       // After 100ms has elapsed, the display index should
-      // increment when we draw the image. We'll wait a little
-      // longer to make sure p5 knows it should be on the next
-      // image.
-      return wait(110);
+      // increment when we draw the image.
+      return wait(100);
+    }).then(function() {
+      return new Promise(function(resolve) {
+        window.requestAnimationFrame(resolve);
+      });
     }).then(function() {
       myp5.image(img, 0, 0);
       assert.equal(img.gifProperties.displayIndex, 1);
