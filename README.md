@@ -634,6 +634,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nabilhassein"><img src="https://avatars.githubusercontent.com/u/693744?v=4?s=100" width="100px;" alt="Nabil Hassein"/><br /><sub><b>Nabil Hassein</b></sub></a><br /><a href="#translation-nabilhassein" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://asukaminato.notion.site/Blog-3c0df75d3d8b471ab67e97ecc82e10a4"><img src="https://avatars.githubusercontent.com/u/30024051?v=4?s=100" width="100px;" alt="AsukaMinato"/><br /><sub><b>AsukaMinato</b></sub></a><br /><a href="#translation-wuyudi" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/agrshch"><img src="https://avatars.githubusercontent.com/u/98658900?v=4?s=100" width="100px;" alt="agrshch"/><br /><sub><b>agrshch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=agrshch" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://shibomb.xyz"><img src="https://avatars.githubusercontent.com/u/958471?v=4?s=100" width="100px;" alt="SHIBAHARA Hiroki"/><br /><sub><b>SHIBAHARA Hiroki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shibomb" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

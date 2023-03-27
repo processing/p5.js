@@ -3628,6 +3628,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shibomb",
+      "name": "SHIBAHARA Hiroki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/958471?v=4",
+      "profile": "https://shibomb.xyz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
