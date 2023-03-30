@@ -110,14 +110,8 @@ class Framebuffer {
         : constants.RGB
     );
     this.useDepth = settings.depth === undefined ? true : settings.depth;
-    this.depthFormat = settings.depthFormat || (
-      this.format === constants.UNSIGNED_BYTE
-        ? constants.UNSIGNED_BYTE
-        : constants.FLOAT
-    );
-    this.textureFiltering = settings.textureFiltering === undefined
-      ? true
-      : settings.textureFiltering;
+    this.depthFormat = settings.depthFormat || constants.FLOAT;
+    this.textureFiltering = settings.textureFiltering || constants.LINEAR;
     if (settings.antialias === undefined) {
       this.antialiasSamples = target._renderer._pInst._glAttributes.antialias
         ? 2
@@ -303,9 +297,9 @@ class Framebuffer {
     ) {
       console.warn(
         'FLOAT depth format is unavailable in WebGL 1. ' +
-          'Defaulting to UNSIGNED_BYTE.'
+          'Defaulting to UNSIGNED_INT.'
       );
-      this.depthFormat = constants.UNSIGNED_BYTE;
+      this.depthFormat = constants.UNSIGNED_INT;
     }
 
     if (![
@@ -321,14 +315,14 @@ class Framebuffer {
       this.format = constants.UNSIGNED_BYTE;
     }
     if (this.useDepth && ![
-      constants.UNSIGNED_BYTE,
+      constants.UNSIGNED_INT,
       constants.FLOAT
     ].includes(this.depthFormat)) {
       console.warn(
         'Unknown Framebuffer depth format. ' +
-          'Please use UNSIGNED_BYTE or FLOAT. Defaulting to UNSIGNED_BYTE.'
+          'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
       );
-      this.depthFormat = constants.UNSIGNED_BYTE;
+      this.depthFormat = constants.FLOAT;
     }
 
     const support = checkWebGLCapabilities(this.target._renderer);
@@ -346,9 +340,9 @@ class Framebuffer {
     ) {
       console.warn(
         'This environment does not support FLOAT depth textures. ' +
-          'Falling back to UNSIGNED_BYTE.'
+          'Falling back to UNSIGNED_INT.'
       );
-      this.depthFormat = constants.UNSIGNED_BYTE;
+      this.depthFormat = constants.UNSIGNED_INT;
     }
     if (!support.halfFloat && this.format === constants.HALF_FLOAT) {
       console.warn(
@@ -504,7 +498,9 @@ class Framebuffer {
     }
 
     this.color = new FramebufferTexture(this, 'colorTexture');
-    const filter = this.textureFiltering ? gl.LINEAR : gl.NEAREST;
+    const filter = this.textureFiltering === constants.LINEAR
+      ? gl.LINEAR
+      : gl.NEAREST;
     this.colorP5Texture = new p5.Texture(
       this.target._renderer,
       this.color,

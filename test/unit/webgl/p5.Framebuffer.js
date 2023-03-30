@@ -21,11 +21,11 @@ suite('p5.Framebuffer', function() {
       version,
       format,
       channels,
-      depth,
-      antialias
+      antialias,
+      depth
     ) {
       test(
-        `framebuffers work with WebGL ${version}, ${format} ${channels} ${depth ? '' : 'no '}depth ${antialias ? ' antialiased' : ''}`,
+        `framebuffers work with WebGL ${version}, ${format} ${channels} ${depth || 'no'} depth ${antialias ? ' antialiased' : ''}`,
         function() {
           myp5.createCanvas(10, 10, myp5.WEBGL);
           myp5.setAttributes({ version });
@@ -35,7 +35,8 @@ suite('p5.Framebuffer', function() {
             format,
             channels,
             antialias,
-            depth
+            depth: depth !== null,
+            depthFormat: depth
           });
           fbo.draw(() => {
             myp5.background(255);
@@ -67,7 +68,7 @@ suite('p5.Framebuffer', function() {
     const formats = ['unsigned-byte', 'float', 'half-float'];
     const channelOptions = ['rgba', 'rgb'];
     const antialiasOptions = [true, false];
-    const depthOptions = [true, false];
+    const depthOptions = ['unsigned-int', 'float', null];
     for (const version of versions) {
       for (const format of formats) {
         for (const channels of channelOptions) {

@@ -753,6 +753,12 @@ export const COVER = 'cover';
 export const UNSIGNED_BYTE = 'unsigned-byte';
 
 /**
+ * @property {String} UNSIGNED_INT
+ * @final
+ */
+export const UNSIGNED_INT = 'unsigned-int';
+
+/**
  * @property {String} FLOAT
  * @final
  */

@@ -258,12 +258,12 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
  * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
  * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
- * - `depthFormat`: The data format for depth information, either `UNSIGNED_BYTE` or `FLOAT`. The default is `UNSIGNED_BYTE` if `format` is that as well, or `FLOAT` otherwise.
+ * - `depthFormat`: The data format for depth information, either `UNSIGNED_INT` or `FLOAT`. The default is `FLOAT` if available, or `UNSIGNED_INT` otherwise.
  * - `antialias`: Boolean or Number, whether or not to render with antialiased edges, and if so, optionally the number of samples to use. Defaults to whether or not the main canvas is antialiased, using a default of 2 samples if so. Antialiasing is only supported when WebGL 2 is available.
  * - `width`: The width of the texture. Defaults to matching the main canvas.
  * - `height`: The height of the texture. Defaults to matching the main canvas.
  * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
- * - `textureFiltering`: A boolean, whether or not to interpolate between nearby pixels when reading values from the color texture. Generally, turn this on when using the texture as an image, and turn it off if reading the texture as data. Defaults to true.
+ * - `textureFiltering`: Either `LINEAR` (nearby pixels will be interpolated when reading values from the color texture) or `NEAREST` (no interpolation.) Generally, use `LINEAR` when using the texture as an image, and use `NEAREST` if reading the texture as data. Defaults to `LINEAR`.
  *
  * If `width`, `height`, or `density` are specified, then the framebuffer will
  * keep that size until manually changed. Otherwise, it will be autosized, and
