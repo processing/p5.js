@@ -37,7 +37,7 @@ import color_conversion from './color_conversion';
  *                                          for red, green, blue and alpha channel
  *                                          or CSS color.
  */
-p5.Color = class {
+p5.Color = class Color {
   constructor(pInst, vals){
   // Record color mode and maxes at time of construction.
     this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);

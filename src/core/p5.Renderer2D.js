@@ -11,7 +11,7 @@ import './p5.Renderer';
 const styleEmpty = 'rgba(0,0,0,0)';
 // const alphaThreshold = 0.00125; // minimum visible
 
-p5.Renderer2D = class extends p5.Renderer {
+p5.Renderer2D = class Renderer2D extends p5.Renderer {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst, isMainCanvas);
     this.drawingContext = this.canvas.getContext('2d');

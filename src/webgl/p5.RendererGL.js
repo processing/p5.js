@@ -86,7 +86,7 @@ const defaultShaders = {
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = class extends p5.Renderer  {
+p5.RendererGL = class RendererGL extends p5.Renderer  {
   constructor(elt, pInst, isMainCanvas, attr){
     super(elt, pInst, isMainCanvas);
     this._setAttributeDefaults(pInst);
