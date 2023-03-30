@@ -143,9 +143,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
       const funcName =
         methodParts.length === 1 ? func : methodParts.slice(2).join('/');
       //msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`;
-      funcName.substring(0,2) === "p5." ?               // ths funcName is the name of function and whenever a function is defined 
-      msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` : // with p5[class] then it starts with "p5."
-       msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`; // this is used correct the link
+      funcName.substring(0,2) === 'p5.' ?               // ths funcName is the name of function and whenever a function is defined
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}.${funcName})` : // with p5[class] then it starts with "p5."
+        msgWithReference = `${message} (http://p5js.org/reference/#/${referenceSection}/${funcName})`; // this is used correct the link
     }
     return msgWithReference;
   };
