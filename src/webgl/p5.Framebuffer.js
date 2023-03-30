@@ -701,6 +701,49 @@ class Framebuffer {
    * Removes the framebuffer and frees its resources.
    *
    * @method remove
+   *
+   * @example
+   * <div>
+   * <code>
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   * }
+   *
+   * function draw() {
+   *   const useFramebuffer = (frameCount % 120) > 60;
+   *   if (useFramebuffer && !framebuffer) {
+   *     // Create a new framebuffer for us to use
+   *     framebuffer = createFramebuffer();
+   *   } else if (!useFramebuffer && framebuffer) {
+   *     // Free the old framebuffer's resources
+   *     framebuffer.remove();
+   *     framebuffer = undefined;
+   *   }
+   *
+   *   background(255);
+   *   if (useFramebuffer) {
+   *     // Draw to the framebuffer
+   *     framebuffer.begin();
+   *     background(255);
+   *     rotateX(frameCount * 0.01);
+   *     rotateY(frameCount * 0.01);
+   *     fill(255, 0, 0);
+   *     box(30);
+   *     framebuffer.end();
+   *
+   *     push();
+   *     noStroke();
+   *     texture(framebuffer);
+   *     plane(width, -height);
+   *     pop();
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A rotating red cube blinks on and off every second.
    */
   remove() {
     const gl = this.gl;
