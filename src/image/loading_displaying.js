@@ -186,9 +186,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * @method saveGif
  * @param  {String} filename File name of your gif
  * @param  {Number} duration Duration in seconds that you wish to capture from your sketch
- * @param  {Object} options An optional object that can contain two more arguments: delay, specifying
- * how much time we should wait before recording, and units, a string that can be either 'seconds' or
- * 'frames'. By default it's 'seconds'.
+ * @param  {Object} options An optional object that can contain five more arguments:
+ * delay, specifying how much time we should wait before recording;
+ * units, a string that can be either 'seconds' or 'frames'. By default it's 'seconds’;
+ * silent, a boolean that defines presence of progress notifications. By default it’s false;
+ * notificationDuration, a number that defines how long in seconds the final notification
+ * will live. 0, the default value, means that the notification will never be removed;
+ * notificationID, a string that specifies the notification DOM element id. By default it’s 'progressBar’.
  *
  * @example
  * <div>
@@ -231,7 +235,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 p5.prototype.saveGif = async function(
   fileName,
   duration,
-  options = { delay: 0, units: 'seconds' }
+  options = {
+    delay: 0,
+    units: 'seconds',
+    silent: false,
+    notificationDuration: 0,
+    notificationID: 'progressBar'
+  }
 ) {
   // validate parameters
   if (typeof fileName !== 'string') {
@@ -244,6 +254,9 @@ p5.prototype.saveGif = async function(
   // extract variables for more comfortable use
   const delay = (options && options.delay) || 0;  // in seconds
   const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
+  const silent = (options && options.silent) || false;
+  const notificationDuration = (options && options.notificationDuration) || 0;
+  const notificationID = (options && options.notificationID) || 'progressBar';
 
   // if arguments in the options object are not correct, cancel operation
   if (typeof delay !== 'number') {
@@ -252,6 +265,18 @@ p5.prototype.saveGif = async function(
   // if units is not seconds nor frames, throw error
   if (units !== 'seconds' && units !== 'frames') {
     throw TypeError('Units parameter must be either "frames" or "seconds"');
+  }
+
+  if (typeof silent !== 'boolean') {
+    throw TypeError('Silent parameter must be a boolean');
+  }
+
+  if (typeof notificationDuration !== 'number') {
+    throw TypeError('Notification duration parameter must be a number');
+  }
+
+  if (typeof notificationID !== 'string') {
+    throw TypeError('Notification ID parameter must be a string');
   }
 
   this._recording = true;
@@ -291,19 +316,19 @@ p5.prototype.saveGif = async function(
   // We first take every frame that we are going to use for the animation
   let frames = [];
 
-  let progressBarIdName = 'p5.gif.progressBar';
-  if (document.getElementById(progressBarIdName) !== null)
-    document.getElementById(progressBarIdName).remove();
+  if (document.getElementById(notificationID) !== null)
+    document.getElementById(notificationID).remove();
 
-  let p = this.createP('');
-  p.id('progressBar');
-
-  p.style('font-size', '16px');
-  p.style('font-family', 'Montserrat');
-  p.style('background-color', '#ffffffa0');
-  p.style('padding', '8px');
-  p.style('border-radius', '10px');
-  p.position(0, 0);
+  if (!silent){
+    let p = this.createP('');
+    p.id(notificationID);
+    p.style('font-size', '16px');
+    p.style('font-family', 'Montserrat');
+    p.style('background-color', '#ffffffa0');
+    p.style('padding', '8px');
+    p.style('border-radius', '10px');
+    p.position(0, 0);
+  }
 
   let pixels;
   let gl;
@@ -353,15 +378,17 @@ p5.prototype.saveGif = async function(
     frames.push(data);
     frameIterator++;
 
-    p.html(
-      'Saved frame <b>' +
+    if (!silent) {
+      p.html(
+        'Saved frame <b>' +
         frames.length.toString() +
         '</b> out of ' +
         nFrames.toString()
-    );
+      );
+    }
     await new Promise(resolve => setTimeout(resolve, 0));
   }
-  p.html('Frames processed, generating color palette...');
+  if (!silent) p.html('Frames processed, generating color palette...');
 
   this.loop();
   this.pixelDensity(lastPixelDensity);
@@ -439,9 +466,12 @@ p5.prototype.saveGif = async function(
 
     prevIndexedFrame = originalIndexedFrame;
 
-    p.html(
-      'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
-    );
+    if (!silent) {
+      p.html(
+        'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
+      );
+    }
+
 
     // this just makes the process asynchronous, preventing
     // that the encoding locks up the browser
@@ -462,8 +492,12 @@ p5.prototype.saveGif = async function(
   this._recording = false;
   this.loop();
 
-  p.html('Done. Downloading your gif!🌸');
-  setTimeout(()=> p.remove(),5000);
+  if (!silent){
+    p.html('Done. Downloading your gif!🌸');
+    if(notificationDuration>0)
+      setTimeout(()=> p.remove(),notificationDuration*1000);
+  }
+
   p5.prototype.downloadFile(blob, fileName, extension);
 };
 
