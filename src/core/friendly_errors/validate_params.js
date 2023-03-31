@@ -342,14 +342,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @returns {String} a string indicating the type
    */
   const isNumber = param => {
-    switch (typeof param) {
-      case 'number':
-        return true;
-      case 'string':
-        return !isNaN(param);
-      default:
-        return false;
-    }
+    return !isNaN(parseFloat(param));
   };
 
   /**
