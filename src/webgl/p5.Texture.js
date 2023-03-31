@@ -455,7 +455,8 @@ p5.Texture = class Texture {
 export function checkWebGLCapabilities(renderer) {
   const gl = renderer.GL;
   const supportsFloat = renderer.webglVersion === constants.WEBGL2
-    ? gl.getExtension('EXT_color_buffer_float')
+    ? (gl.getExtension('EXT_color_buffer_float') &&
+        gl.getExtension('EXT_float_blend'))
     : gl.getExtension('OES_texture_float');
   const supportsFloatLinear = supportsFloat &&
     gl.getExtension('OES_texture_float_linear');

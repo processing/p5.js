@@ -299,9 +299,8 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  *   // up to fill the screen, plus a bit extra scale so it grows
  *   translate(0, 0, -200);
  *   scale(1.001 * (200 + cam.eyeZ) / cam.eyeZ);
- *   texture(prev);
  *   tint(255, 253);
- *   plane(width, -height);
+ *   image(prev, -width/2, -height/2);
  *   pop();
  *
  *   push();
@@ -313,10 +312,7 @@ p5.prototype.createGraphics = function(w, h, renderer) {
  *   pop();
  *   next.end();
  *
- *   push();
- *   texture(next);
- *   plane(width, -height);
- *   pop();
+ *   image(next, -width/2, -height/2);
  * }
  * </code>
  * </div>

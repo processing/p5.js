@@ -25,9 +25,8 @@ function draw() {
     background(255);
 
     push();
-    //scale(1.003);
-    texture(fboPrev);
-    plane(width, -height);
+    scale(1.003);
+    image(fboPrev, 0, 0);
     pop();
 
     push();
@@ -50,8 +49,5 @@ function draw() {
   });
 
   clear();
-  push();
-  texture(fboNext);
-  plane(width, -height);
-  pop();
+  image(fboNext, 0, 0);
 }

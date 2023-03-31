@@ -21,6 +21,12 @@ class FramebufferCamera extends p5.Camera {
   constructor(framebuffer) {
     super(framebuffer.target._renderer);
     this.fbo = framebuffer;
+
+    // WebGL textures are upside-down compared to textures that come from
+    // images and graphics. Framebuffer cameras need to invert their y
+    // axes when being rendered to so that the texture comes out rightway up
+    // when read in shaders or image().
+    this.yScale = -1;
   }
 
   _computeCameraDefaultSettings() {
@@ -201,14 +207,7 @@ class Framebuffer {
    *
    *   background(100);
    *   // Draw the framebuffer to the main canvas
-   *   push();
-   *   translate(
-   *     -width / 2 + framebuffer.width / 2,
-   *     -height / 2 + framebuffer.height / 2
-   *   );
-   *   texture(framebuffer);
-   *   plane(framebuffer.width, -framebuffer.height);
-   *   pop();
+   *   image(framebuffer, -width/2, -height/2);
    * }
    * </code>
    * </div>
@@ -732,11 +731,7 @@ class Framebuffer {
    *     box(30);
    *     framebuffer.end();
    *
-   *     push();
-   *     noStroke();
-   *     texture(framebuffer);
-   *     plane(width, -height);
-   *     pop();
+   *     image(framebuffer, -width/2, -height/2);
    *   }
    * }
    * </code>
@@ -795,15 +790,8 @@ class Framebuffer {
    *
    *   background(100);
    *   // Draw the framebuffer to the main canvas
-   *   texture(framebuffer);
-   *   push();
-   *   translate(-25, -25);
-   *   plane(25, 25);
-   *   pop();
-   *   push();
-   *   translate(15, 15);
-   *   plane(35, 35);
-   *   pop();
+   *   image(framebuffer, -50, -50, 25, 25);
+   *   image(framebuffer, 0, 0, 35, 35);
    * }
    * </code>
    * </div>
@@ -928,17 +916,8 @@ class Framebuffer {
    *
    *   background(100);
    *   // Draw the framebuffer to the main canvas
-   *   push();
-   *   texture(framebuffer);
-   *   push();
-   *   translate(-25, -25);
-   *   plane(25, 25);
-   *   pop();
-   *   push();
-   *   translate(15, 15);
-   *   plane(35, 35);
-   *   pop();
-   *   pop();
+   *   image(framebuffer, -50, -50, 25, 25);
+   *   image(framebuffer, 0, 0, 35, 35);
    * }
    * </code>
    * </div>
@@ -987,10 +966,7 @@ class Framebuffer {
  *   framebuffer.end();
  *
  *   // Draw the framebuffer to the main canvas
- *   push();
- *   texture(framebuffer.color); // or texture(framebuffer)
- *   plane(framebuffer.width, -framebuffer.height);
- *   pop();
+ *   image(framebuffer.color, -width/2, -height/2);
  * }
  * </code>
  * </div>
@@ -1066,7 +1042,7 @@ class Framebuffer {
  *   push();
  *   shader(depthShader);
  *   depthShader.setUniform('depth', framebuffer.depth);
- *   plane(framebuffer.width, -framebuffer.height);
+ *   plane(framebuffer.width, framebuffer.height);
  *   pop();
  * }
  * </code>

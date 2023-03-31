@@ -470,6 +470,7 @@ p5.Camera = function(renderer) {
 
   this.cameraMatrix = new p5.Matrix();
   this.projMatrix = new p5.Matrix();
+  this.yScale = 1;
 };
 /**
  * camera position value on x axis
@@ -811,7 +812,7 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
 
   /* eslint-disable indent */
   this.projMatrix.set(f / aspect,  0,                     0,  0,
-                      0,          -f,                     0,  0,
+                      0,          -f * this.yScale,       0,  0,
                       0,           0,     (far + near) * nf, -1,
                       0,           0, (2 * far * near) * nf,  0);
   /* eslint-enable indent */
@@ -895,7 +896,7 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   const d = far - near;
 
   const x = +2.0 / w;
-  const y = +2.0 / h;
+  const y = +2.0 / h * this.yScale;
   const z = -2.0 / d;
 
   const tx = -(right + left) / w;
@@ -991,7 +992,7 @@ p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
   const d = far - near;
 
   const x = +(2.0 * near) / w;
-  const y = +(2.0 * near) / h;
+  const y = +(2.0 * near) / h * this.yScale;
   const z = -(2.0 * far * near) / d;
 
   const tx = (right + left) / w;
