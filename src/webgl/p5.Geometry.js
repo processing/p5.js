@@ -122,9 +122,9 @@ p5.Geometry = class  {
     const ln = p5.Vector.mag(n);
     let sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
     if (sinAlpha === 0 || isNaN(sinAlpha)) {
-      console.warn(
-        'p5.Geometry.prototype._getFaceNormal:',
-        'face has colinear sides or a repeated vertex'
+      p5._friendlyLocalizedError(
+        'geometry.colinearSidesOrRepeatedVertex',
+        'p5.Geometry.prototype._getFaceNormal:'
       );
       return n;
     }

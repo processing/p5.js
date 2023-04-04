@@ -391,8 +391,8 @@ p5.prototype.bezierVertex = function(...args) {
     this._renderer.bezierVertex(...args);
   } else {
     if (vertices.length === 0) {
-      p5._friendlyError(
-        'vertex() must be used once before calling bezierVertex()',
+      p5._friendlyLocalizedError(
+        '',
         'bezierVertex'
       );
     } else {
