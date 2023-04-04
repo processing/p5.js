@@ -251,6 +251,81 @@ p5.prototype.createGraphics = function(w, h, renderer) {
 };
 
 /**
+ * Creates and returns a new <a href="#/p5.Framebuffer">p5.Framebuffer</a>, a
+ * high-performance WebGL object that you can draw to and then use as a texture.
+ *
+ * Options can include:
+ * - `format`: The data format of the texture, either `UNSIGNED_BYTE`, `FLOAT`, or `HALF_FLOAT`. The default is `UNSIGNED_BYTE`.
+ * - `channels`: What color channels to store, either `RGB` or `RGBA`. The default is to match the channels in the main canvas (with alpha unless disabled with `setAttributes`.)
+ * - `depth`: A boolean, whether or not to include a depth buffer. Defaults to true.
+ * - `depthFormat`: The data format for depth information, either `UNSIGNED_INT` or `FLOAT`. The default is `FLOAT` if available, or `UNSIGNED_INT` otherwise.
+ * - `antialias`: Boolean or Number, whether or not to render with antialiased edges, and if so, optionally the number of samples to use. Defaults to whether or not the main canvas is antialiased, using a default of 2 samples if so. Antialiasing is only supported when WebGL 2 is available.
+ * - `width`: The width of the texture. Defaults to matching the main canvas.
+ * - `height`: The height of the texture. Defaults to matching the main canvas.
+ * - `density`: The pixel density of the texture. Defaults to the pixel density of the main canvas.
+ * - `textureFiltering`: Either `LINEAR` (nearby pixels will be interpolated when reading values from the color texture) or `NEAREST` (no interpolation.) Generally, use `LINEAR` when using the texture as an image, and use `NEAREST` if reading the texture as data. Defaults to `LINEAR`.
+ *
+ * If `width`, `height`, or `density` are specified, then the framebuffer will
+ * keep that size until manually changed. Otherwise, it will be autosized, and
+ * it will update to match the main canvas's size and density when the main
+ * canvas changes.
+ *
+ * @method createFramebuffer
+ * @param {Object} [options] An optional object with configuration
+ *
+ * @example
+ * <div>
+ * <code>
+ * let prev, next, cam;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   prev = createFramebuffer({ format: FLOAT });
+ *   next = createFramebuffer({ format: FLOAT });
+ *   cam = createCamera();
+ *   noStroke();
+ * }
+ *
+ * function draw() {
+ *   // Swap prev and next so that we can use the previous
+ *   // frame as a texture when drawing the current frame
+ *   [prev, next] = [next, prev];
+ *
+ *   // Draw to the framebuffer
+ *   next.begin();
+ *   background(255);
+ *
+ *   push();
+ *   // Draw the previous texture farther away, but scaled
+ *   // up to fill the screen, plus a bit extra scale so it grows
+ *   translate(0, 0, -200);
+ *   scale(1.001 * (200 + cam.eyeZ) / cam.eyeZ);
+ *   tint(255, 253);
+ *   image(prev, -width/2, -height/2);
+ *   pop();
+ *
+ *   push();
+ *   normalMaterial();
+ *   translate(25*sin(frameCount * 0.014), 25*sin(frameCount * 0.02), 0);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(12);
+ *   pop();
+ *   next.end();
+ *
+ *   image(next, -width/2, -height/2);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * A red, green, and blue box (using normalMaterial) moves and rotates around
+ * the canvas, leaving a trail behind it that slowly grows and fades away.
+ */
+p5.prototype.createFramebuffer = function(options) {
+  return new p5.Framebuffer(this, options);
+};
+
+/**
  * Blends the pixels in the display window according to the defined mode.
  * There is a choice of the following modes to blend the source pixels (A)
  * with the ones of pixels already in the display window (B):

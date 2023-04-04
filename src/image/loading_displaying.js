@@ -822,7 +822,7 @@ function _sAssign(sVal, iVal) {
  *
  *
  * @method image
- * @param  {p5.Image|p5.Element|p5.Texture} img    the image to display
+ * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img    the image to display
  * @param  {Number}   x     the x-coordinate of the top-left corner of the image
  * @param  {Number}   y     the y-coordinate of the top-left corner of the image
  * @param  {Number}   [width]  the width to draw the image
@@ -924,7 +924,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image|p5.Element|p5.Texture} img
+ * @param  {p5.Image|p5.Element|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} img
  * @param  {Number}   dx     the x-coordinate of the destination
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination

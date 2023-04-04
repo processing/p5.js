@@ -745,3 +745,33 @@ export const CONTAIN = 'contain';
  * @final
  */
 export const COVER = 'cover';
+
+/**
+ * @property {String} UNSIGNED_BYTE
+ * @final
+ */
+export const UNSIGNED_BYTE = 'unsigned-byte';
+
+/**
+ * @property {String} UNSIGNED_INT
+ * @final
+ */
+export const UNSIGNED_INT = 'unsigned-int';
+
+/**
+ * @property {String} FLOAT
+ * @final
+ */
+export const FLOAT = 'float';
+
+/**
+ * @property {String} FLOAT
+ * @final
+ */
+export const HALF_FLOAT = 'half-float';
+
+/**
+ * @property {String} RGBA
+ * @final
+ */
+export const RGBA = 'rgba';
