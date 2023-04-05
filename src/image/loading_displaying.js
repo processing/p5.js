@@ -494,8 +494,8 @@ p5.prototype.saveGif = async function(
 
   if (!silent){
     p.html('Done. Downloading your gif!🌸');
-    if(notificationDuration>0)
-      setTimeout(()=> p.remove(),notificationDuration*1000);
+    if(notificationDuration > 0)
+      setTimeout(() => p.remove(), notificationDuration * 1000);
   }
 
   p5.prototype.downloadFile(blob, fileName, extension);
