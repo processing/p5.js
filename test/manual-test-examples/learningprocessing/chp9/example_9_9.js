@@ -6,6 +6,28 @@
 
 // Example 9-9: An array of Car objects
 
+// The Car class does not change whether we are making one car, 100 cars or 1,000 cars!
+class Car {
+  constructor(c, xpos, ypos, xspeed) {
+    this.c = c;
+    this.xpos = xpos;
+    this.ypos = ypos;
+    this.xspeed = xspeed;
+  }
+  display() {
+    rectMode(CENTER);
+    stroke(0);
+    fill(this.c);
+    rect(this.xpos, this.ypos, 20, 10);
+  }
+  move() {
+    this.xpos = this.xpos + this.xspeed;
+    if (this.xpos > width) {
+      this.xpos = 0;
+    }
+  }
+}
+
 var cars = []; // An array for Car objects
 
 function setup() {
@@ -25,25 +47,3 @@ function draw() {
     cars[i].display();
   }
 }
-
-// The Car class does not change whether we are making one car, 100 cars or 1,000 cars!
-function Car(c, xpos, ypos, xspeed) {
-  this.c = c;
-  this.xpos = xpos;
-  this.ypos = ypos;
-  this.xspeed = xspeed;
-}
-
-Car.prototype.display = function() {
-  rectMode(CENTER);
-  stroke(0);
-  fill(this.c);
-  rect(this.xpos, this.ypos, 20, 10);
-};
-
-Car.prototype.move = function() {
-  this.xpos = this.xpos + this.xspeed;
-  if (this.xpos > width) {
-    this.xpos = 0;
-  }
-};
