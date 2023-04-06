@@ -41,6 +41,7 @@ var spec = {
     'interaction',
     'p5.Matrix',
     'p5.Camera',
+    'p5.Framebuffer',
     'p5.Geometry',
     'p5.RendererGL',
     'p5.Shader',
