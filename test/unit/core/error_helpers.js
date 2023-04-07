@@ -177,6 +177,28 @@ suite('Error Helpers', function() {
         'ValidationError type is correct'
       );
     });
+
+    testUnMinified('line: null string given', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('line', [1, 2, 4, "null"]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'WRONG_TYPE',
+        'ValidationError type is correct'
+      );
+    });
+
+    testUnMinified('line: infinite value given', function() {
+      let err = assert.throws(function() {
+        p5._validateParameters('line', [1, 2, 4, Infinity]);
+      }, p5.ValidationError);
+      assert.strictEqual(
+        err.type,
+        'WRONG_TYPE',
+        'ValidationError type is correct'
+      );
+    });
   });
 
   suite('validateParameters: trailing undefined arguments', function() {

@@ -344,9 +344,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
   const isNumber = param => {
     switch (typeof param) {
       case 'number':
-        return true;
+        return isFinite(param);
       case 'string':
-        return !isNaN(param);
+        return !(isNaN(param) || param == "null");
       default:
         return false;
     }
