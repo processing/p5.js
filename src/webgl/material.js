@@ -389,7 +389,7 @@ p5.prototype.resetShader = function() {
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  *
  * @method texture
- * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture} tex  image to use as texture
+ * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex  image to use as texture
  * @chainable
  * @example
  * <div>
@@ -666,9 +666,8 @@ p5.prototype.textureWrap = function(wrapX, wrapY = wrapX) {
   this._renderer.textureWrapX = wrapX;
   this._renderer.textureWrapY = wrapY;
 
-  const textures = this._renderer.textures;
-  for (let i = 0; i < textures.length; i++) {
-    textures[i].setWrapMode(wrapX, wrapY);
+  for (const texture of this._renderer.textures.values()) {
+    texture.setWrapMode(wrapX, wrapY);
   }
 };
 

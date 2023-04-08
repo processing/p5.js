@@ -240,8 +240,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.curStrokeCap = constants.ROUND;
   this.curStrokeJoin = constants.ROUND;
 
-  // array of textures created in this gl context via this.getTexture(src)
-  this.textures = [];
+  // map of texture sources to textures created in this gl context via this.getTexture(src)
+  this.textures = new Map();
+
+  // set of framebuffers in use
+  this.framebuffers = new Set();
 
   this.textureMode = constants.IMAGE;
   // default wrap settings
@@ -305,10 +308,8 @@ p5.RendererGL.prototype._initContext = function() {
       this.canvas.getContext('webgl2', this._pInst._glAttributes);
   }
   this.webglVersion = this.drawingContext ? constants.WEBGL2 : constants.WEBGL;
-  if (this._isMainCanvas) {
-    // If this is the main canvas, make sure the global `webglVersion` is set
-    this._pInst._setProperty('webglVersion', this.webglVersion);
-  }
+  // If this is the main canvas, make sure the global `webglVersion` is set
+  this._pInst._setProperty('webglVersion', this.webglVersion);
   if (!this.drawingContext) {
     // If we were unable to create a WebGL2 context (either because it was
     // disabled via `setAttributes({ version: 1 })` or because the device
@@ -324,6 +325,10 @@ p5.RendererGL.prototype._initContext = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    // Make sure all images are loaded into the canvas premultiplied so that
+    // they match the way we render colors. This will make framebuffer textures
+    // be encoded the same way as textures from everything else.
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     this._viewport = this.drawingContext.getParameter(
       this.drawingContext.VIEWPORT
     );
@@ -939,6 +944,12 @@ p5.RendererGL.prototype.resize = function(w, h) {
       )
     );
   }
+
+  for (const framebuffer of this.framebuffers) {
+    // Notify framebuffers of the resize so that any auto-sized framebuffers
+    // can also update their size
+    framebuffer._canvasSizeChanged();
+  }
 };
 
 /**
@@ -1325,16 +1336,24 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
   return this._emptyTexture;
 };
 
-p5.RendererGL.prototype.getTexture = function(img) {
-  const textures = this.textures;
-
-  for (const texture of textures) {
-    if (texture.src === img) return texture;
+p5.RendererGL.prototype.getTexture = function(input) {
+  let src = input;
+  if (src instanceof p5.Framebuffer) {
+    src = src.color;
   }
 
-  const tex = new p5.Texture(this, img);
-  textures.push(tex);
+  const texture = this.textures.get(src);
+  if (texture) {
+    return texture;
+  }
+
+  const tex = new p5.Texture(this, src);
+  this.textures.set(src, tex);
   return tex;
+};
+
+p5.RendererGL.prototype.createFramebuffer = function(options) {
+  return new p5.Framebuffer(this, options);
 };
 
 p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
