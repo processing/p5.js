@@ -189,9 +189,9 @@ suite('Error Helpers', function() {
       );
     });
 
-    testUnMinified('line: infinite value given', function() {
+    testUnMinified('line: NaN value given', function() {
       let err = assert.throws(function() {
-        p5._validateParameters('line', [1, 2, 4, Infinity]);
+        p5._validateParameters('line', [1, 2, 4, NaN]);
       }, p5.ValidationError);
       assert.strictEqual(
         err.type,
