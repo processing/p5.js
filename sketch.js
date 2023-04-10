@@ -19,6 +19,11 @@ function mySelectEvent() {
 }
 
 function toggleSelect(){
-    sel.disable()
-    debugger
+  sel.disable('pear');
+  debugger
+}
+
+function toggleSelectEnable(){
+  sel.enable();
+  debugger
 }

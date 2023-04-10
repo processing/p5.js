@@ -765,6 +765,24 @@ p5.prototype.createSelect = function() {
     return this;
   };
 
+  self.enable = function(value) {
+    if (typeof value === 'string') {
+      for (let i = 0; i < this.elt.length; i++) {
+        if (this.elt[i].value.toString() === value) {
+          this.elt[i].disabled = false;
+          this.elt[i].selected = false;
+        }
+      }
+    } else {
+      this.elt.disabled = false;
+      for (let i = 0; i < this.elt.length; i++) {
+        this.elt[i].disabled = false;
+        this.elt[i].selected = false;
+      }
+    }
+    return this;
+  };
+
   return self;
 };
 
