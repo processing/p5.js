@@ -1731,11 +1731,15 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     newUpY *= -1;
   }
 
-  camRadius += dRadius;
+  camRadius *= Math.pow(10, dRadius);
   // prevent zooming through the center:
-  if (camRadius < 0) {
-    camRadius = 0.1;
+  if (camRadius < this.cameraNear) {
+    camRadius = this.cameraNear;
   }
+  if (camRadius > this.cameraFar) {
+    camRadius = this.cameraFar;
+  }
+
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
   const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
   const _y = Math.cos(camPhi) * camRadius;

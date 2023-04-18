@@ -70,7 +70,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     sensitivityY = sensitivityX;
   }
   if (typeof sensitivityZ === 'undefined') {
-    sensitivityZ = 0.5;
+    sensitivityZ = 1;
   }
 
   // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
@@ -91,17 +91,19 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     this._setProperty('wheelDefaultDisabled', true);
   }
 
+  const zoomScaleFactor = 0.02;
   const scaleFactor = this.height < this.width ? this.height : this.width;
 
   // ZOOM if there is a change in mouseWheelDelta
-  if (this._mouseWheelDeltaY !== this._pmouseWheelDeltaY) {
+  if (this._mouseWheelDeltaY !== 0) {
     // zoom according to direction of mouseWheelDeltaY rather than value
     if (this._mouseWheelDeltaY > 0) {
-      this._renderer._curCamera._orbit(0, 0, sensitivityZ * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, sensitivityZ * zoomScaleFactor);
     } else {
-      this._renderer._curCamera._orbit(0, 0, -sensitivityZ * scaleFactor);
+      this._renderer._curCamera._orbit(0, 0, - sensitivityZ * zoomScaleFactor);
     }
   }
+  this._mouseWheelDeltaY = 0;
 
   if (this.mouseIsPressed) {
     // ORBIT BEHAVIOR
