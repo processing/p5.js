@@ -855,20 +855,16 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.RendererGL.prototype._getPixel = function(x, y) {
-  let imageData, index;
-  imageData = new Uint8Array(4);
-  this.drawingContext.readPixels(
-    x, this.GL.drawingBufferHeight - y - 1, 1, 1,
-    this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
-    imageData
+  const gl = this.GL;
+  return readPixelWebGL(
+    gl,
+    null,
+    x,
+    y,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    this._pInst.height * this._pInst.pixelDensity()
   );
-  index = 0;
-  return [
-    imageData[index + 0],
-    imageData[index + 1],
-    imageData[index + 2],
-    imageData[index + 3]
-  ];
 };
 
 /**
@@ -891,36 +887,169 @@ p5.RendererGL.prototype.loadPixels = function() {
     return;
   }
 
-  //if there isn't a renderer-level temporary pixels buffer
-  //make a new one
-  let pixels = pixelsState.pixels;
-  const len = this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4;
-  if (!(pixels instanceof Uint8Array) || pixels.length !== len) {
-    pixels = new Uint8Array(len);
-    this._pixelsState._setProperty('pixels', pixels);
+  const pd = this._pInst._pixelDensity;
+  const gl = this.GL;
+
+  pixelsState._setProperty(
+    'pixels',
+    readPixelsWebGL(
+      pixelsState.pixels,
+      gl,
+      null,
+      0,
+      0,
+      this.width * pd,
+      this.height * pd,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      this.height * pd
+    )
+  );
+};
+
+p5.RendererGL.prototype.updatePixels = function() {
+  const fbo = this._getTempFramebuffer();
+  fbo.pixels = this._pixelsState.pixels;
+  fbo.updatePixels();
+  this._pInst.push();
+  this._pInst.resetMatrix();
+  this._pInst.clear();
+  this._pInst.imageMode(constants.CENTER);
+  this._pInst.image(fbo, 0, 0);
+  this._pInst.pop();
+  this.GL.clearDepth(1);
+  this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+};
+
+/**
+ * @private
+ * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
+ * of the renderer's canvas. It will be created if it does not yet exist, and
+ * reused if it does.
+ */
+p5.RendererGL.prototype._getTempFramebuffer = function() {
+  if (!this._tempFramebuffer) {
+    this._tempFramebuffer = this._pInst.createFramebuffer({
+      format: constants.UNSIGNED_BYTE,
+      useDepth: this._pInst._glAttributes.depth,
+      depthFormat: constants.UNSIGNED_INT,
+      antialias: this._pInst._glAttributes.antialias
+    });
+  }
+  return this._tempFramebuffer;
+};
+
+/**
+ * @private
+ * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordiante to read (factoring in pixel density)
+ * @param {Number} y The y coordiante to read (factoring in pixel density)
+ * @param {Number} width The width in pixels to be read (factoring in pixel density)
+ * @param {Number} height The height in pixels to be read (factoring in pixel density)
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Uint8Array|Float32Array} pixels A pixels array with the current state of the
+ * WebGL context read into it
+ */
+export function readPixelsWebGL(
+  pixels,
+  gl,
+  framebuffer,
+  x,
+  y,
+  width,
+  height,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+
+  // Make a pixels buffer if it doesn't already exist
+  const len = width * height * channels;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  if (!(pixels instanceof TypedArrayClass) || pixels.length !== len) {
+    pixels = new TypedArrayClass(len);
   }
 
-  const pd = this._pInst._pixelDensity;
-  this.GL.readPixels(
-    0, 0, this.width * pd, this.height * pd,
-    this.GL.RGBA, this.GL.UNSIGNED_BYTE,
+  gl.readPixels(
+    x,
+    flipY ? (flipY - y - height) : y,
+    width,
+    height,
+    format,
+    type,
     pixels
   );
 
-  // WebGL pixels are inverted compared to 2D pixels, so we have to flip
-  // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
-  const width = this.GL.drawingBufferWidth;
-  const height = this.GL.drawingBufferHeight;
-  const halfHeight = Math.floor(height / 2);
-  const tmpRow = new Uint8Array(width * 4);
-  for (let y = 0; y < halfHeight; y++) {
-    const topOffset = y * width * 4;
-    const bottomOffset = (height - y - 1) * width * 4;
-    tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
-    pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
-    pixels.set(tmpRow, bottomOffset);
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  if (flipY) {
+    // WebGL pixels are inverted compared to 2D pixels, so we have to flip
+    // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
+    const halfHeight = Math.floor(height / 2);
+    const tmpRow = new TypedArrayClass(width * channels);
+    for (let y = 0; y < halfHeight; y++) {
+      const topOffset = y * width * 4;
+      const bottomOffset = (height - y - 1) * width * 4;
+      tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
+      pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
+      pixels.set(tmpRow, bottomOffset);
+    }
   }
-};
+
+  return pixels;
+}
+
+/**
+ * @private
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordinate to read (factoring in pixel density)
+ * @param {Number} y The y coordinate to read (factoring in pixel density)
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Number[]} pixels The channel data for the pixel at that location
+ */
+export function readPixelWebGL(
+  gl,
+  framebuffer,
+  x,
+  y,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  const pixels = new TypedArrayClass(channels);
+
+  gl.readPixels(
+    x, flipY ? (flipY - y - 1) : y, 1, 1,
+    format, type,
+    pixels
+  );
+
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  return Array.from(pixels);
+}
 
 //////////////////////////////////////////////
 // HASH | for geometry

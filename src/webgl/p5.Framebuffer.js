@@ -6,6 +6,7 @@
 import p5 from '../core/main';
 import * as constants from '../core/constants';
 import { checkWebGLCapabilities } from './p5.Texture';
+import { readPixelsWebGL, readPixelWebGL } from './p5.RendererGL';
 
 class FramebufferCamera extends p5.Camera {
   /**
@@ -108,6 +109,24 @@ class Framebuffer {
   constructor(target, settings = {}) {
     this.target = target;
     this.target._renderer.framebuffers.add(this);
+
+    /**
+     * A <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
+     * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
+     * containing the values for all the pixels in the Framebuffer.
+     *
+     * Like the <a href="#/p5/pixels">main canvas pixels property</a>, call
+     * <a href="#/p5.Framebuffer/loadPixels">loadPixels()</a> before reading
+     * it, and call <a href="#/p5.Framebuffer.updatePixels">updatePixels()</a>
+     * afterwards to update its data.
+     *
+     * Note that updating pixels via this property will be slower than
+     * <a href="#/p5.Framebuffer/begin">drawing to the framebuffer directly.</a>
+     * Consider using a shader instead of looping over pixels.
+     *
+     * @property {Number[]} pixels
+     */
+    this.pixels = [];
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
     this.channels = settings.channels || (
@@ -930,6 +949,237 @@ class Framebuffer {
     this.begin();
     callback();
     this.end();
+  }
+
+  loadPixels() {
+    const gl = this.gl;
+    const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    const colorFormat = this._glColorFormat();
+    this.pixels = readPixelsWebGL(
+      this.pixels,
+      gl,
+      this.framebuffer,
+      0,
+      0,
+      this.width * this.density,
+      this.height * this.density,
+      colorFormat.format,
+      colorFormat.type
+    );
+    gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+  }
+
+  /**
+   * Get a region of pixels, or a single pixel, from the canvas.
+   *
+   * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+   * an image. If the Framebuffer has been set up to not store alpha values, then
+   * only [R,G,B] will be returned. If no parameters are specified, the entire
+   * image is returned.
+   * Use the x and y parameters to get the value of one pixel. Get a section of
+   * the display window by specifying additional w and h parameters. When
+   * getting an image, the x and y parameters define the coordinates for the
+   * upper-left corner of the image, regardless of the current <a href="#/p5/imageMode">imageMode()</a>.
+   *
+   * @method get
+   * @param  {Number}         x x-coordinate of the pixel
+   * @param  {Number}         y y-coordinate of the pixel
+   * @param  {Number}         w width
+   * @param  {Number}         h height
+   * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
+   */
+  /**
+   * @method get
+   * @return {p5.Image}      the whole <a href="#/p5.Image">p5.Image</a>
+   */
+  /**
+   * @method get
+   * @param  {Number}        x
+   * @param  {Number}        y
+   * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
+   */
+  get(x, y, w, h) {
+    const colorFormat = this._glColorFormat();
+    if (x === undefined && y === undefined) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    } else if (w === undefined && h === undefined) {
+      if (x < 0 || y < 0 || w >= this.width || h >= this.height) {
+        return [0, 0, 0, 0];
+      }
+
+      return readPixelWebGL(
+        this.gl,
+        this.framebuffer,
+        x * this.density,
+        y * this.density,
+        colorFormat.format,
+        colorFormat.type
+      );
+    }
+
+    const rawData = readPixelsWebGL(
+      undefined,
+      this.gl,
+      this.framebuffer,
+      x * this.density,
+      y * this.density,
+      w * this.density,
+      h * this.density,
+      colorFormat.format,
+      colorFormat.type
+    );
+    // Framebuffer data might be either a Uint8Array or Float32Array
+    // depending on its format, and it may or may not have an alpha channel.
+    // To turn it into an image, we have to normalize the data into a
+    // Uint8ClampedArray with alpha.
+    const fullData = new Uint8ClampedArray(
+      w * h * this.density * this.density * 4
+    );
+    const channels = colorFormat.type === this.gl.RGB ? 3 : 4;
+    for (let y = 0; y < h * this.density; y++) {
+      for (let x = 0; x < w * this.density; x++) {
+        for (let channel = 0; channel < 4; channel++) {
+          const idx = (y * w * this.density + x) * 4 + channel;
+          if (channel >= channels) {
+            fullData[idx] = 255;
+          } else {
+            const prevIdx = channels === 4
+              ? idx
+              : (y * w * this.density + x) * channels + channel;
+            fullData[idx] = rawData[prevIdx];
+          }
+        }
+      }
+    }
+
+    // Create an image from the data
+    const region = new p5.Image(w * this.density, h * this.density);
+    region.imageData = region.canvas.getContext('2d').createImageData(
+      region.width,
+      region.height
+    );
+    region.imageData.data.set(fullData);
+    region.pixels = region.imageData.data;
+    region.updatePixels();
+    if (this.density !== 1) {
+      // TODO: support get() at a pixel density > 1
+      region.resize(w, h);
+    }
+    return region;
+  }
+
+  /**
+   * Call this after initially calling <a href="#/p5.Framebuffer/loadPixels">
+   * loadPixels()</a> and updating <a href="#/p5.Framebuffer/pixels">pixels</a>
+   * to replace the content of the framebuffer with the data in the pixels
+   * array.
+   *
+   * This will also clear the depth buffer so that any future drawing done
+   * afterwards will go on top.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let framebuffer;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   framebuffer = createFramebuffer();
+   * }
+
+   * function draw() {
+   *   noStroke();
+   *   lights();
+   *
+   *   // Draw a sphere to the framebuffer
+   *   framebuffer.begin();
+   *   background(0);
+   *   sphere(25);
+   *   framebuffer.end();
+   *
+   *   // Load its pixels and draw a gradient over the lower half of the canvas
+   *   framebuffer.loadPixels();
+   *   for (let y = height/2; y < height; y++) {
+   *     for (let x = 0; x < width; x++) {
+   *       const idx = (y * width + x) * 4;
+   *       framebuffer.pixels[idx] = (x / width) * 255;
+   *       framebuffer.pixels[idx + 1] = (y / height) * 255;
+   *       framebuffer.pixels[idx + 2] = 255;
+   *       framebuffer.pixels[idx + 3] = 255;
+   *     }
+   *   }
+   *   framebuffer.updatePixels();
+   *
+   *   // Draw a cube on top of the pixels we just wrote
+   *   framebuffer.begin();
+   *   push();
+   *   translate(20, 20);
+   *   rotateX(0.5);
+   *   rotateY(0.5);
+   *   box(20);
+   *   pop();
+   *   framebuffer.end();
+   *
+   *   image(framebuffer, -width/2, -height/2);
+   *   noLoop();
+   * }
+   * </code>
+   * </div>
+   *
+   * @alt
+   * A sphere partly occluded by a gradient from cyan to white to magenta on
+   * the lower half of the canvas, with a 3D cube drawn on top of that in the
+   * lower right corner.
+   */
+  updatePixels() {
+    const gl = this.gl;
+    this.colorP5Texture.bindTexture();
+    const colorFormat = this._glColorFormat();
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      colorFormat.internalFormat,
+      this.width * this.density,
+      this.height * this.density,
+      0,
+      colorFormat.format,
+      colorFormat.type,
+      this.pixels
+    );
+    this.colorP5Texture.unbindTexture();
+
+    this.prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+    if (this.useDepth) {
+      gl.clearDepth(1);
+      gl.clear(gl.DEPTH_BUFFER_BIT);
+    }
+    if (this.antialias) {
+      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.framebuffer);
+      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.aaFramebuffer);
+      const partsToCopy = [
+        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
+      ];
+      if (this.useDepth) {
+        partsToCopy.push(
+          [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
+        );
+      }
+      for (const [flag, filter] of partsToCopy) {
+        gl.blitFramebuffer(
+          0, 0,
+          this.width * this.density, this.height * this.density,
+          0, 0,
+          this.width * this.density, this.height * this.density,
+          flag,
+          filter
+        );
+      }
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.prevFramebuffer);
   }
 }
 

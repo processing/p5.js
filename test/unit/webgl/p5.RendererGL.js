@@ -110,7 +110,6 @@ suite('p5.RendererGL', function() {
         myp5.fill('blue');
         myp5.rect(0, 0, 15, 15);
         myp5.loadPixels();
-        console.log([...myp5.pixels]);
         return [...myp5.pixels];
       };
 
@@ -384,6 +383,42 @@ suite('p5.RendererGL', function() {
       assert.isTrue(img[1] === 115);
       assert.isTrue(img.length === 4);
       done();
+    });
+
+    test('updatePixels() matches 2D mode', function() {
+      myp5.createCanvas(20, 20);
+      myp5.pixelDensity(1);
+      const getColors = function(mode) {
+        const g = myp5.createGraphics(20, 20, mode);
+        g.pixelDensity(1);
+        g.background(255);
+        g.loadPixels();
+        for (let y = 0; y < g.height; y++) {
+          for (let x = 0; x < g.width; x++) {
+            const idx = (y * g.width + x) * 4;
+            g.pixels[idx] = (x / g.width) * 255;
+            g.pixels[idx + 1] = (y / g.height) * 255;
+            g.pixels[idx + 2] = 255;
+            g.pixels[idx + 3] = 255;
+          }
+        }
+        g.updatePixels();
+        return g;
+      };
+
+      const p2d = getColors(myp5.P2D);
+      const webgl = getColors(myp5.WEBGL);
+      myp5.image(p2d, 0, 0);
+      myp5.blendMode(myp5.DIFFERENCE);
+      myp5.image(webgl, 0, 0);
+      myp5.loadPixels();
+
+      // There should be no difference, so the result should be all black
+      // at 100% opacity. We add +/- 1 for wiggle room to account for precision
+      // loss.
+      for (let i = 0; i < myp5.pixels.length; i++) {
+        expect(myp5.pixels[i]).to.be.closeTo(i % 4 === 3 ? 255 : 0, 1);
+      }
     });
   });
 
