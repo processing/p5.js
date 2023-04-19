@@ -3637,6 +3637,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "siddhant1",
+      "name": "siddhant",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30566406?v=4",
+      "profile": "http://twitter.com/CallMeSiddhant",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "repoType": "github",

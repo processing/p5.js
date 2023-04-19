@@ -636,6 +636,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/agrshch"><img src="https://avatars.githubusercontent.com/u/98658900?v=4?s=100" width="100px;" alt="agrshch"/><br /><sub><b>agrshch</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=agrshch" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://shibomb.xyz"><img src="https://avatars.githubusercontent.com/u/958471?v=4?s=100" width="100px;" alt="SHIBAHARA Hiroki"/><br /><sub><b>SHIBAHARA Hiroki</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=shibomb" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://twitter.com/CallMeSiddhant"><img src="https://avatars.githubusercontent.com/u/30566406?v=4?s=100" width="100px;" alt="siddhant"/><br /><sub><b>siddhant</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asiddhant1" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=siddhant1" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
