@@ -1152,34 +1152,35 @@ class Framebuffer {
     this.colorP5Texture.unbindTexture();
 
     this.prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    if (this.useDepth) {
-      gl.clearDepth(1);
-      gl.clear(gl.DEPTH_BUFFER_BIT);
-    }
     if (this.antialias) {
-      gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.framebuffer);
-      gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, this.aaFramebuffer);
-      const partsToCopy = [
-        [gl.COLOR_BUFFER_BIT, this.colorP5Texture.glMagFilter]
-      ];
+      // We need to make sure the antialiased framebuffer also has the updated
+      // pixels so that if more is drawn to it, it goes on top of the updated
+      // pixels instead of replacing them.
+      // We can't blit the framebuffer to the multisampled antialias
+      // framebuffer to leave both in the same state, so instead we have
+      // to use image() to put the framebuffer texture onto the antialiased
+      // framebuffer.
+      this.begin();
+      this.target.push();
+      this.target.imageMode(this.target.CENTER);
+      this.target.resetMatrix();
+      this.target.noStroke();
+      this.target.clear();
+      this.target.image(this, 0, 0);
+      this.target.pop();
       if (this.useDepth) {
-        partsToCopy.push(
-          [gl.DEPTH_BUFFER_BIT, this.depthP5Texture.glMagFilter]
-        );
+        gl.clearDepth(1);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
       }
-      for (const [flag, filter] of partsToCopy) {
-        gl.blitFramebuffer(
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          0, 0,
-          this.width * this.density, this.height * this.density,
-          flag,
-          filter
-        );
+      this.end();
+    } else {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+      if (this.useDepth) {
+        gl.clearDepth(1);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
       }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.prevFramebuffer);
     }
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.prevFramebuffer);
   }
 }
 
