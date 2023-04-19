@@ -81,7 +81,7 @@ void main() {
   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
 
   float facingCamera = pow(
-    // The word space tangent's z value is 0 if it's facing the camera
+    // The world space tangent's z value is 0 if it's facing the camera
     abs(normalize(posqIn-posp).z),
 
     // Using pow() here to ramp `facingCamera` up from 0 to 1 really quickly
