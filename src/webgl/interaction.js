@@ -93,14 +93,18 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
 
   const zoomScaleFactor = 0.02;
   const scaleFactor = this.height < this.width ? this.height : this.width;
+  const uP = this._renderer.uPMatrix.mat4;
 
   // ZOOM if there is a change in mouseWheelDelta
   if (this._mouseWheelDeltaY !== 0) {
     // zoom according to direction of mouseWheelDeltaY rather than value
-    if (this._mouseWheelDeltaY > 0) {
-      this._renderer._curCamera._orbit(0, 0, sensitivityZ * zoomScaleFactor);
-    } else {
-      this._renderer._curCamera._orbit(0, 0, - sensitivityZ * zoomScaleFactor);
+    const mouseWheelSign = (this._mouseWheelDeltaY > 0 ? 1 : -1);
+    const deltaRadius = mouseWheelSign * sensitivityZ * zoomScaleFactor;
+    this._renderer._curCamera._orbit(0, 0, deltaRadius);
+    // if ortho, scale change.
+    if (uP[15] !== 0) {
+      uP[0] *= Math.pow(10, -deltaRadius);
+      uP[5] *= Math.pow(10, -deltaRadius);
     }
   }
   this._mouseWheelDeltaY = 0;
