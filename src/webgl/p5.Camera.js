@@ -891,6 +891,9 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (far === undefined)
     far = Math.max(this._renderer.width, this._renderer.height);
 
+  this.cameraNear = near;
+  this.cameraFar = far;
+
   const w = right - left;
   const h = top - bottom;
   const d = far - near;
@@ -979,13 +982,15 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
 p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
-  if (left === undefined) left = -this._renderer.width / 2;
-  if (right === undefined) right = +this._renderer.width / 2;
-  if (bottom === undefined) bottom = -this._renderer.height / 2;
-  if (top === undefined) top = +this._renderer.height / 2;
-  if (near === undefined) near = 0;
-  if (far === undefined)
-    far = Math.max(this._renderer.width, this._renderer.height);
+  if (left === undefined) left = -this._renderer.width * 0.05;
+  if (right === undefined) right = +this._renderer.width * 0.05;
+  if (bottom === undefined) bottom = +this._renderer.height * 0.05;
+  if (top === undefined) top = -this._renderer.height * 0.05;
+  if (near === undefined) near = this.defaultCameraNear;
+  if (far === undefined) far = this.defaultCameraFar;
+
+  this.cameraNear = near;
+  this.cameraFar = far;
 
   const w = right - left;
   const h = top - bottom;
@@ -1003,7 +1008,7 @@ p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
 
   /* eslint-disable indent */
   this.projMatrix.set(  x,  0,  0,  0,
-                        0,  y,  0,  0,
+                        0,  -y,  0,  0,
                        tx, ty, tz, -1,
                         0,  0,  z,  0);
   /* eslint-enable indent */
