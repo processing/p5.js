@@ -638,6 +638,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://twitter.com/CallMeSiddhant"><img src="https://avatars.githubusercontent.com/u/30566406?v=4?s=100" width="100px;" alt="siddhant"/><br /><sub><b>siddhant</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Asiddhant1" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=siddhant1" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://calebfoss.com"><img src="https://avatars.githubusercontent.com/u/16294664?v=4?s=100" width="100px;" alt="Caleb Foss"/><br /><sub><b>Caleb Foss</b></sub></a><br /><a href="#ideas-calebfoss" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/processing/p5.js/pulls?q=is%3Apr+reviewed-by%3Acalebfoss" title="Reviewed Pull Requests">👀</a> <a href="#plugin-calebfoss" title="Plugin/utility libraries">🔌</a></td>
     </tr>
   </tbody>
 </table>
