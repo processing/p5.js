@@ -170,7 +170,7 @@ p5.prototype.loadModel = function(path) {
     if (failureCallback) {
       failureCallback();
     } else {
-      console.error(
+      p5._friendlyError(
         'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
       );
     }

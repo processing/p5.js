@@ -63,7 +63,7 @@ p5.Shader = class {
       gl.compileShader(this._vertShader);
       // if our vertex shader failed compilation?
       if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-        console.error(
+        p5._friendlyError(
           `Yikes! An error occurred compiling the vertex shader:${gl.getShaderInfoLog(
             this._vertShader
           )}`
@@ -77,7 +77,7 @@ p5.Shader = class {
       gl.compileShader(this._fragShader);
       // if our frag shader failed compilation?
       if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-        console.error(
+        p5._friendlyError(
           `Darn! An error occurred compiling the fragment shader:${gl.getShaderInfoLog(
             this._fragShader
           )}`
@@ -90,7 +90,7 @@ p5.Shader = class {
       gl.attachShader(this._glProgram, this._fragShader);
       gl.linkProgram(this._glProgram);
       if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
-        console.error(
+        p5._friendlyError(
           `Snap! Error linking shader program: ${gl.getProgramInfoLog(
             this._glProgram
           )}`
