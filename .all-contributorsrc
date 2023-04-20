@@ -3647,6 +3647,17 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "calebfoss",
+      "name": "Caleb Foss",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16294664?v=4",
+      "profile": "http://calebfoss.com",
+      "contributions": [
+        "ideas",
+        "review",
+        "plugin"
+      ]
     }
   ],
   "repoType": "github",
