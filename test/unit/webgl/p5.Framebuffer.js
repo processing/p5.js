@@ -414,4 +414,42 @@ suite('p5.Framebuffer', function() {
       }
     });
   });
+
+  test(
+    'loadPixels works in arbitrary order for multiple framebuffers',
+    function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      const fbo1 = myp5.createFramebuffer();
+      const fbo2 = myp5.createFramebuffer();
+
+      fbo1.loadPixels();
+      fbo2.loadPixels();
+      for (let i = 0; i < fbo1.pixels.length; i += 4) {
+        // Set everything red
+        fbo1.pixels[i] = 255;
+        fbo1.pixels[i + 1] = 0;
+        fbo1.pixels[i + 2] = 0;
+        fbo1.pixels[i + 3] = 255;
+      }
+      for (let i = 0; i < fbo2.pixels.length; i += 4) {
+        // Set everything blue
+        fbo2.pixels[i] = 0;
+        fbo2.pixels[i + 1] = 0;
+        fbo2.pixels[i + 2] = 255;
+        fbo2.pixels[i + 3] = 255;
+      }
+      fbo2.updatePixels();
+      fbo1.updatePixels();
+
+      myp5.imageMode(myp5.CENTER);
+
+      myp5.clear();
+      myp5.image(fbo1, 0, 0);
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+
+      myp5.clear();
+      myp5.image(fbo2, 0, 0);
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 255, 255]);
+    }
+  );
 });

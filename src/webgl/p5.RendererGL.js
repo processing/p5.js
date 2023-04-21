@@ -944,8 +944,8 @@ p5.RendererGL.prototype._getTempFramebuffer = function() {
  * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
  * @param {WebGLRenderingContext} gl The WebGL context
  * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordiante to read (factoring in pixel density)
- * @param {Number} y The y coordiante to read (factoring in pixel density)
+ * @param {Number} x The x coordiante to read, premultiplied by pixel density
+ * @param {Number} y The y coordiante to read, premultiplied by pixel density
  * @param {Number} width The width in pixels to be read (factoring in pixel density)
  * @param {Number} height The height in pixels to be read (factoring in pixel density)
  * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
@@ -1014,8 +1014,8 @@ export function readPixelsWebGL(
  * @private
  * @param {WebGLRenderingContext} gl The WebGL context
  * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordinate to read (factoring in pixel density)
- * @param {Number} y The y coordinate to read (factoring in pixel density)
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
  * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
  * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
  * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about

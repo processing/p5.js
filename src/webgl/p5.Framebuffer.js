@@ -951,6 +951,12 @@ class Framebuffer {
     this.end();
   }
 
+  /**
+   * Call this befpre updating <a href="#/p5.Framebuffer/pixels">pixels</a>
+   * and calling <a href="#/p5.Framebuffer/updatePixels">updatePixels</a>
+   * to replace the content of the framebuffer with the data in the pixels
+   * array.
+   */
   loadPixels() {
     const gl = this.gl;
     const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
@@ -971,7 +977,9 @@ class Framebuffer {
   }
 
   /**
-   * Get a region of pixels, or a single pixel, from the canvas.
+   * Get a region of pixels from the canvas in the form of a
+   * <a href="#/p5.Image">p5.Image</a>, or a single pixel as an array of
+   * numbers.
    *
    * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
    * an image. If the Framebuffer has been set up to not store alpha values, then
@@ -985,8 +993,8 @@ class Framebuffer {
    * @method get
    * @param  {Number}         x x-coordinate of the pixel
    * @param  {Number}         y y-coordinate of the pixel
-   * @param  {Number}         w width
-   * @param  {Number}         h height
+   * @param  {Number}         w width of the section to be returned
+   * @param  {Number}         h height of the section to be returned
    * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
    */
   /**
@@ -1000,6 +1008,7 @@ class Framebuffer {
    * @return {Number[]}      color of pixel at x,y in array format [R, G, B, A]
    */
   get(x, y, w, h) {
+    p5._validateParameters('p5.Framebuffer.get', arguments);
     const colorFormat = this._glColorFormat();
     if (x === undefined && y === undefined) {
       x = 0;
@@ -1007,8 +1016,12 @@ class Framebuffer {
       w = this.width;
       h = this.height;
     } else if (w === undefined && h === undefined) {
-      if (x < 0 || y < 0 || w >= this.width || h >= this.height) {
-        return [0, 0, 0, 0];
+      if (x < 0 || y < 0 || x >= this.width || y >= this.height) {
+        console.warn(
+          'The x and y values passed to p5.Framebuffer.get are outside of its range and will be clamped.'
+        );
+        x = this.target.constrain(x, 0, this.width - 1);
+        y = this.target.constrain(y, 0, this.height - 1);
       }
 
       return readPixelWebGL(
@@ -1020,6 +1033,11 @@ class Framebuffer {
         colorFormat.type
       );
     }
+
+    x = this.target.constrain(x, 0, this.width - 1);
+    y = this.target.constrain(y, 0, this.height - 1);
+    w = this.target.constrain(w, 1, this.width - x);
+    h = this.target.constrain(h, 1, this.height - y);
 
     const rawData = readPixelsWebGL(
       undefined,
@@ -1039,18 +1057,23 @@ class Framebuffer {
     const fullData = new Uint8ClampedArray(
       w * h * this.density * this.density * 4
     );
+
+    // Default channels that aren't in the framebuffer (e.g. alpha, if the
+    // framebuffer is in RGB mode instead of RGBA) to 255
+    fullData.fill(255);
+
     const channels = colorFormat.type === this.gl.RGB ? 3 : 4;
     for (let y = 0; y < h * this.density; y++) {
       for (let x = 0; x < w * this.density; x++) {
         for (let channel = 0; channel < 4; channel++) {
           const idx = (y * w * this.density + x) * 4 + channel;
-          if (channel >= channels) {
-            fullData[idx] = 255;
-          } else {
-            const prevIdx = channels === 4
+          if (channel < channels) {
+            // Find the index of this pixel in `rawData`, which might have a
+            // different number of channels
+            const rawDataIdx = channels === 4
               ? idx
               : (y * w * this.density + x) * channels + channel;
-            fullData[idx] = rawData[prevIdx];
+            fullData[idx] = rawData[rawDataIdx];
           }
         }
       }
@@ -1138,6 +1161,21 @@ class Framebuffer {
     const gl = this.gl;
     this.colorP5Texture.bindTexture();
     const colorFormat = this._glColorFormat();
+
+    const channels = colorFormat.format === gl.RGBA ? 4 : 3;
+    const len =
+      this.width * this.height * this.density * this.density * channels;
+    const TypedArrayClass = colorFormat.type === gl.UNSIGNED_BYTE
+      ? Uint8Array
+      : Float32Array;
+    if (
+      !(this.pixels instanceof TypedArrayClass) || this.pixels.length !== len
+    ) {
+      throw new Error(
+        'The pixels array has not been set correctly. Please call loadPixels() before updatePixels().'
+      );
+    }
+
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
