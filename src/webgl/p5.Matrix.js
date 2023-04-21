@@ -349,7 +349,7 @@ p5.Matrix = class {
  */
   inverseTranspose(matrix) {
     if (this.mat3 === undefined) {
-      console.error('sorry, this function only works with mat3');
+      p5._friendlyError('sorry, this function only works with mat3');
     } else {
     //convert mat4 -> mat3
       this.mat3[0] = matrix.mat4[0];

@@ -579,7 +579,7 @@ p5.prototype.setAttributes = function(key, value) {
   if (!this._setupDone) {
     for (const x in this._renderer.retainedMode.geometry) {
       if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
-        console.error(
+        p5._friendlyError(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
             'before calling the other drawing methods in setup()'
         );
@@ -755,7 +755,7 @@ p5.RendererGL.prototype.filter = function(filterType) {
   // filter can be achieved using custom shaders.
   // https://github.com/aferriss/p5jsShaderExamples
   // https://itp-xstory.github.io/p5js-shaders/#/
-  console.error('filter() does not work in WEBGL mode');
+  p5._friendlyError('filter() does not work in WEBGL mode');
 };
 
 p5.RendererGL.prototype.blendMode = function(mode) {
