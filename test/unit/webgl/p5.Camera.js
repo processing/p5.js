@@ -593,7 +593,7 @@ suite('p5.Camera', function() {
         /* eslint-disable indent */
         var expectedMatrix = new Float32Array([
           -2,  0,  0,  0,
-           0, -2,  0,  0,
+           0,  2,  0,  0,
            0,  0, -0, -1,
            0,  0,  2,  0
         ]);
@@ -606,10 +606,10 @@ suite('p5.Camera', function() {
 
       test('frustum() with no parameters specified (sets default)', function() {
         var expectedMatrix = new Float32Array([
-          0, 0,  0,  0,
-          0, 0,  0,  0,
-          0, 0, -1, -1,
-          0, 0, -0,  0
+          1.7320507764816284, 0, 0, 0,
+          0, 1.7320507764816284, 0, 0,
+          0, -0, -1.0202020406723022, -1,
+          0, 0, -17.49546241760254, 0
         ]);
 
         myCam.frustum();
