@@ -93,7 +93,6 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
 
   const zoomScaleFactor = 0.02;
   const scaleFactor = this.height < this.width ? this.height : this.width;
-  const uP = this._renderer.uPMatrix.mat4;
 
   // ZOOM if there is a change in mouseWheelDelta
   if (this._mouseWheelDeltaY !== 0) {
@@ -104,9 +103,9 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
     // needs to be modified.
-    if (uP[15] !== 0) {
-      uP[0] *= Math.pow(10, -deltaRadius);
-      uP[5] *= Math.pow(10, -deltaRadius);
+    if (this._renderer.uPMatrix.mat4[15] !== 0) {
+      this._renderer.uPMatrix.mat4[0] *= Math.pow(10, -deltaRadius);
+      this._renderer.uPMatrix.mat4[5] *= Math.pow(10, -deltaRadius);
     }
   }
   this._mouseWheelDeltaY = 0;
