@@ -259,7 +259,8 @@ p5.prototype.ortho = function(...args) {
  * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
  *
  * If no parameters are given, the following default is used:
- * frustum(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
+ * frustum(-width/20, width/20, height/20, -height/20, eyeZ/10, eyeZ*10),
+ * where eyeZ is equal to ((height/2) / tan(PI/6)).
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
