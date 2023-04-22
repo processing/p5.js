@@ -119,33 +119,53 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
         sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
       this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
     } else if (this.mouseButton === this.RIGHT) {
-      // PANNING BEHAVIOR along X/Z camera axes and restricted to X/Z plane
-      // in world space
+      // Translate the camera so that the entire object moves
+      // perpendicular to the line of sight when the mouse is moved
       const local = cam._getLocalAxes();
 
-      // normalize portions along X/Z axes
-      const xmag = Math.sqrt(local.x[0] * local.x[0] + local.x[2] * local.x[2]);
-      if (xmag !== 0) {
-        local.x[0] /= xmag;
-        local.x[2] /= xmag;
+      // Calculate the z coordinate in the view coordinates of
+      // the center, that is, the distance to the view point.
+      const diffX = cam.eyeX - cam.centerX;
+      const diffY = cam.eyeY - cam.centerY;
+      const diffZ = cam.eyeZ - cam.centerZ;
+      const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+
+      // position vector of the center
+      let cv = createVector(cam.centerX, cam.centerY, cam.centerZ);
+
+      // Calculate the normalized device coordinates of the center
+      cv = cam.cameraMatrix.multiplyPoint(cv);
+      cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
+
+      // Normalize mouse movement distance
+      const ndcX = (this.mouseX - this.pmouseX) * 2 / this.width;
+      const ndcY = -(this.mouseY - this.pmouseY) * 2 / this.height;
+
+      // Move the center by this distance
+      // in the normalized device coordinate system
+      cv.x -= ndcX;
+      cv.y -= ndcY;
+
+      // Calculate the translation vector
+      // in the direction perpendicular to the line of sight of center
+      let dx, dy;
+      const uP = this._renderer.uPMatrix.mat4;
+      // When calculating the view coordinates, the calculation method is
+      // different depending on whether ortho() or not, so separate the cases.
+      // uP[15] is non-zero only for ortho().
+      if (uP[15] === 0) {
+        dx = ((uP[8] + cv.x) / uP[0]) * viewZ;
+        dy = ((uP[9] + cv.y) / uP[5]) * viewZ;
+      } else {
+        dx = (cv.x - uP[12]) / uP[0];
+        dy = (cv.y - uP[13]) / uP[5];
       }
 
-      // normalize portions along X/Z axes
-      const ymag = Math.sqrt(local.y[0] * local.y[0] + local.y[2] * local.y[2]);
-      if (ymag !== 0) {
-        local.y[0] /= ymag;
-        local.y[2] /= ymag;
-      }
-
-      // move along those vectors by amount controlled by mouseX, pmouseY
-      const dx = -1 * sensitivityX * (this.mouseX - this.pmouseX);
-      const dz = -1 * sensitivityY * (this.mouseY - this.pmouseY);
-
-      // restrict movement to XZ plane in world space
+      // translate the camera
       cam.setPosition(
-        cam.eyeX + dx * local.x[0] + dz * local.z[0],
-        cam.eyeY,
-        cam.eyeZ + dx * local.x[2] + dz * local.z[2]
+        cam.eyeX + dx * local.x[0] + dy * local.y[0],
+        cam.eyeY + dx * local.x[1] + dy * local.y[1],
+        cam.eyeZ + dx * local.x[2] + dy * local.y[2]
       );
     }
   }
