@@ -720,6 +720,72 @@ p5.Matrix = class {
     return this;
   }
 
+ /**
+* apply a matrix to a vector with x,y,z,w components
+* get the results in the form of an array
+* @method multiplyVec4
+* @param {Number}
+* @return {Number[]}
+*/
+  multiplyVec4(x, y, z, w) {
+    const result = new Array(4);
+
+    result[0] = this.mat4[0] * x + this.mat4[4] * y + this.mat4[8] * z + this.mat4[12] * w;
+    result[1] = this.mat4[1] * x + this.mat4[5] * y + this.mat4[9] * z + this.mat4[13] * w;
+    result[2] = this.mat4[2] * x + this.mat4[6] * y + this.mat4[10] * z + this.mat4[14] * w;
+    result[3] = this.mat4[3] * x + this.mat4[7] * y + this.mat4[11] * z + this.mat4[15] * w;
+
+    return result;
+  }
+
+ /**
+* Applies a matrix to a vector.
+* The fourth component is set to 1.
+* Returns a vector consisting of the first
+* through third components of the result.
+* 
+* @method multiplyPoint
+* @param {p5.Vector}
+* @return {p5.Vector}
+*/
+  multiplyPoint(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+    return new p5.Vector(array[0], array[1], array[2]);
+  }
+
+ /**
+* Applies a matrix to a vector.
+* The fourth component is set to 1.
+* Returns the result of dividing the 1st to 3rd components
+* of the result by the 4th component as a vector.
+* 
+* @method multiplyAndNormalizePoint
+* @param {p5.Vector}
+* @return {p5.Vector}
+*/
+  multiplyAndNormalizePoint(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+    array[0] /= array[3];
+    array[1] /= array[3];
+    array[2] /= array[3];
+    return new p5.Vector(array[0], array[1], array[2]);
+  };
+
+ /**
+* Applies a matrix to a vector.
+* The fourth component is set to 0.
+* Returns a vector consisting of the first
+* through third components of the result.
+* 
+* @method multiplyDirection
+* @param {p5.Vector}
+* @return {p5.Vector}
+*/
+  multiplyDirection(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 0);
+    return new p5.Vector(array[0], array[1], array[2]);
+  }
+
   /**
  * PRIVATE
  */
