@@ -55,7 +55,8 @@ import * as constants from '../core/constants';
 
 // implementation based on three.js 'orbitControls':
 // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
-p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ, options) {
+p5.prototype.orbitControl =
+  function(sensitivityX, sensitivityY, sensitivityZ, options) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
@@ -104,7 +105,7 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ, o
   // 'touchActionsDisabled' flag to p5 instance
   const { disableTouchActions = true } = options;
   if (this.touchActionsDisabled !== true && disableTouchActions) {
-    this.canvas.style["touch-action"] = "none";
+    this.canvas.style['touch-action'] = "none";
     this._setProperty('touchActionsDisabled', true);
   }
 
