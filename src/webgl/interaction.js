@@ -109,7 +109,7 @@ p5.prototype.orbitControl = function(
   // 'touchActionsDisabled' flag to p5 instance
   const { disableTouchActions = true } = options;
   if (this.touchActionsDisabled !== true && disableTouchActions) {
-    this.canvas.style['touch-action'] = "none";
+    this.canvas.style['touch-action'] = 'none';
     this._setProperty('touchActionsDisabled', true);
   }
 
