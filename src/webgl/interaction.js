@@ -113,12 +113,29 @@ p5.prototype.orbitControl = function(
     this._setProperty('touchActionsDisabled', true);
   }
 
-  // get moved touches
-  const movedTouches = this.touches.filter(t => t.moved);
+  // get moved touches.
+  const movedTouches = [];
+  for(let i = 0; i < this.touches.length; i++){
+    const curTouch = this.touches[i];
+    for(let k=0; k < this._renderer.prevTouches.length; k++){
+      const prevTouch = this._renderer.prevTouches[k];
+      if(curTouch.id === prevTouch.id){
+        const movedTouch = {
+          x: curTouch.x,
+          y: curTouch.y,
+          px: prevTouch.x,
+          py: prevTouch.y
+        }
+        movedTouches.push(movedTouch);
+      }
+    }
+  }
+  this._renderer.prevTouches = this.touches;
+
   // flags for interaction
-  let zoomFlag = false;
-  let rotateFlag = false;
-  let moveFlag = false;
+  let executeZoomProcess = false;
+  let executeRotateProcess = false;
+  let executeMoveProcess = false;
   // variables for interaction
   let deltaRadius, deltaPhi, deltaTheta;
   let moveDeltaX, moveDeltaY;
@@ -135,12 +152,12 @@ p5.prototype.orbitControl = function(
     // if length === 1, rotate
     // if length > 1, zoom and move
     if (movedTouches.length === 1) {
-      rotateFlag = true;
+      executeRotateProcess = true;
       const t = movedTouches[0];
       deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
       deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
     } else {
-      zoomFlag = true;
+      executeZoomProcess = true;
       const t0 = movedTouches[0];
       const t1 = movedTouches[1];
       const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
@@ -148,7 +165,7 @@ p5.prototype.orbitControl = function(
       const changeDist = distWithTouches - prevDistWithTouches;
       deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
 
-      moveFlag = true;
+      executeMoveProcess = true;
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
     }
@@ -158,7 +175,7 @@ p5.prototype.orbitControl = function(
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
     if (this._mouseWheelDeltaY !== 0) {
-      zoomFlag = true;
+      executeZoomProcess = true;
       // zoom according to direction of mouseWheelDeltaY rather than value.
       const mouseWheelSign = (this._mouseWheelDeltaY > 0 ? 1 : -1);
       deltaRadius = mouseWheelSign * sensitivityZ * mouseZoomScaleFactor;
@@ -166,11 +183,11 @@ p5.prototype.orbitControl = function(
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
-        rotateFlag = true;
+        executeRotateProcess = true;
         deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
         deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
       } else if (this.mouseButton === this.RIGHT) {
-        moveFlag = true;
+        executeMoveProcess = true;
         moveDeltaX = this.mouseX - this.pmouseX;
         moveDeltaY = this.mouseY - this.pmouseY;
       }
@@ -179,7 +196,7 @@ p5.prototype.orbitControl = function(
 
   // interactions
   // zoom
-  if (zoomFlag) {
+  if (executeZoomProcess) {
     this._renderer._curCamera._orbit(0, 0, deltaRadius);
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
@@ -190,11 +207,11 @@ p5.prototype.orbitControl = function(
     }
   }
   // rotate
-  if (rotateFlag) {
+  if (executeRotateProcess) {
     this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
   }
   // move
-  if (moveFlag) {
+  if (executeMoveProcess) {
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
