@@ -125,7 +125,7 @@ p5.prototype.orbitControl = function(
           y: curTouch.y,
           px: prevTouch.x,
           py: prevTouch.y
-        }
+        };
         movedTouches.push(movedTouch);
       }
     }
