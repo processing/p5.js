@@ -9,20 +9,26 @@ import p5 from '../core/main';
 import * as constants from '../core/constants';
 
 /**
- * Allows movement around a 3D sketch using a mouse or trackpad.  Left-clicking
- * and dragging will rotate the camera position about the center of the sketch,
- * right-clicking and dragging will pan the camera position without rotation,
- * and using the mouse wheel (scrolling) will move the camera closer or further
+ * Allows movement around a 3D sketch using a mouse or trackpad or touch.
+ * Left-clicking and dragging or swipe motion will rotate the camera position
+ * about the center of the sketch, right-clicking and dragging or multi-swipe
+ * will pan the camera position without rotation, and using the mouse wheel
+ * (scrolling) or pinch in/out will move the camera further or closer
  * from the center of the sketch. This function can be called with parameters
- * dictating sensitivity to mouse movement along the X and Y axes.  Calling
- * this function without parameters is equivalent to calling orbitControl(1,1).
- * To reverse direction of movement in either axis, enter a negative number
- * for sensitivity.
+ * dictating sensitivity to mouse/touch movement along the X and Y axes.
+ * Calling this function without parameters is equivalent to calling
+ * orbitControl(1,1). To reverse direction of movement in either axis,
+ * enter a negative number for sensitivity.
  * @method orbitControl
  * @for p5
  * @param  {Number} [sensitivityX] sensitivity to mouse movement along X axis
  * @param  {Number} [sensitivityY] sensitivity to mouse movement along Y axis
  * @param  {Number} [sensitivityZ] sensitivity to scroll movement along Z axis
+ * @param  {Object} [options] An optional object that can contain additional settings,
+ * disableTouchActions - Boolean, default value is true.
+ * Setting this to true makes mobile interactions smoother by preventing
+ * accidental interactions with the page while orbiting. But if you're already
+ * doing it via css or want the default touch actions, consider setting it to false.
  * @chainable
  * @example
  * <div>
@@ -49,7 +55,12 @@ import * as constants from '../core/constants';
 
 // implementation based on three.js 'orbitControls':
 // https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
-p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
+p5.prototype.orbitControl = function(
+  sensitivityX,
+  sensitivityY,
+  sensitivityZ,
+  options
+) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
 
@@ -72,10 +83,13 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
   if (typeof sensitivityZ === 'undefined') {
     sensitivityZ = 1;
   }
+  if (typeof options !== 'object') {
+    options = {};
+  }
 
   // default right-mouse and mouse-wheel behaviors (context menu and scrolling,
   // respectively) are disabled here to allow use of those events for panning and
-  // zooming
+  // zooming. However, whether or not to disable touch actions is an option.
 
   // disable context menu for canvas element and add 'contextMenuDisabled'
   // flag to p5 instance
@@ -91,14 +105,98 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
     this._setProperty('wheelDefaultDisabled', true);
   }
 
-  const zoomScaleFactor = 0.02;
+  // disable default touch behavior on the canvas element and add
+  // 'touchActionsDisabled' flag to p5 instance
+  const { disableTouchActions = true } = options;
+  if (this.touchActionsDisabled !== true && disableTouchActions) {
+    this.canvas.style['touch-action'] = 'none';
+    this._setProperty('touchActionsDisabled', true);
+  }
+
+  // get moved touches.
+  const movedTouches = [];
+  for(let i = 0; i < this.touches.length; i++){
+    const curTouch = this.touches[i];
+    for(let k=0; k < this._renderer.prevTouches.length; k++){
+      const prevTouch = this._renderer.prevTouches[k];
+      if(curTouch.id === prevTouch.id){
+        const movedTouch = {
+          x: curTouch.x,
+          y: curTouch.y,
+          px: prevTouch.x,
+          py: prevTouch.y
+        };
+        movedTouches.push(movedTouch);
+      }
+    }
+  }
+  this._renderer.prevTouches = this.touches;
+
+  // flags for interaction
+  let executeZoomProcess = false;
+  let executeRotateProcess = false;
+  let executeMoveProcess = false;
+  // variables for interaction
+  let deltaRadius, deltaPhi, deltaTheta;
+  let moveDeltaX, moveDeltaY;
+
+  // For touches, the appropriate scale is different
+  // because the distance difference is multiplied.
+  const mouseZoomScaleFactor = 0.02;
+  const touchZoomScaleFactor = 0.0008;
   const scaleFactor = this.height < this.width ? this.height : this.width;
 
-  // ZOOM if there is a change in mouseWheelDelta
-  if (this._mouseWheelDeltaY !== 0) {
-    // zoom according to direction of mouseWheelDeltaY rather than value
-    const mouseWheelSign = (this._mouseWheelDeltaY > 0 ? 1 : -1);
-    const deltaRadius = mouseWheelSign * sensitivityZ * zoomScaleFactor;
+  // calculate and determine flags and variables.
+  if (movedTouches.length > 0) {
+    /* for touch */
+    // if length === 1, rotate
+    // if length > 1, zoom and move
+    if (movedTouches.length === 1) {
+      executeRotateProcess = true;
+      const t = movedTouches[0];
+      deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
+      deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
+    } else {
+      executeZoomProcess = true;
+      const t0 = movedTouches[0];
+      const t1 = movedTouches[1];
+      const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
+      const prevDistWithTouches = Math.hypot(t0.px - t1.px, t0.py - t1.py);
+      const changeDist = distWithTouches - prevDistWithTouches;
+      deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
+
+      executeMoveProcess = true;
+      moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
+      moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
+    }
+  } else {
+    /* for mouse */
+    // if wheelDeltaY !== 0, zoom
+    // if mouseLeftButton is down, rotate
+    // if mouseRightButton is down, move
+    if (this._mouseWheelDeltaY !== 0) {
+      executeZoomProcess = true;
+      // zoom according to direction of mouseWheelDeltaY rather than value.
+      const mouseWheelSign = (this._mouseWheelDeltaY > 0 ? 1 : -1);
+      deltaRadius = mouseWheelSign * sensitivityZ * mouseZoomScaleFactor;
+      this._mouseWheelDeltaY = 0;
+    }
+    if (this.mouseIsPressed) {
+      if (this.mouseButton === this.LEFT) {
+        executeRotateProcess = true;
+        deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
+        deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+      } else if (this.mouseButton === this.RIGHT) {
+        executeMoveProcess = true;
+        moveDeltaX = this.mouseX - this.pmouseX;
+        moveDeltaY = this.mouseY - this.pmouseY;
+      }
+    }
+  }
+
+  // interactions
+  // zoom
+  if (executeZoomProcess) {
     this._renderer._curCamera._orbit(0, 0, deltaRadius);
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
@@ -108,67 +206,61 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
       this._renderer.uPMatrix.mat4[5] *= Math.pow(10, -deltaRadius);
     }
   }
-  this._mouseWheelDeltaY = 0;
-
-  if (this.mouseIsPressed) {
-    // ORBIT BEHAVIOR
-    if (this.mouseButton === this.LEFT) {
-      const deltaTheta =
-        -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
-      const deltaPhi =
-        sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
-      this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
-    } else if (this.mouseButton === this.RIGHT) {
-      // Translate the camera so that the entire object moves
-      // perpendicular to the line of sight when the mouse is moved
-      const local = cam._getLocalAxes();
-
-      // Calculate the z coordinate in the view coordinates of
-      // the center, that is, the distance to the view point.
-      const diffX = cam.eyeX - cam.centerX;
-      const diffY = cam.eyeY - cam.centerY;
-      const diffZ = cam.eyeZ - cam.centerZ;
-      const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-
-      // position vector of the center
-      let cv = createVector(cam.centerX, cam.centerY, cam.centerZ);
-
-      // Calculate the normalized device coordinates of the center
-      cv = cam.cameraMatrix.multiplyPoint(cv);
-      cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
-
-      // Normalize mouse movement distance
-      const ndcX = (this.mouseX - this.pmouseX) * 2 / this.width;
-      const ndcY = -(this.mouseY - this.pmouseY) * 2 / this.height;
-
-      // Move the center by this distance
-      // in the normalized device coordinate system
-      cv.x -= ndcX;
-      cv.y -= ndcY;
-
-      // Calculate the translation vector
-      // in the direction perpendicular to the line of sight of center
-      let dx, dy;
-      const uP = this._renderer.uPMatrix.mat4;
-      // When calculating the view coordinates, the calculation method is
-      // different depending on whether ortho() or not, so separate the cases.
-      // uP[15] is non-zero only for ortho().
-      if (uP[15] === 0) {
-        dx = ((uP[8] + cv.x) / uP[0]) * viewZ;
-        dy = ((uP[9] + cv.y) / uP[5]) * viewZ;
-      } else {
-        dx = (cv.x - uP[12]) / uP[0];
-        dy = (cv.y - uP[13]) / uP[5];
-      }
-
-      // translate the camera
-      cam.setPosition(
-        cam.eyeX + dx * local.x[0] + dy * local.y[0],
-        cam.eyeY + dx * local.x[1] + dy * local.y[1],
-        cam.eyeZ + dx * local.x[2] + dy * local.y[2]
-      );
-    }
+  // rotate
+  if (executeRotateProcess) {
+    this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
   }
+  // move
+  if (executeMoveProcess) {
+    // Translate the camera so that the entire object moves
+    // perpendicular to the line of sight when the mouse is moved
+    // or when the centers of gravity of the two touch pointers move.
+    var local = cam._getLocalAxes();
+
+    // Calculate the z coordinate in the view coordinates of
+    // the center, that is, the distance to the view point
+    const diffX = cam.eyeX - cam.centerX;
+    const diffY = cam.eyeY - cam.centerY;
+    const diffZ = cam.eyeZ - cam.centerZ;
+    const viewZ = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+
+    // position vector of the center.
+    let cv = new p5.Vector(cam.centerX, cam.centerY, cam.centerZ);
+
+    // Calculate the normalized device coordinates of the center.
+    cv = cam.cameraMatrix.multiplyPoint(cv);
+    cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
+
+    // Normalize movement distance
+    const ndcX = moveDeltaX * 2/this.width;
+    const ndcY = -moveDeltaY * 2/this.height;
+
+    // Move the center by this distance
+    // in the normalized device coordinate system.
+    cv.x -= ndcX;
+    cv.y -= ndcY;
+
+    // Calculate the translation vector
+    // in the direction perpendicular to the line of sight of center.
+    let dx, dy;
+    const uP = this._renderer.uPMatrix.mat4;
+
+    if (uP[15] === 0) {
+      dx = ((uP[8] + cv.x)/uP[0]) * viewZ;
+      dy = ((uP[9] + cv.y)/uP[5]) * viewZ;
+    } else {
+      dx = (cv.x - uP[12])/uP[0];
+      dy = (cv.y - uP[13])/uP[5];
+    }
+
+    // translate the camera.
+    cam.setPosition(
+      cam.eyeX + dx * local.x[0] + dy * local.y[0],
+      cam.eyeY + dx * local.x[1] + dy * local.y[1],
+      cam.eyeZ + dx * local.x[2] + dy * local.y[2]
+    );
+  }
+
   return this;
 };
 
