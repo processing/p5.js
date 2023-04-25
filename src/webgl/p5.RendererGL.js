@@ -170,7 +170,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._curCamera = new p5.Camera(this);
   this._curCamera._computeCameraDefaultSettings();
   this._curCamera._setDefaultCamera();
-  
+
   // Information about the previous frame's touch object
   // for executing orbitControl()
   this.prevTouches = [];
