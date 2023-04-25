@@ -39,11 +39,9 @@ p5.prototype.touches = [];
 
 p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
-    // Get an array of previous touch objects
-    const prevTouches = this.touches.slice();
-    var curTouches = [];
+    const touches = [];
     for (let i = 0; i < e.touches.length; i++) {
-      curTouches[i] = getTouchInfo(
+      touches[i] = getTouchInfo(
         this._curElement.elt,
         this.width,
         this.height,
@@ -51,18 +49,7 @@ p5.prototype._updateTouchCoords = function(e) {
         i
       );
     }
-    // Compare with the previous array of touch objects
-    for (let i = 0; i < curTouches.length; i++) {
-      for (let k = 0; k < prevTouches.length; k++) {
-        if (curTouches[i].id === prevTouches[k].id) {
-          curTouches[i].px = prevTouches[k].x;
-          curTouches[i].py = prevTouches[k].y;
-          curTouches[i].moved = true;
-          break;
-        }
-      }
-    }
-    this._setProperty('touches', curTouches);
+    this._setProperty('touches', touches);
   }
 };
 
@@ -76,10 +63,7 @@ function getTouchInfo(canvas, w, h, e, i = 0) {
     y: (touch.clientY - rect.top) / sy,
     winX: touch.clientX,
     winY: touch.clientY,
-    id: touch.identifier,
-    px: undefined,
-    py: undefined,
-    moved: false
+    id: touch.identifier
   };
 }
 
