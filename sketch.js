@@ -1,6 +1,6 @@
 /**
  * The enable method enables an option that is initally disabled in the dropdown menu
- * Use first exmaple from https://p5js.org/reference/#/p5/createSelect to demonstrate how enable method works
+ * Use first example from https://p5js.org/reference/#/p5/createSelect to demonstrate how enable method works
  */
 
 let sel;

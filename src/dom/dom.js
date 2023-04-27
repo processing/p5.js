@@ -629,7 +629,7 @@ p5.prototype.createCheckbox = function() {
  * - `.selected(value)` can be used to make given option selected by default when the page first loads.
  * - `.disable()` marks the whole dropdown element as disabled.
  * - `.disable(value)` marks a given option as disabled.
- * - '.enable()' marks the whole dropdown element as enabled if whole dropdown element is disabled intially.
+ * - `.enable()` marks the whole dropdown element as enabled if whole dropdown element is disabled intially.
  * - `.enable(value)` marks a given option as enable if the initial option is disabled.
  *
  * @method createSelect
@@ -676,21 +676,18 @@ p5.prototype.createCheckbox = function() {
  * let sel;
  *
  * function setup() {
- *  textAlign(CENTER);
- *  background(200);
- *  sel = createSelect();
- *  sel.position(10, 10);
- *  sel.option('oil');
- *  sel.option('milk');
- *  sel.option('bread');
- *  sel.disable('milk');
- *  button = createButton('enable');
- *  button.position(0,25);
- *  button.mousePressed(toggleSelectEnable);
- * }
- *
- * function toogleSelectEnable() {
- *  sel.enable('milk');
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('oil');
+ *   sel.option('milk');
+ *   sel.option('bread');
+ *   // disable milk and oil
+ *   sel.disable('milk');
+ *   sel.disable('oil');
+ *   // enable milk again
+ *   sel.enable('milk');
  * }
  * </code></div>
  */
