@@ -347,8 +347,8 @@ p5.prototype._accsOutput = function(f, args) {
     //get lenght
     include.length = Math.round(this.dist(args[0], args[1], args[2], args[3]));
     //get position of end points
-    let p1 = _getPos([args[0], [1]], this.width, this.height);
-    let p2 = _getPos([args[2], [3]], this.width, this.height);
+    let p1 = this._getPos(args[0], [1]);
+    let p2 = this._getPos(args[2], [3]);
     include.loc = _canvasLocator(middle, this.width, this.height);
     if (p1 === p2) {
       include.pos = `at ${p1}`;
@@ -363,11 +363,11 @@ p5.prototype._accsOutput = function(f, args) {
       //make color fill
       include.color = this.ingredients.colors.fill;
       //get area of shape
-      include.area = _getArea(f, args, this.width, this.height);
+      include.area = this._getArea(f, args);
     }
     //get middle of shapes
     //calculate position using middle of shape
-    include.pos = _getPos(middle, this.width, this.height);
+    include.pos = this._getPos(...middle);
     //calculate location using middle of shape
     include.loc = _canvasLocator(middle, this.width, this.height);
   }
@@ -422,33 +422,38 @@ function _getMiddle(f, args) {
 }
 
 //gets position of shape in the canvas
-function _getPos(args, canvasWidth, canvasHeight) {
-  if (args[0] < 0.4 * canvasWidth) {
-    if (args[1] < 0.4 * canvasHeight) {
+p5.prototype._getPos = function (x, y) {
+  const untransformedPosition = new DOMPointReadOnly(x, y);
+  const currentTransform = this.drawingContext.getTransform();
+  const { x: transformedX, y: transformedY } = untransformedPosition
+    .matrixTransform(currentTransform);
+  const { width: canvasWidth, height: canvasHeight } = this;
+  if (transformedX < 0.4 * canvasWidth) {
+    if (transformedY < 0.4 * canvasHeight) {
       return 'top left';
-    } else if (args[1] > 0.6 * canvasHeight) {
+    } else if (transformedY > 0.6 * canvasHeight) {
       return 'bottom left';
     } else {
       return 'mid left';
     }
-  } else if (args[0] > 0.6 * canvasWidth) {
-    if (args[1] < 0.4 * canvasHeight) {
+  } else if (transformedX > 0.6 * canvasWidth) {
+    if (transformedY < 0.4 * canvasHeight) {
       return 'top right';
-    } else if (args[1] > 0.6 * canvasHeight) {
+    } else if (transformedY > 0.6 * canvasHeight) {
       return 'bottom right';
     } else {
       return 'mid right';
     }
   } else {
-    if (args[1] < 0.4 * canvasHeight) {
+    if (transformedY < 0.4 * canvasHeight) {
       return 'top middle';
-    } else if (args[1] > 0.6 * canvasHeight) {
+    } else if (transformedY > 0.6 * canvasHeight) {
       return 'bottom middle';
     } else {
       return 'middle';
     }
   }
-}
+};
 
 //locates shape in a 10*10 grid
 function _canvasLocator(args, canvasWidth, canvasHeight) {
@@ -469,7 +474,7 @@ function _canvasLocator(args, canvasWidth, canvasHeight) {
 }
 
 //calculates area of shape
-function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
+p5.prototype._getArea = function (objectType, shapeArgs) {
   let objectArea = 0;
   if (objectType === 'arc') {
     // area of full ellipse = PI * horizontal radius * vertical radius.
@@ -526,8 +531,36 @@ function _getArea(objectType, shapeArgs, canvasWidth, canvasHeight) {
       ) / 2;
     // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
   }
-
-  return Math.round(objectArea * 100 / (canvasWidth * canvasHeight));
-}
+  //  Store the positions of the canvas corners
+  const canvasWidth = this.width * this._pixelDensity;
+  const canvasHeight = this.height * this._pixelDensity;
+  const canvasCorners = [
+    new DOMPoint(0, 0),
+    new DOMPoint(canvasWidth, 0),
+    new DOMPoint(canvasWidth, canvasHeight),
+    new DOMPoint(0, canvasHeight)
+  ];
+  //  Apply the inverse of the current transformations to the canvas corners
+  const currentTransform = this.drawingContext.getTransform();
+  const invertedTransform = currentTransform.inverse();
+  const tc = canvasCorners.map(
+    corner => corner.matrixTransform(invertedTransform)
+  );
+  /*  Use same shoelace formula used for quad area (above) to calculate
+  the area of the canvas with inverted transformation applied */
+  const transformedCanvasArea = Math.abs(
+    (tc[3].x + tc[0].x) * (tc[3].y - tc[0].y) +
+    (tc[0].x + tc[1].x) * (tc[0].y - tc[1].y) +
+    (tc[1].x + tc[2].x) * (tc[1].y - tc[2].y)+
+    (tc[2].x + tc[3].x) * (tc[2].y - tc[3].y)
+  ) / 2;
+  /*  Compare area of shape (minus transformations) to area of canvas
+  with inverted transformation applied.
+  Return percentage  */
+  const untransformedArea = Math.round(
+    objectArea * 100 / (transformedCanvasArea)
+  );
+  return untransformedArea;
+};
 
 export default p5;
