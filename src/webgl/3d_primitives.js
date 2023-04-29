@@ -158,9 +158,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
         [0, 2, 1, 3], // 0, 0, -1],// -z
         [4, 5, 6, 7] // 0, 0, +1] // +z
       ];
-      //using strokeIndices instead of faces for strokes
+      //using custom edges
       //to avoid diagonal stroke lines across face of box
-      this.strokeIndices = [
+      this.edges = [
         [0, 1],
         [1, 3],
         [3, 2],
@@ -197,7 +197,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     const boxGeom = new p5.Geometry(detailX, detailY, _box);
     boxGeom.computeNormals();
     if (detailX <= 4 && detailY <= 4) {
-      boxGeom._makeTriangleEdges()._edgesToVertices();
+      boxGeom._edgesToVertices();
     } else if (this._renderer._doStroke) {
       console.log(
         'Cannot draw stroke on box objects with more' +
@@ -1048,13 +1048,13 @@ p5.RendererGL.prototype.triangle = function(args) {
       vertices.push(new p5.Vector(0, 0, 0));
       vertices.push(new p5.Vector(1, 0, 0));
       vertices.push(new p5.Vector(0, 1, 0));
-      this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
+      this.edges = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
       this.faces = [[0, 1, 2]];
       this.uvs = [0, 0, 1, 0, 1, 1];
     };
     const triGeom = new p5.Geometry(1, 1, _triangle);
-    triGeom._makeTriangleEdges()._edgesToVertices();
+    triGeom._edgesToVertices();
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
@@ -1121,7 +1121,6 @@ p5.RendererGL.prototype.arc = function(args) {
 
   if (!this.geometryInHash(gId)) {
     const _arc = function() {
-      this.strokeIndices = [];
 
       // if the start and stop angles are not the same, push vertices to the array
       if (start.toFixed(10) !== stop.toFixed(10)) {
@@ -1144,7 +1143,7 @@ p5.RendererGL.prototype.arc = function(args) {
 
           if (i < detail - 1) {
             this.faces.push([0, i + 1, i + 2]);
-            this.strokeIndices.push([i + 1, i + 2]);
+            this.edges.push([i + 1, i + 2]);
           }
         }
 
@@ -1156,21 +1155,21 @@ p5.RendererGL.prototype.arc = function(args) {
               this.vertices.length - 2,
               this.vertices.length - 1
             ]);
-            this.strokeIndices.push([0, 1]);
-            this.strokeIndices.push([
+            this.edges.push([0, 1]);
+            this.edges.push([
               this.vertices.length - 2,
               this.vertices.length - 1
             ]);
-            this.strokeIndices.push([0, this.vertices.length - 1]);
+            this.edges.push([0, this.vertices.length - 1]);
             break;
 
           case constants.CHORD:
-            this.strokeIndices.push([0, 1]);
-            this.strokeIndices.push([0, this.vertices.length - 1]);
+            this.edges.push([0, 1]);
+            this.edges.push([0, this.vertices.length - 1]);
             break;
 
           case constants.OPEN:
-            this.strokeIndices.push([0, 1]);
+            this.edges.push([0, 1]);
             break;
 
           default:
@@ -1179,7 +1178,7 @@ p5.RendererGL.prototype.arc = function(args) {
               this.vertices.length - 2,
               this.vertices.length - 1
             ]);
-            this.strokeIndices.push([
+            this.edges.push([
               this.vertices.length - 2,
               this.vertices.length - 1
             ]);
@@ -1191,7 +1190,7 @@ p5.RendererGL.prototype.arc = function(args) {
     arcGeom.computeNormals();
 
     if (detail <= 50) {
-      arcGeom._makeTriangleEdges()._edgesToVertices(arcGeom);
+      arcGeom._edgesToVertices(arcGeom);
     } else if (this._doStroke) {
       console.log(
         `Cannot apply a stroke to an ${shape} with more than 50 detail`
@@ -1241,7 +1240,7 @@ p5.RendererGL.prototype.rect = function(args) {
         }
         // using stroke indices to avoid stroke over face(s) of rectangle
         if (detailX > 0 && detailY > 0) {
-          this.strokeIndices = [
+          this.edges = [
             [0, detailX],
             [detailX, (detailX + 1) * (detailY + 1) - 1],
             [(detailX + 1) * (detailY + 1) - 1, (detailX + 1) * detailY],
@@ -1253,7 +1252,6 @@ p5.RendererGL.prototype.rect = function(args) {
       rectGeom
         .computeFaces()
         .computeNormals()
-        ._makeTriangleEdges()
         ._edgesToVertices();
       this.createBuffers(gId, rectGeom);
     }

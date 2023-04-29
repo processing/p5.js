@@ -236,17 +236,13 @@ p5.Geometry = class  {
  */
   _makeTriangleEdges() {
     this.edges.length = 0;
-    if (Array.isArray(this.strokeIndices)) {
-      for (let i = 0, max = this.strokeIndices.length; i < max; i++) {
-        this.edges.push(this.strokeIndices[i]);
-      }
-    } else {
-      for (let j = 0; j < this.faces.length; j++) {
-        this.edges.push([this.faces[j][0], this.faces[j][1]]);
-        this.edges.push([this.faces[j][1], this.faces[j][2]]);
-        this.edges.push([this.faces[j][2], this.faces[j][0]]);
-      }
+
+    for (let j = 0; j < this.faces.length; j++) {
+      this.edges.push([this.faces[j][0], this.faces[j][1]]);
+      this.edges.push([this.faces[j][1], this.faces[j][2]]);
+      this.edges.push([this.faces[j][2], this.faces[j][0]]);
     }
+
     return this;
   }
 
