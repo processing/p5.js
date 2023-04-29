@@ -424,7 +424,9 @@ function _getMiddle(f, args) {
 //gets position of shape in the canvas
 p5.prototype._getPos = function (x, y) {
   const untransformedPosition = new DOMPointReadOnly(x, y);
-  const currentTransform = this.drawingContext.getTransform();
+  const currentTransform = this._renderer.isP3D ?
+    new DOMMatrix(this._renderer.uMVMatrix.mat4) :
+    this.drawingContext.getTransform();
   const { x: transformedX, y: transformedY } = untransformedPosition
     .matrixTransform(currentTransform);
   const { width: canvasWidth, height: canvasHeight } = this;
@@ -541,7 +543,9 @@ p5.prototype._getArea = function (objectType, shapeArgs) {
     new DOMPoint(0, canvasHeight)
   ];
   //  Apply the inverse of the current transformations to the canvas corners
-  const currentTransform = this.drawingContext.getTransform();
+  const currentTransform = this._renderer.isP3D ?
+    new DOMMatrix(this._renderer.uMVMatrix.mat4) :
+    this.drawingContext.getTransform();
   const invertedTransform = currentTransform.inverse();
   const tc = canvasCorners.map(
     corner => corner.matrixTransform(invertedTransform)
