@@ -1,5 +1,5 @@
 'use strict';
-import { EOL } from 'os';
+const EOL = '\n';
 import { ESLint } from 'eslint';
 import dataDoc from '../docs/reference/data.min.json';
 // envs: ['eslint-samples/p5'],
