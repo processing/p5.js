@@ -3,9 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>TextToPoints fails: use case</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.dom.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5.font/dist/p5.font.js"></script>
+    <script src="lib/p5.min.js"></script>
   </head>
   <body >
     <main>
@@ -17,9 +15,9 @@
                 font = loadFont("https://static.observableusercontent.com/files/b9bcb3ce7f9d9e944e4482ef090f0a941f3141d4452d5e294fec81b584c966d99766a2a467e6a506079eb4c7b4600ae65ea79634478cb5948b98ba15c67f908a");
             }
             function setup() {
-                createCanvas(400, 400 );
+                createCanvas(800, 600);
                 textFont(font, 100);
-                pts =font.textToPoints('B\nA', 0, 0, 100, {
+                pts =font.textToPoints('B  \tB B\nA\tA\ncc\tc', 0, 0, 100, {
                     sampleFactor: 0.4 // increase for more points
                 });
                 background(0);
@@ -28,7 +26,7 @@
                 }
             
             function draw() {
-            text('B\nA', 200, 200) // The A in the second line of the canvas
+            text('B  \tB B\nA\tA\ncc\tc', 200, 200) // The A in the second line of the canvas
             pts.forEach(p => circle(200 + p.x, 200 + p.y, 3));
             }
         </script>
