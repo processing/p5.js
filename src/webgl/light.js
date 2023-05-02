@@ -6,7 +6,6 @@
  */
 
 import p5 from '../core/main';
-import * as constants from '../core/constants';
 
 /**
  * Creates an ambient light with the given color.
@@ -531,7 +530,7 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
 p5.prototype.lights = function() {
   this._assert3d('lights');
   // Both specify gray by default.
-  const grayColor = color("rgb(128,128,128)");
+  const grayColor = color('rgb(128,128,128)');
   this.ambientLight(grayColor);
   this.directionalLight(grayColor, 0, 0, -1);
   return this;
