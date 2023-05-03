@@ -92,6 +92,30 @@ suite('p5.RendererGL', function() {
       );
       done();
     });
+
+    test('coplanar strokes match 2D', function(done) {
+      const getColors = function(mode) {
+        myp5.createCanvas(20, 20, mode);
+        myp5.pixelDensity(1);
+        myp5.background(255);
+        myp5.strokeCap(myp5.SQUARE);
+        myp5.strokeJoin(myp5.MITER);
+        if (mode === myp5.WEBGL) {
+          myp5.translate(-myp5.width/2, -myp5.height/2);
+        }
+        myp5.stroke('black');
+        myp5.strokeWeight(4);
+        myp5.fill('red');
+        myp5.rect(10, 10, 15, 15);
+        myp5.fill('blue');
+        myp5.rect(0, 0, 15, 15);
+        myp5.loadPixels();
+        return [...myp5.pixels];
+      };
+
+      assert.deepEqual(getColors(myp5.P2D), getColors(myp5.WEBGL));
+      done();
+    });
   });
 
   suite('text shader', function() {
@@ -359,6 +383,42 @@ suite('p5.RendererGL', function() {
       assert.isTrue(img[1] === 115);
       assert.isTrue(img.length === 4);
       done();
+    });
+
+    test('updatePixels() matches 2D mode', function() {
+      myp5.createCanvas(20, 20);
+      myp5.pixelDensity(1);
+      const getColors = function(mode) {
+        const g = myp5.createGraphics(20, 20, mode);
+        g.pixelDensity(1);
+        g.background(255);
+        g.loadPixels();
+        for (let y = 0; y < g.height; y++) {
+          for (let x = 0; x < g.width; x++) {
+            const idx = (y * g.width + x) * 4;
+            g.pixels[idx] = (x / g.width) * 255;
+            g.pixels[idx + 1] = (y / g.height) * 255;
+            g.pixels[idx + 2] = 255;
+            g.pixels[idx + 3] = 255;
+          }
+        }
+        g.updatePixels();
+        return g;
+      };
+
+      const p2d = getColors(myp5.P2D);
+      const webgl = getColors(myp5.WEBGL);
+      myp5.image(p2d, 0, 0);
+      myp5.blendMode(myp5.DIFFERENCE);
+      myp5.image(webgl, 0, 0);
+      myp5.loadPixels();
+
+      // There should be no difference, so the result should be all black
+      // at 100% opacity. We add +/- 1 for wiggle room to account for precision
+      // loss.
+      for (let i = 0; i < myp5.pixels.length; i++) {
+        expect(myp5.pixels[i]).to.be.closeTo(i % 4 === 3 ? 255 : 0, 1);
+      }
     });
   });
 
@@ -1210,7 +1270,7 @@ suite('p5.RendererGL', function() {
       renderer.bezierVertex(128, -128, 128, 128, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(128, 128), [255, 129, 129, 255]);
+      assert.deepEqual(myp5.get(128, 127), [255, 129, 129, 255]);
 
       done();
     });
@@ -1231,7 +1291,7 @@ suite('p5.RendererGL', function() {
       renderer.bezierVertex(128, -128, 128, 128, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1250,7 +1310,7 @@ suite('p5.RendererGL', function() {
       renderer.quadraticVertex(256, 0, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(128, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(128, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1271,7 +1331,7 @@ suite('p5.RendererGL', function() {
       renderer.quadraticVertex(256, 0, -128, 128);
       renderer.endShape();
 
-      assert.deepEqual(myp5.get(190, 128), [255, 128, 128, 255]);
+      assert.deepEqual(myp5.get(190, 127), [255, 128, 128, 255]);
 
       done();
     });
@@ -1319,7 +1379,7 @@ suite('p5.RendererGL', function() {
       myp5.model(myGeom);
 
       assert.equal(renderer._useLineColor, true);
-      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      assert.deepEqual(myp5.get(128, 255), [127, 0, 128, 255]);
       done();
     });
 
@@ -1340,7 +1400,7 @@ suite('p5.RendererGL', function() {
       myp5.endShape(myp5.CLOSE);
 
       assert.equal(renderer._useLineColor, true);
-      assert.deepEqual(myp5.get(128, 0), [127, 0, 128, 255]);
+      assert.deepEqual(myp5.get(128, 255), [127, 0, 128, 255]);
       done();
     });
   });
@@ -1503,6 +1563,7 @@ suite('p5.RendererGL', function() {
       });
 
       myp5.fill(255);
+      myp5.noStroke();
       myp5.directionalLight(255, 255, 255, 0, 0, -1);
 
       myp5.triangle(-8, -8, 8, -8, 8, 8);
