@@ -498,7 +498,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.max = function (...args) {
+p5.prototype.max = function(...args) {
   const findMax = arr => {
     let max = -Infinity;
     for (let x of arr) {
@@ -554,7 +554,7 @@ p5.prototype.max = function (...args) {
  * @param  {Number[]} nums Numbers to compare
  * @return {Number}
  */
-p5.prototype.min = function (...args) {
+p5.prototype.min = function(...args) {
   const findMin = arr => {
     let min = Infinity;
     for (let x of arr) {
