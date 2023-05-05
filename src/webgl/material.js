@@ -821,6 +821,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   p5._validateParameters('ambientMaterial', arguments);
 
   const color = p5.prototype.color.apply(this, arguments);
+  this._renderer._hasSetAmbient = true;
   this._renderer.curAmbientColor = color._array;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;

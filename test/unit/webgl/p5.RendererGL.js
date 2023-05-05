@@ -364,6 +364,33 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('materials', function() {
+    test('ambient color defaults to the fill color', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.lights();
+      myp5.fill('red');
+      myp5.sphere(25);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(221);
+      expect(pixel[1]).to.equal(0);
+      expect(pixel[2]).to.equal(0);
+    });
+
+    test('ambient color can be set manually', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.lights();
+      myp5.fill('red');
+      myp5.ambientMaterial(255, 255, 255);
+      myp5.sphere(25);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(221);
+      expect(pixel[1]).to.equal(128);
+      expect(pixel[2]).to.equal(128);
+    });
+  });
+
   suite('loadpixels()', function() {
     test('loadPixels color check', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
