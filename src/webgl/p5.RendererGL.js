@@ -711,6 +711,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   this.drawMode = constants.FILL;
   this._useNormalMaterial = false;
   this._tex = null;
+  this._hasSetAmbient = false;
 };
 
 /**
