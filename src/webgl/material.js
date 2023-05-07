@@ -959,6 +959,38 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
  * }
  * </code>
  * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/rockies128.jpg');
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *   describe('textured torus with specular material');
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   texture(img);
+ *
+ *   ambientLight(60);
+ *
+ *   // add point light to showcase specular material
+ *   let locX = mouseX - width / 2;
+ *   let locY = mouseY - height / 2;
+ *   pointLight(255, 255, 255, locX, locY, 50);
+ *
+ *   specularMaterial(250);
+ *   shininess(50);
+ *   torus(30, 10, 64, 64);
+ * }
+ * </code>
+ * </div>
  * @alt
  * torus with specular material
  */
