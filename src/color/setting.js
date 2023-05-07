@@ -359,6 +359,11 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * and all named color strings are supported. In this case, an alpha number
  * value as a second argument is not supported, the RGBA form should be used.
  *
+ * In webgl, calling this will use the color set by this function when calculating
+ * the ambient term in the lighting process. If instead you want to use your own
+ * set color, you should call this function and then call ambientMaterial() to set it
+ * before drawing.
+ *
  * A <a href="#/p5.Color">p5.Color</a> object can also be provided to set the fill color.
  *
  * @method fill
