@@ -388,6 +388,12 @@ p5.prototype.resetShader = function() {
  * You can view more materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  *
+ * If you call this, the color used when computing the ambient term for lighting
+ * will be the same color as determined by the texture.
+ * If you want to use a different color than the one given by the texture,
+ * you should set it by calling ambientMaterial() after calling this but before
+ * drawing.
+ *
  * @method texture
  * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex  image to use as texture
  * @chainable
@@ -718,8 +724,12 @@ p5.prototype.normalMaterial = function(...args) {
 /**
  * Sets the ambient color of the material.
  *
- * The ambientMaterial() color is the color the object will reflect
- * under **any** lighting.
+ * The color set with ambientMaterial() is multiplied by the color set
+ * with ambientLight() and adding up during lighting calculations.
+ * However, if you call fill() or texture() after calling this,
+ * the colors determined by those will be used instead.
+ * Therefore, when using the colors set here, you must either not use
+ * these functions, or call this function after calling these functions.
  *
  * Consider an ambientMaterial() with the color yellow (255, 255, 0).
  * If the light emits the color white (255, 255, 255), then the object
