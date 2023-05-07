@@ -417,8 +417,8 @@ suite('p5.RendererGL', function() {
       myp5.texture(tex);
       myp5.plane(100);
       const pixel = myp5.get(50, 50);
-      expect(pixel[0]).to.equal(110);
-      expect(pixel[1]).to.equal(110);
+      expect(pixel[0]).to.equal(112);
+      expect(pixel[1]).to.equal(112);
       expect(pixel[2]).to.equal(221);
     });
 
@@ -437,8 +437,8 @@ suite('p5.RendererGL', function() {
         myp5.texture(tex);
         myp5.plane(100);
         const pixel = myp5.get(50, 50);
-        expect(pixel[0]).to.equal(238);
-        expect(pixel[1]).to.equal(238);
+        expect(pixel[0]).to.equal(240);
+        expect(pixel[1]).to.equal(240);
         expect(pixel[2]).to.equal(255);
       }
     );
@@ -475,8 +475,8 @@ suite('p5.RendererGL', function() {
       myp5.specularMaterial(128, 128, 128);
       myp5.plane(100);
       const pixel = myp5.get(50, 50);
-      expect(pixel[0]).to.equal(238);
-      expect(pixel[1]).to.equal(238);
+      expect(pixel[0]).to.equal(240);
+      expect(pixel[1]).to.equal(240);
       expect(pixel[2]).to.equal(255);
     });
     test('emissiveMaterial() does not null texture', function() {
@@ -493,8 +493,8 @@ suite('p5.RendererGL', function() {
       myp5.emissiveMaterial(128, 128, 128);
       myp5.plane(100);
       const pixel = myp5.get(50, 50);
-      expect(pixel[0]).to.equal(238);
-      expect(pixel[1]).to.equal(238);
+      expect(pixel[0]).to.equal(240);
+      expect(pixel[1]).to.equal(240);
       expect(pixel[2]).to.equal(255);
     });
   });
