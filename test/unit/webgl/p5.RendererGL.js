@@ -389,6 +389,114 @@ suite('p5.RendererGL', function() {
       expect(pixel[1]).to.equal(128);
       expect(pixel[2]).to.equal(128);
     });
+
+    test('fill() sets _hasSetAmbient to false', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      myp5.noStroke();
+      myp5.lights();
+      myp5.ambientMaterial(255, 255, 255);
+      myp5.fill(255, 0, 0);
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(221);
+      expect(pixel[1]).to.equal(0);
+      expect(pixel[2]).to.equal(0);
+    });
+
+    test('texture() sets _hasSetAmbient to false', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(256, 256);
+      tex.noStroke();
+      for (let i=0; i<256; i++) {
+        tex.fill(i, i, 255);
+        tex.rect(0, i, 256, 1);
+      }
+      myp5.noStroke();
+      myp5.lights();
+      myp5.ambientMaterial(128, 128, 128);
+      myp5.texture(tex);
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(110);
+      expect(pixel[1]).to.equal(110);
+      expect(pixel[2]).to.equal(221);
+    });
+
+    test('texture() does not set _useSpecularMaterial to false',
+      function() {
+        myp5.createCanvas(100, 100, myp5.WEBGL);
+        const tex = myp5.createGraphics(256, 256);
+        tex.noStroke();
+        for (let i=0; i<256; i++) {
+          tex.fill(i, i, 255);
+          tex.rect(0, i, 256, 1);
+        }
+        myp5.noStroke();
+        myp5.lights();
+        myp5.specularMaterial(128, 128, 128);
+        myp5.texture(tex);
+        myp5.plane(100);
+        const pixel = myp5.get(50, 50);
+        expect(pixel[0]).to.equal(238);
+        expect(pixel[1]).to.equal(238);
+        expect(pixel[2]).to.equal(255);
+      }
+    );
+
+    test('ambientMaterial() does not null texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(256, 256);
+      tex.noStroke();
+      for (let i=0; i<256; i++) {
+        tex.fill(i, i, 255);
+        tex.rect(0, i, 256, 1);
+      }
+      myp5.noStroke();
+      myp5.lights();
+      myp5.texture(tex);
+      myp5.ambientMaterial(128, 128, 128);
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(111);
+      expect(pixel[1]).to.equal(111);
+      expect(pixel[2]).to.equal(158);
+    });
+    test('specularMaterial() does not null texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(256, 256);
+      tex.noStroke();
+      for (let i=0; i<256; i++) {
+        tex.fill(i, i, 255);
+        tex.rect(0, i, 256, 1);
+      }
+      myp5.noStroke();
+      myp5.lights();
+      myp5.texture(tex);
+      myp5.specularMaterial(128, 128, 128);
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(238);
+      expect(pixel[1]).to.equal(238);
+      expect(pixel[2]).to.equal(255);
+    });
+    test('emissiveMaterial() does not null texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(256, 256);
+      tex.noStroke();
+      for (let i=0; i<256; i++) {
+        tex.fill(i, i, 255);
+        tex.rect(0, i, 256, 1);
+      }
+      myp5.noStroke();
+      myp5.lights();
+      myp5.texture(tex);
+      myp5.emissiveMaterial(128, 128, 128);
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      expect(pixel[0]).to.equal(238);
+      expect(pixel[1]).to.equal(238);
+      expect(pixel[2]).to.equal(255);
+    });
   });
 
   suite('loadpixels()', function() {
