@@ -2,6 +2,7 @@
 precision highp float;
 precision highp int;
 
+uniform bool uHasSetAmbient;
 uniform vec4 uSpecularMatColor;
 uniform vec4 uAmbientMatColor;
 uniform vec4 uEmissiveMatColor;
@@ -33,7 +34,9 @@ void main(void) {
     // channels by alpha to convert it to premultiplied alpha.
     : vec4(vColor.rgb * vColor.a, vColor.a);
   gl_FragColor = vec4(diffuse * baseColor.rgb + 
-                    vAmbientColor * uAmbientMatColor.rgb + 
+                    vAmbientColor * (
+                      uHasSetAmbient ? uAmbientMatColor.rgb : baseColor.rgb
+                    ) + 
                     specular * uSpecularMatColor.rgb + 
                     uEmissiveMatColor.rgb, baseColor.a);
 }

@@ -349,7 +349,7 @@ p5.Matrix = class {
  */
   inverseTranspose(matrix) {
     if (this.mat3 === undefined) {
-      console.error('sorry, this function only works with mat3');
+      p5._friendlyError('sorry, this function only works with mat3');
     } else {
     //convert mat4 -> mat3
       this.mat3[0] = matrix.mat4[0];
@@ -718,6 +718,73 @@ p5.Matrix = class {
     this.mat4[15] = 1;
 
     return this;
+  }
+
+  /**
+ * apply a matrix to a vector with x,y,z,w components
+ * get the results in the form of an array
+ * @method multiplyVec4
+ * @param {Number}
+ * @return {Number[]}
+ */
+  multiplyVec4(x, y, z, w) {
+    const result = new Array(4);
+    const m = this.mat4;
+
+    result[0] = m[0] * x + m[4] * y + m[8] * z + m[12] * w;
+    result[1] = m[1] * x + m[5] * y + m[9] * z + m[13] * w;
+    result[2] = m[2] * x + m[6] * y + m[10] * z + m[14] * w;
+    result[3] = m[3] * x + m[7] * y + m[11] * z + m[15] * w;
+
+    return result;
+  }
+
+  /**
+ * Applies a matrix to a vector.
+ * The fourth component is set to 1.
+ * Returns a vector consisting of the first
+ * through third components of the result.
+ *
+ * @method multiplyPoint
+ * @param {p5.Vector}
+ * @return {p5.Vector}
+ */
+  multiplyPoint(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+    return new p5.Vector(array[0], array[1], array[2]);
+  }
+
+  /**
+ * Applies a matrix to a vector.
+ * The fourth component is set to 1.
+ * Returns the result of dividing the 1st to 3rd components
+ * of the result by the 4th component as a vector.
+ *
+ * @method multiplyAndNormalizePoint
+ * @param {p5.Vector}
+ * @return {p5.Vector}
+ */
+  multiplyAndNormalizePoint(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+    array[0] /= array[3];
+    array[1] /= array[3];
+    array[2] /= array[3];
+    return new p5.Vector(array[0], array[1], array[2]);
+  }
+
+  /**
+ * Applies a matrix to a vector.
+ * The fourth component is set to 0.
+ * Returns a vector consisting of the first
+ * through third components of the result.
+ *
+ * @method multiplyDirection
+ * @param {p5.Vector}
+ * @return {p5.Vector}
+ */
+  multiplyDirection(v) {
+    const array = this.multiplyVec4(v.x, v.y, v.z, 0);
+    return new p5.Vector(array[0], array[1], array[2]);
   }
 
   /**

@@ -118,6 +118,22 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   const gl = this.GL;
   const geometry = this.retainedMode.geometry[gId];
 
+  if (this._doFill) {
+    this._useVertexColor = (geometry.model.vertexColors.length > 0);
+    const fillShader = this._getRetainedFillShader();
+    this._setFillUniforms(fillShader);
+    for (const buff of this.retainedMode.buffers.fill) {
+      buff._prepareBuffer(geometry, fillShader);
+    }
+    if (geometry.indexBuffer) {
+      //vertex index buffer
+      this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+    }
+    this._applyColorBlend(this.curFillColor);
+    this._drawElements(gl.TRIANGLES, gId);
+    fillShader.unbindShader();
+  }
+
   if (this._doStroke && geometry.lineVertexCount > 0) {
     const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
     // Prevent strokes from getting removed by culling
@@ -136,21 +152,6 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     strokeShader.unbindShader();
   }
 
-  if (this._doFill) {
-    this._useVertexColor = (geometry.model.vertexColors.length > 0);
-    const fillShader = this._getRetainedFillShader();
-    this._setFillUniforms(fillShader);
-    for (const buff of this.retainedMode.buffers.fill) {
-      buff._prepareBuffer(geometry, fillShader);
-    }
-    if (geometry.indexBuffer) {
-      //vertex index buffer
-      this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
-    }
-    this._applyColorBlend(this.curFillColor);
-    this._drawElements(gl.TRIANGLES, gId);
-    fillShader.unbindShader();
-  }
   return this;
 };
 

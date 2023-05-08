@@ -65,11 +65,6 @@ vec2 lineIntersection(vec2 aPoint, vec2 aDir, vec2 bPoint, vec2 bDir) {
 }
 
 void main() {
-  // using a scale <1 moves the lines towards the camera
-  // in order to prevent popping effects due to half of
-  // the line disappearing behind the geometry faces.
-  vec3 scale = vec3(0.9995);
-
   // Caps have one of either the in or out tangent set to 0
   vCap = (aTangentIn == vec3(0.)) != (aTangentOut == (vec3(0.)))
     ? 1. : 0.;
@@ -84,6 +79,20 @@ void main() {
   vec4 posp = uModelViewMatrix * aPosition;
   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+
+  float facingCamera = pow(
+    // The word space tangent's z value is 0 if it's facing the camera
+    abs(normalize(posqIn-posp).z),
+
+    // Using pow() here to ramp `facingCamera` up from 0 to 1 really quickly
+    // so most lines get scaled and don't get clipped
+    0.25
+  );
+
+  // using a scale <1 moves the lines towards the camera
+  // in order to prevent popping effects due to half of
+  // the line disappearing behind the geometry faces.
+  float scale = mix(1., 0.995, facingCamera);
 
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.

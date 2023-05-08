@@ -170,7 +170,7 @@ p5.prototype.loadModel = function(path) {
     if (failureCallback) {
       failureCallback();
     } else {
-      console.error(
+      p5._friendlyError(
         'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
       );
     }
@@ -624,7 +624,12 @@ p5.prototype.model = function(model) {
   p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-      model._makeTriangleEdges()._edgesToVertices();
+
+      if (model.edges.length === 0) {
+        model._makeTriangleEdges();
+      }
+
+      model._edgesToVertices();
       this._renderer.createBuffers(model.gid, model);
     }
 

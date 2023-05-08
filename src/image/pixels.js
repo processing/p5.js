@@ -510,8 +510,8 @@ p5.prototype.filter = function(operation, value) {
  * @method get
  * @param  {Number}         x x-coordinate of the pixel
  * @param  {Number}         y y-coordinate of the pixel
- * @param  {Number}         w width
- * @param  {Number}         h height
+ * @param  {Number}         w width of the section to be returned
+ * @param  {Number}         h height of the section to be returned
  * @return {p5.Image}       the rectangle <a href="#/p5.Image">p5.Image</a>
  * @example
  * <div>

@@ -139,10 +139,12 @@ p5.RendererGL = class RendererGL extends p5.Renderer  {
     }
     this._isBlending = false;
 
-    this._useSpecularMaterial = false;
-    this._useEmissiveMaterial = false;
-    this._useNormalMaterial = false;
-    this._useShininess = 1;
+
+  this._hasSetAmbient = false;
+  this._useSpecularMaterial = false;
+  this._useEmissiveMaterial = false;
+  this._useNormalMaterial = false;
+  this._useShininess = 1;
 
     this._useLineColor = false;
     this._useVertexColor = false;
@@ -160,81 +162,86 @@ p5.RendererGL = class RendererGL extends p5.Renderer  {
    * model view, projection, & normal
    * matrices
    */
-    this.uMVMatrix = new p5.Matrix();
-    this.uPMatrix = new p5.Matrix();
-    this.uNMatrix = new p5.Matrix('mat3');
 
-    // Current vertex normal
-    this._currentNormal = new p5.Vector(0, 0, 1);
+  this.uMVMatrix = new p5.Matrix();
+  this.uPMatrix = new p5.Matrix();
+  this.uNMatrix = new p5.Matrix('mat3');
 
-    // Camera
-    this._curCamera = new p5.Camera(this);
-    this._curCamera._computeCameraDefaultSettings();
-    this._curCamera._setDefaultCamera();
+  // Current vertex normal
+  this._currentNormal = new p5.Vector(0, 0, 1);
 
-    this._defaultLightShader = undefined;
-    this._defaultImmediateModeShader = undefined;
-    this._defaultNormalShader = undefined;
-    this._defaultColorShader = undefined;
-    this._defaultPointShader = undefined;
+  // Camera
+  this._curCamera = new p5.Camera(this);
+  this._curCamera._computeCameraDefaultSettings();
+  this._curCamera._setDefaultCamera();
 
-    this.userFillShader = undefined;
-    this.userStrokeShader = undefined;
-    this.userPointShader = undefined;
+  // Information about the previous frame's touch object
+  // for executing orbitControl()
+  this.prevTouches = [];
 
-    // Default drawing is done in Retained Mode
-    // Geometry and Material hashes stored here
-    this.retainedMode = {
-      geometry: {},
-      buffers: {
-        stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-        ],
-        fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        text: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ]
-      }
-    };
+  this._defaultLightShader = undefined;
+  this._defaultImmediateModeShader = undefined;
+  this._defaultNormalShader = undefined;
+  this._defaultColorShader = undefined;
+  this._defaultPointShader = undefined;
 
-    // Immediate Mode
-    // Geometry and Material hashes stored here
-    this.immediateMode = {
-      geometry: new p5.Geometry(),
-      shapeMode: constants.TRIANGLE_FAN,
-      _bezierVertex: [],
-      _quadraticVertex: [],
-      _curveVertex: [],
-      buffers: {
-        fill: [
-          new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-          new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-          new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-          new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-          new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-        ],
-        stroke: [
-          new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-          new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-          new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-        ],
-        point: this.GL.createBuffer()
-      }
-    };
+  this.userFillShader = undefined;
+  this.userStrokeShader = undefined;
+  this.userPointShader = undefined;
+
+  // Default drawing is done in Retained Mode
+  // Geometry and Material hashes stored here
+  this.retainedMode = {
+    geometry: {},
+    buffers: {
+      stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+      ],
+      fill: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      text: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ]
+    }
+  };
+
+  // Immediate Mode
+  // Geometry and Material hashes stored here
+  this.immediateMode = {
+    geometry: new p5.Geometry(),
+    shapeMode: constants.TRIANGLE_FAN,
+    _bezierVertex: [],
+    _quadraticVertex: [],
+    _curveVertex: [],
+    buffers: {
+      fill: [
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
+        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
+        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
+        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
+      ],
+      stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+      ],
+      point: this.GL.createBuffer()
+    }
+  };
 
     this.pointSize = 5.0; //default point size
     this.curStrokeWeight = 1;
@@ -578,7 +585,7 @@ p5.prototype.setAttributes = function(key, value) {
   if (!this._setupDone) {
     for (const x in this._renderer.retainedMode.geometry) {
       if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
-        console.error(
+        p5._friendlyError(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
             'before calling the other drawing methods in setup()'
         );
@@ -754,7 +761,7 @@ p5.RendererGL.prototype.filter = function(filterType) {
   // filter can be achieved using custom shaders.
   // https://github.com/aferriss/p5jsShaderExamples
   // https://itp-xstory.github.io/p5js-shaders/#/
-  console.error('filter() does not work in WEBGL mode');
+  p5._friendlyError('filter() does not work in WEBGL mode');
 };
 
 p5.RendererGL.prototype.blendMode = function(mode) {
@@ -854,20 +861,16 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
 p5.RendererGL.prototype._getPixel = function(x, y) {
-  let imageData, index;
-  imageData = new Uint8Array(4);
-  this.drawingContext.readPixels(
-    x, y, 1, 1,
-    this.drawingContext.RGBA, this.drawingContext.UNSIGNED_BYTE,
-    imageData
+  const gl = this.GL;
+  return readPixelWebGL(
+    gl,
+    null,
+    x,
+    y,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    this._pInst.height * this._pInst.pixelDensity()
   );
-  index = 0;
-  return [
-    imageData[index + 0],
-    imageData[index + 1],
-    imageData[index + 2],
-    imageData[index + 3]
-  ];
 };
 
 /**
@@ -890,22 +893,169 @@ p5.RendererGL.prototype.loadPixels = function() {
     return;
   }
 
-  //if there isn't a renderer-level temporary pixels buffer
-  //make a new one
-  let pixels = pixelsState.pixels;
-  const len = this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4;
-  if (!(pixels instanceof Uint8Array) || pixels.length !== len) {
-    pixels = new Uint8Array(len);
-    this._pixelsState._setProperty('pixels', pixels);
-  }
-
   const pd = this._pInst._pixelDensity;
-  this.GL.readPixels(
-    0, 0, this.width * pd, this.height * pd,
-    this.GL.RGBA, this.GL.UNSIGNED_BYTE,
-    pixels
+  const gl = this.GL;
+
+  pixelsState._setProperty(
+    'pixels',
+    readPixelsWebGL(
+      pixelsState.pixels,
+      gl,
+      null,
+      0,
+      0,
+      this.width * pd,
+      this.height * pd,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      this.height * pd
+    )
   );
 };
+
+p5.RendererGL.prototype.updatePixels = function() {
+  const fbo = this._getTempFramebuffer();
+  fbo.pixels = this._pixelsState.pixels;
+  fbo.updatePixels();
+  this._pInst.push();
+  this._pInst.resetMatrix();
+  this._pInst.clear();
+  this._pInst.imageMode(constants.CENTER);
+  this._pInst.image(fbo, 0, 0);
+  this._pInst.pop();
+  this.GL.clearDepth(1);
+  this.GL.clear(this.GL.DEPTH_BUFFER_BIT);
+};
+
+/**
+ * @private
+ * @returns {p5.Framebuffer} A p5.Framebuffer set to match the size and settings
+ * of the renderer's canvas. It will be created if it does not yet exist, and
+ * reused if it does.
+ */
+p5.RendererGL.prototype._getTempFramebuffer = function() {
+  if (!this._tempFramebuffer) {
+    this._tempFramebuffer = this._pInst.createFramebuffer({
+      format: constants.UNSIGNED_BYTE,
+      useDepth: this._pInst._glAttributes.depth,
+      depthFormat: constants.UNSIGNED_INT,
+      antialias: this._pInst._glAttributes.antialias
+    });
+  }
+  return this._tempFramebuffer;
+};
+
+/**
+ * @private
+ * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordiante to read, premultiplied by pixel density
+ * @param {Number} y The y coordiante to read, premultiplied by pixel density
+ * @param {Number} width The width in pixels to be read (factoring in pixel density)
+ * @param {Number} height The height in pixels to be read (factoring in pixel density)
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Uint8Array|Float32Array} pixels A pixels array with the current state of the
+ * WebGL context read into it
+ */
+export function readPixelsWebGL(
+  pixels,
+  gl,
+  framebuffer,
+  x,
+  y,
+  width,
+  height,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+
+  // Make a pixels buffer if it doesn't already exist
+  const len = width * height * channels;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  if (!(pixels instanceof TypedArrayClass) || pixels.length !== len) {
+    pixels = new TypedArrayClass(len);
+  }
+
+  gl.readPixels(
+    x,
+    flipY ? (flipY - y - height) : y,
+    width,
+    height,
+    format,
+    type,
+    pixels
+  );
+
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  if (flipY) {
+    // WebGL pixels are inverted compared to 2D pixels, so we have to flip
+    // the resulting rows. Adapted from https://stackoverflow.com/a/41973289
+    const halfHeight = Math.floor(height / 2);
+    const tmpRow = new TypedArrayClass(width * channels);
+    for (let y = 0; y < halfHeight; y++) {
+      const topOffset = y * width * 4;
+      const bottomOffset = (height - y - 1) * width * 4;
+      tmpRow.set(pixels.subarray(topOffset, topOffset + width * 4));
+      pixels.copyWithin(topOffset, bottomOffset, bottomOffset + width * 4);
+      pixels.set(tmpRow, bottomOffset);
+    }
+  }
+
+  return pixels;
+}
+
+/**
+ * @private
+ * @param {WebGLRenderingContext} gl The WebGL context
+ * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
+ * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
+ * @param {GLEnum} type The datatype of each channel, e.g. UNSIGNED_BYTE or FLOAT
+ * @param {Number|undefined} flipY If provided, the total height with which to flip the y axis about
+ * @returns {Number[]} pixels The channel data for the pixel at that location
+ */
+export function readPixelWebGL(
+  gl,
+  framebuffer,
+  x,
+  y,
+  format,
+  type,
+  flipY
+) {
+  // Record the currently bound framebuffer so we can go back to it after, and
+  // bind the framebuffer we want to read from
+  const prevFramebuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+  const channels = format === gl.RGBA ? 4 : 3;
+  const TypedArrayClass = type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+  const pixels = new TypedArrayClass(channels);
+
+  gl.readPixels(
+    x, flipY ? (flipY - y - 1) : y, 1, 1,
+    format, type,
+    pixels
+  );
+
+  // Re-bind whatever was previously bound
+  gl.bindFramebuffer(gl.FRAMEBUFFER, prevFramebuffer);
+
+  return Array.from(pixels);
+}
 
 //////////////////////////////////////////////
 // HASH | for geometry
@@ -1087,6 +1237,7 @@ p5.RendererGL.prototype.push = function() {
   properties.curSpecularColor = this.curSpecularColor;
   properties.curEmissiveColor = this.curEmissiveColor;
 
+  properties._hasSetAmbient = this._hasSetAmbient;
   properties._useSpecularMaterial = this._useSpecularMaterial;
   properties._useEmissiveMaterial = this._useEmissiveMaterial;
   properties._useShininess = this._useShininess;
@@ -1378,6 +1529,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   }
   fillShader.setUniform('uTint', this._tint);
 
+  fillShader.setUniform('uHasSetAmbient', this._hasSetAmbient);
   fillShader.setUniform('uAmbientMatColor', this.curAmbientColor);
   fillShader.setUniform('uSpecularMatColor', this.curSpecularColor);
   fillShader.setUniform('uEmissiveMatColor', this.curEmissiveColor);

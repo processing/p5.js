@@ -259,7 +259,8 @@ p5.prototype.ortho = function(...args) {
  * <a href="https://p5js.org/reference/#/p5/perspective">perspective()</a>.
  *
  * If no parameters are given, the following default is used:
- * frustum(-width/2, width/2, -height/2, height/2, 0, max(width, height)).
+ * frustum(-width/20, width/20, height/20, -height/20, eyeZ/10, eyeZ*10),
+ * where eyeZ is equal to ((height/2) / tan(PI/6)).
  * @method frustum
  * @for p5
  * @param  {Number} [left]   camera frustum left plane
@@ -891,6 +892,9 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (far === undefined)
     far = Math.max(this._renderer.width, this._renderer.height);
 
+  this.cameraNear = near;
+  this.cameraFar = far;
+
   const w = right - left;
   const h = top - bottom;
   const d = far - near;
@@ -979,13 +983,15 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
 p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
-  if (left === undefined) left = -this._renderer.width / 2;
-  if (right === undefined) right = +this._renderer.width / 2;
-  if (bottom === undefined) bottom = -this._renderer.height / 2;
-  if (top === undefined) top = +this._renderer.height / 2;
-  if (near === undefined) near = 0;
-  if (far === undefined)
-    far = Math.max(this._renderer.width, this._renderer.height);
+  if (left === undefined) left = -this._renderer.width * 0.05;
+  if (right === undefined) right = +this._renderer.width * 0.05;
+  if (bottom === undefined) bottom = +this._renderer.height * 0.05;
+  if (top === undefined) top = -this._renderer.height * 0.05;
+  if (near === undefined) near = this.defaultCameraNear;
+  if (far === undefined) far = this.defaultCameraFar;
+
+  this.cameraNear = near;
+  this.cameraFar = far;
 
   const w = right - left;
   const h = top - bottom;
@@ -1003,7 +1009,7 @@ p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
 
   /* eslint-disable indent */
   this.projMatrix.set(  x,  0,  0,  0,
-                        0,  y,  0,  0,
+                        0,  -y,  0,  0,
                        tx, ty, tz, -1,
                         0,  0,  z,  0);
   /* eslint-enable indent */
@@ -1731,11 +1737,15 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     newUpY *= -1;
   }
 
-  camRadius += dRadius;
+  camRadius *= Math.pow(10, dRadius);
   // prevent zooming through the center:
-  if (camRadius < 0) {
-    camRadius = 0.1;
+  if (camRadius < this.cameraNear) {
+    camRadius = this.cameraNear;
   }
+  if (camRadius > this.cameraFar) {
+    camRadius = this.cameraFar;
+  }
+
   // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
   const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
   const _y = Math.cos(camPhi) * camRadius;

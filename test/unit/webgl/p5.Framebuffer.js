@@ -318,4 +318,138 @@ suite('p5.Framebuffer', function() {
       });
     });
   });
+
+  suite('get()', function() {
+    test('get(x, y) loads a pixel', function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => {
+        myp5.noStroke();
+
+        myp5.push();
+        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.fill('red');
+        myp5.sphere(5);
+        myp5.pop();
+
+        myp5.push();
+        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.fill('blue');
+        myp5.sphere(5);
+        myp5.pop();
+      });
+
+      assert.deepEqual(fbo.get(0, 0), [255, 0, 0, 255]);
+      assert.deepEqual(fbo.get(10, 10), [0, 0, 0, 0]);
+      assert.deepEqual(fbo.get(19, 19), [0, 0, 255, 255]);
+    });
+
+    test('get() creates a p5.Image with equivalent pixels', function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => {
+        myp5.noStroke();
+
+        myp5.push();
+        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.fill('red');
+        myp5.sphere(5);
+        myp5.pop();
+
+        myp5.push();
+        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.fill('blue');
+        myp5.sphere(5);
+        myp5.pop();
+      });
+      const img = fbo.get();
+
+      fbo.loadPixels();
+      img.loadPixels();
+
+      expect(img.width).to.equal(fbo.width);
+      expect(img.height).to.equal(fbo.height);
+      for (let i = 0; i < img.pixels.length; i++) {
+        expect(img.pixels[i]).to.be.closeTo(fbo.pixels[i], 1);
+      }
+    });
+
+    test('get() creates a p5.Image with 1x pixel density', function() {
+      const mainCanvas = myp5.createCanvas(20, 20, myp5.WEBGL);
+      myp5.pixelDensity(2);
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => {
+        myp5.noStroke();
+        myp5.background(255);
+
+        myp5.push();
+        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.fill('red');
+        myp5.sphere(5);
+        myp5.pop();
+
+        myp5.push();
+        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.fill('blue');
+        myp5.sphere(5);
+        myp5.pop();
+      });
+      const img = fbo.get();
+      const p2d = myp5.createGraphics(20, 20);
+      p2d.pixelDensity(1);
+      myp5.image(fbo, -10, -10);
+      p2d.image(mainCanvas, 0, 0);
+
+      fbo.loadPixels();
+      img.loadPixels();
+      p2d.loadPixels();
+
+      expect(img.width).to.equal(fbo.width);
+      expect(img.height).to.equal(fbo.height);
+      expect(img.pixels.length).to.equal(fbo.pixels.length / 4);
+      // The pixels should be approximately the same in the 1x image as when we
+      // draw the framebuffer onto a 1x canvas
+      for (let i = 0; i < img.pixels.length; i++) {
+        expect(img.pixels[i]).to.be.closeTo(p2d.pixels[i], 2);
+      }
+    });
+  });
+
+  test(
+    'loadPixels works in arbitrary order for multiple framebuffers',
+    function() {
+      myp5.createCanvas(20, 20, myp5.WEBGL);
+      const fbo1 = myp5.createFramebuffer();
+      const fbo2 = myp5.createFramebuffer();
+
+      fbo1.loadPixels();
+      fbo2.loadPixels();
+      for (let i = 0; i < fbo1.pixels.length; i += 4) {
+        // Set everything red
+        fbo1.pixels[i] = 255;
+        fbo1.pixels[i + 1] = 0;
+        fbo1.pixels[i + 2] = 0;
+        fbo1.pixels[i + 3] = 255;
+      }
+      for (let i = 0; i < fbo2.pixels.length; i += 4) {
+        // Set everything blue
+        fbo2.pixels[i] = 0;
+        fbo2.pixels[i + 1] = 0;
+        fbo2.pixels[i + 2] = 255;
+        fbo2.pixels[i + 3] = 255;
+      }
+      fbo2.updatePixels();
+      fbo1.updatePixels();
+
+      myp5.imageMode(myp5.CENTER);
+
+      myp5.clear();
+      myp5.image(fbo1, 0, 0);
+      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+
+      myp5.clear();
+      myp5.image(fbo2, 0, 0);
+      assert.deepEqual(myp5.get(0, 0), [0, 0, 255, 255]);
+    }
+  );
 });
