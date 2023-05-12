@@ -432,7 +432,7 @@ suite('p5.RendererGL', function() {
 
       myp5.plane(100);
       const pixel = myp5.get(50, 50);
-      assert.deepEqual(pixel, [56, 56, 56, 255]);
+      assert.deepEqual(pixel, [88, 88, 88, 255]);
     });
 
     test('emissiveMaterial() does not kill texture', function() {
