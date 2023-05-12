@@ -512,8 +512,6 @@ p5.prototype.texture = function(tex) {
   }
 
   this._renderer.drawMode = constants.TEXTURE;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._tex = tex;
   this._renderer._setProperty('_doFill', true);
