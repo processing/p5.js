@@ -147,8 +147,8 @@ p5.prototype.orbitControl = function(
   const moveAccelerationFactor = 0.15;
   // For touches, the appropriate scale is different
   // because the distance difference is multiplied.
-  const mouseZoomScaleFactor = 0.00008;
-  const touchZoomScaleFactor = 0.00032;
+  const mouseZoomScaleFactor = 0.0001;
+  const touchZoomScaleFactor = 0.0004;
   const scaleFactor = this.height < this.width ? this.height : this.width;
 
   // calculate and determine flags and variables.
@@ -166,8 +166,11 @@ p5.prototype.orbitControl = function(
       const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
       const prevDistWithTouches = Math.hypot(t0.px - t1.px, t0.py - t1.py);
       const changeDist = distWithTouches - prevDistWithTouches;
+      // move the camera farther when the distance between the two touch points
+      // decreases, move the camera closer when it increases.
       deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
-
+      // Move the center of the camera along with the movement of
+      // the center of gravity of the two touch points.
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
     }
@@ -177,7 +180,8 @@ p5.prototype.orbitControl = function(
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
     if (this._mouseWheelDeltaY !== 0) {
-      // zoom according to direction of mouseWheelDeltaY rather than value.
+      // zoom the camera depending on the value of _mouseWheelDeltaY.
+      // move away if positive, move closer if negative
       deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
       deltaRadius *= mouseZoomScaleFactor;
       this._mouseWheelDeltaY = 0;
