@@ -512,8 +512,6 @@ p5.prototype.texture = function(tex) {
   }
 
   this._renderer.drawMode = constants.TEXTURE;
-  this._renderer._useSpecularMaterial = false;
-  this._renderer._useEmissiveMaterial = false;
   this._renderer._useNormalMaterial = false;
   this._renderer._tex = tex;
   this._renderer._setProperty('_doFill', true);
@@ -825,7 +823,6 @@ p5.prototype.ambientMaterial = function(v1, v2, v3) {
   this._renderer.curAmbientColor = color._array;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
-  this._renderer._tex = null;
   this._renderer._setProperty('_doFill', true);
   return this;
 };
@@ -897,7 +894,6 @@ p5.prototype.emissiveMaterial = function(v1, v2, v3, a) {
   this._renderer._useEmissiveMaterial = true;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
-  this._renderer._tex = null;
 
   return this;
 };
@@ -984,7 +980,6 @@ p5.prototype.specularMaterial = function(v1, v2, v3, alpha) {
   this._renderer._useSpecularMaterial = true;
   this._renderer._useNormalMaterial = false;
   this._renderer._enableLighting = true;
-  this._renderer._tex = null;
 
   return this;
 };
