@@ -135,13 +135,12 @@ p5.prototype.orbitControl = function(
   // The idea of using damping is based on the following website. thank you.
   // https://github.com/freshfork/p5.EasyCam/blob/9782964680f6a5c4c9bee825c475d9f2021d5134/p5.easycam.js#L1124
 
-  // A flag that determines whether to accelerate
-  let accelerateZoomVelocity = false;
-  let accelerateRotateVelocity = false;
-  let accelerateMoveVelocity = false;
   // variables for interaction
-  let deltaRadius, deltaPhi, deltaTheta;
-  let moveDeltaX, moveDeltaY;
+  let deltaRadius = 0;
+  let deltaTheta = 0;
+  let deltaPhi = 0;
+  let moveDeltaX = 0;
+  let moveDeltaY = 0;
   // constants for dampingProcess
   const damping = 0.85;
   const rotateAccelerationFactor = 0.6;
@@ -158,12 +157,10 @@ p5.prototype.orbitControl = function(
     // if length === 1, rotate
     // if length > 1, zoom and move
     if (movedTouches.length === 1) {
-      accelerateRotateVelocity = true;
       const t = movedTouches[0];
       deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
       deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
     } else {
-      accelerateZoomVelocity = true;
       const t0 = movedTouches[0];
       const t1 = movedTouches[1];
       const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
@@ -171,7 +168,6 @@ p5.prototype.orbitControl = function(
       const changeDist = distWithTouches - prevDistWithTouches;
       deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
 
-      accelerateMoveVelocity = true;
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
     }
@@ -181,7 +177,6 @@ p5.prototype.orbitControl = function(
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
     if (this._mouseWheelDeltaY !== 0) {
-      accelerateZoomVelocity = true;
       // zoom according to direction of mouseWheelDeltaY rather than value.
       deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
       deltaRadius *= mouseZoomScaleFactor;
@@ -189,11 +184,9 @@ p5.prototype.orbitControl = function(
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
-        accelerateRotateVelocity = true;
         deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
         deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
       } else if (this.mouseButton === this.RIGHT) {
-        accelerateMoveVelocity = true;
         moveDeltaX = this.mouseX - this.pmouseX;
         moveDeltaY = this.mouseY - this.pmouseY;
       }
@@ -203,7 +196,7 @@ p5.prototype.orbitControl = function(
   // interactions
 
   // zoom process
-  if (accelerateZoomVelocity) {
+  if (deltaRadius !== 0) {
     // accelerate zoom velocity
     this._renderer.zoomVelocity += deltaRadius;
   }
@@ -227,7 +220,7 @@ p5.prototype.orbitControl = function(
   }
 
   // rotate process
-  if (accelerateRotateVelocity) {
+  if (deltaTheta !== 0 || deltaPhi !== 0) {
     // accelerate rotate velocity
     this._renderer.rotateVelocity.add(
       deltaTheta * rotateAccelerationFactor,
@@ -248,7 +241,7 @@ p5.prototype.orbitControl = function(
   }
 
   // move process
-  if (accelerateMoveVelocity) {
+  if (moveDeltaX !== 0 || moveDeltaY !== 0) {
     // Normalize movement distance
     const ndcX = moveDeltaX * 2/this.width;
     const ndcY = -moveDeltaY * 2/this.height;
