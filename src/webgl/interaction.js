@@ -133,7 +133,7 @@ p5.prototype.orbitControl = function(
   this._renderer.prevTouches = this.touches;
 
   // The idea of using damping is based on the following website. thank you.
-  // https://github.com/freshfork/p5.EasyCam/blob/master/p5.easycam.js
+  // https://github.com/freshfork/p5.EasyCam/blob/9782964680f6a5c4c9bee825c475d9f2021d5134/p5.easycam.js#L1124
 
   // A flag that determines whether to accelerate
   let accelerateZoomVelocity = false;
