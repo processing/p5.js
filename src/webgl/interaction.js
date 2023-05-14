@@ -183,7 +183,8 @@ p5.prototype.orbitControl = function(
     if (this._mouseWheelDeltaY !== 0) {
       accelerateZoomVelocity = true;
       // zoom according to direction of mouseWheelDeltaY rather than value.
-      deltaRadius = this._mouseWheelDeltaY * sensitivityZ * mouseZoomScaleFactor;
+      deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
+      deltaRadius *= mouseZoomScaleFactor;
       this._mouseWheelDeltaY = 0;
     }
     if (this.mouseIsPressed) {
