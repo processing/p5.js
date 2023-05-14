@@ -175,6 +175,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // Information about the previous frame's touch object
   // for executing orbitControl()
   this.prevTouches = [];
+  // Velocity variable for use with orbitControl()
+  this.zoomVelocity = 0;
+  this.rotateVelocity = new p5.Vector(0, 0);
+  this.moveVelocity = new p5.Vector(0, 0);
 
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;
