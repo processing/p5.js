@@ -61,6 +61,29 @@ import '../core/friendly_errors/fes_core';
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * // JSON file containing a list of files to load
+ * // ["assets/laDefense.jpg", "assets/rockies.jpg"]
+ * // In this case we use a callback, so once the JSON file is loaded, it will load the images.
+ * let imageList = [];
+ * function preload() {
+ *   loadJSON('assets/images.json', jsonData => {
+ *     for (let filename of jsonData) {
+ *       imageList.push(loadImage(filename));
+ *     }
+ *   }) ;
+ * }
+ *
+ * function setup() {
+ *   let x = 0;
+ *   for (let img of imageList) {
+ *      image(img, x, 0);
+ *      x += img.width;
+ *   }
+ * }
+ * </code>
+ * </div>
  *
  * @alt
  * image of the underside of a white umbrella and grided ceililng above
