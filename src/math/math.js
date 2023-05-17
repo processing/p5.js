@@ -39,6 +39,7 @@ p5.prototype.createVector = function(x, y, z) {
     return new p5.Vector(
       this._fromRadians.bind(this),
       this._toRadians.bind(this),
+      this.random.bind(this),
       ...arguments
     );
   } else {
