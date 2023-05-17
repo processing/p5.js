@@ -1913,7 +1913,7 @@ p5.Vector = class {
  */
   setRandom2D() {
     const rdmForAngle = (this.isPInst ? this._random() : Math.random());
-    const angle = rdmForAngle * TWO_PI;
+    const angle = rdmForAngle * constants.TWO_PI;
     this.x = Math.cos(angle);
     this.y = Math.sin(angle);
     this.z = 0;
@@ -1959,7 +1959,7 @@ p5.Vector = class {
   setRandom3D(){
     const rdmForAngle = (this.isPInst ? this._random() : Math.random());
     const rdmForZ = (this.isPInst ? this._random() : Math.random());
-    const angle = rdmForAngle * TWO_PI;
+    const angle = rdmForAngle * constants.TWO_PI;
     this.z = rdmForZ * 2 - 1;
     const vzBase = Math.sqrt(1 - this.z * this.z);
     this.x = vzBase * Math.cos(angle);
