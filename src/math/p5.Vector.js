@@ -1896,7 +1896,7 @@ p5.Vector = class {
  * <code>
  * function setup(){
  *   noStroke();
- *   fill("red");
+ *   fill('red');
  * }
  * function draw(){
  *   randomSeed(999);
@@ -1904,7 +1904,7 @@ p5.Vector = class {
  *   const v = createVector();
  *   const f = frameCount * TAU / 240;
  *   for (let i = 0; i < 100; i++) {
- *     v.setRandom2D().mult(30 + 10 * sin(i + f)).add(50, 50));
+ *     v.setRandom2D().mult(30 + 10 * sin(i + f)).add(50, 50);
  *     circle(v.x, v.y, 3);
  *   }
  * }
@@ -1935,19 +1935,19 @@ p5.Vector = class {
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();
- *   fill("red");
+ *   fill('red');
  * }
  * function draw(){
  *   orbitControl();
  *   randomSeed(999);
  *   background(0);
  *   lights();
- *   ambientMaterial("red");
+ *   ambientMaterial('red');
  *   specularMaterial(64);
  *   const v = createVector();
  *   const f = frameCount * TAU / 240;
  *   for(let i = 0; i < 100; i++){
- *     v.setRandom3D().mult(30 + 10 * sin(i + f))
+ *     v.setRandom3D().mult(30 + 10 * sin(i + f));
  *     translate(v.x, v.y, v.z);
  *     sphere(3);
  *     translate(-v.x, -v.y, -v.z);
