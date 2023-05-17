@@ -80,9 +80,10 @@ p5.Vector = class {
       this.isPInst = true;
       this._fromRadians = args[0];
       this._toRadians = args[1];
-      x = args[2] || 0;
-      y = args[3] || 0;
-      z = args[4] || 0;
+      this._random = args[2];
+      x = args[3] || 0;
+      y = args[4] || 0;
+      z = args[5] || 0;
       // This is what we'll get with new p5.Vector()
     } else {
       x = args[0] || 0;
@@ -259,6 +260,7 @@ p5.Vector = class {
       return new p5.Vector(
         this._fromRadians,
         this._toRadians,
+        this._random,
         this.x,
         this.y,
         this.z
@@ -1141,11 +1143,9 @@ p5.Vector = class {
     const x = this.y * v.z - this.z * v.y;
     const y = this.z * v.x - this.x * v.z;
     const z = this.x * v.y - this.y * v.x;
-    if (this.isPInst) {
-      return new p5.Vector(this._fromRadians, this._toRadians, x, y, z);
-    } else {
-      return new p5.Vector(x, y, z);
-    }
+    const result = this.copy();
+    result.set(x, y, z);
+    return result;
   }
 
   /**
