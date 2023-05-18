@@ -2119,7 +2119,7 @@ p5.Vector = class {
  * </div>
  */
   static random2D() {
-    return this.fromAngle(Math.random() * constants.TWO_PI);
+    return new p5.Vector().setRandom2D();
   }
 
   /**
@@ -2141,12 +2141,7 @@ p5.Vector = class {
  * </div>
  */
   static random3D() {
-    const angle = Math.random() * constants.TWO_PI;
-    const vz = Math.random() * 2 - 1;
-    const vzBase = Math.sqrt(1 - vz * vz);
-    const vx = vzBase * Math.cos(angle);
-    const vy = vzBase * Math.sin(angle);
-    return new p5.Vector(vx, vy, vz);
+    return new p5.Vector().setRandom3D();
   }
 
   // Returns a copy of a vector.
