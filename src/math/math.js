@@ -13,12 +13,36 @@ import p5 from '../core/main';
  * geometric) vector. A vector is an entity that has both magnitude and
  * direction.
  *
+ * Vectors created with createVector() are slightly different than vectors created with new p5.Vector(),
+ * as they have references to some p5.js functions.
+ * When using <a href="#/p5.Vector/rotate">rotate()</a> and <a href="#/p5.Vector/setHeading">setHeading()</a>,
+ * the method of specifying arguments differs depending on the angleMode.
+ * Must be in the range 0-360 if DEGREES is specified.
+ * Also, the results of <a href="#/p5.Vector/heading">heading()</a> and <a href="#/p5.Vector/angleBetween">angleBetween()</a>
+ * return values in the range 0 to 360 when DEGREES is specified for angleMode.
+ * For vectors created in the form new p5.Vector() , both the value specification and return range are always in radians.
+ * It is not affected by angleMode().
+ *
  * @method createVector
  * @param {Number} [x] x component of the vector
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector
  * @return {p5.Vector}
  * @example
+ * <div class = "norender">
+ * <code>
+ * function setup() {
+ *   angleMode(DEGREES);
+ *
+ *   const v1 = createVector(1, 1);
+ *   print(v1.heading()); // 45
+ *
+ *   const v2 = new p5.Vector(1, 1);
+ *   print(v2.heading()); // 0.7853981633974483
+ * }
+ * </code>
+ * </div>
+ *
  * <div><code>
  * let v1;
  * function setup() {
