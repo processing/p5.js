@@ -115,11 +115,11 @@ p5.prototype.orbitControl = function(
 
   // get moved touches.
   const movedTouches = [];
-  for(let i = 0; i < this.touches.length; i++){
+  for (let i = 0; i < this.touches.length; i++) {
     const curTouch = this.touches[i];
-    for(let k=0; k < this._renderer.prevTouches.length; k++){
+    for (let k = 0; k < this._renderer.prevTouches.length; k++) {
       const prevTouch = this._renderer.prevTouches[k];
-      if(curTouch.id === prevTouch.id){
+      if (curTouch.id === prevTouch.id) {
         const movedTouch = {
           x: curTouch.x,
           y: curTouch.y,
