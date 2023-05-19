@@ -437,7 +437,19 @@ p5.prototype.webglVersion = C.P2D;
  * @readOnly
  * @example
  * <div class="norender"><code>
- * createCanvas(displayWidth, displayHeight);
+ * function setup() {
+  // Create a canvas with your screen width
+  createCanvas(displayWidth, 400);
+  background(220);
+  // Print the value of displayWidth in console
+  print(displayWidth);
+}
+function draw() {
+  // Apply a quarter of displayWidth on the rectangle's width
+  rect(150, 150, displayWidth/4, 100);
+  // Print it
+  print(displayWidth/4);
+}
  * </code></div>
  *
  * @alt
@@ -455,7 +467,19 @@ p5.prototype.displayWidth = screen.width;
  * @readOnly
  * @example
  * <div class="norender"><code>
- * createCanvas(displayWidth, displayHeight);
+ *function setup() {
+  // Create a canvas with your screen height
+  createCanvas(400, displayHeight);
+  background(220);
+  // Print your displayHeight in the console
+  print(displayHeight);
+}
+function draw() {
+  // Create a rectangle with a quarter of your screen width
+  rect(150, 150, 100, displayHeight/4);
+  // Print it
+  print(displayHeight/4);
+}
  * </code></div>
  *
  * @alt
