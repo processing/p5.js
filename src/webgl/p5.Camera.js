@@ -1735,11 +1735,8 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   const vertical = new p5.Vector.cross(side, up).normalize(); // z-axis
   // calculate camPhi (Rise angle when up is regarded as 0)
   let camPhi = Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up))));
-  // calculate camTheta (The amount of rotation in the direction of side when vertical is 0)
-  let camTheta = Math.atan2(
-    p5.Vector.dot(front, side),
-    p5.Vector.dot(front, vertical)
-  );
+  // camTheta is 0.
+  let camTheta = 0;
 
   // update camRadius
   camRadius *= Math.pow(10, dRadius);
