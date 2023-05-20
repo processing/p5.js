@@ -1753,27 +1753,28 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   camPhi += dPhi;
 
   // update eye vector
-  front.x = up.x * Math.cos(camPhi);
-  front.y = up.y * Math.cos(camPhi);
-  front.z = up.z * Math.cos(camPhi);
+  up.mult(Math.cos(camPhi));
   vertical.mult(Math.cos(camTheta) * Math.sin(camPhi));
-  front.add(vertical);
   side.mult(Math.sin(camTheta) * Math.sin(camPhi));
-  front.add(side);
+
+  front.set(up).add(vertical).add(side);
+
   this.eyeX = camRadius * front.x + this.centerX;
   this.eyeY = camRadius * front.y + this.centerY;
   this.eyeZ = camRadius * front.z + this.centerZ;
 
   // update up vector
   if(camPhi <= 0 || camPhi >= Math.PI){
-    up.mult(-1);
+    this.upX *= -1;
+    this.upY *= -1;
+    this.upZ *= -1;
   }
 
   // update camera
   this.camera(
     this.eyeX, this.eyeY, this.eyeZ,
     this.centerX, this.centerY, this.centerZ,
-    up.x, up.y, up.z
+    this.upX, this.upY, this.upZ
   );
 };
 
