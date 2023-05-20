@@ -1719,7 +1719,7 @@ p5.Camera.prototype._getLocalAxes = function() {
  * @param {Number} dPhi change in spherical coordinate phi
  * @param {Number} dRadius change in radius
  */
-p5.Camera.prototype._orbit = function (dTheta, dPhi, dRadius) {
+p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   // Calculate the vector and its magnitude from the center to the viewpoint
   const diffX = this.eyeX - this.centerX;
   const diffY = this.eyeY - this.centerY;
