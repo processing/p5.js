@@ -464,10 +464,9 @@ suite('p5.Camera', function() {
     });
     test('up vector of an arbitrary direction reverses by _orbit(0,PI,0)', function() {
       myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
-      const L = Math.sqrt(1*1 + 2*2 + 3*3);
-      const prevUpX = myCam.upX / L;
-      const prevUpY = myCam.upY / L;
-      const prevUpZ = myCam.upZ / L;
+      const prevUpX = myCam.upX;
+      const prevUpY = myCam.upY;
+      const prevUpZ = myCam.upZ;
       myCam._orbit(0, Math.PI, 0);
       const currUpX = myCam.upX;
       const currUpY = myCam.upY;
