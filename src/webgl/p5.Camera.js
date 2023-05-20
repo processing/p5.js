@@ -1639,6 +1639,9 @@ p5.Camera.prototype.copy = function() {
   _cam.centerX = this.centerX;
   _cam.centerY = this.centerY;
   _cam.centerZ = this.centerZ;
+  _cam.upX = this.upX;
+  _cam.upY = this.upY;
+  _cam.upZ = this.upZ;
   _cam.cameraNear = this.cameraNear;
   _cam.cameraFar = this.cameraFar;
 
