@@ -16,7 +16,7 @@ p5.Renderer2D = function (elt, pInst, isMainCanvas) {
   this.drawingContext = this.canvas.getContext('2d');
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
-}
+};
 
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 

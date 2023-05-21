@@ -282,7 +282,7 @@ p5.RendererGL = function (elt, pInst, isMainCanvas, attr) {
   this._curShader = undefined;
 
   return this;
-}
+};
 
 p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 

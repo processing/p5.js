@@ -57,7 +57,7 @@ p5.Renderer = function (elt, pInst, isMainCanvas) {
   this._strokeSet = false;
   this._fillSet = false;
   this._leadingSet = false;
-}
+};
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
