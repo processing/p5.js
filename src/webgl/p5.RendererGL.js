@@ -162,63 +162,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * model view, projection, & normal
    * matrices
    */
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix('mat3');
-
-  // Current vertex normal
-  this._currentNormal = new p5.Vector(0, 0, 1);
-
-  // Camera
-  this._curCamera = new p5.Camera(this);
-  this._curCamera._computeCameraDefaultSettings();
-  this._curCamera._setDefaultCamera();
-
-  // Information about the previous frame's touch object
-  // for executing orbitControl()
-  this.prevTouches = [];
-  // Velocity variable for use with orbitControl()
-  this.zoomVelocity = 0;
-  this.rotateVelocity = new p5.Vector(0, 0);
-  this.moveVelocity = new p5.Vector(0, 0);
-
-  this._defaultLightShader = undefined;
-  this._defaultImmediateModeShader = undefined;
-  this._defaultNormalShader = undefined;
-  this._defaultColorShader = undefined;
-  this._defaultPointShader = undefined;
-
-  this.userFillShader = undefined;
-  this.userStrokeShader = undefined;
-  this.userPointShader = undefined;
-
-  // Default drawing is done in Retained Mode
-  // Geometry and Material hashes stored here
-  this.retainedMode = {
-    geometry: {},
-    buffers: {
-      stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-      ],
-      fill: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
-        new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
-        new p5.RenderBuffer(4, 'vertexColors', 'colorBuffer', 'aVertexColor', this),
-        new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
-        //new BufferDef(3, 'vertexSpeculars', 'specularBuffer', 'aSpecularColor'),
-        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-      ],
-      text: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
-        new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
-      ]
-    }
-  };
-
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix = new p5.Matrix();
     this.uNMatrix = new p5.Matrix('mat3');
@@ -234,6 +177,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Information about the previous frame's touch object
     // for executing orbitControl()
     this.prevTouches = [];
+    // Velocity variable for use with orbitControl()
+    this.zoomVelocity = 0;
+    this.rotateVelocity = new p5.Vector(0, 0);
+    this.moveVelocity = new p5.Vector(0, 0);
 
     this._defaultLightShader = undefined;
     this._defaultImmediateModeShader = undefined;
