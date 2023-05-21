@@ -1892,22 +1892,18 @@ p5.Vector = class {
  * @chainable
  *
  * @example
- * <div>
+ * <div class="norender">
  * <code>
- * function setup(){
- *   noStroke();
- *   fill('red');
- * }
- * function draw(){
- *   randomSeed(999);
- *   background(0);
- *   const v = createVector();
- *   const f = frameCount * TAU / 240;
- *   for (let i = 0; i < 100; i++) {
- *     v.setRandom2D().mult(30 + 10 * sin(i + f)).add(50, 50);
- *     circle(v.x, v.y, 3);
- *   }
- * }
+ * randomSeed(999);
+ * const v1 = new p5.Vector().setRandom2D();
+ * const v2 = createVector().setRandom2D();
+ * randomSeed(999);
+ * const v3 = new p5.Vector().setRandom2D();
+ * const v4 = createVector().setRandom2D();
+ *
+ * console.log(v1.mag()); // 1.
+ * console.log(v1.x === v3.x && v1.y === v3.y); // almost always false.
+ * console.log(v2.x === v4.x && v2.y === v4.y); // always true.
  * </code>
  * </div>
  */
@@ -1930,29 +1926,18 @@ p5.Vector = class {
  * @chainable
  *
  * @example
- * <div>
+ * <div class="norender">
  * <code>
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- *   noStroke();
- *   fill('red');
- * }
- * function draw(){
- *   orbitControl();
- *   randomSeed(999);
- *   background(0);
- *   lights();
- *   ambientMaterial('red');
- *   specularMaterial(64);
- *   const v = createVector();
- *   const f = frameCount * TAU / 240;
- *   for (let i = 0; i < 100; i++) {
- *     v.setRandom3D().mult(30 + 10 * sin(i + f));
- *     translate(v.x, v.y, v.z);
- *     sphere(3);
- *     translate(-v.x, -v.y, -v.z);
- *   }
- * }
+ * randomSeed(999);
+ * const v1 = new p5.Vector().setRandom3D();
+ * const v2 = createVector().setRandom3D();
+ * randomSeed(999);
+ * const v3 = new p5.Vector().setRandom3D();
+ * const v4 = createVector().setRandom3D();
+ *
+ * console.log(v1.mag()); // 1.
+ * console.log(v1.x === v3.x && v1.y === v3.y && v1.z === v3.z); // almost always false.
+ * console.log(v2.x === v4.x && v2.y === v4.y && v2.z === v4.z); // always true.
  * </code>
  * </div>
  */
