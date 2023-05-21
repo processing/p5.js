@@ -132,18 +132,23 @@ p5.prototype.orbitControl = function(
   }
   this._renderer.prevTouches = this.touches;
 
-  // flags for interaction
-  let executeZoomProcess = false;
-  let executeRotateProcess = false;
-  let executeMoveProcess = false;
-  // variables for interaction
-  let deltaRadius, deltaPhi, deltaTheta;
-  let moveDeltaX, moveDeltaY;
+  // The idea of using damping is based on the following website. thank you.
+  // https://github.com/freshfork/p5.EasyCam/blob/9782964680f6a5c4c9bee825c475d9f2021d5134/p5.easycam.js#L1124
 
+  // variables for interaction
+  let deltaRadius = 0;
+  let deltaTheta = 0;
+  let deltaPhi = 0;
+  let moveDeltaX = 0;
+  let moveDeltaY = 0;
+  // constants for dampingProcess
+  const damping = 0.85;
+  const rotateAccelerationFactor = 0.6;
+  const moveAccelerationFactor = 0.15;
   // For touches, the appropriate scale is different
   // because the distance difference is multiplied.
-  const mouseZoomScaleFactor = 0.02;
-  const touchZoomScaleFactor = 0.0008;
+  const mouseZoomScaleFactor = 0.0001;
+  const touchZoomScaleFactor = 0.0004;
   const scaleFactor = this.height < this.width ? this.height : this.width;
 
   // calculate and determine flags and variables.
@@ -152,20 +157,20 @@ p5.prototype.orbitControl = function(
     // if length === 1, rotate
     // if length > 1, zoom and move
     if (movedTouches.length === 1) {
-      executeRotateProcess = true;
       const t = movedTouches[0];
       deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
       deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
     } else {
-      executeZoomProcess = true;
       const t0 = movedTouches[0];
       const t1 = movedTouches[1];
       const distWithTouches = Math.hypot(t0.x - t1.x, t0.y - t1.y);
       const prevDistWithTouches = Math.hypot(t0.px - t1.px, t0.py - t1.py);
       const changeDist = distWithTouches - prevDistWithTouches;
+      // move the camera farther when the distance between the two touch points
+      // decreases, move the camera closer when it increases.
       deltaRadius = -changeDist * sensitivityZ * touchZoomScaleFactor;
-
-      executeMoveProcess = true;
+      // Move the center of the camera along with the movement of
+      // the center of gravity of the two touch points.
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
     }
@@ -175,19 +180,17 @@ p5.prototype.orbitControl = function(
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
     if (this._mouseWheelDeltaY !== 0) {
-      executeZoomProcess = true;
-      // zoom according to direction of mouseWheelDeltaY rather than value.
-      const mouseWheelSign = (this._mouseWheelDeltaY > 0 ? 1 : -1);
-      deltaRadius = mouseWheelSign * sensitivityZ * mouseZoomScaleFactor;
+      // zoom the camera depending on the value of _mouseWheelDeltaY.
+      // move away if positive, move closer if negative
+      deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
+      deltaRadius *= mouseZoomScaleFactor;
       this._mouseWheelDeltaY = 0;
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
-        executeRotateProcess = true;
         deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
         deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
       } else if (this.mouseButton === this.RIGHT) {
-        executeMoveProcess = true;
         moveDeltaX = this.mouseX - this.pmouseX;
         moveDeltaY = this.mouseY - this.pmouseY;
       }
@@ -195,23 +198,64 @@ p5.prototype.orbitControl = function(
   }
 
   // interactions
-  // zoom
-  if (executeZoomProcess) {
-    this._renderer._curCamera._orbit(0, 0, deltaRadius);
+
+  // zoom process
+  if (deltaRadius !== 0) {
+    // accelerate zoom velocity
+    this._renderer.zoomVelocity += deltaRadius;
+  }
+  if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
+    this._renderer._curCamera._orbit(0, 0, this._renderer.zoomVelocity);
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
     // needs to be modified.
     if (this._renderer.uPMatrix.mat4[15] !== 0) {
-      this._renderer.uPMatrix.mat4[0] *= Math.pow(10, -deltaRadius);
-      this._renderer.uPMatrix.mat4[5] *= Math.pow(10, -deltaRadius);
+      this._renderer.uPMatrix.mat4[0] *= Math.pow(
+        10, -this._renderer.zoomVelocity
+      );
+      this._renderer.uPMatrix.mat4[5] *= Math.pow(
+        10, -this._renderer.zoomVelocity
+      );
     }
+    // damping
+    this._renderer.zoomVelocity *= damping;
+  } else {
+    this._renderer.zoomVelocity = 0;
   }
-  // rotate
-  if (executeRotateProcess) {
-    this._renderer._curCamera._orbit(deltaTheta, deltaPhi, 0);
+
+  // rotate process
+  if (deltaTheta !== 0 || deltaPhi !== 0) {
+    // accelerate rotate velocity
+    this._renderer.rotateVelocity.add(
+      deltaTheta * rotateAccelerationFactor,
+      deltaPhi * rotateAccelerationFactor,
+      0
+    );
   }
-  // move
-  if (executeMoveProcess) {
+  if (this._renderer.rotateVelocity.mag() > 0.001) {
+    this._renderer._curCamera._orbit(
+      this._renderer.rotateVelocity.x,
+      this._renderer.rotateVelocity.y,
+      0
+    );
+    // damping
+    this._renderer.rotateVelocity.mult(damping);
+  } else {
+    this._renderer.rotateVelocity.set(0, 0);
+  }
+
+  // move process
+  if (moveDeltaX !== 0 || moveDeltaY !== 0) {
+    // Normalize movement distance
+    const ndcX = moveDeltaX * 2/this.width;
+    const ndcY = -moveDeltaY * 2/this.height;
+    // accelerate move velocity
+    this._renderer.moveVelocity.add(
+      ndcX * moveAccelerationFactor,
+      ndcY * moveAccelerationFactor
+    );
+  }
+  if (this._renderer.moveVelocity.mag() > 0.001) {
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
@@ -231,14 +275,10 @@ p5.prototype.orbitControl = function(
     cv = cam.cameraMatrix.multiplyPoint(cv);
     cv = this._renderer.uPMatrix.multiplyAndNormalizePoint(cv);
 
-    // Normalize movement distance
-    const ndcX = moveDeltaX * 2/this.width;
-    const ndcY = -moveDeltaY * 2/this.height;
-
     // Move the center by this distance
     // in the normalized device coordinate system.
-    cv.x -= ndcX;
-    cv.y -= ndcY;
+    cv.x -= this._renderer.moveVelocity.x;
+    cv.y -= this._renderer.moveVelocity.y;
 
     // Calculate the translation vector
     // in the direction perpendicular to the line of sight of center.
@@ -259,10 +299,15 @@ p5.prototype.orbitControl = function(
       cam.eyeY + dx * local.x[1] + dy * local.y[1],
       cam.eyeZ + dx * local.x[2] + dy * local.y[2]
     );
+    // damping
+    this._renderer.moveVelocity.mult(damping);
+  } else {
+    this._renderer.moveVelocity.set(0, 0);
   }
 
   return this;
 };
+
 
 /**
  * debugMode() helps visualize 3D space by adding a grid to indicate where the

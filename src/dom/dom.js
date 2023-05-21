@@ -629,6 +629,8 @@ p5.prototype.createCheckbox = function() {
  * - `.selected(value)` can be used to make given option selected by default when the page first loads.
  * - `.disable()` marks the whole dropdown element as disabled.
  * - `.disable(value)` marks a given option as disabled.
+ * - `.enable()` marks the whole dropdown element as enabled if whole dropdown element is disabled intially.
+ * - `.enable(value)` marks a given option as enable if the initial option is disabled.
  *
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
@@ -668,6 +670,24 @@ p5.prototype.createCheckbox = function() {
  *   sel.option('milk');
  *   sel.option('bread');
  *   sel.disable('milk');
+ * }
+ * </code></div>
+ * <div><code>
+ * let sel;
+ *
+ * function setup() {
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('oil');
+ *   sel.option('milk');
+ *   sel.option('bread');
+ *   // disable milk and oil
+ *   sel.disable('milk');
+ *   sel.disable('oil');
+ *   // enable milk again
+ *   sel.enable('milk');
  * }
  * </code></div>
  */
@@ -761,6 +781,24 @@ p5.prototype.createSelect = function() {
       }
     } else {
       this.elt.disabled = true;
+    }
+    return this;
+  };
+
+  self.enable = function(value) {
+    if (typeof value === 'string') {
+      for (let i = 0; i < this.elt.length; i++) {
+        if (this.elt[i].value.toString() === value) {
+          this.elt[i].disabled = false;
+          this.elt[i].selected = false;
+        }
+      }
+    } else {
+      this.elt.disabled = false;
+      for (let i = 0; i < this.elt.length; i++) {
+        this.elt[i].disabled = false;
+        this.elt[i].selected = false;
+      }
     }
     return this;
   };

@@ -389,6 +389,66 @@ suite('p5.RendererGL', function() {
       expect(pixel[1]).to.equal(128);
       expect(pixel[2]).to.equal(128);
     });
+
+    test('specular is not lost by texture()', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(100, 100);
+      tex.background(64);
+      myp5.noStroke();
+      myp5.lights();
+
+      myp5.specularMaterial(128);
+      myp5.texture(tex);
+
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      assert.deepEqual(pixel, [184, 184, 184, 255]);
+    });
+
+    test('specularMaterial() does not kill texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(100, 100);
+      tex.background(64);
+      myp5.noStroke();
+      myp5.lights();
+
+      myp5.texture(tex);
+      myp5.specularMaterial(128);
+
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      assert.deepEqual(pixel, [184, 184, 184, 255]);
+    });
+
+    test('ambientMaterial() does not kill texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(100, 100);
+      tex.background(64);
+      myp5.noStroke();
+      myp5.lights();
+
+      myp5.texture(tex);
+      myp5.ambientMaterial(128);
+
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      assert.deepEqual(pixel, [88, 88, 88, 255]);
+    });
+
+    test('emissiveMaterial() does not kill texture', function() {
+      myp5.createCanvas(100, 100, myp5.WEBGL);
+      const tex = myp5.createGraphics(100, 100);
+      tex.background(64);
+      myp5.noStroke();
+      myp5.lights();
+
+      myp5.texture(tex);
+      myp5.emissiveMaterial(128);
+
+      myp5.plane(100);
+      const pixel = myp5.get(50, 50);
+      assert.deepEqual(pixel, [184, 184, 184, 255]);
+    });
   });
 
   suite('loadpixels()', function() {
