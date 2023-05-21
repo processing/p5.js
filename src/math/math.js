@@ -15,13 +15,10 @@ import p5 from '../core/main';
  *
  * Vectors created with createVector() are slightly different than vectors created with new p5.Vector(),
  * as they have references to some p5.js functions.
- * When using <a href="#/p5.Vector/rotate">rotate()</a> and <a href="#/p5.Vector/setHeading">setHeading()</a>,
- * the method of specifying arguments differs depending on the angleMode.
- * Must be in the range 0-360 if DEGREES is specified.
- * Also, the results of <a href="#/p5.Vector/heading">heading()</a> and <a href="#/p5.Vector/angleBetween">angleBetween()</a>
- * return values in the range 0 to 360 when DEGREES is specified for angleMode.
- * For vectors created in the form new p5.Vector() , both the value specification and return range are always in radians.
- * It is not affected by angleMode().
+ * For example, as for the results of <a href="#/p5.Vector/heading">heading()</a>,
+ * vectors created in the form of createVector() return value in the range 0 to 360
+ * when DEGREES is specified for angleMode, but vectors created in the form new p5.Vector()
+ * return value always in radians. It is not affected by angleMode().
  *
  * @method createVector
  * @param {Number} [x] x component of the vector
