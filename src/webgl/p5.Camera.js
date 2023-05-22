@@ -1727,16 +1727,12 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   let camRadius = Math.hypot(diffX, diffY, diffZ);
   // front vector. unit vector from center to eye.
   const front = new p5.Vector(diffX, diffY, diffZ).normalize();
-  // up vector. normalized camera's unit vector.
+  // up vector. normalized camera's up vector.
   const up = new p5.Vector(this.upX, this.upY, this.upZ).normalize(); // y-axis
   // side vector. Right when viewed from the front
   const side = new p5.Vector.cross(up, front).normalize(); // x-axis
-  // verticalVector. projection of front vector.
-  const vertical = new p5.Vector.cross(side, up).normalize(); // z-axis
-  // calculate camPhi (Rise angle when up is regarded as 0)
-  let camPhi = Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up))));
-  // camTheta is 0.
-  let camTheta = 0;
+  // vertical vector. normalized vector of projection of front vector.
+  const vertical = new p5.Vector.cross(side, up); // z-axis
 
   // update camRadius
   camRadius *= Math.pow(10, dRadius);
@@ -1748,11 +1744,20 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     camRadius = this.cameraFar;
   }
 
-  // update camera angle
-  camTheta += dTheta;
-  camPhi += dPhi;
+  // calculate updated camera angle
+  // Find the angle between the "up" and the "front", add dPhi to that.
+  const camPhi = front.angleBetween(up) + dPhi;
+  // Rotate by dTheta in the shortest direction from "vertical" to "side"
+  const camTheta = dTheta;
 
-  // update eye vector
+  // Invert camera's upX, upY, upZ if dPhi is below 0 or above PI
+  if(camPhi <= 0 || camPhi >= Math.PI){
+    this.upX *= -1;
+    this.upY *= -1;
+    this.upZ *= -1;
+  }
+
+  // update eye vector by calculate new front vector
   up.mult(Math.cos(camPhi));
   vertical.mult(Math.cos(camTheta) * Math.sin(camPhi));
   side.mult(Math.sin(camTheta) * Math.sin(camPhi));
@@ -1762,13 +1767,6 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
   this.eyeX = camRadius * front.x + this.centerX;
   this.eyeY = camRadius * front.y + this.centerY;
   this.eyeZ = camRadius * front.z + this.centerZ;
-
-  // update up vector
-  if(camPhi <= 0 || camPhi >= Math.PI){
-    this.upX *= -1;
-    this.upY *= -1;
-    this.upZ *= -1;
-  }
 
   // update camera
   this.camera(
