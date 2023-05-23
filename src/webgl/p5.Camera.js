@@ -1746,7 +1746,8 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
 
   // calculate updated camera angle
   // Find the angle between the "up" and the "front", add dPhi to that.
-  const camPhi = front.angleBetween(up) + dPhi;
+  const camPhi =
+    Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up)))) + dPhi;
   // Rotate by dTheta in the shortest direction from "vertical" to "side"
   const camTheta = dTheta;
 
