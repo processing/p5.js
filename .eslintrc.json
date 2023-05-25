@@ -46,8 +46,7 @@
     "comma-dangle": ["error", "never"],
     "object-curly-spacing": ["error", "always"],
     "arrow-parens": ["error", "as-needed"],
-    // "linebreak-style": ["error", "unix"],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["error", "unix"],
     "no-trailing-spaces": ["error"],
     "no-prototype-builtins": "off",
     "no-async-promise-executor": "off"
