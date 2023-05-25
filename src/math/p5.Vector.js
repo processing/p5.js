@@ -1579,7 +1579,7 @@ p5.Vector = class {
  * Unlike libraries such as Three.js and Processing, this function may return negatively signed angles.
  * Assuming v.angleBetween(w), if these vectors v and w are projected onto the xy plane
  * and v overlaps w clockwise when viewed from the positive direction of the z axis,
- * then the sign is positive. but with a negative sign in the opposite case.
+ * then the sign is positive, but with a negative sign in the opposite case.
  * If you always want positive values, use abs() or Math.abs().
  *
  * @method angleBetween
@@ -2499,7 +2499,7 @@ p5.Vector = class {
  * Unlike libraries such as Three.js and Processing, this function may return negatively signed angles.
  * Assuming angleBetween(v, w), if these vectors v and w are projected onto the xy plane
  * and v overlaps w clockwise when viewed from the positive direction of the z axis,
- * then the sign is positive. but with a negative sign in the opposite case.
+ * then the sign is positive, but with a negative sign in the opposite case.
  * If you always want positive values, use abs() or Math.abs().
  */
   /**
