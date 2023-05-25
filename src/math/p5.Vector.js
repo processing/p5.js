@@ -1576,6 +1576,12 @@ p5.Vector = class {
  * the current <a href="#/p5/angleMode">angleMode</a> into consideration, and
  * give the angle in radians or degrees accordingly.
  *
+ * Unlike libraries such as Three.js and Processing, this function may return negatively signed angles.
+ * Assuming v.angleBetween(w), if these vectors v and w are projected onto the xy plane
+ * and v overlaps w clockwise when viewed from the positive direction of the z axis,
+ * then the sign is positive. but with a negative sign in the opposite case.
+ * If you always want positive values, use abs() or Math.abs().
+ *
  * @method angleBetween
  * @param  {p5.Vector}    value The x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
  * @return {Number}       The angle between
@@ -1585,9 +1591,12 @@ p5.Vector = class {
  * let v1 = createVector(1, 0, 0);
  * let v2 = createVector(0, 1, 0);
  *
- * let angle = v1.angleBetween(v2);
- * // angle is PI/2
- * print(angle);
+ * let anglePositive = v1.angleBetween(v2);
+ * // anglePositive is PI/2
+ * let angleNegative = v2.angleBetween(v1);
+ * // angleNegative is -PI/2
+ * print(anglePositive);
+ * print(angleNegative);
  * </code>
  * </div>
  *
@@ -2486,6 +2495,12 @@ p5.Vector = class {
  * Calculates and returns the angle between two vectors. This function will take
  * the <a href="#/p5/angleMode">angleMode</a> on v1 into consideration, and
  * give the angle in radians or degrees accordingly.
+ *
+ * Unlike libraries such as Three.js and Processing, this function may return negatively signed angles.
+ * Assuming angleBetween(v, w), if these vectors v and w are projected onto the xy plane
+ * and v overlaps w clockwise when viewed from the positive direction of the z axis,
+ * then the sign is positive. but with a negative sign in the opposite case.
+ * If you always want positive values, use abs() or Math.abs().
  */
   /**
  * @method angleBetween
