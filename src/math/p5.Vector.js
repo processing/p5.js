@@ -1580,7 +1580,7 @@ p5.Vector = class {
  * Assuming v.angleBetween(w), if these vectors v and w are projected onto the xy plane
  * and v overlaps w clockwise when viewed from the positive direction of the z axis,
  * then the sign is positive, but with a negative sign in the opposite case.
- * If you always want positive values, use abs() or Math.abs().
+ * Range is [-PI, PI]. If you always want positive values, use <a href="#/p5/abs">abs()</a> or Math.abs().
  *
  * @method angleBetween
  * @param  {p5.Vector}    value The x, y, and z components of a <a href="#/p5.Vector">p5.Vector</a>
@@ -2500,7 +2500,7 @@ p5.Vector = class {
  * Assuming angleBetween(v, w), if these vectors v and w are projected onto the xy plane
  * and v overlaps w clockwise when viewed from the positive direction of the z axis,
  * then the sign is positive, but with a negative sign in the opposite case.
- * If you always want positive values, use abs() or Math.abs().
+ * Range is [-PI, PI]. If you always want positive values, use <a href="#/p5/abs">abs()</a> or Math.abs().
  */
   /**
  * @method angleBetween
