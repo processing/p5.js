@@ -103,8 +103,6 @@ p5.RendererGL.prototype.createBuffers = function(gId, model) {
     buffers.vertexCount = model.vertices ? model.vertices.length : 0;
   }
 
-  buffers.lineVertexCount = model.lineVertices ? model.lineVertices.length : 0;
-
   return buffers;
 };
 
@@ -134,18 +132,27 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     fillShader.unbindShader();
   }
 
-  if (this._doStroke && geometry.lineVertexCount > 0) {
+  if (this._doStroke && geometry.model.edges.length > 0) {
     const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
     // Prevent strokes from getting removed by culling
     gl.disable(gl.CULL_FACE);
     const strokeShader = this._getRetainedStrokeShader();
     this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     this._setStrokeUniforms(strokeShader);
-    for (const buff of this.retainedMode.buffers.stroke) {
-      buff._prepareBuffer(geometry, strokeShader);
-    }
     this._applyColorBlend(this.curStrokeColor);
-    this._drawArrays(gl.TRIANGLES, gId);
+    if (this.webglVersion === constants.WEBGL2) {
+      for (const key of ['segments', 'caps', 'joins']) {
+        for (const buff of this.retainedMode.buffers[key]) {
+          buff._prepareBuffer(geometry, strokeShader);
+        }
+        this._drawArraysInstanced(gl.TRIANGLES, gId, key);
+      }
+    } else {
+      for (const buff of this.retainedMode.buffers.stroke) {
+        buff._prepareBuffer(geometry, strokeShader);
+      }
+      this._drawArrays(gl.TRIANGLES, gId);
+    }
     if (faceCullingEnabled) {
       gl.enable(gl.CULL_FACE);
     }
@@ -189,7 +196,19 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(
     drawMode,
     0,
-    this.retainedMode.geometry[gId].lineVertexCount
+    this.retainedMode.geometry[gId].model.lineData.stroke.lineVertices.length
+  );
+  return this;
+};
+
+p5.RendererGL.prototype._drawArraysInstanced = function(drawMode, gId, key) {
+  const count =
+    this.retainedMode.geometry[gId].model.lineData[key].count;
+  this.GL.drawArraysInstanced(
+    drawMode,
+    0,
+    this.retainedMode.geometry[gId].model.lineData[key].lineSides.length,
+    count
   );
   return this;
 };

@@ -147,7 +147,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._useLineColor = false;
   this._useVertexColor = false;
 
-  this.registerEnabled = [];
+  this.registerEnabled = new Set();
 
   this._tint = [255, 255, 255, 255];
 
@@ -190,18 +190,87 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.userStrokeShader = undefined;
   this.userPointShader = undefined;
 
+  const makeStrokeBuffers = () => {
+    return {
+      stroke: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten)
+          .namespace('lineData.stroke'),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten)
+          .namespace('lineData.stroke'),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten)
+          .namespace('lineData.stroke'),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten)
+          .namespace('lineData.stroke'),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          .namespace('lineData.stroke')
+      ],
+      segments: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this, this._flatten)
+          .namespace('lineData.segments')
+          .divisor(1)
+          .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+          .offset(0),
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineToColorBuffer', 'aToVertexColor', this, this._flatten)
+          .namespace('lineData.segments')
+          .divisor(1)
+          .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+          .offset(Float32Array.BYTES_PER_ELEMENT * 4),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineFromVerticesBuffer', 'aFromPosition', this, this._flatten)
+          .namespace('lineData.segments')
+          .divisor(1)
+          .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+          .offset(0),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineToVerticesBuffer', 'aToPosition', this, this._flatten)
+          .namespace('lineData.segments').divisor(1)
+          .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+          .offset(Float32Array.BYTES_PER_ELEMENT * 3),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten)
+          .namespace('lineData.segments').divisor(1),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten)
+          .namespace('lineData.segments').divisor(1),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          .namespace('lineData.segments').divisor(0)
+      ],
+      caps: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineToColorBuffer', 'aToVertexColor', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineFromVerticesBuffer', 'aFromPosition', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineToVerticesBuffer', 'aToPosition', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten)
+          .namespace('lineData.caps').divisor(1),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          .namespace('lineData.caps').divisor(0)
+      ],
+      joins: [
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineToColorBuffer', 'aToVertexColor', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineFromVerticesBuffer', 'aFromPosition', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineToVerticesBuffer', 'aToPosition', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten)
+          .namespace('lineData.joins').divisor(1),
+        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+          .namespace('lineData.joins').divisor(0)
+      ]
+    };
+  };
+
   // Default drawing is done in Retained Mode
   // Geometry and Material hashes stored here
   this.retainedMode = {
     geometry: {},
-    buffers: {
-      stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-      ],
+    buffers: Object.assign({
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
@@ -214,7 +283,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ]
-    }
+    }, makeStrokeBuffers())
   };
 
   // Immediate Mode
@@ -225,7 +294,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     _bezierVertex: [],
     _quadraticVertex: [],
     _curveVertex: [],
-    buffers: {
+    buffers: Object.assign({
       fill: [
         new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(3, 'vertexNormals', 'normalBuffer', 'aNormal', this, this._vToNArray),
@@ -233,15 +302,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(3, 'vertexAmbients', 'ambientBuffer', 'aAmbientColor', this),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
-      stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten),
-        new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten),
-        new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
-      ],
       point: this.GL.createBuffer()
-    }
+    }, makeStrokeBuffers())
   };
 
   this.pointSize = 5.0; //default point size

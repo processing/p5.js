@@ -23,22 +23,44 @@ p5.Geometry = class  {
   //@type [p5.Vector]
     this.vertices = [];
 
-    //an array containing every vertex for stroke drawing
-    this.lineVertices = [];
+    // In WebGL2 mode, we will use instanced rendering to draw lines, using
+    // a separate data layout for segments, caps, and joins. In WebGL1 mode,
+    // we manually duplicate data into one big buffer.
+    this.lineData = {};
+    for (const key of ['segments', 'caps', 'joins', 'stroke']) {
+      const data = {};
 
-    // The tangents going into or out of a vertex on a line. Along a straight
-    // line segment, both should be equal. At an endpoint, one or the other
-    // will not exist and will be all 0. In joins between line segments, they
-    // may be different, as they will be the tangents on either side of the join.
-    this.lineTangentsIn = [];
-    this.lineTangentsOut = [];
+      data.count = 0;
+
+      //an array containing every vertex for stroke drawing
+      data.lineVertices = [];
+
+      // The tangents going into or out of a vertex on a line. Along a straight
+      // line segment, both should be equal. At an endpoint, one or the other
+      // will not exist and will be all 0. In joins between line segments, they
+      // may be different, as they will be the tangents on either side of the join.
+      data.lineTangentsIn = [];
+      data.lineTangentsOut = [];
+
+      // One color per line vertex, generated automatically based on
+      // vertexStrokeColors in _edgesToVertices()
+      data.lineVertexColors = [];
+
+      this.lineData[key] = data;
+    }
 
     // When drawing lines with thickness, entries in this buffer represent which
     // side of the centerline the vertex will be placed. The sign of the number
     // will represent the side of the centerline, and the absolute value will be
     // used as an enum to determine which part of the cap or join each vertex
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
-    this.lineSides = [];
+    this.lineData.segments.lineSides = [1, -1, 3, 3, -1, -3];
+    this.lineData.caps.lineSides = [-1, -2, 2, 2, 1, -1];
+    this.lineData.joins.lineSides = [
+      -1, -2, -3, -1, -3, 0,
+      1, 2, 3, 1, 3, 0
+    ];
+    this.lineData.stroke.lineSides = [];
 
     //an array containing 1 normal per vertex
     //@type [p5.Vector]
@@ -58,9 +80,6 @@ p5.Geometry = class  {
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
 
-    // One color per line vertex, generated automatically based on
-    // vertexStrokeColors in _edgesToVertices()
-    this.lineVertexColors = [];
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
     this.dirtyFlags = {};
@@ -72,16 +91,18 @@ p5.Geometry = class  {
   }
 
   reset() {
-    this.lineVertices.length = 0;
-    this.lineTangentsIn.length = 0;
-    this.lineTangentsOut.length = 0;
-    this.lineSides.length = 0;
+    for (const key in this.lineData) {
+      this.lineData[key].count = 0;
+      this.lineData[key].lineVertices.length = 0;
+      this.lineData[key].lineTangentsIn.length = 0;
+      this.lineData[key].lineTangentsOut.length = 0;
+      this.lineData[key].lineVertexColors.length = 0;
+    }
 
     this.vertices.length = 0;
     this.edges.length = 0;
     this.vertexColors.length = 0;
     this.vertexStrokeColors.length = 0;
-    this.lineVertexColors.length = 0;
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
@@ -262,10 +283,13 @@ p5.Geometry = class  {
  * @chainable
  */
   _edgesToVertices() {
-    this.lineVertices.length = 0;
-    this.lineTangentsIn.length = 0;
-    this.lineTangentsOut.length = 0;
-    this.lineSides.length = 0;
+    for (const key in this.lineData) {
+      this.lineData[key].count = 0;
+      this.lineData[key].lineVertices.length = 0;
+      this.lineData[key].lineTangentsIn.length = 0;
+      this.lineData[key].lineTangentsOut.length = 0;
+      this.lineData[key].lineVertexColors.length = 0;
+    }
 
     const closed =
     this.edges.length > 1 &&
@@ -356,11 +380,11 @@ p5.Geometry = class  {
  * and the side of the centerline each vertex belongs to. Sides follow the
  * following scheme:
  *
- *  -1            -1
+ *  -1            -3
  *   o-------------o
  *   |             |
  *   o-------------o
- *   1             1
+ *   1             3
  *
  * @private
  * @chainable
@@ -375,19 +399,14 @@ p5.Geometry = class  {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
-    this.lineSides.push(1, -1, 1, 1, -1, -1);
-    for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
-      tangents.push(dirArr, dirArr, dirArr, dirArr, dirArr, dirArr);
-    }
-    this.lineVertices.push(a, a, b, b, a, b);
-    this.lineVertexColors.push(
-      fromColor,
-      fromColor,
-      toColor,
-      toColor,
+    this.lineData.segments.lineTangentsIn.push(dirArr);
+    this.lineData.segments.lineTangentsOut.push(dirArr);
+    this.lineData.segments.lineVertices.push(a, b);
+    this.lineData.segments.lineVertexColors.push(
       fromColor,
       toColor
     );
+    this.lineData.segments.count++;
     return this;
   }
 
@@ -411,13 +430,11 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = tangent.array();
     const tanOutArray = [0, 0, 0];
-    for (let i = 0; i < 6; i++) {
-      this.lineVertices.push(ptArray);
-      this.lineTangentsIn.push(tanInArray);
-      this.lineTangentsOut.push(tanOutArray);
-      this.lineVertexColors.push(color);
-    }
-    this.lineSides.push(-1, -2, 2, 2, 1, -1);
+    this.lineData.caps.lineVertices.push(ptArray);
+    this.lineData.caps.lineTangentsIn.push(tanInArray);
+    this.lineData.caps.lineTangentsOut.push(tanOutArray);
+    this.lineData.caps.lineVertexColors.push(color);
+    this.lineData.caps.count++;
     return this;
   }
 
@@ -453,15 +470,11 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
-    for (let i = 0; i < 12; i++) {
-      this.lineVertices.push(ptArray);
-      this.lineTangentsIn.push(tanInArray);
-      this.lineTangentsOut.push(tanOutArray);
-      this.lineVertexColors.push(color);
-    }
-    for (const side of [-1, 1]) {
-      this.lineSides.push(side, 2 * side, 3 * side, side, 3 * side, 0);
-    }
+    this.lineData.joins.lineVertices.push(ptArray);
+    this.lineData.joins.lineTangentsIn.push(tanInArray);
+    this.lineData.joins.lineTangentsOut.push(tanOutArray);
+    this.lineData.joins.lineVertexColors.push(color);
+    this.lineData.joins.count++;
     return this;
   }
 

@@ -7,6 +7,7 @@
  */
 
 import p5 from '../core/main';
+import * as constants from '../core/constants';
 
 /**
  * Shader class for WEBGL Mode
@@ -228,6 +229,12 @@ p5.Shader = class {
   unbindShader() {
     if (this._bound) {
       this.unbindTextures();
+      for (const loc of this._renderer.registerEnabled.values()) {
+        // Disable register corresponding to unused attribute
+        this._renderer.GL.disableVertexAttribArray(loc);
+        // Record register availability
+        this._renderer.registerEnabled.delete(loc);
+      }
       //this._renderer.GL.useProgram(0); ??
       this._bound = false;
     }
@@ -551,7 +558,7 @@ p5.Shader = class {
    * @chainable
    * @private
    */
-  enableAttrib(attr, size, type, normalized, stride, offset) {
+  enableAttrib(attr, size, type, normalized, stride, offset, divisor) {
     if (attr) {
       if (
         typeof IS_MINIFIED === 'undefined' &&
@@ -565,10 +572,10 @@ p5.Shader = class {
       if (loc !== -1) {
         const gl = this._renderer.GL;
         // Enable register even if it is disabled
-        if (!this._renderer.registerEnabled[loc]) {
+        if (!this._renderer.registerEnabled.has(loc)) {
           gl.enableVertexAttribArray(loc);
           // Record register availability
-          this._renderer.registerEnabled[loc] = true;
+          this._renderer.registerEnabled.add(loc);
         }
         this._renderer.GL.vertexAttribPointer(
           loc,
@@ -578,6 +585,11 @@ p5.Shader = class {
           stride || 0,
           offset || 0
         );
+        if (divisor !== undefined) {
+          this._renderer.GL.vertexAttribDivisor(loc, divisor);
+        } else if (this._renderer.webglVersion === constants.WEBGL2) {
+          this._renderer.GL.vertexAttribDivisor(loc, 0);
+        }
       }
     }
     return this;

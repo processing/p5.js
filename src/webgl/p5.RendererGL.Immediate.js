@@ -200,7 +200,7 @@ p5.RendererGL.prototype.endShape = function(
     }
   }
   if (this._doStroke) {
-    if (this.immediateMode.geometry.lineVertices.length > 1) {
+    if (this.immediateMode.geometry.edges.length > 1) {
       this._drawImmediateStroke();
     }
   }
@@ -423,15 +423,31 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
   this._setStrokeUniforms(shader);
-  for (const buff of this.immediateMode.buffers.stroke) {
-    buff._prepareBuffer(this.immediateMode.geometry, shader);
-  }
   this._applyColorBlend(this.curStrokeColor);
-  gl.drawArrays(
-    gl.TRIANGLES,
-    0,
-    this.immediateMode.geometry.lineVertices.length
-  );
+  if (this.webglVersion === constants.WEBGL2) {
+    for (const key of ['segments', 'caps', 'joins']) {
+      for (const buff of this.immediateMode.buffers[key]) {
+        buff._prepareBuffer(this.immediateMode.geometry, shader);
+      }
+      const count =
+        this.immediateMode.geometry.lineData[key].count;
+      gl.drawArraysInstanced(
+        gl.TRIANGLES,
+        0,
+        this.immediateMode.geometry.lineData[key].lineSides.length,
+        count
+      );
+    }
+  } else {
+    for (const buff of this.immediateMode.buffers.stroke) {
+      buff._prepareBuffer(this.immediateMode.geometry, shader);
+    }
+    gl.drawArrays(
+      gl.TRIANGLES,
+      0,
+      this.immediateMode.geometry.lineData.lineVertices.length
+    );
+  }
   if (faceCullingEnabled) {
     gl.enable(gl.CULL_FACE);
   }

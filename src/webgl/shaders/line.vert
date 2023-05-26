@@ -32,11 +32,13 @@ uniform vec4 uViewport;
 uniform int uPerspective;
 uniform int uStrokeJoin;
 
-attribute vec4 aPosition;
+attribute vec4 aFromPosition;
+attribute vec4 aToPosition;
 attribute vec3 aTangentIn;
 attribute vec3 aTangentOut;
 attribute float aSide;
-attribute vec4 aVertexColor;
+attribute vec4 aFromVertexColor;
+attribute vec4 aToVertexColor;
 
 varying vec4 vColor;
 varying vec2 vTangent;
@@ -76,6 +78,9 @@ void main() {
     aTangentIn != aTangentOut
   ) ? 1. : 0.;
 
+  // TODO rename aPosition, aVertexColor
+  vec4 aPosition = abs(aSide) == 1. ? aFromPosition : aToPosition;
+  vec4 aVertexColor = abs(aSide) == 1. ? aFromVertexColor : aToVertexColor;
   vec4 posp = uModelViewMatrix * aPosition;
   vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
   vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
@@ -204,7 +209,7 @@ void main() {
     float normalOffset = sign(aSide);
     // Caps will have side values of -2 or 2 on the edge of the cap that
     // extends out from the line
-    float tangentOffset = abs(aSide) - 1.;
+    float tangentOffset = abs(aSide) == 2. ? 1. : 0.;
     offset = (normal * normalOffset + tangent * tangentOffset) *
       uStrokeWeight * 0.5 * curPerspScale;
     vMaxDist = uStrokeWeight / 2.;
