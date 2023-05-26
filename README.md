@@ -28,12 +28,12 @@ Kendi bilgisayarınıza tam p5.js kütüphanesini edinmek için [buradan indireb
 
 ## Sorunlar
 
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
+p5.js kütüphanesinde bir hata bulduysanız, buraya [“sorunlar” sekmesi altına](https://github.com/processing/p5.js/issues) kaydedebilirsiniz. Ayrıca yeni özellikler de talep edebilirsiniz. Sizi (ve bizi) yönlendirmek için sorunları bildirmek ve özellik istekleri için hazır şablonlar sağlanmaktadır. p5.js çoğunlukla gönüllüler tarafından yönetilmekte olup, sorunlarınıza en kısa sürede yanıt vermeye çalışmakta sabrınız için teşekkür ederiz. Mümkünse doğru depoya gönderiniz:
 
-* p5.js general: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
+* p5.js genel: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
 * p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
-* p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
+* p5.js websitesi: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
+* p5.js düzenleyicisi: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
 
 
 ## Öğrenme
