@@ -80,8 +80,6 @@ Herhangi bir kişi, ilgisi olan herkes görevli olmak için gönüllü olabilir!
 
 ## Katkıda bulunanlar
 
-We recognize all types of contributions. This project follows the [all-contributors] https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here] https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment with the text: ` all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
-
 Tüm türdeki katkıları tanımaktayız. Bu proje [all-contributors](https://github.com/kentcdodds/all-contributors) özelliklerini takip etmektedir. Kendinizi eklemek veya katkı emojileri eklemek için talimatlar [burada](https://github.com/processing/p5.js/issues/2309) verilmiştir. Ayrıca, `all-contributors please add @YOUR-USERNAME for THING(S)`  metnini içeren bir sorun veya yorum göndererek güzel botumuz sizi ekleyebilir.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
