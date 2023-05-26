@@ -3676,11 +3676,21 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "neondev27",
+      "name": "Ahmet Kaya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88967833?v=4",
+      "profile": "https://github.com/neondev27",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
