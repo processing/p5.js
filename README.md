@@ -18,13 +18,13 @@ Biz, her cinsiyet kimliği ve ifadesi, cinsel yönelim, ırk, etnisite, dil, nö
 
 p5.js, çoğunlukla gönüllülerden oluşan birçok kişinin katkılarıyla yaratılan ortak bir projedir ve siz de yardım etmeye davetlisiniz. Her türlü katılım memnuniyetle karşılanır. Başlamak için [topluluk bölümüne](https://p5js.org/community) göz atabilirsiniz! Ayrıca, kod, hata düzeltmeleri, belgeleme, tartışma ve daha fazlasını içeren farklı alanlara katkıda bulunmak için daha detaylı bilgi almak için [katkıda bulunan belgelerine](https://p5js.org/contributor-docs/#/) bakabilirsiniz.
 
-[Topluluğumuz](https://p5js.org/community/) hakkında daha fazla bilgi edinin ve [topluluk beyanımızı] (https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md) ve davranış kurallarımızı okuyun. p5.js ile ilgili çalışmalarımızı doğrudan desteklemek için [Processing Vakfına bağış yaparak](https://processingfoundation.org/support) katkıda bulunabilirsiniz.
+[Topluluğumuz](https://p5js.org/community/) hakkında daha fazla bilgi edinin ve [topluluk beyanımızı](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md) ve davranış kurallarımızı okuyun. p5.js ile ilgili çalışmalarımızı doğrudan desteklemek için [Processing Vakfına bağış yaparak](https://processingfoundation.org/support) katkıda bulunabilirsiniz.
 
 ## Başlangıç
 
-Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
+İlk taslağınızı [p5.js Editörü](https://editor.p5js.org/) üzerinde yapın! p5.js ile tasarım hakkında daha fazla bilgi için [Başlarken](https://p5js.org/get-started/) sayfasına bakabilir ve tüm yapabileceğiniz özellikleri [Referans](https://p5js.org/reference/) bölümünde bulabilirsiniz.
 
-To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
+Kendi bilgisayarınıza tam p5.js kütüphanesini edinmek için [buradan indirebilirsiniz](https://p5js.org/download). Eğer en son, daha az stabil sürüm veya sadece (**yeni!**) belirli p5.js bileşenleriyle ilgileniyorsanız, bu depoyu klonlayabilir ve kaynaktan kütüphane oluşturmak için komut satırından `grunt` çalıştırabilirsiniz. Derleme sürecimiz hakkında daha fazla bilgi için [katkıda bulunan belgelerimize](https://p5js.org/contributor-docs/#/) bakın.
 
 ## Sorunlar
 
