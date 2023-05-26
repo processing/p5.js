@@ -38,19 +38,19 @@ p5.js kütüphanesinde bir hata bulduysanız, buraya [“sorunlar” sekmesi alt
 
 ## Öğrenme
 
-Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
+Çok daha fazlası için [p5js.org'u](https://p5js.org) inceleyin! p5.js'yi öğrenmek için burada bazı hızlı bağlantılar vardır.
 
-* [Get Started](https://p5js.org/get-started): Create and run your first sketch!
-* [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview): An overview of the main features and functionality of p5.js
-* [Reference](https://p5js.org/reference): The functionality supported by p5.js
-* [Learn](https://p5js.org/learn): Tutorials and short, prototypical examples exploring the basics of p5.js
+* [Başlarken](https://p5js.org/get-started): İlk eskizinizi oluşturun ve çalıştırın!
+* [p5.js önizleme](https://github.com/processing/p5.js/wiki/p5.js-overview): p5.js'nin ana özelliklerinin ve fonksiyonelitesinin bir önizlemesi
+* [Referans](https://p5js.org/reference): p5.js tarafından desteklenen fonksiyon
+* [Öğren](https://p5js.org/learn): Dersler ve p5.js'nin temellerini keşfeden kısa, prototipsel örnekler
 * [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
 
 ## Görevliler
 
-Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Contributor Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md), and p5.js [Steward Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md).
+Görevliler, proje belirli alanlarıyla özellikle ilgili, tanıdık veya duyarlı olan katkı sağlayıcılardır. Görevleri, p5.js üzerinde çalışan diğer kişilere bağlam ve rehberlik sağlamaya yardımcı olmaktır. Belirli bir alana katkıda bulunma konusunda sorunuz varsa, listede yer alan görevliyi bir sorunda veya çekme isteğinde etiketleyebilirsiniz. Topluluğun girdileriyle birlikte özellik taleplerine de ağırlık verebilirler ve kendi alanlarının genel yönünü yönlendirebilirler. Projelerin organizasyonu hakkında daha fazla bilgi için [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Katkıcı Kılavuzu] (https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) ve p5.js [Steward Kılavuzu] (https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md)'nu okuyabilirsiniz.
 
 Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
 
@@ -58,7 +58,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 * [@outofambit](https://github.com/outofambit) - p5.js Mentor
 * [@lmccart](https://github.com/lmccart)- p5.js Creator
 
-| Area                                                                                 | Steward(s)                                                                                                               |
+| Alan                                                                                 | Görevli(ler)                                                                                                             |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Overall                                                                              | [@qianqianye](https://github.com/qianqianye)                                                                                                             |
 | [Accessibility](https://github.com/processing/p5.js/tree/main/src/accessibility)     | [@kungfuchicken](https://github.com/kungfuchicken), [@cosmicbhejafry](https://github.com/cosmicbhejafry)                                     |
