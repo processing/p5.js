@@ -229,13 +229,6 @@ p5.Shader = class {
   unbindShader() {
     if (this._bound) {
       this.unbindTextures();
-      for (const loc of this._renderer.registerEnabled.values()) {
-        // Disable register corresponding to unused attribute
-        this._renderer.GL.disableVertexAttribArray(loc);
-        // Record register availability
-        this._renderer.registerEnabled.delete(loc);
-      }
-      //this._renderer.GL.useProgram(0); ??
       this._bound = false;
     }
     return this;

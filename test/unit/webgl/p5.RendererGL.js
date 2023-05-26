@@ -798,27 +798,28 @@ suite('p5.RendererGL', function() {
 
       myp5.fill(255);
       myp5.stroke(255);
-      myp5.triangle(0, 0, 1, 0, 0, 1);
+      myp5.box(100);
 
-      var buffers = renderer.retainedMode.geometry['tri'];
+      var buffers = renderer.retainedMode.geometry['box|4|4'];
 
       assert.isObject(buffers);
       assert.isDefined(buffers.indexBuffer);
       assert.isDefined(buffers.indexBufferType);
       assert.isDefined(buffers.vertexBuffer);
-      assert.isDefined(buffers.lineVerticesBuffer);
-      assert.isDefined(buffers.lineSidesBuffer);
-      assert.isDefined(buffers.lineTangentsInBuffer);
-      assert.isDefined(buffers.lineTangentsOutBuffer);
+      for (const key of ['segments', 'joins', 'caps']) {
+        assert.isDefined(buffers.lineData[key].lineFromVerticesBuffer);
+        assert.isDefined(buffers.lineData[key].lineToVerticesBuffer);
+        assert.isDefined(buffers.lineData[key].lineSidesBuffer);
+        assert.isDefined(buffers.lineData[key].lineTangentsInBuffer);
+        assert.isDefined(buffers.lineData[key].lineTangentsOutBuffer);
+      }
       assert.isDefined(buffers.vertexBuffer);
 
-      assert.equal(buffers.vertexCount, 3);
+      assert.equal(buffers.vertexCount, 36);
 
-      //   6 verts per line segment x3 (each is a quad made of 2 triangles)
-      // + 12 verts per join x3 (2 quads each, 1 is discarded in the shader)
-      // + 6 verts per line cap x0 (1 quad each)
-      // = 54
-      assert.equal(buffers.lineVertexCount, 54);
+      assert.equal(buffers.model.lineData.segments.count, 12);
+      assert.equal(buffers.model.lineData.joins.count, 4);
+      assert.equal(buffers.model.lineData.caps.count, 16);
 
       done();
     });
@@ -1660,13 +1661,13 @@ suite('p5.RendererGL', function() {
       const attributes = renderer._curShader.attributes;
       const loc = attributes.aTexCoord.location;
 
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       myp5.model(myGeom);
-      assert.equal(renderer.registerEnabled[loc], false);
+      assert.equal(renderer.registerEnabled.has(loc), false);
 
       myp5.triangle(-8, -8, 8, 8, -8, 8);
-      assert.equal(renderer.registerEnabled[loc], true);
+      assert.equal(renderer.registerEnabled.has(loc), true);
 
       done();
     });

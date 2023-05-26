@@ -200,7 +200,7 @@ p5.RendererGL.prototype.endShape = function(
     }
   }
   if (this._doStroke) {
-    if (this.immediateMode.geometry.edges.length > 1) {
+    if (this.immediateMode.geometry.edges.length > 0) {
       this._drawImmediateStroke();
     }
   }
