@@ -2,31 +2,31 @@
 
 # [p5.js](https://p5js.org)
 
- Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
+Hoşgeldiniz! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
-p5.js is a JavaScript library for creative coding, with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else! p5.js is free and open-source because we believe software, and the tools to learn it, should be accessible to everyone.
+p5.js çizerler, tasarımcılar, eğitmenler, yeni başlayanlar ve diğer herkes için ulaşılabilir ve dahili olma odağı ile yaratıcı kodlama için bir JavaScript kütüphanesidir! p5.js yazılımın ve onu öğrenmek için araçların herkes için erişilibilir olması gerektiğine inandığımızdan ücretsiz ve açık-kaynaklıdır.
 
-Using the metaphor of a sketch, p5.js has a full set of drawing functionality using the HTML5 canvas element. You’re not limited to the drawing canvas though. You can think of your whole browser page as your sketch, including HTML5 objects for text, input, video, webcam, and sound.
+Eskizin metaforunu kullanan p5.js, HTML5 canvas elementlerini kullanan çizim fonksiyonelitesinin tüm setine sahiptir. Sadece kanvas çizmekle sınırlandırılmazsınız. Tüm tarayıcı pencerenizi yazı, giriş, video, webcam ve ses için HTML5 objelerini dahil eden eskizin olarak düşünebilirsiniz.
 
-p5.js draws inspiration, wisdom, and guidance from its precursor [Processing](https://processing.org). However, it is a new interpretation, not an emulation or port. We don't aim to match Processing's set of functionality exactly, allowing ourselves space to deviate and grow in the context of the web.
+p5.js, öncülü [Processing](https://processing.org)'den ilhamı, bilgeliği ve yönlendiriciliği alır. Ancak, yeni bir yorumdur, öykünme veya bağlantı noktası değildir. Processing'in işlevsellik setini tam olarak eşleştirmeyi, kendimize web bağlamında sapma ve büyüme alanı sağlamayı hedeflemiyoruz.
 
-The [p5js.org](https://p5js.org) website contains an extensive overview of the project, community, documentation, and examples. If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start.
+[p5js.org](https://p5js.org) websitesi projenin, topluluğun, dökümantasyonun ve örneklerin yaygın bir önizlemesini içerir. Eğer zaten Javascript'in veya  Processing'in temellerini biliyorsanız, [p5.js önizleme](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki sayfası başlamak için iyi bir yerdir.
 
-## Community
+## Topluluk
 
-We are a community of, and in solidarity with, people from every gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, and background. We acknowledge that not everyone has the time, financial means, or capacity to actively participate, but we recognize and encourage involvement of all kinds. We facilitate and foster access and empowerment. We are all learners.
+Biz, her cinsiyet kimliği ve ifadesi, cinsel yönelim, ırk, etnisite, dil, nöro-türü, beden ölçüsü/boyutu , yetenek/seviye durumu/sınıfı (class), din/kültür/tarikat/alt kültür/politik görüş ya da geçmişten gelen farklılıklara sahip kişilerle dayanışma içinde olan bir topluluğuz. Herkesin aktif olarak katılacak zamanı veya finansal imkanları olmayabileceğini kabul ediyoruz; ancak tüm şekillerdeki katılımı tanımakta ve teşvik etmekteyiz. Erişimi kolaylaştırarak güçlenme sağlamaktayız. Hepimiz öğrenciyiz.
 
-p5.js is a collaborative project created by many individuals, mostly volunteers, and you are invited to help. All types of involvement are welcome. See the [community section](https://p5js.org/community) to get started! You can also check out the [contributor docs](https://p5js.org/contributor-docs/#/) for more in-depth details about contributing to different areas of the project, including code, bug fixes, documentation, discussion, and more.
+p5.js, çoğunlukla gönüllülerden oluşan birçok kişinin katkılarıyla yaratılan ortak bir projedir ve siz de yardım etmeye davetlisiniz. Her türlü katılım memnuniyetle karşılanır. Başlamak için [topluluk bölümüne](https://p5js.org/community) göz atabilirsiniz! Ayrıca, kod, hata düzeltmeleri, belgeleme, tartışma ve daha fazlasını içeren farklı alanlara katkıda bulunmak için daha detaylı bilgi almak için [katkıda bulunan belgelerine](https://p5js.org/contributor-docs/#/) bakabilirsiniz.
 
-Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by [donating to the Processing Foundation](https://processingfoundation.org/support).
+[Topluluğumuz](https://p5js.org/community/) hakkında daha fazla bilgi edinin ve [topluluk beyanımızı] (https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md) ve davranış kurallarımızı okuyun. p5.js ile ilgili çalışmalarımızı doğrudan desteklemek için [Processing Vakfına bağış yaparak](https://processingfoundation.org/support) katkıda bulunabilirsiniz.
 
-## Get Started
+## Başlangıç
 
 Make your first sketch in the [p5.js Editor](https://editor.p5js.org/)! Learn more about sketching with p5.js on the [Get Started](https://p5js.org/get-started/) and find everything you can do in the [Reference](https://p5js.org/reference/).
 
 To get the complete p5.js library on your own computer, you can [download it here](https://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [contributor docs](https://p5js.org/contributor-docs/#/) for more information about our build process.
 
-## Issues
+## Sorunlar
 
 If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). You can also request new features here. A set of templates for reporting issues and requesting features are provided to assist you (and us!). p5.js is maintained mostly by volunteers, so we thank you for your patience as we try to address your issues as soon as we can. Please post in the correct repository if you can:
 
@@ -36,7 +36,7 @@ If you have found a bug in the p5.js library, you can file it here under the [�
 * p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
 
 
-## Learning
+## Öğrenme
 
 Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links to get started learning p5.js.
 
@@ -48,7 +48,7 @@ Check out [p5js.org](https://p5js.org) for lots more! Here are some quick-links 
 * [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
 
-## Stewards
+## Görevliler
 
 Stewards are contributors that are particularly involved, familiar, or responsive to certain areas of the project. Their role is to help provide context and guidance to others working on p5.js. If you have a question about contributing to a particular area, you can tag the listed steward in an issue or pull request. They may also weigh in on feature requests and guide the overall direction of their area, with the input of the community. You can read more about the organization of the project at [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Contributor Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md), and p5.js [Steward Guidelines](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md).
 
@@ -78,7 +78,7 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 | Friendly Errors                                                                      | [@outofambit](https://github.com/outofambit), [@almchung](https://github.com/almchung)                                                                                                              |
 | [Contributor Docs](https://github.com/processing/p5.js/tree/main/contributor_docs)   | [SoD 2022](https://github.com/processing/p5.js/wiki/Season-of-Docs-2022-Organization-Application---p5.js): [@limzykenneth](https://github.com/limzykenneth) |
 
-## Contributors
+## Katkıda bulunanlar
 
 We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
 
@@ -649,4 +649,4 @@ We recognize all types of contributions. This project follows the [all-contribut
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
+Teşekkürler bu harika insanlara gider ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
