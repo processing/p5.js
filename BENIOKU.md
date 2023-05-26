@@ -44,19 +44,19 @@ p5.js kütüphanesinde bir hata bulduysanız, buraya [“sorunlar” sekmesi alt
 * [p5.js önizleme](https://github.com/processing/p5.js/wiki/p5.js-overview): p5.js'nin ana özelliklerinin ve fonksiyonelitesinin bir önizlemesi
 * [Referans](https://p5js.org/reference): p5.js tarafından desteklenen fonksiyon
 * [Öğren](https://p5js.org/learn): Dersler ve p5.js'nin temellerini keşfeden kısa, prototipsel örnekler
-* [Forum](https://discourse.processing.org/c/p5js): Ask and answers questions about how to make things with p5.js here
-* [Libraries](https://p5js.org/libraries): Extend p5 functionality to interact with HTML, manipulate sound, and more!
-* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): A huge trove of tutorials created by Dan Shiffman and friends
+* [Forum](https://discourse.processing.org/c/p5js): Burada p5.js ile birşeyler yapmak hakkındaki sorular sorun ve cevaplayın
+* [Kütüphaneler](https://p5js.org/libraries): HTML ile etkileşime geçmek, sesi manipüle etmek ve daha fazlası için p5 fonksiyonelitesini genişletin!
+* [The Coding Train p5.js Tutorials](https://thecodingtrain.com/beginners/p5js/): Dan Shiffman ve arkadaşları tarafından oluşturulan devasa bir öğreticiler hazinesi
 
 ## Görevliler
 
-Görevliler, proje belirli alanlarıyla özellikle ilgili, tanıdık veya duyarlı olan katkı sağlayıcılardır. Görevleri, p5.js üzerinde çalışan diğer kişilere bağlam ve rehberlik sağlamaya yardımcı olmaktır. Belirli bir alana katkıda bulunma konusunda sorunuz varsa, listede yer alan görevliyi bir sorunda veya çekme isteğinde etiketleyebilirsiniz. Topluluğun girdileriyle birlikte özellik taleplerine de ağırlık verebilirler ve kendi alanlarının genel yönünü yönlendirebilirler. Projelerin organizasyonu hakkında daha fazla bilgi için [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Katkıcı Kılavuzu] (https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) ve p5.js [Steward Kılavuzu] (https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md)'nu okuyabilirsiniz.
+Görevliler, proje belirli alanlarıyla özellikle ilgili, tanıdık veya duyarlı olan katkı sağlayıcılardır. Görevleri, p5.js üzerinde çalışan diğer kişilere bağlam ve rehberlik sağlamaya yardımcı olmaktır. Belirli bir alana katkıda bulunma konusunda sorunuz varsa, listede yer alan görevliyi bir sorunda veya çekme isteğinde etiketleyebilirsiniz. Topluluğun girdileriyle birlikte özellik taleplerine de ağırlık verebilirler ve kendi alanlarının genel yönünü yönlendirebilirler. Projelerin organizasyonu hakkında daha fazla bilgi için [contributor_docs/organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md), p5.js [Katkıcı Kılavuzu](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md) ve p5.js [Steward Kılavuzu](https://github.com/processing/p5.js/blob/main/contributor_docs/steward_guidelines.md)'nu okuyabilirsiniz.
 
-Anyone interested can volunteer to be a steward! There are no specific requirements for expertise, just an interest in actively learning and participating.  If you’re familiar with or interested in actively learning and participating in some of p5.js areas below, please reply to [this issue](https://github.com/processing/p5.js/issues/5719) mentioning which area(s) you are interested to volunteer as a steward! 👋👋👋
+Herhangi bir kişi, ilgisi olan herkes görevli olmak için gönüllü olabilir! Uzmanlık için özel gereksinimler yoktur, aktif olarak öğrenme ve katılımda bulunma isteği yeterlidir. Aşağıdaki p5.js alanlarından bazılarında tanıdık veya ilgi duyuyorsanız, hangi alan(lar)da gönüllü olarak görev almak istediğinizi belirterek [bu soruya](https://github.com/processing/p5.js/issues/5719) yanıt verebilirsiniz! 👋👋👋
 
-* [@qianqianye](https://github.com/qianqianye) - p5.js Project Lead
-* [@outofambit](https://github.com/outofambit) - p5.js Mentor
-* [@lmccart](https://github.com/lmccart)- p5.js Creator
+* [@qianqianye](https://github.com/qianqianye) - p5.js Proje Lideri
+* [@outofambit](https://github.com/outofambit) - p5.js Mentörü
+* [@lmccart](https://github.com/lmccart)- p5.js Yapımcısı
 
 | Alan                                                                                 | Görevli(ler)                                                                                                             |
 | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
@@ -80,7 +80,9 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 
 ## Katkıda bulunanlar
 
-We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment with the text: `@all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+We recognize all types of contributions. This project follows the [all-contributors] https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here] https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment with the text: ` all-contributors please add @YOUR-USERNAME for THING(S)` and our nice bot will add you.
+
+Tüm türdeki katkıları tanımaktayız. Bu proje [all-contributors](https://github.com/kentcdodds/all-contributors) özelliklerini takip etmektedir. Kendinizi eklemek veya katkı emojileri eklemek için talimatlar [burada](https://github.com/processing/p5.js/issues/2309) verilmiştir. Ayrıca, `all-contributors please add @YOUR-USERNAME for THING(S)`  metnini içeren bir sorun veya yorum göndererek güzel botumuz sizi ekleyebilir.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
