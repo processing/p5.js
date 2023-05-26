@@ -110,6 +110,43 @@ p5.Geometry = class  {
   }
 
   /**
+   * Used in WebGL1 mode when instanced rendering is not available. To draw
+   * strokes without instanced rendering, we manually duplicate vertices on
+   * the CPU. This will be slower but will at least work.
+   */
+  _makeStrokeBufferData() {
+    const strokeData = this.lineData.stroke;
+    for (const key of ['segments', 'joins', 'caps']) {
+      const instanceData = this.lineData[key];
+      for (const buffer in instanceData) {
+        if (buffer === 'count') continue;
+        if (buffer === 'lineSides') {
+          for (let i = 0; i < instanceData.count; i++) {
+            strokeData[buffer].push(...instanceData[buffer]);
+          }
+        } else if (
+          key === 'segments' &&
+          (buffer === 'lineVertexColors' || buffer === 'lineVertices')
+        ) {
+          for (let j = 0; j < instanceData[buffer].length; j += 2) {
+            for (let i = 0; i < instanceData.lineSides.length; i++) {
+              for (const offset of [0, 1]) {
+                strokeData[buffer].push(instanceData[buffer][j + offset]);
+              }
+            }
+          }
+        } else {
+          for (let j = 0; j < instanceData[buffer].length; j++) {
+            for (let i = 0; i < instanceData.lineSides.length; i++) {
+              strokeData[buffer].push(instanceData[buffer][j]);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
  * computes faces for geometry objects based on the vertices.
  * @method computeFaces
  * @chainable

@@ -439,13 +439,15 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
       );
     }
   } else {
+    this.immediateMode.geometry._makeStrokeBufferData();
     for (const buff of this.immediateMode.buffers.stroke) {
       buff._prepareBuffer(this.immediateMode.geometry, shader);
     }
     gl.drawArrays(
       gl.TRIANGLES,
       0,
-      this.immediateMode.geometry.lineData.lineVertices.length
+      this.immediateMode.geometry.lineData.stroke.lineVertices.length
+        / 2
     );
   }
   if (faceCullingEnabled) {

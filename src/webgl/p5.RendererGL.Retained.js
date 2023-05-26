@@ -148,6 +148,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         this._drawArraysInstanced(gl.TRIANGLES, gId, key);
       }
     } else {
+      geometry._makeStrokeBufferData();
       for (const buff of this.retainedMode.buffers.stroke) {
         buff._prepareBuffer(geometry, strokeShader);
       }
@@ -197,6 +198,7 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
     drawMode,
     0,
     this.retainedMode.geometry[gId].model.lineData.stroke.lineVertices.length
+      / 2
   );
   return this;
 };

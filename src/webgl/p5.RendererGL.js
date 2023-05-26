@@ -193,10 +193,22 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   const makeStrokeBuffers = () => {
     return {
       stroke: [
-        new p5.RenderBuffer(4, 'lineVertexColors', 'lineColorBuffer', 'aVertexColor', this, this._flatten)
-          .namespace('lineData.stroke'),
-        new p5.RenderBuffer(3, 'lineVertices', 'lineVerticesBuffer', 'aPosition', this, this._flatten)
-          .namespace('lineData.stroke'),
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this, this._flatten)
+          .namespace('lineData.stroke')
+          .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+          .offset(0),
+        new p5.RenderBuffer(4, 'lineVertexColors', 'lineToColorBuffer', 'aToVertexColor', this, this._flatten)
+          .namespace('lineData.stroke')
+          .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+          .offset(Float32Array.BYTES_PER_ELEMENT * 4),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineFromVerticesBuffer', 'aFromPosition', this, this._flatten)
+          .namespace('lineData.stroke')
+          .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+          .offset(0),
+        new p5.RenderBuffer(3, 'lineVertices', 'lineToVerticesBuffer', 'aToPosition', this, this._flatten)
+          .namespace('lineData.stroke')
+          .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+          .offset(Float32Array.BYTES_PER_ELEMENT * 3),
         new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this, this._flatten)
           .namespace('lineData.stroke'),
         new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this, this._flatten)
