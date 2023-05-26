@@ -78,12 +78,11 @@ void main() {
     aTangentIn != aTangentOut
   ) ? 1. : 0.;
 
-  // TODO rename aPosition, aVertexColor
-  vec4 aPosition = abs(aSide) == 1. ? aFromPosition : aToPosition;
-  vec4 aVertexColor = abs(aSide) == 1. ? aFromVertexColor : aToVertexColor;
-  vec4 posp = uModelViewMatrix * aPosition;
-  vec4 posqIn = uModelViewMatrix * (aPosition + vec4(aTangentIn, 0));
-  vec4 posqOut = uModelViewMatrix * (aPosition + vec4(aTangentOut, 0));
+  vec4 position = abs(aSide) == 1. ? aFromPosition : aToPosition;
+  vec4 vertexColor = abs(aSide) == 1. ? aFromVertexColor : aToVertexColor;
+  vec4 posp = uModelViewMatrix * position;
+  vec4 posqIn = uModelViewMatrix * (position + vec4(aTangentIn, 0));
+  vec4 posqOut = uModelViewMatrix * (position + vec4(aTangentOut, 0));
 
   float facingCamera = pow(
     // The word space tangent's z value is 0 if it's facing the camera
@@ -219,5 +218,5 @@ void main() {
   gl_Position.xy = p.xy + offset.xy;
   gl_Position.zw = p.zw;
   
-  vColor = (uUseLineColor ? aVertexColor : uMaterialColor);
+  vColor = (uUseLineColor ? vertexColor : uMaterialColor);
 }
