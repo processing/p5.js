@@ -2,7 +2,7 @@
 
 # [p5.js](https://p5js.org)
 
-[Turkish](https://github.com/neondev27/p5.js/blob/main/BENIOKU.md)
+[**Turkish**](https://github.com/neondev27/p5.js/blob/main/BENIOKU.md)
 
  Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
