@@ -141,7 +141,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._setStrokeUniforms(strokeShader);
     this._applyColorBlend(this.curStrokeColor);
     if (this.webglVersion === constants.WEBGL2) {
-      for (const key of ['segments', 'caps', 'joins']) {
+      for (const key of ['joins', 'caps', 'segments']) {
         for (const buff of this.retainedMode.buffers[key]) {
           buff._prepareBuffer(geometry, strokeShader);
         }

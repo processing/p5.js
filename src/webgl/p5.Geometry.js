@@ -116,7 +116,7 @@ p5.Geometry = class  {
    */
   _makeStrokeBufferData() {
     const strokeData = this.lineData.stroke;
-    for (const key of ['segments', 'joins', 'caps']) {
+    for (const key of ['joins', 'caps', 'segments']) {
       const instanceData = this.lineData[key];
       for (const buffer in instanceData) {
         if (buffer === 'count') continue;
@@ -139,6 +139,9 @@ p5.Geometry = class  {
           for (let j = 0; j < instanceData[buffer].length; j++) {
             for (let i = 0; i < instanceData.lineSides.length; i++) {
               strokeData[buffer].push(instanceData[buffer][j]);
+              if (buffer === 'lineVertexColors' || buffer === 'lineVertices') {
+                strokeData[buffer].push(instanceData[buffer][j]);
+              }
             }
           }
         }

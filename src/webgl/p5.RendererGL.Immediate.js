@@ -425,7 +425,7 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._setStrokeUniforms(shader);
   this._applyColorBlend(this.curStrokeColor);
   if (this.webglVersion === constants.WEBGL2) {
-    for (const key of ['segments', 'caps', 'joins']) {
+    for (const key of ['joins', 'caps', 'segments']) {
       for (const buff of this.immediateMode.buffers[key]) {
         buff._prepareBuffer(this.immediateMode.geometry, shader);
       }
