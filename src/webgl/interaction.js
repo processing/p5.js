@@ -191,7 +191,7 @@ p5.prototype.orbitControl = function(
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
 
-    // For mouse, it is calculated based on the mouse position.    
+    // For mouse, it is calculated based on the mouse position.
     pointersInCanvas =
       (this.mouseX > 0 && this.mouseX < this.width) &&
       (this.mouseY > 0 && this.mouseY < this.height);
