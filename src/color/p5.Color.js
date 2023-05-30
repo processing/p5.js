@@ -350,7 +350,7 @@ p5.Color = class Color {
     if (![constants.RGB, constants.HSL, constants.HSB].includes(this.mode)) {
       throw new Error(`${this.mode} is an invalid colorMode.`);
     } else {
-      this._array = Color._parseInputs(...vals);
+      this._array = Color._parseInputs.apply(this, vals);
     }
 
     // Expose closest screen color.
@@ -827,7 +827,7 @@ p5.Color = class Color {
 
       // Return if string is a named colour.
       if (namedColors[str]) {
-        return Color._parseInputs(namedColors[str]);
+        return Color._parseInputs.call(this, namedColors[str]);
       }
 
       // Try RGBA pattern matching.
