@@ -180,6 +180,9 @@ p5.RendererGL = function (elt, pInst, isMainCanvas, attr) {
   this.zoomVelocity = 0;
   this.rotateVelocity = new p5.Vector(0, 0);
   this.moveVelocity = new p5.Vector(0, 0);
+  // Flags for recording the state of zooming, rotation and moving
+  this.executeZoom = false;
+  this.executeRotateAndMove = false;
 
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;

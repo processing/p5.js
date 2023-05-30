@@ -717,15 +717,15 @@ p5.prototype.normalMaterial = function(...args) {
 /**
  * Sets the ambient color of the material.
  *
- * The ambientMaterial() color is the color the object will reflect
- * under **any** lighting.
+ * The ambientMaterial() color represents the components
+ * of the **ambientLight()** color that the object reflects.
  *
  * Consider an ambientMaterial() with the color yellow (255, 255, 0).
- * If the light emits the color white (255, 255, 255), then the object
+ * If the ambientLight() emits the color white (255, 255, 255), then the object
  * will appear yellow as it will reflect the red and green components
- * of the light. If the light emits the color red (255, 0, 0), then
+ * of the light. If the ambientLight() emits the color red (255, 0, 0), then
  * the object will appear red as it will reflect the red component
- * of the light. If the light emits the color blue (0, 0, 255),
+ * of the light. If the ambientLight() emits the color blue (0, 0, 255),
  * then the object will appear black, as there is no component of
  * the light that it can reflect.
  *

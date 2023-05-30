@@ -1639,6 +1639,9 @@ p5.Camera.prototype.copy = function() {
   _cam.centerX = this.centerX;
   _cam.centerY = this.centerY;
   _cam.centerZ = this.centerZ;
+  _cam.upX = this.upX;
+  _cam.upY = this.upY;
+  _cam.upZ = this.upZ;
   _cam.cameraNear = this.cameraNear;
   _cam.cameraFar = this.cameraFar;
 
@@ -1717,26 +1720,21 @@ p5.Camera.prototype._getLocalAxes = function() {
  * @param {Number} dRadius change in radius
  */
 p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
+  // Calculate the vector and its magnitude from the center to the viewpoint
   const diffX = this.eyeX - this.centerX;
   const diffY = this.eyeY - this.centerY;
   const diffZ = this.eyeZ - this.centerZ;
+  let camRadius = Math.hypot(diffX, diffY, diffZ);
+  // front vector. unit vector from center to eye.
+  const front = new p5.Vector(diffX, diffY, diffZ).normalize();
+  // up vector. normalized camera's up vector.
+  const up = new p5.Vector(this.upX, this.upY, this.upZ).normalize(); // y-axis
+  // side vector. Right when viewed from the front
+  const side = new p5.Vector.cross(up, front).normalize(); // x-axis
+  // vertical vector. normalized vector of projection of front vector.
+  const vertical = new p5.Vector.cross(side, up); // z-axis
 
-  // get spherical coorinates for current camera position about origin
-  let camRadius = Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
-  // from https://github.com/mrdoob/three.js/blob/dev/src/math/Spherical.js#L72-L73
-  let camTheta = Math.atan2(diffX, diffZ); // equatorial angle
-  let camPhi = Math.acos(Math.max(-1, Math.min(1, diffY / camRadius))); // polar angle
-
-  let newUpY = this.upY > 0 ? 1 : -1;
-  // add change according to the direction of newupY
-  camTheta += newUpY * dTheta;
-  camPhi += newUpY * dPhi;
-  // if camPhi becomes >= PI or <= 0,
-  // upY of camera need to be flipped to the other side
-  if (camPhi <= 0 || camPhi >= Math.PI) {
-    newUpY *= -1;
-  }
-
+  // update camRadius
   camRadius *= Math.pow(10, dRadius);
   // prevent zooming through the center:
   if (camRadius < this.cameraNear) {
@@ -1746,21 +1744,39 @@ p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
     camRadius = this.cameraFar;
   }
 
-  // from https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js#L628-L632
-  const _x = Math.sin(camPhi) * camRadius * Math.sin(camTheta);
-  const _y = Math.cos(camPhi) * camRadius;
-  const _z = Math.sin(camPhi) * camRadius * Math.cos(camTheta);
+  // calculate updated camera angle
+  // Find the angle between the "up" and the "front", add dPhi to that.
+  // angleBetween() may return negative value. Since this specification is subject to change
+  // due to version updates, it cannot be adopted, so here we calculate using a method
+  // that directly obtains the absolute value.
+  const camPhi =
+    Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up)))) + dPhi;
+  // Rotate by dTheta in the shortest direction from "vertical" to "side"
+  const camTheta = dTheta;
 
+  // Invert camera's upX, upY, upZ if dPhi is below 0 or above PI
+  if(camPhi <= 0 || camPhi >= Math.PI){
+    this.upX *= -1;
+    this.upY *= -1;
+    this.upZ *= -1;
+  }
+
+  // update eye vector by calculate new front vector
+  up.mult(Math.cos(camPhi));
+  vertical.mult(Math.cos(camTheta) * Math.sin(camPhi));
+  side.mult(Math.sin(camTheta) * Math.sin(camPhi));
+
+  front.set(up).add(vertical).add(side);
+
+  this.eyeX = camRadius * front.x + this.centerX;
+  this.eyeY = camRadius * front.y + this.centerY;
+  this.eyeZ = camRadius * front.z + this.centerZ;
+
+  // update camera
   this.camera(
-    _x + this.centerX,
-    _y + this.centerY,
-    _z + this.centerZ,
-    this.centerX,
-    this.centerY,
-    this.centerZ,
-    0,
-    newUpY,
-    0
+    this.eyeX, this.eyeY, this.eyeZ,
+    this.centerX, this.centerY, this.centerZ,
+    this.upX, this.upY, this.upZ
   );
 };
 

@@ -449,6 +449,36 @@ suite('p5.Camera', function() {
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
+    test('_orbit() does not force up vector to be parallel to y-axis', function() {
+      // Check the shape of the camera matrix to make sure that the up vector
+      // does not become (0,1,0) or (0,-1,0) after running _orbit()
+      var expectedMatrix = new Float32Array([
+        -0.2129584103822708, 0.9760860204696655, -0.04364387318491936, 0,
+        -0.9770612716674805, -0.21274586021900177, 0.009512536227703094, 0,
+        -0, 0.04466851428151131, 0.9990018606185913, 0,
+        2.445493976210855e-7, -1.4983223195486062e-7, -866.025390625, 1
+      ]);
+
+      myCam.camera(100, 100, 100, 0, 0, 0, 0, 0, -1);
+      myCam._orbit(1, 1, 1);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('up vector of an arbitrary direction reverses by _orbit(0,PI,0)', function() {
+      // Make sure the up vector is reversed by doing _orbit(0, Math.PI, 0)
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      const prevUpX = myCam.upX;
+      const prevUpY = myCam.upY;
+      const prevUpZ = myCam.upZ;
+      myCam._orbit(0, Math.PI, 0);
+      const currUpX = myCam.upX;
+      const currUpY = myCam.upY;
+      const currUpZ = myCam.upZ;
+
+      expect(currUpX).to.be.closeTo(-prevUpX, 0.001);
+      expect(currUpY).to.be.closeTo(-prevUpY, 0.001);
+      expect(currUpZ).to.be.closeTo(-prevUpZ, 0.001);
+    });
     test('_orbit() ensures myCam.upY switches direction (from 1 to -1) at camPhi <= 0', function() {
       // the following should produce the upY with inverted direction(from 1 to -1)
       // when camPhi changes from positive to negative or zero
@@ -489,6 +519,21 @@ suite('p5.Camera', function() {
       var myCamCopy = myCam.copy();
       myCamCopy._orbit(0, Math.PI, 0);
       myCamCopy._orbit(0, Math.PI, 0);
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
+    });
+    test('Returns to the origin after a 360° rotation regardless of the up vector', function() {
+      // Even if the up vector is not (0,1,0) or (0,-1,0), _orbit() makes sure that
+      // the camera returns to its original position when rotated 360 degrees vertically.
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      var myCamCopy = myCam.copy();
+      // Performing 200 rotations of Math.PI*0.01 makes exactly one rotation.
+      for (let i = 0; i < 200; i++) {
+        myCamCopy._orbit(0, Math.PI * 0.01, 0);
+      }
       for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
         expect(
           myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(

@@ -54,7 +54,7 @@ import * as constants from '../core/constants';
  */
 
 // implementation based on three.js 'orbitControls':
-// https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
+// https://github.com/mrdoob/three.js/blob/6afb8595c0bf8b2e72818e42b64e6fe22707d896/examples/jsm/controls/OrbitControls.js#L22
 p5.prototype.orbitControl = function(
   sensitivityX,
   sensitivityY,
@@ -63,14 +63,6 @@ p5.prototype.orbitControl = function(
 ) {
   this._assert3d('orbitControl');
   p5._validateParameters('orbitControl', arguments);
-
-  // If the mouse is not in bounds of the canvas, disable all behaviors:
-  const mouseInCanvas =
-    this.mouseX < this.width &&
-    this.mouseX > 0 &&
-    this.mouseY < this.height &&
-    this.mouseY > 0;
-  if (!mouseInCanvas) return;
 
   const cam = this._renderer._curCamera;
 
@@ -115,11 +107,11 @@ p5.prototype.orbitControl = function(
 
   // get moved touches.
   const movedTouches = [];
-  for(let i = 0; i < this.touches.length; i++){
+  for (let i = 0; i < this.touches.length; i++) {
     const curTouch = this.touches[i];
-    for(let k=0; k < this._renderer.prevTouches.length; k++){
+    for (let k = 0; k < this._renderer.prevTouches.length; k++) {
       const prevTouch = this._renderer.prevTouches[k];
-      if(curTouch.id === prevTouch.id){
+      if (curTouch.id === prevTouch.id) {
         const movedTouch = {
           x: curTouch.x,
           y: curTouch.y,
@@ -150,12 +142,20 @@ p5.prototype.orbitControl = function(
   const mouseZoomScaleFactor = 0.0001;
   const touchZoomScaleFactor = 0.0004;
   const scaleFactor = this.height < this.width ? this.height : this.width;
+  // Flag whether the mouse or touch pointer is inside the canvas
+  let pointersInCanvas = false;
 
   // calculate and determine flags and variables.
   if (movedTouches.length > 0) {
     /* for touch */
     // if length === 1, rotate
     // if length > 1, zoom and move
+
+    // for touch, it is calculated based on one moved touch pointer position.
+    pointersInCanvas =
+      movedTouches[0].x > 0 && movedTouches[0].x < this.width &&
+      movedTouches[0].y > 0 && movedTouches[0].y < this.height;
+
     if (movedTouches.length === 1) {
       const t = movedTouches[0];
       deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
@@ -174,17 +174,39 @@ p5.prototype.orbitControl = function(
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
     }
+    if (this.touches.length > 0) {
+      if (pointersInCanvas) {
+        // Initiate an interaction if touched in the canvas
+        this._renderer.executeRotateAndMove = true;
+        this._renderer.executeZoom = true;
+      }
+    } else {
+      // End an interaction when the touch is released
+      this._renderer.executeRotateAndMove = false;
+      this._renderer.executeZoom = false;
+    }
   } else {
     /* for mouse */
     // if wheelDeltaY !== 0, zoom
     // if mouseLeftButton is down, rotate
     // if mouseRightButton is down, move
+
+    // For mouse, it is calculated based on the mouse position.
+    pointersInCanvas =
+      (this.mouseX > 0 && this.mouseX < this.width) &&
+      (this.mouseY > 0 && this.mouseY < this.height);
+
     if (this._mouseWheelDeltaY !== 0) {
       // zoom the camera depending on the value of _mouseWheelDeltaY.
       // move away if positive, move closer if negative
       deltaRadius = this._mouseWheelDeltaY * sensitivityZ;
       deltaRadius *= mouseZoomScaleFactor;
       this._mouseWheelDeltaY = 0;
+      // start zoom when the mouse is wheeled within the canvas.
+      if (pointersInCanvas) this._renderer.executeZoom = true;
+    } else {
+      // quit zoom when you stop wheeling.
+      this._renderer.zoomFlag = false;
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
@@ -194,13 +216,18 @@ p5.prototype.orbitControl = function(
         moveDeltaX = this.mouseX - this.pmouseX;
         moveDeltaY = this.mouseY - this.pmouseY;
       }
+      // start rotate and move when mouse is pressed within the canvas.
+      if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
+    } else {
+      // quit rotate and move if mouse is released.
+      this._renderer.executeRotateAndMove = false;
     }
   }
 
   // interactions
 
   // zoom process
-  if (deltaRadius !== 0) {
+  if (deltaRadius !== 0 && this._renderer.executeZoom) {
     // accelerate zoom velocity
     this._renderer.zoomVelocity += deltaRadius;
   }
@@ -224,7 +251,8 @@ p5.prototype.orbitControl = function(
   }
 
   // rotate process
-  if (deltaTheta !== 0 || deltaPhi !== 0) {
+  if ((deltaTheta !== 0 || deltaPhi !== 0) &&
+  this._renderer.executeRotateAndMove) {
     // accelerate rotate velocity
     this._renderer.rotateVelocity.add(
       deltaTheta * rotateAccelerationFactor,
@@ -232,7 +260,7 @@ p5.prototype.orbitControl = function(
       0
     );
   }
-  if (this._renderer.rotateVelocity.mag() > 0.001) {
+  if (this._renderer.rotateVelocity.magSq() > 0.000001) {
     this._renderer._curCamera._orbit(
       this._renderer.rotateVelocity.x,
       this._renderer.rotateVelocity.y,
@@ -245,7 +273,8 @@ p5.prototype.orbitControl = function(
   }
 
   // move process
-  if (moveDeltaX !== 0 || moveDeltaY !== 0) {
+  if ((moveDeltaX !== 0 || moveDeltaY !== 0) &&
+  this._renderer.executeRotateAndMove) {
     // Normalize movement distance
     const ndcX = moveDeltaX * 2/this.width;
     const ndcY = -moveDeltaY * 2/this.height;
@@ -255,7 +284,7 @@ p5.prototype.orbitControl = function(
       ndcY * moveAccelerationFactor
     );
   }
-  if (this._renderer.moveVelocity.mag() > 0.001) {
+  if (this._renderer.moveVelocity.magSq() > 0.000001) {
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
