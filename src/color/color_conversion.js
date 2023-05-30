@@ -265,6 +265,6 @@ p5.ColorConversion = {
     }
 
     return [hue / 6, sat, li / 2, rgba[3]];
-  },
-}
+  }
+};
 export default p5.ColorConversion;
