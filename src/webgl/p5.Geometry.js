@@ -83,6 +83,7 @@ p5.Geometry = class  {
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
     this.dirtyFlags = {};
+    this.webgl1StrokeDataDirty = true;
 
     if (callback instanceof Function) {
       callback.call(this);
@@ -99,6 +100,7 @@ p5.Geometry = class  {
       this.lineData[key].lineVertexColors.length = 0;
     }
 
+    this.webgl1StrokeDataDirty = true;
     this.vertices.length = 0;
     this.edges.length = 0;
     this.vertexColors.length = 0;
@@ -115,6 +117,8 @@ p5.Geometry = class  {
    * the CPU. This will be slower but will at least work.
    */
   _makeStrokeBufferData() {
+    if (!this.webgl1StrokeDataDirty) return;
+
     const strokeData = this.lineData.stroke;
     for (const key of ['joins', 'caps', 'segments']) {
       const instanceData = this.lineData[key];
@@ -147,6 +151,7 @@ p5.Geometry = class  {
         }
       }
     }
+    this.webgl1StrokeDataDirty = false;
   }
 
   /**
