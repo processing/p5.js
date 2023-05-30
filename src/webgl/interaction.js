@@ -54,7 +54,7 @@ import * as constants from '../core/constants';
  */
 
 // implementation based on three.js 'orbitControls':
-// https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/OrbitControls.js
+// https://github.com/mrdoob/three.js/blob/6afb8595c0bf8b2e72818e42b64e6fe22707d896/examples/jsm/controls/OrbitControls.js#L22
 p5.prototype.orbitControl = function(
   sensitivityX,
   sensitivityY,
@@ -150,13 +150,16 @@ p5.prototype.orbitControl = function(
     /* for touch */
     // if length === 1, rotate
     // if length > 1, zoom and move
+
+    // for touch, it is calculated based on one moved touch pointer position.
+    pointersInCanvas =
+      movedTouches[0].x > 0 && movedTouches[0].x < this.width &&
+      movedTouches[0].y > 0 && movedTouches[0].y < this.height;
+
     if (movedTouches.length === 1) {
       const t = movedTouches[0];
       deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
       deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
-      // For one point, calculate only for that point.
-      pointersInCanvas =
-        (t.x > 0 && t.x < this.width && t.y > 0 && t.y < this.height);
     } else {
       const t0 = movedTouches[0];
       const t1 = movedTouches[1];
@@ -170,18 +173,15 @@ p5.prototype.orbitControl = function(
       // the center of gravity of the two touch points.
       moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
       moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
-      // If there are no less than two points, calculate the first two points.
-      pointersInCanvas =
-        (t0.x > 0 && t0.x < this.width && t0.y > 0 && t0.y < this.height) &&
-        (t1.x > 0 && t1.x < this.width && t1.y > 0 && t1.y < this.height);
     }
-    // Initiate an interaction if touched in the canvas
-    if (this.touches.length > 0 && pointersInCanvas) {
-      this._renderer.executeRotateAndMove = true;
-      this._renderer.executeZoom = true;
-    }
-    // End an interaction when the touch is released while outside the canvas.
-    if (this.touches.length === 0 && !pointersInCanvas) {
+    if (this.touches.length > 0) {
+      if (pointersInCanvas) {
+        // Initiate an interaction if touched in the canvas
+        this._renderer.executeRotateAndMove = true;
+        this._renderer.executeZoom = true;
+      }
+    } else {
+      // End an interaction when the touch is released
       this._renderer.executeRotateAndMove = false;
       this._renderer.executeZoom = false;
     }
@@ -260,7 +260,7 @@ p5.prototype.orbitControl = function(
       0
     );
   }
-  if (this._renderer.rotateVelocity.mag() > 0.001) {
+  if (this._renderer.rotateVelocity.magSq() > 0.000001) {
     this._renderer._curCamera._orbit(
       this._renderer.rotateVelocity.x,
       this._renderer.rotateVelocity.y,
@@ -284,7 +284,7 @@ p5.prototype.orbitControl = function(
       ndcY * moveAccelerationFactor
     );
   }
-  if (this._renderer.moveVelocity.mag() > 0.001) {
+  if (this._renderer.moveVelocity.magSq() > 0.000001) {
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
