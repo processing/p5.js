@@ -61,6 +61,17 @@ import '../core/friendly_errors/fes_core';
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let img;
+ * function setup() {
+ *   img = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ * }
+ * function draw() {
+ *   image(img, 0, 0);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
  * image of the underside of a white umbrella and grided ceililng above
