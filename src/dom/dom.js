@@ -2520,8 +2520,8 @@ p5.MediaElement = class MediaElement extends p5.Element {
     self.elt.onended = function () {
       self._onended(self);
     };
-  };
-}
+  }
+};
 
 /**
  * Play an HTML5 media element.
@@ -3659,8 +3659,8 @@ p5.File = class File {
      * @property data
      */
     this.data = undefined;
-  };
-}
+  }
+};
 
 p5.File._createLoader = function (theFile, callback) {
   const reader = new FileReader();
