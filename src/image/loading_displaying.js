@@ -65,7 +65,7 @@ import '../core/friendly_errors/fes_core';
  * <code>
  * let img;
  * function setup() {
- *  img = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
+ *   img = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
  * }
  * function draw() {
  *   image(img, 0, 0);
