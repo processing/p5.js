@@ -397,7 +397,7 @@ p5.Image = class {
   }
 
   _getPixel(...args) {
-    return p5.Renderer2D.prototype._getPixel(...args);
+    return p5.Renderer2D.prototype._getPixel.apply(this, args);
   }
 
   /**
