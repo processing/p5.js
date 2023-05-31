@@ -2422,6 +2422,20 @@ p5.Element.prototype.drop = function (callback, fxn) {
   return this;
 };
 
+/*** SCHEDULE EVENTS ***/
+
+// Cue inspired by JavaScript setTimeout, and the
+// Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
+// eslint-disable-next-line no-unused-vars
+class Cue {
+  constructor(callback, time, id, val) {
+    this.callback = callback;
+    this.time = time;
+    this.id = id;
+    this.val = val;
+  }
+}
+
 // =============================================================================
 //                         p5.MediaElement additions
 // =============================================================================
@@ -2898,7 +2912,7 @@ p5.MediaElement = class MediaElement extends p5.Element {
     if (val && !oldVal) {
       // bind method to this scope
       const setupAutoplayFailDetection =
-      () => this._setupAutoplayFailDetection();
+        () => this._setupAutoplayFailDetection();
       // if media is ready to play, schedule check now
       if (this.elt.readyState === 4) {
         setupAutoplayFailDetection();
@@ -3433,20 +3447,8 @@ p5.MediaElement = class MediaElement extends p5.Element {
   hideControls() {
     this.elt.controls = false;
   }
-};
 
-/*** SCHEDULE EVENTS ***/
-
-// Cue inspired by JavaScript setTimeout, and the
-// Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
-const Cue = function (callback, time, id, val) {
-  this.callback = callback;
-  this.time = time;
-  this.id = id;
-  this.val = val;
-};
-
-/**
+  /**
  * Schedule events to trigger every time a MediaElement
  * (audio/video) reaches a playback cue point.
  *
@@ -3496,20 +3498,20 @@ const Cue = function (callback, time, id, val) {
  * }
  * </code></div>
  */
-addCue = function (time, callback, val) {
-  const id = this._cueIDCounter++;
+  addCue(time, callback, val) {
+    const id = this._cueIDCounter++;
 
-  const cue = new Cue(callback, time, id, val);
-  this._cues.push(cue);
+    const cue = new Cue(callback, time, id, val);
+    this._cues.push(cue);
 
-  if (!this.elt.ontimeupdate) {
-    this.elt.ontimeupdate = this._onTimeUpdate.bind(this);
+    if (!this.elt.ontimeupdate) {
+      this.elt.ontimeupdate = this._onTimeUpdate.bind(this);
+    }
+
+    return id;
   }
 
-  return id;
-};
-
-/**
+  /**
  * Remove a callback based on its ID. The ID is returned by the
  * addCue method.
  * @method removeCue
@@ -3538,20 +3540,20 @@ addCue = function (time, callback, val) {
  * }
  * </code></div>
  */
-removeCue = function (id) {
-  for (let i = 0; i < this._cues.length; i++) {
-    if (this._cues[i].id === id) {
-      console.log(id);
-      this._cues.splice(i, 1);
+  removeCue(id) {
+    for (let i = 0; i < this._cues.length; i++) {
+      if (this._cues[i].id === id) {
+        console.log(id);
+        this._cues.splice(i, 1);
+      }
+    }
+
+    if (this._cues.length === 0) {
+      this.elt.ontimeupdate = null;
     }
   }
 
-  if (this._cues.length === 0) {
-    this.elt.ontimeupdate = null;
-  }
-};
-
-/**
+  /**
  * Remove all of the callbacks that had originally been scheduled
  * via the addCue method.
  * @method  clearCues
@@ -3585,27 +3587,28 @@ removeCue = function (id) {
  * }
  * </code></div>
  */
-clearCues = function () {
-  this._cues = [];
-  this.elt.ontimeupdate = null;
-};
-
-// private method that checks for cues to be fired if events
-// have been scheduled using addCue(callback, time).
-_onTimeUpdate = function () {
-  const playbackTime = this.time();
-
-  for (let i = 0; i < this._cues.length; i++) {
-    const callbackTime = this._cues[i].time;
-    const val = this._cues[i].val;
-
-    if (this._prevTime < callbackTime && callbackTime <= playbackTime) {
-      // pass the scheduled callbackTime as parameter to the callback
-      this._cues[i].callback(val);
-    }
+  clearCues() {
+    this._cues = [];
+    this.elt.ontimeupdate = null;
   }
 
-  this._prevTime = playbackTime;
+  // private method that checks for cues to be fired if events
+  // have been scheduled using addCue(callback, time).
+  _onTimeUpdate() {
+    const playbackTime = this.time();
+
+    for (let i = 0; i < this._cues.length; i++) {
+      const callbackTime = this._cues[i].time;
+      const val = this._cues[i].val;
+
+      if (this._prevTime < callbackTime && callbackTime <= playbackTime) {
+        // pass the scheduled callbackTime as parameter to the callback
+        this._cues[i].callback(val);
+      }
+    }
+
+    this._prevTime = playbackTime;
+  }
 };
 
 /**
@@ -3663,39 +3666,40 @@ p5.File = class File {
      */
     this.data = undefined;
   }
-};
 
-p5.File._createLoader = function (theFile, callback) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const p5file = new p5.File(theFile);
-    if (p5file.file.type === 'application/json') {
-      // Parse JSON and store the result in data
-      p5file.data = JSON.parse(e.target.result);
-    } else if (p5file.file.type === 'text/xml') {
-      // Parse XML, wrap it in p5.XML and store the result in data
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(e.target.result, 'text/xml');
-      p5file.data = new p5.XML(xml.documentElement);
+
+  static _createLoader(theFile, callback) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const p5file = new p5.File(theFile);
+      if (p5file.file.type === 'application/json') {
+        // Parse JSON and store the result in data
+        p5file.data = JSON.parse(e.target.result);
+      } else if (p5file.file.type === 'text/xml') {
+        // Parse XML, wrap it in p5.XML and store the result in data
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(e.target.result, 'text/xml');
+        p5file.data = new p5.XML(xml.documentElement);
+      } else {
+        p5file.data = e.target.result;
+      }
+      callback(p5file);
+    };
+    return reader;
+  }
+
+  static _load(f, callback) {
+    // Text or data?
+    // This should likely be improved
+    if (/^text\//.test(f.type) || f.type === 'application/json') {
+      p5.File._createLoader(f, callback).readAsText(f);
+    } else if (!/^(video|audio)\//.test(f.type)) {
+      p5.File._createLoader(f, callback).readAsDataURL(f);
     } else {
-      p5file.data = e.target.result;
+      const file = new p5.File(f);
+      file.data = URL.createObjectURL(f);
+      callback(file);
     }
-    callback(p5file);
-  };
-  return reader;
-};
-
-p5.File._load = function (f, callback) {
-  // Text or data?
-  // This should likely be improved
-  if (/^text\//.test(f.type) || f.type === 'application/json') {
-    p5.File._createLoader(f, callback).readAsText(f);
-  } else if (!/^(video|audio)\//.test(f.type)) {
-    p5.File._createLoader(f, callback).readAsDataURL(f);
-  } else {
-    const file = new p5.File(f);
-    file.data = URL.createObjectURL(f);
-    callback(file);
   }
 };
 
