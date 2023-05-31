@@ -599,14 +599,16 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     this.fontInfos = {};
 
-    this._curShader = undefined;
+  this._curShader = undefined;
 
-    return this;
-  }
+  return this;
+};
 
-  //////////////////////////////////////////////
-  // Setting
-  //////////////////////////////////////////////
+p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
+
+//////////////////////////////////////////////
+// Setting
+//////////////////////////////////////////////
 
   _setAttributeDefaults(pInst) {
     // See issue #3850, safer to enable AA in Safari
