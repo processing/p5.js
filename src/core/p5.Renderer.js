@@ -19,48 +19,47 @@ import * as constants from '../core/constants';
  * @param {p5} [pInst] pointer to p5 instance
  * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
-p5.Renderer = class Renderer extends p5.Element {
-  constructor(elt, pInst, isMainCanvas) {
-    super(elt, pInst);
-    this.canvas = elt;
-    this._pixelsState = pInst;
-    if (isMainCanvas) {
-      this._isMainCanvas = true;
-      // for pixel method sharing with pimage
-      this._pInst._setProperty('_curElement', this);
-      this._pInst._setProperty('canvas', this.canvas);
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
-    } else {
-      // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-      this._styles = []; // non-main elt styles stored in p5.Renderer
-    }
-
-    this._textSize = 12;
-    this._textLeading = 15;
-    this._textFont = 'sans-serif';
-    this._textStyle = constants.NORMAL;
-    this._textAscent = null;
-    this._textDescent = null;
-    this._textAlign = constants.LEFT;
-    this._textBaseline = constants.BASELINE;
-    this._textWrap = constants.WORD;
-
-    this._rectMode = constants.CORNER;
-    this._ellipseMode = constants.CENTER;
-    this._curveTightness = 0;
-    this._imageMode = constants.CORNER;
-
-    this._tint = null;
-    this._doStroke = true;
-    this._doFill = true;
-    this._strokeSet = false;
-    this._fillSet = false;
-    this._leadingSet = false;
+p5.Renderer = function (elt, pInst, isMainCanvas) {
+  p5.Element.call(this, elt, pInst);
+  this.canvas = elt;
+  this._pixelsState = pInst;
+  if (isMainCanvas) {
+    this._isMainCanvas = true;
+    // for pixel method sharing with pimage
+    this._pInst._setProperty('_curElement', this);
+    this._pInst._setProperty('canvas', this.canvas);
+    this._pInst._setProperty('width', this.width);
+    this._pInst._setProperty('height', this.height);
+  } else {
+    // hide if offscreen buffer by default
+    this.canvas.style.display = 'none';
+    this._styles = []; // non-main elt styles stored in p5.Renderer
   }
+
+  this._textSize = 12;
+  this._textLeading = 15;
+  this._textFont = 'sans-serif';
+  this._textStyle = constants.NORMAL;
+  this._textAscent = null;
+  this._textDescent = null;
+  this._textAlign = constants.LEFT;
+  this._textBaseline = constants.BASELINE;
+  this._textWrap = constants.WORD;
+
+  this._rectMode = constants.CORNER;
+  this._ellipseMode = constants.CENTER;
+  this._curveTightness = 0;
+  this._imageMode = constants.CORNER;
+
+  this._tint = null;
+  this._doStroke = true;
+  this._doFill = true;
+  this._strokeSet = false;
+  this._fillSet = false;
+  this._leadingSet = false;
 };
 
+p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
 // the renderer should return a 'style' object that it wishes to
 // store on the push stack.
