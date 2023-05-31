@@ -11,11 +11,11 @@ import { join } from 'path';
 const STROKE_CAP_ENUM = {};
 const STROKE_JOIN_ENUM = {};
 let lineDefs = '';
-const defineStrokeCapEnum = function(key, val) {
+const defineStrokeCapEnum = function (key, val) {
   lineDefs += `#define STROKE_CAP_${key} ${val}\n`;
   STROKE_CAP_ENUM[constants[key]] = val;
 };
-const defineStrokeJoinEnum = function(key, val) {
+const defineStrokeJoinEnum = function (key, val) {
   lineDefs += `#define STROKE_JOIN_${key} ${val}\n`;
   STROKE_JOIN_ENUM[constants[key]] = val;
 };
@@ -86,7 +86,7 @@ const defaultShaders = {
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  */
-p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
+p5.RendererGL = function (elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
   this._setAttributeDefaults(pInst);
   this._initContext();
@@ -138,6 +138,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   }
   this._isBlending = false;
 
+
   this._hasSetAmbient = false;
   this._useSpecularMaterial = false;
   this._useEmissiveMaterial = false;
@@ -157,9 +158,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.quadraticAttenuation = 0;
 
   /**
-   * model view, projection, & normal
-   * matrices
-   */
+ * model view, projection, & normal
+ * matrices
+ */
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
@@ -214,7 +215,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ],
       text: [
-        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition',this, this._vToNArray),
+        new p5.RenderBuffer(3, 'vertices', 'vertexBuffer', 'aPosition', this, this._vToNArray),
         new p5.RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, this._flatten)
       ]
     }
@@ -292,7 +293,7 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
-p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
+p5.RendererGL.prototype._setAttributeDefaults = function (pInst) {
   // See issue #3850, safer to enable AA in Safari
   const applyAA = navigator.userAgent.toLowerCase().includes('safari');
   const defaults = {
@@ -313,7 +314,7 @@ p5.RendererGL.prototype._setAttributeDefaults = function(pInst) {
   return;
 };
 
-p5.RendererGL.prototype._initContext = function() {
+p5.RendererGL.prototype._initContext = function () {
   if (this._pInst._glAttributes.version !== 1) {
     // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
     this.drawingContext =
@@ -350,7 +351,7 @@ p5.RendererGL.prototype._initContext = function() {
 //This is helper function to reset the context anytime the attributes
 //are changed with setAttributes()
 
-p5.RendererGL.prototype._resetContext = function(options, callback) {
+p5.RendererGL.prototype._resetContext = function (options, callback) {
   const w = this.width;
   const h = this.height;
   const defaultId = this.canvas.id;
@@ -557,11 +558,11 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
  * @param  {Object}  obj object with key-value pairs
  */
 
-p5.prototype.setAttributes = function(key, value) {
+p5.prototype.setAttributes = function (key, value) {
   if (typeof this._glAttributes === 'undefined') {
     console.log(
       'You are trying to use setAttributes on a p5.Graphics object ' +
-        'that does not use a WEBGL renderer.'
+      'that does not use a WEBGL renderer.'
     );
     return;
   }
@@ -593,7 +594,7 @@ p5.prototype.setAttributes = function(key, value) {
       if (this._renderer.retainedMode.geometry.hasOwnProperty(x)) {
         p5._friendlyError(
           'Sorry, Could not set the attributes, you need to call setAttributes() ' +
-            'before calling the other drawing methods in setup()'
+          'before calling the other drawing methods in setup()'
         );
         return;
       }
@@ -613,7 +614,7 @@ p5.prototype.setAttributes = function(key, value) {
  * @class p5.RendererGL
  */
 
-p5.RendererGL.prototype._update = function() {
+p5.RendererGL.prototype._update = function () {
   // reset model view and apply initial camera transform
   // (containing only look at info; no projection).
   this.uMVMatrix.set(
@@ -667,7 +668,7 @@ p5.RendererGL.prototype._update = function() {
 /**
  * [background description]
  */
-p5.RendererGL.prototype.background = function(...args) {
+p5.RendererGL.prototype.background = function (...args) {
   const _col = this._pInst.color(...args);
   const _r = _col.levels[0] / 255;
   const _g = _col.levels[1] / 255;
@@ -711,7 +712,7 @@ p5.RendererGL.prototype.background = function(...args) {
  * @alt
  * black canvas with purple cube spinning
  */
-p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
+p5.RendererGL.prototype.fill = function (v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curFillColor = color._array;
@@ -750,27 +751,27 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
  * @alt
  * black canvas with purple cube with pink outline spinning
  */
-p5.RendererGL.prototype.stroke = function(r, g, b, a) {
+p5.RendererGL.prototype.stroke = function (r, g, b, a) {
   const color = p5.prototype.color.apply(this._pInst, arguments);
   this.curStrokeColor = color._array;
 };
 
-p5.RendererGL.prototype.strokeCap = function(cap) {
+p5.RendererGL.prototype.strokeCap = function (cap) {
   this.curStrokeCap = cap;
 };
 
-p5.RendererGL.prototype.strokeJoin = function(join) {
+p5.RendererGL.prototype.strokeJoin = function (join) {
   this.curStrokeJoin = join;
 };
 
-p5.RendererGL.prototype.filter = function(filterType) {
+p5.RendererGL.prototype.filter = function (filterType) {
   // filter can be achieved using custom shaders.
   // https://github.com/aferriss/p5jsShaderExamples
   // https://itp-xstory.github.io/p5js-shaders/#/
   p5._friendlyError('filter() does not work in WEBGL mode');
 };
 
-p5.RendererGL.prototype.blendMode = function(mode) {
+p5.RendererGL.prototype.blendMode = function (mode) {
   if (
     mode === constants.DARKEST ||
     mode === constants.LIGHTEST ||
@@ -797,7 +798,7 @@ p5.RendererGL.prototype.blendMode = function(mode) {
   }
 };
 
-p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
+p5.RendererGL.prototype.erase = function (opacityFill, opacityStroke) {
   if (!this._isErasing) {
     this._applyBlendMode(constants.REMOVE);
     this._isErasing = true;
@@ -810,7 +811,7 @@ p5.RendererGL.prototype.erase = function(opacityFill, opacityStroke) {
   }
 };
 
-p5.RendererGL.prototype.noErase = function() {
+p5.RendererGL.prototype.noErase = function () {
   if (this._isErasing) {
     this._isErasing = false;
     this.curFillColor = this._cachedFillStyle.slice();
@@ -858,7 +859,7 @@ p5.RendererGL.prototype.noErase = function() {
  * black canvas with two purple rotating spheres with pink
  * outlines the sphere on top has much heavier outlines,
  */
-p5.RendererGL.prototype.strokeWeight = function(w) {
+p5.RendererGL.prototype.strokeWeight = function (w) {
   if (this.curStrokeWeight !== w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
@@ -866,7 +867,7 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
 };
 
 // x,y are canvas-relative (pre-scaled by _pixelDensity)
-p5.RendererGL.prototype._getPixel = function(x, y) {
+p5.RendererGL.prototype._getPixel = function (x, y) {
   const gl = this.GL;
   return readPixelWebGL(
     gl,
@@ -888,7 +889,7 @@ p5.RendererGL.prototype._getPixel = function(x, y) {
  * @method loadPixels
  */
 
-p5.RendererGL.prototype.loadPixels = function() {
+p5.RendererGL.prototype.loadPixels = function () {
   const pixelsState = this._pixelsState;
 
   //@todo_FES
@@ -919,7 +920,7 @@ p5.RendererGL.prototype.loadPixels = function() {
   );
 };
 
-p5.RendererGL.prototype.updatePixels = function() {
+p5.RendererGL.prototype.updatePixels = function () {
   const fbo = this._getTempFramebuffer();
   fbo.pixels = this._pixelsState.pixels;
   fbo.updatePixels();
@@ -939,7 +940,7 @@ p5.RendererGL.prototype.updatePixels = function() {
  * of the renderer's canvas. It will be created if it does not yet exist, and
  * reused if it does.
  */
-p5.RendererGL.prototype._getTempFramebuffer = function() {
+p5.RendererGL.prototype._getTempFramebuffer = function () {
   if (!this._tempFramebuffer) {
     this._tempFramebuffer = this._pInst.createFramebuffer({
       format: constants.UNSIGNED_BYTE,
@@ -1067,7 +1068,7 @@ export function readPixelWebGL(
 // HASH | for geometry
 //////////////////////////////////////////////
 
-p5.RendererGL.prototype.geometryInHash = function(gId) {
+p5.RendererGL.prototype.geometryInHash = function (gId) {
   return this.retainedMode.geometry[gId] !== undefined;
 };
 
@@ -1077,7 +1078,7 @@ p5.RendererGL.prototype.geometryInHash = function(gId) {
  * @param  {Number} w [description]
  * @param  {Number} h [description]
  */
-p5.RendererGL.prototype.resize = function(w, h) {
+p5.RendererGL.prototype.resize = function (w, h) {
   p5.Renderer.prototype.resize.call(this, w, h);
   this.GL.viewport(
     0,
@@ -1116,7 +1117,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
-p5.RendererGL.prototype.clear = function(...args) {
+p5.RendererGL.prototype.clear = function (...args) {
   const _r = args[0] || 0;
   const _g = args[1] || 0;
   const _b = args[2] || 0;
@@ -1127,7 +1128,7 @@ p5.RendererGL.prototype.clear = function(...args) {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
-p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
+p5.RendererGL.prototype.applyMatrix = function (a, b, c, d, e, f) {
   if (arguments.length === 16) {
     p5.Matrix.prototype.apply.apply(this.uMVMatrix, arguments);
   } else {
@@ -1149,7 +1150,7 @@ p5.RendererGL.prototype.applyMatrix = function(a, b, c, d, e, f) {
  * @chainable
  * @todo implement handle for components or vector as args
  */
-p5.RendererGL.prototype.translate = function(x, y, z) {
+p5.RendererGL.prototype.translate = function (x, y, z) {
   if (x instanceof p5.Vector) {
     z = x.z;
     y = x.y;
@@ -1167,12 +1168,12 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @param  {Number} [z] z-axis scalar
  * @chainable
  */
-p5.RendererGL.prototype.scale = function(x, y, z) {
+p5.RendererGL.prototype.scale = function (x, y, z) {
   this.uMVMatrix.scale(x, y, z);
   return this;
 };
 
-p5.RendererGL.prototype.rotate = function(rad, axis) {
+p5.RendererGL.prototype.rotate = function (rad, axis) {
   if (typeof axis === 'undefined') {
     return this.rotateZ(rad);
   }
@@ -1180,22 +1181,22 @@ p5.RendererGL.prototype.rotate = function(rad, axis) {
   return this;
 };
 
-p5.RendererGL.prototype.rotateX = function(rad) {
+p5.RendererGL.prototype.rotateX = function (rad) {
   this.rotate(rad, 1, 0, 0);
   return this;
 };
 
-p5.RendererGL.prototype.rotateY = function(rad) {
+p5.RendererGL.prototype.rotateY = function (rad) {
   this.rotate(rad, 0, 1, 0);
   return this;
 };
 
-p5.RendererGL.prototype.rotateZ = function(rad) {
+p5.RendererGL.prototype.rotateZ = function (rad) {
   this.rotate(rad, 0, 0, 1);
   return this;
 };
 
-p5.RendererGL.prototype.push = function() {
+p5.RendererGL.prototype.push = function () {
   // get the base renderer style
   const style = p5.Renderer.prototype.push.apply(this);
 
@@ -1263,7 +1264,7 @@ p5.RendererGL.prototype.push = function() {
   return style;
 };
 
-p5.RendererGL.prototype.resetMatrix = function() {
+p5.RendererGL.prototype.resetMatrix = function () {
   this.uMVMatrix.set(
     this._curCamera.cameraMatrix.mat4[0],
     this._curCamera.cameraMatrix.mat4[1],
@@ -1295,7 +1296,7 @@ p5.RendererGL.prototype.resetMatrix = function() {
  * and the shader must be valid in that context.
  */
 
-p5.RendererGL.prototype._getImmediateStrokeShader = function() {
+p5.RendererGL.prototype._getImmediateStrokeShader = function () {
   // select the stroke shader to use
   const stroke = this.userStrokeShader;
   if (!stroke || !stroke.isStrokeShader()) {
@@ -1311,7 +1312,7 @@ p5.RendererGL.prototype._getRetainedStrokeShader =
  * selects which fill shader should be used based on renderer state,
  * for use with begin/endShape and immediate vertex mode.
  */
-p5.RendererGL.prototype._getImmediateFillShader = function() {
+p5.RendererGL.prototype._getImmediateFillShader = function () {
   const fill = this.userFillShader;
   if (this._useNormalMaterial) {
     if (!fill || !fill.isNormalShader()) {
@@ -1336,7 +1337,7 @@ p5.RendererGL.prototype._getImmediateFillShader = function() {
  * selects which fill shader should be used based on renderer state
  * for retained mode.
  */
-p5.RendererGL.prototype._getRetainedFillShader = function() {
+p5.RendererGL.prototype._getRetainedFillShader = function () {
   if (this._useNormalMaterial) {
     return this._getNormalShader();
   }
@@ -1356,7 +1357,7 @@ p5.RendererGL.prototype._getRetainedFillShader = function() {
   return fill;
 };
 
-p5.RendererGL.prototype._getImmediatePointShader = function() {
+p5.RendererGL.prototype._getImmediatePointShader = function () {
   // select the point shader to use
   const point = this.userPointShader;
   if (!point || !point.isPointShader()) {
@@ -1368,7 +1369,7 @@ p5.RendererGL.prototype._getImmediatePointShader = function() {
 p5.RendererGL.prototype._getRetainedLineShader =
   p5.RendererGL.prototype._getImmediateLineShader;
 
-p5.RendererGL.prototype._getLightShader = function() {
+p5.RendererGL.prototype._getLightShader = function () {
   if (!this._defaultLightShader) {
     if (this._pInst._glAttributes.perPixelLighting) {
       this._defaultLightShader = new p5.Shader(
@@ -1388,7 +1389,7 @@ p5.RendererGL.prototype._getLightShader = function() {
   return this._defaultLightShader;
 };
 
-p5.RendererGL.prototype._getImmediateModeShader = function() {
+p5.RendererGL.prototype._getImmediateModeShader = function () {
   if (!this._defaultImmediateModeShader) {
     this._defaultImmediateModeShader = new p5.Shader(
       this,
@@ -1400,7 +1401,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function() {
   return this._defaultImmediateModeShader;
 };
 
-p5.RendererGL.prototype._getNormalShader = function() {
+p5.RendererGL.prototype._getNormalShader = function () {
   if (!this._defaultNormalShader) {
     this._defaultNormalShader = new p5.Shader(
       this,
@@ -1412,7 +1413,7 @@ p5.RendererGL.prototype._getNormalShader = function() {
   return this._defaultNormalShader;
 };
 
-p5.RendererGL.prototype._getColorShader = function() {
+p5.RendererGL.prototype._getColorShader = function () {
   if (!this._defaultColorShader) {
     this._defaultColorShader = new p5.Shader(
       this,
@@ -1424,7 +1425,7 @@ p5.RendererGL.prototype._getColorShader = function() {
   return this._defaultColorShader;
 };
 
-p5.RendererGL.prototype._getPointShader = function() {
+p5.RendererGL.prototype._getPointShader = function () {
   if (!this._defaultPointShader) {
     this._defaultPointShader = new p5.Shader(
       this,
@@ -1435,7 +1436,7 @@ p5.RendererGL.prototype._getPointShader = function() {
   return this._defaultPointShader;
 };
 
-p5.RendererGL.prototype._getLineShader = function() {
+p5.RendererGL.prototype._getLineShader = function () {
   if (!this._defaultLineShader) {
     this._defaultLineShader = new p5.Shader(
       this,
@@ -1447,7 +1448,7 @@ p5.RendererGL.prototype._getLineShader = function() {
   return this._defaultLineShader;
 };
 
-p5.RendererGL.prototype._getFontShader = function() {
+p5.RendererGL.prototype._getFontShader = function () {
   if (!this._defaultFontShader) {
     if (this.webglVersion === constants.WEBGL) {
       this.GL.getExtension('OES_standard_derivatives');
@@ -1455,15 +1456,15 @@ p5.RendererGL.prototype._getFontShader = function() {
     this._defaultFontShader = new p5.Shader(
       this,
       this._webGL2CompatibilityPrefix('vert', 'mediump') +
-        defaultShaders.fontVert,
+      defaultShaders.fontVert,
       this._webGL2CompatibilityPrefix('frag', 'mediump') +
-        defaultShaders.fontFrag
+      defaultShaders.fontFrag
     );
   }
   return this._defaultFontShader;
 };
 
-p5.RendererGL.prototype._webGL2CompatibilityPrefix = function(
+p5.RendererGL.prototype._webGL2CompatibilityPrefix = function (
   shaderType,
   floatPrecision
 ) {
@@ -1482,7 +1483,7 @@ p5.RendererGL.prototype._webGL2CompatibilityPrefix = function(
   return code;
 };
 
-p5.RendererGL.prototype._getEmptyTexture = function() {
+p5.RendererGL.prototype._getEmptyTexture = function () {
   if (!this._emptyTexture) {
     // a plain white texture RGBA, full alpha, single pixel.
     const im = new p5.Image(1, 1);
@@ -1492,7 +1493,7 @@ p5.RendererGL.prototype._getEmptyTexture = function() {
   return this._emptyTexture;
 };
 
-p5.RendererGL.prototype.getTexture = function(input) {
+p5.RendererGL.prototype.getTexture = function (input) {
   let src = input;
   if (src instanceof p5.Framebuffer) {
     src = src.color;
@@ -1508,11 +1509,11 @@ p5.RendererGL.prototype.getTexture = function(input) {
   return tex;
 };
 
-p5.RendererGL.prototype.createFramebuffer = function(options) {
+p5.RendererGL.prototype.createFramebuffer = function (options) {
   return new p5.Framebuffer(this, options);
 };
 
-p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
+p5.RendererGL.prototype._setStrokeUniforms = function (strokeShader) {
   strokeShader.bindShader();
 
   // set the uniform values
@@ -1523,7 +1524,7 @@ p5.RendererGL.prototype._setStrokeUniforms = function(strokeShader) {
   strokeShader.setUniform('uStrokeJoin', STROKE_JOIN_ENUM[this.curStrokeJoin]);
 };
 
-p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
+p5.RendererGL.prototype._setFillUniforms = function (fillShader) {
   fillShader.bindShader();
 
   // TODO: optimize
@@ -1593,7 +1594,7 @@ p5.RendererGL.prototype._setFillUniforms = function(fillShader) {
   fillShader.bindTextures();
 };
 
-p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
+p5.RendererGL.prototype._setPointUniforms = function (pointShader) {
   pointShader.bindShader();
 
   // set the uniform values
@@ -1610,7 +1611,7 @@ p5.RendererGL.prototype._setPointUniforms = function(pointShader) {
  * when passed more than two arguments it also updates or initializes
  * the data associated with the buffer
  */
-p5.RendererGL.prototype._bindBuffer = function(
+p5.RendererGL.prototype._bindBuffer = function (
   buffer,
   target,
   values,
@@ -1628,7 +1629,7 @@ p5.RendererGL.prototype._bindBuffer = function(
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
-p5.RendererGL.prototype._arraysEqual = function(a, b) {
+p5.RendererGL.prototype._arraysEqual = function (a, b) {
   const aLength = a.length;
   if (aLength !== b.length) return false;
   for (let i = 0; i < aLength; i++) {
@@ -1637,7 +1638,7 @@ p5.RendererGL.prototype._arraysEqual = function(a, b) {
   return true;
 };
 
-p5.RendererGL.prototype._isTypedArray = function(arr) {
+p5.RendererGL.prototype._isTypedArray = function (arr) {
   let res = false;
   res = arr instanceof Float32Array;
   res = arr instanceof Float64Array;
@@ -1653,7 +1654,7 @@ p5.RendererGL.prototype._isTypedArray = function(arr) {
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._flatten = function(arr) {
+p5.RendererGL.prototype._flatten = function (arr) {
   //when empty, return empty
   if (arr.length === 0) {
     return [];
@@ -1691,7 +1692,7 @@ p5.RendererGL.prototype._flatten = function(arr) {
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */
-p5.RendererGL.prototype._vToNArray = function(arr) {
+p5.RendererGL.prototype._vToNArray = function (arr) {
   const ret = [];
 
   for (const item of arr) {
@@ -1704,7 +1705,7 @@ p5.RendererGL.prototype._vToNArray = function(arr) {
 /**
  * ensures that p5 is using a 3d renderer. throws an error if not.
  */
-p5.prototype._assert3d = function(name) {
+p5.prototype._assert3d = function (name) {
   if (!this._renderer.isP3D)
     throw new Error(
       `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
@@ -1758,7 +1759,7 @@ p5.RendererGL.prototype._initTessy = function initTesselator() {
   return tessy;
 };
 
-p5.RendererGL.prototype._triangulate = function(contours) {
+p5.RendererGL.prototype._triangulate = function (contours) {
   // libtess will take 3d verts and flatten to a plane for tesselation.
   // libtess is capable of calculating a plane to tesselate on, but
   // if all of the vertices have the same z values, we'll just
@@ -1812,7 +1813,7 @@ p5.RendererGL.prototype._triangulate = function(contours) {
 };
 
 // function to calculate BezierVertex Coefficients
-p5.RendererGL.prototype._bezierCoefficients = function(t) {
+p5.RendererGL.prototype._bezierCoefficients = function (t) {
   const t2 = t * t;
   const t3 = t2 * t;
   const mt = 1 - t;
@@ -1822,7 +1823,7 @@ p5.RendererGL.prototype._bezierCoefficients = function(t) {
 };
 
 // function to calculate QuadraticVertex Coefficients
-p5.RendererGL.prototype._quadraticCoefficients = function(t) {
+p5.RendererGL.prototype._quadraticCoefficients = function (t) {
   const t2 = t * t;
   const mt = 1 - t;
   const mt2 = mt * mt;
@@ -1830,7 +1831,7 @@ p5.RendererGL.prototype._quadraticCoefficients = function(t) {
 };
 
 // function to convert Bezier coordinates to Catmull Rom Splines
-p5.RendererGL.prototype._bezierToCatmull = function(w) {
+p5.RendererGL.prototype._bezierToCatmull = function (w) {
   const p1 = w[1];
   const p2 = w[1] + (w[2] - w[0]) / this._curveTightness;
   const p3 = w[2] - (w[3] - w[1]) / this._curveTightness;
