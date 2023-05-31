@@ -19,7 +19,7 @@ import * as constants from '../core/constants';
  * @param {p5} [pInst] pointer to p5 instance
  * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
-p5.Renderer = class extends p5.Element {
+p5.Renderer = class Renderer extends p5.Element {
   constructor(elt, pInst, isMainCanvas) {
     super(elt, pInst);
     this.canvas = elt;
