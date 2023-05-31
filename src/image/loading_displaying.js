@@ -55,20 +55,9 @@ import '../core/friendly_errors/fes_core';
  * <code>
  * function setup() {
  *   // here we use a callback to display the image after loading
- *   loadImage('assets/arnott-wallace-wink-single-frame.gif', img => {
+ *   loadImage('assets/laDefense.jpg', img => {
  *     image(img, 0, 0);
  *   });
- * }
- * </code>
- * </div>
- * <div>
- * <code>
- * let img;
- * function setup() {
- *  img = loadImage('assets/arnott-wallace-eye-loop-forever.gif');
- * }
- * function draw() {
- *   image(img, 0, 0);
  * }
  * </code>
  * </div>
