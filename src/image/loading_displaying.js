@@ -685,16 +685,18 @@ function _createGif(
   // so we have to reset it to the first frame
   pImg.drawingContext.putImageData(frames[0].image, 0, 0);
 
-  pImg.gifProperties = {
-    displayIndex: 0,
-    loopLimit,
-    loopCount: 0,
-    frames,
-    numFrames,
-    playing: true,
-    timeDisplayed: 0,
-    lastChangeTime: 0
-  };
+  if (frames.length > 1) {
+    pImg.gifProperties = {
+      displayIndex: 0,
+      loopLimit,
+      loopCount: 0,
+      frames,
+      numFrames,
+      playing: true,
+      timeDisplayed: 0,
+      lastChangeTime: 0
+    };
+  }
 
   if (typeof successCallback === 'function') {
     successCallback(pImg);
