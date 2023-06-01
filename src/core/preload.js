@@ -117,13 +117,13 @@ p5.prototype._legacyPreloadGenerator = function(
   // of a specific class.
   const baseValueGenerator =
     legacyPreloadSetup.createBaseObject || objectCreator;
-  let returnedFunction = function() {
+  let returnedFunction = function(...args) {
     // Our then clause needs to run before setup, so we also increment the preload counter
     this._incrementPreload();
     // Generate the return value based on the generator.
-    const returnValue = baseValueGenerator.apply(this, arguments);
+    const returnValue = baseValueGenerator.apply(this, args);
     // Run the original wrapper
-    fn.apply(this, arguments).then(data => {
+    fn.apply(this, args).then(data => {
       // Copy each key from the resolved value into returnValue
       Object.assign(returnValue, data);
       // Decrement the preload counter, to allow setup to continue.

@@ -184,12 +184,12 @@ import p5 from './main';
  * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
  * @chainable
  */
-p5.prototype.applyMatrix = function() {
-  let isTypedArray = arguments[0] instanceof Object.getPrototypeOf(Uint8Array);
-  if (Array.isArray(arguments[0]) || isTypedArray) {
-    this._renderer.applyMatrix(...arguments[0]);
+p5.prototype.applyMatrix = function(...args) {
+  let isTypedArray = args[0] instanceof Object.getPrototypeOf(Uint8Array);
+  if (Array.isArray(args[0]) || isTypedArray) {
+    this._renderer.applyMatrix(...args[0]);
   } else {
-    this._renderer.applyMatrix(...arguments);
+    this._renderer.applyMatrix(...args);
   }
   return this;
 };

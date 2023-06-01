@@ -615,9 +615,9 @@ p5.prototype.quad = function(...args) {
  * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode)
  * @chainable
  */
-p5.prototype.rect = function() {
-  p5._validateParameters('rect', arguments);
-  return this._renderRect.apply(this, arguments);
+p5.prototype.rect = function(...args) {
+  p5._validateParameters('rect', args);
+  return this._renderRect.apply(this, args);
 };
 
 /**
