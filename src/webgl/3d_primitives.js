@@ -174,8 +174,8 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
         [20, 21],
         [22, 23]
       ];
-      for (let i = 0; i < cubeIndices.length; i++) {
-        const cubeIndex = cubeIndices[i];
+
+      cubeIndices.forEach((cubeIndex, i) => {
         const v = i * 4;
         for (let j = 0; j < 4; j++) {
           const d = cubeIndex[j];
@@ -192,7 +192,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
         }
         this.faces.push([v, v + 1, v + 2]);
         this.faces.push([v + 2, v + 1, v + 3]);
-      }
+      });
     };
     const boxGeom = new p5.Geometry(detailX, detailY, _box);
     boxGeom.computeNormals();

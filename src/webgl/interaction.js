@@ -107,10 +107,9 @@ p5.prototype.orbitControl = function(
 
   // get moved touches.
   const movedTouches = [];
-  for (let i = 0; i < this.touches.length; i++) {
-    const curTouch = this.touches[i];
-    for (let k = 0; k < this._renderer.prevTouches.length; k++) {
-      const prevTouch = this._renderer.prevTouches[k];
+
+  this.touches.forEach(curTouch => {
+    this._renderer.prevTouches.forEach(prevTouch => {
       if (curTouch.id === prevTouch.id) {
         const movedTouch = {
           x: curTouch.x,
@@ -120,8 +119,9 @@ p5.prototype.orbitControl = function(
         };
         movedTouches.push(movedTouch);
       }
-    }
-  }
+    });
+  });
+
   this._renderer.prevTouches = this.touches;
 
   // The idea of using damping is based on the following website. thank you.
@@ -288,7 +288,7 @@ p5.prototype.orbitControl = function(
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
-    var local = cam._getLocalAxes();
+    const local = cam._getLocalAxes();
 
     // Calculate the z coordinate in the view coordinates of
     // the center, that is, the distance to the view point
