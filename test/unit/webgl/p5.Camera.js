@@ -551,7 +551,7 @@ suite('p5.Camera', function() {
     test('_orbitFree(1,0,0) sets correct matrix', function() {
       var expectedMatrix = new Float32Array([
         0.5403022766113281, 0, -0.8414709568023682, 0,
-        0, 1, 0, 0,
+        -0, 1, 0, 0,
         0.8414709568023682, 0, 0.5403022766113281, 0,
         -8.216248374992574e-7, 0, -86.6025390625, 1
       ]);
