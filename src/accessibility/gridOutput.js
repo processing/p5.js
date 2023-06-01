@@ -49,9 +49,9 @@ function _gridMap(idT, ingredients) {
   let shapeNumber = 0;
   let table = '';
   //create an array of arrays 10*10 of empty cells
-  let cells = Array.apply(null, Array(10)).map(function() {});
+  let cells = Array(...Array(10)).map(function() {});
   for (let r in cells) {
-    cells[r] = Array.apply(null, Array(10)).map(function() {});
+    cells[r] = Array(...Array(10)).map(function() {});
   }
   for (let x in ingredients) {
     for (let y in ingredients[x]) {

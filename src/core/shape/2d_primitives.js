@@ -271,7 +271,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
   p5._validateParameters('ellipse', arguments);
-  return this._renderEllipse.apply(this, arguments);
+  return this._renderEllipse(...arguments);
 };
 
 /**
@@ -304,7 +304,7 @@ p5.prototype.circle = function() {
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
   args.push(arguments[2]);
-  return this._renderEllipse.apply(this, args);
+  return this._renderEllipse(...args);
 };
 
 // internal method for drawing ellipses (without parameter validation)
@@ -617,7 +617,7 @@ p5.prototype.quad = function(...args) {
  */
 p5.prototype.rect = function(...args) {
   p5._validateParameters('rect', args);
-  return this._renderRect.apply(this, args);
+  return this._renderRect(...args);
 };
 
 /**
