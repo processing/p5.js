@@ -516,14 +516,14 @@ function _flipPixels(pixels) {
   // this stack overflow answer:
   // https://stackoverflow.com/questions/41969562/how-can-i-flip-the-result-of-webglrenderingcontext-readpixels
 
-  var halfHeight = parseInt(height / 2);
-  var bytesPerRow = width * 4;
+  const halfHeight = parseInt(height / 2);
+  const bytesPerRow = width * 4;
 
   // make a temp buffer to hold one row
-  var temp = new Uint8Array(width * 4);
-  for (var y = 0; y < halfHeight; ++y) {
-    var topOffset = y * bytesPerRow;
-    var bottomOffset = (height - y - 1) * bytesPerRow;
+  const temp = new Uint8Array(width * 4);
+  for (let y = 0; y < halfHeight; ++y) {
+    const topOffset = y * bytesPerRow;
+    const bottomOffset = (height - y - 1) * bytesPerRow;
 
     // make copy of a row on the top half
     temp.set(pixels.subarray(topOffset, topOffset + bytesPerRow));
