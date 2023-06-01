@@ -548,6 +548,42 @@ suite('p5.Camera', function() {
       myCam._orbit(0, 0, -250);
       assert.deepEqual(myCam.cameraMatrix.mat4, myCamCopy.cameraMatrix.mat4, 'deep equal is failing');
     });
+    test('_orbitFree(1,0,0) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        0.5403022766113281, 0, -0.8414709568023682, 0,
+        0, 1, 0, 0,
+        0.8414709568023682, 0, 0.5403022766113281, 0,
+        -8.216248374992574e-7, 0, -86.6025390625, 1
+      ]);
+
+      myCam._orbitFree(1, 0, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbitFree(0,1,0) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        1, -2.8148363983860944e-17, -5.1525235865883254e-17, 0,
+        -2.8148363983860944e-17, 0.5403022766113281, -0.8414709568023682, 0,
+        5.1525235865883254e-17, 0.8414709568023682, 0.5403022766113281, 0,
+        1.8143673340160988e-22, -8.216248374992574e-7, -86.6025390625, 1
+      ]);
+
+      myCam._orbitFree(0, 1, 0);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
+    test('_orbitFree(0,0,1) sets correct matrix', function() {
+      var expectedMatrix = new Float32Array([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, -866.025390625, 1
+      ]);
+
+      myCam._orbitFree(0, 0, 1);
+
+      assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
+    });
   });
 
   suite('Projection', function() {
