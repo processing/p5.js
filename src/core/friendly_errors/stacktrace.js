@@ -101,8 +101,8 @@ function ErrorStackParser() {
             : locationParts[0];
 
         return {
-          functionName: functionName,
-          fileName: fileName,
+          functionName,
+          fileName,
           lineNumber: locationParts[1],
           columnNumber: locationParts[2],
           source: line
@@ -138,7 +138,7 @@ function ErrorStackParser() {
           );
 
           return {
-            functionName: functionName,
+            functionName,
             fileName: locationParts[0],
             lineNumber: locationParts[1],
             columnNumber: locationParts[2],
@@ -228,8 +228,8 @@ function ErrorStackParser() {
             : argsRaw.split(',');
 
         return {
-          functionName: functionName,
-          args: args,
+          functionName,
+          args,
           fileName: locationParts[0],
           lineNumber: locationParts[1],
           columnNumber: locationParts[2],

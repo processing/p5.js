@@ -467,7 +467,7 @@ p5.prototype.saveGif = async function(
       gif.writeFrame(indexedFrame, this.width, this.height, {
         delay: gifFrameDelay,
         transparent: true,
-        transparentIndex: transparentIndex,
+        transparentIndex,
         dispose: 1
       });
     }

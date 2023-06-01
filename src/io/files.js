@@ -1069,7 +1069,7 @@ p5.prototype.httpDo = function(...args) {
       method,
       mode: 'cors',
       body: data,
-      headers: headers
+      headers
     });
   }
   // do some sort of smart type checking
