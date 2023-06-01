@@ -2408,8 +2408,7 @@ p5.Element.prototype.drop = function (callback, fxn) {
         const files = evt.dataTransfer.files;
 
         // Load each one and trigger the callback
-        for (let i = 0; i < files.length; i++) {
-          const f = files[i];
+        for (const f of files) {
           p5.File._load(f, callback);
         }
       },
