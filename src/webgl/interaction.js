@@ -29,6 +29,9 @@ import * as constants from '../core/constants';
  * Setting this to true makes mobile interactions smoother by preventing
  * accidental interactions with the page while orbiting. But if you're already
  * doing it via css or want the default touch actions, consider setting it to false.
+ * free - Boolean, default value is false.
+ * Setting this to true will always rotate in the direction you move the mouse or touch pointer.
+ * Regarding zoom and move, both behave the same.
  * @chainable
  * @example
  * <div>
@@ -42,7 +45,11 @@ import * as constants from '../core/constants';
  * }
  * function draw() {
  *   background(200);
+ *
+ *   // If you write here like orbitControl(1, 1, 1, {free: true})
+ *   // instead of this, the behavior will change.
  *   orbitControl();
+ *
  *   rotateY(0.5);
  *   box(30, 50);
  * }
@@ -104,6 +111,10 @@ p5.prototype.orbitControl = function(
     this.canvas.style['touch-action'] = 'none';
     this._setProperty('touchActionsDisabled', true);
   }
+
+  // If option.free is true, it will always rotate freely in the direction
+  // the pointer moves. default value is false (normal behavior)
+  const { free = false } = options;
 
   // get moved touches.
   const movedTouches = [];
@@ -232,7 +243,16 @@ p5.prototype.orbitControl = function(
     this._renderer.zoomVelocity += deltaRadius;
   }
   if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
-    this._renderer._curCamera._orbit(0, 0, this._renderer.zoomVelocity);
+    // if free, we use _orbitFree() instead of _orbit()
+    if (free) {
+      this._renderer._curCamera._orbitFree(
+        0, 0, this._renderer.zoomVelocity
+      );
+    } else {
+      this._renderer._curCamera._orbit(
+        0, 0, this._renderer.zoomVelocity
+      );
+    }
     // In orthogonal projection, the scale does not change even if
     // the distance to the gaze point is changed, so the projection matrix
     // needs to be modified.
@@ -256,16 +276,24 @@ p5.prototype.orbitControl = function(
     // accelerate rotate velocity
     this._renderer.rotateVelocity.add(
       deltaTheta * rotateAccelerationFactor,
-      deltaPhi * rotateAccelerationFactor,
-      0
+      deltaPhi * rotateAccelerationFactor
     );
   }
   if (this._renderer.rotateVelocity.magSq() > 0.000001) {
-    this._renderer._curCamera._orbit(
-      this._renderer.rotateVelocity.x,
-      this._renderer.rotateVelocity.y,
-      0
-    );
+    // if free, it will always rotate freely in the direction the pointer moves
+    if (free) {
+      this._renderer._curCamera._orbitFree(
+        -this._renderer.rotateVelocity.x,
+        this._renderer.rotateVelocity.y,
+        0
+      );
+    } else {
+      this._renderer._curCamera._orbit(
+        this._renderer.rotateVelocity.x,
+        this._renderer.rotateVelocity.y,
+        0
+      );
+    }
     // damping
     this._renderer.rotateVelocity.mult(damping);
   } else {
