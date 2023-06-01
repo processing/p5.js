@@ -566,7 +566,10 @@ function makeObject(row, headers) {
       headers[j.toString()] = j;
     }
   }
-  return Object.fromEntries(headers.entries());
+  return Object.fromEntries(
+    headers
+      .map((key,i) => [key, row[i]])
+  );
 }
 
 /**
