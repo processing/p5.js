@@ -1,5 +1,3 @@
-'use strict';
-
 import p5 from './main';
 
 p5.prototype._promisePreloads = [

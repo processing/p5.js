@@ -24,8 +24,6 @@ import p5 from '../main';
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 function ErrorStackParser() {
-  'use strict';
-
   let FIREFOX_SAFARI_STACK_REGEXP = /(^|@)\S+:\d+/;
   let CHROME_IE_STACK_REGEXP = /^\s*at .*(\S+:\d+|\(native\))/m;
   let SAFARI_NATIVE_CODE_REGEXP = /^(eval@)?(\[native code])?$/;
