@@ -1633,20 +1633,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _arraysEqual(a, b) {
     const aLength = a.length;
     if (aLength !== b.length) return false;
-    for (let i = 0; i < aLength; i++) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
+    return a.every((ai,i) => ai === b[i]);
   }
 
   _isTypedArray(arr) {
-    let res = false;
-    res = arr instanceof Float32Array;
-    res = arr instanceof Float64Array;
-    res = arr instanceof Int16Array;
-    res = arr instanceof Uint16Array;
-    res = arr instanceof Uint32Array;
-    return res;
+    return [
+      Float32Array,
+      Float64Array,
+      Int16Array,
+      Uint16Array,
+      Uint32Array
+    ].some(x => arr instanceof x);
   }
   /**
    * turn a two dimensional array into one dimensional array
