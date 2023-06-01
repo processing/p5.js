@@ -584,6 +584,22 @@ suite('p5.Camera', function() {
 
       assert.deepEqual(myCam.cameraMatrix.mat4, expectedMatrix);
     });
+    test('Rotate camera 360° with _orbitFree() returns it to its original position', function() {
+      // Rotate the camera 360 degrees in any direction using _orbitFree()
+      // and it will return to its original state.
+      myCam.camera(100, 100, 100, 0, 0, 0, 1, 2, 3);
+      var myCamCopy = myCam.copy();
+      // Performing 200 rotations of Math.PI*0.01 makes exactly one rotation.
+      // However, we test in a slightly slanted direction instead of parallel with axis.
+      for (let i = 0; i < 200; i++) {
+        myCamCopy._orbitFree(Math.PI * 0.006, Math.PI * 0.008, 0);
+      }
+      for (let i = 0; i < myCamCopy.cameraMatrix.mat4.length; i++) {
+        expect(
+          myCamCopy.cameraMatrix.mat4[i]).to.be.closeTo(
+          myCam.cameraMatrix.mat4[i], 0.001);
+      }
+    });
   });
 
   suite('Projection', function() {
