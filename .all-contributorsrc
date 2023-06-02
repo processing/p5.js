@@ -3676,11 +3676,21 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ozramos",
+      "name": "oz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69949201?v=4",
+      "profile": "https://oz.super.site/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
