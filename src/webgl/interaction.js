@@ -29,9 +29,12 @@ import * as constants from '../core/constants';
  * Setting this to true makes mobile interactions smoother by preventing
  * accidental interactions with the page while orbiting. But if you're already
  * doing it via css or want the default touch actions, consider setting it to false.
- * free - Boolean, default value is false.
- * Setting this to true will always rotate in the direction you move the mouse or touch pointer.
- * Regarding zoom and move, both behave the same.
+ * freeRotation - Boolean, default value is false.
+ * By default, horizontal movement of the mouse or touch pointer rotates the camera
+ * around the y-axis, and vertical movement rotates the camera around the x-axis.
+ * But if setting this option to true, the camera always rotates in the direction
+ * the pointer is moving. For zoom and move, the behavior is the same regardless of
+ * true/false.
  * @chainable
  * @example
  * <div>
@@ -46,9 +49,10 @@ import * as constants from '../core/constants';
  * function draw() {
  *   background(200);
  *
- *   // If you write here like orbitControl(1, 1, 1, {free: true})
- *   // instead of this, the behavior will change.
+ *   // If you execute the line commented out instead of next line, the direction of rotation
+ *   // will be the direction the mouse or touch pointer moves, not around the X or Y axis.
  *   orbitControl();
+ *   // orbitControl(1, 1, 1, {freeRotation: true});
  *
  *   rotateY(0.5);
  *   box(30, 50);
@@ -112,9 +116,9 @@ p5.prototype.orbitControl = function(
     this._setProperty('touchActionsDisabled', true);
   }
 
-  // If option.free is true, it will always rotate freely in the direction
+  // If option.freeRotation is true, the camera always rotates freely in the direction
   // the pointer moves. default value is false (normal behavior)
-  const { free = false } = options;
+  const { freeRotation = false } = options;
 
   // get moved touches.
   const movedTouches = [];
@@ -243,8 +247,8 @@ p5.prototype.orbitControl = function(
     this._renderer.zoomVelocity += deltaRadius;
   }
   if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
-    // if free, we use _orbitFree() instead of _orbit()
-    if (free) {
+    // if freeRotation is true, we use _orbitFree() instead of _orbit()
+    if (freeRotation) {
       this._renderer._curCamera._orbitFree(
         0, 0, this._renderer.zoomVelocity
       );
@@ -280,8 +284,8 @@ p5.prototype.orbitControl = function(
     );
   }
   if (this._renderer.rotateVelocity.magSq() > 0.000001) {
-    // if free, it will always rotate freely in the direction the pointer moves
-    if (free) {
+    // if freeRotation is true, the camera always rotates freely in the direction the pointer moves
+    if (freeRotation) {
       this._renderer._curCamera._orbitFree(
         -this._renderer.rotateVelocity.x,
         this._renderer.rotateVelocity.y,
