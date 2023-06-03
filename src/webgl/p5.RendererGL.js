@@ -1725,6 +1725,102 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const p = [p1, p2, p3, p4];
     return p;
   }
+  _initTessy () {
+    // function called for each vertex of tesselator output
+    function vertexCallback(data, polyVertArray) {
+      for (let i = 0; i < data.length; i++) {
+        polyVertArray.push(data[i]);
+      }
+    }
+
+    function begincallback(type) {
+      if (type !== libtess.primitiveType.GL_TRIANGLES) {
+        console.log(`expected TRIANGLES but got type: ${type}`);
+      }
+    }
+
+    function errorcallback(errno) {
+      console.log('error callback');
+      console.log(`error number: ${errno}`);
+    }
+    // callback for when segments intersect and must be split
+    function combinecallback(coords, data, weight) {
+      const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
+      for (let i = 0; i < weight.length; i++) {
+        for (let j = 0; j < result.length; j++) {
+          if (weight[i] === 0 || !data[i]) continue;
+          result[j] += data[i][j] * weight[i];
+        }
+      }
+      return result;
+    }
+
+    function edgeCallback(flag) {
+      // don't really care about the flag, but need no-strip/no-fan behavior
+    }
+
+    const tessy = new libtess.GluTesselator();
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
+    tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
+
+    return tessy;
+  }
+
+  _triangulate (contours) {
+    // libtess will take 3d verts and flatten to a plane for tesselation.
+    // libtess is capable of calculating a plane to tesselate on, but
+    // if all of the vertices have the same z values, we'll just
+    // assume the face is facing the camera, letting us skip any performance
+    // issues or bugs in libtess's automatic calculation.
+    const z = contours[0] ? contours[0][2] : undefined;
+    let allSameZ = true;
+    for (const contour of contours) {
+      for (
+        let j = 0;
+        j < contour.length;
+        j += p5.RendererGL.prototype.tessyVertexSize
+      ) {
+        if (contour[j + 2] !== z) {
+          allSameZ = false;
+          break;
+        }
+      }
+    }
+    if (allSameZ) {
+      this._tessy.gluTessNormal(0, 0, 1);
+    } else {
+      // Let libtess pick a plane for us
+      this._tessy.gluTessNormal(0, 0, 0);
+    }
+
+    const triangleVerts = [];
+    this._tessy.gluTessBeginPolygon(triangleVerts);
+
+    for (let i = 0; i < contours.length; i++) {
+      this._tessy.gluTessBeginContour();
+      const contour = contours[i];
+      for (
+        let j = 0;
+        j < contour.length;
+        j += p5.RendererGL.prototype.tessyVertexSize
+      ) {
+        const coords = contour.slice(
+          j,
+          j + p5.RendererGL.prototype.tessyVertexSize
+        );
+        this._tessy.gluTessVertex(coords, coords);
+      }
+      this._tessy.gluTessEndContour();
+    }
+
+    // finish polygon
+    this._tessy.gluTessEndPolygon();
+
+    return triangleVerts;
+  }
 };
 /**
  * ensures that p5 is using a 3d renderer. throws an error if not.
@@ -1739,102 +1835,5 @@ p5.prototype._assert3d = function (name) {
 // function to initialize GLU Tesselator
 
 p5.RendererGL.prototype.tessyVertexSize = 12;
-p5.RendererGL.prototype._initTessy = function initTesselator() {
-  // function called for each vertex of tesselator output
-  function vertexCallback(data, polyVertArray) {
-    for (let i = 0; i < data.length; i++) {
-      polyVertArray[polyVertArray.length] = data[i];
-    }
-  }
-
-  function begincallback(type) {
-    if (type !== libtess.primitiveType.GL_TRIANGLES) {
-      console.log(`expected TRIANGLES but got type: ${type}`);
-    }
-  }
-
-  function errorcallback(errno) {
-    console.log('error callback');
-    console.log(`error number: ${errno}`);
-  }
-  // callback for when segments intersect and must be split
-  function combinecallback(coords, data, weight) {
-    const result = new Array(p5.RendererGL.prototype.tessyVertexSize).fill(0);
-    for (let i = 0; i < weight.length; i++) {
-      for (let j = 0; j < result.length; j++) {
-        if (weight[i] === 0 || !data[i]) continue;
-        result[j] += data[i][j] * weight[i];
-      }
-    }
-    return result;
-  }
-
-  function edgeCallback(flag) {
-    // don't really care about the flag, but need no-strip/no-fan behavior
-  }
-
-  const tessy = new libtess.GluTesselator();
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_VERTEX_DATA, vertexCallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_BEGIN, begincallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_ERROR, errorcallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_COMBINE, combinecallback);
-  tessy.gluTessCallback(libtess.gluEnum.GLU_TESS_EDGE_FLAG, edgeCallback);
-
-  return tessy;
-};
-
-p5.RendererGL.prototype._triangulate = function (contours) {
-  // libtess will take 3d verts and flatten to a plane for tesselation.
-  // libtess is capable of calculating a plane to tesselate on, but
-  // if all of the vertices have the same z values, we'll just
-  // assume the face is facing the camera, letting us skip any performance
-  // issues or bugs in libtess's automatic calculation.
-  const z = contours[0] ? contours[0][2] : undefined;
-  let allSameZ = true;
-  for (const contour of contours) {
-    for (
-      let j = 0;
-      j < contour.length;
-      j += p5.RendererGL.prototype.tessyVertexSize
-    ) {
-      if (contour[j + 2] !== z) {
-        allSameZ = false;
-        break;
-      }
-    }
-  }
-  if (allSameZ) {
-    this._tessy.gluTessNormal(0, 0, 1);
-  } else {
-    // Let libtess pick a plane for us
-    this._tessy.gluTessNormal(0, 0, 0);
-  }
-
-  const triangleVerts = [];
-  this._tessy.gluTessBeginPolygon(triangleVerts);
-
-  for (let i = 0; i < contours.length; i++) {
-    this._tessy.gluTessBeginContour();
-    const contour = contours[i];
-    for (
-      let j = 0;
-      j < contour.length;
-      j += p5.RendererGL.prototype.tessyVertexSize
-    ) {
-      const coords = contour.slice(
-        j,
-        j + p5.RendererGL.prototype.tessyVertexSize
-      );
-      this._tessy.gluTessVertex(coords, coords);
-    }
-    this._tessy.gluTessEndContour();
-  }
-
-  // finish polygon
-  this._tessy.gluTessEndPolygon();
-
-  return triangleVerts;
-};
-
 
 export default p5.RendererGL;
