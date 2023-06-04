@@ -22,9 +22,9 @@ export const VERSION =
  */
 export const P2D = 'p2d';
 /**
- * One of the two render modes in p5.js, most known for 3D rendering.
+ * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
  *
- * Some differences and new features to expect compared to the default render mode <a href="/#/p5/P2D">P2D</a>:
+ * `WEBGL` differs from the default <a href="/#/p5/P2D">`P2D`</a> renderer in the following ways:
  * - The **coordinate system** is centered and uses an optional z-dimension
  * - **Textures**, **materials**, and **lighting** can be applied to shapes
  * - You can control the **camera** that views the scene
