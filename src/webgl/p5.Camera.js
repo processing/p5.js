@@ -1782,6 +1782,84 @@ p5.Camera = class Camera {
   }
 
   /**
+ * Orbits the camera about center point. For use with orbitControl().
+ * Unlike _orbit(), the direction of rotation always matches the direction of pointer movement.
+ * @method _orbitFree
+ * @private
+ * @param {Number} dx the x component of the rotation vector.
+ * @param {Number} dy the y component of the rotation vector.
+ * @param {Number} dRadius change in radius
+ */
+  _orbitFree(dx, dy, dRadius) {
+    // Calculate the vector and its magnitude from the center to the viewpoint
+    const diffX = this.eyeX - this.centerX;
+    const diffY = this.eyeY - this.centerY;
+    const diffZ = this.eyeZ - this.centerZ;
+    let camRadius = Math.hypot(diffX, diffY, diffZ);
+    // front vector. unit vector from center to eye.
+    const front = new p5.Vector(diffX, diffY, diffZ).normalize();
+    // up vector. camera's up vector.
+    const up = new p5.Vector(this.upX, this.upY, this.upZ);
+    // side vector. Right when viewed from the front. (like x-axis)
+    const side = new p5.Vector.cross(up, front).normalize();
+    // down vector. Bottom when viewed from the front. (like y-axis)
+    const down = new p5.Vector.cross(front, side);
+
+    // side vector and down vector are no longer used as-is.
+    // Create a vector representing the direction of rotation
+    // in the form cos(direction)*side + sin(direction)*down.
+    // Make the current side vector into this.
+    const directionAngle = Math.atan2(dy, dx);
+    down.mult(Math.sin(directionAngle));
+    side.mult(Math.cos(directionAngle)).add(down);
+    // The amount of rotation is the size of the vector (dx, dy).
+    const rotAngle = Math.sqrt(dx*dx + dy*dy);
+    // The vector that is orthogonal to both the front vector and
+    // the rotation direction vector is the rotation axis vector.
+    const axis = new p5.Vector.cross(front, side);
+
+    // update camRadius
+    camRadius *= Math.pow(10, dRadius);
+    // prevent zooming through the center:
+    if (camRadius < this.cameraNear) {
+      camRadius = this.cameraNear;
+    }
+    if (camRadius > this.cameraFar) {
+      camRadius = this.cameraFar;
+    }
+
+    // If the axis vector is likened to the z-axis, the front vector is
+    // the x-axis and the side vector is the y-axis. Rotate the up and front
+    // vectors respectively by thinking of them as rotations around the z-axis.
+
+    // Calculate the components by taking the dot product and
+    // calculate a rotation based on that.
+    const c = Math.cos(rotAngle);
+    const s = Math.sin(rotAngle);
+    const dotFront = up.dot(front);
+    const dotSide = up.dot(side);
+    const ux = dotFront * c + dotSide * s;
+    const uy = -dotFront * s + dotSide * c;
+    const uz = up.dot(axis);
+    up.x = ux * front.x + uy * side.x + uz * axis.x;
+    up.y = ux * front.y + uy * side.y + uz * axis.y;
+    up.z = ux * front.z + uy * side.z + uz * axis.z;
+    // We won't be using the side vector and the front vector anymore,
+    // so let's make the front vector into the vector from the center to the new eye.
+    side.mult(-s);
+    front.mult(c).add(side).mult(camRadius);
+
+    // it's complete. let's update camera.
+    this.camera(
+      front.x + this.centerX,
+      front.y + this.centerY,
+      front.z + this.centerZ,
+      this.centerX, this.centerY, this.centerZ,
+      up.x, up.y, up.z
+    );
+  }
+
+  /**
  * Returns true if camera is currently attached to renderer.
  * @method _isActive
  * @private
