@@ -132,19 +132,27 @@ p5.Geometry = class  {
           key === 'segments' &&
           (buffer === 'lineVertexColors' || buffer === 'lineVertices')
         ) {
-          for (let j = 0; j < instanceData[buffer].length; j += 2) {
+          const size = buffer === 'lineVertexColors' ? 4 : 3;
+          for (let j = 0; j < instanceData[buffer].length; j += 2 * size) {
             for (let i = 0; i < instanceData.lineSides.length; i++) {
               for (const offset of [0, 1]) {
-                strokeData[buffer].push(instanceData[buffer][j + offset]);
+                for (let k = 0; k < size; k++) {
+                  strokeData[buffer].push(instanceData[buffer][j + k + offset]);
+                }
               }
             }
           }
         } else {
+          const size = buffer === 'lineVertexColors' ? 4 : 3;
           for (let j = 0; j < instanceData[buffer].length; j++) {
             for (let i = 0; i < instanceData.lineSides.length; i++) {
-              strokeData[buffer].push(instanceData[buffer][j]);
+              for (let k = 0; k < size; k++) {
+                strokeData[buffer].push(instanceData[buffer][j + k]);
+              }
               if (buffer === 'lineVertexColors' || buffer === 'lineVertices') {
-                strokeData[buffer].push(instanceData[buffer][j]);
+                for (let k = 0; k < size; k++) {
+                  strokeData[buffer].push(instanceData[buffer][j + k]);
+                }
               }
             }
           }
@@ -444,12 +452,12 @@ p5.Geometry = class  {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
-    this.lineData.segments.lineTangentsIn.push(dirArr);
-    this.lineData.segments.lineTangentsOut.push(dirArr);
-    this.lineData.segments.lineVertices.push(a, b);
+    this.lineData.segments.lineTangentsIn.push(...dirArr);
+    this.lineData.segments.lineTangentsOut.push(...dirArr);
+    this.lineData.segments.lineVertices.push(...a, ...b);
     this.lineData.segments.lineVertexColors.push(
-      fromColor,
-      toColor
+      ...fromColor,
+      ...toColor
     );
     this.lineData.segments.count++;
     return this;
@@ -475,10 +483,10 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = tangent.array();
     const tanOutArray = [0, 0, 0];
-    this.lineData.caps.lineVertices.push(ptArray);
-    this.lineData.caps.lineTangentsIn.push(tanInArray);
-    this.lineData.caps.lineTangentsOut.push(tanOutArray);
-    this.lineData.caps.lineVertexColors.push(color);
+    this.lineData.caps.lineVertices.push(...ptArray);
+    this.lineData.caps.lineTangentsIn.push(...tanInArray);
+    this.lineData.caps.lineTangentsOut.push(...tanOutArray);
+    this.lineData.caps.lineVertexColors.push(...color);
     this.lineData.caps.count++;
     return this;
   }
@@ -515,10 +523,10 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
-    this.lineData.joins.lineVertices.push(ptArray);
-    this.lineData.joins.lineTangentsIn.push(tanInArray);
-    this.lineData.joins.lineTangentsOut.push(tanOutArray);
-    this.lineData.joins.lineVertexColors.push(color);
+    this.lineData.joins.lineVertices.push(...ptArray);
+    this.lineData.joins.lineTangentsIn.push(...tanInArray);
+    this.lineData.joins.lineTangentsOut.push(...tanOutArray);
+    this.lineData.joins.lineVertexColors.push(...color);
     this.lineData.joins.count++;
     return this;
   }
