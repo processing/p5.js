@@ -989,38 +989,6 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 /// 2D primitives
 /////////////////////////
 
-/**
- * Draws a point, a coordinate in space at the dimension of one pixel,
- * given x, y and z coordinates. The color of the point is determined
- * by the current stroke, while the point size is determined by current
- * stroke weight.
- * @private
- * @param {Number} x x-coordinate of point
- * @param {Number} y y-coordinate of point
- * @param {Number} z z-coordinate of point
- * @chainable
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(50);
- *   stroke(255);
- *   strokeWeight(4);
- *   point(25, 0);
- *   strokeWeight(3);
- *   point(-25, 0);
- *   strokeWeight(2);
- *   point(0, 25);
- *   strokeWeight(1);
- *   point(0, -25);
- * }
- * </code>
- * </div>
- */
 p5.RendererGL.prototype.point = function(x, y, z) {
   if (typeof z === 'undefined') {
     z = 0;
@@ -1503,35 +1471,6 @@ p5.RendererGL.prototype.curve = function(
   return this;
 };
 
-/**
- * Draw a line given two points
- * @private
- * @param {Number} x0 x-coordinate of first vertex
- * @param {Number} y0 y-coordinate of first vertex
- * @param {Number} z0 z-coordinate of first vertex
- * @param {Number} x1 x-coordinate of second vertex
- * @param {Number} y1 y-coordinate of second vertex
- * @param {Number} z1 z-coordinate of second vertex
- * @chainable
- * @example
- * <div>
- * <code>
- * //draw a line
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw() {
- *   background(200);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   // Use fill instead of stroke to change the color of shape.
- *   fill(255, 0, 0);
- *   line(10, 10, 0, 60, 60, 20);
- * }
- * </code>
- * </div>
- */
 p5.RendererGL.prototype.line = function(...args) {
   if (args.length === 6) {
     this.beginShape(constants.LINES);
