@@ -172,6 +172,15 @@ p5.prototype._normalizeArcAngles = (
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * createCanvas(100, 100, WEBGL);
+ * arc(0, 0, 80, 80, 0, PI + QUARTER_PI, PIE, 7);
+ * describe(
+ *   'ellipse with a quarter missing, and the outline is segmented instead of curved'
+ * );
+ * </code>
+ * </div>
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
