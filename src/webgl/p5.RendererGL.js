@@ -1799,9 +1799,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     const triangleVerts = [];
     this._tessy.gluTessBeginPolygon(triangleVerts);
 
-    for (let i = 0; i < contours.length; i++) {
+    for(const contour of contours){
       this._tessy.gluTessBeginContour();
-      const contour = contours[i];
       for (
         let j = 0;
         j < contour.length;
