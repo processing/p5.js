@@ -232,38 +232,49 @@ p5.Font = class {
  * </div>
  */
   textToPoints(txt, x, y, fontSize, options) {
-    let xoff = 0;
+    const xOriginal = x;
     const result = [];
-    const glyphs = this._getGlyphs(txt);
 
-    function isSpace(i) {
+    let lines = txt.split('\n');
+    fontSize = fontSize || this.parent._renderer._textSize;
+
+    function isSpace(i, text, glyphsLine) {
       return (
-        (glyphs[i].name && glyphs[i].name === 'space') ||
-      (txt.length === glyphs.length && txt[i] === ' ') //||
-      //(glyphs[i].index && glyphs[i].index === 3)
+        (glyphsLine[i].name && glyphsLine[i].name === 'space') ||
+        (text.length === glyphsLine.length && text[i] === ' ') //||
+        //(glyphs[i].index && glyphs[i].index === 3)
       );
     }
 
-    fontSize = fontSize || this.parent._renderer._textSize;
+    for (let i = 0; i < lines.length; i++) {
+      let xoff = 0;
+      x = xOriginal;
+      let line = lines[i];
 
-    for (let i = 0; i < glyphs.length; i++) {
-      if (!isSpace(i)) {
-      // fix to #1817, #2069
+      line = line.replace('\t', '  ');
+      const glyphs = this._getGlyphs(line);
 
-        const gpath = glyphs[i].getPath(x, y, fontSize),
-          paths = splitPaths(gpath.commands);
+      for (let j = 0; j < glyphs.length; j++) {
+        if (!isSpace(j, line, glyphs)) {
+          // fix to #1817, #2069
 
-        for (let j = 0; j < paths.length; j++) {
-          const pts = pathToPoints(paths[j], options);
+          const gpath = glyphs[j].getPath(x, y, fontSize),
+            paths = splitPaths(gpath.commands);
 
-          for (let k = 0; k < pts.length; k++) {
-            pts[k].x += xoff;
-            result.push(pts[k]);
+          for (let k = 0; k < paths.length; k++) {
+            const pts = pathToPoints(paths[k], options);
+
+            for (let l = 0; l < pts.length; l++) {
+              pts[l].x += xoff;
+              result.push(pts[l]);
+            }
           }
         }
+
+        xoff += glyphs[j].advanceWidth * this._scale(fontSize);
       }
 
-      xoff += glyphs[i].advanceWidth * this._scale(fontSize);
+      y = y + this.parent._renderer._textLeading;
     }
 
     return result;
