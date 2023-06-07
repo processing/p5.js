@@ -598,94 +598,94 @@ function _createGif(
   const frames = [];
   const numFrames = gifReader.numFrames();
   let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
-  if (numFrames > 1) {
-    const loadGIFFrameIntoImage = (frameNum, gifReader) => {
-      try {
-        gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
-      } catch (e) {
-        p5._friendlyFileLoadError(8, pImg.src);
-        if (typeof failureCallback === 'function') {
-          failureCallback(e);
-        } else {
-          console.error(e);
-        }
+  const loadGIFFrameIntoImage = (frameNum, gifReader) => {
+    try {
+      gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
+    } catch (e) {
+      p5._friendlyFileLoadError(8, pImg.src);
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
+      } else {
+        console.error(e);
       }
-    };
-    for (let j = 0; j < numFrames; j++) {
-      const frameInfo = gifReader.frameInfo(j);
-      const prevFrameData = pImg.drawingContext.getImageData(
-        0,
-        0,
-        pImg.width,
-        pImg.height
+    }
+  };
+  for (let j = 0; j < numFrames; j++) {
+    const frameInfo = gifReader.frameInfo(j);
+    const prevFrameData = pImg.drawingContext.getImageData(
+      0,
+      0,
+      pImg.width,
+      pImg.height
+    );
+    framePixels = prevFrameData.data.slice();
+    loadGIFFrameIntoImage(j, gifReader);
+    const imageData = new ImageData(framePixels, pImg.width, pImg.height);
+    pImg.drawingContext.putImageData(imageData, 0, 0);
+    let frameDelay = frameInfo.delay;
+    // To maintain the default of 10FPS when frameInfo.delay equals to 0
+    if (frameDelay === 0) {
+      frameDelay = 10;
+    }
+    frames.push({
+      image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
+      delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
+    });
+
+    // Some GIFs are encoded so that they expect the previous frame
+    // to be under the current frame. This can occur at a sub-frame level
+    //
+    // Values :    0 -   No disposal specified. The decoder is
+    //                   not required to take any action.
+    //             1 -   Do not dispose. The graphic is to be left
+    //                   in place.
+    //             2 -   Restore to background color. The area used by the
+    //                   graphic must be restored to the background color.
+    //             3 -   Restore to previous. The decoder is required to
+    //                   restore the area overwritten by the graphic with
+    //                   what was there prior to rendering the graphic.
+    //          4-7 -    To be defined.
+    if (frameInfo.disposal === 2) {
+      // Restore background color
+      pImg.drawingContext.clearRect(
+        frameInfo.x,
+        frameInfo.y,
+        frameInfo.width,
+        frameInfo.height
       );
-      framePixels = prevFrameData.data.slice();
-      loadGIFFrameIntoImage(j, gifReader);
-      const imageData = new ImageData(framePixels, pImg.width, pImg.height);
-      pImg.drawingContext.putImageData(imageData, 0, 0);
-      let frameDelay = frameInfo.delay;
-      // To maintain the default of 10FPS when frameInfo.delay equals to 0
-      if (frameDelay === 0) {
-        frameDelay = 10;
-      }
-      frames.push({
-        image: pImg.drawingContext.getImageData(0, 0, pImg.width, pImg.height),
-        delay: frameDelay * 10 //GIF stores delay in one-hundredth of a second, shift to ms
-      });
-
-      // Some GIFs are encoded so that they expect the previous frame
-      // to be under the current frame. This can occur at a sub-frame level
-      //
-      // Values :    0 -   No disposal specified. The decoder is
-      //                   not required to take any action.
-      //             1 -   Do not dispose. The graphic is to be left
-      //                   in place.
-      //             2 -   Restore to background color. The area used by the
-      //                   graphic must be restored to the background color.
-      //             3 -   Restore to previous. The decoder is required to
-      //                   restore the area overwritten by the graphic with
-      //                   what was there prior to rendering the graphic.
-      //          4-7 -    To be defined.
-      if (frameInfo.disposal === 2) {
-        // Restore background color
-        pImg.drawingContext.clearRect(
-          frameInfo.x,
-          frameInfo.y,
-          frameInfo.width,
-          frameInfo.height
-        );
-      } else if (frameInfo.disposal === 3) {
-        // Restore previous
-        pImg.drawingContext.putImageData(
-          prevFrameData,
-          0,
-          0,
-          frameInfo.x,
-          frameInfo.y,
-          frameInfo.width,
-          frameInfo.height
-        );
-      }
+    } else if (frameInfo.disposal === 3) {
+      // Restore previous
+      pImg.drawingContext.putImageData(
+        prevFrameData,
+        0,
+        0,
+        frameInfo.x,
+        frameInfo.y,
+        frameInfo.width,
+        frameInfo.height
+      );
     }
+  }
 
-    //Uses Netscape block encoding
-    //to repeat forever, this will be 0
-    //to repeat just once, this will be null
-    //to repeat N times (1<N), should contain integer for loop number
-    //this is changed to more usable values for us
-    //to repeat forever, loopCount = null
-    //everything else is just the number of loops
-    let loopLimit = gifReader.loopCount();
-    if (loopLimit === null) {
-      loopLimit = 1;
-    } else if (loopLimit === 0) {
-      loopLimit = null;
-    }
+  //Uses Netscape block encoding
+  //to repeat forever, this will be 0
+  //to repeat just once, this will be null
+  //to repeat N times (1<N), should contain integer for loop number
+  //this is changed to more usable values for us
+  //to repeat forever, loopCount = null
+  //everything else is just the number of loops
+  let loopLimit = gifReader.loopCount();
+  if (loopLimit === null) {
+    loopLimit = 1;
+  } else if (loopLimit === 0) {
+    loopLimit = null;
+  }
 
-    // we used the pImg for painting and saving during load
-    // so we have to reset it to the first frame
-    pImg.drawingContext.putImageData(frames[0].image, 0, 0);
+  // we used the pImg for painting and saving during load
+  // so we have to reset it to the first frame
+  pImg.drawingContext.putImageData(frames[0].image, 0, 0);
 
+  if (frames.length > 1) {
     pImg.gifProperties = {
       displayIndex: 0,
       loopLimit,
@@ -736,6 +736,7 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
   }
   return { x, y, w: adjusted_dw, h: adjusted_dh };
 }
+
 /**
  * @private
  * @param {Constant} xAlign either LEFT, RIGHT or CENTER
@@ -748,7 +749,6 @@ function _imageContain(xAlign, yAlign, dx, dy, dw, dh, sw, sh) {
  * @param {Number} sh
  * @returns {Object}
  */
-
 function _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh) {
   const r = Math.max(dw / sw, dh / sh);
   const [adjusted_sw, adjusted_sh] = [dw / r, dh / r];

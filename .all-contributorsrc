@@ -3617,7 +3617,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/30024051?v=4",
       "profile": "https://asukaminato.notion.site/Blog-3c0df75d3d8b471ab67e97ecc82e10a4",
       "contributions": [
-        "translation"
+        "translation",
+        "code"
       ]
     },
     {
@@ -3676,11 +3677,30 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ozramos",
+      "name": "oz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69949201?v=4",
+      "profile": "https://oz.super.site/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "munusshih",
+      "name": "Munus Shih",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34775424?v=4",
+      "profile": "http://munusshih.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
   "repoHost": "https://github.com",
   "contributorsPerLine": 7,
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
