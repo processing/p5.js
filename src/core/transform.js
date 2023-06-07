@@ -156,12 +156,12 @@ import p5 from './main';
  */
 /**
  * @method applyMatrix
- * @param  {Number} a numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} b numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} c numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} d numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} e numbers which define the 2×3 or 4x4 matrix to be multiplied
- * @param  {Number} f numbers which define the 2×3 or 4x4 matrix to be multiplied
+ * @param  {Number} a numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} b numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2×3 or 4×4 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2×3 or 4×4 matrix to be multiplied
  * @chainable
  */
 /**
@@ -172,16 +172,16 @@ import p5 from './main';
  * @param  {Number} d
  * @param  {Number} e
  * @param  {Number} f
- * @param  {Number} g numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} h numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} i numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} j numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} k numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} l numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} m numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} n numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} o numbers which define the 4x4 matrix to be multiplied
- * @param  {Number} p numbers which define the 4x4 matrix to be multiplied
+ * @param  {Number} g numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} h numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} i numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} j numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} k numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} l numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} m numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} n numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} o numbers which define the 4×4 matrix to be multiplied
+ * @param  {Number} p numbers which define the 4×4 matrix to be multiplied
  * @chainable
  */
 p5.prototype.applyMatrix = function() {
