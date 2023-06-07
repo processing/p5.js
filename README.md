@@ -1,7 +1,7 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
 # [p5.js](https://p5js.org)
-[**Turkish**🇹🇷](https://github.com/neondev27/p5.js/blob/turkish/README.md)
+[**Turkish**🇹🇷](https://github.com/processing/p5.js/blob/turkish/README.md)
 
  Welcome! 👋👋🏿👋🏽👋🏻👋🏾👋🏼
 
