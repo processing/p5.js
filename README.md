@@ -642,6 +642,7 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chechenxu"><img src="https://avatars.githubusercontent.com/u/111816575?v=4?s=100" width="100px;" alt="chechenxu"/><br /><sub><b>chechenxu</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=chechenxu" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/pmarsh-scottlogic"><img src="https://avatars.githubusercontent.com/u/118171430?v=4?s=100" width="100px;" alt="Peter Marsh"/><br /><sub><b>Peter Marsh</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=pmarsh-scottlogic" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://oz.super.site/"><img src="https://avatars.githubusercontent.com/u/69949201?v=4?s=100" width="100px;" alt="oz"/><br /><sub><b>oz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=ozramos" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://munusshih.com"><img src="https://avatars.githubusercontent.com/u/34775424?v=4?s=100" width="100px;" alt="Munus Shih"/><br /><sub><b>Munus Shih</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=munusshih" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
