@@ -14,7 +14,7 @@ import p5 from './main';
  *
  * @class p5.Element
  * @constructor
- * @param {String} elt DOM node that is wrapped
+ * @param {HTMLElement} elt DOM node that is wrapped
  * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Element = class {
@@ -37,6 +37,7 @@ p5.Element = class {
      *
      * @property elt
      * @readOnly
+     * @type {HTMLElement}
      */
     this.elt = elt;
     this._pInst = this._pixelsState = pInst;
