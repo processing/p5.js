@@ -2449,8 +2449,9 @@ class Cue {
  * @class p5.MediaElement
  * @constructor
  * @param {String} elt DOM node that is wrapped
+ * @extends p5.Element
  */
-p5.MediaElement = class MediaElement extends p5.Element {
+class MediaElement extends p5.Element {
   constructor(elt, pInst) {
     super(elt, pInst);
 
@@ -3609,7 +3610,9 @@ p5.MediaElement = class MediaElement extends p5.Element {
 
     this._prevTime = playbackTime;
   }
-};
+}
+
+p5.MediaElement = MediaElement;
 
 /**
  * Base class for a file.
@@ -3619,7 +3622,7 @@ p5.MediaElement = class MediaElement extends p5.Element {
  * @constructor
  * @param {File} file File that is wrapped
  */
-p5.File = class File {
+class File {
   constructor(file, pInst) {
     /**
      * Underlying File object. All normal File methods can be called on this.
@@ -3701,6 +3704,9 @@ p5.File = class File {
       callback(file);
     }
   }
-};
+}
+
+
+p5.File = File;
 
 export default p5;
