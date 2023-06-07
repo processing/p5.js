@@ -621,6 +621,49 @@ p5.prototype.createCheckbox = function () {
 };
 
 /**
+ * @class p5.Select
+ * @extends p5.Element
+ * @description This class is for generating yui-doc, use createSelect instead.
+ */
+// eslint-disable-next-line no-unused-vars
+class Select extends p5.Element {
+  constructor(){
+    super();
+  }
+  /**
+   * @method option
+   * @param {String} name
+   * @param {[String]} value
+   */
+  option(name, value){
+
+  }
+  /**
+   * @method selected
+   * @param {[String]} value
+   */
+  selected(value){
+
+  }
+  /**
+   * @method disable
+   * @param {[String]} value
+   * @chainable
+   */
+  disable(value){
+
+  }
+  /**
+   * @method enable
+   * @param {[String]} value
+   * @chainable
+   */
+  enable(value){
+
+  }
+}
+
+/**
  * Creates a dropdown menu `&lt;select&gt;&lt;/select&gt;` element in the DOM.
  * It also assigns select-related methods to <a href="#/p5.Element">p5.Element</a> when selecting an existing select box. Options in the menu are unique by `name` (the display text).
  * - `.option(name, [value])` can be used to add an option with `name` (the display text) and `value` to the select element. If an option with `name` already exists within the select element, this method will change its value to `value`.
@@ -634,7 +677,7 @@ p5.prototype.createCheckbox = function () {
  *
  * @method createSelect
  * @param {boolean} [multiple] true if dropdown should support multiple selections
- * @return {p5.Element} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
+ * @return {p5.Select} pointer to <a href="#/p5.Element">p5.Element</a> holding created node
  * @example
  * <div><code>
  * let sel;
