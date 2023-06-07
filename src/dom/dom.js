@@ -624,6 +624,7 @@ p5.prototype.createCheckbox = function () {
  * @class p5.Select
  * @extends p5.Element
  * @description This class is for generating yui-doc, use createSelect instead.
+ * @private
  */
 // eslint-disable-next-line no-unused-vars
 class Select {
