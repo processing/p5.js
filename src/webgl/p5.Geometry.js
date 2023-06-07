@@ -142,7 +142,7 @@ p5.Geometry = class  {
           ) {
             for (let j = 0; j < instanceData.lineSides.length; j++) {
               strokeData[buffer].push(
-                ...instanceData[buffer].slice(i, i + stride)
+                ...instanceData[buffer].subArray(i, i + stride)
               );
             }
           }

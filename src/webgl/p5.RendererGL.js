@@ -1735,6 +1735,12 @@ p5.RendererGL.prototype._bindBuffer = function(
   if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
+    if (values.data) {
+      // bufferData seems to send the whole Float32Array to the GPU even if
+      // it only uses a small part of it, so if we have a DataVector whose size is
+      // way larger than its data, we need to scale it back down
+      values.rescale();
+    }
     let data = values.data || values;
     if (!(data instanceof (type || Float32Array))) {
       data = new (type || Float32Array)(data);
