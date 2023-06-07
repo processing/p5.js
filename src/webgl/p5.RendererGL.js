@@ -190,6 +190,36 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.userStrokeShader = undefined;
   this.userPointShader = undefined;
 
+  this._prevAttributeParams = {};
+
+  const makeStrokeBuffer = prefix => [
+    new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this)
+      .namespace(`lineData.${prefix}`)
+      .divisor(1)
+      .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+      .offset(0),
+    new p5.RenderBuffer(4, 'lineVertexColors', 'lineToColorBuffer', 'aToVertexColor', this)
+      .namespace(`lineData.${prefix}`)
+      .divisor(1)
+      .stride(Float32Array.BYTES_PER_ELEMENT * 4 * 2)
+      .offset(Float32Array.BYTES_PER_ELEMENT * 4),
+    new p5.RenderBuffer(3, 'lineVertices', 'lineFromVerticesBuffer', 'aFromPosition', this)
+      .namespace(`lineData.${prefix}`)
+      .divisor(1)
+      .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+      .offset(0),
+    new p5.RenderBuffer(3, 'lineVertices', 'lineToVerticesBuffer', 'aToPosition', this)
+      .namespace(`lineData.${prefix}`).divisor(1)
+      .stride(Float32Array.BYTES_PER_ELEMENT * 3 * 2)
+      .offset(Float32Array.BYTES_PER_ELEMENT * 3),
+    new p5.RenderBuffer(3, 'lineTangentsIn', 'lineTangentsInBuffer', 'aTangentIn', this)
+      .namespace(`lineData.${prefix}`).divisor(1),
+    new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this)
+      .namespace(`lineData.${prefix}`).divisor(1),
+    new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
+      .namespace(`lineData.${prefix}`).divisor(0)
+  ];
+
   const makeStrokeBuffers = () => {
     return {
       stroke: [
@@ -216,7 +246,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
         new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
           .namespace('lineData.stroke')
       ],
-      segments: [
+      segments: makeStrokeBuffer('segments'),
+      caps: makeStrokeBuffer('caps'),
+      joins: makeStrokeBuffer('joins')
+      /*segments: [
         new p5.RenderBuffer(4, 'lineVertexColors', 'lineFromColorBuffer', 'aFromVertexColor', this)
           .namespace('lineData.segments')
           .divisor(1)
@@ -274,7 +307,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
           .namespace('lineData.joins').divisor(1),
         new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
           .namespace('lineData.joins').divisor(0)
-      ]
+      ]*/
     };
   };
 
@@ -683,6 +716,13 @@ p5.prototype.setAttributes = function(key, value) {
 /**
  * @class p5.RendererGL
  */
+
+p5.RendererGL.prototype.disableAttributes = function() {
+  for (const loc of this.registerEnabled.values()) {
+    this.GL.disableVertexAttribArray(loc);
+    this.registerEnabled.delete(loc);
+  }
+};
 
 p5.RendererGL.prototype._update = function() {
   // reset model view and apply initial camera transform
@@ -1686,13 +1726,20 @@ p5.RendererGL.prototype._bindBuffer = function(
   target,
   values,
   type,
-  usage
+  {
+    usage = this.GL.STATIC_DRAW,
+    count = values && values.length,
+    offset = 0
+  } = {}
 ) {
   if (!target) target = this.GL.ARRAY_BUFFER;
   this.GL.bindBuffer(target, buffer);
   if (values !== undefined) {
-    const data = new (type || Float32Array)(values);
-    this.GL.bufferData(target, data, usage || this.GL.STATIC_DRAW);
+    let data = values.data || values;
+    if (!(data instanceof (type || Float32Array))) {
+      data = new (type || Float32Array)(data);
+    }
+    this.GL.bufferData(target, data, usage, offset, count);
   }
 };
 

@@ -116,10 +116,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   const gl = this.GL;
   const geometry = this.retainedMode.geometry[gId];
 
-  if (this._doFill) {
+  if (this._doFill && this.retainedMode.geometry[gId].vertexCount > 0) {
     this._useVertexColor = (geometry.model.vertexColors.length > 0);
     const fillShader = this._getRetainedFillShader();
     this._setFillUniforms(fillShader);
+    //this.disableAttributes();
     for (const buff of this.retainedMode.buffers.fill) {
       buff._prepareBuffer(geometry, fillShader);
     }
@@ -133,15 +134,15 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   }
 
   if (this._doStroke && geometry.model.edges.length > 0) {
-    const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
-    // Prevent strokes from getting removed by culling
-    gl.disable(gl.CULL_FACE);
     const strokeShader = this._getRetainedStrokeShader();
     this._useLineColor = (geometry.model.vertexStrokeColors.length > 0);
     this._setStrokeUniforms(strokeShader);
     this._applyColorBlend(this.curStrokeColor);
     if (this.webglVersion === constants.WEBGL2) {
       for (const key of ['joins', 'caps', 'segments']) {
+        const { count } = this.retainedMode.geometry[gId].model.lineData[key];
+        if (count === 0) continue;
+        //this.disableAttributes();
         for (const buff of this.retainedMode.buffers[key]) {
           buff._prepareBuffer(geometry, strokeShader);
         }
@@ -153,9 +154,6 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         buff._prepareBuffer(geometry, strokeShader);
       }
       this._drawArrays(gl.TRIANGLES, gId);
-    }
-    if (faceCullingEnabled) {
-      gl.enable(gl.CULL_FACE);
     }
     strokeShader.unbindShader();
   }
@@ -197,8 +195,7 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(
     drawMode,
     0,
-    this.retainedMode.geometry[gId].model.lineData.stroke.lineVertices.length
-      / 2
+    this.retainedMode.geometry[gId].model.lineData.stroke.lineSides.length
   );
   return this;
 };

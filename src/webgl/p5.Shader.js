@@ -570,6 +570,24 @@ p5.Shader = class {
           // Record register availability
           this._renderer.registerEnabled.add(loc);
         }
+
+        /*const params = { size, type, normalized, stride, offset, divisor };
+        const prevParams = this._renderer._prevAttributeParams[attr.name] || {};
+        let changed = false;
+        for (const key in params) {
+          if (params[key] !== prevParams[key]) {
+            changed = true;
+            break;
+          }
+        }
+        if (!changed) return this;
+        this._renderer._prevAttributeParams[attr.name] = params;*/
+
+        if (divisor !== undefined) {
+          this._renderer.GL.vertexAttribDivisor(loc, divisor);
+        } else if (this._renderer.webglVersion === constants.WEBGL2) {
+          this._renderer.GL.vertexAttribDivisor(loc, 0);
+        }
         this._renderer.GL.vertexAttribPointer(
           loc,
           size,
@@ -578,11 +596,6 @@ p5.Shader = class {
           stride || 0,
           offset || 0
         );
-        if (divisor !== undefined) {
-          this._renderer.GL.vertexAttribDivisor(loc, divisor);
-        } else if (this._renderer.webglVersion === constants.WEBGL2) {
-          this._renderer.GL.vertexAttribDivisor(loc, 0);
-        }
       }
     }
     return this;

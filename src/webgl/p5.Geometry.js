@@ -33,18 +33,18 @@ p5.Geometry = class  {
       data.count = 0;
 
       //an array containing every vertex for stroke drawing
-      data.lineVertices = [];
+      data.lineVertices = new p5.DataVector();
 
       // The tangents going into or out of a vertex on a line. Along a straight
       // line segment, both should be equal. At an endpoint, one or the other
       // will not exist and will be all 0. In joins between line segments, they
       // may be different, as they will be the tangents on either side of the join.
-      data.lineTangentsIn = [];
-      data.lineTangentsOut = [];
+      data.lineTangentsIn = new p5.DataVector();
+      data.lineTangentsOut = new p5.DataVector();
 
       // One color per line vertex, generated automatically based on
       // vertexStrokeColors in _edgesToVertices()
-      data.lineVertexColors = [];
+      data.lineVertexColors = new p5.DataVector();
 
       this.lineData[key] = data;
     }
@@ -54,12 +54,12 @@ p5.Geometry = class  {
     // will represent the side of the centerline, and the absolute value will be
     // used as an enum to determine which part of the cap or join each vertex
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
-    this.lineData.segments.lineSides = [1, -1, 3, 3, -1, -3];
-    this.lineData.caps.lineSides = [-1, -2, 2, 2, 1, -1];
-    this.lineData.joins.lineSides = [
-      -1, -2, -3, -1, -3, 0,
+    this.lineData.segments.lineSides = Float32Array.from([1, 3, -1, 3, -3, -1]);
+    this.lineData.caps.lineSides = Float32Array.from([-1, 2, -2, 2, -1, 1]);
+    this.lineData.joins.lineSides = Float32Array.from([
+      -1, -3, -2, -1, 0, -3,
       1, 2, 3, 1, 3, 0
-    ];
+    ]);
     this.lineData.stroke.lineSides = [];
 
     //an array containing 1 normal per vertex
@@ -94,13 +94,14 @@ p5.Geometry = class  {
   reset() {
     for (const key in this.lineData) {
       this.lineData[key].count = 0;
-      this.lineData[key].lineVertices.length = 0;
-      this.lineData[key].lineTangentsIn.length = 0;
-      this.lineData[key].lineTangentsOut.length = 0;
-      this.lineData[key].lineVertexColors.length = 0;
+      this.lineData[key].lineVertices.clear();
+      this.lineData[key].lineTangentsIn.clear();
+      this.lineData[key].lineTangentsOut.clear();
+      this.lineData[key].lineVertexColors.clear();
     }
 
     this.webgl1StrokeDataDirty = true;
+    this.lineData.stroke.lineSides = [];
     this.vertices.length = 0;
     this.edges.length = 0;
     this.vertexColors.length = 0;
@@ -128,32 +129,21 @@ p5.Geometry = class  {
           for (let i = 0; i < instanceData.count; i++) {
             strokeData[buffer].push(...instanceData[buffer]);
           }
-        } else if (
-          key === 'segments' &&
-          (buffer === 'lineVertexColors' || buffer === 'lineVertices')
-        ) {
-          const size = buffer === 'lineVertexColors' ? 4 : 3;
-          for (let j = 0; j < instanceData[buffer].length; j += 2 * size) {
-            for (let i = 0; i < instanceData.lineSides.length; i++) {
-              for (const offset of [0, 1]) {
-                for (let k = 0; k < size; k++) {
-                  strokeData[buffer].push(instanceData[buffer][j + k + offset]);
-                }
-              }
-            }
-          }
         } else {
+          const valsPerInstance =
+            (buffer === 'lineVertexColors' || buffer === 'lineVertices')
+              ? 2 : 1;
           const size = buffer === 'lineVertexColors' ? 4 : 3;
-          for (let j = 0; j < instanceData[buffer].length; j++) {
-            for (let i = 0; i < instanceData.lineSides.length; i++) {
-              for (let k = 0; k < size; k++) {
-                strokeData[buffer].push(instanceData[buffer][j + k]);
-              }
-              if (buffer === 'lineVertexColors' || buffer === 'lineVertices') {
-                for (let k = 0; k < size; k++) {
-                  strokeData[buffer].push(instanceData[buffer][j + k]);
-                }
-              }
+          const stride = valsPerInstance * size;
+          for (
+            let i = 0;
+            i < instanceData[buffer].length;
+            i += stride
+          ) {
+            for (let j = 0; j < instanceData.lineSides.length; j++) {
+              strokeData[buffer].push(
+                ...instanceData[buffer].slice(i, i + stride)
+              );
             }
           }
         }
@@ -338,15 +328,15 @@ p5.Geometry = class  {
   _edgesToVertices() {
     for (const key in this.lineData) {
       this.lineData[key].count = 0;
-      this.lineData[key].lineVertices.length = 0;
-      this.lineData[key].lineTangentsIn.length = 0;
-      this.lineData[key].lineTangentsOut.length = 0;
-      this.lineData[key].lineVertexColors.length = 0;
+      this.lineData[key].lineVertices.clear();
+      this.lineData[key].lineTangentsIn.clear();
+      this.lineData[key].lineTangentsOut.clear();
+      this.lineData[key].lineVertexColors.clear();
     }
 
     const closed =
-    this.edges.length > 1 &&
-    this.edges[0][0] === this.edges[this.edges.length - 1][1];
+      this.edges.length > 1 &&
+      this.edges[0][0] === this.edges[this.edges.length - 1][1];
     let addedStartingCap = false;
     let lastValidDir;
     for (let i = 0; i < this.edges.length; i++) {
@@ -483,10 +473,12 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = tangent.array();
     const tanOutArray = [0, 0, 0];
-    this.lineData.caps.lineVertices.push(...ptArray);
+    this.lineData.caps.lineVertices.push(...ptArray, ...ptArray);
+    //this.lineData.caps.lineVertices.push(...ptArray);
     this.lineData.caps.lineTangentsIn.push(...tanInArray);
     this.lineData.caps.lineTangentsOut.push(...tanOutArray);
-    this.lineData.caps.lineVertexColors.push(...color);
+    this.lineData.caps.lineVertexColors.push(...color, ...color);
+    //this.lineData.caps.lineVertexColors.push(...color);
     this.lineData.caps.count++;
     return this;
   }
@@ -523,10 +515,12 @@ p5.Geometry = class  {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
-    this.lineData.joins.lineVertices.push(...ptArray);
+    this.lineData.joins.lineVertices.push(...ptArray, ...ptArray);
+    //this.lineData.joins.lineVertices.push(...ptArray);
     this.lineData.joins.lineTangentsIn.push(...tanInArray);
     this.lineData.joins.lineTangentsOut.push(...tanOutArray);
-    this.lineData.joins.lineVertexColors.push(...color);
+    this.lineData.joins.lineVertexColors.push(...color, ...color);
+    //this.lineData.joins.lineVertexColors.push(...color);
     this.lineData.joins.count++;
     return this;
   }

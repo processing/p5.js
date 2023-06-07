@@ -195,7 +195,7 @@ p5.RendererGL.prototype.endShape = function(
   this._processVertices(...arguments);
   this.isProcessingVertices = false;
   if (this._doFill) {
-    if (this.immediateMode.geometry.vertices.length > 1) {
+    if (this.immediateMode.geometry.vertices.length >= 3) {
       this._drawImmediateFill();
     }
   }
@@ -375,6 +375,7 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 
   this._setFillUniforms(shader);
 
+  //this.disableAttributes();
   for (const buff of this.immediateMode.buffers.fill) {
     buff._prepareBuffer(this.immediateMode.geometry, shader);
   }
@@ -415,10 +416,6 @@ p5.RendererGL.prototype._drawImmediateFill = function() {
 p5.RendererGL.prototype._drawImmediateStroke = function() {
   const gl = this.GL;
 
-  const faceCullingEnabled = gl.isEnabled(gl.CULL_FACE);
-  // Prevent strokes from getting removed by culling
-  gl.disable(gl.CULL_FACE);
-
   const shader = this._getImmediateStrokeShader();
   this._useLineColor =
     (this.immediateMode.geometry.vertexStrokeColors.length > 0);
@@ -426,11 +423,13 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   this._applyColorBlend(this.curStrokeColor);
   if (this.webglVersion === constants.WEBGL2) {
     for (const key of ['joins', 'caps', 'segments']) {
+      const count =
+        this.immediateMode.geometry.lineData[key].count;
+      if (count === 0) continue;
+      //this.disableAttributes();
       for (const buff of this.immediateMode.buffers[key]) {
         buff._prepareBuffer(this.immediateMode.geometry, shader);
       }
-      const count =
-        this.immediateMode.geometry.lineData[key].count;
       gl.drawArraysInstanced(
         gl.TRIANGLES,
         0,
@@ -446,12 +445,8 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
     gl.drawArrays(
       gl.TRIANGLES,
       0,
-      this.immediateMode.geometry.lineData.stroke.lineVertices.length
-        / 2
+      this.immediateMode.geometry.lineData.stroke.lineSides.length
     );
-  }
-  if (faceCullingEnabled) {
-    gl.enable(gl.CULL_FACE);
   }
   shader.unbindShader();
 };
