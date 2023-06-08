@@ -225,11 +225,11 @@ p5.prototype.orbitControl = function(
     }
     if (this.mouseIsPressed) {
       if (this.mouseButton === this.LEFT) {
-        deltaTheta = -sensitivityX * (this.mouseX - this.pmouseX) / scaleFactor;
-        deltaPhi = sensitivityY * (this.mouseY - this.pmouseY) / scaleFactor;
+        deltaTheta = -sensitivityX * this.movedX / scaleFactor;
+        deltaPhi = sensitivityY * this.movedY / scaleFactor;
       } else if (this.mouseButton === this.RIGHT) {
-        moveDeltaX = this.mouseX - this.pmouseX;
-        moveDeltaY = this.mouseY - this.pmouseY;
+        moveDeltaX = this.movedX;
+        moveDeltaY = this.movedY;
       }
       // start rotate and move when mouse is pressed within the canvas.
       if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
