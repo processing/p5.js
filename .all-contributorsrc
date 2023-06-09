@@ -3695,6 +3695,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "peilingjiang",
+      "name": "Peiling Jiang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25191575?v=4",
+      "profile": "https://github.com/peilingjiang",
+      "contributions": [
+        "code",
+        "design",
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
