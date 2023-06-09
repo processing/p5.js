@@ -645,6 +645,9 @@ We recognize all types of contributions. This project follows the [all-contribut
       <td align="center" valign="top" width="14.28%"><a href="http://munusshih.com"><img src="https://avatars.githubusercontent.com/u/34775424?v=4?s=100" width="100px;" alt="Munus Shih"/><br /><sub><b>Munus Shih</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=munusshih" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/peilingjiang"><img src="https://avatars.githubusercontent.com/u/25191575?v=4?s=100" width="100px;" alt="Peiling Jiang"/><br /><sub><b>Peiling Jiang</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=peilingjiang" title="Code">💻</a> <a href="#design-peilingjiang" title="Design">🎨</a> <a href="#translation-peilingjiang" title="Translation">🌍</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Decoy4ever"><img src="https://avatars.githubusercontent.com/u/50310148?v=4?s=100" width="100px;" alt="Decoy4ever"/><br /><sub><b>Decoy4ever</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Decoy4ever" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
