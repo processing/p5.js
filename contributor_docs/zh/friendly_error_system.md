@@ -17,6 +17,7 @@ FES将消息打印在控制台窗口中，可以在[p5.js Web Editor]和浏览�
 * [21-22 FES调查报告漫画]
 * [21-22 FES调查完整报告]
 
+
 [21-22 FES调查报告漫画]: https://almchung.github.io/p5jsFESsurvey/
 [21-22 FES调查完整报告]: https://observablehq.com/@almchung/p5-fes-21-survey
 
@@ -24,11 +25,14 @@ FES将消息打印在控制台窗口中，可以在[p5.js Web Editor]和浏览�
 
 如何通过编写和翻译错误消息来为p5.js库做出贡献？
 
-FES是p5.js国际化工作的一部分。我们通过基于[i18next]的`translator()`函数生成所有FES消息的内容。这种动态错误消息生成适用于所有语言，包括p5.js的默认语言英语。
+FES是p5.js[国际化]工作的一部分。我们通过基于[i18next]的`translator()`函数生成所有FES消息的内容。这种动态错误消息生成适用于所有语言，包括p5.js的默认语言英语。
 
 我们欢迎来自世界各地的贡献！🌐
 
+[internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/internationalization.md
 [i18next]: https://www.i18next.com/
+
+
 #### 编写最佳实践
 
 FES消息编写者应该优先考虑降低理解错误消息的障碍，增加调试过程的可访问性。
@@ -36,9 +40,7 @@ FES消息编写者应该优先考虑降低理解错误消息的障碍，增加�
 [Friendly Errors i18n Book]讨论了在跨文化i18n环境中编写友好错误消息的挑战和最佳实践。以下是书中的一些要点：
 
 * 了解您的受众：不要对我们的错误消息的受众做出假设。尝试了解谁在使用我们的库以及他们如何使用它。
-* 保持语言包容性。我们努力使错误消息“友好”，这对您来说意味着什么？在您的语言中寻找可能的
-
-偏见和伤害。遵守[p5.js行为准则]。
+* 保持语言包容性。我们努力使错误消息“友好”，这对您来说意味着什么？在您的语言中寻找可能的偏见和伤害。遵守[p5.js行为准则]。
 * 尽量使用简单的句子。考虑将句子分成较小的块，以最大程度地利用i18next的[插值]功能。
 * 优先考虑跨文化沟通，并在不同语言之间提供出色的体验。避免使用成语。
 * 逐步介绍一个技术概念或技术术语。保持技术写作的一致性。尝试链接一个用简明实例编写的面向初学者的外部资源。
@@ -80,9 +82,7 @@ i18next支持插值，允许我们传递一个变量以动态生成消息。我�
 ```
 这里，键是`greeting`，变量名是`who`。
 
-为了动态生成该消息，我们需要传
-
-递一个值：
+为了动态生成该消息，我们需要传递一个值：
 ```JavaScript
 translator('greeting', { who: 'everyone' } );
 ```
@@ -127,19 +127,6 @@ p5.js从多个位置调用FES，以处理不同的情况，包括：
 
 #### FES消息生成器
 这些函数主要负责捕获错误并生成FES消息：
-* [`_friendlyFileLoadError()`]捕获文件加载错误。
-* [`_validateParameters()`]基于内联文档检查p5.js函数的输入参数。
-* [`_fesErrorMontitor()`]处理全局错误。
-
-有关完整参考，请参阅我们的[开发笔记]。
-
-[`_friendlyFileLoadError()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#_friendlyfileloaderror
-[`_validateParameters()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#validateparameters
-[`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/con
-
-
-FES消息生成器
-这些函数主要负责捕获错误并生成FES消息：
 * [`_friendlyFileLoadError()`] 捕获文件加载错误。
 * [`_validateParameters()`] 根据内联文档检查p5.js函数的输入参数。
 * [`_fesErrorMontitor()`] 处理全局错误。
@@ -151,7 +138,8 @@ FES消息生成器
 [`_fesErrorMontitor()`]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md#feserrormonitor
 [开发笔记]: https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
 
-FES消息显示器
+
+#### FES消息显示器
 `fes_core.js/_friendlyError()` 在控制台中打印生成的友好错误消息。例如：
 
 ```JavaScript
@@ -161,7 +149,7 @@ p5._friendlyError(
 ```
 该函数可以在p5的任何地方调用。
 
-关闭FES
+## 关闭FES
 可能有些情况下您希望[禁用FES以提升性能]。
 
 当`p5.disableFriendlyErrors`设置为`true`时，您可以关闭FES。

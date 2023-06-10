@@ -30,9 +30,7 @@
 * `_addAccsOutput()`: 当 accessibleOutputs 为 true 时，此函数返回 true。
 * `_accsBackground()`: 在 `background()` 结束时调用此函数。它重置 `this.ingredients.shapes`，如果背景色与先前不同，则调用 `_rgbColorName()` 获取颜色的名称，并将其存储在 `this.ingredients.colors.background` 中。
 * `_accsCanvasColors()`: 在 `fill()` 和 `stroke()` 结束时调用此函数。此函数通过将填充和描边颜色保存在 `this.ingredients.colors.fill` 和 `this.ingredients.colors.stroke` 中来更新填充和描边颜色。它还调用 `_rgbColorName()` 来获取颜色的名称。
-* `_accsOutput()`: 构建 `this.ingredients.shapes`，其中包括用于创建输出的所有形状。此函数在基本形状函数结束时调用（参见 accessible output beyond src/accessibility）。根据调用
-
-它的形状，`_accsOutput()` 可能会调用辅助函数来收集有关将用于创建输出的该形状的所有信息。这些辅助函数不是原型的一部分，包括：
+* `_accsOutput()`: 构建 `this.ingredients.shapes`，其中包括用于创建输出的所有形状。此函数在基本形状函数结束时调用（参见 accessible output beyond src/accessibility）。根据调用它的形状，`_accsOutput()` 可能会调用辅助函数来收集有关将用于创建输出的该形状的所有信息。这些辅助函数不是原型的一部分，包括：
   * `_getMiddle()`: 返回矩形、弧形、椭圆、三角形和四边形的中心点或质心。
   * `_getPos()`: 返回形状在画布上的位置（例如：'左上角'、'右中'）。
   * `_canvasLocator()`: 返回映射到画布的 10*10 网格上的形状的位置。
@@ -66,9 +64,7 @@
 * `_shapeList()`: 构建文本输出的形状列表。
 
 #### gridOutput.js
-[src/accessibility/gridOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/gridOutput.js) 包含更新网格输出的所有函数。该文件中的主要函数是 `_updateGridOutput()`，在 [
-
-src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) 中的 `_updateAccsOutput()` 调用该函数，当 `this._accessibleOutputs.grid` 或 `this._accessibleOutputs.gridLabel` 为 `true` 时调用。
+[src/accessibility/gridOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/gridOutput.js) 包含更新网格输出的所有函数。该文件中的主要函数是 `_updateGridOutput()`，在 [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) 中的 `_updateAccsOutput()` 调用该函数，当 `this._accessibleOutputs.grid` 或 `this._accessibleOutputs.gridLabel` 为 `true` 时调用。
 
 `_updateGridOutput()` 使用 `this.ingredients` 构建网格输出和网格输出标签的内容，包括摘要、映射形状位置的网格和形状列表。如果这些内容与当前输出不同，它会更新它们。构建输出内容由文件中的几个辅助函数支持，这些函数不是原型的一部分：
 * `_gridSummary()`: 构建网格输出摘要的内容。

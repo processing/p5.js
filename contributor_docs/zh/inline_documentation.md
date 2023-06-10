@@ -8,7 +8,8 @@ __[需要的示例列表](https://github.com/processing/p5.js/issues/2865)（您
 
 ## 指定元素类型和描述
 
-有4种类型的元素：`@class`、`@method`、`@property`、`@event`。您必须指定其中一种元素，以便该元素出现在文档中，并在其后添加元素的名称。描述应出现在顶部。以下是一些格式化提示：
+有4种类型的元素：`@class`、`@method`、`@property`、`@event`。
+您必须指定其中一种元素，以便该元素出现在文档中，并在其后添加元素的名称。描述应出现在顶部。以下是一些格式化提示：
 * 您可以使用Markdown语法来格式化描述文本。
 * 任何函数、变量或常量名称都应该使用单引号将其`等宽`。
 * 双行间隔被视为新段落。您不需要插入`<br><br>`标签。
@@ -29,9 +30,11 @@ __[需要的示例列表](https://github.com/processing/p5.js/issues/2865)（您
   /**
    * 绘制弧线
    *
-   * 如果只提供 x、y、width、height、start 和 stop 这几个参数，则绘制一个开放式饼图。
+   * 如果只提供 x、y、width、height、start 和 stop 这几个参数，则绘制一个
+   * 开放式饼图。
    * 如果提供了 mode 参数，则根据提供的变量绘制开放式、弦形或饼图弧线。
    *
+   * 
    * @param  {Number} x 弧线椭圆的 x 坐标
    * @param  {Number} y 弧线椭圆的 y 坐标
    * @param  {Number} width 弧线椭圆的默认宽度
@@ -44,6 +47,7 @@ __[需要的示例列表](https://github.com/processing/p5.js/issues/2865)（您
 
 ```js
   /**
+   * 
    * 计算向量的大小（长度）并返回结果作为浮点数
    * （这实际上是等式 sqrt(x*x + y*y + z*z)）。
    *
@@ -69,7 +73,8 @@ __[需要的示例列表](https://github.com/processing/p5.js/issues/2865)（您
 @param {type} [name] 描述。
 ```
 
-如果参数采用 [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) 中定义的一个或多个值，则类型应指定为 `{Constant}`，并且有效值应在 `either` 关键字后的注释中列出，例如：
+如果参数采用 [`constants.js`](https://github.com/processing/p5.js/blob/main/src/core/constants.js) 中定义的一个或多个值，
+则类型应指定为 `{Constant}`，并且有效值应在 `either` 关键字后的注释中列出，例如：
 
 ```
 @param {Constant} horizAlign 水平对齐，可以是 LEFT、CENTER 或 RIGHT 之一
@@ -96,7 +101,9 @@ __[需要的示例列表](https://github.com/processing/p5.js/issues/2865)（您
 ```js
 /**
  * @method background
- * @param {String} colorstring 颜色字符串，可能的格式包括：整数 rgb() 或 rgba()，百分比 rgb() 或 rgba()，3 位十六进制，6 位十六进制
+ * @param {String} colorstring 颜色字符串，可能的格式包括：整数
+ *                             rgb() 或 rgba()，百分比 rgb() 或 rgba()，
+ *                             3 位十六进制，6 位十六进制
  * @param {Number} [a] alpha 值
  */
 
@@ -154,9 +161,7 @@ define(function (require) {
 
 ## 构造函数
 
-构造函数使用 `@class` 定义。每个构造函数都应该有 `@class` 标签，后面跟着类的名称，以及 `@constructor` 标签和所需
-
-的任何 `@param` 标签。
+构造函数使用 `@class` 定义。每个构造函数都应该有 `@class` 标签，后面跟着类的名称，以及 `@constructor` 标签和所需的任何 `@param` 标签。
 
 ```js
 /**
@@ -209,7 +214,6 @@ describe('使用弧线创建的椭圆的下半部分');
 ```
 
 如果您不希望示例执行您的代码（即，只希望代码显示出来），请在 `<div>` 中包含 "norender" 类：
-
 ```
 @example
 <div class="norender">
@@ -272,41 +276,6 @@ function draw() {
 要了解有关 `describe()` 的更多信息，请访问 [Web 可访问性贡献者文档](https://p5js.org/contributor-docs/#/web_accessibility?id=user-generated-accessible-canvas-descriptions)。
 
 以前的文档指南要求通过在每个示例的末尾添加 [alt-text](https://moz.com/learn/seo/alt-text) 来创建适用于屏幕阅读器的画布描述。现在不再建议这样做。始终使用 `describe()`。以前，通过在给定函数的所有示例之后添加 `@alt` 标签来添加 alt-text（而不是在每个示例下添加单独的 `@alt` 标签），并添加一个换行符来分隔多个示例的描述。
-
-```
-@example
-<div>
-<code>
-let xoff = 0.0;
-function draw() {
-  background(204);
-  xoff = xoff + 0.01;
-  let n = noise(xoff) * width;
-  line(n, 0, n, height);
-}
-</code>
-</div>
-
-<div>
-<code>
-let noiseScale=0.02;
-function draw() {
-  background(0);
-  for (let x=0; x < width; x++) {
-    let noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
-    stroke(noiseVal*255);
-    line(x, mouseY+noise
-
-Val*80, x, height);
-  }
-}
-</code>
-</div>
-
-@alt '垂直线从左到右移动，使用更新的噪声值'
-@alt '水平波形模式，受鼠标 x 位置和更新的噪声值影响'
-```
-
 ```
 @example
 <div>
@@ -353,6 +322,7 @@ function draw() {
 * 您可以运行 `npm run docs:dev` 来启动站点的实时预览，每次更改后都会更新。 (您需要在进行更改后刷新页面才能看到更改的内容。)
 
 生成的参考文档位于 docs/reference 中。要在本地预览，请运行 `npm run grunt yui:dev` 并在 http://localhost:9001/docs/reference/ 上查看。
+
 
 ## 西班牙语版本
 

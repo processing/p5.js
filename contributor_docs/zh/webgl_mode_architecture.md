@@ -4,7 +4,8 @@
 
 ## 结构和对象概述
 
-WEBGL架构中的核心对象包括p5.Renderer.GL、p5.Shader、p5.Texture和p5.Geometry。p5.Renderer.GL的单个实例管理其自己的p5.Shaders、p5.Textures和p5.Geometry。其中一个目标是允许使用WebGL进行屏幕外渲染，但尚未进行测试。
+WEBGL架构中的核心对象包括p5.Renderer.GL、p5.Shader、p5.Texture和p5.Geometry。
+p5.Renderer.GL的单个实例管理其自己的p5.Shaders、p5.Textures和p5.Geometry。其中一个目标是允许使用WebGL进行屏幕外渲染，但尚未进行测试。
 着色器和纹理与特定的GL上下文关联在一起，通过渲染器进行管理。
 
 ### p5.RendererGL
@@ -66,13 +67,15 @@ p5.Texture对象根据`p5.Image`、`p5.MediaElement`、`p5.Element`或`ImageData
 | text()                 |                            |
 
 
+
+
+
+
 ## 纹理管理
 p5.Renderer.GL实例按需管理一组p5.Textures对象。
 为使用`texture()`方法或作为自定义着色器提供的uniform的图像和视频创建纹理。
 
-当渲染器需要纹理时，首先检查是否已经为给定
-
-的图像/视频创建了纹理，然后将其提供给着色器进行渲染。只有在找不到图像/视频的现有纹理时才会创建新的纹理。
+当渲染器需要纹理时，首先检查是否已经为给定的图像/视频创建了纹理，然后将其提供给着色器进行渲染。只有在找不到图像/视频的现有纹理时才会创建新的纹理。
 
 ## 着色器
 

@@ -7,3 +7,4 @@
 - **JavaScript及其社区** p5.js旨在通过模拟正确的JavaScript设计模式和用法，使Web开发实践对初学者更加易于理解，同时在必要时进行抽象化。作为一个开源库，p5.js还将广大的JavaScript社区纳入其创作、文档编写和传播的范围。
 
 - **Processing及其社区** p5.js是对Processing语言及其社区的直接回应，旨在使从Processing到JavaScript的过渡变得简单明了。支持Processing的API和社区是p5.js的首要任务，同时还扩展到包括在Web上进行创意编码的新可能性，并采用类似Processing的方法将该API暴露给初学者。
+

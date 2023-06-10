@@ -1,3 +1,5 @@
+# 贡献文档
+
 参考文献对于新手和有经验的程序员来说都是必不可少的。它向那些不太熟悉p5.js的人伸出友好之手以便帮助我们的社区变得更包容、更丰富。它还能帮助我们在测试和编写参考文献时找到代码本身的问题。
 
 有几种方法可以为参考文献做出贡献：
@@ -31,6 +33,3 @@
 * 所有的讨论都发生在github issue上，所以您不需要加入slack/gitter/等等频道。
 * 在readme.md文件中把您的名字加入[贡献者名单](https://github.com/processing/p5.js#contributors)! 说明[在此](https://github.com/processing/p5.js/issues/2309)。
 * 当然，如果您更喜欢修复bug，可以随时点进任何一个[issue](https://github.com/processing/p5.js/issues)!
-
-欢迎！我们很高兴你在这里！
-❤️ p5.js社区

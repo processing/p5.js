@@ -174,7 +174,6 @@ grunt.registerTask('build', [
   'browserify:test'
 ]);
 ```
-
 以`browserify`开头的任务在[./tasks/build/browserify.js](./tasks/build/browserify.js)中定义。它们基本上都执行相同的步骤，只有细微的差异。以下是从许多源代码文件构建完整的p5.js库的主要步骤，将其合并为一个文件。`browserify`构建p5.js，而`browserify:min`构建下一步要进行缩小的中间文件。`browserify`和`browserify:min`之间的区别在于，`browserify:min`不包含FES运行所需的数据。`uglify`接收`browserify:min`的输出文件，并将其缩小为最终的p5.min.js（此步骤的配置在主Gruntfile.js中）。`browserify:test`构建的版本与完整的p5.js版本相同，只是添加了用于测试代码覆盖率报告的代码（使用Istanbul）。
 
 在browserify步骤中，除了将各种文件合并为一个文件外，还执行了其他几个步骤。首先，使用`brfs-babel`将`fs.readFileSync()`节点.js特定代码的使用替换为文件的实际内容。这主要用于WebGL代码，以内联着色器代码，同时将它们保留为单独的文件。
@@ -198,9 +197,7 @@ mochaChrome
 ```
 mochaTest
 ```
-与`mochaChrome`不同，此步骤在node.js中运行，而不是在Chrome中运行，并且仅测试库中的一小部分功能
-
-。p5.js中的大多数功能都需要浏览器环境，因此只有在新的测试确实不需要浏览器环境时，才应扩展此测试集合。
+与`mochaChrome`不同，此步骤在node.js中运行，而不是在Chrome中运行，并且仅测试库中的一小部分功能。p5.js中的大多数功能都需要浏览器环境，因此只有在新的测试确实不需要浏览器环境时，才应扩展此测试集合。
 
 ```
 nyc:report
@@ -266,47 +263,17 @@ watch任务将监视一系列文件的更改，并根据所更改的文件运行
 
 > 我暂时关闭了此问题，因为我们没有看到对此问题的更详细解释[扩大访问权限](https://github.com/processing/p5.js/blob/main/contributor_docs/access.md)。如果可以在功能请求中添加更详细的访问权限说明，请随时重新打开。谢谢！
 
+#### 关闭：插件
+> 我认为这个功能超出了p5.js API的范围（我们尽量保持最简化），但它可以成为一个很好的插件库的起点。请查看此处的文档，了解如何创建一个插件：https://github.com/processing/p5.js/blob/main/contributor_docs/creating_libraries.md
+
 #### 关闭PR：先提出问题
 > 谢谢。作为提醒，必须在打开拉取请求之前打开问题并使用问题标记拉取请求。这对于跟踪开发并保持讨论清晰是必要的。谢谢！
 
+#### 批准问题修复。
+你可以继续进行修复。谢谢。
+
 #### 合并PR
 看起来不错。谢谢！
-
-## GitHub CLI
-对于复杂的PR进行审核，在本地测试PR的代码时可能会遇
-
-到一些困难，这时候可以使用GitHub CLI来帮助您完成这项任务。您可以通过GitHub CLI直接在本地检出PR，并在本地进行代码审查和测试。
-
-要使用GitHub CLI，首先您需要安装并配置它。您可以在[GitHub CLI](https://cli.github.com/)的官方网站上找到安装说明和使用文档。
-
-使用GitHub CLI检出PR的命令如下：
-
-```
-gh pr checkout <PR号>
-```
-
-例如，要检出编号为123的PR，您可以运行：
-
-```
-gh pr checkout 123
-```
-
-这将在您的本地存储库中创建一个名为`pull/123`的新分支，该分支包含PR的代码更改。
-
-在检出PR后，您可以在本地对代码进行任何必要的更改、测试和审查。
-
-请注意，您可能需要一些额外的配置和权限才能使用`gh pr checkout`命令。确保您具有适当的权限并配置了适当的认证信息。
-
-## 高级问题/PR审核
-对于更复杂的问题和PR，您可能需要更深入地了解p5.js的内部工作原理和架构。以下是一些可能对您有帮助的资源：
-
-- [p5.js源代码](https://github.com/processing/p5.js/tree/main/src)：您可以直接查看和分析p5.js库的源代码。
-- [p5.js源代码文档](https://p5js.org/reference/#/libraries/p5/-p5.js)：此文档提供了p5.js库的详细API参考，可以帮助您了解不同部分的功能和用法。
-- [p5.js开发者文档](https://github.com/processing/p5.js/wiki/Development)：此文档提供了关于如何开发p5.js库以及如何在库中添加新功能的指南和说明。
-
-对于复杂的问题和PR，与p5.js核心团队进行更密切的合作也可能非常有帮助。您可以在[Processing Foundation](https://processingfoundation.org/)的[Discord服务器](https://discord.gg/F2c9b4r)上找到他们，并与他们进行讨论和交流。
-
-这些是一些建议，希望能帮助您更好地参与p5.js库的维护和贡献！
 
 ## GitHub CLI
 使用看似晦涩的 git 命令来获取 PR 版本的代码并在本地进行测试，可能会使复杂的 PR 审查变得困难。幸运的是，[GitHub CLI](https://cli.github.com/) 工具可以极大地帮助简化这个过程以及其他操作。
@@ -321,4 +288,3 @@ GitHub CLI 还提供了许多其他命令，你可能会发现它们有用，无
 在某些情况下，你可能会收到 GitHub 发送的与你关注的存储库中的活动相关的电子邮件，你可以在[通知设置页面](https://github.com/settings/notifications)上进行自定义设置，包括完全取消订阅。
 
 根据你的工作方式设置这些通知，可以避免手动查找相关问题/PR并避免被 GitHub 的无休止通知淹没。在这里需要保持良好的平衡。作为起始建议，你可以关注该存储库的“Issues”和“Pull Requests”，并设置仅在“参与、提及和自定义”时接收电子邮件通知。
-

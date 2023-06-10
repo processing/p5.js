@@ -107,7 +107,8 @@ suite('p5.prototype.keyIsPressed', function() {
 });
 ```
 
-我们已经构建了测试套件的结构，但还没有编写测试。我们将使用 chai 的 assert 进行编写。例如：
+我们已经构建了测试套件的结构，但还没有编写测试。我们将使用 chai 的 assert 进行编写。
+例如：
 
 ```js
 test('keyIsPressed is a boolean', function() {

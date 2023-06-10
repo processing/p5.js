@@ -1,5 +1,4 @@
 # FES 开发者参考和注释
-
 本文档包含 p5.js 友好错误系统（FES）的参考和开发注释。FES 包含多个函数，负责为不同类型的错误生成友好的错误消息。这些函数从各个位置收集错误，包括浏览器触发的错误事件、扫描用户代码时发现的错误、库内部的参数检查等。
 
 生成友好错误消息的主要函数有：
@@ -42,40 +41,6 @@ _report(message, func, color)
 ##### 位置
 core/friendly_errors/fes_core.js
 
-
-### `_friendlyError()`
-##### 描述
-`_friendlyError()` 创建并打印一个友好的错误消息。任何 p5 函数都可以调用此函数以提供友好的错误消息。
-
-在以下函数中实现：
-* `core/friendly_errors/fes_core/fesErrorMonitor()`
-* `core/friendly_errors/fes_core/checkForUserDefinedFunctions()`
-* `core/friendly_errors/fes_core/handleMisspelling()`
-* `core/friendly_errors/fes_core/processStack()`
-* `core/friendly_errors/file_errors`
-* `core/friendly_errors/sketch_reader`
-* `core/friendly_errors/validate_params/_friendlyParamError()`
-* `core/main/_createFriendlyGlobalFunctionBinder()`
-* `core/shape/vertex`
-* `math/p5.Vector`
-
-对 `_friendlyError` 的调用顺序如下所示：
-```
-_friendlyError
-  _report
-```
-
-##### 语法
-````JavaScript
-_friendlyError(message)
-````
-````JavaScript
-_friendlyError(message, func)
-````
-````JavaScript
-_friendlyError(message, func, color)
-````
-##### 参数
 
 ### `_friendlyError()`
 ##### 描述
@@ -167,7 +132,6 @@ function setup() {
 };
 function draw() {};
 ````
-
 FES会在控制台生成以下消息：
 > 🌸 p5.js says: 看起来加载字体文件时出现了问题。请检查文件路径 [assets/OpenSans-Regular.ttf] 是否正确，尝试将字体文件托管到在线服务器上，或者运行本地服务器。[https://github.com/processing/p5.js/wiki/Local-server]
 
@@ -241,11 +205,9 @@ _validateParameters(func, args)
 ```
 ##### 示例
 <ins>缺少参数的示例</ins>
-
 ````JavaScript
 arc(1, 1, 10.5, 10);
 ````
-
 FES将在控制台生成以下消息：
 > 🌸 p5.js 说：看起来arc()在位置#4（从零开始的索引）收到了一个空变量。如果不是故意的，这通常是作用域问题：[https://p5js.org/examples/data-variable-scope.html]。[http://p5js.org/reference/#p5/arc]
 
@@ -300,12 +262,12 @@ fesErrorMonitor(event)
 ```
 @param {*}  e     错误事件
 ```
-
 ### 示例
 <ins>内部错误示例 1</ins>
 ```JavaScript
 function preload() {
-  // 由于在preload中调用background()而引发错误
+  // 由于在preload中调用background()而引发
+  // 错误
   background(200);
 }
 ```
@@ -466,8 +428,6 @@ function setup() {
 
 function draw() {
   // 执行绘图操作
-
-
 }
 ```
 
@@ -490,28 +450,20 @@ line(0, 0, 100, 100, x3, Math.PI);
 * `sketch_reader()` 可能会在提取用户代码中的变量/函数名称时遗漏一些情况（例如，当所有代码都写在一行中时）。
 
 ## 未来工作的思考
-* 重新引入 Web 编辑器的颜色编码。
-
-* 为全面测试增加更多单元测试。
-
-* 更直观、更精确的输出消息。
-
-* 所有使用的颜色应该对色盲友好。
-
-* 识别更常见的错误类型，并用 FES 进行泛化（例如 `bezierVertex()`、`quadraticVertex()` - 必需的对象未初始化；对 `nf()`、`nfc()`、`nfp()`、`nfs()` 进行检查，检查数字参数是否为正数）。
-
-* 扩展全局错误捕获。这意味着捕获浏览器抛出到控制台的错误，并将其与友好的消息匹配。`fesErrorMonitor()` 对某些特定类型的错误进行了处理，但支持更多错误的帮助将受到欢迎 :)
-
-* 改进 `sketch_reader.js` 的代码读取和提取变量/函数名称的功能（从用户的代码中提取声明的变量/函数名称）。
-
-未来工作的想法
 * 为 Web 编辑器重新引入颜色编码。
+
 * 增加更多单元测试以实现全面的测试覆盖。
+
 * 更直观、更精确的输出信息。
+
 * 所使用的所有颜色应对色盲友好。
+
 * 识别更多常见的错误类型，并与 FES 进行概括（例如 `bezierVertex()`、`quadraticVertex()` - 需要初始化的对象未启动；检查 `nf()`、`nfc()`、`nfp()`、`nfs()` 的 Number 参数是否为正数）。
+
 * 扩展全局错误捕获。这意味着捕获浏览器输出到控制台的错误，并与友好的消息进行匹配。`fesErrorMonitor()` 可以处理一些特定类型的错误，但对于更多类型的支持会很有帮助。
+
 * 改进 `sketch_reader.js` 的代码读取和提取变量/函数名的功能（提取用户在代码中声明的函数和变量名）。例如，如果所有代码都写在一行中，`sketch_reader.js` 就无法正确提取变量/函数名。我们欢迎未来的提案，以识别所有这些"逃逸"情况，并添加单元测试以捕捉它们。
+
 * `sketch_reader.js` 可以扩展，可以添加新功能（例如：当用户在 `draw()` 函数中声明变量时向用户发出警告）。以更好地帮助用户。
 ```JavaScript
 // 这段代码片段使用新函数包装了 window.console 方法，以修改其功能

@@ -36,9 +36,7 @@ p5.js库可以是扩展或添加到p5.js核心功能的任何JavaScript代码。
   
 ### 使用registerPreloadMethod()在preload()中注册可以在其中调用的方法的名称。
 
-通常，对于某些异步函数（例如加载声音、图像或其他外部文件），都会提供同步和异步选项。例如，`loadStrings(path, [callback])`接受可选的第二个回调参数 - 在loadStrings函数完成后调用的函数。但是，用户也可以在`preload()`中调用loadStrings而不使用回调，并且p5.js将等待直到`preload()`中的所有内容完成后再继续执行`setup()`。如果您想注册自己的方法，请使用要注册的方法的名称调用`registerPreloadMethod()`，
-
-并传递该方法所属的原型对象 ~~（默认为p5.prototype）~~ 。下面的示例显示了“soundfile.js”（p5.sound库）中注册`loadSound()`的一行。
+通常，对于某些异步函数（例如加载声音、图像或其他外部文件），都会提供同步和异步选项。例如，`loadStrings(path, [callback])`接受可选的第二个回调参数 - 在loadStrings函数完成后调用的函数。但是，用户也可以在`preload()`中调用loadStrings而不使用回调，并且p5.js将等待直到`preload()`中的所有内容完成后再继续执行`setup()`。如果您想注册自己的方法，请使用要注册的方法的名称调用`registerPreloadMethod()`，并传递该方法所属的原型对象 ~~（默认为p5.prototype）~~ 。下面的示例显示了“soundfile.js”（p5.sound库）中注册`loadSound()`的一行。
 
   ```js
   p5.prototype.registerPreloadMethod('loadSound', p5.prototype);
@@ -122,10 +120,6 @@ https://github.com/processing/processing/wiki/Library-Basics#library-methods
 
 * **文档至关重要！** 您的库的文档应该放在某个易于找到的位置，供下载和使用您的库的用户使用。贡献的库的文档将不会包含在主要的p5.js参考文档中，但您可能希望遵循类似的格式。请参阅这些示例：[库概述页面](http://p5js.org/reference/#/libraries/p5.sound)、[类概述页面](http://p5js.org/reference/#/p5.Vector)和[方法页面](http://p5js.org/reference/#/p5/arc)。
 
-* **示例也很棒！** 它们展示了如何使用您的库，并帮助用户更好地了解它的功能。您可以在您的文档中包含示例代码，或在GitHub存储库中提供单独的示例文件。
+* **示例也很棒！** 它们向人们展示了您的库能做什么。由于这全部是JavaScript，人们可以在下载之前在线运行它们。[jsfiddle](http://jsfiddle.net/)和[codepen](http://codepen.io)是两个很好的简单选项，可以用来托管示例。
 
-* **让您的库易于安装和使用。** 用户应该能够通过简单的步骤将您的库添加到其项目中，并能够快速上手。提供详细的安装说明和使用指南。
-
-* **保持您的库的更新。** 确保您的库保持与最新版本的p5.js兼容，并随着p5.js的更新进行更新。这将确保您的库在最新版本的p5.js中继续正常工作，并为用户提供最佳的体验。
-
-以上是关于创建和扩展p5.js库的一些建议和指导。希望对您有所帮助！如果您有任何其他问题，请随时提问。
+* **告诉我们吧！** 一旦您的库准备好发布，发送一封电子邮件至[hello@p5js.org](mailto:hello@p5js.org)，附上链接和一些信息。我们将在[libraries page](http://p5js.org/libraries/)上包含它！
