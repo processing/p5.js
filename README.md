@@ -647,6 +647,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Decoy4ever"><img src="https://avatars.githubusercontent.com/u/50310148?v=4?s=100" width="100px;" alt="Decoy4ever"/><br /><sub><b>Decoy4ever</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Decoy4ever" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shujuuu"><img src="https://avatars.githubusercontent.com/u/43021463?v=4?s=100" width="100px;" alt="shujulin"/><br /><sub><b>shujulin</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Ashujuuu" title="Bug reports">🐛</a> <a href="#ideas-shujuuu" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-shujuuu" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
