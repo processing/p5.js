@@ -3715,6 +3715,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shujuuu",
+      "name": "shujulin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43021463?v=4",
+      "profile": "https://github.com/shujuuu",
+      "contributions": [
+        "bug",
+        "ideas",
+        "design"
+      ]
     }
   ],
   "repoType": "github",
