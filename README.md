@@ -647,6 +647,7 @@ We recognize all types of contributions. This project follows the [all-contribut
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Decoy4ever"><img src="https://avatars.githubusercontent.com/u/50310148?v=4?s=100" width="100px;" alt="Decoy4ever"/><br /><sub><b>Decoy4ever</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Decoy4ever" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://lindapaiste.com"><img src="https://avatars.githubusercontent.com/u/28965286?v=4?s=100" width="100px;" alt="Linda Paiste"/><br /><sub><b>Linda Paiste</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Alindapaiste" title="Bug reports">🐛</a> <a href="https://github.com/processing/p5.js/commits?author=lindapaiste" title="Code">💻</a> <a href="#design-lindapaiste" title="Design">🎨</a> <a href="https://github.com/processing/p5.js/commits?author=lindapaiste" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
