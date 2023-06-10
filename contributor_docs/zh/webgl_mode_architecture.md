@@ -48,22 +48,22 @@ p5.Texture对象根据`p5.Image`、`p5.MediaElement`、`p5.Element`或`ImageData
 ## 几何形状：保留模式和即时模式
 保留几何形状用于3D基本图形，而即时模式用于使用begin/endShape创建的形状。
 
-|使用保留几何形状的函数|使用即时模式几何形状的函数|
-|-------------------|---------------------|
-|plane()            | bezier()            |
-|box()              | curve()             |
-|sphere()           | line()              |
-|cylinder()         | beginShape()        |
-|cone()             | vertex()            |
-|ellipsoid()        | endShape()          |
-|torus()            | point()             |
-|triangle()         | curveVertex()       |
-|arc()              | bezierVertex()      |
-|point()            | quadraticVertex()   |
-|ellipse()          |                     |
-|rect()             |                     |
-|quad()             |                     |
-|text()             |                     |
+| 使用保留几何形状的函数 | 使用即时模式几何形状的函数 |
+| ---------------------- | -------------------------- |
+| plane()                | bezier()                   |
+| box()                  | curve()                    |
+| sphere()               | line()                     |
+| cylinder()             | beginShape()               |
+| cone()                 | vertex()                   |
+| ellipsoid()            | endShape()                 |
+| torus()                | point()                    |
+| triangle()             | curveVertex()              |
+| arc()                  | bezierVertex()             |
+| point()                | quadraticVertex()          |
+| ellipse()              |                            |
+| rect()                 |                            |
+| quad()                 |                            |
+| text()                 |                            |
 
 
 ## 纹理管理
@@ -93,73 +93,84 @@ p5.Renderer.GL实例按需管理一组p5.Textures对象。
 ### 着色器参数
 
 #### 标准模型视图和相机uniforms
-|参数                           |线条着色器|纹理光照着色器|颜色着色器|法线着色器|点着色器|
-|------------------------------|---------|-------------|----------|-----------|--------|
-|`uniform mat4 uModelViewMatrix;` |✓        |✓           |✓         |✓           |✓        |
-|`uniform mat4 uProjectionMatrix;`|✓        |✓           |✓         |✓           |✓        |
-|`uniform vec4 uViewPort;`        |✓        |             |          |            |         |
-|`uniform vec4 uPerspective;`     |✓        |             |          |            |         |
+| 参数                              | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| --------------------------------- | ---------- | -------------- | ---------- | ---------- | -------- |
+| `uniform mat4 uModelViewMatrix;`  | x          | x              | x          | x          | x        |
+| `uniform mat4 uProjectionMatrix;` | x          | x              | x          | x          | x        |
+| `uniform vec4 uViewPort;`         | x          |                |            |            |          |
+| `uniform vec4 uPerspective;`      | x          |                |            |            |          |
 
 
 #### 几何属性和uniforms
-|参数                           |线条着色器|纹理光照着色器|颜色着色器|法线着色器|点着色器|
-|------------------------------|---------|-------------|----------|-----------|--------|
-|`attribute vec3 aPosition;`      |✓        |✓           |✓         |✓           |✓        |
-|`attribute vec3 aNormal;`        |         |✓           |          |✓           |         | 
-|`attribute vec2 aTexCoord;`      |         |✓           |          |✓           |         |
-|`uniform mat3 uNormalMatrix;`    |         |✓           |          |✓           |         |
-|`attribute vec4 aDirection;`     |✓        |             |          |            |         |
-|`uniform float uStrokeWeight;`   |✓        |             |          |            |         |
+| 参数                           | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| ------------------------------ | ---------- | -------------- | ---------- | ---------- | -------- |
+| `attribute vec3 aPosition;`    | x          | x              | x          | x          | x        |
+| `attribute vec3 aNormal;`      |            | x              |            | x          |          |
+| `attribute vec2 aTexCoord;`    |            | x              |            | x          |          |
+| `uniform mat3 uNormalMatrix;`  |            | x              |            | x          |          |
+| `attribute vec4 aDirection;`   | x          |                |            |            |          |
+| `uniform float uStrokeWeight;` | x          |                |            |            |          |
 
 #### 材质颜色
-|参数                           |线条着色器|纹理光照着色器|颜色着色器|法线着色器|点着色器|
-|------------------------------|---------|-------------|----------|-----------|--------|
-|`uniform vec4 uMaterialColor;`   |✓        |✓           |          |            |✓        |
-|`attribute vec4 aVertexColor;`   |        
-
- |             |✓         |            |         |
+| 参数                           | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| ------------------------------ | ---------- | -------------- | ---------- | ---------- | -------- |
+| `uniform vec4 uMaterialColor;` | x          | x              |            |            | x        |
+| `attribute vec4 aVertexColor;` |            |                | x          |            |          |
 
 #### 光照参数
 
-|参数                                      |线条着色器|纹理光照着色器|颜色着色器|法线着色器|点着色器|
-|------------------------------------------|---------|-------------|----------|-----------|--------|
-|`uniform int uAmbientLightCount;`              |         |✓           |          |            |         |
-|`uniform int uDirectionalLightCount;`          |         |✓           |          |            |         |
-|`uniform int uPointLightCount;`                |         |✓           |          |            |         |
-|`uniform int uSpotLightCount;`                 |         |✓           |          |            |         |
-|`uniform vec3 uAmbientColor[8];`               |         |✓           |          |            |         |
-|`uniform vec3 uLightingDirection[8];`          |         |✓           |          |            |         |
-|`uniform vec3 uDirectionalDiffuseColors[8];`   |         |✓           |          |            |         |
-|`uniform vec3 uDirectionalSpecularColors[8];`  |         |✓           |          |            |         |
-|`uniform vec3 uPointLightLocation[8];`         |         |✓           |          |            |         |
-|`uniform vec3 uPointLightDiffuseColors[8];`    |         |✓           |          |            |         |
-|`uniform vec3 uPointLightSpecularColors[8];`   |         |✓           |          |            |         |
-|`uniform float uSpotLightAngle[8];`            |         |✓           |          |            |         |
-|`uniform float uSpotLightConc[8];`             |         |✓           |          |            |         |
-|`uniform vec3 uSpotLightDiffuseColors[8];`     |         |✓           |          |            |         |
-|`uniform vec3 uSpotLightSpecularColors[8];`    |         |✓           |          |            |         |
-|`uniform vec3 uSpotLightLocation[8];`          |         |✓           |          |            |         |
-|`uniform vec3 uSpotLightDirection[8];`         |         |✓           |          |            |         |
-|`uniform bool uSpecular;`                      |         |✓           |          |            |         |
-|`uniform bool uEmissive;`                      |         |✓           |          |            |         |
-|`uniform int  uShininess;`                     |         |✓           |          |            |         |
-|`uniform bool uUseLighting;`                   |         |✓           |          |            |         |
-|`uniform float uConstantAttenuation;`          |         |✓           |          |            |         |
-|`uniform float uLinearAttenuation;`            |         |✓           |          |            |         |
-|`uniform float uQuadraticAttenuation;`         |         |✓           |          |            |         |
+| 参数                                          | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| --------------------------------------------- | ---------- | -------------- | ---------- | ---------- | -------- |
+| `uniform int uAmbientLightCount;`             |            | x              |            |            |          |
+| `uniform int uDirectionalLightCount;`         |            | x              |            |            |          |
+| `uniform int uPointLightCount;`               |            | x              |            |            |          |
+| `uniform int uSpotLightCount;`                |            | x              |            |            |          |
+| `uniform vec3 uAmbientColor[8];`              |            | x              |            |            |          |
+| `uniform vec3 uLightingDirection[8];`         |            | x              |            |            |          |
+| `uniform vec3 uDirectionalDiffuseColors[8];`  |            | x              |            |            |          |
+| `uniform vec3 uDirectionalSpecularColors[8];` |            | x              |            |            |          |
+| `uniform vec3 uPointLightLocation[8];`        |            | x              |            |            |          |
+| `uniform vec3 uPointLightDiffuseColors[8];`   |            | x              |            |            |          |
+| `uniform vec3 uPointLightSpecularColors[8];`  |            | x              |            |            |          |
+| `uniform float uSpotLightAngle[8];`           |            | x              |            |            |          |
+| `uniform float uSpotLightConc[8];`            |            | x              |            |            |          |
+| `uniform vec3 uSpotLightDiffuseColors[8];`    |            | x              |            |            |          |
+| `uniform vec3 uSpotLightSpecularColors[8];`   |            | x              |            |            |          |
+| `uniform vec3 uSpotLightLocation[8];`         |            | x              |            |            |          |
+| `uniform vec3 uSpotLightDirection[8];`        |            | x              |            |            |          |
+| `uniform bool uSpecular;`                     |            | x              |            |            |          |
+| `uniform bool uEmissive;`                     |            | x              |            |            |          |
+| `uniform int  uShininess;`                    |            | x              |            |            |          |
+| `uniform bool uUseLighting;`                  |            | x              |            |            |          |
+| `uniform float uConstantAttenuation;`         |            | x              |            |            |          |
+| `uniform float uLinearAttenuation;`           |            | x              |            |            |          |
+| `uniform float uQuadraticAttenuation;`        |            | x              |            |            |          |
 
 #### 纹理参数
 
-|参数                             |线条着色器|纹理光照着色器|颜色着色器|法线着色器|点着色器|
-|----------------------------------|---------|-------------|----------|-----------|--------|
-|`uniform bool uTexture;`            |         |✓           |          |            |         |
-|`uniform sampler2D uSampler;`       |         |✓           |          |            |         |
-|`uniform bool uTextureRepeat;`      |         |✓           |          |            |         |
-|`uniform bool uTextureFlipX;`       |         |✓           |          |            |         |
-|`uniform bool uTextureFlipY;`       |         |✓           |          |            |         |
-|`uniform vec2 uTextureScale;`       |         |✓           |          |            |         |
-|`uniform vec2 uTextureTranslate;`   |         |✓           |          |            |         |
+| 参数                          | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| ----------------------------- | ---------- | -------------- | ---------- | ---------- | -------- |
+| `uniform sampler2D uSampler;` |            | x              |            |            |          |
+| `uniform bool isTexture;`     |            | x              |            |            |          |
 
-## 注意事项
-- 上述信息基于我在2021年的知识，与p5.js版本为1.4.0相关。请在查看相关文档和资料时始终注意版本和更新。
-- 这些是基本概念和参数的概述，还有其他细节和功能可以在p5.js文档和源代码中找到。
+#### 通用参数
+
+| 参数                         | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| ---------------------------- | ---------- | -------------- | ---------- | ---------- | -------- |
+| `uniform float uResolution;` |            |                | x          |            |          |
+| `uniform float uPointSize;`  |            |                | x          |            | x        |
+
+#### 变量参数
+
+| 参数                                | 线条着色器 | 纹理光照着色器 | 颜色着色器 | 法线着色器 | 点着色器 |
+| ----------------------------------- | ---------- | -------------- | ---------- | ---------- | -------- |
+| `varying vec3 vVertexNormal;`       |            | x              |            |            |          |
+| `varying vec2 vVertTexCoord;`       |            | x              |            |            |          |
+| `varying vec3 vLightWeighting;`     |            | x              |            |            |          |
+| `varying highp vec2 vVertTexCoord;` |            |                |            | x          |          |
+| `varying vec4 vColor;`              |            |                | x          |            |          |
+| `varying float vStrokeWeight`       |            |                |            |            | x        |
+
+## 下一步计划
+
+即将推出！
