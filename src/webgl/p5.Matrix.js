@@ -347,20 +347,20 @@ p5.Matrix = class {
  * @chainable
  * @todo  finish implementation
  */
-  inverseTranspose(matrix) {
+  inverseTranspose({ mat4 }) {
     if (this.mat3 === undefined) {
       p5._friendlyError('sorry, this function only works with mat3');
     } else {
     //convert mat4 -> mat3
-      this.mat3[0] = matrix.mat4[0];
-      this.mat3[1] = matrix.mat4[1];
-      this.mat3[2] = matrix.mat4[2];
-      this.mat3[3] = matrix.mat4[4];
-      this.mat3[4] = matrix.mat4[5];
-      this.mat3[5] = matrix.mat4[6];
-      this.mat3[6] = matrix.mat4[8];
-      this.mat3[7] = matrix.mat4[9];
-      this.mat3[8] = matrix.mat4[10];
+      this.mat3[0] = mat4[0];
+      this.mat3[1] = mat4[1];
+      this.mat3[2] = mat4[2];
+      this.mat3[3] = mat4[4];
+      this.mat3[4] = mat4[5];
+      this.mat3[5] = mat4[6];
+      this.mat3[6] = mat4[8];
+      this.mat3[7] = mat4[9];
+      this.mat3[8] = mat4[10];
     }
 
     const inverse = this.invert3x3();
@@ -749,8 +749,8 @@ p5.Matrix = class {
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
-  multiplyPoint(v) {
-    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+  multiplyPoint({ x, y, z }) {
+    const array = this.multiplyVec4(x, y, z, 1);
     return new p5.Vector(array[0], array[1], array[2]);
   }
 
@@ -764,8 +764,8 @@ p5.Matrix = class {
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
-  multiplyAndNormalizePoint(v) {
-    const array = this.multiplyVec4(v.x, v.y, v.z, 1);
+  multiplyAndNormalizePoint({ x, y, z }) {
+    const array = this.multiplyVec4(x, y, z, 1);
     array[0] /= array[3];
     array[1] /= array[3];
     array[2] /= array[3];
@@ -782,8 +782,8 @@ p5.Matrix = class {
  * @param {p5.Vector}
  * @return {p5.Vector}
  */
-  multiplyDirection(v) {
-    const array = this.multiplyVec4(v.x, v.y, v.z, 0);
+  multiplyDirection({ x, y, z }) {
+    const array = this.multiplyVec4(x, y, z, 0);
     return new p5.Vector(array[0], array[1], array[2]);
   }
 

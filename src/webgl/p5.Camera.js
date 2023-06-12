@@ -109,7 +109,7 @@ import p5 from '../core/main';
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
  * z axis and 3 sliders for shifting its center.
  */
-p5.prototype.camera = function(...args) {
+p5.prototype.camera = function (...args) {
   this._assert3d('camera');
   p5._validateParameters('camera', args);
   this._renderer._curCamera.camera(...args);
@@ -173,7 +173,7 @@ p5.prototype.camera = function(...args) {
  * @alt
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  */
-p5.prototype.perspective = function(...args) {
+p5.prototype.perspective = function (...args) {
   this._assert3d('perspective');
   p5._validateParameters('perspective', args);
   this._renderer._curCamera.perspective(...args);
@@ -236,7 +236,7 @@ p5.prototype.perspective = function(...args) {
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
-p5.prototype.ortho = function(...args) {
+p5.prototype.ortho = function (...args) {
   this._assert3d('ortho');
   p5._validateParameters('ortho', args);
   this._renderer._curCamera.ortho(...args);
@@ -303,7 +303,7 @@ p5.prototype.ortho = function(...args) {
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
-p5.prototype.frustum = function(...args) {
+p5.prototype.frustum = function (...args) {
   this._assert3d('frustum');
   p5._validateParameters('frustum', args);
   this._renderer._curCamera.frustum(...args);
@@ -368,7 +368,7 @@ p5.prototype.frustum = function(...args) {
  * @alt
  * An example that creates a camera and moves it around the box.
  */
-p5.prototype.createCamera = function() {
+p5.prototype.createCamera = function () {
   this._assert3d('createCamera');
   const _cam = new p5.Camera(this._renderer);
 
@@ -464,16 +464,17 @@ p5.prototype.createCamera = function() {
  * @alt
  * camera view pans left and right across a series of rotating 3D boxes.
  */
-p5.Camera = function(renderer) {
-  this._renderer = renderer;
+p5.Camera = class Camera {
+  constructor(renderer) {
+    this._renderer = renderer;
 
-  this.cameraType = 'default';
+    this.cameraType = 'default';
 
-  this.cameraMatrix = new p5.Matrix();
-  this.projMatrix = new p5.Matrix();
-  this.yScale = 1;
-};
-/**
+    this.cameraMatrix = new p5.Matrix();
+    this.projMatrix = new p5.Matrix();
+    this.yScale = 1;
+  }
+  /**
  * camera position value on x axis
  * @property {Number} eyeX
  * @readonly
@@ -502,7 +503,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * camera position value on y axis
  * @property {Number} eyeY
  * @readonly
@@ -530,7 +531,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * camera position value on z axis
  * @property {Number} eyeZ
  * @readonly
@@ -558,7 +559,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * x coordinate representing center of the sketch
  * @property {Number} centerX
  * @readonly
@@ -587,7 +588,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * y coordinate representing center of the sketch
  * @property {Number} centerY
  * @readonly
@@ -616,7 +617,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * z coordinate representing center of the sketch
  * @property {Number} centerZ
  * @readonly
@@ -645,7 +646,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * x component of direction 'up' from camera
  * @property {Number} upX
  * @readonly
@@ -669,7 +670,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * y component of direction 'up' from camera
  * @property {Number} upY
  * @readonly
@@ -693,7 +694,7 @@ p5.Camera = function(renderer) {
  *
  */
 
-/**
+  /**
  * z component of direction 'up' from camera
  * @property {Number} upZ
  * @readonly
@@ -717,11 +718,11 @@ p5.Camera = function(renderer) {
  *
  */
 
-////////////////////////////////////////////////////////////////////////////////
-// Camera Projection Methods
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
+  // Camera Projection Methods
+  ////////////////////////////////////////////////////////////////////////////////
 
-/**
+  /**
  * Sets a perspective projection.
  * Accepts the same parameters as the global
  * <a href="#/p5/perspective">perspective()</a>.
@@ -766,81 +767,81 @@ p5.Camera = function(renderer) {
  * @alt
  * two colored 3D boxes move back and forth, rotating as mouse is dragged.
  */
-p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
-  this.cameraType = arguments.length > 0 ? 'custom' : 'default';
-  if (typeof fovy === 'undefined') {
-    fovy = this.defaultCameraFOV;
-    // this avoids issue where setting angleMode(DEGREES) before calling
-    // perspective leads to a smaller than expected FOV (because
-    // _computeCameraDefaultSettings computes in radians)
-    this.cameraFOV = fovy;
-  } else {
-    this.cameraFOV = this._renderer._pInst._toRadians(fovy);
-  }
-  if (typeof aspect === 'undefined') {
-    aspect = this.defaultAspectRatio;
-  }
-  if (typeof near === 'undefined') {
-    near = this.defaultCameraNear;
-  }
-  if (typeof far === 'undefined') {
-    far = this.defaultCameraFar;
-  }
+  perspective(fovy, aspect, near, far) {
+    this.cameraType = arguments.length > 0 ? 'custom' : 'default';
+    if (typeof fovy === 'undefined') {
+      fovy = this.defaultCameraFOV;
+      // this avoids issue where setting angleMode(DEGREES) before calling
+      // perspective leads to a smaller than expected FOV (because
+      // _computeCameraDefaultSettings computes in radians)
+      this.cameraFOV = fovy;
+    } else {
+      this.cameraFOV = this._renderer._pInst._toRadians(fovy);
+    }
+    if (typeof aspect === 'undefined') {
+      aspect = this.defaultAspectRatio;
+    }
+    if (typeof near === 'undefined') {
+      near = this.defaultCameraNear;
+    }
+    if (typeof far === 'undefined') {
+      far = this.defaultCameraFar;
+    }
 
-  if (near <= 0.0001) {
-    near = 0.01;
-    console.log(
-      'Avoid perspective near plane values close to or below 0. ' +
+    if (near <= 0.0001) {
+      near = 0.01;
+      console.log(
+        'Avoid perspective near plane values close to or below 0. ' +
         'Setting value to 0.01.'
-    );
-  }
+      );
+    }
 
-  if (far < near) {
-    console.log(
-      'Perspective far plane value is less than near plane value. ' +
+    if (far < near) {
+      console.log(
+        'Perspective far plane value is less than near plane value. ' +
         'Nothing will be shown.'
-    );
+      );
+    }
+
+    this.aspectRatio = aspect;
+    this.cameraNear = near;
+    this.cameraFar = far;
+
+    this.projMatrix = p5.Matrix.identity();
+
+    const f = 1.0 / Math.tan(this.cameraFOV / 2);
+    const nf = 1.0 / (this.cameraNear - this.cameraFar);
+
+    /* eslint-disable indent */
+    this.projMatrix.set(f / aspect,  0,                     0,  0,
+                        0,          -f * this.yScale,       0,  0,
+                        0,           0,     (far + near) * nf, -1,
+                        0,           0, (2 * far * near) * nf,  0);
+    /* eslint-enable indent */
+
+    if (this._isActive()) {
+      this._renderer.uPMatrix.set(
+        this.projMatrix.mat4[0],
+        this.projMatrix.mat4[1],
+        this.projMatrix.mat4[2],
+        this.projMatrix.mat4[3],
+        this.projMatrix.mat4[4],
+        this.projMatrix.mat4[5],
+        this.projMatrix.mat4[6],
+        this.projMatrix.mat4[7],
+        this.projMatrix.mat4[8],
+        this.projMatrix.mat4[9],
+        this.projMatrix.mat4[10],
+        this.projMatrix.mat4[11],
+        this.projMatrix.mat4[12],
+        this.projMatrix.mat4[13],
+        this.projMatrix.mat4[14],
+        this.projMatrix.mat4[15]
+      );
+    }
   }
 
-  this.aspectRatio = aspect;
-  this.cameraNear = near;
-  this.cameraFar = far;
-
-  this.projMatrix = p5.Matrix.identity();
-
-  const f = 1.0 / Math.tan(this.cameraFOV / 2);
-  const nf = 1.0 / (this.cameraNear - this.cameraFar);
-
-  /* eslint-disable indent */
-  this.projMatrix.set(f / aspect,  0,                     0,  0,
-                      0,          -f * this.yScale,       0,  0,
-                      0,           0,     (far + near) * nf, -1,
-                      0,           0, (2 * far * near) * nf,  0);
-  /* eslint-enable indent */
-
-  if (this._isActive()) {
-    this._renderer.uPMatrix.set(
-      this.projMatrix.mat4[0],
-      this.projMatrix.mat4[1],
-      this.projMatrix.mat4[2],
-      this.projMatrix.mat4[3],
-      this.projMatrix.mat4[4],
-      this.projMatrix.mat4[5],
-      this.projMatrix.mat4[6],
-      this.projMatrix.mat4[7],
-      this.projMatrix.mat4[8],
-      this.projMatrix.mat4[9],
-      this.projMatrix.mat4[10],
-      this.projMatrix.mat4[11],
-      this.projMatrix.mat4[12],
-      this.projMatrix.mat4[13],
-      this.projMatrix.mat4[14],
-      this.projMatrix.mat4[15]
-    );
-  }
-};
-
-/**
+  /**
  * Sets an orthographic projection.
  * Accepts the same parameters as the global
  * <a href="#/p5/ortho">ortho()</a>.
@@ -883,64 +884,64 @@ p5.Camera.prototype.perspective = function(fovy, aspect, near, far) {
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
-p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
-  if (left === undefined) left = -this._renderer.width / 2;
-  if (right === undefined) right = +this._renderer.width / 2;
-  if (bottom === undefined) bottom = -this._renderer.height / 2;
-  if (top === undefined) top = +this._renderer.height / 2;
-  if (near === undefined) near = 0;
-  if (far === undefined)
-    far = Math.max(this._renderer.width, this._renderer.height);
+  ortho(left, right, bottom, top, near, far) {
+    if (left === undefined) left = -this._renderer.width / 2;
+    if (right === undefined) right = +this._renderer.width / 2;
+    if (bottom === undefined) bottom = -this._renderer.height / 2;
+    if (top === undefined) top = +this._renderer.height / 2;
+    if (near === undefined) near = 0;
+    if (far === undefined)
+      far = Math.max(this._renderer.width, this._renderer.height);
 
-  this.cameraNear = near;
-  this.cameraFar = far;
+    this.cameraNear = near;
+    this.cameraFar = far;
 
-  const w = right - left;
-  const h = top - bottom;
-  const d = far - near;
+    const w = right - left;
+    const h = top - bottom;
+    const d = far - near;
 
-  const x = +2.0 / w;
-  const y = +2.0 / h * this.yScale;
-  const z = -2.0 / d;
+    const x = +2.0 / w;
+    const y = +2.0 / h * this.yScale;
+    const z = -2.0 / d;
 
-  const tx = -(right + left) / w;
-  const ty = -(top + bottom) / h;
-  const tz = -(far + near) / d;
+    const tx = -(right + left) / w;
+    const ty = -(top + bottom) / h;
+    const tz = -(far + near) / d;
 
-  this.projMatrix = p5.Matrix.identity();
+    this.projMatrix = p5.Matrix.identity();
 
-  /* eslint-disable indent */
-  this.projMatrix.set(  x,  0,  0,  0,
-                        0, -y,  0,  0,
-                        0,  0,  z,  0,
-                        tx, ty, tz,  1);
-  /* eslint-enable indent */
+    /* eslint-disable indent */
+    this.projMatrix.set(  x,  0,  0,  0,
+                          0, -y,  0,  0,
+                          0,  0,  z,  0,
+                          tx, ty, tz,  1);
+    /* eslint-enable indent */
 
-  if (this._isActive()) {
-    this._renderer.uPMatrix.set(
-      this.projMatrix.mat4[0],
-      this.projMatrix.mat4[1],
-      this.projMatrix.mat4[2],
-      this.projMatrix.mat4[3],
-      this.projMatrix.mat4[4],
-      this.projMatrix.mat4[5],
-      this.projMatrix.mat4[6],
-      this.projMatrix.mat4[7],
-      this.projMatrix.mat4[8],
-      this.projMatrix.mat4[9],
-      this.projMatrix.mat4[10],
-      this.projMatrix.mat4[11],
-      this.projMatrix.mat4[12],
-      this.projMatrix.mat4[13],
-      this.projMatrix.mat4[14],
-      this.projMatrix.mat4[15]
-    );
+    if (this._isActive()) {
+      this._renderer.uPMatrix.set(
+        this.projMatrix.mat4[0],
+        this.projMatrix.mat4[1],
+        this.projMatrix.mat4[2],
+        this.projMatrix.mat4[3],
+        this.projMatrix.mat4[4],
+        this.projMatrix.mat4[5],
+        this.projMatrix.mat4[6],
+        this.projMatrix.mat4[7],
+        this.projMatrix.mat4[8],
+        this.projMatrix.mat4[9],
+        this.projMatrix.mat4[10],
+        this.projMatrix.mat4[11],
+        this.projMatrix.mat4[12],
+        this.projMatrix.mat4[13],
+        this.projMatrix.mat4[14],
+        this.projMatrix.mat4[15]
+      );
+    }
+
+    this.cameraType = 'custom';
   }
 
-  this.cameraType = 'custom';
-};
-
-/**
+  /**
  * Sets the camera's frustum.
  * Accepts the same parameters as the global
  * <a href="#/p5/frustum">frustum()</a>.
@@ -982,112 +983,112 @@ p5.Camera.prototype.ortho = function(left, right, bottom, top, near, far) {
  * @alt
  * two 3D boxes move back and forth along same plane, rotating as mouse is dragged.
  */
-p5.Camera.prototype.frustum = function(left, right, bottom, top, near, far) {
-  if (left === undefined) left = -this._renderer.width * 0.05;
-  if (right === undefined) right = +this._renderer.width * 0.05;
-  if (bottom === undefined) bottom = +this._renderer.height * 0.05;
-  if (top === undefined) top = -this._renderer.height * 0.05;
-  if (near === undefined) near = this.defaultCameraNear;
-  if (far === undefined) far = this.defaultCameraFar;
+  frustum(left, right, bottom, top, near, far) {
+    if (left === undefined) left = -this._renderer.width * 0.05;
+    if (right === undefined) right = +this._renderer.width * 0.05;
+    if (bottom === undefined) bottom = +this._renderer.height * 0.05;
+    if (top === undefined) top = -this._renderer.height * 0.05;
+    if (near === undefined) near = this.defaultCameraNear;
+    if (far === undefined) far = this.defaultCameraFar;
 
-  this.cameraNear = near;
-  this.cameraFar = far;
+    this.cameraNear = near;
+    this.cameraFar = far;
 
-  const w = right - left;
-  const h = top - bottom;
-  const d = far - near;
+    const w = right - left;
+    const h = top - bottom;
+    const d = far - near;
 
-  const x = +(2.0 * near) / w;
-  const y = +(2.0 * near) / h * this.yScale;
-  const z = -(2.0 * far * near) / d;
+    const x = +(2.0 * near) / w;
+    const y = +(2.0 * near) / h * this.yScale;
+    const z = -(2.0 * far * near) / d;
 
-  const tx = (right + left) / w;
-  const ty = (top + bottom) / h;
-  const tz = -(far + near) / d;
+    const tx = (right + left) / w;
+    const ty = (top + bottom) / h;
+    const tz = -(far + near) / d;
 
-  this.projMatrix = p5.Matrix.identity();
+    this.projMatrix = p5.Matrix.identity();
 
-  /* eslint-disable indent */
-  this.projMatrix.set(  x,  0,  0,  0,
-                        0,  -y,  0,  0,
-                       tx, ty, tz, -1,
-                        0,  0,  z,  0);
-  /* eslint-enable indent */
+    /* eslint-disable indent */
+    this.projMatrix.set(  x,  0,  0,  0,
+                          0,  -y,  0,  0,
+                        tx, ty, tz, -1,
+                          0,  0,  z,  0);
+    /* eslint-enable indent */
 
-  if (this._isActive()) {
-    this._renderer.uPMatrix.set(
-      this.projMatrix.mat4[0],
-      this.projMatrix.mat4[1],
-      this.projMatrix.mat4[2],
-      this.projMatrix.mat4[3],
-      this.projMatrix.mat4[4],
-      this.projMatrix.mat4[5],
-      this.projMatrix.mat4[6],
-      this.projMatrix.mat4[7],
-      this.projMatrix.mat4[8],
-      this.projMatrix.mat4[9],
-      this.projMatrix.mat4[10],
-      this.projMatrix.mat4[11],
-      this.projMatrix.mat4[12],
-      this.projMatrix.mat4[13],
-      this.projMatrix.mat4[14],
-      this.projMatrix.mat4[15]
-    );
+    if (this._isActive()) {
+      this._renderer.uPMatrix.set(
+        this.projMatrix.mat4[0],
+        this.projMatrix.mat4[1],
+        this.projMatrix.mat4[2],
+        this.projMatrix.mat4[3],
+        this.projMatrix.mat4[4],
+        this.projMatrix.mat4[5],
+        this.projMatrix.mat4[6],
+        this.projMatrix.mat4[7],
+        this.projMatrix.mat4[8],
+        this.projMatrix.mat4[9],
+        this.projMatrix.mat4[10],
+        this.projMatrix.mat4[11],
+        this.projMatrix.mat4[12],
+        this.projMatrix.mat4[13],
+        this.projMatrix.mat4[14],
+        this.projMatrix.mat4[15]
+      );
+    }
+
+    this.cameraType = 'custom';
   }
 
-  this.cameraType = 'custom';
-};
+  ////////////////////////////////////////////////////////////////////////////////
+  // Camera Orientation Methods
+  ////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// Camera Orientation Methods
-////////////////////////////////////////////////////////////////////////////////
-
-/**
+  /**
  * Rotate camera view about arbitrary axis defined by x,y,z
  * based on http://learnwebgl.brown37.net/07_cameras/camera_rotating_motion.html
  * @method _rotateView
  * @private
  */
-p5.Camera.prototype._rotateView = function(a, x, y, z) {
-  let centerX = this.centerX;
-  let centerY = this.centerY;
-  let centerZ = this.centerZ;
+  _rotateView(a, x, y, z) {
+    let centerX = this.centerX;
+    let centerY = this.centerY;
+    let centerZ = this.centerZ;
 
-  // move center by eye position such that rotation happens around eye position
-  centerX -= this.eyeX;
-  centerY -= this.eyeY;
-  centerZ -= this.eyeZ;
+    // move center by eye position such that rotation happens around eye position
+    centerX -= this.eyeX;
+    centerY -= this.eyeY;
+    centerZ -= this.eyeZ;
 
-  const rotation = p5.Matrix.identity(this._renderer._pInst);
-  rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
+    const rotation = p5.Matrix.identity(this._renderer._pInst);
+    rotation.rotate(this._renderer._pInst._toRadians(a), x, y, z);
 
-  /* eslint-disable max-len */
-  const rotatedCenter = [
-    centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
-    centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
-    centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]
-  ];
-  /* eslint-enable max-len */
+    /* eslint-disable max-len */
+    const rotatedCenter = [
+      centerX * rotation.mat4[0] + centerY * rotation.mat4[4] + centerZ * rotation.mat4[8],
+      centerX * rotation.mat4[1] + centerY * rotation.mat4[5] + centerZ * rotation.mat4[9],
+      centerX * rotation.mat4[2] + centerY * rotation.mat4[6] + centerZ * rotation.mat4[10]
+    ];
+    /* eslint-enable max-len */
 
-  // add eye position back into center
-  rotatedCenter[0] += this.eyeX;
-  rotatedCenter[1] += this.eyeY;
-  rotatedCenter[2] += this.eyeZ;
+    // add eye position back into center
+    rotatedCenter[0] += this.eyeX;
+    rotatedCenter[1] += this.eyeY;
+    rotatedCenter[2] += this.eyeZ;
 
-  this.camera(
-    this.eyeX,
-    this.eyeY,
-    this.eyeZ,
-    rotatedCenter[0],
-    rotatedCenter[1],
-    rotatedCenter[2],
-    this.upX,
-    this.upY,
-    this.upZ
-  );
-};
+    this.camera(
+      this.eyeX,
+      this.eyeY,
+      this.eyeZ,
+      rotatedCenter[0],
+      rotatedCenter[1],
+      rotatedCenter[2],
+      this.upX,
+      this.upY,
+      this.upZ
+    );
+  }
 
-/**
+  /**
  * Panning rotates the camera view to the left and right.
  * @method pan
  * @param {Number} angle amount to rotate camera in current
@@ -1140,12 +1141,12 @@ p5.Camera.prototype._rotateView = function(a, x, y, z) {
  * @alt
  * camera view pans left and right across a series of rotating 3D boxes.
  */
-p5.Camera.prototype.pan = function(amount) {
-  const local = this._getLocalAxes();
-  this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
-};
+  pan(amount) {
+    const local = this._getLocalAxes();
+    this._rotateView(amount, local.y[0], local.y[1], local.y[2]);
+  }
 
-/**
+  /**
  * Tilting rotates the camera view up and down.
  * @method tilt
  * @param {Number} angle amount to rotate camera in current
@@ -1198,12 +1199,12 @@ p5.Camera.prototype.pan = function(amount) {
  * @alt
  * camera view tilts up and down across a series of rotating 3D boxes.
  */
-p5.Camera.prototype.tilt = function(amount) {
-  const local = this._getLocalAxes();
-  this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
-};
+  tilt(amount) {
+    const local = this._getLocalAxes();
+    this._rotateView(amount, local.x[0], local.x[1], local.x[2]);
+  }
 
-/**
+  /**
  * Reorients the camera to look at a position in world space.
  * @method lookAt
  * @for p5.Camera
@@ -1252,25 +1253,25 @@ p5.Camera.prototype.tilt = function(amount) {
  * camera view of rotating 3D cubes changes to look at a new random
  * point every second .
  */
-p5.Camera.prototype.lookAt = function(x, y, z) {
-  this.camera(
-    this.eyeX,
-    this.eyeY,
-    this.eyeZ,
-    x,
-    y,
-    z,
-    this.upX,
-    this.upY,
-    this.upZ
-  );
-};
+  lookAt(x, y, z) {
+    this.camera(
+      this.eyeX,
+      this.eyeY,
+      this.eyeZ,
+      x,
+      y,
+      z,
+      this.upX,
+      this.upY,
+      this.upZ
+    );
+  }
 
-////////////////////////////////////////////////////////////////////////////////
-// Camera Position Methods
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
+  // Camera Position Methods
+  ////////////////////////////////////////////////////////////////////////////////
 
-/**
+  /**
  * Sets the camera's position and orientation.
  * Accepts the same parameters as the global
  * <a href="#/p5/camera">camera()</a>.
@@ -1354,87 +1355,87 @@ p5.Camera.prototype.lookAt = function(x, y, z) {
  * An interactive example of a red cube with 3 sliders for moving it across x, y,
  * z axis and 3 sliders for shifting its center.
  */
-p5.Camera.prototype.camera = function(
-  eyeX,
-  eyeY,
-  eyeZ,
-  centerX,
-  centerY,
-  centerZ,
-  upX,
-  upY,
-  upZ
-) {
-  if (typeof eyeX === 'undefined') {
-    eyeX = this.defaultEyeX;
-    eyeY = this.defaultEyeY;
-    eyeZ = this.defaultEyeZ;
-    centerX = eyeX;
-    centerY = eyeY;
-    centerZ = 0;
-    upX = 0;
-    upY = 1;
-    upZ = 0;
+  camera(
+    eyeX,
+    eyeY,
+    eyeZ,
+    centerX,
+    centerY,
+    centerZ,
+    upX,
+    upY,
+    upZ
+  ) {
+    if (typeof eyeX === 'undefined') {
+      eyeX = this.defaultEyeX;
+      eyeY = this.defaultEyeY;
+      eyeZ = this.defaultEyeZ;
+      centerX = eyeX;
+      centerY = eyeY;
+      centerZ = 0;
+      upX = 0;
+      upY = 1;
+      upZ = 0;
+    }
+
+    this.eyeX = eyeX;
+    this.eyeY = eyeY;
+    this.eyeZ = eyeZ;
+
+    if (typeof centerX !== 'undefined') {
+      this.centerX = centerX;
+      this.centerY = centerY;
+      this.centerZ = centerZ;
+    }
+
+    if (typeof upX !== 'undefined') {
+      this.upX = upX;
+      this.upY = upY;
+      this.upZ = upZ;
+    }
+
+    const local = this._getLocalAxes();
+
+    // the camera affects the model view matrix, insofar as it
+    // inverse translates the world to the eye position of the camera
+    // and rotates it.
+    /* eslint-disable indent */
+    this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
+                          local.x[1], local.y[1], local.z[1], 0,
+                          local.x[2], local.y[2], local.z[2], 0,
+                                  0,          0,          0, 1);
+    /* eslint-enable indent */
+
+    const tx = -eyeX;
+    const ty = -eyeY;
+    const tz = -eyeZ;
+
+    this.cameraMatrix.translate([tx, ty, tz]);
+
+    if (this._isActive()) {
+      this._renderer.uMVMatrix.set(
+        this.cameraMatrix.mat4[0],
+        this.cameraMatrix.mat4[1],
+        this.cameraMatrix.mat4[2],
+        this.cameraMatrix.mat4[3],
+        this.cameraMatrix.mat4[4],
+        this.cameraMatrix.mat4[5],
+        this.cameraMatrix.mat4[6],
+        this.cameraMatrix.mat4[7],
+        this.cameraMatrix.mat4[8],
+        this.cameraMatrix.mat4[9],
+        this.cameraMatrix.mat4[10],
+        this.cameraMatrix.mat4[11],
+        this.cameraMatrix.mat4[12],
+        this.cameraMatrix.mat4[13],
+        this.cameraMatrix.mat4[14],
+        this.cameraMatrix.mat4[15]
+      );
+    }
+    return this;
   }
 
-  this.eyeX = eyeX;
-  this.eyeY = eyeY;
-  this.eyeZ = eyeZ;
-
-  if (typeof centerX !== 'undefined') {
-    this.centerX = centerX;
-    this.centerY = centerY;
-    this.centerZ = centerZ;
-  }
-
-  if (typeof upX !== 'undefined') {
-    this.upX = upX;
-    this.upY = upY;
-    this.upZ = upZ;
-  }
-
-  const local = this._getLocalAxes();
-
-  // the camera affects the model view matrix, insofar as it
-  // inverse translates the world to the eye position of the camera
-  // and rotates it.
-  /* eslint-disable indent */
-  this.cameraMatrix.set(local.x[0], local.y[0], local.z[0], 0,
-                        local.x[1], local.y[1], local.z[1], 0,
-                        local.x[2], local.y[2], local.z[2], 0,
-                                 0,          0,          0, 1);
-  /* eslint-enable indent */
-
-  const tx = -eyeX;
-  const ty = -eyeY;
-  const tz = -eyeZ;
-
-  this.cameraMatrix.translate([tx, ty, tz]);
-
-  if (this._isActive()) {
-    this._renderer.uMVMatrix.set(
-      this.cameraMatrix.mat4[0],
-      this.cameraMatrix.mat4[1],
-      this.cameraMatrix.mat4[2],
-      this.cameraMatrix.mat4[3],
-      this.cameraMatrix.mat4[4],
-      this.cameraMatrix.mat4[5],
-      this.cameraMatrix.mat4[6],
-      this.cameraMatrix.mat4[7],
-      this.cameraMatrix.mat4[8],
-      this.cameraMatrix.mat4[9],
-      this.cameraMatrix.mat4[10],
-      this.cameraMatrix.mat4[11],
-      this.cameraMatrix.mat4[12],
-      this.cameraMatrix.mat4[13],
-      this.cameraMatrix.mat4[14],
-      this.cameraMatrix.mat4[15]
-    );
-  }
-  return this;
-};
-
-/**
+  /**
  * Move camera along its local axes while maintaining current camera orientation.
  * @method move
  * @param {Number} x amount to move along camera's left-right axis
@@ -1484,29 +1485,29 @@ p5.Camera.prototype.camera = function(
  * camera view moves along a series of 3D boxes, maintaining the same
  * orientation throughout the move
  */
-p5.Camera.prototype.move = function(x, y, z) {
-  const local = this._getLocalAxes();
+  move(x, y, z) {
+    const local = this._getLocalAxes();
 
-  // scale local axes by movement amounts
-  // based on http://learnwebgl.brown37.net/07_cameras/camera_linear_motion.html
-  const dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
-  const dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
-  const dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
+    // scale local axes by movement amounts
+    // based on http://learnwebgl.brown37.net/07_cameras/camera_linear_motion.html
+    const dx = [local.x[0] * x, local.x[1] * x, local.x[2] * x];
+    const dy = [local.y[0] * y, local.y[1] * y, local.y[2] * y];
+    const dz = [local.z[0] * z, local.z[1] * z, local.z[2] * z];
 
-  this.camera(
-    this.eyeX + dx[0] + dy[0] + dz[0],
-    this.eyeY + dx[1] + dy[1] + dz[1],
-    this.eyeZ + dx[2] + dy[2] + dz[2],
-    this.centerX + dx[0] + dy[0] + dz[0],
-    this.centerY + dx[1] + dy[1] + dz[1],
-    this.centerZ + dx[2] + dy[2] + dz[2],
-    this.upX,
-    this.upY,
-    this.upZ
-  );
-};
+    this.camera(
+      this.eyeX + dx[0] + dy[0] + dz[0],
+      this.eyeY + dx[1] + dy[1] + dz[1],
+      this.eyeZ + dx[2] + dy[2] + dz[2],
+      this.centerX + dx[0] + dy[0] + dz[0],
+      this.centerY + dx[1] + dy[1] + dz[1],
+      this.centerZ + dx[2] + dy[2] + dz[2],
+      this.upX,
+      this.upY,
+      this.upZ
+    );
+  }
 
-/**
+  /**
  * Set camera position in world-space while maintaining current camera
  * orientation.
  * @method setPosition
@@ -1550,168 +1551,168 @@ p5.Camera.prototype.move = function(x, y, z) {
  * @alt
  * camera position changes as the user presses keys, altering view of a 3D box
  */
-p5.Camera.prototype.setPosition = function(x, y, z) {
-  const diffX = x - this.eyeX;
-  const diffY = y - this.eyeY;
-  const diffZ = z - this.eyeZ;
+  setPosition(x, y, z) {
+    const diffX = x - this.eyeX;
+    const diffY = y - this.eyeY;
+    const diffZ = z - this.eyeZ;
 
-  this.camera(
-    x,
-    y,
-    z,
-    this.centerX + diffX,
-    this.centerY + diffY,
-    this.centerZ + diffZ,
-    this.upX,
-    this.upY,
-    this.upZ
-  );
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Camera Helper Methods
-////////////////////////////////////////////////////////////////////////////////
-
-// @TODO: combine this function with _setDefaultCamera to compute these values
-// as-needed
-p5.Camera.prototype._computeCameraDefaultSettings = function() {
-  this.defaultCameraFOV = 60 / 180 * Math.PI;
-  this.defaultAspectRatio = this._renderer.width / this._renderer.height;
-  this.defaultEyeX = 0;
-  this.defaultEyeY = 0;
-  this.defaultEyeZ =
-    this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
-  this.defaultCenterX = 0;
-  this.defaultCenterY = 0;
-  this.defaultCenterZ = 0;
-  this.defaultCameraNear = this.defaultEyeZ * 0.1;
-  this.defaultCameraFar = this.defaultEyeZ * 10;
-};
-
-//detect if user didn't set the camera
-//then call this function below
-p5.Camera.prototype._setDefaultCamera = function() {
-  this.cameraFOV = this.defaultCameraFOV;
-  this.aspectRatio = this.defaultAspectRatio;
-  this.eyeX = this.defaultEyeX;
-  this.eyeY = this.defaultEyeY;
-  this.eyeZ = this.defaultEyeZ;
-  this.centerX = this.defaultCenterX;
-  this.centerY = this.defaultCenterY;
-  this.centerZ = this.defaultCenterZ;
-  this.upX = 0;
-  this.upY = 1;
-  this.upZ = 0;
-  this.cameraNear = this.defaultCameraNear;
-  this.cameraFar = this.defaultCameraFar;
-
-  this.perspective();
-  this.camera();
-
-  this.cameraType = 'default';
-};
-
-p5.Camera.prototype._resize = function() {
-  // If we're using the default camera, update the aspect ratio
-  if (this.cameraType === 'default') {
-    this._computeCameraDefaultSettings();
-    this._setDefaultCamera();
-  } else {
-    this.perspective(
-      this.cameraFOV,
-      this._renderer.width / this._renderer.height
+    this.camera(
+      x,
+      y,
+      z,
+      this.centerX + diffX,
+      this.centerY + diffY,
+      this.centerZ + diffZ,
+      this.upX,
+      this.upY,
+      this.upZ
     );
   }
-};
 
-/**
+  ////////////////////////////////////////////////////////////////////////////////
+  // Camera Helper Methods
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // @TODO: combine this function with _setDefaultCamera to compute these values
+  // as-needed
+  _computeCameraDefaultSettings() {
+    this.defaultCameraFOV = 60 / 180 * Math.PI;
+    this.defaultAspectRatio = this._renderer.width / this._renderer.height;
+    this.defaultEyeX = 0;
+    this.defaultEyeY = 0;
+    this.defaultEyeZ =
+      this._renderer.height / 2.0 / Math.tan(this.defaultCameraFOV / 2.0);
+    this.defaultCenterX = 0;
+    this.defaultCenterY = 0;
+    this.defaultCenterZ = 0;
+    this.defaultCameraNear = this.defaultEyeZ * 0.1;
+    this.defaultCameraFar = this.defaultEyeZ * 10;
+  }
+
+  //detect if user didn't set the camera
+  //then call this function below
+  _setDefaultCamera() {
+    this.cameraFOV = this.defaultCameraFOV;
+    this.aspectRatio = this.defaultAspectRatio;
+    this.eyeX = this.defaultEyeX;
+    this.eyeY = this.defaultEyeY;
+    this.eyeZ = this.defaultEyeZ;
+    this.centerX = this.defaultCenterX;
+    this.centerY = this.defaultCenterY;
+    this.centerZ = this.defaultCenterZ;
+    this.upX = 0;
+    this.upY = 1;
+    this.upZ = 0;
+    this.cameraNear = this.defaultCameraNear;
+    this.cameraFar = this.defaultCameraFar;
+
+    this.perspective();
+    this.camera();
+
+    this.cameraType = 'default';
+  }
+
+  _resize() {
+    // If we're using the default camera, update the aspect ratio
+    if (this.cameraType === 'default') {
+      this._computeCameraDefaultSettings();
+      this._setDefaultCamera();
+    } else {
+      this.perspective(
+        this.cameraFOV,
+        this._renderer.width / this._renderer.height
+      );
+    }
+  }
+
+  /**
  * Returns a copy of a camera.
  * @method copy
  * @private
  */
-p5.Camera.prototype.copy = function() {
-  const _cam = new p5.Camera(this._renderer);
-  _cam.cameraFOV = this.cameraFOV;
-  _cam.aspectRatio = this.aspectRatio;
-  _cam.eyeX = this.eyeX;
-  _cam.eyeY = this.eyeY;
-  _cam.eyeZ = this.eyeZ;
-  _cam.centerX = this.centerX;
-  _cam.centerY = this.centerY;
-  _cam.centerZ = this.centerZ;
-  _cam.upX = this.upX;
-  _cam.upY = this.upY;
-  _cam.upZ = this.upZ;
-  _cam.cameraNear = this.cameraNear;
-  _cam.cameraFar = this.cameraFar;
+  copy() {
+    const _cam = new p5.Camera(this._renderer);
+    _cam.cameraFOV = this.cameraFOV;
+    _cam.aspectRatio = this.aspectRatio;
+    _cam.eyeX = this.eyeX;
+    _cam.eyeY = this.eyeY;
+    _cam.eyeZ = this.eyeZ;
+    _cam.centerX = this.centerX;
+    _cam.centerY = this.centerY;
+    _cam.centerZ = this.centerZ;
+    _cam.upX = this.upX;
+    _cam.upY = this.upY;
+    _cam.upZ = this.upZ;
+    _cam.cameraNear = this.cameraNear;
+    _cam.cameraFar = this.cameraFar;
 
-  _cam.cameraType = this.cameraType;
+    _cam.cameraType = this.cameraType;
 
-  _cam.cameraMatrix = this.cameraMatrix.copy();
-  _cam.projMatrix = this.projMatrix.copy();
+    _cam.cameraMatrix = this.cameraMatrix.copy();
+    _cam.projMatrix = this.projMatrix.copy();
 
-  return _cam;
-};
+    return _cam;
+  }
 
-/**
+  /**
  * Returns a camera's local axes: left-right, up-down, and forward-backward,
  * as defined by vectors in world-space.
  * @method _getLocalAxes
  * @private
  */
-p5.Camera.prototype._getLocalAxes = function() {
-  // calculate camera local Z vector
-  let z0 = this.eyeX - this.centerX;
-  let z1 = this.eyeY - this.centerY;
-  let z2 = this.eyeZ - this.centerZ;
+  _getLocalAxes() {
+    // calculate camera local Z vector
+    let z0 = this.eyeX - this.centerX;
+    let z1 = this.eyeY - this.centerY;
+    let z2 = this.eyeZ - this.centerZ;
 
-  // normalize camera local Z vector
-  const eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
-  if (eyeDist !== 0) {
-    z0 /= eyeDist;
-    z1 /= eyeDist;
-    z2 /= eyeDist;
+    // normalize camera local Z vector
+    const eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+    if (eyeDist !== 0) {
+      z0 /= eyeDist;
+      z1 /= eyeDist;
+      z2 /= eyeDist;
+    }
+
+    // calculate camera Y vector
+    let y0 = this.upX;
+    let y1 = this.upY;
+    let y2 = this.upZ;
+
+    // compute camera local X vector as up vector (local Y) cross local Z
+    let x0 = y1 * z2 - y2 * z1;
+    let x1 = -y0 * z2 + y2 * z0;
+    let x2 = y0 * z1 - y1 * z0;
+
+    // recompute y = z cross x
+    y0 = z1 * x2 - z2 * x1;
+    y1 = -z0 * x2 + z2 * x0;
+    y2 = z0 * x1 - z1 * x0;
+
+    // cross product gives area of parallelogram, which is < 1.0 for
+    // non-perpendicular unit-length vectors; so normalize x, y here:
+    const xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+    if (xmag !== 0) {
+      x0 /= xmag;
+      x1 /= xmag;
+      x2 /= xmag;
+    }
+
+    const ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+    if (ymag !== 0) {
+      y0 /= ymag;
+      y1 /= ymag;
+      y2 /= ymag;
+    }
+
+    return {
+      x: [x0, x1, x2],
+      y: [y0, y1, y2],
+      z: [z0, z1, z2]
+    };
   }
 
-  // calculate camera Y vector
-  let y0 = this.upX;
-  let y1 = this.upY;
-  let y2 = this.upZ;
-
-  // compute camera local X vector as up vector (local Y) cross local Z
-  let x0 = y1 * z2 - y2 * z1;
-  let x1 = -y0 * z2 + y2 * z0;
-  let x2 = y0 * z1 - y1 * z0;
-
-  // recompute y = z cross x
-  y0 = z1 * x2 - z2 * x1;
-  y1 = -z0 * x2 + z2 * x0;
-  y2 = z0 * x1 - z1 * x0;
-
-  // cross product gives area of parallelogram, which is < 1.0 for
-  // non-perpendicular unit-length vectors; so normalize x, y here:
-  const xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
-  if (xmag !== 0) {
-    x0 /= xmag;
-    x1 /= xmag;
-    x2 /= xmag;
-  }
-
-  const ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
-  if (ymag !== 0) {
-    y0 /= ymag;
-    y1 /= ymag;
-    y2 /= ymag;
-  }
-
-  return {
-    x: [x0, x1, x2],
-    y: [y0, y1, y2],
-    z: [z0, z1, z2]
-  };
-};
-
-/**
+  /**
  * Orbits the camera about center point. For use with orbitControl().
  * @method _orbit
  * @private
@@ -1719,74 +1720,153 @@ p5.Camera.prototype._getLocalAxes = function() {
  * @param {Number} dPhi change in spherical coordinate phi
  * @param {Number} dRadius change in radius
  */
-p5.Camera.prototype._orbit = function(dTheta, dPhi, dRadius) {
-  // Calculate the vector and its magnitude from the center to the viewpoint
-  const diffX = this.eyeX - this.centerX;
-  const diffY = this.eyeY - this.centerY;
-  const diffZ = this.eyeZ - this.centerZ;
-  let camRadius = Math.hypot(diffX, diffY, diffZ);
-  // front vector. unit vector from center to eye.
-  const front = new p5.Vector(diffX, diffY, diffZ).normalize();
-  // up vector. normalized camera's up vector.
-  const up = new p5.Vector(this.upX, this.upY, this.upZ).normalize(); // y-axis
-  // side vector. Right when viewed from the front
-  const side = new p5.Vector.cross(up, front).normalize(); // x-axis
-  // vertical vector. normalized vector of projection of front vector.
-  const vertical = new p5.Vector.cross(side, up); // z-axis
+  _orbit(dTheta, dPhi, dRadius) {
+    // Calculate the vector and its magnitude from the center to the viewpoint
+    const diffX = this.eyeX - this.centerX;
+    const diffY = this.eyeY - this.centerY;
+    const diffZ = this.eyeZ - this.centerZ;
+    let camRadius = Math.hypot(diffX, diffY, diffZ);
+    // front vector. unit vector from center to eye.
+    const front = new p5.Vector(diffX, diffY, diffZ).normalize();
+    // up vector. normalized camera's up vector.
+    const up = new p5.Vector(this.upX, this.upY, this.upZ).normalize(); // y-axis
+    // side vector. Right when viewed from the front
+    const side = new p5.Vector.cross(up, front).normalize(); // x-axis
+    // vertical vector. normalized vector of projection of front vector.
+    const vertical = new p5.Vector.cross(side, up); // z-axis
 
-  // update camRadius
-  camRadius *= Math.pow(10, dRadius);
-  // prevent zooming through the center:
-  if (camRadius < this.cameraNear) {
-    camRadius = this.cameraNear;
+    // update camRadius
+    camRadius *= Math.pow(10, dRadius);
+    // prevent zooming through the center:
+    if (camRadius < this.cameraNear) {
+      camRadius = this.cameraNear;
+    }
+    if (camRadius > this.cameraFar) {
+      camRadius = this.cameraFar;
+    }
+
+    // calculate updated camera angle
+    // Find the angle between the "up" and the "front", add dPhi to that.
+    // angleBetween() may return negative value. Since this specification is subject to change
+    // due to version updates, it cannot be adopted, so here we calculate using a method
+    // that directly obtains the absolute value.
+    const camPhi =
+      Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up)))) + dPhi;
+    // Rotate by dTheta in the shortest direction from "vertical" to "side"
+    const camTheta = dTheta;
+
+    // Invert camera's upX, upY, upZ if dPhi is below 0 or above PI
+    if (camPhi <= 0 || camPhi >= Math.PI) {
+      this.upX *= -1;
+      this.upY *= -1;
+      this.upZ *= -1;
+    }
+
+    // update eye vector by calculate new front vector
+    up.mult(Math.cos(camPhi));
+    vertical.mult(Math.cos(camTheta) * Math.sin(camPhi));
+    side.mult(Math.sin(camTheta) * Math.sin(camPhi));
+
+    front.set(up).add(vertical).add(side);
+
+    this.eyeX = camRadius * front.x + this.centerX;
+    this.eyeY = camRadius * front.y + this.centerY;
+    this.eyeZ = camRadius * front.z + this.centerZ;
+
+    // update camera
+    this.camera(
+      this.eyeX, this.eyeY, this.eyeZ,
+      this.centerX, this.centerY, this.centerZ,
+      this.upX, this.upY, this.upZ
+    );
   }
-  if (camRadius > this.cameraFar) {
-    camRadius = this.cameraFar;
+
+  /**
+ * Orbits the camera about center point. For use with orbitControl().
+ * Unlike _orbit(), the direction of rotation always matches the direction of pointer movement.
+ * @method _orbitFree
+ * @private
+ * @param {Number} dx the x component of the rotation vector.
+ * @param {Number} dy the y component of the rotation vector.
+ * @param {Number} dRadius change in radius
+ */
+  _orbitFree(dx, dy, dRadius) {
+    // Calculate the vector and its magnitude from the center to the viewpoint
+    const diffX = this.eyeX - this.centerX;
+    const diffY = this.eyeY - this.centerY;
+    const diffZ = this.eyeZ - this.centerZ;
+    let camRadius = Math.hypot(diffX, diffY, diffZ);
+    // front vector. unit vector from center to eye.
+    const front = new p5.Vector(diffX, diffY, diffZ).normalize();
+    // up vector. camera's up vector.
+    const up = new p5.Vector(this.upX, this.upY, this.upZ);
+    // side vector. Right when viewed from the front. (like x-axis)
+    const side = new p5.Vector.cross(up, front).normalize();
+    // down vector. Bottom when viewed from the front. (like y-axis)
+    const down = new p5.Vector.cross(front, side);
+
+    // side vector and down vector are no longer used as-is.
+    // Create a vector representing the direction of rotation
+    // in the form cos(direction)*side + sin(direction)*down.
+    // Make the current side vector into this.
+    const directionAngle = Math.atan2(dy, dx);
+    down.mult(Math.sin(directionAngle));
+    side.mult(Math.cos(directionAngle)).add(down);
+    // The amount of rotation is the size of the vector (dx, dy).
+    const rotAngle = Math.sqrt(dx*dx + dy*dy);
+    // The vector that is orthogonal to both the front vector and
+    // the rotation direction vector is the rotation axis vector.
+    const axis = new p5.Vector.cross(front, side);
+
+    // update camRadius
+    camRadius *= Math.pow(10, dRadius);
+    // prevent zooming through the center:
+    if (camRadius < this.cameraNear) {
+      camRadius = this.cameraNear;
+    }
+    if (camRadius > this.cameraFar) {
+      camRadius = this.cameraFar;
+    }
+
+    // If the axis vector is likened to the z-axis, the front vector is
+    // the x-axis and the side vector is the y-axis. Rotate the up and front
+    // vectors respectively by thinking of them as rotations around the z-axis.
+
+    // Calculate the components by taking the dot product and
+    // calculate a rotation based on that.
+    const c = Math.cos(rotAngle);
+    const s = Math.sin(rotAngle);
+    const dotFront = up.dot(front);
+    const dotSide = up.dot(side);
+    const ux = dotFront * c + dotSide * s;
+    const uy = -dotFront * s + dotSide * c;
+    const uz = up.dot(axis);
+    up.x = ux * front.x + uy * side.x + uz * axis.x;
+    up.y = ux * front.y + uy * side.y + uz * axis.y;
+    up.z = ux * front.z + uy * side.z + uz * axis.z;
+    // We won't be using the side vector and the front vector anymore,
+    // so let's make the front vector into the vector from the center to the new eye.
+    side.mult(-s);
+    front.mult(c).add(side).mult(camRadius);
+
+    // it's complete. let's update camera.
+    this.camera(
+      front.x + this.centerX,
+      front.y + this.centerY,
+      front.z + this.centerZ,
+      this.centerX, this.centerY, this.centerZ,
+      up.x, up.y, up.z
+    );
   }
 
-  // calculate updated camera angle
-  // Find the angle between the "up" and the "front", add dPhi to that.
-  // angleBetween() may return negative value. Since this specification is subject to change
-  // due to version updates, it cannot be adopted, so here we calculate using a method
-  // that directly obtains the absolute value.
-  const camPhi =
-    Math.acos(Math.max(-1, Math.min(1, p5.Vector.dot(front, up)))) + dPhi;
-  // Rotate by dTheta in the shortest direction from "vertical" to "side"
-  const camTheta = dTheta;
-
-  // Invert camera's upX, upY, upZ if dPhi is below 0 or above PI
-  if(camPhi <= 0 || camPhi >= Math.PI){
-    this.upX *= -1;
-    this.upY *= -1;
-    this.upZ *= -1;
-  }
-
-  // update eye vector by calculate new front vector
-  up.mult(Math.cos(camPhi));
-  vertical.mult(Math.cos(camTheta) * Math.sin(camPhi));
-  side.mult(Math.sin(camTheta) * Math.sin(camPhi));
-
-  front.set(up).add(vertical).add(side);
-
-  this.eyeX = camRadius * front.x + this.centerX;
-  this.eyeY = camRadius * front.y + this.centerY;
-  this.eyeZ = camRadius * front.z + this.centerZ;
-
-  // update camera
-  this.camera(
-    this.eyeX, this.eyeY, this.eyeZ,
-    this.centerX, this.centerY, this.centerZ,
-    this.upX, this.upY, this.upZ
-  );
-};
-
-/**
+  /**
  * Returns true if camera is currently attached to renderer.
  * @method _isActive
  * @private
  */
-p5.Camera.prototype._isActive = function() {
-  return this === this._renderer._curCamera;
+  _isActive() {
+    return this === this._renderer._curCamera;
+  }
 };
 
 /**
@@ -1864,7 +1944,7 @@ p5.Camera.prototype._isActive = function() {
  * Canvas switches between two camera views, each showing a series of spinning
  * 3D boxes.
  */
-p5.prototype.setCamera = function(cam) {
+p5.prototype.setCamera = function (cam) {
   this._renderer._curCamera = cam;
 
   // set the projection matrix (which is not normally updated each frame)

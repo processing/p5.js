@@ -324,8 +324,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
     // All the colors that cannot be marked transparent in this frame
     const cannotBeTransparent = new Set();
 
-    for (let k = 0; k < allFramesPixelColors[i].length; k++) {
-      const color = allFramesPixelColors[i][k];
+    allFramesPixelColors[i].forEach((color, k) => {
       if (localPaletteRequired) {
         if (colorIndicesLookup[color] === undefined) {
           colorIndicesLookup[color] = palette.length;
@@ -343,7 +342,7 @@ p5.prototype.encodeAndDownloadGif = function(pImg, filename) {
           cannotBeTransparent.add(color);
         }
       }
-    }
+    });
 
     const frameOpts = {};
 

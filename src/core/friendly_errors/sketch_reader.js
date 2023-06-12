@@ -71,7 +71,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         //display the FES message if a match is found
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
-            url: url,
+            url,
             symbol: variableArray[i]
           })
         );
@@ -103,7 +103,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             let url = `https://p5js.org/reference/#/p5/${variableArray[i]}`;
             p5._friendlyError(
               translator('fes.sketchReaderErrors.reservedFunc', {
-                url: url,
+                url,
                 symbol: variableArray[i]
               })
             );
@@ -299,7 +299,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         let url = `https://p5js.org/reference/#/p5/${tempArray[i]}`;
         p5._friendlyError(
           translator('fes.sketchReaderErrors.reservedConst', {
-            url: url,
+            url,
             symbol: tempArray[i]
           })
         );
@@ -357,7 +357,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
               let url = `https://p5js.org/reference/#/p5/${functionArray[i]}`;
               p5._friendlyError(
                 translator('fes.sketchReaderErrors.reservedFunc', {
-                  url: url,
+                  url,
                   symbol: functionArray[i]
                 })
               );
