@@ -320,7 +320,7 @@ p5.prototype.orbitControl = function(
     // Translate the camera so that the entire object moves
     // perpendicular to the line of sight when the mouse is moved
     // or when the centers of gravity of the two touch pointers move.
-    var local = cam._getLocalAxes();
+    const local = cam._getLocalAxes();
 
     // Calculate the z coordinate in the view coordinates of
     // the center, that is, the distance to the view point

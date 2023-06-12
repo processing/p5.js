@@ -53,9 +53,9 @@ window.requestAnimationFrame = (() =>
       typeof Symbol === 'function' && typeof Symbol() === 'symbol';
     const propIsEnumerable = Object.prototype.propertyIsEnumerable;
     const isEnumerableOn = obj =>
-      function isEnumerable(prop) {
+      (function isEnumerable(prop) {
         return propIsEnumerable.call(obj, prop);
-      };
+      });
 
     // per ES6 spec, this function has to have a length of 2
     const assignShim = function assign(target, source1) {
@@ -68,9 +68,9 @@ window.requestAnimationFrame = (() =>
         source = Object(arguments[s]);
         props = keys(source);
         if (hasSymbols && Object.getOwnPropertySymbols) {
-          props.push.apply(
-            props,
-            Object.getOwnPropertySymbols(source).filter(isEnumerableOn(source))
+          props.push(
+            ...Object.getOwnPropertySymbols(source)
+              .filter(isEnumerableOn(source))
           );
         }
         for (i = 0; i < props.length; ++i) {

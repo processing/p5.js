@@ -110,7 +110,7 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     vertexColor[2],
     vertexColor[3]
   );
-  var lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
+  const lineVertexColor = this.curStrokeColor || [0.5, 0.5, 0.5, 1];
   this.immediateMode.geometry.vertexStrokeColors.push(
     lineVertexColor[0],
     lineVertexColor[1],

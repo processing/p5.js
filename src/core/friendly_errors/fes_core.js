@@ -399,7 +399,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
         msg = translator('fes.misspelling', {
           name: errSym,
-          suggestions: suggestions,
+          suggestions,
           location: locationObj ? translator('fes.location', locationObj) : '',
           count: matchedSymbols.length
         });
@@ -443,7 +443,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
           translationObj = {
             func: frame.functionName,
             line: frame.lineNumber,
-            location: location,
+            location,
             file: frame.fileName.split('/').slice(-1)
           };
         if (idx === 0) {
@@ -568,7 +568,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       ) {
         p5._friendlyError(
           translator('fes.wrongPreload', {
-            func: func,
+            func,
             location: locationObj
               ? translator('fes.location', locationObj)
               : '',
@@ -580,7 +580,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
         // Library error
         p5._friendlyError(
           translator('fes.libraryError', {
-            func: func,
+            func,
             location: locationObj
               ? translator('fes.location', locationObj)
               : '',
